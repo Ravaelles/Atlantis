@@ -10,7 +10,6 @@ public class Atlantis implements BWAPIEventListener {
 	private static Atlantis instance;
 	private JNIBWAPI bwapi;
 	private AtlantisGameCommander gameCommander;
-	private AtlantisConfig atlantisConfig;
 
 	// =========================================================
 	// Other variables
@@ -23,7 +22,7 @@ public class Atlantis implements BWAPIEventListener {
 	/**
 	 * You have to pass AtlantisConfig object to initialize Atlantis.
 	 */
-	public Atlantis(AtlantisConfig atlantisConfig) {
+	public Atlantis() {
 
 		// Save static reference to this instance, acting as last-singleton
 		instance = this;
@@ -32,24 +31,39 @@ public class Atlantis implements BWAPIEventListener {
 		bwapi = new JNIBWAPI(this, false);
 
 		// Validate AtlantisConfig and exit if it's invalid
-		this.atlantisConfig = atlantisConfig;
-		this.atlantisConfig.validate();
+		AtlantisConfig.validate();
 	}
 
 	// =========================================================
-	// Start / Pause
+	// Start / Pause / Unpause
 
+	/**
+	 * Starts the bot.
+	 */
 	public void start() {
 		isPaused = false;
 		bwapi.start();
 	}
 
+	/**
+	 * Forces all calculations to be stopped. CPU usage should be minimal.
+	 */
 	public void pause() {
 		isPaused = true;
 	}
 
+	/**
+	 * Resumes the game after pause.
+	 */
+	public void unpause() {
+		isPaused = false;
+	}
+
 	// =========================================================
 
+	/**
+	 * Returns JNIWAPI for this Atlantis object.
+	 */
 	public static JNIBWAPI getBwapi() {
 		return instance.bwapi;
 	}
@@ -67,9 +81,14 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void matchFrame() {
+
+		// If game is running (not paused), run all actions.
 		if (!isPaused) {
 			gameCommander.update();
-		} else {
+		}
+
+		// If game is paused, wait 100ms.
+		else {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

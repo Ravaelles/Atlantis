@@ -9,45 +9,28 @@ import jnibwapi.types.UnitType.UnitTypes;
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 
+/**
+ * This class allows to easily select units e.g. to select one of your Marines,
+ * nearest to given location, you would run:<br />
+ * <p>
+ * <b> SelectUnits.our().ofType(UnitTypes.Terran_Marine).nearestTo(somePlace)
+ * </b>
+ * </p>
+ * It uses nice flow and every next method filters out units that do not fulfill
+ * certain conditions.
+ */
 public class SelectUnits {
 
 	// =====================================================================
-	// Basic functionality for object
+	// Collection<Unit> wrapper with extra methods
 
 	private Units units;
 
-	// =========================================================
+	// =====================================================================
+	// Constructor is private, use our(), enemy() or neutral() methods
 
 	private SelectUnits(Units units) {
 		this.units = units;
-	}
-
-	// =========================================================
-
-	@Override
-	public String toString() {
-		return units.toString();
-	}
-
-	@SuppressWarnings("unused")
-	private SelectUnits filterOut(Collection<Unit> unitsToRemove) {
-		units.removeUnits(unitsToRemove);
-		return this;
-	}
-
-	private SelectUnits filterOut(Unit unitToRemove) {
-		units.removeUnit(unitToRemove);
-		return this;
-	}
-
-	@SuppressWarnings("unused")
-	private SelectUnits filterAllBut(Unit unitToLeave) {
-		for (Unit unit : units.list()) {
-			if (unitToLeave != unit) {
-				units.removeUnit(unit);
-			}
-		}
-		return this;
 	}
 
 	// =====================================================================
@@ -149,8 +132,7 @@ public class SelectUnits {
 
 	public SelectUnits ofType(UnitTypes type1Allowed, UnitTypes type2Allowed) {
 		for (Unit unit : units.list()) {
-			if (!unit.getType().equals(type1Allowed)
-					&& !unit.getType().equals(type2Allowed)) {
+			if (!unit.getType().equals(type1Allowed) && !unit.getType().equals(type2Allowed)) {
 				filterOut(unit);
 			}
 		}
@@ -208,16 +190,19 @@ public class SelectUnits {
 	// =========================================================
 	// Localization-related methods
 
-	// public Unit nearestTo(Unit unit) {
-	// return nearestTo(unit.getPosition());
-	// }
-
+	/**
+	 * Returns closest unit to given <b>position</b>.
+	 */
 	public Unit nearestTo(Position position) {
 		units.sortByDistanceTo(position, true);
 		// return filterAllBut(units.first());
 		return units.first();
 	}
 
+	/**
+	 * Returns all units that are closer than <b>maxDist</b> tiles from given
+	 * <b>position</b>.
+	 */
 	public SelectUnits inRadius(double maxDist, Position position) {
 		for (Unit unit : units.list()) {
 			if (position.distanceTo(unit) > maxDist) {
@@ -228,9 +213,41 @@ public class SelectUnits {
 		return this;
 	}
 
+	/**
+	 * Returns first unit being base. For your units this is most likely your
+	 * main base, for enemy it will be first discovered base.
+	 */
 	public static Unit firstBase() {
 		Units bases = ourBases().units();
 		return bases.isEmpty() ? null : bases.first();
+	}
+
+	// =========================================================
+
+	@SuppressWarnings("unused")
+	private SelectUnits filterOut(Collection<Unit> unitsToRemove) {
+		units.removeUnits(unitsToRemove);
+		return this;
+	}
+
+	private SelectUnits filterOut(Unit unitToRemove) {
+		units.removeUnit(unitToRemove);
+		return this;
+	}
+
+	@SuppressWarnings("unused")
+	private SelectUnits filterAllBut(Unit unitToLeave) {
+		for (Unit unit : units.list()) {
+			if (unitToLeave != unit) {
+				units.removeUnit(unit);
+			}
+		}
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return units.toString();
 	}
 
 	// =========================================================
