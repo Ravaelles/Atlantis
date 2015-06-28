@@ -24,8 +24,8 @@ public class Position {
 	private final int y;
 
 	/**
-	 * Creates a new Position representing the given x and y as Pixel, Walk
-	 * Tile, or Build Tile coordinates (depending on the PosType given).
+	 * Creates a new Position representing the given x and y as Pixel, Walk Tile, or Build Tile coordinates (depending
+	 * on the PosType given).
 	 */
 	public Position(int x, int y, PosType posType) {
 		this.x = x * posType.scale;
@@ -33,8 +33,7 @@ public class Position {
 	}
 
 	/**
-	 * Creates a new Position representing the given x and y as Pixel
-	 * coordinates.
+	 * Creates a new Position representing the given x and y as Pixel coordinates.
 	 */
 	public Position(int x, int y) {
 		this(x, y, PosType.PIXEL);
@@ -89,29 +88,10 @@ public class Position {
 	}
 
 	/**
-	 * Returns the distance to the target position in Pixel coordinates.
-	 * 
-	 * @see #getApproxPDistance(Position)
-	 */
-	public double getPDistance(Position target) {
-		int dx = x - target.x;
-		int dy = y - target.y;
-		return Math.sqrt(dx * dx + dy * dy);
-	}
-
-	public double getWDistance(Position target) {
-		return getPDistance(target) / PosType.WALK.scale;
-	}
-
-	public double getBDistance(Position target) {
-		return getPDistance(target) / PosType.BUILD.scale;
-	}
-
-	/**
 	 * Get an approximate distance to the target position in Pixel coordinates.
 	 * 
-	 * Uses Starcraft's approximated distance function, which is reasonably
-	 * accurate yet avoids a sqrt operation and saves some CPU cycles.
+	 * Uses Starcraft's approximated distance function, which is reasonably accurate yet avoids a sqrt operation and
+	 * saves some CPU cycles.
 	 * 
 	 * @see #getPDistance(Position)
 	 **/
@@ -140,9 +120,8 @@ public class Position {
 	}
 
 	/**
-	 * Returns true if the position is on the map. Note: if map info is
-	 * unavailable, this function will check validity against the largest
-	 * (256x256) map size.
+	 * Returns true if the position is on the map. Note: if map info is unavailable, this function will check validity
+	 * against the largest (256x256) map size.
 	 */
 	public boolean isValid() {
 		if (x < 0 || y < 0)
@@ -159,10 +138,9 @@ public class Position {
 	}
 
 	/**
-	 * Returns a <b>new</b> Position in the closest valid map position. Worked
-	 * out at Build Tile resolution, like in BWAPI 3. Note: if map info is
-	 * unavailable, this function will check validity against the largest
-	 * (256x256) map size.
+	 * Returns a <b>new</b> Position in the closest valid map position. Worked out at Build Tile resolution, like in
+	 * BWAPI 3. Note: if map info is unavailable, this function will check validity against the largest (256x256) map
+	 * size.
 	 */
 	public Position makeValid() {
 		if (isValid())
@@ -186,8 +164,8 @@ public class Position {
 	}
 
 	/**
-	 * Returns a <b>new</b> Position that represents the effect of moving this
-	 * position by delta (treated as a vector from the origin)
+	 * Returns a <b>new</b> Position that represents the effect of moving this position by delta (treated as a vector
+	 * from the origin)
 	 */
 	public Position translated(Position delta) {
 		return new Position(x + delta.x, y + delta.y);
@@ -221,14 +199,58 @@ public class Position {
 
 	@Override
 	public String toString() {
-		return getClass().getName() + "[x=" + x + ",y=" + y + "]";
+		return "[" + x + "," + y + "]";
 	}
-	
+
 	// =========================================================
 	// ===== Start of ATLANTIS CODE ============================
 	// =========================================================
-	
+
+	/**
+	 * Returns distance to other position in build tiles. One build tile equals to 32 pixels. Usage of build tiles
+	 * instead of pixels is preferable, because it's easier to imagine distances if one knows building dimensions.
+	 */
 	public double distanceTo(Position position) {
-		return (double) getPDistance(position) / 32;
+		Position properOurPosition = this;
+		if (properOurPosition instanceof Unit) {
+			properOurPosition = ((Unit) properOurPosition).getPosition();
+		}
+
+		Position properOtherPosition = position;
+		if (properOtherPosition instanceof Unit) {
+			properOtherPosition = ((Unit) properOtherPosition).getPosition();
+		}
+
+		int dx = properOurPosition.x - properOtherPosition.x;
+		int dy = properOurPosition.y - properOtherPosition.y;
+
+		return Math.sqrt(dx * dx + dy * dy) / 32;
+	}
+
+	/**
+	 * Returns distance to other position in pixels. Please use version "distanceTo" that uses build tiles.
+	 */
+	public double distanceToInPixels(Position position) {
+		Position properOurPosition = this;
+		if (properOurPosition instanceof Unit) {
+			properOurPosition = ((Unit) properOurPosition).getPosition();
+		}
+
+		Position properOtherPosition = position;
+		if (properOtherPosition instanceof Unit) {
+			properOtherPosition = ((Unit) properOtherPosition).getPosition();
+		}
+
+		int dx = properOurPosition.x - properOtherPosition.x;
+		int dy = properOurPosition.y - properOtherPosition.y;
+
+		return Math.sqrt(dx * dx + dy * dy);
+	}
+
+	/**
+	 * Returns a <b>new</b> Position that represents the effect of moving this position by [deltaX, deltaY].
+	 */
+	public Position translated(int deltaPixelX, int deltaPixelY) {
+		return new Position(x + deltaPixelX, y + deltaPixelY);
 	}
 }

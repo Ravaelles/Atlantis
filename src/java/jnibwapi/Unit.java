@@ -31,8 +31,8 @@ public class Unit extends Position implements Cloneable {
 	private int replayID;
 	private int playerID;
 	private int typeID;
-	private int x;
-	private int y;
+	private int unitX;
+	private int unitY;
 	private int tileX;
 	private int tileY;
 	private double angle;
@@ -152,7 +152,7 @@ public class Unit extends Position implements Cloneable {
 	private boolean visible;
 
 	public Unit(int ID, JNIBWAPI bwapi) {
-		super(0, 0);
+		super(-666, -666);
 		this.ID = ID;
 		this.bwapi = bwapi;
 		atlantisInit();
@@ -167,8 +167,8 @@ public class Unit extends Position implements Cloneable {
 		replayID = data[index++];
 		playerID = data[index++];
 		typeID = data[index++];
-		x = data[index++];
-		y = data[index++];
+		unitX = data[index++];
+		unitY = data[index++];
 		tileX = data[index++];
 		tileY = data[index++];
 		angle = data[index++] / TO_DEGREES;
@@ -291,10 +291,9 @@ public class Unit extends Position implements Cloneable {
 	@Override
 	public Unit clone() {
 		/*
-		 * Safe to use clone for this class because it has only primitive fields
-		 * and a reference to BWAPI, which should be shallow-copied. Beware when
-		 * using equals or == with cloned Units as they will be considered equal
-		 * (and not ==) regardless of any changes in their properties over time.
+		 * Safe to use clone for this class because it has only primitive fields and a reference to BWAPI, which should
+		 * be shallow-copied. Beware when using equals or == with cloned Units as they will be considered equal (and not
+		 * ==) regardless of any changes in their properties over time.
 		 */
 		try {
 			return (Unit) super.clone();
@@ -307,8 +306,7 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	/**
-	 * Returns the edge-to-edge distance between the current unit and the target
-	 * unit.
+	 * Returns the edge-to-edge distance between the current unit and the target unit.
 	 */
 	public double getDistance(Unit target) {
 		if (!isExists() || target == null || !target.isExists())
@@ -331,12 +329,11 @@ public class Unit extends Position implements Cloneable {
 				yDist = 0;
 			}
 		}
-		return new Position(0, 0).getPDistance(new Position(xDist, yDist));
+		return new Position(0, 0).distanceTo(new Position(xDist, yDist));
 	}
 
 	/**
-	 * Returns the distance from the edge of the current unit to the target
-	 * position.
+	 * Returns the distance from the edge of the current unit to the target position.
 	 */
 	public double getDistance(Position target) {
 		if (!isExists())
@@ -355,7 +352,7 @@ public class Unit extends Position implements Cloneable {
 				yDist = 0;
 			}
 		}
-		return new Position(0, 0).getPDistance(new Position(xDist, yDist));
+		return new Position(0, 0).distanceTo(new Position(xDist, yDist));
 	}
 
 	/** The top left corner of the unit's collision boundary. */
@@ -369,19 +366,19 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	private int getLeft() {
-		return x - getType().getDimensionLeft();
+		return unitX - getType().getDimensionLeft();
 	}
 
 	private int getTop() {
-		return y - getType().getDimensionUp();
+		return unitY - getType().getDimensionUp();
 	}
 
 	private int getRight() {
-		return x + getType().getDimensionRight();
+		return unitX + getType().getDimensionRight();
 	}
 
 	private int getBottom() {
-		return y + getType().getDimensionDown();
+		return unitY + getType().getDimensionDown();
 	}
 
 	// ------------------------------ FIELD ACCESSOR METHODS
@@ -415,34 +412,37 @@ public class Unit extends Position implements Cloneable {
 
 	/** Gives the position of the <b>center</b> of the unit. */
 	public Position getPosition() {
-		return new Position(x, y);
+		return new Position(unitX, unitY);
 	}
 
-	/** @deprecated use {@link #getPosition()} */
-	public int getX() {
-		return x;
-	}
-
-	/** @deprecated use {@link #getPosition()} */
-	public int getY() {
-		return y;
-	}
+	// /** @deprecated use {@link #getPosition()} */
+	// @Deprecated
+	// public int getX() {
+	// return unitX;
+	// }
+	//
+	// /** @deprecated use {@link #getPosition()} */
+	// @Deprecated
+	// public int getY() {
+	// return unitY;
+	// }
 
 	/**
-	 * Returns the position of the top-left build tile occupied by the unit.
-	 * Most useful for buildings. Always above-left of {@link #getPosition()}
-	 * and above-left or equal to {@link #getTopLeft()}
+	 * Returns the position of the top-left build tile occupied by the unit. Most useful for buildings. Always
+	 * above-left of {@link #getPosition()} and above-left or equal to {@link #getTopLeft()}
 	 */
 	public Position getTilePosition() {
 		return new Position(tileX, tileY, PosType.BUILD);
 	}
 
 	/** @deprecated use {@link #getTilePosition()} */
+	@Deprecated
 	public int getTileX() {
 		return tileX;
 	}
 
 	/** @deprecated use {@link #getTilePosition()} */
+	@Deprecated
 	public int getTileY() {
 		return tileY;
 	}
@@ -511,21 +511,25 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	/** @deprecated use {@link #getInitialPosition()} */
+	@Deprecated
 	public int getInitialX() {
 		return initialX;
 	}
 
 	/** @deprecated use {@link #getInitialPosition()} */
+	@Deprecated
 	public int getInitialY() {
 		return initialY;
 	}
 
 	/** @deprecated use {@link #getInitialPosition()} */
+	@Deprecated
 	public int getInitialTileX() {
 		return initialTileX;
 	}
 
 	/** @deprecated use {@link #getInitialPosition()} */
+	@Deprecated
 	public int getInitialTileY() {
 		return initialTileY;
 	}
@@ -1050,8 +1054,7 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean attack(Unit target, boolean queued) {
-		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Attack_Unit, target,
-				queued));
+		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Attack_Unit, target, queued));
 	}
 
 	public boolean build(Position p, UnitType type) {
@@ -1059,8 +1062,7 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean buildAddon(UnitType type) {
-		return bwapi
-				.issueCommand(new UnitCommand(this, UnitCommandTypes.Build_Addon, type.getID()));
+		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Build_Addon, type.getID()));
 	}
 
 	public boolean train(UnitType type) {
@@ -1164,18 +1166,15 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean unloadAll(Position p, boolean queued) {
-		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Unload_All_Position, p,
-				queued));
+		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Unload_All_Position, p, queued));
 	}
 
 	public boolean rightClick(Position p, boolean queued) {
-		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Right_Click_Position, p,
-				queued));
+		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Right_Click_Position, p, queued));
 	}
 
 	public boolean rightClick(Unit target, boolean queued) {
-		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Right_Click_Unit, target,
-				queued));
+		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Right_Click_Unit, target, queued));
 	}
 
 	public boolean haltConstruction() {
@@ -1233,13 +1232,11 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean useTech(TechType tech, Position p) {
-		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Use_Tech_Position, p, tech
-				.getID()));
+		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Use_Tech_Position, p, tech.getID()));
 	}
 
 	public boolean useTech(TechType tech, Unit target) {
-		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Use_Tech_Unit, target,
-				tech.getID()));
+		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Use_Tech_Unit, target, tech.getID()));
 	}
 
 	public boolean placeCOP(Position p) {
@@ -1267,63 +1264,78 @@ public class Unit extends Position implements Cloneable {
 			return false;
 		return true;
 	}
-	
+
 	// =========================================================
 	// ===== Start of ATLANTIS CODE ============================
 	// =========================================================
 
 	private boolean repairableMechanically = false;
 	private boolean healable = false;
-	
+
 	// =========================================================
 	// Atlantis constructor
-	
+
 	private void atlantisInit() {
 		repairableMechanically = isBuilding() || isVehicle();
 		healable = isInfantry() || isWorker();
 	}
-	
+
 	// =========================================================
 	// Important methods
-	
+
+	@Override
+	public String toString() {
+		Position position = getPosition();
+		String toString = getType().getName();
+		toString = toString.replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "")
+				.replace("Resource ", "");
+		toString += " #" + ID + " at [" + position.getBX() + "," + position.getBY() + "]";
+		return toString;
+	}
+
 	public boolean isAlive() {
 		return exists;
 	}
-	
+
 	public boolean canBeHealed() {
 		return repairableMechanically || healable;
 	}
-	
+
 	public boolean isRepairableMechanically() {
 		return repairableMechanically;
 	}
-	
+
 	public boolean isHealable() {
 		return healable;
 	}
-	
+
 	// =========================================================
 	// Generic methods
-	
+
 	public boolean isBuilding() {
 		return getType().isBuilding();
 	}
-	
+
 	public boolean isWorker() {
 		return isType(UnitTypes.Terran_SCV, UnitTypes.Zerg_Drone, UnitTypes.Protoss_Probe);
 	}
-	
+
+	public boolean isBase() {
+		return isType(UnitTypes.Terran_Command_Center, UnitTypes.Protoss_Nexus, UnitTypes.Zerg_Hatchery,
+				UnitTypes.Zerg_Lair, UnitTypes.Zerg_Hive);
+	}
+
 	public boolean isInfantry() {
 		return getType().isOrganic();
 	}
-	
+
 	public boolean isVehicle() {
 		return getType().isMechanical();
 	}
-	
+
 	// =========================================================
 	// Auxiliary methods
-	
+
 	public boolean isType(UnitType type) {
 		return type.equals(type);
 	}
@@ -1336,19 +1348,44 @@ public class Unit extends Position implements Cloneable {
 		}
 		return false;
 	}
-	
+
 	public boolean isFullyHealthy() {
 		return getHitPoints() >= getType().getMaxHitPoints();
 	}
-	
+
 	public int getHPPercent() {
-		return (int) (100 * getHitPoints() / getType().getMaxHitPoints());
+		return 100 * getHitPoints() / getType().getMaxHitPoints();
 	}
-	
+
+	// =========================================================
+	// Debugging / Painting methods
+
+	private String tooltip;
+
+	// private int tooltipStartInSeconds;
+
+	public void setTooltip(String tooltip) {
+		this.tooltip = tooltip;
+		// this.tooltipStartInSeconds = AtlantisGame.getTimeSeconds();
+	}
+
+	public String getTooltip() {
+		return this.tooltip;
+	}
+
+	public void removeTooltip() {
+		this.tooltip = null;
+	}
+
+	public boolean hasTooltip() {
+		return this.tooltip != null;
+	}
+
 	// =========================================================
 	// Very specific auxiliary methods
-	
+
 	public boolean isSpiderMine() {
 		return getType().equals(UnitTypes.Terran_Vulture_Spider_Mine);
 	}
+
 }

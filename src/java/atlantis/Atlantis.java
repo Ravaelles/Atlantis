@@ -3,7 +3,8 @@ package atlantis;
 import jnibwapi.BWAPIEventListener;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
-import atlantis.commanders.AtlantisGameCommander;
+import atlantis.init.AtlantisInitActions;
+import atlantis.util.RUtilities;
 
 public class Atlantis implements BWAPIEventListener {
 
@@ -14,7 +15,9 @@ public class Atlantis implements BWAPIEventListener {
 	// =========================================================
 	// Other variables
 
-	private boolean isPaused;
+	private boolean isStarted = false;
+	private boolean isPaused = false;
+	private boolean oneTimeBoolean = false;
 
 	// =========================================================
 	// Constructors
@@ -32,6 +35,9 @@ public class Atlantis implements BWAPIEventListener {
 
 		// Validate AtlantisConfig and exit if it's invalid
 		AtlantisConfig.validate();
+
+		// Display ok message
+		System.out.println("Atlantis config is valid.");
 	}
 
 	// =========================================================
@@ -41,8 +47,12 @@ public class Atlantis implements BWAPIEventListener {
 	 * Starts the bot.
 	 */
 	public void start() {
-		isPaused = false;
-		bwapi.start();
+		if (!isStarted) {
+			isPaused = false;
+			isStarted = true;
+
+			bwapi.start();
+		}
 	}
 
 	/**
@@ -77,10 +87,22 @@ public class Atlantis implements BWAPIEventListener {
 	@Override
 	public void matchStart() {
 		gameCommander = new AtlantisGameCommander();
+		bwapi.setGameSpeed(AtlantisConfig.INITIAL_GAME_SPEED);
+		bwapi.enableUserInput();
+
+		// System.out.println("### Starting Atlantis... ###");
+		// AtlantisInitActions.executeInitialActions();
+		// System.out.println("### Atlantis is working! ###");
 	}
 
 	@Override
 	public void matchFrame() {
+		if (!oneTimeBoolean && RUtilities.rand(0, 100) <= 1) {
+			oneTimeBoolean = true;
+			System.out.println("### Starting Atlantis... ###");
+			AtlantisInitActions.executeInitialActions();
+			System.out.println("### Atlantis is working! ###");
+		}
 
 		// If game is running (not paused), run all actions.
 		if (!isPaused) {
