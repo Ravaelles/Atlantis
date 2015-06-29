@@ -2,8 +2,9 @@ package bot;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
+import atlantis.production.strategies.DefaultTerranProductionStrategy;
 
-public class AtlantisXVR {
+public class AtlantisBot {
 
 	/**
 	 * Sets up Atlantis config and runs the bot.
@@ -12,6 +13,7 @@ public class AtlantisXVR {
 
 		// Set up some very basic config
 		AtlantisConfig.useConfigForTerran();
+		AtlantisConfig.useProductionStrategy(new DefaultTerranProductionStrategy());
 
 		// Starts bot using Atlantis
 		Atlantis atlantis = new Atlantis();

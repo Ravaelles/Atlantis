@@ -7,6 +7,9 @@ import atlantis.buildings.managers.AtlantisBaseManager;
 import atlantis.buildings.managers.AtlantisSupplyManager;
 import atlantis.wrappers.SelectUnits;
 
+/**
+ * Manages all existing-buildings actions, but training new units depends on AtlantisProductionCommander.
+ */
 public class AtlantisBuildingsCommander {
 
 	/**

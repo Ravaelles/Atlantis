@@ -2,6 +2,7 @@ package atlantis;
 
 import atlantis.buildings.AtlantisBuildingsCommander;
 import atlantis.debug.AtlantisPainter;
+import atlantis.production.AtlantisProductionCommander;
 import atlantis.workers.AtlantisWorkerCommander;
 
 public class AtlantisGameCommander {
@@ -14,6 +15,7 @@ public class AtlantisGameCommander {
 		// =========================================================
 		// Execute code of every Commander
 
+		AtlantisProductionCommander.update();
 		AtlantisBuildingsCommander.update();
 		AtlantisWorkerCommander.update();
 

@@ -3,6 +3,9 @@ package atlantis.workers;
 import jnibwapi.Unit;
 import atlantis.wrappers.SelectUnits;
 
+/**
+ * Manages all worker (SCV, Probe, Drone) actions.
+ */
 public class AtlantisWorkerCommander {
 
 	/**
