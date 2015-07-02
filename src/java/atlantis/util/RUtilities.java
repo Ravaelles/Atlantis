@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -57,37 +58,33 @@ public class RUtilities {
 	public static final Random random = new Random();
 
 	/**
-	 * Displays small window with <b>text</b> information. Very useful for
-	 * testing, error reporting.
+	 * Displays small window with <b>text</b> information. Very useful for testing, error reporting.
 	 */
 	public static void displayMessage(String text) {
 		JOptionPane.showMessageDialog(new JOptionPane(), text, "", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	/**
-	 * Displays small window with <b>text</b> information and with <b>title</b>
-	 * title. Very useful for testing, error reporting.
+	 * Displays small window with <b>text</b> information and with <b>title</b> title. Very useful for testing, error
+	 * reporting.
 	 */
 	public static void displayMessage(String title, String text) {
 		JOptionPane.showMessageDialog(new JOptionPane(), text, title, JOptionPane.PLAIN_MESSAGE);
 	}
 
 	/**
-	 * Displays small window showing that some error has occured, window has
-	 * <b>errorText</b> information.
+	 * Displays small window showing that some error has occured, window has <b>errorText</b> information.
 	 */
 	public static void displayError(String errorText) {
-		JOptionPane.showMessageDialog(new JOptionPane(), errorText, "ERROR",
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(new JOptionPane(), errorText, "ERROR", JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**
-	 * Displays small window showing that some error has occured, window has
-	 * <b>errorText</b> information and <b>title</b> title.
+	 * Displays small window showing that some error has occured, window has <b>errorText</b> information and
+	 * <b>title</b> title.
 	 */
 	public static void displayError(String title, String errorText) {
-		JOptionPane.showMessageDialog(new JOptionPane(), errorText, title,
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(new JOptionPane(), errorText, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	/** Prints the list of the given argument, separated with commas. */
@@ -135,8 +132,7 @@ public class RUtilities {
 
 	/**
 	 * @param percentChance
-	 *            is chance percentage of some action, e.g. 87.2 means some
-	 *            event occurs with 87.2% probability
+	 *            is chance percentage of some action, e.g. 87.2 means some event occurs with 87.2% probability
 	 * @return true if given random event occured
 	 */
 	public static boolean chanceOfPercent(double percentChance) {
@@ -151,8 +147,7 @@ public class RUtilities {
 	}
 
 	/**
-	 * @return String representing a number with given decimal places e.g.
-	 *         (3.1415, 2) will give "3.14"
+	 * @return String representing a number with given decimal places e.g. (3.1415, 2) will give "3.14"
 	 * @param number
 	 *            number that you want to format
 	 * @param decimalPlaces
@@ -167,11 +162,9 @@ public class RUtilities {
 	}
 
 	/**
-	 * Makes sure each object in given panel (and its children) has specified
-	 * color.
+	 * Makes sure each object in given panel (and its children) has specified color.
 	 */
-	public static void setAllBackgroundsColorsOfComponent(Container container,
-			Color desiredBackgroundColor) {
+	public static void setAllBackgroundsColorsOfComponent(Container container, Color desiredBackgroundColor) {
 		container.setBackground(desiredBackgroundColor);
 		for (Component component : container.getComponents()) {
 			if (component instanceof Container) {
@@ -183,11 +176,9 @@ public class RUtilities {
 	}
 
 	/**
-	 * Makes sure each object in given panel (and its children) has specified
-	 * color.
+	 * Makes sure each object in given panel (and its children) has specified color.
 	 */
-	public static void setAllBackgroundsColorsOfJTextField(Container container,
-			Color desiredBackgroundColor) {
+	public static void setAllBackgroundsColorsOfJTextField(Container container, Color desiredBackgroundColor) {
 		if (container instanceof JTextField || container instanceof JTextArea)
 			container.setBackground(desiredBackgroundColor);
 
@@ -201,11 +192,9 @@ public class RUtilities {
 	}
 
 	/**
-	 * Makes sure each object in given panel (and its children) has specified
-	 * color.
+	 * Makes sure each object in given panel (and its children) has specified color.
 	 */
-	public static void setAllBackgroundsColorsOfButtons(Container container,
-			Color desiredBackgroundColor) {
+	public static void setAllBackgroundsColorsOfButtons(Container container, Color desiredBackgroundColor) {
 		container.setBackground(desiredBackgroundColor);
 		for (Component component : container.getComponents()) {
 			if (component instanceof Container)
@@ -218,11 +207,9 @@ public class RUtilities {
 	}
 
 	/**
-	 * Makes sure each object in given panel (and its children) has specified
-	 * color.
+	 * Makes sure each object in given panel (and its children) has specified color.
 	 */
-	public static void setAllForegroundsColorsOfComponent(Container container,
-			Color desiredForegroundColor) {
+	public static void setAllForegroundsColorsOfComponent(Container container, Color desiredForegroundColor) {
 		container.setForeground(desiredForegroundColor);
 
 		for (Component component : container.getComponents()) {
@@ -235,11 +222,10 @@ public class RUtilities {
 	}
 
 	/**
-	 * Makes sure each object in given panel (and its children) has specified
-	 * color.
+	 * Makes sure each object in given panel (and its children) has specified color.
 	 */
-	public static void setAllButtonsOfComponent(Container container, Color backgroundColor,
-			Color fontColor, Border border) {
+	public static void setAllButtonsOfComponent(Container container, Color backgroundColor, Color fontColor,
+			Border border) {
 		for (Component component : container.getComponents()) {
 			if (component instanceof JButton) {
 				component.setBackground(backgroundColor);
@@ -256,69 +242,59 @@ public class RUtilities {
 	}
 
 	/**
-	 * @return true if given extension (like "png", "txt") is equal png, jpg,
-	 *         jpeg, bmp or gif
+	 * @return true if given extension (like "png", "txt") is equal png, jpg, jpeg, bmp or gif
 	 */
 	public static boolean isImage(String extension) {
 		extension = extension.toLowerCase();
-		if (extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg")
-				|| extension.equals("bmp") || extension.equals("gif"))
+		if (extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg") || extension.equals("bmp")
+				|| extension.equals("gif"))
 			return true;
 		else
 			return false;
 	}
 
 	/**
-	 * @return true if given file's extension (like "png", "txt") is equal png,
-	 *         jpg, jpeg, bmp or gif
+	 * @return true if given file's extension (like "png", "txt") is equal png, jpg, jpeg, bmp or gif
 	 */
 	public static boolean isFileImage(File file) {
 		return isImage(file.getName().substring(file.getName().lastIndexOf('.') + 1));
 	}
 
 	/**
-	 * Displays given exception in user friendly way (with exception name and
-	 * stack).
+	 * Displays given exception in user friendly way (with exception name and stack).
 	 */
 	public static void displayException(Exception e) {
 		displayException(e, "Błąd", "Wystąpił błąd!");
 	}
 
 	/**
-	 * Displays given exception in user friendly way (with exception name and
-	 * stack).
+	 * Displays given exception in user friendly way (with exception name and stack).
 	 */
 	public static void displayException(Exception e, String title, String preText) {
-		RUtilities.displayError(
-				title,
-				preText + "\n\n" + e.getMessage() + "\n\n"
-						+ RUtilities.convertStackToString(10, e.getStackTrace()));
+		RUtilities.displayError(title,
+				preText + "\n\n" + e.getMessage() + "\n\n" + RUtilities.convertStackToString(10, e.getStackTrace()));
 	}
 
 	/**
-	 * Displays popup with title @title and content @text with possible options
-	 * yes and no.
+	 * Displays popup with title @title and content @text with possible options yes and no.
 	 * 
 	 * @return true if user clicked yes
 	 * @return false if user clicked no
 	 */
 	public static boolean displayYesNoPopup(String title, String text) {
-		if (JOptionPane
-				.showConfirmDialog(new JOptionPane(), text, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+		if (JOptionPane.showConfirmDialog(new JOptionPane(), text, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 			return true;
 		else
 			return false;
 	}
 
 	/** Displays new JFrame with given panel, as centered window. */
-	public static JFrame displayPanelAsCenteredFrame(JPanel panel, String frameTitle,
-			Image frameIcon) {
+	public static JFrame displayPanelAsCenteredFrame(JPanel panel, String frameTitle, Image frameIcon) {
 		return displayPanelAsCenteredFrame(panel, frameTitle, frameIcon, true);
 	}
 
 	/** Displays new JFrame with given panel, as centered window. */
-	public static JFrame displayPanelAsCenteredFrame(JPanel panel, String frameTitle,
-			Image frameIcon, boolean visible) {
+	public static JFrame displayPanelAsCenteredFrame(JPanel panel, String frameTitle, Image frameIcon, boolean visible) {
 		JFrame frame = new JFrame();
 		if (frameIcon != null)
 			frame.setIconImage(frameIcon);
@@ -383,8 +359,7 @@ public class RUtilities {
 	}
 
 	/**
-	 * @return string without last character or empty string if there was one or
-	 *         less characters.
+	 * @return string without last character or empty string if there was one or less characters.
 	 */
 	public static String removeLastChar(String inputString) {
 		if (inputString.length() > 1) {
@@ -410,16 +385,16 @@ public class RUtilities {
 	public static String getYesterdayAsString() {
 		GregorianCalendar yesterday = new GregorianCalendar();
 		yesterday.add(GregorianCalendar.DAY_OF_MONTH, -1);
-		return yesterday.get(GregorianCalendar.YEAR) + "-" + yesterday.get(GregorianCalendar.MONTH)
-				+ "-" + yesterday.get(GregorianCalendar.DAY_OF_MONTH);
+		return yesterday.get(GregorianCalendar.YEAR) + "-" + yesterday.get(GregorianCalendar.MONTH) + "-"
+				+ yesterday.get(GregorianCalendar.DAY_OF_MONTH);
 	}
 
 	/** Returns string like 21:12:59 */
 	private static String getCurrentTimeAsString() {
 		GregorianCalendar today = new GregorianCalendar();
 		String hour = today.get(GregorianCalendar.HOUR_OF_DAY) + "";
-		return (hour.length() < 2 ? ("0" + hour) : hour) + ":"
-				+ today.get(GregorianCalendar.MINUTE) + ":" + today.get(GregorianCalendar.SECOND);
+		return (hour.length() < 2 ? ("0" + hour) : hour) + ":" + today.get(GregorianCalendar.MINUTE) + ":"
+				+ today.get(GregorianCalendar.SECOND);
 	}
 
 	/** Returns string like 2011-06-09 21:20:59 */
@@ -428,8 +403,7 @@ public class RUtilities {
 	}
 
 	/**
-	 * Returns list of strings made by splitting string <b>string</b> wherever c
-	 * occurrs
+	 * Returns list of strings made by splitting string <b>string</b> wherever c occurrs
 	 */
 	public static ArrayList<String> implodeList(String string, char c) {
 		ArrayList<String> result = new ArrayList<String>();
@@ -481,8 +455,7 @@ public class RUtilities {
 	}
 
 	/**
-	 * Returns just the file name, without extension part e.g. for file
-	 * "images/horse.png" it will return "horse".
+	 * Returns just the file name, without extension part e.g. for file "images/horse.png" it will return "horse".
 	 */
 	public static String getFileNameWithoutExtension(File file) {
 		String fileName = file.getName().replace("/", "\\");
@@ -505,8 +478,7 @@ public class RUtilities {
 	}
 
 	/** Saves given string to file with path filePath. */
-	public static PrintWriter saveToFile(String filePath, String stringToWrite,
-			boolean closeTheStream) {
+	public static PrintWriter saveToFile(String filePath, String stringToWrite, boolean closeTheStream) {
 		try {
 			File file = new File(filePath);
 			file.createNewFile();
@@ -517,15 +489,14 @@ public class RUtilities {
 			else
 				return out;
 		} catch (Exception e) {
-			RUtilities.displayException(e, "Błąd", "Błąd przy zapisywaniu do pliku\n"
-					+ "saveToFile(\"" + filePath + "\", \"" + stringToWrite + "\")");
+			RUtilities.displayException(e, "Błąd", "Błąd przy zapisywaniu do pliku\n" + "saveToFile(\"" + filePath
+					+ "\", \"" + stringToWrite + "\")");
 		}
 		return null;
 	}
 
 	/**
-	 * @return number of all files (directory is not a file) in all these
-	 *         directory and all its subdirectories.
+	 * @return number of all files (directory is not a file) in all these directory and all its subdirectories.
 	 */
 	public static int countNumberOfFiles(File directory) {
 		int total = 0;
@@ -542,8 +513,8 @@ public class RUtilities {
 	}
 
 	/**
-	 * @return number of all files (directory is not a file) in all these
-	 *         directory and all its subdirectories, having given extension.
+	 * @return number of all files (directory is not a file) in all these directory and all its subdirectories, having
+	 *         given extension.
 	 * @see Rafaelles.getFileExtension
 	 */
 	public static int countNumberOfFiles(File directory, String extension) {
@@ -567,24 +538,20 @@ public class RUtilities {
 			return numberOfSeconds + "s";
 		} else {
 			if (numberOfSeconds < 3600) {
-				return numberOfSeconds / 60 + "m "
-						+ convertSecondsToDisplayableFormat(numberOfSeconds % 60);
+				return numberOfSeconds / 60 + "m " + convertSecondsToDisplayableFormat(numberOfSeconds % 60);
 			} else {
 				if (numberOfSeconds < 86400) {
-					return numberOfSeconds / 3600 + "h "
-							+ convertSecondsToDisplayableFormat(numberOfSeconds % 3600);
+					return numberOfSeconds / 3600 + "h " + convertSecondsToDisplayableFormat(numberOfSeconds % 3600);
 				} else {
-					return numberOfSeconds / 86400 + "d "
-							+ convertSecondsToDisplayableFormat(numberOfSeconds % 86400);
+					return numberOfSeconds / 86400 + "d " + convertSecondsToDisplayableFormat(numberOfSeconds % 86400);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Displays report concerning total amount of time that some task has taken,
-	 * also it displays average per one "task object". Number of atomic tasks is
-	 * <b>totalToProcess</b>. You need to pass timeStart
+	 * Displays report concerning total amount of time that some task has taken, also it displays average per one
+	 * "task object". Number of atomic tasks is <b>totalToProcess</b>. You need to pass timeStart
 	 * (System.getCurrentTimeInMillis()).
 	 */
 	public static void displayTimeReport(long timeStart, int totalToProcess) {
@@ -592,31 +559,26 @@ public class RUtilities {
 
 		System.out.println();
 		System.out.println(totalToProcess + " objects have been processed.");
-		System.out.println("Processing took "
-				+ convertSecondsToDisplayableFormat((int) (timeEnd - timeStart) / 1000)
-				+ " seconds  ("
-				+ String.format("%.2f", (double) (timeEnd - timeStart) / (1000 * totalToProcess))
+		System.out.println("Processing took " + convertSecondsToDisplayableFormat((int) (timeEnd - timeStart) / 1000)
+				+ " seconds  (" + String.format("%.2f", (double) (timeEnd - timeStart) / (1000 * totalToProcess))
 				+ "s per file)");
 		System.out.println("################################################");
 		System.out.println();
 	}
 
 	/**
-	 * According to current objects processed and total to process it displays
-	 * estimated time to finish all tasks.
+	 * According to current objects processed and total to process it displays estimated time to finish all tasks.
 	 */
 	public static void displayETA(long timeStart, int alreadyProcessed, int totalToProcess) {
 		double seconds = ((double) (System.currentTimeMillis() - timeStart) / (1000 * alreadyProcessed));
 		String eta = RUtilities
 				.convertSecondsToDisplayableFormat((int) ((totalToProcess - alreadyProcessed) * seconds));
-		System.out.println("It took " + String.format("%.1f", seconds) + "s. "
-				+ (int) alreadyProcessed * 100 / totalToProcess + "% objects (" + alreadyProcessed
-				+ "/" + totalToProcess + ") ready. ETA: " + eta);
+		System.out.println("It took " + String.format("%.1f", seconds) + "s. " + alreadyProcessed * 100
+				/ totalToProcess + "% objects (" + alreadyProcessed + "/" + totalToProcess + ") ready. ETA: " + eta);
 	}
 
 	/**
-	 * Returns map containing number of occurences of each element in given
-	 * collection.
+	 * Returns map containing number of occurences of each element in given collection.
 	 */
 	public static TreeMap<String, Integer> getOccurenceMap(Collection<String> collection) {
 		TreeMap<String, Integer> occurences = new TreeMap<String, Integer>();
@@ -714,6 +676,17 @@ public class RUtilities {
 	}
 
 	/**
+	 *     */
+	public static void displayArray(Object[] array) {
+		System.out.println("### START OF LIST");
+		for (Object value : array) {
+			System.out.print(value + "/");
+			System.out.println();
+		}
+		System.out.println("### END OF LIST");
+	}
+
+	/**
      *     */
 	public static void setColorOnHover(final JLabel label, final Color color) {
 		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -749,9 +722,8 @@ public class RUtilities {
 	}
 
 	/**
-	 * Returns String value, according to the relative comparison of the
-	 * provided value to the possible range e.g. we can assign letters from A to
-	 * Z for numbers 1-10.
+	 * Returns String value, according to the relative comparison of the provided value to the possible range e.g. we
+	 * can assign letters from A to Z for numbers 1-10.
 	 * */
 	public static String assignStringForValue(double value, double max, double min, String[] strings) {
 		value -= min;
@@ -783,11 +755,9 @@ public class RUtilities {
 
 	/**
      *     */
-	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map,
-			boolean ascending) {
+	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map, boolean ascending) {
 		final int compareModifier = ascending ? 1 : -1;
-		java.util.List<Map.Entry<K, V>> list = new LinkedList<java.util.Map.Entry<K, V>>(
-				map.entrySet());
+		java.util.List<Map.Entry<K, V>> list = new LinkedList<java.util.Map.Entry<K, V>>(map.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
 			@Override
 			public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
@@ -813,9 +783,8 @@ public class RUtilities {
 	 * Returns median of given double list.
 	 * 
 	 * @param mathematicMedian
-	 *            If true it will return normal median. If it is set to false
-	 *            and number of elements is even the center (but lesser) element
-	 *            will be returned e.g. for [1 2 3 4] it would return 2.
+	 *            If true it will return normal median. If it is set to false and number of elements is even the center
+	 *            (but lesser) element will be returned e.g. for [1 2 3 4] it would return 2.
 	 * */
 	public static double median(Collection<Double> list, boolean mathematicMedian) {
 		if (list.isEmpty()) {
@@ -843,11 +812,10 @@ public class RUtilities {
 	}
 
 	/**
-	 * Returns index of option chosen according to the option weights. Higher
-	 * the weight is, greater the chance for the option to be chosen.
+	 * Returns index of option chosen according to the option weights. Higher the weight is, greater the chance for the
+	 * option to be chosen.
 	 * */
-	public static int chooseOptionRandomlyWithWeights(boolean areValuesNormalizedToOne,
-			double... weights) {
+	public static int chooseOptionRandomlyWithWeights(boolean areValuesNormalizedToOne, double... weights) {
 		double[] normalized;
 
 		if (!areValuesNormalizedToOne) {
@@ -906,8 +874,7 @@ public class RUtilities {
 	}
 
 	/**
-	 * Returns index-th element of the given set or null if there's no element
-	 * "at" given index.
+	 * Returns index-th element of the given set or null if there's no element "at" given index.
 	 * 
 	 * @return
 	 * */
@@ -941,4 +908,82 @@ public class RUtilities {
 		return max;
 	}
 
+	/**
+	 * Loads .csv file.
+	 */
+	public static String[][] loadCsv(String path, int numberOfFields) {
+		ArrayList<String[]> listOfArrays = new ArrayList<>();
+		Scanner inputStream;
+		try {
+			inputStream = new Scanner(new File(path));
+
+			while (inputStream.hasNextLine()) {
+				String line = inputStream.nextLine();
+				String[] fields = line.split(";");
+				if (fields.length != numberOfFields) {
+					System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
+					System.exit(-1);
+				}
+
+				listOfArrays.add(fields);
+			}
+
+			inputStream.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Error parsing CSV file: '" + path + "'");
+			System.exit(-1);
+			return null;
+		}
+
+		String[][] result = new String[listOfArrays.size()][numberOfFields];
+
+		int counter = 0;
+		for (String[] columns : listOfArrays) {
+			result[counter] = columns;
+			counter++;
+		}
+
+		return result;
+
+		// String s = "Sachin,,M,\"Maths,Science,English\",Need to improve in these subjects.,hreee";
+		// String[] splitted = s.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+		// System.out.println(Arrays.toString(splitted));
+		//
+		// Scanner scanner;
+		// try {
+		// scanner = new Scanner(new File(path));
+		// scanner.useDelimiter(";");
+		//
+		// // Read entire file as strings
+		// ArrayList<String> strings = new ArrayList<>();
+		// while (scanner.hasNext()) {
+		// String stringRead = scanner.next();
+		// strings.add(stringRead);
+		// if (stringRead.equals("\n")) {
+		// System.out.print("NEW LINE");
+		// }
+		// if (stringRead.equals("\r")) {
+		// System.out.print("NEW LINE 2");
+		// }
+		// if (stringRead.equals("\r\n")) {
+		// System.out.print("NEW LINE 3");
+		// }
+		// System.out.print(stringRead + "|");
+		// }
+		// scanner.close();
+		//
+		// // Convert it to 2-D string structure
+		// ArrayList<String> result = new ArrayList<>();
+		//
+		// // for (String string : strings) {
+		// // System.out.println(string);
+		// // }
+		// }
+		//
+		// // Catch errors
+		// catch (FileNotFoundException e) {
+		// }
+		//
+		// return null;
+	}
 }

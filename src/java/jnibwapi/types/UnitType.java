@@ -1,5 +1,6 @@
 package jnibwapi.types;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,9 +15,9 @@ import jnibwapi.types.WeaponType.WeaponTypes;
  * For a description of fields see: http://code.google.com/p/bwapi/wiki/UnitType
  */
 public class UnitType {
-	
+
 	private static Map<Integer, UnitType> idToUnitType = new HashMap<>();
-	
+
 	public static class UnitTypes {
 		public static final UnitType Terran_Marine = new UnitType(0);
 		public static final UnitType Terran_Ghost = new UnitType(1);
@@ -252,19 +253,20 @@ public class UnitType {
 		// 231 Buildings (BWAPI4)
 		// 232 Factories (BWAPI4)
 		public static final UnitType Unknown = new UnitType(233);
-		
+
 		public static UnitType getUnitType(int id) {
 			return idToUnitType.get(id);
 		}
-		
+
 		public static Collection<UnitType> getAllUnitTypes() {
 			return Collections.unmodifiableCollection(idToUnitType.values());
 		}
+
 	}
-	
+
 	public static final int numAttributes = 57;
 	public static final double fixedScale = 100.0;
-	
+
 	private int ID;
 	private int raceID;
 	private int whatBuildID;
@@ -322,15 +324,15 @@ public class UnitType {
 	private boolean addon;
 	private boolean flyingBuilding;
 	private boolean spell;
-	
+
 	private String name;
 	private Map<Integer, Integer> requiredUnits = new HashMap<>();
-	
+
 	private UnitType(int ID) {
 		this.ID = ID;
 		idToUnitType.put(ID, this);
 	}
-	
+
 	public void initialize(int[] data, int index, String name, int[] requiredUnits) {
 		if (ID != data[index++])
 			throw new IllegalArgumentException();
@@ -390,275 +392,301 @@ public class UnitType {
 		addon = data[index++] == 1;
 		flyingBuilding = data[index++] == 1;
 		spell = data[index++] == 1;
-		
+
 		this.name = name;
 		for (int i = 0; i < requiredUnits.length; i += 2) {
 			this.requiredUnits.put(requiredUnits[i], requiredUnits[i + 1]);
 		}
 	}
-	
+
 	public int getID() {
 		return ID;
 	}
-	
+
 	public int getRaceID() {
 		return raceID;
 	}
-	
+
 	public int getWhatBuildID() {
 		return whatBuildID;
 	}
-	
+
 	public int getRequiredTechID() {
 		return requiredTechID;
 	}
-	
+
 	public int getArmorUpgradeID() {
 		return armorUpgradeID;
 	}
-	
+
 	public int getMaxHitPoints() {
 		return maxHitPoints;
 	}
-	
+
 	public int getMaxShields() {
 		return maxShields;
 	}
-	
+
 	public int getMaxEnergy() {
 		return maxEnergy;
 	}
-	
+
 	public int getArmor() {
 		return armor;
 	}
-	
+
 	public int getMineralPrice() {
 		return mineralPrice;
 	}
-	
+
 	public int getGasPrice() {
 		return gasPrice;
 	}
-	
+
 	public int getBuildTime() {
 		return buildTime;
 	}
-	
+
 	public int getSupplyRequired() {
 		return supplyRequired;
 	}
-	
+
 	public int getSupplyProvided() {
 		return supplyProvided;
 	}
-	
+
 	public int getSpaceRequired() {
 		return spaceRequired;
 	}
-	
+
 	public int getSpaceProvided() {
 		return spaceProvided;
 	}
-	
+
 	public int getBuildScore() {
 		return buildScore;
 	}
-	
+
 	public int getDestroyScore() {
 		return destroyScore;
 	}
-	
+
 	public UnitSizeType getSize() {
 		return UnitSizeTypes.getUnitSizeType(sizeID);
 	}
-	
+
 	@Deprecated
 	public int getSizeID() {
 		return sizeID;
 	}
-	
+
 	public int getTileWidth() {
 		return tileWidth;
 	}
-	
+
 	public int getTileHeight() {
 		return tileHeight;
 	}
-	
+
 	public int getDimensionLeft() {
 		return dimensionLeft;
 	}
-	
+
 	public int getDimensionUp() {
 		return dimensionUp;
 	}
-	
+
 	public int getDimensionRight() {
 		return dimensionRight;
 	}
-	
+
 	public int getDimensionDown() {
 		return dimensionDown;
 	}
-	
+
 	public int getSeekRange() {
 		return seekRange;
 	}
-	
+
 	public int getSightRange() {
 		return sightRange;
 	}
-	
+
 	public WeaponType getGroundWeapon() {
 		return WeaponTypes.getWeaponType(groundWeaponID);
 	}
-	
+
 	@Deprecated
 	public int getGroundWeaponID() {
 		return groundWeaponID;
 	}
-	
+
 	public int getMaxGroundHits() {
 		return maxGroundHits;
 	}
-	
+
 	public int getAirWeaponID() {
 		return airWeaponID;
 	}
-	
+
 	public int getMaxAirHits() {
 		return maxAirHits;
 	}
-	
+
 	public double getTopSpeed() {
 		return topSpeed;
 	}
-	
+
 	public int getAcceleration() {
 		return acceleration;
 	}
-	
+
 	public int getHaltDistance() {
 		return haltDistance;
 	}
-	
+
 	public int getTurnRadius() {
 		return turnRadius;
 	}
-	
+
 	public boolean isProduceCapable() {
 		return produceCapable;
 	}
-	
+
 	public boolean isAttackCapable() {
 		return attackCapable;
 	}
-	
+
 	public boolean isCanMove() {
 		return canMove;
 	}
-	
+
 	public boolean isFlyer() {
 		return flyer;
 	}
-	
+
 	public boolean isRegenerates() {
 		return regenerates;
 	}
-	
+
 	public boolean isSpellcaster() {
 		return spellcaster;
 	}
-	
+
 	public boolean isInvincible() {
 		return invincible;
 	}
-	
+
 	public boolean isOrganic() {
 		return organic;
 	}
-	
+
 	public boolean isMechanical() {
 		return mechanical;
 	}
-	
+
 	public boolean isRobotic() {
 		return robotic;
 	}
-	
+
 	public boolean isDetector() {
 		return detector;
 	}
-	
+
 	public boolean isResourceContainer() {
 		return resourceContainer;
 	}
-	
+
 	public boolean isRefinery() {
 		return refinery;
 	}
-	
+
 	public boolean isWorker() {
 		return worker;
 	}
-	
+
 	public boolean isRequiresPsi() {
 		return requiresPsi;
 	}
-	
+
 	public boolean isRequiresCreep() {
 		return requiresCreep;
 	}
-	
+
 	public boolean isBurrowable() {
 		return burrowable;
 	}
-	
+
 	public boolean isCloakable() {
 		return cloakable;
 	}
-	
+
 	public boolean isBuilding() {
 		return building;
 	}
-	
+
 	public boolean isAddon() {
 		return addon;
 	}
-	
+
 	public boolean isFlyingBuilding() {
 		return flyingBuilding;
 	}
-	
+
 	public boolean isSpell() {
 		return spell;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	/** A map from UnitTypeID to quantity required (usually 1, but 2 for Archons) */
 	public Map<Integer, Integer> getRequiredUnits() {
 		return Collections.unmodifiableMap(requiredUnits);
 	}
-	
+
 	public boolean isMineralField() {
-		return this == UnitTypes.Resource_Mineral_Field
-				|| this == UnitTypes.Resource_Mineral_Field_Type_2
+		return this == UnitTypes.Resource_Mineral_Field || this == UnitTypes.Resource_Mineral_Field_Type_2
 				|| this == UnitTypes.Resource_Mineral_Field_Type_3;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName() + " (" + getID() + ")";
 	}
-	
+
 	// =========================================================
 	// ===== Start of ATLANTIS CODE ============================
 	// =========================================================
-	
-	
-	
+
+	/**
+	 * You can "Terran_Marine" or "Terran Marine" or even "Marine".
+	 */
+	public static UnitType getByName(String string) {
+		string = string.replace(" ", "_").toLowerCase();
+
+		// if (!string.startsWith("Terran") && !string.startsWith("Protoss") && !string.startsWith("Zerg")) {
+		//
+		// }
+
+		for (Field field : UnitTypes.class.getFields()) {
+			String otherTypeName = field.getName().toLowerCase();
+			if (!otherTypeName.startsWith("Hero") && otherTypeName.contains(string)) {
+				try {
+					UnitType unitType = (UnitType) UnitTypes.class.getField(field.getName()).get(null);
+					return unitType;
+				} catch (Exception e) {
+					System.err.println("error trying to find UnitType for: '" + string + "'\n" + e.getMessage());
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public boolean isTerranInfantry() {
+		return equals(UnitTypes.Terran_Marine) || equals(UnitTypes.Terran_Medic) || equals(UnitTypes.Terran_Firebat)
+				|| equals(UnitTypes.Terran_Ghost);
+	}
 }

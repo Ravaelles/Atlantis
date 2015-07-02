@@ -267,6 +267,18 @@ public class SelectUnits {
 		return bases.isEmpty() ? null : bases.first();
 	}
 
+	/**
+	 * Returns first idle our unit of given type or null if no idle units found.
+	 */
+	public static Unit ourOneIdle(UnitType type) {
+		for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
+			if (unit.isIdle() && unit.getType().equals(type)) {
+				return unit;
+			}
+		}
+		return null;
+	}
+
 	// =========================================================
 
 	@SuppressWarnings("unused")
@@ -303,6 +315,13 @@ public class SelectUnits {
 	 */
 	public boolean anyExists() {
 		return !units.isEmpty();
+	}
+
+	/**
+	 * Returns first unit that matches previous conditions or null if no units match conditions.
+	 */
+	public Unit first() {
+		return units.isEmpty() ? null : units.first();
 	}
 
 }
