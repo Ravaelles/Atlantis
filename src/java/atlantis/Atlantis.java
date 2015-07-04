@@ -113,18 +113,18 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void keyPressed(int keyCode) {
-		System.err.println("########################################");
+		// System.err.println("########################################");
 		System.err.println("############KEY = " + keyCode + "############################");
-		System.err.println("########################################");
+		// System.err.println("########################################");
 
 		// 27 (Esc) - pause/unpause game
 		if (keyCode == 27) {
 			pauseOrUnpause();
 		}
 
-		// 107 (+) - increase game speed
-		else if (keyCode == 107) {
-			AtlantisConfig.GAME_SPEED--;
+		// 115 (+) - increase game speed
+		else if (keyCode == 115) {
+			AtlantisConfig.GAME_SPEED -= 2;
 			if (AtlantisConfig.GAME_SPEED < 0) {
 				AtlantisConfig.GAME_SPEED = 0;
 			}
@@ -132,12 +132,13 @@ public class Atlantis implements BWAPIEventListener {
 
 		// 109 (-) - decrease game speed
 		else if (keyCode == 107) {
-			AtlantisConfig.GAME_SPEED++;
+			AtlantisConfig.GAME_SPEED += 2;
 		}
 	}
 
 	@Override
 	public void matchEnd(boolean winner) {
+		instance = new Atlantis();
 	}
 
 	@Override

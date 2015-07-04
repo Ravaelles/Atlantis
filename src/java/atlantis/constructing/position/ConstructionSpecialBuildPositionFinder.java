@@ -16,12 +16,7 @@ public class ConstructionSpecialBuildPositionFinder {
 		for (Unit base : SelectUnits.ourBases().list()) {
 			Unit geyser = SelectUnits.neutral().ofType(UnitTypes.Resource_Vespene_Geyser).nearestTo(base);
 
-			System.out.println();
-			System.out.println("GEYSER / BASE");
-			System.out.println(geyser);
-			System.out.println(base);
 			if (geyser != null && geyser.distanceTo(base) < 10) {
-				System.out.println("dist ok");
 				return geyser.translated(-48, -32);
 			}
 		}

@@ -16,7 +16,7 @@ public abstract class AbstractBuildPositionFinder {
 	 * Returns true if game says it's possible to build given building at this position.
 	 */
 	protected static boolean canPhysicallyBuildHere(UnitType building, Position position) {
-		return Atlantis.getBwapi().canBuildHere(position, building, false);
+		return Atlantis.getBwapi().canBuildHere(position, building, true);
 	}
 
 	/**
@@ -44,8 +44,8 @@ public abstract class AbstractBuildPositionFinder {
 
 	private static int areTwoBuildingsTooClose(Unit otherBuilding, Position position, UnitType building) {
 		double edgeToEdgeDistance = getEdgeToEdgeDistanceBetween(otherBuilding, position, building);
-		System.out.println("   --- Dist bitw " + otherBuilding.getType().getName() + " and " + building.getName()
-				+ " is " + edgeToEdgeDistance);
+		// System.out.println("   --- Dist bitw " + otherBuilding.getType().getName() + " and " + building.getName()
+		// + " is " + edgeToEdgeDistance);
 
 		// If buildings are dangerously close
 		if (edgeToEdgeDistance < 0.1) {

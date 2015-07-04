@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
+import atlantis.AtlantisGame;
 import atlantis.constructing.position.ConstructionBuildPositionFinder;
 
 public class AtlantisConstructingManager {
@@ -20,6 +21,10 @@ public class AtlantisConstructingManager {
 	 * Issues request of constructing new building. It will automatically find position and builder unit for it.
 	 */
 	public static void requestConstructionOf(UnitType building) {
+		System.out.println("@@@@ REQUESTED: " + building);
+		if (!building.isBuilding()) {
+			throw new RuntimeException("Requested construction of not building!!! Type: " + building);
+		}
 
 		// Create ConstructionOrder object, assign random worker for the time being
 		ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
@@ -27,7 +32,7 @@ public class AtlantisConstructingManager {
 
 		// Find place for new building
 		Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(building);
-		System.out.println("@@ " + building + " at " + positionToBuild);
+		// System.out.println("@@ " + building + " at " + positionToBuild);
 
 		// Successfully found position for new building
 		Unit optimalBuilder = null;
@@ -41,6 +46,9 @@ public class AtlantisConstructingManager {
 
 			// Add to list of pending orders
 			constructionOrders.add(newConstructionOrder);
+
+			// Rebuild production queue as new building is about to be built
+			AtlantisGame.getProductionStrategy().rebuildQueue();
 		}
 
 		// Couldn't find place for building! That's f'g bad.
@@ -59,16 +67,38 @@ public class AtlantisConstructingManager {
 	public static void update() {
 		for (ConstructionOrder constructionOrder : constructionOrders) {
 			checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
-			checkForBuilderStatusChange(constructionOrder.getBuilder());
+			checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
 		}
 	}
 
 	// =========================================================
 
-	private static void checkForBuilderStatusChange(Unit builder) {
+	/**
+	 * If builder has died when constructing, replace him with new one.
+	 */
+	private static void checkForBuilderStatusChange(ConstructionOrder constructionOrder, Unit builder) {
+		if (builder == null || !builder.isAlive()) {
+			constructionOrder.assignOptimalBuilder();
+		}
 	}
 
+	/**
+	 * If building is completed, mark construction as finished and remove it.
+	 */
 	private static void checkForConstructionStatusChange(ConstructionOrder constructionOrder, Unit building) {
+
+		// If building is not assigned, check if we can get building-unit reference assigned from the builder
+		if (building == null || !building.isExists()) {
+			Unit builder = constructionOrder.getBuilder();
+			if (builder != null) {
+				Unit buildUnit = builder.getBuildUnit();
+				if (buildUnit != null) {
+					constructionOrder.setConstruction(buildUnit);
+					building = buildUnit;
+				}
+			}
+		}
+
 		// If building is finished, remove it from the list
 		if (building != null && building.isCompleted()) {
 			constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
@@ -108,6 +138,22 @@ public class AtlantisConstructingManager {
 		}
 
 		return null;
+	}
+
+	/**
+	 * If we requested to build building A and even assigned worker who's travelling to the building site, it's still
+	 * doesn't count as unitCreated. We need to manually count number of constructions and only then, we can e.g. tell
+	 * "how many unfinished barracks we have".
+	 */
+	public static int countNotStartedConstructionsOfType(UnitType type) {
+		int total = 0;
+		for (ConstructionOrder constructionOrder : constructionOrders) {
+			if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+					&& constructionOrder.getBuildingType().equals(type)) {
+				total++;
+			}
+		}
+		return total;
 	}
 
 }

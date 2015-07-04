@@ -1,6 +1,6 @@
 package atlantis.production;
 
-import atlantis.AtlantisGame;
+import atlantis.buildings.managers.AtlantisSupplyManager;
 import atlantis.constructing.AtlantisConstructingManager;
 
 /**
@@ -9,12 +9,9 @@ import atlantis.constructing.AtlantisConstructingManager;
 public class AtlantisProductionCommander {
 
 	public static void update() {
+		AtlantisSupplyManager.update();
 		AtlantisProduceUnitManager.update();
-
-		// Dont build for first three frames, some errors occuring then.
-		if (AtlantisGame.getTimeFrames() >= 3) {
-			AtlantisConstructingManager.update();
-		}
+		AtlantisConstructingManager.update();
 	}
 
 }

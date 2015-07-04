@@ -76,12 +76,16 @@ public class AtlantisInformationCommander {
 	/**
 	 * Returns cached amount of our units of given type.
 	 */
-	public static int countOurUnitsOfType(UnitType unitType) {
-		return ourUnitsUnfininised.getValueFor(unitType);
+	public static int countOurUnitsOfType(UnitType type) {
+		return ourUnitsUnfininised.getValueFor(type);
 	}
 
-	public static int countEnemyUnitsOfType(UnitType unitType) {
-		return enemyUnitsDiscoveredCounter.getValueFor(unitType);
+	/**
+	 * Returns number of discovered and alive enemy units of given type. Some of them (maybe even all of them) may not
+	 * be visible right now.
+	 */
+	public static int countEnemyUnitsOfType(UnitType type) {
+		return enemyUnitsDiscoveredCounter.getValueFor(type);
 	}
 
 }

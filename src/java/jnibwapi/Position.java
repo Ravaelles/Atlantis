@@ -211,18 +211,21 @@ public class Position {
 	 * instead of pixels is preferable, because it's easier to imagine distances if one knows building dimensions.
 	 */
 	public double distanceTo(Position position) {
-		Position properOurPosition = this;
-		if (properOurPosition instanceof Unit) {
-			properOurPosition = ((Unit) properOurPosition).getPosition();
-		}
+		// Position properOurPosition = this;
+		// if (properOurPosition instanceof Unit) {
+		// properOurPosition = ((Unit) properOurPosition).getPosition();
+		// }
+		//
+		// Position properOtherPosition = position;
+		// if (properOtherPosition instanceof Unit) {
+		// properOtherPosition = ((Unit) properOtherPosition).getPosition();
+		// }
+		//
+		// int dx = properOurPosition.x - properOtherPosition.x;
+		// int dy = properOurPosition.y - properOtherPosition.y;
 
-		Position properOtherPosition = position;
-		if (properOtherPosition instanceof Unit) {
-			properOtherPosition = ((Unit) properOtherPosition).getPosition();
-		}
-
-		int dx = properOurPosition.x - properOtherPosition.x;
-		int dy = properOurPosition.y - properOtherPosition.y;
+		int dx = x - position.x;
+		int dy = y - position.y;
 
 		return Math.sqrt(dx * dx + dy * dy) / 32;
 	}
@@ -231,18 +234,20 @@ public class Position {
 	 * Returns distance to other position in pixels. Please use version "distanceTo" that uses build tiles.
 	 */
 	public double distanceToInPixels(Position position) {
-		Position properOurPosition = this;
-		if (properOurPosition instanceof Unit) {
-			properOurPosition = ((Unit) properOurPosition).getPosition();
-		}
-
-		Position properOtherPosition = position;
-		if (properOtherPosition instanceof Unit) {
-			properOtherPosition = ((Unit) properOtherPosition).getPosition();
-		}
-
-		int dx = properOurPosition.x - properOtherPosition.x;
-		int dy = properOurPosition.y - properOtherPosition.y;
+		// Position properOurPosition = this;
+		// if (properOurPosition instanceof Unit) {
+		// properOurPosition = ((Unit) properOurPosition).getPosition();
+		// }
+		//
+		// Position properOtherPosition = position;
+		// if (properOtherPosition instanceof Unit) {
+		// properOtherPosition = ((Unit) properOtherPosition).getPosition();
+		// }
+		//
+		// int dx = properOurPosition.x - properOtherPosition.x;
+		// int dy = properOurPosition.y - properOtherPosition.y;
+		int dx = x - position.x;
+		int dy = y - position.y;
 
 		return Math.sqrt(dx * dx + dy * dy);
 	}

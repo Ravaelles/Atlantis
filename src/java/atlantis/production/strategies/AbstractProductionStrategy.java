@@ -4,25 +4,29 @@ import java.util.ArrayList;
 
 import jnibwapi.types.UnitType;
 import atlantis.AtlantisGame;
+import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.information.AtlantisInformationCommander;
 import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
+import atlantis.wrappers.MappingCounter;
 
 public abstract class AbstractProductionStrategy {
 
 	/**
-	 * List of production orders as initially read from the file.
+	 * Ordered list of production orders as initially read from the file. It never changes
 	 */
-	private ArrayList<ProductionOrder> initialOrders = new ArrayList<>();
+	private final ArrayList<ProductionOrder> initialProductionQueue = new ArrayList<>();
 
 	/**
-	 * List of orders to be processed.
+	 * Ordered list of next units we should build. It is re-generated when events like
+	 * "started training/building new unit"
 	 */
-	private ArrayList<ProductionOrder> orders = new ArrayList<>();
+	private ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
 
-	/**
-	 * Order list counter.
-	 */
-	private int counterInOrdersQueue = 0;
+	// /**
+	// * Order list counter.
+	// */
+	// private int lastCounterInOrdersQueue = 0;
 
 	// =========================================================
 	// Constructor
@@ -40,47 +44,85 @@ public abstract class AbstractProductionStrategy {
 	// Public defined methods
 
 	/**
-	 * If new unit is created (it doesn't need to exist, it's enough that it's trained) or is destroyed, we need to
-	 * rebuild the production orders queue.
+	 * If new unit is created (it doesn't need to exist, it's enough that it's just started training) or your unit is
+	 * destroyed, we need to rebuild the production orders queue from the beginning (based on initial queue read from
+	 * file). <br />
+	 * This method will detect which units we lack and assign to <b>currentProductionQueue</b> list next units that we
+	 * need. Note this method doesn't check if we can afford them, it only sets up proper sequence of next units to
+	 * produce.
 	 */
 	public void rebuildQueue() {
 
+		// Clear old production queue.
+		currentProductionQueue.clear();
+
+		// It will store [UnitType->(int)howMany] mapping as we gonna process initial production queue and check if we
+		// currently have units needed
+		MappingCounter<UnitType> virtualCounter = new MappingCounter<>();
+
+		System.out.println("---------------");
+		for (ProductionOrder order : initialProductionQueue) {
+			UnitType type = order.getUnitType();
+			virtualCounter.incrementValueFor(type);
+
+			int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
+			int weHaveThisManyUnits = AtlantisInformationCommander.countOurUnitsOfType(type);
+
+			if (order.getUnitType().isBuilding()) {
+				weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);
+				// System.out.println("@@@ Not started constructions of '" + type + "': "
+				// + AtlantisConstructingManager.countNotStartedConstructionsOfType(type));
+			}
+
+			// If we don't have this unit, add it to the current production queue.
+			if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
+				currentProductionQueue.add(order);
+				if (currentProductionQueue.size() >= 8) {
+					break;
+				}
+			}
+		}
 	}
 
 	/**
-	 * Returns list of units that we can (afford) and should train/build now. E.g. it can be one CSV or two CSV and one
-	 * marine. This represents all affordable and available @TODO
+	 * Returns list of units that we should produce (train or build) now. It iterates over latest build orders and
+	 * returns these orders that we can build in this very moment (we can afford them and they match our strategy).
 	 */
-	public ArrayList<UnitType> getUnitsThatShouldBeProducedNow() {
+	public ArrayList<UnitType> getUnitsToProduceRightNow() {
 		ArrayList<UnitType> result = new ArrayList<>();
+		int mineralsNeeded = 0;
+		int gasNeeded = 0;
 
-		for (int i = counterInOrdersQueue; i <= 20; i++) {
-			if (orders.size() <= i) {
-				break;
+		// The idea as follows: as long as we can afford next enqueued production order, add it to the
+		// CurrentToProduceList.
+		for (ProductionOrder order : currentProductionQueue) {
+			UnitType type = order.getUnitType();
+			mineralsNeeded += type.getMineralPrice();
+			gasNeeded += type.getGasPrice();
+
+			// If we can afford this order and the previous, add it to CurrentToProduceList.
+			if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded) && AtlantisGame.canAfford(type)) {
+				result.add(type);
 			}
 
-			UnitType unitType = orders.get(i).getUnitType();
-
-			// Aleways try to produce first order in queue
-			if (i == counterInOrdersQueue) {
-				result.add(unitType);
-			}
-
-			// If we can afford next ones, produce them as well
-			else if (AtlantisGame.canAfford(unitType)) {
-				result.add(unitType);
-			}
-
-			// If we can't afford next order, breaks.
+			// We can't afford to produce this order along with all previous ones. Return currently list.
 			else {
 				break;
 			}
 		}
 
-		// @TODO
-		// result.add(UnitTypes.Terran_SCV);
-		// result.add(UnitTypes.Terran_Barracks);
-		// result.add(UnitTypes.Terran_Marine);
+		return result;
+	}
+
+	/**
+	 * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
+	 */
+	public ArrayList<UnitType> getProductionQueueNextUnits(int howMany) {
+		ArrayList<UnitType> result = new ArrayList<>();
+
+		for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
+			result.add(currentProductionQueue.get(i).getUnitType());
+		}
 
 		return result;
 	}
@@ -150,8 +192,8 @@ public abstract class AbstractProductionStrategy {
 			}
 
 			// Enqueue created order
-			initialOrders.add(order);
-			orders.add(order);
+			initialProductionQueue.add(order);
+			currentProductionQueue.add(order);
 		}
 	}
 

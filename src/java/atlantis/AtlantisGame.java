@@ -107,4 +107,11 @@ public class AtlantisGame {
 		return hasMinerals(unitType.getMineralPrice()) && hasGas(unitType.getGasPrice());
 	}
 
+	/**
+	 * Returns true if we can afford both so many minerals and gas at the same time.
+	 */
+	public static boolean canAfford(int minerals, int gas) {
+		return hasMinerals(minerals) && hasGas(gas);
+	}
+
 }

@@ -69,7 +69,6 @@ public class AtlantisMineralGathering {
 
 		// Get least gathered mineral
 		Unit leastGatheredMineral = minerals.getUnitWithLowestValue();
-		System.out.println("leastGatheredMineral = " + leastGatheredMineral);
 
 		// This is our optimal mineral to gather near given unit
 		return leastGatheredMineral;

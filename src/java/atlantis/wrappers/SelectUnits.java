@@ -47,17 +47,11 @@ public class SelectUnits {
 			}
 		}
 
-		// System.out.println("units in list:");
-		// for (Unit unit : units.list()) {
-		// System.out.println(unit);
-		// }
-		// System.out.println();
-
 		return new SelectUnits(units);
 	}
 
 	/**
-	 * Selects all of our units (units, buildings, but no spider mines etc), <b>even those unfinished</b>..
+	 * Selects all of our units (units, buildings, but no spider mines etc), <b>even those unfinished</b>.
 	 */
 	public static SelectUnits ourIncludingUnfinished() {
 		Units units = new Units();
@@ -68,11 +62,20 @@ public class SelectUnits {
 			}
 		}
 
-		// System.out.println("units in list:");
-		// for (Unit unit : units.list()) {
-		// System.out.println(unit);
-		// }
-		// System.out.println();
+		return new SelectUnits(units);
+	}
+
+	/**
+	 * Selects our unfinished units.
+	 */
+	public static SelectUnits ourUnfinished() {
+		Units units = new Units();
+
+		for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
+			if (unit.isAlive() && !unit.isCompleted()) {
+				units.addUnit(unit);
+			}
+		}
 
 		return new SelectUnits(units);
 	}
@@ -139,7 +142,7 @@ public class SelectUnits {
 	 */
 	public SelectUnits inRadius(double maxDist, Position position) {
 		for (Unit unit : units.list()) {
-			if (position.distanceTo(unit) > maxDist) {
+			if (unit.distanceTo(position) > maxDist) {
 				filterOut(unit);
 			}
 		}
@@ -300,13 +303,6 @@ public class SelectUnits {
 		units.sortByDistanceTo(position, true);
 		// return filterAllBut(units.first());
 		return units.first();
-	}
-
-	/**
-	 * From all units currently in selection, returns closest unit to given <b>position</b>.
-	 */
-	public Unit nearestTo(Unit unit) {
-		return nearestTo(unit);
 	}
 
 	/**

@@ -17,9 +17,10 @@ public class AtlantisProduceUnitManager {
 	protected static void update() {
 		AbstractProductionStrategy productionStrategy = AtlantisConfig.getProductionStrategy();
 
-		ArrayList<UnitType> produceNow = productionStrategy.getUnitsThatShouldBeProducedNow();
+		ArrayList<UnitType> produceNow = productionStrategy.getUnitsToProduceRightNow();
 		for (UnitType unitType : produceNow) {
 			if (unitType.isBuilding()) {
+				System.out.println("HEHE: " + unitType);
 				AtlantisConstructingManager.requestConstructionOf(unitType);
 			} else {
 				produceUnit(unitType);

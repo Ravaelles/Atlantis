@@ -3,7 +3,6 @@ package atlantis.constructing;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
-import atlantis.AtlantisGame;
 import atlantis.wrappers.SelectUnits;
 
 public class ConstructionOrder {
@@ -13,7 +12,8 @@ public class ConstructionOrder {
 	private Unit builder;
 	private Position positionToBuild;
 	private ConstructionOrderStatus status;
-	private int issueFrameTime;
+
+	// private int issueFrameTime;
 
 	// =========================================================
 
@@ -21,7 +21,7 @@ public class ConstructionOrder {
 		this.buildingType = buildingType;
 
 		status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
-		issueFrameTime = AtlantisGame.getTimeFrames();
+		// issueFrameTime = AtlantisGame.getTimeFrames();
 	}
 
 	// =========================================================

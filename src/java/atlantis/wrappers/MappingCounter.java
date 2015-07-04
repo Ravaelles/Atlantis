@@ -39,10 +39,10 @@ public class MappingCounter<K extends Comparable<K>> {
 	}
 
 	public int getValueFor(K key) {
-		if (mapping == null) {
-			return 0;
-		} else {
+		if (mapping.containsKey(key)) {
 			return mapping.get(key);
+		} else {
+			return 0;
 		}
 	}
 

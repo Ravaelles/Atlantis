@@ -48,7 +48,6 @@ public class AtlantisPainter {
 			if (unit.hasTooltip()) {
 				Atlantis.getBwapi().drawText(unit, unit.getTooltip(), false);
 			}
-			Atlantis.getBwapi().drawText(unit.translated(0, 15), "Position: " + unit.toString(), false);
 		}
 	}
 
@@ -56,21 +55,42 @@ public class AtlantisPainter {
 	// Hi-level
 
 	private static void paintProductionQueue() {
-		ArrayList<UnitType> produceNow = AtlantisGame.getProductionStrategy().getUnitsThatShouldBeProducedNow();
+
+		// Display units currently in production
+		for (Unit unit : SelectUnits.ourUnfinished().list()) {
+			paintSideMessage(unit.getType().getShortName(), BWColor.Green);
+		}
+
+		// Display units that should be produced right now or any time
+		ArrayList<UnitType> produceNow = AtlantisGame.getProductionStrategy().getUnitsToProduceRightNow();
 		for (UnitType unitType : produceNow) {
-			paintSideMessage(unitType.getShortName());
+			paintSideMessage(unitType.getShortName(), BWColor.Yellow);
+		}
+
+		// Display next units to produce
+		ArrayList<UnitType> fullQueue = AtlantisGame.getProductionStrategy().getProductionQueueNextUnits(
+				6 - produceNow.size());
+		for (int index = produceNow.size(); index < fullQueue.size(); index++) {
+			UnitType type = fullQueue.get(index);
+			if (type != null && type.getShortName() != null) {
+				paintSideMessage(type.getShortName(), BWColor.Red);
+			}
 		}
 	}
 
 	// =========================================================
 	// Lo-level
 
-	private static void paintSideMessage(String text) {
+	private static void paintSideMessage(String text, BWColor color) {
 		int screenX = 10;
 		int screenY = 10 + 15 * sideMessageCounter;
-		Atlantis.getBwapi().drawText(new Position(screenX, screenY), text, true);
+		paintMessage(text, color, screenX, screenY, true);
 
 		sideMessageCounter++;
+	}
+
+	private static void paintMessage(String text, BWColor color, int x, int y, boolean screenCoord) {
+		Atlantis.getBwapi().drawText(new Position(x, y), BWColor.getColorString(color) + text, screenCoord);
 	}
 
 }

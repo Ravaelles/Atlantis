@@ -14,6 +14,7 @@ public class AtlantisSupplyManager {
 	public static void update() {
 		supply = AtlantisGame.getSupplyTotal();
 		supplyFree = AtlantisGame.getSupplyFree();
+
 		if (supply <= 20) {
 			supply1to20();
 		} else if (supply <= 60) {
@@ -26,19 +27,19 @@ public class AtlantisSupplyManager {
 	// =========================================================
 
 	private static void supply1to20() {
-		if (supplyFree <= 2) {
+		if (supplyFree <= 2 && !requestedConstructionOfSupply()) {
 			requestAdditionalSupply();
 		}
 	}
 
 	private static void supply21to60() {
-		if (supplyFree <= 9) {
+		if (supplyFree <= 9 && !requestedConstructionOfSupply()) {
 			requestAdditionalSupply();
 		}
 	}
 
 	private static void supply61up() {
-		if (supplyFree <= 20 && supply < 200) {
+		if (supplyFree <= 20 && supply < 200 && !requestedConstructionOfSupply()) {
 			requestAdditionalSupply();
 		}
 	}
@@ -47,6 +48,10 @@ public class AtlantisSupplyManager {
 
 	private static void requestAdditionalSupply() {
 		AtlantisConstructingManager.requestConstructionOf(AtlantisConfig.SUPPLY);
+	}
+
+	private static boolean requestedConstructionOfSupply() {
+		return AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY) > 0;
 	}
 
 }

@@ -27,7 +27,7 @@ public class TerranBuildPositionFinder extends AbstractBuildPositionFinder {
 
 		// =========================================================
 
-		int searchRadius = building.isType(UnitTypes.Terran_Supply_Depot) ? 10 : 0;
+		int searchRadius = building.isType(UnitTypes.Terran_Supply_Depot) ? 8 : 0;
 
 		while (searchRadius < maxDistance) {
 			int xCounter = 0;

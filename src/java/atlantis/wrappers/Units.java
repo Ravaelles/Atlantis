@@ -102,7 +102,7 @@ public class Units {
 		return this;
 	}
 
-	// =====================================================================
+	// =========================================================
 	// Value mapping methods
 
 	public void changeValueBy(Unit unit, double deltaValue) {
@@ -130,6 +130,10 @@ public class Units {
 	public Unit getUnitWithLowestValue() {
 		ensureValueMappingExists();
 
+		if (units.isEmpty()) {
+			return null;
+		}
+
 		Unit bestUnit = units.get(0);
 		double bestValue = unitValues.get(bestUnit);
 
@@ -150,7 +154,7 @@ public class Units {
 		}
 	}
 
-	// =====================================================================
+	// =========================================================
 	// Override methods
 
 	@Override
@@ -164,7 +168,18 @@ public class Units {
 		return string;
 	}
 
-	// =====================================================================
+	// =========================================================
+	// Auxiliary
+
+	public void print() {
+		System.out.println("Units in list:");
+		for (Unit unit : list()) {
+			System.out.println(unit + " // Dist to main base: " + (unit.distanceTo(SelectUnits.mainBase())));
+		}
+		System.out.println();
+	}
+
+	// =========================================================
 	// Getters
 
 	/**

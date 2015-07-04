@@ -169,12 +169,16 @@ public class Unit extends Position implements Cloneable {
 		playerID = data[index++];
 		typeID = data[index++];
 
-		// unitX = data[index++]; // @AtlantisChange
-		// unitY = data[index++]; // @AtlantisChange
+		// unitX = data[index++];
+		// unitY = data[index++];
+
 		setPixelX(data[index++]); // @AtlantisChange
 		setPixelY(data[index++]); // @AtlantisChange
-		// tileX = data[index++]; // @AtlantisChange
-		// tileY = data[index++]; // @AtlantisChange
+		index++; // @AtlantisChange
+		index++; // @AtlantisChange
+
+		// tileX = data[index++];
+		// tileY = data[index++];
 
 		angle = data[index++] / TO_DEGREES;
 		velocityX = data[index++] / fixedScale;

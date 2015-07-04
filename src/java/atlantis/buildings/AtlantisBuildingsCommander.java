@@ -4,7 +4,6 @@ import jnibwapi.Unit;
 import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AtlantisBarracksManager;
 import atlantis.buildings.managers.AtlantisBaseManager;
-import atlantis.buildings.managers.AtlantisSupplyManager;
 import atlantis.wrappers.SelectUnits;
 
 /**
@@ -31,11 +30,6 @@ public class AtlantisBuildingsCommander {
 			// BARRACKS (Barracks, Gateway, Spawning Pool)
 			else if (building.isType(AtlantisConfig.BARRACKS)) {
 				AtlantisBarracksManager.update(building);
-			}
-
-			// SUPPLY (Supply Depot, Pylon, Overlord)
-			else if (building.isType(AtlantisConfig.SUPPLY)) {
-				AtlantisSupplyManager.update();
 			}
 		}
 	}

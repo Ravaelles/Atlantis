@@ -16,7 +16,7 @@ import atlantis.production.strategies.AbstractProductionStrategy;
  */
 public class AtlantisConfig {
 
-	public static int GAME_SPEED = 1;
+	public static int GAME_SPEED = 0;
 
 	public static RaceType MY_RACE = null;
 	public static UnitType BASE = null;
