@@ -1,6 +1,8 @@
 package atlantis;
 
 import jnibwapi.types.RaceType.RaceTypes;
+import jnibwapi.types.UnitType;
+import atlantis.production.strategies.AbstractProductionStrategy;
 
 public class AtlantisGame {
 
@@ -53,6 +55,9 @@ public class AtlantisGame {
 		return Atlantis.getBwapi().getSelf().getSupplyTotal();
 	}
 
+	// =========================================================
+	// Auxiliary
+
 	/**
 	 * Returns true if user plays as Terran.
 	 */
@@ -72,6 +77,34 @@ public class AtlantisGame {
 	 */
 	public static boolean playsAsZerg() {
 		return AtlantisConfig.MY_RACE.equals(RaceTypes.Zerg);
+	}
+
+	/**
+	 * Returns object that is responsible for the production queue.
+	 */
+	public static AbstractProductionStrategy getProductionStrategy() {
+		return AtlantisConfig.getProductionStrategy();
+	}
+
+	/**
+	 * Returns true if we can afford given amount of minerals.
+	 */
+	public static boolean hasMinerals(int mineralsToAfford) {
+		return getMinerals() >= mineralsToAfford;
+	}
+
+	/**
+	 * Returns true if we can afford given amount of gas.
+	 */
+	public static boolean hasGas(int gasToAfford) {
+		return getGas() >= gasToAfford;
+	}
+
+	/**
+	 * Returns true if we can afford minerals and gas for given unit type.
+	 */
+	public static boolean canAfford(UnitType unitType) {
+		return hasMinerals(unitType.getMineralPrice()) && hasGas(unitType.getGasPrice());
 	}
 
 }

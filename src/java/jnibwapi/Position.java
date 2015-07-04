@@ -20,8 +20,8 @@ public class Position {
 		}
 	};
 
-	private final int x;
-	private final int y;
+	private int x;
+	private int y;
 
 	/**
 	 * Creates a new Position representing the given x and y as Pixel, Walk Tile, or Build Tile coordinates (depending
@@ -199,7 +199,7 @@ public class Position {
 
 	@Override
 	public String toString() {
-		return "[" + x + "," + y + "]";
+		return "[" + getBX() + "," + getBY() + "]";
 	}
 
 	// =========================================================
@@ -253,4 +253,22 @@ public class Position {
 	public Position translated(int deltaPixelX, int deltaPixelY) {
 		return new Position(x + deltaPixelX, y + deltaPixelY);
 	}
+
+	// =========================================================
+	// Setters
+
+	/**
+	 * <b>Be extra careful using it. Normally, you don't need to use it *ever*.</b>
+	 */
+	public void setPixelX(int x) {
+		this.x = x;
+	}
+
+	/**
+	 * <b>Be extra careful using it. Normally, you don't need to use it *ever*.</b>
+	 */
+	public void setPixelY(int y) {
+		this.y = y;
+	}
+
 }

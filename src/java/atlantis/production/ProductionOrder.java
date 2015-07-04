@@ -68,6 +68,7 @@ public class ProductionOrder {
 	}
 
 	// =========================================================
+	// Override
 
 	@Override
 	public boolean equals(Object object) {
@@ -88,6 +89,13 @@ public class ProductionOrder {
 	@Override
 	public String toString() {
 		return "Order: " + unitType.getName() + ", blocking:" + blocking + ", priority:" + priority;
+	}
+
+	// =========================================================
+	// Getters
+
+	public UnitType getUnitType() {
+		return unitType;
 	}
 
 }

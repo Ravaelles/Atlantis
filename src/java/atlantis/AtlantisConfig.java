@@ -16,7 +16,7 @@ import atlantis.production.strategies.AbstractProductionStrategy;
  */
 public class AtlantisConfig {
 
-	public static int INITIAL_GAME_SPEED = 0;
+	public static int GAME_SPEED = 1;
 
 	public static RaceType MY_RACE = null;
 	public static UnitType BASE = null;
@@ -79,10 +79,17 @@ public class AtlantisConfig {
 	// =========================================================
 	// Hi-level configs
 
+	/**
+	 * Pass an object that will be responsible for the production queue. See e.g. class named
+	 * DefaultTerranProductionStrategy.
+	 */
 	public static void useProductionStrategy(AbstractProductionStrategy productionStrategy) {
 		AtlantisConfig.productionStrategy = productionStrategy;
 	}
 
+	/**
+	 * Returns object that is responsible for the production queue.
+	 */
 	public static AbstractProductionStrategy getProductionStrategy() {
 		return productionStrategy;
 	}

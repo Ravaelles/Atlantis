@@ -13,6 +13,7 @@ import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
 import jnibwapi.types.UpgradeType;
 import jnibwapi.types.UpgradeType.UpgradeTypes;
+import atlantis.Atlantis;
 
 /**
  * Represents a StarCraft unit.
@@ -31,10 +32,10 @@ public class Unit extends Position implements Cloneable {
 	private int replayID;
 	private int playerID;
 	private int typeID;
-	private int unitX;
-	private int unitY;
-	private int tileX;
-	private int tileY;
+	// private int unitX; // @AtlantisChange
+	// private int unitY; // @AtlantisChange
+	// private int tileX; // @AtlantisChange
+	// private int tileY; // @AtlantisChange
 	private double angle;
 	private double velocityX;
 	private double velocityY;
@@ -152,10 +153,10 @@ public class Unit extends Position implements Cloneable {
 	private boolean visible;
 
 	public Unit(int ID, JNIBWAPI bwapi) {
-		super(-666, -666);
+		super(-666, -666); // @AtlantisChange
 		this.ID = ID;
 		this.bwapi = bwapi;
-		atlantisInit();
+		atlantisInit(); // @AtlantisChange
 	}
 
 	public void setDestroyed() {
@@ -167,10 +168,14 @@ public class Unit extends Position implements Cloneable {
 		replayID = data[index++];
 		playerID = data[index++];
 		typeID = data[index++];
-		unitX = data[index++];
-		unitY = data[index++];
-		tileX = data[index++];
-		tileY = data[index++];
+
+		// unitX = data[index++]; // @AtlantisChange
+		// unitY = data[index++]; // @AtlantisChange
+		setPixelX(data[index++]); // @AtlantisChange
+		setPixelY(data[index++]); // @AtlantisChange
+		// tileX = data[index++]; // @AtlantisChange
+		// tileY = data[index++]; // @AtlantisChange
+
 		angle = data[index++] / TO_DEGREES;
 		velocityX = data[index++] / fixedScale;
 		velocityY = data[index++] / fixedScale;
@@ -315,16 +320,16 @@ public class Unit extends Position implements Cloneable {
 		if (this == target)
 			return 0;
 
-		int xDist = getLeft() - (target.getRight() + 1);
+		int xDist = getLeftPixelBoundary() - (target.getRightPixelBoundary() + 1);
 		if (xDist < 0) {
-			xDist = target.getLeft() - (getRight() + 1);
+			xDist = target.getLeftPixelBoundary() - (getRightPixelBoundary() + 1);
 			if (xDist < 0) {
 				xDist = 0;
 			}
 		}
-		int yDist = getTop() - (target.getBottom() + 1);
+		int yDist = getTopPixelBoundary() - (target.getBottomPixelBoundary() + 1);
 		if (yDist < 0) {
-			yDist = target.getTop() - (getBottom() + 1);
+			yDist = target.getTopPixelBoundary() - (getBottomPixelBoundary() + 1);
 			if (yDist < 0) {
 				yDist = 0;
 			}
@@ -338,16 +343,16 @@ public class Unit extends Position implements Cloneable {
 	public double getDistance(Position target) {
 		if (!isExists())
 			return Integer.MAX_VALUE;
-		int xDist = getLeft() - (target.getPX() + 1);
+		int xDist = getLeftPixelBoundary() - (target.getPX() + 1);
 		if (xDist < 0) {
-			xDist = target.getPX() - (getRight() + 1);
+			xDist = target.getPX() - (getRightPixelBoundary() + 1);
 			if (xDist < 0) {
 				xDist = 0;
 			}
 		}
-		int yDist = getTop() - (target.getPY() + 1);
+		int yDist = getTopPixelBoundary() - (target.getPY() + 1);
 		if (yDist < 0) {
-			yDist = target.getPY() - (getBottom() + 1);
+			yDist = target.getPY() - (getBottomPixelBoundary() + 1);
 			if (yDist < 0) {
 				yDist = 0;
 			}
@@ -357,28 +362,28 @@ public class Unit extends Position implements Cloneable {
 
 	/** The top left corner of the unit's collision boundary. */
 	public Position getTopLeft() {
-		return new Position(getLeft(), getTop());
+		return new Position(getLeftPixelBoundary(), getTopPixelBoundary());
 	}
 
 	/** The bottom right corner of the unit's collision boundary. */
 	public Position getBottomRight() {
-		return new Position(getRight(), getBottom());
+		return new Position(getRightPixelBoundary(), getBottomPixelBoundary());
 	}
 
-	private int getLeft() {
-		return unitX - getType().getDimensionLeft();
+	public int getLeftPixelBoundary() {
+		return getPX() - getType().getDimensionLeft();
 	}
 
-	private int getTop() {
-		return unitY - getType().getDimensionUp();
+	public int getTopPixelBoundary() {
+		return getPY() - getType().getDimensionUp();
 	}
 
-	private int getRight() {
-		return unitX + getType().getDimensionRight();
+	public int getRightPixelBoundary() {
+		return getPX() + getType().getDimensionRight();
 	}
 
-	private int getBottom() {
-		return unitY + getType().getDimensionDown();
+	public int getBottomPixelBoundary() {
+		return getPY() + getType().getDimensionDown();
 	}
 
 	// ------------------------------ FIELD ACCESSOR METHODS
@@ -410,10 +415,11 @@ public class Unit extends Position implements Cloneable {
 		return UnitTypes.getUnitType(typeID);
 	}
 
-	/** Gives the position of the <b>center</b> of the unit. */
-	public Position getPosition() {
-		return new Position(unitX, unitY);
-	}
+	// /** Gives the position of the <b>center</b> of the unit. */
+	// public Position getPosition() {
+	// // return new Position(unitX, unitY); // @AtlantisChange
+	// return this;
+	// }
 
 	// /** @deprecated use {@link #getPosition()} */
 	// @Deprecated
@@ -427,25 +433,13 @@ public class Unit extends Position implements Cloneable {
 	// return unitY;
 	// }
 
-	/**
-	 * Returns the position of the top-left build tile occupied by the unit. Most useful for buildings. Always
-	 * above-left of {@link #getPosition()} and above-left or equal to {@link #getTopLeft()}
-	 */
-	public Position getTilePosition() {
-		return new Position(tileX, tileY, PosType.BUILD);
-	}
-
-	/** @deprecated use {@link #getTilePosition()} */
-	@Deprecated
-	public int getTileX() {
-		return tileX;
-	}
-
-	/** @deprecated use {@link #getTilePosition()} */
-	@Deprecated
-	public int getTileY() {
-		return tileY;
-	}
+	// /**
+	// * Returns the position of the top-left build tile occupied by the unit. Most useful for buildings. Always
+	// * above-left of {@link #getPosition()} and above-left or equal to {@link #getTopLeft()}
+	// */
+	// public Position getTilePosition() {
+	// return new Position(tileX, tileY, PosType.BUILD);
+	// }
 
 	public double getAngle() {
 		return angle;
@@ -1283,15 +1277,29 @@ public class Unit extends Position implements Cloneable {
 	// =========================================================
 	// Important methods
 
+	public static Unit getByID(int unitID) {
+		for (Unit unit : Atlantis.getBwapi().getAllUnits()) {
+			if (unit.getID() == unitID) {
+				return unit;
+			}
+		}
+
+		return null;
+	}
+
 	@Override
 	public String toString() {
-		Position position = getPosition();
+		// Position position = getPosition();
+		Position position = this;
 		String toString = getType().getName();
 		toString = toString.replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "")
 				.replace("Resource ", "");
 		toString += " #" + ID + " at [" + position.getBX() + "," + position.getBY() + "]";
 		return toString;
 	}
+
+	// =========================================================
+	// Generic methods
 
 	public boolean isAlive() {
 		return exists;
@@ -1309,15 +1317,12 @@ public class Unit extends Position implements Cloneable {
 		return healable;
 	}
 
-	// =========================================================
-	// Generic methods
-
 	public boolean isBuilding() {
 		return getType().isBuilding();
 	}
 
 	public boolean isWorker() {
-		return isType(UnitTypes.Terran_SCV, UnitTypes.Zerg_Drone, UnitTypes.Protoss_Probe);
+		return getType().isWorker();
 	}
 
 	public boolean isBase() {
@@ -1341,12 +1346,7 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean isType(UnitType... types) {
-		for (UnitType otherType : types) {
-			if (getType().equals(otherType)) {
-				return true;
-			}
-		}
-		return false;
+		return getType().isType(types);
 	}
 
 	public boolean isFullyHealthy() {

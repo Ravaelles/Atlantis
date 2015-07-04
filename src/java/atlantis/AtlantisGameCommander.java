@@ -15,9 +15,9 @@ public class AtlantisGameCommander {
 		// =========================================================
 		// Execute code of every Commander
 
-		AtlantisProductionCommander.update();
-		AtlantisBuildingsCommander.update();
 		AtlantisWorkerCommander.update();
+		AtlantisBuildingsCommander.update();
+		AtlantisProductionCommander.update();
 
 		// =========================================================
 		// Execute extra paint methods at the end of all actions

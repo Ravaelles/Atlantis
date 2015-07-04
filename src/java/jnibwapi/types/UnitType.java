@@ -14,7 +14,7 @@ import jnibwapi.types.WeaponType.WeaponTypes;
  * 
  * For a description of fields see: http://code.google.com/p/bwapi/wiki/UnitType
  */
-public class UnitType {
+public class UnitType implements Comparable<UnitType> {
 
 	private static Map<Integer, UnitType> idToUnitType = new HashMap<>();
 
@@ -653,7 +653,7 @@ public class UnitType {
 
 	@Override
 	public String toString() {
-		return getName() + " (" + getID() + ")";
+		return getName();
 	}
 
 	// =========================================================
@@ -685,8 +685,74 @@ public class UnitType {
 		return null;
 	}
 
-	public boolean isTerranInfantry() {
-		return equals(UnitTypes.Terran_Marine) || equals(UnitTypes.Terran_Medic) || equals(UnitTypes.Terran_Firebat)
-				|| equals(UnitTypes.Terran_Ghost);
+	/**
+	 * Returns true if given type equals to one of types passed as parameter.
+	 */
+	public boolean isType(UnitType... types) {
+		for (UnitType otherType : types) {
+			if (equals(otherType)) {
+				return true;
+			}
+		}
+		return false;
 	}
+
+	// =========================================================
+	// Auxiliary methods
+
+	public String getShortName() {
+		return getName().replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "");
+	}
+
+	// =========================================================
+	// Override
+
+	@Override
+	public int hashCode() {
+		return ID;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UnitType other = (UnitType) obj;
+		if (ID != other.ID)
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(UnitType o) {
+		return Integer.compare(this.ID, o.ID);
+	}
+
+	// =========================================================
+	// Type comparison methods
+
+	public boolean isBase() {
+		return isType(UnitTypes.Terran_Command_Center, UnitTypes.Protoss_Nexus, UnitTypes.Zerg_Hatchery,
+				UnitTypes.Zerg_Lair, UnitTypes.Zerg_Hive);
+	}
+
+	public boolean isInfantry() {
+		return isOrganic();
+	}
+
+	public boolean isVehicle() {
+		return isMechanical();
+	}
+
+	public boolean isTerranInfantry() {
+		return isType(UnitTypes.Terran_Marine, UnitTypes.Terran_Medic, UnitTypes.Terran_Firebat, UnitTypes.Terran_Ghost);
+	}
+
+	public boolean isGasBuilding() {
+		return isType(UnitTypes.Terran_Refinery, UnitTypes.Protoss_Assimilator, UnitTypes.Zerg_Extractor);
+	}
+
 }

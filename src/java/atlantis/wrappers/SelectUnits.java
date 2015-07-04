@@ -57,6 +57,27 @@ public class SelectUnits {
 	}
 
 	/**
+	 * Selects all of our units (units, buildings, but no spider mines etc), <b>even those unfinished</b>..
+	 */
+	public static SelectUnits ourIncludingUnfinished() {
+		Units units = new Units();
+
+		for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
+			if (unit.isAlive() && !unit.isSpiderMine()) {
+				units.addUnit(unit);
+			}
+		}
+
+		// System.out.println("units in list:");
+		// for (Unit unit : units.list()) {
+		// System.out.println(unit);
+		// }
+		// System.out.println();
+
+		return new SelectUnits(units);
+	}
+
+	/**
 	 * Selects all visible enemy units.
 	 */
 	public static SelectUnits enemy() {
@@ -126,24 +147,6 @@ public class SelectUnits {
 		return this;
 	}
 
-	// =========================================================
-	// Get results
-
-	/**
-	 * Selects units that match all previous criteria. <b>Units</b> class is used as a wrapper for result. See its
-	 * javadoc too learn what it can do.
-	 */
-	public Units units() {
-		return units;
-	}
-
-	/**
-	 * Selects units as an iterable collection (list).
-	 */
-	public Collection<Unit> list() {
-		return units().list();
-	}
-
 	// =====================================================================
 	// Filter units
 
@@ -174,6 +177,19 @@ public class SelectUnits {
 
 		return this;
 	}
+
+	// /**
+	// * Selects units which do currently gather minerals but dont carry it.
+	// */
+	// public SelectUnits gatheringMineralsButNotCarryingIt() {
+	// for (Unit unit : units.list()) {
+	// if (!unit.isGatheringMinerals() || unit.isCarryingMinerals()) {
+	// filterOut(unit);
+	// }
+	// }
+	//
+	// return this;
+	// }
 
 	/**
 	 * Selects only buildings.
@@ -212,10 +228,32 @@ public class SelectUnits {
 	}
 
 	/**
-	 * Selects all our workers that is Terran SCV or Zerg Drones or Protoss Probes.
+	 * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe).
 	 */
 	public static SelectUnits ourWorkers() {
-		return our().ofType(AtlantisConfig.WORKER);
+		SelectUnits selectedUnits = SelectUnits.our();
+		for (Unit unit : selectedUnits.list()) {
+			if (!unit.isWorker()) {
+				selectedUnits.filterOut(unit);
+			}
+		}
+		return selectedUnits;
+	}
+
+	/**
+	 * Selects our workers that are free to construct building or repair a unit. That means they mustn't repait any
+	 * other unit or construct other building.
+	 */
+	public static SelectUnits ourWorkersFreeToBuildOrRepair() {
+		SelectUnits selectedUnits = ourWorkers();
+
+		for (Unit unit : selectedUnits.list()) {
+			if (unit.isConstructing() || unit.isRepairing()) {
+				selectedUnits.filterOut(unit);
+			}
+		}
+
+		return selectedUnits;
 	}
 
 	/**
@@ -223,6 +261,19 @@ public class SelectUnits {
 	 */
 	public static SelectUnits ourBuildings() {
 		return our().buildings();
+	}
+
+	/**
+	 * Selects all our buildings including those unfinished.
+	 */
+	public static SelectUnits ourBuildingsIncludingUnfinished() {
+		SelectUnits selectedUnits = SelectUnits.ourIncludingUnfinished();
+		for (Unit unit : selectedUnits.list()) {
+			if (!unit.isWorker()) {
+				selectedUnits.filterOut(unit);
+			}
+		}
+		return selectedUnits;
 	}
 
 	/**
@@ -255,7 +306,7 @@ public class SelectUnits {
 	 * From all units currently in selection, returns closest unit to given <b>position</b>.
 	 */
 	public Unit nearestTo(Unit unit) {
-		return nearestTo(unit.getPosition());
+		return nearestTo(unit);
 	}
 
 	/**
@@ -280,6 +331,24 @@ public class SelectUnits {
 	}
 
 	// =========================================================
+	// Auxiliary methods
+
+	/**
+	 * Returns <b>true</b> if current selection contains at least one unit.
+	 */
+	public boolean anyExists() {
+		return !units.isEmpty();
+	}
+
+	/**
+	 * Returns first unit that matches previous conditions or null if no units match conditions.
+	 */
+	public Unit first() {
+		return units.isEmpty() ? null : units.first();
+	}
+
+	// =========================================================
+	// Operations on set of units
 
 	@SuppressWarnings("unused")
 	private SelectUnits filterOut(Collection<Unit> unitsToRemove) {
@@ -308,20 +377,21 @@ public class SelectUnits {
 	}
 
 	// =========================================================
-	// Auxiliary methods
+	// Get results
 
 	/**
-	 * Returns <b>true</b> if current selection contains at least one unit.
+	 * Selects units that match all previous criteria. <b>Units</b> class is used as a wrapper for result. See its
+	 * javadoc too learn what it can do.
 	 */
-	public boolean anyExists() {
-		return !units.isEmpty();
+	public Units units() {
+		return units;
 	}
 
 	/**
-	 * Returns first unit that matches previous conditions or null if no units match conditions.
+	 * Selects units as an iterable collection (list).
 	 */
-	public Unit first() {
-		return units.isEmpty() ? null : units.first();
+	public Collection<Unit> list() {
+		return units().list();
 	}
 
 }

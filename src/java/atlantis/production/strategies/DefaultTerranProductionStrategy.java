@@ -7,10 +7,4 @@ public class DefaultTerranProductionStrategy extends AbstractProductionStrategy 
 		return "DefaultTerran.csv";
 	}
 
-	// =========================================================
-
-	@Override
-	public void update() {
-	}
-
 }

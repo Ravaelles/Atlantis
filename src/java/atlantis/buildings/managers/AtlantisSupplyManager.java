@@ -2,7 +2,7 @@ package atlantis.buildings.managers;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.constructing.AtlantisConstructing;
+import atlantis.constructing.AtlantisConstructingManager;
 
 public class AtlantisSupplyManager {
 
@@ -46,7 +46,7 @@ public class AtlantisSupplyManager {
 	// =========================================================
 
 	private static void requestAdditionalSupply() {
-		AtlantisConstructing.construct(AtlantisConfig.SUPPLY);
+		AtlantisConstructingManager.requestConstructionOf(AtlantisConfig.SUPPLY);
 	}
 
 }

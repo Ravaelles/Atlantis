@@ -3,6 +3,8 @@ package atlantis;
 import jnibwapi.BWAPIEventListener;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
+import jnibwapi.Unit;
+import atlantis.information.AtlantisInformationCommander;
 import atlantis.init.AtlantisInitActions;
 import atlantis.util.RUtilities;
 
@@ -56,23 +58,17 @@ public class Atlantis implements BWAPIEventListener {
 	}
 
 	/**
-	 * Forces all calculations to be stopped. CPU usage should be minimal.
+	 * Forces all calculations to be stopped. CPU usage should be minimal. Or resumes the game after pause.
 	 */
-	public void pause() {
-		isPaused = true;
-	}
-
-	/**
-	 * Resumes the game after pause.
-	 */
-	public void unpause() {
-		isPaused = false;
+	public void pauseOrUnpause() {
+		isPaused = !isPaused;
 	}
 
 	// =========================================================
 
 	/**
-	 * Returns JNIWAPI for this Atlantis object.
+	 * This method returns bridge connector between Atlantis and Starcraft, which is JNIWAPI object. It provides
+	 * low-level functionality for functions like canBuildHere etc.
 	 */
 	public static JNIBWAPI getBwapi() {
 		return instance.bwapi;
@@ -87,12 +83,8 @@ public class Atlantis implements BWAPIEventListener {
 	@Override
 	public void matchStart() {
 		gameCommander = new AtlantisGameCommander();
-		bwapi.setGameSpeed(AtlantisConfig.INITIAL_GAME_SPEED);
+		bwapi.setGameSpeed(AtlantisConfig.GAME_SPEED);
 		bwapi.enableUserInput();
-
-		// System.out.println("### Starting Atlantis... ###");
-		// AtlantisInitActions.executeInitialActions();
-		// System.out.println("### Atlantis is working! ###");
 	}
 
 	@Override
@@ -121,6 +113,27 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void keyPressed(int keyCode) {
+		System.err.println("########################################");
+		System.err.println("############KEY = " + keyCode + "############################");
+		System.err.println("########################################");
+
+		// 27 (Esc) - pause/unpause game
+		if (keyCode == 27) {
+			pauseOrUnpause();
+		}
+
+		// 107 (+) - increase game speed
+		else if (keyCode == 107) {
+			AtlantisConfig.GAME_SPEED--;
+			if (AtlantisConfig.GAME_SPEED < 0) {
+				AtlantisConfig.GAME_SPEED = 0;
+			}
+		}
+
+		// 109 (-) - decrease game speed
+		else if (keyCode == 107) {
+			AtlantisConfig.GAME_SPEED++;
+		}
 	}
 
 	@Override
@@ -149,14 +162,40 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void unitCreate(int unitID) {
+		Unit unit = Unit.getByID(unitID);
+		if (unit != null) {
+			AtlantisInformationCommander.addOurUnfinishedUnit(unit.getType());
+
+			// Our unit
+			if (unit.getPlayer().isSelf()) {
+				AtlantisGame.getProductionStrategy().rebuildQueue();
+			}
+		}
 	}
 
 	@Override
 	public void unitDestroy(int unitID) {
+		Unit unit = Unit.getByID(unitID);
+		if (unit != null) {
+			AtlantisInformationCommander.unitDestroyed(unit);
+
+			// Our unit
+			if (unit.getPlayer().isSelf()) {
+				AtlantisGame.getProductionStrategy().rebuildQueue();
+			}
+		}
 	}
 
 	@Override
 	public void unitDiscover(int unitID) {
+		Unit unit = Unit.getByID(unitID);
+		if (unit != null) {
+
+			// Enemy unit
+			if (unit.getPlayer().isEnemy()) {
+				AtlantisInformationCommander.discoveredEnemyUnit(unit);
+			}
+		}
 	}
 
 	@Override
@@ -165,6 +204,14 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void unitHide(int unitID) {
+		Unit unit = Unit.getByID(unitID);
+		if (unit != null) {
+
+			// Enemy unit
+			if (unit.getPlayer().isEnemy()) {
+				AtlantisInformationCommander.removeEnemyUnitVisible(unit);
+			}
+		}
 	}
 
 	@Override
@@ -173,6 +220,14 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void unitShow(int unitID) {
+		Unit unit = Unit.getByID(unitID);
+		if (unit != null) {
+
+			// Enemy unit
+			if (unit.getPlayer().isEnemy()) {
+				AtlantisInformationCommander.addEnemyUnitVisible(unit);
+			}
+		}
 	}
 
 	@Override
