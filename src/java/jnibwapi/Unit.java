@@ -14,6 +14,7 @@ import jnibwapi.types.UnitType.UnitTypes;
 import jnibwapi.types.UpgradeType;
 import jnibwapi.types.UpgradeType.UpgradeTypes;
 import atlantis.Atlantis;
+import atlantis.combat.group.Group;
 
 /**
  * Represents a StarCraft unit.
@@ -1267,6 +1268,7 @@ public class Unit extends Position implements Cloneable {
 	// ===== Start of ATLANTIS CODE ============================
 	// =========================================================
 
+	private Group group = null;
 	private boolean repairableMechanically = false;
 	private boolean healable = false;
 
@@ -1340,6 +1342,14 @@ public class Unit extends Position implements Cloneable {
 
 	public boolean isVehicle() {
 		return getType().isMechanical();
+	}
+
+	public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
 	}
 
 	// =========================================================

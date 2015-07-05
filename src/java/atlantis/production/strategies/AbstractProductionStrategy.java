@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import jnibwapi.types.UnitType;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
-import atlantis.information.AtlantisInformationCommander;
+import atlantis.information.AtlantisInformationManager;
 import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
 import atlantis.wrappers.MappingCounter;
@@ -66,7 +66,7 @@ public abstract class AbstractProductionStrategy {
 			virtualCounter.incrementValueFor(type);
 
 			int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
-			int weHaveThisManyUnits = AtlantisInformationCommander.countOurUnitsOfType(type);
+			int weHaveThisManyUnits = AtlantisInformationManager.countOurUnitsOfType(type);
 
 			if (order.getUnitType().isBuilding()) {
 				weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);

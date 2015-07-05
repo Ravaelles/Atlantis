@@ -4,7 +4,8 @@ import jnibwapi.BWAPIEventListener;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
 import jnibwapi.Unit;
-import atlantis.information.AtlantisInformationCommander;
+import atlantis.combat.group.AtlantisGroupCommander;
+import atlantis.information.AtlantisInformationManager;
 import atlantis.init.AtlantisInitActions;
 import atlantis.util.RUtilities;
 
@@ -165,11 +166,12 @@ public class Atlantis implements BWAPIEventListener {
 	public void unitCreate(int unitID) {
 		Unit unit = Unit.getByID(unitID);
 		if (unit != null) {
-			AtlantisInformationCommander.addOurUnfinishedUnit(unit.getType());
+			AtlantisInformationManager.addOurUnfinishedUnit(unit.getType());
 
 			// Our unit
 			if (unit.getPlayer().isSelf()) {
 				AtlantisGame.getProductionStrategy().rebuildQueue();
+				AtlantisGroupCommander.battleUnitCreated(unit);
 			}
 		}
 	}
@@ -178,11 +180,12 @@ public class Atlantis implements BWAPIEventListener {
 	public void unitDestroy(int unitID) {
 		Unit unit = Unit.getByID(unitID);
 		if (unit != null) {
-			AtlantisInformationCommander.unitDestroyed(unit);
+			AtlantisInformationManager.unitDestroyed(unit);
 
 			// Our unit
 			if (unit.getPlayer().isSelf()) {
 				AtlantisGame.getProductionStrategy().rebuildQueue();
+				AtlantisGroupCommander.battleUnitDestroyed(unit);
 			}
 		}
 	}
@@ -194,7 +197,7 @@ public class Atlantis implements BWAPIEventListener {
 
 			// Enemy unit
 			if (unit.getPlayer().isEnemy()) {
-				AtlantisInformationCommander.discoveredEnemyUnit(unit);
+				AtlantisInformationManager.discoveredEnemyUnit(unit);
 			}
 		}
 	}
@@ -210,7 +213,7 @@ public class Atlantis implements BWAPIEventListener {
 
 			// Enemy unit
 			if (unit.getPlayer().isEnemy()) {
-				AtlantisInformationCommander.removeEnemyUnitVisible(unit);
+				AtlantisInformationManager.removeEnemyUnitVisible(unit);
 			}
 		}
 	}
@@ -226,7 +229,7 @@ public class Atlantis implements BWAPIEventListener {
 
 			// Enemy unit
 			if (unit.getPlayer().isEnemy()) {
-				AtlantisInformationCommander.addEnemyUnitVisible(unit);
+				AtlantisInformationManager.addEnemyUnitVisible(unit);
 			}
 		}
 	}

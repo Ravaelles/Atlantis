@@ -6,7 +6,7 @@ import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import atlantis.wrappers.MappingCounter;
 
-public class AtlantisInformationCommander {
+public class AtlantisInformationManager {
 
 	private static MappingCounter<UnitType> ourUnitsFininised = new MappingCounter<>();
 	private static MappingCounter<UnitType> ourUnitsUnfininised = new MappingCounter<>();
