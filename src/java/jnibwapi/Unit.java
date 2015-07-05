@@ -1344,12 +1344,22 @@ public class Unit extends Position implements Cloneable {
 		return getType().isMechanical();
 	}
 
-	public Group getGroup() {
-		return group;
+	private boolean isAirUnit() {
+		return getType().isFlyer();
 	}
 
-	public void setGroup(Group group) {
-		this.group = group;
+	/**
+	 * Returns true if given unit is considered to be "ranged" unit (not melee).
+	 */
+	public boolean isRangedUnit() {
+		return getType().isRangedUnit();
+	}
+
+	/**
+	 * Returns true if given unit is considered to be "melee" unit (not ranged).
+	 */
+	public boolean isMeleeUnit() {
+		return getType().isMeleeUnit();
 	}
 
 	// =========================================================
@@ -1369,6 +1379,31 @@ public class Unit extends Position implements Cloneable {
 
 	public int getHPPercent() {
 		return 100 * getHitPoints() / getType().getMaxHitPoints();
+	}
+
+	/**
+	 * Returns max shoot range (in build tiles) of this unit against land targets.
+	 */
+	public double getShootRangeGround() {
+		return getType().getGroundWeapon().getMaxRange() / 32;
+	}
+
+	/**
+	 * Returns max shoot range (in build tiles) of this unit against land targets.
+	 */
+	public double getShootRangeAir() {
+		return getType().getAirWeapon().getMaxRange() / 32;
+	}
+
+	/**
+	 * Returns max shoot range (in build tiles) of this unit against given <b>opponentUnit</b>.
+	 */
+	public double getShootRangeAgainst(Unit opponentUnit) {
+		if (opponentUnit.isAirUnit()) {
+			return getType().getAirWeapon().getMaxRange() / 32;
+		} else {
+			return getType().getGroundWeapon().getMaxRange() / 32;
+		}
 	}
 
 	// =========================================================
@@ -1400,6 +1435,17 @@ public class Unit extends Position implements Cloneable {
 
 	public boolean isSpiderMine() {
 		return getType().equals(UnitTypes.Terran_Vulture_Spider_Mine);
+	}
+
+	// =========================================================
+	// Getters & setters
+
+	public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
 	}
 
 }

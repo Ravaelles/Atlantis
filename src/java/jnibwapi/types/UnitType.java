@@ -1,6 +1,7 @@
 package jnibwapi.types;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -516,6 +517,10 @@ public class UnitType implements Comparable<UnitType> {
 		return WeaponTypes.getWeaponType(groundWeaponID);
 	}
 
+	public WeaponType getAirWeapon() {
+		return WeaponTypes.getWeaponType(airWeaponID);
+	}
+
 	@Deprecated
 	public int getGroundWeaponID() {
 		return groundWeaponID;
@@ -661,6 +666,36 @@ public class UnitType implements Comparable<UnitType> {
 	// =========================================================
 
 	/**
+	 * Contains list of all unit types that are subjectively considered "melee".
+	 */
+	protected static final ArrayList<UnitType> meleeTypes = new ArrayList<>();
+
+	/**
+	 * Forces to run code that will populate <b>meleeTypes</b> at the beginning of the match.
+	 */
+	static class AutoLoader_PopulateMeleeTypes {
+
+		static AutoLoader_PopulateMeleeTypes autoLoadMe = new AutoLoader_PopulateMeleeTypes();
+
+		private AutoLoader_PopulateMeleeTypes() {
+
+			// Terran
+			UnitType.meleeTypes.add(UnitTypes.Terran_Firebat);
+
+			// Protoss
+			UnitType.meleeTypes.add(UnitTypes.Protoss_Zealot);
+			UnitType.meleeTypes.add(UnitTypes.Protoss_Dark_Templar);
+
+			// Zerg
+			UnitType.meleeTypes.add(UnitTypes.Zerg_Zergling);
+			UnitType.meleeTypes.add(UnitTypes.Zerg_Broodling);
+		}
+
+	}
+
+	// =========================================================
+
+	/**
 	 * You can "Terran_Marine" or "Terran Marine" or even "Marine".
 	 */
 	public static UnitType getByName(String string) {
@@ -695,6 +730,20 @@ public class UnitType implements Comparable<UnitType> {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns true if given unit is considered to be "melee" unit (not ranged).
+	 */
+	public boolean isMeleeUnit() {
+		return meleeTypes.contains(this);
+	}
+
+	/**
+	 * Returns true if given unit is considered to be "ranged" unit (not melee).
+	 */
+	public boolean isRangedUnit() {
+		return !meleeTypes.contains(this);
 	}
 
 	// =========================================================

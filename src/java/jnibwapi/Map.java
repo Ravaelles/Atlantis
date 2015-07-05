@@ -71,6 +71,7 @@ public class Map {
 	/** Initialise the map with regions and base locations */
 	protected void initialize(int[] regionMapData, int[] regionData, HashMap<Integer, int[]> regionPolygons,
 			int[] chokePointData, int[] baseLocationData) {
+
 		// regionMap
 		assert (regionMapData != null && regionMapData.length == size.getBX() * size.getBY());
 		regionMap = regionMapData;
@@ -179,6 +180,9 @@ public class Map {
 	 */
 	public Region getRegion(Position p) {
 		if (p.isValid()) {
+			if (idToRegion == null) {
+				return null;
+			}
 			return idToRegion.get(regionMap[getBuildTileArrayIndex(p)]);
 		} else {
 			return null;
@@ -344,7 +348,7 @@ public class Map {
 	public void drawTerrainData(JNIBWAPI bwapi) {
 		// iterate through all the base locations and draw their outlines
 		for (BaseLocation bl : bwapi.getMap().getBaseLocations()) {
-			Position p = bl.getPosition();
+			Position p = bl;
 
 			// draw outline of base location
 			Position otherCorner = p.translated(new Position(4, 3, PosType.BUILD));

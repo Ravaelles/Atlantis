@@ -24,6 +24,8 @@ public class AtlantisConfig {
 	public static UnitType BARRACKS = null;
 	public static UnitType SUPPLY = null;
 
+	public static int SCOUT_IS_NTH_WORKER = 7;
+
 	private static AbstractProductionStrategy productionStrategy;
 
 	// =========================================================

@@ -8,7 +8,7 @@ import atlantis.combat.group.missions.Missions;
 /**
  * Commands all existing battle groups.
  */
-public class AtlantisGroupCommander {
+public class AtlantisGroupManager {
 
 	/**
 	 * List of all unit groups.
@@ -18,17 +18,29 @@ public class AtlantisGroupCommander {
 	// =========================================================
 
 	public static void battleUnitCreated(Unit unit) {
+		if (shouldSkipUnit(unit)) {
+			return;
+		}
+
 		Group group = getAlphaGroup();
 		group.addUnit(unit);
 		unit.setGroup(group);
 	}
 
 	public static void battleUnitDestroyed(Unit unit) {
+		if (shouldSkipUnit(unit)) {
+			return;
+		}
+
 		Group group = unit.getGroup();
 		if (group != null) {
 			group.removeUnit(unit);
 			unit.setGroup(null);
 		}
+	}
+
+	private static boolean shouldSkipUnit(Unit unit) {
+		return unit.isBuilding() || unit.isWorker();
 	}
 
 	// =========================================================
@@ -46,6 +58,17 @@ public class AtlantisGroupCommander {
 		}
 
 		return groups.get(0);
+	}
+
+	// =========================================================
+	// Getters & Setters
+
+	public static ArrayList<Group> getGroups() {
+		return groups;
+	}
+
+	public static void setGroups(ArrayList<Group> groups) {
+		AtlantisGroupManager.groups = groups;
 	}
 
 }

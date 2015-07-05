@@ -1,8 +1,10 @@
 package atlantis;
 
 import atlantis.buildings.AtlantisBuildingsCommander;
+import atlantis.combat.AtlantisCombatCommander;
 import atlantis.debug.AtlantisPainter;
 import atlantis.production.AtlantisProductionCommander;
+import atlantis.scout.AtlantisScoutManager;
 import atlantis.workers.AtlantisWorkerCommander;
 
 public class AtlantisGameCommander {
@@ -16,6 +18,8 @@ public class AtlantisGameCommander {
 		// Execute code of every Commander
 
 		AtlantisWorkerCommander.update();
+		AtlantisCombatCommander.update();
+		AtlantisScoutManager.update();
 		AtlantisBuildingsCommander.update();
 		AtlantisProductionCommander.update();
 

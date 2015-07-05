@@ -3,6 +3,7 @@ package atlantis.buildings.managers;
 import jnibwapi.Unit;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
+import atlantis.information.AtlantisUnitInformationManager;
 
 public class AtlantisBaseManager {
 
@@ -25,6 +26,11 @@ public class AtlantisBaseManager {
 
 		// Check MINERALS
 		if (AtlantisGame.getMinerals() < 50) {
+			return false;
+		}
+
+		// Check if not TOO MANY WORKERS
+		if (AtlantisUnitInformationManager.countOurWorkers() >= 27 * AtlantisUnitInformationManager.countOurBases()) {
 			return false;
 		}
 

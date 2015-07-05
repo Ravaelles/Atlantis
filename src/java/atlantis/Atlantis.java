@@ -4,8 +4,8 @@ import jnibwapi.BWAPIEventListener;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
 import jnibwapi.Unit;
-import atlantis.combat.group.AtlantisGroupCommander;
-import atlantis.information.AtlantisInformationManager;
+import atlantis.combat.group.AtlantisGroupManager;
+import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.init.AtlantisInitActions;
 import atlantis.util.RUtilities;
 
@@ -34,7 +34,7 @@ public class Atlantis implements BWAPIEventListener {
 		instance = this;
 
 		// Standard procedure: create and save Jnibwapi reference
-		bwapi = new JNIBWAPI(this, false);
+		bwapi = new JNIBWAPI(this, true);
 
 		// Validate AtlantisConfig and exit if it's invalid
 		AtlantisConfig.validate();
@@ -115,7 +115,7 @@ public class Atlantis implements BWAPIEventListener {
 	@Override
 	public void keyPressed(int keyCode) {
 		// System.err.println("########################################");
-		System.err.println("############KEY = " + keyCode + "############################");
+		// System.err.println("############KEY = " + keyCode + "############################");
 		// System.err.println("########################################");
 
 		// 27 (Esc) - pause/unpause game
@@ -123,17 +123,19 @@ public class Atlantis implements BWAPIEventListener {
 			pauseOrUnpause();
 		}
 
-		// 115 (+) - increase game speed
-		else if (keyCode == 115) {
+		// 107 (+) - increase game speed
+		else if (keyCode == 107) {
 			AtlantisConfig.GAME_SPEED -= 2;
 			if (AtlantisConfig.GAME_SPEED < 0) {
 				AtlantisConfig.GAME_SPEED = 0;
 			}
+			getBwapi().setGameSpeed(AtlantisConfig.GAME_SPEED);
 		}
 
 		// 109 (-) - decrease game speed
-		else if (keyCode == 107) {
+		else if (keyCode == 109) {
 			AtlantisConfig.GAME_SPEED += 2;
+			getBwapi().setGameSpeed(AtlantisConfig.GAME_SPEED);
 		}
 	}
 
@@ -166,12 +168,12 @@ public class Atlantis implements BWAPIEventListener {
 	public void unitCreate(int unitID) {
 		Unit unit = Unit.getByID(unitID);
 		if (unit != null) {
-			AtlantisInformationManager.addOurUnfinishedUnit(unit.getType());
+			AtlantisUnitInformationManager.addOurUnfinishedUnit(unit.getType());
 
 			// Our unit
 			if (unit.getPlayer().isSelf()) {
 				AtlantisGame.getProductionStrategy().rebuildQueue();
-				AtlantisGroupCommander.battleUnitCreated(unit);
+				AtlantisGroupManager.battleUnitCreated(unit);
 			}
 		}
 	}
@@ -180,12 +182,12 @@ public class Atlantis implements BWAPIEventListener {
 	public void unitDestroy(int unitID) {
 		Unit unit = Unit.getByID(unitID);
 		if (unit != null) {
-			AtlantisInformationManager.unitDestroyed(unit);
+			AtlantisUnitInformationManager.unitDestroyed(unit);
 
 			// Our unit
 			if (unit.getPlayer().isSelf()) {
 				AtlantisGame.getProductionStrategy().rebuildQueue();
-				AtlantisGroupCommander.battleUnitDestroyed(unit);
+				AtlantisGroupManager.battleUnitDestroyed(unit);
 			}
 		}
 	}
@@ -197,7 +199,7 @@ public class Atlantis implements BWAPIEventListener {
 
 			// Enemy unit
 			if (unit.getPlayer().isEnemy()) {
-				AtlantisInformationManager.discoveredEnemyUnit(unit);
+				AtlantisUnitInformationManager.discoveredEnemyUnit(unit);
 			}
 		}
 	}
@@ -213,7 +215,7 @@ public class Atlantis implements BWAPIEventListener {
 
 			// Enemy unit
 			if (unit.getPlayer().isEnemy()) {
-				AtlantisInformationManager.removeEnemyUnitVisible(unit);
+				AtlantisUnitInformationManager.removeEnemyUnitVisible(unit);
 			}
 		}
 	}
@@ -229,7 +231,7 @@ public class Atlantis implements BWAPIEventListener {
 
 			// Enemy unit
 			if (unit.getPlayer().isEnemy()) {
-				AtlantisInformationManager.addEnemyUnitVisible(unit);
+				AtlantisUnitInformationManager.addEnemyUnitVisible(unit);
 			}
 		}
 	}

@@ -25,6 +25,9 @@ public class SelectUnits {
 
 	private Units units;
 
+	// CACHED variables
+	private static Unit _cached_mainBase = null;
+
 	// =====================================================================
 	// Constructor is private, use our(), enemy() or neutral() methods
 
@@ -43,6 +46,21 @@ public class SelectUnits {
 
 		for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
 			if (unit.isAlive() && unit.isCompleted() && !unit.isSpiderMine()) {
+				units.addUnit(unit);
+			}
+		}
+
+		return new SelectUnits(units);
+	}
+
+	/**
+	 * Selects all of our finished combat units (no buildings, workers, spider mines etc).
+	 */
+	public static SelectUnits ourCombatUnits() {
+		Units units = new Units();
+
+		for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
+			if (unit.isAlive() && unit.isCompleted() && !unit.isSpiderMine() && !unit.isType(AtlantisConfig.WORKER)) {
 				units.addUnit(unit);
 			}
 		}
@@ -310,8 +328,12 @@ public class SelectUnits {
 	 * discovered base.
 	 */
 	public static Unit mainBase() {
-		Units bases = ourBases().units();
-		return bases.isEmpty() ? null : bases.first();
+		if (_cached_mainBase == null) {
+			Units bases = ourBases().units();
+			_cached_mainBase = bases.isEmpty() ? null : bases.first();
+		}
+
+		return _cached_mainBase;
 	}
 
 	/**

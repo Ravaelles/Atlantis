@@ -20,7 +20,6 @@ public class AtlantisProduceUnitManager {
 		ArrayList<UnitType> produceNow = productionStrategy.getUnitsToProduceRightNow();
 		for (UnitType unitType : produceNow) {
 			if (unitType.isBuilding()) {
-				System.out.println("HEHE: " + unitType);
 				AtlantisConstructingManager.requestConstructionOf(unitType);
 			} else {
 				produceUnit(unitType);

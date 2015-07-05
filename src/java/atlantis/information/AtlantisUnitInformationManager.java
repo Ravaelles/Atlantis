@@ -4,18 +4,19 @@ import java.util.ArrayList;
 
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
+import atlantis.AtlantisConfig;
 import atlantis.wrappers.MappingCounter;
 
-public class AtlantisInformationManager {
+public class AtlantisUnitInformationManager {
 
-	private static MappingCounter<UnitType> ourUnitsFininised = new MappingCounter<>();
-	private static MappingCounter<UnitType> ourUnitsUnfininised = new MappingCounter<>();
+	protected static MappingCounter<UnitType> ourUnitsFininised = new MappingCounter<>();
+	protected static MappingCounter<UnitType> ourUnitsUnfininised = new MappingCounter<>();
 
-	private static MappingCounter<UnitType> enemyUnitsDiscoveredCounter = new MappingCounter<>();
-	private static MappingCounter<UnitType> enemyUnitsVisibleCounter = new MappingCounter<>();
+	protected static MappingCounter<UnitType> enemyUnitsDiscoveredCounter = new MappingCounter<>();
+	protected static MappingCounter<UnitType> enemyUnitsVisibleCounter = new MappingCounter<>();
 
-	private static ArrayList<Unit> enemyUnitsDiscovered = new ArrayList<>();
-	private static ArrayList<Unit> enemyUnitsVisible = new ArrayList<>();
+	protected static ArrayList<Unit> enemyUnitsDiscovered = new ArrayList<>();
+	protected static ArrayList<Unit> enemyUnitsVisible = new ArrayList<>();
 
 	// =========================================================
 	// Number of units changed
@@ -71,7 +72,7 @@ public class AtlantisInformationManager {
 	}
 
 	// =========================================================
-	// GET
+	// COUNT
 
 	/**
 	 * Returns cached amount of our units of given type.
@@ -86,6 +87,23 @@ public class AtlantisInformationManager {
 	 */
 	public static int countEnemyUnitsOfType(UnitType type) {
 		return enemyUnitsDiscoveredCounter.getValueFor(type);
+	}
+
+	// =========================================================
+	// Helper methods
+
+	/**
+	 * Returns cached amount of our worker units.
+	 */
+	public static int countOurWorkers() {
+		return countOurUnitsOfType(AtlantisConfig.WORKER);
+	}
+
+	/**
+	 * Returns cached amount of our bases.
+	 */
+	public static int countOurBases() {
+		return countOurUnitsOfType(AtlantisConfig.BASE);
 	}
 
 }

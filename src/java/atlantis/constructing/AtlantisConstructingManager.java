@@ -21,7 +21,7 @@ public class AtlantisConstructingManager {
 	 * Issues request of constructing new building. It will automatically find position and builder unit for it.
 	 */
 	public static void requestConstructionOf(UnitType building) {
-		System.out.println("@@@@ REQUESTED: " + building);
+		// System.out.println("@@@@ REQUESTED: " + building);
 		if (!building.isBuilding()) {
 			throw new RuntimeException("Requested construction of not building!!! Type: " + building);
 		}

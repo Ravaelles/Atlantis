@@ -23,8 +23,12 @@ public class AtlantisPainter {
 	 * Executed once per frame, at the end of all other actions.
 	 */
 	public static void paint() {
-		Atlantis.getBwapi().drawTargets(true);
 		sideMessageCounter = 0;
+
+		// =========================================================
+
+		// Atlantis.getBwapi().drawTargets(true); // Draws line from unit to the target position
+		// Atlantis.getBwapi().getMap().drawTerrainData(Atlantis.getBwapi());
 
 		// =========================================================
 

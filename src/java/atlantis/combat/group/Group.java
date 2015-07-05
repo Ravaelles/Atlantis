@@ -1,6 +1,10 @@
 package atlantis.combat.group;
 
 import atlantis.combat.group.missions.Mission;
+import atlantis.combat.micro.DefaultMeleeManager;
+import atlantis.combat.micro.DefaultRangedManager;
+import atlantis.combat.micro.MicroMeleeManager;
+import atlantis.combat.micro.MicroRangedManager;
 import atlantis.wrappers.Units;
 
 /**
@@ -14,9 +18,19 @@ public class Group extends Units {
 	private String name;
 
 	/**
-	 * Current mission for this group.
+	 * Current mission object for this group.
 	 */
 	private Mission mission;
+
+	/**
+	 * Manager for microing ranged units.
+	 */
+	private MicroRangedManager microRangedManager;
+
+	/**
+	 * Manager for microing melee units.
+	 */
+	private MicroMeleeManager microMeleeManager;
 
 	// =========================================================
 
@@ -24,6 +38,8 @@ public class Group extends Units {
 		super();
 		this.name = name;
 		this.mission = mission;
+		this.microRangedManager = new DefaultRangedManager();
+		this.microMeleeManager = new DefaultMeleeManager();
 	}
 
 	// =========================================================
@@ -37,7 +53,7 @@ public class Group extends Units {
 		// Name is null, use autonaming
 		if (name == null) {
 			String[] names = new String[] { "Alpha", "Bravo", "Charlie", "Delta", "Echo" };
-			name = names[AtlantisGroupCommander.groups.size()];
+			name = names[AtlantisGroupManager.groups.size()];
 		}
 
 		Group group = new Group(name, mission);
@@ -58,6 +74,53 @@ public class Group extends Units {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Current mission object for this group.
+	 */
+	public Mission getMission() {
+		return mission;
+	}
+
+	/**
+	 * Current mission object for this group.
+	 */
+
+	public void setMission(Mission mission) {
+		this.mission = mission;
+	}
+
+	/**
+	 * Manager for microing ranged units.
+	 */
+
+	public MicroRangedManager getMicroRangedManager() {
+		return microRangedManager;
+	}
+
+	/**
+	 * Manager for microing ranged units.
+	 */
+
+	public void setMicroRangedManager(MicroRangedManager microRangedManager) {
+		this.microRangedManager = microRangedManager;
+	}
+
+	/**
+	 * Manager for microing melee units.
+	 */
+
+	public MicroMeleeManager getMicroMeleeManager() {
+		return microMeleeManager;
+	}
+
+	/**
+	 * Manager for microing melee units.
+	 */
+
+	public void setMicroMeleeManager(MicroMeleeManager microMeleeManager) {
+		this.microMeleeManager = microMeleeManager;
 	}
 
 }
