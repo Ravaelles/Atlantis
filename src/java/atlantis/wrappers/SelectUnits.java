@@ -60,7 +60,8 @@ public class SelectUnits {
 		Units units = new Units();
 
 		for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
-			if (unit.isAlive() && unit.isCompleted() && !unit.isSpiderMine() && !unit.isType(AtlantisConfig.WORKER)) {
+			if (unit.isAlive() && unit.isCompleted() && !unit.isSpiderMine() && !unit.isBuilding()
+					&& !unit.isType(AtlantisConfig.WORKER)) {
 				units.addUnit(unit);
 			}
 		}
@@ -410,6 +411,13 @@ public class SelectUnits {
 	 */
 	public Collection<Unit> list() {
 		return units().list();
+	}
+
+	/**
+	 * Returns number of units matching all previous conditions.
+	 */
+	public int count() {
+		return units.size();
 	}
 
 }

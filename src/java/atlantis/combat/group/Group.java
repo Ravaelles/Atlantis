@@ -12,6 +12,9 @@ import atlantis.wrappers.Units;
  */
 public class Group extends Units {
 
+	private static int firstFreeID = 1;
+	private int ID = firstFreeID++;
+
 	/**
 	 * Convenience name for the group e.g. "Alpha", "Bravo", "Delta".
 	 */
@@ -121,6 +124,13 @@ public class Group extends Units {
 
 	public void setMicroMeleeManager(MicroMeleeManager microMeleeManager) {
 		this.microMeleeManager = microMeleeManager;
+	}
+
+	/**
+	 * Returns ID for this battle group (1, 2, 3, 4 etc).
+	 */
+	public int getID() {
+		return ID;
 	}
 
 }

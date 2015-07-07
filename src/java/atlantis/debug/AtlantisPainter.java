@@ -37,10 +37,11 @@ public class AtlantisPainter {
 		// =========================================================
 		// Paint from least important to most important (last is on the top)
 
+		paintColorCirclesAroundUnits();
 		paintConstructionProgress();
 		paintBuildingHealth();
 		paintUnitsBeingTrainedInBuildings();
-		paintCooldownOverUnits();
+		paintSpecialsOverUnits();
 		paintProductionQueue();
 
 		// =========================================================
@@ -83,20 +84,46 @@ public class AtlantisPainter {
 	}
 
 	/**
+	 * Paints circles around units which mean what's their mission.
+	 */
+	private static void paintColorCirclesAroundUnits() {
+		for (Unit unit : SelectUnits.ourCombatUnits().list()) {
+
+			// STARTING ATTACK
+			if (unit.isStartingAttack()) {
+				bwapi.drawCircle(unit, 12, BWColor.Red, false, false);
+				bwapi.drawCircle(unit, 11, BWColor.Red, false, false);
+			}
+
+			// ATTACKING
+			if (unit.isAttacking()) {
+				bwapi.drawCircle(unit, 10, BWColor.Orange, false, false);
+				bwapi.drawCircle(unit, 9, BWColor.Orange, false, false);
+			}
+
+			// MOVE
+			if (unit.isMoving()) {
+				bwapi.drawCircle(unit, 8, BWColor.Teal, false, false);
+				bwapi.drawCircle(unit, 7, BWColor.Teal, false, false);
+			}
+		}
+	}
+
+	/**
 	 * Paints small progress bars over units that have cooldown.
 	 */
-	private static void paintCooldownOverUnits() {
-		String cooldown;
-
+	private static void paintSpecialsOverUnits() {
 		for (Unit unit : SelectUnits.ourCombatUnits().list()) {
+
+			// =========================================================
+			// === Paint cooldown progress bars over units
+			// =========================================================
 			if (unit.getGroundWeaponCooldown() > 0) {
 				int cooldownWidth = 20;
 				int cooldownHeight = 4;
 				int cooldownLeft = unit.getPX() - cooldownWidth / 2;
 				int cooldownTop = unit.getPY() + 23;
-				cooldown = BWColor.getColorString(BWColor.Yellow) + "(" + unit.getGroundWeaponCooldown() + ")";
-
-				// =========================================================
+				String cooldown = BWColor.getColorString(BWColor.Yellow) + "(" + unit.getGroundWeaponCooldown() + ")";
 
 				Position topLeft = new Position(cooldownLeft, cooldownTop);
 
@@ -116,6 +143,21 @@ public class AtlantisPainter {
 				// Paint label
 				bwapi.drawText(new Position(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
 			}
+
+			// =========================================================
+			// === Paint battle group
+			// =========================================================
+			if (unit.getGroup() != null) {
+				bwapi.drawText(new Position(unit.getPX() - 5, unit.getPY() - 7), BWColor.getColorString(BWColor.Grey)
+						+ "#" + unit.getGroup().getID(), false);
+			}
+
+			// =========================================================
+			// === Paint num of other units around this unit
+			// =========================================================
+			int ourAround = SelectUnits.ourCombatUnits().inRadius(1.7, unit).count();
+			bwapi.drawText(new Position(unit.getPX() - 7, unit.getPY() - 15), BWColor.getColorString(BWColor.Orange)
+					+ "(" + ourAround + ")", false);
 		}
 	}
 

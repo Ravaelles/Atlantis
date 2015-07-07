@@ -37,13 +37,16 @@ public class AtlantisCombatCommander {
 			}
 
 			// Handle generic actions according to current mission (e.g. DEFEND, ATTACK)
-			group.getMission().update(unit);
+			boolean microDisallowed = group.getMission().update(unit);
 
-			// Handle micro-managers for given unit according to its type
-			if (unit.isRangedUnit()) {
-				group.getMicroRangedManager().update(unit);
-			} else if (unit.isMeleeUnit()) {
-				group.getMicroMeleeManager().update(unit);
+			if (!microDisallowed) {
+
+				// Handle micro-managers for given unit according to its type
+				if (unit.isMeleeUnit()) {
+					group.getMicroMeleeManager().update(unit);
+				} else {
+					group.getMicroRangedManager().update(unit);
+				}
 			}
 		}
 	}

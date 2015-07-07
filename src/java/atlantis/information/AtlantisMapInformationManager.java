@@ -57,9 +57,9 @@ public class AtlantisMapInformationManager {
 
 					// Try to match choke points between the two regions
 					for (ChokePoint mainRegionChoke : mainRegion.getChokePoints()) {
-						System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
-								+ (mainRegionChoke.getFirstRegion() != null) + " / "
-								+ (mainRegionChoke.getSecondRegion() != null));
+						// System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
+						// + (mainRegionChoke.getFirstRegion() != null) + " / "
+						// + (mainRegionChoke.getSecondRegion() != null));
 						if (secondRegion.equals(mainRegionChoke.getFirstRegion())
 								|| secondRegion.equals(mainRegionChoke.getSecondRegion())) {
 							cached_mainBaseChokepoint = mainRegionChoke;

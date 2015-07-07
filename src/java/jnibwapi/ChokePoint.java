@@ -64,6 +64,10 @@ public class ChokePoint extends Position {
 		return radius;
 	}
 
+	public double getRadiusInTiles() {
+		return radius / 32;
+	}
+
 	/** @deprecated use {@link #getFirstRegion()} instead */
 	@Deprecated
 	public int getFirstRegionID() {

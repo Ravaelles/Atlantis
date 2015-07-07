@@ -14,7 +14,9 @@ import jnibwapi.types.UnitType.UnitTypes;
 import jnibwapi.types.UpgradeType;
 import jnibwapi.types.UpgradeType.UpgradeTypes;
 import atlantis.Atlantis;
+import atlantis.AtlantisGame;
 import atlantis.combat.group.Group;
+import atlantis.combat.micro.AtlantisRunning;
 
 /**
  * Represents a StarCraft unit.
@@ -1056,6 +1058,8 @@ public class Unit extends Position implements Cloneable {
 			return false; // Ignore this command request
 		}
 
+		setTooltip("Attack position");
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Attack_Move, p, queued));
 	}
 
@@ -1064,8 +1068,11 @@ public class Unit extends Position implements Cloneable {
 		// @AtlantisChange
 		// Do not execute the same command twice
 		if (isAttacking() && getTarget() != null && getTarget().equals(target)) {
+			System.out.println("Don't attack twice");
 			return false; // Ignore this command request
 		}
+
+		setTooltip("Attack " + target.getShortName());
 
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Attack_Unit, target, queued));
 	}
@@ -1110,6 +1117,8 @@ public class Unit extends Position implements Cloneable {
 			return false; // Ignore this command request
 		}
 
+		setTooltip("Move");
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Move, p, queued));
 	}
 
@@ -1129,6 +1138,15 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean stop(boolean queued) {
+
+		// @AtlantisChange
+		// Do not execute the same command twice
+		if (isIdle()) {
+			return false; // Ignore this command request
+		}
+
+		setTooltip("Stop");
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Stop, queued));
 	}
 
@@ -1151,6 +1169,8 @@ public class Unit extends Position implements Cloneable {
 		if (isRepairing()) {
 			return false; // Ignore this command request
 		}
+
+		setTooltip("Repair");
 
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Repair, target, queued));
 	}
@@ -1304,19 +1324,38 @@ public class Unit extends Position implements Cloneable {
 	// =========================================================
 
 	private Group group = null;
-	private boolean repairableMechanically = false;
-	private boolean healable = false;
+	private AtlantisRunning running = new AtlantisRunning(this);
+
+	private boolean cached_repairableMechanically = false;
+	private boolean cached_healable = false;
 
 	// =========================================================
 	// Atlantis constructor
 
 	private void atlantisInit() {
-		repairableMechanically = isBuilding() || isVehicle();
-		healable = isInfantry() || isWorker();
+		cached_repairableMechanically = isBuilding() || isVehicle();
+		cached_healable = isInfantry() || isWorker();
 	}
 
 	// =========================================================
 	// Important methods
+
+	/**
+	 * Unit will move by given distance (in build tiles) from given position.
+	 */
+	public void moveAwayFrom(Position position, double moveDistance) {
+		int dx = position.getPX() - getPX();
+		int dy = position.getPY() - getPY();
+		double vectorLength = Math.sqrt(dx * dx + dy * dy);
+		double modifier = (moveDistance * 32) / vectorLength;
+		dx = (int) (dx * modifier);
+		dy = (int) (dy * modifier);
+
+		Position newPosition = new Position(getPX() - dx, getPY() - dy, PosType.PIXEL);
+
+		move(newPosition, false);
+		setTooltip("Move away");
+	}
 
 	public static Unit getByID(int unitID) {
 		for (Unit unit : Atlantis.getBwapi().getAllUnits()) {
@@ -1347,15 +1386,15 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean canBeHealed() {
-		return repairableMechanically || healable;
+		return cached_repairableMechanically || cached_healable;
 	}
 
 	public boolean isRepairableMechanically() {
-		return repairableMechanically;
+		return cached_repairableMechanically;
 	}
 
 	public boolean isHealable() {
-		return healable;
+		return cached_healable;
 	}
 
 	public boolean isBuilding() {
@@ -1401,7 +1440,7 @@ public class Unit extends Position implements Cloneable {
 	// Auxiliary methods
 
 	public boolean isType(UnitType type) {
-		return type.equals(type);
+		return getType().equals(type);
 	}
 
 	public boolean isType(UnitType... types) {
@@ -1457,20 +1496,32 @@ public class Unit extends Position implements Cloneable {
 		}
 	}
 
+	/**
+	 * Indicates that this unit should be running from given enemy unit.
+	 */
+	public void runFrom(Unit nearestEnemy) {
+		getRunning().runFrom(nearestEnemy);
+	}
+
 	// =========================================================
 	// Debugging / Painting methods
 
 	private String tooltip;
-
-	// private int tooltipStartInSeconds;
+	private int tooltipStartInFrames;
 
 	public void setTooltip(String tooltip) {
 		this.tooltip = tooltip;
-		// this.tooltipStartInSeconds = AtlantisGame.getTimeSeconds();
+		this.tooltipStartInFrames = AtlantisGame.getTimeFrames();
 	}
 
 	public String getTooltip() {
-		return this.tooltip;
+		if (AtlantisGame.getTimeFrames() - tooltipStartInFrames > 30) {
+			String tooltipToReturn = this.tooltip;
+			this.tooltip = null;
+			return tooltipToReturn;
+		} else {
+			return tooltip;
+		}
 	}
 
 	public void removeTooltip() {
@@ -1491,12 +1542,26 @@ public class Unit extends Position implements Cloneable {
 	// =========================================================
 	// Getters & setters
 
+	/**
+	 * Returns true if given unit is currently (this frame) running from an enemy.
+	 */
+	public boolean isRunning() {
+		return running.isRunning();
+	}
+
 	public Group getGroup() {
 		return group;
 	}
 
 	public void setGroup(Group group) {
 		this.group = group;
+	}
+
+	/**
+	 * Returns AtlantisRunning object for this unit.
+	 */
+	public AtlantisRunning getRunning() {
+		return running;
 	}
 
 }

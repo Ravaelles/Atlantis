@@ -17,7 +17,7 @@ public class AtlantisGroupManager {
 
 	// =========================================================
 
-	public static void battleUnitCreated(Unit unit) {
+	public static void combatUnitCreated(Unit unit) {
 		if (shouldSkipUnit(unit)) {
 			return;
 		}
@@ -40,7 +40,7 @@ public class AtlantisGroupManager {
 	}
 
 	private static boolean shouldSkipUnit(Unit unit) {
-		return unit.isBuilding() || unit.isWorker();
+		return unit.isBuilding() || unit.isWorker() || unit.isSpiderMine();
 	}
 
 	// =========================================================

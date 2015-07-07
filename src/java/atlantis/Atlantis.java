@@ -168,28 +168,27 @@ public class Atlantis implements BWAPIEventListener {
 	public void unitCreate(int unitID) {
 		Unit unit = Unit.getByID(unitID);
 		if (unit != null) {
-			AtlantisUnitInformationManager.addOurUnfinishedUnit(unit.getType());
 
 			// Our unit
 			if (unit.getPlayer().isSelf()) {
+				AtlantisUnitInformationManager.addOurUnfinishedUnit(unit.getType());
 				AtlantisGame.getProductionStrategy().rebuildQueue();
-				AtlantisGroupManager.battleUnitCreated(unit);
 			}
 		}
 	}
 
 	@Override
 	public void unitDestroy(int unitID) {
-		Unit unit = Unit.getByID(unitID);
-		if (unit != null) {
-			AtlantisUnitInformationManager.unitDestroyed(unit);
-
-			// Our unit
-			if (unit.getPlayer().isSelf()) {
-				AtlantisGame.getProductionStrategy().rebuildQueue();
-				AtlantisGroupManager.battleUnitDestroyed(unit);
-			}
-		}
+		// Unit unit = Unit.getByID(unitID);
+		// if (unit != null) {
+		// AtlantisUnitInformationManager.unitDestroyed(unit);
+		//
+		// // Our unit
+		// if (unit.getPlayer().isSelf()) {
+		// AtlantisGame.getProductionStrategy().rebuildQueue();
+		// AtlantisGroupManager.battleUnitDestroyed(unit);
+		// }
+		// }
 	}
 
 	@Override
@@ -246,10 +245,32 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void unitComplete(int unitID) {
+		Unit unit = Unit.getByID(unitID);
+		if (unit != null) {
+
+			// Our unit
+			if (unit.getPlayer().isSelf()) {
+				AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
+				AtlantisGroupManager.combatUnitCreated(unit);
+			}
+		}
 	}
 
 	@Override
 	public void playerDropped(int playerID) {
+	}
+
+	// =========================================================
+	// Utility / Axuliary methods
+
+	/**
+	 * This is convenience that takes any number of arguments and displays them in one line.
+	 */
+	public static void debug(Object... args) {
+		for (int i = 0; i < args.length - 1; i++) {
+			System.out.print(args[i] + " / ");
+		}
+		System.out.println(args[args.length - 1]);
 	}
 
 }

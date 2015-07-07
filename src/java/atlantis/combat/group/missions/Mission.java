@@ -7,6 +7,9 @@ import jnibwapi.Unit;
  */
 public abstract class Mission {
 
-	public abstract void update(Unit unit);
+	/**
+	 * If returns true, it's not allowed for micro managers to act.
+	 */
+	public abstract boolean update(Unit unit);
 
 }
