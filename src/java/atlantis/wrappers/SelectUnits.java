@@ -290,7 +290,7 @@ public class SelectUnits {
 	public static SelectUnits ourBuildingsIncludingUnfinished() {
 		SelectUnits selectedUnits = SelectUnits.ourIncludingUnfinished();
 		for (Unit unit : selectedUnits.list()) {
-			if (!unit.isWorker()) {
+			if (!unit.isBuilding()) {
 				selectedUnits.filterOut(unit);
 			}
 		}

@@ -112,4 +112,28 @@ public class ChokePoint extends Position {
 	// ===== Start of ATLANTIS CODE ============================
 	// =========================================================
 
+	/**
+	 * If true, this choke point will be fully ignored and never returned. Purpose of this is field is to limit invalid
+	 * chokepoints that are returned for some maps.
+	 */
+	private boolean disabled = false;
+
+	// =========================================================
+
+	/**
+	 * If true, this choke point will be fully ignored and never returned. Purpose of this is field is to limit invalid
+	 * chokepoints that are returned for some maps.
+	 */
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	/**
+	 * If true, this choke point will be fully ignored and never returned. Purpose of this is field is to limit invalid
+	 * chokepoints that are returned for some maps.
+	 */
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
 }

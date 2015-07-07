@@ -94,8 +94,8 @@ public class Units {
 		Collections.sort(units, new Comparator<Unit>() {
 			@Override
 			public int compare(Unit u1, Unit u2) {
-				return position.distanceTo(u1) < position.distanceTo(u2) ? (nearestFirst ? 1 : -1) : (nearestFirst ? -1
-						: 1);
+				return position.distanceTo(u1) < position.distanceTo(u2) ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1
+						: -1);
 			}
 		});
 

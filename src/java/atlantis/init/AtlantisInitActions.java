@@ -1,5 +1,6 @@
 package atlantis.init;
 
+import atlantis.information.AtlantisMapInformationManager;
 import atlantis.workers.AtlantisMineralGathering;
 
 public class AtlantisInitActions {
@@ -10,6 +11,7 @@ public class AtlantisInitActions {
 	 */
 	public static void executeInitialActions() {
 		AtlantisMineralGathering.initialAssignWorkersToMinerals();
+		AtlantisMapInformationManager.disableSomeOfTheChokePoints();
 	}
 
 }

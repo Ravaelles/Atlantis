@@ -32,7 +32,7 @@ public class AtlantisCombatCommander {
 		for (Unit unit : group.arrayList()) {
 
 			// Never interrupt shooting units
-			if (unit.isStartingAttack()) {
+			if (shouldNotDisturbUnit(unit)) {
 				return;
 			}
 
@@ -47,4 +47,11 @@ public class AtlantisCombatCommander {
 			}
 		}
 	}
+
+	// =========================================================
+
+	private static boolean shouldNotDisturbUnit(Unit unit) {
+		return unit.isStartingAttack();
+	}
+
 }

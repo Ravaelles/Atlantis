@@ -3,6 +3,7 @@ package atlantis;
 import jnibwapi.types.RaceType.RaceTypes;
 import jnibwapi.types.UnitType;
 import atlantis.production.strategies.AbstractProductionStrategy;
+import atlantis.util.RUtilities;
 
 public class AtlantisGame {
 
@@ -57,6 +58,13 @@ public class AtlantisGame {
 
 	// =========================================================
 	// Auxiliary
+
+	/**
+	 * Returns random int number from range [min, max], both inclusive.
+	 */
+	public static int rand(int min, int max) {
+		return RUtilities.rand(min, max);
+	}
 
 	/**
 	 * Returns true if user plays as Terran.

@@ -12,16 +12,16 @@ import java.util.Set;
  * For a description of fields see: http://code.google.com/p/bwta/wiki/Region
  */
 public class Region {
-	
+
 	public static final int numAttributes = 3;
-	
+
 	private final int ID;
 	private final Position center;
 	private final Position[] polygon;
 	private Set<Region> connectedRegions = new HashSet<>();
 	private Set<ChokePoint> chokePoints = new HashSet<>();
 	private Set<Region> allConnectedRegions = null;
-	
+
 	public Region(int[] data, int index, int[] coordinates) {
 		ID = data[index++];
 		int centerX = data[index++];
@@ -32,45 +32,47 @@ public class Region {
 			polygon[i / 2] = new Position(coordinates[i], coordinates[i + 1]);
 		}
 	}
-	
+
 	public int getID() {
 		return ID;
 	}
-	
+
 	public Position getCenter() {
 		return center;
 	}
-	
+
 	/** @deprecated use {@link #getCenter()} instead */
+	@Deprecated
 	public int getCenterX() {
 		return center.getPX();
 	}
-	
+
 	/** @deprecated use {@link #getCenter()} instead */
+	@Deprecated
 	public int getCenterY() {
 		return center.getPY();
 	}
-	
+
 	public Position[] getPolygon() {
 		return Arrays.copyOf(polygon, polygon.length);
 	}
-	
+
 	protected void addChokePoint(ChokePoint chokePoint) {
 		chokePoints.add(chokePoint);
 	}
-	
+
 	public Set<ChokePoint> getChokePoints() {
 		return Collections.unmodifiableSet(chokePoints);
 	}
-	
+
 	protected void addConnectedRegion(Region other) {
 		connectedRegions.add(other);
 	}
-	
+
 	public Set<Region> getConnectedRegions() {
 		return Collections.unmodifiableSet(connectedRegions);
 	}
-	
+
 	/** Get all transitively connected regions for a given region */
 	public Set<Region> getAllConnectedRegions() {
 		// Evaluate on first call
@@ -87,5 +89,33 @@ public class Region {
 		}
 		return Collections.unmodifiableSet(allConnectedRegions);
 	}
-	
+
+	// =========================================================
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Region other = (Region) obj;
+		if (ID != other.ID)
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return ID;
+	}
+
+	@Override
+	public String toString() {
+		return "Region " + center.toString();
+	}
+
+	// =========================================================
+
 }

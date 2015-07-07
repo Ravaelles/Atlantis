@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import jnibwapi.Position;
+import atlantis.information.AtlantisMapInformationManager;
 import atlantis.util.RUtilities;
 
 /**
@@ -93,8 +94,28 @@ public class Positions<T extends Position> {
 		Collections.sort(positions, new Comparator<Position>() {
 			@Override
 			public int compare(Position u1, Position u2) {
-				return position.distanceTo(u1) < position.distanceTo(u2) ? (nearestFirst ? 1 : -1) : (nearestFirst ? -1
-						: 1);
+				return position.distanceTo(u1) < position.distanceTo(u2) ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1
+						: -1);
+			}
+		});
+
+		return this;
+	}
+
+	/**
+	 * Sorts all positions according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then after
+	 * sorting first position will be the one closest to given position.
+	 */
+	public Positions sortByGroundDistanceTo(final Position position, final boolean nearestFirst) {
+		Collections.sort(positions, new Comparator<Position>() {
+			@Override
+			public int compare(Position u1, Position u2) {
+				double distToU1 = AtlantisMapInformationManager.getMap().getGroundDistance(position, u1);
+				if (distToU1 < 0) {
+					distToU1 = 99999;
+				}
+				double distToU2 = AtlantisMapInformationManager.getMap().getGroundDistance(position, u2);
+				return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
 			}
 		});
 

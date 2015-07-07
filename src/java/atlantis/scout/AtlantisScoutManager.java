@@ -62,7 +62,9 @@ public class AtlantisScoutManager {
 
 		// Attack
 		else {
-			scout.attack(enemyBase, false);
+			if (!scout.isStartingAttack()) {
+				scout.attack(enemyBase, false);
+			}
 		}
 	}
 

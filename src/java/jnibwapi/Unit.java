@@ -1049,10 +1049,24 @@ public class Unit extends Position implements Cloneable {
 	// ------------------------------ UNIT COMMANDS
 	// ------------------------------ //
 	public boolean attack(Position p, boolean queued) {
+
+		// @AtlantisChange
+		// Do not execute the same command twice
+		if (isAttacking() && getTargetPosition() != null && getTargetPosition().equals(p)) {
+			return false; // Ignore this command request
+		}
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Attack_Move, p, queued));
 	}
 
-	public boolean attack(Unit target, boolean queued) {
+	public boolean attackUnit(Unit target, boolean queued) {
+
+		// @AtlantisChange
+		// Do not execute the same command twice
+		if (isAttacking() && getTarget() != null && getTarget().equals(target)) {
+			return false; // Ignore this command request
+		}
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Attack_Unit, target, queued));
 	}
 
@@ -1089,6 +1103,13 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean move(Position p, boolean queued) {
+
+		// @AtlantisChange
+		// Do not execute the same command twice
+		if (isMoving() && getTargetPosition() != null && getTargetPosition().equals(p)) {
+			return false; // Ignore this command request
+		}
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Move, p, queued));
 	}
 
@@ -1097,6 +1118,13 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean holdPosition(boolean queued) {
+
+		// @AtlantisChange
+		// Do not execute the same command twice
+		if (isHoldingPosition()) {
+			return false; // Ignore this command request
+		}
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Hold_Position, queued));
 	}
 
@@ -1117,6 +1145,13 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean repair(Unit target, boolean queued) {
+
+		// @AtlantisChange
+		// Do not execute the same command twice
+		if (isRepairing()) {
+			return false; // Ignore this command request
+		}
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Repair, target, queued));
 	}
 
@@ -1379,6 +1414,22 @@ public class Unit extends Position implements Cloneable {
 
 	public int getHPPercent() {
 		return 100 * getHitPoints() / getType().getMaxHitPoints();
+	}
+
+	public boolean isWounded() {
+		return getHitPoints() < getMaxHP();
+	}
+
+	public int getHP() {
+		return hitPoints;
+	}
+
+	public int getMaxHP() {
+		return getType().getMaxHitPoints();
+	}
+
+	public String getShortName() {
+		return getType().getShortName();
 	}
 
 	/**

@@ -1,11 +1,12 @@
 package atlantis.information;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import jnibwapi.BaseLocation;
 import jnibwapi.ChokePoint;
+import jnibwapi.Map;
 import jnibwapi.Position;
 import jnibwapi.Region;
 import jnibwapi.Unit;
@@ -19,6 +20,7 @@ import atlantis.wrappers.SelectUnits;
  */
 public class AtlantisMapInformationManager {
 
+	private static List<ChokePoint> cached_chokePoints = null;
 	private static ChokePoint cached_mainBaseChokepoint = null;
 
 	// =========================================================
@@ -30,12 +32,40 @@ public class AtlantisMapInformationManager {
 	public static ChokePoint getMainBaseChokepoint() {
 		if (cached_mainBaseChokepoint == null) {
 			Unit mainBase = SelectUnits.mainBase();
+			// System.out.println("mainBase = " + mainBase);
 			if (mainBase != null) {
-				Region region = getRegion(mainBase);
-				if (region != null) {
-					Set<ChokePoint> chokePoints = region.getChokePoints();
-					if (!chokePoints.isEmpty()) {
-						cached_mainBaseChokepoint = chokePoints.iterator().next();
+
+				// Define region where our main base is
+				Region mainRegion = getRegion(mainBase);
+				// System.out.println("mainRegion = " + mainRegion);
+				if (mainRegion != null) {
+
+					// Define localization of the second base to expand
+					BaseLocation secondBase = getSecondNearestBaseLocation(Atlantis.getBwapi().getSelf()
+							.getStartLocation());
+					// System.out.println("secondBase = " + secondBase);
+					if (secondBase == null) {
+						return null;
+					}
+
+					// Define region of the second base
+					Region secondRegion = secondBase.getRegion();
+					// System.out.println("secondRegion = " + secondRegion);
+					if (secondRegion == null) {
+						return null;
+					}
+
+					// Try to match choke points between the two regions
+					for (ChokePoint mainRegionChoke : mainRegion.getChokePoints()) {
+						System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
+								+ (mainRegionChoke.getFirstRegion() != null) + " / "
+								+ (mainRegionChoke.getSecondRegion() != null));
+						if (secondRegion.equals(mainRegionChoke.getFirstRegion())
+								|| secondRegion.equals(mainRegionChoke.getSecondRegion())) {
+							cached_mainBaseChokepoint = mainRegionChoke;
+							// System.out.println("REGION FOUND! " + cached_mainBaseChokepoint);
+							break;
+						}
 					}
 				}
 			}
@@ -65,8 +95,38 @@ public class AtlantisMapInformationManager {
 		return null;
 	}
 
+	/**
+	 * Returns nearest base location (by the actual ground distance) to the given base location.
+	 */
+	private static BaseLocation getSecondNearestBaseLocation(Position nearestTo) {
+
+		// Get list of all base locations
+		Positions<BaseLocation> baseLocations = new Positions<BaseLocation>();
+		baseLocations.addPositions(getBaseLocations());
+
+		// Sort them all by closest to given nearestTo position
+		baseLocations.sortByDistanceTo(nearestTo, true);
+
+		// Return second nearest location.
+		int counter = 0;
+		for (BaseLocation baseLocation : baseLocations.list()) {
+			if (counter > 0) {
+				return baseLocation;
+			}
+			counter++;
+		}
+		return null;
+	}
+
 	// =========================================================
 	// Generic methods - wrappers for JNIBWAPI methods
+
+	/**
+	 * Returns map object.
+	 */
+	public static Map getMap() {
+		return Atlantis.getBwapi().getMap();
+	}
 
 	/**
 	 * Returns list of places that have geyser and mineral fields so they are the places where you could build a base.
@@ -96,7 +156,15 @@ public class AtlantisMapInformationManager {
 	 * prefers ranged units. They are perfect places for terran bunkers.
 	 */
 	public static List<ChokePoint> getChokePoints() {
-		return Atlantis.getBwapi().getMap().getChokePoints();
+		if (cached_chokePoints == null) {
+			cached_chokePoints = new ArrayList<>();
+			for (ChokePoint choke : Atlantis.getBwapi().getMap().getChokePoints()) {
+				if (!choke.isDisabled()) {
+					cached_chokePoints.add(choke);
+				}
+			}
+		}
+		return cached_chokePoints;
 	}
 
 	/**
@@ -121,6 +189,53 @@ public class AtlantisMapInformationManager {
 	 */
 	public static boolean isVisible(Position position) {
 		return Atlantis.getBwapi().isVisible(position);
+	}
+
+	// =========================================================
+	// Special methods
+
+	/**
+	 * Analyzing map and terrain is far from perfect. For many maps it happens that there are some choke points near the
+	 * main base which are completely invalid e.g. they lead to a dead-end or in the best case are pointing to a place
+	 * where the enemy won't come from. This method "disables" those points so they're never returned, but they don't
+	 * actually get removed. It only sets disabled=true flag for them.
+	 */
+	public static void disableSomeOfTheChokePoints() {
+		Unit mainBase = SelectUnits.mainBase();
+		if (mainBase == null) {
+			System.out.println("Error #821493a");
+			return;
+		}
+
+		Region baseRegion = getRegion(mainBase);
+		if (baseRegion == null) {
+			System.out.println("Error #821493b");
+			return;
+		}
+
+		Collection<ChokePoint> chokes = baseRegion.getChokePoints();
+		for (ChokePoint choke : chokes) {
+			if (baseRegion.getChokePoints().contains(choke)) {
+				System.out.println("Disabling choke point: " + choke);
+				choke.setDisabled(true);
+			}
+		}
+
+		// MapPoint secondBaseLocation =
+		// TerranCommandCenter.getSecondBaseLocation();
+		// System.out.println("secondBaseLocation = " + secondBaseLocation);
+		// Collection<ChokePoint> chokes =
+		// MapExploration.getChokePointsNear(
+		// secondBaseLocation, 20);
+		// Region baseRegion =
+		// xvr.getBwapi().getMap().getRegion(xvr.getFirstBase());
+		// for (ChokePoint choke : chokes) {
+		// if (baseRegion.getChokePoints().contains(choke)) {
+		// // chokePointsProcessed.remove(choke);
+		// System.out.println("Disabling choke point: " + choke);
+		// choke.setDisabled(true);
+		// }
+		// }
 	}
 
 }
