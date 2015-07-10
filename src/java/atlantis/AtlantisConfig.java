@@ -23,6 +23,7 @@ public class AtlantisConfig {
 	public static UnitType WORKER = null;
 	public static UnitType BARRACKS = null;
 	public static UnitType SUPPLY = null;
+	public static UnitType GAS_BUILDING = null;
 
 	/**
 	 * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They will be
@@ -44,6 +45,7 @@ public class AtlantisConfig {
 		AtlantisConfig.WORKER = UnitTypes.Terran_SCV;
 		AtlantisConfig.BARRACKS = UnitTypes.Terran_Barracks;
 		AtlantisConfig.SUPPLY = UnitTypes.Terran_Supply_Depot;
+		AtlantisConfig.GAS_BUILDING = UnitTypes.Terran_Refinery;
 	}
 
 	// =========================================================
@@ -57,6 +59,7 @@ public class AtlantisConfig {
 		validate("WORKER", WORKER);
 		validate("BARRACKS", BARRACKS);
 		validate("SUPPLY", SUPPLY);
+		validate("GAS_BUILDING", GAS_BUILDING);
 		validate("You have to specify production strategy\n-> AtlantisConfig.useProductionStrategy", productionStrategy);
 	}
 

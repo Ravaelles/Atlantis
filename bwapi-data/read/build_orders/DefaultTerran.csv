@@ -19,3 +19,5 @@ Description;Type;Name;Blocking;Priority
 18;Unit;Academy;No;Normal
 19;Unit;Marine;No;Normal
 20;Upgrade;U-238 Shells;No;Normal
+21;Unit;Barracks;No;Normal
+22;Unit;SCV;No;Normal

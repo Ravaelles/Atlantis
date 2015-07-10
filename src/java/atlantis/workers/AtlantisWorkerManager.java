@@ -19,7 +19,7 @@ public class AtlantisWorkerManager {
 
 		// ORDINARY WORKER
 		else {
-			gatherResourcesIfNeeded(unit);
+			sendToGatherMinerals(unit);
 		}
 
 		updateTooltip(unit);
@@ -27,14 +27,18 @@ public class AtlantisWorkerManager {
 
 	// =========================================================
 
-	private static void gatherResourcesIfNeeded(Unit unit) {
+	/**
+	 * Assigns given worker unit (which is idle by now ar least doesn't have anything to do) to gather minerals.
+	 */
+	private static void sendToGatherMinerals(Unit worker) {
 
 		// If basically unit is not doing a shit, send it to gather resources (minerals or gas).
-		if (unit.isIdle()
-				|| (!unit.isGatheringMinerals() && !unit.isGatheringGas() && !unit.isMoving() && !unit.isConstructing()
-						&& !unit.isAttacking() && !unit.isRepairing())) {
-			unit.setTooltip("Move ya ass!");
-			AtlantisMineralGathering.gatherResources(unit);
+		// But check for multiple conditions (like if isn't constructing, repairing etc).
+		if (worker.isIdle()
+				|| (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
+						&& !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
+			worker.setTooltip("Move ya ass!");
+			AtlantisMineralGathering.gatherResources(worker);
 		}
 	}
 
