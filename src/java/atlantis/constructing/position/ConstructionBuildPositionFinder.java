@@ -1,6 +1,7 @@
 package atlantis.constructing.position;
 
 import jnibwapi.Position;
+import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import atlantis.AtlantisGame;
 import atlantis.wrappers.SelectUnits;
@@ -10,15 +11,15 @@ public class ConstructionBuildPositionFinder {
 	/**
 	 * Returns build position for next building of given type.
 	 */
-	public static Position findPositionForNew(UnitType building) {
-		return findPositionForNew(building, null, -1);
+	public static Position findPositionForNew(Unit builder, UnitType building) {
+		return findPositionForNew(builder, building, null, -1);
 	}
 
 	/**
 	 * Returns build position for next building of given type. If <b>nearTo</b> is not null, it forces to find position
 	 * <b>maxDistance</b> build tiles from given position.
 	 */
-	public static Position findPositionForNew(UnitType building, Position nearTo, double maxDistance) {
+	public static Position findPositionForNew(Unit builder, UnitType building, Position nearTo, double maxDistance) {
 
 		// Buildings extracting GAS
 		if (building.isGasBuilding()) {
@@ -57,17 +58,17 @@ public class ConstructionBuildPositionFinder {
 
 			// Terran
 			if (AtlantisGame.playsAsTerran()) {
-				return TerranBuildPositionFinder.findStandardPositionFor(building, nearTo, maxDistance);
+				return TerranBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
 			}
 
 			// Protoss
 			else if (AtlantisGame.playsAsProtoss()) {
-				return ProtossBuildPositionFinder.findStandardPositionFor(building, nearTo, maxDistance);
+				return ProtossBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
 			}
 
 			// Zerg
 			else {
-				return ZergBuildPositionFinder.findStandardPositionFor(building, nearTo, maxDistance);
+				return ZergBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
 			}
 		}
 	}

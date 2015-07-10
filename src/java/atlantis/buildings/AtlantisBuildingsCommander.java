@@ -18,7 +18,7 @@ public class AtlantisBuildingsCommander {
 		for (Unit building : SelectUnits.ourBuildings().list()) {
 
 			// If building is busy, don't disturb.
-			if (building.getTrainingQueueSize() > 0) {
+			if (building.getTrainingQueueSize() > 0 || building.isUpgrading()) {
 				continue;
 			}
 

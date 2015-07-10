@@ -4,6 +4,7 @@ import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import atlantis.AtlantisGame;
+import atlantis.constructing.position.AbstractBuildPositionFinder;
 
 public class AtlantisBuilderManager {
 
@@ -16,6 +17,8 @@ public class AtlantisBuilderManager {
 
 		handleConstruction(builder);
 	}
+
+	// =========================================================
 
 	private static void handleConstruction(Unit builder) {
 		ConstructionOrder constructionOrder = AtlantisConstructingManager.getConstructionOrderFor(builder);
@@ -54,6 +57,9 @@ public class AtlantisBuilderManager {
 			// immediate as unit is standing just right there
 			if (AtlantisGame.hasMinerals(buildingType.getMineralPrice())
 					&& AtlantisGame.hasGas(buildingType.getGasPrice())) {
+				if (!AbstractBuildPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition)) {
+					buildPosition = constructionOrder.findNewBuildPosition();
+				}
 				builder.build(buildPosition, buildingType);
 			}
 		}

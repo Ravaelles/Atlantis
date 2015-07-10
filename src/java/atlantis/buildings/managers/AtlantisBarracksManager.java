@@ -1,5 +1,7 @@
 package atlantis.buildings.managers;
 
+import java.util.ArrayList;
+
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
@@ -31,7 +33,26 @@ public class AtlantisBarracksManager {
 			}
 		}
 
-		return true;
+		// =========================================================
+		// Check PRODUCTION QUEUE
+
+		ArrayList<UnitType> produceRightNow = AtlantisGame.getProductionStrategy().getUnitsToProduceRightNow();
+
+		// EMPTY PRODUCTION QUEUE - can build
+		if (produceRightNow.isEmpty()) {
+			return true;
+		}
+
+		// Production queue not empty
+		else {
+			for (UnitType unitType : produceRightNow) {
+				if (unitType.isInfantry()) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	// =========================================================

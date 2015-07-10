@@ -6,21 +6,27 @@ import atlantis.constructing.AtlantisConstructingManager;
 
 public class AtlantisSupplyManager {
 
-	private static int supply;
+	private static int supplyTotal;
 	private static int supplyFree;
 
 	// =========================================================
 
 	public static void update() {
-		supply = AtlantisGame.getSupplyTotal();
-		supplyFree = AtlantisGame.getSupplyFree();
+		supplyTotal = AtlantisGame.getSupplyTotal();
 
-		if (supply <= 20) {
-			supply1to20();
-		} else if (supply <= 60) {
-			supply21to60();
-		} else {
-			supply61up();
+		/**
+		 * Check if should use auto supply manager
+		 */
+		if (AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS <= supplyTotal) {
+			supplyFree = AtlantisGame.getSupplyFree();
+
+			if (supplyTotal <= 20) {
+				supply1to20();
+			} else if (supplyTotal <= 60) {
+				supply21to60();
+			} else {
+				supply61up();
+			}
 		}
 	}
 
@@ -39,7 +45,7 @@ public class AtlantisSupplyManager {
 	}
 
 	private static void supply61up() {
-		if (supplyFree <= 20 && supply < 200 && !requestedConstructionOfSupply()) {
+		if (supplyFree <= 20 && supplyTotal < 200 && !requestedConstructionOfSupply()) {
 			requestAdditionalSupply();
 		}
 	}

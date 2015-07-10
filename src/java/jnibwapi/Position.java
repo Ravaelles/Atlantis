@@ -1,5 +1,7 @@
 package jnibwapi;
 
+import atlantis.information.AtlantisMapInformationManager;
+
 /** Generalised representation of a position for JNIBWAPI. Immutable. */
 public class Position {
 
@@ -250,6 +252,13 @@ public class Position {
 		int dy = y - position.y;
 
 		return Math.sqrt(dx * dx + dy * dy);
+	}
+
+	/**
+	 * Returns ground distance to given position (in build tiles) or negative value if there's no connection.
+	 */
+	public double distanceGroundTo(Position position) {
+		return AtlantisMapInformationManager.getMap().getGroundDistance(this, position) / 32;
 	}
 
 	/**

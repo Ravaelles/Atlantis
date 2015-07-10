@@ -1,6 +1,6 @@
 Description;Type;Name;Blocking;Priority
 1;Unit;SCV;No;Normal
-2;Unit;SCV;No;Normal
+2;;SCV;No;Normal
 3;Unit;SCV;No;Normal
 4;Unit;SCV;No;Normal
 5;Unit;Barracks;No;Normal
@@ -14,8 +14,3 @@ Description;Type;Name;Blocking;Priority
 13;Unit;SCV;No;Normal
 14;Unit;Marine;No;Normal
 15;Unit;Marine;No;Normal
-16;Unit;Refinery;No;Normal
-17;Unit;SCV;No;Normal
-18;Unit;Academy;No;Normal
-19;Unit;Marine;No;Normal
-20;Upgrade;U-238 Shells;No;Normal

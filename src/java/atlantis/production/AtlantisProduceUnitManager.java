@@ -6,7 +6,7 @@ import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AtlantisConstructingManager;
-import atlantis.production.strategies.AbstractProductionStrategy;
+import atlantis.production.strategies.AtlantisProductionStrategy;
 import atlantis.wrappers.SelectUnits;
 
 public class AtlantisProduceUnitManager {
@@ -15,7 +15,7 @@ public class AtlantisProduceUnitManager {
 	 * Is responsible for training new units and issuing construction requests for buildings.
 	 */
 	protected static void update() {
-		AbstractProductionStrategy productionStrategy = AtlantisConfig.getProductionStrategy();
+		AtlantisProductionStrategy productionStrategy = AtlantisConfig.getProductionStrategy();
 
 		ArrayList<UnitType> produceNow = productionStrategy.getUnitsToProduceRightNow();
 		for (UnitType unitType : produceNow) {

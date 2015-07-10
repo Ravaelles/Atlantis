@@ -2,7 +2,7 @@ package atlantis;
 
 import jnibwapi.types.RaceType.RaceTypes;
 import jnibwapi.types.UnitType;
-import atlantis.production.strategies.AbstractProductionStrategy;
+import atlantis.production.strategies.AtlantisProductionStrategy;
 import atlantis.util.RUtilities;
 
 public class AtlantisGame {
@@ -90,7 +90,7 @@ public class AtlantisGame {
 	/**
 	 * Returns object that is responsible for the production queue.
 	 */
-	public static AbstractProductionStrategy getProductionStrategy() {
+	public static AtlantisProductionStrategy getProductionStrategy() {
 		return AtlantisConfig.getProductionStrategy();
 	}
 

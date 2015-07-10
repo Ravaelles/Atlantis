@@ -3,6 +3,7 @@ package atlantis.constructing;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
+import atlantis.constructing.position.ConstructionBuildPositionFinder;
 import atlantis.wrappers.SelectUnits;
 
 public class ConstructionOrder {
@@ -25,6 +26,13 @@ public class ConstructionOrder {
 	}
 
 	// =========================================================
+
+	/**
+	 * If it's impossible to build in given position (e.g. occupied by units), find new position.
+	 */
+	public Position findNewBuildPosition() {
+		return ConstructionBuildPositionFinder.findPositionForNew(builder, buildingType);
+	}
 
 	/**
 	 * In order to find a tile for building, one worker must be assigned as builder. We can assign any worker and we're

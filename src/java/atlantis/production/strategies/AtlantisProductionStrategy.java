@@ -3,6 +3,7 @@ package atlantis.production.strategies;
 import java.util.ArrayList;
 
 import jnibwapi.types.UnitType;
+import jnibwapi.types.UpgradeType;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.information.AtlantisUnitInformationManager;
@@ -10,7 +11,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
 import atlantis.wrappers.MappingCounter;
 
-public abstract class AbstractProductionStrategy {
+public abstract class AtlantisProductionStrategy {
 
 	/**
 	 * Ordered list of production orders as initially read from the file. It never changes
@@ -31,7 +32,7 @@ public abstract class AbstractProductionStrategy {
 	// =========================================================
 	// Constructor
 
-	public AbstractProductionStrategy() {
+	public AtlantisProductionStrategy() {
 		initializeProductionQueue();
 	}
 
@@ -114,6 +115,13 @@ public abstract class AbstractProductionStrategy {
 	}
 
 	/**
+	 * Returns true if we should produce this unit now.
+	 */
+	public boolean shouldProduceNow(UnitType type) {
+		return getUnitsToProduceRightNow().contains(type);
+	}
+
+	/**
 	 * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
 	 */
 	public ArrayList<UnitType> getProductionQueueNextUnits(int howMany) {
@@ -137,27 +145,47 @@ public abstract class AbstractProductionStrategy {
 		// Skip first row as it's CSV header
 		for (int i = 1; i < loadedFile.length; i++) {
 			String[] row = loadedFile[i];
-			int inRowCounter = 0;
+			int inRowCounter = 1; // Skip first column as it's only description
+			ProductionOrder order = null;
 
 			// =========================================================
 			// Parse entire row of strings
 
 			// Type of entry: Unit / Research etc
-			@SuppressWarnings("unused")
-			String entryType = row[inRowCounter++];
+			String entryType = row[inRowCounter++].toLowerCase().trim();
+			String nameString = row[inRowCounter++].toLowerCase().trim();
 
-			// Unit type
-			String unitTypeString = row[inRowCounter++].toLowerCase();
-			UnitType unitType = UnitType.getByName(unitTypeString);
-			if (unitType == null) {
-				System.err.println("Invalid unit name: " + unitTypeString);
+			// Unit
+			if ("unit".equals(entryType) || "".equals(entryType)) {
+				UnitType unitType = UnitType.getByName(nameString);
+				if (unitType == null) {
+					System.err.println("Invalid unit name: " + nameString);
+					System.exit(-1);
+				}
+				order = new ProductionOrder(unitType);
+			}
+
+			// Upgrade
+			else if ("upgrade".equals(entryType)) {
+				UpgradeType upgrade = UpgradeType.getByName(nameString);
+				if (upgrade == null) {
+					System.err.println("Invalid upgrade name: " + nameString);
+					System.exit(-1);
+				}
+				order = new ProductionOrder(upgrade);
+			}
+
+			// Invalid entry type
+			else {
+				System.err.println("Invalid entry type: " + entryType);
 				System.exit(-1);
 			}
 
+			// =========================================================
 			// Blocking
 			boolean isBlocking;
-			String blockingString = row[inRowCounter++];
-			if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("No")) {
+			String blockingString = row[inRowCounter++].toLowerCase().trim();
+			if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
 				isBlocking = false;
 			} else {
 				isBlocking = true;
@@ -166,7 +194,7 @@ public abstract class AbstractProductionStrategy {
 			// Priority
 			boolean isLowestPriority = false;
 			boolean isHighestPriority = false;
-			String priorityString = row[inRowCounter++];
+			String priorityString = row[inRowCounter++].toLowerCase().trim();
 			if (!priorityString.isEmpty()) {
 				priorityString = priorityString.toLowerCase();
 				if (priorityString.contains("low")) {
@@ -179,7 +207,6 @@ public abstract class AbstractProductionStrategy {
 			// =========================================================
 			// Create ProductionOrder object from strings-row
 
-			ProductionOrder order = new ProductionOrder(unitType);
 			if (isBlocking) {
 				order.markAsBlocking();
 			}
@@ -203,7 +230,7 @@ public abstract class AbstractProductionStrategy {
 
 		// Read file into 2D String array
 		String path = "bwapi-data/read/build_orders/" + getFilename();
-		String[][] loadedFile = RUtilities.loadCsv(path, 4);
+		String[][] loadedFile = RUtilities.loadCsv(path, 5);
 
 		// We can display file here, if we want to
 		// displayLoadedFile(loadedFile);

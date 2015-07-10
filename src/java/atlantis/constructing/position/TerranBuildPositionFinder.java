@@ -20,7 +20,7 @@ public class TerranBuildPositionFinder extends AbstractBuildPositionFinder {
 	 * position.<br />
 	 * It checks if buildings aren't too close one to another and things like that.
 	 * */
-	public static Position findStandardPositionFor(UnitType building, Position nearTo, double maxDistance) {
+	public static Position findStandardPositionFor(Unit builder, UnitType building, Position nearTo, double maxDistance) {
 		TerranBuildPositionFinder.building = building;
 		TerranBuildPositionFinder.nearTo = nearTo;
 		TerranBuildPositionFinder.maxDistance = maxDistance;
@@ -37,7 +37,7 @@ public class TerranBuildPositionFinder extends AbstractBuildPositionFinder {
 				for (int tileY = nearTo.getBY() - searchRadius; tileY <= nearTo.getBY() + searchRadius; tileY++) {
 					if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
 						Position position = new Position(tileX, tileY, PosType.BUILD);
-						if (doesPositionFulfillAllConditions(position)) {
+						if (doesPositionFulfillAllConditions(builder, position)) {
 							return position;
 						}
 					}
@@ -60,10 +60,10 @@ public class TerranBuildPositionFinder extends AbstractBuildPositionFinder {
 	 * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all necessary
 	 * requirements like: doesn't collide with another building, isn't too close to minerals etc.
 	 */
-	private static boolean doesPositionFulfillAllConditions(Position position) {
+	private static boolean doesPositionFulfillAllConditions(Unit builder, Position position) {
 
 		// If it's not physically possible to build here (e.g. rocks, other buildings etc)
-		if (!canPhysicallyBuildHere(building, position)) {
+		if (!canPhysicallyBuildHere(builder, building, position)) {
 			return false;
 		}
 

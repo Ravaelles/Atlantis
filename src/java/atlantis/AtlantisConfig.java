@@ -4,7 +4,7 @@ import jnibwapi.types.RaceType;
 import jnibwapi.types.RaceType.RaceTypes;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
-import atlantis.production.strategies.AbstractProductionStrategy;
+import atlantis.production.strategies.AtlantisProductionStrategy;
 
 /**
  * This class is used to set up your Atlantis framework by providing some basic informations about your bot. Example
@@ -24,9 +24,14 @@ public class AtlantisConfig {
 	public static UnitType BARRACKS = null;
 	public static UnitType SUPPLY = null;
 
+	/**
+	 * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They will be
+	 * <b>automatically built only if your total supply exceeds this value</b>.
+	 */
+	public static int USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
 	public static int SCOUT_IS_NTH_WORKER = 7;
 
-	private static AbstractProductionStrategy productionStrategy;
+	private static AtlantisProductionStrategy productionStrategy;
 
 	// =========================================================
 
@@ -85,14 +90,14 @@ public class AtlantisConfig {
 	 * Pass an object that will be responsible for the production queue. See e.g. class named
 	 * DefaultTerranProductionStrategy.
 	 */
-	public static void useProductionStrategy(AbstractProductionStrategy productionStrategy) {
+	public static void useProductionStrategy(AtlantisProductionStrategy productionStrategy) {
 		AtlantisConfig.productionStrategy = productionStrategy;
 	}
 
 	/**
 	 * Returns object that is responsible for the production queue.
 	 */
-	public static AbstractProductionStrategy getProductionStrategy() {
+	public static AtlantisProductionStrategy getProductionStrategy() {
 		return productionStrategy;
 	}
 

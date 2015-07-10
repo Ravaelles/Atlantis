@@ -1068,7 +1068,6 @@ public class Unit extends Position implements Cloneable {
 		// @AtlantisChange
 		// Do not execute the same command twice
 		if (isAttacking() && getTarget() != null && getTarget().equals(target)) {
-			System.out.println("Don't attack twice");
 			return false; // Ignore this command request
 		}
 

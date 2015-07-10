@@ -27,39 +27,36 @@ public class MissionDefend extends Mission {
 		// =========================================================
 		// Top-importancy orders, can cancel micro orders
 
-		// Too close to
-		if (isCriticallyCloseToChokePoint(unit, chokepoint)) {
-			unit.moveAwayFrom(chokepoint, 1.0);
-			unit.setTooltip("Get back");
-			return true;
-		}
-
 		// =========================================================
 		// Normal orders
 
 		// Don't disturb unit
 		if (canIssueOrderToUnit(unit)) {
 
-			if (chokepoint != null) {
+			// Too close to
+			if (isCriticallyCloseToChokePoint(unit, chokepoint)) {
+				unit.moveAwayFrom(chokepoint, 1.0);
+				unit.setTooltip("Get back");
+				return true;
+			}
 
-				// Unit is quite close to the choke point
-				if (isCloseEnoughToChokePoint(unit, chokepoint)) {
+			// Unit is quite close to the choke point
+			if (isCloseEnoughToChokePoint(unit, chokepoint)) {
 
-					// Too many stacked units
-					if (isTooManyUnitsAround(unit, chokepoint)) {
-						unit.moveAwayFrom(chokepoint, 1.0);
-						unit.setTooltip("Stacked");
-					}
-
-					// Units aren't stacked too much
-					else {
-					}
+				// Too many stacked units
+				if (isTooManyUnitsAround(unit, chokepoint)) {
+					unit.moveAwayFrom(chokepoint, 1.0);
+					unit.setTooltip("Stacked");
 				}
 
-				// Unit is far from choke point
+				// Units aren't stacked too much
 				else {
-					unit.move(chokepoint, false);
 				}
+			}
+
+			// Unit is far from choke point
+			else {
+				unit.move(chokepoint, false);
 			}
 		}
 
@@ -88,6 +85,9 @@ public class MissionDefend extends Mission {
 	}
 
 	private boolean isCriticallyCloseToChokePoint(Unit unit, ChokePoint chokepoint) {
+		if (unit == null || chokepoint == null) {
+			return false;
+		}
 
 		// Distance to the center of choke point
 		double distToChoke = chokepoint.distanceTo(unit) - chokepoint.getRadiusInTiles();

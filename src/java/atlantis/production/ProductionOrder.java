@@ -1,6 +1,7 @@
 package atlantis.production;
 
 import jnibwapi.types.UnitType;
+import jnibwapi.types.UpgradeType;
 
 public class ProductionOrder {
 
@@ -14,9 +15,14 @@ public class ProductionOrder {
 	private int id = firstFreeId++;
 
 	/**
-	 * Unit type to be build.
+	 * Unit type to be build. Can be null if this production order is for upgrade, not unit.
 	 */
-	private UnitType unitType;
+	private UnitType unitType = null;
+
+	/**
+	 * Upgrade type to research. Can be null if this production order is for unit, not upgrade.
+	 */
+	private UpgradeType upgrade;
 
 	/**
 	 * 
@@ -33,6 +39,11 @@ public class ProductionOrder {
 	public ProductionOrder(UnitType unitType) {
 		this();
 		this.unitType = unitType;
+	}
+
+	public ProductionOrder(UpgradeType upgrade) {
+		super();
+		this.upgrade = upgrade;
 	}
 
 	private ProductionOrder() {
@@ -96,6 +107,10 @@ public class ProductionOrder {
 
 	public UnitType getUnitType() {
 		return unitType;
+	}
+
+	public UpgradeType getUpgrade() {
+		return upgrade;
 	}
 
 }

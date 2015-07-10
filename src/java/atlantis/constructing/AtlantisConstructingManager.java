@@ -21,7 +21,7 @@ public class AtlantisConstructingManager {
 	 * Issues request of constructing new building. It will automatically find position and builder unit for it.
 	 */
 	public static void requestConstructionOf(UnitType building) {
-		// System.out.println("@@@@ REQUESTED: " + building);
+		System.out.println("@@@@ REQUESTED: " + building);
 		if (!building.isBuilding()) {
 			throw new RuntimeException("Requested construction of not building!!! Type: " + building);
 		}
@@ -30,9 +30,14 @@ public class AtlantisConstructingManager {
 		ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
 		newConstructionOrder.assignRandomBuilderForNow();
 
+		if (newConstructionOrder.getBuilder() == null) {
+			return;
+		}
+
 		// Find place for new building
-		Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(building);
-		// System.out.println("@@ " + building + " at " + positionToBuild);
+		Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
+				newConstructionOrder.getBuilder(), building);
+		System.out.println("@@ " + building + " at " + positionToBuild);
 
 		// Successfully found position for new building
 		Unit optimalBuilder = null;
@@ -43,6 +48,7 @@ public class AtlantisConstructingManager {
 
 			// Assign optimal builder for this building
 			optimalBuilder = newConstructionOrder.assignOptimalBuilder();
+			System.out.println("@@ BUILDER = " + optimalBuilder);
 
 			// Add to list of pending orders
 			constructionOrders.add(newConstructionOrder);

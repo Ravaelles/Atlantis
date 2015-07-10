@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.production.strategies.DefaultTerranProductionStrategy;
 
-public class AtlantisBot {
+public class AtlantisTide {
 
 	/**
 	 * Sets up Atlantis config and runs the bot.
@@ -13,6 +13,9 @@ public class AtlantisBot {
 
 		// Set up some very basic config
 		AtlantisConfig.useConfigForTerran();
+		AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 15;
+
+		// Set production strategy (build orders) to use.
 		AtlantisConfig.useProductionStrategy(new DefaultTerranProductionStrategy());
 
 		// Starts bot using Atlantis

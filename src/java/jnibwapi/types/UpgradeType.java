@@ -1,5 +1,6 @@
 package jnibwapi.types;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.Map;
  */
 public class UpgradeType {
 	private static Map<Integer, UpgradeType> idToUpgradeType = new HashMap<>();
-	
+
 	public static class UpgradeTypes {
 		public static final UpgradeType Terran_Infantry_Armor = new UpgradeType(0);
 		public static final UpgradeType Terran_Vehicle_Plating = new UpgradeType(1);
@@ -103,18 +104,18 @@ public class UpgradeType {
 		// Undefined55-60
 		public static final UpgradeType None = new UpgradeType(61);
 		public static final UpgradeType Unknown = new UpgradeType(62);
-		
+
 		public static UpgradeType getUpgradeType(int id) {
 			return idToUpgradeType.get(id);
 		}
-		
+
 		public static Collection<UpgradeType> getAllUpgradeTypes() {
 			return Collections.unmodifiableCollection(idToUpgradeType.values());
 		}
 	}
-	
+
 	public static final int numAttributes = 10;
-	
+
 	private String name;
 	private int ID;
 	private int raceID;
@@ -126,12 +127,12 @@ public class UpgradeType {
 	private int upgradeTimeFactor;
 	private int maxRepeats;
 	private int whatUpgradesTypeID;
-	
+
 	private UpgradeType(int ID) {
 		this.ID = ID;
 		idToUpgradeType.put(ID, this);
 	}
-	
+
 	public void initialize(int[] data, int index, String name) {
 		if (ID != data[index++])
 			throw new IllegalArgumentException();
@@ -144,57 +145,81 @@ public class UpgradeType {
 		upgradeTimeFactor = data[index++];
 		maxRepeats = data[index++];
 		whatUpgradesTypeID = data[index++];
-		
+
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public int getID() {
 		return ID;
 	}
-	
+
 	public int getRaceID() {
 		return raceID;
 	}
-	
+
 	public int getMineralPriceBase() {
 		return mineralPriceBase;
 	}
-	
+
 	public int getMineralPriceFactor() {
 		return mineralPriceFactor;
 	}
-	
+
 	public int getGasPriceBase() {
 		return gasPriceBase;
 	}
-	
+
 	public int getGasPriceFactor() {
 		return gasPriceFactor;
 	}
-	
+
 	public int getUpgradeTimeBase() {
 		return upgradeTimeBase;
 	}
-	
+
 	public int getUpgradeTimeFactor() {
 		return upgradeTimeFactor;
 	}
-	
+
 	public int getMaxRepeats() {
 		return maxRepeats;
 	}
-	
+
 	public int getWhatUpgradesTypeID() {
 		return whatUpgradesTypeID;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName() + " (" + getID() + ")";
 	}
-	
+
+	// =========================================================
+
+	/**
+	 * You can use "Terran_U-238_Shells" or "U-238_Shells" or even "U-238 Shells".
+	 */
+	public static UpgradeType getByName(String string) {
+		string = string.replace(" ", "_").toLowerCase();
+		string = string.replace("-", "_").toLowerCase();
+
+		for (Field field : UpgradeTypes.class.getFields()) {
+			String otherTypeName = field.getName().toLowerCase();
+			if (otherTypeName.contains(string)) {
+				try {
+					UpgradeType upgradeType = (UpgradeType) UpgradeTypes.class.getField(field.getName()).get(null);
+					return upgradeType;
+				} catch (Exception e) {
+					System.err.println("error trying to find UnitType for: '" + string + "'\n" + e.getMessage());
+				}
+			}
+		}
+
+		return null;
+	}
+
 }

@@ -8,17 +8,21 @@ public class DefaultRangedManager extends MicroRangedManager {
 
 	@Override
 	public void update(Unit unit) {
-		if (shouldNotInterrupt(unit)) {
+		if (canIssueOrderToUnit(unit)) {
 			Unit nearestEnemy = SelectUnits.enemy().nearestTo(unit);
 			if (nearestEnemy != null) {
-				double distToEnemy = nearestEnemy.distanceTo(unit);
-				double distToMainBase = unit.distanceTo(SelectUnits.mainBase());
-				double enemyDistToMainBase = nearestEnemy.distanceTo(SelectUnits.mainBase());
+				// double distToEnemy = nearestEnemy.distanceTo(unit);
+				// double distToMainBase = unit.distanceTo(SelectUnits.mainBase());
+				double enemyDistToDefendedPosition = nearestEnemy.distanceTo(SelectUnits.mainBase());
 
 				// If unit has mission defend, don't attack close targets if further than X
-				if (unit.getGroup().getMission().equals(Missions.DEFEND)
-						&& (distToEnemy >= 10 || distToMainBase <= enemyDistToMainBase + 7)) {
-					return;
+				if (unit.getGroup().getMission().equals(Missions.DEFEND)) {
+					boolean enemyVeryFarFromBase = enemyDistToDefendedPosition > 20
+							&& nearestEnemy.distanceGroundTo(SelectUnits.mainBase()) > 30;
+					if (enemyVeryFarFromBase) {
+						return;
+					}
+
 				}
 
 				// // Run from the enemy
@@ -38,12 +42,12 @@ public class DefaultRangedManager extends MicroRangedManager {
 
 	// =========================================================
 
-	private boolean shouldNotInterrupt(Unit unit) {
+	private boolean canIssueOrderToUnit(Unit unit) {
 		if (unit.isStartingAttack()) {
-			return true;
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 }
