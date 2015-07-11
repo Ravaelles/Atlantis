@@ -3,7 +3,7 @@ package atlantis.init;
 import atlantis.information.AtlantisMapInformationManager;
 import atlantis.workers.AtlantisMineralGathering;
 
-public class AtlantisInitActions {
+public class AtlantisInitialActions {
 
 	/**
 	 * This method is executed only once, at the game start. It's supposed to initialize game by doing some one-time

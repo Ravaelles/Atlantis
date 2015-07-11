@@ -102,6 +102,16 @@ public class ProductionOrder {
 		return "Order: " + unitType.getName() + ", blocking:" + blocking + ", priority:" + priority;
 	}
 
+	public String getShortName() {
+		if (unitType != null) {
+			return unitType.getShortName();
+		} else if (upgrade != null) {
+			return upgrade.getName();
+		} else {
+			return "Unknown";
+		}
+	}
+
 	// =========================================================
 	// Getters
 

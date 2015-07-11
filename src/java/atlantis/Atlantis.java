@@ -6,7 +6,7 @@ import jnibwapi.Position;
 import jnibwapi.Unit;
 import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.information.AtlantisUnitInformationManager;
-import atlantis.init.AtlantisInitActions;
+import atlantis.init.AtlantisInitialActions;
 import atlantis.util.RUtilities;
 
 public class Atlantis implements BWAPIEventListener {
@@ -93,7 +93,7 @@ public class Atlantis implements BWAPIEventListener {
 		if (!oneTimeBoolean && RUtilities.rand(0, 100) <= 1) {
 			oneTimeBoolean = true;
 			System.out.println("### Starting Atlantis... ###");
-			AtlantisInitActions.executeInitialActions();
+			AtlantisInitialActions.executeInitialActions();
 			System.out.println("### Atlantis is working! ###");
 		}
 

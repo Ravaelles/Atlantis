@@ -6,6 +6,7 @@ import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
 import atlantis.AtlantisGame;
+import atlantis.production.ProductionOrder;
 
 public class AtlantisBarracksManager {
 
@@ -36,17 +37,18 @@ public class AtlantisBarracksManager {
 		// =========================================================
 		// Check PRODUCTION QUEUE
 
-		ArrayList<UnitType> produceRightNow = AtlantisGame.getProductionStrategy().getUnitsToProduceRightNow();
+		ArrayList<ProductionOrder> unitsToProduce = AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(
+				true);
 
 		// EMPTY PRODUCTION QUEUE - can build
-		if (produceRightNow.isEmpty()) {
+		if (unitsToProduce.isEmpty()) {
 			return true;
 		}
 
 		// Production queue not empty
 		else {
-			for (UnitType unitType : produceRightNow) {
-				if (unitType.isInfantry()) {
+			for (ProductionOrder order : unitsToProduce) {
+				if (order.getUnitType().isInfantry()) {
 					return true;
 				}
 			}

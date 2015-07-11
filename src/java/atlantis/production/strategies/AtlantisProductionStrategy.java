@@ -62,20 +62,37 @@ public abstract class AtlantisProductionStrategy {
 		MappingCounter<UnitType> virtualCounter = new MappingCounter<>();
 
 		for (ProductionOrder order : initialProductionQueue) {
-			UnitType type = order.getUnitType();
-			virtualCounter.incrementValueFor(type);
+			boolean isOkayToAdd = false;
 
-			int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
-			int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
+			// =========================================================
+			// Unit
+			if (order.getUnitType() != null) {
+				UnitType type = order.getUnitType();
+				virtualCounter.incrementValueFor(type);
 
-			if (order.getUnitType().isBuilding()) {
-				weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);
-				// System.out.println("@@@ Not started constructions of '" + type + "': "
-				// + AtlantisConstructingManager.countNotStartedConstructionsOfType(type));
+				int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
+				int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
+
+				if (order.getUnitType().isBuilding()) {
+					weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);
+					// System.out.println("@@@ Not started constructions of '" + type + "': "
+					// + AtlantisConstructingManager.countNotStartedConstructionsOfType(type));
+				}
+
+				// If we don't have this unit, add it to the current production queue.
+				if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
+					isOkayToAdd = true;
+				}
 			}
 
-			// If we don't have this unit, add it to the current production queue.
-			if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
+			// Upgrade
+			else if (order.getUpgrade() != null) {
+				isOkayToAdd = true;
+			}
+
+			// =========================================================
+
+			if (isOkayToAdd) {
 				currentProductionQueue.add(order);
 				if (currentProductionQueue.size() >= 8) {
 					break;
@@ -85,24 +102,38 @@ public abstract class AtlantisProductionStrategy {
 	}
 
 	/**
-	 * Returns list of units that we should produce (train or build) now. It iterates over latest build orders and
-	 * returns these orders that we can build in this very moment (we can afford them and they match our strategy).
+	 * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only want to
+	 * get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and returns those
+	 * build orders that we can build in this very moment (we can afford them and they match our strategy).
 	 */
-	public ArrayList<UnitType> getUnitsToProduceRightNow() {
-		ArrayList<UnitType> result = new ArrayList<>();
+	public ArrayList<ProductionOrder> getThingsToProduceRightNow(boolean onlyUnits) {
+		ArrayList<ProductionOrder> result = new ArrayList<>();
 		int mineralsNeeded = 0;
 		int gasNeeded = 0;
 
 		// The idea as follows: as long as we can afford next enqueued production order, add it to the
 		// CurrentToProduceList.
 		for (ProductionOrder order : currentProductionQueue) {
-			UnitType type = order.getUnitType();
-			mineralsNeeded += type.getMineralPrice();
-			gasNeeded += type.getGasPrice();
+			UnitType unitType = order.getUnitType();
+
+			// Check if include only units
+			if (onlyUnits && unitType == null) {
+				continue;
+			}
+
+			UpgradeType upgrade = order.getUpgrade();
+
+			if (unitType != null) {
+				mineralsNeeded += unitType.getMineralPrice();
+				gasNeeded += unitType.getGasPrice();
+			} else if (upgrade != null) {
+				mineralsNeeded += upgrade.getMineralPriceBase();
+				gasNeeded += upgrade.getGasPriceBase();
+			}
 
 			// If we can afford this order and the previous, add it to CurrentToProduceList.
-			if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded) && AtlantisGame.canAfford(type)) {
-				result.add(type);
+			if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
+				result.add(order);
 			}
 
 			// We can't afford to produce this order along with all previous ones. Return currently list.
@@ -118,17 +149,24 @@ public abstract class AtlantisProductionStrategy {
 	 * Returns true if we should produce this unit now.
 	 */
 	public boolean shouldProduceNow(UnitType type) {
-		return getUnitsToProduceRightNow().contains(type);
+		return getThingsToProduceRightNow(true).contains(type);
+	}
+
+	/**
+	 * Returns true if we should produce this upgrade now.
+	 */
+	public boolean shouldProduceNow(UpgradeType upgrade) {
+		return getThingsToProduceRightNow(false).contains(upgrade);
 	}
 
 	/**
 	 * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
 	 */
-	public ArrayList<UnitType> getProductionQueueNextUnits(int howMany) {
-		ArrayList<UnitType> result = new ArrayList<>();
+	public ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
+		ArrayList<ProductionOrder> result = new ArrayList<>();
 
 		for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
-			result.add(currentProductionQueue.get(i).getUnitType());
+			result.add(currentProductionQueue.get(i));
 		}
 
 		return result;

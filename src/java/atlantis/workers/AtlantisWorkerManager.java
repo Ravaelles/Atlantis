@@ -48,30 +48,36 @@ public class AtlantisWorkerManager {
 	private static void updateTooltip(Unit unit) {
 		String tooltip = "";
 		String newLine = "\r\n";
-		if (unit.isGatheringMinerals()) {
-			tooltip += "Minerals" + newLine;
+		if (unit.getTarget() != null) {
+			tooltip += "Target: " + unit.getTarget();
 		}
-		if (unit.isGatheringGas()) {
-			tooltip += "Gas" + newLine;
+		if (unit.getOrderTarget() != null) {
+			tooltip += "OrderTarget: " + unit.getOrderTarget();
 		}
-		if (unit.isConstructing()) {
-			tooltip += "Constructing" + newLine;
-		}
-		if (unit.isRepairing()) {
-			tooltip += "Repairing" + newLine;
-		}
-		if (unit.isMoving()) {
-			tooltip += "Moving" + newLine;
-		}
-		if (unit.isAttacking()) {
-			tooltip += "Attacking" + newLine;
-		}
-		if (unit.isStartingAttack()) {
-			tooltip += "StartingAttack" + newLine;
-		}
-		if (unit.isIdle()) {
-			tooltip += "Idle" + newLine;
-		}
+		// if (unit.isGatheringMinerals()) {
+		// tooltip += "Minerals" + newLine;
+		// }
+		// if (unit.isGatheringGas()) {
+		// tooltip += "Gas" + newLine;
+		// }
+		// if (unit.isConstructing()) {
+		// tooltip += "Constructing" + newLine;
+		// }
+		// if (unit.isRepairing()) {
+		// tooltip += "Repairing" + newLine;
+		// }
+		// if (unit.isMoving()) {
+		// tooltip += "Moving" + newLine;
+		// }
+		// if (unit.isAttacking()) {
+		// tooltip += "Attacking" + newLine;
+		// }
+		// if (unit.isStartingAttack()) {
+		// tooltip += "StartingAttack" + newLine;
+		// }
+		// if (unit.isIdle()) {
+		// tooltip += "Idle" + newLine;
+		// }
 		unit.setTooltip(tooltip);
 	}
 

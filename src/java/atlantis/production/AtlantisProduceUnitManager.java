@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
+import jnibwapi.types.UnitType.UnitTypes;
+import jnibwapi.types.UpgradeType;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.production.strategies.AtlantisProductionStrategy;
@@ -17,17 +19,29 @@ public class AtlantisProduceUnitManager {
 	protected static void update() {
 		AtlantisProductionStrategy productionStrategy = AtlantisConfig.getProductionStrategy();
 
-		ArrayList<UnitType> produceNow = productionStrategy.getUnitsToProduceRightNow();
-		for (UnitType unitType : produceNow) {
-			if (unitType.isBuilding()) {
-				AtlantisConstructingManager.requestConstructionOf(unitType);
-			} else {
-				produceUnit(unitType);
+		ArrayList<ProductionOrder> produceNow = productionStrategy.getThingsToProduceRightNow(false);
+		for (ProductionOrder order : produceNow) {
+
+			// Produce UNIT
+			if (order.getUnitType() != null) {
+				UnitType unitType = order.getUnitType();
+				if (unitType.isBuilding()) {
+					AtlantisConstructingManager.requestConstructionOf(unitType);
+				} else {
+					produceUnit(unitType);
+				}
+			}
+
+			// Produce UPGRADE
+			else if (order.getUpgrade() != null) {
+				UpgradeType upgrade = order.getUpgrade();
+				researchUpgrade(upgrade);
 			}
 		}
 	}
 
 	// =========================================================
+	// Hi-level produce
 
 	private static void produceUnit(UnitType unitType) {
 
@@ -47,7 +61,18 @@ public class AtlantisProduceUnitManager {
 		}
 	}
 
+	private static void researchUpgrade(UpgradeType upgrade) {
+		UnitType buildingType = UnitTypes.getUnitType(upgrade.getWhatUpgradesTypeID());
+		if (buildingType != null) {
+			Unit building = SelectUnits.ourBuildings().ofType(buildingType).first();
+			if (building != null) {
+				building.upgrade(upgrade);
+			}
+		}
+	}
+
 	// =========================================================
+	// Lo-level produce
 
 	private static void produceWorker() {
 		Unit building = SelectUnits.ourOneIdle(AtlantisConfig.BASE);

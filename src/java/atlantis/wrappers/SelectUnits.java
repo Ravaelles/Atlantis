@@ -200,6 +200,23 @@ public class SelectUnits {
 		return this;
 	}
 
+	/**
+	 * Selects units that are gathering minerals.
+	 */
+	public SelectUnits gatheringMinerals(boolean onlyNotCarryingMinerals) {
+		for (Unit unit : units.list()) {
+			if (!unit.isGatheringMinerals()) {
+				if (onlyNotCarryingMinerals && !unit.isCarryingMinerals()) {
+					filterOut(unit);
+				} else {
+					filterOut(unit);
+				}
+			}
+		}
+
+		return this;
+	}
+
 	// /**
 	// * Selects units which do currently gather minerals but dont carry it.
 	// */

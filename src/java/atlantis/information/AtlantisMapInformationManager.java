@@ -50,20 +50,19 @@ public class AtlantisMapInformationManager {
 
 					// Define region of the second base
 					Region secondRegion = secondBase.getRegion();
-					// System.out.println("secondRegion = " + secondRegion);
+					System.out.println("secondRegion = " + secondRegion);
 					if (secondRegion == null) {
 						return null;
 					}
 
 					// Try to match choke points between the two regions
 					for (ChokePoint mainRegionChoke : mainRegion.getChokePoints()) {
-						// System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
-						// + (mainRegionChoke.getFirstRegion() != null) + " / "
-						// + (mainRegionChoke.getSecondRegion() != null));
+						System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
+								+ (mainRegionChoke.getFirstRegion()) + " / " + (mainRegionChoke.getSecondRegion()));
 						if (secondRegion.equals(mainRegionChoke.getFirstRegion())
 								|| secondRegion.equals(mainRegionChoke.getSecondRegion())) {
 							cached_mainBaseChokepoint = mainRegionChoke;
-							// System.out.println("REGION FOUND! " + cached_mainBaseChokepoint);
+							System.out.println("MAIN CHOKE FOUND! " + cached_mainBaseChokepoint);
 							break;
 						}
 					}

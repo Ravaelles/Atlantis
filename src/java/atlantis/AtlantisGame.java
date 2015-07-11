@@ -2,6 +2,7 @@ package atlantis;
 
 import jnibwapi.types.RaceType.RaceTypes;
 import jnibwapi.types.UnitType;
+import jnibwapi.types.UpgradeType;
 import atlantis.production.strategies.AtlantisProductionStrategy;
 import atlantis.util.RUtilities;
 
@@ -113,6 +114,13 @@ public class AtlantisGame {
 	 */
 	public static boolean canAfford(UnitType unitType) {
 		return hasMinerals(unitType.getMineralPrice()) && hasGas(unitType.getGasPrice());
+	}
+
+	/**
+	 * Returns true if we can afford minerals and gas for given upgrade.
+	 */
+	public static boolean canAfford(UpgradeType upgrade) {
+		return hasMinerals(upgrade.getMineralPriceBase()) && hasGas(upgrade.getGasPriceBase());
 	}
 
 	/**

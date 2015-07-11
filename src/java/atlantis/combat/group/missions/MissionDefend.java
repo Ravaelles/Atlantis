@@ -23,14 +23,15 @@ public class MissionDefend extends Mission {
 	 */
 	private boolean moveUnitIfNeededNearChokePoint(Unit unit) {
 		ChokePoint chokepoint = AtlantisMapInformationManager.getMainBaseChokepoint();
-
-		// =========================================================
-		// Top-importancy orders, can cancel micro orders
+		if (chokepoint == null) {
+			System.err.println("Couldn't define choke point.");
+			return false;
+		}
 
 		// =========================================================
 		// Normal orders
 
-		// Don't disturb unit
+		// Check if shouldn't disturb unit
 		if (canIssueOrderToUnit(unit)) {
 
 			// Too close to
@@ -68,6 +69,9 @@ public class MissionDefend extends Mission {
 	}
 
 	private boolean isCloseEnoughToChokePoint(Unit unit, ChokePoint chokepoint) {
+		if (unit == null || chokepoint == null) {
+			return false;
+		}
 
 		// Bigger this value is, further from choke will units stand
 		double standFurther = 1.6;

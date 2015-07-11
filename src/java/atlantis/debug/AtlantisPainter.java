@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
 import jnibwapi.Unit;
-import jnibwapi.types.UnitType;
 import jnibwapi.util.BWColor;
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
+import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
 import atlantis.wrappers.SelectUnits;
 
@@ -67,18 +67,18 @@ public class AtlantisPainter {
 		}
 
 		// Display units that should be produced right now or any time
-		ArrayList<UnitType> produceNow = AtlantisGame.getProductionStrategy().getUnitsToProduceRightNow();
-		for (UnitType unitType : produceNow) {
-			paintSideMessage(unitType.getShortName(), BWColor.Yellow);
+		ArrayList<ProductionOrder> produceNow = AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(false);
+		for (ProductionOrder order : produceNow) {
+			paintSideMessage(order.getShortName(), BWColor.Yellow);
 		}
 
 		// Display next units to produce
-		ArrayList<UnitType> fullQueue = AtlantisGame.getProductionStrategy().getProductionQueueNextUnits(
+		ArrayList<ProductionOrder> fullQueue = AtlantisGame.getProductionStrategy().getProductionQueueNext(
 				6 - produceNow.size());
 		for (int index = produceNow.size(); index < fullQueue.size(); index++) {
-			UnitType type = fullQueue.get(index);
-			if (type != null && type.getShortName() != null) {
-				paintSideMessage(type.getShortName(), BWColor.Red);
+			ProductionOrder order = fullQueue.get(index);
+			if (order != null && order.getShortName() != null) {
+				paintSideMessage(order.getShortName(), BWColor.Red);
 			}
 		}
 	}

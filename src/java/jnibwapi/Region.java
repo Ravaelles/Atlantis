@@ -11,7 +11,7 @@ import java.util.Set;
  * 
  * For a description of fields see: http://code.google.com/p/bwta/wiki/Region
  */
-public class Region {
+public class Region implements Comparable<Region> {
 
 	public static final int numAttributes = 3;
 
@@ -114,6 +114,11 @@ public class Region {
 	@Override
 	public String toString() {
 		return "Region " + center.toString();
+	}
+
+	@Override
+	public int compareTo(Region o) {
+		return Integer.compare(ID, o.ID);
 	}
 
 	// =========================================================
