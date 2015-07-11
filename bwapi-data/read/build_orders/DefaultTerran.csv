@@ -1,23 +1,23 @@
-Description;Type;Name;Blocking;Priority
-1;Unit;SCV;No;Normal
-2;Unit;SCV;No;Normal
-3;Unit;SCV;No;Normal
-4;Unit;SCV;No;Normal
-5;Unit;Barracks;No;Normal
-6;Unit;SCV;No;Normal
-7;Unit;Supply Depot;No;Normal
-8;Unit;SCV;No;Normal
-9;Unit;Barracks;No;Normal
-10;Unit;Marine;No;Normal
-11;Unit;SCV;No;Normal
-12;Unit;Marine;No;Normal
-13;Unit;SCV;No;Normal
-14;Unit;Marine;No;Normal
-15;Unit;Marine;No;Normal
-16;Unit;Refinery;No;Normal
-17;Unit;SCV;No;Normal
-18;Unit;Academy;No;Normal
-19;Unit;Marine;No;Normal
-20;Upgrade;U-238 Shells;No;Normal
-21;Unit;Barracks;No;Normal
-22;Unit;SCV;No;Normal
+;Name;Blocking;Priority
+1;SCV;No;Normal
+2;SCV;No;Normal
+3;SCV;No;Normal
+4;SCV;No;Normal
+5;Barracks;No;Normal
+6;SCV;No;Normal
+7;Supply Depot;No;Normal
+8;SCV;No;Normal
+9;Barracks;No;Normal
+10;Marine;No;Normal
+11;SCV;No;Normal
+12;Marine;No;Normal
+13;SCV;No;Normal
+14;Marine;No;Normal
+15;Marine;No;Normal
+16;Refinery;No;Normal
+17;SCV;No;Normal
+18;Academy;No;Normal
+19;Marine;No;Normal
+20;U-238 Shells;No;Normal
+21;Barracks;No;Normal
+22;SCV;No;Normal

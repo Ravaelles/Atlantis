@@ -1,5 +1,6 @@
 package atlantis.production;
 
+import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UpgradeType;
 
@@ -15,14 +16,19 @@ public class ProductionOrder {
 	private int id = firstFreeId++;
 
 	/**
-	 * Unit type to be build. Can be null if this production order is for upgrade, not unit.
+	 * Unit type to be build. Can be null if this production order is for something else than upgrade.
 	 */
 	private UnitType unitType = null;
 
 	/**
-	 * Upgrade type to research. Can be null if this production order is for unit, not upgrade.
+	 * Upgrade type to research. Can be null if this production order is for something else than upgrade.
 	 */
 	private UpgradeType upgrade;
+
+	/**
+	 * Tech type to research. Can be null if this production order is for something else than upgrade.
+	 */
+	private TechType tech;
 
 	/**
 	 * 
@@ -44,6 +50,11 @@ public class ProductionOrder {
 	public ProductionOrder(UpgradeType upgrade) {
 		super();
 		this.upgrade = upgrade;
+	}
+
+	public ProductionOrder(TechType tech) {
+		super();
+		this.tech = tech;
 	}
 
 	private ProductionOrder() {
@@ -115,12 +126,28 @@ public class ProductionOrder {
 	// =========================================================
 	// Getters
 
+	/**
+	 * If this production order concerns unit to be build (or building, Unit class), it will return non-null value being
+	 * unit type.
+	 */
 	public UnitType getUnitType() {
 		return unitType;
 	}
 
+	/**
+	 * If this production order concerns upgrade (UpgradeType class) to be researched, it will return non-null value
+	 * being unit type.
+	 */
 	public UpgradeType getUpgrade() {
 		return upgrade;
+	}
+
+	/**
+	 * If this production order concerns technology (TechType class) to be researched, it will return non-null value
+	 * being unit type.
+	 */
+	public TechType getTech() {
+		return tech;
 	}
 
 }

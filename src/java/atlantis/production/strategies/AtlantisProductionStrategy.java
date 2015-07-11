@@ -2,6 +2,7 @@ package atlantis.production.strategies;
 
 import java.util.ArrayList;
 
+import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UpgradeType;
 import atlantis.AtlantisGame;
@@ -122,13 +123,17 @@ public abstract class AtlantisProductionStrategy {
 			}
 
 			UpgradeType upgrade = order.getUpgrade();
+			TechType tech = order.getTech();
 
 			if (unitType != null) {
 				mineralsNeeded += unitType.getMineralPrice();
 				gasNeeded += unitType.getGasPrice();
 			} else if (upgrade != null) {
-				mineralsNeeded += upgrade.getMineralPriceBase();
-				gasNeeded += upgrade.getGasPriceBase();
+				mineralsNeeded += upgrade.getMineralPriceBase() * upgrade.getMineralPriceFactor();
+				gasNeeded += upgrade.getGasPriceBase() * upgrade.getGasPriceFactor();
+			} else if (tech != null) {
+				mineralsNeeded += tech.getMineralPrice();
+				gasNeeded += tech.getMineralPrice();
 			}
 
 			// If we can afford this order and the previous, add it to CurrentToProduceList.
@@ -178,7 +183,17 @@ public abstract class AtlantisProductionStrategy {
 	/**
 	 * Populates <b>productionOrdersFromFile</b> with data from CSV file.
 	 */
-	private void createProductionOrderListFromStringArray(String[][] loadedFile) {
+	private void createProductionOrderListFromStringArray() {
+		final int NUMBER_OF_COLUMNS_IN_FILE = 4;
+
+		// Read file into 2D String array
+		String path = "bwapi-data/read/build_orders/" + getFilename();
+		String[][] loadedFile = RUtilities.loadCsv(path, NUMBER_OF_COLUMNS_IN_FILE);
+
+		// We can display file here, if we want to
+		// displayLoadedFile(loadedFile);
+
+		// =========================================================
 
 		// Skip first row as it's CSV header
 		for (int i = 1; i < loadedFile.length; i++) {
@@ -189,33 +204,58 @@ public abstract class AtlantisProductionStrategy {
 			// =========================================================
 			// Parse entire row of strings
 
-			// Type of entry: Unit / Research etc
-			String entryType = row[inRowCounter++].toLowerCase().trim();
+			// Define type of entry: Unit / Research / Tech
 			String nameString = row[inRowCounter++].toLowerCase().trim();
 
+			// =========================================================
+			// Try getting objects of each type as we don't know if it's unit, research or tech.
+
+			// UNIT
+			UnitType.disableErrorReporting = true;
+			UnitType unitType = UnitType.getByName(nameString);
+			UnitType.disableErrorReporting = false;
+
+			// UPGRADE
+			UpgradeType.disableErrorReporting = true;
+			UpgradeType upgrade = UpgradeType.getByName(nameString);
+			UpgradeType.disableErrorReporting = false;
+
+			// TECH
+			TechType.disableErrorReporting = true;
+			TechType tech = TechType.getByName(nameString);
+			TechType.disableErrorReporting = false;
+
+			// Define convienience boolean variables
+			boolean isUnit = unitType != null;
+			boolean isUpgrade = upgrade != null;
+			boolean isTech = tech != null;
+
+			// Check if no error occured like no object found
+			if (!isUnit && !isUpgrade && !isTech) {
+				System.err.println("Invalid production order entry: " + nameString);
+				System.exit(-1);
+			}
+
+			// =========================================================
+
 			// Unit
-			if ("unit".equals(entryType) || "".equals(entryType)) {
-				UnitType unitType = UnitType.getByName(nameString);
-				if (unitType == null) {
-					System.err.println("Invalid unit name: " + nameString);
-					System.exit(-1);
-				}
+			if (isUnit) {
 				order = new ProductionOrder(unitType);
 			}
 
 			// Upgrade
-			else if ("upgrade".equals(entryType)) {
-				UpgradeType upgrade = UpgradeType.getByName(nameString);
-				if (upgrade == null) {
-					System.err.println("Invalid upgrade name: " + nameString);
-					System.exit(-1);
-				}
+			else if (isUpgrade) {
 				order = new ProductionOrder(upgrade);
+			}
+
+			// Tech
+			else if (isTech) {
+				order = new ProductionOrder(tech);
 			}
 
 			// Invalid entry type
 			else {
-				System.err.println("Invalid entry type: " + entryType);
+				System.err.println("Invalid entry type: " + nameString);
 				System.exit(-1);
 			}
 
@@ -266,15 +306,8 @@ public abstract class AtlantisProductionStrategy {
 	 */
 	private void initializeProductionQueue() {
 
-		// Read file into 2D String array
-		String path = "bwapi-data/read/build_orders/" + getFilename();
-		String[][] loadedFile = RUtilities.loadCsv(path, 5);
-
-		// We can display file here, if we want to
-		// displayLoadedFile(loadedFile);
-
 		// Convert 2D String array into ArrayList of ProductionOrder
-		createProductionOrderListFromStringArray(loadedFile);
+		createProductionOrderListFromStringArray();
 	}
 
 	/**

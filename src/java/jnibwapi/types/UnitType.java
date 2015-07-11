@@ -695,6 +695,8 @@ public class UnitType implements Comparable<UnitType> {
 
 	// =========================================================
 
+	public static boolean disableErrorReporting = false;
+
 	/**
 	 * You can "Terran_Marine" or "Terran Marine" or even "Marine".
 	 */
@@ -712,7 +714,9 @@ public class UnitType implements Comparable<UnitType> {
 					UnitType unitType = (UnitType) UnitTypes.class.getField(field.getName()).get(null);
 					return unitType;
 				} catch (Exception e) {
-					System.err.println("error trying to find UnitType for: '" + string + "'\n" + e.getMessage());
+					if (!disableErrorReporting) {
+						System.err.println("error trying to find UnitType for: '" + string + "'\n" + e.getMessage());
+					}
 				}
 			}
 		}

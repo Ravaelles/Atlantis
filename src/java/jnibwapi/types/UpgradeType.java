@@ -200,6 +200,8 @@ public class UpgradeType {
 
 	// =========================================================
 
+	public static boolean disableErrorReporting = false;
+
 	/**
 	 * You can use "Terran_U-238_Shells" or "U-238_Shells" or even "U-238 Shells".
 	 */
@@ -214,7 +216,9 @@ public class UpgradeType {
 					UpgradeType upgradeType = (UpgradeType) UpgradeTypes.class.getField(field.getName()).get(null);
 					return upgradeType;
 				} catch (Exception e) {
-					System.err.println("error trying to find UnitType for: '" + string + "'\n" + e.getMessage());
+					if (!disableErrorReporting) {
+						System.err.println("error trying to find UnitType for: '" + string + "'\n" + e.getMessage());
+					}
 				}
 			}
 		}

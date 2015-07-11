@@ -1,5 +1,6 @@
 package jnibwapi.types;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,9 +14,9 @@ import jnibwapi.types.UnitType.UnitTypes;
  * For a description of fields see: http://code.google.com/p/bwapi/wiki/TechType
  */
 public class TechType {
-	
+
 	private static Map<Integer, TechType> idToTechType = new HashMap<>();
-	
+
 	public static class TechTypes {
 		public static final TechType Stim_Packs = new TechType(0);
 		public static final TechType Lockdown = new TechType(1);
@@ -56,18 +57,18 @@ public class TechType {
 		public static final TechType None = new TechType(44);
 		public static final TechType Unknown = new TechType(45);
 		public static final TechType Nuclear_Strike = new TechType(46);
-		
+
 		public static TechType getTechType(int id) {
 			return idToTechType.get(id);
 		}
-		
+
 		public static Collection<TechType> getAllTechTypes() {
 			return Collections.unmodifiableCollection(idToTechType.values());
 		}
 	}
-	
+
 	public static final int numAttributes = 10;
-	
+
 	private String name;
 	private int ID;
 	private int raceID;
@@ -79,12 +80,12 @@ public class TechType {
 	private int getWeaponID;
 	private boolean targetsUnits;
 	private boolean targetsPosition;
-	
+
 	private TechType(int ID) {
 		this.ID = ID;
 		idToTechType.put(ID, this);
 	}
-	
+
 	public void initialize(int[] data, int index, String name) {
 		if (ID != data[index++])
 			throw new IllegalArgumentException();
@@ -97,62 +98,86 @@ public class TechType {
 		getWeaponID = data[index++];
 		targetsUnits = data[index++] == 1;
 		targetsPosition = data[index++] == 1;
-		
+
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public int getID() {
 		return ID;
 	}
-	
+
 	public int getRaceID() {
 		return raceID;
 	}
-	
+
 	public int getMineralPrice() {
 		return mineralPrice;
 	}
-	
+
 	public int getGasPrice() {
 		return gasPrice;
 	}
-	
+
 	public int getResearchTime() {
 		return researchTime;
 	}
-	
+
 	public int getEnergyUsed() {
 		return energyUsed;
 	}
-	
+
 	@Deprecated
 	public int getWhatResearchesTypeID() {
 		return whatResearchesTypeID;
 	}
-	
+
 	public UnitType getWhatResearches() {
 		return UnitTypes.getUnitType(whatResearchesTypeID);
 	}
-	
+
 	public int getGetWeaponID() {
 		return getWeaponID;
 	}
-	
+
 	public boolean isTargetsUnits() {
 		return targetsUnits;
 	}
-	
+
 	public boolean isTargetsPosition() {
 		return targetsPosition;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName() + " (" + getID() + ")";
 	}
-	
+
+	// =========================================================
+
+	public static boolean disableErrorReporting = false;
+
+	public static TechType getByName(String name) {
+		name = name.replace(" ", "_").toLowerCase();
+
+		for (Field field : TechType.class.getFields()) {
+			String otherTechName = field.getName().toLowerCase();
+			if (otherTechName.contains(name)) {
+				try {
+					TechType techType = (TechType) TechType.class.getField(field.getName()).get(null);
+					return techType;
+				} catch (Exception e) {
+					if (!disableErrorReporting) {
+						System.err.println("error trying to find TechType for: '" + name + "'\n" + e.getMessage());
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
 }
