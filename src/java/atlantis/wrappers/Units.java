@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import jnibwapi.Position;
 import jnibwapi.Unit;
@@ -198,6 +199,14 @@ public class Units {
 		ArrayList<Unit> copy = new ArrayList<Unit>();
 		copy.addAll(units);
 		return copy;
+	}
+
+	/**
+	 * @return iterator object for inner collection with the units.
+	 * 
+	 */
+	public Iterator<Unit> iterator() {
+		return units.iterator();
 	}
 
 }

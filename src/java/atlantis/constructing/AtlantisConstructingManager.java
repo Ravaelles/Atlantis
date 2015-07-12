@@ -22,7 +22,7 @@ public class AtlantisConstructingManager {
 	 * Issues request of constructing new building. It will automatically find position and builder unit for it.
 	 */
 	public static void requestConstructionOf(UnitType building) {
-		System.out.println("@@@@ REQUESTED: " + building);
+		// System.out.println("@@@@ REQUESTED: " + building);
 		if (!building.isBuilding()) {
 			throw new RuntimeException("Requested construction of not building!!! Type: " + building);
 		}
@@ -38,7 +38,7 @@ public class AtlantisConstructingManager {
 		// Find place for new building
 		Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
 				newConstructionOrder.getBuilder(), building);
-		System.out.println("@@ " + building + " at " + positionToBuild);
+		// System.out.println("@@ " + building + " at " + positionToBuild);
 
 		// Successfully found position for new building
 		Unit optimalBuilder = null;
@@ -49,7 +49,7 @@ public class AtlantisConstructingManager {
 
 			// Assign optimal builder for this building
 			optimalBuilder = newConstructionOrder.assignOptimalBuilder();
-			System.out.println("@@ BUILDER = " + optimalBuilder);
+			// System.out.println("@@ BUILDER = " + optimalBuilder);
 
 			// Add to list of pending orders
 			constructionOrders.add(newConstructionOrder);
@@ -160,7 +160,7 @@ public class AtlantisConstructingManager {
 	public static int countNotStartedConstructionsOfType(UnitType type) {
 		int total = 0;
 		for (ConstructionOrder constructionOrder : constructionOrders) {
-			if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+			if (constructionOrder.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED
 					&& constructionOrder.getBuildingType().equals(type)) {
 				total++;
 			}

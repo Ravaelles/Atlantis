@@ -57,6 +57,9 @@ public class AtlantisPainter {
 		}
 	}
 
+	// =========================================================
+	// Hi-level
+
 	/**
 	 * Paints important choke point near the base.
 	 */
@@ -65,22 +68,22 @@ public class AtlantisPainter {
 
 		// Main DEFEND focus point
 		position = MissionDefend.getFocusPoint();
-		paintCircle(position, 15, BWColor.Grey);
+		paintCircle(position, 20, BWColor.Black);
+		paintCircle(position, 19, BWColor.Black);
 		paintTextCentered(position, "DEFEND", BWColor.Grey);
 
 		// Mission PREPARE focus point
 		position = MissionPrepare.getFocusPoint();
-		paintCircle(position, 15, BWColor.Grey);
+		paintCircle(position, 20, BWColor.Black);
+		paintCircle(position, 19, BWColor.Black);
 		paintTextCentered(position, "PREPARE", BWColor.Grey);
 
 		// Mission PREPARE focus point
 		position = MissionAttack.getFocusPoint();
-		paintCircle(position, 15, BWColor.Grey);
+		paintCircle(position, 20, BWColor.Black);
+		paintCircle(position, 19, BWColor.Black);
 		paintTextCentered(position, "ATTACK", BWColor.Grey);
 	}
-
-	// =========================================================
-	// Hi-level
 
 	/**
 	 * Paints next units to build in top left corner.
@@ -122,10 +125,10 @@ public class AtlantisPainter {
 			}
 
 			// ATTACKING
-			if (unit.isAttacking()) {
-				bwapi.drawCircle(unit, 10, BWColor.Orange, false, false);
-				bwapi.drawCircle(unit, 9, BWColor.Orange, false, false);
-			}
+			// if (unit.isAttacking()) {
+			// bwapi.drawCircle(unit, 10, BWColor.Orange, false, false);
+			// bwapi.drawCircle(unit, 9, BWColor.Orange, false, false);
+			// }
 
 			// MOVE
 			if (unit.isMoving()) {
@@ -326,7 +329,10 @@ public class AtlantisPainter {
 	}
 
 	private static void paintTextCentered(Position position, String text, BWColor color) {
-		getBwapi().drawText(position.translated(-5 * text.length(), -3), BWColor.getColorString(color) + text, false);
+		if (position == null || text == null) {
+			return;
+		}
+		getBwapi().drawText(position.translated(-4 * text.length(), -3), BWColor.getColorString(color) + text, false);
 	}
 
 	private static JNIBWAPI getBwapi() {

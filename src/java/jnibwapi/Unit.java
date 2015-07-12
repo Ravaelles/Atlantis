@@ -1227,6 +1227,15 @@ public class Unit extends Position implements Cloneable {
 	}
 
 	public boolean rightClick(Unit target, boolean queued) {
+
+		// @AtlantisChange
+		// Do not execute the same command twice
+		if (getTarget() != null && getTarget().equals(target)) {
+			return false; // Ignore this command request
+		}
+
+		setTooltip("Heal");
+
 		return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Right_Click_Unit, target, queued));
 	}
 

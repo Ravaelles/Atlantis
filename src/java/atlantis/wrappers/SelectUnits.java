@@ -1,6 +1,7 @@
 package atlantis.wrappers;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import jnibwapi.Position;
 import jnibwapi.Unit;
@@ -160,9 +161,11 @@ public class SelectUnits {
 	 * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
 	 */
 	public SelectUnits inRadius(double maxDist, Position position) {
-		for (Unit unit : units.list()) {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
 			if (unit.distanceTo(position) > maxDist) {
-				filterOut(unit);
+				unitsIterator.remove();
 			}
 		}
 
@@ -176,10 +179,12 @@ public class SelectUnits {
 	 * Selects only units of given type(s).
 	 */
 	public SelectUnits ofType(UnitType... types) {
-		for (Unit unit : units.list()) {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
 			for (UnitType type : types) {
 				if (!unit.getType().equals(type)) {
-					filterOut(unit);
+					unitsIterator.remove();
 				}
 			}
 		}
@@ -191,9 +196,11 @@ public class SelectUnits {
 	 * Selects only those units which are idle. Idle is unit's class flag so be careful with that.
 	 */
 	public SelectUnits idle() {
-		for (Unit unit : units.list()) {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
 			if (!unit.isIdle()) {
-				filterOut(unit);
+				unitsIterator.remove();
 			}
 		}
 
@@ -204,12 +211,14 @@ public class SelectUnits {
 	 * Selects units that are gathering minerals.
 	 */
 	public SelectUnits gatheringMinerals(boolean onlyNotCarryingMinerals) {
-		for (Unit unit : units.list()) {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
 			if (!unit.isGatheringMinerals()) {
 				if (onlyNotCarryingMinerals && !unit.isCarryingMinerals()) {
-					filterOut(unit);
+					unitsIterator.remove();
 				} else {
-					filterOut(unit);
+					unitsIterator.remove();
 				}
 			}
 		}
@@ -217,26 +226,45 @@ public class SelectUnits {
 		return this;
 	}
 
-	// /**
-	// * Selects units which do currently gather minerals but dont carry it.
-	// */
-	// public SelectUnits gatheringMineralsButNotCarryingIt() {
-	// for (Unit unit : units.list()) {
-	// if (!unit.isGatheringMinerals() || unit.isCarryingMinerals()) {
-	// filterOut(unit);
-	// }
-	// }
-	//
-	// return this;
-	// }
+	/**
+	 * Selects units being infantry.
+	 */
+	public SelectUnits infantry() {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
+			if (!unit.isInfantry()) {
+				unitsIterator.remove();
+			}
+		}
+
+		return this;
+	}
+
+	/**
+	 * Selects only units that do not currently have max hit points.
+	 */
+	public SelectUnits wounded() {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
+			if (!unit.isWounded()) {
+				unitsIterator.remove();
+			}
+		}
+
+		return this;
+	}
 
 	/**
 	 * Selects only buildings.
 	 */
 	public SelectUnits buildings() {
-		for (Unit unit : units.list()) {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
 			if (!unit.isBuilding()) {
-				filterOut(unit);
+				unitsIterator.remove();
 			}
 		}
 		return this;
@@ -248,9 +276,11 @@ public class SelectUnits {
 	 * - not 100% healthy<br />
 	 */
 	public SelectUnits toRepair() {
-		for (Unit unit : units.list()) {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
 			if (!unit.isRepairableMechanically() || unit.isFullyHealthy() || !unit.isCompleted()) {
-				filterOut(unit);
+				unitsIterator.remove();
 			}
 		}
 		return this;
@@ -273,7 +303,7 @@ public class SelectUnits {
 		SelectUnits selectedUnits = SelectUnits.our();
 		for (Unit unit : selectedUnits.list()) {
 			if (!unit.isWorker()) {
-				selectedUnits.filterOut(unit);
+				selectedUnits.units.removeUnit(unit);
 			}
 		}
 		return selectedUnits;
@@ -288,7 +318,7 @@ public class SelectUnits {
 
 		for (Unit unit : selectedUnits.list()) {
 			if (unit.isConstructing() || unit.isRepairing()) {
-				selectedUnits.filterOut(unit);
+				selectedUnits.units.removeUnit(unit);
 			}
 		}
 
@@ -309,7 +339,7 @@ public class SelectUnits {
 		SelectUnits selectedUnits = SelectUnits.ourIncludingUnfinished();
 		for (Unit unit : selectedUnits.list()) {
 			if (!unit.isBuilding()) {
-				selectedUnits.filterOut(unit);
+				selectedUnits.units.removeUnit(unit);
 			}
 		}
 		return selectedUnits;
@@ -392,14 +422,23 @@ public class SelectUnits {
 		return this;
 	}
 
-	private SelectUnits filterOut(Unit unitToRemove) {
-		units.removeUnit(unitToRemove);
-		return this;
-	}
+	// private SelectUnits filterOut(Unit unitToRemove) {
+	// // units.removeUnit(unitToRemove);
+	// Iterator<Unit> unitsIterator = units.iterator();
+	// while (unitsIterator.hasNext()) {
+	// Unit unit = unitsIterator.next();
+	// if (unitToRemove.equals(unit)) {
+	// units.removeUnit(unit);
+	// }
+	// }
+	// return this;
+	// }
 
 	@SuppressWarnings("unused")
 	private SelectUnits filterAllBut(Unit unitToLeave) {
-		for (Unit unit : units.list()) {
+		Iterator<Unit> unitsIterator = units.iterator();
+		while (unitsIterator.hasNext()) {
+			Unit unit = unitsIterator.next();
 			if (unitToLeave != unit) {
 				units.removeUnit(unit);
 			}

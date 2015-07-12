@@ -9,6 +9,9 @@ import atlantis.constructing.position.AbstractBuildPositionFinder;
 public class AtlantisBuilderManager {
 
 	public static void update(Unit builder) {
+		if (builder == null) {
+			return;
+		}
 
 		// Don't disturb builder that are already constructing
 		if (builder.isConstructing()) {

@@ -38,10 +38,7 @@ public class AtlantisUnitInformationManager {
 	public static void forgetUnit(int unitID) {
 		Unit unit = getUnitByID(unitID);
 		if (unit != null) {
-			System.out.println(" ----> non zerowe " + unit.getShortName());
 			allUnits.remove(unit);
-		} else {
-			System.out.println("-----> UNIT IS NULL: " + unitID);
 		}
 	}
 

@@ -180,17 +180,24 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void unitDestroy(int unitID) {
+
+		// We need to get unit by ID, but we need to use our own solution, because normally if we iterated against
+		// objects in getAllUnits(), dead unit objects would be gone. But if we manually save them, we can access them
+		// at this point, when they're already dead.
+		Unit unit = AtlantisUnitInformationManager.getUnitByID(unitID);
+
+		if (unit != null) {
+			AtlantisUnitInformationManager.unitDestroyed(unit);
+
+			// Our unit
+			if (unit.getPlayer().isSelf()) {
+				AtlantisGame.getProductionStrategy().rebuildQueue();
+				AtlantisGroupManager.battleUnitDestroyed(unit);
+			}
+		}
+
+		// Forever forget this poor unit
 		AtlantisUnitInformationManager.forgetUnit(unitID);
-		// Unit unit = Unit.getByID(unitID);
-		// if (unit != null) {
-		// AtlantisUnitInformationManager.unitDestroyed(unit);
-		//
-		// // Our unit
-		// if (unit.getPlayer().isSelf()) {
-		// AtlantisGame.getProductionStrategy().rebuildQueue();
-		// AtlantisGroupManager.battleUnitDestroyed(unit);
-		// }
-		// }
 	}
 
 	@Override

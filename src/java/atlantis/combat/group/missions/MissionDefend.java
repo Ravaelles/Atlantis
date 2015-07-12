@@ -9,8 +9,10 @@ public class MissionDefend extends Mission {
 
 	@Override
 	public boolean update(Unit unit) {
-		if (moveUnitIfNeededNearChokePoint(unit)) {
-			return true;
+		if (canIssueOrderToUnit(unit)) {
+			if (moveUnitIfNeededNearChokePoint(unit)) {
+				return true;
+			}
 		}
 
 		return false;
@@ -124,7 +126,15 @@ public class MissionDefend extends Mission {
 	 */
 	@Override
 	protected boolean canIssueOrderToUnit(Unit unit) {
+
+		// If unit has far more important actions than fucking positioning, disallow any actions here.
 		if (unit.isAttacking() || unit.isStartingAttack() || unit.isRunning()) {
+			return false;
+		}
+
+		// If enemy is close, also it's dumb to do proper positioning. Let the MicroManager decide.
+		Unit nearestEnemy = SelectUnits.enemy().nearestTo(unit);
+		if (nearestEnemy != null && nearestEnemy.distanceTo(unit) < 13) {
 			return false;
 		}
 

@@ -213,23 +213,22 @@ public class Position {
 	 * instead of pixels is preferable, because it's easier to imagine distances if one knows building dimensions.
 	 */
 	public double distanceTo(Position position) {
-		// Position properOurPosition = this;
-		// if (properOurPosition instanceof Unit) {
-		// properOurPosition = ((Unit) properOurPosition).getPosition();
-		// }
-		//
-		// Position properOtherPosition = position;
-		// if (properOtherPosition instanceof Unit) {
-		// properOtherPosition = ((Unit) properOtherPosition).getPosition();
-		// }
-		//
-		// int dx = properOurPosition.x - properOtherPosition.x;
-		// int dy = properOurPosition.y - properOtherPosition.y;
-
 		int dx = x - position.x;
 		int dy = y - position.y;
 
-		return Math.sqrt(dx * dx + dy * dy) / 32;
+		// Calculate approximate distance between the units. If it's less than let's say X tiles, we probably should
+		// consider calculating more precise value
+		double distanceApprx = getApproxBDistance(position);
+
+		// Precision is fine, return approx value
+		if (distanceApprx > 4.5) {
+			return distanceApprx;
+		}
+
+		// Unit is too close and we need to know the exact distance, not approximization.
+		else {
+			return Math.sqrt(dx * dx + dy * dy) / 32;
+		}
 	}
 
 	/**

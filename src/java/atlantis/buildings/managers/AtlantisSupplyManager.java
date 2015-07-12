@@ -39,7 +39,10 @@ public class AtlantisSupplyManager {
 	}
 
 	private static void supply21to60() {
+		// && (!requestedConstructionOfSupply() || supplyFree <= 2)
 		if (supplyFree <= 9 && !requestedConstructionOfSupply()) {
+			System.out.println("SUPP = "
+					+ AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY));
 			requestAdditionalSupply();
 		}
 	}
