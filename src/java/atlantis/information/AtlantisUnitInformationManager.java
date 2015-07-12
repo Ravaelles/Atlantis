@@ -9,6 +9,8 @@ import atlantis.wrappers.MappingCounter;
 
 public class AtlantisUnitInformationManager {
 
+	protected static ArrayList<Unit> allUnits = new ArrayList<>();
+
 	protected static MappingCounter<UnitType> ourUnitsFininised = new MappingCounter<>();
 	protected static MappingCounter<UnitType> ourUnitsUnfininised = new MappingCounter<>();
 
@@ -17,6 +19,44 @@ public class AtlantisUnitInformationManager {
 
 	protected static ArrayList<Unit> enemyUnitsDiscovered = new ArrayList<>();
 	protected static ArrayList<Unit> enemyUnitsVisible = new ArrayList<>();
+
+	// =========================================================
+	// Special methods
+
+	/**
+	 * Informs this class that new (possibly unfinished) unit exists in the game. Both our (including unfinished) and
+	 * enemy's.
+	 */
+	public static void rememberUnit(Unit unit) {
+		allUnits.add(unit);
+	}
+
+	/**
+	 * Informs this class that new (possibly unfinished) unit exists in the game. Both our (including unfinished) and
+	 * enemy's.
+	 */
+	public static void forgetUnit(int unitID) {
+		Unit unit = getUnitByID(unitID);
+		if (unit != null) {
+			System.out.println(" ----> non zerowe " + unit.getShortName());
+			allUnits.remove(unit);
+		} else {
+			System.out.println("-----> UNIT IS NULL: " + unitID);
+		}
+	}
+
+	/**
+	 * Based on a stored collection, returns unit object for given unitID.
+	 */
+	public static Unit getUnitByID(int unitID) {
+		for (Unit unit : allUnits) {
+			if (unit.getID() == unitID) {
+				return unit;
+			}
+		}
+
+		return null;
+	}
 
 	// =========================================================
 	// Number of units changed
@@ -78,7 +118,17 @@ public class AtlantisUnitInformationManager {
 	 * Returns cached amount of our units of given type.
 	 */
 	public static int countOurUnitsOfType(UnitType type) {
-		return ourUnitsUnfininised.getValueFor(type);
+		if (!type.isGasBuilding()) {
+			return ourUnitsUnfininised.getValueFor(type);
+		} else {
+			int total = 0;
+			for (Unit unit : allUnits) {
+				if (type.equals(unit.getType())) {
+					total++;
+				}
+			}
+			return total;
+		}
 	}
 
 	/**

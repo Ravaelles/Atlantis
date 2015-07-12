@@ -7,6 +7,7 @@ import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import atlantis.AtlantisGame;
 import atlantis.constructing.position.ConstructionBuildPositionFinder;
+import atlantis.information.AtlantisUnitInformationManager;
 
 public class AtlantisConstructingManager {
 
@@ -109,10 +110,15 @@ public class AtlantisConstructingManager {
 		if (building != null && building.isCompleted()) {
 			constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
 			constructionOrders.remove(constructionOrder);
+
+			// @FIX to fix bug with Refineries not being shown as created, because they're kinda changed.
+			if (building.getType().isGasBuilding()) {
+				AtlantisUnitInformationManager.rememberUnit(building);
+			}
 		}
 	}
 
-	// =========================================================
+	// =========================================================no
 	// Public class access methods
 
 	/**

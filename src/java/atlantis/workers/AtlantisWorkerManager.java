@@ -49,10 +49,10 @@ public class AtlantisWorkerManager {
 		String tooltip = "";
 		String newLine = "\r\n";
 		if (unit.getTarget() != null) {
-			tooltip += "Target: " + unit.getTarget();
+			tooltip += "Target: " + unit.getTarget().getShortName() + newLine;
 		}
 		if (unit.getOrderTarget() != null) {
-			tooltip += "OrderTarget: " + unit.getOrderTarget();
+			tooltip += "OrderTarget: " + unit.getOrderTarget().getShortName() + newLine;
 		}
 		// if (unit.isGatheringMinerals()) {
 		// tooltip += "Minerals" + newLine;

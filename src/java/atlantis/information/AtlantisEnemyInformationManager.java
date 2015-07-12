@@ -1,6 +1,8 @@
 package atlantis.information;
 
+import jnibwapi.Position;
 import jnibwapi.Unit;
+import atlantis.wrappers.SelectUnits;
 
 public class AtlantisEnemyInformationManager {
 
@@ -25,6 +27,30 @@ public class AtlantisEnemyInformationManager {
 			}
 		}
 
+		return null;
+	}
+
+	/**
+	 * Gets oldest known enemy base.
+	 */
+	public static Position getEnemyBase() {
+		for (Unit enemyUnit : AtlantisUnitInformationManager.enemyUnitsDiscovered) {
+			if (enemyUnit.isBase()) {
+				return enemyUnit;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+*/
+	public static Unit getNearestEnemyBuilding() {
+		Unit mainBase = SelectUnits.mainBase();
+		if (mainBase != null) {
+			return SelectUnits.from(AtlantisUnitInformationManager.enemyUnitsDiscovered).nearestTo(mainBase);
+		}
 		return null;
 	}
 

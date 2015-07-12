@@ -8,6 +8,10 @@ import atlantis.wrappers.SelectUnits;
 
 public class AtlantisGasManager {
 
+	private static final int MIN_GAS_WORKERS_PER_BUILDING = 3;
+
+	// =========================================================
+
 	/**
 	 * Returns first gas extracting building that needs a worker (because has less than 3 units assigned) or null if
 	 * every gas building has 3 workers assigned.
@@ -18,7 +22,7 @@ public class AtlantisGasManager {
 
 		for (Unit gasBuilding : gasBuildings) {
 			int numberOfWorkersAssigned = countWorkersAssignedTo(gasBuilding, workers);
-			if (numberOfWorkersAssigned < 3) {
+			if (numberOfWorkersAssigned < MIN_GAS_WORKERS_PER_BUILDING) {
 				return gasBuilding;
 			}
 		}

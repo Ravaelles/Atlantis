@@ -184,7 +184,7 @@ public abstract class AtlantisProductionStrategy {
 	 * Populates <b>productionOrdersFromFile</b> with data from CSV file.
 	 */
 	private void createProductionOrderListFromStringArray() {
-		final int NUMBER_OF_COLUMNS_IN_FILE = 4;
+		final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
 		// Read file into 2D String array
 		String path = "bwapi-data/read/build_orders/" + getFilename();
@@ -261,39 +261,39 @@ public abstract class AtlantisProductionStrategy {
 
 			// =========================================================
 			// Blocking
-			boolean isBlocking;
-			String blockingString = row[inRowCounter++].toLowerCase().trim();
-			if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
-				isBlocking = false;
-			} else {
-				isBlocking = true;
-			}
+			// boolean isBlocking;
+			// String blockingString = row[inRowCounter++].toLowerCase().trim();
+			// if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
+			// isBlocking = false;
+			// } else {
+			// isBlocking = true;
+			// }
 
 			// Priority
-			boolean isLowestPriority = false;
-			boolean isHighestPriority = false;
-			String priorityString = row[inRowCounter++].toLowerCase().trim();
-			if (!priorityString.isEmpty()) {
-				priorityString = priorityString.toLowerCase();
-				if (priorityString.contains("low")) {
-					isLowestPriority = true;
-				} else if (priorityString.contains("high")) {
-					isHighestPriority = true;
-				}
-			}
+			// boolean isLowestPriority = false;
+			// boolean isHighestPriority = false;
+			// String priorityString = row[inRowCounter++].toLowerCase().trim();
+			// if (!priorityString.isEmpty()) {
+			// priorityString = priorityString.toLowerCase();
+			// if (priorityString.contains("low")) {
+			// isLowestPriority = true;
+			// } else if (priorityString.contains("high")) {
+			// isHighestPriority = true;
+			// }
+			// }
 
 			// =========================================================
 			// Create ProductionOrder object from strings-row
 
-			if (isBlocking) {
-				order.markAsBlocking();
-			}
-			if (isHighestPriority) {
-				order.priorityHighest();
-			}
-			if (isLowestPriority) {
-				order.priorityLowest();
-			}
+			// if (isBlocking) {
+			// order.markAsBlocking();
+			// }
+			// if (isHighestPriority) {
+			// order.priorityHighest();
+			// }
+			// if (isLowestPriority) {
+			// order.priorityLowest();
+			// }
 
 			// Enqueue created order
 			initialProductionQueue.add(order);

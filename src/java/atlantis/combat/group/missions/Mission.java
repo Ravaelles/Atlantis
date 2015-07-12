@@ -12,4 +12,9 @@ public abstract class Mission {
 	 */
 	public abstract boolean update(Unit unit);
 
+	/**
+	 * Returns true for units that should accept orders in this frame.
+	 */
+	protected abstract boolean canIssueOrderToUnit(Unit unit);
+
 }

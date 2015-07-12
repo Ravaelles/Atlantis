@@ -168,6 +168,7 @@ public class Atlantis implements BWAPIEventListener {
 	public void unitCreate(int unitID) {
 		Unit unit = Unit.getByID(unitID);
 		if (unit != null) {
+			AtlantisUnitInformationManager.rememberUnit(unit);
 
 			// Our unit
 			if (unit.getPlayer().isSelf()) {
@@ -179,6 +180,7 @@ public class Atlantis implements BWAPIEventListener {
 
 	@Override
 	public void unitDestroy(int unitID) {
+		AtlantisUnitInformationManager.forgetUnit(unitID);
 		// Unit unit = Unit.getByID(unitID);
 		// if (unit != null) {
 		// AtlantisUnitInformationManager.unitDestroyed(unit);
@@ -195,6 +197,7 @@ public class Atlantis implements BWAPIEventListener {
 	public void unitDiscover(int unitID) {
 		Unit unit = Unit.getByID(unitID);
 		if (unit != null) {
+			AtlantisUnitInformationManager.rememberUnit(unit);
 
 			// Enemy unit
 			if (unit.getPlayer().isEnemy()) {

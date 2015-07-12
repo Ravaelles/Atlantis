@@ -8,6 +8,9 @@ import jnibwapi.Unit;
 import jnibwapi.util.BWColor;
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
+import atlantis.combat.group.missions.MissionAttack;
+import atlantis.combat.group.missions.MissionDefend;
+import atlantis.combat.group.missions.MissionPrepare;
 import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
 import atlantis.wrappers.SelectUnits;
@@ -37,6 +40,7 @@ public class AtlantisPainter {
 		// =========================================================
 		// Paint from least important to most important (last is on the top)
 
+		paintImportantPlaces();
 		paintColorCirclesAroundUnits();
 		paintConstructionProgress();
 		paintBuildingHealth();
@@ -51,6 +55,28 @@ public class AtlantisPainter {
 				bwapi.drawText(unit, unit.getTooltip(), false);
 			}
 		}
+	}
+
+	/**
+	 * Paints important choke point near the base.
+	 */
+	private static void paintImportantPlaces() {
+		Position position;
+
+		// Main DEFEND focus point
+		position = MissionDefend.getFocusPoint();
+		paintCircle(position, 15, BWColor.Grey);
+		paintTextCentered(position, "DEFEND", BWColor.Grey);
+
+		// Mission PREPARE focus point
+		position = MissionPrepare.getFocusPoint();
+		paintCircle(position, 15, BWColor.Grey);
+		paintTextCentered(position, "PREPARE", BWColor.Grey);
+
+		// Mission PREPARE focus point
+		position = MissionAttack.getFocusPoint();
+		paintCircle(position, 15, BWColor.Grey);
+		paintTextCentered(position, "ATTACK", BWColor.Grey);
 	}
 
 	// =========================================================
@@ -290,6 +316,21 @@ public class AtlantisPainter {
 
 	private static void paintMessage(String text, BWColor color, int x, int y, boolean screenCoord) {
 		bwapi.drawText(new Position(x, y), BWColor.getColorString(color) + text, screenCoord);
+	}
+
+	private static void paintCircle(Position position, int radius, BWColor color) {
+		if (position == null) {
+			return;
+		}
+		getBwapi().drawCircle(position, radius, color, false, false);
+	}
+
+	private static void paintTextCentered(Position position, String text, BWColor color) {
+		getBwapi().drawText(position.translated(-5 * text.length(), -3), BWColor.getColorString(color) + text, false);
+	}
+
+	private static JNIBWAPI getBwapi() {
+		return Atlantis.getBwapi();
 	}
 
 }

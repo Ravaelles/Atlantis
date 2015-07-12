@@ -1,23 +1,25 @@
-;Name;Blocking;Priority
-1;SCV;No;Normal
-2;SCV;No;Normal
-3;SCV;No;Normal
-4;SCV;No;Normal
-5;Barracks;No;Normal
-6;SCV;No;Normal
-7;Supply Depot;No;Normal
-8;SCV;No;Normal
-9;Barracks;No;Normal
-10;Marine;No;Normal
-11;SCV;No;Normal
-12;Marine;No;Normal
-13;SCV;No;Normal
-14;Marine;No;Normal
-15;Marine;No;Normal
-16;Refinery;No;Normal
-17;SCV;No;Normal
-18;Academy;No;Normal
-19;Marine;No;Normal
-20;U-238 Shells;No;Normal
-21;Barracks;No;Normal
-22;SCV;No;Normal
+;Name
+1;SCV
+2;SCV
+3;SCV
+4;SCV
+5;Barracks
+6;SCV
+7;Supply Depot
+8;SCV
+9;Barracks
+10;Marine
+11;SCV
+12;Marine
+13;SCV
+14;Marine
+15;Marine
+16;Refinery
+17;SCV
+18;Academy
+19;Marine
+20;Medic
+20;U-238 Shells
+21;Barracks
+22;SCV
+22;Medic

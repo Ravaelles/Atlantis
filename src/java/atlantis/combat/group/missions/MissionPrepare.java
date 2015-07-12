@@ -1,15 +1,16 @@
 package atlantis.combat.group.missions;
 
 import jnibwapi.ChokePoint;
+import jnibwapi.Position;
 import jnibwapi.Unit;
 import atlantis.information.AtlantisMapInformationManager;
 import atlantis.wrappers.SelectUnits;
 
-public class MissionDefend extends Mission {
+public class MissionPrepare extends Mission {
 
 	@Override
 	public boolean update(Unit unit) {
-		if (moveUnitIfNeededNearChokePoint(unit)) {
+		if (moveUnitToDestinationIfNeeded(unit)) {
 			return true;
 		}
 
@@ -21,8 +22,8 @@ public class MissionDefend extends Mission {
 	/**
 	 * Unit will go towards important choke point near main base.
 	 */
-	private boolean moveUnitIfNeededNearChokePoint(Unit unit) {
-		ChokePoint chokepoint = getFocusPoint();
+	private boolean moveUnitToDestinationIfNeeded(Unit unit) {
+		ChokePoint chokepoint = AtlantisMapInformationManager.getMainBaseChokepoint();
 		if (chokepoint == null) {
 			System.err.println("Couldn't define choke point.");
 			return false;
@@ -115,10 +116,6 @@ public class MissionDefend extends Mission {
 
 	// =========================================================
 
-	public static ChokePoint getFocusPoint() {
-		return AtlantisMapInformationManager.getMainBaseChokepoint();
-	}
-
 	/**
 	 * Do not interrupt unit if it is engaged in combat.
 	 */
@@ -129,5 +126,9 @@ public class MissionDefend extends Mission {
 		}
 
 		return true;
+	}
+
+	public static Position getFocusPoint() {
+		return null;
 	}
 }
