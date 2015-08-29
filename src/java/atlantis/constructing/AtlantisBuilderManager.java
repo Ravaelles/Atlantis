@@ -47,6 +47,10 @@ public class AtlantisBuilderManager {
 	private static void travelToConstruct(Unit builder, ConstructionOrder constructionOrder) {
 		Position buildPosition = constructionOrder.getPositionToBuild();
 		UnitType buildingType = constructionOrder.getBuildingType();
+		
+		if (builder == null) {
+			throw new RuntimeException("Builder empty");
+		}
 
 		// Move builder to the build position
 		if (builder.distanceTo(buildPosition) < 0.5) {
