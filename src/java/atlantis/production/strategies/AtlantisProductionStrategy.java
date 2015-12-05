@@ -1,340 +1,317 @@
 package atlantis.production.strategies;
 
-import java.util.ArrayList;
-
-import jnibwapi.types.TechType;
-import jnibwapi.types.UnitType;
-import jnibwapi.types.UpgradeType;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
+import atlantis.wrappers.AtlantisTech;
 import atlantis.wrappers.MappingCounter;
+import java.util.ArrayList;
+import jnibwapi.types.TechType;
+import jnibwapi.types.UnitType;
+import jnibwapi.types.UpgradeType;
 
 public abstract class AtlantisProductionStrategy {
 
-	/**
-	 * Ordered list of production orders as initially read from the file. It never changes
-	 */
-	private final ArrayList<ProductionOrder> initialProductionQueue = new ArrayList<>();
+    /**
+     * Ordered list of production orders as initially read from the file. It never changes
+     */
+    private final ArrayList<ProductionOrder> initialProductionQueue = new ArrayList<>();
 
-	/**
-	 * Ordered list of next units we should build. It is re-generated when events like
-	 * "started training/building new unit"
-	 */
-	private ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
+    /**
+     * Ordered list of next units we should build. It is re-generated when events like "started
+     * training/building new unit"
+     */
+    private ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
 
-	// /**
-	// * Order list counter.
-	// */
-	// private int lastCounterInOrdersQueue = 0;
+    // /**
+    // * Order list counter.
+    // */
+    // private int lastCounterInOrdersQueue = 0;
+    // =========================================================
+    // Constructor
+    public AtlantisProductionStrategy() {
+        initializeProductionQueue();
+    }
 
-	// =========================================================
-	// Constructor
+    // =========================================================
+    // Abstract methods
+    protected abstract String getFilename();
 
-	public AtlantisProductionStrategy() {
-		initializeProductionQueue();
-	}
+    // =========================================================
+    // Public defined methods
+    /**
+     * If new unit is created (it doesn't need to exist, it's enough that it's just started training) or your
+     * unit is destroyed, we need to rebuild the production orders queue from the beginning (based on initial
+     * queue read from file). <br />
+     * This method will detect which units we lack and assign to <b>currentProductionQueue</b> list next units
+     * that we need. Note this method doesn't check if we can afford them, it only sets up proper sequence of
+     * next units to produce.
+     */
+    public void rebuildQueue() {
 
-	// =========================================================
-	// Abstract methods
+        // Clear old production queue.
+        currentProductionQueue.clear();
 
-	protected abstract String getFilename();
+        // It will store [UnitType->(int)howMany] mapping as we gonna process initial production queue and check if we
+        // currently have units needed
+        MappingCounter<UnitType> virtualCounter = new MappingCounter<>();
 
-	// =========================================================
-	// Public defined methods
+        for (ProductionOrder order : initialProductionQueue) {
+            boolean isOkayToAdd = false;
 
-	/**
-	 * If new unit is created (it doesn't need to exist, it's enough that it's just started training) or your unit is
-	 * destroyed, we need to rebuild the production orders queue from the beginning (based on initial queue read from
-	 * file). <br />
-	 * This method will detect which units we lack and assign to <b>currentProductionQueue</b> list next units that we
-	 * need. Note this method doesn't check if we can afford them, it only sets up proper sequence of next units to
-	 * produce.
-	 */
-	public void rebuildQueue() {
+            // =========================================================
+            // Unit
+            if (order.getUnitType() != null) {
+                UnitType type = order.getUnitType();
+                virtualCounter.incrementValueFor(type);
 
-		// Clear old production queue.
-		currentProductionQueue.clear();
+                int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
+                int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
 
-		// It will store [UnitType->(int)howMany] mapping as we gonna process initial production queue and check if we
-		// currently have units needed
-		MappingCounter<UnitType> virtualCounter = new MappingCounter<>();
+                if (order.getUnitType().isBuilding()) {
+                    weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);
+                    // System.out.println("@@@ Not started constructions of '" + type + "': "
+                    // + AtlantisConstructingManager.countNotStartedConstructionsOfType(type));
+                }
 
-		for (ProductionOrder order : initialProductionQueue) {
-			boolean isOkayToAdd = false;
+                // If we don't have this unit, add it to the current production queue.
+                if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
+                    isOkayToAdd = true;
+                }
+            } // Upgrade
+            else if (order.getUpgrade() != null) {
+                isOkayToAdd = !AtlantisTech.isResearched(order.getUpgrade());
+            } // Tech
+            else if (order.getTech() != null) {
+                isOkayToAdd = !AtlantisTech.isResearched(order.getTech());
+            }
 
-			// =========================================================
-			// Unit
-			if (order.getUnitType() != null) {
-				UnitType type = order.getUnitType();
-				virtualCounter.incrementValueFor(type);
+            // =========================================================
+            if (isOkayToAdd) {
+                currentProductionQueue.add(order);
+                if (currentProductionQueue.size() >= 8) {
+                    break;
+                }
+            }
+        }
+    }
 
-				int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
-				int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
+    /**
+     * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only
+     * want to get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and
+     * returns those build orders that we can build in this very moment (we can afford them and they match our
+     * strategy).
+     */
+    public ArrayList<ProductionOrder> getThingsToProduceRightNow(boolean onlyUnits) {
+        ArrayList<ProductionOrder> result = new ArrayList<>();
+        int mineralsNeeded = 0;
+        int gasNeeded = 0;
 
-				if (order.getUnitType().isBuilding()) {
-					weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);
-					// System.out.println("@@@ Not started constructions of '" + type + "': "
-					// + AtlantisConstructingManager.countNotStartedConstructionsOfType(type));
-				}
+        // The idea as follows: as long as we can afford next enqueued production order, add it to the
+        // CurrentToProduceList.
+        for (ProductionOrder order : currentProductionQueue) {
+            UnitType unitType = order.getUnitType();
 
-				// If we don't have this unit, add it to the current production queue.
-				if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
-					isOkayToAdd = true;
-				}
-			}
+            // Check if include only units
+            if (onlyUnits && unitType == null) {
+                continue;
+            }
 
-			// Upgrade
-			else if (order.getUpgrade() != null) {
-				isOkayToAdd = true;
-			}
+            UpgradeType upgrade = order.getUpgrade();
+            TechType tech = order.getTech();
 
-			// =========================================================
+            if (unitType != null) {
+                mineralsNeeded += unitType.getMineralPrice();
+                gasNeeded += unitType.getGasPrice();
+            } else if (upgrade != null) {
+                mineralsNeeded += upgrade.getMineralPriceBase() * upgrade.getMineralPriceFactor();
+                gasNeeded += upgrade.getGasPriceBase() * upgrade.getGasPriceFactor();
+            } else if (tech != null) {
+                mineralsNeeded += tech.getMineralPrice();
+                gasNeeded += tech.getMineralPrice();
+            }
 
-			if (isOkayToAdd) {
-				currentProductionQueue.add(order);
-				if (currentProductionQueue.size() >= 8) {
-					break;
-				}
-			}
-		}
-	}
+            // If we can afford this order and the previous, add it to CurrentToProduceList.
+            if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
+                result.add(order);
+            } // We can't afford to produce this order along with all previous ones. Return currently list.
+            else {
+                break;
+            }
+        }
 
-	/**
-	 * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only want to
-	 * get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and returns those
-	 * build orders that we can build in this very moment (we can afford them and they match our strategy).
-	 */
-	public ArrayList<ProductionOrder> getThingsToProduceRightNow(boolean onlyUnits) {
-		ArrayList<ProductionOrder> result = new ArrayList<>();
-		int mineralsNeeded = 0;
-		int gasNeeded = 0;
+        return result;
+    }
 
-		// The idea as follows: as long as we can afford next enqueued production order, add it to the
-		// CurrentToProduceList.
-		for (ProductionOrder order : currentProductionQueue) {
-			UnitType unitType = order.getUnitType();
+    /**
+     * Returns true if we should produce this unit now.
+     */
+    public boolean shouldProduceNow(UnitType type) {
+        return getThingsToProduceRightNow(true).contains(type);
+    }
 
-			// Check if include only units
-			if (onlyUnits && unitType == null) {
-				continue;
-			}
+    /**
+     * Returns true if we should produce this upgrade now.
+     */
+    public boolean shouldProduceNow(UpgradeType upgrade) {
+        return getThingsToProduceRightNow(false).contains(upgrade);
+    }
 
-			UpgradeType upgrade = order.getUpgrade();
-			TechType tech = order.getTech();
+    /**
+     * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
+     */
+    public ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
+        ArrayList<ProductionOrder> result = new ArrayList<>();
 
-			if (unitType != null) {
-				mineralsNeeded += unitType.getMineralPrice();
-				gasNeeded += unitType.getGasPrice();
-			} else if (upgrade != null) {
-				mineralsNeeded += upgrade.getMineralPriceBase() * upgrade.getMineralPriceFactor();
-				gasNeeded += upgrade.getGasPriceBase() * upgrade.getGasPriceFactor();
-			} else if (tech != null) {
-				mineralsNeeded += tech.getMineralPrice();
-				gasNeeded += tech.getMineralPrice();
-			}
+        for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
+            result.add(currentProductionQueue.get(i));
+        }
 
-			// If we can afford this order and the previous, add it to CurrentToProduceList.
-			if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
-				result.add(order);
-			}
+        return result;
+    }
 
-			// We can't afford to produce this order along with all previous ones. Return currently list.
-			else {
-				break;
-			}
-		}
+    // =========================================================
+    // Private defined methods
+    /**
+     * Populates <b>productionOrdersFromFile</b> with data from CSV file.
+     */
+    private void createProductionOrderListFromStringArray() {
+        final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
-		return result;
-	}
+        // Read file into 2D String array
+        String path = "bwapi-data/read/build_orders/" + getFilename();
+        String[][] loadedFile = RUtilities.loadCsv(path, NUMBER_OF_COLUMNS_IN_FILE);
 
-	/**
-	 * Returns true if we should produce this unit now.
-	 */
-	public boolean shouldProduceNow(UnitType type) {
-		return getThingsToProduceRightNow(true).contains(type);
-	}
+        // We can display file here, if we want to
+        // displayLoadedFile(loadedFile);
+        // =========================================================
+        // Skip first row as it's CSV header
+        for (int i = 1; i < loadedFile.length; i++) {
+            String[] row = loadedFile[i];
+            int inRowCounter = 1; // Skip first column as it's only description
+            ProductionOrder order = null;
 
-	/**
-	 * Returns true if we should produce this upgrade now.
-	 */
-	public boolean shouldProduceNow(UpgradeType upgrade) {
-		return getThingsToProduceRightNow(false).contains(upgrade);
-	}
+            // =========================================================
+            // Parse entire row of strings
+            // Define type of entry: Unit / Research / Tech
+            String nameString = row[inRowCounter++].toLowerCase().trim();
 
-	/**
-	 * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
-	 */
-	public ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
-		ArrayList<ProductionOrder> result = new ArrayList<>();
+            // =========================================================
+            // Try getting objects of each type as we don't know if it's unit, research or tech.
+            // UNIT
+            UnitType.disableErrorReporting = true;
+            UnitType unitType = UnitType.getByName(nameString);
+            UnitType.disableErrorReporting = false;
 
-		for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
-			result.add(currentProductionQueue.get(i));
-		}
+            // UPGRADE
+            UpgradeType.disableErrorReporting = true;
+            UpgradeType upgrade = UpgradeType.getByName(nameString);
+            UpgradeType.disableErrorReporting = false;
 
-		return result;
-	}
+            // TECH
+            TechType.disableErrorReporting = true;
+            TechType tech = TechType.getByName(nameString);
+            TechType.disableErrorReporting = false;
 
-	// =========================================================
-	// Private defined methods
+            // Define convienience boolean variables
+            boolean isUnit = unitType != null;
+            boolean isUpgrade = upgrade != null;
+            boolean isTech = tech != null;
 
-	/**
-	 * Populates <b>productionOrdersFromFile</b> with data from CSV file.
-	 */
-	private void createProductionOrderListFromStringArray() {
-		final int NUMBER_OF_COLUMNS_IN_FILE = 2;
+            // Check if no error occured like no object found
+            if (!isUnit && !isUpgrade && !isTech) {
+                System.err.println("Invalid production order entry: " + nameString);
+                System.exit(-1);
+            }
 
-		// Read file into 2D String array
-		String path = "bwapi-data/read/build_orders/" + getFilename();
-		String[][] loadedFile = RUtilities.loadCsv(path, NUMBER_OF_COLUMNS_IN_FILE);
+            // =========================================================
+            // Unit
+            if (isUnit) {
+                order = new ProductionOrder(unitType);
+            } // Upgrade
+            else if (isUpgrade) {
+                order = new ProductionOrder(upgrade);
+            } // Tech
+            else if (isTech) {
+                order = new ProductionOrder(tech);
+            } // Invalid entry type
+            else {
+                System.err.println("Invalid entry type: " + nameString);
+                System.exit(-1);
+            }
 
-		// We can display file here, if we want to
-		// displayLoadedFile(loadedFile);
+            // =========================================================
+            // Blocking
+            // boolean isBlocking;
+            // String blockingString = row[inRowCounter++].toLowerCase().trim();
+            // if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
+            // isBlocking = false;
+            // } else {
+            // isBlocking = true;
+            // }
+            // Priority
+            // boolean isLowestPriority = false;
+            // boolean isHighestPriority = false;
+            // String priorityString = row[inRowCounter++].toLowerCase().trim();
+            // if (!priorityString.isEmpty()) {
+            // priorityString = priorityString.toLowerCase();
+            // if (priorityString.contains("low")) {
+            // isLowestPriority = true;
+            // } else if (priorityString.contains("high")) {
+            // isHighestPriority = true;
+            // }
+            // }
+            // =========================================================
+            // Create ProductionOrder object from strings-row
+            // if (isBlocking) {
+            // order.markAsBlocking();
+            // }
+            // if (isHighestPriority) {
+            // order.priorityHighest();
+            // }
+            // if (isLowestPriority) {
+            // order.priorityLowest();
+            // }
+            // Enqueue created order
+            initialProductionQueue.add(order);
+            currentProductionQueue.add(order);
+        }
+    }
 
-		// =========================================================
+    /**
+     * Reads build orders from CSV file and converts them into ArrayList.
+     */
+    private void initializeProductionQueue() {
 
-		// Skip first row as it's CSV header
-		for (int i = 1; i < loadedFile.length; i++) {
-			String[] row = loadedFile[i];
-			int inRowCounter = 1; // Skip first column as it's only description
-			ProductionOrder order = null;
+        // Convert 2D String array into ArrayList of ProductionOrder
+        createProductionOrderListFromStringArray();
+    }
 
-			// =========================================================
-			// Parse entire row of strings
+    /**
+     * Auxiliary method that can be run to see what was loaded from CSV file.
+     */
+    @SuppressWarnings("unused")
+    private void displayLoadedFile(String[][] loadedFile) {
+        int rowCounter = 0;
+        for (String[] rows : loadedFile) {
+            if (rowCounter == 0) {
+                rowCounter++;
+                continue;
+            }
 
-			// Define type of entry: Unit / Research / Tech
-			String nameString = row[inRowCounter++].toLowerCase().trim();
+            // =========================================================
+            for (String value : rows) {
+                System.out.print(value + " | ");
+            }
+            System.out.println();
 
-			// =========================================================
-			// Try getting objects of each type as we don't know if it's unit, research or tech.
+            // =========================================================
+            rowCounter++;
+        }
 
-			// UNIT
-			UnitType.disableErrorReporting = true;
-			UnitType unitType = UnitType.getByName(nameString);
-			UnitType.disableErrorReporting = false;
-
-			// UPGRADE
-			UpgradeType.disableErrorReporting = true;
-			UpgradeType upgrade = UpgradeType.getByName(nameString);
-			UpgradeType.disableErrorReporting = false;
-
-			// TECH
-			TechType.disableErrorReporting = true;
-			TechType tech = TechType.getByName(nameString);
-			TechType.disableErrorReporting = false;
-
-			// Define convienience boolean variables
-			boolean isUnit = unitType != null;
-			boolean isUpgrade = upgrade != null;
-			boolean isTech = tech != null;
-
-			// Check if no error occured like no object found
-			if (!isUnit && !isUpgrade && !isTech) {
-				System.err.println("Invalid production order entry: " + nameString);
-				System.exit(-1);
-			}
-
-			// =========================================================
-
-			// Unit
-			if (isUnit) {
-				order = new ProductionOrder(unitType);
-			}
-
-			// Upgrade
-			else if (isUpgrade) {
-				order = new ProductionOrder(upgrade);
-			}
-
-			// Tech
-			else if (isTech) {
-				order = new ProductionOrder(tech);
-			}
-
-			// Invalid entry type
-			else {
-				System.err.println("Invalid entry type: " + nameString);
-				System.exit(-1);
-			}
-
-			// =========================================================
-			// Blocking
-			// boolean isBlocking;
-			// String blockingString = row[inRowCounter++].toLowerCase().trim();
-			// if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
-			// isBlocking = false;
-			// } else {
-			// isBlocking = true;
-			// }
-
-			// Priority
-			// boolean isLowestPriority = false;
-			// boolean isHighestPriority = false;
-			// String priorityString = row[inRowCounter++].toLowerCase().trim();
-			// if (!priorityString.isEmpty()) {
-			// priorityString = priorityString.toLowerCase();
-			// if (priorityString.contains("low")) {
-			// isLowestPriority = true;
-			// } else if (priorityString.contains("high")) {
-			// isHighestPriority = true;
-			// }
-			// }
-
-			// =========================================================
-			// Create ProductionOrder object from strings-row
-
-			// if (isBlocking) {
-			// order.markAsBlocking();
-			// }
-			// if (isHighestPriority) {
-			// order.priorityHighest();
-			// }
-			// if (isLowestPriority) {
-			// order.priorityLowest();
-			// }
-
-			// Enqueue created order
-			initialProductionQueue.add(order);
-			currentProductionQueue.add(order);
-		}
-	}
-
-	/**
-	 * Reads build orders from CSV file and converts them into ArrayList.
-	 */
-	private void initializeProductionQueue() {
-
-		// Convert 2D String array into ArrayList of ProductionOrder
-		createProductionOrderListFromStringArray();
-	}
-
-	/**
-	 * Auxiliary method that can be run to see what was loaded from CSV file.
-	 */
-	@SuppressWarnings("unused")
-	private void displayLoadedFile(String[][] loadedFile) {
-		int rowCounter = 0;
-		for (String[] rows : loadedFile) {
-			if (rowCounter == 0) {
-				rowCounter++;
-				continue;
-			}
-
-			// =========================================================
-
-			for (String value : rows) {
-				System.out.print(value + " | ");
-			}
-			System.out.println();
-
-			// =========================================================
-
-			rowCounter++;
-		}
-
-		System.exit(0);
-	}
+        System.exit(0);
+    }
 
 }

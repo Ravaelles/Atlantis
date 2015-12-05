@@ -4,9 +4,9 @@ import jnibwapi.Unit;
 
 public class DefaultMeleeManager extends MicroMeleeManager {
 
-	@Override
-	public void update(Unit unit) {
+    @Override
+    public void update(Unit unit) {
 
-	}
+    }
 
 }

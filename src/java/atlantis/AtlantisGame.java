@@ -1,133 +1,169 @@
 package atlantis;
 
+import static atlantis.Atlantis.getBwapi;
+import atlantis.production.strategies.AtlantisProductionStrategy;
+import atlantis.util.RUtilities;
+import jnibwapi.Player;
 import jnibwapi.types.RaceType.RaceTypes;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UpgradeType;
-import atlantis.production.strategies.AtlantisProductionStrategy;
-import atlantis.util.RUtilities;
 
 public class AtlantisGame {
 
-	/**
-	 * Returns approximate number of in-game seconds elapsed.
-	 */
-	public static int getTimeSeconds() {
-		return Atlantis.getBwapi().getFrameCount() / 30;
-	}
+    private static Player _enemy = null;
 
-	/**
-	 * Returns number of frames elapsed.
-	 */
-	public static int getTimeFrames() {
-		return Atlantis.getBwapi().getFrameCount();
-	}
+    // --------------------------------------------------------------------
+    /**
+     * Changes game speed. 0 - fastest 1 - very quick 20 - around default
+     */
+    public static void changeSpeed(int speed) {
+        AtlantisConfig.GAME_SPEED = speed;
+        getBwapi().setGameSpeed(AtlantisConfig.GAME_SPEED);
+    }
 
-	/**
-	 * Number of minerals.
-	 */
-	public static int getMinerals() {
-		return Atlantis.getBwapi().getSelf().getMinerals();
-	}
+    /**
+     * Returns game speed.
+     */
+    public static int getGameSpeed() {
+        return AtlantisConfig.GAME_SPEED;
+    }
 
-	/**
-	 * Number of gas.
-	 */
-	public static int getGas() {
-		return Atlantis.getBwapi().getSelf().getGas();
-	}
+    /**
+     * Returns approximate number of in-game seconds elapsed.
+     */
+    public static int getTimeSeconds() {
+        return Atlantis.getBwapi().getFrameCount() / 30;
+    }
 
-	/**
-	 * Number of free supply.
-	 */
-	public static int getSupplyFree() {
-		return getSupplyTotal() - getSupplyUsed();
-	}
+    /**
+     * Returns number of frames elapsed.
+     */
+    public static int getTimeFrames() {
+        return Atlantis.getBwapi().getFrameCount();
+    }
 
-	/**
-	 * Number of supply used.
-	 */
-	public static int getSupplyUsed() {
-		return Atlantis.getBwapi().getSelf().getSupplyUsed();
-	}
+    /**
+     * Number of minerals.
+     */
+    public static int getMinerals() {
+        return Atlantis.getBwapi().getSelf().getMinerals();
+    }
 
-	/**
-	 * Number of supply totally available.
-	 */
-	public static int getSupplyTotal() {
-		return Atlantis.getBwapi().getSelf().getSupplyTotal();
-	}
+    /**
+     * Number of gas.
+     */
+    public static int getGas() {
+        return Atlantis.getBwapi().getSelf().getGas();
+    }
 
-	// =========================================================
-	// Auxiliary
+    /**
+     * Number of free supply.
+     */
+    public static int getSupplyFree() {
+        return getSupplyTotal() - getSupplyUsed();
+    }
 
-	/**
-	 * Returns random int number from range [min, max], both inclusive.
-	 */
-	public static int rand(int min, int max) {
-		return RUtilities.rand(min, max);
-	}
+    /**
+     * Number of supply used.
+     */
+    public static int getSupplyUsed() {
+        return Atlantis.getBwapi().getSelf().getSupplyUsed();
+    }
 
-	/**
-	 * Returns true if user plays as Terran.
-	 */
-	public static boolean playsAsTerran() {
-		return AtlantisConfig.MY_RACE.equals(RaceTypes.Terran);
-	}
+    /**
+     * Number of supply totally available.
+     */
+    public static int getSupplyTotal() {
+        return Atlantis.getBwapi().getSelf().getSupplyTotal();
+    }
 
-	/**
-	 * Returns true if user plays as Protoss.
-	 */
-	public static boolean playsAsProtoss() {
-		return AtlantisConfig.MY_RACE.equals(RaceTypes.Protoss);
-	}
+    /**
+     * Returns current player.
+     */
+    public static Player getPlayerUs() {
+        return Atlantis.getBwapi().getSelf();
+    }
 
-	/**
-	 * Returns true if user plays as Zerg.
-	 */
-	public static boolean playsAsZerg() {
-		return AtlantisConfig.MY_RACE.equals(RaceTypes.Zerg);
-	}
+    /**
+     * Returns enemy player.
+     */
+    public static Player enemy() {
+        if (_enemy == null) {
+            _enemy = Atlantis.getBwapi().getEnemies().iterator().next();
+        }
+        return _enemy;
+    }
 
-	/**
-	 * Returns object that is responsible for the production queue.
-	 */
-	public static AtlantisProductionStrategy getProductionStrategy() {
-		return AtlantisConfig.getProductionStrategy();
-	}
+    // =========================================================
+    // Auxiliary
+    /**
+     * Returns random int number from range [min, max], both inclusive.
+     */
+    public static int rand(int min, int max) {
+        return RUtilities.rand(min, max);
+    }
 
-	/**
-	 * Returns true if we can afford given amount of minerals.
-	 */
-	public static boolean hasMinerals(int mineralsToAfford) {
-		return getMinerals() >= mineralsToAfford;
-	}
+    /**
+     * Returns true if user plays as Terran.
+     */
+    public static boolean playsAsTerran() {
+        return AtlantisConfig.MY_RACE.equals(RaceTypes.Terran);
+    }
 
-	/**
-	 * Returns true if we can afford given amount of gas.
-	 */
-	public static boolean hasGas(int gasToAfford) {
-		return getGas() >= gasToAfford;
-	}
+    /**
+     * Returns true if user plays as Protoss.
+     */
+    public static boolean playsAsProtoss() {
+        return AtlantisConfig.MY_RACE.equals(RaceTypes.Protoss);
+    }
 
-	/**
-	 * Returns true if we can afford minerals and gas for given unit type.
-	 */
-	public static boolean canAfford(UnitType unitType) {
-		return hasMinerals(unitType.getMineralPrice()) && hasGas(unitType.getGasPrice());
-	}
+    /**
+     * Returns true if user plays as Zerg.
+     */
+    public static boolean playsAsZerg() {
+        return AtlantisConfig.MY_RACE.equals(RaceTypes.Zerg);
+    }
 
-	/**
-	 * Returns true if we can afford minerals and gas for given upgrade.
-	 */
-	public static boolean canAfford(UpgradeType upgrade) {
-		return hasMinerals(upgrade.getMineralPriceBase()) && hasGas(upgrade.getGasPriceBase());
-	}
+    /**
+     * Returns object that is responsible for the production queue.
+     */
+    public static AtlantisProductionStrategy getProductionStrategy() {
+        return AtlantisConfig.getProductionStrategy();
+    }
 
-	/**
-	 * Returns true if we can afford both so many minerals and gas at the same time.
-	 */
-	public static boolean canAfford(int minerals, int gas) {
-		return hasMinerals(minerals) && hasGas(gas);
-	}
+    /**
+     * Returns true if we can afford given amount of minerals.
+     */
+    public static boolean hasMinerals(int mineralsToAfford) {
+        return getMinerals() >= mineralsToAfford;
+    }
+
+    /**
+     * Returns true if we can afford given amount of gas.
+     */
+    public static boolean hasGas(int gasToAfford) {
+        return getGas() >= gasToAfford;
+    }
+
+    /**
+     * Returns true if we can afford minerals and gas for given unit type.
+     */
+    public static boolean canAfford(UnitType unitType) {
+        return hasMinerals(unitType.getMineralPrice()) && hasGas(unitType.getGasPrice());
+    }
+
+    /**
+     * Returns true if we can afford minerals and gas for given upgrade.
+     */
+    public static boolean canAfford(UpgradeType upgrade) {
+        return hasMinerals(upgrade.getMineralPriceBase()) && hasGas(upgrade.getGasPriceBase());
+    }
+
+    /**
+     * Returns true if we can afford both so many minerals and gas at the same time.
+     */
+    public static boolean canAfford(int minerals, int gas) {
+        return hasMinerals(minerals) && hasGas(gas);
+    }
 
 }
