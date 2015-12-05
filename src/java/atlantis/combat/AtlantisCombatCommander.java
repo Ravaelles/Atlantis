@@ -82,7 +82,7 @@ public class AtlantisCombatCommander {
 	// =========================================================
 
 	private static boolean shouldNotDisturbUnit(Unit unit) {
-		return unit.isStartingAttack();
+		return unit.isStartingAttack() || unit.isAttackFrame();
 	}
 
 }
