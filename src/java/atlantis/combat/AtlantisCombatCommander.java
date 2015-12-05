@@ -9,8 +9,8 @@ import atlantis.combat.group.missions.Missions;
 public class AtlantisCombatCommander {
 
 	/**
-	 * This is the mission for main battle group forces. E.g. initially it will be DEFEND, then it should be PREPARE (go
-	 * near enemy) and then ATTACK.
+	 * This is the mission for main battle group forces. E.g. initially it will
+	 * be DEFEND, then it should be PREPARE (go near enemy) and then ATTACK.
 	 */
 	private static Mission currentGlobalMission;
 
@@ -45,8 +45,8 @@ public class AtlantisCombatCommander {
 	}
 
 	/**
-	 * Acts with all units that are part of given battle group, according to the GroupMission object and using proper
-	 * micro managers.
+	 * Acts with all units that are part of given battle group, according to the
+	 * GroupMission object and using proper micro managers.
 	 */
 	private static void handleBattleGroup(Group group) {
 
@@ -63,7 +63,8 @@ public class AtlantisCombatCommander {
 				return;
 			}
 
-			// Handle generic actions according to current mission (e.g. DEFEND, ATTACK)
+			// Handle generic actions according to current mission (e.g. DEFEND,
+			// ATTACK)
 			boolean microDisallowed = group.getMission().update(unit);
 
 			if (!microDisallowed) {

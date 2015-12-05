@@ -37,8 +37,8 @@ public class Map {
 	private List<BaseLocation> baseLocations = null;
 	private HashMap<Integer, Region> idToRegion = null;
 
-	public Map(int width, int height, String name, String fileName, String hash, int[] heightMap, int[] buildable,
-			int[] walkable) {
+	public Map(int width, int height, String name, String fileName, String hash, int[] heightMap,
+			int[] buildable, int[] walkable) {
 		size = new Position(width, height, PosType.BUILD);
 		this.name = name;
 		this.fileName = fileName;
@@ -63,14 +63,15 @@ public class Map {
 		Arrays.fill(lowResWalkable, true);
 		for (int wx = 0; wx < size.getWX(); wx++) {
 			for (int wy = 0; wy < size.getWY(); wy++) {
-				lowResWalkable[wx / 4 + width * (wy / 4)] &= isWalkable(new Position(wx, wy, PosType.WALK));
+				lowResWalkable[wx / 4 + width * (wy / 4)] &= isWalkable(new Position(wx, wy,
+						PosType.WALK));
 			}
 		}
 	}
 
 	/** Initialise the map with regions and base locations */
-	protected void initialize(int[] regionMapData, int[] regionData, HashMap<Integer, int[]> regionPolygons,
-			int[] chokePointData, int[] baseLocationData) {
+	protected void initialize(int[] regionMapData, int[] regionData,
+			HashMap<Integer, int[]> regionPolygons, int[] chokePointData, int[] baseLocationData) {
 
 		// regionMap
 		assert (regionMapData != null && regionMapData.length == size.getBX() * size.getBY());
@@ -161,7 +162,10 @@ public class Map {
 		return hash;
 	}
 
-	/** Converts a position to a 1-dimensional build tile array index for this map */
+	/**
+	 * Converts a position to a 1-dimensional build tile array index for this
+	 * map
+	 */
 	private int getBuildTileArrayIndex(Position p) {
 		return p.getBX() + size.getBX() * p.getBY();
 	}
@@ -175,8 +179,9 @@ public class Map {
 	}
 
 	/**
-	 * Works only after initialize(). Returns null if the specified position is invalid. Build tile accuracy (so may not
-	 * precisely agree with region polygons).
+	 * Works only after initialize(). Returns null if the specified position is
+	 * invalid. Build tile accuracy (so may not precisely agree with region
+	 * polygons).
 	 */
 	public Region getRegion(Position p) {
 		if (p.isValid()) {
@@ -246,17 +251,25 @@ public class Map {
 	}
 
 	/**
-	 * Find the shortest walkable distance, in pixels, between two tile positions or -1 if not reachable. Works only
-	 * after initialize(). Ported from BWTA.
+	 * Find the shortest walkable distance, in pixels, between two tile
+	 * positions or -1 if not reachable. Works only after initialize(). Ported
+	 * from BWTA.
 	 */
 	public double getGroundDistance(Position start, Position end) {
 		if (!isConnected(start, end))
 			return -1;
+
+		System.out.println();
+		System.out.println(start);
+		System.out.println(end);
+		System.out.println("DIST " + aStarSearchDistance(start, end));
+
 		return aStarSearchDistance(start, end);
 	}
 
 	/**
-	 * Based on map connectedness only. Ignores buildings. Works only after initialize(). Ported from BWTA.
+	 * Based on map connectedness only. Ignores buildings. Works only after
+	 * initialize(). Ported from BWTA.
 	 */
 	public boolean isConnected(Position start, Position end) {
 		if (getRegion(start) == null)
@@ -267,14 +280,15 @@ public class Map {
 	}
 
 	/**
-	 * Performs an A* search. Intended to be called from {@link #getGroundDistance(int, int, int, int)}. Ported from
-	 * BWTA.
+	 * Performs an A* search. Intended to be called from
+	 * {@link #getGroundDistance(int, int, int, int)}. Ported from BWTA.
 	 */
 	private double aStarSearchDistance(Position start, Position end) {
 		// Distance of 10 per build tile, or sqrt(10^2 + 10^2) ~= 14 diagonally
 		final int mvmtCost = 10;
 		final int mvmtCostDiag = 14;
-		PriorityQueue<AStarTile> openTiles = new PriorityQueue<AStarTile>(); // min heap
+		PriorityQueue<AStarTile> openTiles = new PriorityQueue<AStarTile>(); // min
+																				// heap
 		// Map from tile to distance
 		HashMap<Position, Integer> gmap = new HashMap<>();
 		HashSet<Position> closedTiles = new HashSet<>();
@@ -310,8 +324,10 @@ public class Map {
 					int dx = Math.abs(x - end.getBX());
 					int dy = Math.abs(y - end.getBY());
 					// Heuristic for remaining distance:
-					// min(dx, dy) is the minimum diagonal distance, so costs mvmtCostDiag
-					// abs(dx - dy) is the rest of the distance, so costs mvmtCost
+					// min(dx, dy) is the minimum diagonal distance, so costs
+					// mvmtCostDiag
+					// abs(dx - dy) is the rest of the distance, so costs
+					// mvmtCost
 					int h = Math.abs(dx - dy) * mvmtCost + Math.min(dx, dy) * mvmtCostDiag;
 					int f = g + h;
 					if (!gmap.containsKey(t) || gmap.get(t) > g) {
@@ -343,7 +359,8 @@ public class Map {
 	}
 
 	/**
-	 * Debugging method to check terrain has been analysed properly. Taken from BWAPI's ExampleAIClient
+	 * Debugging method to check terrain has been analysed properly. Taken from
+	 * BWAPI's ExampleAIClient
 	 */
 	public void drawTerrainData(JNIBWAPI bwapi) {
 		// iterate through all the base locations and draw their outlines
@@ -354,12 +371,15 @@ public class Map {
 			Position otherCorner = p.translated(new Position(4, 3, PosType.BUILD));
 			bwapi.drawBox(p, otherCorner, BWColor.Blue, false, false);
 
-			// if this is an island expansion, draw a yellow circle around the base location
+			// if this is an island expansion, draw a yellow circle around the
+			// base location
 			if (bl.isIsland()) {
-				bwapi.drawCircle(p.translated(new Position(2, 1, PosType.BUILD)), 80, BWColor.Yellow, false, false);
+				bwapi.drawCircle(p.translated(new Position(2, 1, PosType.BUILD)), 80,
+						BWColor.Yellow, false, false);
 			}
 
-			// draw a circle at each mineral patch and a box at each vespene geyser
+			// draw a circle at each mineral patch and a box at each vespene
+			// geyser
 			for (Unit u : bwapi.getNeutralUnits()) {
 				UnitType ut = u.getType();
 				if (ut.isResourceContainer()) {
@@ -368,13 +388,15 @@ public class Map {
 						bwapi.drawCircle(u, 30, BWColor.Cyan, false, false);
 					} else {
 						// Geysers
-						bwapi.drawBox(u.getTopLeft(), u.getBottomRight(), BWColor.Orange, false, false);
+						bwapi.drawBox(u.getTopLeft(), u.getBottomRight(), BWColor.Orange, false,
+								false);
 					}
 				}
 			}
 		}
 
-		// Iterate through all the regions and draw the polygon outline of it in green.
+		// Iterate through all the regions and draw the polygon outline of it in
+		// green.
 		for (Region r : getRegions()) {
 			Position[] polygon = r.getPolygon();
 			for (int i = 0; i < polygon.length; i++) {
