@@ -12,15 +12,17 @@ public class DefaultRangedManager extends MicroRangedManager {
 
             // SPECIAL UNIT TYPE action
             if (unit.isType(UnitTypes.Terran_Medic)) {
-                if (MicroMedic.update(unit)) {
-                    return;
-                }
+                MicroMedic.update(unit);
+//                if (MicroMedic.update(unit)) {
+//                    return;
+//                }
+                return;
             }
 
             // =========================================================
             // STANDARD actions
             Unit nearestEnemy = SelectUnits.enemy().nearestTo(unit);
-            if (nearestEnemy != null) {
+            if (nearestEnemy != null && nearestEnemy.distanceTo(unit) <= 6.5) {
                 // double distToEnemy = nearestEnemy.distanceTo(unit);
                 // double distToMainBase = unit.distanceTo(SelectUnits.mainBase());
                 // double enemyDistToDefendedPosition = nearestEnemy.distanceTo(SelectUnits.mainBase());
@@ -43,7 +45,9 @@ public class DefaultRangedManager extends MicroRangedManager {
                 // // Pursue and attack the enemy
                 // else {
                 // if (distToEnemy > unit.getShootRangeAgainst(nearestEnemy)) {
-                unit.attackUnit(nearestEnemy, false);
+                if (unit.getGroundWeaponCooldown() == 0) {
+                    unit.attackUnit(nearestEnemy, false);
+                }
                 // }
                 // }
             }
@@ -52,7 +56,7 @@ public class DefaultRangedManager extends MicroRangedManager {
 
     // =========================================================
     private boolean canIssueOrderToUnit(Unit unit) {
-        return !unit.isAttacking();
+        return !unit.isAttacking() && !unit.isStartingAttack() && !unit.isAttackFrame();
     }
 
 }

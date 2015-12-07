@@ -40,8 +40,9 @@ public class AtlantisConstructingManager {
 
         // Find place for new building
         Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
-                newConstructionOrder.getBuilder(), building);
-        // System.out.println("@@ " + building + " at " + positionToBuild);
+                newConstructionOrder.getBuilder(), building
+        );
+//        System.out.println("@@ " + building + " at " + positionToBuild);
 
         // Successfully found position for new building
         Unit optimalBuilder = null;
@@ -106,13 +107,20 @@ public class AtlantisConstructingManager {
         }
 
         // If building is finished, remove it from the list
-        if (building != null && building.isCompleted()) {
-            constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
-            constructionOrders.remove(constructionOrder);
+        if (building != null) {
 
-            // @FIX to fix bug with Refineries not being shown as created, because they're kinda changed.
-            if (building.getType().isGasBuilding()) {
-                AtlantisUnitInformationManager.rememberUnit(building);
+            // COMPLETED
+            if (building.isCompleted()) {
+                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
+                constructionOrders.remove(constructionOrder);
+
+                // @FIX to fix bug with Refineries not being shown as created, because they're kinda changed.
+                if (building.getType().isGasBuilding()) {
+                    AtlantisUnitInformationManager.rememberUnit(building);
+                }
+            } // NOT YET COMPLETED
+            else {
+                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
         }
     }

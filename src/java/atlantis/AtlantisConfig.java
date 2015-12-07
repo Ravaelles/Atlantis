@@ -16,7 +16,7 @@ import jnibwapi.types.UnitType.UnitTypes;
  */
 public class AtlantisConfig {
 
-    public static int GAME_SPEED = 0;
+    public static int GAME_SPEED = 4;
     public static boolean USE_DYNAMIC_GAME_SPEED = true; // If true, game will slow down on fighting
     public static int DYNAMIC_GAME_SPEED_SLOWDOWN = 3;
 

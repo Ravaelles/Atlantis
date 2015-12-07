@@ -7,6 +7,7 @@ import atlantis.combat.group.missions.MissionDefend;
 import atlantis.combat.group.missions.MissionPrepare;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
+import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
 import atlantis.wrappers.SelectUnits;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
 import jnibwapi.Unit;
+import jnibwapi.types.UnitType;
 import jnibwapi.util.BWColor;
 
 /**
@@ -22,14 +24,16 @@ import jnibwapi.util.BWColor;
 public class AtlantisPainter {
 
     private static JNIBWAPI bwapi;
-    private static int sideMessageCounter = 0;
+    private static int sideMessageTopCounter = 0;
+    private static int sideMessageBottomCounter = 0;
 
     // =========================================================
     /**
      * Executed once per frame, at the end of all other actions.
      */
     public static void paint() {
-        sideMessageCounter = 0;
+        sideMessageTopCounter = 0;
+        sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
 
         // =========================================================
@@ -40,6 +44,7 @@ public class AtlantisPainter {
         paintImportantPlaces();
         paintColorCirclesAroundUnits();
         paintConstructionProgress();
+        paintConstructionPlaces();
         paintBuildingHealth();
         paintUnitsBeingTrainedInBuildings();
         paintSpecialsOverUnits();
@@ -113,10 +118,56 @@ public class AtlantisPainter {
      * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
      */
     private static void paintConstructionsPending() {
-        int yOffset = 50;
-        paintSideMessage("Constructing:", BWColor.White, yOffset);
-        for (ConstructionOrder constructionOrder : AtlantisConstructingManager.getAllConstructionOrders()) {
-            paintSideMessage(constructionOrder.getBuildingType().getShortName(), BWColor.Yellow, yOffset);
+        int yOffset = 150;
+        ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
+        if (!allOrders.isEmpty()) {
+            paintSideMessage("Constructing:", BWColor.White, yOffset);
+            for (ConstructionOrder constructionOrder : allOrders) {
+                BWColor color = null;
+                switch (constructionOrder.getStatus()) {
+                    case CONSTRUCTION_NOT_STARTED:
+                        color = BWColor.Red;
+                        break;
+                    case CONSTRUCTION_IN_PROGRESS:
+                        color = BWColor.Yellow;
+                        break;
+                    case CONSTRUCTION_FINISHED:
+                        color = BWColor.Green;
+                        break;
+                    default:
+                        color = BWColor.Teal;
+                        break;
+                }
+                paintSideMessage(constructionOrder.getBuildingType().getShortName(), color, yOffset);
+            }
+        }
+    }
+
+    /**
+     * Paints places where buildings that do not yet exist are planned to be placed.
+     */
+    private static void paintConstructionPlaces() {
+        for (ConstructionOrder order : AtlantisConstructingManager.getAllConstructionOrders()) {
+            if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+                Position positionToBuild = order.getPositionToBuild();
+                UnitType buildingType = order.getBuildingType();
+
+                // Paint box
+                bwapi.drawBox(
+                        positionToBuild,
+                        positionToBuild.translated(buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32),
+                        BWColor.Teal, false, false);
+
+                // Draw X
+                bwapi.drawLine(
+                        positionToBuild,
+                        positionToBuild.translated(buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32),
+                        BWColor.Teal, false);
+                bwapi.drawLine(
+                        positionToBuild.translated(buildingType.getTileWidth() * 32, 0),
+                        positionToBuild.translated(0, buildingType.getTileHeight() * 32),
+                        BWColor.Teal, false);
+            }
         }
     }
 
@@ -128,24 +179,27 @@ public class AtlantisPainter {
 
             // STARTING ATTACK
             if (unit.isStartingAttack()) {
-                bwapi.drawCircle(unit, 12, BWColor.Red, false, false);
-                bwapi.drawCircle(unit, 11, BWColor.Red, false, false);
+                bwapi.drawCircle(unit, 10, BWColor.Yellow, false, false);
+                bwapi.drawCircle(unit, 9, BWColor.Yellow, false, false);
             }
+
+            // ATTACK FRAME
             if (unit.isAttackFrame()) {
-                bwapi.drawCircle(unit, 13, BWColor.Green, false, false);
-                bwapi.drawCircle(unit, 14, BWColor.Green, false, false);
+                bwapi.drawCircle(unit, 13, BWColor.Orange, false, false);
+                bwapi.drawCircle(unit, 14, BWColor.Orange, false, false);
             }
 
             // ATTACKING
             if (unit.isAttacking()) {
-                bwapi.drawCircle(unit, 10, BWColor.Orange, false, false);
-                bwapi.drawCircle(unit, 9, BWColor.Orange, false, false);
+                bwapi.drawCircle(unit, 12, BWColor.Red, false, false);
+                bwapi.drawCircle(unit, 11, BWColor.Red, false, false);
             }
+
             // MOVE
-            if (unit.isMoving()) {
-                bwapi.drawCircle(unit, 8, BWColor.Teal, false, false);
-                bwapi.drawCircle(unit, 7, BWColor.Teal, false, false);
-            }
+//            if (unit.isMoving()) {
+//                bwapi.drawCircle(unit, 8, BWColor.Teal, false, false);
+//                bwapi.drawCircle(unit, 7, BWColor.Teal, false, false);
+//            }
         }
     }
 
@@ -328,10 +382,14 @@ public class AtlantisPainter {
         }
 
         int screenX = 10;
-        int screenY = 10 + 15 * sideMessageCounter;
+        int screenY = 10 + 15 * (yOffset == 0 ? sideMessageTopCounter : sideMessageBottomCounter);
         paintMessage(text, color, screenX, yOffset + screenY, true);
 
-        sideMessageCounter++;
+        if (yOffset == 0) {
+            sideMessageTopCounter++;
+        } else {
+            sideMessageBottomCounter++;
+        }
     }
 
     private static void paintMessage(String text, BWColor color, int x, int y, boolean screenCoord) {

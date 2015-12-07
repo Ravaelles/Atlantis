@@ -19,39 +19,42 @@ public class AtlantisSupplyManager {
         if (AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS <= supplyTotal) {
             supplyFree = AtlantisGame.getSupplyFree();
 
-            if (supplyTotal <= 20) {
-                supply1to20();
-            } else if (supplyTotal <= 60) {
-                supply21to60();
-            } else {
-                supply61up();
+//            if (supplyTotal <= 20) {
+//                supply1to20();
+//            } else if (supplyTotal <= 60) {
+//                supply21to60();
+//            } else {
+//                supply61up();
+//            }
+            int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
+            boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
+            if (supplyTotal <= 10) {
+                if (supplyFree <= 2 && noSuppliesBeingBuilt) {
+                    requestAdditionalSupply();
+                }
+            } else if (supplyTotal <= 20) {
+                if (supplyFree <= 4 && noSuppliesBeingBuilt) {
+                    requestAdditionalSupply();
+                }
+            } else if (supplyTotal <= 40) {
+                if (supplyFree <= 8 && noSuppliesBeingBuilt) {
+                    requestAdditionalSupply();
+                }
+            } else if (supplyTotal <= 200) {
+                if (supplyFree <= 14 && suppliesBeingBuilt <= 1) {
+                    requestAdditionalSupply();
+                }
             }
-        }
-    }
 
-    // =========================================================
-    private static void supply1to20() {
-        if (!requestedConstructionOfSupply()) {
-            if (supplyTotal <= 10 && supplyFree <= 1) {
-                requestAdditionalSupply();
-            } else if (supplyTotal <= 20 && supplyFree <= 3) {
-                requestAdditionalSupply();
-            }
-        }
-    }
-
-    private static void supply21to60() {
-        // && (!requestedConstructionOfSupply() || supplyFree <= 2)
-        if (supplyFree <= 9 && !requestedConstructionOfSupply()) {
-            System.out.println("SUPP = "
-                    + AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY));
-            requestAdditionalSupply();
-        }
-    }
-
-    private static void supply61up() {
-        if (supplyFree <= 20 && supplyTotal < 200 && !requestedConstructionOfSupply()) {
-            requestAdditionalSupply();
+//                if (supplyTotal <= 10 && supplyFree <= 1) {
+//                    requestAdditionalSupply();
+//                } else if (supplyTotal <= 20 && supplyFree <= 4) {
+//                    requestAdditionalSupply();
+//                } else if (supplyTotal <= 50 && supplyFree <= 10) {
+//                    requestAdditionalSupply();
+//                } else if (supplyFree <= 20 && supplyTotal < 200) {
+//                    requestAdditionalSupply();
+//                }
         }
     }
 
@@ -62,6 +65,10 @@ public class AtlantisSupplyManager {
 
     private static boolean requestedConstructionOfSupply() {
         return AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY) > 0;
+    }
+
+    private static int requestedConstructionOfSupplyNumber() {
+        return AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY);
     }
 
 }

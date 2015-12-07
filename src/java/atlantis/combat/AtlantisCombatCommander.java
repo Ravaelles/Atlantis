@@ -43,19 +43,31 @@ public class AtlantisCombatCommander {
                 return;
             }
 
-            // Handle generic actions according to current mission (e.g. DEFEND,
-            // ATTACK)
-            boolean microDisallowed = group.getMission().update(unit);
-
-            if (!microDisallowed) {
-
-                // Handle micro-managers for given unit according to its type
-                if (unit.isMeleeUnit()) {
-                    group.getMicroMeleeManager().update(unit);
-                } else {
-                    group.getMicroRangedManager().update(unit);
-                }
+            // Handle micro-managers for given unit according to its type
+            if (unit.isRangedUnit()) {
+                group.getMicroRangedManager().update(unit);
+            } else {
+                group.getMicroMeleeManager().update(unit);
             }
+
+            // Handle generic actions according to current mission (e.g. DEFEND, ATTACK)
+            if (!unit.isAttacking() && !unit.isMoving()) {
+                group.getMission().update(unit);
+            }
+
+//            // Handle generic actions according to current mission (e.g. DEFEND,
+//            // ATTACK)
+//            boolean microDisallowed = group.getMission().update(unit);
+//
+//            if (!microDisallowed) {
+//
+//                // Handle micro-managers for given unit according to its type
+//                if (unit.isMeleeUnit()) {
+//                    group.getMicroMeleeManager().update(unit);
+//                } else {
+//                    group.getMicroRangedManager().update(unit);
+//                }
+//            }
         }
     }
 
@@ -79,7 +91,7 @@ public class AtlantisCombatCommander {
 
     // =========================================================
     private static boolean shouldNotDisturbUnit(Unit unit) {
-        return unit.isStartingAttack() || unit.isAttackFrame();
+        return unit.isStartingAttack() || unit.isAttackFrame() || unit.isAttacking();
     }
 
 }
