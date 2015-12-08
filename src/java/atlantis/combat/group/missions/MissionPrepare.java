@@ -35,7 +35,7 @@ public class MissionPrepare extends Mission {
 
             // Too close to
             if (isCriticallyCloseToChokePoint(unit, chokepoint)) {
-                unit.moveAwayFrom(chokepoint, 1.0);
+                unit.moveAwayFrom(chokepoint, 1.5);
                 unit.setTooltip("Get back");
                 return true;
             }
@@ -45,7 +45,7 @@ public class MissionPrepare extends Mission {
 
                 // Too many stacked units
                 if (isTooManyUnitsAround(unit, chokepoint)) {
-                    unit.moveAwayFrom(chokepoint, 1.0);
+                    unit.moveAwayFrom(chokepoint, 0.2);
                     unit.setTooltip("Stacked");
                 } // Units aren't stacked too much
                 else {
@@ -60,7 +60,7 @@ public class MissionPrepare extends Mission {
     }
 
     private boolean isTooManyUnitsAround(Unit unit, ChokePoint chokepoint) {
-        return SelectUnits.ourCombatUnits().inRadius(1.0, unit).count() >= 3;
+        return SelectUnits.ourCombatUnits().inRadius(0.8, unit).count() >= 4;
     }
 
     private boolean isCloseEnoughToChokePoint(Unit unit, ChokePoint chokepoint) {
@@ -68,19 +68,30 @@ public class MissionPrepare extends Mission {
             return false;
         }
 
-        // Bigger this value is, further from choke will units stand
-        double standFurther = 1.6;
-
         // Distance to the center of choke point
         double distToChoke = chokepoint.distanceTo(unit) - chokepoint.getRadiusInTiles();
 
-        // How far can the unit shoot
-        double unitShootRange = unit.getShootRangeGround();
+        // --------------------------------------------------------------------
+        // Close enough ::meme::
+        if (distToChoke <= Math.max(2.5, 4.5 - chokepoint.getRadiusInTiles() / 3)) {
+            return true;
+        }
 
-        // Define max allowed distance from choke point to consider "still close"
-        double maxDistanceAllowed = unitShootRange + standFurther;
+        return false;
 
-        return distToChoke <= maxDistanceAllowed;
+//        // Bigger this value is, further from choke will units stand
+//        double standFurther = 1.6;
+//
+//        // Distance to the center of choke point
+//        double distToChoke = chokepoint.distanceTo(unit) - chokepoint.getRadiusInTiles();
+//
+//        // How far can the unit shoot
+//        double unitShootRange = unit.getShootRangeGround();
+//
+//        // Define max allowed distance from choke point to consider "still close"
+//        double maxDistanceAllowed = unitShootRange + standFurther;
+//
+//        return distToChoke <= maxDistanceAllowed;
     }
 
     private boolean isCriticallyCloseToChokePoint(Unit unit, ChokePoint chokepoint) {
@@ -88,25 +99,22 @@ public class MissionPrepare extends Mission {
             return false;
         }
 
+        // --------------------------------------------------------------------
         // Distance to the center of choke point
 //        double distToChoke = chokepoint.distanceTo(unit) - chokepoint.getRadiusInTiles();
-        double distToChoke = chokepoint.distanceTo(unit);
+        double distanceToTarget = chokepoint.distanceTo(unit);
 
         // Can't be closer than X from choke point
-        if (distToChoke <= 2.8) {
+        if (distanceToTarget <= 2 + 2 / chokepoint.getRadiusInTiles()) {
             return true;
         }
 
-        // Bigger this value is, further from choke will units stand
-        double standFurther = 1;
+        return false;
 
-        // How far can the unit shoot
-        double unitShootRange = unit.getShootRangeGround();
-
-        // Define max distance
-        double maxDistance = unitShootRange + standFurther;
-
-        return distToChoke <= maxDistance;
+        // --------------------------------------------------------------------
+        // Defiane max distance
+//        double maxDistance = unit.getShootRangeGround();
+//        return distanceToTarget <= maxDistance;
     }
 
     // =========================================================
@@ -115,7 +123,7 @@ public class MissionPrepare extends Mission {
      */
     @Override
     protected boolean canIssueOrderToUnit(Unit unit) {
-        if (unit.isAttacking() || unit.isStartingAttack() || unit.isRunning() || unit.isAttackFrame()) {
+        if (unit.isRunning() || unit.isStartingAttack() || unit.isAttacking() || unit.isAttackFrame() || unit.isMoving()) {
             return false;
         }
 

@@ -359,6 +359,10 @@ public class SelectUnits {
      * From all units currently in selection, returns closest unit to given <b>position</b>.
      */
     public Unit nearestTo(Position position) {
+        if (units.isEmpty()) {
+            return null;
+        }
+
         units.sortByDistanceTo(position, true);
         // return filterAllBut(units.first());
         return units.first();

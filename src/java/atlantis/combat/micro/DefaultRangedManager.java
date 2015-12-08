@@ -22,7 +22,7 @@ public class DefaultRangedManager extends MicroRangedManager {
             // =========================================================
             // STANDARD actions
             Unit nearestEnemy = SelectUnits.enemy().nearestTo(unit);
-            if (nearestEnemy != null && nearestEnemy.distanceTo(unit) <= 6.5) {
+            if (nearestEnemy != null && nearestEnemy.distanceTo(unit) <= 9.5) {
                 // double distToEnemy = nearestEnemy.distanceTo(unit);
                 // double distToMainBase = unit.distanceTo(SelectUnits.mainBase());
                 // double enemyDistToDefendedPosition = nearestEnemy.distanceTo(SelectUnits.mainBase());

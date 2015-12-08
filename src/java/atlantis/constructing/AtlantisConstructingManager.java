@@ -106,10 +106,10 @@ public class AtlantisConstructingManager {
             }
         }
 
-        // If building is finished, remove it from the list
+        // If building exists
         if (building != null) {
 
-            // COMPLETED
+            // COMPLETED: building is finished, remove it from the list
             if (building.isCompleted()) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
                 constructionOrders.remove(constructionOrder);
@@ -122,6 +122,12 @@ public class AtlantisConstructingManager {
             else {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
+        } // Building doesn't exist yet, means builder is travelling to the construction place
+        else {
+            Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
+                    constructionOrder.getBuilder(), constructionOrder.getBuildingType()
+            );
+            constructionOrder.setPositionToBuild(positionToBuild);
         }
     }
 
