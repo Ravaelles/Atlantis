@@ -67,14 +67,14 @@ public class AtlantisGame {
      * Number of supply used.
      */
     public static int getSupplyUsed() {
-        return Atlantis.getBwapi().getSelf().getSupplyUsed();
+        return Atlantis.getBwapi().getSelf().getSupplyUsed() / 2;
     }
 
     /**
      * Number of supply totally available.
      */
     public static int getSupplyTotal() {
-        return Atlantis.getBwapi().getSelf().getSupplyTotal();
+        return Atlantis.getBwapi().getSelf().getSupplyTotal() / 2;
     }
 
     /**

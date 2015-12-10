@@ -39,17 +39,21 @@ public class AtlantisProduceUnitManager {
 
     // =========================================================
     // Hi-level produce
+//    public static boolean isCurrentlyProducing(UnitType unitType) {
+//
+//    }
     private static void produceUnit(UnitType unitType) {
 
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
             produceWorker();
         } // Infantry
-        else if (unitType.isTerranInfantry()) {
+        //        else if (unitType.isTerranInfantry()) {
+        else if (unitType.isInfantry()) {
             produceInfantry(unitType);
         } // Unknown example
         else {
-            System.err.println("UNHANDLED UNIT TO BUILD: " + unitType);
+            System.err.println("UNHANDLED UNIT TYPE TO PRODUCE: " + unitType);
         }
     }
 
@@ -66,17 +70,11 @@ public class AtlantisProduceUnitManager {
     // =========================================================
     // Lo-level produce
     private static void produceWorker() {
-        Unit building = SelectUnits.ourOneIdle(AtlantisConfig.BASE);
-        if (building != null) {
-            building.train(AtlantisConfig.WORKER);
-        }
+        AtlantisConfig.getProductionStrategy().produceWorker();
     }
 
     private static void produceInfantry(UnitType infantryType) {
-        Unit building = SelectUnits.ourOneIdle(AtlantisConfig.BARRACKS);
-        if (building != null) {
-            building.train(infantryType);
-        }
+        AtlantisConfig.getProductionStrategy().produceInfantry(infantryType);
     }
 
 }

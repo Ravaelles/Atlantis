@@ -3,6 +3,9 @@ package atlantis.buildings.managers;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.production.strategies.ZergProductionStrategy;
+import atlantis.wrappers.SelectUnits;
+import jnibwapi.types.UnitType;
 
 public class AtlantisSupplyManager {
 
@@ -28,6 +31,7 @@ public class AtlantisSupplyManager {
 //            }
             int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
+            System.out.println(supplyFree + " / overlord in prod: " + suppliesBeingBuilt);
             if (supplyTotal <= 10) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
@@ -60,7 +64,14 @@ public class AtlantisSupplyManager {
 
     // =========================================================
     private static void requestAdditionalSupply() {
-        AtlantisConstructingManager.requestConstructionOf(AtlantisConfig.SUPPLY);
+
+        // Zerg
+        if (AtlantisConfig.SUPPLY.equals(UnitType.UnitTypes.Zerg_Overlord)) {
+            ((ZergProductionStrategy) AtlantisGame.getProductionStrategy()).produceZergUnit(UnitType.UnitTypes.Zerg_Overlord);
+        } // Terran + Protoss
+        else {
+            AtlantisConstructingManager.requestConstructionOf(AtlantisConfig.SUPPLY);
+        }
     }
 
     private static boolean requestedConstructionOfSupply() {
@@ -68,7 +79,13 @@ public class AtlantisSupplyManager {
     }
 
     private static int requestedConstructionOfSupplyNumber() {
-        return AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY);
+        // Terran + Protoss
+        if (!AtlantisGame.playsAsZerg()) {
+            return AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY);
+        } // Zerg
+        else {
+            return SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
+        }
     }
 
 }

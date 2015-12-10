@@ -35,9 +35,40 @@ public abstract class AtlantisProductionStrategy {
         initializeProductionQueue();
     }
 
+    /**
+     * Returns default production strategy according to the race played.
+     */
+    public static AtlantisProductionStrategy getAccordingToRace() {
+        if (AtlantisGame.playsAsTerran()) {
+            return new TerranProductionStrategy();
+        } else if (AtlantisGame.playsAsProtoss()) {
+            return new ProtossProductionStrategy();
+        } else if (AtlantisGame.playsAsZerg()) {
+            return new ZergProductionStrategy();
+        }
+
+        System.err.println("getAccordingToRace: Unknown race");
+        System.exit(-1);
+        return null;
+    }
+
     // =========================================================
     // Abstract methods
+    /**
+     * Returns name of file with build orders.
+     */
     protected abstract String getFilename();
+
+    /**
+     * Request to produce worker (Zerg Drone, Terran SCV or Protoss Probe) that should be handled according to
+     * the race played.
+     */
+    public abstract void produceWorker();
+
+    /**
+     * Request to produce infantry unit that should be handled according to the race played.
+     */
+    public abstract void produceInfantry(UnitType infantryType);
 
     // =========================================================
     // Public defined methods
@@ -106,8 +137,10 @@ public abstract class AtlantisProductionStrategy {
      */
     public ArrayList<ProductionOrder> getThingsToProduceRightNow(boolean onlyUnits) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
-        int mineralsNeeded = 0;
-        int gasNeeded = 0;
+        int[] resourcesNeededForNotStartedBuildings
+                = AtlantisConstructingManager.countResourcesNeededForNotStartedConstructions();
+        int mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
+        int gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
         // The idea as follows: as long as we can afford next enqueued production order, add it to the
         // CurrentToProduceList.

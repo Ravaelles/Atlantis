@@ -8,10 +8,10 @@ import atlantis.constructing.AtlantisConstructingManager;
  */
 public class AtlantisProductionCommander {
 
-	public static void update() {
-		AtlantisSupplyManager.update();
-		AtlantisProduceUnitManager.update();
-		AtlantisConstructingManager.update();
-	}
+    public static void update() {
+        AtlantisSupplyManager.update();
+        AtlantisProduceUnitManager.update();
+        AtlantisConstructingManager.update();
+    }
 
 }

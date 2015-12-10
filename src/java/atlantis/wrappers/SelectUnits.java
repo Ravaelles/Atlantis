@@ -42,7 +42,7 @@ public class SelectUnits {
         Units units = new Units();
 
         for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
-            if (unit.isAlive() && unit.isCompleted() && !unit.isSpiderMine()) {
+            if (unit.isAlive() && unit.isCompleted() && !unit.isSpiderMine() && !unit.isLarvaOrEgg()) {
                 units.addUnit(unit);
             }
         }
@@ -57,7 +57,7 @@ public class SelectUnits {
         Units units = new Units();
 
         for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
-            if (unit.isAlive() && unit.isCompleted() && !unit.isSpiderMine() && !unit.isBuilding()
+            if (unit.isAlive() && unit.isCompleted() && !unit.isNotActuallyUnit() && !unit.isBuilding()
                     && !unit.isType(AtlantisConfig.WORKER)) {
                 units.addUnit(unit);
             }
@@ -386,7 +386,7 @@ public class SelectUnits {
      */
     public static Unit ourOneIdle(UnitType type) {
         for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
-            if (unit.isIdle() && unit.getType().equals(type)) {
+            if (unit.isCompleted() && unit.isIdle() && unit.getType().equals(type)) {
                 return unit;
             }
         }

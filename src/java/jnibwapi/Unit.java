@@ -1423,6 +1423,9 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
         return cached_healable;
     }
 
+    /**
+     * Returns true if given unit is OF TYPE BUILDING.
+     */
     public boolean isBuilding() {
         return getType().isBuilding();
     }
@@ -1560,6 +1563,14 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
     // Very specific auxiliary methods
     public boolean isSpiderMine() {
         return getType().equals(UnitTypes.Terran_Vulture_Spider_Mine);
+    }
+
+    public boolean isLarvaOrEgg() {
+        return getType().equals(UnitTypes.Zerg_Larva) || getType().equals(UnitTypes.Zerg_Egg);
+    }
+
+    public boolean isNotActuallyUnit() {
+        return isSpiderMine() || isLarvaOrEgg();
     }
 
     // =========================================================

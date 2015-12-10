@@ -16,7 +16,7 @@ import jnibwapi.types.UnitType.UnitTypes;
  */
 public class AtlantisConfig {
 
-    public static int GAME_SPEED = 4;
+    public static int GAME_SPEED = 0;
     public static boolean USE_DYNAMIC_GAME_SPEED = true; // If true, game will slow down on fighting
     public static int DYNAMIC_GAME_SPEED_SLOWDOWN = 3;
 
@@ -29,8 +29,7 @@ public class AtlantisConfig {
 
     /**
      * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They
-     * will be
-     * <b>automatically built only if your total supply exceeds this value</b>.
+     * will be <b>automatically built only if your total supply exceeds this value</b>.
      */
     public static int USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
     public static int SCOUT_IS_NTH_WORKER = 7;
@@ -48,6 +47,30 @@ public class AtlantisConfig {
         AtlantisConfig.BARRACKS = UnitTypes.Terran_Barracks;
         AtlantisConfig.SUPPLY = UnitTypes.Terran_Supply_Depot;
         AtlantisConfig.GAS_BUILDING = UnitTypes.Terran_Refinery;
+    }
+
+    /**
+     * Helper method for using Terran race.
+     */
+    public static void useConfigForZerg() {
+        AtlantisConfig.MY_RACE = RaceTypes.Zerg;
+        AtlantisConfig.BASE = UnitTypes.Zerg_Hatchery;
+        AtlantisConfig.WORKER = UnitTypes.Zerg_Drone;
+        AtlantisConfig.BARRACKS = UnitTypes.Zerg_Spawning_Pool;
+        AtlantisConfig.SUPPLY = UnitTypes.Zerg_Overlord;
+        AtlantisConfig.GAS_BUILDING = UnitTypes.Zerg_Extractor;
+    }
+
+    /**
+     * Helper method for using Protoss race.
+     */
+    public static void useConfigForProtoss() {
+        AtlantisConfig.MY_RACE = RaceTypes.Protoss;
+        AtlantisConfig.BASE = UnitTypes.Protoss_Nexus;
+        AtlantisConfig.WORKER = UnitTypes.Protoss_Probe;
+        AtlantisConfig.BARRACKS = UnitTypes.Protoss_Gateway;
+        AtlantisConfig.SUPPLY = UnitTypes.Protoss_Pylon;
+        AtlantisConfig.GAS_BUILDING = UnitTypes.Protoss_Assimilator;
     }
 
     // =========================================================

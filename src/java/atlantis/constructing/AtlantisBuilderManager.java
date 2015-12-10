@@ -15,7 +15,7 @@ public class AtlantisBuilderManager {
         }
 
         // Don't disturb builder that are already constructing
-        if (builder.isConstructing()) {
+        if (builder.isConstructing() || builder.isMorphing()) {
             return;
         }
 
@@ -52,23 +52,22 @@ public class AtlantisBuilderManager {
         }
 
         // Move builder to the build position
-        if (builder.distanceTo(buildPosition) < 0.5) {
+        buildPosition = buildPosition.translated(buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
+        if (!builder.isMoving() && !builder.isConstructing() && builder.distanceTo(buildPosition) > 0.15) {
             builder.move(buildPosition, false);
         } // Unit is already at the build position, issue build order
-        else // If we can afford to construct this building exactly right now,
-        // issue build order which should be
-        // immediate as unit is standing just right there
-         if (AtlantisGame.hasMinerals(buildingType.getMineralPrice())
-                    && AtlantisGame.hasGas(buildingType.getGasPrice())) {
-                if (!AbstractBuildPositionFinder.canPhysicallyBuildHere(builder, buildingType,
-                        buildPosition)) {
-                    buildPosition = constructionOrder.findNewBuildPosition();
-                }
-
-                if (builder != null && buildPosition != null && buildingType != null) {
-                    builder.build(buildPosition, buildingType);
-                }
+        // If we can afford to construct this building exactly right now, issue build order which should
+        // be immediate as unit is standing just right there
+        else if (AtlantisGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
+            if (!AbstractBuildPositionFinder.canPhysicallyBuildHere(builder, buildingType,
+                    buildPosition)) {
+                buildPosition = constructionOrder.findNewBuildPosition();
             }
+
+            if (buildPosition != null && !builder.isConstructing()) {
+                builder.build(buildPosition, buildingType);
+            }
+        }
 
     }
 

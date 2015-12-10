@@ -12,125 +12,117 @@ import atlantis.wrappers.Units;
  */
 public class Group extends Units {
 
-	private static int firstFreeID = 1;
-	private int ID = firstFreeID++;
+    private static int firstFreeID = 1;
+    private int ID = firstFreeID++;
 
-	/**
-	 * Convenience name for the group e.g. "Alpha", "Bravo", "Delta".
-	 */
-	private String name;
+    /**
+     * Convenience name for the group e.g. "Alpha", "Bravo", "Delta".
+     */
+    private String name;
 
-	/**
-	 * Current mission object for this group.
-	 */
-	private Mission mission;
+    /**
+     * Current mission object for this group.
+     */
+    private Mission mission;
 
-	/**
-	 * Manager for microing ranged units.
-	 */
-	private MicroRangedManager microRangedManager;
+    /**
+     * Manager for microing ranged units.
+     */
+    private MicroRangedManager microRangedManager;
 
-	/**
-	 * Manager for microing melee units.
-	 */
-	private MicroMeleeManager microMeleeManager;
+    /**
+     * Manager for microing melee units.
+     */
+    private MicroMeleeManager microMeleeManager;
 
-	// =========================================================
+    // =========================================================
+    private Group(String name, Mission mission) {
+        super();
+        this.name = name;
+        this.mission = mission;
+        this.microRangedManager = new DefaultRangedManager();
+        this.microMeleeManager = new DefaultMeleeManager();
+    }
 
-	private Group(String name, Mission mission) {
-		super();
-		this.name = name;
-		this.mission = mission;
-		this.microRangedManager = new DefaultRangedManager();
-		this.microMeleeManager = new DefaultMeleeManager();
-	}
+    // =========================================================
+    /**
+     * Creates new group, designated by the given name. If <b>name</b> is null, default numeration "Alpha",
+     * "Bravo", "Charlie", "Delta" will be used.
+     */
+    public static Group createNewGroup(String name, Mission mission) {
 
-	// =========================================================
+        // Name is null, use autonaming
+        if (name == null) {
+            String[] names = new String[]{"Alpha", "Bravo", "Charlie", "Delta", "Echo"};
+            name = names[AtlantisGroupManager.groups.size()];
+        }
 
-	/**
-	 * Creates new group, designated by the given name. If <b>name</b> is null, default numeration "Alpha", "Bravo",
-	 * "Charlie", "Delta" will be used.
-	 */
-	public static Group createNewGroup(String name, Mission mission) {
+        Group group = new Group(name, mission);
+        return group;
+    }
 
-		// Name is null, use autonaming
-		if (name == null) {
-			String[] names = new String[] { "Alpha", "Bravo", "Charlie", "Delta", "Echo" };
-			name = names[AtlantisGroupManager.groups.size()];
-		}
+    // =========================================================
+    /**
+     * Convenience name for the group e.g. "Alpha", "Bravo", "Charlie", "Delta".
+     */
+    public String getName() {
+        return name;
+    }
 
-		Group group = new Group(name, mission);
-		return group;
-	}
+    /**
+     * Convenience name for the group e.g. "Alpha", "Bravo", "Charlie", "Delta".
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	// =========================================================
+    /**
+     * Current mission object for this group.
+     */
+    public Mission getMission() {
+        return mission;
+    }
 
-	/**
-	 * Convenience name for the group e.g. "Alpha", "Bravo", "Charlie", "Delta".
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Current mission object for this group.
+     */
+    public void setMission(Mission mission) {
+        this.mission = mission;
+    }
 
-	/**
-	 * Convenience name for the group e.g. "Alpha", "Bravo", "Charlie", "Delta".
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Manager for microing ranged units.
+     */
+    public MicroRangedManager getMicroRangedManager() {
+        return microRangedManager;
+    }
 
-	/**
-	 * Current mission object for this group.
-	 */
-	public Mission getMission() {
-		return mission;
-	}
+    /**
+     * Manager for microing ranged units.
+     */
+    public void setMicroRangedManager(MicroRangedManager microRangedManager) {
+        this.microRangedManager = microRangedManager;
+    }
 
-	/**
-	 * Current mission object for this group.
-	 */
+    /**
+     * Manager for microing melee units.
+     */
+    public MicroMeleeManager getMicroMeleeManager() {
+        return microMeleeManager;
+    }
 
-	public void setMission(Mission mission) {
-		this.mission = mission;
-	}
+    /**
+     * Manager for microing melee units.
+     */
+    public void setMicroMeleeManager(MicroMeleeManager microMeleeManager) {
+        this.microMeleeManager = microMeleeManager;
+    }
 
-	/**
-	 * Manager for microing ranged units.
-	 */
-
-	public MicroRangedManager getMicroRangedManager() {
-		return microRangedManager;
-	}
-
-	/**
-	 * Manager for microing ranged units.
-	 */
-
-	public void setMicroRangedManager(MicroRangedManager microRangedManager) {
-		this.microRangedManager = microRangedManager;
-	}
-
-	/**
-	 * Manager for microing melee units.
-	 */
-
-	public MicroMeleeManager getMicroMeleeManager() {
-		return microMeleeManager;
-	}
-
-	/**
-	 * Manager for microing melee units.
-	 */
-
-	public void setMicroMeleeManager(MicroMeleeManager microMeleeManager) {
-		this.microMeleeManager = microMeleeManager;
-	}
-
-	/**
-	 * Returns ID for this battle group (1, 2, 3, 4 etc).
-	 */
-	public int getID() {
-		return ID;
-	}
+    /**
+     * Returns ID for this battle group (1, 2, 3, 4 etc).
+     */
+    public int getID() {
+        return ID;
+    }
 
 }

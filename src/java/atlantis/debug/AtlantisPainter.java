@@ -10,8 +10,10 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
+import atlantis.wrappers.MappingCounter;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
+import java.util.Map;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
 import jnibwapi.Unit;
@@ -25,6 +27,7 @@ public class AtlantisPainter {
 
     private static JNIBWAPI bwapi;
     private static int sideMessageTopCounter = 0;
+    private static int sideMessageMiddleCounter = 0;
     private static int sideMessageBottomCounter = 0;
 
     // =========================================================
@@ -48,6 +51,7 @@ public class AtlantisPainter {
         paintBuildingHealth();
         paintUnitsBeingTrainedInBuildings();
         paintSpecialsOverUnits();
+        paintUnitCounters();
         paintProductionQueue();
         paintConstructionsPending();
 
@@ -88,9 +92,28 @@ public class AtlantisPainter {
     }
 
     /**
+     * Paints list of units we have in top left corner.
+     */
+    private static void paintUnitCounters() {
+        MappingCounter<UnitType> unitTypesCounter = new MappingCounter<>();
+        for (Unit unit : SelectUnits.ourUnfinished().list()) {
+            unitTypesCounter.incrementValueFor(unit.getType());
+        }
+
+        Map<UnitType, Integer> counters = unitTypesCounter.map();
+        counters = RUtilities.sortByValue(counters, false);
+        for (UnitType unitType : counters.keySet()) {
+            paintSideMessage("+" + counters.get(unitType) + " " + unitType.getName(), BWColor.Blue, 0);
+        }
+
+        paintSideMessage("", BWColor.White, 0);
+    }
+
+    /**
      * Paints next units to build in top left corner.
      */
     private static void paintProductionQueue() {
+        paintSideMessage("Prod. queue:", BWColor.White);
 
         // Display units currently in production
         for (Unit unit : SelectUnits.ourUnfinished().list()) {
@@ -151,6 +174,9 @@ public class AtlantisPainter {
             if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 Position positionToBuild = order.getPositionToBuild();
                 UnitType buildingType = order.getBuildingType();
+                if (positionToBuild == null || buildingType == null) {
+                    continue;
+                }
 
                 // Paint box
                 bwapi.drawBox(
@@ -308,7 +334,7 @@ public class AtlantisPainter {
                 continue;
             }
             int labelMaxWidth = 56;
-            int labelHeight = 6;
+            int labelHeight = 4;
             int labelLeft = unit.getPX() - labelMaxWidth / 2;
             int labelTop = unit.getPY() + 13;
 

@@ -38,12 +38,14 @@ public class AtlantisConstructingManager {
             return;
         }
 
+        // --------------------------------------------------------------------
         // Find place for new building
         Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
                 newConstructionOrder.getBuilder(), building
         );
 //        System.out.println("@@ " + building + " at " + positionToBuild);
 
+        // --------------------------------------------------------------------
         // Successfully found position for new building
         Unit optimalBuilder = null;
         if (positionToBuild != null) {
@@ -75,7 +77,12 @@ public class AtlantisConstructingManager {
     public static void update() {
         for (ConstructionOrder constructionOrder : constructionOrders) {
             checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
-            checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
+
+            // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
+            // finish the construction.
+            if (AtlantisGame.playsAsTerran()) {
+                checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
+            }
         }
     }
 
@@ -94,7 +101,7 @@ public class AtlantisConstructingManager {
      */
     private static void checkForConstructionStatusChange(ConstructionOrder constructionOrder, Unit building) {
 
-        // If building is not assigned, check if we can get building-unit reference assigned from the builder
+        // If building doesn't exist yet, assign it to the construction order.
         if (building == null || !building.isExists()) {
             Unit builder = constructionOrder.getBuilder();
             if (builder != null) {
@@ -106,8 +113,19 @@ public class AtlantisConstructingManager {
             }
         }
 
-        // If building exists
         if (building != null) {
+            System.out.println("==============");
+            System.out.println(constructionOrder.getPositionToBuild());
+            System.out.println(building.getType());
+            System.out.println(building);
+            System.out.println(building.isExists());
+            System.out.println(constructionOrder.getStatus());
+            System.out.println();
+            System.out.println();
+        }
+
+        // If building exists
+        if (building != null && building.isExists()) {
 
             // COMPLETED: building is finished, remove it from the list
             if (building.isCompleted()) {
@@ -138,7 +156,7 @@ public class AtlantisConstructingManager {
      * already in progress.
      */
     public static boolean isBuilder(Unit worker) {
-        if (worker.isConstructing()) {
+        if (worker.isConstructing() || worker.isMorphing()) {
             return true;
         }
 
@@ -167,7 +185,7 @@ public class AtlantisConstructingManager {
     /**
      * If we requested to build building A and even assigned worker who's travelling to the building site,
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
-     * then, we can e.g. tell "how many unfinished barracks we have".
+     * then, we can e.g. "count unstarted barracks constructions".
      */
     public static int countNotStartedConstructionsOfType(UnitType type) {
         int total = 0;
@@ -181,6 +199,25 @@ public class AtlantisConstructingManager {
     }
 
     /**
+     * If we requested to build building A and even assigned worker who's travelling to the building site,
+     * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
+     * then, we can e.g. "get unstarted barracks constructions".
+     *
+     * @param UnitType type if null, then all not started constructions will be returned
+     * @return
+     */
+    public static ArrayList<ConstructionOrder> getNotStartedConstructionsOfType(UnitType type) {
+        ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
+        for (ConstructionOrder constructionOrder : constructionOrders) {
+            if (constructionOrder.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED
+                    && (type == null || constructionOrder.getBuildingType().equals(type))) {
+                notStarted.add(constructionOrder);
+            }
+        }
+        return notStarted;
+    }
+
+    /**
      * Returns every construction order that is active in this moment. It will include even those buildings
      * that haven't been started yet.
      *
@@ -188,6 +225,20 @@ public class AtlantisConstructingManager {
      */
     public static ArrayList<ConstructionOrder> getAllConstructionOrders() {
         return new ArrayList<>(constructionOrders);
+    }
+
+    /**
+     * @return first int is number minerals, second int is number of gas required.
+     */
+    public static int[] countResourcesNeededForNotStartedConstructions() {
+        int mineralsNeeded = 0;
+        int gasNeeded = 0;
+        for (ConstructionOrder constructionOrder : AtlantisConstructingManager.getNotStartedConstructionsOfType(null)) {
+            mineralsNeeded += constructionOrder.getBuildingType().getMineralPrice();
+            gasNeeded += constructionOrder.getBuildingType().getGasPrice();
+        }
+        int[] result = {mineralsNeeded, gasNeeded};
+        return result;
     }
 
 }

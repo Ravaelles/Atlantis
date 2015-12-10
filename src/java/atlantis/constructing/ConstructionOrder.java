@@ -1,97 +1,93 @@
 package atlantis.constructing;
 
+import atlantis.constructing.position.ConstructionBuildPositionFinder;
+import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
-import atlantis.constructing.position.ConstructionBuildPositionFinder;
-import atlantis.wrappers.SelectUnits;
 
 public class ConstructionOrder {
 
-	private UnitType buildingType;
-	private Unit construction;
-	private Unit builder;
-	private Position positionToBuild;
-	private ConstructionOrderStatus status;
+    private UnitType buildingType;
+    private Unit construction;
+    private Unit builder;
+    private Position positionToBuild;
+    private ConstructionOrderStatus status;
 
-	// private int issueFrameTime;
+    // private int issueFrameTime;
+    // =========================================================
+    public ConstructionOrder(UnitType buildingType) {
+        this.buildingType = buildingType;
 
-	// =========================================================
+        status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
+        // issueFrameTime = AtlantisGame.getTimeFrames();
+    }
 
-	public ConstructionOrder(UnitType buildingType) {
-		this.buildingType = buildingType;
+    // =========================================================
+    /**
+     * If it's impossible to build in given position (e.g. occupied by units), find new position.
+     */
+    public Position findNewBuildPosition() {
+        return ConstructionBuildPositionFinder.findPositionForNew(builder, buildingType);
+    }
 
-		status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
-		// issueFrameTime = AtlantisGame.getTimeFrames();
-	}
+    /**
+     * In order to find a tile for building, one worker must be assigned as builder. We can assign any worker
+     * and we're cool, bro.
+     */
+    protected void assignRandomBuilderForNow() {
+        builder = SelectUnits.ourWorkers().first();
+    }
 
-	// =========================================================
+    /**
+     * Assigns optimal builder for this building. Worker closest to this place.
+     *
+     * @return Unit for convenience it returns
+     */
+    protected Unit assignOptimalBuilder() {
+        builder = SelectUnits.ourWorkersFreeToBuildOrRepair().nearestTo(positionToBuild);
+        return builder;
+    }
 
-	/**
-	 * If it's impossible to build in given position (e.g. occupied by units), find new position.
-	 */
-	public Position findNewBuildPosition() {
-		return ConstructionBuildPositionFinder.findPositionForNew(builder, buildingType);
-	}
+    // =========================================================
+    public UnitType getBuildingType() {
+        return buildingType;
+    }
 
-	/**
-	 * In order to find a tile for building, one worker must be assigned as builder. We can assign any worker and we're
-	 * cool, bro.
-	 */
-	protected void assignRandomBuilderForNow() {
-		builder = SelectUnits.ourWorkers().first();
-	}
+    public void setBuildingType(UnitType buildingType) {
+        this.buildingType = buildingType;
+    }
 
-	/**
-	 * Assigns optimal builder for this building. Worker closest to this place.
-	 * 
-	 * @return Unit for convenience it returns
-	 */
-	protected Unit assignOptimalBuilder() {
-		builder = SelectUnits.ourWorkersFreeToBuildOrRepair().nearestTo(positionToBuild);
-		return builder;
-	}
+    public Unit getBuilder() {
+        return builder;
+    }
 
-	// =========================================================
+    public void setBuilder(Unit builder) {
+        this.builder = builder;
+    }
 
-	public UnitType getBuildingType() {
-		return buildingType;
-	}
+    public ConstructionOrderStatus getStatus() {
+        return status;
+    }
 
-	public void setBuildingType(UnitType buildingType) {
-		this.buildingType = buildingType;
-	}
+    public void setStatus(ConstructionOrderStatus status) {
+        this.status = status;
+    }
 
-	public Unit getBuilder() {
-		return builder;
-	}
+    public Position getPositionToBuild() {
+        return positionToBuild;
+    }
 
-	public void setBuilder(Unit builder) {
-		this.builder = builder;
-	}
+    public void setPositionToBuild(Position positionToBuild) {
+        this.positionToBuild = positionToBuild;
+    }
 
-	public ConstructionOrderStatus getStatus() {
-		return status;
-	}
+    public Unit getConstruction() {
+        return construction;
+    }
 
-	public void setStatus(ConstructionOrderStatus status) {
-		this.status = status;
-	}
-
-	public Position getPositionToBuild() {
-		return positionToBuild;
-	}
-
-	public void setPositionToBuild(Position positionToBuild) {
-		this.positionToBuild = positionToBuild;
-	}
-
-	public Unit getConstruction() {
-		return construction;
-	}
-
-	public void setConstruction(Unit construction) {
-		this.construction = construction;
-	}
+    public void setConstruction(Unit construction) {
+        this.construction = construction;
+    }
 
 }
