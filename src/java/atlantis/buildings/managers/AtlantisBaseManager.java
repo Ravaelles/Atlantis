@@ -24,7 +24,10 @@ public class AtlantisBaseManager {
         }
 
         // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
-        if (!AtlantisGame.getProductionStrategy().shouldProduceNow(AtlantisConfig.WORKER)) {
+//        if (!AtlantisGame.getProductionStrategy().shouldProduceNow(AtlantisConfig.WORKER)) {
+//            return false;
+//        }
+        if (!AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(true).isEmpty()) {
             return false;
         }
 
@@ -38,8 +41,7 @@ public class AtlantisBaseManager {
         // {
         // return false;
         // }
-        // If not forbidden, allow.
-        return true;
+        return false;
     }
 
 }

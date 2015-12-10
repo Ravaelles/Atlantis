@@ -3,10 +3,12 @@ package atlantis;
 import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.init.AtlantisInitialActions;
+import atlantis.production.strategies.AtlantisProductionStrategy;
 import jnibwapi.BWAPIEventListener;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
 import jnibwapi.Unit;
+import jnibwapi.types.RaceType;
 
 public class Atlantis implements BWAPIEventListener {
 
@@ -38,12 +40,6 @@ public class Atlantis implements BWAPIEventListener {
 
         // Standard procedure: create and save Jnibwapi reference
         bwapi = new JNIBWAPI(this, true);
-
-        // Validate AtlantisConfig and exit if it's invalid
-        AtlantisConfig.validate();
-
-        // Display ok message
-        System.out.println("Atlantis config is valid.");
     }
 
     // =========================================================
@@ -83,6 +79,31 @@ public class Atlantis implements BWAPIEventListener {
 
     @Override
     public void matchStart() {
+
+        // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
+        // --------------------------------------------------------------------
+        // Set up base configuration based on race used.
+        RaceType racePlayed = AtlantisGame.getPlayerUs().getRace();
+        if (racePlayed.equals(RaceType.RaceTypes.Protoss)) {
+            AtlantisConfig.useConfigForProtoss();
+        } else if (racePlayed.equals(RaceType.RaceTypes.Terran)) {
+            AtlantisConfig.useConfigForTerran();
+        } else if (racePlayed.equals(RaceType.RaceTypes.Zerg)) {
+            AtlantisConfig.useConfigForZerg();
+        }
+
+        // --------------------------------------------------------------------
+        // Set production strategy (build orders) to use. It can be always changed dynamically.
+        AtlantisConfig.useProductionStrategy(AtlantisProductionStrategy.getAccordingToRace());
+
+        // --------------------------------------------------------------------
+        // Validate AtlantisConfig and exit if it's invalid
+        AtlantisConfig.validate();
+
+        // Display ok message
+        System.out.println("Atlantis config is valid.");
+
+        // --------------------------------------------------------------------
         gameCommander = new AtlantisGameCommander();
         bwapi.setGameSpeed(AtlantisConfig.GAME_SPEED);
         bwapi.enableUserInput();

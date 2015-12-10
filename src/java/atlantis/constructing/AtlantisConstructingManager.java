@@ -113,17 +113,16 @@ public class AtlantisConstructingManager {
             }
         }
 
-        if (building != null) {
-            System.out.println("==============");
-            System.out.println(constructionOrder.getPositionToBuild());
-            System.out.println(building.getType());
-            System.out.println(building);
-            System.out.println(building.isExists());
-            System.out.println(constructionOrder.getStatus());
-            System.out.println();
-            System.out.println();
-        }
-
+//        if (building != null) {
+//            System.out.println("==============");
+//            System.out.println(constructionOrder.getPositionToBuild());
+//            System.out.println(building.getType());
+//            System.out.println(building);
+//            System.out.println(building.isExists());
+//            System.out.println(constructionOrder.getStatus());
+//            System.out.println();
+//            System.out.println();
+//        }
         // If building exists
         if (building != null && building.isExists()) {
 

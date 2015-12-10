@@ -41,6 +41,8 @@ public class AtlantisConfig {
      * Helper method for using Terran race.
      */
     public static void useConfigForTerran() {
+        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 11;
+
         AtlantisConfig.MY_RACE = RaceTypes.Terran;
         AtlantisConfig.BASE = UnitTypes.Terran_Command_Center;
         AtlantisConfig.WORKER = UnitTypes.Terran_SCV;
@@ -53,6 +55,8 @@ public class AtlantisConfig {
      * Helper method for using Terran race.
      */
     public static void useConfigForZerg() {
+        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 11;
+
         AtlantisConfig.MY_RACE = RaceTypes.Zerg;
         AtlantisConfig.BASE = UnitTypes.Zerg_Hatchery;
         AtlantisConfig.WORKER = UnitTypes.Zerg_Drone;
@@ -65,6 +69,8 @@ public class AtlantisConfig {
      * Helper method for using Protoss race.
      */
     public static void useConfigForProtoss() {
+        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 11;
+
         AtlantisConfig.MY_RACE = RaceTypes.Protoss;
         AtlantisConfig.BASE = UnitTypes.Protoss_Nexus;
         AtlantisConfig.WORKER = UnitTypes.Protoss_Probe;

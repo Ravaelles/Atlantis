@@ -31,7 +31,7 @@ public class AtlantisSupplyManager {
 //            }
             int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
-            System.out.println(supplyFree + " / overlord in prod: " + suppliesBeingBuilt);
+//            System.out.println(supplyFree + " / supply in prod: " + suppliesBeingBuilt);
             if (supplyTotal <= 10) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
