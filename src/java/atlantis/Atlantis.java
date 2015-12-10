@@ -230,7 +230,7 @@ public class Atlantis implements BWAPIEventListener {
 
         // --------------------------------------------------------------------
         // Game SPEED change
-        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && !_isSpeedInSlodownMode) {
+        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && !_isSpeedInSlodownMode && !unit.isBuilding()) {
             _previousSpeed = AtlantisConfig.GAME_SPEED;
             _lastTimeUnitDestroyed = AtlantisGame.getTimeSeconds();
             _isSpeedInSlodownMode = true;

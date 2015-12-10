@@ -124,7 +124,7 @@ public class AtlantisConstructingManager {
 //            System.out.println();
 //        }
         // If building exists
-        if (building != null && building.isExists()) {
+        if (building != null) {
 
             // COMPLETED: building is finished, remove it from the list
             if (building.isCompleted()) {
@@ -155,7 +155,7 @@ public class AtlantisConstructingManager {
      * already in progress.
      */
     public static boolean isBuilder(Unit worker) {
-        if (worker.isConstructing() || worker.isMorphing()) {
+        if (worker.isConstructing() || getConstructionOrderFor(worker) != null) {
             return true;
         }
 

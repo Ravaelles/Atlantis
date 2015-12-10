@@ -141,10 +141,10 @@ public class AtlantisPainter {
      * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
      */
     private static void paintConstructionsPending() {
-        int yOffset = 150;
+        int yOffset = 190;
         ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
-            paintSideMessage("Constructing:", BWColor.White, yOffset);
+            paintSideMessage("Constructing (" + allOrders.size() + ")", BWColor.White, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
                 BWColor color = null;
                 switch (constructionOrder.getStatus()) {
@@ -152,10 +152,10 @@ public class AtlantisPainter {
                         color = BWColor.Red;
                         break;
                     case CONSTRUCTION_IN_PROGRESS:
-                        color = BWColor.Yellow;
+                        color = BWColor.Blue;
                         break;
                     case CONSTRUCTION_FINISHED:
-                        color = BWColor.Green;
+                        color = BWColor.Teal;
                         break;
                     default:
                         color = BWColor.Teal;
