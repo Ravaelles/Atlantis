@@ -2,6 +2,7 @@ package atlantis.information;
 
 import atlantis.AtlantisConfig;
 import atlantis.wrappers.MappingCounter;
+import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
@@ -10,9 +11,8 @@ public class AtlantisUnitInformationManager {
 
     protected static ArrayList<Unit> allUnits = new ArrayList<>();
 
-    protected static MappingCounter<UnitType> ourUnitsFininised = new MappingCounter<>();
-    protected static MappingCounter<UnitType> ourUnitsUnfininised = new MappingCounter<>();
-
+//    protected static MappingCounter<UnitType> ourUnitsFininised = new MappingCounter<>();
+//    protected static MappingCounter<UnitType> ourUnitsUnfininised = new MappingCounter<>();
     protected static MappingCounter<UnitType> enemyUnitsDiscoveredCounter = new MappingCounter<>();
     protected static MappingCounter<UnitType> enemyUnitsVisibleCounter = new MappingCounter<>();
 
@@ -58,17 +58,15 @@ public class AtlantisUnitInformationManager {
     /**
      * Saves information about our new unit being trained, so counting units works properly.
      */
-    public static void addOurUnfinishedUnit(UnitType type) {
-        ourUnitsUnfininised.incrementValueFor(type);
-    }
-
+//    public static void addOurUnfinishedUnit(UnitType type) {
+//        ourUnitsUnfininised.incrementValueFor(type);
+//    }
     /**
      * Saves information about new unit being created successfully, so counting units works properly.
      */
-    public static void addOurFinishedUnit(UnitType type) {
-        ourUnitsFininised.incrementValueFor(type);
-    }
-
+//    public static void addOurFinishedUnit(UnitType type) {
+//        ourUnitsFininised.incrementValueFor(type);
+//    }
     /**
      * Saves information about enemy unit that we see for the first time.
      */
@@ -81,13 +79,14 @@ public class AtlantisUnitInformationManager {
      * Saves information about given unit being destroyed, so counting units works properly.
      */
     public static void unitDestroyed(Unit unit) {
-        if (unit.getPlayer().isSelf()) {
-            if (unit.isCompleted()) {
-                ourUnitsFininised.decrementValueFor(unit.getType());
-            } else {
-                ourUnitsUnfininised.decrementValueFor(unit.getType());
-            }
-        } else if (unit.getPlayer().isEnemy()) {
+//        if (unit.getPlayer().isSelf()) {
+//            if (unit.isCompleted()) {
+//                ourUnitsFininised.decrementValueFor(unit.getType());
+//            } else {
+//                ourUnitsUnfininised.decrementValueFor(unit.getType());
+//            }
+//        } else
+        if (unit.getPlayer().isEnemy()) {
             enemyUnitsDiscoveredCounter.decrementValueFor(unit.getType());
             enemyUnitsVisibleCounter.decrementValueFor(unit.getType());
             enemyUnitsDiscovered.remove(unit);
@@ -112,7 +111,8 @@ public class AtlantisUnitInformationManager {
      */
     public static int countOurUnitsOfType(UnitType type) {
         if (!type.isGasBuilding()) {
-            return ourUnitsUnfininised.getValueFor(type);
+//            return ourUnitsUnfininised.getValueFor(type);
+            return SelectUnits.ourIncludingUnfinished().ofType(type).count();
         } else {
             int total = 0;
             for (Unit unit : allUnits) {

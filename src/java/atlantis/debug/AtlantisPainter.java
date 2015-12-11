@@ -95,17 +95,45 @@ public class AtlantisPainter {
      * Paints list of units we have in top left corner.
      */
     private static void paintUnitCounters() {
+        // Unfinished
         MappingCounter<UnitType> unitTypesCounter = new MappingCounter<>();
-        for (Unit unit : SelectUnits.ourUnfinished().list()) {
+        for (Unit unit : SelectUnits.our().ofType(UnitType.UnitTypes.Zerg_Egg).list()) {
+            System.out.println("=====####===");
+            System.out.println(unit.getBuildType());
+            System.out.println(unit.getInitialType());
+            System.out.println(unit.getType());
+            System.out.println("=====####===");
+        }
+        for (Unit unit : SelectUnits.ourUnfinishedRealUnits().list()) {
             unitTypesCounter.incrementValueFor(unit.getType());
         }
 
         Map<UnitType, Integer> counters = unitTypesCounter.map();
         counters = RUtilities.sortByValue(counters, false);
+        boolean paintedMessage = false;
         for (UnitType unitType : counters.keySet()) {
             paintSideMessage("+" + counters.get(unitType) + " " + unitType.getName(), BWColor.Blue, 0);
+            paintedMessage = true;
         }
 
+        if (paintedMessage) {
+            paintSideMessage("", BWColor.White, 0);
+        }
+
+        // --------------------------------------------------------------------
+        // Finished
+        unitTypesCounter = new MappingCounter<>();
+        for (Unit unit : SelectUnits.our().list()) {
+            unitTypesCounter.incrementValueFor(unit.getType());
+        }
+
+        counters = unitTypesCounter.map();
+        counters = RUtilities.sortByValue(counters, false);
+        for (UnitType unitType : counters.keySet()) {
+            if (!unitType.isBuilding()) {
+                paintSideMessage(counters.get(unitType) + "x " + unitType.getName(), BWColor.Grey, 0);
+            }
+        }
         paintSideMessage("", BWColor.White, 0);
     }
 
@@ -128,7 +156,7 @@ public class AtlantisPainter {
 
         // Display next units to produce
         ArrayList<ProductionOrder> fullQueue = AtlantisGame.getProductionStrategy().getProductionQueueNext(
-                6 - produceNow.size());
+                5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);
             if (order != null && order.getShortName() != null) {
@@ -141,7 +169,7 @@ public class AtlantisPainter {
      * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
      */
     private static void paintConstructionsPending() {
-        int yOffset = 190;
+        int yOffset = 205;
         ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", BWColor.White, yOffset);

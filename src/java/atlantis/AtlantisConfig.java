@@ -55,7 +55,7 @@ public class AtlantisConfig {
      * Helper method for using Terran race.
      */
     public static void useConfigForZerg() {
-        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 11;
+        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 8;
 
         AtlantisConfig.MY_RACE = RaceTypes.Zerg;
         AtlantisConfig.BASE = UnitTypes.Zerg_Hatchery;

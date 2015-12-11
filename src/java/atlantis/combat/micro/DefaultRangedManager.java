@@ -21,8 +21,20 @@ public class DefaultRangedManager extends MicroRangedManager {
 
             // =========================================================
             // STANDARD actions
-            Unit nearestEnemy = SelectUnits.enemy().nearestTo(unit);
-            if (nearestEnemy != null && nearestEnemy.distanceTo(unit) <= 9.5) {
+            Unit nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(unit);
+            if (nearestEnemy == null) {
+                nearestEnemy = SelectUnits.enemy().nearestTo(unit);
+            }
+
+//            if (nearestEnemy != null && nearestEnemy.distanceTo(unit) <= 20) {
+            if (nearestEnemy != null) {
+
+                // If anything "ours" is close to enemy, proceed
+//                Unit nearestOurUnitToThisEnemy = SelectUnits.our().nearestTo(nearestEnemy);
+//                if (nearestOurUnitToThisEnemy == null || nearestOurUnitToThisEnemy.distanceTo(nearestEnemy) > 12) {
+//                    return;
+//                }
+//                 && nearestEnemy.distanceTo(unit)
                 // double distToEnemy = nearestEnemy.distanceTo(unit);
                 // double distToMainBase = unit.distanceTo(SelectUnits.mainBase());
                 // double enemyDistToDefendedPosition = nearestEnemy.distanceTo(SelectUnits.mainBase());
@@ -36,7 +48,6 @@ public class DefaultRangedManager extends MicroRangedManager {
                 // }
                 //
                 // }
-
                 // // Run from the enemy
                 // if (distToEnemy < 0.8 && unit.getHitPoints() < 30) {
                 // unit.runFrom(nearestEnemy);

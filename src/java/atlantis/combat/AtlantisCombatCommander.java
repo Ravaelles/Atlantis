@@ -40,18 +40,22 @@ public class AtlantisCombatCommander {
 
             // Never interrupt shooting units
             if (shouldNotDisturbUnit(unit)) {
+                unit.setTooltip("Dont disturb");
                 return;
             }
 
             // Handle micro-managers for given unit according to its type
             if (unit.isRangedUnit()) {
+                unit.setTooltip("Ranged");
                 group.getMicroRangedManager().update(unit);
             } else {
+                unit.setTooltip("Melee");
                 group.getMicroMeleeManager().update(unit);
             }
 
             // Handle generic actions according to current mission (e.g. DEFEND, ATTACK)
-            if (!unit.isAttacking() && !unit.isMoving()) {
+            if (!unit.isAttacking() && !unit.isMoving() && !unit.isStartingAttack()) {
+                unit.setTooltip("Mission");
                 group.getMission().update(unit);
             }
 
@@ -85,13 +89,13 @@ public class AtlantisCombatCommander {
      */
     private static void handleGlobalMission() {
         if (currentGlobalMission == null) {
-            currentGlobalMission = Missions.DEFEND;
+            currentGlobalMission = Missions.ATTACK;
         }
     }
 
     // =========================================================
     private static boolean shouldNotDisturbUnit(Unit unit) {
-        return unit.isStartingAttack() || unit.isAttackFrame() || unit.isAttacking();
+        return unit.isStartingAttack() || unit.isAttackFrame();
     }
 
 }

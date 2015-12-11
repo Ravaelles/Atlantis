@@ -88,16 +88,16 @@ public class Units {
      * after sorting first unit will be the one closest to given position.
      */
     public Units sortByDistanceTo(final Position position, final boolean nearestFirst) {
-        Collections.sort(units, new Comparator<Unit>() {
+        Collections.sort(units, new Comparator<Object>() {
             @Override
-            public int compare(Unit u1, Unit u2) {
-                if (u1 == null) {
+            public int compare(Object u1, Object u2) {
+                if (u1 == null || !(u1 instanceof Unit)) {
                     return -1;
                 }
-                if (u2 == null) {
+                if (u2 == null || !(u2 instanceof Unit)) {
                     return 1;
                 }
-                return position.distanceTo(u1) < position.distanceTo(u2) ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1
+                return position.distanceTo((Unit) u1) < position.distanceTo((Unit) u2) ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1
                         : -1);
             }
         });

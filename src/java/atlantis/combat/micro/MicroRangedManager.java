@@ -4,6 +4,6 @@ import jnibwapi.Unit;
 
 public abstract class MicroRangedManager {
 
-	public abstract void update(Unit unit);
+    public abstract void update(Unit unit);
 
 }

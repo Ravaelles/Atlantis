@@ -7,14 +7,14 @@ import jnibwapi.Unit;
  */
 public abstract class Mission {
 
-	/**
-	 * If returns true, it's not allowed for micro managers to act.
-	 */
-	public abstract boolean update(Unit unit);
+    /**
+     * If returns true, it's not allowed for micro managers to act.
+     */
+    public abstract boolean update(Unit unit);
 
-	/**
-	 * Returns true for units that should accept orders in this frame.
-	 */
-	protected abstract boolean canIssueOrderToUnit(Unit unit);
+    /**
+     * Returns true for units that should accept orders in this frame.
+     */
+    protected abstract boolean canIssueOrderToUnit(Unit unit);
 
 }

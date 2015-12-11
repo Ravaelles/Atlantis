@@ -682,13 +682,16 @@ public class UnitType implements Comparable<UnitType> {
         private AutoLoader_PopulateMeleeTypes() {
 
             // Terran
+            UnitType.meleeTypes.add(UnitTypes.Terran_SCV);
             UnitType.meleeTypes.add(UnitTypes.Terran_Firebat);
 
             // Protoss
+            UnitType.meleeTypes.add(UnitTypes.Protoss_Probe);
             UnitType.meleeTypes.add(UnitTypes.Protoss_Zealot);
             UnitType.meleeTypes.add(UnitTypes.Protoss_Dark_Templar);
 
             // Zerg
+            UnitType.meleeTypes.add(UnitTypes.Zerg_Drone);
             UnitType.meleeTypes.add(UnitTypes.Zerg_Zergling);
             UnitType.meleeTypes.add(UnitTypes.Zerg_Broodling);
         }

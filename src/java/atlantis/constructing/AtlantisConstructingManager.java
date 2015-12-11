@@ -3,6 +3,7 @@ package atlantis.constructing;
 import atlantis.AtlantisGame;
 import atlantis.constructing.position.ConstructionBuildPositionFinder;
 import atlantis.information.AtlantisUnitInformationManager;
+import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import jnibwapi.Position;
@@ -100,9 +101,27 @@ public class AtlantisConstructingManager {
      * If building is completed, mark construction as finished and remove it.
      */
     private static void checkForConstructionStatusChange(ConstructionOrder constructionOrder, Unit building) {
+//        System.out.println("==============");
+//        System.out.println(constructionOrder.getBuildingType());
+//        System.out.println(constructionOrder.getStatus());
+//        System.out.println(constructionOrder.getBuilder());
+//        System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
+//        System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
+//        System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
+//        System.out.println("getOrderTarget = " + constructionOrder.getBuilder().getOrderTarget());
+//        System.out.println("Constr = " + constructionOrder.getConstruction());
+//        System.out.println("Exists = " + constructionOrder.getBuilder().isExists());
+//        System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
 
-        // If building doesn't exist yet, assign it to the construction order.
-        if (building == null || !building.isExists()) {
+        // If ZERG change builder into building (it just happens, yeah, weird stuff)
+        if (AtlantisGame.playsAsZerg()) {
+            Unit builder = constructionOrder.getBuilder();
+            if (builder != null && builder.isBuilding()) {
+                constructionOrder.setConstruction(builder);
+                building = builder;
+            }
+        } // If TERRAN and building doesn't exist yet, assign it to the construction order.
+        else if (AtlantisGame.playsAsTerran() && (building == null || !building.isExists())) {
             Unit builder = constructionOrder.getBuilder();
             if (builder != null) {
                 Unit buildUnit = builder.getBuildUnit();
@@ -112,6 +131,7 @@ public class AtlantisConstructingManager {
                 }
             }
         }
+        // --------------------------------------------------------------------
 
 //        if (building != null) {
 //            System.out.println("==============");
@@ -194,6 +214,13 @@ public class AtlantisConstructingManager {
                 total++;
             }
         }
+
+        // --------------------------------------------------------------------
+        // Special case for Overlord
+        if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
+            total += SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
+        }
+
         return total;
     }
 

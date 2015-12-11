@@ -201,7 +201,7 @@ public class Atlantis implements BWAPIEventListener {
 
             // Our unit
             if (unit.getPlayer().isSelf()) {
-                AtlantisUnitInformationManager.addOurUnfinishedUnit(unit.getType());
+//                AtlantisUnitInformationManager.addOurUnfinishedUnit(unit.getType());
                 AtlantisGame.getProductionStrategy().rebuildQueue();
             }
         }
@@ -298,7 +298,7 @@ public class Atlantis implements BWAPIEventListener {
 
             // Our unit
             if (unit.getPlayer().isSelf()) {
-                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
+//                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
                 AtlantisGroupManager.combatUnitCreated(unit);
             }
         }

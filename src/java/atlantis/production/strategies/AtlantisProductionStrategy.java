@@ -70,6 +70,11 @@ public abstract class AtlantisProductionStrategy {
      */
     public abstract void produceInfantry(UnitType infantryType);
 
+    /**
+     * When production orders run out, we should always produce some units.
+     */
+    public abstract ArrayList<UnitType> produceWhenNoProductionOrders();
+
     // =========================================================
     // Public defined methods
     /**
@@ -172,6 +177,14 @@ public abstract class AtlantisProductionStrategy {
             } // We can't afford to produce this order along with all previous ones. Return currently list.
             else {
                 break;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Produce something if queue is empty
+        if (result.isEmpty()) {
+            for (UnitType unitType : produceWhenNoProductionOrders()) {
+                result.add(new ProductionOrder(unitType));
             }
         }
 

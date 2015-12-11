@@ -97,6 +97,36 @@ public class SelectUnits {
     }
 
     /**
+     * Selects our unfinished units.
+     */
+    public static SelectUnits ourRealUnits() {
+        Units units = new Units();
+
+        for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
+            if (unit.isAlive() && unit.isCompleted() && !unit.isBuilding() && !unit.isNotActuallyUnit()) {
+                units.addUnit(unit);
+            }
+        }
+
+        return new SelectUnits(units);
+    }
+
+    /**
+     * Selects our unfinished units.
+     */
+    public static SelectUnits ourUnfinishedRealUnits() {
+        Units units = new Units();
+
+        for (Unit unit : Atlantis.getBwapi().getMyUnits()) {
+            if (unit.isAlive() && !unit.isCompleted() && !unit.isBuilding() && !unit.isNotActuallyUnit()) {
+                units.addUnit(unit);
+            }
+        }
+
+        return new SelectUnits(units);
+    }
+
+    /**
      * Selects all visible enemy units.
      */
     public static SelectUnits enemy() {
@@ -104,6 +134,21 @@ public class SelectUnits {
 
         for (Unit unit : Atlantis.getBwapi().getEnemyUnits()) {
             if (unit.isAlive()) {
+                units.addUnit(unit);
+            }
+        }
+
+        return new SelectUnits(units);
+    }
+
+    /**
+     * Selects all visible enemy units.
+     */
+    public static SelectUnits enemyRealUnit() {
+        Units units = new Units();
+
+        for (Unit unit : Atlantis.getBwapi().getEnemyUnits()) {
+            if (unit.isAlive() && !unit.isBuilding() && !unit.isNotActuallyUnit()) {
                 units.addUnit(unit);
             }
         }
