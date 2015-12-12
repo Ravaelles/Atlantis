@@ -7,6 +7,16 @@ It uses JNIBWAPI as a base, but wraps everything heavily, so you don't need to w
 # How to use
 Atlantis is still in the early development. The latest stable version is in the `master` branch. In `develop` you will find latest changes, but it doesn't necessarily work.
 
+# Code structure
+  * Atlantis.matchFrame()
+    * AtlantisGameCommander.update()
+	  * AtlantisWorkerCommander.update();
+	  * AtlantisCombatCommander.update();
+	  * AtlantisScoutManager.update();
+	  * AtlantisBuildingsCommander.update();
+	  * AtlantisProductionCommander.update();
+	  * AtlantisPainter.paint();
+    
 # AI tournaments
 Take a look at this site: http://sscaitournament.com/
 
