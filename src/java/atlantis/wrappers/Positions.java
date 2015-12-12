@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import jnibwapi.Position;
-import atlantis.information.AtlantisMapInformationManager;
+import atlantis.information.AtlantisMap;
 import atlantis.util.RUtilities;
 
 /**
@@ -110,11 +110,11 @@ public class Positions<T extends Position> {
 		Collections.sort(positions, new Comparator<Position>() {
 			@Override
 			public int compare(Position u1, Position u2) {
-				double distToU1 = AtlantisMapInformationManager.getMap().getGroundDistance(position, u1);
+				double distToU1 = AtlantisMap.getMap().getGroundDistance(position, u1);
 				if (distToU1 < 0) {
 					distToU1 = 99999;
 				}
-				double distToU2 = AtlantisMapInformationManager.getMap().getGroundDistance(position, u2);
+				double distToU2 = AtlantisMap.getMap().getGroundDistance(position, u2);
 				return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
 			}
 		});

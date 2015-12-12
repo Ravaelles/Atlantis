@@ -4,7 +4,9 @@ import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.combat.group.Group;
 import atlantis.combat.group.missions.Mission;
 import atlantis.combat.group.missions.Missions;
+import atlantis.combat.micro.zerg.ZergOverlordManager;
 import jnibwapi.Unit;
+import jnibwapi.types.UnitType;
 
 public class AtlantisCombatCommander {
 
@@ -40,22 +42,24 @@ public class AtlantisCombatCommander {
 
             // Never interrupt shooting units
             if (shouldNotDisturbUnit(unit)) {
-                unit.setTooltip("Dont disturb");
                 return;
             }
 
             // Handle micro-managers for given unit according to its type
-            if (unit.isRangedUnit()) {
-                unit.setTooltip("Ranged");
-                group.getMicroRangedManager().update(unit);
-            } else {
-                unit.setTooltip("Melee");
-                group.getMicroMeleeManager().update(unit);
+            if (!handleSpecialUnit(unit)) {
+                if (unit.isRangedUnit()) {
+                    System.err.println(unit + " " + unit.getType());
+                    unit.setTooltip("Ranged");
+                    group.getMicroRangedManager().update(unit);
+                } else {
+                    unit.setTooltip("Melee");
+                    group.getMicroMeleeManager().update(unit);
+                }
             }
 
             // Handle generic actions according to current mission (e.g. DEFEND, ATTACK)
-            if (!unit.isAttacking() && !unit.isMoving() && !unit.isStartingAttack()) {
-                unit.setTooltip("Mission");
+            if (!unit.isAttacking() && !unit.isStartingAttack()) {
+//                unit.setTooltip("Mission");
                 group.getMission().update(unit);
             }
 
@@ -72,6 +76,20 @@ public class AtlantisCombatCommander {
 //                    group.getMicroRangedManager().update(unit);
 //                }
 //            }
+        }
+    }
+
+    /**
+     * There are some units that should have individual micro managers like Zerg Overlord. If unit is special
+     * unit it will run proper micro managers here and return true, meaning no other managers should be used.
+     * False will give command to standard Melee of Micro managers.
+     */
+    private static boolean handleSpecialUnit(Unit unit) {
+        if (unit.getType().equals(UnitType.UnitTypes.Zerg_Overlord)) {
+            ZergOverlordManager.update(unit);
+            return true;
+        } else {
+            return false;
         }
     }
 

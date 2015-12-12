@@ -2,6 +2,7 @@ package atlantis.debug;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
+import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.group.missions.MissionAttack;
 import atlantis.combat.group.missions.MissionDefend;
 import atlantis.combat.group.missions.MissionPrepare;
@@ -59,7 +60,7 @@ public class AtlantisPainter {
         // Paint TOOLTIPS over units
         for (Unit unit : SelectUnits.our().list()) {
             if (unit.hasTooltip()) {
-                bwapi.drawText(unit, unit.getTooltip(), false);
+                paintTextCentered(unit, unit.getTooltip(), false);
             }
         }
     }
@@ -232,23 +233,20 @@ public class AtlantisPainter {
         for (Unit unit : SelectUnits.ourCombatUnits().list()) {
 
             // STARTING ATTACK
-            if (unit.isStartingAttack()) {
-                bwapi.drawCircle(unit, 10, BWColor.Yellow, false, false);
-                bwapi.drawCircle(unit, 9, BWColor.Yellow, false, false);
-            }
-
+//            if (unit.isStartingAttack()) {
+//                bwapi.drawCircle(unit, 10, BWColor.Yellow, false, false);
+//                bwapi.drawCircle(unit, 9, BWColor.Yellow, false, false);
+//            }
             // ATTACK FRAME
-            if (unit.isAttackFrame()) {
-                bwapi.drawCircle(unit, 13, BWColor.Orange, false, false);
-                bwapi.drawCircle(unit, 14, BWColor.Orange, false, false);
-            }
-
+//            if (unit.isAttackFrame()) {
+//                bwapi.drawCircle(unit, 13, BWColor.Orange, false, false);
+//                bwapi.drawCircle(unit, 14, BWColor.Orange, false, false);
+//            }
             // ATTACKING
-            if (unit.isAttacking()) {
-                bwapi.drawCircle(unit, 12, BWColor.Red, false, false);
-                bwapi.drawCircle(unit, 11, BWColor.Red, false, false);
-            }
-
+//            if (unit.isAttacking()) {
+//                bwapi.drawCircle(unit, 12, BWColor.Red, false, false);
+//                bwapi.drawCircle(unit, 11, BWColor.Red, false, false);
+//            }
             // MOVE
 //            if (unit.isMoving()) {
 //                bwapi.drawCircle(unit, 8, BWColor.Teal, false, false);
@@ -280,7 +278,7 @@ public class AtlantisPainter {
                 int cooldownProgress = cooldownWidth * unit.getGroundWeaponCooldown()
                         / (unit.getType().getGroundWeapon().getDamageCooldown() + 1);
                 bwapi.drawBox(topLeft, new Position(cooldownLeft + cooldownProgress, cooldownTop + cooldownHeight),
-                        BWColor.Red, true, false);
+                        BWColor.Brown, true, false);
 
                 // =========================================================
                 // Paint box borders
@@ -289,23 +287,27 @@ public class AtlantisPainter {
 
                 // =========================================================
                 // Paint label
-//                bwapi.drawText(new Position(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
+//                paintTextCentered(new Position(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
             }
 
             // =========================================================
             // === Paint battle group
             // =========================================================
-            if (unit.getGroup() != null) {
-                bwapi.drawText(new Position(unit.getPX() - 5, unit.getPY() - 7), BWColor.getColorString(BWColor.Grey)
-                        + "#" + unit.getGroup().getID(), false);
-            }
-
+//            if (unit.getGroup() != null) {
+//                paintTextCentered(new Position(unit.getPX(), unit.getPY() + 3), BWColor.getColorString(BWColor.White)
+//                        + "#" + unit.getGroup().getID(), false);
+//            }
             // =========================================================
             // === Paint num of other units around this unit
             // =========================================================
-            int ourAround = SelectUnits.ourCombatUnits().inRadius(1.7, unit).count();
-            bwapi.drawText(new Position(unit.getPX() - 7, unit.getPY() - 15), BWColor.getColorString(BWColor.Orange)
-                    + "(" + ourAround + ")", false);
+//            int ourAround = SelectUnits.ourCombatUnits().inRadius(1.7, unit).count();
+//            paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), BWColor.getColorString(BWColor.Orange)
+//                    + "(" + ourAround + ")", false);
+            // =========================================================
+            // === Combat Evaluation Strength
+            // =========================================================
+            String combatStrength = AtlantisCombatEvaluator.getEvalString(unit);
+            paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), combatStrength, null);
         }
     }
 
@@ -344,11 +346,11 @@ public class AtlantisPainter {
                     + labelHeight), BWColor.Black, false, false);
 
             // Paint label
-            bwapi.drawText(new Position(labelLeft + labelMaxWidth / 2 - 8, labelTop - 3), stringToDisplay, false);
+            paintTextCentered(new Position(labelLeft, labelTop - 3), stringToDisplay, false);
 
             // Display name of unit
             String name = unit.getBuildType().getShortName();
-            bwapi.drawText(new Position(unit.getPX() - 25, unit.getPY() - 4), BWColor.getColorString(BWColor.Green)
+            paintTextCentered(new Position(unit.getPX(), unit.getPY() - 4), BWColor.getColorString(BWColor.Green)
                     + name, false);
         }
     }
@@ -419,7 +421,7 @@ public class AtlantisPainter {
 
             // =========================================================
             // Display label
-            bwapi.drawText(new Position(unit.getPX() - 4 * trainedUnitString.length(), unit.getPY() + 16),
+            paintTextCentered(new Position(unit.getPX() - 4 * trainedUnitString.length(), unit.getPY() + 16),
                     BWColor.getColorString(BWColor.White) + trainedUnitString, false);
         }
     }
@@ -447,7 +449,7 @@ public class AtlantisPainter {
     }
 
     private static void paintMessage(String text, BWColor color, int x, int y, boolean screenCoord) {
-        bwapi.drawText(new Position(x, y), BWColor.getColorString(color) + text, screenCoord);
+        getBwapi().drawText(new Position(x, y), BWColor.getColorString(color) + text, screenCoord);
     }
 
     private static void paintCircle(Position position, int radius, BWColor color) {
@@ -458,10 +460,18 @@ public class AtlantisPainter {
     }
 
     private static void paintTextCentered(Position position, String text, BWColor color) {
+        paintTextCentered(position, text, color, false);
+    }
+
+    private static void paintTextCentered(Position position, String text, boolean screenCords) {
+        paintTextCentered(position, text, null, screenCords);
+    }
+
+    private static void paintTextCentered(Position position, String text, BWColor color, boolean screenCords) {
         if (position == null || text == null) {
             return;
         }
-        getBwapi().drawText(position.translated(-4 * text.length(), -3), BWColor.getColorString(color) + text, false);
+        getBwapi().drawText(position.translated(-4 * text.length(), -3), BWColor.getColorString(color) + text, screenCords);
     }
 
     private static JNIBWAPI getBwapi() {

@@ -1,7 +1,6 @@
 package jnibwapi.types;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -667,38 +666,6 @@ public class UnitType implements Comparable<UnitType> {
     // =========================================================
     // ===== Start of ATLANTIS CODE ============================
     // =========================================================
-    /**
-     * Contains list of all unit types that are subjectively considered "melee".
-     */
-    protected static final ArrayList<UnitType> meleeTypes = new ArrayList<>();
-
-    /**
-     * Forces to run code that will populate <b>meleeTypes</b> at the beginning of the match.
-     */
-    static class AutoLoader_PopulateMeleeTypes {
-
-        static AutoLoader_PopulateMeleeTypes autoLoadMe = new AutoLoader_PopulateMeleeTypes();
-
-        private AutoLoader_PopulateMeleeTypes() {
-
-            // Terran
-            UnitType.meleeTypes.add(UnitTypes.Terran_SCV);
-            UnitType.meleeTypes.add(UnitTypes.Terran_Firebat);
-
-            // Protoss
-            UnitType.meleeTypes.add(UnitTypes.Protoss_Probe);
-            UnitType.meleeTypes.add(UnitTypes.Protoss_Zealot);
-            UnitType.meleeTypes.add(UnitTypes.Protoss_Dark_Templar);
-
-            // Zerg
-            UnitType.meleeTypes.add(UnitTypes.Zerg_Drone);
-            UnitType.meleeTypes.add(UnitTypes.Zerg_Zergling);
-            UnitType.meleeTypes.add(UnitTypes.Zerg_Broodling);
-        }
-
-    }
-
-    // =========================================================
     public static boolean disableErrorReporting = false;
 
     /**
@@ -742,15 +709,35 @@ public class UnitType implements Comparable<UnitType> {
     /**
      * Returns true if given unit is considered to be "melee" unit (not ranged).
      */
+    private boolean _checkedIfIsMelee = false;
+    private boolean _isMelee = false;
+
     public boolean isMeleeUnit() {
-        return meleeTypes.contains(this);
+        if (!_checkedIfIsMelee) {
+            _checkedIfIsMelee = true;
+            _isMelee = isType(
+                    // Terran
+                    UnitTypes.Terran_SCV,
+                    UnitTypes.Terran_SCV,
+                    UnitTypes.Terran_Firebat,
+                    // Protoss
+                    UnitTypes.Protoss_Probe,
+                    UnitTypes.Protoss_Zealot,
+                    UnitTypes.Protoss_Dark_Templar,
+                    // Zerg
+                    UnitTypes.Zerg_Drone,
+                    UnitTypes.Zerg_Zergling,
+                    UnitTypes.Zerg_Broodling
+            );
+        }
+        return _isMelee;
     }
 
     /**
      * Returns true if given unit is considered to be "ranged" unit (not melee).
      */
     public boolean isRangedUnit() {
-        return !meleeTypes.contains(this);
+        return !isMeleeUnit();
     }
 
     // =========================================================

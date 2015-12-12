@@ -110,10 +110,9 @@ public class AtlantisUnitInformationManager {
      * Returns cached amount of our units of given type.
      */
     public static int countOurUnitsOfType(UnitType type) {
-        if (!type.isGasBuilding()) {
-//            return ourUnitsUnfininised.getValueFor(type);
-            return SelectUnits.ourIncludingUnfinished().ofType(type).count();
-        } else {
+
+        // Bas building
+        if (type.isGasBuilding()) {
             int total = 0;
             for (Unit unit : allUnits) {
                 if (type.equals(unit.getType())) {
@@ -121,6 +120,9 @@ public class AtlantisUnitInformationManager {
                 }
             }
             return total;
+        } else { // Anything but gas building
+//            return ourUnitsUnfininised.getValueFor(type);
+            return SelectUnits.ourIncludingUnfinished().ofType(type).count();
         }
     }
 

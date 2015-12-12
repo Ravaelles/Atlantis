@@ -1,6 +1,6 @@
 package atlantis.combat.group.missions;
 
-import atlantis.information.AtlantisMapInformationManager;
+import atlantis.information.AtlantisMap;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.ChokePoint;
 import jnibwapi.Unit;
@@ -111,7 +111,7 @@ public class MissionDefend extends Mission {
 
     // =========================================================
     public static ChokePoint getFocusPoint() {
-        return AtlantisMapInformationManager.getMainBaseChokepoint();
+        return AtlantisMap.getMainBaseChokepoint();
     }
 
     /**

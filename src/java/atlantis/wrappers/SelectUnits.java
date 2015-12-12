@@ -225,6 +225,7 @@ public class SelectUnits {
             for (UnitType type : types) {
                 if (!unit.getType().equals(type)) {
                     unitsIterator.remove();
+                    break;
                 }
             }
         }
@@ -304,6 +305,27 @@ public class SelectUnits {
         while (unitsIterator.hasNext()) {
             Unit unit = unitsIterator.next();
             if (!unit.isBuilding()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Selects only units that can fight in any way including: - infantry including Terran Medics, but not
+     * workers - military buildings like Photon Cannon, Bunker, Spore Colony, Sunken Colony
+     */
+    public SelectUnits combatUnits() {
+        Iterator<Unit> unitsIterator = units.iterator();
+        while (unitsIterator.hasNext()) {
+            Unit unit = unitsIterator.next();
+            boolean isMilitaryBuilding = unit.isType(
+                    UnitTypes.Terran_Bunker,
+                    UnitTypes.Protoss_Photon_Cannon,
+                    UnitTypes.Zerg_Sunken_Colony,
+                    UnitTypes.Zerg_Spore_Colony
+            );
+            if (!unit.isCompleted() || (unit.isBuilding() && !isMilitaryBuilding)) {
                 unitsIterator.remove();
             }
         }

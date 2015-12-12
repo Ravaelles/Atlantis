@@ -3,7 +3,7 @@ package atlantis.scout;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.information.AtlantisEnemyInformationManager;
-import atlantis.information.AtlantisMapInformationManager;
+import atlantis.information.AtlantisMap;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
@@ -33,15 +33,15 @@ public class AtlantisScoutManager {
         } else {
 
             // We know enemy building, but don't know any base.
-            Unit enemyBase = AtlantisEnemyInformationManager.hasDiscoveredEnemyBase();
-            if (enemyBase == null) {
-                // @TODO
-            } // We know the exact location of enemy's base.
-            else {
-                for (Unit scout : scouts) {
-                    handleScoutWhenKnowEnemyBase(scout, enemyBase);
-                }
-            }
+//            Unit enemyBase = AtlantisEnemyInformationManager.hasDiscoveredEnemyBase();
+//            if (enemyBase == null) {
+//                // @TODO
+//            } // We know the exact location of enemy's base.
+//            else {
+//                for (Unit scout : scouts) {
+//                    handleScoutWhenKnowEnemyBase(scout, enemyBase);
+//                }
+//            }
         }
     }
 
@@ -70,7 +70,7 @@ public class AtlantisScoutManager {
     /**
      * We don't know any enemy building, scout nearest starting location.
      */
-    private static void tryToFindEnemy(Unit scout) {
+    public static void tryToFindEnemy(Unit scout) {
         scout.setTooltip("Find enemy");
         if (scout == null) {
             return;
@@ -87,7 +87,7 @@ public class AtlantisScoutManager {
         }
 
         // Get nearest unexplored starting location and go there
-        BaseLocation startingLocation = AtlantisMapInformationManager.getNearestUnexploredStartingLocation(ourMainBase);
+        BaseLocation startingLocation = AtlantisMap.getNearestUnexploredStartingLocation(ourMainBase);
         if (startingLocation != null) {
             scout.setTooltip("Move 'n' scout");
             scout.move(startingLocation, false);
@@ -99,16 +99,9 @@ public class AtlantisScoutManager {
      */
     private static void assignScoutIfNeeded() {
 
-        // Default case
-        if (!AtlantisGame.playsAsZerg()) {
-            if (scouts.isEmpty() && AtlantisUnitInformationManager.countOurWorkers() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
-                scouts.add(SelectUnits.ourWorkers().first());
-            }
-        } // --------------------------------------------------------------------
         // ZERG case
-        else // We know enemy building
-        {
-            if (AtlantisEnemyInformationManager.hasDiscoveredEnemyBuilding()) {
+        if (AtlantisGame.playsAsZerg()) {
+            if (AtlantisEnemyInformationManager.hasDiscoveredEnemyBuilding()) { // We know enemy building
                 scouts.clear();
 //                if (scouts.size() > 1) {
 //                    scouts.clear();
@@ -122,6 +115,9 @@ public class AtlantisScoutManager {
                 scouts.clear();
                 scouts.addAll(SelectUnits.ourCombatUnits().list());
             }
+        } // TERRAN + PRTOSSS
+        else if (scouts.isEmpty() && AtlantisUnitInformationManager.countOurWorkers() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
+            scouts.add(SelectUnits.ourWorkers().first());
         }
     }
 

@@ -269,6 +269,12 @@ public class Atlantis implements BWAPIEventListener {
 
     @Override
     public void unitMorph(int unitID) {
+        Unit unit = Unit.getByID(unitID);
+        if (unit != null) {
+            AtlantisGroupManager.possibleCombatUnitCreated(unit);
+        } else {
+            System.err.println("Morph is null for id " + unitID);
+        }
     }
 
     @Override
@@ -299,8 +305,10 @@ public class Atlantis implements BWAPIEventListener {
             // Our unit
             if (unit.getPlayer().isSelf()) {
 //                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
-                AtlantisGroupManager.combatUnitCreated(unit);
+                AtlantisGroupManager.possibleCombatUnitCreated(unit);
             }
+        } else {
+            System.err.println("Unit complete is null " + unitID);
         }
     }
 

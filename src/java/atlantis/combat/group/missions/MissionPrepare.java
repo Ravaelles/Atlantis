@@ -1,6 +1,6 @@
 package atlantis.combat.group.missions;
 
-import atlantis.information.AtlantisMapInformationManager;
+import atlantis.information.AtlantisMap;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.ChokePoint;
 import jnibwapi.Position;
@@ -22,7 +22,7 @@ public class MissionPrepare extends Mission {
      * Unit will go towards important choke point near main base.
      */
     private boolean moveUnitToDestinationIfNeeded(Unit unit) {
-        ChokePoint chokepoint = AtlantisMapInformationManager.getMainBaseChokepoint();
+        ChokePoint chokepoint = AtlantisMap.getMainBaseChokepoint();
         if (chokepoint == null) {
             System.err.println("Couldn't define choke point.");
             return false;

@@ -15,7 +15,7 @@ public class AtlantisGroupManager {
     protected static ArrayList<Group> groups = new ArrayList<>();
 
     // =========================================================
-    public static void combatUnitCreated(Unit unit) {
+    public static void possibleCombatUnitCreated(Unit unit) {
         if (shouldSkipUnit(unit)) {
             return;
         }

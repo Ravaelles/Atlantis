@@ -106,7 +106,10 @@ public abstract class AtlantisProductionStrategy {
                 int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
                 int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
 
-                if (order.getUnitType().isBuilding()) {
+//                if (type.isWorker()) {
+//                    System.out.println(order.getUnitType() + ": (" + weHaveThisManyUnits + "/" + shouldHaveThisManyUnits + ")");
+//                }
+                if (type.isBuilding()) {
                     weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);
                     // System.out.println("@@@ Not started constructions of '" + type + "': "
                     // + AtlantisConstructingManager.countNotStartedConstructionsOfType(type));

@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.combat.group.Group;
 import atlantis.combat.micro.AtlantisRunning;
+import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import java.util.List;
 import jnibwapi.types.OrderType;
@@ -1116,6 +1117,10 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
         return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Set_Rally_Unit, target));
     }
 
+    public boolean move(Position p) {
+        return move(p, false);
+    }
+
     public boolean move(Position p, boolean queued) {
 
         // @AtlantisChange
@@ -1471,6 +1476,10 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
         return getType().equals(type);
     }
 
+    public boolean ofType(UnitType type) {
+        return getType().equals(type);
+    }
+
     public boolean isType(UnitType... types) {
         return getType().isType(types);
     }
@@ -1528,7 +1537,15 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
      * Indicates that this unit should be running from given enemy unit.
      */
     public void runFrom(Unit nearestEnemy) {
-        getRunning().runFrom(nearestEnemy);
+        if (nearestEnemy == null) {
+            nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(this);
+        }
+
+        if (nearestEnemy == null) {
+            return;
+        } else {
+            getRunning().runFrom(nearestEnemy);
+        }
     }
 
     // =========================================================

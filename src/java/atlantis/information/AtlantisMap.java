@@ -1,6 +1,7 @@
 package atlantis.information;
 
 import atlantis.Atlantis;
+import atlantis.util.RUtilities;
 import atlantis.wrappers.Positions;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import jnibwapi.Unit;
  * This class provides information about high-abstraction level map operations like returning place for the
  * next base or returning important choke point near the main base.
  */
-public class AtlantisMapInformationManager {
+public class AtlantisMap {
 
     private static List<ChokePoint> cached_chokePoints = null;
     private static ChokePoint cached_mainBaseChokepoint = null;
@@ -120,6 +121,23 @@ public class AtlantisMapInformationManager {
         return null;
     }
 
+    /**
+     * Returns random point on map with fog of war, preferably unexplored one.
+     */
+    public static Position getRandomInvisiblePosition(Position startPoint) {
+        Position position = null;
+        for (int attempts = 0; attempts < 10; attempts++) {
+            int maxRadius = 30;
+            int dx = -maxRadius + RUtilities.rand(0, 2 * maxRadius);
+            int dy = -maxRadius + RUtilities.rand(0, 2 * maxRadius);
+            position = startPoint.translated(dx, dy).makeValid();
+            if (!isVisible(position)) {
+                return position;
+            }
+        }
+        return position;
+    }
+
     // =========================================================
     // Generic methods - wrappers for JNIBWAPI methods
     /**
@@ -144,7 +162,7 @@ public class AtlantisMapInformationManager {
      */
     public static List<BaseLocation> getStartingLocations() {
         ArrayList<BaseLocation> startingLocations = new ArrayList<>();
-        for (BaseLocation baseLocation : AtlantisMapInformationManager.getBaseLocations()) {
+        for (BaseLocation baseLocation : AtlantisMap.getBaseLocations()) {
             if (baseLocation.isStartLocation()) {
                 startingLocations.add(baseLocation);
             }
