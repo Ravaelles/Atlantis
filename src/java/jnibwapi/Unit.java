@@ -1059,6 +1059,10 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
 
     // ------------------------------ UNIT COMMANDS
     // ------------------------------ //
+    public boolean attack(Position p) {
+        return attack(p, false);
+    }
+
     public boolean attack(Position p, boolean queued) {
 
         // @AtlantisChange
@@ -1128,8 +1132,6 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
         if (isMoving() && getTargetPosition() != null && getTargetPosition().equals(p)) {
             return false; // Ignore this command request
         }
-
-        setTooltip("Move");
 
         return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Move, p, queued));
     }
@@ -1544,7 +1546,7 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
         if (nearestEnemy == null) {
             return;
         } else {
-            getRunning().runFrom(nearestEnemy);
+            running.runFrom(nearestEnemy);
         }
     }
 
@@ -1612,6 +1614,10 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
      */
     public AtlantisRunning getRunning() {
         return running;
+    }
+
+    public boolean isJustShooting() {
+        return isAttackFrame() || isStartingAttack();
     }
 
 }

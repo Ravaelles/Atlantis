@@ -3,14 +3,47 @@ package atlantis;
 import static atlantis.Atlantis.getBwapi;
 import atlantis.production.strategies.AtlantisProductionStrategy;
 import atlantis.util.RUtilities;
+import atlantis.wrappers.AtlantisTech;
+import atlantis.wrappers.SelectUnits;
 import jnibwapi.Player;
 import jnibwapi.types.RaceType.RaceTypes;
+import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UpgradeType;
 
 public class AtlantisGame {
 
     private static Player _enemy = null;
+
+    // --------------------------------------------------------------------
+    /**
+     * Returns object that is responsible for the production queue.
+     */
+    public static AtlantisProductionStrategy getProductionStrategy() {
+        return AtlantisConfig.getProductionStrategy();
+    }
+
+    /**
+     * Returns true if it's possible to produce unit (or building) of given type.
+     */
+    public static boolean hasTechAndBuildingsToProduce(UnitType unitType) {
+
+        // Need to have every prerequisite building
+        for (Integer unitTypeID : unitType.getRequiredUnits().keySet()) {
+            UnitType requiredUnitType = UnitType.getByID(unitTypeID);
+            if (SelectUnits.our().ofType(requiredUnitType).count() < unitType.getRequiredUnits().get(unitTypeID)) {
+                return false;
+            }
+        }
+
+        // Needs to have tech
+        TechType techType = TechType.TechTypes.getTechType(unitType.getRequiredTechID());
+        if (techType != null && techType != TechType.TechTypes.None && !AtlantisTech.isResearched(techType)) {
+            return false;
+        }
+
+        return true;
+    }
 
     // --------------------------------------------------------------------
     /**
@@ -122,13 +155,6 @@ public class AtlantisGame {
      */
     public static boolean playsAsZerg() {
         return AtlantisConfig.MY_RACE.equals(RaceTypes.Zerg);
-    }
-
-    /**
-     * Returns object that is responsible for the production queue.
-     */
-    public static AtlantisProductionStrategy getProductionStrategy() {
-        return AtlantisConfig.getProductionStrategy();
     }
 
     /**

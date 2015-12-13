@@ -33,6 +33,7 @@ public class TerranProductionStrategy extends AtlantisProductionStrategy {
     public ArrayList<UnitType> produceWhenNoProductionOrders() {
         ArrayList<UnitType> units = new ArrayList<>();
         units.add(UnitType.UnitTypes.Terran_Marine);
+        units.add(UnitType.UnitTypes.Terran_Medic);
         return units;
     }
 

@@ -7,7 +7,7 @@ import jnibwapi.types.UnitType.UnitTypes;
 public class DefaultRangedManager extends MicroRangedManager {
 
     @Override
-    public void update(Unit unit) {
+    public boolean update(Unit unit) {
         if (canIssueOrderToUnit(unit)) {
 
             // SPECIAL UNIT TYPE action
@@ -16,7 +16,7 @@ public class DefaultRangedManager extends MicroRangedManager {
 //                if (MicroMedic.update(unit)) {
 //                    return;
 //                }
-                return;
+                return true;
             }
 
             // =========================================================
@@ -58,11 +58,13 @@ public class DefaultRangedManager extends MicroRangedManager {
                 // if (distToEnemy > unit.getShootRangeAgainst(nearestEnemy)) {
                 if (unit.getGroundWeaponCooldown() == 0) {
                     unit.attackUnit(nearestEnemy, false);
+                    return true;
                 }
                 // }
                 // }
             }
         }
+        return false;
     }
 
     // =========================================================

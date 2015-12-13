@@ -34,33 +34,11 @@ public class AtlantisCombatEvaluator {
         if (enemyUnits.isEmpty()) {
             return +999;
         }
-        Collection<Unit> ourUnits = SelectUnits.our().combatUnits().inRadius(13, unit).list();
+        Collection<Unit> ourUnits = SelectUnits.our().combatUnits().inRadius(7, unit).list();
 
         double enemyEvaluation = evaluateUnits(enemyUnits);
         double ourEvaluation = evaluateUnits(ourUnits);
         return ourEvaluation / enemyEvaluation - 1;
-    }
-
-    /**
-     * Auxiliary string with colors.
-     */
-    public static String getEvalString(Unit unit) {
-        double eval = evaluateSituation(unit);
-        if (eval > 998) {
-            return "";
-        } else {
-            String string = (eval < 0 ? "" : "+") + String.format("%.1f", eval);
-
-            if (eval < -0.05) {
-                string = BWColor.getColorString(BWColor.Red) + string;
-            } else if (eval > 0.05) {
-                string = BWColor.getColorString(BWColor.Yellow) + string;
-            } else {
-                string = BWColor.getColorString(BWColor.Green) + string;
-            }
-
-            return string;
-        }
     }
 
     // =========================================================
@@ -81,6 +59,30 @@ public class AtlantisCombatEvaluator {
 
     private static double evaluateUnitHPandDamage(Unit unit) {
         return unit.getHP() + unit.getType().getGroundWeapon().getDamageAmount();
+    }
+
+    // =========================================================
+    // Auxiliary
+    /**
+     * Auxiliary string with colors.
+     */
+    public static String getEvalString(Unit unit) {
+        double eval = evaluateSituation(unit);
+        if (eval > 998) {
+            return "";
+        } else {
+            String string = (eval < 0 ? "" : "+") + String.format("%.1f", eval);
+
+            if (eval < -0.05) {
+                string = BWColor.getColorString(BWColor.Red) + string;
+            } else if (eval < 0.05) {
+                string = BWColor.getColorString(BWColor.Yellow) + string;
+            } else {
+                string = BWColor.getColorString(BWColor.Green) + string;
+            }
+
+            return string;
+        }
     }
 
 }

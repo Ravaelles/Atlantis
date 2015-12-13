@@ -27,11 +27,18 @@ public class AtlantisConfig {
     public static UnitType SUPPLY = null;
     public static UnitType GAS_BUILDING = null;
 
+    // =========================================================
     /**
      * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They
      * will be <b>automatically built only if your total supply exceeds this value</b>.
      */
     public static int USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
+
+    /**
+     * Force production of a worker whenever you have 50 minerals and less than N workers.
+     */
+    public static int USE_AUTO_WORKER_PRODUCTION_UNTIL_N_WORKERS = 25;
+
     public static int SCOUT_IS_NTH_WORKER = 7;
 
     private static AtlantisProductionStrategy productionStrategy;

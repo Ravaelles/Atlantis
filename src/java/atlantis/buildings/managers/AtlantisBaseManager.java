@@ -23,17 +23,29 @@ public class AtlantisBaseManager {
             return false;
         }
 
+        // Check FREE SUPPLY
+        if (AtlantisGame.getSupplyFree() == 0) {
+            return false;
+        }
+
+        int workers = AtlantisUnitInformationManager.countOurWorkers();
+
+        // Check if not TOO MANY WORKERS
+        if (workers >= 27 * AtlantisUnitInformationManager.countOurBases()) {
+            return false;
+        }
+
+        // Check if AUTO-PRODUCTION of WORKERS is active.
+        if (workers < AtlantisConfig.USE_AUTO_WORKER_PRODUCTION_UNTIL_N_WORKERS) {
+            return true;
+        }
+
         // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
 //        if (!AtlantisGame.getProductionStrategy().shouldProduceNow(AtlantisConfig.WORKER)) {
 //            return false;
 //        }
         if (!AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(true).isEmpty()) {
             return false;
-        }
-
-        // Check if not TOO FEW WORKERS and EMPTY PRODUCTION QUEUE
-        if (AtlantisUnitInformationManager.countOurWorkers() <= 27 * AtlantisUnitInformationManager.countOurBases()) {
-            return true; // @AutoProduce
         }
 
         // // Check if not TOO MANY WORKERS

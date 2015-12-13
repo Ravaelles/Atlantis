@@ -22,11 +22,18 @@ public class Atlantis implements BWAPIEventListener {
     private boolean isPaused = false;
     private boolean oneTimeBoolean = false;
 
-    // --------------------------------------------------------------------
+    // =========================================================
     // Dynamic game speed adjust - see AtlantisConfig
     private boolean _isSpeedInSlodownMode = false;
     private int _lastTimeUnitDestroyed = 0;
     private int _previousSpeed = 0;
+
+    // =========================================================
+    // Counters
+    public static int KILLED = 0;
+    public static int LOST = 0;
+    public static int KILLED_RESOURCES = 0;
+    public static int LOST_RESOURCES = 0;
 
     // =========================================================
     // Constructors
@@ -222,6 +229,11 @@ public class Atlantis implements BWAPIEventListener {
             if (unit.getPlayer().isSelf()) {
                 AtlantisGame.getProductionStrategy().rebuildQueue();
                 AtlantisGroupManager.battleUnitDestroyed(unit);
+                LOST++;
+                LOST_RESOURCES += unit.getType().getTotalResources();
+            } else {
+                KILLED++;
+                KILLED_RESOURCES += unit.getType().getTotalResources();
             }
         }
 
@@ -231,10 +243,7 @@ public class Atlantis implements BWAPIEventListener {
         // --------------------------------------------------------------------
         // Game SPEED change
         if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && !_isSpeedInSlodownMode && !unit.isBuilding()) {
-            _previousSpeed = AtlantisConfig.GAME_SPEED;
-            _lastTimeUnitDestroyed = AtlantisGame.getTimeSeconds();
-            _isSpeedInSlodownMode = true;
-            AtlantisGame.changeSpeed(AtlantisConfig.DYNAMIC_GAME_SPEED_SLOWDOWN);
+            enableSlowdown();
         }
     }
 
@@ -247,6 +256,12 @@ public class Atlantis implements BWAPIEventListener {
             // Enemy unit
             if (unit.getPlayer().isEnemy()) {
                 AtlantisUnitInformationManager.discoveredEnemyUnit(unit);
+
+                // --------------------------------------------------------------------
+                // Game SPEED change
+//                if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && !_isSpeedInSlodownMode) {
+//                    enableSlowdown();
+//                }
             }
         }
     }
@@ -326,6 +341,13 @@ public class Atlantis implements BWAPIEventListener {
             System.out.print(args[i] + " / ");
         }
         System.out.println(args[args.length - 1]);
+    }
+
+    private void enableSlowdown() {
+        _previousSpeed = AtlantisConfig.GAME_SPEED;
+        _lastTimeUnitDestroyed = AtlantisGame.getTimeSeconds();
+        _isSpeedInSlodownMode = true;
+        AtlantisGame.changeSpeed(AtlantisConfig.DYNAMIC_GAME_SPEED_SLOWDOWN);
     }
 
 }

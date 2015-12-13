@@ -105,6 +105,29 @@ public class Units {
         return this;
     }
 
+    /**
+     * Returns median PX and median PY for all units.
+     */
+    public Position positionMedian() {
+        if (isEmpty()) {
+            return null;
+        }
+
+        ArrayList<Integer> xCoordinates = new ArrayList<>();
+        ArrayList<Integer> yCoordinates = new ArrayList<>();
+        for (Unit unit : units) {
+            xCoordinates.add(unit.getPX());
+            yCoordinates.add(unit.getPY());
+        }
+        Collections.sort(xCoordinates);
+        Collections.sort(yCoordinates);
+
+        return new Position(
+                xCoordinates.get(xCoordinates.size() / 2),
+                yCoordinates.get(yCoordinates.size() / 2)
+        );
+    }
+
     // =========================================================
     // Value mapping methods
     public void changeValueBy(Unit unit, double deltaValue) {

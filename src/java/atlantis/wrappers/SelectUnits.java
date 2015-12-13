@@ -133,7 +133,7 @@ public class SelectUnits {
         Units units = new Units();
 
         for (Unit unit : Atlantis.getBwapi().getEnemyUnits()) {
-            if (unit.isAlive()) {
+            if (unit.isVisible() && unit.getHP() >= 1) {
                 units.addUnit(unit);
             }
         }
@@ -222,11 +222,15 @@ public class SelectUnits {
         Iterator<Unit> unitsIterator = units.iterator();
         while (unitsIterator.hasNext()) {
             Unit unit = unitsIterator.next();
+            boolean typeMatches = false;
             for (UnitType type : types) {
-                if (!unit.getType().equals(type)) {
-                    unitsIterator.remove();
+                if (unit.getType().equals(type)) {
+                    typeMatches = true;
                     break;
                 }
+            }
+            if (!typeMatches) {
+                unitsIterator.remove();
             }
         }
 
@@ -325,7 +329,7 @@ public class SelectUnits {
                     UnitTypes.Zerg_Sunken_Colony,
                     UnitTypes.Zerg_Spore_Colony
             );
-            if (!unit.isCompleted() || (unit.isBuilding() && !isMilitaryBuilding)) {
+            if (!unit.isCompleted() || !unit.isAlive() || (unit.isBuilding() && !isMilitaryBuilding)) {
                 unitsIterator.remove();
             }
         }
@@ -431,7 +435,6 @@ public class SelectUnits {
         }
 
         units.sortByDistanceTo(position, true);
-        // return filterAllBut(units.first());
         return units.first();
     }
 

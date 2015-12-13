@@ -18,7 +18,7 @@ public class AtlantisWorkerManager {
             AtlantisBuilderManager.update(unit);
         } // ORDINARY WORKER
         else {
-            sendToGatherMinerals(unit);
+            sendToGatherMineralsOrGas(unit);
         }
 
         updateTooltip(unit);
@@ -29,7 +29,7 @@ public class AtlantisWorkerManager {
      * Assigns given worker unit (which is idle by now ar least doesn't have anything to do) to gather
      * minerals.
      */
-    private static void sendToGatherMinerals(Unit worker) {
+    private static void sendToGatherMineralsOrGas(Unit worker) {
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).

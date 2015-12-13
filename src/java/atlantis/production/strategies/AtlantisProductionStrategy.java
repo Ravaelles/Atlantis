@@ -103,7 +103,7 @@ public abstract class AtlantisProductionStrategy {
                 UnitType type = order.getUnitType();
                 virtualCounter.incrementValueFor(type);
 
-                int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
+                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + virtualCounter.getValueFor(type);
                 int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
 
 //                if (type.isWorker()) {
@@ -175,7 +175,8 @@ public abstract class AtlantisProductionStrategy {
             }
 
             // If we can afford this order and the previous, add it to CurrentToProduceList.
-            if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
+            if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)
+                    && AtlantisGame.hasTechAndBuildingsToProduce(unitType)) {
                 result.add(order);
             } // We can't afford to produce this order along with all previous ones. Return currently list.
             else {
@@ -185,7 +186,7 @@ public abstract class AtlantisProductionStrategy {
 
         // --------------------------------------------------------------------
         // Produce something if queue is empty
-        if (result.isEmpty()) {
+        if (result.isEmpty() && AtlantisGame.getSupplyUsed() >= 9) {
             for (UnitType unitType : produceWhenNoProductionOrders()) {
                 result.add(new ProductionOrder(unitType));
             }
