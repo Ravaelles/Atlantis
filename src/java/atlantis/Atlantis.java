@@ -101,7 +101,7 @@ public class Atlantis implements BWAPIEventListener {
 
         // --------------------------------------------------------------------
         // Set production strategy (build orders) to use. It can be always changed dynamically.
-        AtlantisConfig.useProductionStrategy(AtlantisProductionStrategy.getAccordingToRace());
+        AtlantisConfig.useProductionStrategy(AtlantisProductionStrategy.loadProductionStrategy());
 
         // --------------------------------------------------------------------
         // Validate AtlantisConfig and exit if it's invalid
@@ -135,7 +135,7 @@ public class Atlantis implements BWAPIEventListener {
 
             // --------------------------------------------------------------------
             // Game SPEED change
-            if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && _isSpeedInSlodownMode) {
+            if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _isSpeedInSlodownMode) {
                 if (_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
                     _isSpeedInSlodownMode = false;
                     AtlantisGame.changeSpeed(_previousSpeed);
@@ -242,7 +242,7 @@ public class Atlantis implements BWAPIEventListener {
 
         // --------------------------------------------------------------------
         // Game SPEED change
-        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && !_isSpeedInSlodownMode && !unit.isBuilding()) {
+        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && !_isSpeedInSlodownMode && !unit.isBuilding()) {
             enableSlowdown();
         }
     }

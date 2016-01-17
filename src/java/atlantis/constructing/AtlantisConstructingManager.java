@@ -39,14 +39,14 @@ public class AtlantisConstructingManager {
             return;
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Find place for new building
         Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
                 newConstructionOrder.getBuilder(), building
         );
 //        System.out.println("@@ " + building + " at " + positionToBuild);
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Successfully found position for new building
         Unit optimalBuilder = null;
         if (positionToBuild != null) {
@@ -209,7 +209,29 @@ public class AtlantisConstructingManager {
     public static int countNotStartedConstructionsOfType(UnitType type) {
         int total = 0;
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED
+            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                    && constructionOrder.getBuildingType().equals(type)) {
+                total++;
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Special case for Overlord
+        if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
+            total += SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
+        }
+
+        return total;
+    }
+    
+    /**
+     * Returns how many buildings (or Overlords) of given type are currently being produced 
+     * (started, but not finished).
+     */
+    public static int countPendingConstructionsOfType(UnitType type) {
+        int total = 0;
+        for (ConstructionOrder constructionOrder : constructionOrders) {
+            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
                     && constructionOrder.getBuildingType().equals(type)) {
                 total++;
             }
@@ -235,7 +257,7 @@ public class AtlantisConstructingManager {
     public static ArrayList<ConstructionOrder> getNotStartedConstructionsOfType(UnitType type) {
         ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED
+            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
                     && (type == null || constructionOrder.getBuildingType().equals(type))) {
                 notStarted.add(constructionOrder);
             }

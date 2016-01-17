@@ -424,6 +424,19 @@ public class SelectUnits {
         return our().ofType(UnitTypes.Terran_Siege_Tank_Siege_Mode);
     }
 
+    /**
+     * Selects all our sieged tanks.
+     */
+    public static SelectUnits ourLarva() {
+        SelectUnits selectedUnits = SelectUnits.ourIncludingUnfinished();
+        for (Unit unit : selectedUnits.list()) {
+            if (!unit.getType().equals(UnitTypes.Zerg_Larva)) {
+                selectedUnits.units.removeUnit(unit);
+            }
+        }
+        return selectedUnits;
+    }
+
     // =========================================================
     // Localization-related methods
     /**

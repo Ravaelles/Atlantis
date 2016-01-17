@@ -10,7 +10,7 @@ public class TerranProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
     protected String getFilename() {
-        return "DefaultTerran.csv";
+        return "TerranDefault.csv";
     }
 
     @Override

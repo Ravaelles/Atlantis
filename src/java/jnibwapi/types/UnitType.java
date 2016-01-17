@@ -17,6 +17,10 @@ public class UnitType implements Comparable<UnitType> {
 
     private static Map<Integer, UnitType> idToUnitType = new HashMap<>();
 
+    public boolean isLarva() {
+        return this.equals(UnitTypes.Zerg_Larva);
+    }
+
     public static class UnitTypes {
 
         public static final UnitType Terran_Marine = new UnitType(0);

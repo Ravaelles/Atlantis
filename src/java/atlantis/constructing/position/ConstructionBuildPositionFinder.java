@@ -12,7 +12,8 @@ public class ConstructionBuildPositionFinder {
     protected static Position nearTo;
     protected static double maxDistance;
 
-    // --------------------------------------------------------------------
+    // =========================================================
+    
     /**
      * Returns build position for next building of given type.
      */
@@ -32,7 +33,7 @@ public class ConstructionBuildPositionFinder {
             return ConstructionSpecialBuildPositionFinder.findPositionForGasBuilding(building);
         } // BASE
         else if (building.isBase()) {
-            return ConstructionSpecialBuildPositionFinder.findPositionForBase(building);
+            return ConstructionSpecialBuildPositionFinder.findPositionForBase(building, builder);
         } // STANDARD BUILDINGS
         else {
 
@@ -56,17 +57,29 @@ public class ConstructionBuildPositionFinder {
             }
 
             // =========================================================
-            // Handle standard building position according to the race as every race uses completely different approach
-            // Terran
-            if (AtlantisGame.playsAsTerran()) {
-                return TerranBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-            } // Protoss
-            else if (AtlantisGame.playsAsProtoss()) {
-                return ProtossBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-            } // Zerg
-            else {
-                return ZergBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-            }
+            // Standard place
+            return findStandardPosition(builder, building, nearTo, maxDistance);
+        }
+    }
+    
+    /**
+     * Returns standard build position for building near given position.
+     */
+    protected static Position findStandardPosition(Unit builder, UnitType building, Position nearTo, double maxDistance) {
+        
+        // =========================================================
+        // Handle standard building position according to the race as every race uses completely different approach
+        // =========================================================
+        
+        // Terran
+        if (AtlantisGame.playsAsTerran()) {
+            return TerranBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+        } // Protoss
+        else if (AtlantisGame.playsAsProtoss()) {
+            return ProtossBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+        } // Zerg
+        else {
+            return ZergBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }
     }
 

@@ -62,7 +62,7 @@ public class TerranBuildPositionFinder extends AbstractBuildPositionFinder {
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(ConstructionBuildPositionFinder.building, position)) {
+        if (otherBuildingsTooClose(builder, ConstructionBuildPositionFinder.building, position)) {
             return false;
         }
 

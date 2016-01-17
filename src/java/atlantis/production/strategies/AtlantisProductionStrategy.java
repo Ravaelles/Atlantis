@@ -1,5 +1,6 @@
 package atlantis.production.strategies;
 
+import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.information.AtlantisUnitInformationManager;
@@ -14,6 +15,10 @@ import jnibwapi.types.UpgradeType;
 
 public abstract class AtlantisProductionStrategy {
 
+    private static final String BUILD_ORDERS_PATH = "bwapi-data/read/build_orders/";
+    
+    // =========================================================
+    
     /**
      * Ordered list of production orders as initially read from the file. It never changes
      */
@@ -32,13 +37,13 @@ public abstract class AtlantisProductionStrategy {
     // =========================================================
     // Constructor
     public AtlantisProductionStrategy() {
-        initializeProductionQueue();
+        readBuildOrdersFile();
     }
 
     /**
      * Returns default production strategy according to the race played.
      */
-    public static AtlantisProductionStrategy getAccordingToRace() {
+    public static AtlantisProductionStrategy loadProductionStrategy() {
         if (AtlantisGame.playsAsTerran()) {
             return new TerranProductionStrategy();
         } else if (AtlantisGame.playsAsProtoss()) {
@@ -93,6 +98,8 @@ public abstract class AtlantisProductionStrategy {
         // It will store [UnitType->(int)howMany] mapping as we gonna process initial production queue and check if we
         // currently have units needed
         MappingCounter<UnitType> virtualCounter = new MappingCounter<>();
+        
+        // =========================================================
 
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
@@ -150,6 +157,7 @@ public abstract class AtlantisProductionStrategy {
         int mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         int gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
+        // =========================================================
         // The idea as follows: as long as we can afford next enqueued production order, add it to the
         // CurrentToProduceList.
         for (ProductionOrder order : currentProductionQueue) {
@@ -231,15 +239,31 @@ public abstract class AtlantisProductionStrategy {
         final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
         // Read file into 2D String array
-        String path = "bwapi-data/read/build_orders/" + getFilename();
+        String path = BUILD_ORDERS_PATH + getFilename();
         String[][] loadedFile = RUtilities.loadCsv(path, NUMBER_OF_COLUMNS_IN_FILE);
 
         // We can display file here, if we want to
-        // displayLoadedFile(loadedFile);
+//         displayLoadedFile(loadedFile);
         // =========================================================
         // Skip first row as it's CSV header
-        for (int i = 1; i < loadedFile.length; i++) {
+        for (int i = 0; i < loadedFile.length; i++) {
             String[] row = loadedFile[i];
+            
+            // =========================================================
+            
+            // Ignore comments and blank lines
+            if (isUnimportantLine(row)) {
+                continue;
+            }
+            
+            // Check for special commands that start with #
+            if (isSpecialCommand(row)) {
+                handleSpecialCommand(row);
+                continue;
+            }
+            
+            // =========================================================
+            
             int inRowCounter = 1; // Skip first column as it's only description
             ProductionOrder order = null;
 
@@ -333,7 +357,7 @@ public abstract class AtlantisProductionStrategy {
     /**
      * Reads build orders from CSV file and converts them into ArrayList.
      */
-    private void initializeProductionQueue() {
+    private void readBuildOrdersFile() {
 
         // Convert 2D String array into ArrayList of ProductionOrder
         createProductionOrderListFromStringArray();
@@ -346,10 +370,10 @@ public abstract class AtlantisProductionStrategy {
     private void displayLoadedFile(String[][] loadedFile) {
         int rowCounter = 0;
         for (String[] rows : loadedFile) {
-            if (rowCounter == 0) {
-                rowCounter++;
-                continue;
-            }
+//            if (rowCounter == 0) {
+//                rowCounter++;
+//                continue;
+//            }
 
             // =========================================================
             for (String value : rows) {
@@ -364,4 +388,50 @@ public abstract class AtlantisProductionStrategy {
         System.exit(0);
     }
 
+    // =========================================================
+    // Special commands
+
+    /**
+     * If the first character in column is # it means it's special command.
+     */
+    private boolean isSpecialCommand(String[] row) {
+        return (row.length >= 1 && row[0].charAt(0) == '#');
+    }
+    
+    /**
+     * // Means comment - should skip it.
+     * We can also have blank lines.
+     */
+    private boolean isUnimportantLine(String[] row) {
+        return row.length == 0 || row[0].isEmpty() || row[0].equals("") 
+                || row[0].equals("Order") || row[0].equals(";");
+    }
+    
+    /**
+     * If the first character in column is # it means it's special command. Here we handle all of them.
+     */
+    private void handleSpecialCommand(String[] row) {
+        String command = row[0].substring(1).toUpperCase();
+        
+        if (command.startsWith("AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS")) {
+            AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = extractSpecialCommandValue(row);
+        }
+        else if (command.startsWith("AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
+            AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = extractSpecialCommandValue(row);
+        }
+        else if (command.startsWith("AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
+            AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS = extractSpecialCommandValue(row);
+        }
+        else if (command.startsWith("SCOUT_IS_NTH_WORKER")) {
+            AtlantisConfig.SCOUT_IS_NTH_WORKER = extractSpecialCommandValue(row);
+        }
+        else if (command.startsWith("USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
+            AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = extractSpecialCommandValue(row);
+        }
+    }
+    
+    private int extractSpecialCommandValue(String[] row) {
+        return Integer.parseInt(row[0].substring(row[0].lastIndexOf("=") + 1));
+    }
+    
 }

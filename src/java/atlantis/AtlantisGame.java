@@ -29,9 +29,17 @@ public class AtlantisGame {
     public static boolean hasTechAndBuildingsToProduce(UnitType unitType) {
 
         // Need to have every prerequisite building
+        
+//        System.out.println("// =========================================================");
+//        System.out.println(unitType + " requires: ");
         for (Integer unitTypeID : unitType.getRequiredUnits().keySet()) {
             UnitType requiredUnitType = UnitType.getByID(unitTypeID);
-            if (SelectUnits.our().ofType(requiredUnitType).count() < unitType.getRequiredUnits().get(unitTypeID)) {
+            int requiredAmount = unitType.getRequiredUnits().get(unitTypeID);
+            int weHaveAmount = requiredUnitType.isLarva() ? 
+                    SelectUnits.ourLarva().count() : SelectUnits.our().ofType(requiredUnitType).count();
+//            System.out.println(requiredUnitType + "    x" + requiredAmount);
+//            System.out.println("   and we have: " + weHaveAmount);
+            if (weHaveAmount < requiredAmount) {
                 return false;
             }
         }

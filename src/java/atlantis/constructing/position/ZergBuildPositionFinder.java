@@ -8,8 +8,15 @@ import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
+import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
+import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
+import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 
 public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
+    
+    protected static String _CONDITION_THAT_FAILED = null;
+    
+    // =========================================================
 
     /**
      * Returns best position for given <b>building</b>, maximum <b>maxDistance</b> build tiles from
@@ -19,12 +26,20 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
      *
      */
     public static Position findStandardPositionFor(Unit builder, UnitType building, Position nearTo, double maxDistance) {
+        _CONDITION_THAT_FAILED = null;
+        
         ConstructionBuildPositionFinder.building = building;
         ConstructionBuildPositionFinder.nearTo = nearTo;
         ConstructionBuildPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
-        int searchRadius = building.isType(AtlantisConfig.SUPPLY) ? 8 : 6;
+        int searchRadius = 3;
+        if (building.isType(AtlantisConfig.BASE)) {
+            searchRadius = 0;
+        }
+        if (building.isType(AtlantisConfig.SUPPLY)) {
+            searchRadius = 8;
+        }
 
         while (searchRadius < maxDistance) {
             int xCounter = 0;
@@ -32,11 +47,15 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
             int doubleRadius = searchRadius * 2;
             for (int tileX = nearTo.getBX() - searchRadius; tileX <= nearTo.getBX() + searchRadius; tileX++) {
                 for (int tileY = nearTo.getBY() - searchRadius; tileY <= nearTo.getBY() + searchRadius; tileY++) {
-                    if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
+//                    System.out.println(xCounter + ", " + yCounter);
+                    if ((xCounter == 0 || xCounter == doubleRadius) || (yCounter == 0 || yCounter == doubleRadius)) {
                         Position position = new Position(tileX, tileY, Position.PosType.BUILD);
+//                        System.out.println("tile [" + tileX + ", " + tileY + "]");
                         if (doesPositionFulfillAllConditions(builder, position)) {
+//                            System.out.println("Position for " + building + " found at: " + position);
                             return position;
                         }
+                        System.out.println("    [" + position + "]  Condition failed = " + _CONDITION_THAT_FAILED);
                     }
 
                     yCounter++;
@@ -46,6 +65,8 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
 
             searchRadius++;
         }
+        System.out.println("## No success with searchRadius = " + searchRadius);
+        System.out.println("## Last condition that failed = " + _CONDITION_THAT_FAILED);
 
         return null;
     }
@@ -60,26 +81,32 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
 
         // Check for CREEP
         if (!isCreepConditionFulfilled(position)) {
+            _CONDITION_THAT_FAILED = "CREEP";
             return false;
         }
 
         // --------------------------------------------------------------------
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
         if (!canPhysicallyBuildHere(builder, ConstructionBuildPositionFinder.building, position)) {
+//            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);
+            _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
             return false;
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(ConstructionBuildPositionFinder.building, position)) {
+        if (otherBuildingsTooClose(builder, ConstructionBuildPositionFinder.building, position)) {
+//            _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
         if (isTooCloseToMineralsOrGeyser(ConstructionBuildPositionFinder.building, position)) {
+            _CONDITION_THAT_FAILED = "TOO CLOSE TO MINERALS OR GEYSER";
             return false;
         }
 
         // All conditions are fullfilled, return this position
+        _CONDITION_THAT_FAILED = null;
         return true;
     }
 

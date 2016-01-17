@@ -47,11 +47,16 @@ public class AtlantisProduceUnitManager {
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
             produceWorker();
-        } // Infantry
-        //        else if (unitType.isTerranInfantry()) {
+        } 
+
+        // =========================================================
+        // Infantry
         else if (unitType.isInfantry()) {
             produceInfantry(unitType);
-        } // Unknown example
+        } 
+
+        // =========================================================
+        // We don't know what to do
         else {
             System.err.println("UNHANDLED UNIT TYPE TO PRODUCE: " + unitType);
         }

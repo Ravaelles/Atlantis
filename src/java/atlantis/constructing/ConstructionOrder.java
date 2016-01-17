@@ -6,8 +6,10 @@ import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 
-public class ConstructionOrder {
+public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
+    private static int _firstFreeId = 1;
+    private int ID = _firstFreeId++;
     private UnitType buildingType;
     private Unit construction;
     private Unit builder;
@@ -50,6 +52,38 @@ public class ConstructionOrder {
     }
 
     // =========================================================
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + this.ID;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ConstructionOrder other = (ConstructionOrder) obj;
+        if (this.ID != other.ID) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public int compareTo(ConstructionOrder o) {
+        return Integer.compare(ID, o.ID);
+    }
+    
+    // =========================================================
     public UnitType getBuildingType() {
         return buildingType;
     }
@@ -90,4 +124,8 @@ public class ConstructionOrder {
         this.construction = construction;
     }
 
+    public int getID() {
+        return ID;
+    }
+    
 }

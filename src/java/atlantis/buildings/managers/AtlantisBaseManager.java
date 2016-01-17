@@ -36,7 +36,7 @@ public class AtlantisBaseManager {
         }
 
         // Check if AUTO-PRODUCTION of WORKERS is active.
-        if (workers < AtlantisConfig.USE_AUTO_WORKER_PRODUCTION_UNTIL_N_WORKERS) {
+        if (workers < AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS) {
             return true;
         }
 

@@ -99,6 +99,29 @@ public class AtlantisMap {
     }
 
     /**
+     * Returns nearest free base location where we don't have base built yet.
+     */
+    public static BaseLocation getNearestBaseLocationToExpand(Position nearestTo) {
+
+        // Get list of all base locations
+        Positions<BaseLocation> baseLocations = new Positions<BaseLocation>();
+        baseLocations.addPositions(getBaseLocations());
+
+        // Sort them all by closest to given nearestTo position
+        if (nearestTo != null) {
+            baseLocations.sortByDistanceTo(nearestTo, true);
+        }
+
+        // For every location...
+        for (BaseLocation baseLocation : baseLocations.list()) {
+            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation)) {
+                return baseLocation;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
     private static BaseLocation getSecondNearestBaseLocation(Position nearestTo) {
@@ -254,6 +277,22 @@ public class AtlantisMap {
         // choke.setDisabled(true);
         // }
         // }
+    }
+
+    private static boolean isBaseLocationFreeOfBuildingsAndEnemyUnits(BaseLocation baseLocation) {
+        
+        // If we have any base, FALSE.
+        if (SelectUnits.ourBases().inRadius(7, baseLocation).count() > 0) {
+            return false;
+        }
+        
+        // If any enemy unit is nearby
+        if (SelectUnits.enemy().inRadius(11, baseLocation).count() > 0) {
+            return false;
+        }
+        
+        // All conditions have been fulfilled.
+        return true;
     }
 
 }

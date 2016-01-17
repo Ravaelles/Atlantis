@@ -50,6 +50,9 @@ public class AtlantisBuilderManager {
         if (builder == null) {
             throw new RuntimeException("Builder empty");
         }
+        if (buildPosition == null) {
+            throw new RuntimeException("buildPosition empty");
+        }
 
         // Move builder to the build position
         buildPosition = buildPosition.translated(buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
