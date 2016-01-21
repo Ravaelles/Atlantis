@@ -79,13 +79,18 @@ public class AtlantisSupplyManager {
     }
 
     private static int requestedConstructionOfSupplyNumber() {
-        // Terran + Protoss
-        if (!AtlantisGame.playsAsZerg()) {
-            return AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY);
-        } // Zerg
-        else {
-            return SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
-        }
+        return AtlantisConstructingManager.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
+        
+        // Zerg
+//        if (AtlantisGame.playsAsZerg()) {
+//            return AtlantisConstructingManager.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
+//        }
+//        
+//        // =========================================================
+//        // Terran + Protoss
+//        else {
+//            return SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
+//        }
     }
 
 }

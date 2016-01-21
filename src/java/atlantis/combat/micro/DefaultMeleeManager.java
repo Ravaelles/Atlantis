@@ -12,6 +12,7 @@ public class DefaultMeleeManager extends MicroMeleeManager {
     @Override
     public boolean update(Unit unit) {
         if (canIssueOrderToUnit(unit)) {
+            unit.setTooltip("Start " + unit.getLastUnitActionWasFramesAgo());
 
             // SPECIAL UNIT TYPE action
             if (handleSpecialUnit(unit)) {
@@ -20,9 +21,9 @@ public class DefaultMeleeManager extends MicroMeleeManager {
 
             // =========================================================
             // Check health status
-            if (handleLowHealthIfNeeded(unit)) {
-                return true;
-            }
+//            if (handleLowHealthIfNeeded(unit)) {
+//                return true;
+//            }
 
             // =========================================================
             // Check chances to win the fight
@@ -32,72 +33,27 @@ public class DefaultMeleeManager extends MicroMeleeManager {
 
             // =========================================================
             // Don't spread too much
-            if (handleDontSpreadTooMuch(unit)) {
-                return true;
-            }
+//            if (handleDontSpreadTooMuch(unit)) {
+//                return true;
+//            }
 
             // =========================================================
             // Attack enemy is possible
-            return handleAttackEnemyUnits(unit);
-        } // =========================================================
+            return AtlantisAttackEnemyUnit.handleAttackEnemyUnits(unit);
+        } 
+
+        // =========================================================
         // Can't give orders to unit right now
         else {
+            unit.setTooltip("x " + unit.getLastUnitActionWasFramesAgo());
             return true;
         }
     }
 
     // =========================================================
+    
     private boolean canIssueOrderToUnit(Unit unit) {
         return !unit.isJustShooting();
-    }
-
-    private Unit defineEnemyToAttack(Unit unit) {
-        Unit nearestEnemy = null;
-
-        if (AtlantisGame.getTimeSeconds() < 180) {
-            nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(unit);
-            if (nearestEnemy != null && nearestEnemy.isWorker()) {
-                return null;
-            }
-        }
-
-        // If no real units found, try selecting important buildings
-        nearestEnemy = SelectUnits.enemy().ofType(
-                UnitTypes.Protoss_Zealot, UnitTypes.Protoss_Dragoon,
-                UnitTypes.Terran_Marine, UnitTypes.Terran_Medic, UnitTypes.Terran_Firebat,
-                UnitTypes.Zerg_Zergling, UnitTypes.Zerg_Hydralisk
-        ).nearestTo(unit);
-        if (nearestEnemy != null) {
-//            System.out.println("Nearest enemy is: " + nearestEnemy + " (dist: " + (nearestEnemy != null ? nearestEnemy.distanceTo(unit) : ""));
-            unit.setTooltip("Attack " + nearestEnemy.getType().getShortName());
-            return nearestEnemy;
-        }
-
-        // Try selecting real units
-        nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(unit);
-        if (nearestEnemy != null) {
-            unit.setTooltip("Engage " + nearestEnemy.getType().getShortName());
-            return nearestEnemy;
-        }
-
-        // If no real units found, try selecting important buildings
-        nearestEnemy = SelectUnits.enemy().ofType(
-                UnitTypes.Protoss_Pylon, UnitTypes.Zerg_Spawning_Pool,
-                UnitTypes.Terran_Command_Center
-        ).nearestTo(unit);
-        if (nearestEnemy != null) {
-            unit.setTooltip("Building: " + nearestEnemy.getType().getShortName());
-            return nearestEnemy;
-        }
-
-        // Okay, try targeting any-fuckin-thing
-        nearestEnemy = SelectUnits.enemy().nearestTo(unit);
-        if (nearestEnemy != null) {
-            unit.setTooltip("building" + nearestEnemy.getType().getShortName());
-            return nearestEnemy;
-        }
-
-        return nearestEnemy;
     }
 
     private boolean handleSpecialUnit(Unit unit) {
@@ -105,24 +61,6 @@ public class DefaultMeleeManager extends MicroMeleeManager {
             MicroMedic.update(unit);
             return true;
         }
-        return false;
-    }
-
-    private boolean handleAttackEnemyUnits(Unit unit) {
-        Unit enemyToAttack = defineEnemyToAttack(unit);
-        if (enemyToAttack != null) {
-            if (!unit.isAttacking() && unit.getGroundWeaponCooldown() <= 0 && !unit.isJustShooting()) {
-//                unit.attackUnit(enemyToAttack, false);
-                unit.attack(enemyToAttack, false);
-                unit.setTooltip(">" + enemyToAttack.getShortName() + "<");
-            }
-            unit.setTooltip("...");
-//            unit.removeTooltip();
-            return true;
-        }
-
-        unit.setTooltip("No enemy");
-
         return false;
     }
 

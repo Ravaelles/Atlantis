@@ -28,16 +28,21 @@ public class ProductionOrder {
      * Tech type to research. Can be null if this production order is for something else than upgrade.
      */
     private TechType tech;
+    
+    /**
+     * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
+     */
+    private String modifier = null;
 
     /**
      *
      */
-    private int priority;
+//    private int priority;
 
     /**
      * If true, no other order that comes after this order in the ProductionQueue can be started.
      */
-    private boolean blocking = false;
+//    private boolean blocking = false;
 
     // =========================================================
     public ProductionOrder(UnitType unitType) {
@@ -56,35 +61,35 @@ public class ProductionOrder {
     }
 
     private ProductionOrder() {
-        priority = PRIORITY_NORMAL;
+//        priority = PRIORITY_NORMAL;
     }
 
     // =========================================================
     /**
      * If true, no other order that comes after this order in the ProductionQueue can be started.
      */
-    protected boolean isBlocking() {
-        return blocking;
-    }
+//    protected boolean isBlocking() {
+//        return blocking;
+//    }
 
     /**
      * If true, no other order that comes after this order in the ProductionQueue can be started.
      */
-    public ProductionOrder markAsBlocking() {
-        this.blocking = true;
-        this.priority = PRIORITY_HIGHEST;
-        return this;
-    }
+//    public ProductionOrder markAsBlocking() {
+//        this.blocking = true;
+//        this.priority = PRIORITY_HIGHEST;
+//        return this;
+//    }
 
-    public ProductionOrder priorityLowest() {
-        this.priority = PRIORITY_LOWEST;
-        return this;
-    }
+//    public ProductionOrder priorityLowest() {
+//        this.priority = PRIORITY_LOWEST;
+//        return this;
+//    }
 
-    public ProductionOrder priorityHighest() {
-        this.priority = PRIORITY_HIGHEST;
-        return this;
-    }
+//    public ProductionOrder priorityHighest() {
+//        this.priority = PRIORITY_HIGHEST;
+//        return this;
+//    }
 
     // =========================================================
     // Override
@@ -106,7 +111,8 @@ public class ProductionOrder {
 
     @Override
     public String toString() {
-        return "Order: " + unitType.getName() + ", blocking:" + blocking + ", priority:" + priority;
+//        return "Order: " + unitType.getName() + ", blocking:" + blocking + ", priority:" + priority;
+        return "Order: " + unitType.getName();
     }
 
     public String getShortName() {
@@ -145,4 +151,18 @@ public class ProductionOrder {
         return tech;
     }
 
+    /**
+     * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
+     */
+    public String getModifier() {
+        return modifier;
+    }
+
+    /**
+     * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
+     */
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+    
 }

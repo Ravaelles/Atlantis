@@ -224,7 +224,8 @@ public class SelectUnits {
             Unit unit = unitsIterator.next();
             boolean typeMatches = false;
             for (UnitType type : types) {
-                if (unit.getType().equals(type)) {
+                if (unit.getType().equals(type) 
+                        || (unit.getType().equals(UnitTypes.Zerg_Egg) && unit.getBuildType().equals(type))) {
                     typeMatches = true;
                     break;
                 }
@@ -425,12 +426,25 @@ public class SelectUnits {
     }
 
     /**
-     * Selects all our sieged tanks.
+     * Selects all of our Zerg Larvas.
      */
     public static SelectUnits ourLarva() {
         SelectUnits selectedUnits = SelectUnits.ourIncludingUnfinished();
         for (Unit unit : selectedUnits.list()) {
             if (!unit.getType().equals(UnitTypes.Zerg_Larva)) {
+                selectedUnits.units.removeUnit(unit);
+            }
+        }
+        return selectedUnits;
+    }
+
+    /**
+     * Selects all of our Zerg Eggs.
+     */
+    public static SelectUnits ourEggs() {
+        SelectUnits selectedUnits = SelectUnits.ourIncludingUnfinished();
+        for (Unit unit : selectedUnits.list()) {
+            if (!unit.getType().equals(UnitTypes.Zerg_Egg)) {
                 selectedUnits.units.removeUnit(unit);
             }
         }

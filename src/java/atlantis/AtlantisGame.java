@@ -15,7 +15,7 @@ public class AtlantisGame {
 
     private static Player _enemy = null;
 
-    // --------------------------------------------------------------------
+    // =========================================================
     /**
      * Returns object that is responsible for the production queue.
      */
@@ -53,7 +53,7 @@ public class AtlantisGame {
         return true;
     }
 
-    // --------------------------------------------------------------------
+    // =========================================================
     /**
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */

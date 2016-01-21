@@ -16,7 +16,7 @@ public abstract class MicroManager {
     protected boolean handleUnfavorableOdds(Unit unit) {
         if (!AtlantisCombatEvaluator.isSituationFavorable(unit)) {
             if (unit.isJustShooting()) {
-                return false;
+                return true;
             }
 
             return run(unit);

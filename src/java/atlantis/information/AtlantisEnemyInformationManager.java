@@ -44,7 +44,9 @@ public class AtlantisEnemyInformationManager {
      * Gets oldest known enemy base.
      */
     public static Position getEnemyBase() {
+//        System.out.println(AtlantisUnitInformationManager.enemyUnitsDiscovered.size());
         for (Unit enemyUnit : AtlantisUnitInformationManager.enemyUnitsDiscovered) {
+//            System.out.println(enemyUnit);
             if (enemyUnit.isBase()) {
                 return enemyUnit;
             }
@@ -59,7 +61,7 @@ public class AtlantisEnemyInformationManager {
     public static Unit getNearestEnemyBuilding() {
         Unit mainBase = SelectUnits.mainBase();
         if (mainBase != null) {
-            return SelectUnits.from(AtlantisUnitInformationManager.enemyUnitsDiscovered).nearestTo(mainBase);
+            return SelectUnits.from(AtlantisUnitInformationManager.enemyUnitsDiscovered).buildings().nearestTo(mainBase);
         }
         return null;
     }

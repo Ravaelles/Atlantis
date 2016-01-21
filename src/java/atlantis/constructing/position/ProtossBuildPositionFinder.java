@@ -62,7 +62,7 @@ public class ProtossBuildPositionFinder extends AbstractBuildPositionFinder {
             return false;
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
         if (!canPhysicallyBuildHere(builder, ConstructionBuildPositionFinder.building, position)) {
             return false;

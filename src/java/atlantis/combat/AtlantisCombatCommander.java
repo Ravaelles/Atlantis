@@ -1,5 +1,6 @@
 package atlantis.combat;
 
+import atlantis.AtlantisGame;
 import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.combat.group.Group;
 import atlantis.combat.group.missions.Mission;
@@ -17,6 +18,7 @@ public class AtlantisCombatCommander {
     private static Mission currentGlobalMission;
 
     // =========================================================
+    
     /**
      * Acts with all battle units.
      */
@@ -26,6 +28,7 @@ public class AtlantisCombatCommander {
     }
 
     // =========================================================
+    
     /**
      * Acts with all units that are part of given battle group, according to the GroupMission object and using
      * proper micro managers.
@@ -46,7 +49,7 @@ public class AtlantisCombatCommander {
             // DON'T INTERRUPT shooting units
             if (shouldNotDisturbUnit(unit)) {
                 unit.setTooltip("X");
-                return;
+                continue;
             }
 
             // =========================================================
@@ -58,16 +61,21 @@ public class AtlantisCombatCommander {
 //                } else {
                 microManagerForbidsOtherActions = group.getMicroMeleeManager().update(unit);
 //                }
-                if (microManagerForbidsOtherActions) {
-                    return;
-                }
-            }
 
-            // =========================================================
-            // Handle MISSION actions according to current mission (e.g. DEFEND, ATTACK)
-            if (!unit.isMoving() && !unit.isAttacking() && !unit.isJustShooting()) {
-                group.getMission().update(unit);
-                unit.setTooltip("Mission!!!");
+                // =========================================================
+                // Do ONLY MICRO-MANAGER actions
+                if (microManagerForbidsOtherActions) {
+                    continue;
+                }
+                
+                // =========================================================
+                // Handle MISSION actions according to current mission (e.g. DEFEND, ATTACK)
+                else {
+//                    if (!unit.isMoving() && !unit.isAttacking() && !unit.isJustShooting()) {
+                        group.getMission().update(unit);
+                        unit.setTooltip("Mission!!!");
+//                    }
+                }
             }
         }
     }
@@ -106,6 +114,7 @@ public class AtlantisCombatCommander {
     }
 
     // =========================================================
+    
     private static boolean shouldNotDisturbUnit(Unit unit) {
         return unit.isJustShooting();
     }

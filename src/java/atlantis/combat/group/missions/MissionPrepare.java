@@ -71,7 +71,7 @@ public class MissionPrepare extends Mission {
         // Distance to the center of choke point
         double distToChoke = chokepoint.distanceTo(unit) - chokepoint.getRadiusInTiles();
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Close enough ::meme::
         if (distToChoke <= Math.max(2.5, 4.5 - chokepoint.getRadiusInTiles() / 3)) {
             return true;
@@ -99,7 +99,7 @@ public class MissionPrepare extends Mission {
             return false;
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Distance to the center of choke point
 //        double distToChoke = chokepoint.distanceTo(unit) - chokepoint.getRadiusInTiles();
         double distanceToTarget = chokepoint.distanceTo(unit);
@@ -111,7 +111,7 @@ public class MissionPrepare extends Mission {
 
         return false;
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Defiane max distance
 //        double maxDistance = unit.getShootRangeGround();
 //        return distanceToTarget <= maxDistance;

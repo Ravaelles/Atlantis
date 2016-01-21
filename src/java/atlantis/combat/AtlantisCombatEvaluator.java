@@ -14,7 +14,7 @@ public class AtlantisCombatEvaluator {
     /**
      * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
      */
-    private static double SAFETY_MARGIN = 0.3;
+    private static double SAFETY_MARGIN = 0.2;
 
     // =========================================================
     /**

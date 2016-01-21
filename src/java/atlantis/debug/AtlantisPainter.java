@@ -3,6 +3,7 @@ package atlantis.debug;
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.combat.AtlantisCombatEvaluator;
+import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.combat.group.missions.MissionAttack;
 import atlantis.combat.group.missions.MissionDefend;
 import atlantis.combat.group.missions.MissionPrepare;
@@ -41,7 +42,7 @@ public class AtlantisPainter {
         bwapi = Atlantis.getBwapi();
 
         // =========================================================
-        bwapi.drawTargets(true); // Draws line from unit to the target position
+//        bwapi.drawTargets(true); // Draws line from unit to the target position
 //        bwapi.getMap().drawTerrainData(bwapi);
         // =========================================================
         // Paint from least important to most important (last is on the top)
@@ -52,6 +53,7 @@ public class AtlantisPainter {
         paintBuildingHealth();
         paintUnitsBeingTrainedInBuildings();
         paintSpecialsOverUnits();
+        paintVariousStats();
         paintUnitCounters();
         paintProductionQueue();
         paintConstructionsPending();
@@ -68,6 +70,24 @@ public class AtlantisPainter {
 
     // =========================================================
     // Hi-level
+    
+    /**
+     * Paint focus point for global attack mission etc.
+     */
+    private static void paintVariousStats() {
+        Position focusPoint = MissionAttack.getFocusPoint();
+        String desc = "";
+        Unit mainBase = SelectUnits.mainBase();
+        if (focusPoint != null && mainBase != null) {
+            desc = "(dist:" + ((int) focusPoint.distanceTo(mainBase)) + ")";
+        }
+        paintSideMessage("Focus point: " + focusPoint + desc, BWColor.Blue, 0);
+        
+        // =========================================================
+        
+        paintSideMessage("Combat group size: " + AtlantisGroupManager.getAlphaGroup().size(), BWColor.Blue, 0);
+    }
+    
     /**
      * Paints small progress bars over units that have cooldown.
      */
@@ -106,10 +126,11 @@ public class AtlantisPainter {
             // =========================================================
             // === Paint battle group
             // =========================================================
-//            if (unit.getGroup() != null) {
-//                paintTextCentered(new Position(unit.getPX(), unit.getPY() + 3), BWColor.getColorString(BWColor.White)
-//                        + "#" + unit.getGroup().getID(), false);
-//            }
+            if (unit.getGroup() != null) {
+                paintTextCentered(new Position(unit.getPX(), unit.getPY() + 3), BWColor.getColorString(BWColor.Grey)
+                        + "#" + unit.getGroup().getID(), false);
+            }
+            
             // =========================================================
             // === Paint num of other units around this unit
             // =========================================================
@@ -142,13 +163,13 @@ public class AtlantisPainter {
         paintCircle(position, 19, BWColor.Black);
         paintTextCentered(position, "PREPARE", BWColor.Grey);
 
-        // Mission PREPARE focus point
+        // Mission ATTACK focus point
         position = MissionAttack.getFocusPoint();
-        paintCircle(position, 20, BWColor.Black);
-        paintCircle(position, 19, BWColor.Black);
-        paintTextCentered(position, "ATTACK", BWColor.Grey);
+        paintCircle(position, 20, BWColor.Red);
+//        paintCircle(position, 19, BWColor.Black);
+        paintTextCentered(position, "ATTACK", BWColor.Red);
     }
-
+    
     /**
      * Paints list of units we have in top left corner.
      */
@@ -171,7 +192,7 @@ public class AtlantisPainter {
             paintSideMessage("", BWColor.White, 0);
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Finished
         unitTypesCounter = new MappingCounter<>();
         for (Unit unit : SelectUnits.our().list()) {

@@ -88,7 +88,7 @@ public class Atlantis implements BWAPIEventListener {
     public void matchStart() {
 
         // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
-        // --------------------------------------------------------------------
+        // =========================================================
         // Set up base configuration based on race used.
         RaceType racePlayed = AtlantisGame.getPlayerUs().getRace();
         if (racePlayed.equals(RaceType.RaceTypes.Protoss)) {
@@ -99,18 +99,18 @@ public class Atlantis implements BWAPIEventListener {
             AtlantisConfig.useConfigForZerg();
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
         AtlantisConfig.useProductionStrategy(AtlantisProductionStrategy.loadProductionStrategy());
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Validate AtlantisConfig and exit if it's invalid
         AtlantisConfig.validate();
 
         // Display ok message
         System.out.println("Atlantis config is valid.");
 
-        // --------------------------------------------------------------------
+        // =========================================================
         gameCommander = new AtlantisGameCommander();
         bwapi.setGameSpeed(AtlantisConfig.GAME_SPEED);
         bwapi.enableUserInput();
@@ -128,12 +128,12 @@ public class Atlantis implements BWAPIEventListener {
             System.out.println("### Atlantis is working! ###");
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // If game is running (not paused), run all actions.
         if (!isPaused) {
             gameCommander.update();
 
-            // --------------------------------------------------------------------
+            // =========================================================
             // Game SPEED change
             if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _isSpeedInSlodownMode) {
                 if (_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
@@ -141,7 +141,7 @@ public class Atlantis implements BWAPIEventListener {
                     AtlantisGame.changeSpeed(_previousSpeed);
                 }
             }
-        } // --------------------------------------------------------------------
+        } // =========================================================
         // If game is paused, wait 100ms.
         else {
             try {
@@ -240,7 +240,7 @@ public class Atlantis implements BWAPIEventListener {
         // Forever forget this poor unit
         AtlantisUnitInformationManager.forgetUnit(unitID);
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Game SPEED change
         if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && !_isSpeedInSlodownMode && !unit.isBuilding()) {
             enableSlowdown();
@@ -257,7 +257,7 @@ public class Atlantis implements BWAPIEventListener {
             if (unit.getPlayer().isEnemy()) {
                 AtlantisUnitInformationManager.discoveredEnemyUnit(unit);
 
-                // --------------------------------------------------------------------
+                // =========================================================
                 // Game SPEED change
 //                if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && !_isSpeedInSlodownMode) {
 //                    enableSlowdown();
@@ -284,12 +284,12 @@ public class Atlantis implements BWAPIEventListener {
 
     @Override
     public void unitMorph(int unitID) {
-        Unit unit = Unit.getByID(unitID);
-        if (unit != null) {
-            AtlantisGroupManager.possibleCombatUnitCreated(unit);
-        } else {
-            System.err.println("Morph is null for id " + unitID);
-        }
+//        Unit unit = Unit.getByID(unitID);
+//        if (unit != null) {
+//            AtlantisGroupManager.possibleCombatUnitCreated(unit);
+//        } else {
+//            System.err.println("Morph is null for id " + unitID);
+//        }
     }
 
     @Override
@@ -318,7 +318,7 @@ public class Atlantis implements BWAPIEventListener {
         if (unit != null) {
 
             // Our unit
-            if (unit.getPlayer().isSelf()) {
+            if (unit.getPlayer().isSelf() && !unit.isLarvaOrEgg()) {
 //                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
                 AtlantisGroupManager.possibleCombatUnitCreated(unit);
             }

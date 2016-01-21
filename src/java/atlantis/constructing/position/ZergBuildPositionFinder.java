@@ -11,6 +11,7 @@ import jnibwapi.types.UnitType;
 import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
+import atlantis.debug.AtlantisPainter;
 
 public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
     
@@ -33,12 +34,20 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
         ConstructionBuildPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
-        int searchRadius = 3;
+        int searchRadius = 0;
         if (building.isType(AtlantisConfig.BASE)) {
             searchRadius = 0;
         }
         if (building.isType(AtlantisConfig.SUPPLY)) {
             searchRadius = 8;
+        }
+        if (maxDistance < searchRadius) {
+            System.err.println("---------------------");
+            System.err.println("Smaller maxDistance than search radius for: " + building);
+            System.err.println("  maxDistance = " + maxDistance);
+            System.err.println("  searchRadius = " + searchRadius);
+            System.err.println("---------------------");
+            maxDistance = searchRadius;
         }
 
         while (searchRadius < maxDistance) {
@@ -52,10 +61,12 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
                         Position position = new Position(tileX, tileY, Position.PosType.BUILD);
 //                        System.out.println("tile [" + tileX + ", " + tileY + "]");
                         if (doesPositionFulfillAllConditions(builder, position)) {
-//                            System.out.println("Position for " + building + " found at: " + position);
+//                            System.out.println("--------------------------------------------------------");
+//                            System.out.println("--- Position for " + building + " found at: " + position);
+//                            System.out.println("--------------------------------------------------------");
                             return position;
                         }
-                        System.out.println("    [" + position + "]  Condition failed = " + _CONDITION_THAT_FAILED);
+//                        System.out.println("    [" + position + "]  Condition failed = " + _CONDITION_THAT_FAILED);
                     }
 
                     yCounter++;
@@ -65,8 +76,8 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
 
             searchRadius++;
         }
-        System.out.println("## No success with searchRadius = " + searchRadius);
-        System.out.println("## Last condition that failed = " + _CONDITION_THAT_FAILED);
+//        System.out.println("##### No success with searchRadius = " + searchRadius);
+//        System.err.println("##### Last condition that failed = `" + _CONDITION_THAT_FAILED + "` for " + building + " with searchRadius = " + searchRadius);
 
         return null;
     }
@@ -85,7 +96,7 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
             return false;
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
         if (!canPhysicallyBuildHere(builder, ConstructionBuildPositionFinder.building, position)) {
 //            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);

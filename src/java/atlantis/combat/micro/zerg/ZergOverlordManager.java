@@ -24,7 +24,7 @@ public class ZergOverlordManager {
         }
     }
 
-    // --------------------------------------------------------------------
+    // =========================================================
     /**
      * We know at least one enemy building location.
      */

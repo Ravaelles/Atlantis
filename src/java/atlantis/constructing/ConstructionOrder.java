@@ -1,6 +1,7 @@
 package atlantis.constructing;
 
 import atlantis.constructing.position.ConstructionBuildPositionFinder;
+import atlantis.production.ProductionOrder;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
@@ -14,6 +15,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     private Unit construction;
     private Unit builder;
     private Position positionToBuild;
+    private ProductionOrder productionOrder;
     private ConstructionOrderStatus status;
 
     // private int issueFrameTime;
@@ -30,7 +32,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
     public Position findNewBuildPosition() {
-        return ConstructionBuildPositionFinder.findPositionForNew(builder, buildingType);
+        return ConstructionBuildPositionFinder.findPositionForNew(builder, buildingType, this);
     }
 
     /**
@@ -126,6 +128,14 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     public int getID() {
         return ID;
+    }
+
+    public ProductionOrder getProductionOrder() {
+        return productionOrder;
+    }
+
+    public void setProductionOrder(ProductionOrder productionOrder) {
+        this.productionOrder = productionOrder;
     }
     
 }

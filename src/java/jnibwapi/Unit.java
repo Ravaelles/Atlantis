@@ -23,7 +23,7 @@ import jnibwapi.types.UpgradeType.UpgradeTypes;
  *
  * For a description of fields see: http://code.google.com/p/bwapi/wiki/Unit
  */
-public class Unit extends Position implements Cloneable, Comparable<Unit> {
+public class Unit extends Position implements Cloneable, Comparable<Object> {
 
     public static final int numAttributes = 123;
     public static final double TO_DEGREES = 180.0 / Math.PI;
@@ -1355,6 +1355,7 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
     // =========================================================
     private Group group = null;
     private AtlantisRunning running = new AtlantisRunning(this);
+    private int lastUnitAction = 0;
 
     private boolean cached_repairableMechanically = false;
     private boolean cached_healable = false;
@@ -1395,7 +1396,7 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
         return null;
     }
 
-    // --------------------------------------------------------------------
+    // =========================================================
     @Override
     public String toString() {
         // Position position = getPosition();
@@ -1408,8 +1409,11 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
     }
 
     @Override
-    public int compareTo(Unit o) {
-        return Integer.compare(this.ID, o.ID);
+    public int compareTo(Object o) {
+        if (!(o instanceof Unit)) {
+            return -1;
+        }
+        return Integer.compare(this.ID, ((Unit) o).ID);
     }
 
     // =========================================================
@@ -1588,6 +1592,14 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
         return getType().equals(UnitTypes.Zerg_Larva) || getType().equals(UnitTypes.Zerg_Egg);
     }
 
+    public boolean isLarva() {
+        return getType().equals(UnitTypes.Zerg_Larva);
+    }
+
+    public boolean isEgg() {
+        return getType().equals(UnitTypes.Zerg_Egg);
+    }
+
     public boolean isNotActuallyUnit() {
         return isSpiderMine() || isLarvaOrEgg();
     }
@@ -1618,6 +1630,18 @@ public class Unit extends Position implements Cloneable, Comparable<Unit> {
 
     public boolean isJustShooting() {
         return isAttackFrame() || isStartingAttack();
+    }
+
+    public int getLastUnitAction() {
+        return lastUnitAction;
+    }
+
+    public int getLastUnitActionWasFramesAgo() {
+        return AtlantisGame.getTimeFrames() - lastUnitAction;
+    }
+
+    public void setLastUnitActionNow() {
+        this.lastUnitAction = AtlantisGame.getTimeFrames();
     }
 
 }

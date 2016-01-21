@@ -16,9 +16,8 @@ import jnibwapi.types.UpgradeType;
 public abstract class AtlantisProductionStrategy {
 
     private static final String BUILD_ORDERS_PATH = "bwapi-data/read/build_orders/";
-    
+
     // =========================================================
-    
     /**
      * Ordered list of production orders as initially read from the file. It never changes
      */
@@ -98,9 +97,8 @@ public abstract class AtlantisProductionStrategy {
         // It will store [UnitType->(int)howMany] mapping as we gonna process initial production queue and check if we
         // currently have units needed
         MappingCounter<UnitType> virtualCounter = new MappingCounter<>();
-        
-        // =========================================================
 
+        // =========================================================
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
 
@@ -192,7 +190,7 @@ public abstract class AtlantisProductionStrategy {
             }
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Produce something if queue is empty
         if (result.isEmpty() && AtlantisGame.getSupplyUsed() >= 9) {
             for (UnitType unitType : produceWhenNoProductionOrders()) {
@@ -206,16 +204,16 @@ public abstract class AtlantisProductionStrategy {
     /**
      * Returns true if we should produce this unit now.
      */
-    public boolean shouldProduceNow(UnitType type) {
-        return getThingsToProduceRightNow(true).contains(type);
-    }
+//    public boolean shouldProduceNow(UnitType type) {
+//        return getThingsToProduceRightNow(true).contains(type);
+//    }
 
     /**
      * Returns true if we should produce this upgrade now.
      */
-    public boolean shouldProduceNow(UpgradeType upgrade) {
-        return getThingsToProduceRightNow(false).contains(upgrade);
-    }
+//    public boolean shouldProduceNow(UpgradeType upgrade) {
+//        return getThingsToProduceRightNow(false).contains(upgrade);
+//    }
 
     /**
      * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
@@ -244,114 +242,130 @@ public abstract class AtlantisProductionStrategy {
 
         // We can display file here, if we want to
 //         displayLoadedFile(loadedFile);
+
         // =========================================================
         // Skip first row as it's CSV header
         for (int i = 0; i < loadedFile.length; i++) {
             String[] row = loadedFile[i];
-            
-            // =========================================================
-            
-            // Ignore comments and blank lines
-            if (isUnimportantLine(row)) {
-                continue;
-            }
-            
-            // Check for special commands that start with #
-            if (isSpecialCommand(row)) {
-                handleSpecialCommand(row);
-                continue;
-            }
-            
+
             // =========================================================
             
-            int inRowCounter = 1; // Skip first column as it's only description
-            ProductionOrder order = null;
-
-            // =========================================================
-            // Parse entire row of strings
-            // Define type of entry: Unit / Research / Tech
-            String nameString = row[inRowCounter++].toLowerCase().trim();
-
-            // =========================================================
-            // Try getting objects of each type as we don't know if it's unit, research or tech.
-            // UNIT
-            UnitType.disableErrorReporting = true;
-            UnitType unitType = UnitType.getByName(nameString);
-            UnitType.disableErrorReporting = false;
-
-            // UPGRADE
-            UpgradeType.disableErrorReporting = true;
-            UpgradeType upgrade = UpgradeType.getByName(nameString);
-            UpgradeType.disableErrorReporting = false;
-
-            // TECH
-            TechType.disableErrorReporting = true;
-            TechType tech = TechType.getByName(nameString);
-            TechType.disableErrorReporting = false;
-
-            // Define convienience boolean variables
-            boolean isUnit = unitType != null;
-            boolean isUpgrade = upgrade != null;
-            boolean isTech = tech != null;
-
-            // Check if no error occured like no object found
-            if (!isUnit && !isUpgrade && !isTech) {
-                System.err.println("Invalid production order entry: " + nameString);
-                System.exit(-1);
-            }
-
-            // =========================================================
-            // Unit
-            if (isUnit) {
-                order = new ProductionOrder(unitType);
-            } // Upgrade
-            else if (isUpgrade) {
-                order = new ProductionOrder(upgrade);
-            } // Tech
-            else if (isTech) {
-                order = new ProductionOrder(tech);
-            } // Invalid entry type
-            else {
-                System.err.println("Invalid entry type: " + nameString);
-                System.exit(-1);
-            }
-
-            // =========================================================
-            // Blocking
-            // boolean isBlocking;
-            // String blockingString = row[inRowCounter++].toLowerCase().trim();
-            // if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
-            // isBlocking = false;
-            // } else {
-            // isBlocking = true;
-            // }
-            // Priority
-            // boolean isLowestPriority = false;
-            // boolean isHighestPriority = false;
-            // String priorityString = row[inRowCounter++].toLowerCase().trim();
-            // if (!priorityString.isEmpty()) {
-            // priorityString = priorityString.toLowerCase();
-            // if (priorityString.contains("low")) {
-            // isLowestPriority = true;
-            // } else if (priorityString.contains("high")) {
-            // isHighestPriority = true;
-            // }
-            // }
-            // =========================================================
-            // Create ProductionOrder object from strings-row
-            // if (isBlocking) {
-            // order.markAsBlocking();
-            // }
-            // if (isHighestPriority) {
-            // order.priorityHighest();
-            // }
-            // if (isLowestPriority) {
-            // order.priorityLowest();
-            // }
-            // Enqueue created order
-            initialProductionQueue.add(order);
-            currentProductionQueue.add(order);
+            parseCsvRow(row);
         }
+    }
+   
+    /**
+     * Analyzes CSV row, where each array element is one column.
+     */
+    private void parseCsvRow(String[] row) {
+        
+        // =========================================================
+        // Ignore comments and blank lines
+        if (isUnimportantLine(row)) {
+            return;
+        }
+
+        // Check for special commands that start with #
+        if (isSpecialCommand(row)) {
+            handleSpecialCommand(row);
+            return;
+        }
+        
+        int inRowCounter = 1; // Skip first column as it's only order number / description / whatever
+        ProductionOrder order = null;
+
+        // =========================================================
+        // Parse entire row of strings
+        // Define type of entry: Unit / Research / Tech
+        String nameString = row[inRowCounter++].toLowerCase().trim();
+
+        // =========================================================
+        // Try getting objects of each type as we don't know if it's unit, research or tech.
+        // UNIT
+        UnitType.disableErrorReporting = true;
+        UnitType unitType = UnitType.getByName(nameString);
+        UnitType.disableErrorReporting = false;
+
+        // UPGRADE
+        UpgradeType.disableErrorReporting = true;
+        UpgradeType upgrade = UpgradeType.getByName(nameString);
+        UpgradeType.disableErrorReporting = false;
+
+        // TECH
+        TechType.disableErrorReporting = true;
+        TechType tech = TechType.getByName(nameString);
+        TechType.disableErrorReporting = false;
+
+        // Define convienience boolean variables
+        boolean isUnit = unitType != null;
+        boolean isUpgrade = upgrade != null;
+        boolean isTech = tech != null;
+
+        // Check if no error occured like no object found
+        if (!isUnit && !isUpgrade && !isTech) {
+            System.err.println("Invalid production order entry: " + nameString);
+            System.exit(-1);
+        }
+
+        // =========================================================
+        // Unit
+        if (isUnit) {
+            order = new ProductionOrder(unitType);
+        } // Upgrade
+        else if (isUpgrade) {
+            order = new ProductionOrder(upgrade);
+        } // Tech
+        else if (isTech) {
+            order = new ProductionOrder(tech);
+        } // Invalid entry type
+        else {
+            System.err.println("Invalid entry type: " + nameString);
+            System.exit(-1);
+        }
+        
+        // =========================================================
+        // Check for modifiers
+        
+        if (row.length >= 3) {
+            String modifierString = row[inRowCounter++].toUpperCase().trim();
+            order.setModifier(modifierString);
+        }
+
+        // =========================================================
+        // Blocking
+        // boolean isBlocking;
+        // String blockingString = row[inRowCounter++].toLowerCase().trim();
+        // if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
+        // isBlocking = false;
+        // } else {
+        // isBlocking = true;
+        // }
+        // Priority
+        // boolean isLowestPriority = false;
+        // boolean isHighestPriority = false;
+        // String priorityString = row[inRowCounter++].toLowerCase().trim();
+        // if (!priorityString.isEmpty()) {
+        // priorityString = priorityString.toLowerCase();
+        // if (priorityString.contains("low")) {
+        // isLowestPriority = true;
+        // } else if (priorityString.contains("high")) {
+        // isHighestPriority = true;
+        // }
+        // }
+        // =========================================================
+        // Create ProductionOrder object from strings-row
+        // if (isBlocking) {
+        // order.markAsBlocking();
+        // }
+        // if (isHighestPriority) {
+        // order.priorityHighest();
+        // }
+        // if (isLowestPriority) {
+        // order.priorityLowest();
+        // }
+        // Enqueue created order
+        initialProductionQueue.add(order);
+        currentProductionQueue.add(order);
     }
 
     /**
@@ -390,48 +404,42 @@ public abstract class AtlantisProductionStrategy {
 
     // =========================================================
     // Special commands
-
     /**
      * If the first character in column is # it means it's special command.
      */
     private boolean isSpecialCommand(String[] row) {
         return (row.length >= 1 && row[0].charAt(0) == '#');
     }
-    
+
     /**
-     * // Means comment - should skip it.
-     * We can also have blank lines.
+     * // Means comment - should skip it. We can also have blank lines.
      */
     private boolean isUnimportantLine(String[] row) {
-        return row.length == 0 || row[0].isEmpty() || row[0].equals("") 
+        return row.length == 0 || row[0].isEmpty() || row[0].equals("")
                 || row[0].equals("Order") || row[0].equals(";");
     }
-    
+
     /**
      * If the first character in column is # it means it's special command. Here we handle all of them.
      */
     private void handleSpecialCommand(String[] row) {
         String command = row[0].substring(1).toUpperCase();
-        
+
         if (command.startsWith("AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS")) {
             AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = extractSpecialCommandValue(row);
-        }
-        else if (command.startsWith("AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
+        } else if (command.startsWith("AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
             AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = extractSpecialCommandValue(row);
-        }
-        else if (command.startsWith("AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
+        } else if (command.startsWith("AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
             AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS = extractSpecialCommandValue(row);
-        }
-        else if (command.startsWith("SCOUT_IS_NTH_WORKER")) {
+        } else if (command.startsWith("SCOUT_IS_NTH_WORKER")) {
             AtlantisConfig.SCOUT_IS_NTH_WORKER = extractSpecialCommandValue(row);
-        }
-        else if (command.startsWith("USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
+        } else if (command.startsWith("USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
             AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = extractSpecialCommandValue(row);
         }
     }
-    
+
     private int extractSpecialCommandValue(String[] row) {
         return Integer.parseInt(row[0].substring(row[0].lastIndexOf("=") + 1));
     }
-    
+
 }

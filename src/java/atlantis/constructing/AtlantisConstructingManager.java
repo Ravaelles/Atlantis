@@ -1,8 +1,10 @@
 package atlantis.constructing;
 
+import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.position.ConstructionBuildPositionFinder;
 import atlantis.information.AtlantisUnitInformationManager;
+import atlantis.production.ProductionOrder;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -18,11 +20,20 @@ public class AtlantisConstructingManager {
     private static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
 
     // =========================================================
+    
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */
     public static void requestConstructionOf(UnitType building) {
+        requestConstructionOf(building, null);
+    }
+    
+    /**
+     * Issues request of constructing new building. It will automatically find position and builder unit for
+     * it.
+     */
+    public static void requestConstructionOf(UnitType building, ProductionOrder order) {
         // System.out.println("@@@@ REQUESTED: " + building);
         if (!building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
@@ -30,6 +41,7 @@ public class AtlantisConstructingManager {
 
         // Create ConstructionOrder object, assign random worker for the time being
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
+        newConstructionOrder.setProductionOrder(order);
         newConstructionOrder.assignRandomBuilderForNow();
 
         if (newConstructionOrder.getBuilder() == null) {
@@ -42,7 +54,7 @@ public class AtlantisConstructingManager {
         // =========================================================
         // Find place for new building
         Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
-                newConstructionOrder.getBuilder(), building
+                newConstructionOrder.getBuilder(), building, newConstructionOrder
         );
 //        System.out.println("@@ " + building + " at " + positionToBuild);
 
@@ -84,6 +96,13 @@ public class AtlantisConstructingManager {
             if (AtlantisGame.playsAsTerran()) {
                 checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
             }
+        }
+        
+        // =========================================================
+        // Check if we should buy a base, because we have shitload of minerals
+        if (AtlantisGame.hasMinerals(490) && SelectUnits.ourBases().count() <= 7 
+                && AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.BASE) == 0) {
+            requestConstructionOf(AtlantisConfig.BASE);
         }
     }
 
@@ -131,7 +150,7 @@ public class AtlantisConstructingManager {
                 }
             }
         }
-        // --------------------------------------------------------------------
+        // =========================================================
 
 //        if (building != null) {
 //            System.out.println("==============");
@@ -162,7 +181,7 @@ public class AtlantisConstructingManager {
         } // Building doesn't exist yet, means builder is travelling to the construction place
         else {
             Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
-                    constructionOrder.getBuilder(), constructionOrder.getBuildingType()
+                    constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
             );
             constructionOrder.setPositionToBuild(positionToBuild);
         }
@@ -215,13 +234,32 @@ public class AtlantisConstructingManager {
             }
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Special case for Overlord
         if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
             total += SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
         }
 
         return total;
+    }
+
+    public static int countNotFinishedConstructionsOfType(UnitType type) {
+        // Special case for Overlord
+        if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
+//            System.out.println("// =========================================================");
+//            for (Unit unit : SelectUnits.ourEggs().list()) {
+//                System.out.println(unit);
+//                System.out.println(unit.getType());
+//                System.out.println(unit.getBuildType());
+//                System.out.println(unit.getInitialType());
+//            }
+            
+            return SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count()
+                    + countNotStartedConstructionsOfType(UnitType.UnitTypes.Zerg_Overlord);
+        }
+        else {
+            return SelectUnits.ourUnfinished().ofType(type).count();
+        }
     }
     
     /**
@@ -237,7 +275,7 @@ public class AtlantisConstructingManager {
             }
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Special case for Overlord
         if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
             total += SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();

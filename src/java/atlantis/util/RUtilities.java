@@ -999,8 +999,10 @@ public class RUtilities {
                 String[] fields = line.split(";");
 
                 if (!line.isEmpty() && line.charAt(0) != '#' && !line.startsWith("//")) {
-                    if (numberOfFields > 0 && fields.length != numberOfFields) {
+                    if (numberOfFields > 0 && fields.length < numberOfFields) {
                         System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
+                        System.err.println("fields.length = " + fields.length);
+                        System.err.println("numberOfFields = " + numberOfFields);
                         System.exit(-1);
                     }
                 }
