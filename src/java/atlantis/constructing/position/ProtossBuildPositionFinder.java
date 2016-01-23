@@ -7,6 +7,7 @@ import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
+import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 
 public class ProtossBuildPositionFinder extends AbstractBuildPositionFinder {
 

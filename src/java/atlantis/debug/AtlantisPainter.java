@@ -16,6 +16,7 @@ import atlantis.wrappers.MappingCounter;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.TreeSet;
 import jnibwapi.JNIBWAPI;
 import jnibwapi.Position;
 import jnibwapi.Unit;
@@ -31,6 +32,11 @@ public class AtlantisPainter {
     private static int sideMessageTopCounter = 0;
     private static int sideMessageMiddleCounter = 0;
     private static int sideMessageBottomCounter = 0;
+    
+    /**
+     * List of enemy units that have been targetted in the last frame.
+     */
+//    private static TreeSet<Unit> _temporaryTargets = new TreeSet<>();
 
     // =========================================================
     /**
@@ -58,6 +64,7 @@ public class AtlantisPainter {
         paintProductionQueue();
         paintConstructionsPending();
         paintKilledAndLost();
+        paintTemporaryTargets();
 
         // =========================================================
         // Paint TOOLTIPS over units
@@ -75,6 +82,18 @@ public class AtlantisPainter {
      * Paint focus point for global attack mission etc.
      */
     private static void paintVariousStats() {
+        
+        // =========================================================
+        // Time
+        paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", BWColor.Grey);
+        
+        // =========================================================
+        // Global mission
+        paintSideMessage("Mission: " + AtlantisGroupManager.getAlphaGroup().getMission().getName(), BWColor.White);
+        
+        // =========================================================
+        // Focus point
+        
         Position focusPoint = MissionAttack.getFocusPoint();
         String desc = "";
         Unit mainBase = SelectUnits.mainBase();
@@ -126,10 +145,10 @@ public class AtlantisPainter {
             // =========================================================
             // === Paint battle group
             // =========================================================
-            if (unit.getGroup() != null) {
-                paintTextCentered(new Position(unit.getPX(), unit.getPY() + 3), BWColor.getColorString(BWColor.Grey)
-                        + "#" + unit.getGroup().getID(), false);
-            }
+//            if (unit.getGroup() != null) {
+//                paintTextCentered(new Position(unit.getPX(), unit.getPY() + 3), BWColor.getColorString(BWColor.Grey)
+//                        + "#" + unit.getGroup().getID(), false);
+//            }
             
             // =========================================================
             // === Paint num of other units around this unit
@@ -140,8 +159,10 @@ public class AtlantisPainter {
             // =========================================================
             // === Combat Evaluation Strength
             // =========================================================
-            String combatStrength = AtlantisCombatEvaluator.getEvalString(unit);
-            paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), combatStrength, null);
+            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 3) {
+                String combatStrength = AtlantisCombatEvaluator.getEvalString(unit);
+                paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), combatStrength, null);
+            }
         }
     }
 
@@ -217,7 +238,11 @@ public class AtlantisPainter {
 
         // Display units currently in production
         for (Unit unit : SelectUnits.ourUnfinished().list()) {
-            paintSideMessage(unit.getType().getShortName(), BWColor.Green);
+            UnitType type = unit.getType();
+            if (type.equals(UnitType.UnitTypes.Zerg_Egg)) {
+                type = unit.getBuildType();
+            }
+            paintSideMessage(type.getShortName(), BWColor.Green);
         }
 
         // Display units that should be produced right now or any time
@@ -323,6 +348,11 @@ public class AtlantisPainter {
 //                bwapi.drawCircle(unit, 8, BWColor.Teal, false, false);
 //                bwapi.drawCircle(unit, 7, BWColor.Teal, false, false);
 //            }
+
+            // RUN
+            if (unit.isRunning()) {
+                paintLine(unit, unit.getRunning().getNextPositionToRunTo(), BWColor.Blue);
+            }
         }
     }
 
@@ -462,6 +492,19 @@ public class AtlantisPainter {
         BWColor color = balance >= 0 ? BWColor.Green : BWColor.Red;
         paintMessage((balance >= 0 ? "+" : "") + balance, color, x + dx, y + 3 * dy, true);
     }
+    
+    /**
+     * Paint red "X" on every enemy unit that has been targetted.
+     */
+    private static void paintTemporaryTargets() {
+        for (Unit ourUnit : SelectUnits.our().list()) {
+            
+            // Paint "x" on every unit that has been targetted by one of our units.
+            if (ourUnit.isAttacking() && ourUnit.getTarget() != null) {
+                paintMessage("X", BWColor.Red, ourUnit.getTarget().getPX(), ourUnit.getTarget().getPY(), false);
+            }
+        }
+    }
 
     // =========================================================
     // Lo-level
@@ -496,6 +539,13 @@ public class AtlantisPainter {
         getBwapi().drawCircle(position, radius, color, false, false);
     }
 
+    private static void paintLine(Position start, Position end, BWColor color) {
+        if (start == null || end == null) {
+            return;
+        }
+        getBwapi().drawLine(start, end, color, false);
+    }
+
     private static void paintTextCentered(Position position, String text, BWColor color) {
         paintTextCentered(position, text, color, false);
     }
@@ -508,7 +558,7 @@ public class AtlantisPainter {
         if (position == null || text == null) {
             return;
         }
-        getBwapi().drawText(position.translated(-4 * text.length(), -3), BWColor.getColorString(color) + text, screenCords);
+        getBwapi().drawText(position.translated((int) (-3.7 * text.length()), -2), BWColor.getColorString(color) + text, screenCords);
     }
 
     private static JNIBWAPI getBwapi() {

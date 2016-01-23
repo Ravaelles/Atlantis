@@ -81,10 +81,13 @@ public class AtlantisMap {
      * fog of war).
      */
     public static BaseLocation getNearestUnexploredStartingLocation(Position nearestTo) {
+        if (nearestTo == null) {
+            return null;
+        }
 
         // Get list of all starting locations
         Positions<BaseLocation> startingLocations = new Positions<BaseLocation>();
-        startingLocations.addPositions(getStartingLocations());
+        startingLocations.addPositions(getStartingLocations(true));
 
         // Sort them all by closest to given nearestTo position
         startingLocations.sortByDistanceTo(nearestTo, true);
@@ -96,6 +99,13 @@ public class AtlantisMap {
             }
         }
         return null;
+    }
+    
+    public static BaseLocation getStartingLocationBasedOnIndex(int index) {
+        ArrayList<BaseLocation> baseLocations = new ArrayList<>();
+        baseLocations.addAll(getStartingLocations(true));
+        
+        return baseLocations.get(index % baseLocations.size());
     }
 
     /**
@@ -183,10 +193,19 @@ public class AtlantisMap {
      * and you know location of your own base. So you also know the location of enemy base (enemy *must* be
      * there), but still obviously you don't see him.
      */
-    public static List<BaseLocation> getStartingLocations() {
+    public static List<BaseLocation> getStartingLocations(boolean excludeOurStartLocation) {
         ArrayList<BaseLocation> startingLocations = new ArrayList<>();
         for (BaseLocation baseLocation : AtlantisMap.getBaseLocations()) {
             if (baseLocation.isStartLocation()) {
+                
+                // Exclude our base location if needed.
+                if (excludeOurStartLocation) {
+                    Unit mainBase = SelectUnits.mainBase();
+                    if (mainBase != null && mainBase.distanceTo(baseLocation) <= 10) {
+                        continue;
+                    }
+                }
+                
                 startingLocations.add(baseLocation);
             }
         }

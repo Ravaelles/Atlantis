@@ -51,7 +51,9 @@ public class AtlantisBuilderManager {
             throw new RuntimeException("Builder empty");
         }
         if (buildPosition == null) {
-            throw new RuntimeException("buildPosition empty");
+//            throw new RuntimeException("buildPosition empty");
+            System.err.println("buildPosition is null");
+            return;
         }
 
         // Move builder to the build position

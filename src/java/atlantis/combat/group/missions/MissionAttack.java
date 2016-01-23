@@ -9,6 +9,12 @@ import jnibwapi.Unit;
 
 public class MissionAttack extends Mission {
 
+    public MissionAttack(String name) {
+        super(name);
+    }
+    
+    // =========================================================
+    
     @Override
     public boolean update(Unit unit) {
         Position focusPoint = getFocusPoint();

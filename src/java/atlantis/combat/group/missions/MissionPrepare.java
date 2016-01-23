@@ -8,6 +8,12 @@ import jnibwapi.Unit;
 
 public class MissionPrepare extends Mission {
 
+    public MissionPrepare(String name) {
+        super(name);
+    }
+    
+    // =========================================================
+    
     @Override
     public boolean update(Unit unit) {
         if (moveUnitToDestinationIfNeeded(unit)) {

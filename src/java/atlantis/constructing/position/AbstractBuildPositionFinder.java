@@ -48,11 +48,13 @@ public abstract class AbstractBuildPositionFinder {
         for (ConstructionOrder constructionOrder : AtlantisConstructingManager.getAllConstructionOrders()) {
             if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)
                     && !constructionOrder.getBuilder().equals(builder)) {
-                double distance = constructionOrder.getPositionToBuild().distanceTo(position);
-                if (distance <= 4) {
-                    ZergBuildPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
-                            + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
-                    return true;
+                if (constructionOrder.getPositionToBuild() != null) {
+                    double distance = constructionOrder.getPositionToBuild().distanceTo(position);
+                    if (distance <= 4) {
+                        ZergBuildPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
+                                + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
+                        return true;
+                    }
                 }
             }
         }

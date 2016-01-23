@@ -1,5 +1,6 @@
 package atlantis.combat.micro;
 
+import atlantis.combat.micro.terran.MicroMedic;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType.UnitTypes;
@@ -21,7 +22,7 @@ public class DefaultRangedManager extends MicroRangedManager {
 
             // =========================================================
             // STANDARD actions
-            Unit nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(unit);
+            Unit nearestEnemy = SelectUnits.enemyRealUnits().nearestTo(unit);
             if (nearestEnemy == null) {
                 nearestEnemy = SelectUnits.enemy().nearestTo(unit);
             }

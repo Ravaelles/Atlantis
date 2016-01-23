@@ -77,8 +77,8 @@ public class AtlantisConstructingManager {
             AtlantisGame.getProductionStrategy().rebuildQueue();
         } // Couldn't find place for building! That's f'g bad.
         else {
-            System.err.println("requestConstruction HAS FAILED! DETAILS: POSITION TO BUILD: " + positionToBuild
-                    + " / BUILDER = " + optimalBuilder);
+//            System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
+//                    + " / BUILDER = " + optimalBuilder);
         }
     }
 
@@ -237,29 +237,15 @@ public class AtlantisConstructingManager {
         // =========================================================
         // Special case for Overlord
         if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
-            total += SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
+            total += SelectUnits.ourUnfinished().ofType(type).count();
         }
 
         return total;
     }
 
     public static int countNotFinishedConstructionsOfType(UnitType type) {
-        // Special case for Overlord
-        if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
-//            System.out.println("// =========================================================");
-//            for (Unit unit : SelectUnits.ourEggs().list()) {
-//                System.out.println(unit);
-//                System.out.println(unit.getType());
-//                System.out.println(unit.getBuildType());
-//                System.out.println(unit.getInitialType());
-//            }
-            
-            return SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count()
-                    + countNotStartedConstructionsOfType(UnitType.UnitTypes.Zerg_Overlord);
-        }
-        else {
-            return SelectUnits.ourUnfinished().ofType(type).count();
-        }
+        return SelectUnits.ourUnfinished().ofType(type).count()
+                + countNotStartedConstructionsOfType(type);
     }
     
     /**

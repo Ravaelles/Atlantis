@@ -21,7 +21,7 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
     public void produceInfantry(UnitType infantryType) {
-        _produceUnit(UnitTypes.Zerg_Zergling);
+        _produceUnit(infantryType);
     }
 
     @Override

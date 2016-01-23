@@ -1,6 +1,8 @@
 package atlantis.combat.micro;
 
+import atlantis.combat.micro.terran.MicroMedic;
 import atlantis.AtlantisGame;
+import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.wrappers.SelectUnits;
 import atlantis.wrappers.Units;
 import jnibwapi.Position;
@@ -12,7 +14,7 @@ public class DefaultMeleeManager extends MicroMeleeManager {
     @Override
     public boolean update(Unit unit) {
         if (canIssueOrderToUnit(unit)) {
-            unit.setTooltip("Start " + unit.getLastUnitActionWasFramesAgo());
+//            unit.setTooltip("Start " + unit.getLastUnitActionWasFramesAgo());
 
             // SPECIAL UNIT TYPE action
             if (handleSpecialUnit(unit)) {
@@ -45,7 +47,7 @@ public class DefaultMeleeManager extends MicroMeleeManager {
         // =========================================================
         // Can't give orders to unit right now
         else {
-            unit.setTooltip("x " + unit.getLastUnitActionWasFramesAgo());
+//            unit.setTooltip("x " + unit.getLastUnitActionWasFramesAgo());
             return true;
         }
     }
@@ -57,10 +59,23 @@ public class DefaultMeleeManager extends MicroMeleeManager {
     }
 
     private boolean handleSpecialUnit(Unit unit) {
-        if (unit.isType(UnitTypes.Terran_Medic)) {
-            MicroMedic.update(unit);
-            return true;
+        
+        // ZERG
+        if (AtlantisGame.playsAsZerg()) {
+            if (unit.isType(UnitTypes.Zerg_Overlord)) {
+                ZergOverlordManager.update(unit);
+                return true;
+            }
         }
+        
+        // TERRAN
+        if (AtlantisGame.playsAsTerran()) {
+            if (unit.isType(UnitTypes.Terran_Medic)) {
+                MicroMedic.update(unit);
+                return true;
+            }
+        }
+        
         return false;
     }
 

@@ -37,6 +37,8 @@ public class AtlantisUnitInformationManager {
         Unit unit = getUnitByID(unitID);
         if (unit != null) {
             allUnits.remove(unit);
+            enemyUnitsDiscovered.remove(unit);
+            enemyUnitsVisible.remove(unit);
         }
     }
 

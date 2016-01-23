@@ -7,6 +7,12 @@ import jnibwapi.Unit;
 
 public class MissionDefend extends Mission {
 
+    public MissionDefend(String name) {
+        super(name);
+    }
+    
+    // =========================================================
+
     @Override
     public boolean update(Unit unit) {
         if (canIssueOrderToUnit(unit)) {

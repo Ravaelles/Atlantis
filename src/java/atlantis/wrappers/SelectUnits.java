@@ -144,12 +144,46 @@ public class SelectUnits {
     /**
      * Selects all visible enemy units.
      */
-    public static SelectUnits enemyRealUnit() {
+    public static SelectUnits enemy(boolean includeGroundUnits, boolean includeAirUnits) {
         Units units = new Units();
 
         for (Unit unit : Atlantis.getBwapi().getEnemyUnits()) {
-            if (unit.isAlive() && !unit.isBuilding() && !unit.isNotActuallyUnit()) {
+            if (unit.isVisible() && unit.getHP() >= 1) {
+                if ((unit.isGroundUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
+                    units.addUnit(unit);
+                }
+            }
+        }
+
+        return new SelectUnits(units);
+    }
+
+    /**
+     * Selects all visible enemy units.
+     */
+    public static SelectUnits enemyRealUnits() {
+        Units units = new Units();
+
+        for (Unit unit : Atlantis.getBwapi().getEnemyUnits()) {
+            if (unit.isAlive() && unit.isVisible() && !unit.isBuilding() && !unit.isNotActuallyUnit()) {
                 units.addUnit(unit);
+            }
+        }
+
+        return new SelectUnits(units);
+    }
+
+    /**
+     * Selects all visible enemy units.
+     */
+    public static SelectUnits enemyRealUnits(boolean includeGroundUnits, boolean includeAirUnits) {
+        Units units = new Units();
+
+        for (Unit unit : Atlantis.getBwapi().getEnemyUnits()) {
+            if (unit.isAlive() && unit.isVisible() && !unit.isBuilding() && !unit.isLarvaOrEgg()) {
+                if ((unit.isGroundUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
+                    units.addUnit(unit);
+                }
             }
         }
 
@@ -368,7 +402,21 @@ public class SelectUnits {
     public static SelectUnits ourWorkers() {
         SelectUnits selectedUnits = SelectUnits.our();
         for (Unit unit : selectedUnits.list()) {
-            if (!unit.isWorker()) {
+            if (!unit.isWorker() && unit.isAlive()) {
+                selectedUnits.units.removeUnit(unit);
+            }
+        }
+        return selectedUnits;
+    }
+
+    /**
+     * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe) that are either 
+     * gathering minerals or gas.
+     */
+    public static SelectUnits ourWorkersThatGather() {
+        SelectUnits selectedUnits = SelectUnits.our();
+        for (Unit unit : selectedUnits.list()) {
+            if (!unit.isWorker() || (!unit.isGatheringGas() && !unit.isGatheringMinerals())) {
                 selectedUnits.units.removeUnit(unit);
             }
         }

@@ -7,7 +7,7 @@ import jnibwapi.Unit;
 
 public class AtlantisGasManager {
 
-    private static final int MIN_GAS_WORKERS_PER_BUILDING = 2;
+    private static final int MIN_GAS_WORKERS_PER_BUILDING = 3;
 
     // =========================================================
     /**
@@ -35,7 +35,8 @@ public class AtlantisGasManager {
     private static int countWorkersAssignedTo(Unit gasBuilding, Collection<Unit> workers) {
         int total = 0;
         for (Unit worker : workers) {
-            if (worker.getTarget() != null && worker.getTarget().equals(gasBuilding)) {
+//            if (worker.getTarget() != null && worker.getTarget().equals(gasBuilding)) {
+            if (gasBuilding.equals(worker.getTarget()) || gasBuilding.equals(worker.getOrderTarget())) {
                 total++;
             }
         }

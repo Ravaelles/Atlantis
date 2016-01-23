@@ -6,6 +6,7 @@ import atlantis.combat.group.Group;
 import atlantis.combat.group.missions.Mission;
 import atlantis.combat.group.missions.Missions;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
+import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 
@@ -48,7 +49,6 @@ public class AtlantisCombatCommander {
 
             // DON'T INTERRUPT shooting units
             if (shouldNotDisturbUnit(unit)) {
-                unit.setTooltip("X");
                 continue;
             }
 
@@ -73,7 +73,6 @@ public class AtlantisCombatCommander {
                 else {
 //                    if (!unit.isMoving() && !unit.isAttacking() && !unit.isJustShooting()) {
                         group.getMission().update(unit);
-                        unit.setTooltip("Mission!!!");
 //                    }
                 }
             }
@@ -109,7 +108,21 @@ public class AtlantisCombatCommander {
      */
     private static void handleGlobalMission() {
         if (currentGlobalMission == null) {
+//            currentGlobalMission = Missions.DEFEND;
             currentGlobalMission = Missions.ATTACK;
+        }
+        
+        // =========================================================
+        
+        if (currentGlobalMission == Missions.DEFEND) {
+            if (SelectUnits.ourCombatUnits().count() >= 20) {
+                currentGlobalMission = Missions.ATTACK;
+            }
+        }
+        else if (currentGlobalMission == Missions.ATTACK) {
+            if (AtlantisGame.getTimeSeconds() > 350 && SelectUnits.ourCombatUnits().count() <= 7) {
+                currentGlobalMission = Missions.DEFEND;
+            }
         }
     }
 

@@ -19,22 +19,10 @@ public abstract class MicroManager {
                 return true;
             }
 
-            return run(unit);
-//            unit.runFrom(null);
-//            Unit safePoint = SelectUnits.mainBase();
-//            if (safePoint != null) {
-//                if (safePoint.distanceTo(unit) > 15) {
-//                    unit.move(unit);
-//                } else {
-//                    unit.runFrom(null);
-//                }
-//                return true;
-//            } else {
-//                unit.setTooltip("No safeplace");
-//                return false;
-//            }
+            return AtlantisRunManager.run(unit);
         }
 
+        AtlantisRunManager.unitWantsStopRunning(unit);
         return false;
     }
 
@@ -43,35 +31,10 @@ public abstract class MicroManager {
      */
     protected boolean handleLowHealthIfNeeded(Unit unit) {
         if (unit.getHP() <= 11) {
-            return run(unit);
+            return AtlantisRunManager.run(unit);
         }
 
         return false;
-    }
-
-    // =========================================================
-    /**
-     * Makes unit run (from close enemies) in the most reasonable way possible.
-     */
-    private boolean run(Unit unit) {
-//        Unit nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(unit);
-//        if (nearestEnemy != null) {
-//            if (nearestEnemy.distanceTo(nearestEnemy) <= 6.5) {
-//                unit.runFrom(nearestEnemy);
-//                unit.setTooltip("LOW HP");
-//            }
-//        } else {
-//            unit.move(AtlantisMap.getRandomInvisiblePosition(unit), true);
-//        }
-        Unit mainBase = SelectUnits.mainBase();
-        if (mainBase != null && mainBase.distanceTo(unit) > 10) {
-            unit.setTooltip("Run to base");
-            unit.move(mainBase);
-            return true;
-        } else {
-            unit.setTooltip("Run fail");
-            return false;
-        }
     }
 
 }

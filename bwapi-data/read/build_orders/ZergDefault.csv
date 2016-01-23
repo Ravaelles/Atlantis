@@ -28,29 +28,34 @@
 
 Order;Name;Modifier
 // ================
-6;Drone
-6;Drone
-6;Drone
-1;Hatchery;NEAREST_FREE
-6;Drone
+1;Hydralisk
+1;Hydralisk
+1;Hydralisk
+1;Hydralisk
+1;Hydralisk
 6;Drone
 3;Spawning Pool
-4;Zergling
-7;Drone
-4;Zergling
 6;Drone
-7;Drone
-1;Hatchery;NEAR_MAIN
-1;Zergling
-1;Zergling
-6;Drone
+4;Zergling
+4;Zergling
 1;Zergling
 7;Drone
-1;Zergling
 7;Drone
-1;Zergling
 7;Drone
-1;Zergling
 7;Drone
-1;Zergling
+2;Hatchery
 7;Drone
+7;Drone
+7;Drone
+7;Drone
+7;Drone
+1;Extractor
+7;Drone
+1;Hydralisk Den
+1;Drone
+2;Hatchery
+1;Hydralisk
+1;Hydralisk
+1;Hydralisk
+1;Hydralisk
+1;Hydralisk

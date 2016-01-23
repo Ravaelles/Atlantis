@@ -12,6 +12,10 @@ import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhys
 import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 import atlantis.debug.AtlantisPainter;
+import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
+import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
+import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
+import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 
 public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
     

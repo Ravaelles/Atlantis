@@ -1,5 +1,6 @@
 package atlantis.production.strategies;
 
+import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
@@ -111,23 +112,20 @@ public abstract class AtlantisProductionStrategy {
                 int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + virtualCounter.getValueFor(type);
                 int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
 
-//                if (type.isWorker()) {
-//                    System.out.println(order.getUnitType() + ": (" + weHaveThisManyUnits + "/" + shouldHaveThisManyUnits + ")");
-//                }
                 if (type.isBuilding()) {
-                    weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);
-                    // System.out.println("@@@ Not started constructions of '" + type + "': "
-                    // + AtlantisConstructingManager.countNotStartedConstructionsOfType(type));
+                    weHaveThisManyUnits += AtlantisConstructingManager.countNotFinishedConstructionsOfType(type);
                 }
 
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
                     isOkayToAdd = true;
                 }
-            } // Upgrade
+            } 
+            // Upgrade
             else if (order.getUpgrade() != null) {
                 isOkayToAdd = !AtlantisTech.isResearched(order.getUpgrade());
-            } // Tech
+            } 
+            // Tech
             else if (order.getTech() != null) {
                 isOkayToAdd = !AtlantisTech.isResearched(order.getTech());
             }
@@ -135,7 +133,7 @@ public abstract class AtlantisProductionStrategy {
             // =========================================================
             if (isOkayToAdd) {
                 currentProductionQueue.add(order);
-                if (currentProductionQueue.size() >= 8) {
+                if (currentProductionQueue.size() >= 15) {
                     break;
                 }
             }
@@ -170,6 +168,10 @@ public abstract class AtlantisProductionStrategy {
             TechType tech = order.getTech();
 
             if (unitType != null) {
+                if (!AtlantisGame.hasTechToProduce(unitType)) {
+                    continue;
+                }
+                
                 mineralsNeeded += unitType.getMineralPrice();
                 gasNeeded += unitType.getGasPrice();
             } else if (upgrade != null) {
@@ -181,8 +183,7 @@ public abstract class AtlantisProductionStrategy {
             }
 
             // If we can afford this order and the previous, add it to CurrentToProduceList.
-            if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)
-                    && AtlantisGame.hasTechAndBuildingsToProduce(unitType)) {
+            if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
                 result.add(order);
             } // We can't afford to produce this order along with all previous ones. Return currently list.
             else {
@@ -222,7 +223,12 @@ public abstract class AtlantisProductionStrategy {
         ArrayList<ProductionOrder> result = new ArrayList<>();
 
         for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
-            result.add(currentProductionQueue.get(i));
+            ProductionOrder productionOrder = currentProductionQueue.get(i);
+            if (productionOrder.getUnitType() != null 
+                    && !AtlantisGame.hasTechAndBuildingsToProduce(productionOrder.getUnitType())) {
+                continue;
+            }
+            result.add(productionOrder);
         }
 
         return result;

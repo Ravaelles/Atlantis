@@ -1,4 +1,4 @@
-package atlantis.combat.micro;
+package atlantis.combat.micro.terran;
 
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;

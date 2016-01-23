@@ -15,7 +15,7 @@ public class AtlantisAttackEnemyUnit {
         
         // Nothing to attack
         if (enemyToAttack == null) {
-            unit.setTooltip("No enemy");
+//            unit.setTooltip("No enemy");
             return false;
         }
         
@@ -26,20 +26,21 @@ public class AtlantisAttackEnemyUnit {
         
         // =========================================================
         
-        unit.setTooltip("-> " + enemyToAttack.getShortName() + "/" + unit.getLastUnitActionWasFramesAgo());
+//        unit.setTooltip("-> " + enemyToAttack.getShortName() + "/" + unit.getLastUnitActionWasFramesAgo());
         if (unit.getGroundWeaponCooldown() <= 0) {
-//                unit.attackUnit(enemyToAttack, false);
             if (!enemyToAttack.equals(unit.getTarget())) {
 //                unit.attack(enemyToAttack, false);
                 unit.attackUnit(enemyToAttack, false);
-                unit.setTooltip("#" + enemyToAttack.getShortName() + "/" + (int) (unit.getLastUnitActionWasFramesAgo() / 30) + "#");
-            } else {
-                unit.setTooltip(">" + enemyToAttack.getShortName() + " " + unit.getLastUnitActionWasFramesAgo() + "ago<");
-            }
-        } else {
-            unit.setTooltip("Attack " + unit.getLastUnitActionWasFramesAgo());
-        }
-//            unit.removeTooltip();
+//                unit.setTooltip("#" + enemyToAttack.getShortName() + "/" + (int) (unit.getLastUnitActionWasFramesAgo() / 30) + "#");
+            } 
+//            else {
+//                unit.setTooltip(">" + enemyToAttack.getShortName() + " " + unit.getLastUnitActionWasFramesAgo() + "ago<");
+//            }
+        } 
+//        else {
+//            unit.setTooltip("Attack " + unit.getLastUnitActionWasFramesAgo());
+//        }
+        unit.removeTooltip();
         return true;
     }
 

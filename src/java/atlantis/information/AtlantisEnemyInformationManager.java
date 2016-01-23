@@ -47,7 +47,7 @@ public class AtlantisEnemyInformationManager {
 //        System.out.println(AtlantisUnitInformationManager.enemyUnitsDiscovered.size());
         for (Unit enemyUnit : AtlantisUnitInformationManager.enemyUnitsDiscovered) {
 //            System.out.println(enemyUnit);
-            if (enemyUnit.isBase()) {
+            if (enemyUnit.isBase() && enemyUnit.isAlive()) {
                 return enemyUnit;
             }
         }
@@ -60,7 +60,7 @@ public class AtlantisEnemyInformationManager {
      */
     public static Unit getNearestEnemyBuilding() {
         Unit mainBase = SelectUnits.mainBase();
-        if (mainBase != null) {
+        if (mainBase != null && !AtlantisUnitInformationManager.enemyUnitsDiscovered.isEmpty()) {
             return SelectUnits.from(AtlantisUnitInformationManager.enemyUnitsDiscovered).buildings().nearestTo(mainBase);
         }
         return null;

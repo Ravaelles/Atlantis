@@ -24,6 +24,20 @@ public class AtlantisGame {
     }
 
     /**
+     * Returns true if we have all techs needed for given unit (but we may NOT have some of the buildings!).
+     */
+    public static boolean hasTechToProduce(UnitType unitType) {
+
+        // Needs to have tech
+        TechType techType = TechType.TechTypes.getTechType(unitType.getRequiredTechID());
+        if (techType != null && techType != TechType.TechTypes.None && !AtlantisTech.isResearched(techType)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Returns true if it's possible to produce unit (or building) of given type.
      */
     public static boolean hasTechAndBuildingsToProduce(UnitType unitType) {
@@ -34,6 +48,11 @@ public class AtlantisGame {
 //        System.out.println(unitType + " requires: ");
         for (Integer unitTypeID : unitType.getRequiredUnits().keySet()) {
             UnitType requiredUnitType = UnitType.getByID(unitTypeID);
+            
+            if (requiredUnitType.isLarva()) {
+                continue;
+            }
+            
             int requiredAmount = unitType.getRequiredUnits().get(unitTypeID);
             int weHaveAmount = requiredUnitType.isLarva() ? 
                     SelectUnits.ourLarva().count() : SelectUnits.our().ofType(requiredUnitType).count();

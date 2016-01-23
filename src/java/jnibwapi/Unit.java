@@ -17,6 +17,7 @@ import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
 import jnibwapi.types.UpgradeType;
 import jnibwapi.types.UpgradeType.UpgradeTypes;
+import jnibwapi.types.WeaponType;
 
 /**
  * Represents a StarCraft unit.
@@ -861,6 +862,11 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         return accelerating;
     }
 
+    /**
+     * Returns <b>true</b> if unit's current command is "Attack". Either [x,y] coordinates or specific unit.
+     * Note that the unit can be very far from the target or already attacking it.
+     * @see isJustShooting()
+     */
     public boolean isAttacking() {
         return attacking;
     }
@@ -1084,7 +1090,7 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
             return false; // Ignore this command request
         }
 
-        setTooltip("Attack " + target.getShortName());
+//        setTooltip("Attack " + target.getShortName());
 
         return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Attack_Unit, target, queued));
     }
@@ -1357,14 +1363,28 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
     private AtlantisRunning running = new AtlantisRunning(this);
     private int lastUnitAction = 0;
 
-    private boolean cached_repairableMechanically = false;
-    private boolean cached_healable = false;
+    private boolean _repairableMechanically = false;
+    private boolean _healable = false;
+    private boolean _isMilitaryBuildingAntiGround = false;
+    private boolean _isMilitaryBuildingAntiAir = false;
+    private double _lastCombatEval;
+    private int _lastTimeCombatEval = 0;
 
     // =========================================================
     // Atlantis constructor
     private void atlantisInit() {
-        cached_repairableMechanically = isBuilding() || isVehicle();
-        cached_healable = isInfantry() || isWorker();
+        
+        // Repair & Heal
+        _repairableMechanically = isBuilding() || isVehicle();
+        _healable = isInfantry() || isWorker();
+        
+        // Military building
+        _isMilitaryBuildingAntiGround = isType(
+                UnitTypes.Terran_Bunker, UnitTypes.Protoss_Photon_Cannon, UnitTypes.Zerg_Sunken_Colony
+        );
+        _isMilitaryBuildingAntiAir = isType(
+                UnitTypes.Terran_Bunker, UnitTypes.Protoss_Photon_Cannon, UnitTypes.Zerg_Spore_Colony
+        );
     }
 
     // =========================================================
@@ -1423,15 +1443,15 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
     }
 
     public boolean canBeHealed() {
-        return cached_repairableMechanically || cached_healable;
+        return _repairableMechanically || _healable;
     }
 
     public boolean isRepairableMechanically() {
-        return cached_repairableMechanically;
+        return _repairableMechanically;
     }
 
     public boolean isHealable() {
-        return cached_healable;
+        return _healable;
     }
 
     /**
@@ -1445,6 +1465,10 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         return getType().isWorker();
     }
 
+    public boolean isBunker() {
+        return getType().equals(UnitTypes.Terran_Bunker);
+    }
+
     public boolean isBase() {
         return isType(UnitTypes.Terran_Command_Center, UnitTypes.Protoss_Nexus, UnitTypes.Zerg_Hatchery,
                 UnitTypes.Zerg_Lair, UnitTypes.Zerg_Hive);
@@ -1456,10 +1480,6 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
 
     public boolean isVehicle() {
         return getType().isMechanical();
-    }
-
-    private boolean isAirUnit() {
-        return getType().isFlyer();
     }
 
     /**
@@ -1542,18 +1562,33 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
     /**
      * Indicates that this unit should be running from given enemy unit.
      */
-    public void runFrom(Unit nearestEnemy) {
+    public boolean runFrom(Unit nearestEnemy) {
         if (nearestEnemy == null) {
-            nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(this);
+            nearestEnemy = SelectUnits.enemyRealUnits().nearestTo(this);
         }
 
         if (nearestEnemy == null) {
-            return;
+            System.err.println("Run: whatta hell: " + nearestEnemy);
+            return false;
         } else {
-            running.runFrom(nearestEnemy);
+            return running.runFrom(nearestEnemy);
         }
     }
 
+    /**
+     * Returns which unit of the same type this unit is. E.g. it can be first (0) Overlord or third (2) 
+     * Zergling. It compares IDs of units to return correct result.
+     */
+    public int getUnitIndex() {
+        int index = 0;
+        for (Unit otherUnit : SelectUnits.our().ofType(getType()).list()) {
+            if (otherUnit.ID < this.ID) {
+                index++;
+            }
+        }
+        return index;
+    }
+    
     // =========================================================
     // Debugging / Painting methods
     private String tooltip;
@@ -1584,6 +1619,32 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
 
     // =========================================================
     // Very specific auxiliary methods
+    
+    /**
+     * Returns true if given unit is one of buildings like Bunker, Photon Cannon etc. For more details, you
+     * have to specify at least one <b>true</b> to the params.
+     */
+    public boolean isMilitaryBuilding(boolean canShootGround, boolean canShootAir) {
+        if (!isBuilding()) {
+            return false;
+        }
+        if (canShootGround && _isMilitaryBuildingAntiGround) {
+            return true;
+        }
+        else if (canShootAir && _isMilitaryBuildingAntiAir) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isGroundUnit() {
+        return !getType().isFlyer();
+    }
+    
+    public boolean isAirUnit() {
+        return getType().isFlyer();
+    }
+    
     public boolean isSpiderMine() {
         return getType().equals(UnitTypes.Terran_Vulture_Spider_Mine);
     }
@@ -1600,6 +1661,9 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         return getType().equals(UnitTypes.Zerg_Egg);
     }
 
+    /**
+     * Not that we're racists, but spider mines and larvas aren't really units...
+     */
     public boolean isNotActuallyUnit() {
         return isSpiderMine() || isLarvaOrEgg();
     }
@@ -1613,10 +1677,16 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         return running.isRunning();
     }
 
+    /**
+     * Returns battle group object for military units or null for non military-units (or buildings).
+     */
     public Group getGroup() {
         return group;
     }
 
+    /**
+     * Assign battle group object for military units.
+     */
     public void setGroup(Group group) {
         this.group = group;
     }
@@ -1628,20 +1698,63 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         return running;
     }
 
+    /**
+     * Returns true if unit is starting an attack or already in the attack frame animation.
+     */
     public boolean isJustShooting() {
         return isAttackFrame() || isStartingAttack();
     }
 
-    public int getLastUnitAction() {
+    /**
+     * Returns the frames counter (time) when the unit had been issued any command.
+     */
+    public int getLastUnitActionTime() {
         return lastUnitAction;
     }
 
+    /**
+     * Returns the frames counter (time) since the unit had been issued any command.
+     */
     public int getLastUnitActionWasFramesAgo() {
         return AtlantisGame.getTimeFrames() - lastUnitAction;
     }
 
+    /**
+     * Indicate that in this frame unit received some command (attack, move etc).
+     */
     public void setLastUnitActionNow() {
         this.lastUnitAction = AtlantisGame.getTimeFrames();
+    }
+
+    /**
+     * Returns true if unit has anti-ground weapon.
+     */
+    public boolean canAttackGroundUnits() {
+        return getType().getGroundWeapon() != WeaponType.WeaponTypes.None;
+    }
+
+    /**
+     * Returns true if unit has anti-air weapon.
+     */
+    public boolean canAttackAirUnits() {
+        return getType().getAirWeapon() != WeaponType.WeaponTypes.None;
+    }
+
+    /**
+     * Caches combat eval of this unit for the time of one frame.
+     */
+    public void updateCombatEval(double eval) {
+        _lastTimeCombatEval = AtlantisGame.getTimeFrames();
+        _lastCombatEval = eval;
+    }
+
+    public double getCombatEvalCachedValueIfNotExpired() {
+        if (AtlantisGame.getTimeFrames() == _lastTimeCombatEval) {
+            return _lastCombatEval;
+        }
+        else {
+            return (int) -123456;
+        }
     }
 
 }
