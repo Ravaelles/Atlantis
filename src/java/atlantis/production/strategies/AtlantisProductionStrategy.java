@@ -1,5 +1,7 @@
 package atlantis.production.strategies;
 
+import atlantis.Atlantis;
+import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.information.AtlantisUnitInformationManager;
@@ -7,6 +9,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
 import atlantis.wrappers.AtlantisTech;
 import atlantis.wrappers.MappingCounter;
+import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
@@ -14,6 +17,9 @@ import jnibwapi.types.UpgradeType;
 
 public abstract class AtlantisProductionStrategy {
 
+    private static final String BUILD_ORDERS_PATH = "bwapi-data/read/build_orders/";
+
+    // =========================================================
     /**
      * Ordered list of production orders as initially read from the file. It never changes
      */
@@ -32,13 +38,13 @@ public abstract class AtlantisProductionStrategy {
     // =========================================================
     // Constructor
     public AtlantisProductionStrategy() {
-        initializeProductionQueue();
+        readBuildOrdersFile();
     }
 
     /**
      * Returns default production strategy according to the race played.
      */
-    public static AtlantisProductionStrategy getAccordingToRace() {
+    public static AtlantisProductionStrategy loadProductionStrategy() {
         if (AtlantisGame.playsAsTerran()) {
             return new TerranProductionStrategy();
         } else if (AtlantisGame.playsAsProtoss()) {
@@ -94,8 +100,11 @@ public abstract class AtlantisProductionStrategy {
         // currently have units needed
         MappingCounter<UnitType> virtualCounter = new MappingCounter<>();
 
+        // =========================================================
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
+            
+//            System.out.println("order = " + order.getUnitType());
 
             // =========================================================
             // Unit
@@ -103,26 +112,25 @@ public abstract class AtlantisProductionStrategy {
                 UnitType type = order.getUnitType();
                 virtualCounter.incrementValueFor(type);
 
-                int shouldHaveThisManyUnits = virtualCounter.getValueFor(type);
-                int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
+                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + virtualCounter.getValueFor(type);
+                int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
 
-//                if (type.isWorker()) {
-//                    System.out.println(order.getUnitType() + ": (" + weHaveThisManyUnits + "/" + shouldHaveThisManyUnits + ")");
-//                }
                 if (type.isBuilding()) {
-                    weHaveThisManyUnits += AtlantisConstructingManager.countNotStartedConstructionsOfType(type);
-                    // System.out.println("@@@ Not started constructions of '" + type + "': "
-                    // + AtlantisConstructingManager.countNotStartedConstructionsOfType(type));
+                    weHaveThisManyUnits += AtlantisConstructingManager.countNotFinishedConstructionsOfType(type);
                 }
+                
+//                System.out.println("       " + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
 
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
                     isOkayToAdd = true;
                 }
-            } // Upgrade
+            } 
+            // Upgrade
             else if (order.getUpgrade() != null) {
                 isOkayToAdd = !AtlantisTech.isResearched(order.getUpgrade());
-            } // Tech
+            } 
+            // Tech
             else if (order.getTech() != null) {
                 isOkayToAdd = !AtlantisTech.isResearched(order.getTech());
             }
@@ -130,7 +138,7 @@ public abstract class AtlantisProductionStrategy {
             // =========================================================
             if (isOkayToAdd) {
                 currentProductionQueue.add(order);
-                if (currentProductionQueue.size() >= 8) {
+                if (currentProductionQueue.size() >= 15) {
                     break;
                 }
             }
@@ -150,20 +158,40 @@ public abstract class AtlantisProductionStrategy {
         int mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         int gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
+        // =========================================================
         // The idea as follows: as long as we can afford next enqueued production order, add it to the
         // CurrentToProduceList.
+        
+//        System.out.println("// =========================================================");
+//        for (ProductionOrder order : currentProductionQueue) {
+//        System.out.println(order.getUnitType());
+//        }
+        
         for (ProductionOrder order : currentProductionQueue) {
             UnitType unitType = order.getUnitType();
+            UpgradeType upgrade = order.getUpgrade();
+            TechType tech = order.getTech();
 
             // Check if include only units
             if (onlyUnits && unitType == null) {
                 continue;
             }
-
-            UpgradeType upgrade = order.getUpgrade();
-            TechType tech = order.getTech();
+            
+            // =========================================================
+            // Protoss fix: wait for at least one Pylon
+            if (AtlantisGame.playsAsProtoss() && unitType != null
+                    && !UnitType.UnitTypes.Protoss_Pylon.equals(unitType)
+                    && SelectUnits.our().countUnitsOfType(UnitType.UnitTypes.Protoss_Pylon) == 0) {
+                continue;
+            }
+            
+            // =========================================================
 
             if (unitType != null) {
+                if (!AtlantisGame.hasBuildingsToProduce(unitType)) {
+                    continue;
+                }
+                
                 mineralsNeeded += unitType.getMineralPrice();
                 gasNeeded += unitType.getGasPrice();
             } else if (upgrade != null) {
@@ -174,18 +202,20 @@ public abstract class AtlantisProductionStrategy {
                 gasNeeded += tech.getMineralPrice();
             }
 
+            // =========================================================
             // If we can afford this order and the previous, add it to CurrentToProduceList.
             if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
                 result.add(order);
             } // We can't afford to produce this order along with all previous ones. Return currently list.
             else {
+//                System.out.println("-----break at: " + unitType);
                 break;
             }
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Produce something if queue is empty
-        if (result.isEmpty()) {
+        if (result.isEmpty() && AtlantisGame.getSupplyUsed() >= 9) {
             for (UnitType unitType : produceWhenNoProductionOrders()) {
                 result.add(new ProductionOrder(unitType));
             }
@@ -193,20 +223,35 @@ public abstract class AtlantisProductionStrategy {
 
         return result;
     }
+    
+    /**
+     * Some buildings like Sunken Colony are morphed into from Creep Colony. When counting Creep Colonies,
+     * we need to count sunkens as well.
+     */
+    private int countUnitsOfGivenTypeOrSimilar(UnitType type) {
+        if (type.equals(UnitType.UnitTypes.Zerg_Creep_Colony)) {
+            return AtlantisUnitInformationManager.countOurUnitsOfType(type) +
+                    + AtlantisUnitInformationManager.countOurUnitsOfType(UnitType.UnitTypes.Zerg_Sunken_Colony)
+                    + AtlantisUnitInformationManager.countOurUnitsOfType(UnitType.UnitTypes.Zerg_Spore_Colony);
+        }
+        else {
+            return AtlantisUnitInformationManager.countOurUnitsOfType(type);
+        }
+    }
 
     /**
      * Returns true if we should produce this unit now.
      */
-    public boolean shouldProduceNow(UnitType type) {
-        return getThingsToProduceRightNow(true).contains(type);
-    }
+//    public boolean shouldProduceNow(UnitType type) {
+//        return getThingsToProduceRightNow(true).contains(type);
+//    }
 
     /**
      * Returns true if we should produce this upgrade now.
      */
-    public boolean shouldProduceNow(UpgradeType upgrade) {
-        return getThingsToProduceRightNow(false).contains(upgrade);
-    }
+//    public boolean shouldProduceNow(UpgradeType upgrade) {
+//        return getThingsToProduceRightNow(false).contains(upgrade);
+//    }
 
     /**
      * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
@@ -215,8 +260,18 @@ public abstract class AtlantisProductionStrategy {
         ArrayList<ProductionOrder> result = new ArrayList<>();
 
         for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
-            result.add(currentProductionQueue.get(i));
+            ProductionOrder productionOrder = currentProductionQueue.get(i);
+//            if (productionOrder.getUnitType() != null 
+//                    && !AtlantisGame.hasBuildingsToProduce(productionOrder.getUnitType())) {
+//                continue;
+//            }
+            result.add(productionOrder);
         }
+        
+//        System.out.println("// =========================================================");
+//        for (ProductionOrder productionOrder : result) {
+//            System.out.println("CURRENT: " + productionOrder.getUnitType());
+//        }
 
         return result;
     }
@@ -230,109 +285,141 @@ public abstract class AtlantisProductionStrategy {
         final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
         // Read file into 2D String array
-        String path = "bwapi-data/read/build_orders/" + getFilename();
+        String path = BUILD_ORDERS_PATH + getFilename();
         String[][] loadedFile = RUtilities.loadCsv(path, NUMBER_OF_COLUMNS_IN_FILE);
 
         // We can display file here, if we want to
-        // displayLoadedFile(loadedFile);
+//         displayLoadedFile(loadedFile);
+
         // =========================================================
         // Skip first row as it's CSV header
-        for (int i = 1; i < loadedFile.length; i++) {
+        for (int i = 0; i < loadedFile.length; i++) {
             String[] row = loadedFile[i];
-            int inRowCounter = 1; // Skip first column as it's only description
-            ProductionOrder order = null;
 
             // =========================================================
-            // Parse entire row of strings
-            // Define type of entry: Unit / Research / Tech
-            String nameString = row[inRowCounter++].toLowerCase().trim();
-
-            // =========================================================
-            // Try getting objects of each type as we don't know if it's unit, research or tech.
-            // UNIT
-            UnitType.disableErrorReporting = true;
-            UnitType unitType = UnitType.getByName(nameString);
-            UnitType.disableErrorReporting = false;
-
-            // UPGRADE
-            UpgradeType.disableErrorReporting = true;
-            UpgradeType upgrade = UpgradeType.getByName(nameString);
-            UpgradeType.disableErrorReporting = false;
-
-            // TECH
-            TechType.disableErrorReporting = true;
-            TechType tech = TechType.getByName(nameString);
-            TechType.disableErrorReporting = false;
-
-            // Define convienience boolean variables
-            boolean isUnit = unitType != null;
-            boolean isUpgrade = upgrade != null;
-            boolean isTech = tech != null;
-
-            // Check if no error occured like no object found
-            if (!isUnit && !isUpgrade && !isTech) {
-                System.err.println("Invalid production order entry: " + nameString);
-                System.exit(-1);
-            }
-
-            // =========================================================
-            // Unit
-            if (isUnit) {
-                order = new ProductionOrder(unitType);
-            } // Upgrade
-            else if (isUpgrade) {
-                order = new ProductionOrder(upgrade);
-            } // Tech
-            else if (isTech) {
-                order = new ProductionOrder(tech);
-            } // Invalid entry type
-            else {
-                System.err.println("Invalid entry type: " + nameString);
-                System.exit(-1);
-            }
-
-            // =========================================================
-            // Blocking
-            // boolean isBlocking;
-            // String blockingString = row[inRowCounter++].toLowerCase().trim();
-            // if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
-            // isBlocking = false;
-            // } else {
-            // isBlocking = true;
-            // }
-            // Priority
-            // boolean isLowestPriority = false;
-            // boolean isHighestPriority = false;
-            // String priorityString = row[inRowCounter++].toLowerCase().trim();
-            // if (!priorityString.isEmpty()) {
-            // priorityString = priorityString.toLowerCase();
-            // if (priorityString.contains("low")) {
-            // isLowestPriority = true;
-            // } else if (priorityString.contains("high")) {
-            // isHighestPriority = true;
-            // }
-            // }
-            // =========================================================
-            // Create ProductionOrder object from strings-row
-            // if (isBlocking) {
-            // order.markAsBlocking();
-            // }
-            // if (isHighestPriority) {
-            // order.priorityHighest();
-            // }
-            // if (isLowestPriority) {
-            // order.priorityLowest();
-            // }
-            // Enqueue created order
-            initialProductionQueue.add(order);
-            currentProductionQueue.add(order);
+            
+            parseCsvRow(row);
         }
+    }
+   
+    /**
+     * Analyzes CSV row, where each array element is one column.
+     */
+    private void parseCsvRow(String[] row) {
+        
+        // =========================================================
+        // Ignore comments and blank lines
+        if (isUnimportantLine(row)) {
+            return;
+        }
+
+        // Check for special commands that start with #
+        if (isSpecialCommand(row)) {
+            handleSpecialCommand(row);
+            return;
+        }
+        
+        int inRowCounter = 1; // Skip first column as it's only order number / description / whatever
+        ProductionOrder order = null;
+
+        // =========================================================
+        // Parse entire row of strings
+        // Define type of entry: Unit / Research / Tech
+        String nameString = row[inRowCounter++].toLowerCase().trim();
+
+        // =========================================================
+        // Try getting objects of each type as we don't know if it's unit, research or tech.
+        // UNIT
+        UnitType.disableErrorReporting = true;
+        UnitType unitType = UnitType.getByName(nameString);
+        UnitType.disableErrorReporting = false;
+
+        // UPGRADE
+        UpgradeType.disableErrorReporting = true;
+        UpgradeType upgrade = UpgradeType.getByName(nameString);
+        UpgradeType.disableErrorReporting = false;
+
+        // TECH
+        TechType.disableErrorReporting = true;
+        TechType tech = TechType.getByName(nameString);
+        TechType.disableErrorReporting = false;
+
+        // Define convienience boolean variables
+        boolean isUnit = unitType != null;
+        boolean isUpgrade = upgrade != null;
+        boolean isTech = tech != null;
+
+        // Check if no error occured like no object found
+        if (!isUnit && !isUpgrade && !isTech) {
+            System.err.println("Invalid production order entry: " + nameString);
+            System.exit(-1);
+        }
+
+        // =========================================================
+        // Unit
+        if (isUnit) {
+            order = new ProductionOrder(unitType);
+        } // Upgrade
+        else if (isUpgrade) {
+            order = new ProductionOrder(upgrade);
+        } // Tech
+        else if (isTech) {
+            order = new ProductionOrder(tech);
+        } // Invalid entry type
+        else {
+            System.err.println("Invalid entry type: " + nameString);
+            System.exit(-1);
+        }
+        
+        // =========================================================
+        // Check for modifiers
+        
+        if (row.length >= 3) {
+            String modifierString = row[inRowCounter++].toUpperCase().trim();
+            order.setModifier(modifierString);
+        }
+
+        // =========================================================
+        // Blocking
+        // boolean isBlocking;
+        // String blockingString = row[inRowCounter++].toLowerCase().trim();
+        // if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
+        // isBlocking = false;
+        // } else {
+        // isBlocking = true;
+        // }
+        // Priority
+        // boolean isLowestPriority = false;
+        // boolean isHighestPriority = false;
+        // String priorityString = row[inRowCounter++].toLowerCase().trim();
+        // if (!priorityString.isEmpty()) {
+        // priorityString = priorityString.toLowerCase();
+        // if (priorityString.contains("low")) {
+        // isLowestPriority = true;
+        // } else if (priorityString.contains("high")) {
+        // isHighestPriority = true;
+        // }
+        // }
+        // =========================================================
+        // Create ProductionOrder object from strings-row
+        // if (isBlocking) {
+        // order.markAsBlocking();
+        // }
+        // if (isHighestPriority) {
+        // order.priorityHighest();
+        // }
+        // if (isLowestPriority) {
+        // order.priorityLowest();
+        // }
+        // Enqueue created order
+        initialProductionQueue.add(order);
+        currentProductionQueue.add(order);
     }
 
     /**
      * Reads build orders from CSV file and converts them into ArrayList.
      */
-    private void initializeProductionQueue() {
+    private void readBuildOrdersFile() {
 
         // Convert 2D String array into ArrayList of ProductionOrder
         createProductionOrderListFromStringArray();
@@ -345,10 +432,10 @@ public abstract class AtlantisProductionStrategy {
     private void displayLoadedFile(String[][] loadedFile) {
         int rowCounter = 0;
         for (String[] rows : loadedFile) {
-            if (rowCounter == 0) {
-                rowCounter++;
-                continue;
-            }
+//            if (rowCounter == 0) {
+//                rowCounter++;
+//                continue;
+//            }
 
             // =========================================================
             for (String value : rows) {
@@ -361,6 +448,46 @@ public abstract class AtlantisProductionStrategy {
         }
 
         System.exit(0);
+    }
+
+    // =========================================================
+    // Special commands
+    /**
+     * If the first character in column is # it means it's special command.
+     */
+    private boolean isSpecialCommand(String[] row) {
+        return (row.length >= 1 && row[0].charAt(0) == '#');
+    }
+
+    /**
+     * // Means comment - should skip it. We can also have blank lines.
+     */
+    private boolean isUnimportantLine(String[] row) {
+        return row.length == 0 || row[0].isEmpty() || row[0].equals("")
+                || row[0].equals("Number")|| row[0].equals("Order") || row[0].equals(";");
+    }
+
+    /**
+     * If the first character in column is # it means it's special command. Here we handle all of them.
+     */
+    private void handleSpecialCommand(String[] row) {
+        String command = row[0].substring(1).toUpperCase();
+
+        if (command.startsWith("AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS")) {
+            AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = extractSpecialCommandValue(row);
+        } else if (command.startsWith("AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
+            AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = extractSpecialCommandValue(row);
+        } else if (command.startsWith("AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
+            AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS = extractSpecialCommandValue(row);
+        } else if (command.startsWith("SCOUT_IS_NTH_WORKER")) {
+            AtlantisConfig.SCOUT_IS_NTH_WORKER = extractSpecialCommandValue(row);
+        } else if (command.startsWith("USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
+            AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = extractSpecialCommandValue(row);
+        }
+    }
+
+    private int extractSpecialCommandValue(String[] row) {
+        return Integer.parseInt(row[0].substring(row[0].lastIndexOf("=") + 1));
     }
 
 }

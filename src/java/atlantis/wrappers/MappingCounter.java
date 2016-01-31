@@ -44,7 +44,7 @@ public class MappingCounter<K extends Comparable<K>> {
         }
     }
 
-    // --------------------------------------------------------------------
+    // =========================================================
     // Export
     public HashMap<K, Integer> map() {
         HashMap<K, Integer> map = new HashMap<>();

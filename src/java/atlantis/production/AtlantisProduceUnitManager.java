@@ -21,15 +21,19 @@ public class AtlantisProduceUnitManager {
         ArrayList<ProductionOrder> produceNow = productionStrategy.getThingsToProduceRightNow(false);
         for (ProductionOrder order : produceNow) {
 
+            // =========================================================
             // Produce UNIT
             if (order.getUnitType() != null) {
                 UnitType unitType = order.getUnitType();
                 if (unitType.isBuilding()) {
-                    AtlantisConstructingManager.requestConstructionOf(unitType);
+                    produceBuilding(unitType, order);
                 } else {
                     produceUnit(unitType);
                 }
-            } // Produce UPGRADE
+            } 
+
+            // =========================================================
+            // Produce UPGRADE
             else if (order.getUpgrade() != null) {
                 UpgradeType upgrade = order.getUpgrade();
                 researchUpgrade(upgrade);
@@ -47,11 +51,16 @@ public class AtlantisProduceUnitManager {
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
             produceWorker();
-        } // Infantry
-        //        else if (unitType.isTerranInfantry()) {
+        } 
+
+        // =========================================================
+        // Infantry
         else if (unitType.isInfantry()) {
             produceInfantry(unitType);
-        } // Unknown example
+        } 
+
+        // =========================================================
+        // We don't know what to do
         else {
             System.err.println("UNHANDLED UNIT TYPE TO PRODUCE: " + unitType);
         }
@@ -69,6 +78,14 @@ public class AtlantisProduceUnitManager {
 
     // =========================================================
     // Lo-level produce
+    
+    private static void produceBuilding(UnitType unitType, ProductionOrder order) {
+        if (!unitType.isBuilding()) {
+            System.err.println("produceBuilding has been given wrong argument: " + unitType);
+        }
+        AtlantisConstructingManager.requestConstructionOf(unitType, order);
+    }
+    
     private static void produceWorker() {
         AtlantisConfig.getProductionStrategy().produceWorker();
     }

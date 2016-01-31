@@ -16,27 +16,71 @@ import jnibwapi.types.UnitType.UnitTypes;
  */
 public class AtlantisConfig {
 
-    public static int GAME_SPEED = 0;
-    public static boolean USE_DYNAMIC_GAME_SPEED = true; // If true, game will slow down on fighting
-    public static int DYNAMIC_GAME_SPEED_SLOWDOWN = 3;
+    // =========================================================    
+    // Customizable variables
 
-    public static RaceType MY_RACE = null;
-    public static UnitType BASE = null;
-    public static UnitType WORKER = null;
-    public static UnitType BARRACKS = null;
-    public static UnitType SUPPLY = null;
-    public static UnitType GAS_BUILDING = null;
+    /**
+     * If not empty, then before the game starts, player race in the bwapi.ini will be overriden to match 
+     * currently played one.
+     */
+    public static String BWAPI_INI_PATH = "";
+    
+    /**
+     * Game speed. Lower is faster. 0 is fastest, 20 is about normal game speed.
+     */
+    public static int GAME_SPEED = 0;
+    
+    /**
+     * If true, game will slow down on fighting, but normally it will run quicker.
+     */
+    public static boolean USE_DYNAMIC_GAME_SPEED_SLOWDOWN = false;
+    
+    /** 
+     * Amount of game speed units to be used for dynamic game speed slowdown.
+     */
+    public static int DYNAMIC_GAME_SPEED_SLOWDOWN = 3;
 
     /**
      * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They
      * will be <b>automatically built only if your total supply exceeds this value</b>.
      */
     public static int USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
+
+    /**
+     * Force production of a worker whenever you have 50 minerals and less than N workers.
+     */
+    public static int AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = 0;
+
+    /**
+     * Force production of a worker whenever you have 50 minerals and more than N workers, but less than
+     * AUTO_PRODUCE_WORKERS_MAX_WORKERS.
+     */
+    public static int AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = 201;
+
+    /**
+     * Maximum number of workers. This variable ONLY MAKES SENSE WHEN USED TOGETHER WITH 
+     * <b>AUTO_PRODUCE_WORKERS_MAX_WORKERS</b>.
+     */
+    public static int AUTO_PRODUCE_WORKERS_MAX_WORKERS = 50;
+
+    /**
+     * We must reach at least N workers (SCVs, Probes) to scout for the enemy location.
+     */
     public static int SCOUT_IS_NTH_WORKER = 7;
 
+    // =========================================================
+    // Do not customize
+    public static RaceType MY_RACE = null;
+    public static UnitType BASE = null;
+    public static UnitType WORKER = null;
+    public static UnitType BARRACKS = null;
+    public static UnitType SUPPLY = null;
+    public static UnitType GAS_BUILDING = null;
+    
     private static AtlantisProductionStrategy productionStrategy;
 
     // =========================================================
+    
     /**
      * Helper method for using Terran race.
      */
@@ -77,9 +121,21 @@ public class AtlantisConfig {
         AtlantisConfig.BARRACKS = UnitTypes.Protoss_Gateway;
         AtlantisConfig.SUPPLY = UnitTypes.Protoss_Pylon;
         AtlantisConfig.GAS_BUILDING = UnitTypes.Protoss_Assimilator;
+        
+//        overrideBwapiIniRace("Protoss");
     }
-
+    
     // =========================================================
+    
+    /**
+     * 
+     */
+    private static void overrideBwapiIniRace(String raceString) {
+        System.out.println("@NotImplemented overrideBwapiIniRace");
+        System.exit(-1);
+//        overrideBwapiIniRace(raceString);
+    }
+    
     /**
      * Makes sure all necessary variables are set (non-null).
      */

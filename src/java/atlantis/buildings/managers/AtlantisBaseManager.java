@@ -3,6 +3,7 @@ package atlantis.buildings.managers;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.information.AtlantisUnitInformationManager;
+import atlantis.workers.AtlantisWorkerCommander;
 import jnibwapi.Unit;
 
 public class AtlantisBaseManager {
@@ -10,38 +11,9 @@ public class AtlantisBaseManager {
     public static void update(Unit base) {
 
         // Train new workers if allowed
-        if (shouldTrainWorkers(base)) {
+        if (AtlantisWorkerCommander.shouldTrainWorkers()) {
             base.train(AtlantisConfig.WORKER);
         }
-    }
-
-    // =========================================================
-    private static boolean shouldTrainWorkers(Unit base) {
-
-        // Check MINERALS
-        if (AtlantisGame.getMinerals() < 50) {
-            return false;
-        }
-
-        // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
-//        if (!AtlantisGame.getProductionStrategy().shouldProduceNow(AtlantisConfig.WORKER)) {
-//            return false;
-//        }
-        if (!AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(true).isEmpty()) {
-            return false;
-        }
-
-        // Check if not TOO FEW WORKERS and EMPTY PRODUCTION QUEUE
-        if (AtlantisUnitInformationManager.countOurWorkers() <= 27 * AtlantisUnitInformationManager.countOurBases()) {
-            return true; // @AutoProduce
-        }
-
-        // // Check if not TOO MANY WORKERS
-        // if (AtlantisUnitInformationManager.countOurWorkers() >= 27 * AtlantisUnitInformationManager.countOurBases())
-        // {
-        // return false;
-        // }
-        return false;
     }
 
 }

@@ -1,15 +1,12 @@
 package atlantis.constructing.position;
 
 import atlantis.Atlantis;
-import atlantis.AtlantisConfig;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.otherBuildingsTooClose;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 
-public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
+public class ProtossPositionFinder extends AbstractPositionFinder {
 
     /**
      * Returns best position for given <b>building</b>, maximum <b>maxDistance</b> build tiles from
@@ -19,12 +16,12 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
      *
      */
     public static Position findStandardPositionFor(Unit builder, UnitType building, Position nearTo, double maxDistance) {
-        ConstructionBuildPositionFinder.building = building;
-        ConstructionBuildPositionFinder.nearTo = nearTo;
-        ConstructionBuildPositionFinder.maxDistance = maxDistance;
+        AtlantisPositionFinder.building = building;
+        AtlantisPositionFinder.nearTo = nearTo;
+        AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
-        int searchRadius = building.isType(AtlantisConfig.SUPPLY) ? 8 : 6;
+        int searchRadius = building.isType(UnitType.UnitTypes.Protoss_Pylon) ? 6 : 0;
 
         while (searchRadius < maxDistance) {
             int xCounter = 0;
@@ -58,24 +55,24 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
      */
     private static boolean doesPositionFulfillAllConditions(Unit builder, Position position) {
 
-        // Check for CREEP
-        if (!isCreepConditionFulfilled(position)) {
+        // Check for POWER
+        if (!isPowerConditionFulfilled(position)) {
             return false;
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, ConstructionBuildPositionFinder.building, position)) {
+        if (!canPhysicallyBuildHere(builder, AtlantisPositionFinder.building, position)) {
             return false;
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(ConstructionBuildPositionFinder.building, position)) {
+        if (otherBuildingsTooClose(builder, AtlantisPositionFinder.building, position)) {
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isTooCloseToMineralsOrGeyser(ConstructionBuildPositionFinder.building, position)) {
+        if (isTooCloseToMineralsOrGeyser(AtlantisPositionFinder.building, position)) {
             return false;
         }
 
@@ -89,8 +86,13 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         Unit nearestBase = SelectUnits.ourBases().nearestTo(position);
-        if (nearestBase != null && nearestBase.distanceTo(position) <= 7) {
+        if (nearestBase != null && nearestBase.distanceTo(position) <= 8) {
             for (Unit mineral : SelectUnits.minerals().inRadius(8, position).list()) {
+                if (mineral.distanceTo(position) <= 4) {
+                    return true;
+                }
+            }
+            for (Unit mineral : SelectUnits.geysers().inRadius(8, position).list()) {
                 if (mineral.distanceTo(position) <= 4) {
                     return true;
                 }
@@ -99,10 +101,9 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
         return false;
     }
 
-    private static boolean isCreepConditionFulfilled(Position position) {
-        return Atlantis.getBwapi().hasCreep(position)
-                || ConstructionBuildPositionFinder.building.equals(UnitType.UnitTypes.Zerg_Hatchery)
-                || ConstructionBuildPositionFinder.building.equals(UnitType.UnitTypes.Zerg_Extractor);
+    private static boolean isPowerConditionFulfilled(Position position) {
+        return Atlantis.getBwapi().hasPower(position)
+                || AtlantisPositionFinder.building.equals(UnitType.UnitTypes.Protoss_Nexus)
+                || AtlantisPositionFinder.building.equals(UnitType.UnitTypes.Protoss_Pylon);
     }
-
 }

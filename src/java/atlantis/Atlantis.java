@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.combat.group.AtlantisGroupManager;
+import atlantis.constructing.ProtossConstructionManager;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.init.AtlantisInitialActions;
 import atlantis.production.strategies.AtlantisProductionStrategy;
@@ -22,11 +23,18 @@ public class Atlantis implements BWAPIEventListener {
     private boolean isPaused = false;
     private boolean oneTimeBoolean = false;
 
-    // --------------------------------------------------------------------
+    // =========================================================
     // Dynamic game speed adjust - see AtlantisConfig
     private boolean _isSpeedInSlodownMode = false;
     private int _lastTimeUnitDestroyed = 0;
     private int _previousSpeed = 0;
+
+    // =========================================================
+    // Counters
+    public static int KILLED = 0;
+    public static int LOST = 0;
+    public static int KILLED_RESOURCES = 0;
+    public static int LOST_RESOURCES = 0;
 
     // =========================================================
     // Constructors
@@ -81,7 +89,7 @@ public class Atlantis implements BWAPIEventListener {
     public void matchStart() {
 
         // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
-        // --------------------------------------------------------------------
+        // =========================================================
         // Set up base configuration based on race used.
         RaceType racePlayed = AtlantisGame.getPlayerUs().getRace();
         if (racePlayed.equals(RaceType.RaceTypes.Protoss)) {
@@ -92,18 +100,18 @@ public class Atlantis implements BWAPIEventListener {
             AtlantisConfig.useConfigForZerg();
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
-        AtlantisConfig.useProductionStrategy(AtlantisProductionStrategy.getAccordingToRace());
+        AtlantisConfig.useProductionStrategy(AtlantisProductionStrategy.loadProductionStrategy());
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Validate AtlantisConfig and exit if it's invalid
         AtlantisConfig.validate();
 
         // Display ok message
         System.out.println("Atlantis config is valid.");
 
-        // --------------------------------------------------------------------
+        // =========================================================
         gameCommander = new AtlantisGameCommander();
         bwapi.setGameSpeed(AtlantisConfig.GAME_SPEED);
         bwapi.enableUserInput();
@@ -121,20 +129,20 @@ public class Atlantis implements BWAPIEventListener {
             System.out.println("### Atlantis is working! ###");
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // If game is running (not paused), run all actions.
         if (!isPaused) {
             gameCommander.update();
 
-            // --------------------------------------------------------------------
+            // =========================================================
             // Game SPEED change
-            if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && _isSpeedInSlodownMode) {
+            if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _isSpeedInSlodownMode) {
                 if (_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
                     _isSpeedInSlodownMode = false;
                     AtlantisGame.changeSpeed(_previousSpeed);
                 }
             }
-        } // --------------------------------------------------------------------
+        } // =========================================================
         // If game is paused, wait 100ms.
         else {
             try {
@@ -203,6 +211,11 @@ public class Atlantis implements BWAPIEventListener {
             if (unit.getPlayer().isSelf()) {
 //                AtlantisUnitInformationManager.addOurUnfinishedUnit(unit.getType());
                 AtlantisGame.getProductionStrategy().rebuildQueue();
+                
+                // Apply construction fix: detect new Protoss buildings and remove them from queue.
+                if (AtlantisGame.playsAsProtoss() && unit.isBuilding()) {
+                    ProtossConstructionManager.handleWarpingNewBuilding(unit);
+                }
             }
         }
     }
@@ -222,19 +235,21 @@ public class Atlantis implements BWAPIEventListener {
             if (unit.getPlayer().isSelf()) {
                 AtlantisGame.getProductionStrategy().rebuildQueue();
                 AtlantisGroupManager.battleUnitDestroyed(unit);
+                LOST++;
+                LOST_RESOURCES += unit.getType().getTotalResources();
+            } else {
+                KILLED++;
+                KILLED_RESOURCES += unit.getType().getTotalResources();
             }
         }
 
         // Forever forget this poor unit
         AtlantisUnitInformationManager.forgetUnit(unitID);
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Game SPEED change
-        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && !_isSpeedInSlodownMode && !unit.isBuilding()) {
-            _previousSpeed = AtlantisConfig.GAME_SPEED;
-            _lastTimeUnitDestroyed = AtlantisGame.getTimeSeconds();
-            _isSpeedInSlodownMode = true;
-            AtlantisGame.changeSpeed(AtlantisConfig.DYNAMIC_GAME_SPEED_SLOWDOWN);
+        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && !_isSpeedInSlodownMode && !unit.isBuilding()) {
+            enableSlowdown();
         }
     }
 
@@ -247,6 +262,12 @@ public class Atlantis implements BWAPIEventListener {
             // Enemy unit
             if (unit.getPlayer().isEnemy()) {
                 AtlantisUnitInformationManager.discoveredEnemyUnit(unit);
+
+                // =========================================================
+                // Game SPEED change
+//                if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED && !_isSpeedInSlodownMode) {
+//                    enableSlowdown();
+//                }
             }
         }
     }
@@ -269,12 +290,12 @@ public class Atlantis implements BWAPIEventListener {
 
     @Override
     public void unitMorph(int unitID) {
-        Unit unit = Unit.getByID(unitID);
-        if (unit != null) {
-            AtlantisGroupManager.possibleCombatUnitCreated(unit);
-        } else {
-            System.err.println("Morph is null for id " + unitID);
-        }
+//        Unit unit = Unit.getByID(unitID);
+//        if (unit != null) {
+//            AtlantisGroupManager.possibleCombatUnitCreated(unit);
+//        } else {
+//            System.err.println("Morph is null for id " + unitID);
+//        }
     }
 
     @Override
@@ -303,7 +324,7 @@ public class Atlantis implements BWAPIEventListener {
         if (unit != null) {
 
             // Our unit
-            if (unit.getPlayer().isSelf()) {
+            if (unit.getPlayer().isSelf() && !unit.isLarvaOrEgg()) {
 //                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
                 AtlantisGroupManager.possibleCombatUnitCreated(unit);
             }
@@ -326,6 +347,13 @@ public class Atlantis implements BWAPIEventListener {
             System.out.print(args[i] + " / ");
         }
         System.out.println(args[args.length - 1]);
+    }
+
+    private void enableSlowdown() {
+        _previousSpeed = AtlantisConfig.GAME_SPEED;
+        _lastTimeUnitDestroyed = AtlantisGame.getTimeSeconds();
+        _isSpeedInSlodownMode = true;
+        AtlantisGame.changeSpeed(AtlantisConfig.DYNAMIC_GAME_SPEED_SLOWDOWN);
     }
 
 }

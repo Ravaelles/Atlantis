@@ -81,10 +81,13 @@ public class AtlantisMap {
      * fog of war).
      */
     public static BaseLocation getNearestUnexploredStartingLocation(Position nearestTo) {
+        if (nearestTo == null) {
+            return null;
+        }
 
         // Get list of all starting locations
         Positions<BaseLocation> startingLocations = new Positions<BaseLocation>();
-        startingLocations.addPositions(getStartingLocations());
+        startingLocations.addPositions(getStartingLocations(true));
 
         // Sort them all by closest to given nearestTo position
         startingLocations.sortByDistanceTo(nearestTo, true);
@@ -92,6 +95,36 @@ public class AtlantisMap {
         // For every location...
         for (BaseLocation baseLocation : startingLocations.list()) {
             if (!isExplored(baseLocation)) {
+                return baseLocation;
+            }
+        }
+        return null;
+    }
+    
+    public static BaseLocation getStartingLocationBasedOnIndex(int index) {
+        ArrayList<BaseLocation> baseLocations = new ArrayList<>();
+        baseLocations.addAll(getStartingLocations(true));
+        
+        return baseLocations.get(index % baseLocations.size());
+    }
+
+    /**
+     * Returns nearest free base location where we don't have base built yet.
+     */
+    public static BaseLocation getNearestBaseLocationToExpand(Position nearestTo) {
+
+        // Get list of all base locations
+        Positions<BaseLocation> baseLocations = new Positions<BaseLocation>();
+        baseLocations.addPositions(getBaseLocations());
+
+        // Sort them all by closest to given nearestTo position
+        if (nearestTo != null) {
+            baseLocations.sortByDistanceTo(nearestTo, true);
+        }
+
+        // For every location...
+        for (BaseLocation baseLocation : baseLocations.list()) {
+            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation)) {
                 return baseLocation;
             }
         }
@@ -160,10 +193,19 @@ public class AtlantisMap {
      * and you know location of your own base. So you also know the location of enemy base (enemy *must* be
      * there), but still obviously you don't see him.
      */
-    public static List<BaseLocation> getStartingLocations() {
+    public static List<BaseLocation> getStartingLocations(boolean excludeOurStartLocation) {
         ArrayList<BaseLocation> startingLocations = new ArrayList<>();
         for (BaseLocation baseLocation : AtlantisMap.getBaseLocations()) {
             if (baseLocation.isStartLocation()) {
+                
+                // Exclude our base location if needed.
+                if (excludeOurStartLocation) {
+                    Unit mainBase = SelectUnits.mainBase();
+                    if (mainBase != null && mainBase.distanceTo(baseLocation) <= 10) {
+                        continue;
+                    }
+                }
+                
                 startingLocations.add(baseLocation);
             }
         }
@@ -254,6 +296,22 @@ public class AtlantisMap {
         // choke.setDisabled(true);
         // }
         // }
+    }
+
+    private static boolean isBaseLocationFreeOfBuildingsAndEnemyUnits(BaseLocation baseLocation) {
+        
+        // If we have any base, FALSE.
+        if (SelectUnits.ourBases().inRadius(7, baseLocation).count() > 0) {
+            return false;
+        }
+        
+        // If any enemy unit is nearby
+        if (SelectUnits.enemy().inRadius(11, baseLocation).count() > 0) {
+            return false;
+        }
+        
+        // All conditions have been fulfilled.
+        return true;
     }
 
 }

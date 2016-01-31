@@ -1,13 +1,16 @@
 package atlantis.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.ConstructionOrder;
+import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
 
-public abstract class AbstractBuildPositionFinder {
+public abstract class AbstractPositionFinder {
 
     // =========================================================
     // Hi-level methods
@@ -15,7 +18,7 @@ public abstract class AbstractBuildPositionFinder {
      * Returns true if game says it's possible to build given building at this position.
      */
     public static boolean canPhysicallyBuildHere(Unit builder, UnitType building, Position position) {
-        return Atlantis.getBwapi().canBuildHere(builder, position, building, true);
+        return Atlantis.getBwapi().canBuildHere(builder, position, building, false);
     }
 
     /**
@@ -30,14 +33,29 @@ public abstract class AbstractBuildPositionFinder {
      * add-on place of another. Buildings can be stacked, but it needs to be done properly e.g. Supply Depots
      * could be stacked.
      */
-    protected static boolean otherBuildingsTooClose(UnitType building, Position position) {
-        // int veryCloseBuildings = 0;
+    protected static boolean otherBuildingsTooClose(Unit builder, UnitType building, Position position) {
+        
+        // Compare against existing buildings
         for (Unit otherBuilding : SelectUnits.ourBuildings().list()) {
             int status = areTwoBuildingsTooClose(otherBuilding, position, building);
-            // veryCloseBuildings++;
-
             if (status >= STATUS_BUILDINGS_ADDON_COLLIDE) {
+                ZergPositionFinder._CONDITION_THAT_FAILED = "BUILDING TOO CLOSE (" + otherBuilding + ")";
                 return true;
+            }
+        }
+        
+        // Compare against planned construction places
+        for (ConstructionOrder constructionOrder : AtlantisConstructingManager.getAllConstructionOrders()) {
+            if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.getStatus())
+                    && !builder.equals(constructionOrder.getBuilder())) {
+                if (constructionOrder.getPositionToBuild() != null) {
+                    double distance = constructionOrder.getPositionToBuild().distanceTo(position);
+                    if (distance <= 4) {
+                        ZergPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
+                                + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
+                        return true;
+                    }
+                }
             }
         }
 

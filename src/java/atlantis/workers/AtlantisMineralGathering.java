@@ -54,22 +54,30 @@ public class AtlantisMineralGathering {
         // Get minerals near to our main base and sort them from closest to most distant one
         Units minerals = SelectUnits.minerals().inRadius(12, base).units()
                 .sortByDistanceTo(SelectUnits.mainBase(), true);
+        
+        if (!minerals.isEmpty()) {
 
-        // Count how many other workers gather this mineral
-        for (Unit otherWorker : SelectUnits.ourWorkers().inRadius(12, base).list()) {
-            if (otherWorker.isGatheringMinerals()) {
-                Unit mineralMined = otherWorker.getTarget();
-                if (mineralMined != null) {
-                    minerals.changeValueBy(mineralMined, 1);
+            // Count how many other workers gather this mineral
+            for (Unit otherWorker : SelectUnits.ourWorkers().inRadius(12, base).list()) {
+                if (otherWorker.isGatheringMinerals()) {
+                    Unit mineralMined = otherWorker.getTarget();
+                    if (mineralMined != null) {
+                        minerals.changeValueBy(mineralMined, 1);
+                    }
                 }
             }
+
+            // Get least gathered mineral
+            Unit leastGatheredMineral = minerals.getUnitWithLowestValue();
+
+            // This is our optimal mineral to gather near given unit
+            return leastGatheredMineral;
         }
-
-        // Get least gathered mineral
-        Unit leastGatheredMineral = minerals.getUnitWithLowestValue();
-
-        // This is our optimal mineral to gather near given unit
-        return leastGatheredMineral;
+        
+        // If no minerals found, return nearest mineral
+        else {
+            return SelectUnits.minerals().nearestTo(base);
+        }
     }
 
 }

@@ -1,8 +1,10 @@
 package atlantis.constructing;
 
+import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.constructing.position.ConstructionBuildPositionFinder;
+import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.information.AtlantisUnitInformationManager;
+import atlantis.production.ProductionOrder;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -18,18 +20,37 @@ public class AtlantisConstructingManager {
     private static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
 
     // =========================================================
+    
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */
     public static void requestConstructionOf(UnitType building) {
-        // System.out.println("@@@@ REQUESTED: " + building);
+        requestConstructionOf(building, null);
+    }
+    
+    /**
+     * Issues request of constructing new building. It will automatically find position and builder unit for
+     * it.
+     */
+    public static void requestConstructionOf(UnitType building, ProductionOrder order) {
+        
+        // =========================================================
+        // Validate
+        
         if (!building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
+        
+        if (AtlantisSpecialConstructionManager.handledAsSpecialBuilding(building, order)) {
+            return;
+        }
+        
+        // =========================================================
 
         // Create ConstructionOrder object, assign random worker for the time being
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
+        newConstructionOrder.setProductionOrder(order);
         newConstructionOrder.assignRandomBuilderForNow();
 
         if (newConstructionOrder.getBuilder() == null) {
@@ -39,14 +60,14 @@ public class AtlantisConstructingManager {
             return;
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Find place for new building
-        Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
-                newConstructionOrder.getBuilder(), building
+        Position positionToBuild = AtlantisPositionFinder.getPositionForNew(
+                newConstructionOrder.getBuilder(), building, newConstructionOrder
         );
 //        System.out.println("@@ " + building + " at " + positionToBuild);
 
-        // --------------------------------------------------------------------
+        // =========================================================
         // Successfully found position for new building
         Unit optimalBuilder = null;
         if (positionToBuild != null) {
@@ -65,7 +86,7 @@ public class AtlantisConstructingManager {
             AtlantisGame.getProductionStrategy().rebuildQueue();
         } // Couldn't find place for building! That's f'g bad.
         else {
-            System.err.println("requestConstruction HAS FAILED! DETAILS: POSITION TO BUILD: " + positionToBuild
+            System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
                     + " / BUILDER = " + optimalBuilder);
         }
     }
@@ -85,8 +106,15 @@ public class AtlantisConstructingManager {
                 checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
             }
         }
+        
+        // =========================================================
+        // Check if we should buy a base, because we have shitload of minerals
+        if (AtlantisGame.hasMinerals(490) && SelectUnits.ourBases().count() <= 7 
+                && AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.BASE) == 0) {
+            requestConstructionOf(AtlantisConfig.BASE);
+        }
     }
-
+    
     // =========================================================
     /**
      * If builder has died when constructing, replace him with new one.
@@ -131,7 +159,7 @@ public class AtlantisConstructingManager {
                 }
             }
         }
-        // --------------------------------------------------------------------
+        // =========================================================
 
 //        if (building != null) {
 //            System.out.println("==============");
@@ -149,7 +177,7 @@ public class AtlantisConstructingManager {
             // COMPLETED: building is finished, remove it from the list
             if (building.isCompleted()) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
-                constructionOrders.remove(constructionOrder);
+                removeOrder(constructionOrder);
 
                 // @FIX to fix bug with Refineries not being shown as created, because they're kinda changed.
                 if (building.getType().isGasBuilding()) {
@@ -161,11 +189,18 @@ public class AtlantisConstructingManager {
             }
         } // Building doesn't exist yet, means builder is travelling to the construction place
         else {
-            Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
-                    constructionOrder.getBuilder(), constructionOrder.getBuildingType()
+            Position positionToBuild = AtlantisPositionFinder.getPositionForNew(
+                    constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
             );
             constructionOrder.setPositionToBuild(positionToBuild);
         }
+    }
+    
+    /**
+     *
+     */
+    protected static void removeOrder(ConstructionOrder constructionOrder) {
+        constructionOrders.remove(constructionOrder);
     }
 
     // =========================================================no
@@ -209,13 +244,40 @@ public class AtlantisConstructingManager {
     public static int countNotStartedConstructionsOfType(UnitType type) {
         int total = 0;
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED
+            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
                     && constructionOrder.getBuildingType().equals(type)) {
                 total++;
             }
         }
 
-        // --------------------------------------------------------------------
+        // =========================================================
+        // Special case for Overlord
+        if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
+            total += SelectUnits.ourUnfinished().ofType(type).count();
+        }
+
+        return total;
+    }
+
+    public static int countNotFinishedConstructionsOfType(UnitType type) {
+        return SelectUnits.ourUnfinished().ofType(type).count()
+                + countNotStartedConstructionsOfType(type);
+    }
+    
+    /**
+     * Returns how many buildings (or Overlords) of given type are currently being produced 
+     * (started, but not finished).
+     */
+    public static int countPendingConstructionsOfType(UnitType type) {
+        int total = 0;
+        for (ConstructionOrder constructionOrder : constructionOrders) {
+            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                    && constructionOrder.getBuildingType().equals(type)) {
+                total++;
+            }
+        }
+
+        // =========================================================
         // Special case for Overlord
         if (type.equals(UnitType.UnitTypes.Zerg_Overlord)) {
             total += SelectUnits.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
@@ -235,7 +297,7 @@ public class AtlantisConstructingManager {
     public static ArrayList<ConstructionOrder> getNotStartedConstructionsOfType(UnitType type) {
         ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED
+            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
                     && (type == null || constructionOrder.getBuildingType().equals(type))) {
                 notStarted.add(constructionOrder);
             }

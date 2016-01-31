@@ -22,7 +22,7 @@ public class Units {
      * This mapping can be used to store extra values assigned to units e.g. if units reprents mineral fields,
      * we can easily store info how many workers are gathering each mineral field thanks to this mapping.
      */
-    private HashMap<Unit, Double> unitValues;
+    private HashMap<Unit, Double> unitValues = null;
 
     // =====================================================================
     public Units() {
@@ -55,7 +55,7 @@ public class Units {
     }
 
     public boolean isEmpty() {
-        return units.isEmpty();
+        return units.isEmpty() && (unitValues == null || unitValues.isEmpty());
     }
 
     public Unit first() {
@@ -105,6 +105,29 @@ public class Units {
         return this;
     }
 
+    /**
+     * Returns median PX and median PY for all units.
+     */
+    public Position positionMedian() {
+        if (isEmpty()) {
+            return null;
+        }
+
+        ArrayList<Integer> xCoordinates = new ArrayList<>();
+        ArrayList<Integer> yCoordinates = new ArrayList<>();
+        for (Unit unit : units) {
+            xCoordinates.add(unit.getPX());
+            yCoordinates.add(unit.getPY());
+        }
+        Collections.sort(xCoordinates);
+        Collections.sort(yCoordinates);
+
+        return new Position(
+                xCoordinates.get(xCoordinates.size() / 2),
+                yCoordinates.get(yCoordinates.size() / 2)
+        );
+    }
+
     // =========================================================
     // Value mapping methods
     public void changeValueBy(Unit unit, double deltaValue) {
@@ -118,31 +141,63 @@ public class Units {
 
     public void setValueFor(Unit unit, double newValue) {
         ensureValueMappingExists();
+        
+        if (unit == null) {
+            throw new IllegalArgumentException("Units unit shouldn't be null");
+        }
+        
         unitValues.put(unit, newValue);
     }
 
     public double getValueFor(Unit unit) {
+//        ensureValueMappingExists();
+        
+        if (unit == null) {
+            throw new IllegalArgumentException("Units unit shouldn't be null");
+        }
+        
         if (unitValues == null) {
             return 0;
-        } else {
-            return unitValues.get(unit);
         }
+//        if (unitValues == null || unitValues.isEmpty()) {
+//            return 0;
+//        } else {
+//        }
+        return unitValues.get(unit);
     }
 
     public Unit getUnitWithLowestValue() {
+        return getUnitWithExtremeValue(true);
+    }
+
+    public Unit getUnitWithHighestValue() {
+        return getUnitWithExtremeValue(false);
+    }
+
+    private Unit getUnitWithExtremeValue(boolean lowest) {
         ensureValueMappingExists();
 
-        if (units.isEmpty()) {
+        if (unitValues.isEmpty()) {
             return null;
         }
 
-        Unit bestUnit = units.get(0);
+        Unit bestUnit = unitValues.keySet().iterator().next();
         double bestValue = unitValues.get(bestUnit);
 
-        for (Unit unit : units) {
-            if (unitValues.get(unit) < bestValue) {
-                bestValue = unitValues.get(unit);
-                bestUnit = unit;
+        if (lowest) {
+            for (Unit unit : unitValues.keySet()) {
+                if (unitValues.get(unit) < bestValue) {
+                    bestValue = unitValues.get(unit);
+                    bestUnit = unit;
+                }
+            }
+        }
+        else {
+            for (Unit unit : unitValues.keySet()) {
+                if (unitValues.get(unit) > bestValue) {
+                    bestValue = unitValues.get(unit);
+                    bestUnit = unit;
+                }
             }
         }
 
@@ -150,8 +205,13 @@ public class Units {
     }
 
     private void ensureValueMappingExists() {
-        unitValues = new HashMap<>();
+        if (unitValues == null) {
+            unitValues = new HashMap<>();
+        }
         for (Unit unit : units) {
+            unitValues.put(unit, 0.0);
+        }
+        for (Unit unit : unitValues.keySet()) {
             unitValues.put(unit, 0.0);
         }
     }

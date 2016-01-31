@@ -1,5 +1,6 @@
 package atlantis.combat.micro;
 
+import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType.UnitTypes;
@@ -7,21 +8,21 @@ import jnibwapi.types.UnitType.UnitTypes;
 public class DefaultRangedManager extends MicroRangedManager {
 
     @Override
-    public void update(Unit unit) {
+    public boolean update(Unit unit) {
         if (canIssueOrderToUnit(unit)) {
 
             // SPECIAL UNIT TYPE action
             if (unit.isType(UnitTypes.Terran_Medic)) {
-                MicroMedic.update(unit);
+                TerranMedic.update(unit);
 //                if (MicroMedic.update(unit)) {
 //                    return;
 //                }
-                return;
+                return true;
             }
 
             // =========================================================
             // STANDARD actions
-            Unit nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(unit);
+            Unit nearestEnemy = SelectUnits.enemyRealUnits().nearestTo(unit);
             if (nearestEnemy == null) {
                 nearestEnemy = SelectUnits.enemy().nearestTo(unit);
             }
@@ -58,11 +59,13 @@ public class DefaultRangedManager extends MicroRangedManager {
                 // if (distToEnemy > unit.getShootRangeAgainst(nearestEnemy)) {
                 if (unit.getGroundWeaponCooldown() == 0) {
                     unit.attackUnit(nearestEnemy, false);
+                    return true;
                 }
                 // }
                 // }
             }
         }
+        return false;
     }
 
     // =========================================================

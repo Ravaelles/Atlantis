@@ -1,31 +1,27 @@
 package atlantis.combat;
 
+import atlantis.AtlantisGame;
 import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.combat.group.Group;
 import atlantis.combat.group.missions.Mission;
 import atlantis.combat.group.missions.Missions;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
+import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 
 public class AtlantisCombatCommander {
-
-    /**
-     * This is the mission for main battle group forces. E.g. initially it will be DEFEND, then it should be
-     * PREPARE (go near enemy) and then ATTACK.
-     */
-    private static Mission currentGlobalMission;
-
-    // =========================================================
+    
     /**
      * Acts with all battle units.
      */
     public static void update() {
-        handleGlobalMission();
+        Missions.handleGlobalMission();
         handleAllBattleGroups();
     }
 
     // =========================================================
+    
     /**
      * Acts with all units that are part of given battle group, according to the GroupMission object and using
      * proper micro managers.
@@ -33,49 +29,45 @@ public class AtlantisCombatCommander {
     private static void handleBattleGroup(Group group) {
 
         // Make sure this battle group has up-to-date strategy
-        if (!currentGlobalMission.equals(group.getMission())) {
-            group.setMission(currentGlobalMission);
+        if (!Missions.getCurrentGlobalMission().equals(group.getMission())) {
+            group.setMission(Missions.getCurrentGlobalMission());
         }
 
+        // =========================================================
+        // =========================================================
+        // =========================================================
         // Act with every unit
         for (Unit unit : group.arrayList()) {
 
-            // Never interrupt shooting units
+            // DON'T INTERRUPT shooting units
             if (shouldNotDisturbUnit(unit)) {
-                return;
+                continue;
             }
 
-            // Handle micro-managers for given unit according to its type
-            if (!handleSpecialUnit(unit)) {
-                if (unit.isRangedUnit()) {
-                    System.err.println(unit + " " + unit.getType());
-                    unit.setTooltip("Ranged");
-                    group.getMicroRangedManager().update(unit);
-                } else {
-                    unit.setTooltip("Melee");
-                    group.getMicroMeleeManager().update(unit);
+            // =========================================================
+            // Handle MICRO-MANAGERS for given unit according to its type
+            if (!handledAsSpecialUnit(unit)) {
+                boolean microManagerForbidsOtherActions;
+//                if (unit.isRangedUnit()) {
+//                    group.getMicroRangedManager().update(unit);
+//                } else {
+                microManagerForbidsOtherActions = group.getMicroMeleeManager().update(unit);
+//                }
+
+                // =========================================================
+                // Do ONLY MICRO-MANAGER actions
+                if (microManagerForbidsOtherActions) {
+                    continue;
+                }
+                
+                // =========================================================
+                // Handle MISSION actions according to current mission (e.g. DEFEND, ATTACK)
+                else {
+//                    if (!unit.isMoving() && !unit.isAttacking() && !unit.isJustShooting()) {
+                        group.getMission().update(unit);
+//                    }
                 }
             }
-
-            // Handle generic actions according to current mission (e.g. DEFEND, ATTACK)
-            if (!unit.isAttacking() && !unit.isStartingAttack()) {
-//                unit.setTooltip("Mission");
-                group.getMission().update(unit);
-            }
-
-//            // Handle generic actions according to current mission (e.g. DEFEND,
-//            // ATTACK)
-//            boolean microDisallowed = group.getMission().update(unit);
-//
-//            if (!microDisallowed) {
-//
-//                // Handle micro-managers for given unit according to its type
-//                if (unit.isMeleeUnit()) {
-//                    group.getMicroMeleeManager().update(unit);
-//                } else {
-//                    group.getMicroRangedManager().update(unit);
-//                }
-//            }
         }
     }
 
@@ -84,9 +76,10 @@ public class AtlantisCombatCommander {
      * unit it will run proper micro managers here and return true, meaning no other managers should be used.
      * False will give command to standard Melee of Micro managers.
      */
-    private static boolean handleSpecialUnit(Unit unit) {
+    private static boolean handledAsSpecialUnit(Unit unit) {
         if (unit.getType().equals(UnitType.UnitTypes.Zerg_Overlord)) {
             ZergOverlordManager.update(unit);
+            unit.setTooltip("Overlord");
             return true;
         } else {
             return false;
@@ -102,18 +95,10 @@ public class AtlantisCombatCommander {
         }
     }
 
-    /**
-     * Takes care of current strategy.
-     */
-    private static void handleGlobalMission() {
-        if (currentGlobalMission == null) {
-            currentGlobalMission = Missions.ATTACK;
-        }
-    }
-
     // =========================================================
+    
     private static boolean shouldNotDisturbUnit(Unit unit) {
-        return unit.isStartingAttack() || unit.isAttackFrame();
+        return unit.isJustShooting();
     }
 
 }

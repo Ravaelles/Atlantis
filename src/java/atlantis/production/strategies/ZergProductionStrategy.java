@@ -1,6 +1,9 @@
 package atlantis.production.strategies;
 
 import atlantis.AtlantisConfig;
+import atlantis.buildings.managers.AtlantisBaseManager;
+import atlantis.workers.AtlantisWorkerCommander;
+import atlantis.workers.AtlantisWorkerManager;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import jnibwapi.Unit;
@@ -11,7 +14,7 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
     protected String getFilename() {
-        return "DefaultZerg.csv";
+        return "ZergDefault.csv";
     }
 
     @Override
@@ -21,17 +24,22 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
     public void produceInfantry(UnitType infantryType) {
-        _produceUnit(UnitTypes.Zerg_Zergling);
+        _produceUnit(infantryType);
     }
 
     @Override
     public ArrayList<UnitType> produceWhenNoProductionOrders() {
         ArrayList<UnitType> units = new ArrayList<>();
-        units.add(UnitTypes.Zerg_Zergling);
+        if (AtlantisWorkerCommander.shouldTrainWorkers()) {
+            units.add(UnitTypes.Zerg_Drone);
+        }
+        else {
+            units.add(UnitTypes.Zerg_Zergling);
+        }
         return units;
     }
 
-    // --------------------------------------------------------------------
+    // =========================================================
     /**
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
@@ -39,21 +47,18 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
         _produceUnit(unitType);
     }
 
-    // --------------------------------------------------------------------
+    // =========================================================
     protected void _produceUnit(UnitType unitType) {
-//        Unit freeLarva = getFreeLarva();
-//        if (freeLarva != null) {
-//            freeLarva.morph(unitType);
-//        }
         for (Unit base : SelectUnits.ourBases().list()) {
             for (Unit unit : base.getLarva()) {
+//                System.out.println(unit + " into " + unitType);
                 base.train(unitType);
                 return;
             }
         }
     }
 
-    // --------------------------------------------------------------------
+    // =========================================================
     // Auxiliary
     private Unit getFreeLarva() {
         return SelectUnits.our().ofType(UnitTypes.Zerg_Larva).first();

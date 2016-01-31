@@ -3,6 +3,7 @@ package atlantis.workers;
 import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
+import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
 
 public class AtlantisWorkerManager {
@@ -18,7 +19,7 @@ public class AtlantisWorkerManager {
             AtlantisBuilderManager.update(unit);
         } // ORDINARY WORKER
         else {
-            sendToGatherMinerals(unit);
+            sendToGatherMineralsOrGas(unit);
         }
 
         updateTooltip(unit);
@@ -29,7 +30,7 @@ public class AtlantisWorkerManager {
      * Assigns given worker unit (which is idle by now ar least doesn't have anything to do) to gather
      * minerals.
      */
-    private static void sendToGatherMinerals(Unit worker) {
+    private static void sendToGatherMineralsOrGas(Unit worker) {
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).
@@ -43,6 +44,41 @@ public class AtlantisWorkerManager {
 
     // =========================================================
     // Auxiliary
+    
+    public static int getHowManyWorkersAt(Unit target) {
+        boolean isGasBuilding = target.getType().isGasBuilding();
+        int total = 0;
+        
+        for (Unit worker : SelectUnits.ourWorkers().inRadius(15, target).list()) {
+            if (target.equals(worker.getTarget())) {
+                total++;
+            }
+            else if (target.equals(worker.getOrderTarget())) {
+                total++;
+            }
+            else if (target.equals(worker.getBuildUnit())) {
+                total++;
+            }
+            else if (isGasBuilding) {
+                if (worker.isCarryingGas() || worker.isGatheringGas()) {
+                    total++;
+                }
+            }
+        }
+        return total;
+    }
+    
+    public static Unit getRandomWorkerAssignedTo(Unit target) {
+        for (Unit worker : SelectUnits.ourWorkers().list()) {
+            if (target.equals(worker.getTarget()) || target.equals(worker.getOrderTarget()) 
+                    || target.equals(worker.getBuildUnit())) {
+                return worker;
+            }
+        }
+        
+        return null;
+    }
+    
     private static void updateTooltip(Unit unit) {
         String tooltip = "";
         String newLine = "\r\n";

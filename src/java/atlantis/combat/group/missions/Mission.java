@@ -7,6 +7,16 @@ import jnibwapi.Unit;
  */
 public abstract class Mission {
 
+    private String name;
+    
+    // =========================================================
+
+    public Mission(String name) {
+        this.name = name;
+    }
+    
+    // =========================================================
+
     /**
      * If returns true, it's not allowed for micro managers to act.
      */
@@ -17,4 +27,14 @@ public abstract class Mission {
      */
     protected abstract boolean canIssueOrderToUnit(Unit unit);
 
+    // =========================================================
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
 }

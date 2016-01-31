@@ -3,8 +3,11 @@ package atlantis;
 import static atlantis.Atlantis.getBwapi;
 import atlantis.production.strategies.AtlantisProductionStrategy;
 import atlantis.util.RUtilities;
+import atlantis.wrappers.AtlantisTech;
+import atlantis.wrappers.SelectUnits;
 import jnibwapi.Player;
 import jnibwapi.types.RaceType.RaceTypes;
+import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UpgradeType;
 
@@ -12,7 +15,66 @@ public class AtlantisGame {
 
     private static Player _enemy = null;
 
-    // --------------------------------------------------------------------
+    // =========================================================
+    /**
+     * Returns object that is responsible for the production queue.
+     */
+    public static AtlantisProductionStrategy getProductionStrategy() {
+        return AtlantisConfig.getProductionStrategy();
+    }
+
+    /**
+     * Returns true if we have all techs needed for given unit (but we may NOT have some of the buildings!).
+     */
+    public static boolean hasTechToProduce(UnitType unitType) {
+
+        // Needs to have tech
+        TechType techType = TechType.TechTypes.getTechType(unitType.getRequiredTechID());
+        if (techType != null && techType != TechType.TechTypes.None && !AtlantisTech.isResearched(techType)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns true if we have all buildings needed for given unit.
+     */
+    public static boolean hasBuildingsToProduce(UnitType unitType) {
+
+        // Need to have every prerequisite building
+        for (Integer unitTypeID : unitType.getRequiredUnits().keySet()) {
+            UnitType requiredUnitType = UnitType.getByID(unitTypeID);
+            
+//            if (requiredUnitType.isLarva()) {
+//                continue;
+//            }
+//            System.out.println("=req: " + requiredUnitType);
+            if (!requiredUnitType.isBuilding()) {
+//                System.out.println("  continue");
+                continue;
+            }
+            
+            int requiredAmount = unitType.getRequiredUnits().get(unitTypeID);
+            int weHaveAmount = requiredUnitType.isLarva() ? 
+                    SelectUnits.ourLarva().count() : SelectUnits.our().ofType(requiredUnitType).count();
+//            System.out.println(requiredUnitType + "    x" + requiredAmount);
+//            System.out.println("   and we have: " + weHaveAmount);
+            if (weHaveAmount < requiredAmount) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns true if it's possible to produce unit (or building) of given type.
+     */
+    public static boolean hasTechAndBuildingsToProduce(UnitType unitType) {
+        return hasTechToProduce(unitType) && hasBuildingsToProduce(unitType);
+    }
+
+    // =========================================================
     /**
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */
@@ -94,6 +156,16 @@ public class AtlantisGame {
         return _enemy;
     }
 
+    /**
+     * Returns enemy player.
+     */
+    public static Player getEnemy() {
+        if (_enemy == null) {
+            _enemy = Atlantis.getBwapi().getEnemies().iterator().next();
+        }
+        return _enemy;
+    }
+
     // =========================================================
     // Auxiliary
     /**
@@ -125,10 +197,24 @@ public class AtlantisGame {
     }
 
     /**
-     * Returns object that is responsible for the production queue.
+     * Returns true if enemy plays as Terran.
      */
-    public static AtlantisProductionStrategy getProductionStrategy() {
-        return AtlantisConfig.getProductionStrategy();
+    public static boolean isEnemyTerran() {
+        return AtlantisGame.enemy().getRace().equals(RaceTypes.Terran);
+    }
+
+    /**
+     * Returns true if enemy plays as Protoss.
+     */
+    public static boolean isEnemyProtoss() {
+        return AtlantisGame.enemy().getRace().equals(RaceTypes.Protoss);
+    }
+
+    /**
+     * Returns true if enemy plays as Zerg.
+     */
+    public static boolean isEnemyZerg() {
+        return AtlantisGame.enemy().getRace().equals(RaceTypes.Zerg);
     }
 
     /**

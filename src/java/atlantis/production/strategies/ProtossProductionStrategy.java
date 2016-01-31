@@ -10,7 +10,7 @@ public class ProtossProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
     protected String getFilename() {
-        return "DefaultProtoss.csv";
+        return "ProtossDefault.csv";
     }
 
     @Override

@@ -17,6 +17,10 @@ public class UnitType implements Comparable<UnitType> {
 
     private static Map<Integer, UnitType> idToUnitType = new HashMap<>();
 
+    public boolean isLarva() {
+        return this.equals(UnitTypes.Zerg_Larva);
+    }
+
     public static class UnitTypes {
 
         public static final UnitType Terran_Marine = new UnitType(0);
@@ -694,6 +698,10 @@ public class UnitType implements Comparable<UnitType> {
         return null;
     }
 
+    public static UnitType getByID(int unitTypeID) {
+        return UnitTypes.getUnitType(unitTypeID);
+    }
+
     /**
      * Returns true if given type equals to one of types passed as parameter.
      */
@@ -738,6 +746,17 @@ public class UnitType implements Comparable<UnitType> {
      */
     public boolean isRangedUnit() {
         return !isMeleeUnit();
+    }
+
+    /**
+     * Returns total sum of minerals and gas this unit is worth.
+     */
+    public int getTotalResources() {
+        int total = getGasPrice() + getMineralPrice();
+        if (this.equals(UnitTypes.Zerg_Zergling)) {
+            total /= 2;
+        }
+        return total;
     }
 
     // =========================================================

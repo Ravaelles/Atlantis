@@ -1,37 +1,47 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.AtlantisCombatEvaluator;
-import atlantis.information.AtlantisMap;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
+import jnibwapi.types.WeaponType;
 
 /**
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public abstract class MicroManager {
+    
+    private static Unit _nearestEnemyThatCanShootAtThisUnit = null;
+    
+    // =========================================================
 
     /**
      * If chances to win the skirmish with the nearby enemy units aren't favorable, safely retreat.
      */
     protected boolean handleUnfavorableOdds(Unit unit) {
-        if (!unit.isRunning() && !AtlantisCombatEvaluator.isSituationFavorable(unit)) {
-            unit.runFrom(null);
-            unit.setTooltip("Run");
-//            Unit safePoint = SelectUnits.mainBase();
-//            if (safePoint != null) {
-//                if (safePoint.distanceTo(unit) > 15) {
-//                    unit.move(unit);
-//                } else {
-//                    unit.runFrom(null);
-//                }
-//                return true;
-//            } else {
-//                unit.setTooltip("No safeplace");
-//                return false;
-//            }
+        if (!AtlantisCombatEvaluator.isSituationFavorable(unit)) {
+            if (unit.isJustShooting()) {
+                return true;
+            }
+
+            return AtlantisRunManager.run(unit);
         }
 
+        AtlantisRunManager.unitWantsStopRunning(unit);
+        return false;
+    }
+
+    /**
+     *
+     */
+    protected boolean handleNotExtremelyFavorableOdds(Unit unit) {
+        if (!AtlantisCombatEvaluator.isSituationExtremelyFavorable(unit)) {
+            if (isInShootRangeOfAnyEnemyUnit(unit)) {
+                unit.moveAwayFrom(_nearestEnemyThatCanShootAtThisUnit, 2);
+                return true;
+            }
+        }
+        
         return false;
     }
 
@@ -39,29 +49,35 @@ public abstract class MicroManager {
      * If unit is severly wounded, it should run.
      */
     protected boolean handleLowHealthIfNeeded(Unit unit) {
-        if (unit.getHP() <= 10) {
-            run(unit);
-
-            return true;
+        if (unit.getHP() <= 11) {
+            return AtlantisRunManager.run(unit);
         }
 
         return false;
     }
 
-    // =========================================================
-    /**
-     * Makes unit run (from close enemies) in the most reasonable way possible.
-     */
-    private void run(Unit unit) {
-        Unit nearestEnemy = SelectUnits.enemyRealUnit().nearestTo(unit);
-        if (nearestEnemy != null) {
-            if (nearestEnemy.distanceTo(nearestEnemy) <= 6.5) {
-                unit.runFrom(nearestEnemy);
-                unit.setTooltip("RUN");
+    private boolean isInShootRangeOfAnyEnemyUnit(Unit unit) {
+        for (Unit enemy : SelectUnits.enemy().combatUnits().inRadius(12, unit).list()) {
+            WeaponType enemyWeapon = (unit.isAirUnit() ? enemy.getAirWeapon() : enemy.getGroundWeapon());
+            double distToEnemy = unit.distanceTo(enemy);
+            
+            // Compare against max range
+            if (distToEnemy + 0.5 <= enemyWeapon.getMaxRange()) {
+                _nearestEnemyThatCanShootAtThisUnit = enemy;
+                return true;
             }
-        } else {
-            unit.move(AtlantisMap.getRandomInvisiblePosition(unit), true);
+            
+            // Compare against min range
+//            if () {
+//                distToEnemy >= enemyWeapon.getMinRange()
+//                return true;
+//            }
         }
+        
+        // =========================================================
+        
+        _nearestEnemyThatCanShootAtThisUnit = null;
+        return false;
     }
 
 }

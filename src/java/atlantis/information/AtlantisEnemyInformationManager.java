@@ -10,7 +10,16 @@ public class AtlantisEnemyInformationManager {
      * Returns true if we learned the location of any still-existing enemy building.
      */
     public static boolean hasDiscoveredEnemyBuilding() {
-        return !AtlantisUnitInformationManager.enemyUnitsDiscovered.isEmpty();
+        if (AtlantisUnitInformationManager.enemyUnitsDiscovered.isEmpty()) {
+            return false;
+        }
+
+        for (Unit enemy : AtlantisUnitInformationManager.enemyUnitsDiscovered) {
+            if (enemy.isBuilding()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -35,8 +44,10 @@ public class AtlantisEnemyInformationManager {
      * Gets oldest known enemy base.
      */
     public static Position getEnemyBase() {
+//        System.out.println(AtlantisUnitInformationManager.enemyUnitsDiscovered.size());
         for (Unit enemyUnit : AtlantisUnitInformationManager.enemyUnitsDiscovered) {
-            if (enemyUnit.isBase()) {
+//            System.out.println(enemyUnit);
+            if (enemyUnit.isBase() && enemyUnit.isAlive()) {
                 return enemyUnit;
             }
         }
@@ -49,8 +60,8 @@ public class AtlantisEnemyInformationManager {
      */
     public static Unit getNearestEnemyBuilding() {
         Unit mainBase = SelectUnits.mainBase();
-        if (mainBase != null) {
-            return SelectUnits.from(AtlantisUnitInformationManager.enemyUnitsDiscovered).nearestTo(mainBase);
+        if (mainBase != null && !AtlantisUnitInformationManager.enemyUnitsDiscovered.isEmpty()) {
+            return SelectUnits.from(AtlantisUnitInformationManager.enemyUnitsDiscovered).buildings().nearestTo(mainBase);
         }
         return null;
     }
