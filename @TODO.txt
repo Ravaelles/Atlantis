@@ -1,1 +1,0 @@
-- Bugged attack animation. Marines dont shoot, however their cooldown indicates they shooted.
