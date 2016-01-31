@@ -2,6 +2,8 @@
 ...is a framework to write your very own Starcraft Broodwar bot in Java and it aims to achieve one thing:
 *Make it much, much easier to create new bot starting from zero*.
 
+![alt tag](http://s7.postimg.org/tky6lsky3/Atlantis_Tide.png)
+
 It uses JNIBWAPI as a base, runs with BWAPI 3.7.5, but wraps everything heavily, so you don't need to write yourself countless lines of tedious code that every bot unfortunately needs to have to even do the most basic stuff.
 
 # What it can do
