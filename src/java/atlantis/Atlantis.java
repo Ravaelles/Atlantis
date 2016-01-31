@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.combat.group.AtlantisGroupManager;
+import atlantis.constructing.ProtossConstructionManager;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.init.AtlantisInitialActions;
 import atlantis.production.strategies.AtlantisProductionStrategy;
@@ -210,6 +211,11 @@ public class Atlantis implements BWAPIEventListener {
             if (unit.getPlayer().isSelf()) {
 //                AtlantisUnitInformationManager.addOurUnfinishedUnit(unit.getType());
                 AtlantisGame.getProductionStrategy().rebuildQueue();
+                
+                // Apply construction fix: detect new Protoss buildings and remove them from queue.
+                if (AtlantisGame.playsAsProtoss() && unit.isBuilding()) {
+                    ProtossConstructionManager.handleWarpingNewBuilding(unit);
+                }
             }
         }
     }

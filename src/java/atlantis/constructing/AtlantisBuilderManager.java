@@ -1,7 +1,7 @@
 package atlantis.constructing;
 
 import atlantis.AtlantisGame;
-import atlantis.constructing.position.AbstractBuildPositionFinder;
+import atlantis.constructing.position.AbstractPositionFinder;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
@@ -53,6 +53,7 @@ public class AtlantisBuilderManager {
         if (buildPosition == null) {
 //            throw new RuntimeException("buildPosition empty");
             System.err.println("buildPosition is null");
+            constructionOrder.cancel();
             return;
         }
 
@@ -64,7 +65,7 @@ public class AtlantisBuilderManager {
         // If we can afford to construct this building exactly right now, issue build order which should
         // be immediate as unit is standing just right there
         else if (AtlantisGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
-            if (!AbstractBuildPositionFinder.canPhysicallyBuildHere(builder, buildingType,
+            if (!AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType,
                     buildPosition)) {
                 buildPosition = constructionOrder.findNewBuildPosition();
             }

@@ -22,10 +22,27 @@ public class AtlantisCombatEvaluator {
     // =========================================================
     
     /**
-     * Returns <b>TRUE</b> if our unit <b>unit</b> should engage in combat with nearby units or
+     * Returns <b>TRUE</b> if our <b>unit</b> should engage in combat with nearby units or
      * <b>FALSE</b> if enemy is too strong and we should pull back.
      */
     public static boolean isSituationFavorable(Unit unit) {
+        Unit mainBase = SelectUnits.mainBase();
+        if (mainBase != null) {
+            if (mainBase.distanceTo(unit) < 20) {
+                return true;
+            }
+        }
+        
+        return true;
+//        return evaluateSituation(unit) >= calculateSafetyMarginOverTime();
+    }
+    
+    /**
+     * Returns <b>TRUE</b> if our <b>unit</b> has overwhelmingly high chances to win nearby fight and 
+     * should engage in combat with nearby enemy units. Returns
+     * <b>FALSE</b> if enemy is too strong and we should pull back.
+     */
+    public static boolean isSituationExtremelyFavorable(Unit unit) {
         Unit mainBase = SelectUnits.mainBase();
         if (mainBase != null) {
             if (mainBase.distanceTo(unit) < 15) {
@@ -33,7 +50,7 @@ public class AtlantisCombatEvaluator {
             }
         }
         
-        return evaluateSituation(unit) >= calculateSafetyMarginOverTime();
+        return evaluateSituation(unit) >= calculateSafetyMarginOverTime() + 0.5;
     }
 
     /**
@@ -74,7 +91,7 @@ public class AtlantisCombatEvaluator {
     // Safety margin
     
     private static double calculateSafetyMarginOverTime() {
-        return SAFETY_MARGIN + Math.min(0.15, AtlantisGame.getTimeSeconds() / 3000);
+        return SAFETY_MARGIN + Math.min(0.1, AtlantisGame.getTimeSeconds() / 3000);
     }
 
     // =========================================================

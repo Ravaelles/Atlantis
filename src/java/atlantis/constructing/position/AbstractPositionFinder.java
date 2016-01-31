@@ -10,7 +10,7 @@ import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
 
-public abstract class AbstractBuildPositionFinder {
+public abstract class AbstractPositionFinder {
 
     // =========================================================
     // Hi-level methods
@@ -39,19 +39,19 @@ public abstract class AbstractBuildPositionFinder {
         for (Unit otherBuilding : SelectUnits.ourBuildings().list()) {
             int status = areTwoBuildingsTooClose(otherBuilding, position, building);
             if (status >= STATUS_BUILDINGS_ADDON_COLLIDE) {
-                ZergBuildPositionFinder._CONDITION_THAT_FAILED = "BUILDING TOO CLOSE (" + otherBuilding + ")";
+                ZergPositionFinder._CONDITION_THAT_FAILED = "BUILDING TOO CLOSE (" + otherBuilding + ")";
                 return true;
             }
         }
         
         // Compare against planned construction places
         for (ConstructionOrder constructionOrder : AtlantisConstructingManager.getAllConstructionOrders()) {
-            if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)
-                    && !constructionOrder.getBuilder().equals(builder)) {
+            if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.getStatus())
+                    && !builder.equals(constructionOrder.getBuilder())) {
                 if (constructionOrder.getPositionToBuild() != null) {
                     double distance = constructionOrder.getPositionToBuild().distanceTo(position);
                     if (distance <= 4) {
-                        ZergBuildPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
+                        ZergPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
                                 + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
                         return true;
                     }

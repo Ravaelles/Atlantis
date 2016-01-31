@@ -1,4 +1,33 @@
-;Name
+// ====================================================================
+// == If variable is prefixed with //, it means it's commented out ====
+// == To use it remove the // and it will become active ===============
+// ====================================================================
+
+
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// If this value is positive, auto-produce workers as long as it's at least N of them
+#AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS=25
+
+// If we have more or equal to N workers, auto-produce them until we reach AUTO_PRODUCE_WORKERS_MAX_WORKERS
+#AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS=4
+
+// If AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS is active, then this value will determine the maximum number of workers we can have
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=25
+
+// Which worker (1st, 4th, 8th) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=8
+
+// When supply is bigger than N, then start auto-producing supply units
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=11
+
+// ====================================================================
+
+
+// === Build orders ===================================================
+
+Number;Name;Modifier
+// ================
 5;SCV
 6;SCV
 7;SCV
@@ -7,19 +36,20 @@
 9;SCV
 10;SCV
 10;Supply Depot
-11;SCV
-11;Barracks
 12;Marine
-10;SCV
+1;Bunker
 14;Marine
-10;SCV
 14;Marine
-10;SCV
+14;Marine
 15;Marine
 16;Refinery
 18;Academy
 19;Marine
-20;Barracks
+11;Barracks
 20;Medic
-20;U-238 Shells
+20;U 238 Shells
+14;Marine
 21;Barracks
+14;Marine
+14;Marine
+2;Command Center

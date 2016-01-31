@@ -1,7 +1,9 @@
 package atlantis.workers;
 
+import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.buildings.managers.AtlantisGasManager;
+import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.wrappers.SelectUnits;
 import atlantis.wrappers.Units;
 import java.util.Collection;
@@ -16,7 +18,7 @@ public class AtlantisWorkerCommander {
      * Executed only once per frame.
      */
     public static void update() {
-        handleGasBuildings();
+        AtlantisGasManager.handleGasBuildings();
         handleNumberOfWorkersNearBases();
 
         for (Unit unit : SelectUnits.ourWorkers().list()) {
@@ -26,19 +28,47 @@ public class AtlantisWorkerCommander {
 
     // =========================================================
     
-    /**
-     * If any of our gas extracting buildings needs worker, it will assign exactly one worker per frame (until
-     * no more needed).
-     */
-    private static void handleGasBuildings() {
-        Unit gasBuildingNeedingWorker = AtlantisGasManager.getOneGasBuildingNeedingWorker();
-        if (gasBuildingNeedingWorker != null) {
-            Unit worker = SelectUnits.ourWorkers().gatheringMinerals(true).first();
-            if (worker != null) {
-                worker.gather(gasBuildingNeedingWorker, false);
-            }
+    public static boolean shouldTrainWorkers() {
+
+        // Check MINERALS
+        if (AtlantisGame.getMinerals() < 50) {
+            return false;
         }
+
+        // Check FREE SUPPLY
+        if (AtlantisGame.getSupplyFree() == 0) {
+            return false;
+        }
+
+        int workers = AtlantisUnitInformationManager.countOurWorkers();
+
+        // Check if not TOO MANY WORKERS
+        if (workers >= 27 * AtlantisUnitInformationManager.countOurBases()) {
+            return false;
+        }
+
+        // Check if AUTO-PRODUCTION of WORKERS is active.
+        if (workers < AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS) {
+            return true;
+        }
+
+        // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
+//        if (!AtlantisGame.getProductionStrategy().shouldProduceNow(AtlantisConfig.WORKER)) {
+//            return false;
+//        }
+//        if (!AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(true).isEmpty()) {
+//            return false;
+//        }
+
+        // // Check if not TOO MANY WORKERS
+        // if (AtlantisUnitInformationManager.countOurWorkers() >= 27 * AtlantisUnitInformationManager.countOurBases())
+        // {
+        // return false;
+        // }
+        return false;
     }
+    
+    // =========================================================
 
     /**
      * Every base should have similar number of workers, more or less.

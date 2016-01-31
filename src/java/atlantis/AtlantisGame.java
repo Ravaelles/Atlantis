@@ -38,18 +38,20 @@ public class AtlantisGame {
     }
 
     /**
-     * Returns true if it's possible to produce unit (or building) of given type.
+     * Returns true if we have all buildings needed for given unit.
      */
-    public static boolean hasTechAndBuildingsToProduce(UnitType unitType) {
+    public static boolean hasBuildingsToProduce(UnitType unitType) {
 
         // Need to have every prerequisite building
-        
-//        System.out.println("// =========================================================");
-//        System.out.println(unitType + " requires: ");
         for (Integer unitTypeID : unitType.getRequiredUnits().keySet()) {
             UnitType requiredUnitType = UnitType.getByID(unitTypeID);
             
-            if (requiredUnitType.isLarva()) {
+//            if (requiredUnitType.isLarva()) {
+//                continue;
+//            }
+//            System.out.println("=req: " + requiredUnitType);
+            if (!requiredUnitType.isBuilding()) {
+//                System.out.println("  continue");
                 continue;
             }
             
@@ -62,14 +64,14 @@ public class AtlantisGame {
                 return false;
             }
         }
-
-        // Needs to have tech
-        TechType techType = TechType.TechTypes.getTechType(unitType.getRequiredTechID());
-        if (techType != null && techType != TechType.TechTypes.None && !AtlantisTech.isResearched(techType)) {
-            return false;
-        }
-
         return true;
+    }
+
+    /**
+     * Returns true if it's possible to produce unit (or building) of given type.
+     */
+    public static boolean hasTechAndBuildingsToProduce(UnitType unitType) {
+        return hasTechToProduce(unitType) && hasBuildingsToProduce(unitType);
     }
 
     // =========================================================
@@ -154,6 +156,16 @@ public class AtlantisGame {
         return _enemy;
     }
 
+    /**
+     * Returns enemy player.
+     */
+    public static Player getEnemy() {
+        if (_enemy == null) {
+            _enemy = Atlantis.getBwapi().getEnemies().iterator().next();
+        }
+        return _enemy;
+    }
+
     // =========================================================
     // Auxiliary
     /**
@@ -182,6 +194,27 @@ public class AtlantisGame {
      */
     public static boolean playsAsZerg() {
         return AtlantisConfig.MY_RACE.equals(RaceTypes.Zerg);
+    }
+
+    /**
+     * Returns true if enemy plays as Terran.
+     */
+    public static boolean isEnemyTerran() {
+        return AtlantisGame.enemy().getRace().equals(RaceTypes.Terran);
+    }
+
+    /**
+     * Returns true if enemy plays as Protoss.
+     */
+    public static boolean isEnemyProtoss() {
+        return AtlantisGame.enemy().getRace().equals(RaceTypes.Protoss);
+    }
+
+    /**
+     * Returns true if enemy plays as Zerg.
+     */
+    public static boolean isEnemyZerg() {
+        return AtlantisGame.enemy().getRace().equals(RaceTypes.Zerg);
     }
 
     /**

@@ -1,6 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.micro.terran.MicroMedic;
+import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.wrappers.SelectUnits;
@@ -30,6 +30,9 @@ public class DefaultMeleeManager extends MicroMeleeManager {
             // =========================================================
             // Check chances to win the fight
             if (handleUnfavorableOdds(unit)) {
+                return true;
+            }
+            if (handleNotExtremelyFavorableOdds(unit)) {
                 return true;
             }
 
@@ -71,7 +74,7 @@ public class DefaultMeleeManager extends MicroMeleeManager {
         // TERRAN
         if (AtlantisGame.playsAsTerran()) {
             if (unit.isType(UnitTypes.Terran_Medic)) {
-                MicroMedic.update(unit);
+                TerranMedic.update(unit);
                 return true;
             }
         }

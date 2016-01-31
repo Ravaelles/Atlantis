@@ -202,7 +202,7 @@ public class SelectUnits {
     }
 
     /**
-     * Selects all minerals on map.
+     * Selects all minerals on the map.
      */
     public static SelectUnits minerals() {
         Units units = new Units();
@@ -211,6 +211,18 @@ public class SelectUnits {
         SelectUnits selectUnits = new SelectUnits(units);
 
         return selectUnits.ofType(UnitTypes.Resource_Mineral_Field);
+    }
+
+    /**
+     * Selects all geysers on the map.
+     */
+    public static SelectUnits geysers() {
+        Units units = new Units();
+
+        units.addUnits(Atlantis.getBwapi().getNeutralUnits());
+        SelectUnits selectUnits = new SelectUnits(units);
+
+        return selectUnits.ofType(UnitTypes.Resource_Vespene_Geyser);
     }
 
     /**
@@ -226,7 +238,9 @@ public class SelectUnits {
      */
     public static SelectUnits from(Collection<Unit> unitsCollection) {
         Units units = new Units();
-        units.addUnits(unitsCollection);
+        for (Unit unit : unitsCollection) {
+            units.addUnit(unit);
+        }
 
         SelectUnits selectUnits = new SelectUnits(units);
         return selectUnits;
@@ -270,6 +284,30 @@ public class SelectUnits {
         }
 
         return this;
+    }
+    
+    /**
+     * Selects only units of given type(s).
+     */
+    public int countUnitsOfType(UnitType... types) {
+        int total = 0;
+        Iterator<Unit> unitsIterator = units.iterator();
+        while (unitsIterator.hasNext()) {
+            Unit unit = unitsIterator.next();
+            boolean typeMatches = false;
+            for (UnitType type : types) {
+                if (unit.getType().equals(type) 
+                        || (unit.getType().equals(UnitTypes.Zerg_Egg) && unit.getBuildType().equals(type))) {
+                    typeMatches = true;
+                    break;
+                }
+            }
+            if (typeMatches) {
+                total++;
+            }
+        }
+
+        return total;
     }
 
     /**
@@ -505,7 +543,7 @@ public class SelectUnits {
      * From all units currently in selection, returns closest unit to given <b>position</b>.
      */
     public Unit nearestTo(Position position) {
-        if (units.isEmpty()) {
+        if (units.isEmpty() || position == null) {
             return null;
         }
 
@@ -524,6 +562,21 @@ public class SelectUnits {
         }
 
         return _cached_mainBase;
+    }
+
+    /**
+     * Returns second (natural) base <b>or if we have only one base</b>, it returns the only base we have.
+     */
+    public static Unit secondBaseOrMainIfNoSecond() {
+        Collection<Unit> bases = SelectUnits.ourBases().list();
+        if (bases.size() <= 1) {
+            return bases.iterator().next();
+        }
+        else {
+            Iterator<Unit> iterator = bases.iterator();
+            iterator.next();
+            return iterator.next();
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
 import atlantis.wrappers.AtlantisTech;
 import atlantis.wrappers.MappingCounter;
+import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
@@ -102,6 +103,8 @@ public abstract class AtlantisProductionStrategy {
         // =========================================================
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
+            
+//            System.out.println("order = " + order.getUnitType());
 
             // =========================================================
             // Unit
@@ -110,11 +113,13 @@ public abstract class AtlantisProductionStrategy {
                 virtualCounter.incrementValueFor(type);
 
                 int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + virtualCounter.getValueFor(type);
-                int weHaveThisManyUnits = AtlantisUnitInformationManager.countOurUnitsOfType(type);
+                int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
 
                 if (type.isBuilding()) {
                     weHaveThisManyUnits += AtlantisConstructingManager.countNotFinishedConstructionsOfType(type);
                 }
+                
+//                System.out.println("       " + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
 
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
@@ -156,19 +161,34 @@ public abstract class AtlantisProductionStrategy {
         // =========================================================
         // The idea as follows: as long as we can afford next enqueued production order, add it to the
         // CurrentToProduceList.
+        
+//        System.out.println("// =========================================================");
+//        for (ProductionOrder order : currentProductionQueue) {
+//        System.out.println(order.getUnitType());
+//        }
+        
         for (ProductionOrder order : currentProductionQueue) {
             UnitType unitType = order.getUnitType();
+            UpgradeType upgrade = order.getUpgrade();
+            TechType tech = order.getTech();
 
             // Check if include only units
             if (onlyUnits && unitType == null) {
                 continue;
             }
-
-            UpgradeType upgrade = order.getUpgrade();
-            TechType tech = order.getTech();
+            
+            // =========================================================
+            // Protoss fix: wait for at least one Pylon
+            if (AtlantisGame.playsAsProtoss() && unitType != null
+                    && !UnitType.UnitTypes.Protoss_Pylon.equals(unitType)
+                    && SelectUnits.our().countUnitsOfType(UnitType.UnitTypes.Protoss_Pylon) == 0) {
+                continue;
+            }
+            
+            // =========================================================
 
             if (unitType != null) {
-                if (!AtlantisGame.hasTechToProduce(unitType)) {
+                if (!AtlantisGame.hasBuildingsToProduce(unitType)) {
                     continue;
                 }
                 
@@ -182,11 +202,13 @@ public abstract class AtlantisProductionStrategy {
                 gasNeeded += tech.getMineralPrice();
             }
 
+            // =========================================================
             // If we can afford this order and the previous, add it to CurrentToProduceList.
             if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
                 result.add(order);
             } // We can't afford to produce this order along with all previous ones. Return currently list.
             else {
+//                System.out.println("-----break at: " + unitType);
                 break;
             }
         }
@@ -200,6 +222,21 @@ public abstract class AtlantisProductionStrategy {
         }
 
         return result;
+    }
+    
+    /**
+     * Some buildings like Sunken Colony are morphed into from Creep Colony. When counting Creep Colonies,
+     * we need to count sunkens as well.
+     */
+    private int countUnitsOfGivenTypeOrSimilar(UnitType type) {
+        if (type.equals(UnitType.UnitTypes.Zerg_Creep_Colony)) {
+            return AtlantisUnitInformationManager.countOurUnitsOfType(type) +
+                    + AtlantisUnitInformationManager.countOurUnitsOfType(UnitType.UnitTypes.Zerg_Sunken_Colony)
+                    + AtlantisUnitInformationManager.countOurUnitsOfType(UnitType.UnitTypes.Zerg_Spore_Colony);
+        }
+        else {
+            return AtlantisUnitInformationManager.countOurUnitsOfType(type);
+        }
     }
 
     /**
@@ -224,12 +261,17 @@ public abstract class AtlantisProductionStrategy {
 
         for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
             ProductionOrder productionOrder = currentProductionQueue.get(i);
-            if (productionOrder.getUnitType() != null 
-                    && !AtlantisGame.hasTechAndBuildingsToProduce(productionOrder.getUnitType())) {
-                continue;
-            }
+//            if (productionOrder.getUnitType() != null 
+//                    && !AtlantisGame.hasBuildingsToProduce(productionOrder.getUnitType())) {
+//                continue;
+//            }
             result.add(productionOrder);
         }
+        
+//        System.out.println("// =========================================================");
+//        for (ProductionOrder productionOrder : result) {
+//            System.out.println("CURRENT: " + productionOrder.getUnitType());
+//        }
 
         return result;
     }
@@ -422,7 +464,7 @@ public abstract class AtlantisProductionStrategy {
      */
     private boolean isUnimportantLine(String[] row) {
         return row.length == 0 || row[0].isEmpty() || row[0].equals("")
-                || row[0].equals("Order") || row[0].equals(";");
+                || row[0].equals("Number")|| row[0].equals("Order") || row[0].equals(";");
     }
 
     /**

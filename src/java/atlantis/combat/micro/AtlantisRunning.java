@@ -66,8 +66,8 @@ public class AtlantisRunning {
         if (unit == null || runAwayFrom == null) {
             return null;
         }
-        int howManyTiles = 2;
-        int maxTiles = 5;
+        int howManyTiles = 6;
+        int maxTiles = 9;
         Position runTo = null;
         
         // =========================================================
@@ -90,7 +90,7 @@ public class AtlantisRunning {
 //            );
 //            return runTo;
             
-            if (howManyTiles >= 4) {
+            if (howManyTiles >= 8) {
                 runTo = runTo.makeValid();
             }
 

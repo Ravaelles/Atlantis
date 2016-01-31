@@ -2,7 +2,7 @@ package atlantis.constructing;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.constructing.position.ConstructionBuildPositionFinder;
+import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
 import atlantis.wrappers.SelectUnits;
@@ -34,10 +34,19 @@ public class AtlantisConstructingManager {
      * it.
      */
     public static void requestConstructionOf(UnitType building, ProductionOrder order) {
-        // System.out.println("@@@@ REQUESTED: " + building);
+        
+        // =========================================================
+        // Validate
+        
         if (!building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
+        
+        if (AtlantisSpecialConstructionManager.handledAsSpecialBuilding(building, order)) {
+            return;
+        }
+        
+        // =========================================================
 
         // Create ConstructionOrder object, assign random worker for the time being
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
@@ -53,7 +62,7 @@ public class AtlantisConstructingManager {
 
         // =========================================================
         // Find place for new building
-        Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
+        Position positionToBuild = AtlantisPositionFinder.getPositionForNew(
                 newConstructionOrder.getBuilder(), building, newConstructionOrder
         );
 //        System.out.println("@@ " + building + " at " + positionToBuild);
@@ -77,8 +86,8 @@ public class AtlantisConstructingManager {
             AtlantisGame.getProductionStrategy().rebuildQueue();
         } // Couldn't find place for building! That's f'g bad.
         else {
-//            System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
-//                    + " / BUILDER = " + optimalBuilder);
+            System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
+                    + " / BUILDER = " + optimalBuilder);
         }
     }
 
@@ -105,7 +114,7 @@ public class AtlantisConstructingManager {
             requestConstructionOf(AtlantisConfig.BASE);
         }
     }
-
+    
     // =========================================================
     /**
      * If builder has died when constructing, replace him with new one.
@@ -168,7 +177,7 @@ public class AtlantisConstructingManager {
             // COMPLETED: building is finished, remove it from the list
             if (building.isCompleted()) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
-                constructionOrders.remove(constructionOrder);
+                removeOrder(constructionOrder);
 
                 // @FIX to fix bug with Refineries not being shown as created, because they're kinda changed.
                 if (building.getType().isGasBuilding()) {
@@ -180,11 +189,18 @@ public class AtlantisConstructingManager {
             }
         } // Building doesn't exist yet, means builder is travelling to the construction place
         else {
-            Position positionToBuild = ConstructionBuildPositionFinder.findPositionForNew(
+            Position positionToBuild = AtlantisPositionFinder.getPositionForNew(
                     constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
             );
             constructionOrder.setPositionToBuild(positionToBuild);
         }
+    }
+    
+    /**
+     *
+     */
+    protected static void removeOrder(ConstructionOrder constructionOrder) {
+        constructionOrders.remove(constructionOrder);
     }
 
     // =========================================================no

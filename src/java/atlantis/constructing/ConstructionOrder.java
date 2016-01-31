@@ -1,6 +1,6 @@
 package atlantis.constructing;
 
-import atlantis.constructing.position.ConstructionBuildPositionFinder;
+import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.production.ProductionOrder;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
@@ -20,6 +20,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     // private int issueFrameTime;
     // =========================================================
+    
     public ConstructionOrder(UnitType buildingType) {
         this.buildingType = buildingType;
 
@@ -28,11 +29,12 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     }
 
     // =========================================================
+    
     /**
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
     public Position findNewBuildPosition() {
-        return ConstructionBuildPositionFinder.findPositionForNew(builder, buildingType, this);
+        return AtlantisPositionFinder.getPositionForNew(builder, buildingType, this);
     }
 
     /**
@@ -53,6 +55,23 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         return builder;
     }
 
+    /**
+     * Fully delete this construction, remove the building if needed by cancelling it.
+     */
+    public void cancel() {
+        if (construction != null) {
+            construction.cancelConstruction();
+        }
+        
+        if (builder != null) {
+            builder.stop(false);
+            builder = null;
+        }
+        
+        AtlantisConstructingManager.removeOrder(this);
+//        status = ConstructionOrderStatus.CONSTRUCTION_FINISHED;
+    }
+    
     // =========================================================
 
     @Override
@@ -83,6 +102,11 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     @Override
     public int compareTo(ConstructionOrder o) {
         return Integer.compare(ID, o.ID);
+    }
+
+    @Override
+    public String toString() {
+        return "ConstructionOrder{" + "ID=" + ID + ", buildingType=" + buildingType + ", construction=" + construction + ", builder=" + builder + ", positionToBuild=" + positionToBuild + ", productionOrder=" + productionOrder + ", status=" + status + '}';
     }
     
     // =========================================================

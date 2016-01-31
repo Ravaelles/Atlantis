@@ -11,20 +11,12 @@ import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 
 public class AtlantisCombatCommander {
-
-    /**
-     * This is the mission for main battle group forces. E.g. initially it will be DEFEND, then it should be
-     * PREPARE (go near enemy) and then ATTACK.
-     */
-    private static Mission currentGlobalMission;
-
-    // =========================================================
     
     /**
      * Acts with all battle units.
      */
     public static void update() {
-        handleGlobalMission();
+        Missions.handleGlobalMission();
         handleAllBattleGroups();
     }
 
@@ -37,8 +29,8 @@ public class AtlantisCombatCommander {
     private static void handleBattleGroup(Group group) {
 
         // Make sure this battle group has up-to-date strategy
-        if (!currentGlobalMission.equals(group.getMission())) {
-            group.setMission(currentGlobalMission);
+        if (!Missions.getCurrentGlobalMission().equals(group.getMission())) {
+            group.setMission(Missions.getCurrentGlobalMission());
         }
 
         // =========================================================
@@ -100,29 +92,6 @@ public class AtlantisCombatCommander {
     private static void handleAllBattleGroups() {
         for (Group group : AtlantisGroupManager.getGroups()) {
             handleBattleGroup(group);
-        }
-    }
-
-    /**
-     * Takes care of current strategy.
-     */
-    private static void handleGlobalMission() {
-        if (currentGlobalMission == null) {
-//            currentGlobalMission = Missions.DEFEND;
-            currentGlobalMission = Missions.ATTACK;
-        }
-        
-        // =========================================================
-        
-        if (currentGlobalMission == Missions.DEFEND) {
-            if (SelectUnits.ourCombatUnits().count() >= 20) {
-                currentGlobalMission = Missions.ATTACK;
-            }
-        }
-        else if (currentGlobalMission == Missions.ATTACK) {
-            if (AtlantisGame.getTimeSeconds() > 350 && SelectUnits.ourCombatUnits().count() <= 7) {
-                currentGlobalMission = Missions.DEFEND;
-            }
         }
     }
 

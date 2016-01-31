@@ -26,17 +26,17 @@
 
 // === Build orders ===================================================
 
-Order;Name;Modifier
+Number;Name;Modifier
 // ================
-1;Hydralisk
-1;Hydralisk
-1;Hydralisk
-1;Hydralisk
-1;Hydralisk
 6;Drone
+6;Drone
+2;Hatchery
 3;Spawning Pool
-6;Drone
+7;Drone
 4;Zergling
+1;Creep Colony
+7;Drone
+1;Sunken Colony
 4;Zergling
 1;Zergling
 7;Drone
@@ -49,7 +49,7 @@ Order;Name;Modifier
 7;Drone
 7;Drone
 7;Drone
-1;Extractor
+1;Hatchery
 7;Drone
 1;Hydralisk Den
 1;Drone

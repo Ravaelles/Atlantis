@@ -1757,4 +1757,12 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         }
     }
 
+    public WeaponType getAirWeapon() {
+        return getType().getAirWeapon();
+    }
+
+    public WeaponType getGroundWeapon() {
+        return getType().getGroundWeapon();
+    }
+
 }

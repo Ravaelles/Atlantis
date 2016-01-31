@@ -1,6 +1,9 @@
 package atlantis.production.strategies;
 
 import atlantis.AtlantisConfig;
+import atlantis.buildings.managers.AtlantisBaseManager;
+import atlantis.workers.AtlantisWorkerCommander;
+import atlantis.workers.AtlantisWorkerManager;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import jnibwapi.Unit;
@@ -27,7 +30,12 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
     @Override
     public ArrayList<UnitType> produceWhenNoProductionOrders() {
         ArrayList<UnitType> units = new ArrayList<>();
-        units.add(UnitTypes.Zerg_Zergling);
+        if (AtlantisWorkerCommander.shouldTrainWorkers()) {
+            units.add(UnitTypes.Zerg_Drone);
+        }
+        else {
+            units.add(UnitTypes.Zerg_Zergling);
+        }
         return units;
     }
 

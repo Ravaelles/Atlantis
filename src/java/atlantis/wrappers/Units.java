@@ -55,7 +55,7 @@ public class Units {
     }
 
     public boolean isEmpty() {
-        return units.isEmpty();
+        return units.isEmpty() && (unitValues == null || unitValues.isEmpty());
     }
 
     public Unit first() {

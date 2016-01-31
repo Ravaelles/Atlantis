@@ -9,7 +9,7 @@ import jnibwapi.types.UnitType.UnitTypes;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.BaseLocation;
 
-public class ConstructionSpecialBuildPositionFinder {
+public class AtlantisSpecialPositionFinder {
     
     /**
      * Constant used as a hint to indicate that base should be built in the nearest base location 
@@ -72,11 +72,11 @@ public class ConstructionSpecialBuildPositionFinder {
 //        System.out.println("Main base = " + SelectUnits.mainBase());
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
 
-        return ConstructionBuildPositionFinder.findStandardPosition(builder, building, baseLocationToExpand, 3);
+        return AtlantisPositionFinder.findStandardPosition(builder, building, baseLocationToExpand, 3);
     }
 
     private static Position findPositionForBase_nearestMainBase(UnitType building, Unit builder) {
-        return ConstructionBuildPositionFinder.findStandardPosition(builder, building, SelectUnits.mainBase(), 20);
+        return AtlantisPositionFinder.findStandardPosition(builder, building, SelectUnits.mainBase(), 20);
     }
 
 }

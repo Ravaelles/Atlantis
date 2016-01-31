@@ -2,22 +2,13 @@ package atlantis.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.otherBuildingsTooClose;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 import atlantis.debug.AtlantisPainter;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
-import static atlantis.constructing.position.AbstractBuildPositionFinder.canPhysicallyBuildHere;
 
-public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
+public class ZergPositionFinder extends AbstractPositionFinder {
     
     protected static String _CONDITION_THAT_FAILED = null;
     
@@ -33,12 +24,12 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
     public static Position findStandardPositionFor(Unit builder, UnitType building, Position nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
         
-        ConstructionBuildPositionFinder.building = building;
-        ConstructionBuildPositionFinder.nearTo = nearTo;
-        ConstructionBuildPositionFinder.maxDistance = maxDistance;
+        AtlantisPositionFinder.building = building;
+        AtlantisPositionFinder.nearTo = nearTo;
+        AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
-        int searchRadius = 0;
+        int searchRadius = 5;
         if (building.isType(AtlantisConfig.BASE)) {
             searchRadius = 0;
         }
@@ -102,20 +93,20 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
 
         // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, ConstructionBuildPositionFinder.building, position)) {
+        if (!canPhysicallyBuildHere(builder, AtlantisPositionFinder.building, position)) {
 //            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);
             _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
             return false;
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(builder, ConstructionBuildPositionFinder.building, position)) {
+        if (otherBuildingsTooClose(builder, AtlantisPositionFinder.building, position)) {
 //            _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isTooCloseToMineralsOrGeyser(ConstructionBuildPositionFinder.building, position)) {
+        if (isTooCloseToMineralsOrGeyser(AtlantisPositionFinder.building, position)) {
             _CONDITION_THAT_FAILED = "TOO CLOSE TO MINERALS OR GEYSER";
             return false;
         }
@@ -143,8 +134,8 @@ public class ZergBuildPositionFinder extends AbstractBuildPositionFinder {
 
     private static boolean isCreepConditionFulfilled(Position position) {
         return Atlantis.getBwapi().hasCreep(position)
-                || ConstructionBuildPositionFinder.building.equals(UnitType.UnitTypes.Zerg_Hatchery)
-                || ConstructionBuildPositionFinder.building.equals(UnitType.UnitTypes.Zerg_Extractor);
+                || AtlantisPositionFinder.building.equals(UnitType.UnitTypes.Zerg_Hatchery)
+                || AtlantisPositionFinder.building.equals(UnitType.UnitTypes.Zerg_Extractor);
     }
 
 }

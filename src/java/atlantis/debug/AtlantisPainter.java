@@ -1,7 +1,9 @@
 package atlantis.debug;
 
 import atlantis.Atlantis;
+import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
+import atlantis.buildings.managers.AtlantisGasManager;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.combat.group.missions.MissionAttack;
@@ -12,6 +14,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
+import atlantis.workers.AtlantisWorkerManager;
 import atlantis.wrappers.MappingCounter;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
@@ -57,6 +60,7 @@ public class AtlantisPainter {
         paintConstructionProgress();
         paintConstructionPlaces();
         paintBuildingHealth();
+        paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
         paintSpecialsOverUnits();
         paintVariousStats();
@@ -88,6 +92,10 @@ public class AtlantisPainter {
         paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", BWColor.Grey);
         
         // =========================================================
+        // Gas workers
+        paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), BWColor.Grey);
+        
+        // =========================================================
         // Global mission
         paintSideMessage("Mission: " + AtlantisGroupManager.getAlphaGroup().getMission().getName(), BWColor.White);
         
@@ -114,33 +122,58 @@ public class AtlantisPainter {
         for (Unit unit : SelectUnits.ourCombatUnits().list()) {
 
             // =========================================================
-            // === Paint cooldown progress bars over units
+            // === Paint life bars bars over wounded units
             // =========================================================
-            if (unit.getGroundWeaponCooldown() > 0) {
-                int cooldownWidth = 20;
-                int cooldownHeight = 4;
-                int cooldownLeft = unit.getPX() - cooldownWidth / 2;
-                int cooldownTop = unit.getPY() + 23;
-                String cooldown = BWColor.getColorString(BWColor.Yellow) + "(" + unit.getGroundWeaponCooldown() + ")";
+            if (unit.getHPPercent() < 100) {
+                int boxWidth = 20;
+                int boxHeight = 4;
+                int boxLeft = unit.getPX() - boxWidth / 2;
+                int boxTop = unit.getPY() + 23;
 
-                Position topLeft = new Position(cooldownLeft, cooldownTop);
+                Position topLeft = new Position(boxLeft, boxTop);
 
                 // =========================================================
                 // Paint box
-                int cooldownProgress = cooldownWidth * unit.getGroundWeaponCooldown()
-                        / (unit.getType().getGroundWeapon().getDamageCooldown() + 1);
-                bwapi.drawBox(topLeft, new Position(cooldownLeft + cooldownProgress, cooldownTop + cooldownHeight),
-                        BWColor.Brown, true, false);
+                int healthBarProgress = boxWidth * unit.getHP() / (unit.getMaxHP() + 1);
+                bwapi.drawBox(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight),
+                        BWColor.Red, true, false);
+                bwapi.drawBox(topLeft, new Position(boxLeft + healthBarProgress, boxTop + boxHeight),
+                        BWColor.Green, true, false);
 
                 // =========================================================
                 // Paint box borders
-                bwapi.drawBox(topLeft, new Position(cooldownLeft + cooldownWidth, cooldownTop + cooldownHeight),
+                bwapi.drawBox(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight),
                         BWColor.Black, false, false);
-
-                // =========================================================
-                // Paint label
-//                paintTextCentered(new Position(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
             }
+
+            // =========================================================
+            // === Paint cooldown progress bars over units
+            // =========================================================
+//            if (unit.getGroundWeaponCooldown() > 0) {
+//                int cooldownWidth = 20;
+//                int cooldownHeight = 4;
+//                int cooldownLeft = unit.getPX() - cooldownWidth / 2;
+//                int cooldownTop = unit.getPY() + 23;
+//                String cooldown = BWColor.getColorString(BWColor.Yellow) + "(" + unit.getGroundWeaponCooldown() + ")";
+//
+//                Position topLeft = new Position(cooldownLeft, cooldownTop);
+//
+//                // =========================================================
+//                // Paint box
+//                int cooldownProgress = cooldownWidth * unit.getGroundWeaponCooldown()
+//                        / (unit.getType().getGroundWeapon().getDamageCooldown() + 1);
+//                bwapi.drawBox(topLeft, new Position(cooldownLeft + cooldownProgress, cooldownTop + cooldownHeight),
+//                        BWColor.Brown, true, false);
+//
+//                // =========================================================
+//                // Paint box borders
+//                bwapi.drawBox(topLeft, new Position(cooldownLeft + cooldownWidth, cooldownTop + cooldownHeight),
+//                        BWColor.Black, false, false);
+//
+//                // =========================================================
+//                // Paint label
+////                paintTextCentered(new Position(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
+//            }
 
             // =========================================================
             // === Paint battle group
@@ -257,6 +290,10 @@ public class AtlantisPainter {
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);
             if (order != null && order.getShortName() != null) {
+                if (order.getUnitType() != null 
+                        && !AtlantisGame.hasBuildingsToProduce(order.getUnitType())) {
+                    continue;
+                }
                 paintSideMessage(order.getShortName(), BWColor.Red);
             }
         }
@@ -318,6 +355,9 @@ public class AtlantisPainter {
                         positionToBuild.translated(buildingType.getTileWidth() * 32, 0),
                         positionToBuild.translated(0, buildingType.getTileHeight() * 32),
                         BWColor.Teal, false);
+                
+                // Draw text
+                paintTextCentered(positionToBuild, buildingType.getShortName(), BWColor.Grey);
             }
         }
     }
@@ -431,6 +471,21 @@ public class AtlantisPainter {
             // Paint box borders
             bwapi.drawBox(new Position(labelLeft, labelTop), new Position(labelLeft + labelMaxWidth, labelTop
                     + labelHeight), BWColor.Black, false, false);
+        }
+    }
+
+    /**
+     * Paints the number of workers that are gathering to this building.
+     */
+    private static void paintWorkersAssignedToBuildings() {
+        for (Unit building : SelectUnits.ourBuildings().list()) {
+
+            // Paint text
+            int workers = AtlantisWorkerManager.getHowManyWorkersAt(building);
+            if (workers > 0) {
+                String workersAssigned = "Workers: " + workers;
+                paintTextCentered(building.translated(0, -15), workersAssigned, BWColor.Blue);
+            }
         }
     }
 

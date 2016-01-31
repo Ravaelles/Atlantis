@@ -1,13 +1,14 @@
 package atlantis.constructing.position;
 
 import atlantis.AtlantisGame;
+import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 
-public class ConstructionBuildPositionFinder {
+public class AtlantisPositionFinder {
 
     protected static UnitType building;
     protected static Position nearTo;
@@ -18,8 +19,8 @@ public class ConstructionBuildPositionFinder {
     /**
      * Returns build position for next building of given type.
      */
-    public static Position findPositionForNew(Unit builder, UnitType building, ConstructionOrder constructionOrder) {
-        return findPositionForNew(builder, building, constructionOrder, null, -1);
+    public static Position getPositionForNew(Unit builder, UnitType building, ConstructionOrder constructionOrder) {
+        return getPositionForNew(builder, building, constructionOrder, null, -1);
     }
 
     /**
@@ -27,16 +28,29 @@ public class ConstructionBuildPositionFinder {
      * position
      * <b>maxDistance</b> build tiles from given position.
      */
-    public static Position findPositionForNew(Unit builder, UnitType building, 
+    public static Position getPositionForNew(Unit builder, UnitType building, 
             ConstructionOrder constructionOrder, Position nearTo, double maxDistance) {
 
+        // =========================================================
         // Buildings extracting GAS
         if (building.isGasBuilding()) {
-            return ConstructionSpecialBuildPositionFinder.findPositionForGasBuilding(building);
-        } // BASE
+            return AtlantisSpecialPositionFinder.findPositionForGasBuilding(building);
+        } 
+
+        // =========================================================
+        // BASE
         else if (building.isBase()) {
-            return ConstructionSpecialBuildPositionFinder.findPositionForBase(building, builder, constructionOrder);
-        } // STANDARD BUILDINGS
+            return AtlantisSpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
+        } 
+
+        // =========================================================
+        // BASE
+        else if (building.equals(UnitType.UnitTypes.Zerg_Creep_Colony)) {
+            return ZergCreepColony.findPosition(building, builder, constructionOrder);
+        } 
+
+        // =========================================================
+        // STANDARD BUILDINGS
         else {
 
             // If we didn't specify location where to build, build somewhere near the main base
@@ -64,10 +78,12 @@ public class ConstructionBuildPositionFinder {
         }
     }
     
+    // =========================================================
+    
     /**
      * Returns standard build position for building near given position.
      */
-    protected static Position findStandardPosition(Unit builder, UnitType building, Position nearTo, double maxDistance) {
+    public static Position findStandardPosition(Unit builder, UnitType building, Position nearTo, double maxDistance) {
         
         // =========================================================
         // Handle standard building position according to the race as every race uses completely different approach
@@ -75,13 +91,13 @@ public class ConstructionBuildPositionFinder {
         
         // Terran
         if (AtlantisGame.playsAsTerran()) {
-            return TerranBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+            return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         } // Protoss
         else if (AtlantisGame.playsAsProtoss()) {
-            return ProtossBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+            return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         } // Zerg
         else if (AtlantisGame.playsAsZerg()) {
-            return ZergBuildPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+            return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }
         else {
             System.err.println("Invalid race: " + AtlantisGame.getPlayerUs().getRace());

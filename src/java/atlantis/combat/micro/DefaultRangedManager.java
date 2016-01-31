@@ -1,6 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.micro.terran.MicroMedic;
+import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType.UnitTypes;
@@ -13,7 +13,7 @@ public class DefaultRangedManager extends MicroRangedManager {
 
             // SPECIAL UNIT TYPE action
             if (unit.isType(UnitTypes.Terran_Medic)) {
-                MicroMedic.update(unit);
+                TerranMedic.update(unit);
 //                if (MicroMedic.update(unit)) {
 //                    return;
 //                }

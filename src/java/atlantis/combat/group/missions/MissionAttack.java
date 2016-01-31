@@ -23,18 +23,18 @@ public class MissionAttack extends Mission {
         if (focusPoint != null) {
             if (focusPoint.distanceTo(unit) > 5) {
                 unit.attack(focusPoint, false);
-                unit.setTooltip("Mission focus");
+//                unit.setTooltip("Mission focus");
                 return true;
             }
         } 
 
         // =========================================================
         // Invalid focus point, no enemy can be found, scatter
-        else if (!unit.isMoving()) {
+        else {
             Position position = AtlantisMap.getRandomInvisiblePosition(unit);
             if (position != null) {
                 unit.attack(position, false);
-                unit.setTooltip("Mission spread");
+//                unit.setTooltip("Mission spread");
                 return true;
             }
         }

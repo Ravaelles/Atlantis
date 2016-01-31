@@ -7,7 +7,7 @@ import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
 
-public class TerranBuildPositionFinder extends AbstractBuildPositionFinder {
+public class TerranPositionFinder extends AbstractPositionFinder {
 
     /**
      * Returns best position for given <b>building</b>, maximum <b>maxDistance</b> build tiles from
@@ -17,9 +17,9 @@ public class TerranBuildPositionFinder extends AbstractBuildPositionFinder {
      *
      */
     public static Position findStandardPositionFor(Unit builder, UnitType building, Position nearTo, double maxDistance) {
-        ConstructionBuildPositionFinder.building = building;
-        ConstructionBuildPositionFinder.nearTo = nearTo;
-        ConstructionBuildPositionFinder.maxDistance = maxDistance;
+        AtlantisPositionFinder.building = building;
+        AtlantisPositionFinder.nearTo = nearTo;
+        AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
         int searchRadius = building.isType(UnitTypes.Terran_Supply_Depot) ? 8 : 0;
@@ -57,17 +57,17 @@ public class TerranBuildPositionFinder extends AbstractBuildPositionFinder {
     private static boolean doesPositionFulfillAllConditions(Unit builder, Position position) {
 
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, ConstructionBuildPositionFinder.building, position)) {
+        if (!canPhysicallyBuildHere(builder, AtlantisPositionFinder.building, position)) {
             return false;
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(builder, ConstructionBuildPositionFinder.building, position)) {
+        if (otherBuildingsTooClose(builder, AtlantisPositionFinder.building, position)) {
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isTooCloseToMineralsOrGeyser(ConstructionBuildPositionFinder.building, position)) {
+        if (isTooCloseToMineralsOrGeyser(AtlantisPositionFinder.building, position)) {
             return false;
         }
 
