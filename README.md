@@ -42,4 +42,4 @@ To be explained and improved...
 Take a look at this site: http://sscaitournament.com/
 
 It's tournament for Starcraft bots that plays matches online 364/24/7. Pretty cool, eh?
-You will find there all info about participation and submission of your bot. 
+There you will find all infos about participation and submission of your bot. 

@@ -51,7 +51,7 @@ public class AtlantisGroupManager {
 
         // If no group exists, create main group
         if (groups.isEmpty()) {
-            Group unitGroup = Group.createNewGroup(null, Missions.defaultMission());
+            Group unitGroup = Group.createNewGroup(null, Missions.getInitialMission());
             groups.add(unitGroup);
         }
 

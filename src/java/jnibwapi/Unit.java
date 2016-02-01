@@ -1765,4 +1765,23 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         return getType().getGroundWeapon();
     }
 
+    /**
+     * Returns true if this unit is capable of attacking <b>otherUnit</b>. For example Zerglings can't
+     * attack flying targets and Corsairs can't attack ground targets.
+     * @param includeCooldown if true, then unit will be considered able to attack only if the cooldown
+     * after the last shot allows it
+     */
+    public boolean canAttackThisKindOfUnit(Unit otherUnit, boolean includeCooldown) {
+        
+        // Enemy is GROUND unit
+        if (otherUnit.isGroundUnit()) {
+            return canAttackGroundUnits() && (!includeCooldown || getGroundWeaponCooldown() == 0);
+        }
+        
+        // Enemy is AIR unit
+        else  {
+            return canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
+        }
+    }
+    
 }

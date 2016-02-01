@@ -5,13 +5,13 @@ import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
 public class AtlantisEnemyTargeting {
 
-    public static Unit defineEnemyToAttackFor(Unit unit) {
+    /**
+     * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
+     * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
+     */
+    public static Unit defineBestEnemyToAttackFor(Unit unit) {
         boolean canAttackGround = unit.canAttackGroundUnits();
         boolean canAttackAir = unit.canAttackAirUnits();
         Unit nearestEnemy = null;

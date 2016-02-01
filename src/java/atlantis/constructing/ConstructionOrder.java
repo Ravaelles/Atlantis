@@ -7,6 +7,9 @@ import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
 
+/**
+ * Represents construction of a building, including ones not yet started.
+ */
 public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     private static int _firstFreeId = 1;

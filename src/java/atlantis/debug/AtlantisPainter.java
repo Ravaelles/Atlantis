@@ -27,7 +27,7 @@ import jnibwapi.types.UnitType;
 import jnibwapi.util.BWColor;
 
 /**
- * Here you can include code that will draw things over units etc.
+ * Here you can include code that will draw extra informations over units etc.
  */
 public class AtlantisPainter {
 

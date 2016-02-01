@@ -1,4 +1,4 @@
-package bot;
+package main;
 
 import atlantis.Atlantis;
 
@@ -7,7 +7,7 @@ import atlantis.Atlantis;
  *
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
-public class AtlantisTide {
+public class Main {
 
     /**
      * Sets up Atlantis config and runs the bot.

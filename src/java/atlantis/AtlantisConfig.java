@@ -8,11 +8,14 @@ import jnibwapi.types.UnitType.UnitTypes;
 
 /**
  * This class is used to set up your Atlantis framework by providing some basic informations about your bot.
- * Example code:
+ * It's race-agnostic by definition.
+ * <br /><br />
+ * Feel free to analyze and adjust variables in this class.
+ * <br /><br />Example code:
  * <p>
  * <b> useConfigForTerran() </b>
  * </p>
- * or for other race you are playing.
+ * is used to load config for Terran.
  */
 public class AtlantisConfig {
 
@@ -33,7 +36,7 @@ public class AtlantisConfig {
     /**
      * If true, game will slow down on fighting, but normally it will run quicker.
      */
-    public static boolean USE_DYNAMIC_GAME_SPEED_SLOWDOWN = false;
+    public static boolean USE_DYNAMIC_GAME_SPEED_SLOWDOWN = true;
     
     /** 
      * Amount of game speed units to be used for dynamic game speed slowdown.
@@ -69,14 +72,14 @@ public class AtlantisConfig {
     public static int SCOUT_IS_NTH_WORKER = 7;
 
     // =========================================================
-    // Do not customize
+    // Do not customize - see methods "useConfigFor{Race}"
+    
     public static RaceType MY_RACE = null;
     public static UnitType BASE = null;
     public static UnitType WORKER = null;
     public static UnitType BARRACKS = null;
     public static UnitType SUPPLY = null;
     public static UnitType GAS_BUILDING = null;
-    
     private static AtlantisProductionStrategy productionStrategy;
 
     // =========================================================
@@ -128,7 +131,8 @@ public class AtlantisConfig {
     // =========================================================
     
     /**
-     * 
+     * This method could be used to overwrite user's race in bwapi.ini file.
+     * <b>CURRENTLY NOT IMPLEMENTED</b>.
      */
     private static void overrideBwapiIniRace(String raceString) {
         System.out.println("@NotImplemented overrideBwapiIniRace");
@@ -137,7 +141,7 @@ public class AtlantisConfig {
     }
     
     /**
-     * Makes sure all necessary variables are set (non-null).
+     * Makes sure all necessary AtlantisConfig variables are set (non-null).
      */
     protected static void validate() {
         validate("MY_RACE", MY_RACE);
@@ -150,12 +154,19 @@ public class AtlantisConfig {
     }
 
     // =========================================================
+    
+    /**
+     * Makes sure variable is non-null. If it's null, exits with a nice error.
+     */
     private static void validate(String title, Object variable) {
         if (variable == null) {
             error(title);
         }
     }
 
+    /**
+     * Display error and exit Java.
+     */
     private static void error(String title) {
         System.err.println("");
         System.err.println("#######################################");
@@ -173,6 +184,7 @@ public class AtlantisConfig {
 
     // =========================================================
     // Hi-level configs
+    
     /**
      * Pass an object that will be responsible for the production queue. See e.g. class named
      * DefaultTerranProductionStrategy.
