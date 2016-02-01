@@ -4,7 +4,7 @@ import atlantis.AtlantisGame;
 import atlantis.wrappers.SelectUnits;
 
 /**
- * All group missions allowed.
+ * Handles the global mission that is mission that affects the battle  group Alpha.
  */
 public class Missions {
     
@@ -19,18 +19,13 @@ public class Missions {
     public static final Mission ATTACK = new MissionAttack("Attack");
     
     // =========================================================
-
-    public static Mission defaultMission() {
-        return Missions.DEFEND;
-//        return Missions.ATTACK;
-    }
     
     /**
      * Takes care of current strategy.
      */
     public static void handleGlobalMission() {
         if (currentGlobalMission == null) {
-            currentGlobalMission = defaultMission();
+            currentGlobalMission = getInitialMission();
         }
         
         // =========================================================
@@ -49,6 +44,14 @@ public class Missions {
     
     // =========================================================
     
+    public static Mission getInitialMission() {
+        return Missions.DEFEND;
+//        return Missions.ATTACK;
+    }
+    
+    /**
+     * Defines how many military units we should have before pushing forward towards the enemy.
+     */
     private static int defineMinUnitsToForFirstAttack() {
         if (AtlantisGame.isEnemyProtoss()) {
             return 4;
@@ -63,6 +66,10 @@ public class Missions {
     
     // =========================================================
 
+    /**
+     * Global mission is the military stance that all non-special battle groups should follow and it
+     * should always correspond to the mission of our main Alpha battle group.
+     */
     public static Mission getCurrentGlobalMission() {
         return currentGlobalMission;
     }

@@ -7,6 +7,10 @@ import jnibwapi.BaseLocation;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 
+/**
+ * This is the mission object that is used by battle groups and it indicates that we should attack 
+ * the enemy at the <b>getFocusPoint</b>.
+ */
 public class MissionAttack extends Mission {
 
     public MissionAttack(String name) {
@@ -44,6 +48,7 @@ public class MissionAttack extends Mission {
 
     // =========================================================
     // =========================================================
+    
     /**
      * Do not interrupt unit if it is engaged in combat.
      */
@@ -56,6 +61,10 @@ public class MissionAttack extends Mission {
         return true;
     }
 
+    /**
+     * Returns the <b>position</b> (not the unit itself) where we should point our units to in hope 
+     * because as far as we know, the enemy is/can be there and it makes sense to attack in this region.
+     */
     public static Position getFocusPoint() {
 
         // Try going near enemy base
@@ -85,4 +94,5 @@ public class MissionAttack extends Mission {
         // Absolutely no enemy unit can be found
         return null;
     }
+
 }

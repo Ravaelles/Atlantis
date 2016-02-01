@@ -4,6 +4,9 @@ import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 
+/**
+ * Provides various useful infromation about the enemy whereabouts or if even know any enemy building.
+ */
 public class AtlantisEnemyInformationManager {
 
     /**

@@ -8,11 +8,14 @@ import jnibwapi.types.UnitType.UnitTypes;
 
 /**
  * This class is used to set up your Atlantis framework by providing some basic informations about your bot.
- * Example code:
+ * It's race-agnostic by definition.
+ * <br /><br />
+ * Feel free to analyze and adjust variables in this class.
+ * <br /><br />Example code:
  * <p>
  * <b> useConfigForTerran() </b>
  * </p>
- * or for other race you are playing.
+ * is used to load config for Terran.
  */
 public class AtlantisConfig {
 

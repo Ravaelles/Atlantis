@@ -12,7 +12,7 @@ import jnibwapi.Unit;
 import jnibwapi.types.RaceType;
 
 /**
- * Main bridge between the game and your code.
+ * Main bridge between the game and your code, build over JNIBWAPI.
  */
 public class Atlantis implements BWAPIEventListener {
 

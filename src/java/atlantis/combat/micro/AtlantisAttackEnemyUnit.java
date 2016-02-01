@@ -9,13 +9,12 @@ import jnibwapi.Unit;
 public class AtlantisAttackEnemyUnit {
 
     public static boolean handleAttackEnemyUnits(Unit unit) {
-        Unit enemyToAttack = AtlantisEnemyTargeting.defineEnemyToAttackFor(unit);
+        Unit enemyToAttack = AtlantisEnemyTargeting.defineBestEnemyToAttackFor(unit);
         
         // =========================================================
         
         // Nothing to attack
         if (enemyToAttack == null) {
-//            unit.setTooltip("No enemy");
             return false;
         }
         
@@ -24,25 +23,20 @@ public class AtlantisAttackEnemyUnit {
             return true;
         }
         
+        // Check if weapon cooldown allows to attack this enemy
+        if (unit.canAttackThisKindOfUnit(enemyToAttack, true)) {
+            return false;
+        } 
+        
         // =========================================================
         
-//        unit.setTooltip("-> " + enemyToAttack.getShortName() + "/" + unit.getLastUnitActionWasFramesAgo());
-        if (unit.getGroundWeaponCooldown() <= 0) {
-            if (!enemyToAttack.equals(unit.getTarget())) {
-//                unit.attack(enemyToAttack, false);
-                unit.attackUnit(enemyToAttack, false);
-//                unit.setTooltip("#" + enemyToAttack.getShortName() + "/" + (int) (unit.getLastUnitActionWasFramesAgo() / 30) + "#");
-            } 
-//            else {
-//                unit.setTooltip(">" + enemyToAttack.getShortName() + " " + unit.getLastUnitActionWasFramesAgo() + "ago<");
-//            }
+        // If we already are attacking this unit, do not issue double command.
+        if (!enemyToAttack.equals(unit.getTarget())) {
+            unit.attackUnit(enemyToAttack, false);
         } 
-//        else {
-//            unit.setTooltip("Attack " + unit.getLastUnitActionWasFramesAgo());
-//        }
+        
         unit.removeTooltip();
         return true;
     }
 
-    // =========================================================
 }

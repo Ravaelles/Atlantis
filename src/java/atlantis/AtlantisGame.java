@@ -11,11 +11,17 @@ import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UpgradeType;
 
+/**
+ * Represents various aspect of the game like time elapsed (in frames or approximated seconds),
+ * free supply (from our point of view), game speed, enemy player etc.<br />
+ * <br /><b>It's worth to study this class carefully as it contains some really useful methods.</b>
+ */
 public class AtlantisGame {
 
-    private static Player _enemy = null;
+    private static Player _enemy = null; // Cached enemy player
 
     // =========================================================
+    
     /**
      * Returns object that is responsible for the production queue.
      */
@@ -75,6 +81,7 @@ public class AtlantisGame {
     }
 
     // =========================================================
+    
     /**
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */
@@ -168,6 +175,7 @@ public class AtlantisGame {
 
     // =========================================================
     // Auxiliary
+    
     /**
      * Returns random int number from range [min, max], both inclusive.
      */

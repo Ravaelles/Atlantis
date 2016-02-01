@@ -15,11 +15,15 @@ import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
 import jnibwapi.types.UpgradeType;
 
+/**
+ * Represents abstract build orders read from the file.
+ */
 public abstract class AtlantisProductionStrategy {
 
     private static final String BUILD_ORDERS_PATH = "bwapi-data/read/build_orders/";
 
     // =========================================================
+    
     /**
      * Ordered list of production orders as initially read from the file. It never changes
      */
@@ -31,12 +35,9 @@ public abstract class AtlantisProductionStrategy {
      */
     private ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
 
-    // /**
-    // * Order list counter.
-    // */
-    // private int lastCounterInOrdersQueue = 0;
     // =========================================================
     // Constructor
+    
     public AtlantisProductionStrategy() {
         readBuildOrdersFile();
     }
@@ -83,6 +84,7 @@ public abstract class AtlantisProductionStrategy {
 
     // =========================================================
     // Public defined methods
+    
     /**
      * If new unit is created (it doesn't need to exist, it's enough that it's just started training) or your
      * unit is destroyed, we need to rebuild the production orders queue from the beginning (based on initial
@@ -240,20 +242,6 @@ public abstract class AtlantisProductionStrategy {
     }
 
     /**
-     * Returns true if we should produce this unit now.
-     */
-//    public boolean shouldProduceNow(UnitType type) {
-//        return getThingsToProduceRightNow(true).contains(type);
-//    }
-
-    /**
-     * Returns true if we should produce this upgrade now.
-     */
-//    public boolean shouldProduceNow(UpgradeType upgrade) {
-//        return getThingsToProduceRightNow(false).contains(upgrade);
-//    }
-
-    /**
      * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
      */
     public ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
@@ -278,6 +266,7 @@ public abstract class AtlantisProductionStrategy {
 
     // =========================================================
     // Private defined methods
+    
     /**
      * Populates <b>productionOrdersFromFile</b> with data from CSV file.
      */
@@ -452,6 +441,7 @@ public abstract class AtlantisProductionStrategy {
 
     // =========================================================
     // Special commands
+    
     /**
      * If the first character in column is # it means it's special command.
      */

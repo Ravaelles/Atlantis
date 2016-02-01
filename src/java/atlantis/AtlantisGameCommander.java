@@ -7,6 +7,9 @@ import atlantis.production.AtlantisProductionCommander;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.workers.AtlantisWorkerCommander;
 
+/**
+ * Top abstraction level entity that issues orders to all other modules (managers).
+ */
 public class AtlantisGameCommander {
 
     /**
