@@ -34,6 +34,9 @@ public class AtlantisConstructingManager {
      * it.
      */
     public static void requestConstructionOf(UnitType building, ProductionOrder order) {
+        if (building.isGasBuilding()) {
+            AtlantisGame.sendMessage(building.toString());
+        }
         
         // =========================================================
         // Validate

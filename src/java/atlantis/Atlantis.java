@@ -336,6 +336,39 @@ public class Atlantis implements BWAPIEventListener {
      */
     @Override
     public void unitMorph(int unitID) {
+        
+        // A bit of safe approach: forget the unit and remember it again.
+        
+        // =========================================================
+        // Forget unit
+        Unit unit = AtlantisUnitInformationManager.getUnitByID(unitID);
+
+        if (unit != null) {
+            AtlantisUnitInformationManager.unitDestroyed(unit);
+
+            // Our unit
+            if (unit.getPlayer().isSelf()) {
+                AtlantisGame.getProductionStrategy().rebuildQueue();
+                AtlantisGroupManager.battleUnitDestroyed(unit);
+            }
+            else if (unit.getPlayer().isEnemy()) {
+                AtlantisUnitInformationManager.discoveredEnemyUnit(unit);
+            }
+        }
+
+        // Forever forget this poor unit
+        AtlantisUnitInformationManager.forgetUnit(unitID);
+        
+        // =========================================================
+        // Remember the unit
+        if (unit != null) {
+
+            // Our unit
+            if (unit.getPlayer().isSelf() && !unit.isLarvaOrEgg()) {
+//                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
+                AtlantisGroupManager.possibleCombatUnitCreated(unit);
+            }
+        }
     }
 
     /**

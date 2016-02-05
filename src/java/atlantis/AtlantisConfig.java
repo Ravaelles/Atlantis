@@ -36,7 +36,7 @@ public class AtlantisConfig {
     /**
      * If true, game will slow down on fighting, but normally it will run quicker.
      */
-    public static boolean USE_DYNAMIC_GAME_SPEED_SLOWDOWN = true;
+    public static boolean USE_DYNAMIC_GAME_SPEED_SLOWDOWN = false;
     
     /** 
      * Amount of game speed units to be used for dynamic game speed slowdown.

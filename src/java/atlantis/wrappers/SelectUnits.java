@@ -13,7 +13,7 @@ import jnibwapi.types.UnitType.UnitTypes;
  * This class allows to easily select units e.g. to select one of your Marines, nearest to given location, you
  * would run:<br />
  * <p>
- * <b> SelectUnits.our().ofType(UnitTypes.Terran_Marine).nearestTo(somePlace) </b>
+ * <b> SelectUnits.our().ofType(UnitTypes.Terran_Marine).nearestTo(SelectUnits.mainBase()) </b>
  * </p>
  * It uses nice flow and every next method filters out units that do not fulfill certain conditions.<br />
  * Unless clearly specified otherwise, this class returns <b>ONLY COMPLETED</b> units.
@@ -512,6 +512,22 @@ public class SelectUnits {
     }
 
     /**
+     * Selects all of our Marines, Firebats, Ghosts and Medics.
+     */
+    public static SelectUnits ourTerranInfantry() {
+        return our().ofType(UnitType.UnitTypes.Terran_Marine, UnitType.UnitTypes.Terran_Medic,
+                    UnitType.UnitTypes.Terran_Firebat, UnitType.UnitTypes.Terran_Ghost);
+    }
+
+    /**
+     * Selects all of our Marines, Firebats, Ghosts.
+     */
+    public static SelectUnits ourTerranInfantryWithoutMedics() {
+        return our().ofType(UnitType.UnitTypes.Terran_Marine,
+                    UnitType.UnitTypes.Terran_Firebat, UnitType.UnitTypes.Terran_Ghost);
+    }
+
+    /**
      * Selects all of our Zerg Larvas.
      */
     public static SelectUnits ourLarva() {
@@ -590,6 +606,13 @@ public class SelectUnits {
         }
         return null;
     }
+    
+    /**
+     * Returns nearest enemy to the given position (or unit).
+     */
+    public static Unit nearestEnemy(Position position) {
+        return SelectUnits.enemy().nearestTo(position);
+    }
 
     // =========================================================
     // Auxiliary methods
@@ -605,6 +628,13 @@ public class SelectUnits {
      */
     public Unit first() {
         return units.isEmpty() ? null : units.first();
+    }
+
+    /**
+     * Returns random unit that matches previous conditions or null if no units matched all conditions.
+     */
+    public Unit random() {
+        return units.random();
     }
 
     // =========================================================

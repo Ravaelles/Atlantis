@@ -11,6 +11,8 @@ import jnibwapi.types.UnitType;
 import jnibwapi.types.UnitType.UnitTypes;
 
 public abstract class AbstractPositionFinder {
+    
+    protected static String _CONDITION_THAT_FAILED = null;
 
     // =========================================================
     // Hi-level methods
@@ -39,7 +41,7 @@ public abstract class AbstractPositionFinder {
         for (Unit otherBuilding : SelectUnits.ourBuildings().list()) {
             int status = areTwoBuildingsTooClose(otherBuilding, position, building);
             if (status >= STATUS_BUILDINGS_ADDON_COLLIDE) {
-                ZergPositionFinder._CONDITION_THAT_FAILED = "BUILDING TOO CLOSE (" + otherBuilding + ")";
+                AbstractPositionFinder._CONDITION_THAT_FAILED = "BUILDING TOO CLOSE (" + otherBuilding + ")";
                 return true;
             }
         }
@@ -51,7 +53,7 @@ public abstract class AbstractPositionFinder {
                 if (constructionOrder.getPositionToBuild() != null) {
                     double distance = constructionOrder.getPositionToBuild().distanceTo(position);
                     if (distance <= 4) {
-                        ZergPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
+                        AbstractPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
                                 + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
                         return true;
                     }
@@ -78,6 +80,9 @@ public abstract class AbstractPositionFinder {
             // Allow stacking of depots
             if (building.isType(UnitTypes.Terran_Supply_Depot) && otherBuilding.isType(UnitTypes.Terran_Supply_Depot)) {
                 return STATUS_BUILDINGS_STICK;
+            }
+            else {
+                return STATUS_BUILDINGS_ADDON_COLLIDE;
             }
         }
 

@@ -260,4 +260,14 @@ public class AtlantisGame {
         return hasMinerals(minerals) && hasGas(gas);
     }
 
+    // =========================================================
+    // Utility
+    
+    /**
+     * Sends in-game message that will be visible by other players.
+     */
+    public static void sendMessage(String message) {
+        getBwapi().sendText(message);
+    }
+    
 }

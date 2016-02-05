@@ -1077,7 +1077,7 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
             return false; // Ignore this command request
         }
 
-        setTooltip("Attack position");
+        setTooltip("Forward!");
 
         return bwapi.issueCommand(new UnitCommand(this, UnitCommandTypes.Attack_Move, p, queued));
     }
@@ -1403,7 +1403,7 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         Position newPosition = new Position(getPX() - dx, getPY() - dy, PosType.PIXEL);
 
         move(newPosition, false);
-        setTooltip("Move away");
+        setTooltip("Run");
     }
 
     public static Unit getByID(int unitID) {
@@ -1568,7 +1568,6 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
         }
 
         if (nearestEnemy == null) {
-            System.err.println("Run: whatta hell: " + nearestEnemy);
             return false;
         } else {
             return running.runFrom(nearestEnemy);
@@ -1749,7 +1748,7 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
     }
 
     public double getCombatEvalCachedValueIfNotExpired() {
-        if (AtlantisGame.getTimeFrames() == _lastTimeCombatEval) {
+        if (AtlantisGame.getTimeFrames() <= _lastTimeCombatEval) {
             return _lastCombatEval;
         }
         else {

@@ -192,8 +192,21 @@ public class AtlantisPainter {
             // =========================================================
             // === Combat Evaluation Strength
             // =========================================================
-            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 3) {
-                String combatStrength = AtlantisCombatEvaluator.getEvalString(unit);
+            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 10) {
+                double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+                if (eval < 999) {
+                    String combatStrength = eval >= 10 ? (BWColor.getColorString(BWColor.Green) + "++") : 
+                            AtlantisCombatEvaluator.getEvalString(unit);
+                    paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), combatStrength, null);
+                }
+            }
+        }
+        
+        for (Unit unit : SelectUnits.enemy().combatUnits().list()) {
+            double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+            if (eval < 999) {
+                String combatStrength = eval >= 10 ? (BWColor.getColorString(BWColor.Green) + "++") : 
+                        AtlantisCombatEvaluator.getEvalString(unit);
                 paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), combatStrength, null);
             }
         }
@@ -556,7 +569,8 @@ public class AtlantisPainter {
             
             // Paint "x" on every unit that has been targetted by one of our units.
             if (ourUnit.isAttacking() && ourUnit.getTarget() != null) {
-                paintMessage("X", BWColor.Red, ourUnit.getTarget().getPX(), ourUnit.getTarget().getPY(), false);
+//                paintMessage("X", BWColor.Red, ourUnit.getTarget().getPX(), ourUnit.getTarget().getPY(), false);
+                paintLine(ourUnit, ourUnit.getTarget(), BWColor.Red);
             }
         }
     }

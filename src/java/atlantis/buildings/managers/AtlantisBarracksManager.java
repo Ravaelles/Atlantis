@@ -2,6 +2,7 @@ package atlantis.buildings.managers;
 
 import atlantis.AtlantisGame;
 import atlantis.production.ProductionOrder;
+import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
@@ -10,13 +11,16 @@ import jnibwapi.types.UnitType.UnitTypes;
 public class AtlantisBarracksManager {
 
     public static void update(Unit barracks) {
-        if (shouldBuildArmyUnits(barracks)) {
-            buildUnit(barracks);
+        if (shouldTrainUnit(barracks)) {
+            if (hasEmptySlot(barracks)) {
+                buildUnit(barracks);
+            }
         }
     }
 
     // =========================================================
-    private static boolean shouldBuildArmyUnits(Unit barracks) {
+    
+    private static boolean shouldTrainUnit(Unit barracks) {
 
         // Plays as TERRAN
         if (AtlantisGame.playsAsTerran()) {
@@ -53,6 +57,7 @@ public class AtlantisBarracksManager {
     }
 
     // =========================================================
+    
     private static void buildUnit(Unit barracks) {
         UnitType unitToBuild = defineUnitToBuild(barracks);
         if (unitToBuild != null) {
@@ -62,6 +67,15 @@ public class AtlantisBarracksManager {
 
     private static UnitType defineUnitToBuild(Unit barracks) {
         return UnitTypes.Terran_Marine;
+    }
+
+    private static boolean hasEmptySlot(Unit barracks) {
+        if (AtlantisGame.playsAsZerg()) {
+            return SelectUnits.ourLarva().count() > 0;
+        }
+        else {
+            return barracks.getTrainingQueueSize() == 0;
+        }
     }
 
 }
