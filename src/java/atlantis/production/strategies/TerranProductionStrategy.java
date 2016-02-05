@@ -2,6 +2,7 @@ package atlantis.production.strategies;
 
 import atlantis.AtlantisConfig;
 import atlantis.wrappers.SelectUnits;
+import com.sun.javafx.css.SizeUnits;
 import java.util.ArrayList;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
@@ -32,8 +33,16 @@ public class TerranProductionStrategy extends AtlantisProductionStrategy {
     @Override
     public ArrayList<UnitType> produceWhenNoProductionOrders() {
         ArrayList<UnitType> units = new ArrayList<>();
-        units.add(UnitType.UnitTypes.Terran_Marine);
-        units.add(UnitType.UnitTypes.Terran_Medic);
+        
+        int marines = SelectUnits.our().countUnitsOfType(UnitType.UnitTypes.Terran_Marine);
+        int medics = SelectUnits.our().countUnitsOfType(UnitType.UnitTypes.Terran_Medic);
+        
+        if ((double) marines / medics < 3) {
+            units.add(UnitType.UnitTypes.Terran_Marine);
+        }
+        else {
+            units.add(UnitType.UnitTypes.Terran_Medic);
+        }
         return units;
     }
 

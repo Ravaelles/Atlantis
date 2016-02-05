@@ -1,7 +1,9 @@
 package atlantis.combat.group.missions;
 
 import atlantis.AtlantisGame;
+import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.wrappers.SelectUnits;
+import jnibwapi.types.UnitType;
 
 /**
  * Handles the global mission that is mission that affects the battle  group Alpha.
@@ -32,6 +34,11 @@ public class Missions {
         
         if (currentGlobalMission == Missions.DEFEND) {
             if (SelectUnits.ourCombatUnits().count() >= defineMinUnitsToForFirstAttack()) {
+//                if (AtlantisGame.playsAsTerran()) {
+//                    if (SelectUnits.our().countUnitsOfType(UnitType.UnitTypes.Terran_Medic) < 4) {
+//                        return;
+//                    }
+//                }
                 currentGlobalMission = Missions.ATTACK;
             }
         }
@@ -57,10 +64,10 @@ public class Missions {
             return 4;
         }
         else if (AtlantisGame.isEnemyTerran()) {
-            return 9;
+            return 1;
         }
         else {
-            return 9;
+            return 2;
         }
     }
     

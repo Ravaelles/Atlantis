@@ -10,10 +10,6 @@ import atlantis.debug.AtlantisPainter;
 
 public class ZergPositionFinder extends AbstractPositionFinder {
     
-    protected static String _CONDITION_THAT_FAILED = null;
-    
-    // =========================================================
-
     /**
      * Returns best position for given <b>building</b>, maximum <b>maxDistance</b> build tiles from
      * <b>nearTo</b>

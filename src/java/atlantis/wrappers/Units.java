@@ -58,10 +58,23 @@ public class Units {
         return units.isEmpty() && (unitValues == null || unitValues.isEmpty());
     }
 
+    /**
+     * Returns first unit from the set.
+     */
     public Unit first() {
         return isEmpty() ? null : units.get(0);
     }
 
+    /**
+     * Returns random unit from the set.
+     */
+    public Unit random() {
+        return (Unit) RUtilities.getRandomElement(units);
+    }
+    
+    /**
+     * Returns unit with <b>N</b>-th index.
+     */
     public Unit get(int index) {
         return units.get(index);
     }
@@ -88,17 +101,27 @@ public class Units {
      * after sorting first unit will be the one closest to given position.
      */
     public Units sortByDistanceTo(final Position position, final boolean nearestFirst) {
-        Collections.sort(units, new Comparator<Object>() {
+        if (position == null) {
+            return null;
+        }
+        
+        Collections.sort(units, new Comparator<Position>() {
             @Override
-            public int compare(Object u1, Object u2) {
-                if (u1 == null || !(u1 instanceof Unit)) {
+            public int compare(Position p1, Position p2) {
+                if (p1 == null || !(p1 instanceof Position)) {
                     return -1;
                 }
-                if (u2 == null || !(u2 instanceof Unit)) {
+                if (p2 == null || !(p2 instanceof Position)) {
                     return 1;
                 }
-                return position.distanceTo((Unit) u1) < position.distanceTo((Unit) u2) ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1
-                        : -1);
+                double distance1 = position.distanceTo(p1);
+                double distance2 = position.distanceTo(p2);
+                if (distance1 == distance2) {
+                    return 0;
+                }
+                else {
+                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
+                }
             }
         });
 

@@ -16,29 +16,38 @@ public abstract class MicroManager {
     // =========================================================
 
     /**
-     * If chances to win the skirmish with the nearby enemy units aren't favorable, safely retreat.
+     * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
     protected boolean handleUnfavorableOdds(Unit unit) {
+        
+        // If situation is unfavorable, retreat
         if (!AtlantisCombatEvaluator.isSituationFavorable(unit)) {
             if (unit.isJustShooting()) {
                 return true;
             }
-
-            return AtlantisRunManager.run(unit);
+            else {
+                return AtlantisRunManager.run(unit);
+            }
         }
 
-        AtlantisRunManager.unitWantsStopRunning(unit);
+        // If unit is running, allow it to stop running only if chances are quite favorable
+        if (unit.isRunning() && AtlantisCombatEvaluator.evaluateSituation(unit) >= 0.3) {
+            AtlantisRunManager.unitWantsStopRunning(unit);
+        }
+        
         return false;
     }
 
     /**
-     *
+     * If combat evaluator tells us that the potential skirmish with nearby enemies wouldn't result in 
+     * decisive victory either retreat or stand where you are.
      */
     protected boolean handleNotExtremelyFavorableOdds(Unit unit) {
         if (!AtlantisCombatEvaluator.isSituationExtremelyFavorable(unit)) {
             if (isInShootRangeOfAnyEnemyUnit(unit)) {
-                unit.moveAwayFrom(_nearestEnemyThatCanShootAtThisUnit, 2);
-                return true;
+//                unit.moveAwayFrom(_nearestEnemyThatCanShootAtThisUnit, 2);
+//                return true;
+                return AtlantisRunManager.run(unit);
             }
         }
         
@@ -49,13 +58,23 @@ public abstract class MicroManager {
      * If unit is severly wounded, it should run.
      */
     protected boolean handleLowHealthIfNeeded(Unit unit) {
-        if (unit.getHP() <= 11) {
-            return AtlantisRunManager.run(unit);
+        Unit nearestEnemy = SelectUnits.nearestEnemy(unit);
+        if (nearestEnemy == null || nearestEnemy.distanceTo(unit) > 6) {
+            return false;
+        }
+        
+        if (unit.getHP() <= 16 || unit.getHPPercent() < 30) {
+            if (SelectUnits.ourCombatUnits().inRadius(4, unit).count() <= 6) {
+                return AtlantisRunManager.run(unit);
+            }
         }
 
         return false;
     }
 
+    /**
+     * @return <b>true</b> if any of the enemy units can shoot at this unit.
+     */
     private boolean isInShootRangeOfAnyEnemyUnit(Unit unit) {
         for (Unit enemy : SelectUnits.enemy().combatUnits().inRadius(12, unit).list()) {
             WeaponType enemyWeapon = (unit.isAirUnit() ? enemy.getAirWeapon() : enemy.getGroundWeapon());

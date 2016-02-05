@@ -22,10 +22,14 @@ public class AtlantisBuildingsCommander {
                 continue;
             }
 
+            // =========================================================
             // BASE (Command Center / Nexus / Hatchery / Lair / Hive)
             if (building.isBase()) {
                 AtlantisBaseManager.update(building);
-            } // BARRACKS (Barracks, Gateway, Spawning Pool)
+            } 
+
+            // =========================================================
+            // BARRACKS (Barracks, Gateway, Spawning Pool)
             else if (building.isType(AtlantisConfig.BARRACKS)) {
                 AtlantisBarracksManager.update(building);
             }

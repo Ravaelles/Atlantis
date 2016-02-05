@@ -55,6 +55,12 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
     private static boolean doesPositionFulfillAllConditions(Unit builder, Position position) {
+        if (builder == null) {
+            return false;
+        }
+        if (position == null) {
+            return false;
+        }
 
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
         if (!canPhysicallyBuildHere(builder, AtlantisPositionFinder.building, position)) {

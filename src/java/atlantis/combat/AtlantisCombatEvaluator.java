@@ -17,7 +17,17 @@ public class AtlantisCombatEvaluator {
     /**
      * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
      */
-    private static double SAFETY_MARGIN = 0.11;
+    private static double SAFETY_MARGIN = 0.03;
+    
+    /**
+     * Multiplier for hit points factor when evaluating unit's combat value.
+     */
+    private static double EVAL_HIT_POINTS_FACTOR = 0.2;
+    
+    /**
+     * Multiplier for damage factor when evaluating unit's combat value.
+     */
+    private static double EVAL_DAMAGE_FACTOR = 1.0;
 
     // =========================================================
     
@@ -26,15 +36,17 @@ public class AtlantisCombatEvaluator {
      * <b>FALSE</b> if enemy is too strong and we should pull back.
      */
     public static boolean isSituationFavorable(Unit unit) {
-        Unit mainBase = SelectUnits.mainBase();
-        if (mainBase != null) {
-            if (mainBase.distanceTo(unit) < 20) {
-                return true;
-            }
+        Unit nearestEnemy = SelectUnits.enemy().nearestTo(unit);
+        
+        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysFight(unit, nearestEnemy)) {
+            return true;
         }
         
-        return true;
-//        return evaluateSituation(unit) >= calculateSafetyMarginOverTime();
+        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
+            return false;
+        }
+        
+        return evaluateSituation(unit) >= calculateSafetyMarginOverTime();
     }
     
     /**
@@ -43,11 +55,10 @@ public class AtlantisCombatEvaluator {
      * <b>FALSE</b> if enemy is too strong and we should pull back.
      */
     public static boolean isSituationExtremelyFavorable(Unit unit) {
-        Unit mainBase = SelectUnits.mainBase();
-        if (mainBase != null) {
-            if (mainBase.distanceTo(unit) < 15) {
-                return true;
-            }
+        Unit nearestEnemy = SelectUnits.enemy().nearestTo(unit);
+        
+        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
+            return false;
         }
         
         return evaluateSituation(unit) >= calculateSafetyMarginOverTime() + 0.5;
@@ -59,12 +70,10 @@ public class AtlantisCombatEvaluator {
      */
     public static double evaluateSituation(Unit unit) {
         
-        // =========================================================
         // Try using cached value
-        
         double combatEvalCachedValueIfNotExpired = unit.getCombatEvalCachedValueIfNotExpired();
-        if ((int) combatEvalCachedValueIfNotExpired != -123456) {
-            return combatEvalCachedValueIfNotExpired;
+        if (combatEvalCachedValueIfNotExpired > -12345) {
+            return updateCombatEval(unit, combatEvalCachedValueIfNotExpired);
         }
         
         // =========================================================
@@ -72,19 +81,19 @@ public class AtlantisCombatEvaluator {
         
         Collection<Unit> enemyUnits = SelectUnits.enemy().combatUnits().inRadius(12, unit).list();
         if (enemyUnits.isEmpty()) {
-            return +999;
+            return updateCombatEval(unit, +999);
         }
-        Collection<Unit> ourUnits = SelectUnits.our().combatUnits().inRadius(10, unit).list();
+        Collection<Unit> ourUnits = SelectUnits.our().combatUnits().inRadius(8.5, unit).list();
         
         // =========================================================
         // Evaluate our and enemy strength
 
         double enemyEvaluation = evaluateUnitsAgainstUnit(enemyUnits, unit, true);
         double ourEvaluation = evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
-        double eval = ourEvaluation / enemyEvaluation - 1;
-        unit.updateCombatEval(eval);
+        double lowHealthPenalty = (100 - unit.getHPPercent()) / 80;
+        double combatEval = ourEvaluation / enemyEvaluation - 1 - lowHealthPenalty;
         
-        return eval;
+        return updateCombatEval(unit, combatEval);
     }
     
     // =========================================================
@@ -168,18 +177,12 @@ public class AtlantisCombatEvaluator {
         double damage = (againstUnit.isGroundUnit() ? 
                 evaluateType.getGroundWeapon().getDamageNormalized() : 
                 evaluateType.getAirWeapon().getDamageNormalized());
-        double total = hp / 5 + damage;
+        double total = hp * EVAL_HIT_POINTS_FACTOR + damage * EVAL_DAMAGE_FACTOR;
         
         // =========================================================
-        // Diminish role of NON-SHOOTING units
-        if (damage == 0 && !evaluateType.isTerranInfantry()) {
+        // Deminish role of NON-SHOOTING units
+        if (damage == 0 && !evaluateType.isMedic()) {
             total /= 15;
-        }
-        
-        // =========================================================
-        // Diminish role of WORKERS
-        if (evaluateType.isWorker()) {
-            total /= 4;
         }
         
         return total;
@@ -208,6 +211,14 @@ public class AtlantisCombatEvaluator {
 
             return string;
         }
+    }
+
+    /**
+     * Returns combat eval and caches it for the time of several frames.
+     */
+    private static double updateCombatEval(Unit unit, double combatEval) {
+        unit.updateCombatEval(combatEval);
+        return combatEval;
     }
 
 }

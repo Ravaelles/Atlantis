@@ -32,24 +32,30 @@ Number;Name;Modifier
 6;SCV
 7;SCV
 8;SCV
-8;Barracks
+1;Barracks
 9;SCV
 10;SCV
 10;Supply Depot
 12;Marine
-1;Bunker
+2;Barracks
+//1;Bunker
 14;Marine
 14;Marine
 14;Marine
-15;Marine
-16;Refinery
-18;Academy
-19;Marine
 11;Barracks
+15;Marine
+1;Refinery
+18;Academy
+14;Marine
 20;Medic
-20;U 238 Shells
+20;Medic
+20;Medic
 14;Marine
 21;Barracks
 14;Marine
+20;Medic
+20;U 238 Shells
 14;Marine
+20;Medic
+1;Engineering Bay
 2;Command Center

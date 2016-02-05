@@ -1,76 +1,18 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.micro.terran.TerranMedic;
-import atlantis.wrappers.SelectUnits;
 import jnibwapi.Unit;
-import jnibwapi.types.UnitType.UnitTypes;
 
 public class DefaultRangedManager extends MicroRangedManager {
 
     @Override
     public boolean update(Unit unit) {
-        if (canIssueOrderToUnit(unit)) {
-
-            // SPECIAL UNIT TYPE action
-            if (unit.isType(UnitTypes.Terran_Medic)) {
-                TerranMedic.update(unit);
-//                if (MicroMedic.update(unit)) {
-//                    return;
-//                }
-                return true;
-            }
-
-            // =========================================================
-            // STANDARD actions
-            Unit nearestEnemy = SelectUnits.enemyRealUnits().nearestTo(unit);
-            if (nearestEnemy == null) {
-                nearestEnemy = SelectUnits.enemy().nearestTo(unit);
-            }
-
-//            if (nearestEnemy != null && nearestEnemy.distanceTo(unit) <= 20) {
-            if (nearestEnemy != null) {
-
-                // If anything "ours" is close to enemy, proceed
-//                Unit nearestOurUnitToThisEnemy = SelectUnits.our().nearestTo(nearestEnemy);
-//                if (nearestOurUnitToThisEnemy == null || nearestOurUnitToThisEnemy.distanceTo(nearestEnemy) > 12) {
-//                    return;
-//                }
-//                 && nearestEnemy.distanceTo(unit)
-                // double distToEnemy = nearestEnemy.distanceTo(unit);
-                // double distToMainBase = unit.distanceTo(SelectUnits.mainBase());
-                // double enemyDistToDefendedPosition = nearestEnemy.distanceTo(SelectUnits.mainBase());
-                //
-                // // If unit has mission defend, don't attack close targets if further than X
-                // if (unit.getGroup().getMission().equals(Missions.DEFEND)) {
-                // boolean enemyVeryFarFromBase = enemyDistToDefendedPosition > 20
-                // && nearestEnemy.distanceGroundTo(SelectUnits.mainBase()) > 30;
-                // if (enemyVeryFarFromBase) {
-                // return;
-                // }
-                //
-                // }
-                // // Run from the enemy
-                // if (distToEnemy < 0.8 && unit.getHitPoints() < 30) {
-                // unit.runFrom(nearestEnemy);
-                // }
-                //
-                // // Pursue and attack the enemy
-                // else {
-                // if (distToEnemy > unit.getShootRangeAgainst(nearestEnemy)) {
-                if (unit.getGroundWeaponCooldown() == 0) {
-                    unit.attackUnit(nearestEnemy, false);
-                    return true;
-                }
-                // }
-                // }
-            }
-        }
+        System.err.println("##########################################");
+        System.err.println("## Currently this is inactive ############");
+        System.err.println("## Class: DefaultMeleeManager ############");
+        System.err.println("## is the only active micro manager ######");
+        System.err.println("##########################################");
+        System.exit(-1);
         return false;
-    }
-
-    // =========================================================
-    private boolean canIssueOrderToUnit(Unit unit) {
-        return !unit.isAttacking() && !unit.isStartingAttack() && !unit.isAttackFrame();
     }
 
 }

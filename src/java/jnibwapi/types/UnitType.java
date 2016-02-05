@@ -814,6 +814,10 @@ public class UnitType implements Comparable<UnitType> {
         return isType(UnitTypes.Terran_Marine, UnitTypes.Terran_Medic, UnitTypes.Terran_Firebat, UnitTypes.Terran_Ghost);
     }
 
+    public boolean isMedic() {
+        return isType(UnitTypes.Terran_Medic);
+    }
+
     public boolean isGasBuilding() {
         return isType(UnitTypes.Terran_Refinery, UnitTypes.Protoss_Assimilator, UnitTypes.Zerg_Extractor);
     }

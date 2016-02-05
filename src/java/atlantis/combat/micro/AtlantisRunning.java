@@ -2,6 +2,7 @@ package atlantis.combat.micro;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
+import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.information.AtlantisMap;
 import atlantis.wrappers.SelectUnits;
 import java.util.Collection;
@@ -32,40 +33,99 @@ public class AtlantisRunning {
      * Indicates that this unit should be running from given enemy unit.
      */
     public boolean runFrom(Unit nearestEnemy) {
-//        int dx = 3 * (nearestEnemy.getPX() - unit.getPX());
-//        int dy = 3 * (nearestEnemy.getPY() - unit.getPY());
+        
+        // Define position to run to
         nextPositionToRunTo = getPositionAwayFrom(unit, nearestEnemy);
+        
+        // Remember the last time of the decision
+        if (nextPositionToRunTo != null) {
+            lastRunTime = AtlantisGame.getTimeFrames();
+        }
+        
+        // =========================================================
+        // Update tooltip
+        
+        if (nextPositionToRunTo != null) {
+            updateRunTooltip();
+        }
+        else {
+            unit.removeTooltip();
+        }
+        
+        // =========================================================
 
+        // Make unit run to the selected position
         if (nextPositionToRunTo != null && !nextPositionToRunTo.equals((Position) unit)) {
             unit.move(nextPositionToRunTo, false);
-            lastRunTime = AtlantisGame.getTimeFrames();
+            updateRunTooltip();
             
-            unit.setTooltip("Run " + String.format("%.1f", nextPositionToRunTo.distanceTo(unit)));
-            notifyOurUnitsAroundToRunAsWell(unit, nearestEnemy);
+            // If this is massive retreat, make all other units run as well
+            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 0.2) {
+                notifyOurUnitsAroundToRunAsWell(unit, nearestEnemy);
+            }
             
             return true;
         }
         
         return false;
     }
-    
-    private void notifyOurUnitsAroundToRunAsWell(Unit ourUnit, Unit nearestEnemy) {
-        
-        // Get all of our units that are close to this unit
-        Collection<Unit> ourUnitsNearby = SelectUnits.our().inRadius(0.8, ourUnit).list();
-        
-        // Tell them to run as well, not to block our escape route
-        for (Unit ourOtherUnit : ourUnitsNearby) {
-            if (!ourOtherUnit.isRunning()) {
-                ourOtherUnit.runFrom(nearestEnemy);
-            }
-        }
-    }
 
+    /**
+     *
+     */
     public static Position getPositionAwayFrom(Unit unit, Position runAwayFrom) {
         if (unit == null || runAwayFrom == null) {
             return null;
         }
+        
+//        if (AtlantisGame.getTimeSeconds() <= 350) {
+            return findPositionToRun_preferMainBase(unit, runAwayFrom);
+//        }
+//        else {
+//            return findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
+//        }
+    }
+
+    /**
+     * Every unit that is relatively close to the unit that wants to run, should run as well, otherwise
+     * it might block the escape route.
+     */
+    private void notifyOurUnitsAroundToRunAsWell(Unit ourUnit, Unit nearestEnemy) {
+        
+        // Get all of our units that are close to this unit
+        Collection<Unit> ourUnitsNearby = SelectUnits.our().inRadius(1.5, ourUnit).list();
+        
+        // Tell them to run as well, not to block our escape route
+        for (Unit ourOtherUnit : ourUnitsNearby) {
+            if (!ourOtherUnit.isRunning()) {
+                ourOtherUnit.runFrom(null);
+//                ourOtherUnit.runFrom(nearestEnemy);
+            }
+        }
+    }
+    
+    // =========================================================
+    // Find position to run away
+    
+    /**
+     * Running behavior which will make unit run toward main base.
+     */
+    private static Position findPositionToRun_preferMainBase(Unit unit, Position runAwayFrom) {
+        Unit mainBase = SelectUnits.mainBase();
+        if (mainBase != null) {
+            if (mainBase.distanceTo(unit) > 5) {
+                return mainBase;
+//                return mainBase.translated(0, 3 * 64);
+            }
+        }
+        
+        return findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
+    }
+    
+    /**
+     * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
+     */
+    private static Position findPositionToRun_dontPreferMainBase(Unit unit, Position runAwayFrom) {
         int howManyTiles = 6;
         int maxTiles = 9;
         Position runTo = null;
@@ -87,12 +147,9 @@ public class AtlantisRunning {
                     (int) (unit.getPY() - ratio * yDirectionToUnit)
             );
             
-//            );
-//            return runTo;
-            
-            if (howManyTiles >= 8) {
+//            if (howManyTiles >= 8) {
                 runTo = runTo.makeValid();
-            }
+//            }
 
             if (Atlantis.getBwapi().isBuildable(runTo, true) && unit.hasPathTo(runTo)
                     & Atlantis.getBwapi().hasPath(unit, runTo)
@@ -114,7 +171,7 @@ public class AtlantisRunning {
         
         return SelectUnits.mainBase();
     }
-
+    
     // =========================================================
     // Stop running
     
@@ -145,6 +202,12 @@ public class AtlantisRunning {
 
     public int getTimeSinceLastRun() {
         return AtlantisGame.getTimeFrames() - lastRunTime;
+    }
+
+    private void updateRunTooltip() {
+        String runTimer = String.format("%.1f", 
+                    ((double) AtlantisRunManager.getHowManyFramesUnitShouldStillBeRunning(unit) / 30));
+        unit.setTooltip("Run " + runTimer + "s");
     }
     
 }

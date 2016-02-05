@@ -150,7 +150,7 @@ public class AtlantisUnitInformationManager {
      */
     public static int countOurBases() {
         int total = 0;
-        for (Unit unit : allUnits) {
+        for (Unit unit : SelectUnits.our().list()) {
             if (unit.isBase()) {
                 total++;
             }

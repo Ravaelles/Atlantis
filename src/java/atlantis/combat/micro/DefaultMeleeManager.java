@@ -9,6 +9,9 @@ import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType.UnitTypes;
 
+/**
+ * Default micro manager that will be used for all melee units.
+ */
 public class DefaultMeleeManager extends MicroMeleeManager {
 
     @Override
@@ -32,9 +35,9 @@ public class DefaultMeleeManager extends MicroMeleeManager {
             if (handleUnfavorableOdds(unit)) {
                 return true;
             }
-            if (handleNotExtremelyFavorableOdds(unit)) {
-                return true;
-            }
+//            if (handleNotExtremelyFavorableOdds(unit)) {
+//                return true;
+//            }
 
             // =========================================================
             // Don't spread too much
@@ -44,7 +47,15 @@ public class DefaultMeleeManager extends MicroMeleeManager {
 
             // =========================================================
             // Attack enemy is possible
-            return AtlantisAttackEnemyUnit.handleAttackEnemyUnits(unit);
+            if (AtlantisAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+                return true;
+            }
+            
+            // =========================================================
+            // False: Did not use micro-manager, allow mission behavior
+            // True: Do not allow mission manager to handle this unit
+            boolean canGiveCommandToMissionManager = unit.getGroundWeaponCooldown() > 0;
+            return canGiveCommandToMissionManager;
         } 
 
         // =========================================================
@@ -57,10 +68,18 @@ public class DefaultMeleeManager extends MicroMeleeManager {
 
     // =========================================================
     
+    /**
+     * @return <b>true</b> if unit can be given order<br />
+     * <b>false</b> if unit is in the shooting frame or does any other thing that mustn't be interrupted
+     */
     private boolean canIssueOrderToUnit(Unit unit) {
         return !unit.isJustShooting();
     }
 
+    /**
+     * There are special units like Terran Marines, Zerg Overlords that should be following different
+     * behavior than standard combat units.
+     */
     private boolean handleSpecialUnit(Unit unit) {
         
         // ZERG
@@ -82,6 +101,9 @@ public class DefaultMeleeManager extends MicroMeleeManager {
         return false;
     }
 
+    /**
+     * If e.g. Terran Marine stands too far forward, it makes him vulnerable. Make him go back.
+     */
     private boolean handleDontSpreadTooMuch(Unit unit) {
         Units ourForcesNearby = SelectUnits.ourCombatUnits().inRadius(7, unit).exclude(unit).units();
         Position goTo = null;

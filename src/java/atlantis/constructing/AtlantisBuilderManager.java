@@ -23,6 +23,7 @@ public class AtlantisBuilderManager {
     }
 
     // =========================================================
+    
     private static void handleConstruction(Unit builder) {
         ConstructionOrder constructionOrder = AtlantisConstructingManager.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
@@ -52,7 +53,7 @@ public class AtlantisBuilderManager {
         }
         if (buildPosition == null) {
 //            throw new RuntimeException("buildPosition empty");
-            System.err.println("buildPosition is null");
+            System.err.println("buildPosition is null (travelToConstruct " + buildingType + ")");
             constructionOrder.cancel();
             return;
         }
