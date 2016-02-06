@@ -61,7 +61,6 @@ public class DefaultMeleeManager extends MicroMeleeManager {
         // =========================================================
         // Can't give orders to unit right now
         else {
-//            unit.setTooltip("x " + unit.getLastUnitActionWasFramesAgo());
             return true;
         }
     }

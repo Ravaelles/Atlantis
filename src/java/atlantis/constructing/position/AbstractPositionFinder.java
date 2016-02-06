@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
+import atlantis.information.AtlantisMap;
 import atlantis.wrappers.SelectUnits;
 import jnibwapi.Position;
 import jnibwapi.Unit;
@@ -16,6 +17,7 @@ public abstract class AbstractPositionFinder {
 
     // =========================================================
     // Hi-level methods
+    
     /**
      * Returns true if game says it's possible to build given building at this position.
      */
@@ -30,6 +32,38 @@ public abstract class AbstractPositionFinder {
         return Atlantis.getBwapi().canBuildHere(position, building, true);
     }
 
+    /**
+     * Returns true if building at this position would be too close to either a mineral field or to a geyser.
+     */
+    protected static boolean isTooCloseToMineralsOrGeyser(UnitType building, Position position) {
+        
+        // We have problem only if building is both close to base and to minerals or to geyser
+        Unit nearestBase = SelectUnits.ourBases().nearestTo(position);
+        if (nearestBase != null && nearestBase.distanceTo(position) <= 9) {
+            for (Unit mineral : SelectUnits.minerals().inRadius(8, position).list()) {
+                if (mineral.distanceTo(position) <= 4) {
+                    return true;
+                }
+            }
+            for (Unit mineral : SelectUnits.geysers().inRadius(8, position).list()) {
+                if (mineral.distanceTo(position) <= 4) {
+                    return true;
+                }
+            }
+        }
+        
+        // Disallow buildings at the edge of the map
+        if (position.getBX() <= 1 || position.getBY() <= 1) {
+            return true;
+        }
+        if (position.getBX() >= AtlantisMap.getMap().getSize().getBX() - 1 || 
+                position.getBY() >= AtlantisMap.getMap().getSize().getBY() - 1) {
+            return true;
+        }
+        
+        return false;
+    }
+    
     /**
      * Returns true if any other building is too close to this building or if two buildings would overlap
      * add-on place of another. Buildings can be stacked, but it needs to be done properly e.g. Supply Depots

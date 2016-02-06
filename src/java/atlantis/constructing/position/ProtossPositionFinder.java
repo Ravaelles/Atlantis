@@ -82,24 +82,6 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Lo-level
-    private static boolean isTooCloseToMineralsOrGeyser(UnitType building, Position position) {
-
-        // We have problem only if building is both close to base and to minerals or to geyser
-        Unit nearestBase = SelectUnits.ourBases().nearestTo(position);
-        if (nearestBase != null && nearestBase.distanceTo(position) <= 8) {
-            for (Unit mineral : SelectUnits.minerals().inRadius(8, position).list()) {
-                if (mineral.distanceTo(position) <= 4) {
-                    return true;
-                }
-            }
-            for (Unit mineral : SelectUnits.geysers().inRadius(8, position).list()) {
-                if (mineral.distanceTo(position) <= 4) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     private static boolean isPowerConditionFulfilled(Position position) {
         return Atlantis.getBwapi().hasPower(position)
