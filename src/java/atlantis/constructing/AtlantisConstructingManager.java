@@ -95,6 +95,7 @@ public class AtlantisConstructingManager {
     }
 
     // =========================================================
+    
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
      * finished objects etc.
@@ -119,6 +120,7 @@ public class AtlantisConstructingManager {
     }
     
     // =========================================================
+    
     /**
      * If builder has died when constructing, replace him with new one.
      */
@@ -206,7 +208,8 @@ public class AtlantisConstructingManager {
         constructionOrders.remove(constructionOrder);
     }
 
-    // =========================================================no
+    // =========================================================
+    
     // Public class access methods
     /**
      * Returns true if given worker has been assigned to construct new building or if the constructions is

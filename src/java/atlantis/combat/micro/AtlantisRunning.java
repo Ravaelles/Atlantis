@@ -93,12 +93,17 @@ public class AtlantisRunning {
     private void notifyOurUnitsAroundToRunAsWell(Unit ourUnit, Unit nearestEnemy) {
         
         // Get all of our units that are close to this unit
-        Collection<Unit> ourUnitsNearby = SelectUnits.our().inRadius(1.5, ourUnit).list();
+        double radius = Math.min(
+                0.8, 2 * (ourUnit.getType().getDimensionLeft() + ourUnit.getType().getDimensionRight()) / 32
+        );
+        Collection<Unit> ourUnitsNearby = SelectUnits.our().inRadius(radius, ourUnit).list();
         
         // Tell them to run as well, not to block our escape route
         for (Unit ourOtherUnit : ourUnitsNearby) {
             if (!ourOtherUnit.isRunning()) {
-                ourOtherUnit.runFrom(null);
+                if (!unit.isMeleeUnit()) {
+                    ourOtherUnit.runFrom(null);
+                }
 //                ourOtherUnit.runFrom(nearestEnemy);
             }
         }
@@ -177,6 +182,9 @@ public class AtlantisRunning {
     
     public void stopRunning() {
         nextPositionToRunTo = null;
+        if (!unit.isHoldingPosition()) {
+            unit.isHoldingPosition();
+        }
     }
     
     // =========================================================

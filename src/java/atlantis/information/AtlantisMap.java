@@ -13,6 +13,7 @@ import jnibwapi.Map;
 import jnibwapi.Position;
 import jnibwapi.Region;
 import jnibwapi.Unit;
+import jnibwapi.types.UnitType;
 
 /**
  * This class provides information about high-abstraction level map operations like returning place for the
@@ -301,7 +302,10 @@ public class AtlantisMap {
     private static boolean isBaseLocationFreeOfBuildingsAndEnemyUnits(BaseLocation baseLocation) {
         
         // If we have any base, FALSE.
-        if (SelectUnits.ourBases().inRadius(7, baseLocation).count() > 0) {
+        if (SelectUnits.ourIncludingUnfinished().ofType(
+                UnitType.UnitTypes.Terran_Command_Center, UnitType.UnitTypes.Protoss_Nexus,
+                UnitType.UnitTypes.Zerg_Hatchery, UnitType.UnitTypes.Zerg_Hive, UnitType.UnitTypes.Zerg_Lair
+            ).inRadius(10, baseLocation).count() > 0) {
             return false;
         }
         
