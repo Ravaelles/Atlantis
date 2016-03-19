@@ -22,13 +22,6 @@ public class AtlantisSupplyManager {
         if (AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS <= supplyTotal) {
             supplyFree = AtlantisGame.getSupplyFree();
 
-//            if (supplyTotal <= 20) {
-//                supply1to20();
-//            } else if (supplyTotal <= 60) {
-//                supply21to60();
-//            } else {
-//                supply61up();
-//            }
             int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
 //            System.out.println(supplyFree + " / supply in prod: " + suppliesBeingBuilt);
@@ -49,16 +42,6 @@ public class AtlantisSupplyManager {
                     requestAdditionalSupply();
                 }
             }
-
-//                if (supplyTotal <= 10 && supplyFree <= 1) {
-//                    requestAdditionalSupply();
-//                } else if (supplyTotal <= 20 && supplyFree <= 4) {
-//                    requestAdditionalSupply();
-//                } else if (supplyTotal <= 50 && supplyFree <= 10) {
-//                    requestAdditionalSupply();
-//                } else if (supplyFree <= 20 && supplyTotal < 200) {
-//                    requestAdditionalSupply();
-//                }
         }
     }
 

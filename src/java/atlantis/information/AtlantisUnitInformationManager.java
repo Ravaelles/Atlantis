@@ -36,9 +36,6 @@ public class AtlantisUnitInformationManager {
      */
     public static void forgetUnit(int unitID) {
         Unit unit = getUnitByID(unitID);
-        SZZZZZ
-                ENEMY UNIT ON KILL IS NULL AND HATCHERY IS BEING ATTACKED
-                        ZERGLINGS RUN FROM GEYSER AND FROM ONE DRONE
         if (unit != null) {
             allUnits.remove(unit);
             enemyUnitsDiscovered.remove(unit);
@@ -94,12 +91,12 @@ public class AtlantisUnitInformationManager {
 //        } else
         if (unit.getPlayer().isEnemy()) {
             if (unit.isBuilding()) {
-                System.err.println("Destroyed " + unit.getType().toString());
+//                System.err.println("Destroyed " + unit.getType().toString());
                 AtlantisGame.sendMessage("Destroyed " + unit.getType().toString());
             }
-            else {
-                System.out.println("Destroyed " + unit.getType().toString());
-            }
+//            else {
+//                System.out.println("Destroyed " + unit.getType().toString());
+//            }
             enemyUnitsDiscoveredCounter.decrementValueFor(unit.getType());
             enemyUnitsVisibleCounter.decrementValueFor(unit.getType());
             enemyUnitsDiscovered.remove(unit);

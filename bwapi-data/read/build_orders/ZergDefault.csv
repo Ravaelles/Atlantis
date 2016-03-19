@@ -27,31 +27,36 @@
 // === Build orders ===================================================
 
 Number;Name;Modifier
-// ================
+// =================
 6;Drone
 6;Drone
-2;Hatchery
 3;Spawning Pool
 7;Drone
 4;Zergling
 4;Zergling
-1;Zergling
 7;Drone
-1;Zergling
+2;Drone
+//1;Extractor
+4;Zergling
+7;Drone
+2;Drone
+//1;Lair
+2;Drone
+7;Drone
+//1;Spire
+2;Drone
+2;Drone
+//1;Mutalisk
+//2;Mutalisk
+//3;Mutalisk
+//4;Mutalisk
+//5;Mutalisk
+//6;Mutalisk
+//1;Greater Spire
 7;Drone
 7;Drone
-2;Hatchery
-1;Zergling
 7;Drone
-1;Zergling
 7;Drone
-1;Zergling
-7;Drone
-1;Zergling
-7;Drone
-1;Zergling
-7;Drone
-1;Zergling
 7;Drone
 7;Drone
 7;Drone

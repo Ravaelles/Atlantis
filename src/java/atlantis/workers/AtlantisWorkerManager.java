@@ -47,17 +47,23 @@ public class AtlantisWorkerManager {
     
     public static int getHowManyWorkersAt(Unit target) {
         boolean isGasBuilding = target.getType().isGasBuilding();
+        boolean isBase = target.isBase();
         int total = 0;
         
         for (Unit worker : SelectUnits.ourWorkers().inRadius(15, target).list()) {
-            if (target.equals(worker.getTarget())) {
-                total++;
-            }
-            else if (target.equals(worker.getOrderTarget())) {
+            if (target.equals(worker.getTarget()) || target.equals(worker.getOrderTarget())) {
                 total++;
             }
             else if (target.equals(worker.getBuildUnit())) {
                 total++;
+            }
+            else if (isBase) {
+                if (worker.isGatheringMinerals() || worker.isCarryingMinerals()) {
+                    total++;
+                }
+                else if (worker.getTarget() != null && worker.getTarget().getType().isMineralField()) {
+                    total++;
+                }
             }
             else if (isGasBuilding) {
                 if (worker.isCarryingGas() || worker.isGatheringGas()) {
