@@ -676,14 +676,13 @@ public class UnitType implements Comparable<UnitType> {
      * You can "Terran_Marine" or "Terran Marine" or even "Marine".
      */
     public static UnitType getByName(String string) {
-        string = string.replace(" ", "_").toLowerCase();
+        string = string.replace(" ", "_").toLowerCase()
+                .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
 
-        // if (!string.startsWith("Terran") && !string.startsWith("Protoss") && !string.startsWith("Zerg")) {
-        //
-        // }
         for (Field field : UnitTypes.class.getFields()) {
-            String otherTypeName = field.getName().toLowerCase();
-            if (!otherTypeName.startsWith("Hero") && otherTypeName.contains(string)) {
+            String otherTypeName = field.getName().toLowerCase()
+                    .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
+            if (!otherTypeName.startsWith("Hero") && otherTypeName.equals(string)) {
                 try {
                     UnitType unitType = (UnitType) UnitTypes.class.getField(field.getName()).get(null);
                     return unitType;

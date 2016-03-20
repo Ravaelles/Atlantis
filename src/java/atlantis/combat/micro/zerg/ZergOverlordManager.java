@@ -29,26 +29,33 @@ public class ZergOverlordManager {
     }
 
     // =========================================================
+    
     /**
      * We know at least one enemy building location.
      */
     private static void actWhenWeKnowEnemy(Unit overlord) {
-//        Position goTo = AtlantisMap.getMainBaseChokepoint();
-//        if (goTo == null) {
-//            goTo = SelectUnits.mainBase();
-//        }
-//
+        Position goTo = null; 
+        
+        goTo = AtlantisMap.getMainBaseChokepoint();
+        if (goTo == null) {
+            goTo = SelectUnits.mainBase();
+        }
+
 //        unit.setTooltip("Retreat");
 //        if (goTo != null && goTo.distanceTo(unit) > 3) {
 //            unit.setTooltip("--> Retreat");
 //            unit.move(goTo, false);
 //        }
 
-        Position medianUnitPosition = AtlantisGroupManager.getAlphaGroup().getMedianUnitPosition();
-        if (medianUnitPosition != null) {
-            if (medianUnitPosition.distanceTo(overlord) > 2.5) {
-                overlord.move(medianUnitPosition);
-            }
+//        Position medianUnitPosition = AtlantisGroupManager.getAlphaGroup().getMedianUnitPosition();
+//        if (medianUnitPosition != null) {
+//            if (medianUnitPosition.distanceTo(overlord) > 1) {
+//                overlord.move(medianUnitPosition);
+//            }
+//        }
+
+        if (goTo != null) {
+            overlord.move(goTo);
         }
     }
 

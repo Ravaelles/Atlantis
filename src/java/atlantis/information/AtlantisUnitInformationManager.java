@@ -12,8 +12,6 @@ public class AtlantisUnitInformationManager {
 
     protected static ArrayList<Unit> allUnits = new ArrayList<>();
 
-//    protected static MappingCounter<UnitType> ourUnitsFininised = new MappingCounter<>();
-//    protected static MappingCounter<UnitType> ourUnitsUnfininised = new MappingCounter<>();
     protected static MappingCounter<UnitType> enemyUnitsDiscoveredCounter = new MappingCounter<>();
     protected static MappingCounter<UnitType> enemyUnitsVisibleCounter = new MappingCounter<>();
 
@@ -58,18 +56,7 @@ public class AtlantisUnitInformationManager {
 
     // =========================================================
     // Number of units changed
-    /**
-     * Saves information about our new unit being trained, so counting units works properly.
-     */
-//    public static void addOurUnfinishedUnit(UnitType type) {
-//        ourUnitsUnfininised.incrementValueFor(type);
-//    }
-    /**
-     * Saves information about new unit being created successfully, so counting units works properly.
-     */
-//    public static void addOurFinishedUnit(UnitType type) {
-//        ourUnitsFininised.incrementValueFor(type);
-//    }
+    
     /**
      * Saves information about enemy unit that we see for the first time.
      */
@@ -82,21 +69,10 @@ public class AtlantisUnitInformationManager {
      * Saves information about given unit being destroyed, so counting units works properly.
      */
     public static void unitDestroyed(Unit unit) {
-//        if (unit.getPlayer().isSelf()) {
-//            if (unit.isCompleted()) {
-//                ourUnitsFininised.decrementValueFor(unit.getType());
-//            } else {
-//                ourUnitsUnfininised.decrementValueFor(unit.getType());
-//            }
-//        } else
         if (unit.getPlayer().isEnemy()) {
             if (unit.isBuilding()) {
-//                System.err.println("Destroyed " + unit.getType().toString());
-                AtlantisGame.sendMessage("Destroyed " + unit.getType().toString());
+//                AtlantisGame.sendMessage("Destroyed " + unit.getType().toString());
             }
-//            else {
-//                System.out.println("Destroyed " + unit.getType().toString());
-//            }
             enemyUnitsDiscoveredCounter.decrementValueFor(unit.getType());
             enemyUnitsVisibleCounter.decrementValueFor(unit.getType());
             enemyUnitsDiscovered.remove(unit);
@@ -116,24 +92,9 @@ public class AtlantisUnitInformationManager {
 
     // =========================================================
     // COUNT
-    /**
-     * Returns cached amount of our units of given type.
-     */
+    
     public static int countOurUnitsOfType(UnitType type) {
-
-        // Bas building
-        if (type.isGasBuilding()) {
-            int total = 0;
-            for (Unit unit : allUnits) {
-                if (type.equals(unit.getType())) {
-                    total++;
-                }
-            }
-            return total;
-        } else { // Anything but gas building
-//            return ourUnitsUnfininised.getValueFor(type);
-            return SelectUnits.ourIncludingUnfinished().ofType(type).count();
-        }
+        return SelectUnits.ourIncludingUnfinished().ofType(type).count();
     }
 
     /**
@@ -150,20 +111,14 @@ public class AtlantisUnitInformationManager {
      * Returns cached amount of our worker units.
      */
     public static int countOurWorkers() {
-        return countOurUnitsOfType(AtlantisConfig.WORKER);
+        return SelectUnits.ourWorkers().count();
     }
 
     /**
      * Returns cached amount of our bases.
      */
     public static int countOurBases() {
-        int total = 0;
-        for (Unit unit : SelectUnits.our().list()) {
-            if (unit.isBase()) {
-                total++;
-            }
-        }
-        return total;
+        return SelectUnits.ourBases().count();
     }
 
 }

@@ -35,9 +35,8 @@ public class AtlantisConstructingManager {
      * it.
      */
     public static void requestConstructionOf(UnitType building, ProductionOrder order) {
-        // =========================================================
-        // Validate
         
+        // Validate request
         if (!building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
@@ -48,7 +47,6 @@ public class AtlantisConstructingManager {
         }
         
         // =========================================================
-
         // Create ConstructionOrder object, assign random worker for the time being
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
         newConstructionOrder.setProductionOrder(order);
@@ -87,8 +85,10 @@ public class AtlantisConstructingManager {
             AtlantisGame.getProductionStrategy().rebuildQueue();
         } // Couldn't find place for building! That's f'g bad.
         else {
-            System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
-                    + " / BUILDER = " + optimalBuilder);
+            if (!building.isBase()) {
+                System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " 
+                        + positionToBuild + " / BUILDER = " + optimalBuilder);
+            }
         }
     }
 
@@ -138,7 +138,7 @@ public class AtlantisConstructingManager {
             if (building == null) {
                 
                 // Special and most problematic case: for Extractor
-                if (order.getBuildingType().equals(UnitType.UnitTypes.Zerg_Extractor)) {
+                if (order.getBuildingType().isGasBuilding()) {
 
                     // Find the nearest extractor to the builder worker. It should be the one we've just created.
                     Unit extractor = SelectUnits.ourIncludingUnfinished()
@@ -149,7 +149,7 @@ public class AtlantisConstructingManager {
                 }
                 
                 // Every other building
-                else if (building == null && builder != null && builder.isBuilding()) {
+                else if (builder != null && builder.isBuilding()) {
                     order.setConstruction(builder);
                     building = builder.getBuildUnit();
                 }
@@ -174,14 +174,6 @@ public class AtlantisConstructingManager {
         // If building exists
         building = order.getConstruction();
         if (building != null) {
-            
-            if (building.getType().isGasBuilding()) {
-                System.out.println("=Start=============");
-                System.out.println(building.isCompleted());
-                System.out.println(building.getBuildType());
-                System.out.println(building.getLastCommand());
-                System.out.println("=End=============");
-            }
 
             // COMPLETED: building is finished, remove it from the list
             if (building.isCompleted() && !building.isBeingConstructed()) {

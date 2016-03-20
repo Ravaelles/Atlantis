@@ -175,6 +175,9 @@ public class AtlantisPainter {
         }
     }
 
+    /**
+     * Specific painting only for workers.
+     */
     private static void paintWorker(Unit unit) {
         // =========================================================
         // === Unit should build a building
@@ -187,8 +190,10 @@ public class AtlantisPainter {
         }
     }
 
+    /**
+     * Specific painting only for buildings.
+     */
     private static void paintBuilding(Unit unit) {
-        
     }
 
     /**

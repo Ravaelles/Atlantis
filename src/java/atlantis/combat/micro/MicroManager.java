@@ -64,7 +64,7 @@ public abstract class MicroManager {
         }
         
         if (unit.getHP() <= 16 || unit.getHPPercent() < 30) {
-            if (SelectUnits.ourCombatUnits().inRadius(4, unit).count() <= 6) {
+            if (unit.isAirUnit() || SelectUnits.ourCombatUnits().inRadius(4, unit).count() <= 6) {
                 return AtlantisRunManager.run(unit);
             }
         }

@@ -115,10 +115,6 @@ public abstract class AtlantisProductionStrategy {
 
                 int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + virtualCounter.getValueFor(type);
                 int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
-                
-                if (type.isGasBuilding()) {
-                    System.out.println("EXTRACTORS: " + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
-                }
 
                 if (type.isBuilding()) {
                     weHaveThisManyUnits += AtlantisConstructingManager.countNotFinishedConstructionsOfType(type);
@@ -146,6 +142,8 @@ public abstract class AtlantisProductionStrategy {
                 }
             }
         }
+        
+//        RUtilities.displayList(currentProductionQueue, "Queue:", null, true);
     }
 
     /**
