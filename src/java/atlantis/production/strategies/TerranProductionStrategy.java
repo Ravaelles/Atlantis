@@ -2,7 +2,6 @@ package atlantis.production.strategies;
 
 import atlantis.AtlantisConfig;
 import atlantis.wrappers.SelectUnits;
-import com.sun.javafx.css.SizeUnits;
 import java.util.ArrayList;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
