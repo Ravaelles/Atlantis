@@ -24,7 +24,7 @@ Atlantis is still in the development, but it's quite capable already. The latest
 * Make sure to read the readme absolutely carefully. The installation of BWAPI can be really hard thing.
 * At least take a quick look at tutorial here (http://sscaitournament.com/index.php?action=tutorial) to understand how the bridge between the game actually works and what it does
 * Checkout this repository and make a new project in either NetBeans or Eclipse, for more instructions see the tutorial above. For all the bugfixing, again, follow the tutorial.
-* If you've done everything correctly, you're free to go. The main class is called AtlantisTide as that's full name of the framework. Atlantis is only a family of all products that will be built upon this framework.
+* If you've done everything correctly, you're free to go. The main class is of AtlantisTide is called Main. Atlantis is only a family of all products that will be built upon this framework.
 * Atlantis is capable of auto-detecting the race it plays. If you want to change your race, modify this line "race = Protoss" in your bwapi.ini file.
 
 # Code structure
