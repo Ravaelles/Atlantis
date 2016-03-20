@@ -6,6 +6,8 @@
 
 It uses JNIBWAPI as a base, runs with BWAPI 3.7.5, but wraps everything heavily, so you don't need to write yourself countless lines of tedious code that every bot unfortunately needs to have to even do the most basic stuff.
 
+Check out Atlantis Facebook page (https://www.facebook.com/AtlantisBWAPI) where you can discuss, give suggestions or ask any questions concerning this project!
+
 # What it can do
 Modular approach with cleanest code possible (that's my priority) is offered by core classes which are prefixed with "Atlantis". So what has been implemented so far is:
 - all three races are supported
