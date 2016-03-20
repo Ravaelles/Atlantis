@@ -729,6 +729,33 @@ public class RUtilities {
     }
 
     /**
+     * Prints out all element of this list.
+     */
+    public static void displayList(List<?> list, String header, String footer, boolean useNewLines) {
+        if (header == null) {
+            header = "### START OF LIST";
+        }
+        if (footer == null) {
+            footer = "### END OF LIST";
+        }
+        
+        System.out.println(header);
+        for (Object object : list) {
+            System.out.print(object + "/");
+            if (useNewLines) {
+                System.out.println();
+            }
+        }
+        if (!useNewLines) {
+            System.out.println();
+        }
+        
+        if (!"".equals(footer)) {
+            System.out.println(footer);
+        }
+    }
+
+    /**
      *
      */
     public static void displayArray(Object[][] array) {

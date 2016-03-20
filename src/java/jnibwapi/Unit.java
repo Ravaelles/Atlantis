@@ -4,6 +4,10 @@ import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.combat.group.Group;
 import atlantis.combat.micro.AtlantisRunning;
+import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.ConstructionOrder;
+import atlantis.production.AtlantisProductionCommander;
+import atlantis.production.strategies.AtlantisProductionStrategy;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import java.util.List;
@@ -1782,5 +1786,45 @@ public class Unit extends Position implements Cloneable, Comparable<Object> {
             return canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
         }
     }
+
+    /**
+     * Returns <b>true</b> if this unit is supposed to "build" something.
+     * It will return true even if the unit wasn't issued yet actual build order, 
+     * but we've created ConstructionOrder and assigned it as a builder, so it will return true.
+     */
+    public boolean isBuilder() {
+        return AtlantisConstructingManager.isBuilder(this);
+    }
+
+    /**
+     * If this unit is supposed to build something it will return ConstructionOrder object assigned to the
+     * construction.
+     */
+    public ConstructionOrder getConstructionOrder() {
+        return AtlantisConstructingManager.getConstructionOrderFor(this);
+    }
+    
+    /**
+     * Returns <b>true</b> if this unit is supposed to "build" something.
+     * @param boolean includeAbstractOrders if <b>true</b> then even if the unit wasn't issued build order, 
+     * but we've created ConstructionOrder and assigned it as a builder, it will return true. <b>false</b>
+     * will force to return true only if there was actual BroodWar build command issued.
+     */
+//    public boolean isBuilder(boolean includeAbstractOrders) {
+//        if (getBuildType() != null || getBuildUnit() != null) {
+//            return true;
+//        }
+//        
+//        // Check for the ConstructionOrders and see if this unit is assigned to any order.
+//        if (includeAbstractOrders) {
+//            for (ConstructionOrder constructionOrder : ConstructionOrder.getAllConstructionOrders()) {
+//                if (this.equals(constructionOrder.getBuilder())) {
+//                    return true;
+//                }
+//            }
+//        }
+//        
+//        return false;
+//    }
     
 }

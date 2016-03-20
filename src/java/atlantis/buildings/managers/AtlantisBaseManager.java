@@ -11,7 +11,7 @@ public class AtlantisBaseManager {
     public static void update(Unit base) {
 
         // Train new workers if allowed
-        if (AtlantisWorkerCommander.shouldTrainWorkers()) {
+        if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
             base.train(AtlantisConfig.WORKER);
         }
     }

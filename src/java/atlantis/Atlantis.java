@@ -203,7 +203,6 @@ public class Atlantis implements BWAPIEventListener {
         }
     }
     
-    
     /**
      * This is only valid to our units. We have started training a new unit. It exists in the memory, but
      * its unit.isComplete() is false and issuing orders to it has no effect.
@@ -218,7 +217,6 @@ public class Atlantis implements BWAPIEventListener {
 
             // Our unit
             if (unit.getPlayer().isSelf()) {
-//                AtlantisUnitInformationManager.addOurUnfinishedUnit(unit.getType());
                 AtlantisGame.getProductionStrategy().rebuildQueue();
                 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
@@ -240,8 +238,8 @@ public class Atlantis implements BWAPIEventListener {
 
             // Our unit
             if (unit.getPlayer().isSelf() && !unit.isLarvaOrEgg()) {
-//                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
                 AtlantisGroupManager.possibleCombatUnitCreated(unit);
+                AtlantisGame.getProductionStrategy().rebuildQueue();
             }
         } else {
             System.err.println("Unit complete is null " + unitID);
@@ -337,10 +335,9 @@ public class Atlantis implements BWAPIEventListener {
     @Override
     public void unitMorph(int unitID) {
         
-        // A bit of safe approach: forget the unit and remember it again.
         
         // =========================================================
-        // Forget unit
+        // A bit of safe approach: forget the unit and remember it again.
         Unit unit = AtlantisUnitInformationManager.getUnitByID(unitID);
 
         if (unit != null) {
@@ -348,7 +345,6 @@ public class Atlantis implements BWAPIEventListener {
 
             // Our unit
             if (unit.getPlayer().isSelf()) {
-                AtlantisGame.getProductionStrategy().rebuildQueue();
                 AtlantisGroupManager.battleUnitDestroyed(unit);
             }
             else if (unit.getPlayer().isEnemy()) {
@@ -362,11 +358,14 @@ public class Atlantis implements BWAPIEventListener {
         // =========================================================
         // Remember the unit
         if (unit != null) {
+            AtlantisUnitInformationManager.rememberUnit(unit);
 
             // Our unit
-            if (unit.getPlayer().isSelf() && !unit.isLarvaOrEgg()) {
-//                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
-                AtlantisGroupManager.possibleCombatUnitCreated(unit);
+            if (unit.getPlayer().isSelf()) {
+                AtlantisGame.getProductionStrategy().rebuildQueue();
+                if (!unit.isLarvaOrEgg()) {
+                    AtlantisGroupManager.possibleCombatUnitCreated(unit);
+                }
             }
         }
     }
@@ -391,6 +390,10 @@ public class Atlantis implements BWAPIEventListener {
      */
     @Override
     public void unitRenegade(int unitID) {
+        Unit unit = AtlantisUnitInformationManager.getUnitByID(unitID);
+        if (unit != null) {
+            AtlantisGame.getProductionStrategy().rebuildQueue();
+        }
     }
 
     /**

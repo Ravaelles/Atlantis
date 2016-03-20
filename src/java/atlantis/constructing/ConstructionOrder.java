@@ -3,6 +3,7 @@ package atlantis.constructing;
 import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.production.ProductionOrder;
 import atlantis.wrappers.SelectUnits;
+import java.util.ArrayList;
 import jnibwapi.Position;
 import jnibwapi.Unit;
 import jnibwapi.types.UnitType;
@@ -113,6 +114,17 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     }
     
     // =========================================================
+ 
+    /**
+     * Returns every construction order that is active in this moment. It will include even those buildings
+     * that haven't been started yet.
+     *
+     * @return
+     */
+    public static ArrayList<ConstructionOrder> getAllConstructionOrders() {
+        return AtlantisConstructingManager.getAllConstructionOrders();
+    }
+    
     public UnitType getBuildingType() {
         return buildingType;
     }

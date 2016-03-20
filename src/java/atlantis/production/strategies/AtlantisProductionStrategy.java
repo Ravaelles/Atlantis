@@ -13,6 +13,7 @@ import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import jnibwapi.types.TechType;
 import jnibwapi.types.UnitType;
+import jnibwapi.types.UnitType.UnitTypes;
 import jnibwapi.types.UpgradeType;
 
 /**
@@ -106,8 +107,6 @@ public abstract class AtlantisProductionStrategy {
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
             
-//            System.out.println("order = " + order.getUnitType());
-
             // =========================================================
             // Unit
             if (order.getUnitType() != null) {
@@ -121,8 +120,6 @@ public abstract class AtlantisProductionStrategy {
                     weHaveThisManyUnits += AtlantisConstructingManager.countNotFinishedConstructionsOfType(type);
                 }
                 
-//                System.out.println("       " + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
-
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
                     isOkayToAdd = true;
@@ -145,6 +142,8 @@ public abstract class AtlantisProductionStrategy {
                 }
             }
         }
+        
+//        RUtilities.displayList(currentProductionQueue, "Queue:", null, true);
     }
 
     /**
@@ -190,6 +189,7 @@ public abstract class AtlantisProductionStrategy {
             // =========================================================
 
             if (unitType != null) {
+//                debug(unitType, UnitTypes.Zerg_Spire, "AtlantisGame.hasBuildingsToProduce(unitType) = ", AtlantisGame.hasBuildingsToProduce(unitType));
                 if (!AtlantisGame.hasBuildingsToProduce(unitType)) {
                     continue;
                 }
@@ -222,6 +222,11 @@ public abstract class AtlantisProductionStrategy {
                 result.add(new ProductionOrder(unitType));
             }
         }
+        
+//        System.out.println("// == Things to produce ============================================");
+//        for (ProductionOrder order : result) {
+//        System.out.println(order.getUnitType());
+//        }
 
         return result;
     }
@@ -249,10 +254,6 @@ public abstract class AtlantisProductionStrategy {
 
         for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
             ProductionOrder productionOrder = currentProductionQueue.get(i);
-//            if (productionOrder.getUnitType() != null 
-//                    && !AtlantisGame.hasBuildingsToProduce(productionOrder.getUnitType())) {
-//                continue;
-//            }
             result.add(productionOrder);
         }
         
@@ -478,6 +479,16 @@ public abstract class AtlantisProductionStrategy {
 
     private int extractSpecialCommandValue(String[] row) {
         return Integer.parseInt(row[0].substring(row[0].lastIndexOf("=") + 1));
+    }
+
+    /**
+     * Auxiliary function to debug production.
+     */
+    private void debug(UnitType type, UnitType activateOnlyForThisType,
+            String label, boolean valueToDisplay) {
+        if (type != null && type.equals(activateOnlyForThisType)) {
+            System.out.println("### " + label + ": " + valueToDisplay);
+        }
     }
 
 }

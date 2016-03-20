@@ -50,6 +50,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Hi-level
+    
     /**
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
@@ -80,20 +81,5 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         // All conditions are fullfilled, return this position
         return true;
     }
-
-    // =========================================================
-    // Lo-level
-    private static boolean isTooCloseToMineralsOrGeyser(UnitType building, Position position) {
-
-        // We have problem only if building is both close to base and to minerals or to geyser
-        Unit nearestBase = SelectUnits.ourBases().nearestTo(position);
-        if (nearestBase != null && nearestBase.distanceTo(position) <= 7) {
-            for (Unit mineral : SelectUnits.minerals().inRadius(8, position).list()) {
-                if (mineral.distanceTo(position) <= 4) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    
 }

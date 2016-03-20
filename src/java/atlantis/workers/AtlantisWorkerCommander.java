@@ -28,15 +28,15 @@ public class AtlantisWorkerCommander {
 
     // =========================================================
     
-    public static boolean shouldTrainWorkers() {
+    public static boolean shouldTrainWorkers(boolean checkSupplyAndMinerals) {
 
         // Check MINERALS
-        if (AtlantisGame.getMinerals() < 50) {
+        if (checkSupplyAndMinerals && AtlantisGame.getMinerals() < 50) {
             return false;
         }
 
         // Check FREE SUPPLY
-        if (AtlantisGame.getSupplyFree() == 0) {
+        if (checkSupplyAndMinerals && AtlantisGame.getSupplyFree() == 0) {
             return false;
         }
 

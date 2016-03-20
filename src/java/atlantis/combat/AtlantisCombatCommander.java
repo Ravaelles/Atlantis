@@ -49,9 +49,11 @@ public class AtlantisCombatCommander {
             if (!handledAsSpecialUnit(unit)) {
                 boolean microManagerForbidsOtherActions;
 //                if (unit.isRangedUnit()) {
-//                    group.getMicroRangedManager().update(unit);
+
+                    // @see class DefaultRangedManager 
+                    microManagerForbidsOtherActions = group.getMicroRangedManager().update(unit);
 //                } else {
-                microManagerForbidsOtherActions = group.getMicroMeleeManager().update(unit);
+//                    microManagerForbidsOtherActions = group.getMicroMeleeManager().update(unit);
 //                }
 
                 // =========================================================
@@ -63,9 +65,7 @@ public class AtlantisCombatCommander {
                 // =========================================================
                 // Handle MISSION actions according to current mission (e.g. DEFEND, ATTACK)
                 else {
-//                    if (!unit.isMoving() && !unit.isAttacking() && !unit.isJustShooting()) {
-                        group.getMission().update(unit);
-//                    }
+                    group.getMission().update(unit);
                 }
             }
         }

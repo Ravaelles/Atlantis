@@ -30,28 +30,31 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
     @Override
     public ArrayList<UnitType> produceWhenNoProductionOrders() {
         ArrayList<UnitType> units = new ArrayList<>();
-        if (AtlantisWorkerCommander.shouldTrainWorkers()) {
+        if (AtlantisWorkerCommander.shouldTrainWorkers(false)) {
             units.add(UnitTypes.Zerg_Drone);
         }
         else {
+            units.add(UnitTypes.Zerg_Mutalisk);
             units.add(UnitTypes.Zerg_Zergling);
+            units.add(UnitTypes.Zerg_Hydralisk);
         }
         return units;
     }
 
     // =========================================================
+    
     /**
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
     public void produceZergUnit(UnitType unitType) {
         _produceUnit(unitType);
     }
-
+    
     // =========================================================
+    
     protected void _produceUnit(UnitType unitType) {
         for (Unit base : SelectUnits.ourBases().list()) {
             for (Unit unit : base.getLarva()) {
-//                System.out.println(unit + " into " + unitType);
                 base.train(unitType);
                 return;
             }

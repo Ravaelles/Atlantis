@@ -2,6 +2,7 @@ package atlantis.constructing;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
+import atlantis.buildings.managers.AtlantisExpansionManager;
 import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
@@ -17,7 +18,7 @@ public class AtlantisConstructingManager {
     /**
      * List of all unfinished (started or pending) constructions.
      */
-    private static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
+    protected static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
 
     // =========================================================
     
@@ -34,23 +35,18 @@ public class AtlantisConstructingManager {
      * it.
      */
     public static void requestConstructionOf(UnitType building, ProductionOrder order) {
-        if (building.isGasBuilding()) {
-            AtlantisGame.sendMessage(building.toString());
-        }
         
-        // =========================================================
-        // Validate
-        
+        // Validate request
         if (!building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
         
+        // Handle separately buildings like ZERG LAIR, HIVE, SUNKEN COLONY etc.
         if (AtlantisSpecialConstructionManager.handledAsSpecialBuilding(building, order)) {
             return;
         }
         
         // =========================================================
-
         // Create ConstructionOrder object, assign random worker for the time being
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
         newConstructionOrder.setProductionOrder(order);
@@ -89,12 +85,15 @@ public class AtlantisConstructingManager {
             AtlantisGame.getProductionStrategy().rebuildQueue();
         } // Couldn't find place for building! That's f'g bad.
         else {
-            System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
-                    + " / BUILDER = " + optimalBuilder);
+            if (!building.isBase()) {
+                System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " 
+                        + positionToBuild + " / BUILDER = " + optimalBuilder);
+            }
         }
     }
 
     // =========================================================
+    
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
      * finished objects etc.
@@ -109,16 +108,10 @@ public class AtlantisConstructingManager {
                 checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
             }
         }
-        
-        // =========================================================
-        // Check if we should buy a base, because we have shitload of minerals
-        if (AtlantisGame.hasMinerals(490) && SelectUnits.ourBases().count() <= 7 
-                && AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.BASE) == 0) {
-            requestConstructionOf(AtlantisConfig.BASE);
-        }
     }
     
     // =========================================================
+    
     /**
      * If builder has died when constructing, replace him with new one.
      */
@@ -131,71 +124,77 @@ public class AtlantisConstructingManager {
     /**
      * If building is completed, mark construction as finished and remove it.
      */
-    private static void checkForConstructionStatusChange(ConstructionOrder constructionOrder, Unit building) {
-//        System.out.println("==============");
-//        System.out.println(constructionOrder.getBuildingType());
-//        System.out.println(constructionOrder.getStatus());
-//        System.out.println(constructionOrder.getBuilder());
-//        System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
-//        System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
-//        System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
-//        System.out.println("getOrderTarget = " + constructionOrder.getBuilder().getOrderTarget());
-//        System.out.println("Constr = " + constructionOrder.getConstruction());
-//        System.out.println("Exists = " + constructionOrder.getBuilder().isExists());
-//        System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
+    private static void checkForConstructionStatusChange(ConstructionOrder order, Unit building) {
 
-        // If ZERG change builder into building (it just happens, yeah, weird stuff)
+        // If playing as ZERG, we have to apply a potent fix here. This code was extremely hard for me. 
+        // Don't touch it unless you're sure what you're doing! 
+        // Explanation: Gas buildings are actually morphed from geyser into a building and that's 
+        // completely different case from standard buildings.
+        // Standard buildings can be accessed like: builder.getBuildUnit().
         if (AtlantisGame.playsAsZerg()) {
-            Unit builder = constructionOrder.getBuilder();
-            if (builder != null && builder.isBuilding()) {
-                constructionOrder.setConstruction(builder);
-                building = builder;
+            Unit builder = order.getBuilder();
+            
+            // If building under construction isn't yet defined, find it.
+            if (building == null) {
+                
+                // Special and most problematic case: for Extractor
+                if (order.getBuildingType().isGasBuilding()) {
+
+                    // Find the nearest extractor to the builder worker. It should be the one we've just created.
+                    Unit extractor = SelectUnits.ourIncludingUnfinished()
+                            .ofType(UnitType.UnitTypes.Zerg_Extractor).nearestTo(builder);
+
+                    order.setConstruction(extractor);
+                    building = extractor;
+                }
+                
+                // Every other building
+                else if (builder != null && builder.isBuilding()) {
+                    order.setConstruction(builder);
+                    building = builder.getBuildUnit();
+                }
             }
-        } // If TERRAN and building doesn't exist yet, assign it to the construction order.
+        } 
+
+        // =========================================================
+        // If TERRAN and building doesn't exist yet, assign it to the construction order.
         else if (AtlantisGame.playsAsTerran() && (building == null || !building.isExists())) {
-            Unit builder = constructionOrder.getBuilder();
+            Unit builder = order.getBuilder();
             if (builder != null) {
                 Unit buildUnit = builder.getBuildUnit();
                 if (buildUnit != null) {
-                    constructionOrder.setConstruction(buildUnit);
+                    order.setConstruction(buildUnit);
                     building = buildUnit;
                 }
             }
         }
+        
         // =========================================================
 
-//        if (building != null) {
-//            System.out.println("==============");
-//            System.out.println(constructionOrder.getPositionToBuild());
-//            System.out.println(building.getType());
-//            System.out.println(building);
-//            System.out.println(building.isExists());
-//            System.out.println(constructionOrder.getStatus());
-//            System.out.println();
-//            System.out.println();
-//        }
         // If building exists
+        building = order.getConstruction();
         if (building != null) {
 
             // COMPLETED: building is finished, remove it from the list
-            if (building.isCompleted()) {
-                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
-                removeOrder(constructionOrder);
+            if (building.isCompleted() && !building.isBeingConstructed()) {
+                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
+                removeOrder(order);
 
-                // @FIX to fix bug with Refineries not being shown as created, because they're kinda changed.
+                // @FIX to fix bug with Refineries not being shown as created, because they're changed.
                 if (building.getType().isGasBuilding()) {
+                    AtlantisUnitInformationManager.forgetUnit(building.getID());
                     AtlantisUnitInformationManager.rememberUnit(building);
                 }
-            } // NOT YET COMPLETED
+            }
             else {
-                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
         } // Building doesn't exist yet, means builder is travelling to the construction place
         else {
             Position positionToBuild = AtlantisPositionFinder.getPositionForNew(
-                    constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
+                    order.getBuilder(), order.getBuildingType(), order
             );
-            constructionOrder.setPositionToBuild(positionToBuild);
+            order.setPositionToBuild(positionToBuild);
         }
     }
     
@@ -206,7 +205,8 @@ public class AtlantisConstructingManager {
         constructionOrders.remove(constructionOrder);
     }
 
-    // =========================================================no
+    // =========================================================
+    
     // Public class access methods
     /**
      * Returns true if given worker has been assigned to construct new building or if the constructions is
@@ -232,6 +232,20 @@ public class AtlantisConstructingManager {
     public static ConstructionOrder getConstructionOrderFor(Unit builder) {
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (builder.equals(constructionOrder.getBuilder())) {
+                return constructionOrder;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns ConstructionOrder object for given building. Makes sense only for buildings that are under
+     * construction.
+     */
+    public static ConstructionOrder getConstructionOrderForBuilding(Unit building) {
+        for (ConstructionOrder constructionOrder : constructionOrders) {
+            if (building.equals(constructionOrder.getConstruction())) {
                 return constructionOrder;
             }
         }

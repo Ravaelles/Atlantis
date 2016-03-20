@@ -12,6 +12,7 @@ import atlantis.combat.group.missions.MissionPrepare;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
+import atlantis.debug.AtlantisPainter;
 import atlantis.production.ProductionOrder;
 import atlantis.util.RUtilities;
 import atlantis.workers.AtlantisWorkerManager;
@@ -35,12 +36,11 @@ public class AtlantisPainter {
     private static int sideMessageTopCounter = 0;
     private static int sideMessageMiddleCounter = 0;
     private static int sideMessageBottomCounter = 0;
-    
+
     /**
      * List of enemy units that have been targetted in the last frame.
      */
 //    private static TreeSet<Unit> _temporaryTargets = new TreeSet<>();
-
     // =========================================================
     /**
      * Executed once per frame, at the end of all other actions.
@@ -58,11 +58,11 @@ public class AtlantisPainter {
         paintImportantPlaces();
         paintColorCirclesAroundUnits();
         paintConstructionProgress();
-        paintConstructionPlaces();
+        paintConstructionOrdersPlaces();
         paintBuildingHealth();
         paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
-        paintSpecialsOverUnits();
+        paintUnits();
         paintVariousStats();
         paintUnitCounters();
         paintProductionQueue();
@@ -81,45 +81,51 @@ public class AtlantisPainter {
 
     // =========================================================
     // Hi-level
-    
     /**
      * Paint focus point for global attack mission etc.
      */
     private static void paintVariousStats() {
-        
-        // =========================================================
-        // Time
-        paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", BWColor.Grey);
-        
-        // =========================================================
-        // Gas workers
-        paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), BWColor.Grey);
-        
-        // =========================================================
-        // Global mission
-        paintSideMessage("Mission: " + AtlantisGroupManager.getAlphaGroup().getMission().getName(), BWColor.White);
-        
+
         // =========================================================
         // Focus point
-        
         Position focusPoint = MissionAttack.getFocusPoint();
         String desc = "";
         Unit mainBase = SelectUnits.mainBase();
         if (focusPoint != null && mainBase != null) {
             desc = "(dist:" + ((int) focusPoint.distanceTo(mainBase)) + ")";
         }
-        paintSideMessage("Focus point: " + focusPoint + desc, BWColor.Blue, 0);
-        
+        paintSideMessage("Focus: " + focusPoint + desc, BWColor.Blue, 0);
+
         // =========================================================
-        
         paintSideMessage("Combat group size: " + AtlantisGroupManager.getAlphaGroup().size(), BWColor.Blue, 0);
+
+        // =========================================================
+        // Global mission
+        paintSideMessage("Mission: " + AtlantisGroupManager.getAlphaGroup().getMission().getName(), BWColor.White);
+
+        // =========================================================
+        // Time
+        paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", BWColor.Grey);
+
+        // =========================================================
+        // Gas workers
+//        paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), BWColor.Grey);
     }
-    
+
     /**
      * Paints small progress bars over units that have cooldown.
      */
-    private static void paintSpecialsOverUnits() {
-        for (Unit unit : SelectUnits.ourCombatUnits().list()) {
+    private static void paintUnits() {
+        for (Unit unit : SelectUnits.ourIncludingUnfinished().list()) {
+            
+//            if ((unit.isWorker() && (unit.isBeingConstructed() || unit.isConstructing())) || unit.isBuilding()) {
+//                paintTextCentered(unit, "Target: " + unit.getTarget(), BWColor.Purple);
+//                paintTextCentered(unit.translated(0, 10), "BuildType: " + unit.getBuildType(), BWColor.Purple);
+//                paintTextCentered(unit.translated(0, 20), "BuildUnit: " + unit.getBuildUnit(), BWColor.Purple);
+//                paintTextCentered(unit.translated(0, 30), "Command: " + unit.getLastCommand(), BWColor.Purple);
+//                paintTextCentered(unit.translated(0, 40), "" + unit.getInitialType(), BWColor.Purple);
+//                paintTextCentered(unit.translated(0, 50), "" + unit.getType(), BWColor.Purple);
+//            }
 
             // =========================================================
             // === Paint life bars bars over wounded units
@@ -145,7 +151,56 @@ public class AtlantisPainter {
                 bwapi.drawBox(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight),
                         BWColor.Black, false, false);
             }
+            
+            // =========================================================
 
+            if (unit.isWorker()) {
+                paintWorker(unit);
+            } else if (unit.isBuilding()) {
+                paintBuilding(unit);
+            } else {
+                paintCombatUnit(unit);
+            }
+        }
+
+        // =========================================================
+        // ENEMY COMBAT EVAL
+        for (Unit unit : SelectUnits.enemy().combatUnits().list()) {
+            double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+            if (eval < 999) {
+                String combatStrength = eval >= 10 ? (BWColor.getColorString(BWColor.Green) + "++")
+                        : AtlantisCombatEvaluator.getEvalString(unit);
+                paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), combatStrength, null);
+            }
+        }
+    }
+
+    /**
+     * Specific painting only for workers.
+     */
+    private static void paintWorker(Unit unit) {
+        // =========================================================
+        // === Unit should build a building
+        // =========================================================
+        ConstructionOrder constructionOrder = unit.getConstructionOrder();
+        if (constructionOrder != null) {
+            paintLine(unit, unit.getTargetPosition(), BWColor.Grey);
+            paintTextCentered(unit.translated(0, -10), "Build " + constructionOrder.getBuildingType(),
+                    BWColor.Orange);
+        }
+    }
+
+    /**
+     * Specific painting only for buildings.
+     */
+    private static void paintBuilding(Unit unit) {
+    }
+
+    /**
+     * Put all detailed information specific to combat units you want to display.
+     */
+    private static void paintCombatUnit(Unit unit) {
+        
             // =========================================================
             // === Paint cooldown progress bars over units
             // =========================================================
@@ -174,39 +229,30 @@ public class AtlantisPainter {
 //                // Paint label
 ////                paintTextCentered(new Position(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
 //            }
-
-            // =========================================================
+        
+        // =========================================================
             // === Paint battle group
             // =========================================================
 //            if (unit.getGroup() != null) {
 //                paintTextCentered(new Position(unit.getPX(), unit.getPY() + 3), BWColor.getColorString(BWColor.Grey)
 //                        + "#" + unit.getGroup().getID(), false);
 //            }
-            
-            // =========================================================
+        
+        // =========================================================
             // === Paint num of other units around this unit
             // =========================================================
 //            int ourAround = SelectUnits.ourCombatUnits().inRadius(1.7, unit).count();
 //            paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), BWColor.getColorString(BWColor.Orange)
 //                    + "(" + ourAround + ")", false);
-            // =========================================================
-            // === Combat Evaluation Strength
-            // =========================================================
-            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 10) {
-                double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
-                if (eval < 999) {
-                    String combatStrength = eval >= 10 ? (BWColor.getColorString(BWColor.Green) + "++") : 
-                            AtlantisCombatEvaluator.getEvalString(unit);
-                    paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), combatStrength, null);
-                }
-            }
-        }
         
-        for (Unit unit : SelectUnits.enemy().combatUnits().list()) {
+        // =========================================================
+        // === Combat Evaluation Strength
+        // =========================================================
+        if (AtlantisCombatEvaluator.evaluateSituation(unit) < 10) {
             double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
             if (eval < 999) {
-                String combatStrength = eval >= 10 ? (BWColor.getColorString(BWColor.Green) + "++") : 
-                        AtlantisCombatEvaluator.getEvalString(unit);
+                String combatStrength = eval >= 10 ? (BWColor.getColorString(BWColor.Green) + "++")
+                        : AtlantisCombatEvaluator.getEvalString(unit);
                 paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), combatStrength, null);
             }
         }
@@ -236,7 +282,7 @@ public class AtlantisPainter {
 //        paintCircle(position, 19, BWColor.Black);
         paintTextCentered(position, "ATTACK", BWColor.Red);
     }
-    
+
     /**
      * Paints list of units we have in top left corner.
      */
@@ -273,6 +319,11 @@ public class AtlantisPainter {
                 paintSideMessage(counters.get(unitType) + "x " + unitType.getName(), BWColor.Grey, 0);
             }
         }
+        for (UnitType unitType : counters.keySet()) {
+            if (unitType.isBuilding()) {
+                paintSideMessage(counters.get(unitType) + "x " + unitType.getName(), BWColor.Grey, 0);
+            }
+        }
         paintSideMessage("", BWColor.White, 0);
     }
 
@@ -293,17 +344,21 @@ public class AtlantisPainter {
 
         // Display units that should be produced right now or any time
         ArrayList<ProductionOrder> produceNow = AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(false);
+        int counter = 0;
         for (ProductionOrder order : produceNow) {
             paintSideMessage(order.getShortName(), BWColor.Yellow);
+            if (counter++ >= 4) {
+                break;
+            }
         }
 
         // Display next units to produce
         ArrayList<ProductionOrder> fullQueue = AtlantisGame.getProductionStrategy().getProductionQueueNext(
-                5 - produceNow.size());
+                4 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);
             if (order != null && order.getShortName() != null) {
-                if (order.getUnitType() != null 
+                if (order.getUnitType() != null
                         && !AtlantisGame.hasBuildingsToProduce(order.getUnitType())) {
                     continue;
                 }
@@ -316,13 +371,13 @@ public class AtlantisPainter {
      * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
      */
     private static void paintConstructionsPending() {
-        int yOffset = 205;
+        int yOffset = 235;
         ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", BWColor.White, yOffset);
-            for (ConstructionOrder constructionOrder : allOrders) {
+            for (ConstructionOrder order : allOrders) {
                 BWColor color = null;
-                switch (constructionOrder.getStatus()) {
+                switch (order.getStatus()) {
                     case CONSTRUCTION_NOT_STARTED:
                         color = BWColor.Red;
                         break;
@@ -336,7 +391,11 @@ public class AtlantisPainter {
                         color = BWColor.Teal;
                         break;
                 }
-                paintSideMessage(constructionOrder.getBuildingType().getShortName(), color, yOffset);
+                String extraString = "";
+//                if (order.getBuildingType().isGasBuilding()) {
+                    extraString = " (" + order.getBuilder() + " / " + order.getConstruction() + ")";
+//                }
+                paintSideMessage(order.getBuildingType().getShortName() + extraString, color, yOffset);
             }
         }
     }
@@ -344,34 +403,49 @@ public class AtlantisPainter {
     /**
      * Paints places where buildings that do not yet exist are planned to be placed.
      */
-    private static void paintConstructionPlaces() {
+    private static void paintConstructionOrdersPlaces() {
         for (ConstructionOrder order : AtlantisConstructingManager.getAllConstructionOrders()) {
-            if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
-                Position positionToBuild = order.getPositionToBuild();
-                UnitType buildingType = order.getBuildingType();
-                if (positionToBuild == null || buildingType == null) {
-                    continue;
-                }
-
-                // Paint box
-                bwapi.drawBox(
-                        positionToBuild,
-                        positionToBuild.translated(buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32),
-                        BWColor.Teal, false, false);
-
-                // Draw X
-                bwapi.drawLine(
-                        positionToBuild,
-                        positionToBuild.translated(buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32),
-                        BWColor.Teal, false);
-                bwapi.drawLine(
-                        positionToBuild.translated(buildingType.getTileWidth() * 32, 0),
-                        positionToBuild.translated(0, buildingType.getTileHeight() * 32),
-                        BWColor.Teal, false);
-                
-                // Draw text
-                paintTextCentered(positionToBuild, buildingType.getShortName(), BWColor.Grey);
+//            if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+            Position positionToBuild = order.getPositionToBuild();
+            UnitType buildingType = order.getBuildingType();
+            if (positionToBuild == null || buildingType == null) {
+                continue;
             }
+
+            // Paint box
+            bwapi.drawBox(
+                    positionToBuild,
+                    positionToBuild.translated(buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32),
+                    BWColor.Teal, false, false);
+
+            // Draw X
+            bwapi.drawLine(
+                    positionToBuild,
+                    positionToBuild.translated(buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32),
+                    BWColor.Teal, false);
+            bwapi.drawLine(
+                    positionToBuild.translated(buildingType.getTileWidth() * 32, 0),
+                    positionToBuild.translated(0, buildingType.getTileHeight() * 32),
+                    BWColor.Teal, false);
+
+            // Draw text
+            paintTextCentered(positionToBuild.translated(0, -10), order.getStatus().toString(), BWColor.Grey);
+            paintTextCentered(positionToBuild, buildingType.getShortName(), BWColor.Grey);
+            Unit builder = order.getBuilder();
+            if (builder != null) {
+                paintTextCentered(positionToBuild.translated(0, 10), "Builder: " + builder.getID(), BWColor.White);
+
+                Unit construction = order.getConstruction();
+                if (construction != null) {
+                    paintTextCentered(positionToBuild.translated(0, 20), "Constr: "
+                            + construction.getType() + " (#" + construction.getID() + ")", BWColor.White);
+                } else {
+                    paintTextCentered(positionToBuild.translated(0, 20), "Constr: null", BWColor.Grey);
+                }
+            } else {
+                paintTextCentered(positionToBuild.translated(0, 10), "Builder: null", BWColor.Grey);
+            }
+//            }
         }
     }
 
@@ -401,7 +475,6 @@ public class AtlantisPainter {
 //                bwapi.drawCircle(unit, 8, BWColor.Teal, false, false);
 //                bwapi.drawCircle(unit, 7, BWColor.Teal, false, false);
 //            }
-
             // RUN
             if (unit.isRunning()) {
                 paintLine(unit, unit.getRunning().getNextPositionToRunTo(), BWColor.Blue);
@@ -450,6 +523,38 @@ public class AtlantisPainter {
             String name = unit.getBuildType().getShortName();
             paintTextCentered(new Position(unit.getPX(), unit.getPY() - 4), BWColor.getColorString(BWColor.Green)
                     + name, false);
+
+            // =========================================================
+            // BUILDING CONSTRUCTION INFO
+            if (unit.isBuilding()) {
+                Unit building = unit;
+                Position positionToBuild = unit;
+                UnitType buildingType = unit.getType();
+                ConstructionOrder order = AtlantisConstructingManager.getConstructionOrderForBuilding(building);
+
+                if (positionToBuild == null || order == null) {
+                    continue;
+                }
+
+                paintTextCentered(positionToBuild.translated(0, 10), 
+                        order.getStatus().toString().replace("CONSTRUCTION_", ""), BWColor.Grey);
+                paintTextCentered(positionToBuild, buildingType.getShortName(), BWColor.Grey);
+                Unit builder = order.getBuilder();
+                if (builder != null) {
+                    paintTextCentered(positionToBuild.translated(0, 20), 
+                            "Builder: " + builder.getID(), BWColor.White);
+
+                    Unit construction = order.getConstruction();
+                    if (construction != null) {
+                        paintTextCentered(positionToBuild.translated(0, 30), "Constr: "
+                                + construction.getType() + " (#" + construction.getID() + ")", BWColor.White);
+                    } else {
+                        paintTextCentered(positionToBuild.translated(0, 30), "Constr: null", BWColor.Grey);
+                    }
+                } else {
+                    paintTextCentered(positionToBuild.translated(0, 10), "Builder: null", BWColor.Grey);
+                }
+            }
         }
     }
 
@@ -497,7 +602,7 @@ public class AtlantisPainter {
             int workers = AtlantisWorkerManager.getHowManyWorkersAt(building);
             if (workers > 0) {
                 String workersAssigned = "Workers: " + workers;
-                paintTextCentered(building.translated(0, -15), workersAssigned, BWColor.Blue);
+                paintTextCentered(building.translated(20, 0), workersAssigned, BWColor.Blue);
             }
         }
     }
@@ -560,13 +665,13 @@ public class AtlantisPainter {
         BWColor color = balance >= 0 ? BWColor.Green : BWColor.Red;
         paintMessage((balance >= 0 ? "+" : "") + balance, color, x + dx, y + 3 * dy, true);
     }
-    
+
     /**
      * Paint red "X" on every enemy unit that has been targetted.
      */
     private static void paintTemporaryTargets() {
         for (Unit ourUnit : SelectUnits.our().list()) {
-            
+
             // Paint "x" on every unit that has been targetted by one of our units.
             if (ourUnit.isAttacking() && ourUnit.getTarget() != null) {
 //                paintMessage("X", BWColor.Red, ourUnit.getTarget().getPX(), ourUnit.getTarget().getPY(), false);
@@ -633,5 +738,4 @@ public class AtlantisPainter {
     private static JNIBWAPI getBwapi() {
         return Atlantis.getBwapi();
     }
-
 }

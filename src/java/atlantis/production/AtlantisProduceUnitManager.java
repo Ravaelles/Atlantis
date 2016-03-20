@@ -1,8 +1,10 @@
 package atlantis.production;
 
 import atlantis.AtlantisConfig;
+import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.production.strategies.AtlantisProductionStrategy;
+import atlantis.production.strategies.ZergProductionStrategy;
 import atlantis.wrappers.SelectUnits;
 import java.util.ArrayList;
 import jnibwapi.Unit;
@@ -43,9 +45,7 @@ public class AtlantisProduceUnitManager {
 
     // =========================================================
     // Hi-level produce
-//    public static boolean isCurrentlyProducing(UnitType unitType) {
-//
-//    }
+    
     private static void produceUnit(UnitType unitType) {
 
         // Worker
@@ -83,6 +83,7 @@ public class AtlantisProduceUnitManager {
         if (!unitType.isBuilding()) {
             System.err.println("produceBuilding has been given wrong argument: " + unitType);
         }
+        
         AtlantisConstructingManager.requestConstructionOf(unitType, order);
     }
     
