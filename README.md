@@ -29,6 +29,10 @@ Atlantis is still in the development, but it's quite capable already. The latest
 * If you've done everything correctly, you're free to go. The main class is of AtlantisTide is called Main. Atlantis is only a family of all products that will be built upon this framework.
 * Atlantis is capable of auto-detecting the race it plays. If you want to change your race, modify this line "race = Protoss" in your bwapi.ini file.
 
+# Where to start
+Check out class that holds main logic of the bot: [AtlantisGameCommander](https://github.com/Ravaelles/Atlantis/blob/master/src/java/atlantis/AtlantisGameCommander.java). Here everything starts. Or check out [DefaultRangedManager](https://github.com/Ravaelles/Atlantis/blob/master/src/java/atlantis/combat/micro/DefaultRangedManager.java) class, which is default micro-manager for all combat units. 
+In directory `build_orders` you will find default build orders for all three races. You can modify them and see how it works out! It's as simple as editing the text file (I recommend using text editor like Notepad++ for it).
+
 # Code structure
 To be explained and improved...
   * Atlantis.matchFrame()
