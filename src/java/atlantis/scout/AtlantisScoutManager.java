@@ -18,7 +18,7 @@ public class AtlantisScoutManager {
     /**
      * Current scout unit.
      */
-    private static ArrayList<Unit> scouts = new ArrayList<Unit>();
+    private static ArrayList<Unit> scouts = new ArrayList<>();
 
     // =========================================================
     /**
@@ -26,7 +26,8 @@ public class AtlantisScoutManager {
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
     public static void update() {
-        assignScoutIfNeeded();
+        // @FIX: Currently no scout is used !!!!!!!!!!!!!!!!!!!!!!!
+//        assignScoutIfNeeded();
 
         // We don't know any enemy building, scout nearest starting location.
         if (!AtlantisEnemyInformationManager.hasDiscoveredEnemyBuilding()) {

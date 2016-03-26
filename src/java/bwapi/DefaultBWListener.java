@@ -100,4 +100,5 @@ public class DefaultBWListener implements BWEventListener {
     public void onPlayerDropped(Player player) {
 
     }
+
 }

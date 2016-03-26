@@ -37,7 +37,7 @@ import bwapi.PositionedObject;
  * only the getInitial__ functions will be available to the AI. However for units that were owned by the
  * player, getPlayer and getType will continue to work for units that have been destroyed.
  */
-public class Unit extends PositionedObject implements Comparable<Object> {
+public class Unit extends PositionedObject implements Comparable<Unit> {
 
     /**
      * Retrieves a unique identifier for this unit. Returns An integer containing the unit's identifier. See
@@ -4707,8 +4707,8 @@ public class Unit extends PositionedObject implements Comparable<Object> {
     // ===== Start of ATLANTIS CODE ============================
     // =========================================================
     
-    private static int firstFreeID = 1;
-    private int atlantisID;
+//    private static int firstFreeID = 1;
+//    private int atlantisID;
     
     private Group group = null;
     private AtlantisRunning running = new AtlantisRunning(this);
@@ -4779,19 +4779,16 @@ public class Unit extends PositionedObject implements Comparable<Object> {
         toString += " #" + getID() + " at [" + position.getTileX() + "," + position.getTileY() + "]";
         return toString;
     }
-
+    
     @Override
-    public int compareTo(Object o) {
-        if (!(o instanceof Unit)) {
-            return -1;
-        }
-        return Integer.compare(this.atlantisID, ((Unit) o).atlantisID);
+    public int compareTo(Unit o) {
+        return Integer.compare(this.getID(), ((Unit) o).getID());
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 53 * hash + (int) (atlantisID ^ (atlantisID >>> 32));
+        hash = 53 * hash + this.getID();
         return hash;
     }
 
@@ -4807,11 +4804,44 @@ public class Unit extends PositionedObject implements Comparable<Object> {
             return false;
         }
         final Unit other = (Unit) obj;
-        if (this.atlantisID != other.atlantisID) {
+        if (this.getID() != other.getID()) {
             return false;
         }
         return true;
     }
+
+//    @Override
+//    public int compareTo(Object o) {
+//        if (!(o instanceof Unit)) {
+//            return -1;
+//        }
+//        return Integer.compare(this.getID(), ((Unit) o).getID());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int hash = 7;
+//        hash = 53 * hash + (int) (getID() ^ (getID() >>> 32));
+//        return hash;
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj) {
+//            return true;
+//        }
+//        if (obj == null) {
+//            return false;
+//        }
+//        if (getClass() != obj.getClass()) {
+//            return false;
+//        }
+//        final Unit other = (Unit) obj;
+//        if (this.getID() != other.getID()) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     // =========================================================
     // Compare type methods

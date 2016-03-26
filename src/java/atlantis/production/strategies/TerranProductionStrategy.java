@@ -9,11 +9,6 @@ import bwapi.UnitType;
 public class TerranProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
-    protected String getFilename() {
-        return "TerranDefault.csv";
-    }
-
-    @Override
     public void produceWorker() {
         Unit building = Select.ourOneIdle(AtlantisConfig.BASE);
         if (building != null) {

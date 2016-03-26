@@ -32,6 +32,7 @@ import bwapi.Game;
 import bwapi.Position;
 import bwapi.Unit;
 import bwapi.UnitType;
+import bwapi.Text.Size.Enum;
 
 /**
  * Here you can include code that will draw extra informations over units etc.
@@ -55,6 +56,7 @@ public class AtlantisPainter {
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
+        bwapi.setTextSize(Enum.Small);
 
         // =========================================================
 //        bwapi.drawTargets(true); // Draws line from unit to the target position
@@ -415,7 +417,7 @@ public class AtlantisPainter {
             }
             
             // Current COMMAND
-            if (AtlantisGame.getTimeFrames() > 2) {
+            if (AtlantisGame.getTimeFrames() > 5) {
 //                System.out.println(unit.getLastCommand());
 //                paintTextCentered(unit, unit.getLastCommand().toString(), Color.Purple);
             }

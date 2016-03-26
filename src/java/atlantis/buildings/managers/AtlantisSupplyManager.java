@@ -14,6 +14,10 @@ public class AtlantisSupplyManager {
 
     // =========================================================
     public static void update() {
+        if (true) {
+            return;
+        }
+        
         supplyTotal = AtlantisGame.getSupplyTotal();
 
         /**

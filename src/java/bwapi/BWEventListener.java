@@ -17,7 +17,7 @@ public interface BWEventListener {
     public void onEnd(boolean isWinner);
 
     public void onFrame();
-
+    
     public void onSendText(String text);
 
     public void onReceiveText(Player player, String text);

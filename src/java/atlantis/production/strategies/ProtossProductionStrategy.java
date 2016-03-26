@@ -9,11 +9,6 @@ import bwapi.UnitType;
 public class ProtossProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
-    protected String getFilename() {
-        return "ProtossDefault.csv";
-    }
-
-    @Override
     public void produceWorker() {
         Unit building = Select.ourOneIdle(AtlantisConfig.BASE);
         if (building != null) {

@@ -76,18 +76,18 @@ public class AtlantisBuilderManager {
 
             if (buildPosition != null && !builder.isConstructing()) {
                 TilePosition buildTilePosition = buildPosition.toTilePosition();
-                if (Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType)) {
-                    System.out.println(buildTilePosition + " / " + buildingType);
-                    System.out.println(Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType));
-                    builder.build(buildingType, buildTilePosition);
-                }
-                else {
-                    System.err.println("canBuildHere for " + buildTilePosition + " / " + buildingType 
-                            + " returned false!");
-                }
+                builder.build(buildingType, buildTilePosition);
+//                if (Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType)) {
+//                    System.out.println(buildTilePosition + " / " + buildingType);
+//                    System.out.println(Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType));
+//                    builder.build(buildingType, buildTilePosition);
+//                }
+//                else {
+//                    System.err.println("canBuildHere for " + buildTilePosition + " / " + buildingType 
+//                            + " returned false!");
+//                }
             }
         }
-
     }
 
 }
