@@ -26,6 +26,7 @@ public class AtlantisBuilderManager {
     }
 
     // =========================================================
+    
     private static void handleConstruction(Unit builder) {
         ConstructionOrder constructionOrder = AtlantisConstructingManager.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
@@ -78,7 +79,7 @@ public class AtlantisBuilderManager {
                 if (Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType)) {
                     System.out.println(buildTilePosition + " / " + buildingType);
                     System.out.println(Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType));
-//                    builder.build(buildingType, buildTilePosition);
+                    builder.build(buildingType, buildTilePosition);
                 }
                 else {
                     System.err.println("canBuildHere for " + buildTilePosition + " / " + buildingType 

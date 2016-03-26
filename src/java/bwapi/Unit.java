@@ -3630,9 +3630,9 @@ public class Unit extends PositionedObject implements Comparable<Object> {
 
     public Unit(long pointer) {
         this.pointer = pointer;
-        if (!isNeutralUnit()) {
-            atlantisInit(); // @AtlantisChange
-        }
+//        if (!isNeutralUnit()) {
+        atlantisInit(); // @AtlantisChange
+//        }
     }
 
     private static Unit get(long pointer) {
@@ -4707,6 +4707,9 @@ public class Unit extends PositionedObject implements Comparable<Object> {
     // ===== Start of ATLANTIS CODE ============================
     // =========================================================
     
+    private static int firstFreeID = 1;
+    private int atlantisID;
+    
     private Group group = null;
     private AtlantisRunning running = new AtlantisRunning(this);
     private int lastUnitAction = 0;
@@ -4755,22 +4758,11 @@ public class Unit extends PositionedObject implements Comparable<Object> {
         TooltipManager.setTooltip(this, "Run");
     }
 
-//    public static Unit getByID(int unitID) {
-//        for (Unit unit : Atlantis.getBwapi().getAllUnits()) {
-//            if (unit.getID() == unitID) {
-//                return unit;
-//            }
-//        }
-//
-//        return null;
-//    }
-
     /**
      * Returns distance in tiles (1 tile = 32 pixels) to the target.
      */
     public double distanceTo(Object target) {
         if (target instanceof Unit) {
-            System.out.println("dist: " + getDistance((Unit) target) / 32);
             return (double) getDistance((Unit) target) / 32;
         }
         else {
@@ -4793,7 +4785,32 @@ public class Unit extends PositionedObject implements Comparable<Object> {
         if (!(o instanceof Unit)) {
             return -1;
         }
-        return Integer.compare(this.getID(), ((Unit) o).getID());
+        return Integer.compare(this.atlantisID, ((Unit) o).atlantisID);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (int) (atlantisID ^ (atlantisID >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Unit other = (Unit) obj;
+        if (this.atlantisID != other.atlantisID) {
+            return false;
+        }
+        return true;
     }
 
     // =========================================================

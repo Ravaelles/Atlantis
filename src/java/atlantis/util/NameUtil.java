@@ -8,21 +8,23 @@ import bwapi.UpgradeType;
 
 /**
  * Utilities for retrieving names of game entities
- * @author Anderson
- * TODO: check whether UnitType.class.getFields() from bwapi works the same way 
- * as in bwapi.UnitTypes
+ *
+ * @author Anderson TODO: check whether UnitType.class.getFields() from bwapi works the same way as in
+ * bwapi.UnitTypes
  */
 public class NameUtil {
-	/**
-	 * Returns a shorter name for a UnitType
-	 * @param t
-	 * @return
-	 */
-	public static String getShortName(UnitType t) {
-        return t.toString().replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "");
-    }
-	
-	public static boolean disableErrorReporting = false;
+
+    /**
+     * Returns a shorter name for a UnitType
+     *
+     * @param t
+     * @return
+     */
+//    public static String getShortName(UnitType t) {
+//        return t.toString().replace("Terran_", "").replace("Protoss_", "").replace("Zerg_", "");
+//    }
+
+    public static boolean disableErrorReporting = false;
 
     /**
      * You can "Terran_Marine" or "Terran Marine" or even "Marine".
@@ -49,7 +51,7 @@ public class NameUtil {
 
         return null;
     }
-    
+
     /**
      * You can use "Terran_U-238_Shells" or "U-238_Shells" or even "U-238 Shells".
      */
@@ -73,24 +75,24 @@ public class NameUtil {
 
         return null;
     }
-    
+
     public static TechType getTechTypeByName(String name) {
-		name = name.replace(" ", "_").toLowerCase();
+        name = name.replace(" ", "_").toLowerCase();
 
-		for (Field field : TechType.class.getFields()) {
-			String otherTechName = field.getName().toLowerCase();
-			if (otherTechName.contains(name)) {
-				try {
-					TechType techType = (TechType) TechType.class.getField(field.getName()).get(null);
-					return techType;
-				} catch (Exception e) {
-					if (!disableErrorReporting) {
-						System.err.println("error trying to find TechType for: '" + name + "'\n" + e.getMessage());
-					}
-				}
-			}
-		}
+        for (Field field : TechType.class.getFields()) {
+            String otherTechName = field.getName().toLowerCase();
+            if (otherTechName.contains(name)) {
+                try {
+                    TechType techType = (TechType) TechType.class.getField(field.getName()).get(null);
+                    return techType;
+                } catch (Exception e) {
+                    if (!disableErrorReporting) {
+                        System.err.println("error trying to find TechType for: '" + name + "'\n" + e.getMessage());
+                    }
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

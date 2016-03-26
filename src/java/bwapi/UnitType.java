@@ -16,8 +16,8 @@ The UnitType is used to get information about a particular type of unit, such as
 /**
 Expected type constructor. If the type is an invalid type, then it becomes Types::Unknown. A type is invalid if its value is less than 0 or greater than Types::Unknown. Parameters id The id that corresponds to this type. It is typically an integer value that corresponds to an internal Broodwar type. If the given id is invalid, then it becomes Types::Unknown.
 */
-public class UnitType {
-//public class UnitType implements Comparable<UnitType> {
+//public class UnitType {
+public class UnitType implements Comparable<UnitType> {
 
     public String toString() {
         return toString_native(pointer);
@@ -1003,6 +1003,7 @@ Retrieves the set of upgrades that this unit type is capable of upgrading. Note 
 
     private UnitType(long pointer) {
         this.pointer = pointer;
+        atlantisInit(); // @AtlantisChange
     }
 
     private static UnitType get(long pointer) {
@@ -1183,10 +1184,19 @@ Retrieves the set of upgrades that this unit type is capable of upgrading. Note 
     // ===== Start of ATLANTIS CODE ============================
     // =========================================================
     
+    private static int firstFreeID = 1;
+    private int ID;
+    
     private String _name = null;
     private String _shortName = null;
     public static boolean disableErrorReporting = false;
 
+    // =========================================================
+    
+    private void atlantisInit() {
+        this.ID = UnitType.firstFreeID++;
+    }
+    
     // =========================================================
     
     public static Collection<UnitType> getAllUnitTypes() {
@@ -1217,11 +1227,6 @@ Retrieves the set of upgrades that this unit type is capable of upgrading. Note 
 
         return null;
     }
-
-//    public static UnitType getByID(int unitTypeID) {
-////        return UnitType.getUnitType(unitTypeID);
-//        return instances.get(Long.parseLong(unitTypeID + ""));
-//    }
 
     /**
      * Returns true if given type equals to one of types passed as parameter.
@@ -1311,7 +1316,9 @@ Retrieves the set of upgrades that this unit type is capable of upgrading. Note 
         String name = getName();
         if (_shortName == null) {
             _shortName = name.replace("Terran_", "").replace("Protoss_", "").replace("Zerg_", "")
-                .replace("Hero_", "").replace("Special_", "").replace("Powerup_", "").replace("_", " ");
+                .replace("Hero_", "").replace("Special_", "").replace("Powerup_", "").replace("_", " ")
+                .replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "")
+                .replace("Hero ", "").replace("Special ", "").replace("Powerup ", "");
         }
         
         return _shortName;
@@ -1319,33 +1326,34 @@ Retrieves the set of upgrades that this unit type is capable of upgrading. Note 
 
     // =========================================================
     // Override
-//    @Override
-//    public int hashCode() {
-//        return ID;
-//    }
-//
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null) {
-//            return false;
-//        }
-//        if (getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        UnitType other = (UnitType) obj;
-//        if (ID != other.ID) {
-//            return false;
-//        }
-//        return true;
-//    }
-//
-//    @Override
-//    public int compareTo(UnitType o) {
-//        return Integer.compare(this.ID, o.ID);
-//    }
+    
+    @Override
+    public int hashCode() {
+        return ID;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        UnitType other = (UnitType) obj;
+        if (ID != other.ID) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int compareTo(UnitType o) {
+        return Integer.compare(this.ID, o.ID);
+    }
 
     // =========================================================
     // Type comparison methods

@@ -119,7 +119,7 @@ public class ProductionOrder {
 
     public String getShortName() {
         if (unitType != null) {
-            return NameUtil.getShortName(unitType);
+            return unitType.getShortName();
         } else if (upgrade != null) {
             return upgrade.toString(); //replaces .getName();
         } else {

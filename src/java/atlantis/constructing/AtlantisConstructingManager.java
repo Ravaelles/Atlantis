@@ -21,6 +21,7 @@ public class AtlantisConstructingManager {
     private static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
 
     // =========================================================
+    
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
@@ -101,6 +102,7 @@ public class AtlantisConstructingManager {
     }
 
     // =========================================================
+    
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
      * finished objects etc.
@@ -125,6 +127,7 @@ public class AtlantisConstructingManager {
     }
 
     // =========================================================
+    
     /**
      * If builder has died when constructing, replace him with new one.
      */
@@ -214,6 +217,7 @@ public class AtlantisConstructingManager {
 
     // =========================================================no
     // Public class access methods
+    
     /**
      * Returns true if given worker has been assigned to construct new building or if the constructions is
      * already in progress.

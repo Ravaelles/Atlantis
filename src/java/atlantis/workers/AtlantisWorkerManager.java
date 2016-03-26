@@ -87,7 +87,7 @@ public class AtlantisWorkerManager {
         //FIXME: this is making tooltip get the empty string
         ConstructionOrder buildingToBuild = AtlantisConstructingManager.getConstructionOrderFor(unit);
         if (buildingToBuild != null) {
-            tooltip += "Build: " + NameUtil.getShortName(buildingToBuild.getBuildingType()) + newLine;
+            tooltip += "Build: " + buildingToBuild.getBuildingType().getShortName() + newLine;
         }
 //		if (unit.getTarget() != null) {
 //			tooltip += "Target: " + unit.getTarget().getShortName() + newLine;

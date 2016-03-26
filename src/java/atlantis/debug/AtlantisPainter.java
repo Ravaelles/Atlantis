@@ -290,7 +290,7 @@ public class AtlantisPainter {
             if (type.equals(UnitType.Zerg_Egg)) {
                 type = unit.getBuildType();
             }
-            paintSideMessage(NameUtil.getShortName(type), Color.Green);
+            paintSideMessage(type.getShortName(), Color.Green);
         }
 
         // Display units that should be produced right now or any time
@@ -338,7 +338,7 @@ public class AtlantisPainter {
                         color = Color.Teal;
                         break;
                 }
-                paintSideMessage(NameUtil.getShortName(constructionOrder.getBuildingType()), color, yOffset);
+                paintSideMessage(constructionOrder.getBuildingType().getShortName(), color, yOffset);
             }
         }
     }
@@ -372,7 +372,7 @@ public class AtlantisPainter {
                 );
 
                 // Draw text
-                paintTextCentered(positionToBuild, NameUtil.getShortName(buildingType), Color.Grey);
+                paintTextCentered(positionToBuild, buildingType.getShortName(), Color.Grey);
             }
         }
     }
@@ -470,7 +470,7 @@ public class AtlantisPainter {
             paintTextCentered(new Position(labelLeft, labelTop - 3), stringToDisplay, false);
 
             // Display name of unit
-            String name = NameUtil.getShortName(unit.getBuildType());
+            String name = unit.getBuildType().getShortName();
             paintTextCentered(new Position(unit.getPosition().getX(), unit.getPosition().getY() - 4), ColorUtil.getColorString(Color.Green)
                     + name, false);
         }
@@ -554,7 +554,7 @@ public class AtlantisPainter {
             String trainedUnitString = "";
             if (trained != null) {
                 operationProgress = UnitUtil.getHPPercent(trained); // trained.getHP() * 100 / trained.getMaxHP();
-                trainedUnitString = NameUtil.getShortName(trained.getType()); //trained.getShortName();
+                trainedUnitString = trained.getShortName();
             }
 
             // Paint box

@@ -26,7 +26,6 @@ public class Atlantis implements BWEventListener {
      */
     private static Mirror mirror = new Mirror();
     private Game bwapi;
-    //private JNIBWAPI bwapi;
 
     /**
      * Top abstraction-level class that governs all units, buildings etc.
@@ -110,7 +109,6 @@ public class Atlantis implements BWEventListener {
 
             mirror.getModule().setEventListener(this);
             mirror.startGame();
-
         }
     }
 
