@@ -19,3 +19,4 @@ hs_err_pid*
 nbproject/
 build.xml
 manifest.mf
+nbbuild.xml

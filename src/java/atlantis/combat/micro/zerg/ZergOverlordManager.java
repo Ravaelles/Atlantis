@@ -26,7 +26,7 @@ public class ZergOverlordManager {
         // =========================================================
         // We don't know any enemy building
         else {
-            actWhenDontKnowEnemyLocation(unit);
+//            actWhenDontKnowEnemyLocation(unit);
         }
     }
 

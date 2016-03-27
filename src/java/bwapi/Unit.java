@@ -3631,7 +3631,7 @@ public class Unit extends PositionedObject implements Comparable<Unit> {
     public Unit(long pointer) {
         this.pointer = pointer;
 //        if (!isNeutralUnit()) {
-        atlantisInit(); // @AtlantisChange
+//        atlantisInit(); // @AtlantisChange
 //        }
     }
 
@@ -4714,29 +4714,28 @@ public class Unit extends PositionedObject implements Comparable<Unit> {
     private AtlantisRunning running = new AtlantisRunning(this);
     private int lastUnitAction = 0;
 
-    private boolean _repairableMechanically = false;
-    private boolean _healable = false;
-    private boolean _isMilitaryBuildingAntiGround = false;
-    private boolean _isMilitaryBuildingAntiAir = false;
+//    private boolean _repairableMechanically = false;
+//    private boolean _healable = false;
+//    private boolean _isMilitaryBuildingAntiGround = false;
+//    private boolean _isMilitaryBuildingAntiAir = false;
     private double _lastCombatEval;
     private int _lastTimeCombatEval = 0;
 
     // =========================================================
     // Atlantis constructor
     private void atlantisInit() {
-
         // Repair & Heal
-        _repairableMechanically = isBuilding() || isVehicle();
-        _healable = isInfantry() || isWorker();
+//        _repairableMechanically = isBuilding() || isVehicle();
+//        _healable = isInfantry() || isWorker();
 
         // Military building
-        _isMilitaryBuildingAntiGround = isType(
-                UnitType.Terran_Bunker, UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Sunken_Colony
-        );
-        _isMilitaryBuildingAntiAir = isType(
-                UnitType.Terran_Bunker, UnitType.Terran_Missile_Turret,
-                UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Spore_Colony
-        );
+//        _isMilitaryBuildingAntiGround = isType(
+//                UnitType.Terran_Bunker, UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Sunken_Colony
+//        );
+//        _isMilitaryBuildingAntiAir = isType(
+//                UnitType.Terran_Bunker, UnitType.Terran_Missile_Turret,
+//                UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Spore_Colony
+//        );
     }
 
     // =========================================================
@@ -4850,16 +4849,16 @@ public class Unit extends PositionedObject implements Comparable<Unit> {
         return !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
     }
 
-    public boolean canBeHealed() {
-        return _repairableMechanically || _healable;
+    public boolean canBeHealedOrRepaired() {
+        return isRepairableMechanically() || isHealable();
     }
 
     public boolean isRepairableMechanically() {
-        return _repairableMechanically;
+        return isBuilding() || isVehicle();
     }
 
     public boolean isHealable() {
-        return _healable;
+        return isInfantry() || isWorker();
     }
 
     /**
@@ -5027,9 +5026,9 @@ public class Unit extends PositionedObject implements Comparable<Unit> {
         if (!isBuilding()) {
             return false;
         }
-        if (canShootGround && _isMilitaryBuildingAntiGround) {
+        if (canShootGround && isMilitaryBuildingAntiGround()) {
             return true;
-        } else if (canShootAir && _isMilitaryBuildingAntiAir) {
+        } else if (canShootAir && isMilitaryBuildingAntiAir()) {
             return true;
         }
         return false;
@@ -5268,6 +5267,19 @@ public class Unit extends PositionedObject implements Comparable<Unit> {
      */
     public boolean isNeutralUnit() {
         return getPlayer().equals(AtlantisGame.getNeutralPlayer());
+    }
+
+    private boolean isMilitaryBuildingAntiAir() {
+        return isType(
+                UnitType.Terran_Bunker, UnitType.Terran_Missile_Turret,
+                UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Spore_Colony
+        );
+    }
+
+    private boolean isMilitaryBuildingAntiGround() {
+        return isType(
+                UnitType.Terran_Bunker, UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Sunken_Colony
+        );
     }
     
 }

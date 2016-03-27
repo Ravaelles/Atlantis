@@ -50,18 +50,50 @@ public class AtlantisWorkerManager {
 
     // =========================================================
     // Auxiliary
+    
+    /**
+     * Returns total number of workers that are currently assigned to this building.
+     */
+//    public static int getHowManyWorkersAt(Unit target) {
+//        boolean isGasBuilding = UnitUtil.isGasBuilding(target.getType());
+//        int total = 0;
+//        Collection<Unit> ourWorkersInRange = (Collection<Unit>) Select.ourWorkers().inRadius(15, target.getPosition()).listUnits();
+//        for (Unit worker : ourWorkersInRange) {
+//            if (target.equals(worker.getTarget())) {
+//                total++;
+//            } else if (target.equals(worker.getOrderTarget())) {
+//                total++;
+//            } else if (target.equals(worker.getBuildUnit())) {
+//                total++;
+//            } else if (isGasBuilding) {
+//                if (worker.isCarryingGas() || worker.isGatheringGas()) {
+//                    total++;
+//                }
+//            }
+//        }
+//        return total;
+//    }
     public static int getHowManyWorkersAt(Unit target) {
-        boolean isGasBuilding = UnitUtil.isGasBuilding(target.getType());
+        boolean isGasBuilding = target.getType().isGasBuilding();
+        boolean isBase = target.isBase();
         int total = 0;
-        Collection<Unit> ourWorkersInRange = (Collection<Unit>) Select.ourWorkers().inRadius(15, target.getPosition()).listUnits();
-        for (Unit worker : ourWorkersInRange) {
-            if (target.equals(worker.getTarget())) {
+        
+        for (Unit worker : Select.ourWorkers().inRadius(15, target).listUnits()) {
+            if (target.equals(worker.getTarget()) || target.equals(worker.getOrderTarget())) {
                 total++;
-            } else if (target.equals(worker.getOrderTarget())) {
+            }
+            else if (target.equals(worker.getBuildUnit())) {
                 total++;
-            } else if (target.equals(worker.getBuildUnit())) {
-                total++;
-            } else if (isGasBuilding) {
+            }
+            else if (isBase) {
+                if (worker.isGatheringMinerals() || worker.isCarryingMinerals()) {
+                    total++;
+                }
+                else if (worker.getTarget() != null && worker.getTarget().getType().isMineralField()) {
+                    total++;
+                }
+            }
+            else if (isGasBuilding) {
                 if (worker.isCarryingGas() || worker.isGatheringGas()) {
                     total++;
                 }

@@ -10,11 +10,13 @@ import atlantis.combat.group.missions.MissionAttack;
 import atlantis.combat.group.missions.MissionDefend;
 import atlantis.combat.group.missions.MissionPrepare;
 import atlantis.combat.micro.AtlantisRunning;
+import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.production.ProductionOrder;
+import atlantis.production.strategies.AtlantisProductionStrategy;
 import atlantis.util.ColorUtil;
 import atlantis.util.NameUtil;
 import atlantis.util.PositionUtil;
@@ -95,14 +97,14 @@ public class AtlantisPainter {
      */
     private static void paintVariousStats() {
 
-        // =========================================================
         // Time
         paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", Color.Grey);
 
         // =========================================================
         // Gas workers
         paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-
+        paintSideMessage("Reserved minerals: " + AtlantisProductionStrategy.getMineralsNeeded(), Color.Grey);
+        paintSideMessage("Reserved gas: " + AtlantisProductionStrategy.getGasNeeded(), Color.Grey);
         // =========================================================
         // Global mission
         paintSideMessage("Mission: " + AtlantisGroupManager.getAlphaGroup().getMission().getName(), Color.White);
@@ -402,8 +404,8 @@ public class AtlantisPainter {
             }
             // MOVE
             if (unit.isMoving()) {
-                paintCircle(unit, 8, Color.Grey);
-                paintCircle(unit, 7, Color.Grey);
+                paintCircle(unit, 8, Color.White);
+                paintCircle(unit, 7, Color.White);
             }
             // CONSTRUCTING
             if (unit.isConstructing()) {
@@ -416,11 +418,14 @@ public class AtlantisPainter {
                 paintLine(unit.getPosition(), AtlantisRunning.getNextPositionToRunTo(unit), Color.Blue);
             }
             
+            // Paint #ID
+            paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
+            
             // Current COMMAND
-            if (AtlantisGame.getTimeFrames() > 5) {
-//                System.out.println(unit.getLastCommand());
-//                paintTextCentered(unit, unit.getLastCommand().toString(), Color.Purple);
-            }
+//            if (AtlantisGame.getTimeFrames() > 5 && unit.getLastCommandFrame() > 0
+//                    && !AtlantisConstructingManager.isBuilder(unit)) {
+//                paintTextCentered(unit, "Shit: " + unit.getLastCommand().toString(), Color.Purple);
+//            }
         }
     }
 

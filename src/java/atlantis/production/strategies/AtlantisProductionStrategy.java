@@ -37,6 +37,16 @@ public abstract class AtlantisProductionStrategy {
      */
     private ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
 
+    /**
+     * Number of minerals reserved to produce some units/buildings.
+     */
+    private static int mineralsNeeded = 0;
+    
+    /**
+     * Number of gas reserved to produce some units/buildings.
+     */
+    private static int gasNeeded = 0;
+    
     // =========================================================
     // Constructor
     
@@ -171,8 +181,8 @@ public abstract class AtlantisProductionStrategy {
         ArrayList<ProductionOrder> result = new ArrayList<>();
         int[] resourcesNeededForNotStartedBuildings
                 = AtlantisConstructingManager.countResourcesNeededForNotStartedConstructions();
-        int mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
-        int gasNeeded = resourcesNeededForNotStartedBuildings[1];
+        mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
+        gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
         // =========================================================
         // The idea as follows: as long as we can afford next enqueued production order, add it to the
@@ -494,4 +504,21 @@ public abstract class AtlantisProductionStrategy {
         return Integer.parseInt(row[0].substring(row[0].lastIndexOf("=") + 1));
     }
 
+    // =========================================================
+    // Getters
+
+    /**
+     * Number of minerals reserved to produce some units/buildings.
+     */
+    public static int getMineralsNeeded() {
+        return mineralsNeeded;
+    }
+
+    /**
+     * Number of gas reserved to produce some units/buildings.
+     */
+    public static int getGasNeeded() {
+        return gasNeeded;
+    }
+    
 }

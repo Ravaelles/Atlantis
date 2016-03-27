@@ -522,7 +522,7 @@ public class Select<T> {
         //for (Unit unit : selectedUnits.list()) {
         for (Iterator<Unit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             Unit unit = unitIter.next();
-            if (!unit.getType().isWorker() || !unit.exists()) {
+            if (!unit.isCompleted() || !unit.getType().isWorker() || !unit.exists()) {
                 unitIter.remove();
             }
         }
