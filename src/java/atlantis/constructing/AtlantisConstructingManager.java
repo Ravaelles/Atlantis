@@ -43,11 +43,7 @@ public class AtlantisConstructingManager {
      * it.
      */
     public static void requestConstructionOf(UnitType building, ProductionOrder order, Position near) {
-        if (UnitUtil.isGasBuilding(building)) {
-            AtlantisGame.sendMessage(building.toString());
-        }
 
-        // =========================================================
         // Validate
         if (!building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);

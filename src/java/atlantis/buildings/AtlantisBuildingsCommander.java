@@ -2,6 +2,7 @@ package atlantis.buildings;
 
 import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AtlantisBarracksManager;
+import atlantis.buildings.managers.AtlantisBaseManager;
 //import atlantis.buildings.managers.AtlantisBaseManager;
 import atlantis.util.UnitUtil;
 import atlantis.wrappers.Select;
@@ -33,14 +34,14 @@ public class AtlantisBuildingsCommander {
         // =========================================================
         // Handled separately to produce workers at the end
         
-//        for (Unit building : Select.ourBases().listUnits()) {
-//            
-//            // =========================================================
-//            // BASE (Command Center / Nexus / Hatchery / Lair / Hive)
-//            if (UnitUtil.isBase(building.getType())) {
-//                AtlantisBaseManager.update(building);
-//            } 
-//        }
+        for (Unit building : Select.ourBases().listUnits()) {
+            
+            // =========================================================
+            // BASE (Command Center / Nexus / Hatchery / Lair / Hive)
+            if (UnitUtil.isBase(building.getType())) {
+                AtlantisBaseManager.update(building);
+            } 
+        }
     }
 
 }

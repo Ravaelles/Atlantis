@@ -1,23 +1,17 @@
 package bwapi;
 
-import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.combat.group.Group;
 import atlantis.combat.micro.AtlantisRunning;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.debug.tooltip.Tooltip;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.util.PositionUtil;
 import atlantis.wrappers.Select;
-import bwapi.*;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collection;
 import java.util.List;
-import bwapi.PositionedObject;
 
 /**
  * The Unit class is used to get information about individual units as well as issue orders to units. Each

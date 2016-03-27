@@ -13,7 +13,7 @@ public class AtlantisBaseManager {
         // Train new workers if allowed
         if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
 //            if (hasSlotToProduceUnit(base)) {
-                System.out.println("--> Train worker");
+                System.out.println("--> Train worker in " + base);
                 base.train(AtlantisConfig.WORKER);
 //            }
         }

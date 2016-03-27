@@ -39,10 +39,10 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
     public void produceZergUnit(UnitType unitType) {
         for (Unit base : Select.ourBases().listUnits()) {
             for (Unit larva : base.getLarva()) {
-                System.out.println("TRAIN " + unitType + " IN " + base);
-                System.out.println("TRAIN " + unitType + " IN " + larva);
-                larva.train(unitType);
-                base.train(unitType);
+                boolean result = base.train(unitType);
+                result = base.train();
+                System.out.println(result + "  -> TRAIN " + unitType + " IN " + base);
+//                larva.morph(unitType);
                 return;
             }
         }

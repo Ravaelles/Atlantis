@@ -11,7 +11,7 @@ import java.util.List;
 /**
 The Player represents a unique controller in the game. Each player in a match will have his or her own player instance. There is also a neutral player which owns all the neutral units (such as mineral patches and vespene geysers). See also Playerset, PlayerType, Race
 */
-public class Player {
+public class Player implements Comparable<Player> {
 
 /**
 Retrieves a unique ID that represents the player. Returns An integer representing the ID of the player.
@@ -576,6 +576,39 @@ Verifies that this player satisfies a unit type requirement. This verifies compl
 
     // =========================================================
     // ===== Start of ATLANTIS CODE ============================
+    // =========================================================
+
+    // =========================================================
+    // Override
+    
+    @Override
+    public int hashCode() {
+        return getID();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Player other = (Player) obj;
+        if (getID() != other.getID()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int compareTo(Player o) {
+        return Integer.compare(this.getID(), o.getID());
+    }
+
     // =========================================================
     
     /**
