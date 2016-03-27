@@ -22,9 +22,11 @@ public class AtlantisGameCommander {
         // Execute code of every Commander
         AtlantisWorkerCommander.update();
         AtlantisCombatCommander.update();
-        AtlantisScoutManager.update();
-        AtlantisBuildingsCommander.update();
-        AtlantisProductionCommander.update();
+        if (AtlantisGame.getTimeFrames() >= 2) {
+            AtlantisScoutManager.update();
+            AtlantisBuildingsCommander.update();
+            AtlantisProductionCommander.update();
+        }
 
         // =========================================================
         // Execute extra paint methods at the end of all actions

@@ -5245,9 +5245,17 @@ public class Unit extends PositionedObject implements Comparable<Unit> {
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemyUnit() {
-        return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
+//        return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
+        return getPlayer().isEnemy();
     }
 
+    /**
+     * Returns true if this unit belongs to the enemy.
+     */
+    public boolean isEnemy() {
+        return getPlayer().isEnemy();
+    }
+    
     /**
      * Returns true if this unit belongs to us.
      */

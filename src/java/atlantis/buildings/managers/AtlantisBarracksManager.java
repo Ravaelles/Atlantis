@@ -11,15 +11,16 @@ import bwapi.UnitType;
 public class AtlantisBarracksManager {
 
     public static void update(Unit barracks) {
-        if (shouldTrainUnit(barracks)) {
-            if (hasEmptySlot(barracks)) {
-                buildUnit(barracks);
+        if (!AtlantisGame.playsAsZerg()) {
+            if (shouldTrainUnit(barracks)) {
+                if (hasEmptySlot(barracks)) {
+                    buildUnit(barracks);
+                }
             }
         }
     }
 
     // =========================================================
-    
     private static boolean shouldTrainUnit(Unit barracks) {
 
         // Plays as TERRAN
@@ -57,7 +58,6 @@ public class AtlantisBarracksManager {
     }
 
     // =========================================================
-    
     private static void buildUnit(Unit barracks) {
         UnitType unitToBuild = defineUnitToBuild(barracks);
         if (unitToBuild != null) {
@@ -72,8 +72,7 @@ public class AtlantisBarracksManager {
     private static boolean hasEmptySlot(Unit barracks) {
         if (AtlantisGame.playsAsZerg()) {
             return Select.ourLarva().count() > 0;
-        }
-        else {
+        } else {
             return barracks.getTrainingQueue().size() == 0;
         }
     }

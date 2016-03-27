@@ -182,7 +182,7 @@ public class Atlantis implements BWEventListener {
         try {
             playerOnFrame();
         } catch (Exception e) {
-            System.err.println("AN ERROR HAS OCCURRED");
+            System.err.println("### AN ERROR HAS OCCURRED ###");
             e.printStackTrace();
         }
 

@@ -676,13 +676,20 @@ public class Select<T> {
      */
     public static Unit secondBaseOrMainIfNoSecond() {
         Collection<Unit> bases = Select.ourBases().list();
-        if (bases.size() <= 1) {
-            return bases.iterator().next();
-        } else {
-            Iterator<Unit> iterator = bases.iterator();
-            iterator.next();
-            return iterator.next();
+        
+        int counter = 0;
+        for (Unit base : bases) {
+            if (bases.size() <= 1) {
+                return base;
+            }
+            else if (counter > 0) {
+                return base;
+            }
+            
+            counter++;
         }
+        
+        return null;
     }
 
     /**

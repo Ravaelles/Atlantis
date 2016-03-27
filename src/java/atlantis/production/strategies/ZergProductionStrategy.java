@@ -11,12 +11,12 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
     public void produceWorker() {
-        _produceUnit(AtlantisConfig.WORKER);
+        produceZergUnit(AtlantisConfig.WORKER);
     }
 
     @Override
     public void produceInfantry(UnitType infantryType) {
-        _produceUnit(infantryType);
+        produceZergUnit(infantryType);
     }
 
     @Override
@@ -32,18 +32,13 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
     }
 
     // =========================================================
+    
     /**
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
     public void produceZergUnit(UnitType unitType) {
-        _produceUnit(unitType);
-    }
-
-    // =========================================================
-    protected void _produceUnit(UnitType unitType) {
         for (Unit base : Select.ourBases().listUnits()) {
-            for (Unit unit : base.getLarva()) {
-//                System.out.println(unit + " into " + unitType);
+            for (Unit larva : base.getLarva()) {
                 base.train(unitType);
                 return;
             }
@@ -52,8 +47,8 @@ public class ZergProductionStrategy extends AtlantisProductionStrategy {
 
     // =========================================================
     // Auxiliary
-    private Unit getFreeLarva() {
-        return (Unit) Select.our().ofType(UnitType.Zerg_Larva).first();
-    }
+//    private Unit getFreeLarva() {
+//        return (Unit) Select.our().ofType(UnitType.Zerg_Larva).first();
+//    }
 
 }

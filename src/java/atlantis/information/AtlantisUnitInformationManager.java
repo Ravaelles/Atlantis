@@ -93,7 +93,8 @@ public class AtlantisUnitInformationManager {
 //                ourUnitsUnfininised.decrementValueFor(unit.getType());
 //            }
 //        } else
-        if (Atlantis.getBwapi().self().isEnemy(unit.getPlayer()) ) {
+//        if (Atlantis.getBwapi().self().isEnemy(unit.getPlayer()) ) {
+        if (Atlantis.getBwapi().self().isEnemy() ) {
             enemyUnitsDiscoveredCounter.decrementValueFor(unit.getType());
             enemyUnitsVisibleCounter.decrementValueFor(unit.getType());
             enemyUnitsDiscovered.remove(unit.getID());

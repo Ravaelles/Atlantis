@@ -22,7 +22,8 @@ public class AtlantisEnemyUnits {
     public static void refreshEnemyUnit(Unit enemyUnit) {
         forgetUnit(enemyUnit);
         
-        if (enemyUnit.getPlayer().isEnemy(enemyUnit.getPlayer())) {
+//        if (enemyUnit.getPlayer().isEnemy(enemyUnit.getPlayer())) {
+        if (enemyUnit.isEnemy()) {
             discoveredEnemyUnit(enemyUnit);
         }
     }

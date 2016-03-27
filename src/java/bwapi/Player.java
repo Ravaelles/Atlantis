@@ -1,5 +1,6 @@
 package bwapi;
 
+import atlantis.AtlantisGame;
 import bwapi.*;
 
 import java.util.Map;
@@ -64,9 +65,9 @@ Checks if this player is allied to the specified player. Parameters player The p
 /**
 Checks if this player is unallied to the specified player. Parameters player The player to check alliance with. Return values true if this player is allied with player . false if this player is not allied with player . Note This function will also return false if this player is neutral or an observer, or if player is neutral or an observer. See also isAlly
 */
-    public boolean isEnemy(Player player) {
-        return isEnemy_native(pointer, player);
-    }
+//    public boolean isEnemy(Player player) {
+//        return isEnemy_native(pointer, player);
+//    }
 
 /**
 Checks if this player is the neutral player. Return values true if this player is the neutral player. false if this player is any other player.
@@ -573,4 +574,15 @@ Verifies that this player satisfies a unit type requirement. This verifies compl
 
     private native boolean hasUnitTypeRequirement_native(long pointer, UnitType unit, int amount);
 
+    // =========================================================
+    // ===== Start of ATLANTIS CODE ============================
+    // =========================================================
+    
+    /**
+     * Returns true if this is our enemy.
+     */
+    public boolean isEnemy() {
+        return getID() != AtlantisGame.getPlayerUs().getID();
+    }
+    
 }

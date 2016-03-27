@@ -634,7 +634,7 @@ public class AtlantisPainter {
         }
 
         int screenX = 10;
-        int screenY = 10 + 15 * (yOffset == 0 ? sideMessageTopCounter : sideMessageBottomCounter);
+        int screenY = 5 + 9 * (yOffset == 0 ? sideMessageTopCounter : sideMessageBottomCounter);
         paintMessage(text, color, screenX, yOffset + screenY, true);
 
         if (yOffset == 0) {
@@ -650,7 +650,6 @@ public class AtlantisPainter {
         } else {
             bwapi.drawTextMap(new Position(x, y), ColorUtil.getColorString(color) + text);
         }
-        //getBwapi().drawText(new Position(x, y), Color.getColorString(color) + text, screenCoord);
     }
 
     private static void paintRectangle(Position position, int width, int height, Color color) {
@@ -695,21 +694,15 @@ public class AtlantisPainter {
 
         if (screenCoords) {
             bwapi.drawTextScreen(
-                    PositionUtil.translate(position, (int) (-3.7 * text.length()), -2),
+                    PositionUtil.translate(position, (int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         } else {
             bwapi.drawTextMap(
-                    PositionUtil.translate(position, (int) (-3.7 * text.length()), -2),
+                    PositionUtil.translate(position, (int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         }
-        //System.out.println(String.format("writing @ %d, %d", (int) (-3.7 * text.length()), -2));	//TODO DEBUG
-
-        //getBwapi().drawText(PositionUtil.translate(position, (int) (-3.7 * text.length()), -2), Color.getColorString(color) + text, screenCords);
     }
 
-    /*private static   getBwapi() {
-        return Atlantis.getBwapi();
-    }*/
 }
