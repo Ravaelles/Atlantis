@@ -31,7 +31,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
-        int searchRadius = 5;
+        int searchRadius = 6;
         if (building.equals(AtlantisConfig.BASE)) {
             searchRadius = 0;
         }

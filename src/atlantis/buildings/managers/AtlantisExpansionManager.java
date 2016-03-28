@@ -19,7 +19,7 @@ public class AtlantisExpansionManager {
     public static void requestNewBaseIfNeeded() {
         
         // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AtlantisGame.hasMinerals(520)) {
+        if (!AtlantisGame.hasMinerals(620)) {
             return;
         }
         

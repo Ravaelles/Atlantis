@@ -82,13 +82,6 @@ public abstract class AtlantisBuildOrders {
         System.exit(-1);
         return null;
     }
-
-    /**
-     * Returns object that is responsible for the production queue.
-     */
-    public static AtlantisBuildOrders getBuildOrders() {
-        return AtlantisConfig.getBuildOrders();
-    }
     
     // =========================================================
     // Probably most important method in the world
@@ -293,7 +286,14 @@ public abstract class AtlantisBuildOrders {
 
         return result;
     }
-
+    
+    /**
+     * Returns object that is responsible for the production queue.
+     */
+    public static AtlantisBuildOrders getBuildOrders() {
+        return AtlantisConfig.getBuildOrders();
+    }
+    
     // =========================================================
     // Private defined methods
     
@@ -443,7 +443,7 @@ public abstract class AtlantisBuildOrders {
         // Convert 2D String array into ArrayList of ProductionOrder
         createProductionOrderListFromStringArray();
     }
-
+    
     /**
      * Auxiliary method that can be run to see what was loaded from CSV file.
      */

@@ -66,7 +66,7 @@ public class AtlantisPainter {
         // =========================================================
         // Paint from least important to most important (last is on the top)
         paintImportantPlaces();
-//        paintColorCirclesAroundUnits();
+        paintColorCirclesAroundUnits();
 //        paintConstructionProgress();
         paintConstructionPlaces();
         paintBuildingHealth();
@@ -417,14 +417,16 @@ public class AtlantisPainter {
 //            paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
 
             // BUILDER
-            if (AtlantisConstructingManager.isBuilder(unit)) {
-                paintCircle(unit, 15, Color.Teal);
-                paintCircle(unit, 13, Color.Teal);
-                paintCircle(unit, 11, Color.Teal);
-            }
+//            if (AtlantisConstructingManager.isBuilder(unit)) {
+//                paintCircle(unit, 15, Color.Teal);
+//                paintCircle(unit, 13, Color.Teal);
+//                paintCircle(unit, 11, Color.Teal);
+//            }
             
             // Current COMMAND
-            paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
+            if (!unit.isMoving()) {
+                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
+            }
         }
     }
 

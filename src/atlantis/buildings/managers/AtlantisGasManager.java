@@ -12,7 +12,6 @@ import bwapi.UpgradeType;
 
 public class AtlantisGasManager {
 
-    private static final int MIN_GAS_WORKERS_PER_BUILDING = 3;
     private static final int MAX_GAS_WORKERS_PER_BUILDING = 3;
 
     // =========================================================
@@ -22,29 +21,31 @@ public class AtlantisGasManager {
      * no more needed).
      */
     public static void handleGasBuildings() {
-        if (AtlantisGame.getTimeFrames() % 10 != 0) {
+        
+        // Only once per second
+        if (AtlantisGame.getTimeFrames() % 30 != 0) {
             return;
         }
+        int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
         
         // =========================================================
         
-        Collection<AUnit> gasBuildings = (Collection<AUnit>) Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).listUnits();
+        Collection<AUnit> gasBuildings = (Collection<AUnit>) 
+                Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).listUnits();
         Collection<AUnit> workers = Select.ourWorkers().listUnits();
         
         // =========================================================
         
-        int MIN_GAS_WORKERS_PER_BUILDING = defineMinGasWorkersPerBuilding();
-
         for (AUnit gasBuilding : gasBuildings) {
             int numberOfWorkersAssigned = AtlantisWorkerManager.getHowManyWorkersAt(gasBuilding);
             
             // Assign when LOWER THAN MIN
-            if (numberOfWorkersAssigned < MIN_GAS_WORKERS_PER_BUILDING) {
+            if (numberOfWorkersAssigned < minGasWorkersPerBuilding) {
                 AUnit worker = getWorkerForGasBuilding(gasBuilding);
                 if (worker != null) {
                     worker.gather(gasBuilding);
                 }
-                break;
+                break; // Only one worker per call
             }
             
             // Deassign when MORE THAN MAX
@@ -53,7 +54,7 @@ public class AtlantisGasManager {
                 if (worker != null) {
                     worker.stop();
                 }
-                break;
+                break; // Only one worker per call
             }
         }
         

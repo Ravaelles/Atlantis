@@ -245,7 +245,7 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
 
             // Our unit
-            if (unit.getPlayer().equals(bwapi.self())) {
+            if (unit.isOurUnit()) {
                 AtlantisGame.getBuildOrders().rebuildQueue();
 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
@@ -253,6 +253,9 @@ public class Atlantis implements BWEventListener {
                     ProtossConstructionManager.handleWarpingNewBuilding(unit);
                 }
             }
+//            if (!unit.isLarvaOrEgg()) {
+//                System.out.println(unit);
+//            }
         }
     }
 
@@ -264,6 +267,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitComplete(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
+            AtlantisGame.getBuildOrders().rebuildQueue();
 
             // Our unit
             if (unit.getPlayer().equals(bwapi.self()) && !(unit.getType().equals(AUnitType.Zerg_Larva) 
@@ -360,7 +364,6 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOurUnit()) {
-                AtlantisGame.getBuildOrders().rebuildQueue();
                 AtlantisGroupManager.battleUnitDestroyed(unit);
             } else if (unit.isEnemyUnit()) {
                 AtlantisEnemyUnits.discoveredEnemyUnit(unit);
@@ -373,6 +376,7 @@ public class Atlantis implements BWEventListener {
         // =========================================================
         // Remember the unit
         if (unit != null) {
+            AtlantisGame.getBuildOrders().rebuildQueue();
 
             // Our unit
             if (unit.isOurUnit() && !(unit.getType().equals(AUnitType.Zerg_Larva)
@@ -382,10 +386,10 @@ public class Atlantis implements BWEventListener {
             }
         }
             
-            // Enemy unit
-            else if (unit.isEnemyUnit()) {
-                AtlantisEnemyUnits.refreshEnemyUnit(unit);
-            }
+        // Enemy unit
+        else if (unit.isEnemyUnit()) {
+            AtlantisEnemyUnits.refreshEnemyUnit(unit);
+        }
     }
 
     /**

@@ -37,7 +37,6 @@ public class MissionAttack extends Mission {
             if (PositionUtil.distanceTo(focusPoint, unit.getPosition()) > 5) {
                 unit.attack(focusPoint);
                 TooltipManager.setTooltip(unit, "Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
-                System.out.println("--Concentrate");	//TODO DEBUG
                 return true;
             }
         } 

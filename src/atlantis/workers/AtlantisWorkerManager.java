@@ -55,31 +55,12 @@ public class AtlantisWorkerManager {
     /**
      * Returns total number of workers that are currently assigned to this building.
      */
-//    public static int getHowManyWorkersAt(AUnit target) {
-//        boolean isGasBuilding = UnitUtil.isGasBuilding(target.getType());
-//        int total = 0;
-//        Collection<AUnit> ourWorkersInRange = (Collection<AUnit>) Select.ourWorkers().inRadius(15, target.getPosition()).listUnits();
-//        for (AUnit worker : ourWorkersInRange) {
-//            if (target.equals(worker.getTarget())) {
-//                total++;
-//            } else if (target.equals(worker.getOrderTarget())) {
-//                total++;
-//            } else if (target.equals(worker.getBuildUnit())) {
-//                total++;
-//            } else if (isGasBuilding) {
-//                if (worker.isCarryingGas() || worker.isGatheringGas()) {
-//                    total++;
-//                }
-//            }
-//        }
-//        return total;
-//    }
     public static int getHowManyWorkersAt(AUnit target) {
         boolean isGasBuilding = target.getType().isGasBuilding();
         boolean isBase = target.isBase();
         int total = 0;
         
-        for (AUnit worker : Select.ourWorkers().inRadius(15, target.getPosition()).listUnits()) {
+        for (AUnit worker : Select.ourWorkers().listUnits()) {
             if (target.equals(worker.getTarget()) || target.equals(worker.getOrderTarget())) {
                 total++;
             }
