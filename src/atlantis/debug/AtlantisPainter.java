@@ -69,28 +69,27 @@ public class AtlantisPainter {
         // =========================================================
         // Paint from least important to most important (last is on the top)
         paintImportantPlaces();
-        paintColorCirclesAroundUnits();
-        paintConstructionProgress();
+//        paintColorCirclesAroundUnits();
+//        paintConstructionProgress();
         paintConstructionPlaces();
-        paintBuildingHealth();
-        paintWorkersAssignedToBuildings();
-        paintUnitsBeingTrainedInBuildings();
-        paintSpecialsOverUnits();
+//        paintBuildingHealth();
+//        paintWorkersAssignedToBuildings();
+//        paintUnitsBeingTrainedInBuildings();
+//        paintSpecialsOverUnits();
         paintVariousStats();
         paintUnitCounters();
         paintProductionQueue();
-        paintConstructionsPending();
-        paintKilledAndLost();
-        paintTemporaryTargets();
+        paintSidebarConstructionsPending();
+//        paintKilledAndLost();
+//        paintTemporaryTargets();
 
         // =========================================================
         // Paint TOOLTIPS over units
-        for (AUnit unit : Select.our().listUnits()) {
-            if (TooltipManager.hasTooltip(unit)) { // unit.hasTooltip()
-                //System.out.println("-tooltip: " + TooltipManager.getTooltipObject(unit)); //TODO DEBUG
-                paintTextCentered(unit.getPosition(), TooltipManager.getTooltip(unit), Color.White);
-            }
-        }
+//        for (AUnit unit : Select.our().listUnits()) {
+//            if (TooltipManager.hasTooltip(unit)) { // unit.hasTooltip()
+//                paintTextCentered(unit.getPosition(), TooltipManager.getTooltip(unit), Color.White);
+//            }
+//        }
     }
 
     // =========================================================
@@ -330,7 +329,7 @@ public class AtlantisPainter {
     /**
      * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
      */
-    private static void paintConstructionsPending() {
+    private static void paintSidebarConstructionsPending() {
         int yOffset = 205;
         ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
@@ -348,7 +347,7 @@ public class AtlantisPainter {
                         color = Color.Teal;
                         break;
                     default:
-                        color = Color.Teal;
+                        color = Color.Purple;
                         break;
                 }
                 paintSideMessage(constructionOrder.getBuildingType().getShortName(), color, yOffset);
@@ -396,42 +395,48 @@ public class AtlantisPainter {
     private static void paintColorCirclesAroundUnits() {
         for (AUnit unit : Select.ourWorkers().listUnits()) {
 
-            // STARTING ATTACK
-            if (unit.isStartingAttack()) {
-                paintCircle(unit, 10, Color.Yellow);
-                paintCircle(unit, 9, Color.Yellow);
-            }
-            // ATTACK FRAME
-            if (unit.isAttackFrame()) {
-                paintCircle(unit, 13, Color.Orange);
-                paintCircle(unit, 14, Color.Orange);
-            }
-            // ATTACKING
-            if (unit.isAttacking()) {
-                paintCircle(unit, 12, Color.Red);
-                paintCircle(unit, 11, Color.Red);
-            }
-            // MOVE
-            if (unit.isMoving()) {
-                paintCircle(unit, 8, Color.White);
-                paintCircle(unit, 7, Color.White);
-            }
-            // CONSTRUCTING
-            if (unit.isConstructing()) {
-                paintCircle(unit, 6, Color.Teal);
-                paintCircle(unit, 5, Color.Teal);
-            }
+//            // STARTING ATTACK
+//            if (unit.isStartingAttack()) {
+//                paintCircle(unit, 10, Color.Yellow);
+//                paintCircle(unit, 9, Color.Yellow);
+//            }
+//            // ATTACK FRAME
+//            if (unit.isAttackFrame()) {
+//                paintCircle(unit, 13, Color.Orange);
+//                paintCircle(unit, 14, Color.Orange);
+//            }
+//            // ATTACKING
+//            if (unit.isAttacking()) {
+//                paintCircle(unit, 12, Color.Red);
+//                paintCircle(unit, 11, Color.Red);
+//            }
+//            // MOVE
+//            if (unit.isMoving()) {
+//                paintCircle(unit, 8, Color.White);
+//                paintCircle(unit, 7, Color.White);
+//            }
+//            // CONSTRUCTING
+//            if (unit.isConstructing()) {
+//                paintCircle(unit, 6, Color.Teal);
+//                paintCircle(unit, 5, Color.Teal);
+//            }
+//
+//            // RUN
+//            if (AtlantisRunning.isRunning(unit)) {
+//                paintLine(unit.getPosition(), AtlantisRunning.getNextPositionToRunTo(unit), Color.Blue);
+//            }
+//            
+//            // Paint #ID
+//            paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
 
-            // RUN
-            if (AtlantisRunning.isRunning(unit)) {
-                paintLine(unit.getPosition(), AtlantisRunning.getNextPositionToRunTo(unit), Color.Blue);
+            // BUILDER
+            if (AtlantisConstructingManager.isBuilder(unit)) {
+                paintCircle(unit, 15, Color.Teal);
+                paintCircle(unit, 13, Color.Teal);
+                paintCircle(unit, 11, Color.Teal);
             }
-            
-            // Paint #ID
-            paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
             
             // Current COMMAND
-//            if (AtlantisGame.getTimeFrames() > 5 && !AtlantisConstructingManager.isBuilder(unit)) {
             paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
         }
     }

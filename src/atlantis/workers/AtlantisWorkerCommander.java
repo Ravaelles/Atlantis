@@ -24,7 +24,6 @@ public class AtlantisWorkerCommander {
         AtlantisGasManager.handleGasBuildings();
         handleNumberOfWorkersNearBases();
 
-
         for (AUnit unit : Select.ourWorkers().listUnits()) {
             AtlantisWorkerManager.update(unit);
         }

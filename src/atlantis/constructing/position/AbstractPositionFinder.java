@@ -22,6 +22,9 @@ public abstract class AbstractPositionFinder {
      * Returns true if game says it's possible to build given building at this position.
      */
     public static boolean canPhysicallyBuildHere(AUnit builder, AUnitType building, Position position) {
+        if (position == null || builder == null) {
+            return false;
+        }
         return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
     }
 

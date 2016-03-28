@@ -28,8 +28,7 @@ public class AtlantisScoutManager {
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
     public static void update() {
-        // @FIX: Currently no scout is used !!!!!!!!!!!!!!!!!!!!!!!
-//        assignScoutIfNeeded();
+        assignScoutIfNeeded();
 
         // We don't know any enemy building, scout nearest starting location.
         if (!AtlantisEnemyInformationManager.hasDiscoveredEnemyBuilding()) {

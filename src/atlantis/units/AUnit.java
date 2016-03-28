@@ -12,6 +12,7 @@ import bwapi.Player;
 import bwapi.Position;
 import bwapi.Unit;
 import bwapi.UnitCommand;
+import bwapi.UnitCommandType;
 import bwapi.UnitType;
 import bwapi.WeaponType;
 import java.util.ArrayList;
@@ -680,7 +681,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }
 
     public boolean isIdle() {
-        return u.isIdle();
+        return u.isIdle() || u.getLastCommand().getUnitCommandType().equals(UnitCommandType.None);
     }
 
     public boolean isVisible() {

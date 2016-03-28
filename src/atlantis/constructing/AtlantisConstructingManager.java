@@ -203,6 +203,12 @@ public class AtlantisConstructingManager {
             );
             constructionOrder.setPositionToBuild(positionToBuild);
         }
+        
+        // =========================================================
+        // Check if both building and builder are destroyed
+        if (constructionOrder.getBuilder() == null && constructionOrder.getConstruction() == null) {
+            constructionOrder.cancel();
+        }
     }
 
     /**
