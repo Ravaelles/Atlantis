@@ -3,12 +3,13 @@ package atlantis.combat.group.missions;
 import atlantis.combat.micro.AtlantisRunning;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.enemy.AtlantisMap;
+import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwta.Chokepoint;
 import bwapi.TilePosition;
-import bwapi.Unit;
+
 
 public class MissionDefend extends Mission {
 
@@ -19,7 +20,7 @@ public class MissionDefend extends Mission {
     // =========================================================
 
     @Override
-    public boolean update(Unit unit) {
+    public boolean update(AUnit unit) {
         if (canIssueOrderToUnit(unit)) {
             if (moveUnitIfNeededNearChokePoint(unit)) {
                 return true;
@@ -31,9 +32,9 @@ public class MissionDefend extends Mission {
 
     // =========================================================
     /**
-     * Unit will go towards important choke point near main base.
+     * AUnit will go towards important choke point near main base.
      */
-    private boolean moveUnitIfNeededNearChokePoint(Unit unit) {
+    private boolean moveUnitIfNeededNearChokePoint(AUnit unit) {
         Chokepoint chokepoint = getFocusPoint();
         if (chokepoint == null) {
             System.err.println("Couldn't define choke point.");
@@ -47,37 +48,37 @@ public class MissionDefend extends Mission {
 
             // Too close to
             if (isCriticallyCloseToChokePoint(unit, chokepoint)) {
-                UnitUtil.moveAwayFrom(unit, chokepoint.getCenter(),  1.0);	//unit.moveAwayFrom(chokepoint, 1.0);
+                unit.moveAwayFrom(chokepoint.getCenter(), 1.0);	//unit.moveAwayFrom(chokepoint, 1.0);
                 TooltipManager.setTooltip(unit, "Get back");
                 System.out.println("get back -- defend");	//TODO DEBUG
                 //unit.setTooltip("Get back");
                 return true;
             }
 
-            // Unit is quite close to the choke point
+            // AUnit is quite close to the choke point
             if (isCloseEnoughToChokePoint(unit, chokepoint)) {
 
                 // Too many stacked units
                 if (isTooManyUnitsAround(unit, chokepoint)) {
-                	UnitUtil.moveAwayFrom(unit, chokepoint.getCenter(),  1.0);	//unit.moveAwayFrom(chokepoint, 1.0);
+                	unit.moveAwayFrom(chokepoint.getCenter(),  1.0);	//unit.moveAwayFrom(chokepoint, 1.0);
                     TooltipManager.setTooltip(unit, "Stacked"); //unit.setTooltip("Stacked");
                 } // Units aren't stacked too much
                 else {
                 }
-            } // Unit is far from choke point
+            } // AUnit is far from choke point
             else {
-                unit.move(chokepoint.getCenter(), false);
+                unit.move(chokepoint.getCenter());
             }
         }
 
         return false;
     }
 
-    private boolean isTooManyUnitsAround(Unit unit, Chokepoint chokepoint) {
+    private boolean isTooManyUnitsAround(AUnit unit, Chokepoint chokepoint) {
         return Select.ourCombatUnits().inRadius(1.0, unit.getPosition()).count() >= 3;
     }
 
-    private boolean isCloseEnoughToChokePoint(Unit unit, Chokepoint chokepoint) {
+    private boolean isCloseEnoughToChokePoint(AUnit unit, Chokepoint chokepoint) {
         if (unit == null || chokepoint == null) {
             return false;
         }
@@ -89,7 +90,7 @@ public class MissionDefend extends Mission {
         double distToChoke = PositionUtil.distanceTo(chokepoint.getCenter(), unit.getPosition()) - chokepoint.getWidth()/100.0f;	// getRadiusInTiles()
 
         // How far can the unit shoot
-        double unitShootRange =  unit.getType().groundWeapon().maxRange() / 32; //getShootRangeGround();
+        double unitShootRange =  unit.getType().getGroundWeapon().maxRange() / 32; //getShootRangeGround();
 
         // Define max allowed distance from choke point to consider "still close"
         double maxDistanceAllowed = unitShootRange + unitShootRangeExtra;
@@ -97,7 +98,7 @@ public class MissionDefend extends Mission {
         return distToChoke <= maxDistanceAllowed;
     }
 
-    private boolean isCriticallyCloseToChokePoint(Unit unit, Chokepoint chokepoint) {
+    private boolean isCriticallyCloseToChokePoint(AUnit unit, Chokepoint chokepoint) {
         if (unit == null || chokepoint == null) {
             return false;
         }
@@ -114,7 +115,7 @@ public class MissionDefend extends Mission {
         double standFurther = 1;
 
         // How far can the unit shoot (in build tiles)
-        double unitShootRange = unit.getType().groundWeapon().maxRange() / TilePosition.SIZE_IN_PIXELS; //getShootRangeGround();
+        double unitShootRange = unit.getType().getGroundWeapon().maxRange() / TilePosition.SIZE_IN_PIXELS; //getShootRangeGround();
 
         // Define max distance
         double maxDistance = unitShootRange + standFurther;
@@ -131,7 +132,7 @@ public class MissionDefend extends Mission {
      * Do not interrupt unit if it is engaged in combat.
      */
     @Override
-    protected boolean canIssueOrderToUnit(Unit unit) {
+    protected boolean canIssueOrderToUnit(AUnit unit) {
 
         // If unit has far more important actions than fucking positioning, disallow any actions here.
         if (unit.isAttacking() || unit.isStartingAttack() || AtlantisRunning.isRunning(unit) || unit.isAttackFrame() || unit.isMoving()) {
@@ -139,7 +140,7 @@ public class MissionDefend extends Mission {
         }
 
         // If enemy is close, also it's dumb to do proper positioning. Let the MicroManager decide.
-        Unit nearestEnemy = Select.enemy().nearestTo(unit.getPosition());
+        AUnit nearestEnemy = Select.enemy().nearestTo(unit.getPosition());
         if (nearestEnemy != null && PositionUtil.distanceTo(nearestEnemy, unit) < 15) {
             return false;
         }

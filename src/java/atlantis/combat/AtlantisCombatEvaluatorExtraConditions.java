@@ -2,9 +2,10 @@ package atlantis.combat;
 
 import atlantis.AtlantisGame;
 import atlantis.debug.tooltip.TooltipManager;
+import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.Select;
-import bwapi.Unit;
+import atlantis.units.Select;
+
 
 /**
  *
@@ -12,12 +13,12 @@ import bwapi.Unit;
  */
 public class AtlantisCombatEvaluatorExtraConditions {
 
-    private static Unit unit = null;
-    private static Unit nearestEnemy = null;
+    private static AUnit unit = null;
+    private static AUnit nearestEnemy = null;
     
     // =========================================================
     
-    protected static boolean shouldAlwaysFight(Unit unit, Unit nearestEnemy) {
+    protected static boolean shouldAlwaysFight(AUnit unit, AUnit nearestEnemy) {
         AtlantisCombatEvaluatorExtraConditions.unit = unit;
         AtlantisCombatEvaluatorExtraConditions.nearestEnemy = nearestEnemy;
         
@@ -28,7 +29,7 @@ public class AtlantisCombatEvaluatorExtraConditions {
         return false;
     }
     
-    protected static boolean shouldAlwaysRetreat(Unit unit, Unit nearestEnemy) {
+    protected static boolean shouldAlwaysRetreat(AUnit unit, AUnit nearestEnemy) {
         AtlantisCombatEvaluatorExtraConditions.unit = unit;
         AtlantisCombatEvaluatorExtraConditions.nearestEnemy = nearestEnemy;
         
@@ -49,7 +50,7 @@ public class AtlantisCombatEvaluatorExtraConditions {
 //        }
         
         // If you're near the main base, force the fight
-        Unit mainBase = Select.mainBase();
+        AUnit mainBase = Select.mainBase();
         if (mainBase != null) {
             if (PositionUtil.distanceTo(mainBase, unit) < 7) {
 

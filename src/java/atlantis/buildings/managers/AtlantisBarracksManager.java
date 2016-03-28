@@ -2,15 +2,17 @@ package atlantis.buildings.managers;
 
 import atlantis.AtlantisGame;
 import atlantis.production.ProductionOrder;
-import atlantis.wrappers.Select;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.Select;
 import java.util.ArrayList;
-import bwapi.Unit;
+
 import bwapi.UnitType;
-//import bwapi.UnitType.UnitTypes;
+//import bwapi.AUnitType.UnitTypes;
 
 public class AtlantisBarracksManager {
 
-    public static void update(Unit barracks) {
+    public static void update(AUnit barracks) {
         if (!AtlantisGame.playsAsZerg()) {
             if (shouldTrainUnit(barracks)) {
                 if (hasEmptySlot(barracks)) {
@@ -21,7 +23,8 @@ public class AtlantisBarracksManager {
     }
 
     // =========================================================
-    private static boolean shouldTrainUnit(Unit barracks) {
+    
+    private static boolean shouldTrainUnit(AUnit barracks) {
 
         // Plays as TERRAN
         if (AtlantisGame.playsAsTerran()) {
@@ -58,18 +61,19 @@ public class AtlantisBarracksManager {
     }
 
     // =========================================================
-    private static void buildUnit(Unit barracks) {
-        UnitType unitToBuild = defineUnitToBuild(barracks);
+    
+    private static void buildUnit(AUnit barracks) {
+        AUnitType unitToBuild = defineUnitToBuild(barracks);
         if (unitToBuild != null) {
             barracks.train(unitToBuild);
         }
     }
 
-    private static UnitType defineUnitToBuild(Unit barracks) {
-        return UnitType.Terran_Marine;
+    private static AUnitType defineUnitToBuild(AUnit barracks) {
+        return AUnitType.Terran_Marine;
     }
 
-    private static boolean hasEmptySlot(Unit barracks) {
+    private static boolean hasEmptySlot(AUnit barracks) {
         if (AtlantisGame.playsAsZerg()) {
             return Select.ourLarva().count() > 0;
         } else {

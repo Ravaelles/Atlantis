@@ -2,8 +2,10 @@ package atlantis.constructing;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.production.ProductionOrder;
-import atlantis.wrappers.Select;
-import bwapi.Unit;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.Select;
+
 import bwapi.UnitType;
 
 /**
@@ -15,24 +17,24 @@ public class AtlantisSpecialConstructionManager {
     /**
      * Some buildings like Zerg SUnken Colony need special treatment.
      */
-    protected static boolean handledAsSpecialBuilding(UnitType building, ProductionOrder order) {
-        if (building.equals(UnitType.Zerg_Sunken_Colony)) {
+    protected static boolean handledAsSpecialBuilding(AUnitType building, ProductionOrder order) {
+        if (building.equals(AUnitType.Zerg_Sunken_Colony)) {
             ZergCreepColony.creepOneIntoSunkenColony();
             return true;
         }
         
-        else if (building.isType(UnitType.Zerg_Lair)) {
-            morphFromZergBuildingInto(UnitType.Zerg_Hatchery, UnitType.Zerg_Lair);
+        else if (building.isType(AUnitType.Zerg_Lair)) {
+            morphFromZergBuildingInto(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair);
             return true;
         }
         
-        else if (building.isType(UnitType.Zerg_Hive)) {
-            morphFromZergBuildingInto(UnitType.Zerg_Lair, UnitType.Zerg_Hive);
+        else if (building.isType(AUnitType.Zerg_Hive)) {
+            morphFromZergBuildingInto(AUnitType.Zerg_Lair, AUnitType.Zerg_Hive);
             return true;
         }
         
-        else if (building.isType(UnitType.Zerg_Greater_Spire)) {
-            morphFromZergBuildingInto(UnitType.Zerg_Spire, UnitType.Zerg_Greater_Spire);
+        else if (building.isType(AUnitType.Zerg_Greater_Spire)) {
+            morphFromZergBuildingInto(AUnitType.Zerg_Spire, AUnitType.Zerg_Greater_Spire);
             return true;
         }
         
@@ -41,8 +43,8 @@ public class AtlantisSpecialConstructionManager {
     
     // =========================================================
 
-    private static void morphFromZergBuildingInto(UnitType from, UnitType into) {
-        Unit building = (Unit) Select.ourBuildings().ofType(from).first();
+    private static void morphFromZergBuildingInto(AUnitType from, AUnitType into) {
+        AUnit building = (AUnit) Select.ourBuildings().ofType(from).first();
         if (building == null) {
             System.err.println("No " + from + " found to morph into " + into);
         }

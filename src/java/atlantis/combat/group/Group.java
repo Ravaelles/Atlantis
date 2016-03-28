@@ -5,14 +5,15 @@ import atlantis.combat.micro.DefaultMeleeManager;
 import atlantis.combat.micro.DefaultRangedManager;
 import atlantis.combat.micro.MicroMeleeManager;
 import atlantis.combat.micro.MicroRangedManager;
-import atlantis.wrappers.Units;
+import atlantis.units.AUnit;
+import atlantis.units.Units;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeSet;
 
 import bwapi.Position;
-import bwapi.Unit;
+
 
 /**
  * Represents battle group (unit squad) that contains multiple battle units (could be one unit as well).
@@ -45,25 +46,25 @@ public class Group extends Units {
     /**
      * Stores the group that each unit belongs to. Intends to replace Unit.setGroup() and getGroup() methods.
      */
-    private static java.util.Map<Unit, Group> groupOfUnit = new HashMap<>();
+    private static java.util.Map<AUnit, Group> groupOfUnit = new HashMap<>();
     
     
     /**
-     * Stores that a Unit belongs to a Group
-     * @param u
+     * Stores that a AUnit belongs to a Group
+     * @param unit
      * @param g
      */
-    public static void setGroupOfUnit(Unit u, Group g){
-    	groupOfUnit.put(u, g);
+    public static void setGroupOfUnit(AUnit unit, Group g){
+    	groupOfUnit.put(unit, g);
     }
     
     /**
      * Retrieves the group that the unit belongs to
-     * @param u
+     * @param unit
      * @return
      */
-    public static Group getGroupOfUnit(Unit u){
-    	return groupOfUnit.get(u);
+    public static Group getGroupOfUnit(AUnit unit){
+    	return groupOfUnit.get(unit);
     }
 
     // =========================================================
@@ -104,7 +105,7 @@ public class Group extends Units {
         ArrayList<Integer> xCoords = new ArrayList<>();
         ArrayList<Integer> yCoords = new ArrayList<>();
         
-        for (Unit unit : list()) {
+        for (AUnit unit : list()) {
             xCoords.add(unit.getPosition().getX());
             yCoords.add(unit.getPosition().getY());
         }

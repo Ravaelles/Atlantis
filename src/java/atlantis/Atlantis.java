@@ -2,10 +2,13 @@ package atlantis;
 
 import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.constructing.ProtossConstructionManager;
+import atlantis.debug.AtlantisUnitTypesHelper;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.init.AtlantisInitialActions;
 import atlantis.production.strategies.AtlantisProductionStrategy;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.UnitUtil;
 import bwapi.*;
 import bwta.BWTA;
@@ -130,15 +133,17 @@ public class Atlantis implements BWEventListener {
     }
 
     // =========================================================
+    
     /**
      * It's executed only once, before the first game frame happens.
      */
     @Override
     public void onStart() {
         bwapi = mirror.getGame();
+        bwapi.enableFlag(1);	//FIXME: use the Enum'ed value
         
         // Uncomment this line to see list of units -> damage.
-        // AtlantisUnitTypesHelper.displayUnitTypesDamage();
+        AtlantisUnitTypesHelper.displayUnitTypesDamage();
 
         // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
         // =========================================================
@@ -170,8 +175,8 @@ public class Atlantis implements BWEventListener {
 
         // =========================================================
         gameCommander = new AtlantisGameCommander();
+        System.out.println("gameCommander = " + gameCommander);
         bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED);
-        bwapi.enableFlag(1);	//FIXME: use the Enum'ed value
     }
 
     /**
@@ -179,6 +184,13 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
+        System.out.println("&" + AtlantisGame.getTimeFrames());
+        
+        if (gameCommander == null) {
+            gameCommander = new AtlantisGameCommander();
+            System.out.println("LOL WHAT DE FUUUUUUUUUCK");
+        }
+        
         try {
             playerOnFrame();
         } catch (Exception e) {
@@ -232,7 +244,8 @@ public class Atlantis implements BWEventListener {
      * @see unitCreate()
      */
     @Override
-    public void onUnitCreate(Unit unit) {
+    public void onUnitCreate(Unit u) {
+        AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
 
             // Our unit
@@ -252,11 +265,13 @@ public class Atlantis implements BWEventListener {
      * once per unit.
      */
     @Override
-    public void onUnitComplete(Unit unit) {
+    public void onUnitComplete(Unit u) {
+        AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
 
             // Our unit
-            if (unit.getPlayer().equals(bwapi.self()) && !(unit.getType().equals(UnitType.Zerg_Larva) || unit.getType().equals(UnitType.Zerg_Egg))) {
+            if (unit.getPlayer().equals(bwapi.self()) && !(unit.getType().equals(AUnitType.Zerg_Larva) 
+                    || unit.getType().equals(AUnitType.Zerg_Egg))) {
                 AtlantisGroupManager.possibleCombatUnitCreated(unit);
             }
         } else {
@@ -268,25 +283,23 @@ public class Atlantis implements BWEventListener {
      * A unit has been destroyed. It was either our unit or enemy unit.
      */
     @Override
-    public void onUnitDestroy(Unit unit) {
+    public void onUnitDestroy(Unit u) {
+        AUnit unit = AUnit.createFrom(u);
 
-        // We need to get unit by ID, but we need to use our own solution, because dead unit objects 
-        // would be gone. But if we manually save them, we can access them at this point, even when 
-        // they're already dead.
-        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
+//        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
 
-        if (theUnit != null) {
-            AtlantisUnitInformationManager.unitDestroyed(theUnit);
+        if (unit != null) {
+            AtlantisUnitInformationManager.unitDestroyed(unit);
 
             // Our unit
-            if (theUnit.getPlayer().equals(bwapi.self())) {
+            if (unit.getPlayer().equals(bwapi.self())) {
                 AtlantisGame.getProductionStrategy().rebuildQueue();
-                AtlantisGroupManager.battleUnitDestroyed(theUnit);
+                AtlantisGroupManager.battleUnitDestroyed(unit);
                 LOST++;
-                LOST_RESOURCES += UnitUtil.getTotalPrice(theUnit.getType());
+                LOST_RESOURCES += UnitUtil.getTotalPrice(unit.getType());
             } else {
                 KILLED++;
-                KILLED_RESOURCES += UnitUtil.getTotalPrice(theUnit.getType());
+                KILLED_RESOURCES += UnitUtil.getTotalPrice(unit.getType());
             }
         }
 
@@ -306,7 +319,8 @@ public class Atlantis implements BWEventListener {
      * a <b>critter</b>.
      */
     @Override
-    public void onUnitDiscover(Unit unit) {
+    public void onUnitDiscover(Unit u) {
+        AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
 
             // Enemy unit
@@ -320,24 +334,27 @@ public class Atlantis implements BWEventListener {
      * Called when unit is hidden by a fog war and it becomes inaccessible by the BWAPI.
      */
     @Override
-    public void onUnitEvade(Unit unit) {
+    public void onUnitEvade(Unit u) {
+//        AUnit unit = AUnit.createFrom(u);
     }
 
     /**
      * Called just as a visible unit is becoming invisible.
      */
     @Override
-    public void onUnitHide(Unit unit) {
+    public void onUnitHide(Unit u) {
+//        AUnit unit = AUnit.createFrom(u);
     }
 
     /**
-     * Called when a unit changes its UnitType.
+     * Called when a unit changes its AUnitType.
      *
      * For example, when a Drone transforms into a Hatchery, a Siege Tank uses Siege Mode, or a Vespene Geyser
      * receives a Refinery.
      */
     @Override
-    public void onUnitMorph(Unit unit) {
+    public void onUnitMorph(Unit u) {
+        AUnit unit = AUnit.createFrom(u);
 
         // A bit of safe approach: forget the unit and remember it again.
         // =========================================================
@@ -362,8 +379,8 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
 
             // Our unit
-            if (unit.getPlayer().equals(bwapi.self()) && !(unit.getType().equals(UnitType.Zerg_Larva)
-                    || unit.getType().equals(UnitType.Zerg_Egg))) {
+            if (unit.getPlayer().equals(bwapi.self()) && !(unit.getType().equals(AUnitType.Zerg_Larva)
+                    || unit.getType().equals(AUnitType.Zerg_Egg))) {
 //                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
                 AtlantisGroupManager.possibleCombatUnitCreated(unit);
             }
@@ -379,20 +396,16 @@ public class Atlantis implements BWEventListener {
      * Called when a previously invisible unit becomes visible.
      */
     @Override
-    public void onUnitShow(Unit unit) {
-//        if (unit != null) {
-//
-//            // Enemy unit
-//            if (isEnemyUnit()) {
-//            }
-//        }
+    public void onUnitShow(Unit u) {
+//        AUnit unit = AUnit.createFrom(u);
     }
 
     /**
      * Unit has been converted and joined the enemy (by Dark Archon).
      */
     @Override
-    public void onUnitRenegade(Unit unit) {
+    public void onUnitRenegade(Unit u) {
+//        AUnit unit = AUnit.createFrom(u);
     }
 
     /**

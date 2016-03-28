@@ -5,7 +5,9 @@ import atlantis.combat.group.Group;
 import atlantis.combat.group.missions.Missions;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.debug.tooltip.TooltipManager;
-import bwapi.Unit;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+
 import bwapi.UnitType;
 
 public class AtlantisCombatCommander {
@@ -35,7 +37,7 @@ public class AtlantisCombatCommander {
         // =========================================================
         // =========================================================
         // Act with every unit
-        for (Unit unit : group.arrayList()) {
+        for (AUnit unit : group.arrayList()) {
 
             // DON'T INTERRUPT shooting units
             if (shouldNotDisturbUnit(unit)) {
@@ -74,8 +76,8 @@ public class AtlantisCombatCommander {
      * unit it will run proper micro managers here and return true, meaning no other managers should be used.
      * False will give command to standard Melee of Micro managers.
      */
-    private static boolean handledAsSpecialUnit(Unit unit) {
-        if (unit.getType().equals(UnitType.Zerg_Overlord)) {
+    private static boolean handledAsSpecialUnit(AUnit unit) {
+        if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
             ZergOverlordManager.update(unit);
             TooltipManager.setTooltip(unit, "Overlord");
             return true;
@@ -95,7 +97,7 @@ public class AtlantisCombatCommander {
 
     // =========================================================
     
-    private static boolean shouldNotDisturbUnit(Unit unit) {
+    private static boolean shouldNotDisturbUnit(AUnit unit) {
     	//this below replaces unit.isJustShooting()
         return unit.isAttackFrame() || unit.isStartingAttack();
     }

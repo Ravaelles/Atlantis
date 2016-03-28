@@ -1,6 +1,8 @@
 package atlantis.debug;
 
+import atlantis.units.AUnitType;
 import atlantis.util.AtlantisUtilities;
+import atlantis.util.WeaponUtil;
 import bwapi.UnitType;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,19 +17,21 @@ public class AtlantisUnitTypesHelper {
      * Auxiliary function that ensures that damages units inflict are properly calculated.
      */
     public static void displayUnitTypesDamage() {
-        HashMap<UnitType, Double> unitsPerGroundDamage = new HashMap<>();
-        HashMap<UnitType, Double> unitsPerAirDamage = new HashMap<>();
-        HashMap<UnitType, Double> unitsTopRatioAirDamage = new HashMap<>();
-        HashMap<UnitType, Double> unitsTopRatioGroundDamage = new HashMap<>();
+        System.out.println("Displaying damages of all units (" + AUnitType.getAllUnitTypes().size() + " units)");
         
-        for (UnitType type : UnitType.getAllUnitTypes()) {
+        HashMap<AUnitType, Double> unitsPerGroundDamage = new HashMap<>();
+        HashMap<AUnitType, Double> unitsPerAirDamage = new HashMap<>();
+        HashMap<AUnitType, Double> unitsTopRatioAirDamage = new HashMap<>();
+        HashMap<AUnitType, Double> unitsTopRatioGroundDamage = new HashMap<>();
+        
+        for (AUnitType type : AUnitType.getAllUnitTypes()) {
             if (type.getName().startsWith("Hero") || type.getName().startsWith("Special")
                     || type.getName().startsWith("Powerup") || type.getName().startsWith("Critter")) {
                 continue;
             }
             
-            double dmgGround = type.getGroundWeapon().getDamageNormalized();
-            double dmgAir = type.getAirWeapon().getDamageNormalized();
+            double dmgGround = WeaponUtil.getDamageNormalized(type.getGroundWeapon());
+            double dmgAir = WeaponUtil.getDamageNormalized(type.getAirWeapon());
             double unitPrice = type.mineralPrice() + type.gasPrice() * 1.5;
             
             if (dmgGround > 0) {
@@ -40,10 +44,10 @@ public class AtlantisUnitTypesHelper {
             }
         }
         
-        Map<UnitType, Double> bestGroundDamage = AtlantisUtilities.sortByValue(unitsPerGroundDamage, false);
-        Map<UnitType, Double> bestAirDamage = AtlantisUtilities.sortByValue(unitsPerAirDamage, false);
-        Map<UnitType, Double> topRatioGroundDamage = AtlantisUtilities.sortByValue(unitsTopRatioAirDamage, false);
-        Map<UnitType, Double> topRatioAirDamage = AtlantisUtilities.sortByValue(unitsTopRatioGroundDamage, false);
+        Map<AUnitType, Double> bestGroundDamage = AtlantisUtilities.sortByValue(unitsPerGroundDamage, false);
+        Map<AUnitType, Double> bestAirDamage = AtlantisUtilities.sortByValue(unitsPerAirDamage, false);
+        Map<AUnitType, Double> topRatioGroundDamage = AtlantisUtilities.sortByValue(unitsTopRatioAirDamage, false);
+        Map<AUnitType, Double> topRatioAirDamage = AtlantisUtilities.sortByValue(unitsTopRatioGroundDamage, false);
         
         // =========================================================
         // Display all results
@@ -53,25 +57,25 @@ public class AtlantisUnitTypesHelper {
         System.out.println();
         
         System.out.println("===== Best ground damage =====");
-        for (UnitType unitType : bestGroundDamage.keySet()) {
+        for (AUnitType unitType : bestGroundDamage.keySet()) {
             System.out.println(unitType.getShortName() + " damage: " + bestGroundDamage.get(unitType));
         }
         System.out.println();
         
         System.out.println("===== Best air damage =====");
-        for (UnitType unitType : bestAirDamage.keySet()) {
+        for (AUnitType unitType : bestAirDamage.keySet()) {
             System.out.println(unitType.getShortName() + " damage: " + bestAirDamage.get(unitType));
         }
         System.out.println();
         
         System.out.println("===== Top quality / price ground units =====");
-        for (UnitType unitType : bestGroundDamage.keySet()) {
+        for (AUnitType unitType : bestGroundDamage.keySet()) {
             System.out.println(unitType.getShortName() + " ratio: " + String.format("%.2f", bestGroundDamage.get(unitType)));
         }
         System.out.println();
         
         System.out.println("===== Top quality / price air units =====");
-        for (UnitType unitType : bestAirDamage.keySet()) {
+        for (AUnitType unitType : bestAirDamage.keySet()) {
             System.out.println(unitType.getShortName() + " ratio: " + String.format("%.2f", bestAirDamage.get(unitType)));
         }
         System.out.println();

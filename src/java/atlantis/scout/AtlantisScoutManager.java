@@ -6,11 +6,13 @@ import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisEnemyInformationManager;
 import atlantis.enemy.AtlantisMap;
 import atlantis.information.AtlantisUnitInformationManager;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import java.util.ArrayList;
 import bwta.BaseLocation;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 
 public class AtlantisScoutManager {
@@ -18,7 +20,7 @@ public class AtlantisScoutManager {
     /**
      * Current scout unit.
      */
-    private static ArrayList<Unit> scouts = new ArrayList<>();
+    private static ArrayList<AUnit> scouts = new ArrayList<>();
 
     // =========================================================
     /**
@@ -31,21 +33,21 @@ public class AtlantisScoutManager {
 
         // We don't know any enemy building, scout nearest starting location.
         if (!AtlantisEnemyInformationManager.hasDiscoveredEnemyBuilding()) {
-            for (Unit scout : scouts) {
+            for (AUnit scout : scouts) {
                 tryToFindEnemy(scout);
             }
         } else {
-            for (Unit scout : scouts) {
+            for (AUnit scout : scouts) {
                 scoutForTheNextBase(scout);
             }
 
             // We know enemy building, but don't know any base.
-//            Unit enemyBase = AtlantisEnemyInformationManager.hasDiscoveredEnemyBase();
+//            AUnit enemyBase = AtlantisEnemyInformationManager.hasDiscoveredEnemyBase();
 //            if (enemyBase == null) {
 //                // @TODO
 //            } // We know the exact location of enemy's base.
 //            else {
-//                for (Unit scout : scouts) {
+//                for (AUnit scout : scouts) {
 //                    handleScoutWhenKnowEnemyBase(scout, enemyBase);
 //                }
 //            }
@@ -56,7 +58,7 @@ public class AtlantisScoutManager {
     /**
      * Behavior for the scout if we know enemy base location.
      */
-    private static void handleScoutWhenKnowEnemyBase(Unit scout, Unit enemyBase) {
+    private static void handleScoutWhenKnowEnemyBase(AUnit scout, AUnit enemyBase) {
         tryToFindEnemy(scout);
 
 //        // Scout already attacking
@@ -78,7 +80,7 @@ public class AtlantisScoutManager {
     /**
      * We don't know any enemy building, scout nearest starting location.
      */
-    public static void tryToFindEnemy(Unit scout) {
+    public static void tryToFindEnemy(AUnit scout) {
         if (scout == null) {
             return;
         }
@@ -90,7 +92,7 @@ public class AtlantisScoutManager {
 //            return;
 //        }
         // Define center point for our searches
-        Unit ourMainBase = Select.mainBase();
+        AUnit ourMainBase = Select.mainBase();
         if (ourMainBase == null) {
             return;
         }
@@ -98,7 +100,7 @@ public class AtlantisScoutManager {
         // =========================================================
         // Get nearest unexplored starting location and go there
         BaseLocation startingLocation;
-        if (scout.getType().equals(UnitType.Zerg_Overlord)) {
+        if (scout.getType().equals(AUnitType.Zerg_Overlord)) {
             startingLocation = AtlantisMap.getStartingLocationBasedOnIndex(
                     UnitUtil.getUnitIndex(scout)
             );
@@ -110,7 +112,7 @@ public class AtlantisScoutManager {
         if (startingLocation != null) {
             TooltipManager.setTooltip(scout, "Scout!");
             //scout.setTooltip("Scout!");
-            scout.move(startingLocation.getPosition(), false);
+            scout.move(startingLocation.getPosition());
         }
     }
 
@@ -139,7 +141,7 @@ public class AtlantisScoutManager {
         }
     }
 
-    private static void scoutForTheNextBase(Unit scout) {
+    private static void scoutForTheNextBase(AUnit scout) {
         BaseLocation baseLocation = AtlantisMap.getNearestUnexploredStartingLocation(scout.getPosition());
         if (baseLocation != null) {
             scout.move(baseLocation.getPosition());

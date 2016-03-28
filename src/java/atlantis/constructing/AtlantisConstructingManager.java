@@ -5,12 +5,13 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import bwapi.Position;
-import bwapi.Unit;
 import bwapi.UnitType;
 
 public class AtlantisConstructingManager {
@@ -26,7 +27,7 @@ public class AtlantisConstructingManager {
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */
-    public static void requestConstructionOf(UnitType building) {
+    public static void requestConstructionOf(AUnitType building) {
         requestConstructionOf(building, null, null);
     }
 
@@ -34,7 +35,7 @@ public class AtlantisConstructingManager {
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */
-    public static void requestConstructionOf(UnitType building, Position near) {
+    public static void requestConstructionOf(AUnitType building, Position near) {
         requestConstructionOf(building, null, near);
     }
 
@@ -42,7 +43,7 @@ public class AtlantisConstructingManager {
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */
-    public static void requestConstructionOf(UnitType building, ProductionOrder order, Position near) {
+    public static void requestConstructionOf(AUnitType building, ProductionOrder order, Position near) {
 
         // Validate
         if (!building.isBuilding()) {
@@ -75,7 +76,7 @@ public class AtlantisConstructingManager {
 
         // =========================================================
         // Successfully found position for new building
-        Unit optimalBuilder = null;
+        AUnit optimalBuilder = null;
         if (positionToBuild != null) {
 
             // Update construction order with found position for building
@@ -127,7 +128,7 @@ public class AtlantisConstructingManager {
     /**
      * If builder has died when constructing, replace him with new one.
      */
-    private static void checkForBuilderStatusChange(ConstructionOrder constructionOrder, Unit builder) {
+    private static void checkForBuilderStatusChange(ConstructionOrder constructionOrder, AUnit builder) {
         if (builder == null || !builder.exists()) {
             constructionOrder.assignOptimalBuilder();
         }
@@ -136,7 +137,7 @@ public class AtlantisConstructingManager {
     /**
      * If building is completed, mark construction as finished and remove it.
      */
-    private static void checkForConstructionStatusChange(ConstructionOrder constructionOrder, Unit building) {
+    private static void checkForConstructionStatusChange(ConstructionOrder constructionOrder, AUnit building) {
 //        System.out.println("==============");
 //        System.out.println(constructionOrder.getBuildingType());
 //        System.out.println(constructionOrder.getStatus());
@@ -151,16 +152,16 @@ public class AtlantisConstructingManager {
 
         // If ZERG change builder into building (it just happens, yeah, weird stuff)
         if (AtlantisGame.playsAsZerg()) {
-            Unit builder = constructionOrder.getBuilder();
+            AUnit builder = constructionOrder.getBuilder();
             if (builder != null && builder.getType().isBuilding()) {
                 constructionOrder.setConstruction(builder);
                 building = builder;
             }
         } // If TERRAN and building doesn't exist yet, assign it to the construction order.
         else if (AtlantisGame.playsAsTerran() && (building == null || !building.exists())) {
-            Unit builder = constructionOrder.getBuilder();
+            AUnit builder = constructionOrder.getBuilder();
             if (builder != null) {
-                Unit buildUnit = builder.getBuildUnit();
+                AUnit buildUnit = AUnit.createFrom(builder.u().getBuildUnit());
                 if (buildUnit != null) {
                     constructionOrder.setConstruction(buildUnit);
                     building = buildUnit;
@@ -188,7 +189,7 @@ public class AtlantisConstructingManager {
                 removeOrder(constructionOrder);
 
                 // @FIX to fix bug with Refineries not being shown as created, because they're kinda changed.
-                if (UnitUtil.isGasBuilding(building.getType())) {
+                if (building.getType().isGasBuilding()) {
                     AtlantisUnitInformationManager.rememberUnit(building);
                 }
             } // NOT YET COMPLETED
@@ -218,7 +219,7 @@ public class AtlantisConstructingManager {
      * Returns true if given worker has been assigned to construct new building or if the constructions is
      * already in progress.
      */
-    public static boolean isBuilder(Unit worker) {
+    public static boolean isBuilder(AUnit worker) {
         if (worker.isConstructing() || getConstructionOrderFor(worker) != null) {
             return true;
         }
@@ -235,7 +236,7 @@ public class AtlantisConstructingManager {
     /**
      * Returns ConstructionOrder object for given builder.
      */
-    public static ConstructionOrder getConstructionOrderFor(Unit builder) {
+    public static ConstructionOrder getConstructionOrderFor(AUnit builder) {
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (builder.equals(constructionOrder.getBuilder())) {
                 return constructionOrder;
@@ -250,7 +251,7 @@ public class AtlantisConstructingManager {
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
      * then, we can e.g. "count unstarted barracks constructions".
      */
-    public static int countNotStartedConstructionsOfType(UnitType type) {
+    public static int countNotStartedConstructionsOfType(AUnitType type) {
         int total = 0;
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
@@ -261,14 +262,14 @@ public class AtlantisConstructingManager {
 
         // =========================================================
         // Special case for Overlord
-        if (type.equals(UnitType.Zerg_Overlord)) {
+        if (type.equals(AUnitType.Zerg_Overlord)) {
             total += Select.ourUnfinished().ofType(type).count();
         }
 
         return total;
     }
 
-    public static int countNotFinishedConstructionsOfType(UnitType type) {
+    public static int countNotFinishedConstructionsOfType(AUnitType type) {
         return Select.ourUnfinished().ofType(type).count()
                 + countNotStartedConstructionsOfType(type);
     }
@@ -277,7 +278,7 @@ public class AtlantisConstructingManager {
      * Returns how many buildings (or Overlords) of given type are currently being produced (started, but not
      * finished).
      */
-    public static int countPendingConstructionsOfType(UnitType type) {
+    public static int countPendingConstructionsOfType(AUnitType type) {
         int total = 0;
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
@@ -288,8 +289,8 @@ public class AtlantisConstructingManager {
 
         // =========================================================
         // Special case for Overlord
-        if (type.equals(UnitType.Zerg_Overlord)) {
-            total += Select.ourUnfinished().ofType(UnitType.Zerg_Overlord).count();
+        if (type.equals(AUnitType.Zerg_Overlord)) {
+            total += Select.ourUnfinished().ofType(AUnitType.Zerg_Overlord).count();
         }
 
         return total;
@@ -300,10 +301,10 @@ public class AtlantisConstructingManager {
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
      * then, we can e.g. "get unstarted barracks constructions".
      *
-     * @param UnitType type if null, then all not started constructions will be returned
+     * @param AUnitType type if null, then all not started constructions will be returned
      * @return
      */
-    public static ArrayList<ConstructionOrder> getNotStartedConstructionsOfType(UnitType type) {
+    public static ArrayList<ConstructionOrder> getNotStartedConstructionsOfType(AUnitType type) {
         ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED

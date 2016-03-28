@@ -1,8 +1,9 @@
 package atlantis.combat.micro;
 
 import atlantis.debug.tooltip.TooltipManager;
+import atlantis.units.AUnit;
 import atlantis.util.UnitUtil;
-import bwapi.Unit;
+
 
 /**
  *
@@ -16,8 +17,8 @@ public class AtlantisAttackEnemyUnit {
      * an attack or just attacking the enemy<br />
      * <b>false</b> if no valid enemy to attack could be found
      */
-    public static boolean handleAttackEnemyUnits(Unit unit) {
-        Unit enemyToAttack = AtlantisEnemyTargeting.defineBestEnemyToAttackFor(unit);
+    public static boolean handleAttackEnemyUnits(AUnit unit) {
+        AUnit enemyToAttack = AtlantisEnemyTargeting.defineBestEnemyToAttackFor(unit);
         
         // =========================================================
         
@@ -40,7 +41,7 @@ public class AtlantisAttackEnemyUnit {
         
         // If we already are attacking this unit, do not issue double command.
         if (!enemyToAttack.equals(unit.getTarget())) {
-            unit.attack(enemyToAttack, false);
+            unit.attack(enemyToAttack);
             TooltipManager.setTooltip(unit, "Forward!"); //setTooltip("Forward!");
         } 
         

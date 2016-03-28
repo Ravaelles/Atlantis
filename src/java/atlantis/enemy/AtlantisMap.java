@@ -1,10 +1,11 @@
 package atlantis.enemy;
 
 import atlantis.Atlantis;
+import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import atlantis.util.AtlantisUtilities;
 import atlantis.wrappers.Positions;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,7 +16,7 @@ import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.Region;
 import bwta.Chokepoint;
-import bwapi.Unit;
+
 import bwta.BWTA;
 import bwta.BaseLocation;
 
@@ -37,7 +38,7 @@ public class AtlantisMap {
      */
     public static Chokepoint getMainBaseChokepoint() {
         if (cached_mainBaseChokepoint == null) {
-            Unit mainBase = Select.mainBase();
+            AUnit mainBase = Select.mainBase();
             if (mainBase != null) {
 
                 // Define region where our main base is
@@ -206,7 +207,7 @@ public class AtlantisMap {
                 
                 // Exclude our base location if needed.
                 if (excludeOurStartLocation) {
-                    Unit mainBase = Select.mainBase();
+                    AUnit mainBase = Select.mainBase();
                     if (mainBase != null && PositionUtil.distanceTo(mainBase.getPosition(), baseLocation.getPosition()) <= 10) {
                         continue;
                     }
@@ -267,7 +268,7 @@ public class AtlantisMap {
      * never returned, but they don't actually get removed. It only sets disabled=true flag for them.
      */
     public static void disableSomeOfTheChokePoints() {
-        Unit mainBase = Select.mainBase();
+        AUnit mainBase = Select.mainBase();
         if (mainBase == null) {
             System.out.println("Error #821493a");
             return;

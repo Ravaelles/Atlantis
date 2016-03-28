@@ -2,7 +2,7 @@ package atlantis.combat.group.missions;
 
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.terran.TerranMedic;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwapi.UnitType;
 
 /**
@@ -35,7 +35,7 @@ public class Missions {
         if (currentGlobalMission == Missions.DEFEND) {
             if (Select.ourCombatUnits().count() >= defineMinUnitsToForFirstAttack()) {
 //                if (AtlantisGame.playsAsTerran()) {
-//                    if (Select.our().countUnitsOfType(UnitType.UnitTypes.Terran_Medic) < 4) {
+//                    if (Select.our().countUnitsOfType(AUnitType.UnitTypes.Terran_Medic) < 4) {
 //                        return;
 //                    }
 //                }

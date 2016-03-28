@@ -3,7 +3,7 @@ package atlantis.buildings.managers;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import atlantis.production.strategies.AtlantisProductionStrategy;
 import java.util.ArrayList;
 import static atlantis.constructing.AtlantisConstructingManager.requestConstructionOf;
@@ -44,7 +44,7 @@ public class AtlantisExpansionManager {
                     requestConstructionOf(AtlantisConfig.BASE);
                 }
                 else {
-                    requestConstructionOf(AtlantisConfig.BASE, Select.mainBase());
+                    requestConstructionOf(AtlantisConfig.BASE, Select.mainBase().getPosition());
                 }
             }
         }

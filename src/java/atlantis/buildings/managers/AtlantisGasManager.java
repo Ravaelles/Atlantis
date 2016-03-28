@@ -2,10 +2,11 @@ package atlantis.buildings.managers;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
+import atlantis.units.AUnit;
 import atlantis.workers.AtlantisWorkerManager;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import java.util.Collection;
-import bwapi.Unit;
+
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -27,30 +28,30 @@ public class AtlantisGasManager {
         
         // =========================================================
         
-        Collection<Unit> gasBuildings = (Collection<Unit>) Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).listUnits();
-        Collection<Unit> workers = Select.ourWorkers().listUnits();
+        Collection<AUnit> gasBuildings = (Collection<AUnit>) Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).listUnits();
+        Collection<AUnit> workers = Select.ourWorkers().listUnits();
         
         // =========================================================
         
         int MIN_GAS_WORKERS_PER_BUILDING = defineMinGasWorkersPerBuilding();
 
-        for (Unit gasBuilding : gasBuildings) {
+        for (AUnit gasBuilding : gasBuildings) {
             int numberOfWorkersAssigned = AtlantisWorkerManager.getHowManyWorkersAt(gasBuilding);
             
             // Assign when LOWER THAN MIN
             if (numberOfWorkersAssigned < MIN_GAS_WORKERS_PER_BUILDING) {
-                Unit worker = getWorkerForGasBuilding(gasBuilding);
+                AUnit worker = getWorkerForGasBuilding(gasBuilding);
                 if (worker != null) {
-                    worker.gather(gasBuilding, false);
+                    worker.gather(gasBuilding);
                 }
                 break;
             }
             
             // Deassign when MORE THAN MAX
             else if (numberOfWorkersAssigned > MAX_GAS_WORKERS_PER_BUILDING) {
-                Unit worker = AtlantisWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
+                AUnit worker = AtlantisWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null) {
-                    worker.stop(false);
+                    worker.stop();
                 }
                 break;
             }
@@ -58,9 +59,9 @@ public class AtlantisGasManager {
         
         // =========================================================
         
-//        Unit gasBuildingNeedingWorker = AtlantisGasManager.getOneGasBuildingNeedingWorker();
+//        AUnit gasBuildingNeedingWorker = AtlantisGasManager.getOneGasBuildingNeedingWorker();
 //        if (gasBuildingNeedingWorker != null) {
-//            Unit worker = Select.ourWorkers().gatheringMinerals(true).first();
+//            AUnit worker = Select.ourWorkers().gatheringMinerals(true).first();
 //            if (worker != null) {
 //                worker.gather(gasBuildingNeedingWorker, false);
 //            }
@@ -69,8 +70,8 @@ public class AtlantisGasManager {
     
     // =========================================================
     
-    private static Unit getWorkerForGasBuilding(Unit gasBuilding) {
-        Unit worker = Select.ourWorkers().gatheringMinerals(true).first();
+    private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
+        AUnit worker = Select.ourWorkers().gatheringMinerals(true).first();
         return worker;
     }
 

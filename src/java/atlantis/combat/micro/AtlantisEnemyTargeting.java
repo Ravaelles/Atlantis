@@ -1,10 +1,12 @@
 package atlantis.combat.micro;
 
 import atlantis.AtlantisGame;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
-import bwapi.Unit;
+import atlantis.units.Select;
+
 import bwapi.UnitType;
 
 public class AtlantisEnemyTargeting {
@@ -13,20 +15,20 @@ public class AtlantisEnemyTargeting {
      * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
-    public static Unit defineBestEnemyToAttackFor(Unit unit) {
+    public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
         boolean canAttackGround = UnitUtil.attacksGround(unit);
         boolean canAttackAir = UnitUtil.attacksAir(unit);
-        Unit nearestEnemy = null;
+        AUnit nearestEnemy = null;
         
         // =========================================================
         // Attack top priority units
-        nearestEnemy = (Unit)Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+        nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
                 .inRadius(14, unit.getPosition())
                 .ofType(
-                        UnitType.Terran_Siege_Tank_Siege_Mode,
-                        UnitType.Terran_Siege_Tank_Tank_Mode,
-                        UnitType.Protoss_Reaver,
-                        UnitType.Zerg_Lurker
+                        AUnitType.Terran_Siege_Tank_Siege_Mode,
+                        AUnitType.Terran_Siege_Tank_Tank_Mode,
+                        AUnitType.Protoss_Reaver,
+                        AUnitType.Zerg_Lurker
                 ).nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
@@ -47,20 +49,20 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // If no real units found, try selecting important buildings
-        nearestEnemy = (Unit)Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
-                .ofType(UnitType.Protoss_Zealot, UnitType.Protoss_Dragoon, 
-                        UnitType.Terran_Marine, UnitType.Terran_Medic, 
-                        UnitType.Terran_Firebat, UnitType.Zerg_Zergling, 
-                        UnitType.Zerg_Hydralisk).nearestTo(unit.getPosition());
+        nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+                .ofType(AUnitType.Protoss_Zealot, AUnitType.Protoss_Dragoon, 
+                        AUnitType.Terran_Marine, AUnitType.Terran_Medic, 
+                        AUnitType.Terran_Firebat, AUnitType.Zerg_Zergling, 
+                        AUnitType.Zerg_Hydralisk).nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
         
         // =========================================================
         // Try selecting defensive buildings
-        nearestEnemy = (Unit)Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
-                .ofType(UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Sunken_Colony, 
-                        UnitType.Terran_Bunker).nearestTo(unit.getPosition());
+        nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+                .ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony, 
+                        AUnitType.Terran_Bunker).nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
@@ -74,9 +76,9 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // If no real units found, try selecting important buildings
-        nearestEnemy = (Unit)Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
-                .ofType(UnitType.Protoss_Pylon, UnitType.Zerg_Spawning_Pool, 
-                        UnitType.Terran_Command_Center).nearestTo(unit.getPosition());
+        nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+                .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool, 
+                        AUnitType.Terran_Command_Center).nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
         }

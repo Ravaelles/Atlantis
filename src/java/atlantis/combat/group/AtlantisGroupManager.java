@@ -1,8 +1,10 @@
 package atlantis.combat.group;
 
 import atlantis.combat.group.missions.Missions;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import java.util.ArrayList;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 
 /**
@@ -16,7 +18,7 @@ public class AtlantisGroupManager {
     protected static ArrayList<Group> groups = new ArrayList<>();
 
     // =========================================================
-    public static void possibleCombatUnitCreated(Unit unit) {
+    public static void possibleCombatUnitCreated(AUnit unit) {
         if (shouldSkipUnit(unit)) {
             return;
         }
@@ -26,7 +28,7 @@ public class AtlantisGroupManager {
         Group.setGroupOfUnit(unit, group); //unit.setGroup(group);
     }
 
-    public static void battleUnitDestroyed(Unit unit) {
+    public static void battleUnitDestroyed(AUnit unit) {
         if (shouldSkipUnit(unit)) {
             return;
         }
@@ -43,8 +45,8 @@ public class AtlantisGroupManager {
      * @param unit
      * @return
      */
-    private static boolean shouldSkipUnit(Unit unit) {
-        return unit.getType().isBuilding() || unit.getType().isWorker() || unit.getType().equals(UnitType.Zerg_Larva);
+    private static boolean shouldSkipUnit(AUnit unit) {
+        return unit.getType().isBuilding() || unit.isWorker() || unit.getType().equals(AUnitType.Zerg_Larva);
     }
 
     // =========================================================

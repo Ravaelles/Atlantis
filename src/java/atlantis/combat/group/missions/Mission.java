@@ -1,6 +1,8 @@
 package atlantis.combat.group.missions;
 
-import bwapi.Unit;
+import atlantis.units.AUnit;
+
+
 
 /**
  * Represents behavior for group of units e.g. DEFEND, ATTACK etc.
@@ -20,12 +22,12 @@ public abstract class Mission {
     /**
      * If returns true, it's not allowed for micro managers to act.
      */
-    public abstract boolean update(Unit unit);
+    public abstract boolean update(AUnit unit);
 
     /**
      * Returns true for units that should accept orders in this frame.
      */
-    protected abstract boolean canIssueOrderToUnit(Unit unit);
+    protected abstract boolean canIssueOrderToUnit(AUnit unit);
 
     // =========================================================
 

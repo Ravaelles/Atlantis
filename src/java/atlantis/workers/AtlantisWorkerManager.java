@@ -6,17 +6,18 @@ import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.tooltip.TooltipManager;
+import atlantis.units.AUnit;
 import atlantis.util.NameUtil;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
-import bwapi.Unit;
+import atlantis.units.Select;
+
 
 public class AtlantisWorkerManager {
 
     /**
      * Executed for every worker unit.
      */
-    public static void update(Unit unit) {
+    public static void update(AUnit unit) {
         TooltipManager.removeTooltip(unit);
         //unit.removeTooltip();
 
@@ -36,7 +37,7 @@ public class AtlantisWorkerManager {
      * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather
      * minerals.
      */
-    private static void sendToGatherMineralsOrGasIfNeeded(Unit worker) {
+    private static void sendToGatherMineralsOrGasIfNeeded(AUnit worker) {
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).
@@ -54,11 +55,11 @@ public class AtlantisWorkerManager {
     /**
      * Returns total number of workers that are currently assigned to this building.
      */
-//    public static int getHowManyWorkersAt(Unit target) {
+//    public static int getHowManyWorkersAt(AUnit target) {
 //        boolean isGasBuilding = UnitUtil.isGasBuilding(target.getType());
 //        int total = 0;
-//        Collection<Unit> ourWorkersInRange = (Collection<Unit>) Select.ourWorkers().inRadius(15, target.getPosition()).listUnits();
-//        for (Unit worker : ourWorkersInRange) {
+//        Collection<AUnit> ourWorkersInRange = (Collection<AUnit>) Select.ourWorkers().inRadius(15, target.getPosition()).listUnits();
+//        for (AUnit worker : ourWorkersInRange) {
 //            if (target.equals(worker.getTarget())) {
 //                total++;
 //            } else if (target.equals(worker.getOrderTarget())) {
@@ -73,12 +74,12 @@ public class AtlantisWorkerManager {
 //        }
 //        return total;
 //    }
-    public static int getHowManyWorkersAt(Unit target) {
+    public static int getHowManyWorkersAt(AUnit target) {
         boolean isGasBuilding = target.getType().isGasBuilding();
         boolean isBase = target.isBase();
         int total = 0;
         
-        for (Unit worker : Select.ourWorkers().inRadius(15, target).listUnits()) {
+        for (AUnit worker : Select.ourWorkers().inRadius(15, target.getPosition()).listUnits()) {
             if (target.equals(worker.getTarget()) || target.equals(worker.getOrderTarget())) {
                 total++;
             }
@@ -102,8 +103,8 @@ public class AtlantisWorkerManager {
         return total;
     }
 
-    public static Unit getRandomWorkerAssignedTo(Unit target) {
-        for (Unit worker : Select.ourWorkers().listUnits()) {
+    public static AUnit getRandomWorkerAssignedTo(AUnit target) {
+        for (AUnit worker : Select.ourWorkers().listUnits()) {
             if (target.equals(worker.getTarget()) || target.equals(worker.getOrderTarget())
                     || target.equals(worker.getBuildUnit())) {
                 return worker;
@@ -113,7 +114,7 @@ public class AtlantisWorkerManager {
         return null;
     }
 
-    private static void updateTooltip(Unit unit) {
+    private static void updateTooltip(AUnit unit) {
         String tooltip = "";
         String newLine = "\r\n";
         //FIXME: this is making tooltip get the empty string

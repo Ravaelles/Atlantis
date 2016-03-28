@@ -4,10 +4,12 @@ import atlantis.Atlantis;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwapi.Position;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 
 public abstract class AbstractPositionFinder {
@@ -19,14 +21,14 @@ public abstract class AbstractPositionFinder {
     /**
      * Returns true if game says it's possible to build given building at this position.
      */
-    public static boolean canPhysicallyBuildHere(Unit builder, UnitType building, Position position) {
-        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building, builder, false);
+    public static boolean canPhysicallyBuildHere(AUnit builder, AUnitType building, Position position) {
+        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
     }
 
     /**
      * Returns true if game says it's possible to build given building at this position.
      *
-    protected static boolean canPhysicallyBuildHere(UnitType building, Position position) {
+    protected static boolean canPhysicallyBuildHere(AUnitType building, Position position) {
     	return Atlantis.getBwapi().canBuildHere(arg0, arg1, arg2, arg3)
         return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building, true);
         
@@ -37,10 +39,10 @@ public abstract class AbstractPositionFinder {
      * add-on place of another. Buildings can be stacked, but it needs to be done properly e.g. Supply Depots
      * could be stacked.
      */
-    protected static boolean otherBuildingsTooClose(Unit builder, UnitType building, Position position) {
+    protected static boolean otherBuildingsTooClose(AUnit builder, AUnitType building, Position position) {
         
         // Compare against existing buildings
-        for (Unit otherBuilding : Select.ourBuildings().listUnits()) {
+        for (AUnit otherBuilding : Select.ourBuildings().listUnits()) {
             int status = areTwoBuildingsTooClose(otherBuilding, position, building);
             if (status >= STATUS_BUILDINGS_ADDON_COLLIDE) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "BUILDING TOO CLOSE (" + otherBuilding + ")";
@@ -71,7 +73,7 @@ public abstract class AbstractPositionFinder {
     private static final int STATUS_BUILDINGS_STICK = 200;
     private static final int STATUS_BUILDINGS_ADDON_COLLIDE = 300;
 
-    private static int areTwoBuildingsTooClose(Unit otherBuilding, Position position, UnitType building) {
+    private static int areTwoBuildingsTooClose(AUnit otherBuilding, Position position, AUnitType building) {
         double edgeToEdgeDistance = getEdgeToEdgeDistanceBetween(otherBuilding, position, building);
         // System.out.println("   --- Dist bitw " + otherBuilding.getType().getName() + " and " + building.getName()
         // + " is " + edgeToEdgeDistance);
@@ -80,7 +82,7 @@ public abstract class AbstractPositionFinder {
         if (edgeToEdgeDistance < 0.1) {
 
             // Allow stacking of depots
-            if (building.equals(UnitType.Terran_Supply_Depot) && otherBuilding.getType().equals(UnitType.Terran_Supply_Depot)) {
+            if (building.equals(AUnitType.Terran_Supply_Depot) && otherBuilding.getType().equals(AUnitType.Terran_Supply_Depot)) {
                 return STATUS_BUILDINGS_STICK;
             }
             else {
@@ -97,27 +99,27 @@ public abstract class AbstractPositionFinder {
      * Returns edge-to-edge distance (in build tiles) between one existing building and the other one not yet
      * existing.
      */
-    protected static double getEdgeToEdgeDistanceBetween(Unit building, Position positionForNewBuilding,
-            UnitType newBuildingType) {
+    protected static double getEdgeToEdgeDistanceBetween(AUnit building, Position positionForNewBuilding,
+            AUnitType newBuildingType) {
     	
     	
-        int targetRight = positionForNewBuilding.getX() + newBuildingType.dimensionRight();	//dimension* returns distance in pixels
-        int targetLeft = positionForNewBuilding.getX() - newBuildingType.dimensionLeft();
-        int targetTop = positionForNewBuilding.getY() - newBuildingType.dimensionUp();
-        int targetBottom = positionForNewBuilding.getY() + newBuildingType.dimensionDown();
+        int targetRight = positionForNewBuilding.getX() + newBuildingType.ut().dimensionRight();	//dimension* returns distance in pixels
+        int targetLeft = positionForNewBuilding.getX() - newBuildingType.ut().dimensionLeft();
+        int targetTop = positionForNewBuilding.getY() - newBuildingType.ut().dimensionUp();
+        int targetBottom = positionForNewBuilding.getY() + newBuildingType.ut().dimensionDown();
 
         //TODO: check whether get{Left,Right,Top,Bottom}PixelBoundary replacements have expected behavior
         //get{left,right,top,bottom} returns distances in pixels
-        int xDist = building.getLeft() - (targetRight + 1);
+        int xDist = building.getType().ut().dimensionLeft() - (targetRight + 1);
         if (xDist < 0) {
-            xDist = targetLeft - (building.getRight()+ 1);
+            xDist = targetLeft - (building.getType().ut().dimensionRight()+ 1);
             if (xDist < 0) {
                 xDist = 0;
             }
         }
-        int yDist = building.getTop() - (targetBottom + 1);
+        int yDist = building.getType().ut().dimensionUp()- (targetBottom + 1);
         if (yDist < 0) {
-            yDist = targetTop - (building.getBottom() + 1);
+            yDist = targetTop - (building.getType().ut().dimensionDown()+ 1);
             if (yDist < 0) {
                 yDist = 0;
             }

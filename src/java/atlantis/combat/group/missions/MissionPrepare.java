@@ -3,12 +3,13 @@ package atlantis.combat.group.missions;
 import atlantis.combat.micro.AtlantisRunning;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.enemy.AtlantisMap;
+import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwta.Chokepoint;
 import bwapi.Position;
-import bwapi.Unit;
+
 
 public class MissionPrepare extends Mission {
 
@@ -19,7 +20,7 @@ public class MissionPrepare extends Mission {
     // =========================================================
     
     @Override
-    public boolean update(Unit unit) {
+    public boolean update(AUnit unit) {
         if (moveUnitToDestinationIfNeeded(unit)) {
             return true;
         }
@@ -29,9 +30,9 @@ public class MissionPrepare extends Mission {
 
     // =========================================================
     /**
-     * Unit will go towards important choke point near main base.
+     * AUnit will go towards important choke point near main base.
      */
-    private boolean moveUnitToDestinationIfNeeded(Unit unit) {
+    private boolean moveUnitToDestinationIfNeeded(AUnit unit) {
         Chokepoint chokepoint = AtlantisMap.getMainBaseChokepoint();
         if (chokepoint == null) {
             System.err.println("Couldn't define choke point.");
@@ -45,36 +46,36 @@ public class MissionPrepare extends Mission {
 
             // Too close to
             if (isCriticallyCloseToChokePoint(unit, chokepoint)) {
-                UnitUtil.moveAwayFrom(unit, chokepoint.getCenter(), 1.5);	//unit.moveAwayFrom(chokepoint, 1.5);
+                unit.moveAwayFrom(chokepoint.getCenter(), 1.5);	//unit.moveAwayFrom(chokepoint, 1.5);
                 TooltipManager.setTooltip(unit, "Get back");  //unit.setTooltip("Get back");
                 System.out.println("get back -- prepare");	//TODO DEBUG
                 return true;
             }
 
-            // Unit is quite close to the choke point
+            // AUnit is quite close to the choke point
             if (isCloseEnoughToChokePoint(unit, chokepoint)) {
 
                 // Too many stacked units
                 if (isTooManyUnitsAround(unit, chokepoint)) {
-                    UnitUtil.moveAwayFrom(unit, chokepoint.getCenter(), 0.2);	//unit.moveAwayFrom(chokepoint, 0.2);
+                    unit.moveAwayFrom(chokepoint.getCenter(), 0.2);	//unit.moveAwayFrom(chokepoint, 0.2);
                     TooltipManager.setTooltip(unit, "Stacked"); //unit.setTooltip("Stacked");
                 } // Units aren't stacked too much
                 else {
                 }
-            } // Unit is far from choke point
+            } // AUnit is far from choke point
             else {
-                unit.move(chokepoint.getCenter(), false);
+                unit.move(chokepoint.getCenter());
             }
         }
 
         return false;
     }
 
-    private boolean isTooManyUnitsAround(Unit unit, Chokepoint chokepoint) {
+    private boolean isTooManyUnitsAround(AUnit unit, Chokepoint chokepoint) {
         return Select.ourCombatUnits().inRadius(0.8, unit.getPosition()).count() >= 4;
     }
 
-    private boolean isCloseEnoughToChokePoint(Unit unit, Chokepoint chokepoint) {
+    private boolean isCloseEnoughToChokePoint(AUnit unit, Chokepoint chokepoint) {
         if (unit == null || chokepoint == null) {
             return false;
         }
@@ -105,7 +106,7 @@ public class MissionPrepare extends Mission {
 //        return distToChoke <= maxDistanceAllowed;
     }
 
-    private boolean isCriticallyCloseToChokePoint(Unit unit, Chokepoint chokepoint) {
+    private boolean isCriticallyCloseToChokePoint(AUnit unit, Chokepoint chokepoint) {
         if (unit == null || chokepoint == null) {
             return false;
         }
@@ -133,7 +134,7 @@ public class MissionPrepare extends Mission {
      * Do not interrupt unit if it is engaged in combat.
      */
     @Override
-    protected boolean canIssueOrderToUnit(Unit unit) {
+    protected boolean canIssueOrderToUnit(AUnit unit) {
         if (AtlantisRunning.isRunning(unit) || unit.isStartingAttack() || unit.isAttacking() || unit.isAttackFrame() || unit.isMoving()) {
             return false;
         }

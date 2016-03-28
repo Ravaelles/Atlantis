@@ -3,15 +3,15 @@ package atlantis.constructing.position;
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.constructing.ConstructionOrder;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwapi.Position;
-import bwapi.Unit;
-import bwapi.UnitType;
 
 public class AtlantisPositionFinder {
 
-    protected static UnitType building;
+    protected static AUnitType building;
     protected static Position nearTo;
     protected static double maxDistance;
 
@@ -20,7 +20,7 @@ public class AtlantisPositionFinder {
     /**
      * Returns build position for next building of given type.
      */
-    public static Position getPositionForNew(Unit builder, UnitType building, ConstructionOrder constructionOrder) {
+    public static Position getPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
         return getPositionForNew(builder, building, constructionOrder, null, -1);
     }
 
@@ -29,24 +29,24 @@ public class AtlantisPositionFinder {
      * position
      * <b>maxDistance</b> build tiles from given position.
      */
-    public static Position getPositionForNew(Unit builder, UnitType building, 
+    public static Position getPositionForNew(AUnit builder, AUnitType building, 
             ConstructionOrder constructionOrder, Position nearTo, double maxDistance) {
 
         // =========================================================
         // Buildings extracting GAS
-        if (UnitUtil.isGasBuilding(building)) {
+        if (building.isGasBuilding()) {
             return AtlantisSpecialPositionFinder.findPositionForGasBuilding(building);
         } 
 
         // =========================================================
         // BASE
-        else if (UnitUtil.isBase(building)) {
+        else if (building.isBase()) {
             return AtlantisSpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
         } 
 
         // =========================================================
         // BASE
-        else if (building.equals(UnitType.Zerg_Creep_Colony)) {
+        else if (building.equals(AUnitType.Zerg_Creep_Colony)) {
             return ZergCreepColony.findPosition(building, builder, constructionOrder);
         } 
 
@@ -84,7 +84,7 @@ public class AtlantisPositionFinder {
     /**
      * Returns standard build position for building near given position.
      */
-    public static Position findStandardPosition(Unit builder, UnitType building, Position nearTo, double maxDistance) {
+    public static Position findStandardPosition(AUnit builder, AUnitType building, Position nearTo, double maxDistance) {
         
         // =========================================================
         // Handle standard building position according to the race as every race uses completely different approach

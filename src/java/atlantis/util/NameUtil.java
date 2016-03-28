@@ -1,5 +1,6 @@
 package atlantis.util;
 
+import atlantis.units.AUnitType;
 import java.lang.reflect.Field;
 
 import bwapi.UnitType;
@@ -9,7 +10,7 @@ import bwapi.UpgradeType;
 /**
  * Utilities for retrieving names of game entities
  *
- * @author Anderson TODO: check whether UnitType.class.getFields() from bwapi works the same way as in
+ * @author Anderson TODO: check whether AUnitType.class.getFields() from bwapi works the same way as in
  * bwapi.UnitTypes
  */
 public class NameUtil {
@@ -20,7 +21,7 @@ public class NameUtil {
      * @param t
      * @return
      */
-//    public static String getShortName(UnitType t) {
+//    public static String getShortName(AUnitType t) {
 //        return t.toString().replace("Terran_", "").replace("Protoss_", "").replace("Zerg_", "");
 //    }
 
@@ -29,21 +30,21 @@ public class NameUtil {
     /**
      * You can "Terran_Marine" or "Terran Marine" or even "Marine".
      */
-    public static UnitType getUnitTypeByName(String string) {
+    public static AUnitType getUnitTypeByName(String string) {
         string = string.replace(" ", "_").toLowerCase();
 
         // if (!string.startsWith("Terran") && !string.startsWith("Protoss") && !string.startsWith("Zerg")) {
         //
         // }
-        for (Field field : UnitType.class.getFields()) {
+        for (Field field : AUnitType.class.getFields()) {
             String otherTypeName = field.getName().toLowerCase();
             if (!otherTypeName.startsWith("Hero") && otherTypeName.contains(string)) {
                 try {
-                    UnitType unitType = (UnitType) UnitType.class.getField(field.getName()).get(null);
+                    AUnitType unitType = (AUnitType) AUnitType.class.getField(field.getName()).get(null);
                     return unitType;
                 } catch (Exception e) {
                     if (!disableErrorReporting) {
-                        System.err.println("error trying to find UnitType for: '" + string + "'\n" + e.getMessage());
+                        System.err.println("error trying to find AUnitType for: '" + string + "'\n" + e.getMessage());
                     }
                 }
             }
@@ -67,7 +68,7 @@ public class NameUtil {
                     return upgradeType;
                 } catch (Exception e) {
                     if (!disableErrorReporting) {
-                        System.err.println("error trying to find UnitType for: '" + string + "'\n" + e.getMessage());
+                        System.err.println("error trying to find AUnitType for: '" + string + "'\n" + e.getMessage());
                     }
                 }
             }

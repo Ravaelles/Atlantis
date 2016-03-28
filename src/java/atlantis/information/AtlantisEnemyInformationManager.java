@@ -1,9 +1,10 @@
 package atlantis.information;
 
+import atlantis.units.AUnit;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwapi.Position;
-import bwapi.Unit;
+
 
 /**
  * Provides various useful information about the enemy whereabouts or if even know any enemy building.
@@ -30,7 +31,7 @@ public class AtlantisEnemyInformationManager {
      * If we learned about at least one still existing enemy base it returns first of them. Returns null
      * otherwise.
      */
-    public static Unit hasDiscoveredEnemyBase() {
+    public static AUnit hasDiscoveredEnemyBase() {
         if (!hasDiscoveredEnemyBuilding()) {
             return null;
         }
@@ -63,7 +64,7 @@ public class AtlantisEnemyInformationManager {
      *
      */
     public static UnitData getNearestEnemyBuilding() {
-        Unit mainBase = Select.mainBase();
+        AUnit mainBase = Select.mainBase();
         if (mainBase != null && !AtlantisUnitInformationManager.enemyUnitsDiscovered.isEmpty()) {
             return Select.fromData(AtlantisUnitInformationManager.enemyUnitsDiscovered.values()).buildings().nearestTo(mainBase.getPosition());
         }

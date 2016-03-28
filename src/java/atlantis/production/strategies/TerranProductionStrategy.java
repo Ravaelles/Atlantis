@@ -1,41 +1,43 @@
 package atlantis.production.strategies;
 
 import atlantis.AtlantisConfig;
-import atlantis.wrappers.Select;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.Select;
 import java.util.ArrayList;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 
 public class TerranProductionStrategy extends AtlantisProductionStrategy {
 
     @Override
     public void produceWorker() {
-        Unit building = Select.ourOneIdle(AtlantisConfig.BASE);
+        AUnit building = Select.ourOneIdle(AtlantisConfig.BASE);
         if (building != null) {
             building.train(AtlantisConfig.WORKER);
         }
     }
 
     @Override
-    public void produceInfantry(UnitType infantryType) {
-        Unit building = Select.ourOneIdle(AtlantisConfig.BARRACKS);
+    public void produceInfantry(AUnitType infantryType) {
+        AUnit building = Select.ourOneIdle(AtlantisConfig.BARRACKS);
         if (building != null) {
             building.train(infantryType);
         }
     }
 
     @Override
-    public ArrayList<UnitType> produceWhenNoProductionOrders() {
-        ArrayList<UnitType> units = new ArrayList<>();
+    public ArrayList<AUnitType> produceWhenNoProductionOrders() {
+        ArrayList<AUnitType> units = new ArrayList<>();
         
-        int marines = Select.our().countUnitsOfType(UnitType.Terran_Marine);
-        int medics = Select.our().countUnitsOfType(UnitType.Terran_Medic);
+        int marines = Select.our().countUnitsOfType(AUnitType.Terran_Marine);
+        int medics = Select.our().countUnitsOfType(AUnitType.Terran_Medic);
         
         if ((double) marines / medics < 3) {
-            units.add(UnitType.Terran_Marine);
+            units.add(AUnitType.Terran_Marine);
         }
         else {
-            units.add(UnitType.Terran_Medic);
+            units.add(AUnitType.Terran_Medic);
         }
         return units;
     }

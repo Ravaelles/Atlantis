@@ -1,10 +1,11 @@
 package atlantis.constructing;
 
+import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.MappingCounter;
-import atlantis.wrappers.Units;
+import atlantis.units.Units;
 import java.util.ArrayList;
-import bwapi.Unit;
+
 
 /**
  *
@@ -17,7 +18,7 @@ public class ProtossConstructionManager {
      * It's because the construction of Protoss buildings is immediate and we have no way of telling
      * that the Probe has actually started a construction.
      */
-    public static void handleWarpingNewBuilding(Unit newBuilding) {
+    public static void handleWarpingNewBuilding(AUnit newBuilding) {
         ArrayList<ConstructionOrder> notStartedConstructions = 
                 AtlantisConstructingManager.getNotStartedConstructionsOfType(newBuilding.getType());
         
@@ -34,7 +35,7 @@ public class ProtossConstructionManager {
         // =========================================================
         
         if (!closestBuilders.isEmpty()) {
-            Unit closestBuilder = closestBuilders.getUnitWithLowestValue();
+            AUnit closestBuilder = closestBuilders.getUnitWithLowestValue();
             
             // Assume that closest builder is the one that has just constructed a building.
             if (closestBuilder != null) {

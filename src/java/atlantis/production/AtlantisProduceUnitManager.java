@@ -3,9 +3,11 @@ package atlantis.production;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.production.strategies.AtlantisProductionStrategy;
-import atlantis.wrappers.Select;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.Select;
 import java.util.ArrayList;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 import bwapi.UpgradeType;
 
@@ -23,7 +25,7 @@ public class AtlantisProduceUnitManager {
             // =========================================================
             // Produce UNIT
             if (order.getUnitType() != null) {
-                UnitType unitType = order.getUnitType();
+                AUnitType unitType = order.getUnitType();
                 if (unitType.isBuilding()) {
                     produceBuilding(unitType, order);
                 } else {
@@ -42,10 +44,10 @@ public class AtlantisProduceUnitManager {
 
     // =========================================================
     // Hi-level produce
-//    public static boolean isCurrentlyProducing(UnitType unitType) {
+//    public static boolean isCurrentlyProducing(AUnitType unitType) {
 //
 //    }
-    private static void produceUnit(UnitType unitType) {
+    private static void produceUnit(AUnitType unitType) {
 
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
@@ -66,9 +68,9 @@ public class AtlantisProduceUnitManager {
     }
 
     private static void researchUpgrade(UpgradeType upgrade) {
-        UnitType buildingType = upgrade.whatUpgrades(); //UnitType.getUnitType(upgrade.getWhatUpgradesTypeID());
+        AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades()); //AUnitType.getUnitType(upgrade.getWhatUpgradesTypeID());
         if (buildingType != null) {
-            Unit building = (Unit) Select.ourBuildings().ofType(buildingType).first();
+            AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
             if (building != null) {
                 building.upgrade(upgrade);
             }
@@ -78,7 +80,7 @@ public class AtlantisProduceUnitManager {
     // =========================================================
     // Lo-level produce
     
-    private static void produceBuilding(UnitType unitType, ProductionOrder order) {
+    private static void produceBuilding(AUnitType unitType, ProductionOrder order) {
         if (!unitType.isBuilding()) {
             System.err.println("produceBuilding has been given wrong argument: " + unitType);
         }
@@ -89,7 +91,7 @@ public class AtlantisProduceUnitManager {
         AtlantisConfig.getProductionStrategy().produceWorker();
     }
 
-    private static void produceInfantry(UnitType infantryType) {
+    private static void produceInfantry(AUnitType infantryType) {
         AtlantisConfig.getProductionStrategy().produceInfantry(infantryType);
     }
 

@@ -1,21 +1,22 @@
 package atlantis.debug.tooltip;
 
 import atlantis.AtlantisGame;
+import atlantis.units.AUnit;
 import atlantis.util.NameUtil;
-import bwapi.Unit;
+
 
 public class Tooltip {
 
-    private Unit unit;
+    private AUnit unit;
     private String tooltip;
     private int tooltipStartInFrames;
 
-    public Tooltip(Unit u, String text) {
+    public Tooltip(AUnit u, String text) {
         unit = u;
         setTooltip(text);
     }
 
-    public Unit getUnit() {
+    public AUnit getUnit() {
         return unit;
     }
 

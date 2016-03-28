@@ -6,15 +6,14 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
+import atlantis.units.AUnitType;
 import atlantis.util.NameUtil;
 import atlantis.util.AtlantisUtilities;
-import atlantis.util.UnitUtil;
 import atlantis.wrappers.AtlantisTech;
 import atlantis.wrappers.MappingCounter;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import java.util.ArrayList;
 import bwapi.TechType;
-import bwapi.UnitType;
 import bwapi.UpgradeType;
 
 /**
@@ -58,8 +57,8 @@ public abstract class AtlantisProductionStrategy {
      * Returns name of file with build orders.
      */
     protected String getFilename() {
-        String ourRaceLetter = AtlantisGame.getPlayerUs().getRace().getLetter();
-        String enemyRaceLetter = AtlantisGame.getEnemy().getRace().getLetter();
+        String ourRaceLetter = AtlantisGame.getPlayerUs().getRace().toString().substring(0, 1);
+        String enemyRaceLetter = AtlantisGame.getEnemy().getRace().toString().substring(0, 1);
         return ourRaceLetter + "v" + enemyRaceLetter + ".csv";
     }
     
@@ -99,12 +98,12 @@ public abstract class AtlantisProductionStrategy {
     /**
      * Request to produce infantry unit that should be handled according to the race played.
      */
-    public abstract void produceInfantry(UnitType infantryType);
+    public abstract void produceInfantry(AUnitType infantryType);
 
     /**
      * When production orders run out, we should always produce some units.
      */
-    public abstract ArrayList<UnitType> produceWhenNoProductionOrders();
+    public abstract ArrayList<AUnitType> produceWhenNoProductionOrders();
 
     // =========================================================
     // Public defined methods
@@ -124,7 +123,7 @@ public abstract class AtlantisProductionStrategy {
 
         // It will store [UnitType->(int)howMany] mapping as we gonna process initial production queue and check if we
         // currently have units needed
-        MappingCounter<UnitType> virtualCounter = new MappingCounter<>();
+        MappingCounter<AUnitType> virtualCounter = new MappingCounter<>();
 
         // =========================================================
         for (ProductionOrder order : initialProductionQueue) {
@@ -135,7 +134,7 @@ public abstract class AtlantisProductionStrategy {
             // =========================================================
             // Unit
             if (order.getUnitType() != null) {
-                UnitType type = order.getUnitType();
+                AUnitType type = order.getUnitType();
                 virtualCounter.incrementValueFor(type);
 
                 int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + virtualCounter.getValueFor(type);
@@ -195,7 +194,7 @@ public abstract class AtlantisProductionStrategy {
 //        }
         
         for (ProductionOrder order : currentProductionQueue) {
-            UnitType unitType = order.getUnitType();
+            AUnitType unitType = order.getUnitType();
             UpgradeType upgrade = order.getUpgrade();
             TechType tech = order.getTech();
 
@@ -207,8 +206,8 @@ public abstract class AtlantisProductionStrategy {
             // =========================================================
             // Protoss fix: wait for at least one Pylon
             if (AtlantisGame.playsAsProtoss() && unitType != null
-                    && !UnitType.Protoss_Pylon.equals(unitType)
-                    && Select.our().countUnitsOfType(UnitType.Protoss_Pylon) == 0) {
+                    && !AUnitType.Protoss_Pylon.equals(unitType)
+                    && Select.our().countUnitsOfType(AUnitType.Protoss_Pylon) == 0) {
                 continue;
             }
             
@@ -243,7 +242,7 @@ public abstract class AtlantisProductionStrategy {
         // =========================================================
         // Produce something if queue is empty
         if (result.isEmpty() && AtlantisGame.getSupplyUsed() >= 9) {
-            for (UnitType unitType : produceWhenNoProductionOrders()) {
+            for (AUnitType unitType : produceWhenNoProductionOrders()) {
                 result.add(new ProductionOrder(unitType));
             }
         }
@@ -255,11 +254,11 @@ public abstract class AtlantisProductionStrategy {
      * Some buildings like Sunken Colony are morphed into from Creep Colony. When counting Creep Colonies,
      * we need to count sunkens as well.
      */
-    private int countUnitsOfGivenTypeOrSimilar(UnitType type) {
-        if (type.equals(UnitType.Zerg_Creep_Colony)) {
+    private int countUnitsOfGivenTypeOrSimilar(AUnitType type) {
+        if (type.equals(AUnitType.Zerg_Creep_Colony)) {
             return AtlantisUnitInformationManager.countOurUnitsOfType(type) +
-                    + AtlantisUnitInformationManager.countOurUnitsOfType(UnitType.Zerg_Sunken_Colony)
-                    + AtlantisUnitInformationManager.countOurUnitsOfType(UnitType.Zerg_Spore_Colony);
+                    + AtlantisUnitInformationManager.countOurUnitsOfType(AUnitType.Zerg_Sunken_Colony)
+                    + AtlantisUnitInformationManager.countOurUnitsOfType(AUnitType.Zerg_Spore_Colony);
         }
         else {
             return AtlantisUnitInformationManager.countOurUnitsOfType(type);
@@ -338,14 +337,14 @@ public abstract class AtlantisProductionStrategy {
 
         // =========================================================
         // Parse entire row of strings
-        // Define type of entry: Unit / Research / Tech
+        // Define type of entry: AUnit / Research / Tech
         String nameString = row[inRowCounter++].toLowerCase().trim();
 
         // =========================================================
         // Try getting objects of each type as we don't know if it's unit, research or tech.
         // UNIT
         NameUtil.disableErrorReporting = true;
-        UnitType unitType = NameUtil.getUnitTypeByName(nameString);	
+        AUnitType unitType = AUnitType.getByName(nameString);	
         NameUtil.disableErrorReporting = false;
 
         // UPGRADE

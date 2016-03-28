@@ -2,26 +2,28 @@ package atlantis.information;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.UnitUtil;
 import atlantis.wrappers.MappingCounter;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import bwapi.Unit;
+
 import bwapi.UnitType;	
 
 public class AtlantisUnitInformationManager {
 
     protected static HashMap<Integer, UnitData> allUnits = new HashMap<>();
 
-//    protected static MappingCounter<UnitType> ourUnitsFininised = new MappingCounter<>();
-//    protected static MappingCounter<UnitType> ourUnitsUnfininised = new MappingCounter<>();
-    protected static MappingCounter<UnitType> enemyUnitsDiscoveredCounter = new MappingCounter<>();
-    protected static MappingCounter<UnitType> enemyUnitsVisibleCounter = new MappingCounter<>();
+//    protected static MappingCounter<AUnitType> ourUnitsFininised = new MappingCounter<>();
+//    protected static MappingCounter<AUnitType> ourUnitsUnfininised = new MappingCounter<>();
+    protected static MappingCounter<AUnitType> enemyUnitsDiscoveredCounter = new MappingCounter<>();
+    protected static MappingCounter<AUnitType> enemyUnitsVisibleCounter = new MappingCounter<>();
 
     protected static HashMap<Integer, UnitData> enemyUnitsDiscovered = new HashMap<>();
-    protected static HashMap<Integer, Unit> enemyUnitsVisible = new HashMap<>();
+    protected static HashMap<Integer, AUnit> enemyUnitsVisible = new HashMap<>();
 
     // =========================================================
     // Special methods
@@ -29,7 +31,7 @@ public class AtlantisUnitInformationManager {
      * Informs this class that new (possibly unfinished) unit exists in the game. Both our (including
      * unfinished) and enemy's.
      */
-    public static void rememberUnit(Unit unit) {
+    public static void rememberUnit(AUnit unit) {
         allUnits.put(unit.getID(), new UnitData(unit));
     }
 
@@ -51,7 +53,7 @@ public class AtlantisUnitInformationManager {
      */
     public static UnitData getUnitDataByID(int unitID) {
         return allUnits.get(unitID);
-    	/*for (Unit unit : allUnits) {
+    	/*for (AUnit unit : allUnits) {
             if (unit.getID() == unitID) {
                 return unit;
             }
@@ -65,19 +67,19 @@ public class AtlantisUnitInformationManager {
     /**
      * Saves information about our new unit being trained, so counting units works properly.
      */
-//    public static void addOurUnfinishedUnit(UnitType type) {
+//    public static void addOurUnfinishedUnit(AUnitType type) {
 //        ourUnitsUnfininised.incrementValueFor(type);
 //    }
     /**
      * Saves information about new unit being created successfully, so counting units works properly.
      */
-//    public static void addOurFinishedUnit(UnitType type) {
+//    public static void addOurFinishedUnit(AUnitType type) {
 //        ourUnitsFininised.incrementValueFor(type);
 //    }
     /**
      * Saves information about enemy unit that we see for the first time.
      */
-    public static void discoveredEnemyUnit(Unit unit) {
+    public static void discoveredEnemyUnit(AUnit unit) {
         enemyUnitsDiscovered.put(unit.getID(), new UnitData(unit));
         enemyUnitsDiscoveredCounter.incrementValueFor(unit.getType());
     }
@@ -85,7 +87,7 @@ public class AtlantisUnitInformationManager {
     /**
      * Saves information about given unit being destroyed, so counting units works properly.
      */
-    public static void unitDestroyed(Unit unit) {
+    public static void unitDestroyed(AUnit unit) {
 //        if (unit.getPlayer().isSelf()) {
 //            if (unit.isCompleted()) {
 //                ourUnitsFininised.decrementValueFor(unit.getType());
@@ -94,7 +96,7 @@ public class AtlantisUnitInformationManager {
 //            }
 //        } else
 //        if (Atlantis.getBwapi().self().isEnemy(unit.getPlayer()) ) {
-        if (Atlantis.getBwapi().self().isEnemy() ) {
+        if (unit.isEnemy()) {
             enemyUnitsDiscoveredCounter.decrementValueFor(unit.getType());
             enemyUnitsVisibleCounter.decrementValueFor(unit.getType());
             enemyUnitsDiscovered.remove(unit.getID());
@@ -102,7 +104,7 @@ public class AtlantisUnitInformationManager {
         }
     }
 
-    public static void addEnemyUnitVisible(Unit unit) {
+    public static void addEnemyUnitVisible(AUnit unit) {
         enemyUnitsVisible.put(unit.getID(), unit);
         enemyUnitsVisibleCounter.incrementValueFor(unit.getType());
         
@@ -110,7 +112,7 @@ public class AtlantisUnitInformationManager {
         enemyUnitsDiscovered.get(unit.getID()).update(unit);
     }
 
-    public static void removeEnemyUnitVisible(Unit unit) {
+    public static void removeEnemyUnitVisible(AUnit unit) {
         enemyUnitsVisible.remove(unit.getID());
         enemyUnitsVisibleCounter.decrementValueFor(unit.getType());
     }
@@ -120,7 +122,7 @@ public class AtlantisUnitInformationManager {
     /**
      * Returns cached amount of our units of given type.
      */
-    public static int countOurUnitsOfType(UnitType type) {
+    public static int countOurUnitsOfType(AUnitType type) {
 
         // Bas building
         if (UnitUtil.isGasBuilding(type)) {
@@ -141,7 +143,7 @@ public class AtlantisUnitInformationManager {
      * Returns number of discovered and alive enemy units of given type. Some of them (maybe even all of them)
      * may not be visible right now.
      */
-    public static int countEnemyUnitsOfType(UnitType type) {
+    public static int countEnemyUnitsOfType(AUnitType type) {
         return enemyUnitsDiscoveredCounter.getValueFor(type);
     }
 
@@ -159,8 +161,8 @@ public class AtlantisUnitInformationManager {
      */
     public static int countOurBases() {
         int total = 0;
-        for (Unit unit : Select.our().listUnits()) {
-            if (UnitUtil.isBase(unit.getType())) {
+        for (AUnit unit : Select.our().listUnits()) {
+            if (unit.isBase()) {
                 total++;
             }
         }

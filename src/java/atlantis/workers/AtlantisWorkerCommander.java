@@ -5,11 +5,12 @@ import atlantis.AtlantisGame;
 import atlantis.buildings.managers.AtlantisGasManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.information.AtlantisUnitInformationManager;
+import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.Select;
-import atlantis.wrappers.Units;
+import atlantis.units.Select;
+import atlantis.units.Units;
 import java.util.Collection;
-import bwapi.Unit;
+
 
 /**
  * Manages all worker (SCV, Probe, Drone) actions.
@@ -24,7 +25,7 @@ public class AtlantisWorkerCommander {
         handleNumberOfWorkersNearBases();
 
 
-        for (Unit unit : Select.ourWorkers().listUnits()) {
+        for (AUnit unit : Select.ourWorkers().listUnits()) {
             AtlantisWorkerManager.update(unit);
         }
     }
@@ -85,14 +86,14 @@ public class AtlantisWorkerCommander {
         
         // =========================================================
         
-        Collection<Unit> ourBases = Select.ourBases().listUnits();
+        Collection<AUnit> ourBases = Select.ourBases().listUnits();
         if (ourBases.size() <= 1) {
             return;
         }
         
         // Count ratios of workers / minerals for every base
         Units baseWorkersRatios = new Units();
-        for (Unit ourBase : ourBases) {
+        for (AUnit ourBase : ourBases) {
             int numOfWorkersNearBase = Select.ourWorkersThatGather().inRadius(15, ourBase.getPosition()).count();
             int numOfMineralsNearBase = Select.minerals().inRadius(10, ourBase.getPosition()).count() + 1;
             if (numOfWorkersNearBase <= 2) {
@@ -104,8 +105,8 @@ public class AtlantisWorkerCommander {
         }
         
         // Take the base with lowest and highest worker ratio
-        Unit baseWithFewestWorkers = baseWorkersRatios.getUnitWithLowestValue();
-        Unit baseWithMostWorkers = baseWorkersRatios.getUnitWithHighestValue();
+        AUnit baseWithFewestWorkers = baseWorkersRatios.getUnitWithLowestValue();
+        AUnit baseWithMostWorkers = baseWorkersRatios.getUnitWithHighestValue();
         
         if (baseWithFewestWorkers == null || baseWithMostWorkers == null) {
 //            System.err.println("baseWithFewestWorkers = " + baseWithFewestWorkers);
@@ -126,7 +127,7 @@ public class AtlantisWorkerCommander {
         // If the difference is "significant" transfer one worker from base to base
         if (baseWorkersRatios.getValueFor(baseWithMostWorkers) - 0.1 > 
                 baseWorkersRatios.getValueFor(baseWithFewestWorkers)) {
-            Unit worker = (Unit) Select.ourWorkersThatGather().inRadius(10, baseWithMostWorkers.getPosition()).first();
+            AUnit worker = (AUnit) Select.ourWorkersThatGather().inRadius(10, baseWithMostWorkers.getPosition()).first();
             if (worker != null) {
                 worker.move(baseWithFewestWorkers.getPosition());
             }

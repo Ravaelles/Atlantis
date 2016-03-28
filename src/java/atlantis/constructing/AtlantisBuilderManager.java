@@ -3,15 +3,17 @@ package atlantis.constructing;
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.constructing.position.AbstractPositionFinder;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
 import bwapi.Position;
 import bwapi.TilePosition;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 
 public class AtlantisBuilderManager {
 
-    public static void update(Unit builder) {
+    public static void update(AUnit builder) {
         if (builder == null) {
             System.err.println("builder null in ABM.update()");
             return;
@@ -27,7 +29,7 @@ public class AtlantisBuilderManager {
 
     // =========================================================
     
-    private static void handleConstruction(Unit builder) {
+    private static void handleConstruction(AUnit builder) {
         ConstructionOrder constructionOrder = AtlantisConstructingManager.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
 
@@ -47,10 +49,10 @@ public class AtlantisBuilderManager {
         }
     }
 
-    private static void travelToConstruct(Unit builder, ConstructionOrder constructionOrder) {
+    private static void travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
         //TODO: check possible confusion with Position and TilePosition here
         Position buildPosition = constructionOrder.getPositionToBuild();
-        UnitType buildingType = constructionOrder.getBuildingType();
+        AUnitType buildingType = constructionOrder.getBuildingType();
 
         if (builder == null) {
             throw new RuntimeException("Builder empty");
@@ -66,7 +68,7 @@ public class AtlantisBuilderManager {
         buildPosition = PositionUtil.translate(buildPosition, buildingType.tileWidth() * 16, buildingType.tileHeight() * 16);
         if (!builder.isMoving() && !builder.isConstructing() && PositionUtil.distanceTo(builder.getPosition(), buildPosition) > 0.15) {
             builder.move(buildPosition);
-        } // Unit is already at the build position, issue build order
+        } // AUnit is already at the build position, issue build order
         // If we can afford to construct this building exactly right now, issue build order which should
         // be immediate as unit is standing just right there
         else if (AtlantisGame.canAfford(buildingType.mineralPrice(), buildingType.gasPrice())) {

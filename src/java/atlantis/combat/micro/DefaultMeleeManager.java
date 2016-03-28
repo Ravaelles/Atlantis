@@ -7,12 +7,14 @@ import java.util.Collection;
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.debug.tooltip.TooltipManager;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
 import atlantis.util.UnitUtil;
-import atlantis.wrappers.Select;
-import atlantis.wrappers.Units;
+import atlantis.units.Select;
+import atlantis.units.Units;
 import bwapi.Position;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 
 /**
@@ -21,7 +23,7 @@ import bwapi.UnitType;
 public class DefaultMeleeManager extends MicroMeleeManager {
 
     @Override
-    public boolean update(Unit unit) {
+    public boolean update(AUnit unit) {
         if (canIssueOrderToUnit(unit)) {
 //            unit.setTooltip("Start " + unit.getLastUnitActionWasFramesAgo());
 
@@ -78,7 +80,7 @@ public class DefaultMeleeManager extends MicroMeleeManager {
      * @return <b>true</b> if unit can be given order<br />
      * <b>false</b> if unit is in the shooting frame or does any other thing that mustn't be interrupted
      */
-    private boolean canIssueOrderToUnit(Unit unit) {
+    private boolean canIssueOrderToUnit(AUnit unit) {
         return !(unit.isAttackFrame() || unit.isStartingAttack()); //replaces unit.isJustShooting();
     }
 
@@ -86,11 +88,11 @@ public class DefaultMeleeManager extends MicroMeleeManager {
      * There are special units like Terran Marines, Zerg Overlords that should be following different
      * behavior than standard combat units.
      */
-    private boolean handleSpecialUnit(Unit unit) {
+    private boolean handleSpecialUnit(AUnit unit) {
         
         // ZERG
         if (AtlantisGame.playsAsZerg()) {
-            if (unit.getType().equals(UnitType.Zerg_Overlord)) {
+            if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
                 ZergOverlordManager.update(unit);
                 return true;
             }
@@ -98,7 +100,7 @@ public class DefaultMeleeManager extends MicroMeleeManager {
         
         // TERRAN
         if (AtlantisGame.playsAsTerran()) {
-            if (unit.getType().equals(UnitType.Terran_Medic)) {
+            if (unit.getType().equals(AUnitType.Terran_Medic)) {
                 TerranMedic.update(unit);
                 return true;
             }
@@ -110,9 +112,9 @@ public class DefaultMeleeManager extends MicroMeleeManager {
     /**
      * If e.g. Terran Marine stands too far forward, it makes him vulnerable. Make him go back.
      */
-    private boolean handleDontSpreadTooMuch(Unit unit) {
-    	Select<Unit> ourClose = (Select<Unit>) Select.ourCombatUnits().inRadius(7, unit.getPosition());
-        Collection<Unit> ourForcesNearby = ourClose.exclude(unit).listUnits();
+    private boolean handleDontSpreadTooMuch(AUnit unit) {
+    	Select<AUnit> ourClose = (Select<AUnit>) Select.ourCombatUnits().inRadius(7, unit.getPosition());
+        Collection<AUnit> ourForcesNearby = ourClose.exclude(unit).listUnits();
         Position goTo = null;
         if (ourForcesNearby.isEmpty()) {
             goTo = Select.ourCombatUnits().exclude(unit).first().getPosition();

@@ -4,12 +4,14 @@ import java.util.Collection;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwapi.Position;
 import bwapi.TilePosition;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 import atlantis.debug.AtlantisPainter;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
 
 public class ZergPositionFinder extends AbstractPositionFinder {
@@ -21,7 +23,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      *
      */
-    public static Position findStandardPositionFor(Unit builder, UnitType building, Position nearTo, double maxDistance) {
+    public static Position findStandardPositionFor(AUnit builder, AUnitType building, Position nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
         
         AtlantisPositionFinder.building = building;
@@ -84,7 +86,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
-    private static boolean doesPositionFulfillAllConditions(Unit builder, Position position) {
+    private static boolean doesPositionFulfillAllConditions(AUnit builder, Position position) {
 
         // Check for CREEP
         if (!isCreepConditionFulfilled(position)) {
@@ -119,13 +121,13 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Lo-level
-    private static boolean isTooCloseToMineralsOrGeyser(UnitType building, Position position) {
+    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, Position position) {
 
         // We have problem only if building is both close to base and to minerals or to geyser
-        Unit nearestBase = Select.ourBases().nearestTo(position);
+        AUnit nearestBase = Select.ourBases().nearestTo(position);
         if (nearestBase != null && PositionUtil.distanceTo(nearestBase.getPosition(), position) <= 7) {
-        	Collection<Unit> mineralsInRange = (Collection<Unit>) Select.minerals().inRadius(8, position).listUnits();
-            for (Unit mineral : mineralsInRange) {
+        	Collection<AUnit> mineralsInRange = (Collection<AUnit>) Select.minerals().inRadius(8, position).listUnits();
+            for (AUnit mineral : mineralsInRange) {
                 if (PositionUtil.distanceTo(mineral.getPosition(), position) <= 4) {
                     return true;
                 }
@@ -136,8 +138,8 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
     private static boolean isCreepConditionFulfilled(Position position) {
         return Atlantis.getBwapi().hasCreep(position.toTilePosition())
-                || AtlantisPositionFinder.building.equals(UnitType.Zerg_Hatchery)
-                || AtlantisPositionFinder.building.equals(UnitType.Zerg_Extractor);
+                || AtlantisPositionFinder.building.equals(AUnitType.Zerg_Hatchery)
+                || AtlantisPositionFinder.building.equals(AUnitType.Zerg_Extractor);
     }
 
 }

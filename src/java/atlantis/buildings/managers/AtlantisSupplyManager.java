@@ -4,7 +4,8 @@ import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.production.strategies.ZergProductionStrategy;
-import atlantis.wrappers.Select;
+import atlantis.units.AUnitType;
+import atlantis.units.Select;
 import bwapi.UnitType;
 
 public class AtlantisSupplyManager {
@@ -13,6 +14,7 @@ public class AtlantisSupplyManager {
     private static int supplyFree;
 
     // =========================================================
+    
     public static void update() {
         if (true) {
             return;
@@ -50,11 +52,12 @@ public class AtlantisSupplyManager {
     }
 
     // =========================================================
+    
     private static void requestAdditionalSupply() {
 
         // Zerg
-        if (AtlantisConfig.SUPPLY.equals(UnitType.Zerg_Overlord)) {
-            ((ZergProductionStrategy) AtlantisGame.getProductionStrategy()).produceZergUnit(UnitType.Zerg_Overlord);
+        if (AtlantisConfig.SUPPLY.equals(AUnitType.Zerg_Overlord)) {
+            ((ZergProductionStrategy) AtlantisGame.getProductionStrategy()).produceZergUnit(AUnitType.Zerg_Overlord);
         } // Terran + Protoss
         else {
             AtlantisConstructingManager.requestConstructionOf(AtlantisConfig.SUPPLY);
@@ -76,7 +79,7 @@ public class AtlantisSupplyManager {
 //        // =========================================================
 //        // Terran + Protoss
 //        else {
-//            return Select.ourUnfinished().ofType(UnitType.UnitTypes.Zerg_Overlord).count();
+//            return Select.ourUnfinished().ofType(AUnitType.UnitTypes.Zerg_Overlord).count();
 //        }
     }
 

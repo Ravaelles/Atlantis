@@ -2,9 +2,11 @@ package atlantis.constructing;
 
 import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.production.ProductionOrder;
-import atlantis.wrappers.Select;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.Select;
 import bwapi.Position;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 
 /**
@@ -14,9 +16,9 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     private static int _firstFreeId = 1;
     private int ID = _firstFreeId++;
-    private UnitType buildingType;
-    private Unit construction;
-    private Unit builder;
+    private AUnitType buildingType;
+    private AUnit construction;
+    private AUnit builder;
     private Position positionToBuild;
     private ProductionOrder productionOrder;
     private ConstructionOrderStatus status;
@@ -24,7 +26,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     // private int issueFrameTime;
     // =========================================================
     
-    public ConstructionOrder(UnitType buildingType) {
+    public ConstructionOrder(AUnitType buildingType) {
         this.buildingType = buildingType;
 
         status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
@@ -51,9 +53,9 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     /**
      * Assigns optimal builder for this building. Worker closest to this place.
      *
-     * @return Unit for convenience it returns
+     * @return  AUnit for convenience it returns
      */
-    protected Unit assignOptimalBuilder() {
+    protected AUnit assignOptimalBuilder() {
         builder = Select.ourWorkersFreeToBuildOrRepair().nearestTo(positionToBuild);
         return builder;
     }
@@ -67,7 +69,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         }
         
         if (builder != null) {
-            builder.stop(false);
+            builder.stop();
             builder = null;
         }
         
@@ -113,19 +115,20 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     }
     
     // =========================================================
-    public UnitType getBuildingType() {
+    
+    public AUnitType getBuildingType() {
         return buildingType;
     }
 
-    public void setBuildingType(UnitType buildingType) {
+    public void setBuildingType(AUnitType buildingType) {
         this.buildingType = buildingType;
     }
 
-    public Unit getBuilder() {
+    public AUnit getBuilder() {
         return builder;
     }
 
-    public void setBuilder(Unit builder) {
+    public void setBuilder(AUnit builder) {
         this.builder = builder;
     }
 
@@ -145,11 +148,11 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.positionToBuild = positionToBuild;
     }
 
-    public Unit getConstruction() {
+    public AUnit getConstruction() {
         return construction;
     }
 
-    public void setConstruction(Unit construction) {
+    public void setConstruction(AUnit construction) {
         this.construction = construction;
     }
 

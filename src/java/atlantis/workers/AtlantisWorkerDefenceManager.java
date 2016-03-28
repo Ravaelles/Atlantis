@@ -1,7 +1,8 @@
 package atlantis.workers;
 
-import atlantis.wrappers.Select;
-import bwapi.Unit;
+import atlantis.units.AUnit;
+import atlantis.units.Select;
+
 import java.util.Collection;
 
 /**
@@ -13,7 +14,7 @@ public class AtlantisWorkerDefenceManager {
     /**
      * Attack other workers, run from enemies etc.
      */
-    public static boolean handleDefenceIfNeeded(Unit worker) {
+    public static boolean handleDefenceIfNeeded(AUnit worker) {
         if (handleFightEnemyIfNeeded(worker)) {
             return true;
         }
@@ -30,11 +31,12 @@ public class AtlantisWorkerDefenceManager {
     /**
      * Sometimes workers need to fight.
      */
-    private static boolean handleFightEnemyIfNeeded(Unit worker) {
+    private static boolean handleFightEnemyIfNeeded(AUnit worker) {
         
         // DESTROY ENEMY BUILDINGS that are being built close to main base.
-        if (Select.ourBases().inRadius(20, worker).count() > 0) {
-            for (Unit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).listUnits()) {
+        if (Select.ourBases().inRadius(20, worker.getPosition()).count() > 0) {
+            for (AUnit enemyBuilding : Select.enemy().buildings()
+                    .inRadius(20, worker.getPosition()).listUnits()) {
 
                 // Attack enemy building
                 worker.attackUnit(enemyBuilding);
@@ -43,7 +45,7 @@ public class AtlantisWorkerDefenceManager {
         }
         
         // FIGHT AGAINST ENEMY WORKERS
-        for (Unit enemy : Select.enemy().inRadius(2, worker).listUnits()) {
+        for (AUnit enemy : Select.enemy().inRadius(2, worker.getPosition()).listUnits()) {
             if (enemy.isWorker() && worker.getHP() >= 11) {
                 worker.attackUnit(enemy);
                 return true;
@@ -56,13 +58,14 @@ public class AtlantisWorkerDefenceManager {
     /**
      * If unit is overwhelmed, low on health etc, just run from enemy.
      */
-    private static boolean handleRunFromEnemyIfNeeded(Unit worker) {
+    private static boolean handleRunFromEnemyIfNeeded(AUnit worker) {
         
         // Define list of all units that are in range of shot.
-        Collection<Unit> enemiesInRange = Select.enemy().inRadius(12, worker).thatCanShoot(worker).listUnits();
+        Collection<AUnit> enemiesInRange = Select.enemy().inRadius(12, worker.getPosition())
+                .thatCanShoot(worker).listUnits();
         
         // Run from every combat unit...
-        for (Unit enemy : enemiesInRange) {
+        for (AUnit enemy : enemiesInRange) {
             
             // Enemy is non-worker unit
             if (!enemy.isWorker()) {
@@ -72,7 +75,7 @@ public class AtlantisWorkerDefenceManager {
         }
         
         // ...but run from enemy workers only if seriously wounded.
-        for (Unit enemy : enemiesInRange) {
+        for (AUnit enemy : enemiesInRange) {
             if (enemy.isWorker() && worker.getHP() < 11) {
                 worker.runFrom(enemy);
                 return true;

@@ -1,12 +1,14 @@
 package atlantis.constructing.position;
 
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import java.util.Collection;
 
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwapi.Position;
 import bwapi.TilePosition;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
@@ -18,13 +20,13 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      *
      */
-    public static Position findStandardPositionFor(Unit builder, UnitType building, Position nearTo, double maxDistance) {
+    public static Position findStandardPositionFor(AUnit builder, AUnitType building, Position nearTo, double maxDistance) {
         AtlantisPositionFinder.building = building;
         AtlantisPositionFinder.nearTo = nearTo;
         AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
-        int searchRadius = building.equals(UnitType.Terran_Supply_Depot) ? 8 : 0;
+        int searchRadius = building.equals(AUnitType.Terran_Supply_Depot) ? 8 : 0;
 
         while (searchRadius < maxDistance) {
             int xCounter = 0;
@@ -57,7 +59,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
-    private static boolean doesPositionFulfillAllConditions(Unit builder, Position position) {
+    private static boolean doesPositionFulfillAllConditions(AUnit builder, Position position) {
         if (builder == null) {
             return false;
         }
@@ -86,14 +88,15 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Lo-level
-    private static boolean isTooCloseToMineralsOrGeyser(UnitType building, Position position) {
+    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, Position position) {
 
         // We have problem only if building is both close to base and to minerals or to geyser
-        Unit nearestBase = Select.ourBases().nearestTo(position);
-        if (nearestBase != null && PositionUtil.distanceTo(nearestBase.getPosition(), position) <= 7) {
-        	Collection<Unit> mineralsInRange = (Collection<Unit>) Select.minerals().inRadius(8, position).listUnits();
-            for (Unit mineral : mineralsInRange) {
-                if (PositionUtil.distanceTo(mineral.getPosition(), position) <= 4) {
+        AUnit nearestBase = Select.ourBases().nearestTo(position);
+        if (nearestBase != null && nearestBase.distanceTo(position) <= 7) {
+        	Collection<AUnit> mineralsInRange = 
+                  (Collection<AUnit>) Select.minerals().inRadius(8, position).listUnits();
+            for (AUnit mineral : mineralsInRange) {
+                if (mineral.distanceTo(position) <= 4) {
                     return true;
                 }
             }

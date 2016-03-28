@@ -1,11 +1,13 @@
 package atlantis.combat.micro;
 
-import bwapi.Unit;
+import atlantis.units.AUnit;
+
+
 
 public class DefaultRangedManager extends MicroRangedManager {
 
     @Override
-    public boolean update(Unit unit) {
+    public boolean update(AUnit unit) {
         System.err.println("##########################################");
         System.err.println("## Currently this is inactive ############");
         System.err.println("## Class: DefaultMeleeManager ############");

@@ -1,9 +1,11 @@
 package atlantis.combat.micro;
 
-import bwapi.Unit;
+import atlantis.units.AUnit;
+
+
 
 public abstract class MicroMeleeManager extends MicroManager {
 
-    public abstract boolean update(Unit unit);
+    public abstract boolean update(AUnit unit);
 
 }

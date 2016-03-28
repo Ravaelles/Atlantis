@@ -3,12 +3,13 @@ package atlantis.buildings.managers;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.enemy.AtlantisEnemyUnits;
+import atlantis.units.AUnit;
 import atlantis.workers.AtlantisWorkerCommander;
-import bwapi.Unit;
+
 
 public class AtlantisBaseManager {
 
-    public static void update(Unit base) {
+    public static void update(AUnit base) {
 
         // Train new workers if allowed
         if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
@@ -21,7 +22,7 @@ public class AtlantisBaseManager {
     
     // =========================================================
 
-    private static boolean hasSlotToProduceUnit(Unit base) {
+    private static boolean hasSlotToProduceUnit(AUnit base) {
         if (AtlantisGame.playsAsZerg()) {
             return !base.getLarva().isEmpty();
         }

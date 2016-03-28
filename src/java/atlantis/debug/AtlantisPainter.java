@@ -17,6 +17,8 @@ import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.production.ProductionOrder;
 import atlantis.production.strategies.AtlantisProductionStrategy;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.ColorUtil;
 import atlantis.util.NameUtil;
 import atlantis.util.PositionUtil;
@@ -24,7 +26,7 @@ import atlantis.util.AtlantisUtilities;
 import atlantis.util.UnitUtil;
 import atlantis.workers.AtlantisWorkerManager;
 import atlantis.wrappers.MappingCounter;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeSet;
@@ -32,9 +34,10 @@ import java.util.TreeSet;
 import bwapi.Color;
 import bwapi.Game;
 import bwapi.Position;
-import bwapi.Unit;
+
 import bwapi.UnitType;
 import bwapi.Text.Size.Enum;
+import bwapi.Unit;
 
 /**
  * Here you can include code that will draw extra informations over units etc.
@@ -49,7 +52,7 @@ public class AtlantisPainter {
     /**
      * List of enemy units that have been targetted in the last frame.
      */
-//    private static TreeSet<Unit> _temporaryTargets = new TreeSet<>();
+//    private static TreeSet<AUnit> _temporaryTargets = new TreeSet<>();
     // =========================================================
     /**
      * Executed once per frame, at the end of all other actions.
@@ -82,7 +85,7 @@ public class AtlantisPainter {
 
         // =========================================================
         // Paint TOOLTIPS over units
-        for (Unit unit : Select.our().listUnits()) {
+        for (AUnit unit : Select.our().listUnits()) {
             if (TooltipManager.hasTooltip(unit)) { // unit.hasTooltip()
                 //System.out.println("-tooltip: " + TooltipManager.getTooltipObject(unit)); //TODO DEBUG
                 paintTextCentered(unit.getPosition(), TooltipManager.getTooltip(unit), Color.White);
@@ -113,7 +116,7 @@ public class AtlantisPainter {
         // Focus point
         Position focusPoint = MissionAttack.getFocusPoint();
         String desc = "";
-        Unit mainBase = Select.mainBase();
+        AUnit mainBase = Select.mainBase();
         if (focusPoint != null && mainBase != null) {
             desc = "(dist:" + ((int) PositionUtil.distanceTo(focusPoint, mainBase.getPosition())) + ")";
         }
@@ -127,7 +130,7 @@ public class AtlantisPainter {
      * Paints small progress bars over units that have cooldown.
      */
     private static void paintSpecialsOverUnits() {
-        for (Unit unit : Select.ourCombatUnits().listUnits()) {
+        for (AUnit unit : Select.ourCombatUnits().listUnits()) {
 
             // =========================================================
             // === Paint life bars bars over wounded units
@@ -142,7 +145,7 @@ public class AtlantisPainter {
 
                 // =========================================================
                 // Paint box
-                int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getType().maxHitPoints() + 1);
+                int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
                 bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
                 //(jni)bwapi.drawBox(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true, false);
                 bwapi.drawBoxMap(topLeft, new Position(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
@@ -208,7 +211,7 @@ public class AtlantisPainter {
             }
         }
 
-        for (Unit unit : Select.enemy().combatUnits().listUnits()) {
+        for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
             double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
             if (eval < 999) {
                 String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + "++")
@@ -248,15 +251,15 @@ public class AtlantisPainter {
      */
     private static void paintUnitCounters() {
         // Unfinished
-        MappingCounter<UnitType> unitTypesCounter = new MappingCounter<>();
-        for (Unit unit : Select.ourUnfinishedRealUnits().listUnits()) {
+        MappingCounter<AUnitType> unitTypesCounter = new MappingCounter<>();
+        for (AUnit unit : Select.ourUnfinishedRealUnits().listUnits()) {
             unitTypesCounter.incrementValueFor(unit.getType());
         }
 
-        Map<UnitType, Integer> counters = unitTypesCounter.map();
+        Map<AUnitType, Integer> counters = unitTypesCounter.map();
         counters = AtlantisUtilities.sortByValue(counters, false);
         boolean paintedMessage = false;
-        for (UnitType unitType : counters.keySet()) {
+        for (AUnitType unitType : counters.keySet()) {
             paintSideMessage("+" + counters.get(unitType) + " " + unitType.toString(), Color.Blue, 0);
             paintedMessage = true;
         }
@@ -268,13 +271,13 @@ public class AtlantisPainter {
         // =========================================================
         // Finished
         unitTypesCounter = new MappingCounter<>();
-        for (Unit unit : Select.our().listUnits()) {
+        for (AUnit unit : Select.our().listUnits()) {
             unitTypesCounter.incrementValueFor(unit.getType());
         }
 
         counters = unitTypesCounter.map();
         counters = AtlantisUtilities.sortByValue(counters, false);
-        for (UnitType unitType : counters.keySet()) {
+        for (AUnitType unitType : counters.keySet()) {
             if (!unitType.isBuilding()) {
                 paintSideMessage(counters.get(unitType) + "x " + unitType.toString(), Color.Grey, 0);
             }
@@ -289,9 +292,9 @@ public class AtlantisPainter {
         paintSideMessage("Prod. queue:", Color.White);
 
         // Display units currently in production
-        for (Unit unit : Select.ourUnfinished().listUnits()) {
-            UnitType type = unit.getType();
-            if (type.equals(UnitType.Zerg_Egg)) {
+        for (AUnit unit : Select.ourUnfinished().listUnits()) {
+            AUnitType type = unit.getType();
+            if (type.equals(AUnitType.Zerg_Egg)) {
                 type = unit.getBuildType();
             }
             paintSideMessage(type.getShortName(), Color.Green);
@@ -354,7 +357,7 @@ public class AtlantisPainter {
         for (ConstructionOrder order : AtlantisConstructingManager.getAllConstructionOrders()) {
             if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 Position positionToBuild = order.getPositionToBuild();
-                UnitType buildingType = order.getBuildingType();
+                AUnitType buildingType = order.getBuildingType();
                 if (positionToBuild == null || buildingType == null) {
                     continue;
                 }
@@ -385,7 +388,7 @@ public class AtlantisPainter {
      * Paints circles around units which mean what's their mission.
      */
     private static void paintColorCirclesAroundUnits() {
-        for (Unit unit : Select.ourWorkers().listUnits()) {
+        for (AUnit unit : Select.ourWorkers().listUnits()) {
 
             // STARTING ATTACK
             if (unit.isStartingAttack()) {
@@ -433,7 +436,7 @@ public class AtlantisPainter {
      * Paints progress bar with percent of completion over all buildings under construction.
      */
     private static void paintConstructionProgress() {
-        for (Unit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
+        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
             if (unit.isCompleted()) {
                 continue;
             }
@@ -445,7 +448,7 @@ public class AtlantisPainter {
             int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
             int labelTop = unit.getPosition().getY() + 13;
 
-            double progress = (double) unit.getHitPoints() / unit.getType().maxHitPoints();
+            double progress = (double) unit.getHitPoints() / unit.getMaxHitPoints();
             int labelProgress = (int) (1 + 99 * progress);
             String color = AtlantisUtilities.assignStringForValue(
                     progress,
@@ -487,8 +490,8 @@ public class AtlantisPainter {
      * For buildings not 100% healthy, paints its hit points using progress bar.
      */
     private static void paintBuildingHealth() {
-        for (Unit unit : Select.ourBuildings().listUnits()) {
-            if (unit.getHitPoints() >= unit.getType().maxHitPoints()) { //isWounded()
+        for (AUnit unit : Select.ourBuildings().listUnits()) {
+            if (unit.getHitPoints() >= unit.getMaxHitPoints()) { //isWounded()
                 continue;
             }
             int labelMaxWidth = 56;
@@ -496,7 +499,7 @@ public class AtlantisPainter {
             int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
             int labelTop = unit.getPosition().getY() + 13;
 
-            double hpRatio = (double) unit.getHitPoints() / unit.getType().maxHitPoints();
+            double hpRatio = (double) unit.getHitPoints() / unit.getMaxHitPoints();
             int hpProgress = (int) (1 + 99 * hpRatio);
 
             Color color = Color.Green;
@@ -531,7 +534,7 @@ public class AtlantisPainter {
      * Paints the number of workers that are gathering to this building.
      */
     private static void paintWorkersAssignedToBuildings() {
-        for (Unit building : Select.ourBuildings().listUnits()) {
+        for (AUnit building : Select.ourBuildings().listUnits()) {
 
             // Paint text
             int workers = AtlantisWorkerManager.getHowManyWorkersAt(building);
@@ -546,7 +549,7 @@ public class AtlantisPainter {
      * If buildings are training units, it paints what unit is trained and the progress.
      */
     private static void paintUnitsBeingTrainedInBuildings() {
-        for (Unit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
+        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
             if (!unit.getType().isBuilding() || !unit.isTraining()) {
                 continue;
             }
@@ -557,7 +560,7 @@ public class AtlantisPainter {
             int labelTop = unit.getPosition().getY() + 5;
 
             int operationProgress = 1;
-            Unit trained = unit.getBuildUnit();
+            AUnit trained = unit.getBuildUnit();
             String trainedUnitString = "";
             if (trained != null) {
                 operationProgress = UnitUtil.getHPPercent(trained); // trained.getHP() * 100 / trained.getMaxHP();
@@ -617,7 +620,7 @@ public class AtlantisPainter {
      * Paint red "X" on every enemy unit that has been targetted.
      */
     private static void paintTemporaryTargets() {
-        for (Unit ourUnit : Select.our().listUnits()) {
+        for (AUnit ourUnit : Select.our().listUnits()) {
 
             // Paint "x" on every unit that has been targetted by one of our units.
             if (ourUnit.isAttacking() && ourUnit.getTarget() != null) {
@@ -664,6 +667,10 @@ public class AtlantisPainter {
         bwapi.drawBoxMap(position, PositionUtil.translate(position, width, height), color, false);
     }
 
+    private static void paintCircle(AUnit unit, int radius, Color color) {
+        paintCircle(unit.getPosition(), radius, color);
+    }
+
     private static void paintCircle(Position position, int radius, Color color) {
         if (position == null) {
             return;
@@ -684,8 +691,16 @@ public class AtlantisPainter {
         //getBwapi().drawLine(start, end, color, false);
     }
 
+    private static void paintTextCentered(AUnit unit, String text, Color color) {
+        paintTextCentered(unit.getPosition(), text, color, false);
+    }
+
     private static void paintTextCentered(Position position, String text, Color color) {
         paintTextCentered(position, text, color, false);
+    }
+
+    private static void paintTextCentered(AUnit unit, String text, boolean screenCords) {
+        paintTextCentered(unit.getPosition(), text, null, screenCords);
     }
 
     private static void paintTextCentered(Position position, String text, boolean screenCords) {

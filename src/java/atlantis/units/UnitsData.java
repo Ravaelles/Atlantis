@@ -1,5 +1,6 @@
-package atlantis.wrappers;
+package atlantis.units;
 
+import atlantis.information.UnitData;
 import atlantis.util.PositionUtil;
 import atlantis.util.AtlantisUtilities;
 import java.util.ArrayList;
@@ -10,44 +11,44 @@ import java.util.HashMap;
 import java.util.Iterator;
 import bwapi.Position;
 import bwapi.PositionedObject;
-import bwapi.Unit;
+
 
 /**
- * This class is wrapper for ArrayList<Unit>. It allows some helpful methods to be executed upon group of
+ * This class is wrapper for ArrayList<UnitData>. It allows some helpful methods to be executed upon group of
  * units like sorting etc.
  */
-public class Units {
+public class UnitsData {
 
-    private ArrayList<Unit> units = new ArrayList<>();
+    private ArrayList<UnitData> units = new ArrayList<>();
 
     /**
      * This mapping can be used to store extra values assigned to units e.g. if units reprents mineral fields,
      * we can easily store info how many workers are gathering each mineral field thanks to this mapping.
      */
-    private HashMap<Unit, Double> unitValues = null;
+    private HashMap<UnitData, Double> unitValues = null;
 
     // =====================================================================
-    public Units() {
+    public UnitsData() {
     }
 
     // =====================================================================
     // Basic functionality methods
-    public Units addUnit(Unit unitToAdd) {
+    public UnitsData addUnit(UnitData unitToAdd) {
         units.add(unitToAdd);
         return this;
     }
 
-    public Units addUnits(Collection<Unit> unitsToAdd) {
+    public UnitsData addUnits(Collection<UnitData> unitsToAdd) {
         units.addAll(unitsToAdd);
         return this;
     }
 
-    public Units removeUnits(Collection<Unit> unitsToRemove) {
+    public UnitsData removeUnits(Collection<UnitData> unitsToRemove) {
         units.removeAll(unitsToRemove);
         return this;
     }
 
-    public Units removeUnit(Unit unitToRemove) {
+    public UnitsData removeUnit(UnitData unitToRemove) {
         units.remove(unitToRemove);
         return this;
     }
@@ -63,21 +64,21 @@ public class Units {
     /**
      * Returns first unit from the set.
      */
-    public Unit first() {
+    public UnitData first() {
         return isEmpty() ? null : units.get(0);
     }
 
     /**
      * Returns random unit from the set.
      */
-    public Unit random() {
-        return (Unit) AtlantisUtilities.getRandomElement(units);
+    public UnitData random() {
+        return (UnitData) AtlantisUtilities.getRandomElement(units);
     }
     
     /**
      * Returns unit with <b>N</b>-th index.
      */
-    public Unit get(int index) {
+    public UnitData get(int index) {
         return units.get(index);
     }
 
@@ -86,7 +87,7 @@ public class Units {
     /**
      * Shuffle units to have random sequence in the list.
      */
-    public Units shuffle() {
+    public UnitsData shuffle() {
         Collections.shuffle(units);
         return this;
     }
@@ -94,30 +95,30 @@ public class Units {
     /**
      * Returns random units.
      */
-    public Unit getRandom() {
-        return (Unit) AtlantisUtilities.getRandomListElement(units);
+    public UnitData getRandom() {
+        return (UnitData) AtlantisUtilities.getRandomListElement(units);
     }
 
     /**
      * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first unit will be the one closest to given position.
      */
-    public Units sortByDistanceTo(final Position position, final boolean nearestFirst) {
+    public UnitsData sortByDistanceTo(final Position position, final boolean nearestFirst) {
         if (position == null) {
             return null;
         }
         
-        Collections.sort(units, new Comparator<PositionedObject>() {
+        Collections.sort(units, new Comparator<UnitData>() {
             @Override
-            public int compare(PositionedObject p1, PositionedObject p2) {
-                if (p1 == null || !(p1 instanceof PositionedObject)) {
+            public int compare(UnitData u1, UnitData u2) {
+                if (u1 == null || !(u1 instanceof UnitData)) {
                     return -1;
                 }
-                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                if (u2 == null || !(u2 instanceof UnitData)) {
                     return 1;
                 }
-                double distance1 = PositionUtil.distanceTo(position, p1.getPosition());	//TODO: check whether this doesn't mix up position types
-                double distance2 = PositionUtil.distanceTo(position, p2.getPosition());
+                double distance1 = PositionUtil.distanceTo(position, u1.getPosition());	//TODO: check whether this doesn't mix up position types
+                double distance2 = PositionUtil.distanceTo(position, u2.getPosition());
                 if (distance1 == distance2) {
                     return 0;
                 }
@@ -140,7 +141,7 @@ public class Units {
 
         ArrayList<Integer> xCoordinates = new ArrayList<>();
         ArrayList<Integer> yCoordinates = new ArrayList<>();
-        for (Unit unit : units) {
+        for (UnitData unit : units) {
             xCoordinates.add(unit.getPosition().getX());	//TODO: check whether position is in Pixels
             yCoordinates.add(unit.getPosition().getX());
         }
@@ -155,7 +156,7 @@ public class Units {
 
     // =========================================================
     // Value mapping methods
-    public void changeValueBy(Unit unit, double deltaValue) {
+    public void changeValueBy(UnitData unit, double deltaValue) {
         ensureValueMappingExists();
         if (unitValues.containsKey(unit)) {
             unitValues.put(unit, unitValues.get(unit) + deltaValue);
@@ -164,7 +165,7 @@ public class Units {
         }
     }
 
-    public void setValueFor(Unit unit, double newValue) {
+    public void setValueFor(UnitData unit, double newValue) {
         ensureValueMappingExists();
         
         if (unit == null) {
@@ -174,7 +175,7 @@ public class Units {
         unitValues.put(unit, newValue);
     }
 
-    public double getValueFor(Unit unit) {
+    public double getValueFor(AUnit unit) {
 //        ensureValueMappingExists();
         
         if (unit == null) {
@@ -191,26 +192,26 @@ public class Units {
         return unitValues.get(unit);
     }
 
-    public Unit getUnitWithLowestValue() {
+    public UnitData getUnitWithLowestValue() {
         return getUnitWithExtremeValue(true);
     }
 
-    public Unit getUnitWithHighestValue() {
+    public UnitData getUnitWithHighestValue() {
         return getUnitWithExtremeValue(false);
     }
 
-    private Unit getUnitWithExtremeValue(boolean lowest) {
+    private UnitData getUnitWithExtremeValue(boolean lowest) {
         ensureValueMappingExists();
 
         if (unitValues.isEmpty()) {
             return null;
         }
 
-        Unit bestUnit = unitValues.keySet().iterator().next();
+        UnitData bestUnit = unitValues.keySet().iterator().next();
         double bestValue = unitValues.get(bestUnit);
 
         if (lowest) {
-            for (Unit unit : unitValues.keySet()) {
+            for (UnitData unit : unitValues.keySet()) {
                 if (unitValues.get(unit) < bestValue) {
                     bestValue = unitValues.get(unit);
                     bestUnit = unit;
@@ -218,7 +219,7 @@ public class Units {
             }
         }
         else {
-            for (Unit unit : unitValues.keySet()) {
+            for (UnitData unit : unitValues.keySet()) {
                 if (unitValues.get(unit) > bestValue) {
                     bestValue = unitValues.get(unit);
                     bestUnit = unit;
@@ -233,10 +234,10 @@ public class Units {
         if (unitValues == null) {
             unitValues = new HashMap<>();
         }
-        for (Unit unit : units) {
+        for (UnitData unit : units) {
             unitValues.put(unit, 0.0);
         }
-        for (Unit unit : unitValues.keySet()) {
+        for (UnitData unit : unitValues.keySet()) {
             unitValues.put(unit, 0.0);
         }
     }
@@ -247,8 +248,8 @@ public class Units {
     public String toString() {
         String string = "Units (" + units.size() + "):\n";
 
-        for (Unit unit : units) {
-            string += "   - " + unit.getType() + " (ID:" + unit.getID() + ")\n";
+        for (UnitData unitData : units) {
+            string += "   - " + unitData.getType() + " (ID:" + unitData.getUnit().getID() + ")\n";
         }
 
         return string;
@@ -258,8 +259,8 @@ public class Units {
     // Auxiliary
     public void print() {
         System.out.println("Units in list:");
-        for (Unit unit : list()) {
-            System.out.println(unit + " // Dist to main base: " + (PositionUtil.distanceTo(unit, Select.mainBase())));
+        for (UnitData unit : list()) {
+            System.out.println(unit + " // Dist to main base: " + (PositionUtil.distanceTo(unit.getPosition(), Select.mainBase().getPosition())));
         }
         System.out.println();
     }
@@ -269,8 +270,8 @@ public class Units {
     /**
      * Returns iterable collection of units in this object.
      */
-    public Collection<Unit> list() {
-        ArrayList<Unit> copy = new ArrayList<Unit>();
+    public Collection<UnitData> list() {
+        ArrayList<UnitData> copy = new ArrayList<UnitData>();
         copy.addAll(units);
         return copy;
     }
@@ -278,8 +279,8 @@ public class Units {
     /**
      * Returns iterable ArrayList of units in this object.
      */
-    public ArrayList<Unit> arrayList() {
-        ArrayList<Unit> copy = new ArrayList<Unit>();
+    public ArrayList<UnitData> arrayList() {
+        ArrayList<UnitData> copy = new ArrayList<UnitData>();
         copy.addAll(units);
         return copy;
     }
@@ -288,7 +289,7 @@ public class Units {
      * @return iterator object for inner collection with the units.
      *
      */
-    public Iterator<Unit> iterator() {
+    public Iterator<UnitData> iterator() {
         return units.iterator();
     }
 

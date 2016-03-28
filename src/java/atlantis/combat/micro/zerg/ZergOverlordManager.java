@@ -5,10 +5,11 @@ import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisEnemyInformationManager;
 import atlantis.enemy.AtlantisMap;
 import atlantis.scout.AtlantisScoutManager;
+import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.Select;
+import atlantis.units.Select;
 import bwapi.Position;
-import bwapi.Unit;
+
 
 /**
  *
@@ -16,7 +17,7 @@ import bwapi.Unit;
  */
 public class ZergOverlordManager {
 
-    public static void update(Unit unit) {
+    public static void update(AUnit unit) {
 
         // We know enemy building
         if (AtlantisEnemyInformationManager.hasDiscoveredEnemyBuilding()) {
@@ -34,7 +35,7 @@ public class ZergOverlordManager {
     /**
      * We know at least one enemy building location.
      */
-    private static void actWhenWeKnowEnemy(Unit overlord) {
+    private static void actWhenWeKnowEnemy(AUnit overlord) {
 //        Position goTo = AtlantisMap.getMainBaseChokepoint();
 //        if (goTo == null) {
 //            goTo = Select.mainBase();
@@ -57,7 +58,7 @@ public class ZergOverlordManager {
     /**
      * We don't know at any enemy building location.
      */
-    private static void actWhenDontKnowEnemyLocation(Unit unit) {
+    private static void actWhenDontKnowEnemyLocation(AUnit unit) {
         AtlantisScoutManager.tryToFindEnemy(unit);
         TooltipManager.setTooltip(unit, "Find enemy");
         //unit.setTooltip("Find enemy");

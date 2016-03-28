@@ -1,5 +1,6 @@
 package atlantis.production;
 
+import atlantis.units.AUnitType;
 import bwapi.TechType;
 import atlantis.util.NameUtil;
 import atlantis.util.UnitUtil;
@@ -17,9 +18,9 @@ public class ProductionOrder {
     private int id = firstFreeId++;
 
     /**
-     * Unit type to be build. Can be null if this production order is for something else than upgrade.
+     * AUnit type to be build. Can be null if this production order is for something else than upgrade.
      */
-    private UnitType unitType = null;
+    private AUnitType unitType = null;
 
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
@@ -47,7 +48,8 @@ public class ProductionOrder {
 //    private boolean blocking = false;
 
     // =========================================================
-    public ProductionOrder(UnitType unitType) {
+    
+    public ProductionOrder(AUnitType unitType) {
         this();
         this.unitType = unitType;
     }
@@ -95,6 +97,7 @@ public class ProductionOrder {
 
     // =========================================================
     // Override
+    
     @Override
     public boolean equals(Object object) {
         if (object == null) {
@@ -129,11 +132,12 @@ public class ProductionOrder {
 
     // =========================================================
     // Getters
+    
     /**
-     * If this production order concerns unit to be build (or building, Unit class), it will return non-null
+     * If this production order concerns unit to be build (or building, AUnit class), it will return non-null
      * value being unit type.
      */
-    public UnitType getUnitType() {
+    public AUnitType getUnitType() {
         return unitType;
     }
 
