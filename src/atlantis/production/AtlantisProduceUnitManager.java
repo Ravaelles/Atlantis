@@ -1,6 +1,7 @@
 package atlantis.production;
 
 import atlantis.AtlantisConfig;
+import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.production.strategies.AtlantisProductionStrategy;
 import atlantis.units.AUnit;
@@ -48,6 +49,11 @@ public class AtlantisProduceUnitManager {
 //
 //    }
     private static void produceUnit(AUnitType unitType) {
+        
+        // Supply: OVERLORD / PYLON / DEPOT
+        if (AtlantisGame.getSupplyFree() == 0 && !unitType.isSupplyUnit() && !unitType.isBuilding()) {
+            return;
+        }
 
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {

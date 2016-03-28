@@ -16,10 +16,6 @@ public class AtlantisSupplyManager {
     // =========================================================
     
     public static void update() {
-        if (true) {
-            return;
-        }
-        
         supplyTotal = AtlantisGame.getSupplyTotal();
 
         /**
@@ -30,7 +26,6 @@ public class AtlantisSupplyManager {
 
             int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
-//            System.out.println(supplyFree + " / supply in prod: " + suppliesBeingBuilt);
             if (supplyTotal <= 10) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();

@@ -10,15 +10,11 @@ import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.wrappers.APositionedObject;
 import bwapi.Player;
 import bwapi.Position;
-import bwapi.PositionOrUnit;
-import bwapi.PositionedObject;
-import bwapi.TechType;
-import bwapi.TilePosition;
 import bwapi.Unit;
+import bwapi.UnitCommand;
 import bwapi.UnitType;
-import bwapi.UpgradeType;
-
 import bwapi.WeaponType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +26,7 @@ import java.util.List;
 public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitActions {
     
     private static final HashMap<Unit, AUnit> instances = new HashMap<>();
+//    private static final List<AUnit> instances = new ArrayList<>();
     
     private Unit u;
     private AUnitType type;
@@ -37,10 +34,11 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     // =========================================================
 
     private AUnit(Unit u) {
+        if (u == null) {
+            throw new RuntimeException("AUnit constructor: unit is null");
+        }
         this.u = u;
         this.type = AUnitType.createFrom(u.getType());
-        
-        instances.put(u, this);
     }
 
     public static AUnit createFrom(Unit u) {
@@ -49,8 +47,18 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         }
         else {
             AUnit unit = new AUnit(u);
+            instances.put(u, unit);
             return unit;
         }
+//        AUnit unit;
+//        if ((unit = getBWMirrorUnit(u)) != null) {
+//            return unit;
+//        }
+//        else {
+//            unit = new AUnit(u);
+//            instances.add(unit);
+//            return unit;
+//        }
     }
     
     // =========================================================
@@ -71,6 +79,15 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     @Override
     public Unit u() {
         return u;
+    }
+    
+    private static AUnit getBWMirrorUnit(Unit u) {
+        for (AUnit unit : instances.values()) {
+            if (unit.u.equals(u)) {
+                return unit;
+            }
+        }
+        return null;
     }
     
     // =========================================================
@@ -128,11 +145,11 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     // =========================================================
     @Override
     public String toString() {
-        // Position position = getPosition();
-        Position position = this.getPosition();
-        String toString = getType().getShortName();
-        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
-        return toString;
+//        Position position = this.getPosition();
+//        String toString = getType().getShortName();
+//        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
+//        return toString;
+        return "AUnit(" + u.getType().toString() + ")";
     }
     
     @Override
@@ -155,13 +172,24 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
+//        if (getClass() != obj.getClass()) {
+//            return false;
+//        }
+//        final Unit other = (Unit) obj;
+//        if (this.getID() != other.getID()) {
+//            return false;
+//        }
+
+        if (obj instanceof AUnit) {
+            AUnit other = (AUnit) obj;
+//            return getID() == other.getID();
+            return u == other.u;
         }
-        final Unit other = (Unit) obj;
-        if (this.getID() != other.getID()) {
-            return false;
-        }
+//        else if (obj instanceof Unit) {
+//            Unit other = (Unit) obj;
+//            return getID() == other.getID();
+//        }
+
         return true;
     }
 
@@ -676,7 +704,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isStartingAttack();
     }
 
-    public List<UnitType>  getTrainingQueue() {
+    public List<UnitType> getTrainingQueue() {
         return u.getTrainingQueue();
     }
 
@@ -689,19 +717,19 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }
 
     public AUnit getTarget() {
-        return AUnit.createFrom(u.getTarget());
+        return u.getTarget() != null ? AUnit.createFrom(u.getTarget()) : null;
     }
 
     public AUnit getOrderTarget() {
-        return AUnit.createFrom(u.getOrderTarget());
+        return u.getOrderTarget() != null ? AUnit.createFrom(u.getOrderTarget()) : null;
     }
 
     public AUnit getBuildUnit() {
-        return AUnit.createFrom(u.getBuildUnit());
+        return u.getBuildUnit() != null ? AUnit.createFrom(u.getBuildUnit()) : null;
     }
 
     public AUnitType getBuildType() {
-        return AUnitType.createFrom(u.getBuildType());
+        return u.getBuildType() != null ? AUnitType.createFrom(u.getBuildType()) : null;
     }
 
     public boolean isMorphing() {
@@ -722,6 +750,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     public boolean isTraining() {
         return u.isTraining();
+    }
+
+    public UnitCommand getLastCommand() {
+        return u.getLastCommand();
     }
 
 }

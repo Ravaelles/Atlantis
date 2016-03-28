@@ -13,16 +13,19 @@ public class AtlantisBaseManager {
 
         // Train new workers if allowed
         if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
-//            if (hasSlotToProduceUnit(base)) {
-                System.out.println("--> Train worker in " + base);
+            if (hasSlotToProduceUnit(base)) {
                 base.train(AtlantisConfig.WORKER);
-//            }
+            }
         }
     }
     
     // =========================================================
 
     private static boolean hasSlotToProduceUnit(AUnit base) {
+        if (AtlantisGame.getSupplyFree() == 0) {
+            return false;
+        }
+        
         if (AtlantisGame.playsAsZerg()) {
             return !base.getLarva().isEmpty();
         }

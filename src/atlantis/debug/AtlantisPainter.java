@@ -228,22 +228,28 @@ public class AtlantisPainter {
         Position position;
 
         // Main DEFEND focus point
-        position = MissionDefend.getFocusPoint().getCenter();
-        paintCircle(position, 20, Color.Black);
-        paintCircle(position, 19, Color.Black);
-        paintTextCentered(position, "DEFEND", Color.Grey);
+        if (MissionDefend.getFocusPoint() != null && MissionDefend.getFocusPoint().getCenter() != null) {
+            position = MissionDefend.getFocusPoint().getCenter();
+            paintCircle(position, 20, Color.Black);
+            paintCircle(position, 19, Color.Black);
+            paintTextCentered(position, "DEFEND", Color.Grey);
+        }
 
         // Mission PREPARE focus point
         position = MissionPrepare.getFocusPoint();
-        paintCircle(position, 20, Color.Black);
-        paintCircle(position, 19, Color.Black);
-        paintTextCentered(position, "PREPARE", Color.Grey);
+        if (position != null) {
+            paintCircle(position, 20, Color.Black);
+            paintCircle(position, 19, Color.Black);
+            paintTextCentered(position, "PREPARE", Color.Grey);
+        }
 
         // Mission ATTACK focus point
         position = MissionAttack.getFocusPoint();
-        paintCircle(position, 20, Color.Red);
-//        paintCircle(position, 19, Color.Black);
-        paintTextCentered(position, "ATTACK", Color.Red);
+        if (position != null) {
+            paintCircle(position, 20, Color.Red);
+    //        paintCircle(position, 19, Color.Black);
+            paintTextCentered(position, "ATTACK", Color.Red);
+        }
     }
 
     /**
@@ -425,10 +431,8 @@ public class AtlantisPainter {
             paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
             
             // Current COMMAND
-//            if (AtlantisGame.getTimeFrames() > 5 && unit.getLastCommandFrame() > 0
-//                    && !AtlantisConstructingManager.isBuilder(unit)) {
-//                paintTextCentered(unit, "Shit: " + unit.getLastCommand().toString(), Color.Purple);
-//            }
+//            if (AtlantisGame.getTimeFrames() > 5 && !AtlantisConstructingManager.isBuilder(unit)) {
+            paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
         }
     }
 

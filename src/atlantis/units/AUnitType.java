@@ -1,11 +1,14 @@
 package atlantis.units;
 
 import bwapi.TechType;
+import bwapi.Unit;
 import bwapi.UnitType;
 import bwapi.WeaponType;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,28 +16,42 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AUnitType implements Comparable<Object> {
+//public class AUnitType implements Comparable<Object> {
+public class AUnitType implements Comparable<AUnitType> {
 
     private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
+//    private static final List<AUnitType> instances = new ArrayList<>();
 
     private UnitType ut;
 
     // =========================================================
     
     private AUnitType(UnitType ut) {
+        if (ut == null) {
+            throw new RuntimeException("AUnitType constructor: type is null");
+        }
         this.ut = ut;
         this.ID = firstFreeID++;
-
-        instances.put(ut, this);
     }
 
     public static AUnitType createFrom(UnitType ut) {
         if (instances.containsKey(ut)) {
             return instances.get(ut);
-        } else {
+        }
+        else {
             AUnitType unitType = new AUnitType(ut);
+            instances.put(ut, unitType);
             return unitType;
         }
+//        AUnitType unitType;
+//        if ((unitType = getBWMirrorUnitType(ut)) != null) {
+//            return unitType;
+//        }
+//        else {
+//            unitType = new AUnitType(ut);
+//            instances.add(unitType);
+//            return unitType;
+//        }
     }
 
     // =========================================================
@@ -46,6 +63,15 @@ public class AUnitType implements Comparable<Object> {
         return ut;
     }
 
+    private static AUnitType getBWMirrorUnitType(UnitType ut) {
+        for (AUnitType unitType : instances.values()) {
+            if (unitType.ut.equals(ut)) {
+                return unitType;
+            }
+        }
+        return null;
+    }
+    
     // =========================================================
     // =========================================================
     // =========================================================
@@ -366,22 +392,25 @@ public class AUnitType implements Comparable<Object> {
      */
     public String getName() {
         if (_name == null) {
-            try {
-//                for (Field field : AUnitType.class.getDeclaredFields()) {
-//                    AUnitType type = (AUnitType) field.get(this);
-                for (AUnitType type : instances.values()) {
-                    if (type.equals(this)) {
-                        _name = type.getName().replace("_", " ");
-                        break;
-                    }
-                }
-            } catch (Exception ex) {
-                System.err.println(ex.getMessage());
-                System.err.println("Can't define name for unit type: " + this);
-                return "error";
-            }
+            _name = ut.toString();
         }
         return _name;
+//        if (_name == null) {
+//            try {
+//                for (AUnitType type : instances) {
+//                    if (type.equals(this)) {
+//                        System.out.println(type + " / " + this);
+//                        _name = type.getName().replace("_", " ");
+//                        break;
+//                    }
+//                }
+//            } catch (Exception ex) {
+//                System.err.println(ex.getMessage());
+//                System.err.println("Can't define name for unit type: " + this);
+//                return "error";
+//            }
+//        }
+//        return _name;
     }
 
     // =========================================================
@@ -403,6 +432,7 @@ public class AUnitType implements Comparable<Object> {
 
     // =========================================================
     // Override
+    
     @Override
     public int hashCode() {
         return ID;
@@ -419,20 +449,54 @@ public class AUnitType implements Comparable<Object> {
         
         if (obj instanceof AUnitType) {
             AUnitType other = (AUnitType) obj;
-            return ID != other.ID;
-        }
-        else if (obj instanceof UnitType) {
-            UnitType other = (UnitType) obj;
-            return ut != obj;
+            return (ut == other.ut);
+//            boolean condition = ID == other.ID;
+//            boolean condition = (ut == other.ut);
+//            if (condition) {
+//                System.out.println(this + " #EQUALS# " + obj);
+//            }
+//            return condition;
         }
         
         return false;
     }
 
     @Override
-    public int compareTo(Object o) {
-        return this.ut.toString().compareTo(o.toString());
+    public int compareTo(AUnitType o) {
+//        return this.ut.toString().compareTo(o.toString());
+        return Integer.compare(ID, o.ID);
     }
+    
+//    @Override
+//    public int hashCode() {
+//        return ID;
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj) {
+//            return true;
+//        }
+//        if (obj == null) {
+//            return false;
+//        }
+//        
+//        if (obj instanceof AUnitType) {
+//            AUnitType other = (AUnitType) obj;
+//            return ID == other.ID;
+//        }
+//        else if (obj instanceof UnitType) {
+//            UnitType other = (UnitType) obj;
+//            return ut == obj;
+//        }
+//        
+//        return false;
+//    }
+//
+//    @Override
+//    public int compareTo(Object o) {
+//        return this.ut.toString().compareTo(o.toString());
+//    }
 
     @Override
     public String toString() {
@@ -533,6 +597,10 @@ public class AUnitType implements Comparable<Object> {
 
     public boolean isMineralField() {
         return isType(Resource_Mineral_Field);
+    }
+
+    public boolean isSupplyUnit() {
+        return isType(Protoss_Pylon, Terran_Supply_Depot, Zerg_Overlord);
     }
 
 }

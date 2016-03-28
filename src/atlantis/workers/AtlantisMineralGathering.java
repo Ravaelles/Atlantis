@@ -21,15 +21,6 @@ public class AtlantisMineralGathering {
      * Assign all 4 workers to optimal (closest) minerals fields.
      */
     public static void initialAssignWorkersToMinerals() {
-        System.out.println("=== MINERALS: (" + Select.minerals().count() + ")");
-        System.out.println("=== MINERALS: (" + Select.minerals().count() + ")");
-        System.out.println("== Select.mainBase() = " + Select.mainBase());
-        System.out.println("=== MINERALS: (" + Select.minerals().count() + ")");
-        System.out.println("== Select.mainBase() = " + Select.mainBase());
-        System.out.println("== Select.mainBase() = " + Select.mainBase());
-        for (AUnit unit : Select.minerals().inRadius(12, Select.mainBase().getPosition()).listUnits()) {
-            System.out.println(unit.toString());
-        }
 
         // Get minerals near to our main base and sort them from closest to most distant one
         //TODO check safety of this cast

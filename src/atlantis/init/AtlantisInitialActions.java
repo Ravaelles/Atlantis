@@ -10,8 +10,8 @@ public class AtlantisInitialActions {
      * one-time only actions like initial assignment of workers to minerals etc.
      */
     public static void executeInitialActions() {
-//        AtlantisMineralGathering.initialAssignWorkersToMinerals();
-//        AtlantisMap.disableSomeOfTheChokePoints();
+        AtlantisMineralGathering.initialAssignWorkersToMinerals();
+        AtlantisMap.disableSomeOfTheChokePoints();
     }
 
 }

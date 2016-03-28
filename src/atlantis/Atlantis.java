@@ -25,9 +25,13 @@ public class Atlantis implements BWEventListener {
     private static Atlantis instance;
 
     /**
-     * BWAPI is core
+     * BWMirror core class.
      */
     private static Mirror mirror = new Mirror();
+    
+    /**
+     * BWMirror game object, contains lo-level methods.
+     */
     private Game bwapi;
 
     /**
@@ -140,10 +144,9 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onStart() {
         bwapi = mirror.getGame();
-        bwapi.enableFlag(1);	//FIXME: use the Enum'ed value
         
         // Uncomment this line to see list of units -> damage.
-        AtlantisUnitTypesHelper.displayUnitTypesDamage();
+//        AtlantisUnitTypesHelper.displayUnitTypesDamage();
 
         // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
         // =========================================================
@@ -157,10 +160,10 @@ public class Atlantis implements BWEventListener {
             AtlantisConfig.useConfigForZerg();
         }
 
-        System.out.println("Analyzing map...");
+        System.out.print("Analyzing map... ");
         BWTA.readMap();
         BWTA.analyze();
-        System.out.println("Map data ready");
+        System.out.println("Map data ready.");
 
         // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
@@ -175,8 +178,8 @@ public class Atlantis implements BWEventListener {
 
         // =========================================================
         gameCommander = new AtlantisGameCommander();
-        System.out.println("gameCommander = " + gameCommander);
         bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED);
+        bwapi.enableFlag(1);	//FIXME: use the Enum'ed value
     }
 
     /**
@@ -184,11 +187,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
-        System.out.println("frame: " + AtlantisGame.getTimeFrames());
-        
         if (gameCommander == null) {
             gameCommander = new AtlantisGameCommander();
             System.out.println("LOL WHAT DE FUUCK this has no right to be null");
+            onStart();
         }
         
         try {
@@ -215,26 +217,26 @@ public class Atlantis implements BWEventListener {
 
         // =========================================================
         // If game is running (not paused), proceed with all actions.
-        if (!_isPaused) {
-            gameCommander.update();
+//        if (!_isPaused) {
+        gameCommander.update();
 
-            // =========================================================
-            // Game SPEED change using DYNAMIC SLODOWN
-            if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _dynamicSlowdown_isSlowdownActive) {
-                if (_dynamicSlowdown_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
-                    _dynamicSlowdown_isSlowdownActive = false;
-                    AtlantisGame.changeSpeed(_dynamicSlowdown_previousSpeed);
-                }
-            }
-        } // =========================================================
-        // If game is PAUSED, wait 100ms - pause is handled by Escape button
-        else {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // No need to handle
+        // =========================================================
+        // Game SPEED change using DYNAMIC SLODOWN
+        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _dynamicSlowdown_isSlowdownActive) {
+            if (_dynamicSlowdown_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
+                _dynamicSlowdown_isSlowdownActive = false;
+                AtlantisGame.changeSpeed(_dynamicSlowdown_previousSpeed);
             }
         }
+//        } // =========================================================
+        // If game is PAUSED, wait 100ms - pause is handled by Escape button
+//        else {
+//            try {
+//                Thread.sleep(100);
+//            } catch (InterruptedException e) {
+//                // No need to handle
+//            }
+//        }
     }
 
     /**

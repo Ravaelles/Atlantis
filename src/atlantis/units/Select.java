@@ -19,7 +19,6 @@ import bwapi.Position;
 import bwapi.PositionedObject;
 import bwapi.Unit;
 
-import bwapi.UnitType;
 
 /**
  * This class allows to easily select units e.g. to select one of your Marines, nearest to given location, you
@@ -53,12 +52,15 @@ public class Select<T> {
     private static List<AUnit> ourUnits() {
         List<AUnit> data = new ArrayList<>();
 
+//        System.out.println("AtlantisGame.getPlayerUs().getUnits() = " + AtlantisGame.getPlayerUs().getUnits().size());
         for (Unit u : AtlantisGame.getPlayerUs().getUnits()) {
+//            System.out.print(u + " -> ");
+//            System.out.println("******** " + AUnit.createFrom(u));
             data.add(AUnit.createFrom(u));
-            System.out.println(AUnit.createFrom(u));
+//            System.out.println(AUnit.createFrom(u));
         }
         
-        System.out.println("## Our size: " + data.size());
+//        System.out.println("## Our size: " + data.size());
 
         return data;
     }
@@ -99,11 +101,18 @@ public class Select<T> {
 
         //self().getUnits() replaces getMyUnits()
         for (AUnit unit : ourUnits()) {
+//            System.out.println(unit);
+//            System.out.println("    " + unit.exists() + " / " +  unit.isCompleted() + " / "  +
+//                    !unit.getType().isType(AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, 
+//                            AUnitType.Zerg_Egg));
+//            System.out.println("    " + unit.isType(AtlantisConfig.WORKER));
             if (unit.exists() && unit.isCompleted() && !unit.getType().isType(
                     AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
+//                System.out.println(">>ADD!<< " + unit);
             }
         }
+//        System.out.println("## data.size() = " + data.size());
         return new Select<AUnit>(data);
 
     }
@@ -557,7 +566,7 @@ public class Select<T> {
      */
     public static Select<AUnit> ourBases() {
         if (AtlantisGame.playsAsZerg()) {
-            return (Select<AUnit>) ourBuildings().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, 
+            return (Select<AUnit>) our().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, 
                     AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
         }
         else {
@@ -715,16 +724,16 @@ public class Select<T> {
      * first discovered base.
      */
     public static AUnit mainBase() {
-//        if (_cached_mainBase == null || !_cached_mainBase.isAlive()) {
-//            List<AUnit> bases = ourBases().list();
-//            _cached_mainBase = bases.isEmpty() ? null : bases.get(0);	//first();
-//        }
-//        return _cached_mainBase;
-        System.out.println("TEST");
-        System.out.println("TEST%" + ourBases());
-        List<AUnit> bases = ourBases().list();
-        System.out.println("TEST@ " + bases.size());
-        return bases.isEmpty() ? null : bases.get(0);
+        if (_cached_mainBase == null || !_cached_mainBase.isAlive()) {
+            List<AUnit> bases = ourBases().list();
+            _cached_mainBase = bases.isEmpty() ? null : bases.get(0);	//first();
+        }
+        return _cached_mainBase;
+//        System.out.println("TEST");
+//        System.out.println("TEST%" + ourBases());
+//        List<AUnit> bases = ourBases().list();
+//        System.out.println("TEST@ " + bases.size());
+//        return bases.isEmpty() ? null : bases.get(0);
     }
 
     /**
