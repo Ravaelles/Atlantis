@@ -6,6 +6,7 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.NameUtil;
 import atlantis.util.AtlantisUtilities;
@@ -182,7 +183,6 @@ public abstract class AtlantisProductionStrategy {
                 = AtlantisConstructingManager.countResourcesNeededForNotStartedConstructions();
         mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         gasNeeded = resourcesNeededForNotStartedBuildings[1];
-        mineralsNeeded = 0;
 
         // =========================================================
         // The idea as follows: as long as we can afford next enqueued production order, add it to the

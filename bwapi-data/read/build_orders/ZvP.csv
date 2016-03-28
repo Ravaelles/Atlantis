@@ -41,6 +41,7 @@ Number;Name;Modifier
 1;Spire
 1;Creep Colony
 1;Sunken Colony
+2;Hatchery;NEAR_MAIN
 1;Zergling
 3;Drone
 1;Mutalisk
@@ -50,7 +51,6 @@ Number;Name;Modifier
 7;Drone
 3;Mutalisk
 4;Mutalisk
-2;Hatchery;NEAR_MAIN
 8;Drone
 5;Mutalisk
 6;Mutalisk
