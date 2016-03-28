@@ -187,12 +187,6 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
-        if (gameCommander == null) {
-            gameCommander = new AtlantisGameCommander();
-            System.out.println("LOL WHAT DE FUUCK this has no right to be null");
-            onStart();
-        }
-        
         try {
             playerOnFrame();
         } catch (Exception e) {

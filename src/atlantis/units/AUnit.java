@@ -29,7 +29,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 //    private static final List<AUnit> instances = new ArrayList<>();
     
     private Unit u;
-    private AUnitType type;
+//    private AUnitType type;
     
     // =========================================================
 
@@ -38,10 +38,16 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
             throw new RuntimeException("AUnit constructor: unit is null");
         }
         this.u = u;
-        this.type = AUnitType.createFrom(u.getType());
+//        this.type = AUnitType.createFrom(u.getType());
+        
+        atlantisInit();
     }
 
     public static AUnit createFrom(Unit u) {
+        if (u == null) {
+            throw new RuntimeException("AUnit constructor: unit is null");
+        }
+
         if (instances.containsKey(u)) {
             return instances.get(u);
         }
@@ -63,8 +69,19 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     
     // =========================================================
     
+    /**
+     * Units can change its type and we have to manually call this method to updated cached unit's type.
+     */
+//    public void updateType() {
+//        if (type.isLarva()) {
+//            System.out.println("Update " + this + " to " + u.getType());
+//        }
+////        this.type = AUnitType.createFrom(u.getType());
+//    }
+    
     public AUnitType getType() {
-        return type;
+//        return type;
+        return AUnitType.createFrom(u.getType());
     }
     
     @Override
@@ -94,6 +111,9 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     // =========================================================
     // =========================================================
 
+    private static int firstFreeID = 1;
+
+    private int innerID;
     private Group group = null;
     private AtlantisRunning running = new AtlantisRunning(this);
     private int lastUnitAction = 0;
@@ -108,6 +128,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     // =========================================================
     // Atlantis constructor
     private void atlantisInit() {
+        innerID = firstFreeID++;
 
         // Repair & Heal
         _repairableMechanically = isBuilding() || isVehicle();
@@ -149,7 +170,8 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 //        String toString = getType().getShortName();
 //        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
 //        return toString;
-        return "AUnit(" + u.getType().toString() + ")";
+//        return "AUnit(" + u.getType().toString() + ")";
+        return "AUnit(" + getType().toString() + " #" + innerID + ")";
     }
     
     @Override
@@ -257,11 +279,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     // =========================================================
     // Auxiliary methods
     
-    public boolean isType(UnitType type) {
-        return getType().equals(type);
-    }
-
-    public boolean ofType(UnitType type) {
+    public boolean ofType(AUnitType type) {
         return getType().equals(type);
     }
 
@@ -622,7 +640,8 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }    
     
     public int getID() {
-        return u.getID();
+//        return u.getID();
+        return innerID;
     }
 
     // =========================================================

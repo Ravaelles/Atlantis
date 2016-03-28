@@ -35,6 +35,10 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public static AUnitType createFrom(UnitType ut) {
+        if (ut == null) {
+            throw new RuntimeException("AUnitType constructor: type is null");
+        }
+        
         if (instances.containsKey(ut)) {
             return instances.get(ut);
         }
@@ -335,7 +339,7 @@ public class AUnitType implements Comparable<AUnitType> {
      */
     public boolean isType(AUnitType... types) {
         for (AUnitType otherType : types) {
-            if (equals(otherType)) {
+            if (this.equals(otherType)) {
                 return true;
             }
         }
@@ -449,7 +453,9 @@ public class AUnitType implements Comparable<AUnitType> {
         
         if (obj instanceof AUnitType) {
             AUnitType other = (AUnitType) obj;
-            return (ut == other.ut);
+//            return (ut == other.ut);
+//            System.out.println("@@@@@@@@@@@@@@@@@@@@@" + ut.toString() + " / " + other.ut.toString());
+            return (ut.toString().equals(other.ut.toString()));
 //            boolean condition = ID == other.ID;
 //            boolean condition = (ut == other.ut);
 //            if (condition) {

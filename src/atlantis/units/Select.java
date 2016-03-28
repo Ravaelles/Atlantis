@@ -54,7 +54,7 @@ public class Select<T> {
 
 //        System.out.println("AtlantisGame.getPlayerUs().getUnits() = " + AtlantisGame.getPlayerUs().getUnits().size());
         for (Unit u : AtlantisGame.getPlayerUs().getUnits()) {
-//            System.out.print(u + " -> ");
+//            System.out.println(u);
 //            System.out.println("******** " + AUnit.createFrom(u));
             data.add(AUnit.createFrom(u));
 //            System.out.println(AUnit.createFrom(u));
@@ -99,20 +99,25 @@ public class Select<T> {
         //Units units = new Units();
         List<AUnit> data = new ArrayList<>();
 
-        //self().getUnits() replaces getMyUnits()
+//        System.out.println("####### ourUnits() = " + ourUnits().size());
         for (AUnit unit : ourUnits()) {
 //            System.out.println(unit);
-//            System.out.println("    " + unit.exists() + " / " +  unit.isCompleted() + " / "  +
+//            System.out.println(unit + "    " + unit.exists() + " / " +  unit.isCompleted() + " / "  +
 //                    !unit.getType().isType(AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, 
 //                            AUnitType.Zerg_Egg));
+//            System.out.println(unit + " / larva: " + unit.isType(AUnitType.Zerg_Larva) + " / egg: " + unit.isType(AUnitType.Zerg_Egg) + " / getType: " + unit.getType());
 //            System.out.println("    " + unit.isType(AtlantisConfig.WORKER));
-            if (unit.exists() && unit.isCompleted() && !unit.getType().isType(
+            if (unit.exists() && unit.isCompleted() && !unit.isType(
                     AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
-//                System.out.println(">>ADD!<< " + unit);
+//                System.out.println(">>>>>ADD!<<<<<<< " + unit);
             }
+//            else {
+//                System.out.println("REJECT: " + unit + " / larva: " + unit.isType(AUnitType.Zerg_Larva));
+//                System.out.println("        compl:" + unit.isCompleted() + " / " + unit.u().getType() + " / " +unit.u().getInitialType());
+//            }
         }
-//        System.out.println("## data.size() = " + data.size());
+//        System.out.println("########## data.size() = " + data.size());
         return new Select<AUnit>(data);
 
     }
@@ -580,8 +585,12 @@ public class Select<T> {
     public static Select<AUnit> ourWorkers() {
         Select<AUnit> selectedUnits = Select.our();
         //for (AUnit unit : selectedUnits.list()) {
+//        System.out.println("########## OUR SIZE = " + selectedUnits.data.size());
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
+            
+//            System.out.println(unit + " --> " +  !unit.isCompleted() + " / " +  !unit.isWorker() + " / " +  !unit.exists());
+            
             if (!unit.isCompleted() || !unit.isWorker() || !unit.exists()) {
                 unitIter.remove();
             }
