@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import bwapi.UnitType;
 
-public class ProtossProductionStrategy extends AtlantisProductionStrategy {
+public class ProtossBuildOrders extends AtlantisBuildOrders {
 
     @Override
     public void produceWorker() {

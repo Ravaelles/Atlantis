@@ -501,21 +501,17 @@ public class Select<T> {
     }
 
     /**
-     * Selects only units that can fight in any way including: - infantry including Terran Medics, but not
-     * workers - military buildings like Photon Cannon, Bunker, Spore Colony, Sunken Colony
+     * Selects only units that can fight in any way including: 
+     * - infantry including Terran Medics, but not workers 
+     * - military buildings like Photon Cannon, Bunker, Spore Colony, Sunken Colony
      */
     public Select<T> combatUnits() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             UnitData uData = dataFrom(unitsIterator.next());
-            boolean isMilitaryBuilding = UnitUtil.isType(uData.getType(),
-                    AUnitType.Terran_Bunker,
-                    AUnitType.Protoss_Photon_Cannon,
-                    AUnitType.Zerg_Sunken_Colony,
-                    AUnitType.Zerg_Spore_Colony
-            );
+            boolean isMilitaryBuilding = uData.getType().isMilitaryBuilding();
             AUnit u = uData.getUnit();	//TODO: will work only on visible units...
-            if (!u.isCompleted() || !u.exists() || (uData.getType().isBuilding() && !isMilitaryBuilding)) {
+            if (u == null || !u.isCompleted() || !u.exists() || (uData.getType().isBuilding() && !isMilitaryBuilding)) {
                 unitsIterator.remove();
             }
         }
@@ -735,14 +731,9 @@ public class Select<T> {
     public static AUnit mainBase() {
         if (_cached_mainBase == null || !_cached_mainBase.isAlive()) {
             List<AUnit> bases = ourBases().list();
-            _cached_mainBase = bases.isEmpty() ? null : bases.get(0);	//first();
+            _cached_mainBase = bases.isEmpty() ? null : bases.get(0);
         }
         return _cached_mainBase;
-//        System.out.println("TEST");
-//        System.out.println("TEST%" + ourBases());
-//        List<AUnit> bases = ourBases().list();
-//        System.out.println("TEST@ " + bases.size());
-//        return bases.isEmpty() ? null : bases.get(0);
     }
 
     /**

@@ -12,11 +12,11 @@ public class AtlantisBaseManager {
     public static void update(AUnit base) {
 
         // Train new workers if allowed
-        if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
-            if (hasSlotToProduceUnit(base)) {
-                base.train(AtlantisConfig.WORKER);
-            }
-        }
+//        if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
+//            if (hasSlotToProduceUnit(base)) {
+//                base.train(AtlantisConfig.WORKER);
+//            }
+//        }
     }
     
     // =========================================================

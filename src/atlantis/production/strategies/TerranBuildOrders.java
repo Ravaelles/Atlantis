@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import bwapi.UnitType;
 
-public class TerranProductionStrategy extends AtlantisProductionStrategy {
+public class TerranBuildOrders extends AtlantisBuildOrders {
 
     @Override
     public void produceWorker() {

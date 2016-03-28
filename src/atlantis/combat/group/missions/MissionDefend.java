@@ -2,7 +2,7 @@ package atlantis.combat.group.missions;
 
 import atlantis.combat.micro.AtlantisRunning;
 import atlantis.debug.tooltip.TooltipManager;
-import atlantis.enemy.AtlantisMap;
+import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import atlantis.util.UnitUtil;

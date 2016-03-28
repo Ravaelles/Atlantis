@@ -3,7 +3,7 @@ package atlantis.combat.micro.zerg;
 import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisEnemyInformationManager;
-import atlantis.enemy.AtlantisMap;
+import atlantis.information.AtlantisMap;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;

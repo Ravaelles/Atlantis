@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
-import atlantis.production.strategies.AtlantisProductionStrategy;
+import atlantis.production.strategies.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -18,7 +18,7 @@ public class AtlantisProduceUnitManager {
      * Is responsible for training new units and issuing construction requests for buildings.
      */
     protected static void update() {
-        AtlantisProductionStrategy productionStrategy = AtlantisConfig.getProductionStrategy();
+        AtlantisBuildOrders productionStrategy = AtlantisConfig.getBuildOrders();
 
         ArrayList<ProductionOrder> produceNow = productionStrategy.getThingsToProduceRightNow(false);
         for (ProductionOrder order : produceNow) {
@@ -94,11 +94,11 @@ public class AtlantisProduceUnitManager {
     }
     
     private static void produceWorker() {
-        AtlantisConfig.getProductionStrategy().produceWorker();
+        AtlantisConfig.getBuildOrders().produceWorker();
     }
 
     private static void produceInfantry(AUnitType infantryType) {
-        AtlantisConfig.getProductionStrategy().produceInfantry(infantryType);
+        AtlantisConfig.getBuildOrders().produceInfantry(infantryType);
     }
 
 }

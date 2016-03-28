@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import bwapi.UnitType;
 
-public class ZergProductionStrategy extends AtlantisProductionStrategy {
+public class ZergBuildOrders extends AtlantisBuildOrders {
 
     @Override
     public void produceWorker() {

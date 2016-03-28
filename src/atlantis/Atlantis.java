@@ -6,7 +6,7 @@ import atlantis.debug.AtlantisUnitTypesHelper;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.init.AtlantisInitialActions;
-import atlantis.production.strategies.AtlantisProductionStrategy;
+import atlantis.production.strategies.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.UnitUtil;
@@ -167,7 +167,7 @@ public class Atlantis implements BWEventListener {
 
         // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
-        AtlantisConfig.useProductionStrategy(AtlantisProductionStrategy.loadProductionStrategy());
+        AtlantisConfig.useBuildOrders(AtlantisBuildOrders.loadBuildOrders());
 
         // =========================================================
         // Validate AtlantisConfig and exit if it's invalid
@@ -246,7 +246,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.getPlayer().equals(bwapi.self())) {
-                AtlantisGame.getProductionStrategy().rebuildQueue();
+                AtlantisGame.getBuildOrders().rebuildQueue();
 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
                 if (AtlantisGame.playsAsProtoss() && unit.getType().isBuilding()) {
@@ -289,7 +289,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.getPlayer().equals(bwapi.self())) {
-                AtlantisGame.getProductionStrategy().rebuildQueue();
+                AtlantisGame.getBuildOrders().rebuildQueue();
                 AtlantisGroupManager.battleUnitDestroyed(unit);
                 LOST++;
                 LOST_RESOURCES += UnitUtil.getTotalPrice(unit.getType());
@@ -359,8 +359,8 @@ public class Atlantis implements BWEventListener {
             AtlantisEnemyUnits.unitDestroyed(unit);
 
             // Our unit
-            if (unit.getPlayer().equals(bwapi.self())) {
-                AtlantisGame.getProductionStrategy().rebuildQueue();
+            if (unit.isOurUnit()) {
+                AtlantisGame.getBuildOrders().rebuildQueue();
                 AtlantisGroupManager.battleUnitDestroyed(unit);
             } else if (unit.isEnemyUnit()) {
                 AtlantisEnemyUnits.discoveredEnemyUnit(unit);
@@ -375,7 +375,7 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
 
             // Our unit
-            if (unit.getPlayer().equals(bwapi.self()) && !(unit.getType().equals(AUnitType.Zerg_Larva)
+            if (unit.isOurUnit() && !(unit.getType().equals(AUnitType.Zerg_Larva)
                     || unit.getType().equals(AUnitType.Zerg_Egg))) {
 //                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
                 AtlantisGroupManager.possibleCombatUnitCreated(unit);

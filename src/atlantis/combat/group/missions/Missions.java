@@ -60,14 +60,28 @@ public class Missions {
      * Defines how many military units we should have before pushing forward towards the enemy.
      */
     private static int defineMinUnitsToForFirstAttack() {
-        if (AtlantisGame.isEnemyProtoss()) {
-            return 4;
+        // We're ZERG
+        if (AtlantisGame.playsAsZerg()) {
+            return 12;
         }
-        else if (AtlantisGame.isEnemyTerran()) {
-            return 1;
-        }
+        
+        // =========================================================
         else {
-            return 2;
+            
+            // Enemy PROTOSS
+            if (AtlantisGame.isEnemyProtoss()) {
+                return 1;
+            }
+
+            // Enemy TERRAN
+            else if (AtlantisGame.isEnemyTerran()) {
+                return 1;
+            }
+
+            // Enemy ZERG
+            else {
+                return 2;
+            }
         }
     }
     

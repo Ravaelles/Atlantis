@@ -4,7 +4,7 @@ import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisEnemyInformationManager;
-import atlantis.enemy.AtlantisMap;
+import atlantis.information.AtlantisMap;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

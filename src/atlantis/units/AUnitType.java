@@ -609,4 +609,17 @@ public class AUnitType implements Comparable<AUnitType> {
         return isType(Protoss_Pylon, Terran_Supply_Depot, Zerg_Overlord);
     }
 
+    /**
+     * Returns true if this is Bunker, Turret, Photon Cannon, Sunken/Spore Colony.
+     */
+    public boolean isMilitaryBuilding() {
+        return isType(
+                AUnitType.Terran_Bunker,
+                AUnitType.Terran_Missile_Turret,
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Zerg_Sunken_Colony,
+                AUnitType.Zerg_Spore_Colony
+        );
+    }
+
 }

@@ -5,7 +5,7 @@ import atlantis.combat.micro.AtlantisRunManager;
 import atlantis.combat.micro.AtlantisRunning;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisEnemyInformationManager;
-import atlantis.enemy.AtlantisMap;
+import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
@@ -51,7 +51,6 @@ public class MissionAttack extends Mission {
                 Atlantis.getBwapi().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
                 TooltipManager.setTooltip(unit, "Spread!"); //TODO: DEBUG
 //                unit.setTooltip("Mission spread");
-                System.out.println("--Spread");	//TODO DEBUG
                 return true;
             }
         }

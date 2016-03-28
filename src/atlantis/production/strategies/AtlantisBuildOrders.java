@@ -20,8 +20,11 @@ import bwapi.UpgradeType;
 /**
  * Represents abstract build orders read from the file.
  */
-public abstract class AtlantisProductionStrategy {
+public abstract class AtlantisBuildOrders {
 
+    /**
+     * Directory that contains build orders.
+     */
     private static final String BUILD_ORDERS_PATH = "bwapi-data/read/build_orders/";
 
     // =========================================================
@@ -50,7 +53,7 @@ public abstract class AtlantisProductionStrategy {
     // =========================================================
     // Constructor
     
-    public AtlantisProductionStrategy() {
+    public AtlantisBuildOrders() {
         readBuildOrdersFile();
     }
     
@@ -66,13 +69,13 @@ public abstract class AtlantisProductionStrategy {
     /**
      * Returns default production strategy according to the race played.
      */
-    public static AtlantisProductionStrategy loadProductionStrategy() {
+    public static AtlantisBuildOrders loadBuildOrders() {
         if (AtlantisGame.playsAsTerran()) {
-            return new TerranProductionStrategy();
+            return new TerranBuildOrders();
         } else if (AtlantisGame.playsAsProtoss()) {
-            return new ProtossProductionStrategy();
+            return new ProtossBuildOrders();
         } else if (AtlantisGame.playsAsZerg()) {
-            return new ZergProductionStrategy();
+            return new ZergBuildOrders();
         }
 
         System.err.println("getAccordingToRace: Unknown race");
@@ -83,8 +86,90 @@ public abstract class AtlantisProductionStrategy {
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static AtlantisProductionStrategy getProductionStrategy() {
-        return AtlantisConfig.getProductionStrategy();
+    public static AtlantisBuildOrders getBuildOrders() {
+        return AtlantisConfig.getBuildOrders();
+    }
+    
+    // =========================================================
+    // Probably most important method in the world
+    
+    /**
+     * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only
+     * want to get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and
+     * returns those build orders that we can build in this very moment (we can afford them and they match our
+     * strategy).
+     */
+    public ArrayList<ProductionOrder> getThingsToProduceRightNow(boolean onlyUnits) {
+        ArrayList<ProductionOrder> result = new ArrayList<>();
+        int[] resourcesNeededForNotStartedBuildings
+                = AtlantisConstructingManager.countResourcesNeededForNotStartedConstructions();
+        mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
+        gasNeeded = resourcesNeededForNotStartedBuildings[1];
+
+        // =========================================================
+        // The idea as follows: as long as we can afford next enqueued production order, add it to the
+        // CurrentToProduceList.
+        
+//        System.out.println("// =========================================================");
+//        for (ProductionOrder order : currentProductionQueue) {
+//        System.out.println(order.getUnitType());
+//        }
+        
+        for (ProductionOrder order : currentProductionQueue) {
+            AUnitType unitType = order.getUnitType();
+            UpgradeType upgrade = order.getUpgrade();
+            TechType tech = order.getTech();
+
+            // Check if include only units
+            if (onlyUnits && unitType == null) {
+                continue;
+            }
+            
+            // =========================================================
+            // Protoss fix: wait for at least one Pylon
+            if (AtlantisGame.playsAsProtoss() && unitType != null
+                    && !AUnitType.Protoss_Pylon.equals(unitType)
+                    && Select.our().countUnitsOfType(AUnitType.Protoss_Pylon) == 0) {
+                continue;
+            }
+            
+            // =========================================================
+
+            if (unitType != null) {
+//                if (!AtlantisGame.hasBuildingsToProduce(unitType)) {
+//                    continue;
+//                }
+                
+                mineralsNeeded += unitType.mineralPrice();
+                gasNeeded += unitType.gasPrice();
+            } else if (upgrade != null) {
+                mineralsNeeded += upgrade.mineralPrice() * upgrade.mineralPriceFactor();
+                gasNeeded += upgrade.gasPrice() * upgrade.gasPriceFactor();
+            } else if (tech != null) {
+                mineralsNeeded += tech.mineralPrice();
+                gasNeeded += tech.gasPrice();	//previous was `getMineralPrice()`, this seems to be a bugfix
+            }
+
+            // =========================================================
+            // If we can afford this order and the previous, add it to CurrentToProduceList.
+            if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
+                result.add(order);
+            } // We can't afford to produce this order along with all previous ones. Return currently list.
+            else {
+//                System.out.println("-----break at: " + unitType);
+                break;
+            }
+        }
+
+        // =========================================================
+        // Produce something if queue is empty
+        if (result.isEmpty() && AtlantisGame.getSupplyUsed() >= 9) {
+            for (AUnitType unitType : produceWhenNoProductionOrders()) {
+                result.add(new ProductionOrder(unitType));
+            }
+        }
+
+        return result;
     }
     
     // =========================================================
@@ -169,85 +254,6 @@ public abstract class AtlantisProductionStrategy {
                 }
             }
         }
-    }
-
-    /**
-     * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only
-     * want to get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and
-     * returns those build orders that we can build in this very moment (we can afford them and they match our
-     * strategy).
-     */
-    public ArrayList<ProductionOrder> getThingsToProduceRightNow(boolean onlyUnits) {
-        ArrayList<ProductionOrder> result = new ArrayList<>();
-        int[] resourcesNeededForNotStartedBuildings
-                = AtlantisConstructingManager.countResourcesNeededForNotStartedConstructions();
-        mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
-        gasNeeded = resourcesNeededForNotStartedBuildings[1];
-
-        // =========================================================
-        // The idea as follows: as long as we can afford next enqueued production order, add it to the
-        // CurrentToProduceList.
-        
-//        System.out.println("// =========================================================");
-//        for (ProductionOrder order : currentProductionQueue) {
-//        System.out.println(order.getUnitType());
-//        }
-        
-        for (ProductionOrder order : currentProductionQueue) {
-            AUnitType unitType = order.getUnitType();
-            UpgradeType upgrade = order.getUpgrade();
-            TechType tech = order.getTech();
-
-            // Check if include only units
-            if (onlyUnits && unitType == null) {
-                continue;
-            }
-            
-            // =========================================================
-            // Protoss fix: wait for at least one Pylon
-            if (AtlantisGame.playsAsProtoss() && unitType != null
-                    && !AUnitType.Protoss_Pylon.equals(unitType)
-                    && Select.our().countUnitsOfType(AUnitType.Protoss_Pylon) == 0) {
-                continue;
-            }
-            
-            // =========================================================
-
-            if (unitType != null) {
-                if (!AtlantisGame.hasBuildingsToProduce(unitType)) {
-                    continue;
-                }
-                
-                mineralsNeeded += unitType.mineralPrice();
-                gasNeeded += unitType.gasPrice();
-            } else if (upgrade != null) {
-                mineralsNeeded += upgrade.mineralPrice() * upgrade.mineralPriceFactor();
-                gasNeeded += upgrade.gasPrice() * upgrade.gasPriceFactor();
-            } else if (tech != null) {
-                mineralsNeeded += tech.mineralPrice();
-                gasNeeded += tech.gasPrice();	//previous was `getMineralPrice()`, this seems to be a bugfix
-            }
-
-            // =========================================================
-            // If we can afford this order and the previous, add it to CurrentToProduceList.
-            if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
-                result.add(order);
-            } // We can't afford to produce this order along with all previous ones. Return currently list.
-            else {
-//                System.out.println("-----break at: " + unitType);
-                break;
-            }
-        }
-
-        // =========================================================
-        // Produce something if queue is empty
-        if (result.isEmpty() && AtlantisGame.getSupplyUsed() >= 9) {
-            for (AUnitType unitType : produceWhenNoProductionOrders()) {
-                result.add(new ProductionOrder(unitType));
-            }
-        }
-
-        return result;
     }
     
     /**
@@ -500,6 +506,9 @@ public abstract class AtlantisProductionStrategy {
         }
     }
 
+    /**
+     * Gets integer value from a row that contains special build order command.
+     */
     private int extractSpecialCommandValue(String[] row) {
         return Integer.parseInt(row[0].substring(row[0].lastIndexOf("=") + 1));
     }

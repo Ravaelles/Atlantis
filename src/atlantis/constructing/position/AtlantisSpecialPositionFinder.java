@@ -1,7 +1,7 @@
 package atlantis.constructing.position;
 
 import atlantis.constructing.ConstructionOrder;
-import atlantis.enemy.AtlantisMap;
+import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
@@ -17,13 +17,19 @@ public class AtlantisSpecialPositionFinder {
      * Constant used as a hint to indicate that base should be built in the nearest base location 
      * (to the main base) that's still free.
      */
-    public static final String NEW_BASE_NEAREST_FREE = "NEAREST_FREE";
+    public static final String BASE_NEAREST_FREE = "NEAREST_FREE";
     
     /**
      * Constant used as a hint to indicate that base should be built in the main base (not as much 
      * expansion as additional slots in base).
      */
-    public static final String NEW_BASE_NEAR_MAIN = "NEAR_MAIN";
+    public static final String BASE_NEAR_MAIN = "NEAR_MAIN";
+    
+    /**
+     * Constant used as a hint to indicate that base should be built in the "natural" 
+     * (also called "expansion").
+     */
+    public static final String BASE_NATURAL = "NATURAL";
     
     // =========================================================
 
@@ -54,8 +60,11 @@ public class AtlantisSpecialPositionFinder {
                 constructionOrder.getProductionOrder().getModifier() : null;
         
         if (mode != null) {
-            if (mode.equals(NEW_BASE_NEAR_MAIN)) {
+            if (mode.equals(BASE_NEAR_MAIN)) {
                 return findPositionForBase_nearestMainBase(building, builder);
+            }
+            else if (mode.equals(BASE_NATURAL)) {
+                return findPositionForBase_natural(building, builder);
             }
         }
         
@@ -79,6 +88,11 @@ public class AtlantisSpecialPositionFinder {
 
     private static Position findPositionForBase_nearestMainBase(AUnitType building, AUnit builder) {
         return AtlantisPositionFinder.findStandardPosition(builder, building, Select.mainBase().getPosition(), 20);
+    }
+
+    private static Position findPositionForBase_natural(AUnitType building, AUnit builder) {
+        return AtlantisPositionFinder.findStandardPosition(builder, building, 
+                AtlantisMap.getNearestBaseLocationToExpand(Select.mainBase().getPosition()).getPosition(), 10);
     }
 
 }

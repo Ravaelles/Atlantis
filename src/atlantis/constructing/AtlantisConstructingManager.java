@@ -90,7 +90,7 @@ public class AtlantisConstructingManager {
             constructionOrders.add(newConstructionOrder);
 
             // Rebuild production queue as new building is about to be built
-            AtlantisGame.getProductionStrategy().rebuildQueue();
+            AtlantisGame.getBuildOrders().rebuildQueue();
         } // Couldn't find place for building! That's f'g bad.
         else {
             System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild

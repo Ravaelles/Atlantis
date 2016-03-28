@@ -5,7 +5,7 @@ import atlantis.AtlantisGame;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.AtlantisCombatInformation;
 import atlantis.debug.tooltip.TooltipManager;
-import atlantis.enemy.AtlantisMap;
+import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import atlantis.units.Select;

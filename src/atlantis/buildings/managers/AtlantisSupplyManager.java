@@ -3,7 +3,7 @@ package atlantis.buildings.managers;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
-import atlantis.production.strategies.ZergProductionStrategy;
+import atlantis.production.strategies.ZergBuildOrders;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwapi.UnitType;
@@ -52,7 +52,7 @@ public class AtlantisSupplyManager {
 
         // Zerg
         if (AtlantisConfig.SUPPLY.equals(AUnitType.Zerg_Overlord)) {
-            ((ZergProductionStrategy) AtlantisGame.getProductionStrategy()).produceZergUnit(AUnitType.Zerg_Overlord);
+            ((ZergBuildOrders) AtlantisGame.getBuildOrders()).produceZergUnit(AUnitType.Zerg_Overlord);
         } // Terran + Protoss
         else {
             AtlantisConstructingManager.requestConstructionOf(AtlantisConfig.SUPPLY);

@@ -16,7 +16,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.production.ProductionOrder;
-import atlantis.production.strategies.AtlantisProductionStrategy;
+import atlantis.production.strategies.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.ColorUtil;
@@ -64,32 +64,22 @@ public class AtlantisPainter {
         bwapi.setTextSize(Enum.Small);
 
         // =========================================================
-//        bwapi.drawTargets(true); // Draws line from unit to the target position
-//        bwapi.getMap().drawTerrainData(bwapi);
-        // =========================================================
         // Paint from least important to most important (last is on the top)
         paintImportantPlaces();
 //        paintColorCirclesAroundUnits();
 //        paintConstructionProgress();
         paintConstructionPlaces();
-//        paintBuildingHealth();
-//        paintWorkersAssignedToBuildings();
-//        paintUnitsBeingTrainedInBuildings();
-//        paintSpecialsOverUnits();
+        paintBuildingHealth();
+        paintWorkersAssignedToBuildings();
+        paintUnitsBeingTrainedInBuildings();
+        paintBarsUnderUnits();
         paintVariousStats();
         paintUnitCounters();
         paintProductionQueue();
         paintSidebarConstructionsPending();
-//        paintKilledAndLost();
+        paintKilledAndLost();
 //        paintTemporaryTargets();
-
-        // =========================================================
-        // Paint TOOLTIPS over units
-//        for (AUnit unit : Select.our().listUnits()) {
-//            if (TooltipManager.hasTooltip(unit)) { // unit.hasTooltip()
-//                paintTextCentered(unit.getPosition(), TooltipManager.getTooltip(unit), Color.White);
-//            }
-//        }
+        paintTooltipsOverUnits();
     }
 
     // =========================================================
@@ -105,8 +95,8 @@ public class AtlantisPainter {
         // =========================================================
         // Gas workers
         paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + AtlantisProductionStrategy.getMineralsNeeded(), Color.Grey);
-        paintSideMessage("Reserved gas: " + AtlantisProductionStrategy.getGasNeeded(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + AtlantisBuildOrders.getMineralsNeeded(), Color.Grey);
+        paintSideMessage("Reserved gas: " + AtlantisBuildOrders.getGasNeeded(), Color.Grey);
         // =========================================================
         // Global mission
         paintSideMessage("Mission: " + AtlantisGroupManager.getAlphaGroup().getMission().getName(), Color.White);
@@ -128,7 +118,7 @@ public class AtlantisPainter {
     /**
      * Paints small progress bars over units that have cooldown.
      */
-    private static void paintSpecialsOverUnits() {
+    private static void paintBarsUnderUnits() {
         for (AUnit unit : Select.ourCombatUnits().listUnits()) {
 
             // =========================================================
@@ -146,14 +136,11 @@ public class AtlantisPainter {
                 // Paint box
                 int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
                 bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
-                //(jni)bwapi.drawBox(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true, false);
                 bwapi.drawBoxMap(topLeft, new Position(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
-                //(jni)bwapi.drawBox(topLeft, new Position(boxLeft + healthBarProgress, boxTop + boxHeight),Color.Green, true, false);
 
                 // =========================================================
                 // Paint box borders
                 bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
-                //(jni)bwapi.drawBox(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight),Color.Black, false, false);
             }
 
             // =========================================================
@@ -306,13 +293,13 @@ public class AtlantisPainter {
         }
 
         // Display units that should be produced right now or any time
-        ArrayList<ProductionOrder> produceNow = AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(false);
+        ArrayList<ProductionOrder> produceNow = AtlantisGame.getBuildOrders().getThingsToProduceRightNow(false);
         for (ProductionOrder order : produceNow) {
             paintSideMessage(order.getShortName(), Color.Yellow);
         }
 
         // Display next units to produce
-        ArrayList<ProductionOrder> fullQueue = AtlantisGame.getProductionStrategy().getProductionQueueNext(
+        ArrayList<ProductionOrder> fullQueue = AtlantisGame.getBuildOrders().getProductionQueueNext(
                 5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);
@@ -635,6 +622,18 @@ public class AtlantisPainter {
             if (ourUnit.isAttacking() && ourUnit.getTarget() != null) {
 //                paintMessage("X", Color.Red, ourUnit.getTarget().getPX(), ourUnit.getTarget().getPY(), false);
                 paintLine(ourUnit.getPosition(), ourUnit.getTarget().getPosition(), Color.Red);
+            }
+        }
+    }
+    
+    /**
+     * Tooltips are units messages that appear over them and allow to report actions like "Repairing" or
+     * "Run from enemy" etc.
+     */
+    private static void paintTooltipsOverUnits() {
+        for (AUnit unit : Select.our().listUnits()) {
+            if (TooltipManager.hasTooltip(unit)) { // unit.hasTooltip()
+                paintTextCentered(unit.getPosition(), TooltipManager.getTooltip(unit), Color.White);
             }
         }
     }

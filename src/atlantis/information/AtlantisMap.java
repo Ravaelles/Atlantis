@@ -1,4 +1,4 @@
-package atlantis.enemy;
+package atlantis.information;
 
 import atlantis.Atlantis;
 import atlantis.units.AUnit;

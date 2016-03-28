@@ -56,10 +56,10 @@ public class AtlantisWorkerCommander {
         }
 
         // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
-//        if (!AtlantisGame.getProductionStrategy().shouldProduceNow(AtlantisConfig.WORKER)) {
+//        if (!AtlantisGame.getBuildOrders().shouldProduceNow(AtlantisConfig.WORKER)) {
 //            return false;
 //        }
-//        if (!AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(true).isEmpty()) {
+//        if (!AtlantisGame.getBuildOrders().getThingsToProduceRightNow(true).isEmpty()) {
 //            return false;
 //        }
 

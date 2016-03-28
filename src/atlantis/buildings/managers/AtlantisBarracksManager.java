@@ -42,7 +42,7 @@ public class AtlantisBarracksManager {
 
         // =========================================================
         // Check PRODUCTION QUEUE
-        ArrayList<ProductionOrder> unitsToProduce = AtlantisGame.getProductionStrategy().getThingsToProduceRightNow(
+        ArrayList<ProductionOrder> unitsToProduce = AtlantisGame.getBuildOrders().getThingsToProduceRightNow(
                 true);
 
         // EMPTY PRODUCTION QUEUE - can build
