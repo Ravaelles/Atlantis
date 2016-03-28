@@ -274,8 +274,6 @@ public class Atlantis implements BWEventListener {
                     || unit.getType().equals(AUnitType.Zerg_Egg))) {
                 AtlantisGroupManager.possibleCombatUnitCreated(unit);
             }
-        } else {
-            System.err.println("Unit complete is null " + unit.getID());
         }
     }
 

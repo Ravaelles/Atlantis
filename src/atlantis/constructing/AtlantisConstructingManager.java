@@ -142,30 +142,29 @@ public class AtlantisConstructingManager {
 //        System.out.println(constructionOrder.getBuildingType());
 //        System.out.println(constructionOrder.getStatus());
 //        System.out.println(constructionOrder.getBuilder());
-//        System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
-//        System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
-//        System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
-//        System.out.println("getOrderTarget = " + constructionOrder.getBuilder().getOrderTarget());
-//        System.out.println("Constr = " + constructionOrder.getConstruction());
-//        System.out.println("Exists = " + constructionOrder.getBuilder().isExists());
-//        System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
 
         // If ZERG change builder into building (it just happens, yeah, weird stuff)
-        if (AtlantisGame.playsAsZerg()) {
+        if (building == null || !building.exists()) {
             AUnit builder = constructionOrder.getBuilder();
-            if (builder != null && builder.getType().isBuilding()) {
-                constructionOrder.setConstruction(builder);
-                building = builder;
-            }
-        } // If TERRAN and building doesn't exist yet, assign it to the construction order.
-        else if (AtlantisGame.playsAsTerran() && (building == null || !building.exists())) {
-            AUnit builder = constructionOrder.getBuilder();
-            if (builder != null) {
-                AUnit buildUnit = AUnit.createFrom(builder.u().getBuildUnit());
-                if (buildUnit != null) {
-                    constructionOrder.setConstruction(buildUnit);
-                    building = buildUnit;
+            if (builder != null && !builder.getType().equals(AtlantisConfig.WORKER)) {
+//                System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
+//                System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
+//                System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
+//                System.out.println("getOrderTarget = " + constructionOrder.getBuilder().getOrderTarget());
+//                System.out.println("Constr = " + constructionOrder.getConstruction());
+//                System.out.println("Exists = " + constructionOrder.getBuilder().exists());
+//                System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
+//                AUnit buildUnit = AUnit.createFrom(builder.getType().);
+
+                // Happens for Extractor
+                if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
+                    building = builder;
+                    constructionOrder.setConstruction(builder);
                 }
+//                if (buildUnit != null) {
+//                    building = buildUnit;
+//                    constructionOrder.setConstruction(buildUnit);
+//                }
             }
         }
         // =========================================================

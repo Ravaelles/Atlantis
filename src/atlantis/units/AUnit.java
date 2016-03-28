@@ -772,6 +772,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isTraining();
     }
 
+    public boolean isBeingConstructed() {
+        return u.isBeingConstructed();
+    }
+
     public UnitCommand getLastCommand() {
         return u.getLastCommand();
     }
