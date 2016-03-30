@@ -567,11 +567,11 @@ public class Select<T> {
      */
     public static Select<AUnit> ourBases() {
         if (AtlantisGame.playsAsZerg()) {
-            return (Select<AUnit>) our().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, 
+            return (Select<AUnit>) ourIncludingUnfinished().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, 
                     AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
         }
         else {
-            return (Select<AUnit>) our().ofType(AtlantisConfig.BASE);
+            return (Select<AUnit>) ourIncludingUnfinished().ofType(AtlantisConfig.BASE);
         }
     }
 

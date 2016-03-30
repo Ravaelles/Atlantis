@@ -84,6 +84,72 @@ public class AtlantisPainter {
 
     // =========================================================
     // Hi-level
+    
+    /**
+     * Painting for combat units can be a little different. Put here all the related code.
+     */
+    private static void paintCombatUnits() {
+        for (AUnit unit : Select.ourCombatUnits().listUnits()) {
+            double combatEval = AtlantisCombatEvaluator.evaluateSituation(unit);
+            
+            // =========================================================
+            // === Paint targets for combat units
+            // =========================================================
+            Position targetPosition = unit.getTargetPosition();
+            if (targetPosition == null) {
+                targetPosition = unit.getTarget().getPosition();
+            }
+            if (targetPosition != null && unit.distanceTo(targetPosition) <= 15) {
+                paintLine(unit.getPosition(), targetPosition, (unit.isAttacking() ? Color.Green : Color.Red));
+            }
+
+            // =========================================================
+            // === Paint life bars bars over wounded units
+            // =========================================================
+            if (UnitUtil.getHPPercent(unit) < 100) {
+                int boxWidth = 20;
+                int boxHeight = 4;
+                int boxLeft = unit.getPosition().getX() - boxWidth / 2;
+                int boxTop = unit.getPosition().getY() + 23;
+
+                Position topLeft = new Position(boxLeft, boxTop);
+
+                // =========================================================
+                // Paint box
+                int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
+                bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
+                bwapi.drawBoxMap(topLeft, new Position(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
+
+                // =========================================================
+                // Paint box borders
+                bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
+            }
+            
+            // =========================================================
+            // === Combat Evaluation Strength
+            // =========================================================
+            if (combatEval < 10) {
+                double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+                if (eval < 999) {
+                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
+                            : AtlantisCombatEvaluator.getEvalString(unit);
+                    paintTextCentered(new Position(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
+                }
+            }
+        }
+        
+        // =========================================================
+
+        for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
+            double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+            if (eval < 999) {
+                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
+                        : AtlantisCombatEvaluator.getEvalString(unit);
+                paintTextCentered(new Position(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
+            }
+        }
+    }
+    
     /**
      * Paint focus point for global attack mission etc.
      */
@@ -119,29 +185,29 @@ public class AtlantisPainter {
      * Paints small progress bars over units that have cooldown.
      */
     private static void paintBarsUnderUnits() {
-        for (AUnit unit : Select.ourCombatUnits().listUnits()) {
-
-            // =========================================================
-            // === Paint life bars bars over wounded units
-            // =========================================================
-            if (UnitUtil.getHPPercent(unit) < 100) {
-                int boxWidth = 20;
-                int boxHeight = 4;
-                int boxLeft = unit.getPosition().getX() - boxWidth / 2;
-                int boxTop = unit.getPosition().getY() + 23;
-
-                Position topLeft = new Position(boxLeft, boxTop);
-
-                // =========================================================
-                // Paint box
-                int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
-                bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
-                bwapi.drawBoxMap(topLeft, new Position(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
-
-                // =========================================================
-                // Paint box borders
-                bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
-            }
+//        for (AUnit unit : Select.ourCombatUnits().listUnits()) {
+//
+//            // =========================================================
+//            // === Paint life bars bars over wounded units
+//            // =========================================================
+//            if (UnitUtil.getHPPercent(unit) < 100) {
+//                int boxWidth = 20;
+//                int boxHeight = 4;
+//                int boxLeft = unit.getPosition().getX() - boxWidth / 2;
+//                int boxTop = unit.getPosition().getY() + 23;
+//
+//                Position topLeft = new Position(boxLeft, boxTop);
+//
+//                // =========================================================
+//                // Paint box
+//                int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
+//                bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
+//                bwapi.drawBoxMap(topLeft, new Position(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
+//
+//                // =========================================================
+//                // Paint box borders
+//                bwapi.drawBoxMap(topLeft, new Position(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
+//            }
 
             // =========================================================
             // === Paint cooldown progress bars over units
@@ -184,27 +250,27 @@ public class AtlantisPainter {
 //            int ourAround = Select.ourCombatUnits().inRadius(1.7, unit).count();
 //            paintTextCentered(new Position(unit.getPX(), unit.getPY() - 15), Color.getColorString(Color.Orange)
 //                    + "(" + ourAround + ")", false);
-            // =========================================================
-            // === Combat Evaluation Strength
-            // =========================================================
-            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 10) {
-                double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
-                if (eval < 999) {
-                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + "++")
-                            : AtlantisCombatEvaluator.getEvalString(unit);
-                    paintTextCentered(new Position(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
-                }
-            }
-        }
-
-        for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
-            double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
-            if (eval < 999) {
-                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + "++")
-                        : AtlantisCombatEvaluator.getEvalString(unit);
-                paintTextCentered(new Position(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
-            }
-        }
+//            // =========================================================
+//            // === Combat Evaluation Strength
+//            // =========================================================
+//            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 10) {
+//                double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+//                if (eval < 999) {
+//                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + "++")
+//                            : AtlantisCombatEvaluator.getEvalString(unit);
+//                    paintTextCentered(new Position(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
+//                }
+//            }
+//        }
+//
+//        for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
+//            double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+//            if (eval < 999) {
+//                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + "++")
+//                        : AtlantisCombatEvaluator.getEvalString(unit);
+//                paintTextCentered(new Position(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
+//            }
+//        }
     }
 
     /**
@@ -244,7 +310,8 @@ public class AtlantisPainter {
     private static void paintUnitCounters() {
         // Unfinished
         MappingCounter<AUnitType> unitTypesCounter = new MappingCounter<>();
-        for (AUnit unit : Select.ourUnfinishedRealUnits().listUnits()) {
+//        for (AUnit unit : Select.ourUnfinishedRealUnits().listUnits()) {
+        for (AUnit unit : Select.our().listUnits()) {
             unitTypesCounter.incrementValueFor(unit.getType());
         }
 

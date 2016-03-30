@@ -57,13 +57,13 @@ public class AtlantisProduceUnitManager {
 
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
-            produceWorker();
+            AtlantisBuildOrders.getBuildOrders().produceWorker();
         } 
 
         // =========================================================
         // Infantry
         else if (unitType.isOrganic()) { //replaces  isInfantry()
-            produceInfantry(unitType);
+            AtlantisBuildOrders.getBuildOrders().produceInfantry(unitType);
         } 
 
         // =========================================================
@@ -93,12 +93,4 @@ public class AtlantisProduceUnitManager {
         AtlantisConstructingManager.requestConstructionOf(unitType, order, null);
     }
     
-    private static void produceWorker() {
-        AtlantisConfig.getBuildOrders().produceWorker();
-    }
-
-    private static void produceInfantry(AUnitType infantryType) {
-        AtlantisConfig.getBuildOrders().produceInfantry(infantryType);
-    }
-
 }

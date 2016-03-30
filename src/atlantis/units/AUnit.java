@@ -740,6 +740,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.getTarget() != null ? AUnit.createFrom(u.getTarget()) : null;
     }
 
+    public Position getTargetPosition() {
+        return u.getTargetPosition();
+    }
+
     public AUnit getOrderTarget() {
         return u.getOrderTarget() != null ? AUnit.createFrom(u.getOrderTarget()) : null;
     }
