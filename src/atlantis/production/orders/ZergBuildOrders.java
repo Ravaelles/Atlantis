@@ -5,10 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.workers.AtlantisWorkerCommander;
 import atlantis.units.Select;
-import bwapi.Unit;
 import java.util.ArrayList;
-
-import bwapi.UnitType;
 
 public class ZergBuildOrders extends AtlantisBuildOrders {
 
@@ -18,8 +15,8 @@ public class ZergBuildOrders extends AtlantisBuildOrders {
     }
 
     @Override
-    public void produceInfantry(AUnitType infantryType) {
-        produceZergUnit(infantryType);
+    public void produceUnit(AUnitType unitType) {
+        produceZergUnit(unitType);
     }
 
     @Override
@@ -41,7 +38,7 @@ public class ZergBuildOrders extends AtlantisBuildOrders {
      */
     public void produceZergUnit(AUnitType unitType) {
         for (AUnit base : Select.ourBases().listUnits()) {
-            for (Unit larva : base.getLarva()) {
+            for (AUnit larva : base.getLarva()) {
                 boolean result = base.train(unitType);
 //                System.err.println("TRAIN FAIL: " + unitType + " IN " + base);
 //                System.err.println("Are you sure you have supply? Chech against it.");

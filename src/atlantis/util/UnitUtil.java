@@ -24,7 +24,7 @@ public class UnitUtil {
      * @return
      */
     public static int getTotalPrice(AUnitType type) {
-        int total = type.gasPrice() + type.mineralPrice();
+        int total = type.getGasPrice() + type.getMineralPrice();
         if (type.equals(AUnitType.Zerg_Zergling)) {
             total /= 2;
         }

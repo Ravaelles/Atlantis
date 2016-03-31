@@ -50,25 +50,21 @@ public class AtlantisProductionManager {
         
         // Supply: OVERLORD / PYLON / DEPOT
         if (AtlantisGame.getSupplyFree() == 0 && !unitType.isSupplyUnit() && !unitType.isBuilding()) {
+            // Supply production is handled by AtlantisSupplyManager
             return;
         }
 
+        // =========================================================
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
             AtlantisBuildOrders.getBuildOrders().produceWorker();
         } 
 
         // =========================================================
-        // Infantry
-        else if (unitType.isOrganic()) { //replaces  isInfantry()
-            AtlantisBuildOrders.getBuildOrders().produceInfantry(unitType);
+        // Non-worker so combat units and special units like Scarabs etc.
+        else { 
+            AtlantisBuildOrders.getBuildOrders().produceUnit(unitType);
         } 
-
-        // =========================================================
-        // We don't know what to do
-        else {
-            System.err.println("UNHANDLED UNIT TYPE TO PRODUCE: " + unitType);
-        }
     }
 
     private static void researchUpgrade(UpgradeType upgrade) {

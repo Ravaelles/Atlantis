@@ -7,6 +7,8 @@ import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.enemy.AtlantisEnemyUnits;
+import static atlantis.units.AUnitType.createFrom;
+import atlantis.wrappers.APosition;
 import atlantis.wrappers.APositionedObject;
 import bwapi.Player;
 import bwapi.Position;
@@ -18,19 +20,22 @@ import bwapi.WeaponType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Wrapper for BWMirror Unit class that makes it much easier to use.
+ * Wrapper for BWMirror Unit class that makes units much easier to use.<br /><br />
+ * Atlantis uses wrappers for BWMirror native classes which can't be extended.<br /><br />
+ * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing
+ * you can create missing method here and you can reference original Unit class via u() method.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitActions {
+//public class AUnit implements Comparable<AUnit>, UnitActions {
     
-    private static final HashMap<Unit, AUnit> instances = new HashMap<>();
-//    private static final List<AUnit> instances = new ArrayList<>();
+    private static final Map<Unit, AUnit> instances = new HashMap<>();
     
     private Unit u;
-//    private AUnitType type;
     
     // =========================================================
 
@@ -44,6 +49,11 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         atlantisInit();
     }
 
+    /**
+     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
+     * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing
+     * you can create missing method here and you can reference original Unit class via u() method.
+     */
     public static AUnit createFrom(Unit u) {
         if (u == null) {
             throw new RuntimeException("AUnit constructor: unit is null");
@@ -57,28 +67,9 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
             instances.put(u, unit);
             return unit;
         }
-//        AUnit unit;
-//        if ((unit = getBWMirrorUnit(u)) != null) {
-//            return unit;
-//        }
-//        else {
-//            unit = new AUnit(u);
-//            instances.add(unit);
-//            return unit;
-//        }
     }
     
     // =========================================================
-    
-    /**
-     * Units can change its type and we have to manually call this method to updated cached unit's type.
-     */
-//    public void updateType() {
-//        if (type.isLarva()) {
-//            System.out.println("Update " + this + " to " + u.getType());
-//        }
-////        this.type = AUnitType.createFrom(u.getType());
-//    }
     
     public AUnitType getType() {
 //        return type;
@@ -86,8 +77,9 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }
     
     @Override
-    public Position getPosition() {
-        return u.getPosition();
+    public APosition getPosition() {
+        return APosition.createFrom(u.getPosition());
+//        return u.getPosition();
     }
     
     /**
@@ -97,6 +89,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     @Override
     public Unit u() {
         return u;
+    }
+    
+    /**
+     * This method exists only to allow reference in UnitActions class.
+     */
+    @Override
+    public AUnit unit() {
+        return this;
     }
     
     private static AUnit getBWMirrorUnit(Unit u) {
@@ -436,6 +436,38 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return isSpiderMine() || isLarvaOrEgg();
     }
 
+    
+    // =========================================================
+    // Auxiliary
+    
+    /**
+     * Converts collection of <b>Unit</b> variables into collection of <b>AUnit</b> variables.
+     */
+    private static Object convertToAUnitCollection(Object collection) {
+        if (collection instanceof Map) {
+            Map<AUnit, Integer> result = new HashMap<>();
+            for (Object key : ((Map) collection).keySet()) {
+                Unit u = (Unit) key;
+                AUnit unit = createFrom(u);
+                result.put(unit, (Integer) ((Map) collection).get(u));
+            }
+            return result;
+        }
+        else if (collection instanceof List) {
+            List<AUnit> result = new ArrayList<>();
+            for (Object key : (List) collection) {
+                Unit u = (Unit) key;
+                AUnit unit = createFrom(u);
+                result.add(unit);
+            }
+            return result;
+        }
+        else {
+            throw new RuntimeException("I don't know how to convert collection of type: " 
+                    + collection.toString());
+        }
+    }
+    
     // =========================================================
     // RANGE and ATTACK methods
     
@@ -724,24 +756,24 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isStartingAttack();
     }
 
-    public List<UnitType> getTrainingQueue() {
-        return u.getTrainingQueue();
+    public List<AUnitType> getTrainingQueue() {
+        return (List<AUnitType>) AUnitType.convertToAUnitTypesCollection(u.getTrainingQueue());
     }
 
     public boolean isUpgrading() {
         return u.isUpgrading();
     }
 
-    public List<Unit> getLarva() {
-        return u.getLarva();
+    public List<AUnit> getLarva() {
+        return (List<AUnit>) convertToAUnitCollection(u.getLarva());
     }
 
     public AUnit getTarget() {
         return u.getTarget() != null ? AUnit.createFrom(u.getTarget()) : null;
     }
 
-    public Position getTargetPosition() {
-        return u.getTargetPosition();
+    public APosition getTargetPosition() {
+        return APosition.createFrom(u.getTargetPosition());
     }
 
     public AUnit getOrderTarget() {

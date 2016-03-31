@@ -27,6 +27,7 @@ import atlantis.util.UnitUtil;
 import atlantis.workers.AtlantisWorkerManager;
 import atlantis.wrappers.MappingCounter;
 import atlantis.units.Select;
+import atlantis.wrappers.APosition;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeSet;
@@ -95,7 +96,7 @@ public class AtlantisPainter {
             // =========================================================
             // === Paint targets for combat units
             // =========================================================
-            Position targetPosition = unit.getTargetPosition();
+            APosition targetPosition = unit.getTargetPosition();
             if (targetPosition == null) {
                 targetPosition = unit.getTarget().getPosition();
             }
@@ -372,7 +373,7 @@ public class AtlantisPainter {
             ProductionOrder order = fullQueue.get(index);
             if (order != null && order.getShortName() != null) {
                 if (order.getUnitType() != null
-                        && !AtlantisGame.hasBuildingsToProduce(order.getUnitType())) {
+                        && !AtlantisGame.hasBuildingsToProduce(order.getUnitType(), true)) {
                     continue;
                 }
                 paintSideMessage(order.getShortName(), Color.Red);
@@ -404,8 +405,11 @@ public class AtlantisPainter {
                         color = Color.Purple;
                         break;
                 }
+                
+                String status = constructionOrder.getStatus().toString().replace("CONSTRUCTION_", "");
+                String builder = (constructionOrder.getBuilder() + "").replace("AUnit(", "");
                 paintSideMessage(constructionOrder.getBuildingType().getShortName() 
-                        + " " + constructionOrder.getStatus(), color, yOffset);
+                        + ", " + status + ", " + builder, color, yOffset);
             }
         }
     }
@@ -424,17 +428,17 @@ public class AtlantisPainter {
 
                 // Paint box
                 paintRectangle(positionToBuild, 
-                        buildingType.tileWidth() * 32, buildingType.tileHeight() * 32, Color.Teal);
+                        buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, Color.Teal);
 
                 // Draw X
                 paintLine(
-                        PositionUtil.translate(positionToBuild, buildingType.tileWidth() * 32, 0), 
-                        PositionUtil.translate(positionToBuild, 0, buildingType.tileHeight() * 32), 
+                        PositionUtil.translate(positionToBuild, buildingType.getTileWidth() * 32, 0), 
+                        PositionUtil.translate(positionToBuild, 0, buildingType.getTileHeight() * 32), 
                         Color.Teal
                 );
                 paintLine(positionToBuild, 
-                        buildingType.tileWidth() * 32, 
-                        buildingType.tileHeight() * 32, 
+                        buildingType.getTileWidth() * 32, 
+                        buildingType.getTileHeight() * 32, 
                         Color.Teal
                 );
 

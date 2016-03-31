@@ -6,8 +6,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import java.util.ArrayList;
 
-import bwapi.UnitType;
-
 public class TerranBuildOrders extends AtlantisBuildOrders {
 
     @Override
@@ -19,10 +17,10 @@ public class TerranBuildOrders extends AtlantisBuildOrders {
     }
 
     @Override
-    public void produceInfantry(AUnitType infantryType) {
+    public void produceUnit(AUnitType unitType) {
         AUnit building = Select.ourOneIdle(AtlantisConfig.BARRACKS);
         if (building != null) {
-            building.train(infantryType);
+            building.train(unitType);
         }
     }
 

@@ -129,12 +129,12 @@ public abstract class AtlantisBuildOrders {
             // =========================================================
 
             if (unitType != null) {
-//                if (!AtlantisGame.hasBuildingsToProduce(unitType)) {
-//                    continue;
-//                }
+                if (!AtlantisGame.hasBuildingsToProduce(unitType, true)) {
+                    continue;
+                }
                 
-                mineralsNeeded += unitType.mineralPrice();
-                gasNeeded += unitType.gasPrice();
+                mineralsNeeded += unitType.getMineralPrice();
+                gasNeeded += unitType.getGasPrice();
             } else if (upgrade != null) {
                 mineralsNeeded += upgrade.mineralPrice() * upgrade.mineralPriceFactor();
                 gasNeeded += upgrade.gasPrice() * upgrade.gasPriceFactor();
@@ -175,9 +175,9 @@ public abstract class AtlantisBuildOrders {
     public abstract void produceWorker();
 
     /**
-     * Request to produce infantry unit that should be handled according to the race played.
+     * Request to produce non-building and non-worker unit. Should be handled according to the race played.
      */
-    public abstract void produceInfantry(AUnitType infantryType);
+    public abstract void produceUnit(AUnitType unitType);
 
     /**
      * When production orders run out, we should always produce some units.

@@ -32,7 +32,7 @@ public class AtlantisUnitTypesHelper {
             
             double dmgGround = WeaponUtil.getDamageNormalized(type.getGroundWeapon());
             double dmgAir = WeaponUtil.getDamageNormalized(type.getAirWeapon());
-            double unitPrice = type.mineralPrice() + type.gasPrice() * 1.5;
+            double unitPrice = type.getMineralPrice() + type.getGasPrice() * 1.5;
             
             if (dmgGround > 0) {
                 unitsPerGroundDamage.put(type, dmgGround);

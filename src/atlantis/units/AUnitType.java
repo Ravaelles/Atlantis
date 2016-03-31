@@ -12,15 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Wrapper for BWMirror UnitType class that makes it much easier to use.
+ * Wrapper for BWMirror UnitType class that makes it much easier to use.<br /><br />
+ * Atlantis uses wrappers for BWMirror native classes which aren't extended.<br /><br />
+ * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing
+ * you can create missing method here and you can reference original UnitType class via ut() method.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-//public class AUnitType implements Comparable<Object> {
 public class AUnitType implements Comparable<AUnitType> {
 
     private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
-//    private static final List<AUnitType> instances = new ArrayList<>();
 
     private UnitType ut;
 
@@ -34,6 +35,11 @@ public class AUnitType implements Comparable<AUnitType> {
         this.ID = firstFreeID++;
     }
 
+    /**
+     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
+     * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing
+     * you can create missing method here and you can reference original UnitType class via ut() method.
+     */
     public static AUnitType createFrom(UnitType ut) {
         if (ut == null) {
             throw new RuntimeException("AUnitType constructor: type is null");
@@ -473,40 +479,40 @@ public class AUnitType implements Comparable<AUnitType> {
         return Integer.compare(ID, o.ID);
     }
     
-//    @Override
-//    public int hashCode() {
-//        return ID;
-//    }
-//
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null) {
-//            return false;
-//        }
-//        
-//        if (obj instanceof AUnitType) {
-//            AUnitType other = (AUnitType) obj;
-//            return ID == other.ID;
-//        }
-//        else if (obj instanceof UnitType) {
-//            UnitType other = (UnitType) obj;
-//            return ut == obj;
-//        }
-//        
-//        return false;
-//    }
-//
-//    @Override
-//    public int compareTo(Object o) {
-//        return this.ut.toString().compareTo(o.toString());
-//    }
-
     @Override
     public String toString() {
         return ut.toString();
+    }
+    
+    // =========================================================
+    // Auxiliary
+    
+    /**
+     * Converts collection of <b>UnitType</b> variables into collection of <b>AUnitType</b> variables.
+     */
+    protected static Object convertToAUnitTypesCollection(Object collection) {
+        if (collection instanceof Map) {
+            Map<AUnitType, Integer> result = new HashMap<>();
+            for (Object key : ((Map) collection).keySet()) {
+                UnitType ut = (UnitType) key;
+                AUnitType unitType = createFrom(ut);
+                result.put(unitType, (Integer) ((Map) collection).get(ut));
+            }
+            return result;
+        }
+        else if (collection instanceof List) {
+            List<AUnitType> result = new ArrayList<>();
+            for (Object key : (List) collection) {
+                UnitType ut = (UnitType) key;
+                AUnitType unitType = createFrom(ut);
+                result.add(unitType);
+            }
+            return result;
+        }
+        else {
+            throw new RuntimeException("I don't know how to convert collection of type: " 
+                    + collection.toString());
+        }
     }
     
     // =========================================================
@@ -561,11 +567,11 @@ public class AUnitType implements Comparable<AUnitType> {
         return ut.isBuilding();
     }
 
-    public int gasPrice() {
+    public int getGasPrice() {
         return ut.gasPrice();
     }
 
-    public int mineralPrice() {
+    public int getMineralPrice() {
         return ut.mineralPrice();
     }
 
@@ -577,19 +583,15 @@ public class AUnitType implements Comparable<AUnitType> {
         return ut.isMechanical();
     }
 
-    public Map<UnitType, Integer> requiredUnits() {
-        return ut.requiredUnits();
-    }
-
-    public TechType requiredTech() {
+    public TechType getRequiredTech() {
         return ut.requiredTech();
     }
 
-    public int tileWidth() {
+    public int getTileWidth() {
         return ut.tileWidth();
     }
 
-    public int tileHeight() {
+    public int getTileHeight() {
         return ut.tileHeight();
     }
 
@@ -620,6 +622,17 @@ public class AUnitType implements Comparable<AUnitType> {
                 AUnitType.Zerg_Sunken_Colony,
                 AUnitType.Zerg_Spore_Colony
         );
+    }
+    
+    public Map<AUnitType, Integer> getRequiredUnits() {
+        return (Map<AUnitType, Integer>) convertToAUnitTypesCollection(ut.requiredUnits());
+    }
+    
+    /**
+     * Returns building type (or parent type for units like Archon, Lurker) that produces this unit type.
+     */
+    public AUnitType getWhatBuildsIt() {
+        return createFrom(ut.whatBuilds().first);
     }
 
 }

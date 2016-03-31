@@ -36,7 +36,7 @@ public class AtlantisGame {
     public static boolean hasTechToProduce(AUnitType unitType) {
 
         // Needs to have tech
-        TechType techType = unitType.requiredTech();
+        TechType techType = unitType.getRequiredTech();
         if (techType != null && techType != TechType.None && !AtlantisTech.isResearched(techType)) {
             return false;
         }
@@ -46,20 +46,20 @@ public class AtlantisGame {
 
     /**
      * Returns true if we have all buildings needed for given unit.
+     * @param boolean countUnfinished if true, then if it will require required units to be finished to 
+     * return true e.g. to produce Zealot you need at least one finished Gateway
      */
-    public static boolean hasBuildingsToProduce(AUnitType unitType) {
+    public static boolean hasBuildingsToProduce(AUnitType unitType, boolean countUnfinished) {
 
         // Need to have every prerequisite building
-        for (UnitType requiredUnitType : unitType.requiredUnits().keySet()) {
-            //UnitType requiredUnitType = AUnitType.getByID(unitTypeID);
-            
-            if (!requiredUnitType.isBuilding() || requiredUnitType.equals(AUnitType.Zerg_Larva)) {
+        for (AUnitType requiredType : unitType.getRequiredUnits().keySet()) {
+            if (!requiredType.isBuilding() || requiredType.equals(AUnitType.Zerg_Larva)) {
                 continue;
             }
             
-            int requiredAmount = unitType.requiredUnits().get(requiredUnitType);
-            int weHaveAmount = requiredUnitType.equals(AUnitType.Zerg_Larva) ? 
-                    Select.ourLarva().count() : Select.our().ofType(AUnitType.createFrom(requiredUnitType)).count();
+            int requiredAmount = unitType.getRequiredUnits().get(requiredType);
+            int weHaveAmount = requiredType.equals(AUnitType.Zerg_Larva) ? 
+                    Select.ourLarva().count() : Select.our().ofType(requiredType).count();
 //            System.out.println("   need " + requiredUnitType + "    x" + requiredAmount);
 //            System.out.println("   and we have: " + weHaveAmount);
             if (weHaveAmount < requiredAmount) {
@@ -73,7 +73,7 @@ public class AtlantisGame {
      * Returns true if it's possible to produce unit (or building) of given type.
      */
     public static boolean hasTechAndBuildingsToProduce(AUnitType unitType) {
-        return hasTechToProduce(unitType) && hasBuildingsToProduce(unitType);
+        return hasTechToProduce(unitType) && hasBuildingsToProduce(unitType, true);
     }
 
     // =========================================================
@@ -249,7 +249,7 @@ public class AtlantisGame {
      * Returns true if we can afford minerals and gas for given unit type.
      */
     public static boolean canAfford(AUnitType unitType) {
-        return hasMinerals(unitType.mineralPrice()) && hasGas(unitType.gasPrice());
+        return hasMinerals(unitType.getMineralPrice()) && hasGas(unitType.getGasPrice());
     }
 
     /**

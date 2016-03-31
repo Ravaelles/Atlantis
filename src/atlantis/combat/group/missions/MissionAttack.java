@@ -48,7 +48,7 @@ public class MissionAttack extends Mission {
             if (position != null) {
                 unit.attack(position);	
                 Atlantis.getBwapi().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
-                TooltipManager.setTooltip(unit, "Spread!"); //TODO: DEBUG
+                TooltipManager.setTooltip(unit, "Attack!"); //TODO: DEBUG
 //                unit.setTooltip("Mission spread");
                 return true;
             }

@@ -19,14 +19,14 @@ public class AtlantisExpansionManager {
     public static void requestNewBaseIfNeeded() {
         
         // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AtlantisGame.hasMinerals(620)) {
+        if (!AtlantisGame.hasMinerals(384)) {
             return;
         }
         
         // If there're still things to produce, don't auto-expand.
         ArrayList<ProductionOrder> nextOrders = 
                 AtlantisBuildOrders.getBuildOrders().getProductionQueueNext(5);
-        if (nextOrders.size() >= 3 && !AtlantisGame.hasMinerals(500)) {
+        if (nextOrders.size() >= 3 && !AtlantisGame.hasMinerals(400)) {
             return;
         }
         

@@ -6,8 +6,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import java.util.ArrayList;
 
-import bwapi.UnitType;
-
 public class ProtossBuildOrders extends AtlantisBuildOrders {
 
     @Override
@@ -19,10 +17,14 @@ public class ProtossBuildOrders extends AtlantisBuildOrders {
     }
 
     @Override
-    public void produceInfantry(AUnitType infantryType) {
-        AUnit building = Select.ourOneIdle(AtlantisConfig.BARRACKS);
-        if (building != null) {
-            building.train(infantryType);
+    public void produceUnit(AUnitType unitType) {
+        AUnitType whatBuildsIt = unitType.getWhatBuildsIt();
+        AUnit unitThatWillProduce = Select.ourOneIdle(whatBuildsIt);
+        if (unitThatWillProduce != null) {
+            unitThatWillProduce.train(unitType);
+        }
+        else {
+            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
         }
     }
 

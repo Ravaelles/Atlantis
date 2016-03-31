@@ -1,5 +1,6 @@
 package atlantis.units;
 
+
 import bwapi.Position;
 import bwapi.PositionOrUnit;
 import bwapi.TechType;
@@ -8,21 +9,38 @@ import bwapi.Unit;
 import bwapi.UpgradeType;
 
 /**
+ * Class using default methods which are extracted from AUnit class to separate this functionality.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public interface UnitActions {
     
     Unit u();
+    AUnit unit();
     
     // =========================================================
     
     default boolean attack(AUnit target) {
-        return u().attack(target.u());
+        
+        // Do NOT issue double orders
+        if (u().isAttacking() && u().getTarget() != null && unit().getTarget().equals(target)) {
+            return false;
+        }
+        else {
+            return u().attack(target.u());
+        }
+//        return u().attack(target.u());
     }
     
     default boolean attack(Position target) {
-        return u().attack(target);
+        
+        // Do NOT issue double orders
+        if (u().isAttacking() && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
+            return false;
+        }
+        else {
+            return u().attack(target);
+        }
     }
     
     default boolean train(AUnitType unitToTrain) {

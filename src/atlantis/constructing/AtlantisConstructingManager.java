@@ -337,8 +337,8 @@ public class AtlantisConstructingManager {
         int mineralsNeeded = 0;
         int gasNeeded = 0;
         for (ConstructionOrder constructionOrder : AtlantisConstructingManager.getNotStartedConstructionsOfType(null)) {
-            mineralsNeeded += constructionOrder.getBuildingType().mineralPrice();
-            gasNeeded += constructionOrder.getBuildingType().gasPrice();
+            mineralsNeeded += constructionOrder.getBuildingType().getMineralPrice();
+            gasNeeded += constructionOrder.getBuildingType().getGasPrice();
         }
         int[] result = {mineralsNeeded, gasNeeded};
         return result;
