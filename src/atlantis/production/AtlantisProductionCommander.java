@@ -15,7 +15,7 @@ public class AtlantisProductionCommander {
         AtlantisSupplyManager.update();
         
         // See what units/buildings we need to create and take care of it.
-        AtlantisProduceUnitManager.update();
+        AtlantisProductionManager.update();
         
         // Take care of any unfinished constructions, make sure they have builders assigned etc.
         AtlantisConstructingManager.update();

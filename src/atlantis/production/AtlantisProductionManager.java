@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
-import atlantis.production.strategies.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import bwapi.UnitType;
 import bwapi.UpgradeType;
 
-public class AtlantisProduceUnitManager {
+public class AtlantisProductionManager {
 
     /**
      * Is responsible for training new units and issuing construction requests for buildings.
@@ -45,9 +45,7 @@ public class AtlantisProduceUnitManager {
 
     // =========================================================
     // Hi-level produce
-//    public static boolean isCurrentlyProducing(AUnitType unitType) {
-//
-//    }
+    
     private static void produceUnit(AUnitType unitType) {
         
         // Supply: OVERLORD / PYLON / DEPOT

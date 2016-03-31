@@ -2,8 +2,6 @@ package atlantis.combat.micro;
 
 import atlantis.units.AUnit;
 
-
-
 public class DefaultRangedManager extends MicroRangedManager {
 
     @Override

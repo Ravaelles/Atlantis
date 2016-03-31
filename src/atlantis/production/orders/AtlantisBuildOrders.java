@@ -1,4 +1,4 @@
-package atlantis.production.strategies;
+package atlantis.production.orders;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
@@ -208,8 +208,6 @@ public abstract class AtlantisBuildOrders {
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
             
-//            System.out.println("order = " + order.getUnitType());
-
             // =========================================================
             // Unit
             if (order.getUnitType() != null) {
@@ -255,12 +253,12 @@ public abstract class AtlantisBuildOrders {
      */
     private int countUnitsOfGivenTypeOrSimilar(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Creep_Colony)) {
-            return AtlantisUnitInformationManager.countOurUnitsOfType(type) +
-                    + AtlantisUnitInformationManager.countOurUnitsOfType(AUnitType.Zerg_Sunken_Colony)
-                    + AtlantisUnitInformationManager.countOurUnitsOfType(AUnitType.Zerg_Spore_Colony);
+            return Select.ourIncludingUnfinished().ofType(type).count() 
+                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
         }
         else {
-            return AtlantisUnitInformationManager.countOurUnitsOfType(type);
+            return Select.ourIncludingUnfinished().ofType(type).count();
         }
     }
 

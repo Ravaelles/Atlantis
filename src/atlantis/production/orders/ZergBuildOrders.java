@@ -1,4 +1,4 @@
-package atlantis.production.strategies;
+package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;

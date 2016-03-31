@@ -1,7 +1,7 @@
 package atlantis;
 
 import static atlantis.Atlantis.getBwapi;
-import atlantis.production.strategies.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnitType;
 import atlantis.util.AtlantisUtilities;
 import atlantis.wrappers.AtlantisTech;

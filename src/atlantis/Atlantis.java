@@ -6,7 +6,7 @@ import atlantis.debug.AtlantisUnitTypesHelper;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.init.AtlantisInitialActions;
-import atlantis.production.strategies.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.UnitUtil;

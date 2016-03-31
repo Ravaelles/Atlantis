@@ -4,7 +4,7 @@ import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.units.Select;
-import atlantis.production.strategies.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrders;
 import java.util.ArrayList;
 import static atlantis.constructing.AtlantisConstructingManager.requestConstructionOf;
 import atlantis.production.ProductionOrder;

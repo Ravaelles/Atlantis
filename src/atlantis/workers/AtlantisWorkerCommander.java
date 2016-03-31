@@ -43,10 +43,10 @@ public class AtlantisWorkerCommander {
             return false;
         }
 
-        int workers = AtlantisUnitInformationManager.countOurWorkers();
+        int workers = Select.ourWorkers().count();
 
         // Check if not TOO MANY WORKERS
-        if (workers >= 27 * AtlantisUnitInformationManager.countOurBases()) {
+        if (workers >= 27 * Select.ourBases().count()) {
             return false;
         }
 

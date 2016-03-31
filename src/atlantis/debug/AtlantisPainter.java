@@ -16,7 +16,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.production.ProductionOrder;
-import atlantis.production.strategies.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.ColorUtil;
@@ -310,8 +310,8 @@ public class AtlantisPainter {
     private static void paintUnitCounters() {
         // Unfinished
         MappingCounter<AUnitType> unitTypesCounter = new MappingCounter<>();
-//        for (AUnit unit : Select.ourUnfinishedRealUnits().listUnits()) {
-        for (AUnit unit : Select.our().listUnits()) {
+        for (AUnit unit : Select.ourUnfinishedRealUnits().listUnits()) {
+//        for (AUnit unit : Select.our().listUnits()) {
             unitTypesCounter.incrementValueFor(unit.getType());
         }
 
@@ -384,7 +384,7 @@ public class AtlantisPainter {
      * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
      */
     private static void paintSidebarConstructionsPending() {
-        int yOffset = 205;
+        int yOffset = 220;
         ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
@@ -404,7 +404,8 @@ public class AtlantisPainter {
                         color = Color.Purple;
                         break;
                 }
-                paintSideMessage(constructionOrder.getBuildingType().getShortName(), color, yOffset);
+                paintSideMessage(constructionOrder.getBuildingType().getShortName() 
+                        + " " + constructionOrder.getStatus(), color, yOffset);
             }
         }
     }

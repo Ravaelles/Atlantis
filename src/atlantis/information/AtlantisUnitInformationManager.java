@@ -119,25 +119,6 @@ public class AtlantisUnitInformationManager {
 
     // =========================================================
     // COUNT
-    /**
-     * Returns cached amount of our units of given type.
-     */
-    public static int countOurUnitsOfType(AUnitType type) {
-
-        // Bas building
-        if (UnitUtil.isGasBuilding(type)) {
-            int total = 0;
-            for (UnitData unit : allUnits.values()) {
-                if (type.equals(unit.getType())) {
-                    total++;
-                }
-            }
-            return total;
-        } else { // Anything but gas building
-//            return ourUnitsUnfininised.getValueFor(type);
-            return Select.ourIncludingUnfinished().ofType(type).count();
-        }
-    }
 
     /**
      * Returns number of discovered and alive enemy units of given type. Some of them (maybe even all of them)
@@ -145,28 +126,6 @@ public class AtlantisUnitInformationManager {
      */
     public static int countEnemyUnitsOfType(AUnitType type) {
         return enemyUnitsDiscoveredCounter.getValueFor(type);
-    }
-
-    // =========================================================
-    // Helper methods
-    /**
-     * Returns cached amount of our worker units.
-     */
-    public static int countOurWorkers() {
-        return countOurUnitsOfType(AtlantisConfig.WORKER);
-    }
-
-    /**
-     * Returns cached amount of our bases.
-     */
-    public static int countOurBases() {
-        int total = 0;
-        for (AUnit unit : Select.our().listUnits()) {
-            if (unit.isBase()) {
-                total++;
-            }
-        }
-        return total;
     }
 
 }

@@ -135,7 +135,7 @@ public class AtlantisScoutManager {
             }
         } // =========================================================
         // TERRAN + PRTOSSS
-        else if (scouts.isEmpty() && AtlantisUnitInformationManager.countOurWorkers() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
+        else if (scouts.isEmpty() && Select.ourWorkers().count() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
             scouts.add(Select.ourWorkers().first());
         }
     }

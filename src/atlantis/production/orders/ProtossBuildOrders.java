@@ -1,4 +1,4 @@
-package atlantis.production.strategies;
+package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import bwapi.UnitType;
 
-public class TerranBuildOrders extends AtlantisBuildOrders {
+public class ProtossBuildOrders extends AtlantisBuildOrders {
 
     @Override
     public void produceWorker() {
@@ -29,16 +29,7 @@ public class TerranBuildOrders extends AtlantisBuildOrders {
     @Override
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
-        
-        int marines = Select.our().countUnitsOfType(AUnitType.Terran_Marine);
-        int medics = Select.our().countUnitsOfType(AUnitType.Terran_Medic);
-        
-        if ((double) marines / medics < 3) {
-            units.add(AUnitType.Terran_Marine);
-        }
-        else {
-            units.add(AUnitType.Terran_Medic);
-        }
+        units.add(AUnitType.Protoss_Zealot);
         return units;
     }
 

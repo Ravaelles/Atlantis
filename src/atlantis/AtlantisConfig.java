@@ -1,6 +1,6 @@
 package atlantis;
 
-import atlantis.production.strategies.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import bwapi.UnitType;
