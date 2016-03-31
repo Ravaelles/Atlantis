@@ -1,6 +1,6 @@
 package atlantis;
 
-import atlantis.buildings.AtlantisBuildingsCommander;
+//import atlantis.buildings.AtlantisBuildingsCommander;
 import atlantis.combat.AtlantisCombatCommander;
 import atlantis.debug.AtlantisPainter;
 import atlantis.production.AtlantisProductionCommander;
@@ -23,7 +23,7 @@ public class AtlantisGameCommander {
         AtlantisWorkerCommander.update();
         AtlantisCombatCommander.update();
         AtlantisScoutManager.update();
-        AtlantisBuildingsCommander.update();
+//        AtlantisBuildingsCommander.update(); // Currently unused
         AtlantisProductionCommander.update();
 
         // =========================================================
