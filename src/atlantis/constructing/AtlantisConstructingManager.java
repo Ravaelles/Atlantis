@@ -83,7 +83,7 @@ public class AtlantisConstructingManager {
             newConstructionOrder.setPositionToBuild(positionToBuild);
 
             // Assign optimal builder for this building
-            optimalBuilder = newConstructionOrder.assignOptimalBuilder();
+            newConstructionOrder.assignOptimalBuilder();
             // System.out.println("@@ BUILDER = " + optimalBuilder);
 
             // Add to list of pending orders
