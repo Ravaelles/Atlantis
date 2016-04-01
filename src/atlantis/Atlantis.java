@@ -9,7 +9,6 @@ import atlantis.init.AtlantisInitialActions;
 import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.UnitUtil;
 import bwapi.*;
 import bwta.BWTA;
 import bwapi.UnitType;
@@ -294,10 +293,10 @@ public class Atlantis implements BWEventListener {
                 AtlantisGame.getBuildOrders().rebuildQueue();
                 AtlantisGroupManager.battleUnitDestroyed(unit);
                 LOST++;
-                LOST_RESOURCES += UnitUtil.getTotalPrice(unit.getType());
+                LOST_RESOURCES += unit.getType().getTotalResources();
             } else {
                 KILLED++;
-                KILLED_RESOURCES += UnitUtil.getTotalPrice(unit.getType());
+                KILLED_RESOURCES += unit.getType().getTotalResources();
             }
         }
 

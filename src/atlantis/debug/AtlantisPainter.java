@@ -23,7 +23,6 @@ import atlantis.util.ColorUtil;
 import atlantis.util.NameUtil;
 import atlantis.util.PositionUtil;
 import atlantis.util.AtlantisUtilities;
-import atlantis.util.UnitUtil;
 import atlantis.workers.AtlantisWorkerManager;
 import atlantis.wrappers.MappingCounter;
 import atlantis.units.Select;
@@ -107,7 +106,7 @@ public class AtlantisPainter {
             // =========================================================
             // === Paint life bars bars over wounded units
             // =========================================================
-            if (UnitUtil.getHPPercent(unit) < 100) {
+            if (unit.isWounded()) {
                 int boxWidth = 20;
                 int boxHeight = 4;
                 int boxLeft = unit.getPosition().getX() - boxWidth / 2;
@@ -174,7 +173,7 @@ public class AtlantisPainter {
         String desc = "";
         AUnit mainBase = Select.mainBase();
         if (focusPoint != null && mainBase != null) {
-            desc = "(dist:" + ((int) PositionUtil.distanceTo(focusPoint, mainBase.getPosition())) + ")";
+            desc = "(dist:" + ((int) mainBase.distanceTo(focusPoint)) + ")";
         }
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
@@ -633,7 +632,7 @@ public class AtlantisPainter {
             AUnit trained = unit.getBuildUnit();
             String trainedUnitString = "";
             if (trained != null) {
-                operationProgress = UnitUtil.getHPPercent(trained); // trained.getHP() * 100 / trained.getMaxHP();
+                operationProgress = trained.getHPPercent(); // trained.getHP() * 100 / trained.getMaxHP();
                 trainedUnitString = trained.getShortName();
             }
 

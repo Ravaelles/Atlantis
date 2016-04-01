@@ -7,7 +7,7 @@ import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.information.UnitData;
 import atlantis.util.PositionUtil;
 import atlantis.util.AtlantisUtilities;
-import atlantis.util.UnitUtil;
+import atlantis.wrappers.APositionedObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -131,7 +131,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.exists() && unit.isCompleted() && !UnitUtil.isNotActuallyUnit(unit.getType()) && !unit.getType().isBuilding()
+            if (unit.exists() && unit.isCompleted() && !unit.isNotActuallyUnit() && !unit.getType().isBuilding()
                     && !unit.getType().equals(AtlantisConfig.WORKER)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
@@ -182,7 +182,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (unit.exists() && unit.isCompleted() && !unit.getType().isBuilding() && !UnitUtil.isNotActuallyUnit(unit.getType())) {
+            if (unit.exists() && unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
         }
@@ -198,7 +198,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (unit.exists() && !unit.isCompleted() && !unit.getType().isBuilding() && !UnitUtil.isNotActuallyUnit(unit.getType())) {
+            if (unit.exists() && !unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
         }
@@ -247,7 +247,7 @@ public class Select<T> {
 
         for (AUnit unit : enemyUnits()) {
             if (unit.exists() && unit.isVisible() && !unit.getType().isBuilding() 
-                    && !UnitUtil.isNotActuallyUnit(unit.getType())) {
+                    && !unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
         }
@@ -263,7 +263,7 @@ public class Select<T> {
 
         for (AUnit unit : enemyUnits()) {
             if (unit.exists() && unit.isVisible() && !unit.getType().isBuilding() 
-                    && !UnitUtil.isType(unit.getType(), AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
+                    && ! unit.isType(AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 if ((!unit.isAirUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
                     data.add(unit);
                 }
@@ -334,8 +334,8 @@ public class Select<T> {
     public Select<?> inRadius(double maxDist, Position position) {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
-            PositionedObject unit = (PositionedObject) unitsIterator.next();
-            if (PositionUtil.distanceTo(unit.getPosition(), position) > maxDist) {
+            APositionedObject unit = (APositionedObject) unitsIterator.next();
+            if (unit.distanceTo(position) > maxDist) {
                 unitsIterator.remove();
             }
         }

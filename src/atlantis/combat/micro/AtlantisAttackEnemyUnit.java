@@ -2,7 +2,6 @@ package atlantis.combat.micro;
 
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
-import atlantis.util.UnitUtil;
 
 
 /**
@@ -33,7 +32,7 @@ public class AtlantisAttackEnemyUnit {
         }
         
         // Check if weapon cooldown allows to attack this enemy
-        if (!UnitUtil.canAttack(unit, enemyToAttack, true)) {
+        if (!unit.canAttackThisKindOfUnit(enemyToAttack, true)) {
             return false;
         } 
         

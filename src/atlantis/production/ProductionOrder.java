@@ -3,7 +3,6 @@ package atlantis.production;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import atlantis.util.NameUtil;
-import atlantis.util.UnitUtil;
 import bwapi.UnitType;
 import bwapi.UpgradeType;
 

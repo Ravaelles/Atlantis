@@ -4,7 +4,6 @@ import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.UnitUtil;
 import atlantis.wrappers.MappingCounter;
 import atlantis.units.Select;
 import java.util.ArrayList;

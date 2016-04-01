@@ -5,10 +5,10 @@ import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 import bwta.Chokepoint;
 import bwapi.Position;
+import bwapi.TilePosition;
 
 
 public class MissionPrepare extends Mission {
@@ -81,7 +81,7 @@ public class MissionPrepare extends Mission {
         }
 
         // Distance to the center of choke point
-        double distToChoke = PositionUtil.distanceTo(chokepoint.getCenter(), unit.getPosition()) - chokepoint.getWidth() / 32; //TODO: check consistency with getRadiusInTiles()
+        double distToChoke = unit.distanceTo(chokepoint.getCenter()) - chokepoint.getWidth() / TilePosition.SIZE_IN_PIXELS; //TODO: check consistency with getRadiusInTiles()
 
         // =========================================================
         // Close enough ::meme::
@@ -114,7 +114,7 @@ public class MissionPrepare extends Mission {
         // =========================================================
         // Distance to the center of choke point
 //        double distToChoke = chokepoint.distanceTo(unit) - chokepoint.getRadiusInTiles();
-        double distanceToTarget = PositionUtil.distanceTo(chokepoint.getCenter(), unit.getPosition());
+        double distanceToTarget = unit.distanceTo(chokepoint.getCenter());
 
         // Can't be closer than X from choke point
         if (distanceToTarget <= 2 + 2 / chokepoint.getWidth() / 32) { //TODO: check consistency with getRadiusInTiles()

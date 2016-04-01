@@ -66,7 +66,7 @@ public class AtlantisBuilderManager {
         // Move builder to the build position
         //TODO: check possible confusion with Position and TilePosition here
         buildPosition = PositionUtil.translate(buildPosition, buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
-        if (!builder.isMoving() && !builder.isConstructing() && PositionUtil.distanceTo(builder.getPosition(), buildPosition) > 0.15) {
+        if (!builder.isMoving() && !builder.isConstructing() && builder.distanceTo(buildPosition) > 0.15) {
             builder.move(buildPosition);
         } // AUnit is already at the build position, issue build order
         // If we can afford to construct this building exactly right now, issue build order which should

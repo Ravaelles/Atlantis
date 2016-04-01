@@ -158,7 +158,7 @@ public class AtlantisRunning {
             double xDirectionToUnit = runAwayFrom.getX() - unit.getPosition().getX();
             double yDirectionToUnit = runAwayFrom.getY() - unit.getPosition().getY();
 
-            double vectorLength = PositionUtil.distanceTo(runAwayFrom, unit.getPosition());
+            double vectorLength = unit.distanceTo(runAwayFrom);
             double ratio = howManyTiles / vectorLength;
 
             // Add randomness of move if distance is big enough
@@ -184,7 +184,7 @@ public class AtlantisRunning {
 
         // =========================================================
         if (runTo != null) {
-            double dist = PositionUtil.distanceTo(unit.getPosition(), runTo);
+            double dist = unit.distanceTo(runTo);
             if (dist >= 0.8 && dist <= maxTiles + 1) {
                 return runTo;
             }

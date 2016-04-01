@@ -388,6 +388,7 @@ public class AUnitType implements Comparable<AUnitType> {
 
     /**
      * Returns total sum of minerals and gas this unit is worth.
+     * Accounts for the Zergling case (each Zergling costs half the pair ;-)
      */
     public int getTotalResources() {
         int total = ut.gasPrice() + ut.mineralPrice();
@@ -609,6 +610,44 @@ public class AUnitType implements Comparable<AUnitType> {
 
     public boolean isSupplyUnit() {
         return isType(Protoss_Pylon, Terran_Supply_Depot, Zerg_Overlord);
+    }
+    
+    /**
+     * Replaces variable _isMilitaryBuildingAntiGround of old AUnit class
+     *
+     * @return
+     */
+    public boolean isMilitaryBuildingAntiGround() {
+        return isType(
+    		AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony
+        );
+    }
+
+    /**
+     * Replaces variable _isMilitaryBuildingAntiAir of old AUnit class
+     *
+     * @return
+     */
+    public boolean isMilitaryBuildingAntiAir() {
+        return isType(
+    		AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
+        );
+    }
+
+    /**
+     * Returns true if given unit type is one of buildings like Bunker, Photon Cannon etc. For more details,
+     * you have to specify at least one <b>true</b> to the params.
+     */
+    public boolean isMilitaryBuilding(boolean canShootGround, boolean canShootAir) {
+        if (!isBuilding()) {
+            return false;
+        }
+        if (canShootGround && isMilitaryBuildingAntiGround()) {
+            return true;
+        } else if (canShootAir && isMilitaryBuildingAntiAir()) {
+            return true;
+        }
+        return false;
     }
 
     /**

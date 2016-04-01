@@ -5,7 +5,6 @@ import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 import bwta.Chokepoint;
 import bwapi.TilePosition;
@@ -87,7 +86,7 @@ public class MissionDefend extends Mission {
         double unitShootRangeExtra = +0.3;
 
      // Distance to the center of choke point. TODO: check whether getWidth()/100.0f has the same effect of getRadiusInTiles
-        double distToChoke = PositionUtil.distanceTo(chokepoint.getCenter(), unit.getPosition()) - chokepoint.getWidth()/100.0f;	// getRadiusInTiles()
+        double distToChoke = unit.distanceTo(chokepoint.getCenter()) - chokepoint.getWidth()/100.0f;	// getRadiusInTiles()
 
         // How far can the unit shoot
         double unitShootRange =  unit.getType().getGroundWeapon().maxRange() / 32; //getShootRangeGround();
@@ -104,7 +103,7 @@ public class MissionDefend extends Mission {
         }
 
         // Distance to the center of choke point. TODO: check whether getWidth()/100.0f has the same effect of getRadiusInTiles
-        double distToChoke = PositionUtil.distanceTo(chokepoint.getCenter(), unit.getPosition()) - chokepoint.getWidth()/100.0f;	// getRadiusInTiles()
+        double distToChoke = unit.distanceTo(chokepoint.getCenter()) - chokepoint.getWidth()/100.0f;	// getRadiusInTiles()
 
         // Can't be closer than X from choke point
         if (distToChoke <= 3.8) {

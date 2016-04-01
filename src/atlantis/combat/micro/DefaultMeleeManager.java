@@ -10,7 +10,6 @@ import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import bwapi.Position;
@@ -119,10 +118,10 @@ public class DefaultMeleeManager extends MicroMeleeManager {
         if (ourForcesNearby.isEmpty()) {
             goTo = Select.ourCombatUnits().exclude(unit).first().getPosition();
         } else if (ourForcesNearby.size() <= 4) {
-            goTo = UnitUtil.medianPosition(ourForcesNearby);
+            goTo = PositionUtil.medianPosition(ourForcesNearby);
         }
 
-        if (goTo != null && PositionUtil.distanceTo(unit.getPosition(), goTo) > 5) {
+        if (goTo != null && unit.distanceTo(goTo) > 5) {
             unit.move(goTo);
             TooltipManager.setTooltip(unit, "Stand closer");
             //unit.setTooltip("Stand closer");

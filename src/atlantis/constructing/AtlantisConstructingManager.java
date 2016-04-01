@@ -7,7 +7,6 @@ import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;

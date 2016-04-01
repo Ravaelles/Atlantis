@@ -49,7 +49,7 @@ public class ZergOverlordManager {
 
         Position medianUnitPosition = AtlantisGroupManager.getAlphaGroup().getMedianUnitPosition();
         if (medianUnitPosition != null) {
-            if (PositionUtil.distanceTo(medianUnitPosition, overlord.getPosition()) > 2.5) {
+            if (overlord.distanceTo(medianUnitPosition) > 2.5) {
                 overlord.move(medianUnitPosition);
             }
         }

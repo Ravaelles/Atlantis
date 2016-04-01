@@ -5,7 +5,6 @@ import java.util.Collection;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 
 import bwapi.WeaponType;
@@ -68,7 +67,7 @@ public abstract class MicroManager {
             return false;
         }
         
-        if (unit.getHitPoints() <= 16 || UnitUtil.getHPPercent(unit) < 30) {
+        if (unit.getHitPoints() <= 16 || unit.getHPPercent() < 30) {
             if (Select.ourCombatUnits().inRadius(4, unit.getPosition()).count() <= 6) {
                 return AtlantisRunManager.run(unit);
             }

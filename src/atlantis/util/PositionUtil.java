@@ -1,5 +1,9 @@
 package atlantis.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 import atlantis.units.AUnit;
 import bwapi.Position;
 import bwapi.TilePosition;
@@ -45,4 +49,27 @@ public class PositionUtil {
     public static Position translate(Position p, int deltaPixelX, int deltaPixelY) {
         return new Position(p.getX() + deltaPixelX, p.getY() + deltaPixelY);
     }
+
+	/**
+	 * Returns median PX and median PY for all units.
+	 */
+	public static Position medianPosition(Collection<AUnit> units) {
+	    if (units.isEmpty()) {
+	        return null;
+	    }
+	
+	    ArrayList<Integer> xCoordinates = new ArrayList<>();
+	    ArrayList<Integer> yCoordinates = new ArrayList<>();
+	    for (AUnit unit : units) {
+	        xCoordinates.add(unit.getPosition().getX());	//TODO: check whether position is in Pixels
+	        yCoordinates.add(unit.getPosition().getX());
+	    }
+	    Collections.sort(xCoordinates);
+	    Collections.sort(yCoordinates);
+	
+	    return new Position(
+	            xCoordinates.get(xCoordinates.size() / 2),
+	            yCoordinates.get(yCoordinates.size() / 2)
+	    );
+	}
 }

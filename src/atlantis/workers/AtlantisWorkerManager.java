@@ -8,7 +8,6 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
 import atlantis.util.NameUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 
 

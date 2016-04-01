@@ -93,16 +93,16 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
-        if (nearestBase != null && PositionUtil.distanceTo(nearestBase.getPosition(), position) <= 8) {
+        if (nearestBase != null && nearestBase.distanceTo(position) <= 8) {
         	Collection<AUnit> mineralsInRange = (Collection<AUnit>) Select.minerals().inRadius(8, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
-                if (PositionUtil.distanceTo(mineral.getPosition(), position) <= 4) {
+                if (mineral.distanceTo(position) <= 4) {
                     return true;
                 }
             }
         	Collection<AUnit> geysersInRange = (Collection<AUnit>) Select.geysers().inRadius(8, position).listUnits();
             for (AUnit geyser : geysersInRange) {
-                if (PositionUtil.distanceTo(geyser.getPosition(), position) <= 4) {
+                if (geyser.distanceTo(position) <= 4) {
                     return true;
                 }
             }

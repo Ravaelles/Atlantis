@@ -5,7 +5,6 @@ import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 import bwapi.Position;
 

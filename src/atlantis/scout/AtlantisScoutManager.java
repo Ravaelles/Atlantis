@@ -8,7 +8,6 @@ import atlantis.information.AtlantisMap;
 import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 import java.util.ArrayList;
 import bwta.BaseLocation;
@@ -101,7 +100,7 @@ public class AtlantisScoutManager {
         BaseLocation startingLocation;
         if (scout.getType().equals(AUnitType.Zerg_Overlord)) {
             startingLocation = AtlantisMap.getStartingLocationBasedOnIndex(
-                    UnitUtil.getUnitIndex(scout)
+                    scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {
             startingLocation = AtlantisMap.getNearestUnexploredStartingLocation(ourMainBase.getPosition());
