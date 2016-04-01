@@ -5,6 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
+import atlantis.util.WeaponUtil;
 import atlantis.units.Select;
 import java.util.Collection;
 import java.util.HashMap;
@@ -174,8 +175,8 @@ public class AtlantisCombatEvaluator {
 
     private static double evaluateUnitHPandDamage(AUnitType evaluateType, int hp, AUnit againstUnit) {
         double damage = ( againstUnit.isAirUnit()
-            ? evaluateType.getAirWeapon().damageAmount() * evaluateType.getAirWeapon().damageFactor()
-            : evaluateType.getGroundWeapon().damageAmount() * evaluateType.getGroundWeapon().damageFactor()
+            ? WeaponUtil.getDamageNormalized(evaluateType.getAirWeapon())
+            : WeaponUtil.getDamageNormalized(evaluateType.getGroundWeapon())
         );
         double total = hp * EVAL_HIT_POINTS_FACTOR + damage * EVAL_DAMAGE_FACTOR;
 
