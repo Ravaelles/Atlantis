@@ -16,6 +16,7 @@ import atlantis.units.Select;
 import java.util.ArrayList;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+import java.io.File;
 
 /**
  * Represents abstract build orders read from the file.
@@ -63,7 +64,19 @@ public abstract class AtlantisBuildOrders {
     protected String getFilename() {
         String ourRaceLetter = AtlantisGame.getPlayerUs().getRace().toString().substring(0, 1);
         String enemyRaceLetter = AtlantisGame.getEnemy().getRace().toString().substring(0, 1);
-        return ourRaceLetter + "v" + enemyRaceLetter + ".csv";
+        String customBuildOrders = ourRaceLetter + "v" + enemyRaceLetter + ".csv";
+        
+        // Check if user has defined his own build orders file for this race and if so, use it.
+        File buildOrdersFile = new File(BUILD_ORDERS_PATH + customBuildOrders);
+        if (buildOrdersFile.exists()) {
+            return customBuildOrders;
+        }
+        
+        // Return default Atlantis build orders for this race vs race matchup.
+        else {
+            String atlantisDefaultBuildOrders = "Atlantis_" + customBuildOrders;
+            return atlantisDefaultBuildOrders;
+        }
     }
     
     /**
@@ -302,8 +315,9 @@ public abstract class AtlantisBuildOrders {
         final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
         // Read file into 2D String array
-        String path = BUILD_ORDERS_PATH + getFilename();
-        String[][] loadedFile = AtlantisUtilities.loadCsv(path, NUMBER_OF_COLUMNS_IN_FILE);
+        String buildOrdersFile = BUILD_ORDERS_PATH + getFilename();
+        System.out.println("Using `" + getFilename() + "` build orders file.");
+        String[][] loadedFile = AtlantisUtilities.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
 
         // We can display file here, if we want to
 //         displayLoadedFile(loadedFile);

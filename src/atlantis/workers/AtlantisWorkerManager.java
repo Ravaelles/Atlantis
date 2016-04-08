@@ -37,6 +37,7 @@ public class AtlantisWorkerManager {
      * minerals.
      */
     private static void sendToGatherMineralsOrGasIfNeeded(AUnit worker) {
+        worker.removeTooltip();
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).
