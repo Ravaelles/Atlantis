@@ -3,7 +3,6 @@ package atlantis.constructing;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.position.AtlantisPositionFinder;
-import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -11,7 +10,6 @@ import atlantis.units.Select;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import bwapi.Position;
-import bwapi.UnitType;
 
 public class AtlantisConstructingManager {
 
@@ -186,20 +184,19 @@ public class AtlantisConstructingManager {
         // If building exists
         if (building != null) {
 
-            // COMPLETED: building is finished, remove it from the list
+            // Finished: building is completed, remove the construction order object
             if (building.isCompleted()) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
                 removeOrder(constructionOrder);
+            } 
 
-                // @FIX to fix bug with Refineries not being shown as created, because they're kinda changed.
-                if (building.getType().isGasBuilding()) {
-                    AtlantisUnitInformationManager.rememberUnit(building);
-                }
-            } // NOT YET COMPLETED
+            // In progress
             else {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
-        } // Building doesn't exist yet, means builder is travelling to the construction place
+        } 
+
+        // Building doesn't exist yet, means builder is travelling to the construction place
         else {
             Position positionToBuild = AtlantisPositionFinder.getPositionForNew(
                     constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder

@@ -31,17 +31,23 @@ public class TerranBuildOrders extends AtlantisBuildOrders {
     @Override
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
-        
-        int marines = Select.our().countUnitsOfType(AUnitType.Terran_Marine);
-        int medics = Select.our().countUnitsOfType(AUnitType.Terran_Medic);
-        
-        if ((double) marines / medics < 3) {
+
+        if (Select.ourBuildings().ofType(AUnitType.Terran_Academy).count() == 0) {
             units.add(AUnitType.Terran_Marine);
+            return units;
         }
         else {
-            units.add(AUnitType.Terran_Medic);
+            int marines = Select.our().countUnitsOfType(AUnitType.Terran_Marine);
+            int medics = Select.our().countUnitsOfType(AUnitType.Terran_Medic);
+
+            if ((double) marines / medics < 3) {
+                units.add(AUnitType.Terran_Marine);
+            }
+            else {
+                units.add(AUnitType.Terran_Medic);
+            }
+            return units;
         }
-        return units;
     }
 
 }

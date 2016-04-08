@@ -4,7 +4,6 @@ import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.constructing.ProtossConstructionManager;
 import atlantis.debug.AtlantisUnitTypesHelper;
 import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.init.AtlantisInitialActions;
 import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
@@ -286,7 +285,9 @@ public class Atlantis implements BWEventListener {
 //        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
 
         if (unit != null) {
-            AtlantisUnitInformationManager.unitDestroyed(unit);
+            if (unit.isEnemyUnit()) {
+                AtlantisEnemyUnits.unitDestroyed(unit);
+            }
 
             // Our unit
             if (unit.getPlayer().equals(bwapi.self())) {
@@ -299,9 +300,6 @@ public class Atlantis implements BWEventListener {
                 KILLED_RESOURCES += unit.getType().getTotalResources();
             }
         }
-
-        // Forever forget this poor unit
-        AtlantisUnitInformationManager.forgetUnit(unit.getID());
 
         // =========================================================
         // Game SPEED change
@@ -357,35 +355,32 @@ public class Atlantis implements BWEventListener {
         // =========================================================
         // Forget unit
         if (unit != null) {
-            AtlantisEnemyUnits.unitDestroyed(unit);
-
-            // Our unit
-            if (unit.isOurUnit()) {
+            if (unit.isEnemyUnit()) {
+                AtlantisEnemyUnits.unitDestroyed(unit);
+            }
+            else {
                 AtlantisGroupManager.battleUnitDestroyed(unit);
-            } else if (unit.isEnemyUnit()) {
-                AtlantisEnemyUnits.discoveredEnemyUnit(unit);
             }
         }
-
-        // Forever forget this poor unit
-        AtlantisUnitInformationManager.forgetUnit(unit.getID());
 
         // =========================================================
         // Remember the unit
         if (unit != null) {
-            AtlantisGame.getBuildOrders().rebuildQueue();
-
-            // Our unit
-            if (unit.isOurUnit() && !(unit.getType().equals(AUnitType.Zerg_Larva)
-                    || unit.getType().equals(AUnitType.Zerg_Egg))) {
-//                AtlantisUnitInformationManager.addOurFinishedUnit(unit.getType());
-                AtlantisGroupManager.possibleCombatUnitCreated(unit);
-            }
-        }
             
-        // Enemy unit
-        else if (unit.isEnemyUnit()) {
-            AtlantisEnemyUnits.refreshEnemyUnit(unit);
+            // Enemy unit
+            if (unit.isEnemyUnit()) {
+                AtlantisEnemyUnits.refreshEnemyUnit(unit);
+            }
+            
+            // Our unit
+            else {
+                AtlantisGame.getBuildOrders().rebuildQueue();
+
+                // Add to combat group if it's military unit
+                if (unit.isActualUnit()) {
+                    AtlantisGroupManager.possibleCombatUnitCreated(unit);
+                }
+            }
         }
     }
 

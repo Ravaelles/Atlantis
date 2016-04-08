@@ -1,73 +1,94 @@
 package atlantis.enemy;
 
-import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.information.UnitData;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.wrappers.MappingCounter;
 import atlantis.units.Select;
-
-import bwapi.UnitType;
+import atlantis.wrappers.APosition;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AtlantisEnemyUnits {
 
-    protected static ArrayList<AUnit> enemyUnitsDiscovered = new ArrayList<>();
+    protected static Map<AUnit, UnitData> enemyUnitsDiscovered = new HashMap<>();
     protected static ArrayList<AUnit> enemyUnitsDestroyed = new ArrayList<>();
 
     // =========================================================
-    // Special methods
+    // Top abstraction methods
     
     /**
-     * Forgets and refreshes info about given unit
+     *
      */
-    public static void refreshEnemyUnit(AUnit enemyUnit) {
-        forgetUnit(enemyUnit);
-        
-//        if (enemyUnit.getPlayer().isEnemy(enemyUnit.getPlayer())) {
-        if (enemyUnit.isEnemy()) {
-            discoveredEnemyUnit(enemyUnit);
-        }
+    public static APosition getLastPositionOfEnemyUnit(AUnit enemyUnit) {
+        return enemyUnitsDiscovered.get(enemyUnit).getPosition();
     }
-
+    
     /**
-     * Informs this class that new (possibly unfinished) unit exists in the game. Both our (including
-     * unfinished) and enemy's.
+     * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */
-    public static void forgetUnit(AUnit enemyUnit) {
-        if (enemyUnit != null) {
-            enemyUnitsDiscovered.remove(enemyUnit);
-        }
-    }
-
-    /**
-     * Based on a stored collection, returns unit object for given unitID.
-     */
-    public static AUnit getEnemyUnitByID(int unitID) {
-        for (AUnit unit : enemyUnitsDiscovered) {
-            if (unit.getID() == unitID) {
-                return unit;
+    public static boolean hasDiscoveredEnemyBuilding() {
+        for (AUnit enemyUnit : enemyUnitsDiscovered.keySet()) {
+            if (enemyUnit.isBuilding()) {
+                return true;
             }
         }
-
+        return false;
+    }
+    
+    public static APosition getEnemyBase() {
+        for (AUnit enemyUnit : enemyUnitsDiscovered.keySet()) {
+            if (enemyUnit.isBase()) {
+                return getLastPositionOfEnemyUnit(enemyUnit);
+            }
+        }
         return null;
     }
-
+    
+    public static UnitData getNearestEnemyBuilding() {
+        AUnit ourMainBase = Select.mainBase();
+        UnitData best = null;
+        if (ourMainBase != null) {
+            double minDist = 999999;
+            
+            for (UnitData enemy : enemyUnitsDiscovered.values()) {
+                if (enemy.getType().isBuilding()) {
+                    double dist = enemy.getPosition().distanceTo(ourMainBase);
+                    if (minDist > dist) {
+                        minDist = dist;
+                        best = null;
+                    }
+                }
+            }
+        }
+        
+        if (best != null) {
+            return best;
+        }
+        else {
+            return null;
+        }
+    }
+    
+    public static Collection<UnitData> getDiscoveredAndAliveUnits() {
+        return enemyUnitsDiscovered.values();
+    }
+    
     // =========================================================
     // Number of units changed
-    
+
     /**
      * Saves information about enemy unit that we see for the first time.
      */
     public static void discoveredEnemyUnit(AUnit enemyUnit) {
-        enemyUnitsDiscovered.add(enemyUnit);
+        enemyUnitsDiscovered.put(enemyUnit, new UnitData(enemyUnit));
     }
 
     /**
      * Saves information about given unit being destroyed, so counting units works properly.
      */
     public static void unitDestroyed(AUnit enemyUnit) {
-//        System.out.println("Destroyed " + unit + " / " + unit.getID() + " / enemy: " + unit.isEnemy());
         enemyUnitsDestroyed.add(enemyUnit);
     }
     
@@ -77,18 +98,28 @@ public class AtlantisEnemyUnits {
     public static boolean isEnemyUnitDestroyed(AUnit enemyUnit) {
         return enemyUnitsDestroyed.contains(enemyUnit);
     }
+    
+    /**
+     * Forgets and refreshes info about given unit
+     */
+    public static void refreshEnemyUnit(AUnit enemyUnit) {
+        enemyUnitsDiscovered.remove(enemyUnit);
+        if (enemyUnit.isEnemy()) {
+            discoveredEnemyUnit(enemyUnit);
+        }
+    }
 
     // =========================================================
-    // ESTIMATE
+    // COUNT
     
     /**
      * Returns number of discovered and alive enemy units of given type. Some of them (maybe even all of them)
      * may not be visible right now.
      */
-    public static int estimateEnemyUnitsOfType(AUnitType type) {
+    public static int countEnemyKnownUnitsOfType(AUnitType type) {
         int total = 0;
-        for (AUnit unit : enemyUnitsDiscovered) {
-            if (unit.getType().equals(type)) {
+        for (AUnit enemyUnit : enemyUnitsDiscovered.keySet()) {
+            if (enemyUnit.isType(type)) {
                 total++;
             }
         }

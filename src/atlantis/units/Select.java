@@ -86,7 +86,7 @@ public class Select<T> {
         return data;
     }
     
-    private static List<Unit> neutralBwMirror() {
+    private static List<Unit> neutralUnitsBWMirror() {
         return Atlantis.getBwapi().neutral().getUnits();
     }
 
@@ -100,27 +100,14 @@ public class Select<T> {
         //Units units = new Units();
         List<AUnit> data = new ArrayList<>();
 
-//        System.out.println("####### ourUnits() = " + ourUnits().size());
         for (AUnit unit : ourUnits()) {
-//            System.out.println(unit);
-//            System.out.println(unit + "    " + unit.exists() + " / " +  unit.isCompleted() + " / "  +
-//                    !unit.getType().isType(AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, 
-//                            AUnitType.Zerg_Egg));
-//            System.out.println(unit + " / larva: " + unit.isType(AUnitType.Zerg_Larva) + " / egg: " + unit.isType(AUnitType.Zerg_Egg) + " / getType: " + unit.getType());
-//            System.out.println("    " + unit.isType(AtlantisConfig.WORKER));
             if (unit.exists() && unit.isCompleted() && !unit.isType(
                     AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
-//                System.out.println(">>>>>ADD!<<<<<<< " + unit);
             }
-//            else {
-//                System.out.println("REJECT: " + unit + " / larva: " + unit.isType(AUnitType.Zerg_Larva));
-//                System.out.println("        compl:" + unit.isCompleted() + " / " + unit.u().getType() + " / " +unit.u().getInitialType());
-//            }
         }
-//        System.out.println("########## data.size() = " + data.size());
+        
         return new Select<AUnit>(data);
-
     }
 
     /**
@@ -293,7 +280,7 @@ public class Select<T> {
 
         List<AUnit> data = new ArrayList<>();
 
-        for (Unit u : neutralBwMirror()) {
+        for (Unit u : neutralUnitsBWMirror()) {
             data.add(AUnit.createFrom(u));
         }
 

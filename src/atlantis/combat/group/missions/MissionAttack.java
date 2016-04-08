@@ -1,19 +1,17 @@
 package atlantis.combat.group.missions;
 
 import atlantis.Atlantis;
-import atlantis.combat.micro.AtlantisRunManager;
 import atlantis.combat.micro.AtlantisRunning;
 import atlantis.debug.tooltip.TooltipManager;
-import atlantis.information.AtlantisEnemyInformationManager;
+import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
+import atlantis.wrappers.APosition;
 import bwta.BaseLocation;
 import bwapi.Color;
 import bwapi.Position;
-
 
 /**
  * This is the mission object that is used by battle groups and it indicates that we should attack 
@@ -75,17 +73,18 @@ public class MissionAttack extends Mission {
      * Returns the <b>position</b> (not the unit itself) where we should point our units to in hope 
      * because as far as we know, the enemy is/can be there and it makes sense to attack in this region.
      */
-    public static Position getFocusPoint() {
+    public static APosition getFocusPoint() {
 
         // Try going near enemy base
-        Position enemyBase = AtlantisEnemyInformationManager.getEnemyBase();
+//        Position enemyBase = AtlantisEnemyInformationManager.getEnemyBase();
+        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
         	//System.out.println("focus on enemy base");	//TODO debug
             return enemyBase;
         }
 
         // Try going near any enemy building
-        UnitData enemyBuilding = AtlantisEnemyInformationManager.getNearestEnemyBuilding();
+        UnitData enemyBuilding = AtlantisEnemyUnits.getNearestEnemyBuilding();
         if (enemyBuilding != null) {
         	//System.out.println("focus on enemy bldg");	//TODO debug
             return enemyBuilding.getPosition();
@@ -102,7 +101,7 @@ public class MissionAttack extends Mission {
         BaseLocation startLocation = AtlantisMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
         if (startLocation != null) {
         	//System.out.println("focus on start location");	//TODO debug
-            return startLocation.getPosition();
+            return APosition.createFrom(startLocation.getPosition());
         }
 
         // Absolutely no enemy unit can be found

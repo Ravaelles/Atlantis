@@ -1,12 +1,9 @@
 package atlantis.production.orders;
 
-import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
-import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.NameUtil;
 import atlantis.util.AtlantisUtilities;
@@ -39,7 +36,7 @@ public abstract class AtlantisBuildOrders {
      * Ordered list of next units we should build. It is re-generated when events like "started
      * training/building new unit"
      */
-    private ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
+    private final ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
 
     /**
      * Number of minerals reserved to produce some units/buildings.
@@ -324,11 +321,7 @@ public abstract class AtlantisBuildOrders {
 
         // =========================================================
         // Skip first row as it's CSV header
-        for (int i = 0; i < loadedFile.length; i++) {
-            String[] row = loadedFile[i];
-
-            // =========================================================
-            
+        for (String[] row : loadedFile) {
             parseCsvRow(row);
         }
     }

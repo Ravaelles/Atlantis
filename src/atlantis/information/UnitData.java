@@ -2,6 +2,8 @@ package atlantis.information;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.wrappers.APosition;
+import atlantis.wrappers.APositionedObject;
 import bwapi.Position;
 import bwapi.PositionedObject;
 
@@ -13,19 +15,29 @@ import bwapi.UnitType;
  * @author Anderson
  *
  */
-public class UnitData extends PositionedObject {
+public class UnitData extends APositionedObject {
 
-    private Position position;
-    private AUnit unit;
-    private AUnitType type, buildType;
+    private APosition position;
+    private final AUnit unit;
+    private AUnitType type;
+    private final AUnitType buildType;
+    
+    // =========================================================
 
     public UnitData(AUnit unit) {
-        unit = unit;
-        position = unit.getPosition();
+        this.unit = unit;
+        position = new APosition(unit.getPosition());
         type = unit.getType();
         buildType = unit.getBuildType();
     }
 
+    // =========================================================
+    
+    @Override
+    public APosition getPosition() {
+        return position;
+    }
+    
     public AUnitType getType() {
         return type;
     }
@@ -36,10 +48,6 @@ public class UnitData extends PositionedObject {
 
     public AUnit getUnit() {
         return unit;
-    }
-
-    public Position getPosition() {
-        return position;
     }
 
     public UnitData update(AUnit updated) {

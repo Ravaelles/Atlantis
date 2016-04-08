@@ -436,6 +436,12 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return isSpiderMine() || isLarvaOrEgg();
     }
 
+    /**
+     * Not that we're racists, but spider mines and larvas aren't really units...
+     */
+    public boolean isActualUnit() {
+        return !isNotActuallyUnit();
+    }
     
     // =========================================================
     // Auxiliary

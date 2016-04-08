@@ -15,6 +15,8 @@ import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.debug.tooltip.TooltipManager;
+import atlantis.enemy.AtlantisEnemyUnits;
+import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
@@ -64,7 +66,8 @@ public class AtlantisPainter {
         bwapi.setTextSize(Enum.Small);
 
         // =========================================================
-        // Paint from least important to most important (last is on the top)
+        // On-map paint
+        
         paintImportantPlaces();
         paintColorCirclesAroundUnits();
 //        paintConstructionProgress();
@@ -73,12 +76,17 @@ public class AtlantisPainter {
         paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
         paintBarsUnderUnits();
+//        paintTemporaryTargets();
+        paintEnemyDiscovered();
+        
+        // =========================================================
+        // On-screen paint
+        
         paintInfo();
         paintUnitCounters();
         paintProductionQueue();
         paintSidebarConstructionsPending();
         paintKilledAndLost();
-//        paintTemporaryTargets();
         paintTooltipsOverUnits();
     }
 
@@ -169,11 +177,11 @@ public class AtlantisPainter {
 
         // =========================================================
         // Focus point
-        Position focusPoint = MissionAttack.getFocusPoint();
-        String desc = "";
+        APosition focusPoint = MissionAttack.getFocusPoint();
         AUnit mainBase = Select.mainBase();
+        String desc = "";
         if (focusPoint != null && mainBase != null) {
-            desc = "(dist:" + ((int) mainBase.distanceTo(focusPoint)) + ")";
+            desc = "(" + ((int) mainBase.distanceTo(focusPoint)) + " tiles)";
         }
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
@@ -711,6 +719,25 @@ public class AtlantisPainter {
         }
     }
 
+    /**
+     * Paints information about enemy units that are not visible, but as far as we know are alive.
+     */
+    private static void paintEnemyDiscovered() {
+        for (UnitData enemyUnitData : AtlantisEnemyUnits.getDiscoveredAndAliveUnits()) {
+            if (enemyUnitData.getType().isBuilding()) {
+                paintRectangle(enemyUnitData.getPosition().translate(-32, -32), 64, 64, Color.Red);
+            }
+            else {
+                paintCircle(enemyUnitData.getPosition(), 10, Color.Red);
+            }
+            
+            paintTextCentered(enemyUnitData.getPosition().translate(0, 10), 
+                    enemyUnitData.getPosition().toString(), Color.White);
+            paintTextCentered(enemyUnitData.getPoint(), 
+                    enemyUnitData.getPoint().toString(), Color.White);
+        }
+    }
+    
     // =========================================================
     // Lo-level
     private static void paintSideMessage(String text, Color color) {

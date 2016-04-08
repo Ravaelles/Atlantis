@@ -1,6 +1,7 @@
 package atlantis.wrappers;
 
 import atlantis.units.AUnit;
+import atlantis.util.PositionUtil;
 import bwapi.Position;
 import bwapi.Unit;
 import java.util.HashMap;
@@ -20,6 +21,16 @@ public class APosition extends Position {
     private Position p;
     
     // =========================================================
+
+    public APosition(APosition position) {
+        super(position.getX(), position.getY());
+        this.p = null;
+    }
+
+    public APosition(int pixelX, int pixelY) {
+        super(pixelX, pixelY);
+        this.p = null;
+    }
 
     private APosition(Position p) {
         super(p.getX(), p.getY());
@@ -42,14 +53,60 @@ public class APosition extends Position {
         }
     }
     
-    // =========================================================
-    
     /**
      * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside APosition class.
      * APosition class should be used always in place of Position when possible.
      */
     public Position p() {
         return p;
+    }
+
+    // =========================================================
+    
+    /**
+     * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
+     * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
+     * building dimensions.
+     */
+    public double distanceTo(Position position) {
+        return PositionUtil.distanceTo(getPoint(), position);
+    }
+    
+    /**
+     * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
+     * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
+     * building dimensions.
+     */
+    public double distanceTo(AUnit unit) {
+        return PositionUtil.distanceTo(getPoint(), unit.getPosition());
+    }
+    
+    /**
+     * Returns X coordinate in tiles, 1 tile = 32 pixels.
+     */
+    public int getTileX() {
+        return getX() / 32;
+    }
+    
+    /**
+     * Returns Y coordinate in tiles, 1 tile = 32 pixels.
+     */
+    public int getTileY() {
+        return getY() / 32;
+    }
+    
+    /**
+     * Returns new position object that is translated in x,y by given values.
+     */
+    public APosition translate(int pixelDX, int pixelDY) {
+        return new APosition(pixelDX, pixelDY);
+    }
+    
+    // =========================================================
+
+    @Override
+    public String toString() {
+        return "(" + getTileX() + ", " + getTileY() + ")";
     }
     
 }
