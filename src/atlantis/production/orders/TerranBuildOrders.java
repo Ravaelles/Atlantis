@@ -24,7 +24,7 @@ public class TerranBuildOrders extends AtlantisBuildOrders {
             unitThatWillProduce.train(unitType);
         }
         else {
-            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
+//            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
         }
     }
 

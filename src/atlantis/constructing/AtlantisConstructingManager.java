@@ -21,7 +21,6 @@ public class AtlantisConstructingManager {
     private static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
 
     // =========================================================
-    
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
@@ -98,7 +97,6 @@ public class AtlantisConstructingManager {
     }
 
     // =========================================================
-    
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
      * finished objects etc.
@@ -123,7 +121,6 @@ public class AtlantisConstructingManager {
     }
 
     // =========================================================
-    
     /**
      * If builder has died when constructing, replace him with new one.
      */
@@ -145,25 +142,33 @@ public class AtlantisConstructingManager {
         // If ZERG change builder into building (it just happens, yeah, weird stuff)
         if (building == null || !building.exists()) {
             AUnit builder = constructionOrder.getBuilder();
-            if (builder != null && !builder.getType().equals(AtlantisConfig.WORKER)) {
-//                System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
-//                System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
-//                System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
-//                System.out.println("getOrderTarget = " + constructionOrder.getBuilder().getOrderTarget());
-//                System.out.println("Constr = " + constructionOrder.getConstruction());
-//                System.out.println("Exists = " + constructionOrder.getBuilder().exists());
-//                System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
-//                AUnit buildUnit = AUnit.createFrom(builder.getType().);
+            if (builder != null) {
 
-                // Happens for Extractor
-                if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
-                    building = builder;
-                    constructionOrder.setConstruction(builder);
+                // If builder has changed its type and became Zerg Extractor
+                if (!builder.getType().equals(AtlantisConfig.WORKER)) {
+
+                    // Happens for Extractor
+                    if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
+                        building = builder;
+                        constructionOrder.setConstruction(builder);
+                    }
                 }
-//                if (buildUnit != null) {
-//                    building = buildUnit;
-//                    constructionOrder.setConstruction(buildUnit);
-//                }
+                
+                // Builder did not change it's type so it's not Zerg Extractor case
+                else {
+//                    System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
+//                    System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
+//                    System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
+//                    System.out.println("getOrderTarget = " + constructionOrder.getBuilder().getOrderTarget());
+//                    System.out.println("Constr = " + constructionOrder.getConstruction());
+//                    System.out.println("Exists = " + constructionOrder.getBuilder().exists());
+//                    System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
+                    AUnit buildUnit = builder.getBuildUnit();
+                    if (buildUnit != null) {
+                        building = buildUnit;
+                        constructionOrder.setConstruction(buildUnit);
+                    }
+                }
             }
         }
         // =========================================================
@@ -201,7 +206,7 @@ public class AtlantisConstructingManager {
             );
             constructionOrder.setPositionToBuild(positionToBuild);
         }
-        
+
         // =========================================================
         // Check if both building and builder are destroyed
         if (constructionOrder.getBuilder() == null && constructionOrder.getConstruction() == null) {
@@ -218,7 +223,6 @@ public class AtlantisConstructingManager {
 
     // =========================================================no
     // Public class access methods
-    
     /**
      * Returns true if given worker has been assigned to construct new building or if the constructions is
      * already in progress.

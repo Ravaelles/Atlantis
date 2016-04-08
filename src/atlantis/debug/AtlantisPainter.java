@@ -73,7 +73,7 @@ public class AtlantisPainter {
         paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
         paintBarsUnderUnits();
-        paintVariousStats();
+        paintInfo();
         paintUnitCounters();
         paintProductionQueue();
         paintSidebarConstructionsPending();
@@ -153,7 +153,7 @@ public class AtlantisPainter {
     /**
      * Paint focus point for global attack mission etc.
      */
-    private static void paintVariousStats() {
+    private static void paintInfo() {
 
         // Time
         paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", Color.Grey);
