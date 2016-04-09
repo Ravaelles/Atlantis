@@ -23,7 +23,7 @@ public abstract class AtlantisBuildOrders {
     /**
      * Directory that contains build orders.
      */
-    private static final String BUILD_ORDERS_PATH = "bwapi-data/read/build_orders/";
+    private static final String BUILD_ORDERS_PATH = "bwapi-data/AI/build_orders/";
 
     // =========================================================
     
