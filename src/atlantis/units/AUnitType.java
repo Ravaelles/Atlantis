@@ -673,4 +673,20 @@ public class AUnitType implements Comparable<AUnitType> {
         return createFrom(ut.whatBuilds().first);
     }
 
+    public int getDimensionLeft() {
+        return ut.dimensionLeft();
+    }
+
+    public int getDimensionRight() {
+        return ut.dimensionRight();
+    }
+
+    public int getDimensionUp() {
+        return ut.dimensionUp();
+    }
+
+    public int getDimensionDown() {
+        return ut.dimensionDown();
+    }
+    
 }

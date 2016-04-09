@@ -1,5 +1,7 @@
 package atlantis.combat.micro;
 
+import atlantis.AtlantisConfig;
+import atlantis.AtlantisGame;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -64,6 +66,16 @@ public abstract class MicroManager {
      * If unit is severly wounded, it should run.
      */
     protected boolean handleLowHealthIfNeeded(AUnit unit) {
+        if (AtlantisGame.playsAsTerran()) {
+            if (unit.getHP() <= 7) {
+                AUnit rendezvousWithMedics = (AUnit) Select.ourBuildings().ofType(AtlantisConfig.BARRACKS).first();
+                if (rendezvousWithMedics != null && rendezvousWithMedics.distanceTo(unit) > 5) {
+                    unit.move(rendezvousWithMedics.getPosition());
+                }
+                return true;
+            }
+        }
+        
         AUnit nearestEnemy = Select.nearestEnemy(unit.getPosition());
         if (nearestEnemy == null || PositionUtil.distanceTo(nearestEnemy, unit) > 6) {
             return false;

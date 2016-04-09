@@ -4,6 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.PositionUtil;
+import bwapi.UnitCommandType;
 import java.util.HashMap;
 
 public class TerranMedic {
@@ -33,18 +34,16 @@ public class TerranMedic {
 
     // =========================================================
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
-        if (medic.getTarget() == null || !medic.getTarget().equals(unitToHeal)) {
-            if (unitToHeal != null) {
-                medic.rightClick(unitToHeal.u());
-            }
+        if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.getTarget())) {
+            medic.rightClick(unitToHeal);
         }
     }
 
     private static AUnit getInfantryAssignedForThisMedic(AUnit medic) {
         AUnit assignment = medicsAssignments.get(medic);
         
-        if (assignment == null || !assignment.exists()) {
-            assignment = Select.ourTerranInfantryWithoutMedics().random();
+        if (assignment == null || !assignment.exists() || !assignment.isAlive()) {
+            assignment = Select.ourTerranInfantryWithoutMedics().first();
         }
         
         return assignment;
@@ -67,6 +66,10 @@ public class TerranMedic {
     }
 
     private static boolean handleHealWoundedUnit(AUnit medic) {
+        if (medic.getLastCommand().getUnitCommandType() == UnitCommandType.Right_Click_Unit) {
+            return true;
+        }
+        
         AUnit nearestWoundedInfantry = (AUnit) Select.ourCombatUnits().infantry().wounded()
                 .inRadius(6, medic.getPosition()).nearestTo(medic.getPosition());
 
@@ -87,6 +90,7 @@ public class TerranMedic {
         if (nearestInfantry != null && PositionUtil.distanceTo(nearestInfantry, medic) > 1.4
                 && !nearestInfantry.equals(medic.getTarget())) {
             healUnit(medic, nearestWoundedInfantry);
+            return true;
         }
         return false;
     }

@@ -6,6 +6,7 @@ import bwapi.PositionOrUnit;
 import bwapi.TechType;
 import bwapi.TilePosition;
 import bwapi.Unit;
+import bwapi.UnitCommand;
 import bwapi.UpgradeType;
 
 /**
@@ -283,17 +284,25 @@ public interface UnitActions {
      * would fail. Note There is a small chance for a command to fail after it has been passed to Broodwar.
      * See also canRightClick, canRightClickPosition, canRightClickUnit
      */
-    default boolean rightClick(APosition target) {
-        return u().rightClick(target);
+//    default boolean rightClick(APosition target) {
+//        return u().rightClick(target);
+//    }
+
+    default boolean rightClick(AUnit target) {
+        if (target != null) {
+            if (!target.u().equals(u().getTarget())) {
+                boolean result = u().rightClick(target.u());
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
-    default boolean rightClick(Unit target) {
-        return u().rightClick(target);
-    }
-
-    default boolean rightClick(PositionOrUnit target) {
-        return u().rightClick(target);
-    }
+//    default boolean rightClick(PositionOrUnit target) {
+//        return u().rightClick(target);
+//    }
 
     /**
      * Orders a SCV to stop constructing a structure. This leaves the structure in an incomplete state until

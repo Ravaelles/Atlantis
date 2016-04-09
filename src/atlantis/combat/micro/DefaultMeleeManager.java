@@ -86,7 +86,7 @@ public class DefaultMeleeManager extends MicroMeleeManager {
         
         // ZERG
         if (AtlantisGame.playsAsZerg()) {
-            if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
+            if (unit.isType(AUnitType.Zerg_Overlord)) {
                 ZergOverlordManager.update(unit);
                 return true;
             }
@@ -94,9 +94,8 @@ public class DefaultMeleeManager extends MicroMeleeManager {
         
         // TERRAN
         if (AtlantisGame.playsAsTerran()) {
-            if (unit.getType().equals(AUnitType.Terran_Medic)) {
-                TerranMedic.update(unit);
-                return true;
+            if (unit.isType(AUnitType.Terran_Medic)) {
+                return TerranMedic.update(unit);
             }
         }
         

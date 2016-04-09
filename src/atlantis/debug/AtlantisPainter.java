@@ -36,6 +36,9 @@ import java.util.Map;
  * Here you can include code that will draw extra informations over units etc.
  */
 public class AtlantisPainter {
+    
+    private static boolean DISABLE_PAINTING = true;
+//    private static boolean DISABLE_PAINTING = false;
 
     private static Game bwapi;
     private static int sideMessageTopCounter = 0;
@@ -55,10 +58,13 @@ public class AtlantisPainter {
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
         bwapi.setTextSize(Enum.Small);
+        
+        if (DISABLE_PAINTING) {
+            return;
+        }
 
         // =========================================================
         // On-map paint
-        
         paintImportantPlaces();
         paintColorCirclesAroundUnits();
 //        paintConstructionProgress();
@@ -70,10 +76,9 @@ public class AtlantisPainter {
 //        paintTemporaryTargets();
         paintEnemyDiscovered();
         paintCombatUnits();
-        
+
         // =========================================================
         // On-screen paint
-        
         paintInfo();
         paintUnitCounters();
         paintProductionQueue();
@@ -84,7 +89,6 @@ public class AtlantisPainter {
 
     // =========================================================
     // Hi-level
-    
     /**
      * Painting for combat units can be a little different. Put here all the related code.
      */
@@ -114,7 +118,7 @@ public class AtlantisPainter {
                 // Paint box borders
                 bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
             }
-            
+
             // =========================================================
             // === Paint targets for combat units
             // =========================================================
@@ -125,25 +129,25 @@ public class AtlantisPainter {
             if (targetPosition != null && unit.distanceTo(targetPosition) <= 15) {
                 paintLine(unitPosition, targetPosition, (unit.isAttacking() ? Color.Green : Color.Red));
             }
-            
+
             // =========================================================
             // === Paint white flags over running units
             // =========================================================
             if (unit.isRunning()) {
                 int flagWidth = 15;
                 int flagHeight = 8;
-                
+
                 System.out.println("is running");
                 paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
-                
-                paintRectangleFilled(unitPosition.translate(0, -flagHeight - 2), 
+
+                paintRectangleFilled(unitPosition.translate(0, -flagHeight - 2),
                         flagWidth, flagHeight, Color.Yellow); // White flag
-                paintRectangle(unitPosition.translate(0, -flagHeight - 2), 
+                paintRectangle(unitPosition.translate(0, -flagHeight - 2),
                         flagWidth, flagHeight, Color.Black); // Flag border
-                paintRectangleFilled(unitPosition.translate(-1, --flagHeight - 2), 
+                paintRectangleFilled(unitPosition.translate(-1, --flagHeight - 2),
                         2, flagHeight, Color.Red); // Flag stick
             }
-            
+
             // =========================================================
             // === Combat Evaluation Strength
             // =========================================================
@@ -156,9 +160,8 @@ public class AtlantisPainter {
                 }
             }
         }
-        
-        // =========================================================
 
+        // =========================================================
         for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
             APosition unitPosition = unit.getPosition();
             double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
@@ -169,7 +172,7 @@ public class AtlantisPainter {
             }
         }
     }
-    
+
     /**
      * Paint focus point for global attack mission etc.
      */
@@ -229,9 +232,9 @@ public class AtlantisPainter {
 //                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
 //            }
 
-            // =========================================================
-            // === Paint cooldown progress bars over units
-            // =========================================================
+        // =========================================================
+        // === Paint cooldown progress bars over units
+        // =========================================================
 //            if (unit.getGroundWeaponCooldown() > 0) {
 //                int cooldownWidth = 20;
 //                int cooldownHeight = 4;
@@ -257,16 +260,16 @@ public class AtlantisPainter {
 //                // Paint label
 ////                paintTextCentered(new APosition(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
 //            }
-            // =========================================================
-            // === Paint battle group
-            // =========================================================
+        // =========================================================
+        // === Paint battle group
+        // =========================================================
 //            if (unit.getGroup() != null) {
 //                paintTextCentered(new APosition(unit.getPX(), unit.getPY() + 3), Color.getColorString(Color.Grey)
 //                        + "#" + unit.getGroup().getID(), false);
 //            }
-            // =========================================================
-            // === Paint num of other units around this unit
-            // =========================================================
+        // =========================================================
+        // === Paint num of other units around this unit
+        // =========================================================
 //            int ourAround = Select.ourCombatUnits().inRadius(1.7, unit).count();
 //            paintTextCentered(new APosition(unit.getPX(), unit.getPY() - 15), Color.getColorString(Color.Orange)
 //                    + "(" + ourAround + ")", false);
@@ -319,7 +322,7 @@ public class AtlantisPainter {
         position = MissionAttack.getFocusPoint();
         if (position != null) {
             paintCircle(position, 20, Color.Red);
-    //        paintCircle(position, 19, Color.Black);
+            //        paintCircle(position, 19, Color.Black);
             paintTextCentered(position, "ATTACK", Color.Red);
         }
     }
@@ -424,10 +427,10 @@ public class AtlantisPainter {
                         color = Color.Purple;
                         break;
                 }
-                
+
                 String status = constructionOrder.getStatus().toString().replace("CONSTRUCTION_", "");
                 String builder = (constructionOrder.getBuilder() + "").replace("AUnit(", "");
-                paintSideMessage(constructionOrder.getBuildingType().getShortName() 
+                paintSideMessage(constructionOrder.getBuildingType().getShortName()
                         + ", " + status + ", " + builder, color, yOffset);
             }
         }
@@ -446,18 +449,18 @@ public class AtlantisPainter {
                 }
 
                 // Paint box
-                paintRectangle(positionToBuild, 
+                paintRectangle(positionToBuild,
                         buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, Color.Teal);
 
                 // Draw X
                 paintLine(
-                        PositionUtil.translate(positionToBuild, buildingType.getTileWidth() * 32, 0), 
-                        PositionUtil.translate(positionToBuild, 0, buildingType.getTileHeight() * 32), 
+                        PositionUtil.translate(positionToBuild, buildingType.getTileWidth() * 32, 0),
+                        PositionUtil.translate(positionToBuild, 0, buildingType.getTileHeight() * 32),
                         Color.Teal
                 );
-                paintLine(positionToBuild, 
-                        buildingType.getTileWidth() * 32, 
-                        buildingType.getTileHeight() * 32, 
+                paintLine(positionToBuild,
+                        buildingType.getTileWidth() * 32,
+                        buildingType.getTileHeight() * 32,
                         Color.Teal
                 );
 
@@ -506,14 +509,12 @@ public class AtlantisPainter {
 //            
 //            // Paint #ID
 //            paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
-
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
 //                paintCircle(unit, 15, Color.Teal);
 //                paintCircle(unit, 13, Color.Teal);
 //                paintCircle(unit, 11, Color.Teal);
 //            }
-            
             // Current COMMAND
             if (!unit.isMoving()) {
                 paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
@@ -718,10 +719,10 @@ public class AtlantisPainter {
             }
         }
     }
-    
+
     /**
-     * Tooltips are units messages that appear over them and allow to report actions like "Repairing" or
-     * "Run from enemy" etc.
+     * Tooltips are units messages that appear over them and allow to report actions like "Repairing" or "Run
+     * from enemy" etc.
      */
     private static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().listUnits()) {
@@ -736,18 +737,24 @@ public class AtlantisPainter {
      */
     private static void paintEnemyDiscovered() {
         for (UnitData enemyUnitData : AtlantisEnemyUnits.getDiscoveredAndAliveUnits()) {
-            if (enemyUnitData.getType().isBuilding()) {
-                paintRectangle(enemyUnitData.getPosition().translate(-32, -32), 64, 64, Color.Red);
-            }
-            else {
-                paintCircle(enemyUnitData.getPosition(), 10, Color.Red);
-            }
-            
-            paintTextCentered(enemyUnitData.getPosition().translate(0, 10), 
-                    enemyUnitData.getPosition().toString(), Color.White);
+            APosition topLeft;
+//            if (enemyUnitData.getType().isBuilding()) {
+            topLeft = enemyUnitData.getPosition().translate(
+                    -enemyUnitData.getType().getDimensionLeft(),
+                    -enemyUnitData.getType().getDimensionUp()
+            );
+            paintRectangle(topLeft, enemyUnitData.getType().getDimensionRight(),
+                    enemyUnitData.getType().getDimensionDown(), Color.Grey);
+            paintText(topLeft, enemyUnitData.getType().getShortName(), Color.White);
+//            }
+//            else {
+//                paintCircle(enemyUnitData.getPosition(), 10, Color.Red);
+//            }
+//            paintTextCentered(enemyUnitData.getPosition().translate(0, 10), 
+//                    enemyUnitData.getPosition().toString(), Color.White);
         }
     }
-    
+
     // =========================================================
     // Lo-level
     private static void paintSideMessage(String text, Color color) {
@@ -807,7 +814,7 @@ public class AtlantisPainter {
     private static void paintLine(APosition start, int dx, int dy, Color color) {
         paintLine(start, PositionUtil.translate(start, dx, dy), color);
     }
-    
+
     private static void paintLine(Position start, Position end, Color color) {
         if (start == null || end == null) {
             return;
@@ -848,6 +855,14 @@ public class AtlantisPainter {
                     ColorUtil.getColorString(color) + text
             );
         }
+    }
+
+    private static void paintText(APosition position, String text, Color color) {
+        if (position == null || text == null) {
+            return;
+        }
+
+        bwapi.drawTextMap(position, ColorUtil.getColorString(color) + text);
     }
 
 }
