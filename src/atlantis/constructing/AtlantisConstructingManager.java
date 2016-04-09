@@ -7,9 +7,9 @@ import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.wrappers.APosition;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import bwapi.Position;
 
 public class AtlantisConstructingManager {
 
@@ -31,7 +31,7 @@ public class AtlantisConstructingManager {
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */
-    public static void requestConstructionOf(AUnitType building, Position near) {
+    public static void requestConstructionOf(AUnitType building, APosition near) {
         requestConstructionOf(building, null, near);
     }
 
@@ -39,7 +39,7 @@ public class AtlantisConstructingManager {
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */
-    public static void requestConstructionOf(AUnitType building, ProductionOrder order, Position near) {
+    public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
 
         // Validate
         if (!building.isBuilding()) {
@@ -65,7 +65,7 @@ public class AtlantisConstructingManager {
 
         // =========================================================
         // Find place for new building
-        Position positionToBuild = AtlantisPositionFinder.getPositionForNew(
+        APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
                 newConstructionOrder.getBuilder(), building, newConstructionOrder, near, 25
         );
 //        System.out.println("@@ " + building + " at " + positionToBuild);
@@ -198,7 +198,7 @@ public class AtlantisConstructingManager {
 
         // Building doesn't exist yet, means builder is travelling to the construction place
         else {
-            Position positionToBuild = AtlantisPositionFinder.getPositionForNew(
+            APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
                     constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
             );
             constructionOrder.setPositionToBuild(positionToBuild);

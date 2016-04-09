@@ -3,19 +3,12 @@ package atlantis.combat.micro;
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.combat.AtlantisCombatEvaluator;
-import atlantis.combat.AtlantisCombatInformation;
-import atlantis.debug.tooltip.TooltipManager;
-import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
+import atlantis.util.PositionUtil;
 import bwapi.Position;
 import bwta.BWTA;
-import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Handles best way of running from close enemies and information about the fact if given unit is running or
@@ -46,6 +39,10 @@ public class AtlantisRunning {
      * Indicates that this unit should be running from given enemy unit.
      */
     public static boolean runFrom(AUnit runner, AUnit chaser) {
+        if (true) {
+            runner.move(Select.mainBase().getPosition());
+        }
+        
         if (chaser == null) {
             chaser = Select.enemyRealUnits().nearestTo(runner.getPosition());
         }

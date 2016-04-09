@@ -6,6 +6,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.wrappers.APosition;
 import bwapi.Position;
 
 public class AtlantisPositionFinder {
@@ -19,7 +20,7 @@ public class AtlantisPositionFinder {
     /**
      * Returns build position for next building of given type.
      */
-    public static Position getPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
+    public static APosition getPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
         return getPositionForNew(builder, building, constructionOrder, null, -1);
     }
 
@@ -28,8 +29,8 @@ public class AtlantisPositionFinder {
      * position
      * <b>maxDistance</b> build tiles from given position.
      */
-    public static Position getPositionForNew(AUnit builder, AUnitType building, 
-            ConstructionOrder constructionOrder, Position nearTo, double maxDistance) {
+    public static APosition getPositionForNew(AUnit builder, AUnitType building, 
+            ConstructionOrder constructionOrder, APosition nearTo, double maxDistance) {
 
         // =========================================================
         // Buildings extracting GAS
@@ -83,7 +84,7 @@ public class AtlantisPositionFinder {
     /**
      * Returns standard build position for building near given position.
      */
-    public static Position findStandardPosition(AUnit builder, AUnitType building, Position nearTo, double maxDistance) {
+    public static APosition findStandardPosition(AUnit builder, AUnitType building, APosition nearTo, double maxDistance) {
         
         // =========================================================
         // Handle standard building position according to the race as every race uses completely different approach

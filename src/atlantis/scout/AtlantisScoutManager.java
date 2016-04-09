@@ -8,10 +8,8 @@ import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import java.util.ArrayList;
 import bwta.BaseLocation;
-
-import bwapi.UnitType;
+import java.util.ArrayList;
 
 public class AtlantisScoutManager {
 

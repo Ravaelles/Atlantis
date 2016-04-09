@@ -3,7 +3,6 @@ package atlantis.debug;
 import atlantis.units.AUnitType;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.WeaponUtil;
-import bwapi.UnitType;
 import java.util.HashMap;
 import java.util.Map;
 

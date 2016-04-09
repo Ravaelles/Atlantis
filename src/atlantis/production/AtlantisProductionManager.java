@@ -7,10 +7,8 @@ import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import java.util.ArrayList;
-
-import bwapi.UnitType;
 import bwapi.UpgradeType;
+import java.util.ArrayList;
 
 public class AtlantisProductionManager {
 

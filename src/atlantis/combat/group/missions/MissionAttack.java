@@ -9,9 +9,8 @@ import atlantis.information.UnitData;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.wrappers.APosition;
-import bwta.BaseLocation;
 import bwapi.Color;
-import bwapi.Position;
+import bwta.BaseLocation;
 
 /**
  * This is the mission object that is used by battle groups and it indicates that we should attack 
@@ -27,7 +26,7 @@ public class MissionAttack extends Mission {
     
     @Override
     public boolean update(AUnit unit) {
-        Position focusPoint = getFocusPoint();
+        APosition focusPoint = getFocusPoint();
         //System.out.println("Focus point: " + focusPoint);	//TODO DEBUG
         // Focus point is well known
         if (focusPoint != null) {
@@ -42,7 +41,7 @@ public class MissionAttack extends Mission {
         // =========================================================
         // Invalid focus point, no enemy can be found, scatter
         else {
-            Position position = AtlantisMap.getRandomInvisiblePosition(unit.getPosition());
+            APosition position = AtlantisMap.getRandomInvisiblePosition(unit.getPosition());
             if (position != null) {
                 unit.attack(position);	
                 Atlantis.getBwapi().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG

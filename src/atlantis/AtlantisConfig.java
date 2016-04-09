@@ -3,7 +3,6 @@ package atlantis;
 import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnitType;
 import bwapi.Race;
-import bwapi.UnitType;
 
 /**
  * This class is used to set up your Atlantis framework by providing some basic informations about your bot.

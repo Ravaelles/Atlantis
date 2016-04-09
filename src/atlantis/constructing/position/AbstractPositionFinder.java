@@ -6,11 +6,9 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
+import atlantis.util.PositionUtil;
 import bwapi.Position;
-
-import bwapi.UnitType;
 
 public abstract class AbstractPositionFinder {
     

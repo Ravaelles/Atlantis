@@ -1,9 +1,7 @@
 package atlantis.combat.group.missions;
 
 import atlantis.AtlantisGame;
-import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.units.Select;
-import bwapi.UnitType;
 
 /**
  * Handles the global mission that is mission that affects the battle  group Alpha.

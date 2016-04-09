@@ -1,14 +1,9 @@
 package atlantis.buildings.managers;
 
 import atlantis.AtlantisGame;
-import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import java.util.ArrayList;
-
-import bwapi.UnitType;
-//import bwapi.AUnitType.UnitTypes;
 
 public class AtlantisBarracksManager {
 

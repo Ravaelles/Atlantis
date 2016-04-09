@@ -1,16 +1,16 @@
 package atlantis.units;
 
+import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APositionedObject;
-import atlantis.util.AtlantisUtilities;
+import bwapi.Position;
+import bwapi.PositionedObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import bwapi.Position;
-import bwapi.PositionedObject;
 
 /**
  * This class is wrapper for ArrayList<AUnit>. It allows some helpful methods to be executed upon group of

@@ -7,13 +7,10 @@ import atlantis.combat.micro.MicroMeleeManager;
 import atlantis.combat.micro.MicroRangedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.wrappers.APosition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.TreeSet;
-
-import bwapi.Position;
-
 
 /**
  * Represents battle group (unit squad) that contains multiple battle units (could be one unit as well).
@@ -101,7 +98,7 @@ public class Group extends Units {
      * Returns median <b>position</b> of all units. It's better than the average, because the outliners
      * don't affect the end result so badly.
      */
-    public Position getMedianUnitPosition() {
+    public APosition getMedianUnitPosition() {
         ArrayList<Integer> xCoords = new ArrayList<>();
         ArrayList<Integer> yCoords = new ArrayList<>();
         
@@ -113,7 +110,7 @@ public class Group extends Units {
         Collections.sort(xCoords);
         Collections.sort(yCoords);
         
-        return new Position(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
+        return new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
     }
     
     // =========================================================

@@ -1,13 +1,4 @@
 package atlantis.buildings.managers;
-
-import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
-import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.units.AUnit;
-import atlantis.workers.AtlantisWorkerCommander;
-
-
-//public class AtlantisBaseManager {
 //
 //    public static void update(AUnit base) {
 //

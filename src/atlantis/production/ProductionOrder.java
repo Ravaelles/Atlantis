@@ -2,8 +2,6 @@ package atlantis.production;
 
 import atlantis.units.AUnitType;
 import bwapi.TechType;
-import atlantis.util.NameUtil;
-import bwapi.UnitType;
 import bwapi.UpgradeType;
 
 public class ProductionOrder {

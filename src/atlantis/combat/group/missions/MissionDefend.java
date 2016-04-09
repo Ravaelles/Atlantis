@@ -4,10 +4,10 @@ import atlantis.combat.micro.AtlantisRunning;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
-import bwta.Chokepoint;
+import atlantis.util.PositionUtil;
 import bwapi.TilePosition;
+import bwta.Chokepoint;
 
 
 public class MissionDefend extends Mission {

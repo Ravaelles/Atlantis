@@ -1,10 +1,9 @@
 package atlantis.combat.micro;
 
 import atlantis.units.AUnit;
-import java.util.List;
-
 import atlantis.units.Select;
 import bwapi.Position;
+import java.util.List;
 
 
 /**

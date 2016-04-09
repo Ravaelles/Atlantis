@@ -8,8 +8,6 @@ import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
-import bwapi.UnitType;
-
 public class AtlantisCombatCommander {
     
     /**

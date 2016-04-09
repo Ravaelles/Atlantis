@@ -3,7 +3,6 @@ package atlantis.wrappers;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import bwapi.Position;
-import bwapi.Unit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,12 +23,12 @@ public class APosition extends Position {
 
     public APosition(APosition position) {
         super(position.getX(), position.getY());
-        this.p = null;
+        this.p = new Position(position.getX(), position.getY());
     }
 
     public APosition(int pixelX, int pixelY) {
         super(pixelX, pixelY);
-        this.p = null;
+        this.p = new Position(pixelX, pixelY);
     }
 
     private APosition(Position p) {
@@ -100,6 +99,15 @@ public class APosition extends Position {
      */
     public APosition translate(int pixelDX, int pixelDY) {
         return new APosition(getX() + pixelDX, getY() + pixelDY);
+    }
+    
+    /**
+     * Ensures that position's [x,y] are valid map coordinates.
+     */
+    @Override
+    public APosition makeValid() {
+        p = p.makeValid();
+        return this;
     }
     
     // =========================================================

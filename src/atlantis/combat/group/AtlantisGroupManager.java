@@ -5,8 +5,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import java.util.ArrayList;
 
-import bwapi.UnitType;
-
 /**
  * Commands all existing battle groups.
  */

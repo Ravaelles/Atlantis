@@ -1,11 +1,8 @@
 package atlantis.util;
 
-import atlantis.units.AUnitType;
-import java.lang.reflect.Field;
-
-import bwapi.UnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+import java.lang.reflect.Field;
 
 /**
  * Utilities for retrieving names of game entities

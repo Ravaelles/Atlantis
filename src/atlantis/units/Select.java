@@ -5,20 +5,18 @@ import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.information.UnitData;
-import atlantis.util.PositionUtil;
 import atlantis.util.AtlantisUtilities;
+import atlantis.util.PositionUtil;
 import atlantis.wrappers.APositionedObject;
-
+import bwapi.Position;
+import bwapi.PositionedObject;
+import bwapi.Unit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import bwapi.Position;
-import bwapi.PositionedObject;
-import bwapi.Unit;
 
 
 /**

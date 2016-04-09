@@ -1,15 +1,12 @@
 package atlantis.constructing;
 
-import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
-import bwapi.Position;
+import atlantis.wrappers.APosition;
 import bwapi.TilePosition;
-
-import bwapi.UnitType;
 
 public class AtlantisBuilderManager {
 
@@ -51,7 +48,7 @@ public class AtlantisBuilderManager {
 
     private static void travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
         //TODO: check possible confusion with Position and TilePosition here
-        Position buildPosition = constructionOrder.getPositionToBuild();
+        APosition buildPosition = constructionOrder.getPositionToBuild();
         AUnitType buildingType = constructionOrder.getBuildingType();
 
         if (builder == null) {

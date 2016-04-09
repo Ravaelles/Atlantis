@@ -3,8 +3,8 @@ package atlantis.combat;
 import atlantis.AtlantisGame;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
+import atlantis.util.PositionUtil;
 
 
 /**

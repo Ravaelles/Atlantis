@@ -1,7 +1,5 @@
 package atlantis.combat;
 
-import java.util.Map;
-
 import atlantis.AtlantisGame;
 import atlantis.units.AUnit;
 

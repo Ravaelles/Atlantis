@@ -2,23 +2,22 @@ package atlantis.information;
 
 import atlantis.Atlantis;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
-import atlantis.util.AtlantisUtilities;
-import atlantis.wrappers.Positions;
 import atlantis.units.Select;
+import atlantis.util.AtlantisUtilities;
+import atlantis.util.PositionUtil;
+import atlantis.wrappers.APosition;
+import atlantis.wrappers.Positions;
+import bwapi.Position;
+import bwapi.TilePosition;
+import bwta.BWTA;
+import bwta.BaseLocation;
+import bwta.Chokepoint;
+import bwta.Region;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import bwapi.Position;
-import bwapi.TilePosition;
-import bwta.Region;
-import bwta.Chokepoint;
-
-import bwta.BWTA;
-import bwta.BaseLocation;
 
 /**
  * This class provides information about high-abstraction level map operations like returning place for the
@@ -29,7 +28,7 @@ public class AtlantisMap {
     private static List<Chokepoint> cached_chokePoints = null;
     private static Chokepoint cached_mainBaseChokepoint = null;
     private static Set<Chokepoint> disabledChokepoints = new HashSet<>();
-    private static BWTA bwta = new BWTA();	//all methods in BWTA are static, but I keep a class instance to return it in getMap()
+    private static BWTA bwta = new BWTA(); // all methods in BWTA are static, but I keep a class instance to return it in getMap()
 
     // =========================================================
     /**
@@ -87,7 +86,7 @@ public class AtlantisMap {
      * Returns starting location that's nearest to given position and is not yet explored (black space, not
      * fog of war).
      */
-    public static BaseLocation getNearestUnexploredStartingLocation(Position nearestTo) {
+    public static BaseLocation getNearestUnexploredStartingLocation(APosition nearestTo) {
         if (nearestTo == null) {
             return null;
         }
@@ -118,7 +117,7 @@ public class AtlantisMap {
     /**
      * Returns nearest free base location where we don't have base built yet.
      */
-    public static BaseLocation getNearestBaseLocationToExpand(Position nearestTo) {
+    public static BaseLocation getNearestBaseLocationToExpand(APosition nearestTo) {
 
         // Get list of all base locations
         Positions<BaseLocation> baseLocations = new Positions<BaseLocation>();
@@ -164,8 +163,8 @@ public class AtlantisMap {
     /**
      * Returns random point on map with fog of war, preferably unexplored one.
      */
-    public static Position getRandomInvisiblePosition(Position startPoint) {
-        Position position = null;
+    public static APosition getRandomInvisiblePosition(APosition startPoint) {
+        APosition position = null;
         for (int attempts = 0; attempts < 10; attempts++) {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;	//TODO: check whether this scaling to TilePosition is oK
             int dx = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
@@ -241,7 +240,7 @@ public class AtlantisMap {
      *
      * @see Region
      */
-    public static Region getRegion(Position position) {
+    public static Region getRegion(APosition position) {
         return BWTA.getRegion(position);
     }
 

@@ -1,13 +1,10 @@
 package atlantis.workers;
 
-import java.util.Collection;
-
 import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
-import atlantis.util.NameUtil;
 import atlantis.units.Select;
 
 

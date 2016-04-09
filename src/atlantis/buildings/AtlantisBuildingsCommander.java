@@ -1,11 +1,5 @@
 package atlantis.buildings;
 
-import atlantis.AtlantisConfig;
-import atlantis.buildings.managers.AtlantisBarracksManager;
-import atlantis.units.AUnit;
-//import atlantis.buildings.managers.AtlantisBaseManager;
-import atlantis.units.Select;
-
 
 /**
  * Manages all existing-buildings actions, but training new units depends on AtlantisProductionCommander.

@@ -5,15 +5,15 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.util.NameUtil;
+import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
+import atlantis.util.NameUtil;
 import atlantis.wrappers.AtlantisTech;
 import atlantis.wrappers.MappingCounter;
-import atlantis.units.Select;
-import java.util.ArrayList;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Represents abstract build orders read from the file.

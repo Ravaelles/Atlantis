@@ -5,7 +5,7 @@ import atlantis.debug.tooltip.TooltipManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
-import bwapi.Position;
+import atlantis.wrappers.APosition;
 
 /**
  *
@@ -43,7 +43,7 @@ public class ZergOverlordManager {
 //            unit.move(goTo, false);
 //        }
 
-        Position medianUnitPosition = AtlantisGroupManager.getAlphaGroup().getMedianUnitPosition();
+        APosition medianUnitPosition = AtlantisGroupManager.getAlphaGroup().getMedianUnitPosition();
         if (medianUnitPosition != null) {
             if (overlord.distanceTo(medianUnitPosition) > 2.5) {
                 overlord.move(medianUnitPosition);

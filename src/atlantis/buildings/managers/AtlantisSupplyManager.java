@@ -5,8 +5,6 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.production.orders.ZergBuildOrders;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import bwapi.UnitType;
 
 public class AtlantisSupplyManager {
 

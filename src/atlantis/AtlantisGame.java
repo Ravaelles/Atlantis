@@ -3,13 +3,12 @@ package atlantis;
 import static atlantis.Atlantis.getBwapi;
 import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnitType;
+import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
 import atlantis.wrappers.AtlantisTech;
-import atlantis.units.Select;
 import bwapi.Player;
 import bwapi.Race;
 import bwapi.TechType;
-import bwapi.UnitType;
 import bwapi.UpgradeType;
 
 /**

@@ -2,7 +2,6 @@ package atlantis;
 
 import atlantis.combat.group.AtlantisGroupManager;
 import atlantis.constructing.ProtossConstructionManager;
-import atlantis.debug.AtlantisUnitTypesHelper;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.init.AtlantisInitialActions;
 import atlantis.production.orders.AtlantisBuildOrders;
@@ -10,7 +9,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.*;
 import bwta.BWTA;
-import bwapi.UnitType;
 
 /**
  * Main bridge between the game and your code, ported to BWMirror.

@@ -3,10 +3,8 @@ package atlantis.combat.micro;
 import atlantis.AtlantisGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
-
-import bwapi.UnitType;
+import atlantis.util.PositionUtil;
 
 public class AtlantisEnemyTargeting {
 

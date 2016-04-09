@@ -1,9 +1,7 @@
 package atlantis.workers;
 
 import atlantis.units.AUnit;
-import atlantis.util.AtlantisUtilities;
 import atlantis.units.Select;
-import atlantis.units.Units;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;

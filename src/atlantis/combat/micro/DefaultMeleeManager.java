@@ -1,20 +1,15 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.micro.terran.TerranMedic;
-
-import java.util.Collection;
-
 import atlantis.AtlantisGame;
+import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
-import atlantis.units.Units;
+import atlantis.util.PositionUtil;
 import bwapi.Position;
-
-import bwapi.UnitType;
+import java.util.Collection;
 
 /**
  * Default micro manager that will be used for all melee units.
@@ -24,7 +19,7 @@ public class DefaultMeleeManager extends MicroMeleeManager {
     @Override
     public boolean update(AUnit unit) {
         if (canIssueOrderToUnit(unit)) {
-//            unit.setTooltip("Start " + unit.getLastUnitActionWasFramesAgo());
+            unit.setTooltip("Last: " + unit.getLastUnitActionWasFramesAgo());
 
             // SPECIAL UNIT TYPE action
             if (handleSpecialUnit(unit)) {
@@ -33,15 +28,15 @@ public class DefaultMeleeManager extends MicroMeleeManager {
 
             // =========================================================
             // Check health status
-//            if (handleLowHealthIfNeeded(unit)) {
-//                return true;
-//            }
+            if (handleLowHealthIfNeeded(unit)) {
+                return true;
+            }
 
             // =========================================================
             // Check chances to win the fight
-            if (handleUnfavorableOdds(unit)) {
-                return true;
-            }
+//            if (handleUnfavorableOdds(unit)) {
+//                return true;
+//            }
 //            if (handleNotExtremelyFavorableOdds(unit)) {
 //                return true;
 //            }

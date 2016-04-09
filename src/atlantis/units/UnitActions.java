@@ -1,6 +1,6 @@
 package atlantis.units;
 
-
+import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwapi.PositionOrUnit;
 import bwapi.TechType;
@@ -32,7 +32,7 @@ public interface UnitActions {
 //        return u().attack(target.u());
     }
     
-    default boolean attack(Position target) {
+    default boolean attack(APosition target) {
         
         // Do NOT issue double orders
         if (u().isAttacking() && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
@@ -73,7 +73,7 @@ public interface UnitActions {
      * determined that the command would fail. Note There is a small chance for a command to fail after it has
      * been passed to Broodwar. See also isPatrolling, canPatrol
      */
-    default boolean patrol(Position target) {
+    default boolean patrol(APosition target) {
         return u().patrol(target);
     }
 
@@ -271,7 +271,7 @@ public interface UnitActions {
      * for a command to fail after it has been passed to Broodwar. See also load, unload, getLoadedUnits,
      * isLoaded, canUnloadAll, canUnloadAtPosition
      */
-    default boolean unloadAll(Position target) {
+    default boolean unloadAll(APosition target) {
         return u().unloadAll(target);
     }
 
@@ -283,7 +283,7 @@ public interface UnitActions {
      * would fail. Note There is a small chance for a command to fail after it has been passed to Broodwar.
      * See also canRightClick, canRightClickPosition, canRightClickUnit
      */
-    default boolean rightClick(Position target) {
+    default boolean rightClick(APosition target) {
         return u().rightClick(target);
     }
 
@@ -381,12 +381,12 @@ public interface UnitActions {
         return u().useTech(tech);
     }
 
-    default boolean useTech(TechType tech, Position target) {
+    default boolean useTech(TechType tech, APosition target) {
         return u().useTech(tech, target);
     }
 
-    default boolean useTech(TechType tech, Unit target) {
-        return u().useTech(tech, target);
+    default boolean useTech(TechType tech, AUnit target) {
+        return u().useTech(tech, target.u());
     }
 
     default boolean useTech(TechType tech, PositionOrUnit target) {

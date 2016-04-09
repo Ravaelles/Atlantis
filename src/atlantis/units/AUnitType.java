@@ -1,7 +1,6 @@
 package atlantis.units;
 
 import bwapi.TechType;
-import bwapi.Unit;
 import bwapi.UnitType;
 import bwapi.WeaponType;
 import java.lang.reflect.Field;

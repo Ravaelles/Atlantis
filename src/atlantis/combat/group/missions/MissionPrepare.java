@@ -4,12 +4,10 @@ import atlantis.combat.micro.AtlantisRunning;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
-import bwta.Chokepoint;
-import bwapi.Position;
+import atlantis.wrappers.APosition;
 import bwapi.TilePosition;
-
+import bwta.Chokepoint;
 
 public class MissionPrepare extends Mission {
 
@@ -142,7 +140,7 @@ public class MissionPrepare extends Mission {
         return true;
     }
 
-    public static Position getFocusPoint() {
+    public static APosition getFocusPoint() {
         return null;
     }
 }
