@@ -725,8 +725,7 @@ public class AtlantisPainter {
     private static void paintEnemyDiscovered() {
         for (UnitData enemyUnitData : AtlantisEnemyUnits.getDiscoveredAndAliveUnits()) {
             if (enemyUnitData.getType().isBuilding()) {
-//                .translate(-32, -32)
-                paintRectangle(enemyUnitData.getPosition(), 64, 64, Color.Red);
+                paintRectangle(enemyUnitData.getPosition().translate(-32, -32), 64, 64, Color.Red);
             }
             else {
                 paintCircle(enemyUnitData.getPosition(), 10, Color.Red);
@@ -735,7 +734,7 @@ public class AtlantisPainter {
             paintTextCentered(enemyUnitData.getPosition().translate(0, 10), 
                     enemyUnitData.getPosition().toString(), Color.White);
             paintTextCentered(enemyUnitData.getPoint(), 
-                    enemyUnitData.getPoint().toString(), Color.White);
+                    enemyUnitData.getPoint().toString(), Color.Blue);
         }
     }
     

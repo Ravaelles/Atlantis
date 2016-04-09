@@ -75,7 +75,7 @@ public class Missions {
 
             // Enemy TERRAN
             else if (AtlantisGame.isEnemyTerran()) {
-                return 1;
+                return 2;
             }
 
             // Enemy ZERG

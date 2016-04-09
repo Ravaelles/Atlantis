@@ -389,7 +389,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitShow(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.createFrom(u);
+        if (unit.isEnemyUnit()) {
+            AtlantisEnemyUnits.updateEnemyUnitPosition(unit);
+        }
     }
 
     /**

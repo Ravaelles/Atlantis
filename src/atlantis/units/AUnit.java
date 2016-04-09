@@ -36,6 +36,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     private static final Map<Unit, AUnit> instances = new HashMap<>();
     
     private Unit u;
+    private AUnitType _lastCachedType;
     
     // =========================================================
 
@@ -43,10 +44,23 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         if (u == null) {
             throw new RuntimeException("AUnit constructor: unit is null");
         }
-        this.u = u;
-//        this.type = AUnitType.createFrom(u.getType());
         
-        atlantisInit();
+        this.u = u;
+        this.innerID = firstFreeID++;
+        this._lastCachedType = AUnitType.createFrom(u.getType());
+
+        // Repair & Heal
+        this._repairableMechanically = isBuilding() || isVehicle();
+        this._healable = isInfantry() || isWorker();
+
+        // Military building
+        this._isMilitaryBuildingAntiGround = isType(
+                AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony
+        );
+        this._isMilitaryBuildingAntiAir = isType(
+                AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
+                AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
+        );
     }
 
     /**
@@ -71,9 +85,19 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     
     // =========================================================
     
+    /**
+     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached 
+     * type.
+     */
     public AUnitType getType() {
-//        return type;
-        return AUnitType.createFrom(u.getType());
+        AUnitType type = AUnitType.createFrom(u.getType());
+        if (type.equals(AUnitType.Unknown)) {
+            return _lastCachedType;
+        }
+        else {
+            _lastCachedType = type;
+            return type;
+        }
     }
     
     @Override
@@ -125,25 +149,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     private boolean _isMilitaryBuildingAntiAir = false;
     private double _lastCombatEval;
     private int _lastTimeCombatEval = 0;
-
-    // =========================================================
-    // Atlantis constructor
-    private void atlantisInit() {
-        innerID = firstFreeID++;
-
-        // Repair & Heal
-        _repairableMechanically = isBuilding() || isVehicle();
-        _healable = isInfantry() || isWorker();
-
-        // Military building
-        _isMilitaryBuildingAntiGround = isType(
-                AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony
-        );
-        _isMilitaryBuildingAntiAir = isType(
-                AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
-                AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
-        );
-    }
 
     // =========================================================
     // Important methods

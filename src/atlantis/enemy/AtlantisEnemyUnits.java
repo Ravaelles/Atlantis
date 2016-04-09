@@ -89,6 +89,7 @@ public class AtlantisEnemyUnits {
      * Saves information about given unit being destroyed, so counting units works properly.
      */
     public static void unitDestroyed(AUnit enemyUnit) {
+        enemyUnitsDiscovered.remove(enemyUnit);
         enemyUnitsDestroyed.add(enemyUnit);
     }
     
@@ -104,9 +105,14 @@ public class AtlantisEnemyUnits {
      */
     public static void refreshEnemyUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.remove(enemyUnit);
-        if (enemyUnit.isEnemy()) {
-            discoveredEnemyUnit(enemyUnit);
-        }
+        discoveredEnemyUnit(enemyUnit);
+    }
+    
+    /**
+     * Updates last known position of the enemy unit.
+     */
+    public static void updateEnemyUnitPosition(AUnit enemyUnit) {
+        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
     }
 
     // =========================================================

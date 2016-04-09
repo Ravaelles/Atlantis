@@ -79,14 +79,14 @@ public class MissionAttack extends Mission {
 //        Position enemyBase = AtlantisEnemyInformationManager.getEnemyBase();
         APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-        	System.out.println("focus on enemy base " + enemyBase);	//TODO debug
+//        	System.out.println("focus on enemy base " + enemyBase);	//TODO debug
             return enemyBase;
         }
 
         // Try going near any enemy building
         UnitData enemyBuilding = AtlantisEnemyUnits.getNearestEnemyBuilding();
         if (enemyBuilding != null) {
-        	System.out.println("focus on enemy bldg " + enemyBuilding.getPosition());	//TODO debug
+//        	System.out.println("focus on enemy bldg " + enemyBuilding.getPosition());	//TODO debug
             return enemyBuilding.getPosition();
         }
 

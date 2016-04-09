@@ -46,20 +46,28 @@ public class AtlantisRunning {
      * Indicates that this unit should be running from given enemy unit.
      */
     public static boolean runFrom(AUnit runner, AUnit chaser) {
-
         if (chaser == null) {
             chaser = Select.enemyRealUnits().nearestTo(runner.getPosition());
         }
-
         if (chaser == null) {
             return false;
         }
-        /*else {
-            return running.runFrom(nearestEnemy);
-        }*/
-//        checkRunningInfo(runner);
-//        AtlantisRunning running = unitRunning.get(runner);
-        AtlantisRunning running = new AtlantisRunning(runner);
+        
+        // =========================================================
+        
+        AtlantisRunning running = runner.getRunning();
+        if (running != null && running.nextPositionToRunTo != null) {
+            if (runner.distanceTo(running.nextPositionToRunTo) > 0.5) {
+                if (!runner.isMoving()) {
+                    runner.move(running.nextPositionToRunTo);
+                }
+                return true;
+            }
+        }
+        
+        // =========================================================
+        
+        running = new AtlantisRunning(runner);
         // Define position to run to
         running.nextPositionToRunTo = getPositionAwayFrom(runner, chaser.getPosition());
 
@@ -73,7 +81,7 @@ public class AtlantisRunning {
         if (running.nextPositionToRunTo != null) {
             running.updateRunTooltip();
         } else {
-            TooltipManager.removeTooltip(runner);
+            runner.removeTooltip();
             //unit.removeTooltip();
         }
 
@@ -85,7 +93,7 @@ public class AtlantisRunning {
 
             // If this is massive retreat, make all other units run as well
             if (AtlantisCombatEvaluator.evaluateSituation(runner) < 0.2) {
-                running.notifyOurUnitsAroundToRunAsWell(runner, chaser);
+                running.notifyNearbyGroundUnitsToMakeSpace(runner, chaser);
             }
 
             return true;
@@ -114,15 +122,15 @@ public class AtlantisRunning {
      * Every unit that is relatively close to the unit that wants to run, should run as well, otherwise it
      * might block the escape route.
      */
-    private void notifyOurUnitsAroundToRunAsWell(AUnit ourUnit, AUnit nearestEnemy) {
+    private void notifyNearbyGroundUnitsToMakeSpace(AUnit ourUnit, AUnit nearestEnemy) {
 
         // Get all of our units that are close to this unit. 
         //TODO: this cast seems to be safe, as units will be visible
-        Collection<AUnit> ourUnitsNearby = (Collection<AUnit>) Select.our().inRadius(1.5, ourUnit.getPosition()).listUnits();
+        Collection<AUnit> ourUnitsNearby = Select.our().inRadius(1.5, ourUnit.getPosition()).listUnits();
 
         // Tell them to run as well, not to block our escape route
         for (AUnit ourOtherUnit : ourUnitsNearby) {
-            if (!isRunning(ourOtherUnit)) {
+            if (ourOtherUnit.isGroundUnit() && !isRunning(ourOtherUnit)) {
                 runFrom(ourOtherUnit, null);
             }
         }
@@ -242,7 +250,7 @@ public class AtlantisRunning {
     private void updateRunTooltip() {
         String runTimer = String.format("%.1f",
                 ((double) AtlantisRunManager.getHowManyFramesUnitShouldStillBeRunning(unit) / 30));
-        TooltipManager.setTooltip(unit, "Run " + runTimer + "s");  //unit.setTooltip("Run " + runTimer + "s");
+        unit.setTooltip("Run " + runTimer + "s");  //unit.setTooltip("Run " + runTimer + "s");
     }
 
 }

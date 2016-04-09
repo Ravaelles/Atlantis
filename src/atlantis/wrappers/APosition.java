@@ -99,7 +99,7 @@ public class APosition extends Position {
      * Returns new position object that is translated in x,y by given values.
      */
     public APosition translate(int pixelDX, int pixelDY) {
-        return new APosition(pixelDX, pixelDY);
+        return new APosition(getX() + pixelDX, getY() + pixelDY);
     }
     
     // =========================================================

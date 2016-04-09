@@ -39,9 +39,9 @@ public class DefaultMeleeManager extends MicroMeleeManager {
 
             // =========================================================
             // Check chances to win the fight
-//            if (handleUnfavorableOdds(unit)) {
-//                return true;
-//            }
+            if (handleUnfavorableOdds(unit)) {
+                return true;
+            }
 //            if (handleNotExtremelyFavorableOdds(unit)) {
 //                return true;
 //            }

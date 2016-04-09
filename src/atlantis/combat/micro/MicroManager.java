@@ -23,9 +23,10 @@ public abstract class MicroManager {
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
     protected boolean handleUnfavorableOdds(AUnit unit) {
+        boolean isSituationFavorable = AtlantisCombatEvaluator.isSituationFavorable(unit);
         
         // If situation is unfavorable, retreat
-        if (!AtlantisCombatEvaluator.isSituationFavorable(unit)) {
+        if (!isSituationFavorable) {
             if (unit.isAttackFrame() || unit.isStartingAttack()) { //replacing isJustShooting
                 return true;
             }
@@ -33,11 +34,14 @@ public abstract class MicroManager {
                 return AtlantisRunManager.run(unit);
             }
         }
-
-        // If unit is running, allow it to stop running only if chances are quite favorable
-        if (AtlantisRunning.isRunning(unit) && AtlantisCombatEvaluator.evaluateSituation(unit) >= 0.3) {
-            AtlantisRunManager.unitWantsStopRunning(unit);
+        else {
+            
+            // If unit is running, allow it to stop running only if chances are quite favorable
+            if (AtlantisRunning.isRunning(unit)) {
+                AtlantisRunManager.unitWantsStopRunning(unit);
+            }
         }
+
         
         return false;
     }
