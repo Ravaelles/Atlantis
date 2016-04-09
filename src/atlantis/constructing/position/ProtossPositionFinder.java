@@ -1,16 +1,11 @@
 package atlantis.constructing.position;
 
-import java.util.Collection;
-
 import atlantis.Atlantis;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
-import bwapi.Position;
-import bwapi.TilePosition;
-
-import bwapi.UnitType;
+import atlantis.wrappers.APosition;
+import java.util.Collection;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {
 
@@ -21,7 +16,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      *
      */
-    public static Position findStandardPositionFor(AUnit builder, AUnitType building, Position nearTo, double maxDistance) {
+    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo, 
+            double maxDistance) {
         AtlantisPositionFinder.building = building;
         AtlantisPositionFinder.nearTo = nearTo;
         AtlantisPositionFinder.maxDistance = maxDistance;
@@ -33,13 +29,13 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             int xCounter = 0;
             int yCounter = 0;
             int doubleRadius = searchRadius * 2;
-            TilePosition tileNearTo = nearTo.toTilePosition();	//TODO? check the validity of this conversion 
-            for (int tileX = tileNearTo.getX() - searchRadius; tileX <= tileNearTo.getX() + searchRadius; tileX++) {
-                for (int tileY = tileNearTo.getY() - searchRadius; tileY <= tileNearTo.getY() + searchRadius; tileY++) {
+            
+            for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
+                for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
-                        TilePosition tilePosition = new TilePosition(tileX, tileY);	//TODO? check the validity of this conversion 
-                        if (doesPositionFulfillAllConditions(builder, tilePosition.toPosition())) {
-                            return tilePosition.toPosition();
+                        APosition constructionPosition = new APosition(tileX * 32, tileY * 32);
+                        if (doesPositionFulfillAllConditions(builder, constructionPosition)) {
+                            return constructionPosition;
                         }
                     }
 
@@ -60,7 +56,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
-    private static boolean doesPositionFulfillAllConditions(AUnit builder, Position position) {
+    private static boolean doesPositionFulfillAllConditions(AUnit builder, APosition position) {
 
         // Check for POWER
         if (!isPowerConditionFulfilled(position)) {
@@ -89,20 +85,20 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Lo-level
-    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, Position position) {
+    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
-        if (nearestBase != null && PositionUtil.distanceTo(nearestBase.getPosition(), position) <= 8) {
+        if (nearestBase != null && nearestBase.distanceTo(position) <= 8) {
         	Collection<AUnit> mineralsInRange = (Collection<AUnit>) Select.minerals().inRadius(8, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
-                if (PositionUtil.distanceTo(mineral.getPosition(), position) <= 4) {
+                if (mineral.distanceTo(position) <= 4) {
                     return true;
                 }
             }
         	Collection<AUnit> geysersInRange = (Collection<AUnit>) Select.geysers().inRadius(8, position).listUnits();
             for (AUnit geyser : geysersInRange) {
-                if (PositionUtil.distanceTo(geyser.getPosition(), position) <= 4) {
+                if (geyser.distanceTo(position) <= 4) {
                     return true;
                 }
             }
@@ -110,7 +106,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         return false;
     }
 
-    private static boolean isPowerConditionFulfilled(Position position) {
+    private static boolean isPowerConditionFulfilled(APosition position) {
         return Atlantis.getBwapi().hasPower(position.toTilePosition())
                 || AtlantisPositionFinder.building.equals(AUnitType.Protoss_Nexus)
                 || AtlantisPositionFinder.building.equals(AUnitType.Protoss_Pylon);

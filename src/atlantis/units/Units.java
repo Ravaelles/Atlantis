@@ -1,15 +1,16 @@
 package atlantis.units;
 
-import atlantis.util.PositionUtil;
 import atlantis.util.AtlantisUtilities;
+import atlantis.util.PositionUtil;
+import atlantis.wrappers.APositionedObject;
+import bwapi.Position;
+import bwapi.PositionedObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import bwapi.Position;
-import bwapi.PositionedObject;
 
 /**
  * This class is wrapper for ArrayList<AUnit>. It allows some helpful methods to be executed upon group of
@@ -106,17 +107,17 @@ public class Units {
             return null;
         }
         
-        Collections.sort(units, new Comparator<PositionedObject>() {
+        Collections.sort(units, new Comparator<APositionedObject>() {
             @Override
-            public int compare(PositionedObject p1, PositionedObject p2) {
+            public int compare(APositionedObject p1, APositionedObject p2) {
                 if (p1 == null || !(p1 instanceof PositionedObject)) {
                     return -1;
                 }
                 if (p2 == null || !(p2 instanceof PositionedObject)) {
                     return 1;
                 }
-                double distance1 = PositionUtil.distanceTo(position, p1.getPosition());	//TODO: check whether this doesn't mix up position types
-                double distance2 = PositionUtil.distanceTo(position, p2.getPosition());
+                double distance1 = p1.distanceTo(position);	//TODO: check whether this doesn't mix up position types
+                double distance2 = p2.distanceTo(position);
                 if (distance1 == distance2) {
                     return 0;
                 }

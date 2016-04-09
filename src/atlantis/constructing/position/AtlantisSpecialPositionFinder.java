@@ -4,11 +4,9 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
-import bwapi.Position;
-
-import bwapi.UnitType;
 import atlantis.units.Select;
+import atlantis.util.PositionUtil;
+import atlantis.wrappers.APosition;
 import bwta.BaseLocation;
 
 public class AtlantisSpecialPositionFinder {
@@ -37,7 +35,7 @@ public class AtlantisSpecialPositionFinder {
      * Returns build position for next Refinery/Assimilator/Extractor. It will be chosen for the oldest base
      * that doesn't have gas extracting building.
      */
-    protected static Position findPositionForGasBuilding(AUnitType building) {
+    protected static APosition findPositionForGasBuilding(AUnitType building) {
         for (AUnit base : Select.ourBases().listUnits()) {
             AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base.getPosition());
 
@@ -53,7 +51,7 @@ public class AtlantisSpecialPositionFinder {
      * Returns build position for next base. It will usually be next free BaseLocation that doesn't have base
      * built.
      */
-    public static Position findPositionForBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
+    public static APosition findPositionForBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
 //        String mode = "NEAREST_FREE";
 //        String mode = "NEAR_MAIN";
         String mode = constructionOrder.getProductionOrder() != null ? 
@@ -73,7 +71,7 @@ public class AtlantisSpecialPositionFinder {
 
     // =========================================================
     
-    private static Position findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder) {
+    private static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder) {
         BaseLocation baseLocationToExpand = AtlantisMap.getNearestBaseLocationToExpand(Select.mainBase().getPosition());
         if (baseLocationToExpand == null) {
             System.err.println("baseLocationToExpand is null");
@@ -83,16 +81,19 @@ public class AtlantisSpecialPositionFinder {
 //        System.out.println("Main base = " + Select.mainBase());
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
 
-        return AtlantisPositionFinder.findStandardPosition(builder, building, baseLocationToExpand.getPosition(), 3);
+        return AtlantisPositionFinder.findStandardPosition(builder, building, 
+                APosition.createFrom(baseLocationToExpand.getPosition()), 3);
     }
 
-    private static Position findPositionForBase_nearestMainBase(AUnitType building, AUnit builder) {
+    private static APosition findPositionForBase_nearestMainBase(AUnitType building, AUnit builder) {
         return AtlantisPositionFinder.findStandardPosition(builder, building, Select.mainBase().getPosition(), 20);
     }
 
-    private static Position findPositionForBase_natural(AUnitType building, AUnit builder) {
-        return AtlantisPositionFinder.findStandardPosition(builder, building, 
-                AtlantisMap.getNearestBaseLocationToExpand(Select.mainBase().getPosition()).getPosition(), 10);
+    private static APosition findPositionForBase_natural(AUnitType building, AUnit builder) {
+        APosition nearestBase = APosition.createFrom(
+                AtlantisMap.getNearestBaseLocationToExpand(Select.mainBase().getPosition()).getPosition()
+        );
+        return AtlantisPositionFinder.findStandardPosition(builder, building, nearestBase, 10);
     }
 
 }

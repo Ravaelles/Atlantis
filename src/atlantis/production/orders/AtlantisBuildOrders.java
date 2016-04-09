@@ -1,21 +1,19 @@
 package atlantis.production.orders;
 
-import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
-import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.production.ProductionOrder;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.NameUtil;
+import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
+import atlantis.util.NameUtil;
 import atlantis.wrappers.AtlantisTech;
 import atlantis.wrappers.MappingCounter;
-import atlantis.units.Select;
-import java.util.ArrayList;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Represents abstract build orders read from the file.
@@ -25,7 +23,7 @@ public abstract class AtlantisBuildOrders {
     /**
      * Directory that contains build orders.
      */
-    private static final String BUILD_ORDERS_PATH = "bwapi-data/read/build_orders/";
+    private static final String BUILD_ORDERS_PATH = "bwapi-data/AI/build_orders/";
 
     // =========================================================
     
@@ -38,7 +36,7 @@ public abstract class AtlantisBuildOrders {
      * Ordered list of next units we should build. It is re-generated when events like "started
      * training/building new unit"
      */
-    private ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
+    private final ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
 
     /**
      * Number of minerals reserved to produce some units/buildings.
@@ -63,7 +61,19 @@ public abstract class AtlantisBuildOrders {
     protected String getFilename() {
         String ourRaceLetter = AtlantisGame.getPlayerUs().getRace().toString().substring(0, 1);
         String enemyRaceLetter = AtlantisGame.getEnemy().getRace().toString().substring(0, 1);
-        return ourRaceLetter + "v" + enemyRaceLetter + ".csv";
+        String customBuildOrders = ourRaceLetter + "v" + enemyRaceLetter + ".csv";
+        
+        // Check if user has defined his own build orders file for this race and if so, use it.
+        File buildOrdersFile = new File(BUILD_ORDERS_PATH + customBuildOrders);
+        if (buildOrdersFile.exists()) {
+            return customBuildOrders;
+        }
+        
+        // Return default Atlantis build orders for this race vs race matchup.
+        else {
+            String atlantisDefaultBuildOrders = "Atlantis_" + customBuildOrders;
+            return atlantisDefaultBuildOrders;
+        }
     }
     
     /**
@@ -302,19 +312,16 @@ public abstract class AtlantisBuildOrders {
         final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
         // Read file into 2D String array
-        String path = BUILD_ORDERS_PATH + getFilename();
-        String[][] loadedFile = AtlantisUtilities.loadCsv(path, NUMBER_OF_COLUMNS_IN_FILE);
+        String buildOrdersFile = BUILD_ORDERS_PATH + getFilename();
+        System.out.println("Using `" + getFilename() + "` build orders file.");
+        String[][] loadedFile = AtlantisUtilities.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
 
         // We can display file here, if we want to
 //         displayLoadedFile(loadedFile);
 
         // =========================================================
         // Skip first row as it's CSV header
-        for (int i = 0; i < loadedFile.length; i++) {
-            String[] row = loadedFile[i];
-
-            // =========================================================
-            
+        for (String[] row : loadedFile) {
             parseCsvRow(row);
         }
     }

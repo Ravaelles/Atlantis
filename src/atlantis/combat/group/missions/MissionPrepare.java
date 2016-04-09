@@ -4,12 +4,10 @@ import atlantis.combat.micro.AtlantisRunning;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
+import atlantis.wrappers.APosition;
+import bwapi.TilePosition;
 import bwta.Chokepoint;
-import bwapi.Position;
-
 
 public class MissionPrepare extends Mission {
 
@@ -81,7 +79,7 @@ public class MissionPrepare extends Mission {
         }
 
         // Distance to the center of choke point
-        double distToChoke = PositionUtil.distanceTo(chokepoint.getCenter(), unit.getPosition()) - chokepoint.getWidth() / 32; //TODO: check consistency with getRadiusInTiles()
+        double distToChoke = unit.distanceTo(chokepoint.getCenter()) - chokepoint.getWidth() / TilePosition.SIZE_IN_PIXELS; //TODO: check consistency with getRadiusInTiles()
 
         // =========================================================
         // Close enough ::meme::
@@ -114,7 +112,7 @@ public class MissionPrepare extends Mission {
         // =========================================================
         // Distance to the center of choke point
 //        double distToChoke = chokepoint.distanceTo(unit) - chokepoint.getRadiusInTiles();
-        double distanceToTarget = PositionUtil.distanceTo(chokepoint.getCenter(), unit.getPosition());
+        double distanceToTarget = unit.distanceTo(chokepoint.getCenter());
 
         // Can't be closer than X from choke point
         if (distanceToTarget <= 2 + 2 / chokepoint.getWidth() / 32) { //TODO: check consistency with getRadiusInTiles()
@@ -135,14 +133,15 @@ public class MissionPrepare extends Mission {
      */
     @Override
     protected boolean canIssueOrderToUnit(AUnit unit) {
-        if (AtlantisRunning.isRunning(unit) || unit.isStartingAttack() || unit.isAttacking() || unit.isAttackFrame() || unit.isMoving()) {
+        if (unit.isRunning() || unit.isStartingAttack() || unit.isAttacking() 
+                || unit.isAttackFrame() || unit.isMoving()) {
             return false;
         }
 
         return true;
     }
 
-    public static Position getFocusPoint() {
+    public static APosition getFocusPoint() {
         return null;
     }
 }

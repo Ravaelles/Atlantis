@@ -6,8 +6,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-import bwapi.UnitType;
-
 /**
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>

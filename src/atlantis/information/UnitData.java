@@ -2,10 +2,8 @@ package atlantis.information;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import bwapi.Position;
-import bwapi.PositionedObject;
-
-import bwapi.UnitType;
+import atlantis.wrappers.APosition;
+import atlantis.wrappers.APositionedObject;
 
 /**
  * Stores information about units in order to retrieve them when they are out of sight
@@ -13,21 +11,52 @@ import bwapi.UnitType;
  * @author Anderson
  *
  */
-public class UnitData extends PositionedObject {
+public class UnitData extends APositionedObject {
 
-    private Position position;
-    private AUnit unit;
-    private AUnitType type, buildType;
+    private APosition position;
+    private final AUnit unit;
+    private AUnitType type;
+    private AUnitType _lastCachedType;
+    private final AUnitType buildType;
+    
+    // =========================================================
 
     public UnitData(AUnit unit) {
-        unit = unit;
-        position = unit.getPosition();
+        this.unit = unit;
+        position = new APosition(unit.getPosition());
         type = unit.getType();
+        _lastCachedType = type;
         buildType = unit.getBuildType();
     }
 
+    // =========================================================
+    
+    /**
+     * Updates last known position of this unit.
+     */
+    public void updatePosition(APosition position) {
+        this.position = new APosition(position);
+    }
+    
+    @Override
+    public APosition getPosition() {
+        return position;
+    }
+    
+    // =========================================================
+    
+    /**
+     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached 
+     * type.
+     */
     public AUnitType getType() {
-        return type;
+        if (type.equals(AUnitType.Unknown)) {
+            return _lastCachedType;
+        }
+        else {
+            _lastCachedType = type;
+            return type;
+        }
     }
 
     public AUnitType getBuildType() {
@@ -36,10 +65,6 @@ public class UnitData extends PositionedObject {
 
     public AUnit getUnit() {
         return unit;
-    }
-
-    public Position getPosition() {
-        return position;
     }
 
     public UnitData update(AUnit updated) {

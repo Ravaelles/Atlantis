@@ -5,9 +5,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.Position;
-
-import bwapi.UnitType;
+import atlantis.wrappers.APosition;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -19,7 +17,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     private AUnitType buildingType;
     private AUnit construction;
     private AUnit builder;
-    private Position positionToBuild;
+    private APosition positionToBuild;
     private ProductionOrder productionOrder;
     private ConstructionOrderStatus status;
 
@@ -38,7 +36,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     /**
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
-    public Position findNewBuildPosition() {
+    public APosition findNewBuildPosition() {
         return AtlantisPositionFinder.getPositionForNew(builder, buildingType, this);
     }
 
@@ -140,11 +138,11 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.status = status;
     }
 
-    public Position getPositionToBuild() {
+    public APosition getPositionToBuild() {
         return positionToBuild;
     }
 
-    public void setPositionToBuild(Position positionToBuild) {
+    public void setPositionToBuild(APosition positionToBuild) {
         this.positionToBuild = positionToBuild;
     }
 

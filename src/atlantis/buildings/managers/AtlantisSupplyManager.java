@@ -5,8 +5,6 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.production.orders.ZergBuildOrders;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import bwapi.UnitType;
 
 public class AtlantisSupplyManager {
 
@@ -35,7 +33,11 @@ public class AtlantisSupplyManager {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 40) {
-                if (supplyFree <= 8 && noSuppliesBeingBuilt) {
+                if (supplyFree <= 7 && noSuppliesBeingBuilt) {
+                    requestAdditionalSupply();
+                }
+            } else if (supplyTotal <= 100) {
+                if (supplyFree <= 10 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 200) {

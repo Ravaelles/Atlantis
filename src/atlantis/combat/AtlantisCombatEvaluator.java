@@ -3,14 +3,14 @@ package atlantis.combat;
 import atlantis.AtlantisGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Select;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
-import atlantis.util.UnitUtil;
-import atlantis.units.Select;
+import atlantis.util.WeaponUtil;
+import bwapi.Color;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import bwapi.Color;
 
 /**
  *
@@ -99,7 +99,7 @@ public class AtlantisCombatEvaluator {
         // Evaluate our and enemy strength
         double enemyEvaluation = evaluateUnitsAgainstUnit(enemyUnits, unit, true);
         double ourEvaluation = evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
-        double lowHealthPenalty = (100 - UnitUtil.getHPPercent(unit)) / 80;
+        double lowHealthPenalty = (100 - unit.getHPPercent()) / 80;
         double combatEval = ourEvaluation / enemyEvaluation - 1 - lowHealthPenalty;
 
         return updateCombatEval(unit, combatEval);
@@ -130,7 +130,7 @@ public class AtlantisCombatEvaluator {
             else if (unit.getType().isBuilding() && unit.isCompleted()) {
                 boolean antiGround = (againstUnit != null ? !againstUnit.isAirUnit() : true);
                 boolean antiAir = (againstUnit != null ? againstUnit.isAirUnit() : true);
-                if (UnitUtil.isMilitaryBuilding(unit.getType(), antiGround, antiAir)) {
+                if (unit.getType().isMilitaryBuilding(antiGround, antiAir)) {
                     enemyDefensiveBuildingFound = true;
                     if (unit.getType().equals(AUnitType.Terran_Bunker)) {
                         strength += 7 * evaluateUnitHPandDamage(AUnitType.Terran_Marine, againstUnit);
@@ -174,9 +174,10 @@ public class AtlantisCombatEvaluator {
     }
 
     private static double evaluateUnitHPandDamage(AUnitType evaluateType, int hp, AUnit againstUnit) {
-        double damage = (!againstUnit.isAirUnit()
-                ? UnitUtil.getNormalizedDamage(evaluateType.getGroundWeapon())
-                : UnitUtil.getNormalizedDamage(evaluateType.getAirWeapon()));
+        double damage = ( againstUnit.isAirUnit()
+            ? WeaponUtil.getDamageNormalized(evaluateType.getAirWeapon())
+            : WeaponUtil.getDamageNormalized(evaluateType.getGroundWeapon())
+        );
         double total = hp * EVAL_HIT_POINTS_FACTOR + damage * EVAL_DAMAGE_FACTOR;
 
         // =========================================================

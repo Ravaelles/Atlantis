@@ -3,8 +3,8 @@ package atlantis.production.orders;
 import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.workers.AtlantisWorkerCommander;
 import atlantis.units.Select;
+import atlantis.workers.AtlantisWorkerCommander;
 import java.util.ArrayList;
 
 public class ZergBuildOrders extends AtlantisBuildOrders {

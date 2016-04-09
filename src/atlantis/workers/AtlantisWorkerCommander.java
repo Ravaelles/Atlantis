@@ -3,12 +3,10 @@ package atlantis.workers;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.buildings.managers.AtlantisGasManager;
-import atlantis.constructing.ConstructionOrder;
-import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
 import atlantis.units.Units;
+import atlantis.util.PositionUtil;
 import java.util.Collection;
 
 

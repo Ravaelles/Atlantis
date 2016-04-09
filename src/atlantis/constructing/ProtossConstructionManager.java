@@ -1,8 +1,6 @@
 package atlantis.constructing;
 
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
-import atlantis.wrappers.MappingCounter;
 import atlantis.units.Units;
 import java.util.ArrayList;
 
@@ -28,7 +26,7 @@ public class ProtossConstructionManager {
             if (order.getBuilder() == null || order.getPositionToBuild() == null) {
                 continue;
             }
-            int distBuilderToConstruction = (int) (PositionUtil.distanceTo(order.getPositionToBuild(), order.getBuilder().getPosition())) * 10;
+            int distBuilderToConstruction = (int) (order.getBuilder().distanceTo(order.getPositionToBuild())) * 10;
             closestBuilders.changeValueBy(order.getBuilder(), distBuilderToConstruction);
         }
         

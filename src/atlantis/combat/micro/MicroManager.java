@@ -1,14 +1,11 @@
 package atlantis.combat.micro;
 
-import java.util.Collection;
-
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
-
+import atlantis.util.PositionUtil;
 import bwapi.WeaponType;
+import java.util.Collection;
 
 /**
  *
@@ -24,9 +21,10 @@ public abstract class MicroManager {
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
     protected boolean handleUnfavorableOdds(AUnit unit) {
+        boolean isSituationFavorable = AtlantisCombatEvaluator.isSituationFavorable(unit);
         
         // If situation is unfavorable, retreat
-        if (!AtlantisCombatEvaluator.isSituationFavorable(unit)) {
+        if (!isSituationFavorable) {
             if (unit.isAttackFrame() || unit.isStartingAttack()) { //replacing isJustShooting
                 return true;
             }
@@ -34,11 +32,14 @@ public abstract class MicroManager {
                 return AtlantisRunManager.run(unit);
             }
         }
-
-        // If unit is running, allow it to stop running only if chances are quite favorable
-        if (AtlantisRunning.isRunning(unit) && AtlantisCombatEvaluator.evaluateSituation(unit) >= 0.3) {
-            AtlantisRunManager.unitWantsStopRunning(unit);
+        else {
+            
+            // If unit is running, allow it to stop running only if chances are quite favorable
+            if (unit.isRunning()) {
+                AtlantisRunManager.unitWantsStopRunning(unit);
+            }
         }
+
         
         return false;
     }
@@ -68,7 +69,7 @@ public abstract class MicroManager {
             return false;
         }
         
-        if (unit.getHitPoints() <= 16 || UnitUtil.getHPPercent(unit) < 30) {
+        if (unit.getHitPoints() <= 16 || unit.getHPPercent() < 30) {
             if (Select.ourCombatUnits().inRadius(4, unit.getPosition()).count() <= 6) {
                 return AtlantisRunManager.run(unit);
             }

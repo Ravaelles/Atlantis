@@ -2,7 +2,6 @@ package atlantis.debug.tooltip;
 
 import atlantis.AtlantisGame;
 import atlantis.units.AUnit;
-import atlantis.util.NameUtil;
 
 
 public class Tooltip {

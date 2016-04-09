@@ -23,12 +23,10 @@ public class TooltipManager {
      * @return
      */
     public static void setTooltip(AUnit unit, String tooltip) {
-
         tooltips.put(unit, new Tooltip(unit, tooltip));
-        if (unit.getType().equals(AUnitType.Terran_Marine)) {
-            System.out.println("--set: " + tooltip + " // " + tooltips.get(unit)); //TODO debug
-        }
-
+//        if (unit.getType().equals(AUnitType.Terran_Marine)) {
+//            System.out.println("--set: " + tooltip + " // " + tooltips.get(unit)); //TODO debug
+//        }
     }
 
     /**

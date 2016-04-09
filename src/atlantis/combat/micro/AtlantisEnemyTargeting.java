@@ -3,11 +3,8 @@ package atlantis.combat.micro;
 import atlantis.AtlantisGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
-
-import bwapi.UnitType;
+import atlantis.util.PositionUtil;
 
 public class AtlantisEnemyTargeting {
 
@@ -16,8 +13,8 @@ public class AtlantisEnemyTargeting {
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
-        boolean canAttackGround = UnitUtil.attacksGround(unit);
-        boolean canAttackAir = UnitUtil.attacksAir(unit);
+        boolean canAttackGround = unit.canAttackGroundUnits(); 
+        boolean canAttackAir = unit.canAttackAirUnits(); 
         AUnit nearestEnemy = null;
         
         // =========================================================

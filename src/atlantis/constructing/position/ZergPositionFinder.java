@@ -1,21 +1,17 @@
 package atlantis.constructing.position;
 
-import java.util.Collection;
-
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
-import atlantis.units.Select;
-import bwapi.Position;
-import bwapi.TilePosition;
-
-import bwapi.UnitType;
-import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
+import atlantis.units.Select;
+import atlantis.wrappers.APosition;
+import bwapi.Position;
+import bwapi.TilePosition;
+import java.util.Collection;
 
 public class ZergPositionFinder extends AbstractPositionFinder {
-    
+
     /**
      * Returns best position for given <b>building</b>, maximum <b>maxDistance</b> build tiles from
      * <b>nearTo</b>
@@ -23,9 +19,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      *
      */
-    public static Position findStandardPositionFor(AUnit builder, AUnitType building, Position nearTo, double maxDistance) {
+    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo, 
+            double maxDistance) {
         _CONDITION_THAT_FAILED = null;
-        
+
         AtlantisPositionFinder.building = building;
         AtlantisPositionFinder.nearTo = nearTo;
         AtlantisPositionFinder.maxDistance = maxDistance;
@@ -39,11 +36,6 @@ public class ZergPositionFinder extends AbstractPositionFinder {
             searchRadius = 8;
         }
         if (maxDistance < searchRadius) {
-            System.err.println("---------------------");
-            System.err.println("Smaller maxDistance than search radius for: " + building);
-            System.err.println("  maxDistance = " + maxDistance);
-            System.err.println("  searchRadius = " + searchRadius);
-            System.err.println("---------------------");
             maxDistance = searchRadius;
         }
 
@@ -51,20 +43,14 @@ public class ZergPositionFinder extends AbstractPositionFinder {
             int xCounter = 0;
             int yCounter = 0;
             int doubleRadius = searchRadius * 2;
-            TilePosition tileNearTo = nearTo.toTilePosition();	//TODO? check the validity of this conversion
-            for (int tileX = tileNearTo.getX() - searchRadius; tileX <= tileNearTo.getX() + searchRadius; tileX++) {
-                for (int tileY = tileNearTo.getY() - searchRadius; tileY <= tileNearTo.getY() + searchRadius; tileY++) {
-//                    System.out.println(xCounter + ", " + yCounter);
-                    if ((xCounter == 0 || xCounter == doubleRadius) || (yCounter == 0 || yCounter == doubleRadius)) {
-                    	TilePosition tilePosition = new TilePosition(tileX, tileY);	//TODO? check the validity of this conversion 
-//                        System.out.println("tile [" + tileX + ", " + tileY + "]");
-                        if (doesPositionFulfillAllConditions(builder, tilePosition.toPosition())) {
-//                            System.out.println("--------------------------------------------------------");
-//                            System.out.println("--- Position for " + building + " found at: " + position);
-//                            System.out.println("--------------------------------------------------------");
-                            return tilePosition.toPosition();
+            
+            for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
+                for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
+                    if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
+                        APosition constructionPosition = new APosition(tileX * 32, tileY * 32);
+                        if (doesPositionFulfillAllConditions(builder, constructionPosition)) {
+                            return constructionPosition;
                         }
-//                        System.out.println("    [" + position + "]  Condition failed = " + _CONDITION_THAT_FAILED);
                     }
 
                     yCounter++;
@@ -125,10 +111,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
-        if (nearestBase != null && PositionUtil.distanceTo(nearestBase.getPosition(), position) <= 7) {
-        	Collection<AUnit> mineralsInRange = (Collection<AUnit>) Select.minerals().inRadius(8, position).listUnits();
+        if (nearestBase != null && nearestBase.distanceTo(position) <= 7) {
+            Collection<AUnit> mineralsInRange = (Collection<AUnit>) Select.minerals().inRadius(8, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
-                if (PositionUtil.distanceTo(mineral.getPosition(), position) <= 4) {
+                if (mineral.distanceTo(position) <= 4) {
                     return true;
                 }
             }

@@ -3,12 +3,9 @@ package atlantis.buildings.managers;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.units.AUnit;
-import atlantis.workers.AtlantisWorkerManager;
 import atlantis.units.Select;
+import atlantis.workers.AtlantisWorkerManager;
 import java.util.Collection;
-
-import bwapi.TechType;
-import bwapi.UpgradeType;
 
 public class AtlantisGasManager {
 

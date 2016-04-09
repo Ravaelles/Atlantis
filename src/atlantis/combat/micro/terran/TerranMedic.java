@@ -2,13 +2,9 @@ package atlantis.combat.micro.terran;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
 import atlantis.units.Select;
-import atlantis.units.Units;
-import java.util.Collection;
+import atlantis.util.PositionUtil;
 import java.util.HashMap;
-
-import bwapi.UnitType;
 
 public class TerranMedic {
     
@@ -38,7 +34,9 @@ public class TerranMedic {
     // =========================================================
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
         if (medic.getTarget() == null || !medic.getTarget().equals(unitToHeal)) {
-            medic.rightClick(unitToHeal);
+            if (unitToHeal != null) {
+                medic.rightClick(unitToHeal.u());
+            }
         }
     }
 

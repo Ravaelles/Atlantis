@@ -3,17 +3,13 @@ package atlantis.scout;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.debug.tooltip.TooltipManager;
-import atlantis.information.AtlantisEnemyInformationManager;
+import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
-import atlantis.information.AtlantisUnitInformationManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
-import java.util.ArrayList;
 import bwta.BaseLocation;
-
-import bwapi.UnitType;
+import java.util.ArrayList;
 
 public class AtlantisScoutManager {
 
@@ -31,7 +27,7 @@ public class AtlantisScoutManager {
         assignScoutIfNeeded();
 
         // We don't know any enemy building, scout nearest starting location.
-        if (!AtlantisEnemyInformationManager.hasDiscoveredEnemyBuilding()) {
+        if (!AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
             for (AUnit scout : scouts) {
                 tryToFindEnemy(scout);
             }
@@ -101,7 +97,7 @@ public class AtlantisScoutManager {
         BaseLocation startingLocation;
         if (scout.getType().equals(AUnitType.Zerg_Overlord)) {
             startingLocation = AtlantisMap.getStartingLocationBasedOnIndex(
-                    UnitUtil.getUnitIndex(scout)
+                    scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {
             startingLocation = AtlantisMap.getNearestUnexploredStartingLocation(ourMainBase.getPosition());
@@ -122,18 +118,24 @@ public class AtlantisScoutManager {
 
         // ZERG case
         if (AtlantisGame.playsAsZerg()) {
-            if (AtlantisEnemyInformationManager.hasDiscoveredEnemyBuilding()) { // We know enemy building
+            
+            // We know enemy building
+            if (AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
                 if (AtlantisGame.getTimeSeconds() < 600) {
                     if (scouts.isEmpty()) {
                         scouts.add(Select.ourWorkers().first());
                     }
                 }
-            } // Haven't discovered any enemy building
+            } 
+
+            // Haven't discovered any enemy building
             else {
                 scouts.clear();
                 scouts.addAll(Select.ourCombatUnits().listUnits());
             }
-        } // =========================================================
+        } 
+
+        // =========================================================
         // TERRAN + PRTOSSS
         else if (scouts.isEmpty() && Select.ourWorkers().count() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
             scouts.add(Select.ourWorkers().first());

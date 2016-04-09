@@ -1,16 +1,15 @@
 package atlantis.wrappers;
 
+import atlantis.util.AtlantisUtilities;
+import atlantis.util.PositionUtil;
+import bwapi.Position;
+import bwapi.PositionedObject;
+import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-
-import bwapi.Position;
-import bwapi.PositionedObject;
-import bwta.BWTA;
-import atlantis.util.PositionUtil;
-import atlantis.util.AtlantisUtilities;
 
 /**
  * This class is wrapper for ArrayList<Position>. It allows some helpful methods to be executed upon group of positions

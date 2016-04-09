@@ -1,14 +1,10 @@
 package atlantis.workers;
 
-import java.util.Collection;
-
 import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
-import atlantis.util.NameUtil;
-import atlantis.util.UnitUtil;
 import atlantis.units.Select;
 
 
@@ -38,6 +34,7 @@ public class AtlantisWorkerManager {
      * minerals.
      */
     private static void sendToGatherMineralsOrGasIfNeeded(AUnit worker) {
+        worker.removeTooltip();
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).
