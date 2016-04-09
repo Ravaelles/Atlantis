@@ -34,7 +34,9 @@ public class TerranMedic {
     // =========================================================
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
         if (medic.getTarget() == null || !medic.getTarget().equals(unitToHeal)) {
-            medic.rightClick(unitToHeal);
+            if (unitToHeal != null) {
+                medic.rightClick(unitToHeal.u());
+            }
         }
     }
 

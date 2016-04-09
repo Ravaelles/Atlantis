@@ -33,7 +33,11 @@ public class AtlantisSupplyManager {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 40) {
-                if (supplyFree <= 8 && noSuppliesBeingBuilt) {
+                if (supplyFree <= 7 && noSuppliesBeingBuilt) {
+                    requestAdditionalSupply();
+                }
+            } else if (supplyTotal <= 100) {
+                if (supplyFree <= 10 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 200) {

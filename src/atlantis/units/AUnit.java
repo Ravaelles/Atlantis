@@ -530,7 +530,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return running.isRunning(this);
+        return running.isRunning();
     }
 
     /**
@@ -631,7 +631,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         if (nearestEnemy == null) {
             return false;
         } else {
-            return running.runFrom(this, nearestEnemy);
+            return running.runFrom(nearestEnemy);
         }
     }
     

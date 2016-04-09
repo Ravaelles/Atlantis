@@ -54,8 +54,8 @@ public class DefaultMeleeManager extends MicroMeleeManager {
             }
             
             // =========================================================
-            // False: Did not use micro-manager, allow mission behavior
-            // True: Do not allow mission manager to handle this unit
+            // False: Did not use micro-manager, allow mission behavior.
+            // True: Do not allow mission manager to handle this unit, because micro-manager issued command.
             boolean canGiveCommandToMissionManager = unit.getGroundWeaponCooldown() > 0;
             return canGiveCommandToMissionManager;
         } 

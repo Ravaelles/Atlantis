@@ -134,7 +134,8 @@ public class MissionDefend extends Mission {
     protected boolean canIssueOrderToUnit(AUnit unit) {
 
         // If unit has far more important actions than fucking positioning, disallow any actions here.
-        if (unit.isAttacking() || unit.isStartingAttack() || AtlantisRunning.isRunning(unit) || unit.isAttackFrame() || unit.isMoving()) {
+        if (unit.isAttacking() || unit.isStartingAttack() || unit.isRunning() 
+                || unit.isAttackFrame() || unit.isMoving()) {
             return false;
         }
 

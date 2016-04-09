@@ -287,8 +287,8 @@ public interface UnitActions {
         return u().rightClick(target);
     }
 
-    default boolean rightClick(AUnit target) {
-        return u().rightClick(target.u());
+    default boolean rightClick(Unit target) {
+        return u().rightClick(target);
     }
 
     default boolean rightClick(PositionOrUnit target) {

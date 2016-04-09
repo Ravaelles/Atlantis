@@ -133,7 +133,8 @@ public class MissionPrepare extends Mission {
      */
     @Override
     protected boolean canIssueOrderToUnit(AUnit unit) {
-        if (AtlantisRunning.isRunning(unit) || unit.isStartingAttack() || unit.isAttacking() || unit.isAttackFrame() || unit.isMoving()) {
+        if (unit.isRunning() || unit.isStartingAttack() || unit.isAttacking() 
+                || unit.isAttackFrame() || unit.isMoving()) {
             return false;
         }
 

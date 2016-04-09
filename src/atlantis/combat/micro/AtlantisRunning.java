@@ -19,6 +19,7 @@ public class AtlantisRunning {
     private AUnit unit;
     private Position nextPositionToRunTo = null;
     private int lastRunTime = -1;
+    private boolean _isRunning = false;
 
     /**
      * Maps AUnit to AtlantisRunning instances (to remove unit.isRunning method)
@@ -38,13 +39,19 @@ public class AtlantisRunning {
     /**
      * Indicates that this unit should be running from given enemy unit.
      */
-    public static boolean runFrom(AUnit runner, AUnit chaser) {
+    public boolean runFrom(AUnit chaser) {
+        
+        // TEMP fix
         if (true) {
-            runner.move(Select.mainBase().getPosition());
+            _isRunning = true;
+            unit.move(Select.mainBase().getPosition());
+            return true;
         }
         
+        // =========================================================
+        
         if (chaser == null) {
-            chaser = Select.enemyRealUnits().nearestTo(runner.getPosition());
+            chaser = Select.enemyRealUnits().nearestTo(unit.getPosition());
         }
         if (chaser == null) {
             return false;
@@ -52,11 +59,11 @@ public class AtlantisRunning {
         
         // =========================================================
         
-        AtlantisRunning running = runner.getRunning();
+        AtlantisRunning running = unit.getRunning();
         if (running != null && running.nextPositionToRunTo != null) {
-            if (runner.distanceTo(running.nextPositionToRunTo) > 0.5) {
-                if (!runner.isMoving()) {
-                    runner.move(running.nextPositionToRunTo);
+            if (unit.distanceTo(running.nextPositionToRunTo) > 0.5) {
+                if (!unit.isMoving()) {
+                    unit.move(running.nextPositionToRunTo);
                 }
                 return true;
             }
@@ -64,9 +71,9 @@ public class AtlantisRunning {
         
         // =========================================================
         
-        running = new AtlantisRunning(runner);
+        running = new AtlantisRunning(unit);
         // Define position to run to
-        running.nextPositionToRunTo = getPositionAwayFrom(runner, chaser.getPosition());
+        running.nextPositionToRunTo = getPositionAwayFrom(unit, chaser.getPosition());
 
         // Remember the last time of the decision
         if (running.nextPositionToRunTo != null) {
@@ -78,19 +85,19 @@ public class AtlantisRunning {
         if (running.nextPositionToRunTo != null) {
             running.updateRunTooltip();
         } else {
-            runner.removeTooltip();
+            unit.removeTooltip();
             //unit.removeTooltip();
         }
 
         // =========================================================
         // Make unit run to the selected position
-        if (running.nextPositionToRunTo != null && !running.nextPositionToRunTo.equals(runner.getPosition())) {
-            runner.move(running.nextPositionToRunTo);
+        if (running.nextPositionToRunTo != null && !running.nextPositionToRunTo.equals(unit.getPosition())) {
+            unit.move(running.nextPositionToRunTo);
             running.updateRunTooltip();
 
             // If this is massive retreat, make all other units run as well
-            if (AtlantisCombatEvaluator.evaluateSituation(runner) < 0.2) {
-                running.notifyNearbyGroundUnitsToMakeSpace(runner, chaser);
+            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 0.2) {
+                running.notifyNearbyGroundUnitsToMakeSpace(unit, chaser);
             }
 
             return true;
@@ -127,8 +134,8 @@ public class AtlantisRunning {
 
         // Tell them to run as well, not to block our escape route
         for (AUnit ourOtherUnit : ourUnitsNearby) {
-            if (ourOtherUnit.isGroundUnit() && !isRunning(ourOtherUnit)) {
-                runFrom(ourOtherUnit, null);
+            if (ourOtherUnit.isGroundUnit() && !ourOtherUnit.isRunning()) {
+                ourOtherUnit.runFrom(null);
             }
         }
     }
@@ -200,10 +207,11 @@ public class AtlantisRunning {
 
     // =========================================================
     // Stop running
-    public static void stopRunning(AUnit unit) {
+    public void stopRunning() {
 //    	checkRunningInfo(unit);
 //        unitRunning.get(u).nextPositionToRunTo = null;
-        unit.getRunning().nextPositionToRunTo = null;
+        nextPositionToRunTo = null;
+        _isRunning = false;
     }
 
     // =========================================================
@@ -211,10 +219,9 @@ public class AtlantisRunning {
     /**
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
-    public static boolean isRunning(AUnit unit) {
-//    	checkRunningInfo(unit);
-//        return unitRunning.get(unit).nextPositionToRunTo != null;
-        return unit.getRunning().nextPositionToRunTo != null;
+    public boolean isRunning() {
+        return _isRunning;
+//        return unit.getRunning().nextPositionToRunTo != null;
     }
 
     /**

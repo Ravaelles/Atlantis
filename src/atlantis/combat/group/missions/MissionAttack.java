@@ -61,7 +61,7 @@ public class MissionAttack extends Mission {
      */
     @Override
     protected boolean canIssueOrderToUnit(AUnit unit) {
-        if (unit.isAttacking() || unit.isStartingAttack() || AtlantisRunning.isRunning(unit)) {
+        if (unit.isAttacking() || unit.isStartingAttack() || unit.isRunning()) {
             return false;
         }
 
