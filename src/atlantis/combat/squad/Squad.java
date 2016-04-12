@@ -1,32 +1,31 @@
-package atlantis.combat.group;
+package atlantis.combat.squad;
 
-import atlantis.combat.group.missions.Mission;
 import atlantis.combat.micro.DefaultMeleeManager;
 import atlantis.combat.micro.DefaultRangedManager;
 import atlantis.combat.micro.MicroMeleeManager;
 import atlantis.combat.micro.MicroRangedManager;
+import atlantis.combat.squad.missions.Mission;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.wrappers.APosition;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
- * Represents battle group (unit squad) that contains multiple battle units (could be one unit as well).
+ * Represents battle squad (unit squad) that contains multiple battle units (could be one unit as well).
  */
-public class Group extends Units {
+public class Squad extends Units {
 
     private static int firstFreeID = 1;
     private int ID = firstFreeID++;
 
     /**
-     * Convenience name for the group e.g. "Alpha", "Bravo", "Delta".
+     * Convenience name for the squad e.g. "Alpha", "Bravo", "Delta".
      */
     private String name;
 
     /**
-     * Current mission object for this group.
+     * Current mission object for this squad.
      */
     private Mission mission;
 
@@ -41,32 +40,32 @@ public class Group extends Units {
     private MicroMeleeManager microMeleeManager;
     
     /**
-     * Stores the group that each unit belongs to. Intends to replace Unit.setGroup() and getGroup() methods.
+     * Stores the squad that each unit belongs to. Intends to replace Unit.setSquad() and getSquad() methods.
      */
-    private static java.util.Map<AUnit, Group> groupOfUnit = new HashMap<>();
+//    private static java.util.Map<AUnit, Squad> squadOfUnit = new HashMap<>();
     
     
     /**
-     * Stores that a AUnit belongs to a Group
+     * Stores that a AUnit belongs to a Squad
      * @param unit
      * @param g
      */
-    public static void setGroupOfUnit(AUnit unit, Group g){
-    	groupOfUnit.put(unit, g);
-    }
+//    public static void setSquadOfUnit(AUnit unit, Squad g){
+//    	squadOfUnit.put(unit, g);
+//    }
     
     /**
-     * Retrieves the group that the unit belongs to
+     * Retrieves the squad that the unit belongs to
      * @param unit
      * @return
      */
-    public static Group getGroupOfUnit(AUnit unit){
-    	return groupOfUnit.get(unit);
-    }
+//    public static Squad getSquadOfUnit(AUnit unit){
+//    	return squadOfUnit.get(unit);
+//    }
 
     // =========================================================
     
-    private Group(String name, Mission mission) {
+    private Squad(String name, Mission mission) {
         super();
         this.name = name;
         this.mission = mission;
@@ -77,19 +76,19 @@ public class Group extends Units {
     // =========================================================
     
     /**
-     * Creates new group, designated by the given name. If <b>name</b> is null, default numeration "Alpha",
+     * Creates new squad, designated by the given name. If <b>name</b> is null, default numeration "Alpha",
      * "Bravo", "Charlie", "Delta" will be used.
      */
-    public static Group createNewGroup(String name, Mission mission) {
+    public static Squad createNewSquad(String name, Mission mission) {
 
         // Name is null, use autonaming
         if (name == null) {
             String[] names = new String[]{"Alpha", "Bravo", "Charlie", "Delta", "Echo"};
-            name = names[AtlantisGroupManager.groups.size()];
+            name = names[AtlantisSquadManager.squads.size()];
         }
 
-        Group group = new Group(name, mission);
-        return group;
+        Squad squad = new Squad(name, mission);
+        return squad;
     }
 
     // =========================================================
@@ -116,28 +115,28 @@ public class Group extends Units {
     // =========================================================
     
     /**
-     * Convenience name for the group e.g. "Alpha", "Bravo", "Charlie", "Delta".
+     * Convenience name for the squad e.g. "Alpha", "Bravo", "Charlie", "Delta".
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Convenience name for the group e.g. "Alpha", "Bravo", "Charlie", "Delta".
+     * Convenience name for the squad e.g. "Alpha", "Bravo", "Charlie", "Delta".
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * Current mission object for this group.
+     * Current mission object for this squad.
      */
     public Mission getMission() {
         return mission;
     }
 
     /**
-     * Current mission object for this group.
+     * Current mission object for this squad.
      */
     public void setMission(Mission mission) {
         this.mission = mission;
@@ -172,7 +171,7 @@ public class Group extends Units {
     }
 
     /**
-     * Returns ID for this battle group (1, 2, 3, 4 etc).
+     * Returns ID for this battle squad (1, 2, 3, 4 etc).
      */
     public int getID() {
         return ID;

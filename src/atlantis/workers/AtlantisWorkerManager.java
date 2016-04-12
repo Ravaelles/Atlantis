@@ -3,10 +3,8 @@ package atlantis.workers;
 import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-
 
 public class AtlantisWorkerManager {
 
@@ -14,7 +12,7 @@ public class AtlantisWorkerManager {
      * Executed for every worker unit.
      */
     public static void update(AUnit unit) {
-        TooltipManager.removeTooltip(unit);
+        unit.removeTooltip();
         //unit.removeTooltip();
 
         // Act as BUILDER
@@ -41,7 +39,7 @@ public class AtlantisWorkerManager {
         if (worker.isIdle()
                 || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
                 && !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
-            TooltipManager.setTooltip(worker, "Move ya ass!");
+            worker.setTooltip("Move ya ass!");
             AtlantisMineralGathering.gatherResources(worker);
         }
     }
@@ -130,7 +128,7 @@ public class AtlantisWorkerManager {
         // if (unit.isIdle()) {
         // tooltip += "Idle" + newLine;
         // }
-        TooltipManager.setTooltip(unit, tooltip);
+        unit.setTooltip(tooltip);
         //unit.setTooltip(tooltip);
     }
 

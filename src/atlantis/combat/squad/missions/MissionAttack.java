@@ -1,8 +1,6 @@
-package atlantis.combat.group.missions;
+package atlantis.combat.squad.missions;
 
 import atlantis.Atlantis;
-import atlantis.combat.micro.AtlantisRunning;
-import atlantis.debug.tooltip.TooltipManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
@@ -13,7 +11,7 @@ import bwapi.Color;
 import bwta.BaseLocation;
 
 /**
- * This is the mission object that is used by battle groups and it indicates that we should attack 
+ * This is the mission object that is used by battle squads and it indicates that we should attack 
  * the enemy at the <b>getFocusPoint</b>.
  */
 public class MissionAttack extends Mission {
@@ -33,7 +31,7 @@ public class MissionAttack extends Mission {
         	//System.out.println("-Dist to focus point: " + PositionUtil.distanceTo(focusPoint, unit.getPosition()));
             if (unit.distanceTo(focusPoint) > 5) {
                 unit.attack(focusPoint);
-                TooltipManager.setTooltip(unit, "Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
+                unit.setTooltip("Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
                 return true;
             }
         } 
@@ -45,7 +43,7 @@ public class MissionAttack extends Mission {
             if (position != null) {
                 unit.attack(position);	
                 Atlantis.getBwapi().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
-                TooltipManager.setTooltip(unit, "Attack!"); //TODO: DEBUG
+                unit.setTooltip("Attack!"); //TODO: DEBUG
 //                unit.setTooltip("Mission spread");
                 return true;
             }
@@ -54,19 +52,6 @@ public class MissionAttack extends Mission {
     }
 
     // =========================================================
-    // =========================================================
-    
-    /**
-     * Do not interrupt unit if it is engaged in combat.
-     */
-    @Override
-    protected boolean canIssueOrderToUnit(AUnit unit) {
-        if (unit.isAttacking() || unit.isStartingAttack() || unit.isRunning()) {
-            return false;
-        }
-
-        return true;
-    }
 
     /**
      * Returns the <b>position</b> (not the unit itself) where we should point our units to in hope 

@@ -4,14 +4,12 @@ import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.buildings.managers.AtlantisGasManager;
 import atlantis.combat.AtlantisCombatEvaluator;
-import atlantis.combat.group.AtlantisGroupManager;
-import atlantis.combat.group.missions.MissionAttack;
-import atlantis.combat.group.missions.MissionDefend;
-import atlantis.combat.group.missions.MissionPrepare;
+import atlantis.combat.squad.AtlantisSquadManager;
+import atlantis.combat.squad.missions.MissionAttack;
+import atlantis.combat.squad.missions.MissionDefend;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
-import atlantis.debug.tooltip.TooltipManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
@@ -37,8 +35,8 @@ import java.util.Map;
  */
 public class AtlantisPainter {
     
-    private static boolean DISABLE_PAINTING = true;
-//    private static boolean DISABLE_PAINTING = false;
+//    private static final boolean DISABLE_PAINTING = true;
+    private static final boolean DISABLE_PAINTING = false;
 
     private static Game bwapi;
     private static int sideMessageTopCounter = 0;
@@ -158,6 +156,14 @@ public class AtlantisPainter {
                             : AtlantisCombatEvaluator.getEvalString(unit);
                     paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
                 }
+                
+                // =========================================================
+                // === Paint circle around units with zero ground weapon 
+                // === cooldown equal to 0 - meaning they can shoot now
+                // =========================================================
+                if (unit.getGroundWeaponCooldown() == 0) {
+                    paintCircle(unitPosition, 14, Color.White);
+                }
             }
         }
 
@@ -188,7 +194,7 @@ public class AtlantisPainter {
         paintSideMessage("Reserved gas: " + AtlantisBuildOrders.getGasNeeded(), Color.Grey);
         // =========================================================
         // Global mission
-        paintSideMessage("Mission: " + AtlantisGroupManager.getAlphaGroup().getMission().getName(), Color.White);
+        paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
 
         // =========================================================
         // Focus point
@@ -201,7 +207,7 @@ public class AtlantisPainter {
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
         // =========================================================
-        paintSideMessage("Combat group size: " + AtlantisGroupManager.getAlphaGroup().size(), Color.Blue, 0);
+        paintSideMessage("Combat squad size: " + AtlantisSquadManager.getAlphaSquad().size(), Color.Blue, 0);
     }
 
     /**
@@ -261,11 +267,11 @@ public class AtlantisPainter {
 ////                paintTextCentered(new APosition(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
 //            }
         // =========================================================
-        // === Paint battle group
+        // === Paint battle squad
         // =========================================================
-//            if (unit.getGroup() != null) {
+//            if (unit.getSquad() != null) {
 //                paintTextCentered(new APosition(unit.getPX(), unit.getPY() + 3), Color.getColorString(Color.Grey)
-//                        + "#" + unit.getGroup().getID(), false);
+//                        + "#" + unit.getSquad().getID(), false);
 //            }
         // =========================================================
         // === Paint num of other units around this unit
@@ -308,14 +314,6 @@ public class AtlantisPainter {
             paintCircle(position, 20, Color.Black);
             paintCircle(position, 19, Color.Black);
             paintTextCentered(position, "DEFEND", Color.Grey);
-        }
-
-        // Mission PREPARE focus point
-        position = MissionPrepare.getFocusPoint();
-        if (position != null) {
-            paintCircle(position, 20, Color.Black);
-            paintCircle(position, 19, Color.Black);
-            paintTextCentered(position, "PREPARE", Color.Grey);
         }
 
         // Mission ATTACK focus point
@@ -726,8 +724,8 @@ public class AtlantisPainter {
      */
     private static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().listUnits()) {
-            if (TooltipManager.hasTooltip(unit)) { // unit.hasTooltip()
-                paintTextCentered(unit.getPosition(), TooltipManager.getTooltip(unit), Color.White);
+            if (unit.hasTooltip()) { 
+                paintTextCentered(unit.getPosition(), unit.getTooltip(), Color.White);
             }
         }
     }
@@ -808,7 +806,6 @@ public class AtlantisPainter {
             return;
         }
         bwapi.drawCircleMap(position, radius, color, false);
-        //getBwapi().drawCircle(position, radius, color, false, false);
     }
 
     private static void paintLine(APosition start, int dx, int dy, Color color) {

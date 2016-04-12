@@ -63,12 +63,7 @@ public class AtlantisEnemyUnits {
             }
         }
         
-        if (best != null) {
-            return best;
-        }
-        else {
-            return null;
-        }
+        return best; // Can be null
     }
     
     public static Collection<UnitData> getDiscoveredAndAliveUnits() {

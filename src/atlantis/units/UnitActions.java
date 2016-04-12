@@ -6,7 +6,6 @@ import bwapi.PositionOrUnit;
 import bwapi.TechType;
 import bwapi.TilePosition;
 import bwapi.Unit;
-import bwapi.UnitCommand;
 import bwapi.UpgradeType;
 
 /**

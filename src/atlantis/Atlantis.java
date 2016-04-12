@@ -1,6 +1,6 @@
 package atlantis;
 
-import atlantis.combat.group.AtlantisGroupManager;
+import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.constructing.ProtossConstructionManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.init.AtlantisInitialActions;
@@ -268,7 +268,7 @@ public class Atlantis implements BWEventListener {
             // Our unit
             if (unit.getPlayer().equals(bwapi.self()) && !(unit.getType().equals(AUnitType.Zerg_Larva) 
                     || unit.getType().equals(AUnitType.Zerg_Egg))) {
-                AtlantisGroupManager.possibleCombatUnitCreated(unit);
+                AtlantisSquadManager.possibleCombatUnitCreated(unit);
             }
         }
     }
@@ -290,7 +290,7 @@ public class Atlantis implements BWEventListener {
             // Our unit
             if (unit.getPlayer().equals(bwapi.self())) {
                 AtlantisGame.getBuildOrders().rebuildQueue();
-                AtlantisGroupManager.battleUnitDestroyed(unit);
+                AtlantisSquadManager.battleUnitDestroyed(unit);
                 LOST++;
                 LOST_RESOURCES += unit.getType().getTotalResources();
             } else {
@@ -357,7 +357,7 @@ public class Atlantis implements BWEventListener {
                 AtlantisEnemyUnits.unitDestroyed(unit);
             }
             else {
-                AtlantisGroupManager.battleUnitDestroyed(unit);
+                AtlantisSquadManager.battleUnitDestroyed(unit);
             }
         }
 
@@ -374,9 +374,9 @@ public class Atlantis implements BWEventListener {
             else {
                 AtlantisGame.getBuildOrders().rebuildQueue();
 
-                // Add to combat group if it's military unit
+                // Add to combat squad if it's military unit
                 if (unit.isActualUnit()) {
-                    AtlantisGroupManager.possibleCombatUnitCreated(unit);
+                    AtlantisSquadManager.possibleCombatUnitCreated(unit);
                 }
             }
         }

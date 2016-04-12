@@ -3,9 +3,11 @@ package atlantis.combat.micro;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.combat.AtlantisCombatEvaluator;
+import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.PositionUtil;
+import atlantis.wrappers.APosition;
 import bwapi.WeaponType;
 import java.util.Collection;
 
@@ -28,13 +30,16 @@ public abstract class MicroManager {
         // If situation is unfavorable, retreat
         if (!isSituationFavorable) {
             if (unit.isAttackFrame() || unit.isStartingAttack()) { //replacing isJustShooting
+                unit.setTooltip("SHOOTS");
                 return true;
             }
             else {
+                unit.setTooltip("Runs");
                 return AtlantisRunManager.run(unit);
             }
         }
         else {
+            unit.setTooltip("---");
             
             // If unit is running, allow it to stop running only if chances are quite favorable
             if (unit.isRunning()) {
@@ -91,9 +96,32 @@ public abstract class MicroManager {
     }
 
     /**
-     * @return <b>true</b> if any of the enemy units can shoot at this unit.
+     * If e.g. Terran Marine stands too far forward, it makes him vulnerable. Make him go back.
      */
-    private boolean isInShootRangeOfAnyEnemyUnit(AUnit unit) {
+    protected boolean handleDontSpreadTooMuch(AUnit unit) {
+        Squad squad = unit.getSquad();
+        Select ourUnits = Select.from(squad.arrayList()).inRadius(7, unit.getPosition());
+        int ourUnitsNearby = ourUnits.count();
+        int minUnitsNearby = (int) (squad.size() * 0.66);
+        
+        // =========================================================
+
+        if (ourUnitsNearby < minUnitsNearby && ourUnitsNearby <= 5) {
+            APosition goTo = PositionUtil.averagePosition(ourUnits.list());
+            if (goTo != null && goTo.distanceTo(unit) > 1) {
+                unit.move(goTo);
+                unit.setTooltip("Closer");
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    /**
+     * @return <b>true</b> if any of the enemy units in range can shoot at this unit.
+     */
+    protected boolean isInShootRangeOfAnyEnemyUnit(AUnit unit) {
     	Collection<AUnit> enemiesInRange = (Collection<AUnit>) Select.enemy().combatUnits().inRadius(12, unit.getPosition()).listUnits();
         for (AUnit enemy : enemiesInRange) {
             WeaponType enemyWeapon = (unit.isAirUnit() ? enemy.getAirWeapon() : enemy.getGroundWeapon());

@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 /**
- * This class is wrapper for ArrayList<Position>. It allows some helpful methods to be executed upon group of positions
+ * This class is wrapper for ArrayList<Position>. It allows some helpful methods to be executed upon squad of positions
  * like sorting etc.
  * TODO: check whether using PositionedObject instead of Positions yields correct behavior
  */

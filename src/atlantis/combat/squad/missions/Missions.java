@@ -1,21 +1,20 @@
-package atlantis.combat.group.missions;
+package atlantis.combat.squad.missions;
 
 import atlantis.AtlantisGame;
 import atlantis.units.Select;
 
 /**
- * Handles the global mission that is mission that affects the battle  group Alpha.
+ * Handles the global mission that is mission that affects the battle  squad Alpha.
  */
 public class Missions {
     
     /**
-     * This is the mission for main battle group forces. E.g. initially it will be DEFEND, then it should be
+     * This is the mission for main battle squad forces. E.g. initially it will be DEFEND, then it should be
      * PREPARE (go near enemy) and then ATTACK.
      */
     private static Mission currentGlobalMission;
 
     public static final Mission DEFEND = new MissionDefend("Defend");
-    public static final Mission PREPARE = new MissionPrepare("Prepare");
     public static final Mission ATTACK = new MissionAttack("Attack");
     
     // =========================================================
@@ -73,7 +72,7 @@ public class Missions {
 
             // Enemy TERRAN
             else if (AtlantisGame.isEnemyTerran()) {
-                return 9;
+                return 6;
             }
 
             // Enemy ZERG
@@ -86,8 +85,8 @@ public class Missions {
     // =========================================================
 
     /**
-     * Global mission is the military stance that all non-special battle groups should follow and it
-     * should always correspond to the mission of our main Alpha battle group.
+     * Global mission is the military stance that all non-special battle squads should follow and it
+     * should always correspond to the mission of our main Alpha battle squad.
      */
     public static Mission getCurrentGlobalMission() {
         return currentGlobalMission;

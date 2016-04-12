@@ -19,16 +19,16 @@ public class AtlantisGameCommander {
     public void update() {
 
         // =========================================================
+        // Execute extra paint methods at the end of all actions
+        AtlantisPainter.paint();
+
+        // =========================================================
         // Execute code of every Commander
         AtlantisWorkerCommander.update();
         AtlantisCombatCommander.update();
         AtlantisScoutManager.update();
 //        AtlantisBuildingsCommander.update(); // Currently unused
         AtlantisProductionCommander.update();
-
-        // =========================================================
-        // Execute extra paint methods at the end of all actions
-        AtlantisPainter.paint();
     }
 
 }
