@@ -25,7 +25,7 @@ Atlantis is actively developed, but it's quite capable already. The latest stabl
 * First install [BWAPI in version 4.1.2](https://github.com/bwapi/bwapi/releases/download/v4.1.2/BWAPI_412_Setup.exe)
 * Make sure to read the readme absolutely carefully. The installation of BWAPI can be really hard thing.
 * At least take a quick look at tutorial here (http://sscaitournament.com/index.php?action=tutorial) to understand how the BWMirror bridge between the game actually works and what it does
-* Checkout this repository and make a new project in either NetBeans or Eclipse, for more instructions see the tutorial above. For all the bugfixing, again, follow the tutorial.
+* Checkout this repository and make a new project in either NetBeans or Eclipse. Make sure you have Java 1.8 as Atlantis requires it. For more instructions about how to use Eclipse and/or troubleshooting see the tutorial above. 
 * If you've done everything correctly, you're free to go. The main class is of AtlantisTide is called Main. Atlantis is only a family of all products that will be built upon this framework.
 * Atlantis is capable of auto-detecting the race it plays. If you want to change your race, modify this line "race = Protoss" in your bwapi.ini file.
 
@@ -33,6 +33,11 @@ Atlantis is actively developed, but it's quite capable already. The latest stabl
 To be explained and improved...
   * Atlantis.matchFrame()
     * AtlantisGameCommander.update()
+	  * AtlantisPainter.paint();
+    		- paints life bars over units
+    		- displays places of construction that haven't started yet
+    		- displays current production queue
+    		- displays tooltips over units that make debugging easier
 	  * AtlantisWorkerCommander.update();
 	  	- gathering resources
 	  	- transfers workers between bases if needed
@@ -50,11 +55,6 @@ To be explained and improved...
 	  	- automatically builds supply units when needed 
 	  	- ensures constructions are finished and have proper builders
 	  	- requests construction of new base (expands)
-	  * AtlantisPainter.paint();
-    		- paints life bars over units
-    		- displays places of construction that haven't started yet
-    		- displays current production queue
-    		- displays tooltips over units that make debugging easier
 
 # AI tournaments
 Take a look at this site: http://sscaitournament.com/
