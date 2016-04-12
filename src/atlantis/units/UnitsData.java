@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 
 /**
- * This class is wrapper for ArrayList<UnitData>. It allows some helpful methods to be executed upon group of
+ * This class is wrapper for ArrayList<UnitData>. It allows some helpful methods to be executed upon squad of
  * units like sorting etc.
  */
 public class UnitsData {

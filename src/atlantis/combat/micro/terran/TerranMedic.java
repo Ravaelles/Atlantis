@@ -1,17 +1,25 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.PositionUtil;
+import bwapi.UnitCommandType;
 import java.util.HashMap;
 
 public class TerranMedic {
     
-    private static HashMap<AUnit, AUnit> medicsAssignments = new HashMap<>();
-    
-    // =========================================================
+    /**
+     * Maximum allowed distance for a medic to heal wounded units that are not their assignment.
+     * The idea is to disallow them to move away too much.
+     */
+    private static final int HEAL_OTHER_UNITS_MAX_DISTANCE = 6;
 
+    /**
+     * Specific units that medics should follow in order to heal them as fast as possible 
+     * when they get wounded.
+     */
+    private static final HashMap<AUnit, AUnit> medicsAssignments = new HashMap<>();
+
+    // =========================================================
     public static boolean update(AUnit medic) {
 
         // =========================================================
@@ -21,11 +29,11 @@ public class TerranMedic {
         }
 
         // =========================================================
-        // If there's no "real" infatnry around, go to the nearest Marine, Firebat or Ghost.
+        // If there's no "real" infantry around, go to the nearest Marine, Firebat or Ghost.
         if (handleTooFarFromRealInfantry(medic)) {
             return true;
         }
-        
+
         // =========================================================
         // False: Did not use micro-manager, allow mission behavior
         return false;
@@ -33,61 +41,54 @@ public class TerranMedic {
 
     // =========================================================
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
-        if (medic.getTarget() == null || !medic.getTarget().equals(unitToHeal)) {
-            if (unitToHeal != null) {
-                medic.rightClick(unitToHeal.u());
-            }
+        if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.getTarget())) {
+            medic.rightClick(unitToHeal);
         }
     }
 
     private static AUnit getInfantryAssignedForThisMedic(AUnit medic) {
         AUnit assignment = medicsAssignments.get(medic);
-        
-        if (assignment == null || !assignment.exists()) {
-            assignment = Select.ourTerranInfantryWithoutMedics().random();
+
+        if (assignment == null || !assignment.exists() || !assignment.isAlive()) {
+            assignment = Select.ourTerranInfantryWithoutMedics().first();
+            
+            if (assignment != null) {
+                medicsAssignments.put(medic, assignment);
+            }
         }
-        
+
         return assignment;
     }
 
     private static boolean handleTooFarFromRealInfantry(AUnit medic) {
-        int realInfantryNearby
-                = Select.our().inRadius(4, medic.getPosition()).countUnitsOfType(AUnitType.Terran_Marine,
-                AUnitType.Terran_Firebat, AUnitType.Terran_Ghost);
-        if (realInfantryNearby == 0) {
-            AUnit nearestRealInfantry = Select.ourTerranInfantryWithoutMedics().nearestTo(medic.getPosition());
-            if (nearestRealInfantry != null) {
-                // Check if medic is close to the infantry it should be close to
-                AUnit infantryAssignedForThisMedic = getInfantryAssignedForThisMedic(medic);
-                medic.move(infantryAssignedForThisMedic.getPosition());
-                return true;
+        AUnit unitAssignedForMedic = getInfantryAssignedForThisMedic(medic);
+        if (unitAssignedForMedic != null) {
+            if (unitAssignedForMedic.distanceTo(medic) > 1.9) {
+                if (Select.ourTerranInfantryWithoutMedics().inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic.getPosition()).count() <= 2) {
+                    medic.move(unitAssignedForMedic.getPosition());
+                    return true;
+                }
             }
         }
+        
         return false;
     }
 
     private static boolean handleHealWoundedUnit(AUnit medic) {
+        if (!medic.isIdle() && medic.getLastCommand().getUnitCommandType() == UnitCommandType.Right_Click_Unit) {
+            return true;
+        }
+
         AUnit nearestWoundedInfantry = (AUnit) Select.ourCombatUnits().infantry().wounded()
-                .inRadius(6, medic.getPosition()).nearestTo(medic.getPosition());
+                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic.getPosition()).nearestTo(medic.getPosition());
 
         // =========================================================
-        // If there's wounded unit, heal it.
+        // If there's a wounded unit, heal it.
         if (nearestWoundedInfantry != null) {
             healUnit(medic, nearestWoundedInfantry);
             return true;
-        } 
-
-        // =========================================================
-        // If no wounded unit, get close to random infantry
-        AUnit nearestInfantry = (AUnit) Select.our().ofType(
-                AUnitType.Terran_Marine,
-                AUnitType.Terran_Firebat,
-                AUnitType.Terran_Ghost
-        ).nearestTo(medic.getPosition());
-        if (nearestInfantry != null && PositionUtil.distanceTo(nearestInfantry, medic) > 1.4
-                && !nearestInfantry.equals(medic.getTarget())) {
-            healUnit(medic, nearestWoundedInfantry);
         }
+
         return false;
     }
 

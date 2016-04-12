@@ -50,14 +50,14 @@ Number;Name;Modifier
 1;Refinery
 11;Barracks
 12;SCV
+20;Medic
 15;Marine
 12;SCV
+20;Medic
 14;Marine
 12;SCV
 20;Medic
-20;Medic
 12;SCV
-20;Medic
 14;Marine
 21;Barracks
 12;SCV
@@ -65,4 +65,4 @@ Number;Name;Modifier
 12;SCV
 14;Marine
 12;SCV
-2;Command Center
+20;U 238 Shells

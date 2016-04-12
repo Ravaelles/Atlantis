@@ -39,7 +39,8 @@ public class AtlantisRunning {
     /**
      * Indicates that this unit should be running from given enemy unit.
      */
-    public boolean runFrom(AUnit chaser) {
+    @SuppressWarnings("unused")
+	public boolean runFrom(AUnit chaser) {
         
         // TEMP fix
         if (true) {
@@ -84,9 +85,6 @@ public class AtlantisRunning {
         // Update tooltip
         if (running.nextPositionToRunTo != null) {
             running.updateRunTooltip();
-        } else {
-            unit.removeTooltip();
-            //unit.removeTooltip();
         }
 
         // =========================================================

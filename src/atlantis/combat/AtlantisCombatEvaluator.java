@@ -34,6 +34,11 @@ public class AtlantisCombatEvaluator {
     private static double EVAL_DAMAGE_FACTOR = 1.0;
 
     /**
+     * Maximum allowed value as a result of evaluation.
+     */
+    private static int MAX_VALUE = 999;
+
+    /**
      * Stores the instances of AtlantisCombatInformation for each unit
      */
     private static Map<AUnit, AtlantisCombatInformation> combatInfo = new HashMap<>();
@@ -45,6 +50,9 @@ public class AtlantisCombatEvaluator {
      */
     public static boolean isSituationFavorable(AUnit unit) {
         AUnit nearestEnemy = Select.enemy().nearestTo(unit.getPosition());
+        if (nearestEnemy == null || unit.distanceTo(nearestEnemy) >= 14) {
+            return true;
+        }
 
         if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysFight(unit, nearestEnemy)) {
             return true;
@@ -77,7 +85,6 @@ public class AtlantisCombatEvaluator {
      * <b>NEGATIVE</b> when enemy is too strong and we should pull back.
      */
     public static double evaluateSituation(AUnit unit) {
-
         checkCombatInfo(unit);
 
         // Try using cached value

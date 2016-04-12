@@ -1,8 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.debug.tooltip.TooltipManager;
 import atlantis.units.AUnit;
-
 
 /**
  *
@@ -41,11 +39,9 @@ public class AtlantisAttackEnemyUnit {
         // If we already are attacking this unit, do not issue double command.
         if (!enemyToAttack.equals(unit.getTarget())) {
             unit.attack(enemyToAttack);
-            TooltipManager.setTooltip(unit, "Forward!"); //setTooltip("Forward!");
+            unit.setTooltip("Forward!"); //setTooltip("Forward!");
         } 
         
-        TooltipManager.removeTooltip(unit);
-        //unit.removeTooltip();
         return true;
     }
 

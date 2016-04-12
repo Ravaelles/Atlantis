@@ -82,7 +82,7 @@ public class AtlantisSpecialPositionFinder {
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
 
         return AtlantisPositionFinder.findStandardPosition(builder, building, 
-                APosition.createFrom(baseLocationToExpand.getPosition()), 3);
+                APosition.createFrom(baseLocationToExpand.getPosition()), 1);
     }
 
     private static APosition findPositionForBase_nearestMainBase(AUnitType building, AUnit builder) {
@@ -90,10 +90,10 @@ public class AtlantisSpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder) {
-        APosition nearestBase = APosition.createFrom(
+        APosition nearestBaseLocation = APosition.createFrom(
                 AtlantisMap.getNearestBaseLocationToExpand(Select.mainBase().getPosition()).getPosition()
         );
-        return AtlantisPositionFinder.findStandardPosition(builder, building, nearestBase, 10);
+        return AtlantisPositionFinder.findStandardPosition(builder, building, nearestBaseLocation, 3);
     }
 
 }

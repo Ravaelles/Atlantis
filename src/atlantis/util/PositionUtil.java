@@ -71,7 +71,7 @@ public class PositionUtil {
     }
 
     /**
-     * Returns median PX and median PY for all units.
+     * Returns median PX and median PY for all passed units.
      */
     public static APosition medianPosition(Collection<AUnit> units) {
         if (units.isEmpty()) {
@@ -92,4 +92,25 @@ public class PositionUtil {
                 yCoordinates.get(yCoordinates.size() / 2)
         );
     }
+
+    /**
+     * Returns average PX and average PY for all passed units.
+     */
+    public static APosition averagePosition(Collection<AUnit> units) {
+        if (units.isEmpty()) {
+            return null;
+        }
+
+        int totalX = 0;
+        int totalY = 0;
+        for (AUnit unit : units) {
+            totalX += unit.getPosition().getX();
+            totalY += unit.getPosition().getY();
+        }
+        return new APosition(
+            totalX / units.size(),
+            totalY / units.size()
+        );
+    }
+    
 }

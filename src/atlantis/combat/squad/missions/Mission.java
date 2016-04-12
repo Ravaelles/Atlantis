@@ -1,11 +1,11 @@
-package atlantis.combat.group.missions;
+package atlantis.combat.squad.missions;
 
 import atlantis.units.AUnit;
 
 
 
 /**
- * Represents behavior for group of units e.g. DEFEND, ATTACK etc.
+ * Represents behavior for squad of units e.g. DEFEND, ATTACK etc.
  */
 public abstract class Mission {
 
@@ -23,11 +23,6 @@ public abstract class Mission {
      * If returns true, it's not allowed for micro managers to act.
      */
     public abstract boolean update(AUnit unit);
-
-    /**
-     * Returns true for units that should accept orders in this frame.
-     */
-    protected abstract boolean canIssueOrderToUnit(AUnit unit);
 
     // =========================================================
 

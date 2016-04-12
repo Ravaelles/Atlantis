@@ -157,9 +157,10 @@ public abstract class AtlantisBuildOrders {
             // If we can afford this order and the previous, add it to CurrentToProduceList.
             if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
                 result.add(order);
-            } // We can't afford to produce this order along with all previous ones. Return currently list.
+            } 
+
+            // We can't afford to produce this order along with all previous ones. Return currently list.
             else {
-//                System.out.println("-----break at: " + unitType);
                 break;
             }
         }

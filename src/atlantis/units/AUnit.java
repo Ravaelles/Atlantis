@@ -1,11 +1,10 @@
 package atlantis.units;
 
 import atlantis.AtlantisGame;
-import atlantis.combat.group.Group;
 import atlantis.combat.micro.AtlantisRunning;
+import atlantis.combat.squad.Squad;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.debug.tooltip.TooltipManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.APositionedObject;
@@ -137,7 +136,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     private static int firstFreeID = 1;
 
     private int innerID;
-    private Group group = null;
+    private Squad squad = null;
     private AtlantisRunning running = new AtlantisRunning(this);
     private int lastUnitAction = 0;
 
@@ -164,7 +163,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         Position newPosition = new Position(getX() - dx, getY() - dy);
 
         move(newPosition);
-        TooltipManager.setTooltip(this, "Run");
+        this.setTooltip("Run");
     }
     
     // =========================================================
@@ -534,17 +533,17 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }
 
     /**
-     * Returns battle group object for military units or null for non military-units (or buildings).
+     * Returns battle squad object for military units or null for non military-units (or buildings).
      */
-    public Group getGroup() {
-        return group;
+    public Squad getSquad() {
+        return squad;
     }
 
     /**
-     * Assign battle group object for military units.
+     * Assign battle squad object for military units.
      */
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setSquad(Squad squad) {
+        this.squad = squad;
     }
 
     /**
