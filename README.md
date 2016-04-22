@@ -30,7 +30,7 @@ Atlantis is actively developed, but it's quite capable already. The latest stabl
 * Atlantis is capable of auto-detecting the race it plays. If you want to change your race, modify this line "race = Protoss" in your bwapi.ini file.
 
 # Code structure
-To be explained and improved...
+
   * Atlantis.matchFrame()
     * AtlantisGameCommander.update()
 	  * AtlantisPainter.paint();
@@ -60,5 +60,5 @@ To be explained and improved...
 Take a look at this site: http://sscaitournament.com/
 
 It's tournament for Starcraft bots where all bots play online matches that are transmitted 364/24/7. Pretty cool, eh?
-There you can will find all the information about participation and submission of your bot. 
+There you can find all the information about participation and submission of your bot. 
 Adun Toridas!
