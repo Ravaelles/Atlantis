@@ -100,13 +100,13 @@ public abstract class MicroManager {
      */
     protected boolean handleDontSpreadTooMuch(AUnit unit) {
         Squad squad = unit.getSquad();
-        Select ourUnits = Select.from(squad.arrayList()).inRadius(7, unit.getPosition());
+        Select ourUnits = Select.from(squad.arrayList()).inRadius(10, unit.getPosition());
         int ourUnitsNearby = ourUnits.count();
         int minUnitsNearby = (int) (squad.size() * 0.66);
         
         // =========================================================
 
-        if (ourUnitsNearby < minUnitsNearby && ourUnitsNearby <= 5) {
+        if (ourUnitsNearby < minUnitsNearby && ourUnitsNearby <= 3) {
             APosition goTo = PositionUtil.averagePosition(ourUnits.list());
             if (goTo != null && goTo.distanceTo(unit) > 1) {
                 unit.move(goTo);

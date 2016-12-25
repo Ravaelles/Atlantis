@@ -122,7 +122,13 @@ public class AtlantisScoutManager {
             if (AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
                 if (AtlantisGame.getTimeSeconds() < 600) {
                     if (scouts.isEmpty()) {
-                        scouts.add(Select.ourWorkers().first());
+                        for (AUnit worker : Select.ourWorkers().list()) {
+                            if (!worker.isBuilder()) {
+                                System.err.println(worker.getID());
+                                scouts.add(worker);
+                                break;
+                            }
+                        }
                     }
                 }
             } 
