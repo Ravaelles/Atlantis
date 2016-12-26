@@ -1,5 +1,7 @@
 package atlantis.units;
 
+import atlantis.units.missions.UnitMission;
+import atlantis.units.missions.UnitMissions;
 import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwapi.PositionOrUnit;
@@ -20,25 +22,27 @@ public interface UnitActions {
     
     // =========================================================
     
-    default boolean attack(AUnit target) {
+    default boolean attack(AUnit target, UnitMission unitMission) {
         
         // Do NOT issue double orders
         if (u().isAttacking() && u().getTarget() != null && unit().getTarget().equals(target)) {
             return false;
         }
         else {
+            unit().setUnitMission(unitMission);
             return u().attack(target.u());
         }
 //        return u().attack(target.u());
     }
     
-    default boolean attack(APosition target) {
+    default boolean attack(APosition target, UnitMission unitMission) {
         
         // Do NOT issue double orders
         if (u().isAttacking() && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
             return false;
         }
         else {
+            unit().setUnitMission(unitMission);
             return u().attack(target);
         }
     }
@@ -51,7 +55,8 @@ public interface UnitActions {
         return u().morph(into.ut());
     }
     
-    default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {
+    default boolean build(AUnitType buildingType, TilePosition buildTilePosition, UnitMission unitMission) {
+        unit().setUnitMission(UnitMissions.BUILD);
         return u().build(buildingType.ut(), buildTilePosition);
     }
     
@@ -59,7 +64,8 @@ public interface UnitActions {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    default public boolean move(Position target) {
+    default public boolean move(Position target, UnitMission unitMission) {
+        unit().setUnitMission(unitMission);
         return u().move(target);
     }
     
@@ -73,7 +79,8 @@ public interface UnitActions {
      * determined that the command would fail. Note There is a small chance for a command to fail after it has
      * been passed to Broodwar. See also isPatrolling, canPatrol
      */
-    default boolean patrol(APosition target) {
+    default boolean patrol(APosition target, UnitMission unitMission) {
+        unit().setUnitMission(UnitMissions.PATROL);
         return u().patrol(target);
     }
 
@@ -85,6 +92,7 @@ public interface UnitActions {
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
     default boolean holdPosition() {
+        unit().setUnitMission(UnitMissions.HOLD_POSITION);
         return u().holdPosition();
     }
 
@@ -96,6 +104,7 @@ public interface UnitActions {
      * been passed to Broodwar. See also canStop, isIdle
      */
     default boolean stop() {
+        unit().setUnitMission(UnitMissions.STOP);
         return u().stop();
     }
 
@@ -109,6 +118,7 @@ public interface UnitActions {
      * See also isFollowing, canFollow, getOrderTarget
      */
     default boolean follow(AUnit target) {
+        unit().setUnitMission(UnitMissions.FOLLOW);
         return u().follow(target.u());
     }
 
@@ -121,6 +131,13 @@ public interface UnitActions {
      * been passed to Broodwar. See also isGatheringGas, isGatheringMinerals, canGather
      */
     default boolean gather(AUnit target) {
+        if (target.getType().isMineralField()) {
+            unit().setUnitMission(UnitMissions.GATHER_MINERALS);
+        }
+        else {
+            unit().setUnitMission(UnitMissions.GATHER_GAS);
+        }
+        
         return u().gather(target.u());
     }
 
@@ -147,6 +164,7 @@ public interface UnitActions {
      * canRepair
      */
     default boolean repair(AUnit target) {
+        unit().setUnitMission(UnitMissions.REPAIR);
         return u().repair(target.u());
     }
 
@@ -194,6 +212,7 @@ public interface UnitActions {
      * command to fail after it has been passed to Broodwar. See also unsiege, isSieged, canSiege
      */
     default boolean siege() {
+        unit().setUnitMission(UnitMissions.SIEGE);
         return u().siege();
     }
 
@@ -203,6 +222,7 @@ public interface UnitActions {
      * for a command to fail after it has been passed to Broodwar. See also siege, isSieged, canUnsiege
      */
     default boolean unsiege() {
+        unit().setUnitMission(UnitMissions.UNSIEGE);
         return u().unsiege();
     }
 
@@ -290,6 +310,7 @@ public interface UnitActions {
     default boolean rightClick(AUnit target) {
         if (target != null) {
             if (!target.u().equals(u().getTarget())) {
+                unit().setUnitMission(UnitMissions.RIGHT_CLICK);
                 boolean result = u().rightClick(target.u());
             }
             return true;

@@ -6,6 +6,7 @@ import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.missions.UnitMissions;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import bwapi.WeaponType;
@@ -75,7 +76,7 @@ public abstract class MicroManager {
             if (unit.getHP() <= 7) {
                 AUnit rendezvousWithMedics = (AUnit) Select.ourBuildings().ofType(AtlantisConfig.BARRACKS).first();
                 if (rendezvousWithMedics != null && rendezvousWithMedics.distanceTo(unit) > 5) {
-                    unit.move(rendezvousWithMedics.getPosition());
+                    unit.move(rendezvousWithMedics.getPosition(), UnitMissions.HEAL);
                 }
                 return true;
             }
@@ -109,12 +110,18 @@ public abstract class MicroManager {
         if (ourUnitsNearby < minUnitsNearby && ourUnitsNearby <= 3) {
             APosition goTo = PositionUtil.averagePosition(ourUnits.list());
             if (goTo != null && goTo.distanceTo(unit) > 1) {
-                unit.move(goTo);
+                unit.move(goTo, UnitMissions.MOVE);
                 unit.setTooltip("Closer");
                 return true;
             }
         }
 
+        return false;
+    }
+    
+    protected boolean handleAvoidMeleeUnits(AUnit unit) {
+        
+        
         return false;
     }
     

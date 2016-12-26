@@ -4,6 +4,7 @@ import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
+import atlantis.units.missions.UnitMissions;
 import atlantis.wrappers.APosition;
 
 /**
@@ -45,7 +46,7 @@ public class ZergOverlordManager {
         APosition medianUnitPosition = AtlantisSquadManager.getAlphaSquad().getMedianUnitPosition();
         if (medianUnitPosition != null) {
             if (overlord.distanceTo(medianUnitPosition) > 2.5) {
-                overlord.move(medianUnitPosition);
+                overlord.move(medianUnitPosition, UnitMissions.MOVE);
             }
         }
     }

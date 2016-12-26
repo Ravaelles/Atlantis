@@ -7,6 +7,7 @@ import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.units.missions.UnitMissions;
 import bwta.BaseLocation;
 import java.util.ArrayList;
 
@@ -106,7 +107,7 @@ public class AtlantisScoutManager {
         if (startingLocation != null) {
             scout.setTooltip("Scout!");
             //scout.setTooltip("Scout!");
-            scout.move(startingLocation.getPosition());
+            scout.move(startingLocation.getPosition(), UnitMissions.MOVE);
         }
     }
 
@@ -150,7 +151,7 @@ public class AtlantisScoutManager {
     private static void scoutForTheNextBase(AUnit scout) {
         BaseLocation baseLocation = AtlantisMap.getNearestUnexploredStartingLocation(scout.getPosition());
         if (baseLocation != null) {
-            scout.move(baseLocation.getPosition());
+            scout.move(baseLocation.getPosition(), UnitMissions.MOVE);
         }
     }
 

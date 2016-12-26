@@ -4,6 +4,7 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.missions.UnitMissions;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import bwapi.TilePosition;
@@ -64,7 +65,7 @@ public class AtlantisBuilderManager {
         //TODO: check possible confusion with Position and TilePosition here
         buildPosition = PositionUtil.translate(buildPosition, buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
         if (!builder.isMoving() && !builder.isConstructing() && builder.distanceTo(buildPosition) > 0.15) {
-            builder.move(buildPosition);
+            builder.move(buildPosition, UnitMissions.BUILD);
         } // AUnit is already at the build position, issue build order
         // If we can afford to construct this building exactly right now, issue build order which should
         // be immediate as unit is standing just right there
@@ -75,7 +76,7 @@ public class AtlantisBuilderManager {
 
             if (buildPosition != null && !builder.isConstructing()) {
                 TilePosition buildTilePosition = buildPosition.toTilePosition();
-                builder.build(buildingType, buildTilePosition);
+                builder.build(buildingType, buildTilePosition, UnitMissions.BUILD);
 //                if (Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType)) {
 //                    System.out.println(buildTilePosition + " / " + buildingType);
 //                    System.out.println(Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType));

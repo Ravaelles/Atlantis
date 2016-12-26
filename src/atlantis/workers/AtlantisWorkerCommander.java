@@ -6,6 +6,7 @@ import atlantis.buildings.managers.AtlantisGasManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
+import atlantis.units.missions.UnitMissions;
 import atlantis.util.PositionUtil;
 import java.util.Collection;
 
@@ -126,7 +127,7 @@ public class AtlantisWorkerCommander {
                 baseWorkersRatios.getValueFor(baseWithFewestWorkers)) {
             AUnit worker = (AUnit) Select.ourWorkersThatGather().inRadius(10, baseWithMostWorkers.getPosition()).first();
             if (worker != null) {
-                worker.move(baseWithFewestWorkers.getPosition());
+                worker.move(baseWithFewestWorkers.getPosition(), UnitMissions.MOVE);
             }
         }
     }

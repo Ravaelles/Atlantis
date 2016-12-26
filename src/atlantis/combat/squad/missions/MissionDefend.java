@@ -3,6 +3,7 @@ package atlantis.combat.squad.missions;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.missions.UnitMissions;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.Chokepoint;
@@ -52,7 +53,7 @@ public class MissionDefend extends Mission {
             unit.setTooltip("Positioning");
             Position center = chokepoint.getCenter();
             if (unit.distanceTo(center) > 2) {
-                unit.move(center);
+                unit.move(center, UnitMissions.MOVE);
                 return true;
             }
         }
@@ -65,12 +66,6 @@ public class MissionDefend extends Mission {
      * AUnit will go towards important choke point near main base.
      */
     private boolean moveUnitIfNeededNearChokePoint(AUnit unit) {
-        
-
-        
-
-        
-
         return false;
     }
 

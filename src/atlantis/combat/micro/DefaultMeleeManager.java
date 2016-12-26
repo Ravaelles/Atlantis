@@ -26,12 +26,18 @@ public class DefaultMeleeManager extends MicroMeleeManager {
             if (handleLowHealthIfNeeded(unit)) {
                 return true;
             }
+            
+            // =========================================================
+            // Avoid melee units
+            if (handleAvoidMeleeUnits(unit)) {
+                return true;
+            }
 
             // =========================================================
             // Check chances to win the fight
-//            if (handleUnfavorableOdds(unit)) {
-//                return true;
-//            }
+            if (handleUnfavorableOdds(unit)) {
+                return true;
+            }
 //            if (handleNotExtremelyFavorableOdds(unit)) {
 //                return true;
 //            }

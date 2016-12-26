@@ -5,6 +5,7 @@ import atlantis.AtlantisGame;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.missions.UnitMissions;
 import atlantis.util.PositionUtil;
 import bwapi.Position;
 import bwta.BWTA;
@@ -40,12 +41,12 @@ public class AtlantisRunning {
      * Indicates that this unit should be running from given enemy unit.
      */
     @SuppressWarnings("unused")
-	public boolean runFrom(AUnit chaser) {
+    public boolean runFrom(AUnit chaser) {
         
         // TEMP fix
         if (true) {
             _isRunning = true;
-            unit.move(Select.mainBase().getPosition());
+            unit.move(Select.mainBase().getPosition(), UnitMissions.AVOID_UNIT);
             return true;
         }
         
@@ -64,7 +65,7 @@ public class AtlantisRunning {
         if (running != null && running.nextPositionToRunTo != null) {
             if (unit.distanceTo(running.nextPositionToRunTo) > 0.5) {
                 if (!unit.isMoving()) {
-                    unit.move(running.nextPositionToRunTo);
+                    unit.move(running.nextPositionToRunTo, UnitMissions.AVOID_UNIT);
                 }
                 return true;
             }
@@ -90,7 +91,7 @@ public class AtlantisRunning {
         // =========================================================
         // Make unit run to the selected position
         if (running.nextPositionToRunTo != null && !running.nextPositionToRunTo.equals(unit.getPosition())) {
-            unit.move(running.nextPositionToRunTo);
+            unit.move(running.nextPositionToRunTo, UnitMissions.AVOID_UNIT);
             running.updateRunTooltip();
 
             // If this is massive retreat, make all other units run as well

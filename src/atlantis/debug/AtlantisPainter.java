@@ -17,6 +17,7 @@ import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.units.missions.UnitMissions;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
@@ -28,13 +29,14 @@ import bwapi.Game;
 import bwapi.Position;
 import bwapi.Text.Size.Enum;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Here you can include code that will draw extra informations over units etc.
  */
 public class AtlantisPainter {
-    
+
 //    private static final boolean DISABLE_PAINTING = true;
     private static final boolean DISABLE_PAINTING = false;
 
@@ -56,7 +58,7 @@ public class AtlantisPainter {
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
         bwapi.setTextSize(Enum.Small);
-        
+
         if (DISABLE_PAINTING) {
             return;
         }
@@ -121,12 +123,12 @@ public class AtlantisPainter {
             // === Paint targets for combat units
             // =========================================================
             APosition targetPosition = unit.getTargetPosition();
-            if (targetPosition == null) {
-                targetPosition = unit.getTarget().getPosition();
-            }
-            if (targetPosition != null && unit.distanceTo(targetPosition) <= 15) {
-                paintLine(unitPosition, targetPosition, (unit.isAttacking() ? Color.Green : Color.Red));
-            }
+//            if (targetPosition == null) {
+//                targetPosition = unit.getTarget().getPosition();
+//            }
+//            if (targetPosition != null && unit.distanceTo(targetPosition) <= 15) {
+//                paintLine(unitPosition, targetPosition, (unit.isAttacking() ? Color.Green : Color.Red));
+//            }
 
             // =========================================================
             // === Paint white flags over running units
@@ -156,14 +158,14 @@ public class AtlantisPainter {
                             : AtlantisCombatEvaluator.getEvalString(unit);
                     paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
                 }
-                
+
                 // =========================================================
                 // === Paint circle around units with zero ground weapon 
                 // === cooldown equal to 0 - meaning they can shoot now
                 // =========================================================
-                if (unit.getGroundWeaponCooldown() == 0) {
-                    paintCircle(unitPosition, 14, Color.White);
-                }
+//                if (unit.getGroundWeaponCooldown() == 0) {
+//                    paintCircle(unitPosition, 14, Color.White);
+//                }
             }
         }
 
@@ -472,7 +474,7 @@ public class AtlantisPainter {
      * Paints circles around units which mean what's their mission.
      */
     private static void paintColorCirclesAroundUnits() {
-        for (AUnit unit : Select.ourWorkers().listUnits()) {
+        for (AUnit unit : Select.ourRealUnits().listUnits()) {
 
 //            // STARTING ATTACK
 //            if (unit.isStartingAttack()) {
@@ -514,8 +516,37 @@ public class AtlantisPainter {
 //                paintCircle(unit, 11, Color.Teal);
 //            }
             // Current COMMAND
-            if (!unit.isMoving()) {
-                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
+//            if (!unit.isMoving()) {
+//                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
+//            }
+            // =========================================================
+            Color color = Color.Grey;
+            if (unit.getUnitMission() != null) {
+                if (unit.getUnitMission().equals(UnitMissions.MOVE)) {
+                    color = Color.Teal;
+                } else if (unit.getUnitMission().isAttacking()) {
+                    color = Color.Green;
+                } else if (unit.getUnitMission().equals(UnitMissions.AVOID_MELEE_UNIT)) {
+                    color = Color.Orange;
+                } else if (unit.getUnitMission().equals(UnitMissions.RETREAT)) {
+                    color = Color.Orange;
+                } else if (unit.getUnitMission().equals(UnitMissions.HEAL)) {
+                    color = Color.Blue;
+                } else if (unit.getUnitMission().equals(UnitMissions.BUILD)) {
+                    color = Color.White;
+                } else if (unit.getUnitMission().equals(UnitMissions.REPAIR)) {
+                    color = Color.White;
+                }
+//            else if (unit.getUnitMission().equals(UnitMissions.)) {
+//                color = Color.;
+//            }
+//            else if (unit.getUnitMission().equals(UnitMissions.)) {
+//                color = Color.;
+//            }
+            }
+
+            if (!unit.isWorker() && (unit.isGatheringMinerals() || unit.isGatheringGas())) {
+                paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
             }
         }
     }
@@ -707,24 +738,23 @@ public class AtlantisPainter {
     /**
      * Paint red "X" on every enemy unit that has been targetted.
      */
-    private static void paintTemporaryTargets() {
-        for (AUnit ourUnit : Select.our().listUnits()) {
-
-            // Paint "x" on every unit that has been targetted by one of our units.
-            if (ourUnit.isAttacking() && ourUnit.getTarget() != null) {
-//                paintMessage("X", Color.Red, ourUnit.getTarget().getPX(), ourUnit.getTarget().getPY(), false);
-                paintLine(ourUnit.getPosition(), ourUnit.getTarget().getPosition(), Color.Red);
-            }
-        }
-    }
-
+//    private static void paintTemporaryTargets() {
+//        for (AUnit ourUnit : Select.our().listUnits()) {
+//
+//            // Paint "x" on every unit that has been targetted by one of our units.
+//            if (ourUnit.isAttacking() && ourUnit.getTarget() != null) {
+////                paintMessage("X", Color.Red, ourUnit.getTarget().getPX(), ourUnit.getTarget().getPY(), false);
+//                paintLine(ourUnit.getPosition(), ourUnit.getTarget().getPosition(), Color.Red);
+//            }
+//        }
+//    }
     /**
      * Tooltips are units messages that appear over them and allow to report actions like "Repairing" or "Run
      * from enemy" etc.
      */
     private static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().listUnits()) {
-            if (unit.hasTooltip()) { 
+            if (unit.hasTooltip()) {
                 paintTextCentered(unit.getPosition(), unit.getTooltip(), Color.White);
             }
         }

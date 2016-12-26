@@ -6,6 +6,8 @@ import atlantis.combat.squad.Squad;
 import atlantis.constructing.AtlantisConstructingManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AtlantisEnemyUnits;
+import atlantis.units.missions.UnitMission;
+import atlantis.units.missions.UnitMissions;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.APositionedObject;
 import bwapi.Player;
@@ -22,26 +24,27 @@ import java.util.Map;
 /**
  * Wrapper for BWMirror Unit class that makes units much easier to use.<br /><br />
  * Atlantis uses wrappers for BWMirror native classes which can't be extended.<br /><br />
- * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing
- * you can create missing method here and you can reference original Unit class via u() method.
+ * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
+ * create missing method here and you can reference original Unit class via u() method.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitActions {
 //public class AUnit implements Comparable<AUnit>, UnitActions {
-    
+
     private static final Map<Unit, AUnit> instances = new HashMap<>();
-    
+
     private Unit u;
     private AUnitType _lastCachedType;
-    
-    // =========================================================
 
+    private UnitMission unitMission;
+
+    // =========================================================
     private AUnit(Unit u) {
         if (u == null) {
             throw new RuntimeException("AUnit constructor: unit is null");
         }
-        
+
         this.u = u;
         this.innerID = firstFreeID++;
         this._lastCachedType = AUnitType.createFrom(u.getType());
@@ -62,8 +65,8 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     /**
      * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
-     * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing
-     * you can create missing method here and you can reference original Unit class via u() method.
+     * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
+     * create missing method here and you can reference original Unit class via u() method.
      */
     public static AUnit createFrom(Unit u) {
         if (u == null) {
@@ -72,46 +75,43 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
         if (instances.containsKey(u)) {
             return instances.get(u);
-        }
-        else {
+        } else {
             AUnit unit = new AUnit(u);
             instances.put(u, unit);
             return unit;
         }
     }
-    
+
     // =========================================================
-    
     /**
-     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached 
+     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached
      * type.
      */
     public AUnitType getType() {
         AUnitType type = AUnitType.createFrom(u.getType());
         if (type.equals(AUnitType.Unknown)) {
             return _lastCachedType;
-        }
-        else {
+        } else {
             _lastCachedType = type;
             return type;
         }
     }
-    
+
     @Override
     public APosition getPosition() {
         return APosition.createFrom(u.getPosition());
 //        return u.getPosition();
     }
-    
+
     /**
-     * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside AUnit class.
-     * AUnit class should be used always in place of Unit.
+     * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside AUnit class. AUnit class should be used always in place
+     * of Unit.
      */
     @Override
     public Unit u() {
         return u;
     }
-    
+
     /**
      * This method exists only to allow reference in UnitActions class.
      */
@@ -119,7 +119,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public AUnit unit() {
         return this;
     }
-    
+
     private static AUnit getBWMirrorUnit(Unit u) {
         for (AUnit unit : instances.values()) {
             if (unit.u.equals(u)) {
@@ -128,11 +128,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         }
         return null;
     }
-    
-    // =========================================================
-    // =========================================================
-    // =========================================================
 
+    // =========================================================
+    // =========================================================
+    // =========================================================
     private static int firstFreeID = 1;
 
     private int innerID;
@@ -162,10 +161,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
         Position newPosition = new Position(getX() - dx, getY() - dy);
 
-        move(newPosition);
+        move(newPosition, UnitMissions.AVOID_UNIT);
         this.setTooltip("Run");
     }
-    
+
     // =========================================================
     @Override
     public String toString() {
@@ -176,7 +175,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 //        return "AUnit(" + u.getType().toString() + ")";
         return "AUnit(" + getType().toString() + " #" + innerID + ")";
     }
-    
+
     @Override
     public int compareTo(AUnit o) {
         return Integer.compare(this.getID(), ((AUnit) o).getID());
@@ -220,7 +219,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     // =========================================================
     // Compare type methods
-    
     public boolean isAlive() {
         return !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
     }
@@ -281,7 +279,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     // =========================================================
     // Auxiliary methods
-    
     public boolean ofType(AUnitType type) {
         return getType().equals(type);
     }
@@ -320,7 +317,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public boolean attackUnit(AUnit target) {
         return u.attack(target.u);
     }
-    
+
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
@@ -362,7 +359,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     // =========================================================
     // Debugging / Painting methods
-    
     private String tooltip;
     private int tooltipStartInFrames;
 
@@ -444,10 +440,9 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public boolean isActualUnit() {
         return !isNotActuallyUnit();
     }
-    
+
     // =========================================================
     // Auxiliary
-    
     /**
      * Converts collection of <b>Unit</b> variables into collection of <b>AUnit</b> variables.
      */
@@ -460,8 +455,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
                 result.put(unit, (Integer) ((Map) collection).get(u));
             }
             return result;
-        }
-        else if (collection instanceof List) {
+        } else if (collection instanceof List) {
             List<AUnit> result = new ArrayList<>();
             for (Object key : (List) collection) {
                 Unit u = (Unit) key;
@@ -469,16 +463,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
                 result.add(unit);
             }
             return result;
-        }
-        else {
-            throw new RuntimeException("I don't know how to convert collection of type: " 
+        } else {
+            throw new RuntimeException("I don't know how to convert collection of type: "
                     + collection.toString());
         }
     }
-    
+
     // =========================================================
     // RANGE and ATTACK methods
-    
     /**
      * Returns true if this unit is capable of attacking <b>otherUnit</b>. For example Zerglings can't attack
      * flying targets and Corsairs can't attack ground targets.
@@ -497,32 +489,32 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         }
     }
 
-/**
-     * Returns <b>true</b> if this unit can attack <b>targetUnit</b> in terms of both min and max range 
+    /**
+     * Returns <b>true</b> if this unit can attack <b>targetUnit</b> in terms of both min and max range
      * conditions fulfilled.
+     *
      * @param safetyMargin allowed error (in tiles) applied to the max distance condition
      */
     public boolean hasRangeToAttack(AUnit targetUnit, double safetyMargin) {
         WeaponType weaponAgainstThisUnit = getWeaponAgainst(targetUnit);
         double dist = this.distanceTo(targetUnit);
-        return weaponAgainstThisUnit != WeaponType.None 
-                && weaponAgainstThisUnit.maxRange() <= (dist + safetyMargin) 
+        return weaponAgainstThisUnit != WeaponType.None
+                && weaponAgainstThisUnit.maxRange() <= (dist + safetyMargin)
                 && weaponAgainstThisUnit.minRange() >= dist;
     }
-    
+
     /**
-     * Returns weapon that would be used to attack given target. 
-     * If no such weapon, then WeaponTypes.None will be returned.
+     * Returns weapon that would be used to attack given target. If no such weapon, then WeaponTypes.None will
+     * be returned.
      */
     public WeaponType getWeaponAgainst(AUnit target) {
         if (target.isGroundUnit()) {
             return getGroundWeapon();
-        }
-        else {
+        } else {
             return getAirWeapon();
         }
     }
-    
+
     // =========================================================
     // Getters & setters
     /**
@@ -618,7 +610,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public WeaponType getGroundWeapon() {
         return getType().getGroundWeapon();
     }
-    
+
     /**
      * Indicates that this unit should be running from given enemy unit.
      */
@@ -633,7 +625,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
             return running.runFrom(nearestEnemy);
         }
     }
-    
+
     /**
      * Returns <b>true</b> if this unit is supposed to "build" something. It will return true even if the unit
      * wasn't issued yet actual build order, but we've created ConstructionOrder and assigned it as a builder,
@@ -665,7 +657,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public boolean isEnemy() {
         return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
     }
-    
+
     /**
      * Returns true if this unit belongs to us.
      */
@@ -678,8 +670,8 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      */
     public boolean isNeutralUnit() {
         return getPlayer().equals(AtlantisGame.getNeutralPlayer());
-    }    
-    
+    }
+
     public int getID() {
 //        return u.getID();
         return innerID;
@@ -687,7 +679,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     // =========================================================
     // Method intermediates between BWMirror and Atlantis
-    
     public Player getPlayer() {
         return u.getPlayer();
     }
@@ -822,6 +813,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     public UnitCommand getLastCommand() {
         return u.getLastCommand();
+    }
+
+    public UnitMission getUnitMission() {
+        return unitMission;
+    }
+
+    public void setUnitMission(UnitMission unitMission) {
+        this.unitMission = unitMission;
     }
 
 }

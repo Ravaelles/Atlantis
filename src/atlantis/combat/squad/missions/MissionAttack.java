@@ -6,6 +6,7 @@ import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.missions.UnitMissions;
 import atlantis.wrappers.APosition;
 import bwapi.Color;
 import bwta.BaseLocation;
@@ -30,7 +31,7 @@ public class MissionAttack extends Mission {
         if (focusPoint != null) {
         	//System.out.println("-Dist to focus point: " + PositionUtil.distanceTo(focusPoint, unit.getPosition()));
             if (unit.distanceTo(focusPoint) > 5) {
-                unit.attack(focusPoint);
+                unit.attack(focusPoint, UnitMissions.ATTACK_POSITION);
                 unit.setTooltip("Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
                 return true;
             }
@@ -41,7 +42,7 @@ public class MissionAttack extends Mission {
         else {
             APosition position = AtlantisMap.getRandomInvisiblePosition(unit.getPosition());
             if (position != null) {
-                unit.attack(position);	
+                unit.attack(position, UnitMissions.ATTACK_POSITION);	
                 Atlantis.getBwapi().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
                 unit.setTooltip("Attack!"); //TODO: DEBUG
 //                unit.setTooltip("Mission spread");

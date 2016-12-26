@@ -1,6 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.units.AUnit;
+import atlantis.units.missions.UnitMissions;
 
 /**
  *
@@ -38,7 +39,7 @@ public class AtlantisAttackEnemyUnit {
         
         // If we already are attacking this unit, do not issue double command.
         if (!enemyToAttack.equals(unit.getTarget())) {
-            unit.attack(enemyToAttack);
+            unit.attack(enemyToAttack, UnitMissions.ATTACK_UNIT);
             unit.setTooltip("Forward!"); //setTooltip("Forward!");
         } 
         
