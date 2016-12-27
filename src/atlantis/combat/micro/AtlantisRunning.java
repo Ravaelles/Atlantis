@@ -46,7 +46,7 @@ public class AtlantisRunning {
         // TEMP fix
         if (true) {
             _isRunning = true;
-            unit.move(Select.mainBase().getPosition(), UnitMissions.AVOID_UNIT);
+            unit.move(Select.mainBase().getPosition(), UnitMissions.RUN_FROM_UNIT);
             return true;
         }
         
@@ -65,7 +65,7 @@ public class AtlantisRunning {
         if (running != null && running.nextPositionToRunTo != null) {
             if (unit.distanceTo(running.nextPositionToRunTo) > 0.5) {
                 if (!unit.isMoving()) {
-                    unit.move(running.nextPositionToRunTo, UnitMissions.AVOID_UNIT);
+                    unit.move(running.nextPositionToRunTo, UnitMissions.RUN_FROM_UNIT);
                 }
                 return true;
             }
@@ -91,7 +91,7 @@ public class AtlantisRunning {
         // =========================================================
         // Make unit run to the selected position
         if (running.nextPositionToRunTo != null && !running.nextPositionToRunTo.equals(unit.getPosition())) {
-            unit.move(running.nextPositionToRunTo, UnitMissions.AVOID_UNIT);
+            unit.move(running.nextPositionToRunTo, UnitMissions.RUN_FROM_UNIT);
             running.updateRunTooltip();
 
             // If this is massive retreat, make all other units run as well

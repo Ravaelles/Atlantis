@@ -21,7 +21,8 @@ public class AtlantisCombatEvaluator {
     /**
      * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
      */
-    private static double SAFETY_MARGIN = 0.03;
+    private static double SAFETY_MARGIN_ATTACK = 0.2;
+    private static double SAFETY_MARGIN_RETREAT = -0.3;
 
     /**
      * Multiplier for hit points factor when evaluating unit's combat value.
@@ -47,8 +48,11 @@ public class AtlantisCombatEvaluator {
     /**
      * Returns <b>TRUE</b> if our <b>unit</b> should engage in combat with nearby units or
      * <b>FALSE</b> if enemy is too strong and we should pull back.
+     * @param boolean isPendingFight if true then it will check if unit should continue fighting 
+     * (retreat otherwise). If false then it means we would engage in new fight, so make sure you've got
+     * some safe margin. This feature avoids fighting and immediately running away and fighting again.
      */
-    public static boolean isSituationFavorable(AUnit unit) {
+    public static boolean isSituationFavorable(AUnit unit, boolean isPendingFight) {
         AUnit nearestEnemy = Select.enemy().nearestTo(unit.getPosition());
         if (nearestEnemy == null || unit.distanceTo(nearestEnemy) >= 14) {
             return true;
@@ -62,7 +66,7 @@ public class AtlantisCombatEvaluator {
             return false;
         }
 
-        return evaluateSituation(unit) >= calculateSafetyMarginOverTime();
+        return evaluateSituation(unit) >= calculateSafetyMarginOverTime(isPendingFight);
     }
 
     /**
@@ -70,14 +74,14 @@ public class AtlantisCombatEvaluator {
      * engage in combat with nearby enemy units. Returns
      * <b>FALSE</b> if enemy is too strong and we should pull back.
      */
-    public static boolean isSituationExtremelyFavorable(AUnit unit) {
+    public static boolean isSituationExtremelyFavorable(AUnit unit, boolean isPendingFight) {
         AUnit nearestEnemy = Select.enemy().nearestTo(unit.getPosition());
 
         if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
             return false;
         }
 
-        return evaluateSituation(unit) >= calculateSafetyMarginOverTime() + 0.5;
+        return evaluateSituation(unit) >= calculateSafetyMarginOverTime(isPendingFight) + 0.5;
     }
 
     /**
@@ -114,8 +118,9 @@ public class AtlantisCombatEvaluator {
 
     // =========================================================
     // Safety margin
-    private static double calculateSafetyMarginOverTime() {
-        return SAFETY_MARGIN + Math.min(0.1, AtlantisGame.getTimeSeconds() / 3000);
+    private static double calculateSafetyMarginOverTime(boolean isPendingFight) {
+        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK) 
+                + Math.min(0.1, AtlantisGame.getTimeSeconds() / 3000);
     }
 
     // =========================================================

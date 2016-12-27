@@ -526,7 +526,7 @@ public class AtlantisPainter {
                     color = Color.Teal;
                 } else if (unit.getUnitMission().isAttacking()) {
                     color = Color.Green;
-                } else if (unit.getUnitMission().equals(UnitMissions.AVOID_MELEE_UNIT)) {
+                } else if (unit.getUnitMission().equals(UnitMissions.RUN_FROM_UNIT)) {
                     color = Color.Orange;
                 } else if (unit.getUnitMission().equals(UnitMissions.RETREAT)) {
                     color = Color.Orange;
@@ -545,7 +545,7 @@ public class AtlantisPainter {
 //            }
             }
 
-            if (!unit.isWorker() && (unit.isGatheringMinerals() || unit.isGatheringGas())) {
+            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
                 paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
             }
         }

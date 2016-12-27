@@ -363,12 +363,12 @@ public class AUnitType implements Comparable<AUnitType> {
             _isMelee = isType(
                     // Terran
                     AUnitType.Terran_SCV,
-                    AUnitType.Terran_SCV,
                     AUnitType.Terran_Firebat,
                     // Protoss
                     AUnitType.Protoss_Probe,
                     AUnitType.Protoss_Zealot,
                     AUnitType.Protoss_Dark_Templar,
+                    AUnitType.Protoss_Archon,
                     // Zerg
                     AUnitType.Zerg_Drone,
                     AUnitType.Zerg_Zergling,

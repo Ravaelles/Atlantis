@@ -22,14 +22,16 @@ public class DefaultMeleeManager extends MicroMeleeManager {
             }
 
             // =========================================================
-            // Check health status
-            if (handleLowHealthIfNeeded(unit)) {
-                return true;
-            }
+            // Avoid dying because of very low hit points
+            // @FIX: Breaks handleUnfavorableOdds(), units tend to avoid fighting too much
+            
+//            if (handleLowHealthIfNeeded(unit)) {
+//                return true;
+//            }
             
             // =========================================================
             // Avoid melee units
-            if (handleAvoidMeleeUnits(unit)) {
+            if (handleAvoidCloseMeleeUnits(unit)) {
                 return true;
             }
 

@@ -5,8 +5,7 @@ public class UnitMissions {
 //    public static final UnitMission ATTACK_BUILDING = new UnitMission(true);
     public static final UnitMission ATTACK_POSITION = new UnitMission(true);
     public static final UnitMission ATTACK_UNIT = new UnitMission(true);
-    public static final UnitMission AVOID_MELEE_UNIT = new UnitMission();
-    public static final UnitMission AVOID_UNIT = new UnitMission();
+//    public static final UnitMission AVOID_MELEE_UNIT = new UnitMission();
     public static final UnitMission BUILD = new UnitMission();
     public static final UnitMission FOLLOW = new UnitMission();
 //    public static final UnitMission GATHER = new UnitMission();
@@ -18,7 +17,8 @@ public class UnitMissions {
     public static final UnitMission MOVE_TO_BUILD = new UnitMission();
     public static final UnitMission PATROL = new UnitMission();
     public static final UnitMission REPAIR = new UnitMission();
-    public static final UnitMission RETREAT = new UnitMission();
+    public static final UnitMission RETREAT = new UnitMission(false, true);
+    public static final UnitMission RUN_FROM_UNIT = new UnitMission(false, true);
     public static final UnitMission RIGHT_CLICK = new UnitMission();
     public static final UnitMission SIEGE = new UnitMission();
     public static final UnitMission STOP = new UnitMission();

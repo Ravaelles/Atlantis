@@ -161,7 +161,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
         Position newPosition = new Position(getX() - dx, getY() - dy);
 
-        move(newPosition, UnitMissions.AVOID_UNIT);
+        move(newPosition, UnitMissions.RUN_FROM_UNIT);
         this.setTooltip("Run");
     }
 
@@ -614,7 +614,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     /**
      * Indicates that this unit should be running from given enemy unit.
      */
-    public boolean runFrom(AUnit nearestEnemy) {
+     public boolean runFrom(AUnit nearestEnemy) {
         if (nearestEnemy == null) {
             nearestEnemy = Select.enemyRealUnits().nearestTo(this.getPosition());
         }

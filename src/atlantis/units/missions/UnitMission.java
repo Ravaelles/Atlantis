@@ -3,6 +3,7 @@ package atlantis.units.missions;
 public class UnitMission {
     
     private boolean attack;
+    private boolean run;
 
     // =========================================================
     
@@ -13,6 +14,11 @@ public class UnitMission {
     public UnitMission(boolean attack) {
         this.attack = attack;
     }
+
+    public UnitMission(boolean attack, boolean run) {
+        this.attack = attack;
+        this.run = run;
+    }
     
     // =========================================================
 
@@ -20,4 +26,8 @@ public class UnitMission {
         return attack;
     }
 
+    public boolean isRunningOrRetreating() {
+        return run;
+    }
+    
 }

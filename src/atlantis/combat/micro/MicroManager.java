@@ -26,7 +26,8 @@ public abstract class MicroManager {
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
     protected boolean handleUnfavorableOdds(AUnit unit) {
-        boolean isSituationFavorable = AtlantisCombatEvaluator.isSituationFavorable(unit);
+        boolean isNewFight = (unit.getUnitMission() != null && !unit.getUnitMission().isRunningOrRetreating());
+        boolean isSituationFavorable = AtlantisCombatEvaluator.isSituationFavorable(unit, isNewFight);
         
         // If situation is unfavorable, retreat
         if (!isSituationFavorable) {
@@ -57,13 +58,13 @@ public abstract class MicroManager {
      * decisive victory either retreat or stand where you are.
      */
     protected boolean handleNotExtremelyFavorableOdds(AUnit unit) {
-        if (!AtlantisCombatEvaluator.isSituationExtremelyFavorable(unit)) {
-            if (isInShootRangeOfAnyEnemyUnit(unit)) {
-//                unit.moveAwayFrom(_nearestEnemyThatCanShootAtThisUnit, 2);
-//                return true;
-                return AtlantisRunManager.run(unit);
-            }
-        }
+//        if (!AtlantisCombatEvaluator.isSituationExtremelyFavorable(unit)) {
+//            if (isInShootRangeOfAnyEnemyUnit(unit)) {
+////                unit.moveAwayFrom(_nearestEnemyThatCanShootAtThisUnit, 2);
+////                return true;
+//                return AtlantisRunManager.run(unit);
+//            }
+//        }
         
         return false;
     }
@@ -119,7 +120,7 @@ public abstract class MicroManager {
         return false;
     }
     
-    protected boolean handleAvoidMeleeUnits(AUnit unit) {
+    protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         
         
         return false;
