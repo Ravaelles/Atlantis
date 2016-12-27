@@ -37,19 +37,15 @@ import java.util.Map;
  */
 public class AtlantisPainter {
 
-//    private static final boolean DISABLE_PAINTING = true;
-    private static final boolean DISABLE_PAINTING = false;
+    private static final boolean DISABLE_PAINTING = true;
 
     private static Game bwapi;
     private static int sideMessageTopCounter = 0;
     private static int sideMessageMiddleCounter = 0;
     private static int sideMessageBottomCounter = 0;
 
-    /**
-     * List of enemy units that have been targetted in the last frame.
-     */
-//    private static TreeSet<AUnit> _temporaryTargets = new TreeSet<>();
     // =========================================================
+    
     /**
      * Executed once per frame, at the end of all other actions.
      */

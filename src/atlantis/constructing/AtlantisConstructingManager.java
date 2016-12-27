@@ -68,7 +68,7 @@ public class AtlantisConstructingManager {
         APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
                 newConstructionOrder.getBuilder(), building, newConstructionOrder, near, 25
         );
-//        System.out.println("@@ " + building + " at " + positionToBuild);
+        System.out.println("@@ " + building + " at " + positionToBuild);
 
         // =========================================================
         // Successfully found position for new building

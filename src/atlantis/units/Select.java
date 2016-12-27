@@ -457,6 +457,21 @@ public class Select<T> {
     }
 
     /**
+     * Selects melee units that is units which have attack range at most 1 tile.
+     */
+    public Select<T> melee() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            UnitData unit = dataFrom(unitsIterator.next());
+            if (!unit.getType().isMeleeUnit()) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
+    /**
      * Selects only units that do not currently have max hit points.
      */
     public Select<T> wounded() {

@@ -121,7 +121,13 @@ public abstract class MicroManager {
     }
     
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
-        
+        if (unit.getType().isRangedUnit()) {
+            AUnit enemy = (AUnit) Select.enemyRealUnits().melee().inRadius(1.5, unit.getPosition()).nearestTo(unit.getPosition());
+            if (enemy != null && !unit.isStartingAttack()) {
+                unit.runFrom(enemy);
+                return true;
+            }
+        }
         
         return false;
     }
