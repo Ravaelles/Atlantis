@@ -1,9 +1,7 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.micro.DefaultMeleeManager;
-import atlantis.combat.micro.DefaultRangedManager;
-import atlantis.combat.micro.MicroMeleeManager;
-import atlantis.combat.micro.MicroRangedManager;
+import atlantis.combat.micro.AbstractMicroManager;
+import atlantis.combat.micro.MicroManager;
 import atlantis.combat.squad.missions.Mission;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
@@ -32,12 +30,7 @@ public class Squad extends Units {
     /**
      * Manager for microing ranged units.
      */
-    private MicroRangedManager microRangedManager;
-
-    /**
-     * Manager for microing melee units.
-     */
-    private MicroMeleeManager microMeleeManager;
+    private AbstractMicroManager microManager;
     
     /**
      * Stores the squad that each unit belongs to. Intends to replace Unit.setSquad() and getSquad() methods.
@@ -69,8 +62,7 @@ public class Squad extends Units {
         super();
         this.name = name;
         this.mission = mission;
-        this.microRangedManager = new DefaultRangedManager();
-        this.microMeleeManager = new DefaultMeleeManager();
+        this.microManager = new MicroManager();
     }
 
     // =========================================================
@@ -143,31 +135,17 @@ public class Squad extends Units {
     }
 
     /**
-     * Manager for microing ranged units.
+     * Manager for microing units.
      */
-    public MicroRangedManager getMicroRangedManager() {
-        return microRangedManager;
+    public AbstractMicroManager getMicroManager() {
+        return microManager;
     }
 
     /**
-     * Manager for microing ranged units.
+     * Manager for microing units.
      */
-    public void setMicroRangedManager(MicroRangedManager microRangedManager) {
-        this.microRangedManager = microRangedManager;
-    }
-
-    /**
-     * Manager for microing melee units.
-     */
-    public MicroMeleeManager getMicroMeleeManager() {
-        return microMeleeManager;
-    }
-
-    /**
-     * Manager for microing melee units.
-     */
-    public void setMicroMeleeManager(MicroMeleeManager microMeleeManager) {
-        this.microMeleeManager = microMeleeManager;
+    public void setMicroManager(AbstractMicroManager microManager) {
+        this.microManager = microManager;
     }
 
     /**

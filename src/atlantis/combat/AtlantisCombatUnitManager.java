@@ -33,7 +33,7 @@ public class AtlantisCombatUnitManager {
 //        if (unit.isRangedUnit()) {
 //            microManagerForbidsOtherActions = squad.getMicroRangedManager().update(unit);
 //        } else {
-        microManagerForbidsOtherActions = squad.getMicroMeleeManager().update(unit);
+        microManagerForbidsOtherActions = squad.getMicroManager().update(unit);
 //        }
 
         // MICRO-MANAGER indicates that its orders should not be overriden by mission manager

@@ -29,7 +29,6 @@ import bwapi.Game;
 import bwapi.Position;
 import bwapi.Text.Size.Enum;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
