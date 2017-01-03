@@ -9,6 +9,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class AtlantisProductionManager {
 
@@ -39,6 +41,10 @@ public class AtlantisProductionManager {
                 researchUpgrade(upgrade);
             }
         }
+        
+        // === Fix - refresh entire queue ==============================
+        
+        AtlantisBuildOrders.getBuildOrders().getProductionQueueNext(20);
     }
 
     // =========================================================

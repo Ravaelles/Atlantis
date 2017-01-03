@@ -51,8 +51,8 @@ Number;Name;Modifier
 9;Drone
 9;Overlord
 10;Drone
-11;Drone
 12;Hatchery;NATURAL
+11;Drone
 11;Spawning Pool
 10;Extractor
 11;Zergling
@@ -62,14 +62,12 @@ Number;Name;Modifier
 13;Zergling
 14;Drone
 13;Lair
-1;Creep Colony
-1;Sunken Colony
+12;Hatchery;MAIN
 15;Drone
 16;Overlord
 16;Spire
-1;Creep Colony
 16;Overlord
-1;Sunken Colony
+13;Zergling
 16;Overlord
 17;Mutalisk
 18;Mutalisk

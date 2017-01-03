@@ -27,11 +27,12 @@ public class Units {
     private HashMap<AUnit, Double> unitValues = null;
 
     // =====================================================================
+
     public Units() {
     }
 
-    // =====================================================================
-    // Basic functionality methods
+    // === Base functionality ==============================================
+
     public Units addUnit(AUnit unitToAdd) {
         units.add(unitToAdd);
         return this;
@@ -81,8 +82,8 @@ public class Units {
         return units.get(index);
     }
 
-    // =========================================================
-    // Special methods
+    // === Special methods =====================================
+    
     /**
      * Shuffle units to have random sequence in the list.
      */

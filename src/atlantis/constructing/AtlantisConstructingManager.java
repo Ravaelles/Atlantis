@@ -12,12 +12,38 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AtlantisConstructingManager {
+    
+    public static int totalRequests = 0;
 
     /**
      * List of all unfinished (started or pending) constructions.
      */
     private static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
+    
+    // =========================================================
+    /**
+     * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
+     * finished objects etc.
+     */
+    public static void update() {
+        for (ConstructionOrder constructionOrder : constructionOrders) {
+            checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
 
+            // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
+            // finish the construction.
+//            if (AtlantisGame.playsAsTerran()) {
+            checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
+//            }
+        }
+
+        // =========================================================
+        // Check if we should buy a base, because we have shitload of minerals
+        if (AtlantisGame.hasMinerals(490) && Select.ourBases().count() <= 7
+                && AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.BASE) == 0) {
+            requestConstructionOf(AtlantisConfig.BASE);
+        }
+    }
+    
     // =========================================================
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
@@ -40,6 +66,7 @@ public class AtlantisConstructingManager {
      * it.
      */
     public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
+        totalRequests++;
 
         // Validate
         if (!building.isBuilding()) {
@@ -91,30 +118,6 @@ public class AtlantisConstructingManager {
         else {
             System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
                     + " / BUILDER = " + optimalBuilder);
-        }
-    }
-
-    // =========================================================
-    /**
-     * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
-     * finished objects etc.
-     */
-    public static void update() {
-        for (ConstructionOrder constructionOrder : constructionOrders) {
-            checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
-
-            // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
-            // finish the construction.
-//            if (AtlantisGame.playsAsTerran()) {
-            checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
-//            }
-        }
-
-        // =========================================================
-        // Check if we should buy a base, because we have shitload of minerals
-        if (AtlantisGame.hasMinerals(490) && Select.ourBases().count() <= 7
-                && AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.BASE) == 0) {
-            requestConstructionOf(AtlantisConfig.BASE);
         }
     }
 

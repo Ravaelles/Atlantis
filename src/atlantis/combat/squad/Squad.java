@@ -18,7 +18,7 @@ public class Squad extends Units {
     private int ID = firstFreeID++;
 
     /**
-     * Convenience name for the squad e.g. "Alpha", "Bravo", "Delta".
+     * Auxilary name for the squad e.g. "Alpha", "Bravo", "Delta".
      */
     private String name;
 
@@ -28,41 +28,17 @@ public class Squad extends Units {
     private Mission mission;
 
     /**
-     * Manager for microing ranged units.
+     * Manager that handles microing of units.
      */
     private AbstractMicroManager microManager;
     
-    /**
-     * Stores the squad that each unit belongs to. Intends to replace Unit.setSquad() and getSquad() methods.
-     */
-//    private static java.util.Map<AUnit, Squad> squadOfUnit = new HashMap<>();
-    
-    
-    /**
-     * Stores that a AUnit belongs to a Squad
-     * @param unit
-     * @param g
-     */
-//    public static void setSquadOfUnit(AUnit unit, Squad g){
-//    	squadOfUnit.put(unit, g);
-//    }
-    
-    /**
-     * Retrieves the squad that the unit belongs to
-     * @param unit
-     * @return
-     */
-//    public static Squad getSquadOfUnit(AUnit unit){
-//    	return squadOfUnit.get(unit);
-//    }
-
     // =========================================================
     
     private Squad(String name, Mission mission) {
         super();
         this.name = name;
-        this.mission = mission;
-        this.microManager = new MicroManager();
+        this.setMission(mission);
+        this.setMicroManager(new MicroManager());
     }
 
     // =========================================================
@@ -131,6 +107,9 @@ public class Squad extends Units {
      * Current mission object for this squad.
      */
     public void setMission(Mission mission) {
+        if (mission == null) {
+            throw new RuntimeException("Assigned null Mission to squad");
+        }
         this.mission = mission;
     }
 
@@ -145,6 +124,9 @@ public class Squad extends Units {
      * Manager for microing units.
      */
     public void setMicroManager(AbstractMicroManager microManager) {
+        if (microManager == null) {
+            throw new RuntimeException("Assigned null MicroManager to squad");
+        }
         this.microManager = microManager;
     }
 

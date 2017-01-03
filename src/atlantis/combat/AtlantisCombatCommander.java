@@ -14,7 +14,7 @@ public class AtlantisCombatCommander {
     public static void update() {
         if (AtlantisGame.getTimeFrames() % 20 == 0) {
             Missions.handleGlobalMission();
-            handleAllBattleSquads();
+            handleAllSquads();
         }
     }
 
@@ -24,7 +24,7 @@ public class AtlantisCombatCommander {
      * Acts with all units that are part of given battle squad, according to the SquadMission object and using
      * proper micro managers.
      */
-    private static void handleBattleSquad(Squad squad) {
+    private static void handleSquad(Squad squad) {
 
         // Make sure this battle squad has up-to-date strategy
         if (!Missions.getCurrentGlobalMission().equals(squad.getMission())) {
@@ -41,9 +41,9 @@ public class AtlantisCombatCommander {
     /**
      * Acts with all (combat) units that are part of a unit squad.
      */
-    private static void handleAllBattleSquads() {
+    private static void handleAllSquads() {
         for (Squad squad : AtlantisSquadManager.getSquads()) {
-            handleBattleSquad(squad);
+            handleSquad(squad);
         }
     }
 

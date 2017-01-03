@@ -16,38 +16,41 @@ import java.util.ArrayList;
 public class AtlantisExpansionManager {
 
     public static void requestNewBaseIfNeeded() {
-        int raceBonus = AtlantisGame.playsAsZerg() ? 100 : 0;
-        
+        int minMinerals = AtlantisGame.playsAsZerg() ? 288 : 376;
+
         // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AtlantisGame.hasMinerals(376 - raceBonus)) {
+        if (!AtlantisGame.hasMinerals(minMinerals)) {
             return;
         }
-        
+
         // If there're still things to produce, don't auto-expand.
-        ArrayList<ProductionOrder> nextOrders = 
-                AtlantisBuildOrders.getBuildOrders().getProductionQueueNext(5);
-        if (nextOrders.size() >= 3 && !AtlantisGame.hasMinerals(400 - raceBonus)) {
+        ArrayList<ProductionOrder> nextOrders
+                = AtlantisBuildOrders.getBuildOrders().getProductionQueueNext(5);
+        if (nextOrders.size() >= 3 && !AtlantisGame.hasMinerals(minMinerals + 50)) {
             return;
         }
-        
+
         // =========================================================
-        
-        boolean haveEnoughMinerals = AtlantisGame.hasMinerals(376 - raceBonus);
-        boolean haveEnoughBases = Select.ourBases().count() >= 7 
+        int numberOfUnfinishedBases
+                = AtlantisConstructingManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
+
+        boolean haveEnoughMinerals = AtlantisGame.hasMinerals(minMinerals);
+        boolean haveEnoughBases = Select.ourBases().count() >= 7
                 && AtlantisGame.playsAsZerg() && Select.ourLarva().count() >= 2;
-        boolean areWeAlreadyExpanding = 
-                AtlantisConstructingManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE) == 0;
-        boolean allowExtraExpansion = AtlantisGame.hasMinerals(550 - raceBonus);
-        if (haveEnoughMinerals && !haveEnoughBases && (!areWeAlreadyExpanding || allowExtraExpansion)) {
-            if (AtlantisConstructingManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE) <= 1) {
-                if (!AtlantisGame.hasMinerals(550 - raceBonus)) {
-                    requestConstructionOf(AtlantisConfig.BASE);
-                }
-                else {
-                    requestConstructionOf(AtlantisConfig.BASE, Select.mainBase().getPosition());
-                }
+        boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
+        boolean allowExtraExpansion = AtlantisGame.hasMinerals(minMinerals + 200)
+                && numberOfUnfinishedBases <= 2;
+
+        // Check if it makes sense to request new base
+        if (haveEnoughMinerals && !haveEnoughBases && (noBaseToConstruct || allowExtraExpansion)) {
+//            if (numberOfUnfinishedBases <= 1) {
+            if (AtlantisGame.playsAsZerg() && AtlantisGame.hasMinerals(minMinerals + 200)) {
+                requestConstructionOf(AtlantisConfig.BASE, Select.secondBaseOrMainIfNoSecond().getPosition());
+            } else {
+                requestConstructionOf(AtlantisConfig.BASE);
             }
+//            }
         }
     }
-    
+
 }

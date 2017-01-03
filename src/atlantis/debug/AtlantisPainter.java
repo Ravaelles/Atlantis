@@ -36,12 +36,13 @@ import java.util.Map;
  */
 public class AtlantisPainter {
 
-    private static final boolean DISABLE_PAINTING = true;
+    private static final boolean DISABLE_PAINTING = false;
 
     private static Game bwapi;
     private static int sideMessageTopCounter = 0;
     private static int sideMessageMiddleCounter = 0;
     private static int sideMessageBottomCounter = 0;
+    private static int prevTotalFindBuildPlace = 0;
 
     // =========================================================
     
@@ -55,6 +56,10 @@ public class AtlantisPainter {
         bwapi.setTextSize(Enum.Small);
 
         if (DISABLE_PAINTING) {
+            return;
+        }
+        
+        if (AtlantisGame.getTimeFrames() < 5) {
             return;
         }
 
@@ -186,6 +191,10 @@ public class AtlantisPainter {
 
         // =========================================================
         // Gas workers
+        paintSideMessage("Find build. place: " + AtlantisConstructingManager.totalRequests, 
+                prevTotalFindBuildPlace != AtlantisConstructingManager.totalRequests ? Color.White : Color.Grey);
+        prevTotalFindBuildPlace = AtlantisConstructingManager.totalRequests;
+        
         paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + AtlantisBuildOrders.getMineralsNeeded(), Color.Grey);
         paintSideMessage("Reserved gas: " + AtlantisBuildOrders.getGasNeeded(), Color.Grey);

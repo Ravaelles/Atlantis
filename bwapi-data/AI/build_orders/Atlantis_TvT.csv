@@ -34,36 +34,5 @@ Number;Name;Modifier
 8;SCV
 9;SCV
 1;Command Center
-10;SCV
-10;Barracks
-10;Supply Depot
-11;SCV
-13;Marine
-12;SCV
-13;Barracks
-14;Marine
-12;SCV
-18;Academy
-14;Marine
-12;SCV
-14;Marine
-12;SCV
-1;Refinery
-11;Barracks
-12;SCV
-20;Medic
-15;Marine
-12;SCV
-20;Medic
-14;Marine
-12;SCV
-20;Medic
-12;SCV
-14;Marine
-21;Barracks
-12;SCV
-14;Marine
-12;SCV
-14;Marine
-12;SCV
-20;U 238 Shells
+1;Command Center
+1;Command Center
