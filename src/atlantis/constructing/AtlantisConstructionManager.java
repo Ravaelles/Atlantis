@@ -56,6 +56,12 @@ public class AtlantisConstructionManager {
      */
     public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
         totalRequests++;
+        
+        if (building.isBase()) {
+            System.err.println(building);
+            System.err.println(order);
+            System.err.println(near);
+        }
 
         // Validate
         if (!building.isBuilding()) {

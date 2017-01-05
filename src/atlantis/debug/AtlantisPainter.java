@@ -13,7 +13,7 @@ import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -57,7 +57,7 @@ public class AtlantisPainter {
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
-        bwapi.setTextSize(Enum.Small);
+        bwapi.setTextSize(Enum.Default);
 
         if (paintingMode == MODE_NO_PAINTING) {
             return;
@@ -75,6 +75,9 @@ public class AtlantisPainter {
         
         // =========================================================
         // On-map paint
+        
+        bwapi.setTextSize(Enum.Small);
+        
         paintImportantPlaces();
         paintColorCirclesAroundUnits();
 //        paintConstructionProgress();
@@ -202,8 +205,8 @@ public class AtlantisPainter {
         prevTotalFindBuildPlace = AtlantisConstructionManager.totalRequests;
         
         paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + AtlantisBuildOrders.getMineralsNeeded(), Color.Grey);
-        paintSideMessage("Reserved gas: " + AtlantisBuildOrders.getGasNeeded(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + AtlantisBuildOrdersManager.getMineralsNeeded(), Color.Grey);
+        paintSideMessage("Reserved gas: " + AtlantisBuildOrdersManager.getGasNeeded(), Color.Grey);
         // =========================================================
         // Global mission
         paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
@@ -394,7 +397,9 @@ public class AtlantisPainter {
         }
 
         // Display units that should be produced right now or any time
-        ArrayList<ProductionOrder> produceNow = AtlantisGame.getBuildOrders().getThingsToProduceRightNow(false);
+        ArrayList<ProductionOrder> produceNow = AtlantisGame.getBuildOrders().getThingsToProduceRightNow(
+                AtlantisBuildOrdersManager.MODE_ALL_ORDERS
+        );
         for (ProductionOrder order : produceNow) {
             paintSideMessage(order.getShortName(), Color.Yellow);
         }

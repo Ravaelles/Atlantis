@@ -17,8 +17,13 @@ import java.util.ArrayList;
 
 /**
  * Represents abstract build orders read from the file.
+ * Build Orders in Atlantis are called "Production Orders", because you can produce 
+ * both units and buildings and one couldn't say you build marines, rather produce.
  */
-public abstract class AtlantisBuildOrders {
+public abstract class AtlantisBuildOrdersManager {
+    
+    public static final int MODE_ALL_ORDERS = 1;
+    public static final int MODE_ONLY_UNITS = 2;
 
     /**
      * Directory that contains build orders.
@@ -51,7 +56,7 @@ public abstract class AtlantisBuildOrders {
     // =========================================================
     // Constructor
     
-    public AtlantisBuildOrders() {
+    public AtlantisBuildOrdersManager() {
         readBuildOrdersFile();
     }
     
@@ -79,7 +84,7 @@ public abstract class AtlantisBuildOrders {
     /**
      * Returns default production strategy according to the race played.
      */
-    public static AtlantisBuildOrders loadBuildOrders() {
+    public static AtlantisBuildOrdersManager loadBuildOrders() {
         if (AtlantisGame.playsAsTerran()) {
             return new TerranBuildOrders();
         } else if (AtlantisGame.playsAsProtoss()) {
@@ -101,10 +106,10 @@ public abstract class AtlantisBuildOrders {
      * want to get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and
      * returns those build orders that we can build in this very moment (we can afford them and they match our
      * strategy).
-     * @param boolean onlyUnits if true it will only return "units" as opposed to buildings (keep in mind AUnit
-     * is both "unit" and building)
+     * @param int mode use this classes constants; if MODE_ONLY_UNITS it will only return "units" as 
+     * opposed to buildings (keep in mind AUnit is both "unit" and building)
      */
-    public ArrayList<ProductionOrder> getThingsToProduceRightNow(boolean onlyUnits) {
+    public ArrayList<ProductionOrder> getThingsToProduceRightNow(int mode) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
         int[] resourcesNeededForNotStartedBuildings
                 = AtlantisConstructionManager.countResourcesNeededForNotStartedConstructions();
@@ -116,13 +121,15 @@ public abstract class AtlantisBuildOrders {
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
         
+        System.out.println("=============================");
         for (ProductionOrder order : currentProductionQueue) {
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
+            System.out.println(unitOrBuilding);
             UpgradeType upgrade = order.getUpgrade();
             TechType tech = order.getTech();
 
             // Check if include only units
-            if (onlyUnits && unitOrBuilding == null) {
+            if (mode == MODE_ONLY_UNITS && unitOrBuilding == null) {
                 continue;
             }
 
@@ -309,7 +316,7 @@ public abstract class AtlantisBuildOrders {
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static AtlantisBuildOrders getBuildOrders() {
+    public static AtlantisBuildOrdersManager getBuildOrders() {
         return AtlantisConfig.getBuildOrders();
     }
     

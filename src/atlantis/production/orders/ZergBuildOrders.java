@@ -7,7 +7,7 @@ import atlantis.units.Select;
 import atlantis.workers.AtlantisWorkerCommander;
 import java.util.ArrayList;
 
-public class ZergBuildOrders extends AtlantisBuildOrders {
+public class ZergBuildOrders extends AtlantisBuildOrdersManager {
 
     @Override
     public void produceWorker() {

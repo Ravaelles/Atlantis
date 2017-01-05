@@ -1,6 +1,6 @@
 package atlantis;
 
-import atlantis.production.orders.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 
@@ -79,7 +79,7 @@ public class AtlantisConfig {
     public static AUnitType BARRACKS = null;
     public static AUnitType SUPPLY = null;
     public static AUnitType GAS_BUILDING = null;
-    private static AtlantisBuildOrders productionStrategy;
+    private static AtlantisBuildOrdersManager buildOrdersManager;
 
     // =========================================================
     
@@ -149,7 +149,7 @@ public class AtlantisConfig {
         validate("BARRACKS", BARRACKS);
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
-        validate("You have to specify production strategy\n-> AtlantisConfig.useBuildOrders", productionStrategy);
+        validate("You have to specify production strategy\n-> AtlantisConfig.useBuildOrders", buildOrdersManager);
     }
 
     // =========================================================
@@ -188,15 +188,15 @@ public class AtlantisConfig {
      * Pass an object that will be responsible for the production queue. See e.g. class named
      * DefaultTerranBuildOrders.
      */
-    public static void useBuildOrders(AtlantisBuildOrders productionStrategy) {
-        AtlantisConfig.productionStrategy = productionStrategy;
+    public static void useBuildOrders(AtlantisBuildOrdersManager buildOrdersManager) {
+        AtlantisConfig.buildOrdersManager = buildOrdersManager;
     }
 
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static AtlantisBuildOrders getBuildOrders() {
-        return productionStrategy;
+    public static AtlantisBuildOrdersManager getBuildOrders() {
+        return buildOrdersManager;
     }
 
 }

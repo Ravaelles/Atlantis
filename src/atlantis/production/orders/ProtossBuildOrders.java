@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import java.util.ArrayList;
 
-public class ProtossBuildOrders extends AtlantisBuildOrders {
+public class ProtossBuildOrders extends AtlantisBuildOrdersManager {
 
     @Override
     public void produceWorker() {

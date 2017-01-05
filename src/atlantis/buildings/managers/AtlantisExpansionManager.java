@@ -5,7 +5,7 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import static atlantis.constructing.AtlantisConstructionManager.requestConstructionOf;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.AtlantisBuildOrders;
+import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.Select;
 import java.util.ArrayList;
 
@@ -16,6 +16,10 @@ import java.util.ArrayList;
 public class AtlantisExpansionManager {
 
     public static void requestNewBaseIfNeeded() {
+        if (1 < 2) {
+            return;
+        }
+        
         int minMinerals = AtlantisGame.playsAsZerg() ? 268 : 356;
 
         // It makes sense to think about expansion only if we have a lot of minerals.
@@ -25,7 +29,7 @@ public class AtlantisExpansionManager {
 
         // If there're still things to produce, don't auto-expand.
         ArrayList<ProductionOrder> nextOrders
-                = AtlantisBuildOrders.getBuildOrders().getProductionQueueNext(5);
+                = AtlantisBuildOrdersManager.getBuildOrders().getProductionQueueNext(5);
         if (nextOrders.size() >= 3 && !AtlantisGame.hasMinerals(minMinerals + 50)) {
             return;
         }

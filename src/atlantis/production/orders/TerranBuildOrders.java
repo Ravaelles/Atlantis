@@ -7,7 +7,7 @@ import atlantis.units.Select;
 import atlantis.workers.AtlantisWorkerCommander;
 import java.util.ArrayList;
 
-public class TerranBuildOrders extends AtlantisBuildOrders {
+public class TerranBuildOrders extends AtlantisBuildOrdersManager {
 
     @Override
     public void produceWorker() {
