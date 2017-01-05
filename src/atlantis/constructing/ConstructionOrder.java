@@ -71,7 +71,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
             builder = null;
         }
         
-        AtlantisConstructingManager.removeOrder(this);
+        AtlantisConstructionManager.removeOrder(this);
 //        status = ConstructionOrderStatus.CONSTRUCTION_FINISHED;
     }
     

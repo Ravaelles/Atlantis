@@ -1,5 +1,6 @@
 package atlantis.constructing.position;
 
+import atlantis.AtlantisGame;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
@@ -52,16 +53,17 @@ public class AtlantisSpecialPositionFinder {
      * built.
      */
     public static APosition findPositionForBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-//        String mode = "NEAREST_FREE";
-//        String mode = "NEAR_MAIN";
-        String mode = constructionOrder.getProductionOrder() != null ? 
+        String modifier = constructionOrder.getProductionOrder() != null ? 
                 constructionOrder.getProductionOrder().getModifier() : null;
         
-        if (mode != null) {
-            if (mode.equals(BASE_NEAR_MAIN) || mode.equals("NEAR_MAIN")) {
+        System.err.println("");
+        System.err.println(constructionOrder.getProductionOrder());
+        System.err.println("=== modifier /" + modifier + "/ ===");
+        if (modifier != null) {
+            if (modifier.equals(BASE_NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
                 return findPositionForBase_nearMainBase(building, builder);
             }
-            else if (mode.equals(BASE_NATURAL)) {
+            else if (modifier.equals(BASE_NATURAL)) {
                 return findPositionForBase_natural(building, builder);
             }
         }
@@ -88,7 +90,7 @@ public class AtlantisSpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder) {
-        System.out.println("NEAR MAIN BASE");
+        AtlantisGame.sendMessage("NEAR MAIN BASE");
         return AtlantisPositionFinder.findStandardPosition(builder, building, Select.mainBase().getPosition(), 20);
     }
 

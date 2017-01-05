@@ -2,8 +2,8 @@ package atlantis.buildings.managers;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.constructing.AtlantisConstructingManager;
-import static atlantis.constructing.AtlantisConstructingManager.requestConstructionOf;
+import atlantis.constructing.AtlantisConstructionManager;
+import static atlantis.constructing.AtlantisConstructionManager.requestConstructionOf;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.Select;
@@ -32,7 +32,7 @@ public class AtlantisExpansionManager {
 
         // =========================================================
         int numberOfUnfinishedBases
-                = AtlantisConstructingManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
+                = AtlantisConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
 
         boolean haveEnoughMinerals = AtlantisGame.hasMinerals(minMinerals);
         boolean haveEnoughBases = Select.ourBases().count() >= 7

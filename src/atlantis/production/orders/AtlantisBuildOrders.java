@@ -2,7 +2,7 @@ package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -107,7 +107,7 @@ public abstract class AtlantisBuildOrders {
     public ArrayList<ProductionOrder> getThingsToProduceRightNow(boolean onlyUnits) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
         int[] resourcesNeededForNotStartedBuildings
-                = AtlantisConstructingManager.countResourcesNeededForNotStartedConstructions();
+                = AtlantisConstructionManager.countResourcesNeededForNotStartedConstructions();
         mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
@@ -239,7 +239,7 @@ public abstract class AtlantisBuildOrders {
                 int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
 
                 if (type.isBuilding()) {
-                    weHaveThisManyUnits += AtlantisConstructingManager.countNotFinishedConstructionsOfType(type);
+                    weHaveThisManyUnits += AtlantisConstructionManager.countNotFinishedConstructionsOfType(type);
                 }
                 
 //                System.out.println("       " + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);

@@ -3,7 +3,7 @@ package atlantis.units;
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.information.UnitData;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
@@ -620,7 +620,7 @@ public class Select<T> {
 
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (unit.isConstructing() || unit.isRepairing() || AtlantisConstructingManager.isBuilder(unit)) {
+            if (unit.isConstructing() || unit.isRepairing() || AtlantisConstructionManager.isBuilder(unit)) {
                 unitIter.remove();
             }
         }
@@ -695,6 +695,19 @@ public class Select<T> {
             }
         }
         return selectedUnits;
+    }
+
+    /**
+     * Counts all of our Zerg Larvas.
+     */
+    public static int countOurLarva() {
+        int total = 0;
+        for (Iterator<AUnit> unitIter = our().list().iterator(); unitIter.hasNext();) {
+            if (!unitIter.next().getType().equals(AUnitType.Zerg_Larva)) {
+                total++;
+            }
+        }
+        return total;
     }
 
     /**

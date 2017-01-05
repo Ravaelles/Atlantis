@@ -1,7 +1,7 @@
 package atlantis.constructing.position;
 
 import atlantis.Atlantis;
-import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.units.AUnit;
@@ -52,7 +52,7 @@ public abstract class AbstractPositionFinder {
         }
         
         // Compare against planned construction places
-        for (ConstructionOrder constructionOrder : AtlantisConstructingManager.getAllConstructionOrders()) {
+        for (ConstructionOrder constructionOrder : AtlantisConstructionManager.getAllConstructionOrders()) {
             if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.getStatus())
                     && !builder.equals(constructionOrder.getBuilder())) {
                 if (constructionOrder.getPositionToBuild() != null) {

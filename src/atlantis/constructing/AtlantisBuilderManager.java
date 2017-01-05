@@ -28,7 +28,7 @@ public class AtlantisBuilderManager {
     // =========================================================
     
     private static void handleConstruction(AUnit builder) {
-        ConstructionOrder constructionOrder = AtlantisConstructingManager.getConstructionOrderFor(builder);
+        ConstructionOrder constructionOrder = AtlantisConstructionManager.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place

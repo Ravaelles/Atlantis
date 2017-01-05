@@ -48,10 +48,4 @@ public class ZergBuildOrders extends AtlantisBuildOrders {
         }
     }
 
-    // =========================================================
-    // Auxiliary
-//    private AUnit getFreeLarva() {
-//        return (Unit) Select.our().ofType(AUnitType.Zerg_Larva).first();
-//    }
-
 }

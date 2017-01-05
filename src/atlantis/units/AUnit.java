@@ -3,7 +3,7 @@ package atlantis.units;
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.AtlantisRunning;
 import atlantis.combat.squad.Squad;
-import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.units.missions.UnitMission;
@@ -632,7 +632,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * so it will return true.
      */
     public boolean isBuilder() {
-        return AtlantisConstructingManager.isBuilder(this);
+        return AtlantisConstructionManager.isBuilder(this);
     }
 
     /**
@@ -640,7 +640,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * construction.
      */
     public ConstructionOrder getConstructionOrder() {
-        return AtlantisConstructingManager.getConstructionOrderFor(this);
+        return AtlantisConstructionManager.getConstructionOrderFor(this);
     }
 
     /**

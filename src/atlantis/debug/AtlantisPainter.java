@@ -7,7 +7,7 @@ import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.combat.squad.missions.MissionAttack;
 import atlantis.combat.squad.missions.MissionDefend;
-import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.enemy.AtlantisEnemyUnits;
@@ -197,9 +197,9 @@ public class AtlantisPainter {
 
         // =========================================================
         // Gas workers
-        paintSideMessage("Find build. place: " + AtlantisConstructingManager.totalRequests, 
-                prevTotalFindBuildPlace != AtlantisConstructingManager.totalRequests ? Color.White : Color.Grey);
-        prevTotalFindBuildPlace = AtlantisConstructingManager.totalRequests;
+        paintSideMessage("Find build. place: " + AtlantisConstructionManager.totalRequests, 
+                prevTotalFindBuildPlace != AtlantisConstructionManager.totalRequests ? Color.White : Color.Grey);
+        prevTotalFindBuildPlace = AtlantisConstructionManager.totalRequests;
         
         paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + AtlantisBuildOrders.getMineralsNeeded(), Color.Grey);
@@ -419,7 +419,7 @@ public class AtlantisPainter {
      */
     private static void paintSidebarConstructionsPending() {
         int yOffset = 220;
-        ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
+        ArrayList<ConstructionOrder> allOrders = AtlantisConstructionManager.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
@@ -451,7 +451,7 @@ public class AtlantisPainter {
      * Paints places where buildings that do not yet exist are planned to be placed.
      */
     private static void paintConstructionPlaces() {
-        for (ConstructionOrder order : AtlantisConstructingManager.getAllConstructionOrders()) {
+        for (ConstructionOrder order : AtlantisConstructionManager.getAllConstructionOrders()) {
             if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 APosition positionToBuild = order.getPositionToBuild();
                 AUnitType buildingType = order.getBuildingType();

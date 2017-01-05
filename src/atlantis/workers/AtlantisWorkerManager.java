@@ -1,7 +1,7 @@
 package atlantis.workers;
 
 import atlantis.constructing.AtlantisBuilderManager;
-import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -16,7 +16,7 @@ public class AtlantisWorkerManager {
         //unit.removeTooltip();
 
         // Act as BUILDER
-        if (AtlantisConstructingManager.isBuilder(unit)) {
+        if (AtlantisConstructionManager.isBuilder(unit)) {
             AtlantisBuilderManager.update(unit);
         } // ORDINARY WORKER
         else {
@@ -94,7 +94,7 @@ public class AtlantisWorkerManager {
         String tooltip = "";
         String newLine = "\r\n";
         //FIXME: this is making tooltip get the empty string
-        ConstructionOrder buildingToBuild = AtlantisConstructingManager.getConstructionOrderFor(unit);
+        ConstructionOrder buildingToBuild = AtlantisConstructionManager.getConstructionOrderFor(unit);
         if (buildingToBuild != null) {
             tooltip += "Build: " + buildingToBuild.getBuildingType().getShortName() + newLine;
         }

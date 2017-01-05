@@ -2,7 +2,7 @@ package atlantis.production;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.production.orders.AtlantisBuildOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -88,7 +88,7 @@ public class AtlantisProductionManager {
         if (!unitType.isBuilding()) {
             System.err.println("produceBuilding has been given wrong argument: " + unitType);
         }
-        AtlantisConstructingManager.requestConstructionOf(unitType, order, null);
+        AtlantisConstructionManager.requestConstructionOf(unitType, order, null);
     }
     
 }

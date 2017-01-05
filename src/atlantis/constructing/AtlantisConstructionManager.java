@@ -12,7 +12,7 @@ import bwapi.Color;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class AtlantisConstructingManager {
+public class AtlantisConstructionManager {
 
     public static int totalRequests = 0;
 
@@ -32,16 +32,7 @@ public class AtlantisConstructingManager {
 
             // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
             // finish the construction.
-//            if (AtlantisGame.playsAsTerran()) {
             checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
-//            }
-        }
-
-        // =========================================================
-        // Check if we should buy a base, because we have shitload of minerals
-        if (AtlantisGame.hasMinerals(490) && Select.ourBases().count() <= 7
-                && AtlantisConstructingManager.countNotStartedConstructionsOfType(AtlantisConfig.BASE) == 0) {
-            requestConstructionOf(AtlantisConfig.BASE);
         }
     }
 
@@ -206,6 +197,7 @@ public class AtlantisConstructingManager {
             }
         } // Building doesn't exist yet, means builder is travelling to the construction place
         else {
+            AtlantisGame.sendMessage("finding place for " +  constructionOrder.getBuildingType());
             APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
                     constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
             );
@@ -344,7 +336,7 @@ public class AtlantisConstructingManager {
     public static int[] countResourcesNeededForNotStartedConstructions() {
         int mineralsNeeded = 0;
         int gasNeeded = 0;
-        for (ConstructionOrder constructionOrder : AtlantisConstructingManager.getNotStartedConstructionsOfType(null)) {
+        for (ConstructionOrder constructionOrder : AtlantisConstructionManager.getNotStartedConstructionsOfType(null)) {
             mineralsNeeded += constructionOrder.getBuildingType().getMineralPrice();
             gasNeeded += constructionOrder.getBuildingType().getGasPrice();
         }
@@ -358,7 +350,7 @@ public class AtlantisConstructingManager {
      * the drone actually became a building (sweet metamorphosis, yay!).
      */
     private static void handleRemoveZergConstructionsWhichBecamePendingBuildings() {
-        ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
+        ArrayList<ConstructionOrder> allOrders = AtlantisConstructionManager.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
             for (ConstructionOrder constructionOrder : allOrders) {
                 if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {

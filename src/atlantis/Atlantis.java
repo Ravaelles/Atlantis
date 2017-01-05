@@ -80,12 +80,7 @@ public class Atlantis implements BWEventListener {
      * You have to pass AtlantisConfig object to initialize Atlantis.
      */
     public Atlantis() {
-
-        // Save static reference to this instance, acting as last-singleton
-        instance = this;
-
-        // Standard procedure: create and save Jnibwapi reference
-        //bwapi = new JNIBWAPI(this, true);
+        instance = this; // Save static reference to this instance, act like a singleton.
     }
 
     /**

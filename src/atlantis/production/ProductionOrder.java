@@ -121,7 +121,7 @@ public class ProductionOrder {
         if (unitOrBuilding != null) {
             return unitOrBuilding.getShortName();
         } else if (upgrade != null) {
-            return upgrade.toString(); //replaces .getName();
+            return upgrade.toString();
         } else {
             return "Unknown";
         }
@@ -165,6 +165,9 @@ public class ProductionOrder {
      * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
      */
     public void setModifier(String modifier) {
+        if (modifier != null) {
+            modifier = modifier.trim();
+        }
         this.modifier = modifier;
     }
     
