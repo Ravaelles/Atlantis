@@ -14,7 +14,7 @@ public class AtlantisCombatUnitManager {
     protected static boolean update(AUnit unit) {
 //        unit.removeTooltip();
         Squad squad = unit.getSquad();
-
+        
         // =========================================================
         // DON'T INTERRUPT shooting units
         if (shouldNotDisturbUnit(unit)) {
@@ -47,7 +47,11 @@ public class AtlantisCombatUnitManager {
         // It's okay to handle MISSION orders according to current mission (e.g. DEFEND, ATTACK)
         else {
 //                    if (!unit.isMoving() && !unit.isAttacking() && !unit.isJustShooting()) {
-            if (squad.getMission() == null) {
+            if (squad == null) {
+                System.err.println("squad is NULL!");
+                return true;
+            }
+            else if (squad.getMission() == null) {
                 System.err.println("squad.getMission() is NULL!");
                 return true;
             }

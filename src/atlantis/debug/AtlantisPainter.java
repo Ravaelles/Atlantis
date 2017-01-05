@@ -35,8 +35,12 @@ import java.util.Map;
  * Here you can include code that will draw extra informations over units etc.
  */
 public class AtlantisPainter {
+    
+    private static final int MODE_NO_PAINTING = 1;
+    private static final int MODE_PARTIAL_PAINTING = 2;
+    private static final int MODE_FULL_PAINTING = 3;
 
-    private static final boolean DISABLE_PAINTING = false;
+    private static int paintingMode = MODE_PARTIAL_PAINTING;
 
     private static Game bwapi;
     private static int sideMessageTopCounter = 0;
@@ -55,14 +59,20 @@ public class AtlantisPainter {
         bwapi = Atlantis.getBwapi();
         bwapi.setTextSize(Enum.Small);
 
-        if (DISABLE_PAINTING) {
+        if (paintingMode == MODE_NO_PAINTING) {
             return;
         }
         
-        if (AtlantisGame.getTimeFrames() < 5) {
+        // === Only text ===========================================
+
+        paintInfo();
+        paintKilledAndLost();
+        paintProductionQueue();
+        paintSidebarConstructionsPending();
+        if (paintingMode == MODE_PARTIAL_PAINTING) {
             return;
         }
-
+        
         // =========================================================
         // On-map paint
         paintImportantPlaces();
@@ -79,11 +89,7 @@ public class AtlantisPainter {
 
         // =========================================================
         // On-screen paint
-        paintInfo();
         paintUnitCounters();
-        paintProductionQueue();
-        paintSidebarConstructionsPending();
-        paintKilledAndLost();
         paintTooltipsOverUnits();
     }
 

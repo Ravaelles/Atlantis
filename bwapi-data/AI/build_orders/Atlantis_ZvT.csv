@@ -19,7 +19,7 @@
 #SCOUT_IS_NTH_WORKER=4
 
 // When supply is bigger than N, then start auto-producing supply units
-//#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=9
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=19
 
 // ====================================================================
 
@@ -45,36 +45,5 @@
 Number;Name;Modifier
 // =================
 5;Drone
-6;Drone
-7;Drone
-8;Drone
-9;Drone
-9;Overlord
-10;Drone
 12;Hatchery;NATURAL
-11;Drone
 11;Spawning Pool
-10;Extractor
-11;Zergling
-1;Creep Colony
-1;Sunken Colony
-12;Zergling
-13;Zergling
-14;Drone
-13;Lair
-12;Hatchery;MAIN
-15;Drone
-16;Overlord
-16;Spire
-16;Overlord
-13;Zergling
-16;Overlord
-17;Mutalisk
-18;Mutalisk
-19;Mutalisk
-20;Mutalisk
-21;Mutalisk
-22;Mutalisk
-23;Mutalisk
-24;Mutalisk
-25;Mutalisk

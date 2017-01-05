@@ -8,18 +8,19 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.wrappers.APosition;
+import bwapi.Color;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AtlantisConstructingManager {
-    
+
     public static int totalRequests = 0;
 
     /**
      * List of all unfinished (started or pending) constructions.
      */
     private static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
-    
+
     // =========================================================
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
@@ -43,7 +44,7 @@ public class AtlantisConstructingManager {
             requestConstructionOf(AtlantisConfig.BASE);
         }
     }
-    
+
     // =========================================================
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
@@ -140,23 +141,24 @@ public class AtlantisConstructingManager {
 //        System.out.println(constructionOrder.getStatus());
 //        System.out.println(constructionOrder.getBuilder());
 
-        // If ZERG change builder into building (it just happens, yeah, weird stuff)
-        if (building == null || !building.exists()) {
-            AUnit builder = constructionOrder.getBuilder();
-            if (builder != null) {
+        // If playing as ZERG...
+        if (AtlantisGame.playsAsZerg()) {
 
-                // If builder has changed its type and became Zerg Extractor
-                if (!builder.getType().equals(AtlantisConfig.WORKER)) {
+            // ...change builder into building (it just happens, yeah, weird stuff)
+            if (building == null || !building.exists()) {
+                AUnit builder = constructionOrder.getBuilder();
+                if (builder != null) {
 
-                    // Happens for Extractor
-                    if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
-                        building = builder;
-                        constructionOrder.setConstruction(builder);
-                    }
-                }
-                
-                // Builder did not change it's type so it's not Zerg Extractor case
-                else {
+                    // If builder has changed its type and became Zerg Extractor
+                    if (!builder.getType().equals(AtlantisConfig.WORKER)) {
+
+                        // Happens for Extractor
+                        if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
+                            building = builder;
+                            constructionOrder.setConstruction(builder);
+                        }
+                    } // Builder did not change it's type so it's not Zerg Extractor case
+                    else {
 //                    System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
 //                    System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
 //                    System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
@@ -164,16 +166,23 @@ public class AtlantisConstructingManager {
 //                    System.out.println("Constr = " + constructionOrder.getConstruction());
 //                    System.out.println("Exists = " + constructionOrder.getBuilder().exists());
 //                    System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
-                    AUnit buildUnit = builder.getBuildUnit();
-                    if (buildUnit != null) {
-                        building = buildUnit;
-                        constructionOrder.setConstruction(buildUnit);
+                        AUnit buildUnit = builder.getBuildUnit();
+                        if (buildUnit != null) {
+                            building = buildUnit;
+                            constructionOrder.setConstruction(buildUnit);
+                        }
                     }
                 }
             }
-        }
-        // =========================================================
 
+            // 
+            handleRemoveZergConstructionsWhichBecamePendingBuildings();
+//            if () {
+//                
+//            }
+        }
+
+        // =========================================================
 //        if (building != null) {
 //            System.out.println("==============");
 //            System.out.println(constructionOrder.getPositionToBuild());
@@ -191,15 +200,11 @@ public class AtlantisConstructingManager {
             if (building.isCompleted()) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
                 removeOrder(constructionOrder);
-            } 
-
-            // In progress
+            } // In progress
             else {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
-        } 
-
-        // Building doesn't exist yet, means builder is travelling to the construction place
+        } // Building doesn't exist yet, means builder is travelling to the construction place
         else {
             APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
                     constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
@@ -345,6 +350,27 @@ public class AtlantisConstructingManager {
         }
         int[] result = {mineralsNeeded, gasNeeded};
         return result;
+    }
+
+    /**
+     * The moment zerg drone starts building a building we're not detecting it without this method. This
+     * method looks for constructions for which builder.type and builder.builds.type is the same, meaning that
+     * the drone actually became a building (sweet metamorphosis, yay!).
+     */
+    private static void handleRemoveZergConstructionsWhichBecamePendingBuildings() {
+        ArrayList<ConstructionOrder> allOrders = AtlantisConstructingManager.getAllConstructionOrders();
+        if (!allOrders.isEmpty()) {
+            for (ConstructionOrder constructionOrder : allOrders) {
+                if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                    AUnit builder = constructionOrder.getBuilder();
+                    if (builder != null) {
+                        if (builder.getType().equals(constructionOrder.getBuildingType())) {
+                            constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
