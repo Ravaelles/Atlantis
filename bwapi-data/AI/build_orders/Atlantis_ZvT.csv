@@ -45,5 +45,7 @@
 Number;Name;Modifier
 // =================
 5;Drone
-12;Hatchery;NATURAL
+12;Hatchery;MAIN
+12;Hatchery;MAIN
+//12;Hatchery;NATURAL
 11;Spawning Pool

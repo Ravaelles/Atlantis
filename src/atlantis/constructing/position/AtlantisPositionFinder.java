@@ -86,9 +86,10 @@ public class AtlantisPositionFinder {
      */
     public static APosition findStandardPosition(AUnit builder, AUnitType building, APosition nearTo, double maxDistance) {
         
-        // =========================================================
-        // Handle standard building position according to the race as every race uses completely different approach
-        // =========================================================
+        // ===========================================================
+        // = Handle standard building position according to the race =
+        // = as every race uses completely different approach        =
+        // ===========================================================
         
         // Terran
         if (AtlantisGame.playsAsTerran()) {

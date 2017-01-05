@@ -21,7 +21,7 @@ public class AtlantisSpecialPositionFinder {
      * Constant used as a hint to indicate that base should be built in the main base (not as much 
      * expansion as additional slots in base).
      */
-    public static final String BASE_NEAR_MAIN = "NEAR_MAIN";
+    public static final String BASE_NEAR_MAIN = "MAIN";
     
     /**
      * Constant used as a hint to indicate that base should be built in the "natural" 
@@ -58,8 +58,8 @@ public class AtlantisSpecialPositionFinder {
                 constructionOrder.getProductionOrder().getModifier() : null;
         
         if (mode != null) {
-            if (mode.equals(BASE_NEAR_MAIN)) {
-                return findPositionForBase_nearestMainBase(building, builder);
+            if (mode.equals(BASE_NEAR_MAIN) || mode.equals("NEAR_MAIN")) {
+                return findPositionForBase_nearMainBase(building, builder);
             }
             else if (mode.equals(BASE_NATURAL)) {
                 return findPositionForBase_natural(building, builder);
@@ -87,7 +87,8 @@ public class AtlantisSpecialPositionFinder {
         );
     }
 
-    private static APosition findPositionForBase_nearestMainBase(AUnitType building, AUnit builder) {
+    private static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder) {
+        System.out.println("NEAR MAIN BASE");
         return AtlantisPositionFinder.findStandardPosition(builder, building, Select.mainBase().getPosition(), 20);
     }
 

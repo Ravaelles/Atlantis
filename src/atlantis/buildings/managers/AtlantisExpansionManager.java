@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class AtlantisExpansionManager {
 
     public static void requestNewBaseIfNeeded() {
-        int minMinerals = AtlantisGame.playsAsZerg() ? 288 : 376;
+        int minMinerals = AtlantisGame.playsAsZerg() ? 268 : 356;
 
         // It makes sense to think about expansion only if we have a lot of minerals.
         if (!AtlantisGame.hasMinerals(minMinerals)) {

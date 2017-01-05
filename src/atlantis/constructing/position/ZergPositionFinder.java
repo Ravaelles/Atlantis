@@ -2,10 +2,12 @@ package atlantis.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
+import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.wrappers.APosition;
+import bwapi.Color;
 import bwapi.Position;
 import java.util.Collection;
 
@@ -48,7 +50,11 @@ public class ZergPositionFinder extends AbstractPositionFinder {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
                         APosition constructionPosition = new APosition(tileX * 32, tileY * 32);
                         if (doesPositionFulfillAllConditions(builder, constructionPosition)) {
+                            AtlantisPainter.paintRectangle(constructionPosition, tileX, tileY, Color.Green);
                             return constructionPosition;
+                        }
+                        else {
+                            AtlantisPainter.paintRectangle(constructionPosition, tileX, tileY, Color.Red);
                         }
                     }
 

@@ -17,7 +17,7 @@ public class ProductionOrder {
     /**
      * AUnit type to be build. Can be null if this production order is for something else than upgrade.
      */
-    private AUnitType unitType = null;
+    private AUnitType unitOrBuilding = null;
 
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
@@ -46,9 +46,9 @@ public class ProductionOrder {
 
     // =========================================================
     
-    public ProductionOrder(AUnitType unitType) {
+    public ProductionOrder(AUnitType unitOrBuilding) {
         this();
-        this.unitType = unitType;
+        this.unitOrBuilding = unitOrBuilding;
     }
 
     public ProductionOrder(UpgradeType upgrade) {
@@ -114,12 +114,12 @@ public class ProductionOrder {
     @Override
     public String toString() {
 //        return "Order: " + unitType.getName() + ", blocking:" + blocking + ", priority:" + priority;
-        return "Order: " + unitType; //TODO: test replacement of getName();
+        return "Order: " + unitOrBuilding; //TODO: test replacement of getName();
     }
 
     public String getShortName() {
-        if (unitType != null) {
-            return unitType.getShortName();
+        if (unitOrBuilding != null) {
+            return unitOrBuilding.getShortName();
         } else if (upgrade != null) {
             return upgrade.toString(); //replaces .getName();
         } else {
@@ -134,8 +134,8 @@ public class ProductionOrder {
      * If this production order concerns unit to be build (or building, AUnit class), it will return non-null
      * value being unit type.
      */
-    public AUnitType getUnitType() {
-        return unitType;
+    public AUnitType getUnitOrBuilding() {
+        return unitOrBuilding;
     }
 
     /**

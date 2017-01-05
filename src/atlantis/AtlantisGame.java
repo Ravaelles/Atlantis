@@ -52,14 +52,15 @@ public class AtlantisGame {
 
         // Need to have every prerequisite building
         for (AUnitType requiredType : unitType.getRequiredUnits().keySet()) {
-            if (!requiredType.isBuilding() || requiredType.equals(AUnitType.Zerg_Larva)) {
+//            if (!requiredType.isBuilding() || requiredType.equals(AUnitType.Zerg_Larva)) {
+            if (requiredType.equals(AUnitType.Zerg_Larva)) {
                 continue;
             }
             
             int requiredAmount = unitType.getRequiredUnits().get(requiredType);
             int weHaveAmount = requiredType.equals(AUnitType.Zerg_Larva) ? 
                     Select.ourLarva().count() : Select.our().ofType(requiredType).count();
-//            System.out.println("   need " + requiredUnitType + "    x" + requiredAmount);
+//            System.out.println("   need " + requiredType + "    x" + requiredAmount);
 //            System.out.println("   and we have: " + weHaveAmount);
             if (weHaveAmount < requiredAmount) {
                 return false;

@@ -25,8 +25,8 @@ public class AtlantisProductionManager {
 
             // =========================================================
             // Produce UNIT
-            if (order.getUnitType() != null) {
-                AUnitType unitType = order.getUnitType();
+            if (order.getUnitOrBuilding() != null) {
+                AUnitType unitType = order.getUnitOrBuilding();
                 if (unitType.isBuilding()) {
                     produceBuilding(unitType, order);
                 } else {

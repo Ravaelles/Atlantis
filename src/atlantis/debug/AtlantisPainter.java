@@ -381,6 +381,7 @@ public class AtlantisPainter {
      * Paints next units to build in top left corner.
      */
     private static void paintProductionQueue() {
+        paintSideMessage("", Color.White);
         paintSideMessage("Prod. queue:", Color.White);
 
         // Display units currently in production
@@ -404,8 +405,8 @@ public class AtlantisPainter {
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);
             if (order != null && order.getShortName() != null) {
-                if (order.getUnitType() != null
-                        && !AtlantisGame.hasBuildingsToProduce(order.getUnitType(), true)) {
+                if (order.getUnitOrBuilding() != null
+                        && !AtlantisGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
                     continue;
                 }
                 paintSideMessage(order.getShortName(), Color.Red);
@@ -795,11 +796,11 @@ public class AtlantisPainter {
 
     // =========================================================
     // Lo-level
-    private static void paintSideMessage(String text, Color color) {
+    public static void paintSideMessage(String text, Color color) {
         paintSideMessage(text, color, 0);
     }
 
-    private static void paintSideMessage(String text, Color color, int yOffset) {
+    public static void paintSideMessage(String text, Color color, int yOffset) {
         if (color == null) {
             color = Color.White;
         }
@@ -815,7 +816,7 @@ public class AtlantisPainter {
         }
     }
 
-    private static void paintMessage(String text, Color color, int x, int y, boolean screenCoord) {
+    public static void paintMessage(String text, Color color, int x, int y, boolean screenCoord) {
         if (screenCoord) {
             bwapi.drawTextScreen(new APosition(x, y), ColorUtil.getColorString(color) + text);
         } else {
@@ -823,36 +824,36 @@ public class AtlantisPainter {
         }
     }
 
-    private static void paintRectangle(APosition position, int width, int height, Color color) {
+    public static void paintRectangle(APosition position, int width, int height, Color color) {
         if (position == null) {
             return;
         }
         bwapi.drawBoxMap(position, PositionUtil.translate(position, width, height), color, false);
     }
 
-    private static void paintRectangleFilled(APosition position, int width, int height, Color color) {
+    public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
         if (position == null) {
             return;
         }
         bwapi.drawBoxMap(position, PositionUtil.translate(position, width, height), color, true);
     }
 
-    private static void paintCircle(AUnit unit, int radius, Color color) {
+    public static void paintCircle(AUnit unit, int radius, Color color) {
         paintCircle(unit.getPosition(), radius, color);
     }
 
-    private static void paintCircle(Position position, int radius, Color color) {
+    public static void paintCircle(Position position, int radius, Color color) {
         if (position == null) {
             return;
         }
         bwapi.drawCircleMap(position, radius, color, false);
     }
 
-    private static void paintLine(APosition start, int dx, int dy, Color color) {
+    public static void paintLine(APosition start, int dx, int dy, Color color) {
         paintLine(start, PositionUtil.translate(start, dx, dy), color);
     }
 
-    private static void paintLine(Position start, Position end, Color color) {
+    public static void paintLine(Position start, Position end, Color color) {
         if (start == null || end == null) {
             return;
         }
@@ -860,23 +861,23 @@ public class AtlantisPainter {
         //getBwapi().drawLine(start, end, color, false);
     }
 
-    private static void paintTextCentered(AUnit unit, String text, Color color) {
+    public static void paintTextCentered(AUnit unit, String text, Color color) {
         paintTextCentered(unit.getPosition(), text, color, false);
     }
 
-    private static void paintTextCentered(APosition position, String text, Color color) {
+    public static void paintTextCentered(APosition position, String text, Color color) {
         paintTextCentered(position, text, color, false);
     }
 
-    private static void paintTextCentered(AUnit unit, String text, boolean screenCords) {
+    public static void paintTextCentered(AUnit unit, String text, boolean screenCords) {
         paintTextCentered(unit.getPosition(), text, null, screenCords);
     }
 
-    private static void paintTextCentered(APosition position, String text, boolean screenCords) {
+    public static void paintTextCentered(APosition position, String text, boolean screenCords) {
         paintTextCentered(position, text, null, screenCords);
     }
 
-    private static void paintTextCentered(APosition position, String text, Color color, boolean screenCoords) {
+    public static void paintTextCentered(APosition position, String text, Color color, boolean screenCoords) {
         if (position == null || text == null) {
             return;
         }
@@ -894,7 +895,7 @@ public class AtlantisPainter {
         }
     }
 
-    private static void paintText(APosition position, String text, Color color) {
+    public static void paintText(APosition position, String text, Color color) {
         if (position == null || text == null) {
             return;
         }

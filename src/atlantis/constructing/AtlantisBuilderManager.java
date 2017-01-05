@@ -31,16 +31,15 @@ public class AtlantisBuilderManager {
         ConstructionOrder constructionOrder = AtlantisConstructingManager.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
 
-            // Construction HASN'T STARTED YET, we're probably not even at the
-            // required place
+            // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 travelToConstruct(builder, constructionOrder);
-            } // Construction is IN PROGRESS
+            } 
             else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
-                // Do nothing
-            } // Construction has FINISHED
+                // Do nothing - construction is pending
+            }
             else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
-                // Do nothing
+                // Do nothing - construction is finished
             }
         } else {
             System.err.println("constructionOrder null for " + builder);
@@ -61,6 +60,7 @@ public class AtlantisBuilderManager {
             return;
         }
 
+        // =========================================================
         // Move builder to the build position
         //TODO: check possible confusion with Position and TilePosition here
         buildPosition = PositionUtil.translate(buildPosition, buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
@@ -74,18 +74,10 @@ public class AtlantisBuilderManager {
                 buildPosition = constructionOrder.findNewBuildPosition();
             }
 
-            if (buildPosition != null && !builder.isConstructing()) {
+            // If place is ok, builder isn't constructing and we can afford it, issue the build command.
+            if (buildPosition != null && !builder.isConstructing() && AtlantisGame.canAfford(buildingType)) {
                 TilePosition buildTilePosition = buildPosition.toTilePosition();
                 builder.build(buildingType, buildTilePosition, UnitMissions.BUILD);
-//                if (Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType)) {
-//                    System.out.println(buildTilePosition + " / " + buildingType);
-//                    System.out.println(Atlantis.getBwapi().canBuildHere(buildTilePosition, buildingType));
-//                    builder.build(buildingType, buildTilePosition);
-//                }
-//                else {
-//                    System.err.println("canBuildHere for " + buildTilePosition + " / " + buildingType 
-//                            + " returned false!");
-//                }
             }
         }
     }
