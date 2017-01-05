@@ -4,7 +4,7 @@ package atlantis;
 import atlantis.combat.AtlantisCombatCommander;
 import atlantis.debug.AtlantisPainter;
 import atlantis.production.AtlantisProductionCommander;
-import atlantis.scout.AtlantisScoutManager;
+import atlantis.scout.AtlantisScoutCommander;
 import atlantis.workers.AtlantisWorkerCommander;
 
 /**
@@ -18,15 +18,15 @@ public class AtlantisGameCommander {
      */
     public void update() {
 
-        // =========================================================
-        // Execute extra paint methods at the end of all actions
+        // === Execute paint methods ========================================
+        
         AtlantisPainter.paint();
 
-        // =========================================================
-        // Execute code of every Commander
+        // === Execute code of every Commander and Manager ==================
+        
         AtlantisWorkerCommander.update();
         AtlantisCombatCommander.update();
-        AtlantisScoutManager.update();
+        AtlantisScoutCommander.update();
 //        AtlantisBuildingsCommander.update(); // Currently unused
         AtlantisProductionCommander.update();
     }

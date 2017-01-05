@@ -11,7 +11,7 @@ import atlantis.units.missions.UnitMissions;
 import bwta.BaseLocation;
 import java.util.ArrayList;
 
-public class AtlantisScoutManager {
+public class AtlantisScoutCommander {
 
     /**
      * Current scout unit.
