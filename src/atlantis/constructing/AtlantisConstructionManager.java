@@ -29,9 +29,6 @@ public class AtlantisConstructionManager {
     public static void update() {
         for (ConstructionOrder constructionOrder : constructionOrders) {
             checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
-
-            // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
-            // finish the construction.
             checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
         }
     }
@@ -118,6 +115,9 @@ public class AtlantisConstructionManager {
      * If builder has died when constructing, replace him with new one.
      */
     private static void checkForBuilderStatusChange(ConstructionOrder constructionOrder, AUnit builder) {
+
+        // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
+        // finish the construction.
         if (builder == null || !builder.exists()) {
             constructionOrder.assignOptimalBuilder();
         }
@@ -132,24 +132,21 @@ public class AtlantisConstructionManager {
 //        System.out.println(constructionOrder.getStatus());
 //        System.out.println(constructionOrder.getBuilder());
 
-        // If playing as ZERG...
-        if (AtlantisGame.playsAsZerg()) {
+        // ...change builder into building (it just happens, yeah, weird stuff)
+        if (building == null || !building.exists()) {
+            AUnit builder = constructionOrder.getBuilder();
+            if (builder != null) {
 
-            // ...change builder into building (it just happens, yeah, weird stuff)
-            if (building == null || !building.exists()) {
-                AUnit builder = constructionOrder.getBuilder();
-                if (builder != null) {
+                // If builder has changed its type and became Zerg Extractor
+                if (!builder.getType().equals(AtlantisConfig.WORKER)) {
 
-                    // If builder has changed its type and became Zerg Extractor
-                    if (!builder.getType().equals(AtlantisConfig.WORKER)) {
-
-                        // Happens for Extractor
-                        if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
-                            building = builder;
-                            constructionOrder.setConstruction(builder);
-                        }
-                    } // Builder did not change it's type so it's not Zerg Extractor case
-                    else {
+                    // Happens for Extractor
+                    if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
+                        building = builder;
+                        constructionOrder.setConstruction(builder);
+                    }
+                } // Builder did not change it's type so it's not Zerg Extractor case
+                else {
 //                    System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
 //                    System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
 //                    System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
@@ -157,20 +154,18 @@ public class AtlantisConstructionManager {
 //                    System.out.println("Constr = " + constructionOrder.getConstruction());
 //                    System.out.println("Exists = " + constructionOrder.getBuilder().exists());
 //                    System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
-                        AUnit buildUnit = builder.getBuildUnit();
-                        if (buildUnit != null) {
-                            building = buildUnit;
-                            constructionOrder.setConstruction(buildUnit);
-                        }
+                    AUnit buildUnit = builder.getBuildUnit();
+                    if (buildUnit != null) {
+                        building = buildUnit;
+                        constructionOrder.setConstruction(buildUnit);
                     }
                 }
             }
+        }
 
-            // 
+        // If playing as ZERG...
+        if (AtlantisGame.playsAsZerg()) {
             handleRemoveZergConstructionsWhichBecamePendingBuildings();
-//            if () {
-//                
-//            }
         }
 
         // =========================================================
@@ -184,6 +179,7 @@ public class AtlantisConstructionManager {
 //            System.out.println();
 //            System.out.println();
 //        }
+
         // If building exists
         if (building != null) {
 
@@ -191,17 +187,22 @@ public class AtlantisConstructionManager {
             if (building.isCompleted()) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
                 removeOrder(constructionOrder);
-            } // In progress
-            else {
+            } 
+
+            // In progress
+            else if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
-        } // Building doesn't exist yet, means builder is travelling to the construction place
+        } 
+
+        // Building doesn't exist yet, means builder is travelling to the construction place
         else {
-            AtlantisGame.sendMessage("finding place for " +  constructionOrder.getBuildingType());
-            APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
-                    constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
-            );
-            constructionOrder.setPositionToBuild(positionToBuild);
+            if (constructionOrder.getPositionToBuild() == null) {
+                APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
+                        constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
+                );
+                constructionOrder.setPositionToBuild(positionToBuild);
+            }
         }
 
         // =========================================================

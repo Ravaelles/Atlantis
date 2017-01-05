@@ -412,6 +412,11 @@ public class AtlantisPainter {
                 paintSideMessage(order.getShortName(), Color.Red);
             }
         }
+        
+        // Paint info if queues are empty
+        if (produceNow.isEmpty() && fullQueue.isEmpty()) {
+            paintSideMessage("Nothing to produce - it seems to be a bug", Color.Red);
+        }
     }
 
     /**
