@@ -40,7 +40,8 @@ public class AtlantisPainter {
     private static final int MODE_PARTIAL_PAINTING = 2;
     private static final int MODE_FULL_PAINTING = 3;
 
-    private static int paintingMode = MODE_PARTIAL_PAINTING;
+//    private static int paintingMode = MODE_PARTIAL_PAINTING;
+    private static int paintingMode = MODE_FULL_PAINTING;
 
     private static Game bwapi;
     private static int sideMessageTopCounter = 0;
@@ -568,6 +569,13 @@ public class AtlantisPainter {
 
             if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
                 paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
+            }
+
+            if (unit.isWorker() && unit.isIdle()) {
+                paintCircle(unit, 10, Color.Black);
+                paintCircle(unit, 8, Color.Black);
+                paintCircle(unit, 6, Color.Black);
+                paintCircle(unit, 4, Color.Black);
             }
         }
     }

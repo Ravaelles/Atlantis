@@ -1,5 +1,6 @@
 package atlantis.workers;
 
+import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
@@ -15,13 +16,19 @@ public class AtlantisWorkerManager {
         unit.removeTooltip();
         //unit.removeTooltip();
 
+        // =========================================================
+        
         // Act as BUILDER
         if (AtlantisConstructionManager.isBuilder(unit)) {
             AtlantisBuilderManager.update(unit);
-        } // ORDINARY WORKER
+        } 
+
+        // ORDINARY WORKER
         else {
             sendToGatherMineralsOrGasIfNeeded(unit);
         }
+        
+        // =========================================================
 
         updateTooltip(unit);
     }
@@ -39,6 +46,7 @@ public class AtlantisWorkerManager {
         if (worker.isIdle()
                 || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
                 && !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
+            AtlantisGame.sendMessage("Move ass");
             worker.setTooltip("Move ya ass!");
             AtlantisMineralGathering.gatherResources(worker);
         }

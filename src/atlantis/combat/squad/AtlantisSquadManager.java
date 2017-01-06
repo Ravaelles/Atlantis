@@ -57,9 +57,9 @@ public class AtlantisSquadManager {
         // If no squad exists, create main squad
         if (squads.isEmpty()) {
             Squad squad = Squad.createNewSquad(null, Missions.getInitialMission());
-            System.out.println("#######################");
-            System.out.println(squad);
-            System.out.println("#######################");
+            System.err.println("### Printing squad ####################");
+            System.err.println(squad);
+            System.err.println("#######################");
             squads.add(squad);
         }
 

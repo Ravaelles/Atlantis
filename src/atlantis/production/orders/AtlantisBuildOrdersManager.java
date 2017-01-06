@@ -111,8 +111,8 @@ public abstract class AtlantisBuildOrdersManager {
      */
     public ArrayList<ProductionOrder> getThingsToProduceRightNow(int mode) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
-        int[] resourcesNeededForNotStartedBuildings
-                = AtlantisConstructionManager.countResourcesNeededForNotStartedConstructions();
+        int[] resourcesNeededForNotStartedBuildings = 
+                AtlantisConstructionManager.countResourcesNeededForNotStartedConstructions();
         mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
@@ -121,10 +121,8 @@ public abstract class AtlantisBuildOrdersManager {
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
         
-        System.out.println("=============================");
         for (ProductionOrder order : currentProductionQueue) {
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
-            System.out.println(unitOrBuilding);
             UpgradeType upgrade = order.getUpgrade();
             TechType tech = order.getTech();
 
@@ -242,7 +240,8 @@ public abstract class AtlantisBuildOrdersManager {
                 AUnitType type = order.getUnitOrBuilding();
                 virtualCounter.incrementValueFor(type);
 
-                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + virtualCounter.getValueFor(type);
+                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + (type.isBase() ? 1 : 0) 
+                        + virtualCounter.getValueFor(type);
                 int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
 
                 if (type.isBuilding()) {
