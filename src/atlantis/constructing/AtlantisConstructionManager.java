@@ -85,7 +85,7 @@ public class AtlantisConstructionManager {
         APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
                 newConstructionOrder.getBuilder(), building, newConstructionOrder, near, 25
         );
-//        System.out.println("@@ " + building + " at " + positionToBuild + " near " + near);
+//        System.err.println("@@ " + building + " at " + positionToBuild + " near " + near);
 
         // =========================================================
         // Successfully found position for new building
@@ -97,14 +97,15 @@ public class AtlantisConstructionManager {
 
             // Assign optimal builder for this building
             newConstructionOrder.assignOptimalBuilder();
-            // System.out.println("@@ BUILDER = " + optimalBuilder);
 
             // Add to list of pending orders
             constructionOrders.add(newConstructionOrder);
 
             // Rebuild production queue as new building is about to be built
             AtlantisGame.getBuildOrders().rebuildQueue();
-        } // Couldn't find place for building! That's f'g bad.
+        } 
+        
+        // Couldn't find place for building! That's f'g bad.
         else {
             System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
                     + " / BUILDER = " + optimalBuilder);
@@ -134,7 +135,6 @@ public class AtlantisConstructionManager {
 //        System.out.println(constructionOrder.getBuilder());
 
         // =========================================================
-
         AUnit builder = constructionOrder.getBuilder();
 
         // ...change builder into building (it just happens, yeah, weird stuff)
@@ -183,7 +183,6 @@ public class AtlantisConstructionManager {
 //            System.out.println();
 //            System.out.println();
 //        }
-
         // If building exists
         if (building != null) {
 
@@ -191,15 +190,11 @@ public class AtlantisConstructionManager {
             if (building.isCompleted()) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
                 removeOrder(constructionOrder);
-            } 
-
-            // In progress
+            } // In progress
             else if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
-        } 
-
-        // Building doesn't exist yet, means builder is travelling to the construction place
+        } // Building doesn't exist yet, means builder is travelling to the construction place
         else if (!builder.isMoving()) {
             if (constructionOrder.getPositionToBuild() == null) {
                 APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(

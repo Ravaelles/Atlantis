@@ -26,7 +26,6 @@ public class AtlantisBuilderManager {
     }
 
     // =========================================================
-    
     private static void handleConstruction(AUnit builder) {
         ConstructionOrder constructionOrder = AtlantisConstructionManager.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
@@ -34,11 +33,9 @@ public class AtlantisBuilderManager {
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 travelToConstruct(builder, constructionOrder);
-            } 
-            else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
+            } else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
                 // Do nothing - construction is pending
-            }
-            else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
+            } else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 // Do nothing - construction is finished
             }
         } else {
@@ -65,9 +62,9 @@ public class AtlantisBuilderManager {
         //TODO: check possible confusion with Position and TilePosition here
         buildPosition = PositionUtil.translate(buildPosition, buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
         if (!builder.isMoving() && builder.distanceTo(buildPosition) > 1) {
-            if (!builder.isConstructing()) {
+//            if (!builder.isConstructing()) {
                 builder.move(buildPosition, UnitMissions.BUILD);
-            }
+//            }
         } 
 
         // AUnit is already at the build position, issue build order

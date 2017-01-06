@@ -23,16 +23,22 @@ public class ZergBuildOrders extends AtlantisBuildOrdersManager {
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
         
-        units.add(AUnitType.Zerg_Hydralisk);
-        units.add(AUnitType.Zerg_Zergling);
-        units.add(AUnitType.Zerg_Hydralisk);
-        units.add(AUnitType.Zerg_Zergling);
-        units.add(AUnitType.Zerg_Zergling);
+        boolean shouldTrainWorkers = AtlantisWorkerCommander.shouldTrainWorkers(false);
         
-        if (AtlantisWorkerCommander.shouldTrainWorkers(false)) {
-            units.add(AUnitType.Zerg_Drone);
+        if (shouldTrainWorkers) {
             units.add(AUnitType.Zerg_Drone);
         }
+        
+        units.add(AUnitType.Zerg_Hydralisk);
+        units.add(AUnitType.Zerg_Zergling);
+        units.add(AUnitType.Zerg_Hydralisk);
+        
+        if (shouldTrainWorkers) {
+            units.add(AUnitType.Zerg_Drone);
+        }
+        
+        units.add(AUnitType.Zerg_Zergling);
+        units.add(AUnitType.Zerg_Zergling);
         
         return units;
     }

@@ -459,15 +459,7 @@ public class AUnitType implements Comparable<AUnitType> {
         
         if (obj instanceof AUnitType) {
             AUnitType other = (AUnitType) obj;
-//            return (ut == other.ut);
-//            System.out.println("@@@@@@@@@@@@@@@@@@@@@" + ut.toString() + " / " + other.ut.toString());
             return (ut.toString().equals(other.ut.toString()));
-//            boolean condition = ID == other.ID;
-//            boolean condition = (ut == other.ut);
-//            if (condition) {
-//                System.out.println(this + " #EQUALS# " + obj);
-//            }
-//            return condition;
         }
         
         return false;
