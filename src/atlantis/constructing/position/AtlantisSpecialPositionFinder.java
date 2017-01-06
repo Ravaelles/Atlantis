@@ -90,7 +90,6 @@ public class AtlantisSpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder) {
-        AtlantisGame.sendMessage("NEAR MAIN BASE");
         return AtlantisPositionFinder.findStandardPosition(builder, building, Select.mainBase().getPosition(), 20);
     }
 

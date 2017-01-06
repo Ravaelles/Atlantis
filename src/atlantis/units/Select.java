@@ -83,10 +83,6 @@ public class Select<T> {
 
         return data;
     }
-    
-    private static List<Unit> neutralUnitsBWMirror() {
-        return Atlantis.getBwapi().neutral().getUnits();
-    }
 
     // =====================================================================
     // Create base object
@@ -274,26 +270,18 @@ public class Select<T> {
      * Selects all (accessible) minerals on the map.
      */
     public static Select<AUnit> minerals() {
-//        /*Units units = new AUnits();
-
-        List<AUnit> data = new ArrayList<>();
-
-        for (Unit u : neutralUnitsBWMirror()) {
-            data.add(AUnit.createFrom(u));
-        }
-
-        return new Select<>(data);
+        return (Select<AUnit>) neutral().ofType(
+                AUnitType.Resource_Mineral_Field, 
+                AUnitType.Resource_Mineral_Field_Type_2, 
+                AUnitType.Resource_Mineral_Field_Type_3
+        );
     }
 
     /**
      * Selects all geysers on the map.
      */
     public static Select<AUnit> geysers() {
-        /*Units units = new AUnits();
-
-        units.addUnits(Atlantis.getBwapi().getNeutralUnits());*/
         Select<AUnit> selectUnits = neutral();
-
         return (Select<AUnit>) selectUnits.ofType(AUnitType.Resource_Vespene_Geyser);
     }
 

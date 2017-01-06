@@ -46,7 +46,6 @@ public class AtlantisWorkerManager {
         if (worker.isIdle()
                 || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
                 && !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
-            AtlantisGame.sendMessage("Move ass");
             worker.setTooltip("Move ya ass!");
             AtlantisMineralGathering.gatherResources(worker);
         }

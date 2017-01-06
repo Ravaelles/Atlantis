@@ -241,7 +241,7 @@ public abstract class AtlantisBuildOrdersManager {
                 virtualCounter.incrementValueFor(type);
 
                 int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + (type.isBase() ? 1 : 0) 
-                        + virtualCounter.getValueFor(type);
+                        + (type.isOverlord() ? 1 : 0) + virtualCounter.getValueFor(type);
                 int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
 
                 if (type.isBuilding()) {

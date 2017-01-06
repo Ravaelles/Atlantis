@@ -26,7 +26,6 @@ public class AtlantisSupplyManager {
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
             if (supplyTotal <= 10) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
-                    AtlantisGame.sendMessage("Request supply");
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 20) {

@@ -76,7 +76,6 @@ public class AtlantisBuilderManager {
         else if (AtlantisGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
             if (!AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition)) {
                 buildPosition = constructionOrder.findNewBuildPosition();
-                AtlantisGame.sendMessage("Find new location: " + buildPosition.toString());
             }
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.

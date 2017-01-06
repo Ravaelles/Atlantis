@@ -1,5 +1,6 @@
 package atlantis.workers;
 
+import atlantis.AtlantisGame;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import java.util.Collection;
@@ -49,6 +50,7 @@ public class AtlantisMineralGathering {
     }
 
     // =========================================================
+    
     private static AUnit getMineralFieldToGather(AUnit worker) {
 
         // Get nearest base for this unit
