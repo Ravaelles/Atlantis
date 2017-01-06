@@ -132,9 +132,12 @@ public class AtlantisConstructionManager {
 //        System.out.println(constructionOrder.getStatus());
 //        System.out.println(constructionOrder.getBuilder());
 
+        // =========================================================
+
+        AUnit builder = constructionOrder.getBuilder();
+
         // ...change builder into building (it just happens, yeah, weird stuff)
         if (building == null || !building.exists()) {
-            AUnit builder = constructionOrder.getBuilder();
             if (builder != null) {
 
                 // If builder has changed its type and became Zerg Extractor
@@ -196,7 +199,7 @@ public class AtlantisConstructionManager {
         } 
 
         // Building doesn't exist yet, means builder is travelling to the construction place
-        else {
+        else if (!builder.isMoving()) {
             if (constructionOrder.getPositionToBuild() == null) {
                 APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
                         constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder

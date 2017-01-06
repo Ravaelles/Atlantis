@@ -31,6 +31,7 @@ public class AtlantisPositionFinder {
      */
     public static APosition getPositionForNew(AUnit builder, AUnitType building, 
             ConstructionOrder constructionOrder, APosition nearTo, double maxDistance) {
+        AtlantisGame.sendMessage("Find for " + building);
 
         // =========================================================
         // Buildings extracting GAS
@@ -45,7 +46,7 @@ public class AtlantisPositionFinder {
         } 
 
         // =========================================================
-        // BASE
+        // Creep colony
         else if (building.equals(AUnitType.Zerg_Creep_Colony)) {
             return ZergCreepColony.findPosition(building, builder, constructionOrder);
         } 
@@ -56,7 +57,12 @@ public class AtlantisPositionFinder {
 
             // If we didn't specify location where to build, build somewhere near the main base
             if (nearTo == null) {
-                nearTo = Select.mainBase().getPosition();
+                if (AtlantisGame.playsAsZerg()) {
+                    nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
+                }
+                else {
+                    nearTo = Select.mainBase().getPosition();
+                }
             }
 
             // If all of our bases have been destroyed, build somewhere near our first unit alive

@@ -182,9 +182,11 @@ public abstract class AtlantisBuildOrdersManager {
         // This can mean that we run out of build orders from build order file.
         // For proper build order files this feature will activate in late game.
         
-        if (result.isEmpty() && AtlantisGame.getSupplyUsed() >= 9) {
+        if (result.isEmpty() && (AtlantisGame.getSupplyUsed() >= 9 || initialProductionQueue.isEmpty())) {
             for (AUnitType unitType : produceWhenNoProductionOrders()) {
-                result.add(new ProductionOrder(unitType));
+                if (AtlantisGame.hasBuildingsToProduce(unitType, false)) {
+                    result.add(new ProductionOrder(unitType));
+                }
             }
         }
 

@@ -5,6 +5,9 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class ProductionOrder {
+    
+    public static final String BASE_POSITION_NATURAL = "NATURAL";
+    public static final String BASE_POSITION_MAIN = "MAIN";
 
     private static final int PRIORITY_LOWEST = 1;
     private static final int PRIORITY_NORMAL = 4;
@@ -162,7 +165,7 @@ public class ProductionOrder {
     }
 
     /**
-     * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
+     * Special modifier e.g. base position modifier. See ProductionOrder constants.
      */
     public void setModifier(String modifier) {
         if (modifier != null) {

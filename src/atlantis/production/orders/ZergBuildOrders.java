@@ -22,12 +22,17 @@ public class ZergBuildOrders extends AtlantisBuildOrdersManager {
     @Override
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
+        
+        units.add(AUnitType.Zerg_Hydralisk);
+        units.add(AUnitType.Zerg_Zergling);
+        units.add(AUnitType.Zerg_Hydralisk);
+        units.add(AUnitType.Zerg_Zergling);
+        units.add(AUnitType.Zerg_Zergling);
+        
         if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
             units.add(AUnitType.Zerg_Drone);
         }
-        else {
-            units.add(AUnitType.Zerg_Zergling);
-        }
+        
         return units;
     }
 
@@ -40,9 +45,6 @@ public class ZergBuildOrders extends AtlantisBuildOrdersManager {
         for (AUnit base : Select.ourBases().listUnits()) {
             for (AUnit larva : base.getLarva()) {
                 boolean result = base.train(unitType);
-//                System.err.println("TRAIN FAIL: " + unitType + " IN " + base);
-//                System.err.println("Are you sure you have supply? Chech against it.");
-//                larva.morph(unitType);
                 return;
             }
         }

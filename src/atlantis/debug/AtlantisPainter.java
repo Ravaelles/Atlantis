@@ -42,6 +42,8 @@ public class AtlantisPainter {
 
 //    private static int paintingMode = MODE_PARTIAL_PAINTING;
     private static int paintingMode = MODE_FULL_PAINTING;
+    
+    // =========================================================
 
     private static Game bwapi;
     private static int sideMessageTopCounter = 0;
@@ -93,7 +95,7 @@ public class AtlantisPainter {
 
         // =========================================================
         // On-screen paint
-        paintUnitCounters();
+//        paintUnitCounters();
         paintTooltipsOverUnits();
     }
 
