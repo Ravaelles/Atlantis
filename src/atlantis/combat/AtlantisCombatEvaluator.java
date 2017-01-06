@@ -21,13 +21,13 @@ public class AtlantisCombatEvaluator {
     /**
      * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
      */
-    private static double SAFETY_MARGIN_ATTACK = 0.2;
-    private static double SAFETY_MARGIN_RETREAT = -0.3;
+    private static double SAFETY_MARGIN_ATTACK = 0.25;
+    private static double SAFETY_MARGIN_RETREAT = -0.35;
 
     /**
      * Multiplier for hit points factor when evaluating unit's combat value.
      */
-    private static double EVAL_HIT_POINTS_FACTOR = 0.2;
+    private static double EVAL_HIT_POINTS_FACTOR = 0.3;
 
     /**
      * Multiplier for damage factor when evaluating unit's combat value.

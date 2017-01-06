@@ -21,7 +21,9 @@ public class AtlantisPositionFinder {
      * Returns build position for next building of given type.
      */
     public static APosition getPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
-        return getPositionForNew(builder, building, constructionOrder, null, -1);
+        APosition near = constructionOrder != null ? constructionOrder.getNearTo() : null;
+        double maxDistance = constructionOrder != null ? constructionOrder.getMaxDistance() : 20;
+        return getPositionForNew(builder, building, constructionOrder, near, maxDistance);
     }
 
     /**
@@ -31,6 +33,7 @@ public class AtlantisPositionFinder {
      */
     public static APosition getPositionForNew(AUnit builder, AUnitType building, 
             ConstructionOrder constructionOrder, APosition nearTo, double maxDistance) {
+        constructionOrder.setMaxDistance(maxDistance);
         AtlantisGame.sendMessage("Find for " + building);
 
         // =========================================================

@@ -18,6 +18,8 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     private AUnit construction;
     private AUnit builder;
     private APosition positionToBuild;
+    private APosition near;
+    private double maxDistance;
     private ProductionOrder productionOrder;
     private ConstructionOrderStatus status;
 
@@ -164,6 +166,22 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     public void setProductionOrder(ProductionOrder productionOrder) {
         this.productionOrder = productionOrder;
+    }
+
+    public APosition getNearTo() {
+        return near;
+    }
+
+    public void setNearTo(APosition near) {
+        this.near = near;
+    }
+
+    public double getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(double maxDistance) {
+        this.maxDistance = maxDistance;
     }
     
 }

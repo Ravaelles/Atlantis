@@ -40,8 +40,9 @@ public class AtlantisPainter {
     private static final int MODE_PARTIAL_PAINTING = 2;
     private static final int MODE_FULL_PAINTING = 3;
 
+    private static int paintingMode = MODE_NO_PAINTING;
 //    private static int paintingMode = MODE_PARTIAL_PAINTING;
-    private static int paintingMode = MODE_FULL_PAINTING;
+//    private static int paintingMode = MODE_FULL_PAINTING;
     
     // =========================================================
 
@@ -60,7 +61,6 @@ public class AtlantisPainter {
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
-        bwapi.setTextSize(Enum.Default);
 
         if (paintingMode == MODE_NO_PAINTING) {
             return;
@@ -68,16 +68,19 @@ public class AtlantisPainter {
         
         // === Only text ===========================================
 
+        bwapi.setTextSize(Enum.Default);
+        
         paintInfo();
         paintKilledAndLost();
         paintProductionQueue();
         paintSidebarConstructionsPending();
+        //        paintUnitCounters();
+        
         if (paintingMode == MODE_PARTIAL_PAINTING) {
             return;
         }
         
         // =========================================================
-        // On-map paint
         
         bwapi.setTextSize(Enum.Small);
         
@@ -92,10 +95,6 @@ public class AtlantisPainter {
 //        paintTemporaryTargets();
         paintEnemyDiscovered();
         paintCombatUnits();
-
-        // =========================================================
-        // On-screen paint
-//        paintUnitCounters();
         paintTooltipsOverUnits();
     }
 
@@ -684,15 +683,17 @@ public class AtlantisPainter {
      * Paints the number of workers that are gathering to this building.
      */
     private static void paintWorkersAssignedToBuildings() {
+        bwapi.setTextSize(Enum.Default);
         for (AUnit building : Select.ourBuildings().listUnits()) {
 
             // Paint text
             int workers = AtlantisWorkerManager.getHowManyWorkersAt(building);
             if (workers > 0) {
-                String workersAssigned = "Workers: " + workers;
+                String workersAssigned = workers + " WRK";
                 paintTextCentered(PositionUtil.translate(building.getPosition(), 0, -15), workersAssigned, Color.Blue);
             }
         }
+        bwapi.setTextSize(Enum.Small);
     }
 
     /**

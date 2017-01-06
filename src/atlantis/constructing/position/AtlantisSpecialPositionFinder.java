@@ -58,7 +58,7 @@ public class AtlantisSpecialPositionFinder {
         
 //        System.err.println("");
 //        System.err.println(constructionOrder.getProductionOrder());
-        System.err.println("=== modifier /" + modifier + "/ ===");
+//        System.err.println("=== modifier /" + modifier + "/ ===");
         if (modifier != null) {
             if (modifier.equals(BASE_NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
                 return findPositionForBase_nearMainBase(building, builder);
@@ -85,19 +85,19 @@ public class AtlantisSpecialPositionFinder {
 //        System.out.println(builder + " / " + building + " / " +  APosition.createFrom(baseLocationToExpand.getPosition()));
 
         return AtlantisPositionFinder.findStandardPosition(
-                builder, building, APosition.createFrom(baseLocationToExpand.getPosition()), 3
+                builder, building, APosition.createFrom(baseLocationToExpand.getPosition()), 1
         );
     }
 
     private static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder) {
-        return AtlantisPositionFinder.findStandardPosition(builder, building, Select.mainBase().getPosition(), 20);
+        return AtlantisPositionFinder.findStandardPosition(builder, building, Select.mainBase().getPosition(), 30);
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder) {
         APosition nearestBaseLocation = APosition.createFrom(
                 AtlantisMap.getNearestBaseLocationToExpand(Select.mainBase().getPosition()).getPosition()
         );
-        return AtlantisPositionFinder.findStandardPosition(builder, building, nearestBaseLocation, 3);
+        return AtlantisPositionFinder.findStandardPosition(builder, building, nearestBaseLocation, 1);
     }
 
 }

@@ -66,7 +66,8 @@ public class ZergPositionFinder extends AbstractPositionFinder {
             searchRadius++;
         }
 //        System.out.println("##### No success with searchRadius = " + searchRadius);
-//        System.err.println("##### Last condition that failed = `" + _CONDITION_THAT_FAILED + "` for " + building + " with searchRadius = " + searchRadius);
+//        System.err.println("##### Last condition that failed = `" + _CONDITION_THAT_FAILED + "` for " 
+//              + building + " with searchRadius = " + searchRadius);
 
         return null;
     }

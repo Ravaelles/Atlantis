@@ -74,12 +74,13 @@ public class AtlantisBuilderManager {
         // If we can afford to construct this building exactly right now, issue build order which should
         // be immediate as unit is standing just right there
         else if (AtlantisGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
-            if (!AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition)) {
-                buildPosition = constructionOrder.findNewBuildPosition();
-            }
+//            if (!AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition)) {
+//                buildPosition = constructionOrder.findNewBuildPosition();
+//            }
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
             if (buildPosition != null && !builder.isConstructing() && AtlantisGame.canAfford(buildingType)) {
+                buildPosition = constructionOrder.findNewBuildPosition();
                 TilePosition buildTilePosition = buildPosition.toTilePosition();
                 builder.build(buildingType, buildTilePosition, UnitMissions.BUILD);
             }

@@ -29,7 +29,8 @@ public class ZergBuildOrders extends AtlantisBuildOrdersManager {
         units.add(AUnitType.Zerg_Zergling);
         units.add(AUnitType.Zerg_Zergling);
         
-        if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
+        if (AtlantisWorkerCommander.shouldTrainWorkers(false)) {
+            units.add(AUnitType.Zerg_Drone);
             units.add(AUnitType.Zerg_Drone);
         }
         

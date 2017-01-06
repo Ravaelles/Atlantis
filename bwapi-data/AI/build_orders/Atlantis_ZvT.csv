@@ -44,6 +44,7 @@
 
 Number;Name;Modifier
 // =================
+12;Hatchery;NATURAL
 1;Drone
 1;Drone
 1;Drone
@@ -51,7 +52,7 @@ Number;Name;Modifier
 1;Drone
 1;Drone
 0;Overlord
-12;Hatchery;NATURAL
+//12;Hatchery;NATURAL
 1;Drone
 1;Drone
 1;Drone
