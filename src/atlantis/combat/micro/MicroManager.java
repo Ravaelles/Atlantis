@@ -78,8 +78,8 @@ public class MicroManager extends AbstractMicroManager {
      * <b>false</b> if unit is in the shooting frame or does any other thing that mustn't be interrupted
      */
     private boolean canIssueOrderToUnit(AUnit unit) {
-        return true;
-//        return !(unit.isAttackFrame() || unit.isStartingAttack()); //replaces unit.isJustShooting();
+//        return true;
+        return !(unit.isAttackFrame() || unit.isStartingAttack()); //replaces unit.isJustShooting();
     }
 
     /**

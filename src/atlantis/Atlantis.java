@@ -1,6 +1,9 @@
 package atlantis;
 
 import atlantis.combat.squad.AtlantisSquadManager;
+import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.ConstructionOrder;
+import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.ProtossConstructionManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.init.AtlantisInitialActions;
@@ -274,7 +277,7 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitDestroy(Unit u) {
         AUnit unit = AUnit.createFrom(u);
-
+        
 //        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
 
         if (unit != null) {
@@ -343,36 +346,53 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitMorph(Unit u) {
         AUnit unit = AUnit.createFrom(u);
-
+        
         // A bit of safe approach: forget the unit and remember it again.
         // =========================================================
         // Forget unit
         if (unit != null) {
-            if (unit.isEnemyUnit()) {
-                AtlantisEnemyUnits.unitDestroyed(unit);
+            if (unit.isOurUnit()) {
+                AtlantisSquadManager.battleUnitDestroyed(unit);
             }
             else {
-                AtlantisSquadManager.battleUnitDestroyed(unit);
+                AtlantisEnemyUnits.unitDestroyed(unit);
             }
         }
 
         // =========================================================
         // Remember the unit
         if (unit != null) {
-            
-            // Enemy unit
-            if (unit.isEnemyUnit()) {
-                AtlantisEnemyUnits.refreshEnemyUnit(unit);
-            }
+            unit.refreshType();
             
             // Our unit
-            else {
+            if (unit.isOurUnit()) {
+
+                // === Fix for Zerg Extractor ========================================
+
+                // Detect morphed gas building meaning construction has just started
+                if (unit.getType().isGasBuilding()) {
+                    for (ConstructionOrder order : AtlantisConstructionManager.getAllConstructionOrders()) {
+                        if (order.getBuildingType().equals(AtlantisConfig.GAS_BUILDING) 
+                                && order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                            order.setConstruction(unit);
+                            break;
+                        }
+                    }
+                }
+                
+                // =========================================================
+
                 AtlantisGame.getBuildOrders().rebuildQueue();
 
                 // Add to combat squad if it's military unit
                 if (unit.isActualUnit()) {
                     AtlantisSquadManager.possibleCombatUnitCreated(unit);
                 }
+            }
+            
+            // Enemy unit
+            else {
+                AtlantisEnemyUnits.refreshEnemyUnit(unit);
             }
         }
     }

@@ -50,7 +50,7 @@ public class AtlantisWorkerCommander {
         }
 
         // Check if AUTO-PRODUCTION of WORKERS is active.
-        if (workers < AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS) {
+        if (workers < AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS) {
             return true;
         }
 

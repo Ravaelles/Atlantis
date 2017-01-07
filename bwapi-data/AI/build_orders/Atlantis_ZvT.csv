@@ -6,20 +6,17 @@
 
 // === CUSTOMIZABLE VARIABLES =========================================
 
-// If this value is positive, auto-produce workers as long as it's at least N of them
-#AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS=40
-
 // If we have more or equal to N workers, auto-produce them until we reach AUTO_PRODUCE_WORKERS_MAX_WORKERS
 #AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS=201
 
 // If AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS is active, then this value will determine the maximum number of workers we can have
-#AUTO_PRODUCE_WORKERS_MAX_WORKERS=50
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=40
 
 // Which worker (1st, 4th, 8th) should scout and try to find enemy base
 #SCOUT_IS_NTH_WORKER=4
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=11
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=20
 
 // ====================================================================
 
@@ -44,21 +41,45 @@
 
 Number;Name;Modifier
 // =================
+5;Drone
+10;Extractor
+6;Drone
+7;Drone
+8;Drone
+9;Drone
+9;Overlord
+10;Drone
 12;Hatchery;NATURAL
-1;Drone
-1;Drone
-1;Drone
-1;Drone
-1;Drone
-1;Drone
-0;Overlord
-//12;Hatchery;NATURAL
-1;Drone
-1;Drone
-1;Drone
-1;Drone
-1;Drone
-1;Spawning Pool
-1;Drone
-1;Drone
+11;Drone
+11;Spawning Pool
+16;Overlord
+11;Zergling
+12;Zergling
+14;Drone
+13;Zergling
 12;Hatchery;MAIN
+//10;Extractor
+15;Drone
+1;Hydralisk Den
+15;Drone
+15;Drone
+1;Hydralisk
+15;Drone
+1;Hydralisk
+15;Drone
+1;Hydralisk
+15;Drone
+1;Hydralisk
+15;Drone
+1;Hydralisk
+15;Drone
+1;Hydralisk
+15;Drone
+1;Hydralisk
+15;Drone
+1;Hydralisk
+12;Hatchery
+12;Hatchery
+12;Hatchery
+//12;Hatchery
+//12;Hatchery

@@ -2,12 +2,14 @@ package atlantis.constructing.position;
 
 import atlantis.AtlantisGame;
 import atlantis.constructing.ConstructionOrder;
+import atlantis.debug.AtlantisPainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
+import bwapi.Color;
 import bwta.BaseLocation;
 
 public class AtlantisSpecialPositionFinder {
@@ -40,7 +42,7 @@ public class AtlantisSpecialPositionFinder {
         for (AUnit base : Select.ourBases().listUnits()) {
             AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base.getPosition());
 
-            if (geyser != null && geyser.distanceTo(base) < 10) {
+            if (geyser != null && geyser.distanceTo(base) < 12) {
                 return PositionUtil.translate(geyser.getPosition(), -48, -32);
             }
         }
@@ -74,14 +76,21 @@ public class AtlantisSpecialPositionFinder {
     // =========================================================
     
     private static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        BaseLocation baseLocationToExpand = AtlantisMap.getNearestBaseLocationToExpand(Select.mainBase().getPosition());
+        BaseLocation baseLocationToExpand;
+        if (Select.ourBases().count() <= 2) {
+            baseLocationToExpand = AtlantisMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().getPosition());
+        }
+        else {
+            baseLocationToExpand = AtlantisMap.getExpansionBaseLocationMostDistantToEnemy();
+        }
+        
         if (baseLocationToExpand == null) {
             System.err.println("baseLocationToExpand is null");
             return null;
         }
         
         APosition near = APosition.createFrom(baseLocationToExpand.getPosition());
-        constructionOrder.setMaxDistance(3);
+        constructionOrder.setMaxDistance(4);
 
 //        System.out.println("Main base = " + Select.mainBase());
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
@@ -103,11 +112,11 @@ public class AtlantisSpecialPositionFinder {
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
         APosition near = APosition.createFrom(
-                AtlantisMap.getNearestBaseLocationToExpand(Select.mainBase().getPosition()).getPosition()
+                AtlantisMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().getPosition()).getPosition()
         );
         
         constructionOrder.setNearTo(near);
-        constructionOrder.setMaxDistance(3);
+        constructionOrder.setMaxDistance(7);
         
         return AtlantisPositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
     }

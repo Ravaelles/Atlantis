@@ -49,11 +49,6 @@ public class AtlantisConfig {
     public static int USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
 
     /**
-     * Force production of a worker whenever you have 50 minerals and less than N workers.
-     */
-    public static int AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = 0;
-
-    /**
      * Force production of a worker whenever you have 50 minerals and more than N workers, but less than
      * AUTO_PRODUCE_WORKERS_MAX_WORKERS.
      */
@@ -68,7 +63,7 @@ public class AtlantisConfig {
     /**
      * We must reach at least N workers (SCVs, Probes) to scout for the enemy location.
      */
-    public static int SCOUT_IS_NTH_WORKER = 7;
+    public static int SCOUT_IS_NTH_WORKER = 201;
 
     // =========================================================
     // Do not customize - see methods "useConfigFor{Race}"

@@ -11,6 +11,8 @@ import bwapi.Position;
 
 public class AtlantisPositionFinder {
 
+    public static int totalRequests = 0;
+    
     protected static AUnitType building;
     protected static Position nearTo;
     protected static double maxDistance;
@@ -33,8 +35,8 @@ public class AtlantisPositionFinder {
      */
     public static APosition getPositionForNew(AUnit builder, AUnitType building, 
             ConstructionOrder constructionOrder, APosition nearTo, double maxDistance) {
+        totalRequests++;
         constructionOrder.setMaxDistance(maxDistance);
-        AtlantisGame.sendMessage("Find for " + building);
 
         // =========================================================
         // Buildings extracting GAS
@@ -45,7 +47,8 @@ public class AtlantisPositionFinder {
         // =========================================================
         // BASE
         else if (building.isBase()) {
-            return AtlantisSpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
+            APosition position = AtlantisSpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
+            return position;
         } 
 
         // =========================================================

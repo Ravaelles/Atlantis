@@ -83,6 +83,16 @@ public class Select<T> {
 
         return data;
     }
+    
+    private static List<AUnit> allUnits() {
+        List<AUnit> data = new ArrayList<>();
+
+        for (Unit u : Atlantis.getBwapi().getAllUnits()) {
+            data.add(AUnit.createFrom(u));
+        }
+
+        return data;
+    }
 
     // =====================================================================
     // Create base object
@@ -99,6 +109,19 @@ public class Select<T> {
                     AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
+        }
+        
+        return new Select<AUnit>(data);
+    }
+    /**
+     * Selects all game units including minerals, geysers and enemy units.
+     */
+    public static Select<AUnit> all() {
+        //Units units = new Units();
+        List<AUnit> data = new ArrayList<>();
+
+        for (AUnit unit : ourUnits()) {
+            data.add(unit);
         }
         
         return new Select<AUnit>(data);
@@ -790,7 +813,14 @@ public class Select<T> {
      * Returns first unit that matches previous conditions or null if no units match conditions.
      */
     public T first() {
-        return data.isEmpty() ? null : data.get(0);	// first();
+        return data.isEmpty() ? null : data.get(0);
+    }
+
+    /**
+     * Returns first unit that matches previous conditions or null if no units match conditions.
+     */
+    public T last() {
+        return data.isEmpty() ? null : data.get(data.size() - 1);
     }
 
     /**

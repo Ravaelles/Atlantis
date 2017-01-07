@@ -14,8 +14,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AtlantisConstructionManager {
 
-    public static int totalRequests = 0;
-
     /**
      * List of all unfinished (started or pending) constructions.
      */
@@ -55,7 +53,6 @@ public class AtlantisConstructionManager {
      * it.
      */
     public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
-        totalRequests++;
 
         // Validate
         if (!building.isBuilding()) {
@@ -82,9 +79,12 @@ public class AtlantisConstructionManager {
 
         // =========================================================
         // Find place for new building
-        APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
-                newConstructionOrder.getBuilder(), building, newConstructionOrder, near, 25
-        );
+//        APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
+//                newConstructionOrder.getBuilder(), building, newConstructionOrder, near, 25
+//        );
+        newConstructionOrder.setMaxDistance(25);
+        APosition positionToBuild = newConstructionOrder.findNewBuildPosition();
+//        AtlantisGame.sendMessage("@@ " + building + " at " + positionToBuild + " near " + near);
 //        System.err.println("@@ " + building + " at " + positionToBuild + " near " + near);
 
         // =========================================================
@@ -103,9 +103,7 @@ public class AtlantisConstructionManager {
 
             // Rebuild production queue as new building is about to be built
             AtlantisGame.getBuildOrders().rebuildQueue();
-        } 
-        
-        // Couldn't find place for building! That's f'g bad.
+        } // Couldn't find place for building! That's f'g bad.
         else {
             System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
                     + " / BUILDER = " + optimalBuilder);
@@ -120,8 +118,10 @@ public class AtlantisConstructionManager {
 
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
-        if (builder == null || !builder.exists()) {
-            constructionOrder.assignOptimalBuilder();
+        if (AtlantisGame.playsAsTerran()) {
+            if (builder == null || !builder.exists()) {
+                constructionOrder.assignOptimalBuilder();
+            }
         }
     }
 
@@ -169,7 +169,7 @@ public class AtlantisConstructionManager {
 
         // If playing as ZERG...
         if (AtlantisGame.playsAsZerg()) {
-            handleRemoveZergConstructionsWhichBecamePendingBuildings();
+            handleZergConstructionsWhichBecameBuildings();
         }
 
         // =========================================================
@@ -195,7 +195,7 @@ public class AtlantisConstructionManager {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
         } // Building doesn't exist yet, means builder is travelling to the construction place
-        else if (!builder.isMoving()) {
+        else if (builder != null && !builder.isMoving()) {
             if (constructionOrder.getPositionToBuild() == null) {
                 APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
                         constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
@@ -349,15 +349,24 @@ public class AtlantisConstructionManager {
      * method looks for constructions for which builder.type and builder.builds.type is the same, meaning that
      * the drone actually became a building (sweet metamorphosis, yay!).
      */
-    private static void handleRemoveZergConstructionsWhichBecamePendingBuildings() {
-        ArrayList<ConstructionOrder> allOrders = AtlantisConstructionManager.getAllConstructionOrders();
-        if (!allOrders.isEmpty()) {
-            for (ConstructionOrder constructionOrder : allOrders) {
-                if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+    private static void handleZergConstructionsWhichBecameBuildings() {
+        if (AtlantisGame.playsAsZerg()) {
+            ArrayList<ConstructionOrder> allOrders = AtlantisConstructionManager.getAllConstructionOrders();
+            if (!allOrders.isEmpty()) {
+                for (ConstructionOrder constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.getBuilder();
-                    if (builder != null) {
-                        if (builder.getType().equals(constructionOrder.getBuildingType())) {
-                            constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+//                    System.out.println("--- " + constructionOrder.getBuildingType()+ " ----------");
+//                    System.out.println("BUILDER = " + builder);
+//                    System.out.println(builder.getBuildUnit());
+//                    System.out.println(builder.getBuildType());
+//                    System.out.println(builder.getTarget());
+//                    System.out.println(builder.getTargetPosition());
+//                    System.out.println(builder.getOrderTarget());
+                    if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                        if (builder != null) {
+                            if (builder.getType().equals(constructionOrder.getBuildingType())) {
+                                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+                            }
                         }
                     }
                 }

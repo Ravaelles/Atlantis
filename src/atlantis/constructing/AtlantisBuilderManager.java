@@ -57,14 +57,18 @@ public class AtlantisBuilderManager {
             return;
         }
 
+//        buildPosition = PositionUtil.translate(buildPosition, buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
+//        buildPosition = PositionUtil.translate(
+//                buildPosition, buildingType.getTileWidth() * 32 / 2, buildingType.getTileHeight() * 32 / 2
+//        );
+        
         // =========================================================
+        
+        double maxDistance = buildingType.isGasBuilding() ? 5 : 1;
+        
         // Move builder to the build position
-        //TODO: check possible confusion with Position and TilePosition here
-        buildPosition = PositionUtil.translate(buildPosition, buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
-        if (!builder.isMoving() && builder.distanceTo(buildPosition) > 1) {
-//            if (!builder.isConstructing()) {
-                builder.move(buildPosition, UnitMissions.BUILD);
-//            }
+        if (builder.distanceTo(buildPosition) > maxDistance) {
+            builder.move(buildPosition, UnitMissions.BUILD);
         } 
 
         // AUnit is already at the build position, issue build order
@@ -76,10 +80,12 @@ public class AtlantisBuilderManager {
 //            }
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
-            if (buildPosition != null && !builder.isConstructing() && AtlantisGame.canAfford(buildingType)) {
-                buildPosition = constructionOrder.findNewBuildPosition();
+            if (buildPosition != null && AtlantisGame.canAfford(buildingType)) {
+//                buildPosition = constructionOrder.findNewBuildPosition();
                 TilePosition buildTilePosition = buildPosition.toTilePosition();
-                builder.build(buildingType, buildTilePosition, UnitMissions.BUILD);
+                if (buildTilePosition != null && !builder.isConstructing()) {
+                    builder.build(buildingType, buildTilePosition, UnitMissions.BUILD);
+                }
             }
         }
     }

@@ -89,12 +89,16 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      */
     public AUnitType getType() {
         AUnitType type = AUnitType.createFrom(u.getType());
-        if (type.equals(AUnitType.Unknown)) {
+        if (AUnitType.Unknown.equals(type)) {
             return _lastCachedType;
         } else {
             _lastCachedType = type;
             return type;
         }
+    }
+    
+    public void refreshType() {
+        _lastCachedType = AUnitType.createFrom(u.getType());
     }
 
     @Override

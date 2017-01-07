@@ -517,9 +517,10 @@ public abstract class AtlantisBuildOrdersManager {
     private void handleSpecialCommand(String[] row) {
         String command = row[0].substring(1).toUpperCase();
 
-        if (command.startsWith("AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS")) {
-            AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = extractSpecialCommandValue(row);
-        } else if (command.startsWith("AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
+//        if (command.startsWith("AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS")) {
+//            AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = extractSpecialCommandValue(row);
+//        } else 
+        if (command.startsWith("AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
             AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = extractSpecialCommandValue(row);
         } else if (command.startsWith("AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
             AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS = extractSpecialCommandValue(row);

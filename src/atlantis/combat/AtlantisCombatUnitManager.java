@@ -1,5 +1,6 @@
 package atlantis.combat;
 
+import atlantis.AtlantisGame;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
@@ -36,6 +37,10 @@ public class AtlantisCombatUnitManager {
         if (squad != null) {
             microManagerForbidsOtherActions = squad.getMicroManager().update(unit);
         }
+        else {
+            AtlantisGame.sendMessage(unit + " sq null");
+            System.err.println(unit + " sq null");
+        }
 //        }
 
         // MICRO-MANAGER indicates that its orders should not be overriden by mission manager
@@ -46,7 +51,6 @@ public class AtlantisCombatUnitManager {
         // =========================================================
         // It's okay to handle MISSION orders according to current mission (e.g. DEFEND, ATTACK)
         else {
-//                    if (!unit.isMoving() && !unit.isAttacking() && !unit.isJustShooting()) {
             if (squad == null) {
                 System.err.println("squad is NULL!");
                 return true;
@@ -58,7 +62,6 @@ public class AtlantisCombatUnitManager {
             else {
                 return squad.getMission().update(unit);
             }
-//                    }
         }
     }
 

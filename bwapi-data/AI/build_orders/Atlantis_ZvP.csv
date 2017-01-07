@@ -6,9 +6,6 @@
 
 // === CUSTOMIZABLE VARIABLES =========================================
 
-// If this value is positive, auto-produce workers as long as it's at least N of them
-#AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS=40
-
 // If we have more or equal to N workers, auto-produce them until we reach AUTO_PRODUCE_WORKERS_MAX_WORKERS
 #AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS=22
 

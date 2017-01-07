@@ -65,8 +65,11 @@ public interface UnitActions {
     }
     
     default public boolean move(Position target, UnitMission unitMission) {
-        unit().setUnitMission(unitMission);
-        return u().move(target);
+        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
+            unit().setUnitMission(unitMission);
+            return u().move(target);
+        }
+        return true;
     }
     
     /**

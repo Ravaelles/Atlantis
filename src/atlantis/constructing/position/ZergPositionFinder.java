@@ -50,12 +50,12 @@ public class ZergPositionFinder extends AbstractPositionFinder {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
                         APosition constructionPosition = new APosition(tileX * 32, tileY * 32);
                         if (doesPositionFulfillAllConditions(builder, constructionPosition)) {
-                            AtlantisPainter.paintRectangle(constructionPosition, tileX, tileY, Color.Green);
+//                            AtlantisPainter.paintRectangle(constructionPosition, 32, 32, Color.Green);
                             return constructionPosition;
                         }
-                        else {
-                            AtlantisPainter.paintRectangle(constructionPosition, tileX, tileY, Color.Red);
-                        }
+//                        else {
+//                            AtlantisPainter.paintRectangle(constructionPosition, 32, 32, Color.Red);
+//                        }
                     }
 
                     yCounter++;

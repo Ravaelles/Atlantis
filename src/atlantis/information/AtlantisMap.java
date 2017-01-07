@@ -1,6 +1,7 @@
 package atlantis.information;
 
 import atlantis.Atlantis;
+import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
@@ -117,7 +118,7 @@ public class AtlantisMap {
     /**
      * Returns nearest free base location where we don't have base built yet.
      */
-    public static BaseLocation getNearestBaseLocationToExpand(APosition nearestTo) {
+    public static BaseLocation getExpansionFreeBaseLocationNearestTo(APosition nearestTo) {
 
         // Get list of all base locations
         Positions<BaseLocation> baseLocations = new Positions<BaseLocation>();
@@ -126,6 +127,35 @@ public class AtlantisMap {
         // Sort them all by closest to given nearestTo position
         if (nearestTo != null) {
             baseLocations.sortByDistanceTo(nearestTo, true);
+        }
+
+        // For every location...
+        for (BaseLocation baseLocation : baseLocations.list()) {
+            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation)) {
+                return baseLocation;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns free base location which is as far from enemy starting location as possible.
+     */
+    public static BaseLocation getExpansionBaseLocationMostDistantToEnemy() {
+        APosition farthestTo = AtlantisEnemyUnits.getEnemyBase();
+        if (farthestTo == null) {
+            return getExpansionFreeBaseLocationNearestTo(Select.ourBases().first().getPosition());
+        }
+        
+        // =========================================================
+
+        // Get list of all base locations
+        Positions<BaseLocation> baseLocations = new Positions<BaseLocation>();
+        baseLocations.addPositions(getBaseLocations());
+
+        // Sort them all by closest to given nearestTo position
+        if (farthestTo != null) {
+            baseLocations.sortByDistanceTo(farthestTo, false);
         }
 
         // For every location...

@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.AtlantisGame;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -24,6 +25,9 @@ public class AtlantisSquadManager {
         Squad squad = getAlphaSquad();
         squad.addUnit(unit);
         unit.setSquad(squad);
+        
+        AtlantisGame.sendMessage("Squad size: " + squad.size());
+        System.err.println("Squad size: " + squad.size());
     }
 
     public static void battleUnitDestroyed(AUnit unit) {
