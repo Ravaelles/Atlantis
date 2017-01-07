@@ -539,6 +539,10 @@ public class AUnitType implements Comparable<AUnitType> {
         return this.equals(AUnitType.Zerg_Larva);
     }
 
+    public boolean isEgg() {
+        return this.equals(AUnitType.Zerg_Egg);
+    }
+
     public boolean isOverlord() {
         return this.equals(AUnitType.Zerg_Overlord);
     }

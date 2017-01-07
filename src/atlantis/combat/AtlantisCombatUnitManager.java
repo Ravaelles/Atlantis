@@ -39,7 +39,7 @@ public class AtlantisCombatUnitManager {
         }
         else {
             AtlantisGame.sendMessage(unit + " sq null");
-            System.err.println(unit + " sq null");
+            System.err.println(unit + " sq null for unit " + unit);
         }
 //        }
 
@@ -52,7 +52,8 @@ public class AtlantisCombatUnitManager {
         // It's okay to handle MISSION orders according to current mission (e.g. DEFEND, ATTACK)
         else {
             if (squad == null) {
-                System.err.println("squad is NULL!");
+                System.err.println("squad is NULLz!");
+                System.err.println(unit + " sq null for unit " + unit);
                 return true;
             }
             else if (squad.getMission() == null) {

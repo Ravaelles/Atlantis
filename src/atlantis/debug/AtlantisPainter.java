@@ -41,9 +41,9 @@ public class AtlantisPainter {
     private static final int MODE_PARTIAL_PAINTING = 2;
     private static final int MODE_FULL_PAINTING = 3;
 
-//    private static int paintingMode = MODE_NO_PAINTING;
+    private static int paintingMode = MODE_NO_PAINTING;
 //    private static int paintingMode = MODE_PARTIAL_PAINTING;
-    private static int paintingMode = MODE_FULL_PAINTING;
+//    private static int paintingMode = MODE_FULL_PAINTING;
     
     // =========================================================
 
@@ -498,8 +498,7 @@ public class AtlantisPainter {
      * Paints circles around units which mean what's their mission.
      */
     private static void paintColorCirclesAroundUnits() {
-//        for (AUnit unit : Select.ourRealUnits().listUnits()) {
-        for (AUnit unit : Select.all().listUnits()) {
+        for (AUnit unit : Select.ourRealUnits().listUnits()) {
 
 //            // STARTING ATTACK
 //            if (unit.isStartingAttack()) {

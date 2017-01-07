@@ -17,6 +17,7 @@ public class AtlantisSquadManager {
     protected static ArrayList<Squad> squads = new ArrayList<>();
 
     // =========================================================
+    
     public static void possibleCombatUnitCreated(AUnit unit) {
         if (shouldSkipUnit(unit)) {
             return;
@@ -48,7 +49,7 @@ public class AtlantisSquadManager {
      * @return
      */
     private static boolean shouldSkipUnit(AUnit unit) {
-        return unit.getType().isBuilding() || unit.isWorker() || unit.getType().equals(AUnitType.Zerg_Larva);
+        return unit.getType().isBuilding() || unit.isWorker() || unit.getType().isLarva() || unit.getType().isEgg();
     }
 
     // =========================================================

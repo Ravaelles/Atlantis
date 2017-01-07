@@ -2,6 +2,7 @@ package atlantis.units;
 
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.AtlantisRunning;
+import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
@@ -532,6 +533,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad getSquad() {
+        if (squad == null) {
+            System.err.println("still squad in unit was fuckin null");
+            squad = AtlantisSquadManager.getAlphaSquad();
+        }
         return squad;
     }
 

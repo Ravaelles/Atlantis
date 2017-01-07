@@ -42,7 +42,6 @@
 Number;Name;Modifier
 // =================
 5;Drone
-10;Extractor
 6;Drone
 7;Drone
 8;Drone
@@ -58,7 +57,7 @@ Number;Name;Modifier
 14;Drone
 13;Zergling
 12;Hatchery;MAIN
-//10;Extractor
+10;Extractor
 15;Drone
 1;Hydralisk Den
 15;Drone

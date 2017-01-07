@@ -247,9 +247,6 @@ public class Atlantis implements BWEventListener {
                     ProtossConstructionManager.handleWarpingNewBuilding(unit);
                 }
             }
-//            if (!unit.isLarvaOrEgg()) {
-//                System.out.println(unit);
-//            }
         }
     }
 
@@ -264,8 +261,7 @@ public class Atlantis implements BWEventListener {
             AtlantisGame.getBuildOrders().rebuildQueue();
 
             // Our unit
-            if (unit.getPlayer().equals(bwapi.self()) && !(unit.getType().equals(AUnitType.Zerg_Larva) 
-                    || unit.getType().equals(AUnitType.Zerg_Egg))) {
+            if (unit.isOurUnit()) {
                 AtlantisSquadManager.possibleCombatUnitCreated(unit);
             }
         }
