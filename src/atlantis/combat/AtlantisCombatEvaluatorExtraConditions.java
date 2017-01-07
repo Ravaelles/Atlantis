@@ -32,10 +32,10 @@ public class AtlantisCombatEvaluatorExtraConditions {
         AtlantisCombatEvaluatorExtraConditions.unit = unit;
         AtlantisCombatEvaluatorExtraConditions.nearestEnemy = nearestEnemy;
         
-        if (shouldRetreatBecauseTooFewOurUnitsAround()) {
-            unit.setTooltip("Closer!");
-            return true;
-        }
+//        if (shouldRetreatBecauseTooFewOurUnitsAround()) {
+//            unit.setTooltip("Closer!");
+//            return true;
+//        }
         
         return false;
     }
@@ -51,12 +51,12 @@ public class AtlantisCombatEvaluatorExtraConditions {
         // If you're near the main base, force the fight
         AUnit mainBase = Select.mainBase();
         if (mainBase != null) {
-            if (PositionUtil.distanceTo(mainBase, unit) < 7) {
+            if (PositionUtil.distanceTo(mainBase, unit) < 15) {
 
                 // Force to fight units that aren't close to being dead                
-                if (unit.getHitPoints() >= 11) {
+//                if (unit.getHitPoints() >= 11) {
                     return true;
-                }
+//                }
             }
         }
         

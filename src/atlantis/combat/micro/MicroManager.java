@@ -46,9 +46,9 @@ public class MicroManager extends AbstractMicroManager {
 
             // =========================================================
             // Don't spread too much
-            if (handleDontSpreadTooMuch(unit)) {
-                return true;
-            }
+//            if (handleDontSpreadTooMuch(unit)) {
+//                return true;
+//            }
 
             // =========================================================
             // Attack enemy is possible

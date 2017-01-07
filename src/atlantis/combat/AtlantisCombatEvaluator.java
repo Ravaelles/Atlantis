@@ -21,8 +21,8 @@ public class AtlantisCombatEvaluator {
     /**
      * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
      */
-    private static double SAFETY_MARGIN_ATTACK = 0.25;
-    private static double SAFETY_MARGIN_RETREAT = -0.35;
+    private static double SAFETY_MARGIN_ATTACK = 0.4;
+    private static double SAFETY_MARGIN_RETREAT = -0.4;
 
     /**
      * Multiplier for hit points factor when evaluating unit's combat value.
@@ -63,7 +63,7 @@ public class AtlantisCombatEvaluator {
         }
 
         if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
-            return false;
+            return true;
         }
 
         return evaluateSituation(unit) >= calculateSafetyMarginOverTime(isPendingFight);
@@ -89,20 +89,29 @@ public class AtlantisCombatEvaluator {
      * <b>NEGATIVE</b> when enemy is too strong and we should pull back.
      */
     public static double evaluateSituation(AUnit unit) {
+        return evaluateSituation(unit, false, false);
+    }
+
+    /**
+     * Returns <b>POSITIVE</b> value if our unit <b>unit</b> should engage in combat with nearby units or
+     * <b>NEGATIVE</b> when enemy is too strong and we should pull back.
+     */
+    public static double evaluateSituation(AUnit unit, boolean returnRaw, boolean calculateForEnemy) {
         checkCombatInfo(unit);
 
-        // Try using cached value
-        double combatEvalCachedValueIfNotExpired = combatInfo.get(unit).getCombatEvalCachedValueIfNotExpired();
-        if (combatEvalCachedValueIfNotExpired > -12345) {
-            return updateCombatEval(unit, combatEvalCachedValueIfNotExpired);
-        }
+//        // Try using cached value
+//        double combatEvalCachedValueIfNotExpired = combatInfo.get(unit).getCombatEvalCachedValueIfNotExpired();
+//        if (combatEvalCachedValueIfNotExpired > -12345) {
+//            return updateCombatEval(unit, combatEvalCachedValueIfNotExpired);
+//        }
 
         // =========================================================
         // Define nearby enemy and our units
         //TODO: check safety of these casts
         Collection<AUnit> enemyUnits = (Collection<AUnit>) Select.enemy().combatUnits().inRadius(12, unit.getPosition()).listUnits();
         if (enemyUnits.isEmpty()) {
-            return updateCombatEval(unit, +999);
+//            return updateCombatEval(unit, +999);
+            return 999;
         }
         Collection<AUnit> ourUnits = (Collection<AUnit>) Select.our().combatUnits().inRadius(8.5, unit.getPosition()).listUnits();
 
@@ -110,10 +119,24 @@ public class AtlantisCombatEvaluator {
         // Evaluate our and enemy strength
         double enemyEvaluation = evaluateUnitsAgainstUnit(enemyUnits, unit, true);
         double ourEvaluation = evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
-        double lowHealthPenalty = (100 - unit.getHPPercent()) / 80;
-        double combatEval = ourEvaluation / enemyEvaluation - 1 - lowHealthPenalty;
 
-        return updateCombatEval(unit, combatEval);
+        // Return non-relative absolute value
+        if (returnRaw) {
+            if (calculateForEnemy) {
+                return enemyEvaluation;
+            }
+            else {
+                return ourEvaluation;
+            }
+        }
+        
+        // Return relative value compared to local enemy strength
+        else {
+            double lowHealthPenalty = (100 - unit.getHPPercent()) / 80;
+            double combatEval = ourEvaluation / enemyEvaluation - 1 - lowHealthPenalty;
+
+            return updateCombatEval(unit, combatEval);
+        }
     }
 
     // =========================================================

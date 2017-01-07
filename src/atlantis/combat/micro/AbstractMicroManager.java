@@ -52,7 +52,6 @@ public abstract class AbstractMicroManager {
                 AtlantisRunManager.unitWantsStopRunning(unit);
             }
         }
-
         
         return false;
     }

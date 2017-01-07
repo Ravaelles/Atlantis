@@ -48,21 +48,23 @@ Number;Name;Modifier
 9;Drone
 9;Overlord
 10;Drone
-12;Hatchery;NATURAL
 11;Drone
+12;Drone
+13;Drone
+12;Hatchery;NATURAL
 11;Spawning Pool
-16;Overlord
-11;Zergling
-12;Zergling
 14;Drone
+11;Zergling
+16;Overlord
+12;Zergling
 13;Zergling
-12;Hatchery;MAIN
 10;Extractor
 15;Drone
 1;Hydralisk Den
 15;Drone
 15;Drone
 1;Hydralisk
+12;Hatchery;MAIN
 15;Drone
 1;Hydralisk
 15;Drone

@@ -41,9 +41,9 @@ public class AtlantisPainter {
     private static final int MODE_PARTIAL_PAINTING = 2;
     private static final int MODE_FULL_PAINTING = 3;
 
-    private static int paintingMode = MODE_NO_PAINTING;
+//    private static int paintingMode = MODE_NO_PAINTING;
 //    private static int paintingMode = MODE_PARTIAL_PAINTING;
-//    private static int paintingMode = MODE_FULL_PAINTING;
+    private static int paintingMode = MODE_FULL_PAINTING;
     
     // =========================================================
 
@@ -164,7 +164,7 @@ public class AtlantisPainter {
             // === Combat Evaluation Strength
             // =========================================================
             if (combatEval < 10) {
-                double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+                double eval = (int) AtlantisCombatEvaluator.evaluateSituation(unit, true, false);
                 if (eval < 999) {
                     String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
                             : AtlantisCombatEvaluator.getEvalString(unit);
@@ -184,7 +184,7 @@ public class AtlantisPainter {
         // =========================================================
         for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
             APosition unitPosition = unit.getPosition();
-            double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+            double eval = (int) AtlantisCombatEvaluator.evaluateSituation(unit, true, true);
             if (eval < 999) {
                 String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
                         : AtlantisCombatEvaluator.getEvalString(unit);
@@ -203,6 +203,7 @@ public class AtlantisPainter {
 
         // =========================================================
         // Gas workers
+        
         paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests, 
                 prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
         prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
@@ -210,12 +211,15 @@ public class AtlantisPainter {
         paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + AtlantisBuildOrdersManager.getMineralsNeeded(), Color.Grey);
         paintSideMessage("Reserved gas: " + AtlantisBuildOrdersManager.getGasNeeded(), Color.Grey);
+        
         // =========================================================
         // Global mission
+        
         paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
 
         // =========================================================
         // Focus point
+        
         APosition focusPoint = MissionAttack.getFocusPoint();
         AUnit mainBase = Select.mainBase();
         String desc = "";
@@ -225,6 +229,7 @@ public class AtlantisPainter {
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
         // =========================================================
+        
         paintSideMessage("Combat squad size: " + AtlantisSquadManager.getAlphaSquad().size(), Color.Blue, 0);
     }
 

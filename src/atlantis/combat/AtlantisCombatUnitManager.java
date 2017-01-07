@@ -12,9 +12,8 @@ import atlantis.units.AUnitType;
  */
 public class AtlantisCombatUnitManager {
 
-    protected static boolean update(AUnit unit) {
+    protected static boolean update(AUnit unit, Squad squad) {
 //        unit.removeTooltip();
-        Squad squad = unit.getSquad();
         
         // =========================================================
         // DON'T INTERRUPT shooting units
@@ -31,17 +30,12 @@ public class AtlantisCombatUnitManager {
         // =========================================================
         // Act with proper micro-manager and decide if mission manager can issue orders afterward.
         boolean microManagerForbidsOtherActions = false;
-//        if (unit.isRangedUnit()) {
-//            microManagerForbidsOtherActions = squad.getMicroRangedManager().update(unit);
-//        } else {
         if (squad != null) {
             microManagerForbidsOtherActions = squad.getMicroManager().update(unit);
         }
         else {
-            AtlantisGame.sendMessage(unit + " sq null");
             System.err.println(unit + " sq null for unit " + unit);
         }
-//        }
 
         // MICRO-MANAGER indicates that its orders should not be overriden by mission manager
         if (microManagerForbidsOtherActions) {
