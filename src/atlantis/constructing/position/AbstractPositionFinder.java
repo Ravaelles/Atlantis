@@ -80,7 +80,7 @@ public abstract class AbstractPositionFinder {
         // + " is " + edgeToEdgeDistance);
 
         // If buildings are dangerously close
-        if (edgeToEdgeDistance < 0.1) {
+        if (edgeToEdgeDistance < 0.1 || (edgeToEdgeDistance <= 1 && otherBuilding.isBase())) {
 
             // Allow stacking of depots
             if (building.equals(AUnitType.Terran_Supply_Depot) && otherBuilding.getType().equals(AUnitType.Terran_Supply_Depot)) {

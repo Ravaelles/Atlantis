@@ -27,8 +27,8 @@ public class AtlantisSquadManager {
         squad.addUnit(unit);
         unit.setSquad(squad);
         
-        AtlantisGame.sendMessage("Squad size: " + squad.size());
-        System.err.println("Squad size: " + squad.size());
+//        AtlantisGame.sendMessage("Squad size: " + squad.size());
+//        System.err.println("Squad size: " + squad.size());
     }
 
     public static void battleUnitDestroyed(AUnit unit) {

@@ -26,6 +26,7 @@ public class AtlantisBuilderManager {
     }
 
     // =========================================================
+    
     private static void handleConstruction(AUnit builder) {
         ConstructionOrder constructionOrder = AtlantisConstructionManager.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
@@ -64,7 +65,7 @@ public class AtlantisBuilderManager {
         
         // =========================================================
         
-        double maxDistance = buildingType.isGasBuilding() ? 5 : 1;
+        double maxDistance = buildingType.isGasBuilding() ? 5 : 1.5;
         
         // Move builder to the build position
         if (builder.distanceTo(buildPosition) > maxDistance) {
@@ -83,7 +84,7 @@ public class AtlantisBuilderManager {
             if (buildPosition != null && AtlantisGame.canAfford(buildingType)) {
 //                buildPosition = constructionOrder.findNewBuildPosition();
                 TilePosition buildTilePosition = buildPosition.toTilePosition();
-                if (buildTilePosition != null && !builder.isConstructing()) {
+                if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle())) {
                     builder.build(buildingType, buildTilePosition, UnitMissions.BUILD);
                 }
             }

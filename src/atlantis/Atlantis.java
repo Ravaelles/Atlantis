@@ -173,6 +173,7 @@ public class Atlantis implements BWEventListener {
         // =========================================================
         gameCommander = new AtlantisGameCommander();
         bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED);
+        bwapi.setFrameSkip(1);
         bwapi.enableFlag(1);	//FIXME: use the Enum'ed value
     }
 

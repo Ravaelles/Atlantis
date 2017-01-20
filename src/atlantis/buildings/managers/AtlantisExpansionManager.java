@@ -17,11 +17,11 @@ import java.util.ArrayList;
 public class AtlantisExpansionManager {
 
     public static void requestNewBaseIfNeeded() {
-        if (1 < 2) {
-            return;
-        }
+//        if (1 < 2) {
+//            return;
+//        }
         
-        int minMinerals = AtlantisGame.playsAsZerg() ? 268 : 356;
+        int minMinerals = 100 + (AtlantisGame.playsAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
         if (!AtlantisGame.hasMinerals(minMinerals)) {
