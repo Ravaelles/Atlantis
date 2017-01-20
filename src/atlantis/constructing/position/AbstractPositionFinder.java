@@ -1,6 +1,7 @@
 package atlantis.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
@@ -57,7 +58,8 @@ public abstract class AbstractPositionFinder {
                     && !builder.equals(constructionOrder.getBuilder())) {
                 if (constructionOrder.getPositionToBuild() != null) {
                     double distance = PositionUtil.distanceTo(constructionOrder.getPositionToBuild(), position);
-                    if (distance <= 4) {
+                    if (distance <= 4 || (distance <= 8 
+                            && !AtlantisGame.playsAsZerg()&& building.isBase() && constructionOrder.getBuildingType().isBase())) {
                         AbstractPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
                                 + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
                         return true;

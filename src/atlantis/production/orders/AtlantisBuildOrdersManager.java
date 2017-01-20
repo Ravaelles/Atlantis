@@ -82,6 +82,15 @@ public abstract class AtlantisBuildOrdersManager {
     }
     
     /**
+     * Reads build orders from CSV file and converts them into ArrayList.
+     */
+    private void readBuildOrdersFile() {
+
+        // Convert 2D String array into ArrayList of ProductionOrder
+        createProductionOrderListFromStringArray();
+    }
+    
+    /**
      * Returns default production strategy according to the race played.
      */
     public static AtlantisBuildOrdersManager loadBuildOrders() {
@@ -457,15 +466,6 @@ public abstract class AtlantisBuildOrdersManager {
         // Enqueue created order
         initialProductionQueue.add(order);
         currentProductionQueue.add(order);
-    }
-
-    /**
-     * Reads build orders from CSV file and converts them into ArrayList.
-     */
-    private void readBuildOrdersFile() {
-
-        // Convert 2D String array into ArrayList of ProductionOrder
-        createProductionOrderListFromStringArray();
     }
     
     /**

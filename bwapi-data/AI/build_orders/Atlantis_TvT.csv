@@ -19,24 +19,57 @@
 #SCOUT_IS_NTH_WORKER=8
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=11
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=34
 
 // ====================================================================
+
+# 1 Port Wraith (vs. Terran) Build Order
+# 9/10 - Supply Depot
+# 12/18 - Barracks
+# 12/18 - Refinery
+# 16/18 - Factory
+# 17/18 - Supply Depot
+# @100% Factory - Vulture and Machine Shop
+# 24/26 - Starport
+# 24/26 - Supply Depot
+# @100% Starport - Control Tower or Wraith
+# 28/34 - Supply Depot
 
 
 // === Build orders ===================================================
 
 Number;Name;Modifier
 // ================
-5;SCV
-6;SCV
-7;SCV
-8;SCV
-9;SCV
-10;SCV
-1;Command Center;NATURAL
-10;Supply Depot
-11;SCV
-11;SCV
-11;SCV
-11;SCV
+5/10 - SCV
+6/10 - SCV
+7/10 - SCV
+8/10 - SCV
+9/10 - Supply Depot
+10/18 - SCV
+11/18 - SCV
+12/18 - Barracks
+12/18 - Refinery
+13/18 - SCV
+14/18 - SCV
+15/18 - SCV
+16/18 - Factory
+17/18 - Supply Depot
+18/26 - Vulture
+19/26 - Machine Shop
+20/26 - SCV
+21/26 - SCV
+22/26 - SCV
+23/26 - SCV
+24/26 - Starport
+24/26 - Supply Depot
+25/34 - Wraith
+26/34 - SCV
+27/34 - Wraith
+26/34 - SCV
+28/34 - Supply Depot
+/ - Wraith
+/ - SCV
+/ - Wraith
+/ - SCV
+/ - Wraith
+/ - SCV

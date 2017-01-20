@@ -547,6 +547,10 @@ public class AUnitType implements Comparable<AUnitType> {
         return this.equals(AUnitType.Zerg_Overlord);
     }
 
+    public boolean isAddon() {
+        return ut.isAddon();
+    }
+
     public boolean isAirUnit() {
         return ut.isFlyer();
     }

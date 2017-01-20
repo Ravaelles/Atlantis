@@ -53,7 +53,7 @@ public class AtlantisConstructionManager {
      * it.
      */
     public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
-
+        
         // Validate
         if (!building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);

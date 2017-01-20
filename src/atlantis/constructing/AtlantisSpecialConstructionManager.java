@@ -1,6 +1,8 @@
 package atlantis.constructing;
 
+import atlantis.AtlantisGame;
 import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.constructing.position.TerranAddonManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,6 +18,38 @@ public class AtlantisSpecialConstructionManager {
      * Some buildings like Zerg SUnken Colony need special treatment.
      */
     protected static boolean handledAsSpecialBuilding(AUnitType building, ProductionOrder order) {
+        if (handledTerranSpecialBuilding(building, order)) {
+            return true;
+        }
+        if (handledZergSpecialBuilding(building, order)) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    // === Terran ========================================    
+
+    private static boolean handledTerranSpecialBuilding(AUnitType building, ProductionOrder order) {
+        if (!AtlantisGame.playsAsTerran()) {
+            return false;
+        }
+        
+        if (building.isAddon()) {
+            TerranAddonManager.buildNewAddon(building, order);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    // === Zerg ========================================
+
+    private static boolean handledZergSpecialBuilding(AUnitType building, ProductionOrder order) {
+        if (!AtlantisGame.playsAsZerg()) {
+            return false;
+        }
+        
         if (building.equals(AUnitType.Zerg_Sunken_Colony)) {
             ZergCreepColony.creepOneIntoSunkenColony();
             return true;
@@ -39,8 +73,6 @@ public class AtlantisSpecialConstructionManager {
         return false;
     }
     
-    // =========================================================
-
     private static void morphFromZergBuildingInto(AUnitType from, AUnitType into) {
         AUnit building = (AUnit) Select.ourBuildings().ofType(from).first();
         if (building == null) {

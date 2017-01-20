@@ -812,8 +812,8 @@ public class Select<T> {
     /**
      * Returns first unit that matches previous conditions or null if no units match conditions.
      */
-    public T first() {
-        return data.isEmpty() ? null : data.get(0);
+    public AUnit first() {
+        return data.isEmpty() ? null : (AUnit) data.get(0);
     }
 
     /**

@@ -1023,9 +1023,13 @@ public class AtlantisUtilities {
             while (inputStream.hasNextLine()) {
                 String line = inputStream.nextLine();
                 String[] fields = line.split(";");
+                
+                if (fields.length == 1 && line.contains(" - ")) {
+                    fields = line.split(" - ");
+                }
 
                 if (!line.isEmpty() && line.charAt(0) != '#' && !line.startsWith("//")) {
-                    if (numberOfFields > 0 && fields.length < numberOfFields) {
+                    if (numberOfFields > 0 && fields.length < numberOfFields && !line.contains(" - ")) {
                         System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
                         System.err.println("fields.length = " + fields.length);
                         System.err.println("numberOfFields = " + numberOfFields);

@@ -60,6 +60,10 @@ public interface UnitActions {
         return u().build(buildingType.ut(), buildTilePosition);
     }
     
+    default boolean buildAddon(AUnitType addon) {
+        return unit().buildAddon(addon);
+    }
+    
     default void upgrade(UpgradeType upgrade) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

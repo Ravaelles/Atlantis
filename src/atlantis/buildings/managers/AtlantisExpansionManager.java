@@ -44,7 +44,7 @@ public class AtlantisExpansionManager {
                 && AtlantisGame.playsAsZerg() && Select.ourLarva().count() >= 2;
         boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
         boolean allowExtraExpansion = AtlantisGame.hasMinerals(minMinerals + 200)
-                && numberOfUnfinishedBases <= 3;
+                && numberOfUnfinishedBases <= 2;
 
         // Check if it makes sense to request new base
         if (haveEnoughMinerals && !haveEnoughBases && (noBaseToConstruct || allowExtraExpansion)) {
