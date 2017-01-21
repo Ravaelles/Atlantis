@@ -1028,14 +1028,14 @@ public class AtlantisUtilities {
                     fields = line.split(" - ");
                 }
 
-                if (!line.isEmpty() && line.charAt(0) != '#' && !line.startsWith("//")) {
-                    if (numberOfFields > 0 && fields.length < numberOfFields && !line.contains(" - ")) {
-                        System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
-                        System.err.println("fields.length = " + fields.length);
-                        System.err.println("numberOfFields = " + numberOfFields);
-                        System.exit(-1);
-                    }
-                }
+//                if (!line.isEmpty() && line.charAt(0) != '#' && !line.startsWith("//")) {
+//                    if (numberOfFields > 0 && fields.length < numberOfFields && !line.contains(" - ")) {
+//                        System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
+//                        System.err.println("fields.length = " + fields.length);
+//                        System.err.println("numberOfFields = " + numberOfFields);
+//                        System.exit(-1);
+//                    }
+//                }
 
                 if (!line.isEmpty() && !line.startsWith("//")) {
                     listOfArrays.add(fields);

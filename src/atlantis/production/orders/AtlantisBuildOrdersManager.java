@@ -371,13 +371,26 @@ public abstract class AtlantisBuildOrdersManager {
             return;
         }
         
-        int inRowCounter = 1; // Skip first column as it's only order number / description / whatever
+        // Skip first column as it's only order number / description / whatever
+        int inRowCounter = 1;
+        
+        // If only one cell, don't skip anything as first string is already important
+        if (row.length == 1) {
+            inRowCounter = 0;
+        }
+        
         ProductionOrder order = null;
 
         // =========================================================
         // Parse entire row of strings
         // Define type of entry: AUnit / Research / Tech
         String nameString = row[inRowCounter++].toLowerCase().trim();
+        
+        // === Parse some strings ==================================
+        
+        if ("siege tank".equals(nameString)) {
+            nameString = "Siege Tank Tank Mode";
+        }
 
         // =========================================================
         // Try getting objects of each type as we don't know if it's unit, research or tech.

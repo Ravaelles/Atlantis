@@ -61,7 +61,7 @@ public interface UnitActions {
     }
     
     default boolean buildAddon(AUnitType addon) {
-        return unit().buildAddon(addon);
+        return u().buildAddon(addon.ut());
     }
     
     default void upgrade(UpgradeType upgrade) {

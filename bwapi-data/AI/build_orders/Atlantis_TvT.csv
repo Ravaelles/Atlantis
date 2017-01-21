@@ -19,7 +19,7 @@
 #SCOUT_IS_NTH_WORKER=8
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=34
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=29
 
 // ====================================================================
 
@@ -64,12 +64,26 @@ Number;Name;Modifier
 24/26 - Supply Depot
 25/34 - Wraith
 26/34 - SCV
-27/34 - Wraith
-26/34 - SCV
-28/34 - Supply Depot
-/ - Wraith
-/ - SCV
-/ - Wraith
-/ - SCV
-/ - Wraith
-/ - SCV
+Siege Tank
+Wraith
+SCV
+Siege Tank
+Wraith
+SCV
+Siege Tank
+Wraith
+SCV
+Siege Tank
+Wraith
+SCV
+Siege Tank
+Wraith
+SCV
+Siege Tank
+Wraith
+SCV
+Siege Tank
+Wraith
+SCV
+Siege Tank
+Wraith
