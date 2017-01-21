@@ -12,8 +12,8 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 /**
- * Represents various aspect of the game like time elapsed (in frames or approximated seconds),
- * free supply (from our point of view), game speed, enemy player etc.<br />
+ * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply
+ * (from our point of view), game speed, enemy player etc.<br />
  * <br /><b>It's worth to study this class carefully as it contains some really useful methods.</b>
  */
 public class AtlantisGame {
@@ -21,7 +21,6 @@ public class AtlantisGame {
     private static Player _enemy = null; // Cached enemy player
 
     // =========================================================
-    
     /**
      * Returns object that is responsible for the production queue.
      */
@@ -45,8 +44,9 @@ public class AtlantisGame {
 
     /**
      * Returns true if we have all buildings needed for given unit.
-     * @param boolean countUnfinished if true, then if it will require required units to be finished to 
-     * return true e.g. to produce Zealot you need at least one finished Gateway
+     *
+     * @param boolean countUnfinished if true, then if it will require required units to be finished to return
+     * true e.g. to produce Zealot you need at least one finished Gateway
      */
     public static boolean hasBuildingsToProduce(AUnitType unitType, boolean countUnfinished) {
 
@@ -56,10 +56,10 @@ public class AtlantisGame {
             if (requiredType.equals(AUnitType.Zerg_Larva)) {
                 continue;
             }
-            
+
             int requiredAmount = unitType.getRequiredUnits().get(requiredType);
-            int weHaveAmount = requiredType.equals(AUnitType.Zerg_Larva) ? 
-                    Select.ourLarva().count() : Select.our().ofType(requiredType).count();
+            int weHaveAmount = requiredType.equals(AUnitType.Zerg_Larva)
+                    ? Select.ourLarva().count() : Select.our().ofType(requiredType).count();
 //            System.out.println("   need " + requiredType + "    x" + requiredAmount);
 //            System.out.println("   and we have: " + weHaveAmount);
             if (weHaveAmount < requiredAmount) {
@@ -77,16 +77,41 @@ public class AtlantisGame {
     }
 
     // =========================================================
-    
     /**
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */
-    public static void changeSpeed(int speed) {
+    public static void changeSpeedTo(int speed) {
+        if (speed < 0) {
+            speed = 0;
+        }
+
         AtlantisConfig.GAME_SPEED = speed;
         getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-        
+
         String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
         sendMessage("Game speed: " + speedString);
+    }
+
+    /**
+     * Changes game speed by given ammount of units. Total game speed: 0 - fastest 1 - very quick 20 - around
+     * default
+     */
+    public static void changeSpeedBy(int deltaSpeed) {
+        int speed = AtlantisConfig.GAME_SPEED + deltaSpeed;
+        if (speed < 0) {
+            speed = 0;
+        }
+
+        if (getBwapi() != null) {
+            AtlantisConfig.GAME_SPEED = speed;
+            getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+
+            String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
+            sendMessage("Game speed: " + speedString);
+        }
+        else {
+            System.err.println("Can't change game speed, bwapi is null.");
+        }
     }
 
     /**
@@ -171,17 +196,16 @@ public class AtlantisGame {
         }
         return _enemy;
     }
-    
+
     /**
      * Returns neutral player (minerals, geysers, critters).
      */
     public static Player getNeutralPlayer() {
         return Atlantis.getBwapi().neutral();
     }
-    
+
     // =========================================================
     // Auxiliary
-    
     /**
      * Returns random int number from range [min, max], both inclusive.
      */
@@ -256,8 +280,8 @@ public class AtlantisGame {
      * Returns true if we can afford minerals and gas for given upgrade.
      */
     public static boolean canAfford(UpgradeType upgrade) {
-    	//TODO: check whether we need to pass level 0 to match getMineral/GasPriceBase()
-        return hasMinerals(upgrade.mineralPrice()) && hasGas(upgrade.gasPrice());	
+        //TODO: check whether we need to pass level 0 to match getMineral/GasPriceBase()
+        return hasMinerals(upgrade.mineralPrice()) && hasGas(upgrade.gasPrice());
     }
 
     /**
@@ -269,12 +293,11 @@ public class AtlantisGame {
 
     // =========================================================
     // Utility
-    
     /**
      * Sends in-game message that will be visible by other players.
      */
     public static void sendMessage(String message) {
         getBwapi().sendText(message);
     }
-    
+
 }

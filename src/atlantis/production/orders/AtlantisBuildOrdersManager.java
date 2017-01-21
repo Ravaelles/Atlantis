@@ -388,7 +388,7 @@ public abstract class AtlantisBuildOrdersManager {
         
         // === Parse some strings ==================================
         
-        if ("siege tank".equals(nameString)) {
+        if ("siege tank".equals(nameString) || "tank".equals(nameString)) {
             nameString = "Siege Tank Tank Mode";
         }
 

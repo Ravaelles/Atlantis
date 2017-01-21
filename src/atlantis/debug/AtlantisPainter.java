@@ -37,11 +37,11 @@ import java.util.Map;
  */
 public class AtlantisPainter {
     
-    private static final int MODE_NO_PAINTING = 1;
-    private static final int MODE_PARTIAL_PAINTING = 2;
-    private static final int MODE_FULL_PAINTING = 3;
+    public static final int MODE_NO_PAINTING = 1;
+    public static final int MODE_PARTIAL_PAINTING = 2;
+    public static final int MODE_FULL_PAINTING = 3;
 
-    private static int paintingMode = MODE_NO_PAINTING;
+    public static int paintingMode = MODE_NO_PAINTING;
 //    private static int paintingMode = MODE_PARTIAL_PAINTING;
 //    private static int paintingMode = MODE_FULL_PAINTING;
     
@@ -62,6 +62,12 @@ public class AtlantisPainter {
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
+        
+        // === Dynamic PAINTING MODE ===============================
+        
+        paintingMode = (AtlantisGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
+                
+        // =========================================================
 
         if (paintingMode == MODE_NO_PAINTING) {
             return;
@@ -163,13 +169,15 @@ public class AtlantisPainter {
             // =========================================================
             // === Combat Evaluation Strength
             // =========================================================
-            if (combatEval < 10) {
-                double eval = (int) AtlantisCombatEvaluator.evaluateSituation(unit, true, false);
-                if (eval < 999) {
-                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
-                            : AtlantisCombatEvaluator.getEvalString(unit);
+//            if (combatEval < 10) {
+                double eval = AtlantisCombatEvaluator.evaluateSituation(unit, true, false);
+//                if (eval < 999) {
+//                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
+//                            : AtlantisCombatEvaluator.getEvalString(unit);
+                    String combatStrength = ColorUtil.getColorString(Color.Green) 
+                            + AtlantisCombatEvaluator.getEvalString(unit, eval);
                     paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
-                }
+//                }
 
                 // =========================================================
                 // === Paint circle around units with zero ground weapon 
@@ -178,18 +186,20 @@ public class AtlantisPainter {
 //                if (unit.getGroundWeaponCooldown() == 0) {
 //                    paintCircle(unitPosition, 14, Color.White);
 //                }
-            }
+//            }
         }
 
         // =========================================================
         for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
             APosition unitPosition = unit.getPosition();
             double eval = (int) AtlantisCombatEvaluator.evaluateSituation(unit, true, true);
-            if (eval < 999) {
-                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
-                        : AtlantisCombatEvaluator.getEvalString(unit);
+//            if (eval < 999) {
+//                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
+//                        : AtlantisCombatEvaluator.getEvalString(unit);
+                String combatStrength = ColorUtil.getColorString(Color.Red) 
+                            + AtlantisCombatEvaluator.getEvalString(unit, eval);
                 paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
-            }
+//            }
         }
     }
 

@@ -174,7 +174,7 @@ public class Atlantis implements BWEventListener {
         gameCommander = new AtlantisGameCommander();
         bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED);
         bwapi.setFrameSkip(1);
-        bwapi.enableFlag(1);	//FIXME: use the Enum'ed value
+        bwapi.enableFlag(1);	// Enable user input - will be disabled for tournaments
     }
 
     /**
@@ -214,7 +214,7 @@ public class Atlantis implements BWEventListener {
         if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _dynamicSlowdown_isSlowdownActive) {
             if (_dynamicSlowdown_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
                 _dynamicSlowdown_isSlowdownActive = false;
-                AtlantisGame.changeSpeed(_dynamicSlowdown_previousSpeed);
+                AtlantisGame.changeSpeedTo(_dynamicSlowdown_previousSpeed);
             }
         }
 //        } // =========================================================
@@ -525,7 +525,7 @@ public class Atlantis implements BWEventListener {
         _dynamicSlowdown_previousSpeed = AtlantisConfig.GAME_SPEED;
         _dynamicSlowdown_lastTimeUnitDestroyed = AtlantisGame.getTimeSeconds();
         _dynamicSlowdown_isSlowdownActive = true;
-        AtlantisGame.changeSpeed(AtlantisConfig.DYNAMIC_GAME_SPEED_SLOWDOWN);
+        AtlantisGame.changeSpeedTo(AtlantisConfig.DYNAMIC_GAME_SPEED_SLOWDOWN);
     }
 
 }

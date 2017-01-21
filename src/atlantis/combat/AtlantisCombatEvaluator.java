@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class AtlantisCombatEvaluator {
-
+    
     /**
      * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
      */
@@ -37,7 +37,7 @@ public class AtlantisCombatEvaluator {
     /**
      * Maximum allowed value as a result of evaluation.
      */
-    private static int MAX_VALUE = 999;
+    private static int MAX_VALUE = 999999999;
 
     /**
      * Stores the instances of AtlantisCombatInformation for each unit
@@ -111,7 +111,7 @@ public class AtlantisCombatEvaluator {
         Collection<AUnit> enemyUnits = (Collection<AUnit>) Select.enemy().combatUnits().inRadius(12, unit.getPosition()).listUnits();
         if (enemyUnits.isEmpty()) {
 //            return updateCombatEval(unit, +999);
-            return 999;
+            return MAX_VALUE;
         }
         Collection<AUnit> ourUnits = (Collection<AUnit>) Select.our().combatUnits().inRadius(8.5, unit.getPosition()).listUnits();
 
@@ -229,12 +229,19 @@ public class AtlantisCombatEvaluator {
     /**
      * Auxiliary string with colors.
      */
-    public static String getEvalString(AUnit unit) {
-        double eval = evaluateSituation(unit);
-        if (eval > 998) {
-            return "";
+    public static String getEvalString(AUnit unit, double forceValue) {
+        double eval = forceValue != 0 ? forceValue : evaluateSituation(unit);
+        if (eval >= MAX_VALUE) {
+            return "+";
         } else {
-            String string = (eval < 0 ? "" : "+") + String.format("%.1f", eval);
+            String string = (eval < 0 ? "" : "+");
+            
+            if (eval < 5) {
+                string += String.format("%.1f", eval);
+            }
+            else {
+                string += (int) eval;
+            }
 
             if (eval < -0.05) {
                 string = ColorUtil.getColorString(Color.Red) + string;
