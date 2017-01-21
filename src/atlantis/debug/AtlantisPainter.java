@@ -64,8 +64,7 @@ public class AtlantisPainter {
         bwapi = Atlantis.getBwapi();
         
         // === Dynamic PAINTING MODE ===============================
-        
-        paintingMode = (AtlantisGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
+//        paintingMode = (AtlantisGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
                 
         // =========================================================
 

@@ -63,17 +63,17 @@ public class AtlantisKeyboard implements NativeKeyListener {
 
             // Key "1"
             case 2: 
-                AtlantisPainter.paintingMode = AtlantisPainter.MODE_NO_PAINTING;
+                changePaintingMode(AtlantisPainter.MODE_NO_PAINTING);
                 break;
 
             // Key "2"
             case 3: 
-                AtlantisPainter.paintingMode = AtlantisPainter.MODE_PARTIAL_PAINTING;
+                changePaintingMode(AtlantisPainter.MODE_PARTIAL_PAINTING);
                 break;
 
             // Key "3"
             case 4: 
-                AtlantisPainter.paintingMode = AtlantisPainter.MODE_FULL_PAINTING;
+                changePaintingMode(AtlantisPainter.MODE_FULL_PAINTING);
                 break;
         }
     }
@@ -85,29 +85,27 @@ public class AtlantisKeyboard implements NativeKeyListener {
     public void nativeKeyTyped(NativeKeyEvent e) {
 //        String keyAsString = e.getKeyText(e.getKeyCode());
     }
+    
+    // =========================================================
 
-//        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
-//                new KeyEventDispatcher() {
-//
-//            @Override
-//            public boolean dispatchKeyEvent(KeyEvent event) {
-//                System.out.println("KEY PRESSED: " + event.getID());
-//
-//                switch (event.getID()) {
-//                    case KeyEvent.KEY_PRESSED:
-//                        if (event.getKeyCode() == KeyEvent.VK_PLUS) {
-//                            AtlantisGame.changeSpeedBy(-2);
-//                        }
-//                        break;
-//
-//                    case KeyEvent.KEY_RELEASED:
-//                        if (event.getKeyCode() == KeyEvent.VK_MINUS) {
-//                            AtlantisGame.changeSpeedBy(+2);
-//                        }
-//                        break;
-//                }
-//                return false;
-//            }
-//
-//        });
+    private void changePaintingMode(int mode) {
+        AtlantisPainter.paintingMode = mode;
+        
+        String string = "";
+        if (mode == AtlantisPainter.MODE_NO_PAINTING) {
+            string = "Paint mode #1: PAINTING DISABLED";
+        }
+        else if (mode == AtlantisPainter.MODE_PARTIAL_PAINTING) {
+            string = "Paint mode #2: PAINT ONLY INFO";
+        }
+        else if (mode == AtlantisPainter.MODE_FULL_PAINTING) {
+            string = "Paint mode #3: FULL PAINT MODE";
+        }
+        else {
+            string = "Paint mode error";
+        }
+        
+        AtlantisGame.sendMessage(string);
+    }
+    
 }
