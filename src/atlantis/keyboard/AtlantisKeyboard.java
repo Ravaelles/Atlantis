@@ -40,15 +40,11 @@ public class AtlantisKeyboard implements NativeKeyListener {
     }
 
     // =========================================================
+    
+    @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-//        System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
-//
-//        if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
-//            GlobalScreen.unregisterNativeHook();
-//        }
-
-        System.out.println("Key pressed: " + e.getKeyCode());
-
+//        System.out.println(e.getKeyCode());
+        
         switch (e.getKeyCode()) {
             
             // Keys "-" and NumPad "-"

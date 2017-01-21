@@ -297,7 +297,9 @@ public class AtlantisGame {
      * Sends in-game message that will be visible by other players.
      */
     public static void sendMessage(String message) {
-        getBwapi().sendText(message);
+        if (getBwapi() != null) {
+            getBwapi().sendText(message);
+        }
     }
 
 }

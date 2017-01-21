@@ -45,8 +45,19 @@ public abstract class AbstractPositionFinder {
         
         // Compare against existing buildings
         for (AUnit otherBuilding : Select.ourBuildings().listUnits()) {
-            int status = areTwoBuildingsTooClose(otherBuilding, position, building);
-            if (status >= STATUS_BUILDINGS_ADDON_COLLIDE) {
+            double distance = PositionUtil.distanceTo(otherBuilding.getPosition(), position);
+            
+            boolean isTooCloseToTheBase = ( AtlantisGame.playsAsTerran() && building.isBase()
+                    && PositionUtil.distanceTo(otherBuilding.getPosition().translate(96, 48), position) <= 4);
+            
+            if (isTooCloseToTheBase) {
+                AbstractPositionFinder._CONDITION_THAT_FAILED = "BASE IS TOO CLOSE (" 
+                                + otherBuilding.getShortName() + ", DIST: " + distance + ")";
+                        return true;
+            }
+            
+            int addonProximityStatus = areTwoBuildingsTooClose(otherBuilding, position, building);
+            if (addonProximityStatus >= STATUS_BUILDINGS_ADDON_COLLIDE) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "BUILDING TOO CLOSE (" + otherBuilding + ")";
                 return true;
             }
@@ -58,8 +69,9 @@ public abstract class AbstractPositionFinder {
                     && !builder.equals(constructionOrder.getBuilder())) {
                 if (constructionOrder.getPositionToBuild() != null) {
                     double distance = PositionUtil.distanceTo(constructionOrder.getPositionToBuild(), position);
-                    if (distance <= 4 || (distance <= 8 
-                            && !AtlantisGame.playsAsZerg()&& building.isBase() && constructionOrder.getBuildingType().isBase())) {
+                    boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AtlantisGame.playsAsZerg()
+                            && building.isBase() && constructionOrder.getBuildingType().isBase());
+                    if (distance <= 4 || areBasesTooCloseOneToAnother) {
                         AbstractPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
                                 + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
                         return true;

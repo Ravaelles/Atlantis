@@ -53,6 +53,7 @@ public class AtlantisConstructionManager {
      * it.
      */
     public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
+        AtlantisGame.sendMessage("Request to build: " + building.getShortName());
         
         // Validate
         if (!building.isBuilding()) {
