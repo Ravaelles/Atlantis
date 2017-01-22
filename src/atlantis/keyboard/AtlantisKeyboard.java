@@ -54,7 +54,7 @@ public class AtlantisKeyboard implements NativeKeyListener {
 
             // Keys "+" and NumPad "+"
             case 13: case 3662: 
-                System.out.println("DAMN, SPEED FASTER!");
+                System.out.println("Notice: SPEED FASTER!");
                 AtlantisGame.changeSpeedBy(-2);
                 break;
 

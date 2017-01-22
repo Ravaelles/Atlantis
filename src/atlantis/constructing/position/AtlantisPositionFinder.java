@@ -87,6 +87,7 @@ public class AtlantisPositionFinder {
 
             // =========================================================
             // Standard place
+            
             return findStandardPosition(builder, building, nearTo, maxDistance);
         }
     }

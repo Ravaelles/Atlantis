@@ -19,9 +19,6 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo,
             double maxDistance) {
         _CONDITION_THAT_FAILED = null;
-//        building = building;
-//        AtlantisPositionFinder.nearTo = nearTo;
-//        AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
         int searchRadius = building.equals(AUnitType.Terran_Supply_Depot) ? 8 : 0;
@@ -34,7 +31,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
                 for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
-                        APosition constructionPosition = new APosition(tileX * 32, tileY * 32);
+                        APosition constructionPosition = APosition.createFrom(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
                         }
@@ -47,6 +44,8 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
             searchRadius++;
         }
+        
+        System.err.println("Finished at search radius: " + searchRadius);
 
         return null;
     }

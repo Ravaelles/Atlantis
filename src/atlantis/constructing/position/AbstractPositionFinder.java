@@ -33,14 +33,17 @@ public abstract class AbstractPositionFinder {
         
         // Leave entire vertical (same tileX) corridor free for units
         if ((position.getTileX() + 1) % 4 == 0) {
+            _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }
         
         // Leave entire horizontal (same tileY) corridor free for units
         if ((position.getTileY() + 1) % 4 == 0) {
+            _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;
         }
         
+        // Position okay
         return false;
     }
     
@@ -81,7 +84,7 @@ public abstract class AbstractPositionFinder {
                     
                     // Look for two bases that would be built too close one to another
                     if (distance <= 4 || areBasesTooCloseOneToAnother) {
-                        AbstractPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
+                        _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
                                 + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
                         return true;
                     }
