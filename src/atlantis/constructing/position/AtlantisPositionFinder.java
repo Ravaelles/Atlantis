@@ -13,9 +13,9 @@ public class AtlantisPositionFinder {
 
     public static int totalRequests = 0;
     
-    protected static AUnitType building;
-    protected static Position nearTo;
-    protected static double maxDistance;
+//    protected static AUnitType building;
+//    protected static Position nearTo;
+//    protected static double maxDistance;
 
     // =========================================================
     

@@ -46,7 +46,7 @@ public class AtlantisBuilderManager {
 
     private static void travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
         //TODO: check possible confusion with Position and TilePosition here
-        APosition buildPosition = constructionOrder.getPositionToBuild();
+        APosition buildPosition = constructionOrder.getPositionToBuildCenter();
         AUnitType buildingType = constructionOrder.getBuildingType();
 
         if (builder == null) {

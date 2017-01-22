@@ -47,14 +47,14 @@ public abstract class AbstractPositionFinder {
         for (AUnit otherBuilding : Select.ourBuildings().listUnits()) {
             double distance = PositionUtil.distanceTo(otherBuilding.getPosition(), position);
             
-            boolean isTooCloseToTheBase = ( AtlantisGame.playsAsTerran() && building.isBase()
-                    && PositionUtil.distanceTo(otherBuilding.getPosition().translate(96, 48), position) <= 4);
-            
-            if (isTooCloseToTheBase) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "BASE IS TOO CLOSE (" 
-                                + otherBuilding.getShortName() + ", DIST: " + distance + ")";
-                        return true;
-            }
+//            boolean isTooCloseToTheBase = (AtlantisGame.playsAsTerran() && otherBuilding.isBase()
+//                    && PositionUtil.distanceTo(otherBuilding.getPosition().translate(96, 48), position) <= 4);
+//            
+//            if (isTooCloseToTheBase) {
+//                AbstractPositionFinder._CONDITION_THAT_FAILED = "BASE IS TOO CLOSE (" 
+//                                + otherBuilding.getShortName() + ", DIST: " + distance + ")";
+//                        return true;
+//            }
             
             int addonProximityStatus = areTwoBuildingsTooClose(otherBuilding, position, building);
             if (addonProximityStatus >= STATUS_BUILDINGS_ADDON_COLLIDE) {

@@ -53,6 +53,13 @@ public class APosition extends Position {
     }
     
     /**
+     * Returns APosition object from (build) tile coordinates (32 pixels = 1 build tile).
+     */
+    public static APosition createFrom(int tileX, int tileY) {
+        return new APosition(tileX * 32, tileY * 32);
+    }
+    
+    /**
      * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside APosition class.
      * APosition class should be used always in place of Position when possible.
      */

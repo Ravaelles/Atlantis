@@ -168,7 +168,7 @@ public abstract class AtlantisBuildOrdersManager {
             // TECH
             else if (tech != null) {
                 mineralsNeeded += tech.mineralPrice();
-                gasNeeded += tech.gasPrice();	//previous was `getMineralPrice()`, this seems to be a bugfix
+                gasNeeded += tech.gasPrice();
             }
 
             // =========================================================

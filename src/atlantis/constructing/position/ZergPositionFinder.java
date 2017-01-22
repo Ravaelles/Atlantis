@@ -23,10 +23,9 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo, 
             double maxDistance) {
         _CONDITION_THAT_FAILED = null;
-
-        AtlantisPositionFinder.building = building;
-        AtlantisPositionFinder.nearTo = nearTo;
-        AtlantisPositionFinder.maxDistance = maxDistance;
+//        building = building;
+//        AtlantisPositionFinder.nearTo = nearTo;
+//        AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
         int searchRadius = 6;
@@ -49,7 +48,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
                 for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
                         APosition constructionPosition = new APosition(tileX * 32, tileY * 32);
-                        if (doesPositionFulfillAllConditions(builder, constructionPosition)) {
+                        if (doesPositionFulfillAllConditions(builder,building, constructionPosition)) {
 //                            AtlantisPainter.paintRectangle(constructionPosition, 32, 32, Color.Green);
                             return constructionPosition;
                         }
@@ -78,30 +77,30 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
-    private static boolean doesPositionFulfillAllConditions(AUnit builder, Position position) {
+    public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, Position position) {
 
         // Check for CREEP
-        if (!isCreepConditionFulfilled(position)) {
+        if (!isCreepConditionFulfilled(building, position)) {
             _CONDITION_THAT_FAILED = "CREEP";
             return false;
         }
 
         // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, AtlantisPositionFinder.building, position)) {
+        if (!canPhysicallyBuildHere(builder, building, position)) {
 //            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);
             _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
             return false;
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(builder, AtlantisPositionFinder.building, position)) {
+        if (otherBuildingsTooClose(builder, building, position)) {
 //            _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isTooCloseToMineralsOrGeyser(AtlantisPositionFinder.building, position)) {
+        if (isTooCloseToMineralsOrGeyser(building, position)) {
             _CONDITION_THAT_FAILED = "TOO CLOSE TO MINERALS OR GEYSER";
             return false;
         }
@@ -128,10 +127,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         return false;
     }
 
-    private static boolean isCreepConditionFulfilled(Position position) {
+    private static boolean isCreepConditionFulfilled(AUnitType building, Position position) {
         return Atlantis.getBwapi().hasCreep(position.toTilePosition())
-                || AtlantisPositionFinder.building.equals(AUnitType.Zerg_Hatchery)
-                || AtlantisPositionFinder.building.equals(AUnitType.Zerg_Extractor);
+                || building.equals(AUnitType.Zerg_Hatchery)
+                || building.equals(AUnitType.Zerg_Extractor);
     }
 
 }

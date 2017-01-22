@@ -11,6 +11,7 @@ import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.position.AtlantisPositionFinder;
+import atlantis.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
@@ -102,6 +103,7 @@ public class AtlantisPainter {
         paintEnemyDiscovered();
         paintCombatUnits();
         paintTooltipsOverUnits();
+        paintTestMissileTurretLocationsNearMain();
     }
 
     // =========================================================
@@ -830,6 +832,27 @@ public class AtlantisPainter {
         }
     }
 
+    private static void paintTestMissileTurretLocationsNearMain() {
+        AUnit worker = Select.ourWorkers().first();
+        AUnit base = Select.ourBases().first();
+        int tileX = base.getPosition().getTileX();
+        int tileY = base.getPosition().getTileY();
+        for (int x = tileX - 10; x <= tileX + 10; x++) {
+            for (int y = tileY - 10; y <= tileY + 10; y++) {
+                APosition position = APosition.createFrom(x, y);
+                boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
+                        worker, AUnitType.Terran_Missile_Turret, position
+                );
+                
+                paintCircleFilled(position, 4, canBuild ? Color.Green : Color.Red);
+                
+                if (x == tileX && y == tileY) {
+                    paintCircleFilled(position, 10, canBuild ? Color.Green : Color.Red);
+                }
+            }
+        }
+    }
+    
     // =========================================================
     // Lo-level
     public static void paintSideMessage(String text, Color color) {
@@ -883,6 +906,13 @@ public class AtlantisPainter {
             return;
         }
         bwapi.drawCircleMap(position, radius, color, false);
+    }
+
+    public static void paintCircleFilled(Position position, int radius, Color color) {
+        if (position == null) {
+            return;
+        }
+        bwapi.drawCircleMap(position, radius, color, true);
     }
 
     public static void paintLine(APosition start, int dx, int dy, Color color) {

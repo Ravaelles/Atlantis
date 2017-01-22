@@ -19,7 +19,7 @@
 #SCOUT_IS_NTH_WORKER=8
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=29
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=11
 
 // ====================================================================
 
@@ -48,42 +48,29 @@ Number;Name;Modifier
 10/18 - SCV
 11/18 - SCV
 12/18 - Barracks
-12/18 - Refinery
-13/18 - SCV
-14/18 - SCV
-15/18 - SCV
-16/18 - Factory
-17/18 - Supply Depot
-18/26 - Vulture
-19/26 - Machine Shop
-20/26 - SCV
-21/26 - SCV
-22/26 - SCV
-23/26 - SCV
-24/26 - Starport
-24/26 - Supply Depot
-25/34 - SCV
-26/34 - Wraith
-Siege Tank
-Wraith
 SCV
-Siege Tank
-Wraith
+Barracks
+Marine
+Marine
 SCV
-Siege Tank
-Wraith
+Marine
+Marine
 SCV
-Siege Tank
-Wraith
+Marine
+Marine
 SCV
-Siege Tank
-Wraith
+Marine
+Marine
 SCV
-Siege Tank
-Wraith
+Marine
+Marine
 SCV
-Siege Tank
-Wraith
+Marine
+Marine
 SCV
-Siege Tank
-Wraith
+Marine
+Marine
+SCV
+Marine
+Marine
+SCV
