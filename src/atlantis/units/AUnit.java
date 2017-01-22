@@ -681,6 +681,13 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return getPlayer().equals(AtlantisGame.getNeutralPlayer());
     }
 
+    /**
+     * Returns true if given building is able to build add-on like Terran Machine Shop.
+     */
+    public boolean canHaveAddon() {
+        return getType().canHaveAddon();
+    }
+    
     public int getID() {
 //        return u.getID();
         return innerID;

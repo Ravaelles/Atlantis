@@ -18,6 +18,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo, 
             double maxDistance) {
+        _CONDITION_THAT_FAILED = null;
 //        building = building;
 //        AtlantisPositionFinder.nearTo = nearTo;
 //        AtlantisPositionFinder.maxDistance = maxDistance;
@@ -70,7 +71,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(builder, building, position)) {
+        if (isOtherBuildingTooClose(builder, building, position)) {
             return false;
         }
 

@@ -693,5 +693,13 @@ public class AUnitType implements Comparable<AUnitType> {
     public int getDimensionDown() {
         return ut.dimensionDown();
     }
+
+    /**
+     * Returns true if given building is able to build add-on like Terran Machine Shop.
+     */
+    public boolean canHaveAddon() {
+        return isType(AUnitType.Terran_Factory, AUnitType.Terran_Command_Center, 
+                AUnitType.Terran_Starport, AUnitType.Terran_Science_Facility);
+    }
     
 }

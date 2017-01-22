@@ -79,7 +79,7 @@ public class AtlantisSpecialPositionFinder {
         BaseLocation baseLocationToExpand;
         if (Select.ourBases().count() <= 2) {
             baseLocationToExpand = AtlantisMap.getExpansionFreeBaseLocationNearestTo(
-                    Select.mainBase().getPosition().translate(-64, -48)
+                    Select.mainBase().getPosition().translateByPixels(-64, -48)
             );
         }
         else {
@@ -104,7 +104,7 @@ public class AtlantisSpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = Select.mainBase().getPosition().translate(-64, -48);
+        APosition near = Select.mainBase().getPosition().translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);
         constructionOrder.setMaxDistance(30);
@@ -115,7 +115,7 @@ public class AtlantisSpecialPositionFinder {
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
         APosition near = APosition.createFrom(
                 AtlantisMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().getPosition()).getPosition()
-        ).translate(-64, -48);
+        ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);
         constructionOrder.setMaxDistance(4);

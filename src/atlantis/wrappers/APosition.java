@@ -102,10 +102,17 @@ public class APosition extends Position {
     }
     
     /**
-     * Returns new position object that is translated in x,y by given values.
+     * Returns new position object that is translated in [x,y] pixels.
      */
-    public APosition translate(int pixelDX, int pixelDY) {
+    public APosition translateByPixels(int pixelDX, int pixelDY) {
         return new APosition(getX() + pixelDX, getY() + pixelDY);
+    }
+    
+    /**
+     * Returns new position object that is translated in [x,y] tiles.
+     */
+    public APosition translateByTiles(int tileDX, int tileDY) {
+        return new APosition(getX() + tileDX * 32, getY() + tileDY * 32);
     }
     
     /**

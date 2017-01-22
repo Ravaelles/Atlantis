@@ -77,7 +77,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
-    public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, Position position) {
+    public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
 
         // Check for CREEP
         if (!isCreepConditionFulfilled(building, position)) {
@@ -94,7 +94,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(builder, building, position)) {
+        if (isOtherBuildingTooClose(builder, building, position)) {
 //            _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
             return false;
         }

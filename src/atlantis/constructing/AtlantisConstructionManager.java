@@ -2,6 +2,7 @@ package atlantis.constructing;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
+import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
@@ -104,10 +105,16 @@ public class AtlantisConstructionManager {
 
             // Rebuild production queue as new building is about to be built
             AtlantisGame.getBuildOrders().rebuildQueue();
-        } // Couldn't find place for building! That's f'g bad.
+        } 
+
+        // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
-            System.err.println("requestConstruction `" + building + "` FAILED! POSITION: " + positionToBuild
+            System.err.println("requestConstruction `" + building 
+                    + "` FAILED! POSITION: " + positionToBuild
                     + " / BUILDER = " + optimalBuilder);
+            if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
+                System.err.println("    (reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
+            }
         }
     }
 

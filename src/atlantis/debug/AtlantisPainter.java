@@ -159,11 +159,11 @@ public class AtlantisPainter {
                 System.out.println("is running");
                 paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
 
-                paintRectangleFilled(unitPosition.translate(0, -flagHeight - 2),
+                paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - 2),
                         flagWidth, flagHeight, Color.Yellow); // White flag
-                paintRectangle(unitPosition.translate(0, -flagHeight - 2),
+                paintRectangle(unitPosition.translateByPixels(0, -flagHeight - 2),
                         flagWidth, flagHeight, Color.Black); // Flag border
-                paintRectangleFilled(unitPosition.translate(-1, --flagHeight - 2),
+                paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - 2),
                         2, flagHeight, Color.Red); // Flag stick
             }
 
@@ -816,7 +816,7 @@ public class AtlantisPainter {
         for (UnitData enemyUnitData : AtlantisEnemyUnits.getDiscoveredAndAliveUnits()) {
             APosition topLeft;
 //            if (enemyUnitData.getType().isBuilding()) {
-            topLeft = enemyUnitData.getPosition().translate(
+            topLeft = enemyUnitData.getPosition().translateByPixels(
                     -enemyUnitData.getType().getDimensionLeft(),
                     -enemyUnitData.getType().getDimensionUp()
             );

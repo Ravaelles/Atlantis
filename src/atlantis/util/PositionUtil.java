@@ -1,6 +1,7 @@
 package atlantis.util;
 
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwapi.TilePosition;
@@ -63,6 +64,38 @@ public class PositionUtil {
         return distanceTo(one.getPosition(), other.getPosition());
     }
 
+    /**
+     * Returns edge-to-edge distance (in build tiles) between one existing building and the other one not yet
+     * existing.
+     */
+    public static double getEdgeToEdgeDistanceBetween(AUnit building, Position positionForNewBuilding,
+            AUnitType newBuildingType) {
+        int targetRight = positionForNewBuilding.getX() + newBuildingType.ut().dimensionRight(); //dimension* returns distance in pixels
+        int targetLeft = positionForNewBuilding.getX() - newBuildingType.ut().dimensionLeft();
+        int targetTop = positionForNewBuilding.getY() - newBuildingType.ut().dimensionUp();
+        int targetBottom = positionForNewBuilding.getY() + newBuildingType.ut().dimensionDown();
+
+        //TODO: check whether get{Left,Right,Top,Bottom}PixelBoundary replacements have expected behavior
+        //get{left,right,top,bottom} returns distances in pixels
+        int xDist = building.getType().ut().dimensionLeft() - (targetRight + 1);
+        if (xDist < 0) {
+            xDist = targetLeft - (building.getType().ut().dimensionRight()+ 1);
+            if (xDist < 0) {
+                xDist = 0;
+            }
+        }
+        int yDist = building.getType().ut().dimensionUp()- (targetBottom + 1);
+        if (yDist < 0) {
+            yDist = targetTop - (building.getType().ut().dimensionDown()+ 1);
+            if (yDist < 0) {
+                yDist = 0;
+            }
+        }
+        return PositionUtil.distanceTo(new Position(0, 0), new Position(xDist, yDist));
+    }
+    
+    // =========================================================
+    
     /**
      * Returns a <b>new</b> Position that represents the effect of moving this position by [deltaX, deltaY].
      */
