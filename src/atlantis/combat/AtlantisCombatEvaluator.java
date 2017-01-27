@@ -54,7 +54,7 @@ public class AtlantisCombatEvaluator {
      */
     public static boolean isSituationFavorable(AUnit unit, boolean isPendingFight) {
         AUnit nearestEnemy = Select.enemy().nearestTo(unit.getPosition());
-        if (nearestEnemy == null || unit.distanceTo(nearestEnemy) >= 14) {
+        if (nearestEnemy == null || unit.distanceTo(nearestEnemy) >= 15) {
             return true;
         }
 
@@ -62,11 +62,11 @@ public class AtlantisCombatEvaluator {
             return true;
         }
 
-        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
-            return true;
-        }
+//        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
+//            return false;
+//        }
 
-        return evaluateSituation(unit) >= calculateSafetyMarginOverTime(isPendingFight);
+        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight);
     }
 
     /**
@@ -81,7 +81,7 @@ public class AtlantisCombatEvaluator {
             return false;
         }
 
-        return evaluateSituation(unit) >= calculateSafetyMarginOverTime(isPendingFight) + 0.5;
+        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight) + 0.5;
     }
 
     /**
@@ -93,10 +93,14 @@ public class AtlantisCombatEvaluator {
     }
 
     /**
+     * 
      * Returns <b>POSITIVE</b> value if our unit <b>unit</b> should engage in combat with nearby units or
      * <b>NEGATIVE</b> when enemy is too strong and we should pull back.
+     * 
+     * When absolute value is true, it returns the evaluation value 
+     * (like 3564, more equals higher combat strength).
      */
-    public static double evaluateSituation(AUnit unit, boolean returnRaw, boolean calculateForEnemy) {
+    public static double evaluateSituation(AUnit unit, boolean returnAbsoluteValue, boolean calculateForEnemy) {
         checkCombatInfo(unit);
 
 //        // Try using cached value
@@ -121,7 +125,7 @@ public class AtlantisCombatEvaluator {
         double ourEvaluation = evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
 
         // Return non-relative absolute value
-        if (returnRaw) {
+        if (returnAbsoluteValue) {
             if (calculateForEnemy) {
                 return enemyEvaluation;
             }
@@ -141,9 +145,11 @@ public class AtlantisCombatEvaluator {
 
     // =========================================================
     // Safety margin
-    private static double calculateSafetyMarginOverTime(boolean isPendingFight) {
-        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK) 
-                + Math.min(0.1, AtlantisGame.getTimeSeconds() / 3000);
+    
+    private static double calculateFavorableValueThreshold(boolean isPendingFight) {
+//        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK) 
+//                + Math.min(0.1, AtlantisGame.getTimeSeconds() / 3000);
+        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK);
     }
 
     // =========================================================

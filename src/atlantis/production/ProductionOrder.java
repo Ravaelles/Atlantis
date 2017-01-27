@@ -36,6 +36,16 @@ public class ProductionOrder {
      * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
      */
     private String modifier = null;
+    
+    /**
+     * Contains first column 
+     */
+    private String rawFirstColumnInFile;
+    
+    /**
+     * Number of row columns of line in build orders file.
+     */
+    private int numberOfColumnsInRow;
 
     /**
      *
@@ -65,35 +75,7 @@ public class ProductionOrder {
     }
 
     private ProductionOrder() {
-//        priority = PRIORITY_NORMAL;
     }
-
-    // =========================================================
-    /**
-     * If true, no other order that comes after this order in the ProductionQueue can be started.
-     */
-//    protected boolean isBlocking() {
-//        return blocking;
-//    }
-
-    /**
-     * If true, no other order that comes after this order in the ProductionQueue can be started.
-     */
-//    public ProductionOrder markAsBlocking() {
-//        this.blocking = true;
-//        this.priority = PRIORITY_HIGHEST;
-//        return this;
-//    }
-
-//    public ProductionOrder priorityLowest() {
-//        this.priority = PRIORITY_LOWEST;
-//        return this;
-//    }
-
-//    public ProductionOrder priorityHighest() {
-//        this.priority = PRIORITY_HIGHEST;
-//        return this;
-//    }
 
     // =========================================================
     // Override
@@ -130,6 +112,20 @@ public class ProductionOrder {
         }
     }
 
+    public ProductionOrder copy() {
+        ProductionOrder clone = new ProductionOrder();
+        
+        clone.id = firstFreeId++;
+        clone.modifier = this.modifier;
+        clone.numberOfColumnsInRow = this.numberOfColumnsInRow;
+        clone.rawFirstColumnInFile = this.rawFirstColumnInFile;
+        clone.tech = this.tech;
+        clone.unitOrBuilding = this.unitOrBuilding;
+        clone.upgrade = this.upgrade;
+        
+        return clone;
+    }
+    
     // =========================================================
     // Getters
     
@@ -172,6 +168,22 @@ public class ProductionOrder {
             modifier = modifier.trim();
         }
         this.modifier = modifier;
+    }
+
+    public String getRawFirstColumnInFile() {
+        return rawFirstColumnInFile;
+    }
+
+    public void setRawFirstColumnInFile(String rawFirstColumnInFile) {
+        this.rawFirstColumnInFile = rawFirstColumnInFile;
+    }
+
+    public int getNumberOfColumnsInRow() {
+        return numberOfColumnsInRow;
+    }
+
+    public void setNumberOfColumnsInRow(int numberOfColumnsInRow) {
+        this.numberOfColumnsInRow = numberOfColumnsInRow;
     }
     
 }

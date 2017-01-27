@@ -14,6 +14,8 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents abstract build orders read from the file.
@@ -85,9 +87,52 @@ public abstract class AtlantisBuildOrdersManager {
      * Reads build orders from CSV file and converts them into ArrayList.
      */
     private void readBuildOrdersFile() {
+        final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
-        // Convert 2D String array into ArrayList of ProductionOrder
-        createProductionOrderListFromStringArray();
+        // Read file into 2D String array
+        String buildOrdersFile = BUILD_ORDERS_PATH + getFilename();
+        System.out.println("Using `" + getFilename() + "` build orders file.");
+        String[][] loadedFile = AtlantisUtilities.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
+
+        // We can display file here, if we want to
+        displayLoadedFile(loadedFile);
+
+        // =========================================================
+        // Skip first row as it's CSV header
+        int counter = 0;
+        for (String[] row : loadedFile) {
+//            System.out.print("Processing row:  #" + counter + "/" + loadedFile.length + ":  ");
+//            System.out.println(row[0] + " - " + (row.length > 1 ? row[1] : "") + ",   SIZE OF INITIAL: " + initialProductionQueue.size());
+            parseCsvRow(row);
+            counter++;
+        }
+        
+        // =========================================================
+        // Converts shortcut notations like:
+        //         6 - Barracks
+        //         8 - Supply Depot
+        //         8 - Marine - x3
+        //
+        // To full build order sequence like this:
+        //         5 - SCV
+        //         6 - Barracks
+        //         6 - SCV
+        //         7 - SCV
+        //         8 - Supply Depot
+        //         8 - Marine
+        //         9 - Marine
+        //         10 - Marine
+        buildFullBuildOrderSequeneBasedOnRawOrders();
+        
+        // === Display initial production queue ====================
+        
+        System.out.println("Initial production order queue:");
+        for (ProductionOrder productionOrder : initialProductionQueue) {
+            System.out.println("   - " + productionOrder.getUnitOrBuilding().getShortName());
+        }
+        System.out.println("END OF Initial production order queue");
+
+        System.exit(-1);        
     }
     
     /**
@@ -334,27 +379,6 @@ public abstract class AtlantisBuildOrdersManager {
     // Private defined methods
     
     /**
-     * Populates <b>productionOrdersFromFile</b> with data from CSV file.
-     */
-    private void createProductionOrderListFromStringArray() {
-        final int NUMBER_OF_COLUMNS_IN_FILE = 2;
-
-        // Read file into 2D String array
-        String buildOrdersFile = BUILD_ORDERS_PATH + getFilename();
-        System.out.println("Using `" + getFilename() + "` build orders file.");
-        String[][] loadedFile = AtlantisUtilities.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
-
-        // We can display file here, if we want to
-//         displayLoadedFile(loadedFile);
-
-        // =========================================================
-        // Skip first row as it's CSV header
-        for (String[] row : loadedFile) {
-            parseCsvRow(row);
-        }
-    }
-   
-    /**
      * Analyzes CSV row, where each array element is one column.
      */
     private void parseCsvRow(String[] row) {
@@ -371,15 +395,24 @@ public abstract class AtlantisBuildOrdersManager {
             return;
         }
         
+        // =========================================================
+        
+        ProductionOrder order = null;
+        String modifier = null;
+        
         // Skip first column as it's only order number / description / whatever
         int inRowCounter = 1;
         
-        // If only one cell, don't skip anything as first string is already important
-        if (row.length == 1) {
+        // If only one column in row, don't skip anything as first string is already important
+        if (row.length <= 1) {
             inRowCounter = 0;
         }
         
-        ProductionOrder order = null;
+        // If two rows and last cell start with "x", dont skip first string
+        if (row.length == 2 && row[1].length() > 0 && row[1].charAt(0) == 'x') {
+            inRowCounter = 0;
+            modifier = row[1];
+        }
 
         // =========================================================
         // Parse entire row of strings
@@ -416,6 +449,7 @@ public abstract class AtlantisBuildOrdersManager {
 
         // Check if no error occured like no object found
         if (!isUnit && !isUpgrade && !isTech) {
+            System.out.println("Invalid production order entry: " + nameString);
             System.err.println("Invalid production order entry: " + nameString);
             System.exit(-1);
         }
@@ -432,53 +466,77 @@ public abstract class AtlantisBuildOrdersManager {
             order = new ProductionOrder(tech);
         } // Invalid entry type
         else {
+            System.out.println("Invalid entry type: " + nameString);
             System.err.println("Invalid entry type: " + nameString);
             System.exit(-1);
         }
         
         // =========================================================
-        // Check for modifiers
         
+        // Save first column from row as it may contain build order modifiers
+        order.setRawFirstColumnInFile(row[0]);
+        order.setNumberOfColumnsInRow(row.length);
+        
+        // =========================================================
+        // Save order modifier
+        order.setModifier(modifier);
         if (row.length >= 3) {
             String modifierString = row[inRowCounter++].toUpperCase().trim();
             order.setModifier(modifierString);
         }
 
-        // =========================================================
-        // Blocking
-        // boolean isBlocking;
-        // String blockingString = row[inRowCounter++].toLowerCase().trim();
-        // if (blockingString.isEmpty() || blockingString.equals("") || blockingString.toLowerCase().equals("no")) {
-        // isBlocking = false;
-        // } else {
-        // isBlocking = true;
-        // }
-        // Priority
-        // boolean isLowestPriority = false;
-        // boolean isHighestPriority = false;
-        // String priorityString = row[inRowCounter++].toLowerCase().trim();
-        // if (!priorityString.isEmpty()) {
-        // priorityString = priorityString.toLowerCase();
-        // if (priorityString.contains("low")) {
-        // isLowestPriority = true;
-        // } else if (priorityString.contains("high")) {
-        // isHighestPriority = true;
-        // }
-        // }
-        // =========================================================
-        // Create ProductionOrder object from strings-row
-        // if (isBlocking) {
-        // order.markAsBlocking();
-        // }
-        // if (isHighestPriority) {
-        // order.priorityHighest();
-        // }
-        // if (isLowestPriority) {
-        // order.priorityLowest();
-        // }
         // Enqueue created order
         initialProductionQueue.add(order);
-        currentProductionQueue.add(order);
+    }
+    
+    /**
+     Converts shortcut notations like:
+     6 - Barracks
+     8 - Supply Depot
+     8 - Marine x3 - MODIFIER WITHOUT MEANING
+
+     to full build order sequence like this:
+     5 - SCV
+     6 - Barracks
+     6 - SCV
+     7 - SCV
+     8 - Supply Depot
+     8 - Marine
+     9 - Marine
+     10 - Marine
+    */
+    private void buildFullBuildOrderSequeneBasedOnRawOrders() {
+        ArrayList<ProductionOrder> newInitialQueue = new ArrayList<>();
+        
+//        while (!initialProductionQueue.isEmpty() && currentSupply <= 200) {
+//            ProductionOrder order = initialProductionQueue.remove(0);
+
+        int currentSupply = 5;
+        for (int i = 0; i < initialProductionQueue.size(); i++) {
+            ProductionOrder order = initialProductionQueue.get(i);
+            
+            System.out.println("---------");
+            System.out.println("NAME: " + order.getShortName());
+            System.out.println("MODIFIER: " + order.getModifier());
+            
+            if (order.getModifier() != null) {
+                int timesToMultiply = Integer.parseInt(order.getModifier().substring(1)) - 1;
+                for (int multiplyCounter = 0; multiplyCounter < timesToMultiply; multiplyCounter++) {
+                    ProductionOrder newOrder = order.copy();
+                    newInitialQueue.add(newOrder);
+                }
+            }
+            
+            ProductionOrder newOrder = order.copy();
+            newInitialQueue.add(newOrder);
+            
+            currentSupply++;
+        }
+        
+        // Replace old initial queue with new
+        initialProductionQueue.clear();
+        initialProductionQueue.addAll(newInitialQueue);
+        currentProductionQueue.addAll(newInitialQueue);
     }
     
     /**
@@ -487,6 +545,8 @@ public abstract class AtlantisBuildOrdersManager {
     @SuppressWarnings("unused")
     private void displayLoadedFile(String[][] loadedFile) {
         int rowCounter = 0;
+        System.out.println("");
+        System.out.println("===== LOADED FILE =====");
         for (String[] rows : loadedFile) {
 //            if (rowCounter == 0) {
 //                rowCounter++;
@@ -502,8 +562,8 @@ public abstract class AtlantisBuildOrdersManager {
             // =========================================================
             rowCounter++;
         }
-
-        System.exit(0);
+        System.out.println("===== End of LOADED FILE ==");
+        System.out.println();
     }
 
     // =========================================================
@@ -521,7 +581,7 @@ public abstract class AtlantisBuildOrdersManager {
      */
     private boolean isUnimportantLine(String[] row) {
         return row.length == 0 || row[0].isEmpty() || row[0].equals("")
-                || row[0].equals("Number")|| row[0].equals("Order") || row[0].equals(";");
+                || row[0].equals("Number") || row[0].equals("@") || row[0].equals("Order") || row[0].equals(";");
     }
 
     /**

@@ -162,6 +162,7 @@ public class Atlantis implements BWEventListener {
         // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
         AtlantisConfig.useBuildOrders(AtlantisBuildOrdersManager.loadBuildOrders());
+        System.err.println("co kurwa");
 
         // =========================================================
         // Validate AtlantisConfig and exit if it's invalid
@@ -207,7 +208,9 @@ public class Atlantis implements BWEventListener {
         // =========================================================
         // If game is running (not paused), proceed with all actions.
 //        if (!_isPaused) {
-        gameCommander.update();
+        if (gameCommander != null) {
+            gameCommander.update();
+        }
 
         // =========================================================
         // Game SPEED change using DYNAMIC SLODOWN
