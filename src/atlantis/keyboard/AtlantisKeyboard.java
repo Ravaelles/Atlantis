@@ -3,9 +3,6 @@ package atlantis.keyboard;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.debug.AtlantisPainter;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jnativehook.GlobalScreen;
@@ -84,10 +81,12 @@ public class AtlantisKeyboard implements NativeKeyListener {
         }
     }
 
+    @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
 //        System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
     }
 
+    @Override
     public void nativeKeyTyped(NativeKeyEvent e) {
 //        String keyAsString = e.getKeyText(e.getKeyCode());
     }
@@ -97,18 +96,20 @@ public class AtlantisKeyboard implements NativeKeyListener {
     private void changePaintingMode(int mode) {
         AtlantisPainter.paintingMode = mode;
         
-        String string = "";
-        if (mode == AtlantisPainter.MODE_NO_PAINTING) {
-            string = "Paint mode #1: PAINTING DISABLED";
-        }
-        else if (mode == AtlantisPainter.MODE_PARTIAL_PAINTING) {
-            string = "Paint mode #2: PAINT ONLY INFO";
-        }
-        else if (mode == AtlantisPainter.MODE_FULL_PAINTING) {
-            string = "Paint mode #3: FULL PAINT MODE";
-        }
-        else {
-            string = "Paint mode error";
+        String string;
+        switch (mode) {
+            case AtlantisPainter.MODE_NO_PAINTING:
+                string = "Paint mode #1: PAINTING DISABLED";
+                break;
+            case AtlantisPainter.MODE_PARTIAL_PAINTING:
+                string = "Paint mode #2: PAINT ONLY INFO";
+                break;
+            case AtlantisPainter.MODE_FULL_PAINTING:
+                string = "Paint mode #3: FULL PAINT MODE";
+                break;
+            default:
+                string = "Paint mode error";
+                break;
         }
         
         AtlantisGame.sendMessage(string);
