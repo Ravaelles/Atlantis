@@ -142,8 +142,8 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             }
 
             // Check for other buildings' addons
-            if (distance <= 2 && otherBuilding.canHaveAddon()) {
-                if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(-2, 0))) {
+            if (distance <= 3 && otherBuilding.canHaveAddon()) {
+                if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(2, 0))) {
                     _CONDITION_THAT_FAILED = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
                     return true;
                 }
