@@ -18,12 +18,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Represents abstract build orders read from the file.
- * Build Orders in Atlantis are called "Production Orders", because you can produce 
- * both units and buildings and one couldn't say you build marines, rather produce.
+ * Represents abstract build orders read from the file. Build Orders in Atlantis are called "Production
+ * Orders", because you can produce both units and buildings and one couldn't say you build marines, rather
+ * produce.
  */
 public abstract class AtlantisBuildOrdersManager {
-    
+
     public static final int MODE_ALL_ORDERS = 1;
     public static final int MODE_ONLY_UNITS = 2;
 
@@ -33,7 +33,6 @@ public abstract class AtlantisBuildOrdersManager {
     private static final String BUILD_ORDERS_PATH = "bwapi-data/AI/build_orders/";
 
     // =========================================================
-    
     /**
      * Ordered list of production orders as initially read from the file. It never changes
      */
@@ -49,19 +48,18 @@ public abstract class AtlantisBuildOrdersManager {
      * Number of minerals reserved to produce some units/buildings.
      */
     private static int mineralsNeeded = 0;
-    
+
     /**
      * Number of gas reserved to produce some units/buildings.
      */
     private static int gasNeeded = 0;
-    
+
     // =========================================================
     // Constructor
-    
     public AtlantisBuildOrdersManager() {
         readBuildOrdersFile();
     }
-    
+
     /**
      * Returns name of file with build orders.
      */
@@ -69,20 +67,18 @@ public abstract class AtlantisBuildOrdersManager {
         String ourRaceLetter = AtlantisGame.getPlayerUs().getRace().toString().substring(0, 1);
         String enemyRaceLetter = AtlantisGame.getEnemy().getRace().toString().substring(0, 1);
         String customBuildOrders = ourRaceLetter + "v" + enemyRaceLetter + ".csv";
-        
+
         // Check if user has defined his own build orders file for this race and if so, use it.
         File buildOrdersFile = new File(BUILD_ORDERS_PATH + customBuildOrders);
         if (buildOrdersFile.exists()) {
             return customBuildOrders;
-        }
-        
-        // Return default Atlantis build orders for this race vs race matchup.
+        } // Return default Atlantis build orders for this race vs race matchup.
         else {
             String atlantisDefaultBuildOrders = "Atlantis_" + customBuildOrders;
             return atlantisDefaultBuildOrders;
         }
     }
-    
+
     /**
      * Reads build orders from CSV file and converts them into ArrayList.
      */
@@ -106,7 +102,7 @@ public abstract class AtlantisBuildOrdersManager {
             parseCsvRow(row);
             counter++;
         }
-        
+
         // =========================================================
         // Converts shortcut notations like:
         //         6 - Barracks
@@ -123,18 +119,17 @@ public abstract class AtlantisBuildOrdersManager {
         //         9 - Marine
         //         10 - Marine
         buildFullBuildOrderSequeneBasedOnRawOrders();
-        
+
         // === Display initial production queue ====================
-        
         System.out.println("Initial production order queue:");
         for (ProductionOrder productionOrder : initialProductionQueue) {
             System.out.println("   - " + productionOrder.getUnitOrBuilding().getShortName());
         }
         System.out.println("END OF Initial production order queue");
 
-        System.exit(-1);        
+        System.exit(-1);
     }
-    
+
     /**
      * Returns default production strategy according to the race played.
      */
@@ -151,22 +146,22 @@ public abstract class AtlantisBuildOrdersManager {
         System.exit(-1);
         return null;
     }
-    
+
     // =========================================================
     // Probably most important method in the world
-    
     /**
      * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only
      * want to get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and
      * returns those build orders that we can build in this very moment (we can afford them and they match our
      * strategy).
-     * @param int mode use this classes constants; if MODE_ONLY_UNITS it will only return "units" as 
-     * opposed to buildings (keep in mind AUnit is both "unit" and building)
+     *
+     * @param int mode use this classes constants; if MODE_ONLY_UNITS it will only return "units" as opposed
+     * to buildings (keep in mind AUnit is both "unit" and building)
      */
     public ArrayList<ProductionOrder> getThingsToProduceRightNow(int mode) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
-        int[] resourcesNeededForNotStartedBuildings = 
-                AtlantisConstructionManager.countResourcesNeededForNotStartedConstructions();
+        int[] resourcesNeededForNotStartedBuildings
+                = AtlantisConstructionManager.countResourcesNeededForNotStartedConstructions();
         mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
@@ -174,7 +169,6 @@ public abstract class AtlantisBuildOrdersManager {
         // The idea as follows: as long as we can afford next enqueued production order, 
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
-        
         for (ProductionOrder order : currentProductionQueue) {
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
             UpgradeType upgrade = order.getUpgrade();
@@ -193,24 +187,19 @@ public abstract class AtlantisBuildOrdersManager {
             }
 
             // === Define order type: UNIT/BUILDING or UPGRADE or TECH ==
-
             // UNIT/BUILDING
             if (unitOrBuilding != null) {
                 if (!AtlantisGame.hasBuildingsToProduce(unitOrBuilding, true)) {
                     continue;
                 }
-                
+
                 mineralsNeeded += unitOrBuilding.getMineralPrice();
                 gasNeeded += unitOrBuilding.getGasPrice();
-            } 
-            
-            // UPGRADE
+            } // UPGRADE
             else if (upgrade != null) {
                 mineralsNeeded += upgrade.mineralPrice() * upgrade.mineralPriceFactor();
                 gasNeeded += upgrade.gasPrice() * upgrade.gasPriceFactor();
-            } 
-            
-            // TECH
+            } // TECH
             else if (tech != null) {
                 mineralsNeeded += tech.mineralPrice();
                 gasNeeded += tech.gasPrice();
@@ -220,9 +209,7 @@ public abstract class AtlantisBuildOrdersManager {
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
             if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
                 result.add(order);
-            } 
-
-            // We can't afford to produce this order (possibly other, previous orders are blocking it). 
+            } // We can't afford to produce this order (possibly other, previous orders are blocking it). 
             // Return current list of production orders (can be empty).
             else {
                 break;
@@ -235,7 +222,6 @@ public abstract class AtlantisBuildOrdersManager {
         // Produce some generic units (preferably combat units) if queue is empty.
         // This can mean that we run out of build orders from build order file.
         // For proper build order files this feature will activate in late game.
-        
         if (result.isEmpty() && (AtlantisGame.getSupplyUsed() >= 9 || initialProductionQueue.isEmpty())) {
             for (AUnitType unitType : produceWhenNoProductionOrders()) {
                 if (AtlantisGame.hasBuildingsToProduce(unitType, false)) {
@@ -246,10 +232,9 @@ public abstract class AtlantisBuildOrdersManager {
 
         return result;
     }
-    
+
     // =========================================================
     // Abstract methods
-
     /**
      * Request to produce worker (Zerg Drone, Terran SCV or Protoss Probe) that should be handled according to
      * the race played.
@@ -268,7 +253,6 @@ public abstract class AtlantisBuildOrdersManager {
 
     // =========================================================
     // Public defined methods
-    
     /**
      * If new unit is created (it doesn't need to exist, it's enough that it's just started training) or your
      * unit is destroyed, we need to rebuild the production orders queue from the beginning (based on initial
@@ -289,33 +273,30 @@ public abstract class AtlantisBuildOrdersManager {
         // =========================================================
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
-            
+
             // =========================================================
             // Unit
             if (order.getUnitOrBuilding() != null) {
                 AUnitType type = order.getUnitOrBuilding();
                 virtualCounter.incrementValueFor(type);
 
-                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + (type.isBase() ? 1 : 0) 
+                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + (type.isBase() ? 1 : 0)
                         + (type.isOverlord() ? 1 : 0) + virtualCounter.getValueFor(type);
                 int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
 
                 if (type.isBuilding()) {
                     weHaveThisManyUnits += AtlantisConstructionManager.countNotFinishedConstructionsOfType(type);
                 }
-                
-//                System.out.println("       " + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
 
+//                System.out.println("       " + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
                     isOkayToAdd = true;
                 }
-            } 
-            // Upgrade
+            } // Upgrade
             else if (order.getUpgrade() != null) {
                 isOkayToAdd = !AtlantisTech.isResearched(order.getUpgrade());
-            } 
-            // Tech
+            } // Tech
             else if (order.getTech() != null) {
                 isOkayToAdd = !AtlantisTech.isResearched(order.getTech());
             }
@@ -329,18 +310,17 @@ public abstract class AtlantisBuildOrdersManager {
             }
         }
     }
-    
+
     /**
-     * Some buildings like Sunken Colony are morphed into from Creep Colony. When counting Creep Colonies,
-     * we need to count sunkens as well.
+     * Some buildings like Sunken Colony are morphed into from Creep Colony. When counting Creep Colonies, we
+     * need to count sunkens as well.
      */
     private int countUnitsOfGivenTypeOrSimilar(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Creep_Colony)) {
-            return Select.ourIncludingUnfinished().ofType(type).count() 
+            return Select.ourIncludingUnfinished().ofType(type).count()
                     + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
                     + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
-        }
-        else {
+        } else {
             return Select.ourIncludingUnfinished().ofType(type).count();
         }
     }
@@ -359,30 +339,28 @@ public abstract class AtlantisBuildOrdersManager {
 //            }
             result.add(productionOrder);
         }
-        
+
 //        System.out.println("// =========================================================");
 //        for (ProductionOrder productionOrder : result) {
 //            System.out.println("CURRENT: " + productionOrder.getUnitType());
 //        }
-
         return result;
     }
-    
+
     /**
      * Returns object that is responsible for the production queue.
      */
     public static AtlantisBuildOrdersManager getBuildOrders() {
         return AtlantisConfig.getBuildOrders();
     }
-    
+
     // =========================================================
     // Private defined methods
-    
     /**
      * Analyzes CSV row, where each array element is one column.
      */
     private void parseCsvRow(String[] row) {
-        
+
         // =========================================================
         // Ignore comments and blank lines
         if (isUnimportantLine(row)) {
@@ -394,20 +372,20 @@ public abstract class AtlantisBuildOrdersManager {
             handleSpecialCommand(row);
             return;
         }
-        
+
         // =========================================================
         
         ProductionOrder order = null;
-        String modifier = null;
-        
+        String modifier = null; // Build order modifier, will be assigned later
+
         // Skip first column as it's only order number / description / whatever
         int inRowCounter = 1;
-        
+
         // If only one column in row, don't skip anything as first string is already important
         if (row.length <= 1) {
             inRowCounter = 0;
         }
-        
+
         // If two rows and last cell start with "x", dont skip first string
         if (row.length == 2 && row[1].length() > 0 && row[1].charAt(0) == 'x') {
             inRowCounter = 0;
@@ -418,9 +396,8 @@ public abstract class AtlantisBuildOrdersManager {
         // Parse entire row of strings
         // Define type of entry: AUnit / Research / Tech
         String nameString = row[inRowCounter++].toLowerCase().trim();
-        
+
         // === Parse some strings ==================================
-        
         if ("siege tank".equals(nameString) || "tank".equals(nameString)) {
             nameString = "Siege Tank Tank Mode";
         }
@@ -429,7 +406,7 @@ public abstract class AtlantisBuildOrdersManager {
         // Try getting objects of each type as we don't know if it's unit, research or tech.
         // UNIT
         NameUtil.disableErrorReporting = true;
-        AUnitType unitType = AUnitType.getByName(nameString);	
+        AUnitType unitType = AUnitType.getByName(nameString);
         NameUtil.disableErrorReporting = false;
 
         // UPGRADE
@@ -470,13 +447,12 @@ public abstract class AtlantisBuildOrdersManager {
             System.err.println("Invalid entry type: " + nameString);
             System.exit(-1);
         }
-        
+
         // =========================================================
-        
         // Save first column from row as it may contain build order modifiers
         order.setRawFirstColumnInFile(row[0]);
         order.setNumberOfColumnsInRow(row.length);
-        
+
         // =========================================================
         // Save order modifier
         order.setModifier(modifier);
@@ -488,57 +464,70 @@ public abstract class AtlantisBuildOrdersManager {
         // Enqueue created order
         initialProductionQueue.add(order);
     }
-    
-    /**
-     Converts shortcut notations like:
-     6 - Barracks
-     8 - Supply Depot
-     8 - Marine x3 - MODIFIER WITHOUT MEANING
 
-     to full build order sequence like this:
-     5 - SCV
-     6 - Barracks
-     6 - SCV
-     7 - SCV
-     8 - Supply Depot
-     8 - Marine
-     9 - Marine
-     10 - Marine
-    */
+    /**
+     * Converts shortcut notations like: 6 - Barracks 8 - Supply Depot 8 - Marine - x2 Marine - x3 15 - Supply
+     * Depot
+     *
+     * to full build order sequence like this: (5) SCV (6) Barracks (6) SCV (7) SCV (8) Supply Depot (8)
+     * Marine (9) Marine (10) Marine
+     */
     private void buildFullBuildOrderSequeneBasedOnRawOrders() {
         ArrayList<ProductionOrder> newInitialQueue = new ArrayList<>();
-        
-//        while (!initialProductionQueue.isEmpty() && currentSupply <= 200) {
-//            ProductionOrder order = initialProductionQueue.remove(0);
 
-        int currentSupply = 5;
-        for (int i = 0; i < initialProductionQueue.size(); i++) {
-            ProductionOrder order = initialProductionQueue.get(i);
-            
-            System.out.println("---------");
-            System.out.println("NAME: " + order.getShortName());
-            System.out.println("MODIFIER: " + order.getModifier());
-            
-            if (order.getModifier() != null) {
-                int timesToMultiply = Integer.parseInt(order.getModifier().substring(1)) - 1;
-                for (int multiplyCounter = 0; multiplyCounter < timesToMultiply; multiplyCounter++) {
-                    ProductionOrder newOrder = order.copy();
-                    newInitialQueue.add(newOrder);
-                }
+        int lastSupplyFromFile = -1;
+        for (int currentSupply = 4; currentSupply <= 200; currentSupply++) {
+            if (initialProductionQueue.isEmpty()) {
+                break;
             }
             
-            ProductionOrder newOrder = order.copy();
-            newInitialQueue.add(newOrder);
+            ProductionOrder order = initialProductionQueue.get(0);
             
-            currentSupply++;
+            // === Check if should worker build order ========================================
+            
+            int orderSupplyRequired = -1;
+            try {
+                orderSupplyRequired = Integer.parseInt(order.getRawFirstColumnInFile());
+                System.out.println("        orderSupplyRequired = " + orderSupplyRequired);
+            }
+            catch (NumberFormatException e) {
+                // Do nothing
+            }
+
+            // =========================================================
+            
+            // Insert additional worker build order
+            if (orderSupplyRequired < 0 || currentSupply < orderSupplyRequired) {
+                ProductionOrder workerOrder = new ProductionOrder(AtlantisConfig.WORKER);
+                newInitialQueue.add(workerOrder);
+            }
+            
+            // Add build order from file
+            else {
+//            System.out.println("---------");
+//            System.out.println("NAME: " + order.getShortName());
+//            System.out.println("MODIFIER: " + order.getModifier());
+
+                if (order.getModifier() != null) {
+                    int timesToMultiply = Integer.parseInt(order.getModifier().substring(1)) - 1;
+                    for (int multiplyCounter = 0; multiplyCounter < timesToMultiply; multiplyCounter++) {
+                        ProductionOrder newOrder = order.copy();
+                        newInitialQueue.add(newOrder);
+                    }
+                }
+
+                ProductionOrder newOrder = order.copy();
+                initialProductionQueue.remove(0);
+                newInitialQueue.add(newOrder);
+            }
         }
-        
+
         // Replace old initial queue with new
         initialProductionQueue.clear();
         initialProductionQueue.addAll(newInitialQueue);
         currentProductionQueue.addAll(newInitialQueue);
     }
-    
+
     /**
      * Auxiliary method that can be run to see what was loaded from CSV file.
      */
@@ -568,7 +557,6 @@ public abstract class AtlantisBuildOrdersManager {
 
     // =========================================================
     // Special commands
-    
     /**
      * If the first character in column is # it means it's special command.
      */
@@ -613,7 +601,6 @@ public abstract class AtlantisBuildOrdersManager {
 
     // =========================================================
     // Getters
-
     /**
      * Number of minerals reserved to produce some units/buildings.
      */
@@ -627,5 +614,5 @@ public abstract class AtlantisBuildOrdersManager {
     public static int getGasNeeded() {
         return gasNeeded;
     }
-    
+
 }

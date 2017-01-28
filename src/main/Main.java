@@ -2,6 +2,7 @@ package main;
 
 import atlantis.Atlantis;
 import atlantis.keyboard.AtlantisKeyboard;
+import atlantis.util.ProcessHelper;
 
 /**
  * This is the main class of the bot. Here everything starts.
@@ -14,6 +15,17 @@ public class Main {
      * Sets up Atlantis config and runs the bot.
      */
     public static void main(String[] args) {
+        
+        // Kill previous Starcraft.exe process
+        ProcessHelper.killStarcraftProcess();
+        
+        // Kill previous Chaoslauncher.exe process
+        ProcessHelper.killChaosLauncherProcess();
+        
+        // Autostart Chaoslauncher
+        // Combined with Chaoslauncher -> Settings -> Run Starcraft on Startup 
+        // SC will be autostarted at this moment
+        ProcessHelper.startChaosLauncherProcess();
 
         // =============================================================
         // =============================================================

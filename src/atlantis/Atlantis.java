@@ -10,6 +10,7 @@ import atlantis.init.AtlantisInitialActions;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.ProcessHelper;
 import bwapi.*;
 import bwta.BWTA;
 
@@ -454,6 +455,8 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onEnd(boolean winner) {
         instance = new Atlantis();
+        ProcessHelper.killStarcraftProcess();
+        ProcessHelper.killChaosLauncherProcess();
         System.out.println("Exiting now...");
         System.exit(0);
     }
