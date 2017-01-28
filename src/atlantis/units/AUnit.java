@@ -771,6 +771,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isStartingAttack();
     }
 
+    public boolean isSieged() {
+        return u.isSieged();
+    }
+
+    public boolean isUnsieged() {
+        return !u.isSieged();
+    }
+
     public List<AUnitType> getTrainingQueue() {
         return (List<AUnitType>) AUnitType.convertToAUnitTypesCollection(u.getTrainingQueue());
     }

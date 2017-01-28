@@ -528,6 +528,10 @@ public class AUnitType implements Comparable<AUnitType> {
                 AUnitType.Terran_Firebat, AUnitType.Terran_Ghost);
     }
 
+    public boolean isSiegeTank() {
+        return isType(AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode);
+    }
+
     public boolean isMedic() {
         return isType(AUnitType.Terran_Medic);
     }

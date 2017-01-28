@@ -7,6 +7,7 @@ import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.information.UnitData;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
+import atlantis.wrappers.APosition;
 import atlantis.wrappers.APositionedObject;
 import bwapi.Position;
 import bwapi.PositionedObject;
@@ -737,14 +738,26 @@ public class Select<T> {
 
     // =========================================================
     // Localization-related methods
+    
     /**
      * From all units currently in selection, returns closest unit to given <b>position</b>.
      */
-    public T nearestTo(Position position) {
-        if (data.isEmpty() || position == null) {
+    public T nearestTo(Object positionOrUnit) {
+        if (data.isEmpty() || positionOrUnit == null) {
             return null;
         }
 
+        Position position;
+        if (positionOrUnit instanceof APosition) {
+            position = (APosition) positionOrUnit;
+        }
+        else if (positionOrUnit instanceof Position) {
+            position = (Position) positionOrUnit;
+        }
+        else {
+            position = ((AUnit) positionOrUnit).getPosition();
+        }
+        
         sortDataByDistanceTo(position, true);
         return data.get(0);	//first();
     }

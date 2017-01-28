@@ -44,8 +44,6 @@ public class AtlantisSpecialPositionFinder {
 
             if (geyser != null && geyser.distanceTo(base) < 12) {
                 APosition position = PositionUtil.translateByPixels(geyser.getPosition(), -64, -32);
-//                APosition position = geyser.getPosition();
-                position.paintIt(3, 2);
                 return position;
             }
         }

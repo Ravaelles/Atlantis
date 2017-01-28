@@ -35,9 +35,15 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
         if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
             units.add(AtlantisConfig.WORKER);
         }
+        
+        if (Select.ourTanks().count() < 30) {
+            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
+            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
+            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
+            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
+        }
 
         if (Select.ourBuildings().ofType(AUnitType.Terran_Academy).count() == 0) {
-            units.add(AUnitType.Terran_Marine);
             units.add(AUnitType.Terran_Marine);
             return units;
         } else {
@@ -45,7 +51,6 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
             int medics = Select.our().countUnitsOfType(AUnitType.Terran_Medic);
 
             if ((double) marines / medics < 3) {
-                units.add(AUnitType.Terran_Marine);
                 units.add(AUnitType.Terran_Marine);
             } else {
                 units.add(AUnitType.Terran_Medic);
