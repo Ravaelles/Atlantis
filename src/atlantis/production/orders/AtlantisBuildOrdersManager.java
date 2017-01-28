@@ -105,29 +105,37 @@ public abstract class AtlantisBuildOrdersManager {
 
         // =========================================================
         // Converts shortcut notations like:
-        //         6 - Barracks
-        //         8 - Supply Depot
-        //         8 - Marine - x3
+        //        6 - Barracks
+        //        8 - Supply Depot
+        //        8 - Marine - x2
+        //        Marine - x3
+        //        15 - Supply Depot
         //
         // To full build order sequence like this:
-        //         5 - SCV
-        //         6 - Barracks
-        //         6 - SCV
-        //         7 - SCV
-        //         8 - Supply Depot
-        //         8 - Marine
-        //         9 - Marine
-        //         10 - Marine
+        //   - SCV
+        //   - SCV
+        //   - Barracks
+        //   - SCV
+        //   - Supply Depot
+        //   - Marine
+        //   - Marine
+        //   - Marine
+        //   - Marine
+        //   - Marine
+        //   - SCV
+        //   - SCV
+        //   - SCV
+        //   - SCV
+        //   - Supply Depot
         buildFullBuildOrderSequeneBasedOnRawOrders();
 
         // === Display initial production queue ====================
-        System.out.println("Initial production order queue:");
-        for (ProductionOrder productionOrder : initialProductionQueue) {
-            System.out.println("   - " + productionOrder.getUnitOrBuilding().getShortName());
-        }
-        System.out.println("END OF Initial production order queue");
-
-        System.exit(-1);
+//        System.out.println("Initial production order queue:");
+//        for (ProductionOrder productionOrder : initialProductionQueue) {
+//            System.out.println("   - " + productionOrder.getUnitOrBuilding().getShortName());
+//        }
+//        System.out.println("END OF Initial production order queue");
+//        System.exit(-1);
     }
 
     /**
@@ -466,17 +474,47 @@ public abstract class AtlantisBuildOrdersManager {
     }
 
     /**
-     * Converts shortcut notations like: 6 - Barracks 8 - Supply Depot 8 - Marine - x2 Marine - x3 15 - Supply
-     * Depot
-     *
-     * to full build order sequence like this: (5) SCV (6) Barracks (6) SCV (7) SCV (8) Supply Depot (8)
-     * Marine (9) Marine (10) Marine
+     * Converts shortcut notations like: 
+            6 - Barracks
+            8 - Supply Depot
+            8 - Marine - x2
+            Marine - x3
+            15 - Supply Depot
+    
+     To full build order sequence like this:
+       - SCV
+       - SCV
+       - Barracks
+       - SCV
+       - Supply Depot
+       - Marine
+       - Marine
+       - Marine
+       - Marine
+       - Marine
+       - SCV
+       - SCV
+       - SCV
+       - SCV
+       - Supply Depot
      */
     private void buildFullBuildOrderSequeneBasedOnRawOrders() {
         ArrayList<ProductionOrder> newInitialQueue = new ArrayList<>();
+        
+//        System.out.println();
+//        System.out.println();
+//        System.out.println("Initial queue");
+//        for (ProductionOrder productionOrder : initialProductionQueue) {
+//            System.out.print(productionOrder.getRawFirstColumnInFile() + ":  ");
+//            System.out.println(productionOrder.getShortName());
+//        }
+//        System.out.println();
+//        System.out.println();
 
         int lastSupplyFromFile = -1;
         for (int currentSupply = 4; currentSupply <= 200; currentSupply++) {
+            
+            // If no more orders left, exit the loop
             if (initialProductionQueue.isEmpty()) {
                 break;
             }
@@ -485,14 +523,15 @@ public abstract class AtlantisBuildOrdersManager {
             
             // === Check if should worker build order ========================================
             
-            int orderSupplyRequired = -1;
+            int orderSupplyRequired;
             try {
                 orderSupplyRequired = Integer.parseInt(order.getRawFirstColumnInFile());
-                System.out.println("        orderSupplyRequired = " + orderSupplyRequired);
             }
             catch (NumberFormatException e) {
-                // Do nothing
+                orderSupplyRequired = lastSupplyFromFile + 1; // Take last order supply value and increment it
             }
+            lastSupplyFromFile = orderSupplyRequired;
+//            System.out.println("        orderSupplyRequired = " + orderSupplyRequired + ", order: " + order.getShortName());
 
             // =========================================================
             

@@ -25,10 +25,10 @@ public class ProcessHelper {
      */
     public static void startChaosLauncherProcess() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(200);
             executeInCommandLine("C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe");
         } catch (InterruptedException ex) {
-            Logger.getLogger(ProcessHelper.class.getName()).log(Level.SEVERE, null, ex);
+            // Don't do anything
         }
     }
     

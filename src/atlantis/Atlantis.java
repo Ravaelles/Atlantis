@@ -163,7 +163,6 @@ public class Atlantis implements BWEventListener {
         // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
         AtlantisConfig.useBuildOrders(AtlantisBuildOrdersManager.loadBuildOrders());
-        System.err.println("co kurwa");
 
         // =========================================================
         // Validate AtlantisConfig and exit if it's invalid
