@@ -456,7 +456,8 @@ public class Atlantis implements BWEventListener {
 //        instance = new Atlantis();
         ProcessHelper.killStarcraftProcess();
         ProcessHelper.killChaosLauncherProcess();
-        System.out.println("Exiting now...");
+        System.out.println();
+        System.out.println("Exiting...");
         System.exit(0);
     }
 

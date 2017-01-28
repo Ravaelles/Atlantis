@@ -32,14 +32,13 @@ public abstract class AbstractPositionFinder {
         // =========================================================
         
         // Leave entire vertical (same tileX) corridor free for units
-        System.out.println("position.getTileX() = " + position.getTileX());
-        if ((position.getTileX() + 1) % 5 == 0) {
+        if (position.getTileX() % 5 == 0) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }
         
         // Leave entire horizontal (same tileY) corridor free for units
-        if ((position.getTileY() + 1) % 5 == 0) {
+        if (position.getTileY() % 5 == 0) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;
         }
@@ -52,9 +51,15 @@ public abstract class AbstractPositionFinder {
      * Returns true if game says it's possible to build given building at this position.
      */
     public static boolean canPhysicallyBuildHere(AUnit builder, AUnitType building, APosition position) {
-        if (position == null || builder == null) {
+        if (position == null) {
+            _CONDITION_THAT_FAILED = "POSITION IS NULL";
             return false;
         }
+        if (builder == null) {
+            _CONDITION_THAT_FAILED = "BUILDER IS NULL";
+            return false;
+        }
+        
         return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
     }
 
@@ -96,29 +101,31 @@ public abstract class AbstractPositionFinder {
         // No collisions detected
         return false;
     }
-
+    
+//    private static int areTwoBuildingsTooClose(AUnit otherBuilding, Position position, AUnitType building) {
+//        double edgeToEdgeDistance = PositionUtil.getEdgeToEdgeDistanceBetween(otherBuilding, position, building);
+//        // System.out.println("   --- Dist bitw " + otherBuilding.getType().getName() + " and " + building.getName()
+//        // + " is " + edgeToEdgeDistance);
+//
+//        // If buildings are dangerously close
+//        if (edgeToEdgeDistance < 0.1 || (edgeToEdgeDistance <= 1 && otherBuilding.isBase())) {
+//
+//            // Allow stacking of depots
+//            if (building.equals(AUnitType.Terran_Supply_Depot) && otherBuilding.getType().equals(AUnitType.Terran_Supply_Depot)) {
+//                return STATUS_BUILDINGS_STICK;
+//            }
+//            else {
+//                return STATUS_BUILDINGS_ADDON_COLLIDE;
+//            }
+//        }
+//
+//        return STATUS_BUILDINGS_DONT_STICK;
+//    }
+    
+    // =========================================================
+    
     private static final int STATUS_BUILDINGS_DONT_STICK = 100;
     private static final int STATUS_BUILDINGS_STICK = 200;
     private static final int STATUS_BUILDINGS_ADDON_COLLIDE = 300;
-
-    private static int areTwoBuildingsTooClose(AUnit otherBuilding, Position position, AUnitType building) {
-        double edgeToEdgeDistance = PositionUtil.getEdgeToEdgeDistanceBetween(otherBuilding, position, building);
-        // System.out.println("   --- Dist bitw " + otherBuilding.getType().getName() + " and " + building.getName()
-        // + " is " + edgeToEdgeDistance);
-
-        // If buildings are dangerously close
-        if (edgeToEdgeDistance < 0.1 || (edgeToEdgeDistance <= 1 && otherBuilding.isBase())) {
-
-            // Allow stacking of depots
-            if (building.equals(AUnitType.Terran_Supply_Depot) && otherBuilding.getType().equals(AUnitType.Terran_Supply_Depot)) {
-                return STATUS_BUILDINGS_STICK;
-            }
-            else {
-                return STATUS_BUILDINGS_ADDON_COLLIDE;
-            }
-        }
-
-        return STATUS_BUILDINGS_DONT_STICK;
-    }
 
 }

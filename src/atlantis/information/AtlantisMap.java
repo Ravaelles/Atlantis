@@ -1,6 +1,7 @@
 package atlantis.information;
 
 import atlantis.Atlantis;
+import atlantis.AtlantisGame;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -288,6 +289,20 @@ public class AtlantisMap {
         return Atlantis.getBwapi().isVisible(position.toTilePosition());
     }
 
+    /**
+     * Returns map width in tiles.
+     */
+    public static int getMapWidthInTiles() {
+        return Atlantis.getBwapi().mapWidth();
+    }
+
+    /**
+     * Returns map height in tiles.
+     */
+    public static int getMapHeightInTiles() {
+        return Atlantis.getBwapi().mapHeight();
+    }
+    
     // =========================================================
     // Special methods
     /**

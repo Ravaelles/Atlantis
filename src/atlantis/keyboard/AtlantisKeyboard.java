@@ -43,7 +43,7 @@ public class AtlantisKeyboard implements NativeKeyListener {
     
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        System.out.println(e.getKeyCode());
+//        System.out.println(e.getKeyCode());
         
         switch (e.getKeyCode()) {
             

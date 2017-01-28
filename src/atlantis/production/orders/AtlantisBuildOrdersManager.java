@@ -91,7 +91,7 @@ public abstract class AtlantisBuildOrdersManager {
         String[][] loadedFile = AtlantisUtilities.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
 
         // We can display file here, if we want to
-        displayLoadedFile(loadedFile);
+//        displayLoadedFile(loadedFile);
 
         // =========================================================
         // Skip first row as it's CSV header

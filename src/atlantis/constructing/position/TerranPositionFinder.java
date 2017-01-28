@@ -1,5 +1,6 @@
 package atlantis.constructing.position;
 
+import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -28,10 +29,20 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             int yCounter = 0;
             int doubleRadius = searchRadius * 2;
 
-            for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
-                for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
+            // Search horizontally
+            int minTileX = Math.max(0, nearTo.getTileX() - searchRadius);
+            int maxTileX = Math.min(nearTo.getTileX() + searchRadius, AtlantisMap.getMapWidthInTiles() - 1);
+            for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
+                
+                // Search veritcally
+                int minTileY = Math.max(0, nearTo.getTileY() - searchRadius);
+                int maxTileY = Math.min(nearTo.getTileY() + searchRadius, AtlantisMap.getMapHeightInTiles() - 1);
+                for (int tileY = minTileY; tileY <= maxTileY; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
+//                        System.out.println(tileX + " / " + tileY);
                         APosition constructionPosition = APosition.createFrom(tileX, tileY);
+                        
+                        // Check if position is buildable etc
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
                         }
@@ -46,6 +57,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         }
         
         System.err.println("Finished at search radius: " + searchRadius + " from " + nearTo);
+        System.err.println("   (Last error: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
 
         return null;
     }
@@ -58,9 +70,11 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      */
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
         if (builder == null) {
+            _CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
             return false;
         }
         if (position == null) {
+            _CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";
             return false;
         }
 
@@ -86,7 +100,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isPlaceLeftForAddons(builder, building, position)) {
+        if (isNotEnoughPlaceLeftForAddons(builder, building, position)) {
             return false;
         }
 
@@ -96,6 +110,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Low-level
+    
     private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
 
         // We have problem only if building is both close to base and to minerals or to geyser
@@ -105,6 +120,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                     = (Collection<AUnit>) Select.minerals().inRadius(8, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
                 if (mineral.distanceTo(position) <= 4) {
+                    _CONDITION_THAT_FAILED = "MINERAL TOO CLOSE";
                     return true;
                 }
             }
@@ -112,7 +128,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         return false;
     }
 
-    private static boolean isPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
+    private static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
         boolean canThisBuildingHaveAddon = building.canHaveAddon();
         for (AUnit otherBuilding : Select.ourBuildings().listUnits()) {
             double distance = otherBuilding.getPosition().distanceTo(position);
@@ -121,7 +137,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             if (distance <= 2 && canThisBuildingHaveAddon) {
                 if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(2, 0))) {
                     _CONDITION_THAT_FAILED = "MY_ADDON_COULDNT_BE_BUILT_HERE";
-                    return false;
+                    return true;
                 }
             }
 
@@ -129,11 +145,11 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             if (distance <= 2 && otherBuilding.canHaveAddon()) {
                 if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(-2, 0))) {
                     _CONDITION_THAT_FAILED = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
-                    return false;
+                    return true;
                 }
             }
         }
 
-        return true;
+        return false;
     }
 }

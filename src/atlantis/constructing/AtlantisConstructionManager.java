@@ -109,9 +109,9 @@ public class AtlantisConstructionManager {
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
-            System.err.println("requestConstruction `" + building 
-                    + "` FAILED! POSITION: " + positionToBuild
-                    + " / BUILDER = " + optimalBuilder);
+            System.err.println("requestConstruction `" + building);
+//                    + "` FAILED! POSITION: " + positionToBuild
+//                    + " / BUILDER = " + optimalBuilder);
             if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                 System.err.println("    (reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             }
