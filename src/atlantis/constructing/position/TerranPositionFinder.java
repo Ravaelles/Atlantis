@@ -45,7 +45,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             searchRadius++;
         }
         
-        System.err.println("Finished at search radius: " + searchRadius);
+        System.err.println("Finished at search radius: " + searchRadius + " from " + nearTo);
 
         return null;
     }

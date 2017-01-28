@@ -43,7 +43,7 @@ public class AtlantisKeyboard implements NativeKeyListener {
     
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-//        System.out.println(e.getKeyCode());
+        System.out.println(e.getKeyCode());
         
         switch (e.getKeyCode()) {
             
@@ -56,6 +56,12 @@ public class AtlantisKeyboard implements NativeKeyListener {
             case 13: case 3662: 
                 System.out.println("Notice: SPEED FASTER!");
                 AtlantisGame.changeSpeedBy(-2);
+                break;
+
+            // Key "ESCAPE"
+            case 1: 
+                System.out.println("ESCAPE pressed: Exit requested by user");
+                atlantis.Atlantis.getInstance().onEnd(false);
                 break;
 
             // Key "1"

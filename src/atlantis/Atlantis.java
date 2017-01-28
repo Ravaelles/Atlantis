@@ -453,7 +453,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onEnd(boolean winner) {
-        instance = new Atlantis();
+//        instance = new Atlantis();
         ProcessHelper.killStarcraftProcess();
         ProcessHelper.killChaosLauncherProcess();
         System.out.println("Exiting now...");
