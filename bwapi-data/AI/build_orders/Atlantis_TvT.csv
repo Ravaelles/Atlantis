@@ -19,14 +19,37 @@
 #SCOUT_IS_NTH_WORKER=8
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=11
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=45
+
+// ====================================================================
+
+# 9/10 - Supply Depot
+# 12/18 - Barracks
+# 12/18 - Refinery
+# 15/18 - Supply Depot
+# 16/26 - Factory
+# 20/26 - Machine Shop
+# 22/26 - Siege Tank and Siege Mode
+# 23/26 - Supply Depot
+# 28/34 - Command Center
+# 28/44 - Supply Depot
+# 32/54 - Factory
 
 // === Build orders ===================================================
 
 @ - Name - Modifier
-4 - Supply Depot
-5 - Barracks
 9 - Supply Depot
-8 - Marine - x2
-Marine - x3
+12 - Barracks
+12 - Refinery
 15 - Supply Depot
+16 - Factory
+20 - Machine Shop
+22 - Siege Tank
+22 - Siege Mode
+23 - Supply Depot
+28 - Command Center
+28 - Supply Depot
+32 - Factory
+32 - Siege Tank
+34 - Siege Tank
+40 - Siege Tank - x3

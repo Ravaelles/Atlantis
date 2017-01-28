@@ -7,6 +7,7 @@ import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -44,6 +45,13 @@ public class AtlantisProductionManager {
                 UpgradeType upgrade = order.getUpgrade();
                 researchUpgrade(upgrade);
             }
+
+            // =========================================================
+            // Produce TECH
+            else if (order.getTech()!= null) {
+                TechType tech = order.getTech();
+                researchTech(tech);
+            }
         }
         
         // === Fix - refresh entire queue ==============================
@@ -76,11 +84,21 @@ public class AtlantisProductionManager {
     }
 
     private static void researchUpgrade(UpgradeType upgrade) {
-        AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades()); //AUnitType.getUnitType(upgrade.getWhatUpgradesTypeID());
+        AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades());
         if (buildingType != null) {
             AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
             if (building != null) {
                 building.upgrade(upgrade);
+            }
+        }
+    }
+
+    private static void researchTech(TechType tech) {
+        AUnitType buildingType = AUnitType.createFrom(tech.whatResearches());
+        if (buildingType != null) {
+            AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
+            if (building != null) {
+                building.reserach(tech);
             }
         }
     }

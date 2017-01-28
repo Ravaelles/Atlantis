@@ -1,5 +1,6 @@
 package atlantis.keyboard;
 
+import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.debug.AtlantisPainter;
 import java.awt.KeyEventDispatcher;
@@ -50,17 +51,19 @@ public class AtlantisKeyboard implements NativeKeyListener {
             // Keys "-" and NumPad "-"
             case 12: case 3658:
                 AtlantisGame.changeSpeedBy(+2);
+                System.out.println("Notice: SPEED SLOWER (" + AtlantisConfig.GAME_SPEED + ")");
                 break;
 
             // Keys "+" and NumPad "+"
             case 13: case 3662: 
-                System.out.println("Notice: SPEED FASTER!");
                 AtlantisGame.changeSpeedBy(-2);
+                System.out.println("Notice: SPEED FASTER (" + AtlantisConfig.GAME_SPEED + ")");
                 break;
 
             // Key "ESCAPE"
             case 1: 
-                System.out.println("ESCAPE pressed: Exit requested by user");
+                System.out.println();
+                System.out.println("ESC pressed: exit requested by the user");
                 atlantis.Atlantis.getInstance().onEnd(false);
                 break;
 

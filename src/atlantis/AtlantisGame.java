@@ -104,7 +104,7 @@ public class AtlantisGame {
 
         if (getBwapi() != null) {
             AtlantisConfig.GAME_SPEED = speed;
-            getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+            getBwapi().setLocalSpeed(speed);
 
             String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
             sendMessage("Game speed: " + speedString);

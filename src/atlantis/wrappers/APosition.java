@@ -1,7 +1,9 @@
 package atlantis.wrappers;
 
+import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
+import bwapi.Color;
 import bwapi.Position;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,6 +118,22 @@ public class APosition extends Position {
     }
     
     /**
+     * Paint it on screen for testing.
+     */
+    public void paintIt(int widthTiles, int heightTiles) {
+        paintIt(widthTiles, heightTiles, Color.Red);
+    }
+    
+    /**
+     * Paint it on screen for testing.
+     */
+    public void paintIt(int widthTiles, int heightTiles, Color color) {
+        AtlantisPainter.paintRectangle(this, widthTiles * 32, heightTiles * 32, color);
+    }
+    
+    // =========================================================
+    
+    /**
      * Ensures that position's [x,y] are valid map coordinates.
      */
     @Override
@@ -123,8 +141,6 @@ public class APosition extends Position {
         p = p.makeValid();
         return this;
     }
-    
-    // =========================================================
 
     @Override
     public String toString() {

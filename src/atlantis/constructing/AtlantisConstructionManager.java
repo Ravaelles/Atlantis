@@ -21,6 +21,7 @@ public class AtlantisConstructionManager {
     private static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
 
     // =========================================================
+    
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
      * finished objects etc.
@@ -33,6 +34,7 @@ public class AtlantisConstructionManager {
     }
 
     // =========================================================
+    
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
@@ -119,6 +121,7 @@ public class AtlantisConstructionManager {
     }
 
     // =========================================================
+    
     /**
      * If builder has died when constructing, replace him with new one.
      */
@@ -228,6 +231,7 @@ public class AtlantisConstructionManager {
 
     // =========================================================no
     // Public class access methods
+    
     /**
      * Returns true if given worker has been assigned to construct new building or if the constructions is
      * already in progress.
@@ -352,6 +356,8 @@ public class AtlantisConstructionManager {
         return result;
     }
 
+    // === Zerg ========================================
+    
     /**
      * The moment zerg drone starts building a building we're not detecting it without this method. This
      * method looks for constructions for which builder.type and builder.builds.type is the same, meaning that

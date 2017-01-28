@@ -200,7 +200,7 @@ public class AtlantisMap {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;	//TODO: check whether this scaling to TilePosition is oK
             int dx = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
             int dy = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
-            position = PositionUtil.translate(startPoint, dx, dy).makeValid();
+            position = PositionUtil.translateByPixels(startPoint, dx, dy).makeValid();
             if (!isVisible(position)) {
                 return position;
             }

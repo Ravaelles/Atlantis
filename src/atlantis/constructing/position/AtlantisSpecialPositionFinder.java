@@ -43,10 +43,14 @@ public class AtlantisSpecialPositionFinder {
             AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base.getPosition());
 
             if (geyser != null && geyser.distanceTo(base) < 12) {
-                return PositionUtil.translate(geyser.getPosition(), -48, -32);
+                APosition position = PositionUtil.translateByPixels(geyser.getPosition(), -64, -32);
+//                APosition position = geyser.getPosition();
+                position.paintIt(3, 2);
+                return position;
             }
         }
 
+        System.err.println("Couldn't find place for " + building);
         return null;
     }
 
@@ -79,7 +83,7 @@ public class AtlantisSpecialPositionFinder {
         BaseLocation baseLocationToExpand;
         if (Select.ourBases().count() <= 2) {
             baseLocationToExpand = AtlantisMap.getExpansionFreeBaseLocationNearestTo(
-                    Select.mainBase().getPosition().translateByPixels(-64, -48)
+                    Select.mainBase().getPosition()
             );
         }
         else {
@@ -91,7 +95,7 @@ public class AtlantisSpecialPositionFinder {
             return null;
         }
         
-        APosition near = APosition.createFrom(baseLocationToExpand.getPosition());
+        APosition near = APosition.createFrom(baseLocationToExpand.getPosition()).translateByPixels(-64, -48);
         constructionOrder.setMaxDistance(4);
 
 //        System.out.println("Main base = " + Select.mainBase());

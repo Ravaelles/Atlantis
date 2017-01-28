@@ -60,17 +60,9 @@ public abstract class AbstractPositionFinder {
             return false;
         }
         
-        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
+        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
+//        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
     }
-
-    /**
-     * Returns true if game says it's possible to build given building at this position.
-     *
-    protected static boolean canPhysicallyBuildHere(AUnitType building, Position position) {
-    	return Atlantis.getBwapi().canBuildHere(arg0, arg1, arg2, arg3)
-        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building, true);
-        
-    }*/
 
     /**
      * Returns true if any other building is too close to this building or if two buildings would overlap
@@ -102,30 +94,6 @@ public abstract class AbstractPositionFinder {
         return false;
     }
     
-//    private static int areTwoBuildingsTooClose(AUnit otherBuilding, Position position, AUnitType building) {
 //        double edgeToEdgeDistance = PositionUtil.getEdgeToEdgeDistanceBetween(otherBuilding, position, building);
-//        // System.out.println("   --- Dist bitw " + otherBuilding.getType().getName() + " and " + building.getName()
-//        // + " is " + edgeToEdgeDistance);
-//
-//        // If buildings are dangerously close
-//        if (edgeToEdgeDistance < 0.1 || (edgeToEdgeDistance <= 1 && otherBuilding.isBase())) {
-//
-//            // Allow stacking of depots
-//            if (building.equals(AUnitType.Terran_Supply_Depot) && otherBuilding.getType().equals(AUnitType.Terran_Supply_Depot)) {
-//                return STATUS_BUILDINGS_STICK;
-//            }
-//            else {
-//                return STATUS_BUILDINGS_ADDON_COLLIDE;
-//            }
-//        }
-//
-//        return STATUS_BUILDINGS_DONT_STICK;
-//    }
-    
-    // =========================================================
-    
-    private static final int STATUS_BUILDINGS_DONT_STICK = 100;
-    private static final int STATUS_BUILDINGS_STICK = 200;
-    private static final int STATUS_BUILDINGS_ADDON_COLLIDE = 300;
 
 }

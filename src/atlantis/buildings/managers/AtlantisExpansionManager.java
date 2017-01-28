@@ -44,13 +44,13 @@ public class AtlantisExpansionManager {
                 && AtlantisGame.playsAsZerg() && Select.ourLarva().count() >= 2;
         boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
         boolean allowExtraExpansion = AtlantisGame.hasMinerals(minMinerals + 200)
-                && numberOfUnfinishedBases <= 2;
+                && numberOfUnfinishedBases <= 1;
 
         // Check if it makes sense to request new base
         if (haveEnoughMinerals && !haveEnoughBases && (noBaseToConstruct || allowExtraExpansion)) {
-//            if (AtlantisGame.playsAsZerg() && AtlantisGame.hasMinerals(minMinerals + 200)) {
+            
+            // ZERG case
             if (AtlantisGame.playsAsZerg() && AtlantisGame.hasMinerals(minMinerals)) {
-//                requestConstructionOf(AtlantisConfig.BASE, Select.secondBaseOrMainIfNoSecond().getPosition());
                 ProductionOrder fakeProductionOrder = new ProductionOrder(AtlantisConfig.BASE);
                 fakeProductionOrder.setModifier(ProductionOrder.BASE_POSITION_MAIN);
                 
@@ -59,7 +59,10 @@ public class AtlantisExpansionManager {
                         fakeProductionOrder,
                         Select.secondBaseOrMainIfNoSecond().getPosition()
                 );
-            } else {
+            } 
+            
+            // TERRAN + PROTOSS
+            else {
                 requestConstructionOf(AtlantisConfig.BASE);
             }
         }

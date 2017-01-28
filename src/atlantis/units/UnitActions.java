@@ -65,7 +65,11 @@ public interface UnitActions {
     }
     
     default void upgrade(UpgradeType upgrade) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        u().upgrade(upgrade);
+    }
+    
+    default void reserach(TechType tech) {
+        u().research(tech);
     }
     
     default public boolean move(Position target, UnitMission unitMission) {

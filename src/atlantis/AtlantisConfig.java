@@ -30,7 +30,7 @@ public class AtlantisConfig {
      * Game speed. Lower is faster. 0 is fastest, 20 is about normal game speed.
      * In game you can use buttons -/+ to change the game speed.
      */
-    public static int GAME_SPEED = 1;
+    public static int GAME_SPEED = 0;
     
     /**
      * If true, game will slow down on fighting, but normally it will run quicker.
