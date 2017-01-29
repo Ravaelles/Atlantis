@@ -5,6 +5,7 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import static atlantis.constructing.AtlantisConstructionManager.requestConstructionOf;
 import atlantis.constructing.ConstructionOrderStatus;
+import atlantis.information.AtlantisMap;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.Select;
@@ -34,13 +35,21 @@ public class AtlantisExpansionManager {
         if (nextOrders.size() >= 3 && !AtlantisGame.hasMinerals(minMinerals + 50)) {
             return;
         }
+        
+        // === Check if we have almost as many bases as base locations; if so, exit ======
+        
+        int numberOfBases = Select.ourBases().count();
+        
+        if (numberOfBases >= AtlantisMap.getBaseLocations().size() - 2) {
+            return;
+        }
 
-        // =========================================================
+        // ===============================================================================
         int numberOfUnfinishedBases
                 = AtlantisConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
 
         boolean haveEnoughMinerals = AtlantisGame.hasMinerals(minMinerals);
-        boolean haveEnoughBases = Select.ourBases().count() >= 7
+        boolean haveEnoughBases = numberOfBases >= 7
                 && AtlantisGame.playsAsZerg() && Select.ourLarva().count() >= 2;
         boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
         boolean allowExtraExpansion = AtlantisGame.hasMinerals(minMinerals + 200)

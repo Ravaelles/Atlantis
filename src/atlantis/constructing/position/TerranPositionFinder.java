@@ -130,11 +130,14 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
     private static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
         boolean canThisBuildingHaveAddon = building.canHaveAddon();
-        for (AUnit otherBuilding : Select.ourBuildings().listUnits()) {
+        
+        // === Compare against existing buildings ========================================
+        
+        for (AUnit otherBuilding : Select.ourBuildingsIncludingUnfinished().inRadius(8, position).listUnits()) {
             double distance = otherBuilding.getPosition().distanceTo(position);
 
             // Check for this building's addon if needed
-            if (distance <= 2 && canThisBuildingHaveAddon) {
+            if (canThisBuildingHaveAddon) {
                 if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(3, 0))) {
                     _CONDITION_THAT_FAILED = "MY_ADDON_COULDNT_BE_BUILT_HERE";
                     return true;
@@ -142,7 +145,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             }
 
             // Check for other buildings' addons
-            if (distance <= 3 && otherBuilding.canHaveAddon()) {
+            if (otherBuilding.canHaveAddon()) {
                 if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(-3, 0))) {
                     _CONDITION_THAT_FAILED = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
                     return true;
