@@ -79,7 +79,8 @@ public class AtlantisSpecialPositionFinder {
     
     private static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
         BaseLocation baseLocationToExpand;
-        if (Select.ourBases().count() <= 2) {
+        int ourBasesCount = Select.ourBases().count();
+        if (ourBasesCount <= 2) {
             baseLocationToExpand = AtlantisMap.getExpansionFreeBaseLocationNearestTo(
                     Select.mainBase().getPosition()
             );
@@ -89,7 +90,9 @@ public class AtlantisSpecialPositionFinder {
         }
         
         if (baseLocationToExpand == null) {
-            System.err.println("baseLocationToExpand is null");
+            if (ourBasesCount <= 2) {
+                System.err.println("baseLocationToExpand is null");
+            }
             return null;
         }
         

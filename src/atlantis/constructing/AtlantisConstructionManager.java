@@ -63,7 +63,7 @@ public class AtlantisConstructionManager {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
 
-        if (AtlantisSpecialConstructionManager.handledAsSpecialBuilding(building, order)) {
+        if (AtlantisSpecificConstructionManager.handledAsSpecialBuilding(building, order)) {
             return;
         }
 
@@ -86,7 +86,7 @@ public class AtlantisConstructionManager {
 //        APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
 //                newConstructionOrder.getBuilder(), building, newConstructionOrder, near, 25
 //        );
-        newConstructionOrder.setMaxDistance(25);
+        newConstructionOrder.setMaxDistance(32);
         APosition positionToBuild = newConstructionOrder.findNewBuildPosition();
 //        AtlantisGame.sendMessage("@@ " + building + " at " + positionToBuild + " near " + near);
 //        System.err.println("@@ " + building + " at " + positionToBuild + " near " + near);
@@ -112,8 +112,6 @@ public class AtlantisConstructionManager {
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
             System.err.println("requestConstruction `" + building);
-//                    + "` FAILED! POSITION: " + positionToBuild
-//                    + " / BUILDER = " + optimalBuilder);
             if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                 System.err.println("    (reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             }
