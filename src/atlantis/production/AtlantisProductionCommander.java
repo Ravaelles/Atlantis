@@ -22,6 +22,10 @@ public class AtlantisProductionCommander {
         
         // Check if we should automatically build new base, because we have shitload of minerals.
         AtlantisExpansionManager.requestNewBaseIfNeeded();
+        
+        // When it can be applied and makes sense, automatically produce units like workers, factories.
+        AtlantisDynamicProductionCommander.update();
+        
     }
 
 }

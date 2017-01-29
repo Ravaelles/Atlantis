@@ -30,7 +30,7 @@ public class Missions {
         // =========================================================
         
         if (currentGlobalMission == Missions.DEFEND) {
-            if (Select.ourCombatUnits().count() >= defineMinUnitsToForFirstAttack()) {
+            if (canChangeMissionToAttack()) {
 //                if (AtlantisGame.playsAsTerran()) {
 //                    if (Select.our().countUnitsOfType(AUnitType.UnitTypes.Terran_Medic) < 4) {
 //                        return;
@@ -48,17 +48,19 @@ public class Missions {
     
     // =========================================================
     
-    public static Mission getInitialMission() {
-        return Missions.DEFEND;
-//        return Missions.ATTACK;
-    }
-    
     /**
      * Defines how many military units we should have before pushing forward towards the enemy.
      */
     private static int defineMinUnitsToForFirstAttack() {
+        
+        // We're TERRAN
+        if (AtlantisGame.playsAsTerran()) {
+            return 6;
+        }
+        
+        // =========================================================
         // We're ZERG
-        if (AtlantisGame.playsAsZerg()) {
+        else if (AtlantisGame.playsAsZerg()) {
             return 12;
         }
         
@@ -82,8 +84,26 @@ public class Missions {
         }
     }
     
+    
+    private static boolean canChangeMissionToAttack() {
+        if (Select.ourTanks().count() < 2) {
+            return false;
+        }
+        
+        if (Select.ourCombatUnits().count() < defineMinUnitsToForFirstAttack()) {
+            return false;
+        }
+        
+        return true;
+    }
+    
     // =========================================================
 
+    public static Mission getInitialMission() {
+        return Missions.DEFEND;
+//        return Missions.ATTACK;
+    }
+    
     /**
      * Global mission is the military stance that all non-special battle squads should follow and it
      * should always correspond to the mission of our main Alpha battle squad.

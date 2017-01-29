@@ -41,7 +41,7 @@ public class MissionDefend extends Mission {
             if (isTooManyUnitsAround(unit, chokepoint)) {
                 if (unit.isMoving()) {
                     unit.setTooltip("Stop");
-                    unit.stop();
+                    unit.holdPosition();
                     return true;
                 }
             } 

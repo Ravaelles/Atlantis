@@ -1,6 +1,7 @@
 package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
+import atlantis.production.AtlantisWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -11,10 +12,7 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
 
     @Override
     public void produceWorker() {
-        AUnit building = Select.ourOneIdle(AtlantisConfig.BASE);
-        if (building != null) {
-            building.train(AtlantisConfig.WORKER);
-        }
+        AtlantisWorkerProductionManager.produceWorker();
     }
 
     @Override

@@ -27,6 +27,10 @@ public class TerranSiegeTankManager {
     // =========================================================
     
     private static boolean updateWhenSieged(AUnit tank, AUnit enemy, double distanceToEnemy) {
+        if (tank.isHoldingPosition()) {
+            return true;
+        }
+        
         if (enemy == null || distanceToEnemy >= 14) {
             if (AtlantisUtilities.rand(1, 100) <= 10) {
                 tank.unsiege();
@@ -38,6 +42,13 @@ public class TerranSiegeTankManager {
     }
 
     private static boolean updateWhenUnsieged(AUnit tank, AUnit enemy, double distanceToEnemy) {
+        
+        // If tank is holding position, siege
+        if (tank.isHoldingPosition()) {
+            tank.siege();
+            return true;
+        }
+        
         // === Enemy is BUILDING ========================================
         if (enemy.isBuilding()) {
             return nearestEnemyIsBuilding(tank, enemy, distanceToEnemy);

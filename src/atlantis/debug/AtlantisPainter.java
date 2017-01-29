@@ -722,7 +722,7 @@ public class AtlantisPainter {
      */
     private static void paintUnitsBeingTrainedInBuildings() {
         for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-            if (!unit.getType().isBuilding() || !unit.isTraining()) {
+            if (!unit.getType().isBuilding() || !unit.isTrainingAnyUnit()) {
                 continue;
             }
 

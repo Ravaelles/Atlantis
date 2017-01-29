@@ -115,6 +115,7 @@ public class Select<T> {
         
         return new Select<AUnit>(data);
     }
+    
     /**
      * Selects all game units including minerals, geysers and enemy units.
      */
@@ -867,6 +868,7 @@ public class Select<T> {
 
     // =========================================================
     // Operations on set of units
+    
     /**
      * @return all units except for the given one
      */
@@ -875,23 +877,20 @@ public class Select<T> {
         return this;
     }
 
+    /**
+     * Reverse the order in which units are returned.
+     */
+    public Select<T> reverse() {
+        Collections.reverse(data);
+        return this;
+    }
+    
     @SuppressWarnings("unused")
     private Select<T> filterOut(Collection<T> unitsToRemove) {
         data.removeAll(unitsToRemove);
         return this;
     }
 
-    // private Select filterOut(AUnit unitToRemove) {
-    // // units.removeUnit(unitToRemove);
-    // Iterator<AUnit> unitsIterator = units.iterator();
-    // while (unitsIterator.hasNext()) {
-    // AUnit unit = unitsIterator.next();
-    // if (unitToRemove.equals(unit)) {
-    // units.removeUnit(unit);
-    // }
-    // }
-    // return this;
-    // }
     @SuppressWarnings("unused")
     private Select<T> filterAllBut(T unitToLeave) {
         Iterator<T> unitsIterator = data.iterator();
@@ -918,13 +917,7 @@ public class Select<T> {
 
     // =========================================================
     // Get results
-    /**
-     * Selects units that match all previous criteria. <b>Units</b> class is used as a wrapper for result. See
-     * its javadoc too learn what it can do.
-     */
-//    public AUnitsData unitsData() { 
-//        return data;
-//    }
+    
     /**
      * Selects result as an iterable collection (list).
      */

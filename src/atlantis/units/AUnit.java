@@ -771,6 +771,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isStartingAttack();
     }
 
+    public boolean isHoldingPosition() {
+        return u.isHoldingPosition();
+    }
+
     public boolean isSieged() {
         return u.isSieged();
     }
@@ -827,7 +831,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.hasPath(point);
     }
 
-    public boolean isTraining() {
+    public boolean isTrainingAnyUnit() {
         return u.isTraining();
     }
 
