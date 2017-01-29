@@ -2,7 +2,7 @@ package atlantis.combat.micro.zerg;
 
 import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.scout.AtlantisScoutCommander;
+import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.missions.UnitMissions;
 import atlantis.wrappers.APosition;
@@ -55,7 +55,7 @@ public class ZergOverlordManager {
      * We don't know at any enemy building location.
      */
     private static void actWhenDontKnowEnemyLocation(AUnit unit) {
-        AtlantisScoutCommander.tryToFindEnemy(unit);
+        AtlantisScoutManager.tryToFindEnemy(unit);
         unit.setTooltip("Find enemy");
         //unit.setTooltip("Find enemy");
     }

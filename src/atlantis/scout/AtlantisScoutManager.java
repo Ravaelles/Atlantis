@@ -11,7 +11,7 @@ import atlantis.units.missions.UnitMissions;
 import bwta.BaseLocation;
 import java.util.ArrayList;
 
-public class AtlantisScoutCommander {
+public class AtlantisScoutManager {
 
     /**
      * Current scout unit.
@@ -155,4 +155,13 @@ public class AtlantisScoutCommander {
         }
     }
 
+    // =========================================================
+    
+    /**
+     * Returns true if given unit has been assigned to explore the map.
+     */
+    public static boolean isScout(AUnit unit) {
+        return scouts.contains(unit);
+    }
+    
 }

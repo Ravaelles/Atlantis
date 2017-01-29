@@ -4,7 +4,7 @@ package atlantis;
 import atlantis.combat.AtlantisCombatCommander;
 import atlantis.debug.AtlantisPainter;
 import atlantis.production.AtlantisProductionCommander;
-import atlantis.scout.AtlantisScoutCommander;
+import atlantis.scout.AtlantisScoutManager;
 import atlantis.workers.AtlantisWorkerCommander;
 
 /**
@@ -26,7 +26,7 @@ public class AtlantisGameCommander {
         
         AtlantisWorkerCommander.update();
         AtlantisCombatCommander.update();
-        AtlantisScoutCommander.update();
+        AtlantisScoutManager.update();
 //        AtlantisBuildingsCommander.update(); // Currently unused
         AtlantisProductionCommander.update();
     }
