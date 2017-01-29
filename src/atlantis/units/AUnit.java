@@ -731,6 +731,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isIdle() || u.getLastCommand().getUnitCommandType().equals(UnitCommandType.None);
     }
 
+    public boolean isBusy() {
+        return !isIdle();
+    }
+
     public boolean isVisible() {
         return u.isVisible();
     }

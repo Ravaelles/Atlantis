@@ -119,8 +119,14 @@ public class MissionDefend extends Mission {
     }
 
     // =========================================================
+    
     public static Chokepoint getFocusPoint() {
-        return AtlantisMap.getMainBaseChokepoint();
+        if (Select.ourBases().count() <= 1) {
+            return AtlantisMap.getMainBaseChokepoint();
+        }
+        else {
+            return AtlantisMap.getNaturalBaseChokepoint();
+        }
     }
 
     /**

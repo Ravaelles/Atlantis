@@ -131,6 +131,21 @@ public class Select<T> {
     }
 
     /**
+     * Selects our units of given type(s).
+     */
+    public static Select<?> ourOfType(AUnitType type) {
+        List<AUnit> data = new ArrayList<>();
+
+        for (AUnit unit : ourUnits()) {
+            if (unit.exists() && unit.isCompleted() && unit.isType(type)) {
+                data.add(unit);	
+            }
+        }
+        
+        return new Select<AUnit>(data);
+    }
+    
+    /**
      * Selects all of our finished combat units (no buildings, workers, spider mines etc).
      */
     public static Select<AUnit> ourCombatUnits() {
@@ -344,6 +359,7 @@ public class Select<T> {
 
     // =====================================================================
     // Filter units
+    
     /**
      * Selects only units of given type(s).
      */
@@ -817,7 +833,8 @@ public class Select<T> {
     }
 
     // =========================================================
-    // Auxiliary methods
+    // Special retrieve
+    
     /**
      * Returns <b>true</b> if current selection contains at least one unit.
      */
@@ -846,6 +863,37 @@ public class Select<T> {
         return (T) AtlantisUtilities.getRandomElement(data); //units.random();
     }
 
+    // === High-level of abstraction ===========================
+    
+    public boolean areAllBusy() {
+        for (Iterator<AUnit> it = (Iterator<AUnit>) data. iterator(); it.hasNext();) {
+            AUnit unit = (AUnit) it.next();
+            if (!unit.isBusy()) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    // === Operations on set of units ==========================
+    
+    /**
+     * @return all units except for the given one
+     */
+    public Select<T> exclude(T unitToExclude) {
+        data.remove(unitToExclude);
+        return this;
+    }
+
+    /**
+     * Reverse the order in which units are returned.
+     */
+    public Select<T> reverse() {
+        Collections.reverse(data);
+        return this;
+    }
+    
     /**
      * Returns a AUnit out of an entity that is either a AUnit or UnitData
      *
@@ -864,25 +912,6 @@ public class Select<T> {
      */
     private UnitData dataFrom(Object unitOrData) {
         return (unitOrData instanceof UnitData ? (UnitData) unitOrData : new UnitData((AUnit) unitOrData));
-    }
-
-    // =========================================================
-    // Operations on set of units
-    
-    /**
-     * @return all units except for the given one
-     */
-    public Select<T> exclude(T unitToExclude) {
-        data.remove(unitToExclude);
-        return this;
-    }
-
-    /**
-     * Reverse the order in which units are returned.
-     */
-    public Select<T> reverse() {
-        Collections.reverse(data);
-        return this;
     }
     
     @SuppressWarnings("unused")
@@ -937,6 +966,13 @@ public class Select<T> {
      */
     public int count() {
         return data.size();
+    }
+
+    /**
+     * Returns number of units matching all previous conditions.
+     */
+    public int size() {
+        return count();
     }
 
     /**

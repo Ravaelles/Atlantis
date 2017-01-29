@@ -2,6 +2,7 @@ package atlantis.information;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
+import atlantis.debug.AtlantisPainter;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -9,6 +10,7 @@ import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.Positions;
+import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.BWTA;
@@ -29,10 +31,12 @@ public class AtlantisMap {
 
     private static List<Chokepoint> cached_chokePoints = null;
     private static Chokepoint cached_mainBaseChokepoint = null;
+    private static Chokepoint cached_naturalBaseChokepoint = null;
     private static Set<Chokepoint> disabledChokepoints = new HashSet<>();
     private static BWTA bwta = new BWTA(); // all methods in BWTA are static, but I keep a class instance to return it in getMap()
 
     // =========================================================
+    
     /**
      * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
      * method returns this choke point. It's perfect position to defend (because it's *choke* point).
@@ -48,17 +52,17 @@ public class AtlantisMap {
                 if (mainRegion != null) {
 
                     // Define localization of the second base to expand
-                    BaseLocation secondBase = getSecondNearestBaseLocation(Atlantis.getBwapi().self()
+                    BaseLocation naturalBase = getNaturalBaseLocation(Atlantis.getBwapi().self()
                             .getStartLocation().toPosition());
                     // System.out.println("secondBase = " + secondBase);
-                    if (secondBase == null) {
+                    if (naturalBase == null) {
                         return null;
                     }
 
                     // Define region of the second base
-                    Region secondRegion = secondBase.getRegion();
+                    Region naturalBaseRegion = naturalBase.getRegion();
                     // System.out.println("secondRegion = " + secondRegion);
-                    if (secondRegion == null) {
+                    if (naturalBaseRegion == null) {
                         return null;
                     }
 
@@ -66,8 +70,8 @@ public class AtlantisMap {
                     for (Chokepoint mainRegionChoke : mainRegion.getChokepoints()) {
                         // System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
                         // + (mainRegionChoke.getFirstRegion()) + " / " + (mainRegionChoke.getSecondRegion()));
-                        if (secondRegion.equals(mainRegionChoke.getRegions().first)	// getFirstRegion()
-                                || secondRegion.equals(mainRegionChoke.getRegions().second)) {	// getSecondRegion()
+                        if (naturalBaseRegion.equals(mainRegionChoke.getRegions().first)	// getFirstRegion()
+                                || naturalBaseRegion.equals(mainRegionChoke.getRegions().second)) {	// getSecondRegion()
                             cached_mainBaseChokepoint = mainRegionChoke;
                             // System.out.println("MAIN CHOKE FOUND! " + cached_mainBaseChokepoint);
                             break;
@@ -82,6 +86,36 @@ public class AtlantisMap {
         }
 
         return cached_mainBaseChokepoint;
+    }
+    
+    /**
+     * Returns chokepoint to defend for the natural (second) base.
+     */
+    public static Chokepoint getNaturalBaseChokepoint() {
+        if (cached_naturalBaseChokepoint != null) {
+            AtlantisPainter.paintCircle(APosition.createFrom(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
+            return cached_naturalBaseChokepoint;
+        }
+        
+        // =========================================================
+        
+        AUnit mainBase = Select.mainBase();
+        if (mainBase == null) {
+            System.err.println("Can't find natural base chokepoint");
+            return null;
+        }
+        
+        Region naturalRegion = getRegion(getNaturalBaseLocation(mainBase.getPoint()));
+        
+        for (Chokepoint chokepoint : naturalRegion.getChokepoints()) {
+            APosition center = APosition.createFrom(chokepoint.getCenter());
+            if (center.distanceTo(getMainBaseChokepoint().getCenter()) > 1) {
+                cached_naturalBaseChokepoint = chokepoint;
+                return cached_naturalBaseChokepoint;
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -171,7 +205,12 @@ public class AtlantisMap {
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
-    private static BaseLocation getSecondNearestBaseLocation(Position nearestTo) {
+    private static BaseLocation getNaturalBaseLocation(Object mainBasePosition) {
+        Position nearestTo = mainBasePosition instanceof Position 
+                ? (Position) mainBasePosition 
+                : ((APosition) mainBasePosition).getPoint();
+        
+        // =========================================================
 
         // Get list of all base locations
         Positions<BaseLocation> baseLocations = new Positions<BaseLocation>();
@@ -271,7 +310,23 @@ public class AtlantisMap {
      *
      * @see Region
      */
-    public static Region getRegion(APosition position) {
+    public static Region getRegion(Object positionOrRegionOrBaseLocation) {
+        Position position = null;
+        
+        if (positionOrRegionOrBaseLocation instanceof Position) {
+            position = (Position) positionOrRegionOrBaseLocation;
+        }
+        else if (positionOrRegionOrBaseLocation instanceof Region) {
+            position = ((Region) positionOrRegionOrBaseLocation).getCenter();
+        }
+        else if (positionOrRegionOrBaseLocation instanceof BaseLocation) {
+            position = ((BaseLocation) positionOrRegionOrBaseLocation).getPosition();
+        }
+        else {
+            System.err.println("getRegion failed for " + positionOrRegionOrBaseLocation);
+            return null;
+        }
+        
         return BWTA.getRegion(position);
     }
 

@@ -117,6 +117,7 @@ public class AtlantisConstructionManager {
             if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                 System.err.println("    (reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             }
+            System.err.println("");
         }
     }
 
