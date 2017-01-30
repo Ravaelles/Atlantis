@@ -578,12 +578,33 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
             if (!unit.isCompleted() || !unit.isAlive()) {
-                boolean isInShotRange = unit.hasRangeToAttack(targetUnit, 0.5);
+                boolean isInShotRange = unit.hasRangeToAttack(targetUnit, 0.2);
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 } else {
                     System.out.println(unit.getType().getShortName() + " in range ("
                             + unit.distanceTo(targetUnit) + ") to attack " + targetUnit.getType().getShortName());
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Selects only those units from current selection, which can be both <b>attacked by</b> given unit
+     * (e.g. Zerglings can't attack Overlord) and are <b>in shot range</b> to the given <b>unit</b>.
+     */
+    public Select<T> canBeAttackedBy(AUnit predator) {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (!unit.isCompleted() || !unit.isAlive()) {
+                boolean isInShotRange = predator.hasRangeToAttack(unit, 0.2);
+                if (!isInShotRange) {
+                    unitsIterator.remove();
+                } else {
+                    System.out.println(unit.getType().getShortName() + " in range ("
+                            + unit.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
                 }
             }
         }

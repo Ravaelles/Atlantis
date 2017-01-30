@@ -87,9 +87,10 @@ public class AtlantisCombatUnitManager {
      * 
      */
     private static boolean handledAsSpecialUnit(AUnit unit) {
-        if (unit.getType().isSiegeTank()) {
-            boolean dontDoAnythingElse = TerranSiegeTankManager.update(unit);
-            return dontDoAnythingElse;
+        if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
+            ZergOverlordManager.update(unit);
+            unit.setTooltip("Overlord");
+            return true;
         } else {
             return false;
         }
@@ -100,10 +101,9 @@ public class AtlantisCombatUnitManager {
      * semi-special it will run its micro managers after other managers have been executed.
      */
     private static boolean handledAsSemiSpecialUnit(AUnit unit) {
-        if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
-            ZergOverlordManager.update(unit);
-            unit.setTooltip("Overlord");
-            return true;
+        if (unit.getType().isSiegeTank()) {
+            boolean dontDoAnythingElse = TerranSiegeTankManager.update(unit);
+            return dontDoAnythingElse;
         } else {
             return false;
         }
