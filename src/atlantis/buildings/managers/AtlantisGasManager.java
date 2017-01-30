@@ -20,7 +20,7 @@ public class AtlantisGasManager {
     public static void handleGasBuildings() {
         
         // Only once per second
-        if (AtlantisGame.getTimeFrames() % 30 != 0) {
+        if (AtlantisGame.getTimeFrames() % 20 != 0) {
             return;
         }
         int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
@@ -74,17 +74,19 @@ public class AtlantisGasManager {
     }
 
     public static int defineMinGasWorkersPerBuilding() {
-        int seconds = AtlantisGame.getTimeSeconds();
+        return 3;
         
-        if (seconds < 150) {
-            return 1;
-        }
-        else if (seconds < 200) {
-            return 2;
-        }
-        else {
-            return 3;
-        }
+//        int seconds = AtlantisGame.getTimeSeconds();
+//        
+//        if (seconds < 150) {
+//            return 1;
+//        }
+//        else if (seconds < 200) {
+//            return 2;
+//        }
+//        else {
+//            return 3;
+//        }
     }
 
 }

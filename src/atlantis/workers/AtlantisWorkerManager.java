@@ -34,6 +34,7 @@ public class AtlantisWorkerManager {
     }
 
     // =========================================================
+    
     /**
      * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather
      * minerals.

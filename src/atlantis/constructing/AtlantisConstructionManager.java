@@ -86,7 +86,8 @@ public class AtlantisConstructionManager {
 //        APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
 //                newConstructionOrder.getBuilder(), building, newConstructionOrder, near, 25
 //        );
-        newConstructionOrder.setMaxDistance(32);
+//        newConstructionOrder.setMaxDistance(32);
+        newConstructionOrder.setMaxDistance(-1);
         APosition positionToBuild = newConstructionOrder.findNewBuildPosition();
 //        AtlantisGame.sendMessage("@@ " + building + " at " + positionToBuild + " near " + near);
 //        System.err.println("@@ " + building + " at " + positionToBuild + " near " + near);

@@ -705,5 +705,27 @@ public class AUnitType implements Comparable<AUnitType> {
         return isType(AUnitType.Terran_Factory, AUnitType.Terran_Command_Center, 
                 AUnitType.Terran_Starport, AUnitType.Terran_Science_Facility);
     }
+
+    /**
+     * Returns most default addon for Terran building like Machine Shop for Factory, Comsat Station for
+     * Command Center or null if building can't have addon.
+     */
+    public AUnitType getRelatedAddon() {
+        if (this.equals(Terran_Factory)) {
+            return Terran_Machine_Shop;
+        }
+        else if (this.equals(Terran_Command_Center)) {
+            return Terran_Comsat_Station;
+        }
+        else if (this.equals(Terran_Starport)) {
+            return Terran_Control_Tower;
+        }
+        else if (this.equals(Terran_Science_Facility)) {
+            return Terran_Physics_Lab;
+        }
+        else {
+            return null;
+        }
+    }
     
 }

@@ -719,6 +719,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isConstructing();
     }
 
+    public boolean hasAddon() {
+        return u().getAddon() != null;
+    }
+    
     public int getHitPoints() {
         return u.getHitPoints();
     }
