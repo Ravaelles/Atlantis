@@ -25,7 +25,7 @@ public class ProcessHelper {
      */
     public static void startChaosLauncherProcess() {
         try {
-            Thread.sleep(200);
+            Thread.sleep(250);
             executeInCommandLine("C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe");
         } catch (InterruptedException ex) {
             // Don't do anything

@@ -29,6 +29,8 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
     @Override
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
+        
+        System.out.println("Notice: No production orders, auto-produce.");
 
         if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
             units.add(AtlantisConfig.WORKER);
@@ -37,25 +39,28 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
         if (Select.ourTanks().count() < 30) {
             units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
             units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
+        }
+
+//        if (Select.ourBuildings().ofType(AUnitType.Terran_Academy).count() == 0) {
+//            units.add(AUnitType.Terran_Marine);
+//        } else {
+//            int marines = Select.our().countUnitsOfType(AUnitType.Terran_Marine);
+//            int medics = Select.our().countUnitsOfType(AUnitType.Terran_Medic);
+//
+//            if ((double) marines / medics < 3) {
+//                units.add(AUnitType.Terran_Marine);
+//            } else {
+//                units.add(AUnitType.Terran_Medic);
+//                units.add(AUnitType.Terran_Marine);
+//            }
+//        }
+        
+        if (Select.ourTanks().count() < 30) {
             units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
             units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
         }
-
-        if (Select.ourBuildings().ofType(AUnitType.Terran_Academy).count() == 0) {
-            units.add(AUnitType.Terran_Marine);
-            return units;
-        } else {
-            int marines = Select.our().countUnitsOfType(AUnitType.Terran_Marine);
-            int medics = Select.our().countUnitsOfType(AUnitType.Terran_Medic);
-
-            if ((double) marines / medics < 3) {
-                units.add(AUnitType.Terran_Marine);
-            } else {
-                units.add(AUnitType.Terran_Medic);
-                units.add(AUnitType.Terran_Marine);
-            }
-            return units;
-        }
+        
+        return units;
     }
 
 }

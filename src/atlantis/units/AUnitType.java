@@ -435,7 +435,7 @@ public class AUnitType implements Comparable<AUnitType> {
                     .replace("Hero_", "").replace("Special_", "").replace("Powerup_", "").replace("_", " ")
                     .replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "")
                     .replace("Hero ", "").replace("Special ", "").replace("Powerup ", "")
-                    .replace("Tank Mode ", "");
+                    .replace("Tank Mode ", "").replace("_Tank_Mode", "");
         }
 
         return _shortName;

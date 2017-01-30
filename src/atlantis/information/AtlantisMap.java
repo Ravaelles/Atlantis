@@ -2,6 +2,8 @@ package atlantis.information;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
+import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.AtlantisPainter;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.units.AUnit;
@@ -404,7 +406,15 @@ public class AtlantisMap {
         // }
     }
 
-    private static boolean isBaseLocationFreeOfBuildingsAndEnemyUnits(BaseLocation baseLocation) {
+    /**
+     * Returns true if given base location is free from units, meaning it's a good place for expansion.
+     * 
+     * Trying to avoid:
+     * - existing buildings
+     * - any enemy units
+     * - planned constructions
+     */
+    public static boolean isBaseLocationFreeOfBuildingsAndEnemyUnits(BaseLocation baseLocation) {
         
         // If we have any base, FALSE.
         if (Select.ourBases().inRadius(7, baseLocation.getPosition()).count() > 0) {
@@ -414,6 +424,14 @@ public class AtlantisMap {
         // If any enemy unit is nearby
         if (Select.enemy().inRadius(11, baseLocation.getPosition()).count() > 0) {
             return false;
+        }
+        
+        // Check for planned constructions
+        for (ConstructionOrder constructionOrder : AtlantisConstructionManager.getAllConstructionOrders()) {
+            APosition constructionPlace = constructionOrder.getPositionToBuildCenter();
+            if (constructionPlace != null && constructionPlace.distanceTo(baseLocation.getPosition()) < 8) {
+                return false;
+            }
         }
         
         // All conditions have been fulfilled.
