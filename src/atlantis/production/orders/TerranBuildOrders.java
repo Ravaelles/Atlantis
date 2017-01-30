@@ -35,21 +35,24 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
 
         if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
             units.add(AtlantisConfig.WORKER);
+            units.add(AtlantisConfig.WORKER);
+            units.add(AtlantisConfig.WORKER);
+            units.add(AtlantisConfig.WORKER);
         }
         
         // =========================================================
         
-        boolean shouldProduceTanks = Select.ourTanks().count() < 30;
-        
-        if (AtlantisGame.canAfford(400, 0) && !AtlantisGame.canAfford(0, 200)) {
-            units.add(AUnitType.Terran_Vulture);
-            units.add(AUnitType.Terran_Vulture);
-        }
-        
-        if (shouldProduceTanks) {
-            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
-            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
-        }
+//        boolean shouldProduceTanks = Select.ourTanks().count() < 30;
+//        
+//        if (AtlantisGame.canAfford(400, 0) && !AtlantisGame.canAfford(0, 200)) {
+//            units.add(AUnitType.Terran_Vulture);
+//            units.add(AUnitType.Terran_Vulture);
+//        }
+//        
+//        if (shouldProduceTanks) {
+//            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
+//            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
+//        }
 
 //        if (Select.ourBuildings().ofType(AUnitType.Terran_Academy).count() == 0) {
 //            units.add(AUnitType.Terran_Marine);

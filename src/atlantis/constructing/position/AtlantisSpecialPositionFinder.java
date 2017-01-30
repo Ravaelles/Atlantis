@@ -48,7 +48,7 @@ public class AtlantisSpecialPositionFinder {
             }
         }
 
-        System.err.println("Couldn't find place for " + building);
+        System.err.println("Couldn't find geyser for " + building);
         return null;
     }
 

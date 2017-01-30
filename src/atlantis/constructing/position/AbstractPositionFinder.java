@@ -32,7 +32,7 @@ public abstract class AbstractPositionFinder {
         // =========================================================
         
         // Leave entire vertical (same tileX) corridor free for units
-        if (position.getTileX() % 6 == 0 || (position.getTileX()) % 7 == 0) {
+        if (position.getTileX() % 7 == 1 || (position.getTileX()) % 8 == 1) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }

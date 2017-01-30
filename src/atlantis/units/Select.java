@@ -573,7 +573,7 @@ public class Select<T> {
      * Selects only those units from current selection, which are both <b>capable of attacking</b> given unit
      * (e.g. Zerglings can't attack Overlord) and are <b>in shot range</b> to the given <b>unit</b>.
      */
-    public Select<T> thatCanShoot(AUnit targetUnit) {
+    public Select<T> canAttack(AUnit targetUnit) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
@@ -597,12 +597,19 @@ public class Select<T> {
      * Selects all of our bases.
      */
     public static Select<AUnit> ourBases() {
+//        if (AtlantisGame.playsAsZerg()) {
+//            return (Select<AUnit>) ourIncludingUnfinished().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, 
+//                    AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
+//        }
+//        else {
+//            return (Select<AUnit>) ourIncludingUnfinished().ofType(AtlantisConfig.BASE);
+//        }
         if (AtlantisGame.playsAsZerg()) {
-            return (Select<AUnit>) ourIncludingUnfinished().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, 
+            return (Select<AUnit>) our().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, 
                     AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
         }
         else {
-            return (Select<AUnit>) ourIncludingUnfinished().ofType(AtlantisConfig.BASE);
+            return (Select<AUnit>) our().ofType(AtlantisConfig.BASE);
         }
     }
 

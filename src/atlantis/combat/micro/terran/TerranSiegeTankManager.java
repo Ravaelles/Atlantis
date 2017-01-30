@@ -11,7 +11,7 @@ import atlantis.util.AtlantisUtilities;
 public class TerranSiegeTankManager {
 
     public static boolean update(AUnit tank) {
-        AUnit enemy = Select.enemy().combatUnits().nearestTo(tank);
+        AUnit enemy = Select.enemy().combatUnits().canAttack(tank).nearestTo(tank);
         if (enemy != null) {
             double distanceToEnemy = enemy.distanceTo(tank);
 

@@ -25,6 +25,7 @@ public class AtlantisProductionCommander {
         
         // When it can be applied and makes sense, automatically produce units like workers, factories.
         AtlantisDynamicConstructionCommander.update();
+        AtlantisDynamicUnitsCommander.update();
         
     }
 

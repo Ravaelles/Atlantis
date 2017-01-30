@@ -1,5 +1,6 @@
 package atlantis.production;
 
+import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.units.AUnit;
@@ -20,6 +21,8 @@ public class AtlantisDynamicConstructionCommander {
             handleBuildFactoriesIfNeeded();
             handleBuildAddonsIfNeeded();
         }
+        
+        handleBuildGasBuildingsIfNeeded();
     }
     
     // =========================================================
@@ -60,13 +63,31 @@ public class AtlantisDynamicConstructionCommander {
             for (AUnit building : Select.ourBuildings().list()) {
                 if (building.getType().isFactory() && !building.isBusy() && !building.hasAddon()) {
                     AUnitType addonType = building.getType().getRelatedAddon();
-                    System.out.println(addonType);
                     if (addonType != null) {
-                        System.out.println(building + " build " + addonType);
                         building.buildAddon(addonType);
                         return;
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Build Refineries/ Assimilators/ Extractors when it makes sense.
+     */
+    private static void handleBuildGasBuildingsIfNeeded() {
+        if (AtlantisGame.getTimeSeconds() % 3 != 0) {
+            return;
+        }
+        
+        // =========================================================
+        
+        int numberOfBases = Select.ourBases().count();
+        if (numberOfBases >= 2) {
+            int numberOfGasBuildings = Select.ourIncludingUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
+            if (numberOfBases > numberOfGasBuildings && !AtlantisGame.canAfford(0, 350) 
+                    && AtlantisConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0) {
+                AtlantisConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
             }
         }
     }

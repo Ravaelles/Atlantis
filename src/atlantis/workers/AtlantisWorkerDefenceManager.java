@@ -61,7 +61,7 @@ public class AtlantisWorkerDefenceManager {
         
         // Define list of all units that are in range of shot.
         Collection<AUnit> enemiesInRange = Select.enemy().inRadius(12, worker.getPosition())
-                .thatCanShoot(worker).listUnits();
+                .canAttack(worker).listUnits();
         
         // Run from every combat unit...
         for (AUnit enemy : enemiesInRange) {
