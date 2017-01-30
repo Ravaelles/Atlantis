@@ -12,6 +12,7 @@ public class ProcessHelper {
 
     public static void killStarcraftProcess() {
         executeInCommandLine("taskkill /f /im Starcraft.exe");
+        executeInCommandLine("taskkill /f /im StarCraft.exe");
     }
     
     public static void killChaosLauncherProcess() {

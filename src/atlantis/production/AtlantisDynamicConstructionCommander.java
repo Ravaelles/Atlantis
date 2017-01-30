@@ -42,13 +42,11 @@ public class AtlantisDynamicConstructionCommander {
             if (numberOfFactories >= 1 && factories.areAllBusy()) {
                 
                 if (unfinishedFactories == 0) {
-                    AtlantisGame.sendMessage("Request factory #JUST_ONE");
                     AtlantisConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
                 }
                 else if (unfinishedFactories >= 1 && AtlantisGame.canAfford(
                         100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
                 )) {
-                    AtlantisGame.sendMessage("Request factory #MORE");
                     AtlantisConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
                 }
             }

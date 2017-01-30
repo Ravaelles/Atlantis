@@ -73,8 +73,8 @@ public class TerranSiegeTankManager {
         if (distanceToEnemy <= 14) {
             if (AtlantisUtilities.rand(1, 100) < 8) {
                 tank.siege();
+                return true;
             }
-            return true;
         }
 
         if (distanceToEnemy <= 10.8) {
@@ -82,7 +82,7 @@ public class TerranSiegeTankManager {
             return true;
         }
 
-        return true;
+        return false;
     }
 
 }

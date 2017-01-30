@@ -91,14 +91,15 @@ public class AtlantisWorkerCommander {
         
         // Count ratios of workers / minerals for every base
         Units baseWorkersRatios = new Units();
+        System.out.println();
         for (AUnit ourBase : ourBases) {
             int numOfWorkersNearBase = Select.ourWorkersThatGather().inRadius(15, ourBase.getPosition()).count();
             int numOfMineralsNearBase = Select.minerals().inRadius(10, ourBase.getPosition()).count() + 1;
-            if (numOfWorkersNearBase <= 2) {
-                continue;
-            }
+//            if (numOfWorkersNearBase <= 2) {
+//                continue;
+//            }
             double workersToMineralsRatio = (double) numOfWorkersNearBase / numOfMineralsNearBase;
-//            System.out.println(ourBase + " / work:" + numOfWorkersNearBase + " / miner:" +numOfMineralsNearBase + " / RATIO:" + workersToMineralsRatio);
+            System.out.println(ourBase + " / work:" + numOfWorkersNearBase + " / miner:" +numOfMineralsNearBase + " / RATIO:" + workersToMineralsRatio);
             baseWorkersRatios.setValueFor(ourBase, workersToMineralsRatio);
         }
         
@@ -112,12 +113,16 @@ public class AtlantisWorkerCommander {
             return;
         }
         
-//        System.out.println("Fewest: " + baseWithFewestWorkers + " / " + baseWorkersRatios.getValueFor(baseWithFewestWorkers));
-//        System.out.println("Most: " + baseWithMostWorkers + " / " + baseWorkersRatios.getValueFor(baseWithMostWorkers));
-//        System.out.println();
+        double fewestWorkers = baseWorkersRatios.getValueFor(baseWithFewestWorkers);
+        double mostWorkers = baseWorkersRatios.getValueFor(baseWithMostWorkers);
+        
+        System.out.println("Fewest: " + baseWithFewestWorkers + " / " + fewestWorkers);
+        System.out.println("Most: " + baseWithMostWorkers + " / " + mostWorkers);
+        System.out.println();
         
         // If there's only 120% as many workers as minerals OR bases are too close, don't transfer
-        if (baseWorkersRatios.getValueFor(baseWithMostWorkers) <= 1.2 || 
+//        if (baseWorkersRatios.getValueFor(baseWithMostWorkers) <= 1.2 || 
+        if ((mostWorkers - fewestWorkers) < 2 || 
                 PositionUtil.distanceTo(baseWithMostWorkers, baseWithFewestWorkers) < 10) {
             return;
         }
@@ -128,6 +133,7 @@ public class AtlantisWorkerCommander {
             AUnit worker = (AUnit) Select.ourWorkersThatGather().inRadius(10, baseWithMostWorkers.getPosition()).first();
             if (worker != null) {
                 worker.move(baseWithFewestWorkers.getPosition(), UnitMissions.MOVE);
+                System.err.println("Transfer from " + baseWithMostWorkers + " to " + baseWithFewestWorkers);
             }
         }
     }

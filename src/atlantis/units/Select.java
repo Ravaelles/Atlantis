@@ -577,7 +577,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (!unit.isCompleted() || !unit.isAlive()) {
+            if (unit.isCompleted() && unit.isAlive()) {
                 boolean isInShotRange = unit.hasRangeToAttack(targetUnit, 0.2);
                 if (!isInShotRange) {
                     unitsIterator.remove();
@@ -598,7 +598,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (!unit.isCompleted() || !unit.isAlive()) {
+            if (predator.canAttackThisKindOfUnit(unit, false)) {
                 boolean isInShotRange = predator.hasRangeToAttack(unit, 0.2);
                 if (!isInShotRange) {
                     unitsIterator.remove();
@@ -606,6 +606,9 @@ public class Select<T> {
                     System.out.println(unit.getType().getShortName() + " in range ("
                             + unit.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
                 }
+            }
+            else {
+                System.out.println(predator.getShortName() + " cant attack " + unit.getShortName());
             }
         }
         return this;
