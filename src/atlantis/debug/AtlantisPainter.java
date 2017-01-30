@@ -107,7 +107,7 @@ public class AtlantisPainter {
         paintEnemyDiscovered();
         paintCombatUnits();
         paintTooltipsOverUnits();
-        paintTestMissileTurretLocationsNearMain();
+        paintTestSupplyDepotLocationsNearMain();
     }
 
     // =========================================================
@@ -836,7 +836,7 @@ public class AtlantisPainter {
         }
     }
 
-    private static void paintTestMissileTurretLocationsNearMain() {
+    private static void paintTestSupplyDepotLocationsNearMain() {
         AUnit worker = Select.ourWorkers().first();
         AUnit base = Select.ourBases().first();
         int tileX = base.getPosition().getTileX();
@@ -845,7 +845,7 @@ public class AtlantisPainter {
             for (int y = tileY - 10; y <= tileY + 10; y++) {
                 APosition position = APosition.createFrom(x, y);
                 boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
-                        worker, AUnitType.Terran_Missile_Turret, position
+                        worker, AUnitType.Terran_Supply_Depot, position
                 );
                 
                 paintCircleFilled(position, 4, canBuild ? Color.Green : Color.Red);

@@ -67,7 +67,8 @@ public class AtlantisPositionFinder {
                     nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
                 }
                 else {
-                    nearTo = Select.mainBase().getPosition();
+//                    nearTo = Select.mainBase().getPosition();
+                    nearTo = Select.ourBases().random().getPosition();
                 }
             }
 

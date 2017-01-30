@@ -32,13 +32,13 @@ public abstract class AbstractPositionFinder {
         // =========================================================
         
         // Leave entire vertical (same tileX) corridor free for units
-        if (position.getTileX() % 6 == 0 || (position.getTileX() + 1) % 7 == 0) {
+        if (position.getTileX() % 6 == 0 || (position.getTileX()) % 7 == 0) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }
         
         // Leave entire horizontal (same tileY) corridor free for units
-        if (position.getTileY() % 6 == 0 || (position.getTileY() + 1) % 7 == 0) {
+        if (position.getTileY() % 7 == 0 || (position.getTileY()) % 8 == 0) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;
         }

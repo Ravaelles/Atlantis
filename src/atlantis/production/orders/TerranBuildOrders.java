@@ -1,6 +1,7 @@
 package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
+import atlantis.AtlantisGame;
 import atlantis.production.AtlantisWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -36,7 +37,16 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
             units.add(AtlantisConfig.WORKER);
         }
         
-        if (Select.ourTanks().count() < 30) {
+        // =========================================================
+        
+        boolean shouldProduceTanks = Select.ourTanks().count() < 30;
+        
+        if (AtlantisGame.canAfford(400, 0) && !AtlantisGame.canAfford(0, 200)) {
+            units.add(AUnitType.Terran_Vulture);
+            units.add(AUnitType.Terran_Vulture);
+        }
+        
+        if (shouldProduceTanks) {
             units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
             units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
         }
@@ -54,11 +64,6 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
 //                units.add(AUnitType.Terran_Marine);
 //            }
 //        }
-        
-        if (Select.ourTanks().count() < 30) {
-            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
-            units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
-        }
         
         return units;
     }

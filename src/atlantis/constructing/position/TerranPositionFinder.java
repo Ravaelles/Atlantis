@@ -115,9 +115,9 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
-        if (nearestBase != null && nearestBase.distanceTo(position) <= 7) {
+        if (nearestBase != null && nearestBase.distanceTo(position) <= 4.5) {
             Collection<AUnit> mineralsInRange
-                    = (Collection<AUnit>) Select.minerals().inRadius(8, position).listUnits();
+                    = (Collection<AUnit>) Select.minerals().inRadius(6, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
                 if (mineral.distanceTo(position) <= 4) {
                     _CONDITION_THAT_FAILED = "MINERAL TOO CLOSE";

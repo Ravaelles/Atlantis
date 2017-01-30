@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisDynamicProductionCommander {
+public class AtlantisDynamicConstructionCommander {
 
     public static void update() {
         AtlantisWorkerProductionManager.handleWorkerProduction();
@@ -28,19 +28,23 @@ public class AtlantisDynamicProductionCommander {
      * If all factories are busy (training units) request new ones.
      */
     private static void handleBuildFactoriesIfNeeded() {
-        if (AtlantisGame.canAfford(180, 80)) {
+        if (AtlantisGame.canAfford(140, 60)) {
             Select<?> factories = Select.ourOfType(AUnitType.Terran_Factory);
             
+            int unfinishedFactories = 
+                    AtlantisConstructionManager.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);
+            int numberOfFactories = factories.size() + unfinishedFactories;
+            
             // Proceed only if all factories are busy
-            if (factories.size() >= 1 && factories.areAllBusy()) {
-                int numberOfFactoriesInProduction = Select.ourBuildingsIncludingUnfinished()
-                        .ofType(AUnitType.Terran_Factory).count();
+            if (numberOfFactories >= 1 && factories.areAllBusy()) {
                 
-                if (numberOfFactoriesInProduction == 0) {
+                if (unfinishedFactories == 0) {
                     AtlantisGame.sendMessage("Request factory #JUST_ONE");
                     AtlantisConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
                 }
-                else if (numberOfFactoriesInProduction >= 1 && AtlantisGame.canAfford(500, 200)) {
+                else if (unfinishedFactories >= 1 && AtlantisGame.canAfford(
+                        100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
+                )) {
                     AtlantisGame.sendMessage("Request factory #MORE");
                     AtlantisConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
                 }
@@ -52,12 +56,14 @@ public class AtlantisDynamicProductionCommander {
      * If there are buildings without addons, build them.
      */
     private static void handleBuildAddonsIfNeeded() {
-        if (AtlantisGame.canAfford(250, 150)) {
+        if (AtlantisGame.canAfford(200, 100)) {
             for (AUnit building : Select.ourBuildings().list()) {
-                if (building.canHaveAddon() && !building.hasAddon()) {
-                    AUnitType addon = building.getType().getRelatedAddon();
-                    if (addon != null) {
-                        building.buildAddon(addon);
+                if (building.getType().isFactory() && !building.isBusy() && !building.hasAddon()) {
+                    AUnitType addonType = building.getType().getRelatedAddon();
+                    System.out.println(addonType);
+                    if (addonType != null) {
+                        System.out.println(building + " build " + addonType);
+                        building.buildAddon(addonType);
                         return;
                     }
                 }

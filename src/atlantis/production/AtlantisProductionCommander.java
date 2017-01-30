@@ -24,7 +24,7 @@ public class AtlantisProductionCommander {
         AtlantisExpansionManager.requestNewBaseIfNeeded();
         
         // When it can be applied and makes sense, automatically produce units like workers, factories.
-        AtlantisDynamicProductionCommander.update();
+        AtlantisDynamicConstructionCommander.update();
         
     }
 

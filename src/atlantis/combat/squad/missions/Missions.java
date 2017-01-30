@@ -84,9 +84,8 @@ public class Missions {
         }
     }
     
-    
     private static boolean canChangeMissionToAttack() {
-        if (Select.ourTanks().count() < 2) {
+        if (Select.ourTanks().count() < 4) {
             return false;
         }
         
