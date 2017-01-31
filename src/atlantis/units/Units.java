@@ -231,22 +231,13 @@ public class Units {
             return null;
         }
 
-//        AUnit bestUnit = unitValues.keySet().iterator().next();
-//        double bestValue = getValueFor(bestUnit);
-//        System.out.println("initial best value: "+ bestValue);
         AUnit bestUnit = null;
         
-        System.out.println();
-        print();
-
         // We're interested in MIN
         if (returnLowest) {
             double bestValue = Integer.MAX_VALUE;
-            System.out.println("--- search MIN");
             for (AUnit unit : units.keySet()) {
-                System.out.println("       " + unit + ":  " + getValueFor(unit));
                 if (bestUnit == null || getValueFor(unit) < bestValue) {
-                    System.out.println("       MINFOUND: " + unit.getShortName() + ":  " + getValueFor(unit));
                     bestValue = getValueFor(unit);
                     bestUnit = unit;
                 }
@@ -256,11 +247,8 @@ public class Units {
         // We're interested in MAX
         else {
             double bestValue = Integer.MIN_VALUE;
-            System.out.println("--- search max");
             for (AUnit unit : units.keySet()) {
-                System.out.println("       " + unit + ":  " + getValueFor(unit));
                 if (bestUnit == null || getValueFor(unit) > bestValue) {
-                    System.out.println("       MAXFOUND: " + unit.getShortName() + ":  " + getValueFor(unit));
                     bestValue = getValueFor(unit);
                     bestUnit = unit;
                 }

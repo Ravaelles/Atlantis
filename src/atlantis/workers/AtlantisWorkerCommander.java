@@ -20,7 +20,7 @@ public class AtlantisWorkerCommander {
      */
     public static void update() {
         AtlantisGasManager.handleGasBuildings();
-        handleNumberOfWorkersNearBases();
+        transferWorkersBetweenBasesIfNeeded();
 
         for (AUnit unit : Select.ourWorkers().listUnits()) {
             AtlantisWorkerManager.update(unit);
@@ -71,7 +71,7 @@ public class AtlantisWorkerCommander {
     /**
      * Every base should have similar number of workers, more or less.
      */
-    private static void handleNumberOfWorkersNearBases() {
+    private static void transferWorkersBetweenBasesIfNeeded() {
 
         // Don't run every frame
         if (AtlantisGame.getTimeFrames() % 10 != 0) {
@@ -88,7 +88,7 @@ public class AtlantisWorkerCommander {
         Units baseWorkersRatios = new Units();
 //        System.out.println();
         for (AUnit ourBase : ourBases) {
-            int numOfWorkersNearBase = Select.ourWorkersThatGather().inRadius(15, ourBase.getPosition()).count();
+            int numOfWorkersNearBase = Select.ourWorkersThatGather(false).inRadius(15, ourBase.getPosition()).count();
             int numOfMineralsNearBase = Select.minerals().inRadius(10, ourBase.getPosition()).count() + 1;
 //            if (numOfWorkersNearBase <= 2) {
 //                continue;
@@ -112,25 +112,25 @@ public class AtlantisWorkerCommander {
         double fewestWorkers = baseWorkersRatios.getValueFor(baseWithFewestWorkers);
         double mostWorkers = baseWorkersRatios.getValueFor(baseWithMostWorkers);
 
-        System.out.println("Fewest: " + baseWithFewestWorkers + " / " + fewestWorkers);
-        System.out.println("Most: " + baseWithMostWorkers + " / " + mostWorkers);
-        System.out.println();
+//        System.out.println("Fewest: " + baseWithFewestWorkers + " / " + fewestWorkers);
+//        System.out.println("Most: " + baseWithMostWorkers + " / " + mostWorkers);
+//        System.out.println();
 
         // If there's only 117% as many workers as minerals OR bases are too close, don't transfer
-        if ((mostWorkers - fewestWorkers) > 0.17
+        if (Math.abs(mostWorkers - fewestWorkers) < 0.17
                 || PositionUtil.distanceTo(baseWithMostWorkers, baseWithFewestWorkers) < 6) {
             return;
         }
+        
+        // === Perform worker transfer from base to base ========================================
 
-        // If the difference is "significant" transfer one worker from base to base
-//        if (Math.abs(baseWorkersRatios.getValueFor(baseWithMostWorkers) 
-//                - baseWorkersRatios.getValueFor(baseWithFewestWorkers)) < 0) {
-        AUnit worker = (AUnit) Select.ourWorkersThatGather().inRadius(10, baseWithMostWorkers.getPosition()).first();
+        AUnit worker = (AUnit) Select.ourWorkersThatGather(true)
+                .inRadius(12, baseWithMostWorkers.getPosition())
+                .nearestTo(baseWithFewestWorkers);
         if (worker != null) {
             worker.move(baseWithFewestWorkers.getPosition(), UnitMissions.MOVE);
-            System.err.println("Transfer from " + baseWithMostWorkers + " to " + baseWithFewestWorkers);
+//            System.err.println("Transfer from " + baseWithMostWorkers + " to " + baseWithFewestWorkers);
         }
-//        }
     }
 
 }

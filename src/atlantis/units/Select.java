@@ -662,12 +662,13 @@ public class Select<T> {
      * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe) that are either
      * gathering minerals or gas.
      */
-    public static Select<AUnit> ourWorkersThatGather() {
+    public static Select<AUnit> ourWorkersThatGather(boolean onlyNotCarryingAnything) {
         Select<AUnit> selectedUnits = Select.our();
         //for (AUnit unit : selectedUnits.list()) {
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (!unit.isWorker() || (!unit.isGatheringGas() && !unit.isGatheringMinerals())) {
+            if (!unit.isWorker() || (!unit.isGatheringGas() && !unit.isGatheringMinerals()) 
+                    || (onlyNotCarryingAnything && (unit.isCarryingGas() || unit.isCarryingMinerals()))) {
                 unitIter.remove();
             }
         }
