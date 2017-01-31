@@ -2,9 +2,11 @@ package atlantis.buildings.managers;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
+import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.workers.AtlantisWorkerManager;
+import bwapi.Color;
 import java.util.Collection;
 
 public class AtlantisGasManager {
@@ -20,9 +22,9 @@ public class AtlantisGasManager {
     public static void handleGasBuildings() {
         
         // Only once per second
-        if (AtlantisGame.getTimeFrames() % 20 != 0) {
-            return;
-        }
+//        if (AtlantisGame.getTimeFrames() % 5 != 0) {
+//            return;
+//        }
         int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
         
         // =========================================================
@@ -35,6 +37,7 @@ public class AtlantisGasManager {
         
         for (AUnit gasBuilding : gasBuildings) {
             int numberOfWorkersAssigned = AtlantisWorkerManager.getHowManyWorkersAt(gasBuilding);
+            AtlantisPainter.paintTextCentered(gasBuilding, "" + numberOfWorkersAssigned, Color.Green);
             
             // Assign when LOWER THAN MIN
             if (numberOfWorkersAssigned < minGasWorkersPerBuilding) {

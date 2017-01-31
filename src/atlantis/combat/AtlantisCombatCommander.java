@@ -14,8 +14,9 @@ public class AtlantisCombatCommander {
     public static void update() {
         if (AtlantisGame.getTimeFrames() % 20 == 0) {
             Missions.handleGlobalMission();
-            handleAllSquads();
         }
+        
+        handleAllSquads();
     }
 
     // =========================================================

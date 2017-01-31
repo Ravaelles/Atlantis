@@ -3,8 +3,11 @@ package atlantis.combat.micro;
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
+import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Select;
+import bwapi.Color;
 
 /**
  * Default micro manager that will be used for all melee units.
@@ -13,6 +16,20 @@ public class MicroManager extends AbstractMicroManager {
 
     @Override
     public boolean update(AUnit unit) {
+//        AUnit mainBase = Select.mainBase();
+//
+//        System.out.println(unit.getShortName() + " range: " + unit.getWeaponRangeAgainst(mainBase));
+//        boolean canAttack = unit.canAttackThisKindOfUnit(mainBase, false);
+//        boolean hasRange = unit.hasRangeToAttack(mainBase, 0.1);
+//        String dist = String.format("%.2f", unit.distanceTo(mainBase));
+//        if (canAttack && hasRange) {
+//            AtlantisPainter.paintCircle(unit, unit.getWeaponRangeAgainst(mainBase) * 32, Color.Green);
+//        }
+//        else {
+//            AtlantisPainter.paintCircle(unit, unit.getWeaponRangeAgainst(mainBase) * 32, Color.Red);
+//            AtlantisPainter.paintTextCentered(unit, "Dist: " + dist, Color.Red);
+//        }
+        
         if (canIssueOrderToUnit(unit)) {
             unit.setTooltip("Last: " + unit.getLastUnitActionWasFramesAgo());
 
@@ -25,9 +42,9 @@ public class MicroManager extends AbstractMicroManager {
             // Avoid dying because of very low hit points
             // @FIX: Breaks handleUnfavorableOdds(), units tend to avoid fighting too much
             
-//            if (handleLowHealthIfNeeded(unit)) {
-//                return true;
-//            }
+            if (handleLowHealthIfNeeded(unit)) {
+                return true;
+            }
             
             // =========================================================
             // Avoid melee units
@@ -89,12 +106,12 @@ public class MicroManager extends AbstractMicroManager {
     private boolean handleSpecialUnit(AUnit unit) {
 
         // ZERG
-        if (AtlantisGame.playsAsZerg()) {
-            if (unit.isType(AUnitType.Zerg_Overlord)) {
-                ZergOverlordManager.update(unit);
-                return true;
-            }
-        }
+//        if (AtlantisGame.playsAsZerg()) {
+//            if (unit.isType(AUnitType.Zerg_Overlord)) {
+//                ZergOverlordManager.update(unit);
+//                return true;
+//            }
+//        }
 
         // TERRAN
         if (AtlantisGame.playsAsTerran()) {

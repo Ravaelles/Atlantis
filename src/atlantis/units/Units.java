@@ -104,14 +104,6 @@ public class Units {
      */
     public Units shuffle() {
         Set<AUnit> keySet = units.keySet();
-//        customOrder.clear();
-//        
-//        int maxIndex = keySet.size() - 1;
-//        for (int i = 0; i <= maxIndex; i++) {
-//            customOrder.add(i);
-//        }
-//        
-//        Collections.shuffle(customOrder);
 
         // Create new mapping, with new order
         LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
@@ -277,15 +269,6 @@ public class Units {
 
         return bestUnit;
     }
-
-//    private void ensureMapKeysAreProperlySet(AUnit ensureExists) {
-//        for (AUnit unit : units) {
-//            units.put(unit, 0.0);
-//        }
-//        for (AUnit unit : units.keySet()) {
-//            units.put(unit, 0.0);
-//        }
-//    }
 
     // =========================================================
     // Override methods

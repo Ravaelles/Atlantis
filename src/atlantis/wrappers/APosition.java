@@ -86,7 +86,8 @@ public class APosition extends Position {
      * building dimensions.
      */
     public double distanceTo(AUnit unit) {
-        return PositionUtil.distanceTo(getPoint(), unit.getPosition());
+//        return PositionUtil.distanceTo(getPoint(), unit.getPosition());
+        return PositionUtil.distanceTo(getPoint(), unit);
     }
     
     /**

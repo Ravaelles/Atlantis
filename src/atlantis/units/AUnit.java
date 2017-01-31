@@ -326,21 +326,21 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double getShootRangeGround() {
+    public double getWeaponRangeGround() {
         return getType().getGroundWeapon().maxRange() / 32;
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double getShootRangeAir() {
+    public double getWeaponRangeAir() {
         return getType().getAirWeapon().maxRange() / 32;
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against given <b>opponentUnit</b>.
      */
-    public double getShootRangeAgainst(AUnit opponentUnit) {
+    public int getWeaponRangeAgainst(AUnit opponentUnit) {
         if (opponentUnit.isAirUnit()) {
             return getType().getAirWeapon().maxRange() / 32;
         } else {
@@ -504,9 +504,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public boolean hasRangeToAttack(AUnit targetUnit, double safetyMargin) {
         WeaponType weaponAgainstThisUnit = getWeaponAgainst(targetUnit);
         double dist = this.distanceTo(targetUnit);
+        
         return weaponAgainstThisUnit != WeaponType.None
-                && weaponAgainstThisUnit.maxRange() <= (dist + safetyMargin)
-                && weaponAgainstThisUnit.minRange() >= (dist + 0.1);
+                && (dist + safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
+                && (dist + 0.02) >= (weaponAgainstThisUnit.minRange() / 32);
     }
 
     /**
