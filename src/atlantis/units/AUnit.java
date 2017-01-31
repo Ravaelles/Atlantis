@@ -484,11 +484,12 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * the last shot allows it
      */
     public boolean canAttackThisKindOfUnit(AUnit otherUnit, boolean includeCooldown) {
-
         // Enemy is GROUND unit
         if (otherUnit.isGroundUnit()) {
             return canAttackGroundUnits() && (!includeCooldown || getGroundWeaponCooldown() == 0);
-        } // Enemy is AIR unit
+        } 
+
+        // Enemy is AIR unit
         else {
             return canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
         }
@@ -505,7 +506,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         double dist = this.distanceTo(targetUnit);
         return weaponAgainstThisUnit != WeaponType.None
                 && weaponAgainstThisUnit.maxRange() <= (dist + safetyMargin)
-                && weaponAgainstThisUnit.minRange() >= dist;
+                && weaponAgainstThisUnit.minRange() >= (dist + 0.1);
     }
 
     /**

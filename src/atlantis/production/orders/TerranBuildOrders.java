@@ -31,7 +31,7 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
         
-        System.out.println("Notice: No production orders, auto-produce.");
+//        System.out.println("Notice: No production orders, auto-produce.");
 
         if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
             units.add(AtlantisConfig.WORKER);

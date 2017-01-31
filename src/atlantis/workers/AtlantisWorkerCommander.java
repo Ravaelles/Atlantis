@@ -101,6 +101,7 @@ public class AtlantisWorkerCommander {
             double workersToMineralsRatio = (double) numOfWorkersNearBase / numOfMineralsNearBase;
             System.out.println(ourBase + " / work:" + numOfWorkersNearBase + " / miner:" +numOfMineralsNearBase + " / RATIO:" + workersToMineralsRatio);
             baseWorkersRatios.setValueFor(ourBase, workersToMineralsRatio);
+            System.out.println("getValueFor = " + baseWorkersRatios.getValueFor(ourBase));
         }
         
         // Take the base with lowest and highest worker ratio

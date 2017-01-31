@@ -40,6 +40,12 @@ public class AtlantisWorkerManager {
      * minerals.
      */
     private static void sendToGatherMineralsOrGasIfNeeded(AUnit worker) {
+        
+        // Don't react if already gathering
+        if (worker.isGatheringGas() || worker.isGatheringMinerals()) {
+            return;
+        }
+            
         worker.removeTooltip();
         
         // If is carrying minerals, return
