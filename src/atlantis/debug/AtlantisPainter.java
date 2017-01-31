@@ -708,7 +708,7 @@ public class AtlantisPainter {
         for (AUnit building : Select.ourBuildings().listUnits()) {
 
             // Paint text
-            int workers = AtlantisWorkerManager.getHowManyWorkersAt(building);
+            int workers = AtlantisWorkerManager.getHowManyWorkersGatheringAt(building);
             if (workers > 0) {
                 String workersAssigned = workers + " WRK";
                 paintTextCentered(PositionUtil.translateByPixels(building.getPosition(), 0, -15), workersAssigned, Color.Blue);

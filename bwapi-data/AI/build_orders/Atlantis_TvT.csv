@@ -19,7 +19,7 @@
 #SCOUT_IS_NTH_WORKER=8
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=45
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=35
 
 // ====================================================================
 
@@ -53,9 +53,11 @@
 28 - Command Center
 28 - Supply Depot
 28 - Factory
+29 - Supply Depot
 Vulture
 30 - Machine Shop
 32 - Siege Tank
+33 - Supply Depot
 33 - Siege Tank
 33 - Factory
 Vulture

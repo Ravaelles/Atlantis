@@ -384,26 +384,10 @@ public class AtlantisMap {
         Collection<Chokepoint> chokes = baseRegion.getChokepoints();
         for (Chokepoint choke : chokes) {
             if (baseRegion.getChokepoints().contains(choke)) {
-                System.out.println("Disabling choke point: " + choke);
+                System.out.println("Disabling choke point: " + APosition.createFrom(choke.getCenter()));
                 disabledChokepoints.add(choke);	//choke.setDisabled(true);
             }
         }
-
-        // MapPoint secondBaseLocation =
-        // TerranCommandCenter.getSecondBaseLocation();
-        // System.out.println("secondBaseLocation = " + secondBaseLocation);
-        // Collection<ChokePoint> chokes =
-        // MapExploration.getChokePointsNear(
-        // secondBaseLocation, 20);
-        // Region baseRegion =
-        // xvr.getBwapi().getMap().getRegion(xvr.getFirstBase());
-        // for (ChokePoint choke : chokes) {
-        // if (baseRegion.getChokePoints().contains(choke)) {
-        // // chokePointsProcessed.remove(choke);
-        // System.out.println("Disabling choke point: " + choke);
-        // choke.setDisabled(true);
-        // }
-        // }
     }
 
     /**

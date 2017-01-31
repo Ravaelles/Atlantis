@@ -22,9 +22,9 @@ public class AtlantisGasManager {
     public static void handleGasBuildings() {
         
         // Only once per second
-//        if (AtlantisGame.getTimeFrames() % 5 != 0) {
-//            return;
-//        }
+        if (AtlantisGame.getTimeFrames() % 5 != 0) {
+            return;
+        }
         int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
         
         // =========================================================
@@ -36,7 +36,7 @@ public class AtlantisGasManager {
         // =========================================================
         
         for (AUnit gasBuilding : gasBuildings) {
-            int numberOfWorkersAssigned = AtlantisWorkerManager.getHowManyWorkersAt(gasBuilding);
+            int numberOfWorkersAssigned = AtlantisWorkerManager.getHowManyWorkersGatheringAt(gasBuilding);
             AtlantisPainter.paintTextCentered(gasBuilding, "" + numberOfWorkersAssigned, Color.Green);
             
             // Assign when LOWER THAN MIN
@@ -72,8 +72,7 @@ public class AtlantisGasManager {
     // =========================================================
     
     private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
-        AUnit worker = Select.ourWorkers().gatheringMinerals(true).first();
-        return worker;
+        return Select.ourWorkers().gatheringMinerals(true).nearestTo(gasBuilding);
     }
 
     public static int defineMinGasWorkersPerBuilding() {
