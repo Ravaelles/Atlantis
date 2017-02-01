@@ -15,6 +15,7 @@ public class TerranSiegeTankManager {
 
     public static boolean update(AUnit tank) {
         if (!tank.isInterruptible()) {
+            tank.setTooltip("Busy");
             return true;
         }
         
@@ -26,10 +27,10 @@ public class TerranSiegeTankManager {
         if (enemy != null) {
              string += " (" + enemy.distanceTo(tank) + ")";
         }
-        
-        AtlantisPainter.paintTextCentered(tank.getPosition().translateByPixels(0, 10), 
+        AtlantisPainter.paintTextCentered(tank.getPosition().translateByPixels(0, 16), 
                 string, 
-                Color.White);
+                Color.Red);
+        
         if (enemy != null) {
             double distanceToEnemy = tank.distanceTo(enemy);
 
@@ -51,6 +52,7 @@ public class TerranSiegeTankManager {
         if (enemy == null || distanceToEnemy >= 14) {
             if (AtlantisUtilities.rand(1, 100) <= 10) {
                 tank.unsiege();
+                tank.setTooltip("No enemy");
                 return true;
             }
         }
@@ -66,6 +68,7 @@ public class TerranSiegeTankManager {
         // If tank is holding position, siege
         if (tank.isHoldingPosition()) {
             tank.siege();
+            tank.setTooltip("Hold & siege");
             return true;
         }
         
@@ -83,6 +86,7 @@ public class TerranSiegeTankManager {
     private static boolean nearestEnemyIsBuilding(AUnit tank, AUnit enemy, double distanceToEnemy) {
         if (distanceToEnemy <= 10.3) {
             tank.siege();
+            tank.setTooltip("Siege - building");
             return true;
         }
 
@@ -93,12 +97,14 @@ public class TerranSiegeTankManager {
         if (distanceToEnemy < 14) {
             if (AtlantisUtilities.rand(1, 100) < 8 || enemy.getType().isDangerousGroundUnit()) {
                 tank.siege();
+                tank.setTooltip("Better siege");
                 return true;
             }
         }
 
         if (distanceToEnemy <= 10.8) {
             tank.siege();
+            tank.setTooltip("Siege!");
             return true;
         }
 

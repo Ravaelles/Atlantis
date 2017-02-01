@@ -96,7 +96,8 @@ public class MicroManager extends AbstractMicroManager {
      */
     private boolean canIssueOrderToUnit(AUnit unit) {
 //        return true;
-        return !(unit.isAttackFrame() || unit.isStartingAttack()); //replaces unit.isJustShooting();
+        return !(unit.isAttackFrame() || unit.isStartingAttack()) || 
+                unit.getGroundWeaponCooldown() > 0 || unit.getAirWeaponCooldown() > 0;
     }
 
     /**

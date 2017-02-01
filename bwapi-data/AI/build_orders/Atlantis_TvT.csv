@@ -4,7 +4,7 @@
 #SCOUT_IS_NTH_WORKER=8
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=35
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=30
 
 // === Raw build order used - taken from Liquipedia or so =============
 
@@ -34,12 +34,12 @@
 20 - Machine Shop
 22 - Siege Tank
 22 - Siege Mode
-23 - Supply Depot
-28 - Command Center
+22 - Supply Depot
+27 - Supply Depot
 28 - Supply Depot
+28 - Command Center
 28 - Factory
 30 - Vulture
-30 - Supply Depot
 30 - Machine Shop
 32 - Siege Tank
 33 - Siege Tank

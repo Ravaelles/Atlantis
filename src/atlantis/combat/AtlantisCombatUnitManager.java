@@ -32,6 +32,13 @@ public class AtlantisCombatUnitManager {
         if (handledAsSpecialUnit(unit)) {
             return true;
         }
+        
+        // =========================================================
+        // Handle some units in semi-special way
+        
+        if (handledAsSemiSpecialUnit(unit)) {
+            return true;
+        }
 
         // =========================================================
         // Act with proper micro-manager and decide if mission manager can issue orders afterward.
@@ -47,14 +54,6 @@ public class AtlantisCombatUnitManager {
         if (microManagerForbidsOtherActions) {
             return true;
         } 
-        
-        // =========================================================
-        // Handle some units in semi-special way
-        
-        if (handledAsSemiSpecialUnit(unit)) {
-            unit.setTooltip("semiSpecial");
-            return true;
-        }
 
         // =========================================================
         // It's okay to handle MISSION orders according to current mission (e.g. DEFEND, ATTACK)
@@ -83,7 +82,8 @@ public class AtlantisCombatUnitManager {
      */
     private static boolean shouldNotDisturbUnit(AUnit unit) {
 //        return false;
-        return unit.isAttackFrame() || unit.isStartingAttack();
+        return (unit.isAttackFrame() || unit.isStartingAttack()) &&
+                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
     }
 
     /**

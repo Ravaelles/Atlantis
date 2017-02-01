@@ -433,6 +433,10 @@ public class AUnitType implements Comparable<AUnitType> {
                     .replace("Hero ", "").replace("Special ", "").replace("Powerup ", "")
                     .replace("Tank Mode ", "").replace("_Tank_Mode", "");
         }
+        
+        if (_shortName == "Unknown") {
+            System.err.println("Unknown? What? " + this.toString());
+        }
 
         return _shortName;
     }

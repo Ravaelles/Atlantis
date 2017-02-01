@@ -74,7 +74,7 @@ public class AtlantisWorkerCommander {
     private static void transferWorkersBetweenBasesIfNeeded() {
 
         // Don't run every frame
-        if (AtlantisGame.getTimeFrames() % 10 != 0) {
+        if (AtlantisGame.getTimeFrames() % 3 != 0) {
             return;
         }
 

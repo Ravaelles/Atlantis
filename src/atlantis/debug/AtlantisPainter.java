@@ -163,9 +163,9 @@ public class AtlantisPainter {
                 paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
 
                 paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - 2),
-                        flagWidth, flagHeight, Color.Yellow); // White flag
+                        flagWidth, flagHeight, Color.White); // White flag
                 paintRectangle(unitPosition.translateByPixels(0, -flagHeight - 2),
-                        flagWidth, flagHeight, Color.Black); // Flag border
+                        flagWidth, flagHeight, Color.Grey); // Flag border
                 paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - 2),
                         2, flagHeight, Color.Red); // Flag stick
             }

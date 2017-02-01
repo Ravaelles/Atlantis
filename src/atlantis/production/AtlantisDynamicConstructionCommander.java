@@ -3,6 +3,7 @@ package atlantis.production;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -31,7 +32,7 @@ public class AtlantisDynamicConstructionCommander {
      * If all factories are busy (training units) request new ones.
      */
     private static void handleBuildFactoriesIfNeeded() {
-        if (AtlantisGame.canAfford(140, 60)) {
+        if (canAfford(250, 100)) {
             Select<?> factories = Select.ourOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
@@ -57,7 +58,7 @@ public class AtlantisDynamicConstructionCommander {
      * If there are buildings without addons, build them.
      */
     private static void handleBuildAddonsIfNeeded() {
-        if (AtlantisGame.canAfford(200, 100)) {
+        if (canAfford(100, 50)) {
             for (AUnit building : Select.ourBuildings().list()) {
                 if (building.getType().isFactory() && !building.isBusy() && !building.hasAddon()) {
                     AUnitType addonType = building.getType().getRelatedAddon();
@@ -88,6 +89,14 @@ public class AtlantisDynamicConstructionCommander {
                 AtlantisConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
             }
         }
+    }
+
+    // =========================================================
+    
+    private static boolean canAfford(int minerals, int gas) {
+        return AtlantisGame.canAfford(
+                minerals + AtlantisBuildOrdersManager.getMineralsNeeded(), gas + AtlantisBuildOrdersManager.getGasNeeded()
+        );
     }
     
 }
