@@ -238,6 +238,13 @@ public interface UnitActions {
     }
 
     /**
+     * Returns false if unit can't stop what it's doing e.g. sieging or unsieging tank.
+     */
+    default boolean isInterruptible() {
+        return isInterruptible();
+    }
+    
+    /**
      * Orders the unit to lift. Only works for liftable Terran structures. Returns true if the command was
      * passed to Broodwar, and false if BWAPI determined that the command would fail. Note There is a small
      * chance for a command to fail after it has been passed to Broodwar. See also land, isLifted, canLift

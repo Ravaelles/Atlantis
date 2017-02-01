@@ -87,15 +87,16 @@ public class AtlantisWorkerCommander {
         // Count ratios of workers / minerals for every base
         Units baseWorkersRatios = new Units();
 //        System.out.println();
-        for (AUnit ourBase : ourBases) {
-            int numOfWorkersNearBase = Select.ourWorkersThatGather(false).inRadius(15, ourBase.getPosition()).count();
-            int numOfMineralsNearBase = Select.minerals().inRadius(10, ourBase.getPosition()).count() + 1;
+        for (AUnit base : ourBases) {
+//            int numOfWorkersNearBase = Select.ourWorkersThatGather(false).inRadius(15, ourBase.getPosition()).count();
+            int numOfWorkersNearBase = AtlantisWorkerManager.getHowManyWorkersGatheringAt(base);
+            int numOfMineralsNearBase = Select.minerals().inRadius(10, base.getPosition()).count() + 1;
 //            if (numOfWorkersNearBase <= 2) {
 //                continue;
 //            }
             double workersToMineralsRatio = (double) numOfWorkersNearBase / numOfMineralsNearBase;
 //            System.out.println(ourBase + " / work:" + numOfWorkersNearBase + " / miner:" +numOfMineralsNearBase + " / RATIO:" + workersToMineralsRatio);
-            baseWorkersRatios.setValueFor(ourBase, workersToMineralsRatio);
+            baseWorkersRatios.setValueFor(base, workersToMineralsRatio);
 //            System.out.println("getValueFor = " + baseWorkersRatios.getValueFor(ourBase));
         }
 

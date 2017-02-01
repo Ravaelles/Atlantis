@@ -14,6 +14,12 @@ import bwapi.Color;
 public class TerranSiegeTankManager {
 
     public static boolean update(AUnit tank) {
+        if (!tank.isInterruptible()) {
+            return true;
+        }
+        
+        // =========================================================
+        
         AUnit enemy = Select.enemy().combatUnits().canBeAttackedBy(tank).nearestTo(tank);
         
         String string = (enemy != null ? enemy.getShortName() : "NULL");
