@@ -4,6 +4,7 @@ import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.missions.UnitMissions;
+import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.Chokepoint;
@@ -19,28 +20,28 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean update(AUnit unit) {
-        Chokepoint chokepoint = getFocusPoint();
-        if (chokepoint == null) {
+        APosition focusPoint = getFocusPoint();
+        if (focusPoint == null) {
             System.err.println("Couldn't define choke point.");
             return false;
         }
 
         // =========================================================
         // Too close to the chokepoint
-        else if (isCriticallyCloseToChokePoint(unit, chokepoint)) {
-            unit.moveAwayFrom(chokepoint.getCenter(), 0.4);
+        else if (isCriticallyCloseToFocusPoint(unit, focusPoint)) {
+            unit.moveAwayFrom(focusPoint, 0.4);
             unit.setTooltip("Too close");
             return true;
         }
         
         // =========================================================
         // Unit is quite close to the choke point
-        else if (isCloseEnoughToChokePoint(unit, chokepoint)) {
+        else if (isCloseEnoughToFocusPoint(unit, focusPoint)) {
 
             // Too many stacked units
-            if (isTooManyUnitsAround(unit, chokepoint)) {
+            if (isTooManyUnitsAround(unit, focusPoint)) {
                 if (unit.isMoving()) {
-                    unit.setTooltip("Stop");
+                    unit.setTooltip("Hold");
                     unit.holdPosition();
                     return true;
                 }
@@ -51,9 +52,8 @@ public class MissionDefend extends Mission {
         // Unit is far from choke point
         else {
             unit.setTooltip("Positioning");
-            Position center = chokepoint.getCenter();
-            if (unit.distanceTo(center) > 2) {
-                unit.move(center, UnitMissions.MOVE);
+            if (unit.distanceTo(focusPoint) > 3) {
+                unit.move(focusPoint, UnitMissions.MOVE);
                 return true;
             }
         }
@@ -69,23 +69,23 @@ public class MissionDefend extends Mission {
         return false;
     }
 
-    private boolean isTooManyUnitsAround(AUnit unit, Chokepoint chokepoint) {
+    private boolean isTooManyUnitsAround(AUnit unit, APosition focusPoint) {
         return Select.ourCombatUnits().inRadius(1.0, unit.getPosition()).count() >= 3;
     }
 
-    private boolean isCloseEnoughToChokePoint(AUnit unit, Chokepoint chokepoint) {
-        if (unit == null || chokepoint == null) {
+    private boolean isCloseEnoughToFocusPoint(AUnit unit, APosition focusPoint) {
+        if (unit == null || focusPoint == null) {
             return false;
         }
 
-        // Bigger this value is, further from choke will units stand
+        // Bigger this value is, farther from choke will units stand
         double unitShootRangeExtra = +0.3;
 
-     // Distance to the center of choke point. TODO: check whether getWidth()/100.0f has the same effect of getRadiusInTiles
-        double distToChoke = unit.distanceTo(chokepoint.getCenter()) - chokepoint.getWidth()/100.0f;	// getRadiusInTiles()
+        // Distance to the center of choke point.
+        double distToChoke = unit.distanceTo(focusPoint);
 
         // How far can the unit shoot
-        double unitShootRange =  unit.getType().getGroundWeapon().maxRange() / 32; //getShootRangeGround();
+        double unitShootRange =  unit.getWeaponRangeGround();
 
         // Define max allowed distance from choke point to consider "still close"
         double maxDistanceAllowed = unitShootRange + unitShootRangeExtra;
@@ -93,39 +93,39 @@ public class MissionDefend extends Mission {
         return distToChoke <= maxDistanceAllowed;
     }
 
-    private boolean isCriticallyCloseToChokePoint(AUnit unit, Chokepoint chokepoint) {
-        if (unit == null || chokepoint == null) {
+    private boolean isCriticallyCloseToFocusPoint(AUnit unit, APosition focusPoint) {
+        if (unit == null || focusPoint == null) {
             return false;
         }
 
-        // Distance to the center of choke point. TODO: check whether getWidth()/100.0f has the same effect of getRadiusInTiles
-        double distToChoke = unit.distanceTo(chokepoint.getCenter()) - chokepoint.getWidth()/100.0f;	// getRadiusInTiles()
+        // Distance to the center of choke point.
+        double distToChoke = unit.distanceTo(focusPoint);
 
         // Can't be closer than X from choke point
         if (distToChoke <= 4.2) {
             return true;
         }
 
-        // Bigger this value is, further from choke will units stand
-        double standFurther = 1;
+        // Bigger this value is, farther from choke will units stand
+        double standFarther = 1;
 
         // How far can the unit shoot (in build tiles)
-        double unitShootRange = unit.getType().getGroundWeapon().maxRange() / TilePosition.SIZE_IN_PIXELS; //getShootRangeGround();
+        double unitShootRange = unit.getWeaponRangeGround();
 
         // Define max distance
-        double maxDistance = unitShootRange + standFurther;
+        double maxDistance = unitShootRange + standFarther;
 
         return distToChoke <= maxDistance;
     }
 
     // =========================================================
     
-    public static Chokepoint getFocusPoint() {
+    public static APosition getFocusPoint() {
         if (Select.ourBases().count() <= 1) {
-            return AtlantisMap.getMainBaseChokepoint();
+            return APosition.createFrom(AtlantisMap.getMainBaseChokepoint().getCenter());
         }
         else {
-            return AtlantisMap.getNaturalBaseChokepoint();
+            return APosition.createFrom(AtlantisMap.getNaturalBaseChokepoint().getCenter());
         }
     }
 

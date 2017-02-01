@@ -346,11 +346,11 @@ public class AtlantisPainter {
         APosition position;
 
         // Main DEFEND focus point
-        if (MissionDefend.getFocusPoint() != null && MissionDefend.getFocusPoint().getCenter() != null) {
-            position = APosition.createFrom(MissionDefend.getFocusPoint().getCenter());
-            paintCircle(position, 20, Color.Black);
-            paintCircle(position, 19, Color.Black);
-            paintTextCentered(position, "DEFEND", Color.Grey);
+        if (MissionDefend.getFocusPoint() != null && MissionDefend.getFocusPoint() != null) {
+            position = MissionDefend.getFocusPoint();
+            paintCircle(position, 20, Color.Orange);
+            paintCircle(position, 19, Color.Orange);
+            paintTextCentered(position, "DEFEND", Color.Orange);
         }
 
         // Mission ATTACK focus point

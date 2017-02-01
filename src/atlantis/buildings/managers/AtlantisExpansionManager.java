@@ -41,7 +41,7 @@ public class AtlantisExpansionManager {
         int numberOfBases = Select.ourBases().count();
         
         // Enforce too have a lot of tanks before expansion
-        if (AtlantisGame.playsAsTerran() && numberOfBases == 2) {
+        if (AtlantisGame.playsAsTerran() && numberOfBases >= 2) {
             if (Select.ourTanks().count() <= 8) {
                 return;
             }
