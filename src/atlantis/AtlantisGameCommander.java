@@ -24,11 +24,11 @@ public class AtlantisGameCommander {
 
         // === Execute code of every Commander and Manager ==================
         
+        AtlantisProductionCommander.update();
         AtlantisWorkerCommander.update();
         AtlantisCombatCommander.update();
         AtlantisScoutManager.update();
 //        AtlantisBuildingsCommander.update(); // Currently unused
-        AtlantisProductionCommander.update();
     }
 
 }

@@ -14,21 +14,20 @@ public class AtlantisWorkerManager {
     /**
      * Executed for every worker unit.
      */
-    public static void update(AUnit unit) {
-        unit.removeTooltip();
-        //unit.removeTooltip();
+    public static void update(AUnit worker) {
+        worker.removeTooltip();
 
         // =========================================================
         // Act as BUILDER
-        if (AtlantisConstructionManager.isBuilder(unit)) {
-            AtlantisBuilderManager.update(unit);
+        if (AtlantisConstructionManager.isBuilder(worker)) {
+            AtlantisBuilderManager.update(worker);
         } // ORDINARY WORKER
         else {
-            sendToGatherMineralsOrGasIfNeeded(unit);
+            sendToGatherMineralsOrGasIfNeeded(worker);
         }
 
         // =========================================================
-        updateTooltip(unit);
+        updateTooltip(worker);
     }
 
     // =========================================================

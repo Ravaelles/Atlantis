@@ -68,18 +68,18 @@ public class PositionUtil {
 
         if (fromPosition != null) {
             if (toPosition != null) {
-                return fromPosition.getDistance(toPosition) / 32;
+                return (double) fromPosition.getDistance(toPosition) / 32;
             }
             else {
-                return fromPosition.getDistance(toUnit) / 32;
+                return (double) fromPosition.getDistance(toUnit) / 32;
             }
         }
         else {
             if (toPosition != null) {
-                return fromUnit.getDistance(toPosition) / 32;
+                return (double) fromUnit.getDistance(toPosition) / 32;
             }
             else {
-                return fromUnit.getDistance(toUnit) / 32;
+                return (double) fromUnit.getDistance(toUnit) / 32;
             }
         }
     }

@@ -24,7 +24,7 @@ public class AtlantisPositionFinder {
      */
     public static APosition getPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
         APosition near = constructionOrder != null ? constructionOrder.getNearTo() : null;
-        double maxDistance = constructionOrder != null ? constructionOrder.getMaxDistance() : 20;
+        double maxDistance = constructionOrder != null ? constructionOrder.getMaxDistance() : 30;
         return getPositionForNew(builder, building, constructionOrder, near, maxDistance);
     }
 

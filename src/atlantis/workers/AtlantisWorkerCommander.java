@@ -22,8 +22,8 @@ public class AtlantisWorkerCommander {
         AtlantisGasManager.handleGasBuildings();
         transferWorkersBetweenBasesIfNeeded();
 
-        for (AUnit unit : Select.ourWorkers().listUnits()) {
-            AtlantisWorkerManager.update(unit);
+        for (AUnit worker : Select.ourWorkers().listUnits()) {
+            AtlantisWorkerManager.update(worker);
         }
     }
 

@@ -22,7 +22,8 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         _CONDITION_THAT_FAILED = null;
 
         // =========================================================
-        int searchRadius = building.equals(AUnitType.Terran_Supply_Depot) ? 8 : 0;
+//        int searchRadius = building.equals(AUnitType.Terran_Supply_Depot) ? 0 : 0;
+        int searchRadius = 0;
 
         while (searchRadius < maxDistance) {
             int xCounter = 0;

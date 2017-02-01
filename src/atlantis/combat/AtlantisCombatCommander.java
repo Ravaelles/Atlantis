@@ -35,9 +35,10 @@ public class AtlantisCombatCommander {
         // =========================================================
         
         // Act with every unit
-//        System.out.println("------------------");
+//        System.out.println("--- (" + squad.size() + ") ---------------");
         for (AUnit unit : squad.arrayList()) {
-//            System.out.println("unita (" + unit.getSquad() != null + "): " + unit.getType());
+//            System.out.println("Commander (" + (unit.getSquad() != null) + "): " + unit);
+//            unit.setTooltip("C:" + AtlantisGame.getTimeFrames());
             AtlantisCombatUnitManager.update(unit, squad);
         }
     }

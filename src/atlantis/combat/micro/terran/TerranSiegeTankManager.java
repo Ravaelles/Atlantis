@@ -1,8 +1,11 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
+import bwapi.Color;
 
 /**
  *
@@ -12,8 +15,17 @@ public class TerranSiegeTankManager {
 
     public static boolean update(AUnit tank) {
         AUnit enemy = Select.enemy().combatUnits().canBeAttackedBy(tank).nearestTo(tank);
+        
+        String string = (enemy != null ? enemy.getShortName() : "NULL");
         if (enemy != null) {
-            double distanceToEnemy = enemy.distanceTo(tank);
+             string += " (" + enemy.distanceTo(tank) + ")";
+        }
+        
+        AtlantisPainter.paintTextCentered(tank.getPosition().translateByPixels(0, 10), 
+                string, 
+                Color.White);
+        if (enemy != null) {
+            double distanceToEnemy = tank.distanceTo(enemy);
 
             if (tank.isSieged()) {
                 return updateWhenSieged(tank, enemy, distanceToEnemy);
@@ -72,8 +84,8 @@ public class TerranSiegeTankManager {
     }
 
     private static boolean nearestEnemyIsUnit(AUnit tank, AUnit enemy, double distanceToEnemy) {
-        if (distanceToEnemy <= 14) {
-            if (AtlantisUtilities.rand(1, 100) < 8) {
+        if (distanceToEnemy < 14) {
+            if (AtlantisUtilities.rand(1, 100) < 8 || enemy.getType().isDangerousGroundUnit()) {
                 tank.siege();
                 return true;
             }

@@ -55,7 +55,7 @@ public class Missions {
         
         // We're TERRAN
         if (AtlantisGame.playsAsTerran()) {
-            return 6;
+            return 3;
         }
         
         // =========================================================
@@ -85,9 +85,9 @@ public class Missions {
     }
     
     private static boolean canChangeMissionToAttack() {
-        if (Select.ourTanks().count() < 4) {
-            return false;
-        }
+//        if (Select.ourTanks().count() < 4) {
+//            return false;
+//        }
         
         if (Select.ourCombatUnits().count() < defineMinUnitsToForFirstAttack()) {
             return false;

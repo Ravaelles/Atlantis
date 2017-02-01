@@ -107,7 +107,7 @@ public class AtlantisPainter {
         paintEnemyDiscovered();
         paintCombatUnits();
         paintTooltipsOverUnits();
-        paintTestSupplyDepotLocationsNearMain();
+//        paintTestSupplyDepotLocationsNearMain();
     }
 
     // =========================================================
@@ -806,10 +806,28 @@ public class AtlantisPainter {
      * from enemy" etc.
      */
     private static void paintTooltipsOverUnits() {
-        for (AUnit unit : Select.our().listUnits()) {
+        for (AUnit unit : Select.ourCombatUnits().listUnits()) {
+//            if (unit.hasTooltip()) {
+            String string = "";
+            
             if (unit.hasTooltip()) {
-                paintTextCentered(unit.getPosition(), unit.getTooltip(), Color.White);
+                string += unit.getTooltip();
             }
+            else {
+                string += "---";
+            }
+            
+//            string += "/";
+//            
+//            if (unit.getUnitMission() != null) {
+//                string += unit.getUnitMission();
+//            }
+//            else {
+//                string += "no_mission";
+//            }
+            
+            paintTextCentered(unit.getPosition(), string, Color.White);
+//            }
         }
     }
 

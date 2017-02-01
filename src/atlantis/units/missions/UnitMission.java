@@ -22,6 +22,13 @@ public class UnitMission {
     
     // =========================================================
 
+    @Override
+    public String toString() {
+        return "UnitMission{" + "attack=" + attack + ", run=" + run + '}';
+    }
+    
+    // =========================================================
+    
     public boolean isAttacking() {
         return attack;
     }

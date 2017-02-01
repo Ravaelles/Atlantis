@@ -286,7 +286,7 @@ public class Atlantis implements BWEventListener {
             }
 
             // Our unit
-            if (unit.getPlayer().equals(bwapi.self())) {
+            if (unit.isOurUnit()) {
                 AtlantisGame.getBuildOrders().rebuildQueue();
                 AtlantisSquadManager.battleUnitDestroyed(unit);
                 LOST++;

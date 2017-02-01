@@ -33,7 +33,10 @@ import java.util.Map;
 public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitActions {
 //public class AUnit implements Comparable<AUnit>, UnitActions {
 
-    private static final Map<Unit, AUnit> instances = new HashMap<>();
+//    private static final Map<Unit, AUnit> instances = new HashMap<>();
+    
+    // Mapping of native unit IDs to AUnit objects
+    private static final Map<Integer, AUnit> instances = new HashMap<>();
 
     private Unit u;
     private AUnitType _lastCachedType;
@@ -41,13 +44,15 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     private UnitMission unitMission;
 
     // =========================================================
+    
     private AUnit(Unit u) {
         if (u == null) {
             throw new RuntimeException("AUnit constructor: unit is null");
         }
 
         this.u = u;
-        this.innerID = firstFreeID++;
+//        this.innerID = firstFreeID++;
+        this.innerID = u.getID();
         this._lastCachedType = AUnitType.createFrom(u.getType());
 
         // Repair & Heal
@@ -74,11 +79,11 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
             throw new RuntimeException("AUnit constructor: unit is null");
         }
 
-        if (instances.containsKey(u)) {
-            return instances.get(u);
+        if (instances.containsKey(u.getID())) {
+            return instances.get(u.getID());
         } else {
             AUnit unit = new AUnit(u);
-            instances.put(u, unit);
+            instances.put(u.getID(), unit);
             return unit;
         }
     }
@@ -365,24 +370,24 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return index;
     }
 
-    // =========================================================
-    // Debugging / Painting methods
+    // ===  Debugging / Painting methods ========================================
+    
     private String tooltip;
-    private int tooltipStartInFrames;
+//    private int tooltipStartInFrames;
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
-        this.tooltipStartInFrames = AtlantisGame.getTimeFrames();
+//        this.tooltipStartInFrames = AtlantisGame.getTimeFrames();
     }
 
     public String getTooltip() {
-        if (AtlantisGame.getTimeFrames() - tooltipStartInFrames > 30) {
-            String tooltipToReturn = this.tooltip;
-            this.tooltip = null;
-            return tooltipToReturn;
-        } else {
-            return tooltip;
-        }
+//        if (AtlantisGame.getTimeFrames() - tooltipStartInFrames > 30) {
+//            String tooltipToReturn = this.tooltip;
+//            this.tooltip = null;
+//            return tooltipToReturn;
+//        } else {
+        return tooltip;
+//        }
     }
 
     public void removeTooltip() {

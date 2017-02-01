@@ -35,14 +35,14 @@ public abstract class AbstractMicroManager {
         
         // If situation is unfavorable, retreat
         if (!isSituationFavorable) {
-            if (unit.isAttackFrame() || unit.isStartingAttack()) { //replacing isJustShooting
-                unit.setTooltip("SHOOTS");
-                return true;
-            }
-            else {
+//            if (unit.isAttackFrame() || unit.isStartingAttack()) { //replacing isJustShooting
+//                unit.setTooltip("SHOOTS");
+//                return true;
+//            }
+//            else {
                 unit.setTooltip("Runs");
                 return AtlantisRunManager.run(unit);
-            }
+//            }
         }
         else {
             unit.setTooltip("---");
@@ -50,6 +50,8 @@ public abstract class AbstractMicroManager {
             // If unit is running, allow it to stop running only if chances are quite favorable
             if (unit.isRunning()) {
                 AtlantisRunManager.unitWantsStopRunning(unit);
+                unit.setTooltip("Don't run!");
+                return true;
             }
         }
         
@@ -128,6 +130,7 @@ public abstract class AbstractMicroManager {
             AUnit enemy = (AUnit) Select.enemyRealUnits().melee().inRadius(1.5, unit.getPosition()).nearestTo(unit.getPosition());
             if (enemy != null && !unit.isStartingAttack()) {
                 unit.runFrom(enemy);
+                unit.setTooltip("Melee " + enemy.getShortName() + "!");
                 return true;
             }
         }

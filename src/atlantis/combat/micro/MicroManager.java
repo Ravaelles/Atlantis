@@ -42,9 +42,9 @@ public class MicroManager extends AbstractMicroManager {
             // Avoid dying because of very low hit points
             // @FIX: Breaks handleUnfavorableOdds(), units tend to avoid fighting too much
             
-            if (handleLowHealthIfNeeded(unit)) {
-                return true;
-            }
+//            if (handleLowHealthIfNeeded(unit)) {
+//                return true;
+//            }
             
             // =========================================================
             // Avoid melee units
@@ -79,7 +79,7 @@ public class MicroManager extends AbstractMicroManager {
             // =========================================================
             // False: Did not use micro-manager, allow mission behavior.
             // True: Do not allow mission manager to handle this unit, because micro-manager issued command.
-            boolean canGiveCommandToMissionManager = unit.getGroundWeaponCooldown() > 0;
+            boolean canGiveCommandToMissionManager = unit.getGroundWeaponCooldown() <= 0;
             return canGiveCommandToMissionManager;
         } // =========================================================
         // Can't give orders to unit right now
@@ -116,6 +116,7 @@ public class MicroManager extends AbstractMicroManager {
         // TERRAN
         if (AtlantisGame.playsAsTerran()) {
             if (unit.isType(AUnitType.Terran_Medic)) {
+                unit.setTooltip("Medic");
                 return TerranMedic.update(unit);
             }
         }

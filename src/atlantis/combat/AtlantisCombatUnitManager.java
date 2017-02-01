@@ -15,11 +15,14 @@ public class AtlantisCombatUnitManager {
 
     protected static boolean update(AUnit unit, Squad squad) {
 //        unit.removeTooltip();
+//        unit.setTooltip("M:" + AtlantisGame.getTimeFrames());
+//        System.out.println("  Manager (" + (unit.getSquad() != null) + "): " + unit + " / " + unit.getTooltip());
         
         // =========================================================
         // DON'T INTERRUPT shooting units
         
         if (shouldNotDisturbUnit(unit)) {
+            unit.setTooltip("#DontDisturb");
             return true;
         }
 
@@ -49,6 +52,7 @@ public class AtlantisCombatUnitManager {
         // Handle some units in semi-special way
         
         if (handledAsSemiSpecialUnit(unit)) {
+            unit.setTooltip("semiSpecial");
             return true;
         }
 
@@ -58,13 +62,16 @@ public class AtlantisCombatUnitManager {
             if (squad == null) {
                 System.err.println("squad is NULLz!");
                 System.err.println(unit + " sq null for unit " + unit);
+                unit.setTooltip("squadIsNull");
                 return true;
             }
             else if (squad.getMission() == null) {
                 System.err.println("squad.getMission() is NULL!");
+                unit.setTooltip("missionIsNull");
                 return true;
             }
             else {
+                unit.setTooltip("updateMission");
                 return squad.getMission().update(unit);
             }
         }
