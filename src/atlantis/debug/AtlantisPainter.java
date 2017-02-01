@@ -160,7 +160,6 @@ public class AtlantisPainter {
                 int flagWidth = 15;
                 int flagHeight = 8;
 
-                System.out.println("is running");
                 paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
 
                 paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - 2),

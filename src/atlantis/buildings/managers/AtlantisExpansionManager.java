@@ -36,9 +36,19 @@ public class AtlantisExpansionManager {
             return;
         }
         
-        // === Check if we have almost as many bases as base locations; if so, exit ======
+        // === Force decent army before 3rd base =========================================
         
         int numberOfBases = Select.ourBases().count();
+        
+        // Enforce too have a lot of tanks before expansion
+        if (AtlantisGame.playsAsTerran() && numberOfBases == 2) {
+            if (Select.ourTanks().count() <= 8) {
+                return;
+            }
+        }
+        
+        // === Check if we have almost as many bases as base locations; if so, exit ======
+        
         
         if (numberOfBases >= AtlantisMap.getBaseLocations().size() - 2) {
             return;

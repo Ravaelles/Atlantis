@@ -25,15 +25,25 @@
 @ - Name - Modifier
 9 - Supply Depot
 12 - Barracks
-13 - Marine - x3
+12 - Refinery
+13 - Marine
 15 - Marine
 15 - Supply Depot
-18 - Marine - x2
-20 - Supply Depot
-21 - Academy
-22 - Refinery
-22 - Marine
-23 - U-238 Shells
-23 - Medic - x2
-26 - Supply Depot
-Marine - x10
+16 - Factory
+18 - Vulture
+20 - Machine Shop
+22 - Siege Tank
+22 - Siege Mode
+23 - Supply Depot
+28 - Command Center
+28 - Supply Depot
+28 - Factory
+30 - Vulture
+30 - Supply Depot
+30 - Machine Shop
+32 - Siege Tank
+33 - Siege Tank
+33 - Factory
+35 - Machine Shop
+40 - Siege Tank - x3
+Vulture

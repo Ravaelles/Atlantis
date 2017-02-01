@@ -601,17 +601,18 @@ public class Select<T> {
             if (predator.canAttackThisKindOfUnit(prey, false)) {
                 boolean isInShotRange = predator.hasRangeToAttack(prey, 0.2);
                 if (!isInShotRange) {
-                    System.out.println(prey.getType().getShortName() + " OUT OF range ("
-                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
+//                    System.out.println(prey.getType().getShortName() + " OUT OF range ("
+//                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
                     unitsIterator.remove();
-                } else {
-                    System.out.println(prey.getType().getShortName() + " in range ("
-                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
-                }
+                } 
+//                else {
+//                    System.out.println(prey.getType().getShortName() + " in range ("
+//                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
+//                }
             }
-            else {
-                System.out.println(predator.getShortName() + " cant attack " + prey.getShortName());
-            }
+//            else {
+//                System.out.println(predator.getShortName() + " cant attack " + prey.getShortName());
+//            }
         }
         return this;
     }
