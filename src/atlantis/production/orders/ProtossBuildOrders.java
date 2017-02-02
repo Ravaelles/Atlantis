@@ -23,9 +23,9 @@ public class ProtossBuildOrders extends AtlantisBuildOrdersManager {
         if (unitThatWillProduce != null) {
             unitThatWillProduce.train(unitType);
         }
-        else {
-            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
-        }
+//        else {
+//            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
+//        }
     }
 
     @Override

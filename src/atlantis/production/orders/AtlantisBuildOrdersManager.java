@@ -11,6 +11,7 @@ import atlantis.util.NameUtil;
 import atlantis.wrappers.AtlantisTech;
 import atlantis.wrappers.MappingCounter;
 import bwapi.TechType;
+import bwapi.UnitType;
 import bwapi.UpgradeType;
 import java.io.File;
 import java.util.ArrayList;
@@ -365,6 +366,9 @@ public abstract class AtlantisBuildOrdersManager {
 
     // =========================================================
     // Private defined methods
+    
+    private static boolean _isCommentMode = false;
+    
     /**
      * Analyzes CSV row, where each array element is one column.
      */
@@ -407,9 +411,8 @@ public abstract class AtlantisBuildOrdersManager {
         String nameString = row[inRowCounter++].toLowerCase().trim();
 
         // === Parse some strings ==================================
-        if ("siege tank".equals(nameString) || "tank".equals(nameString)) {
-            nameString = "Siege Tank Tank Mode";
-        }
+        
+        nameString = convertIntoValidNames(nameString);
 
         // =========================================================
         // Try getting objects of each type as we don't know if it's unit, research or tech.
@@ -474,6 +477,29 @@ public abstract class AtlantisBuildOrdersManager {
         initialProductionQueue.add(order);
     }
 
+    /**
+     * Converts names like "tank" into "Siege Tank Tank Mode".
+     */
+    private String convertIntoValidNames(String nameString) {
+        
+        // TERRAN
+        if ("siege tank".equals(nameString) || "tank".equals(nameString)) {
+            return "Siege Tank Tank Mode";
+        }
+        else if ("marine range".equals(nameString)) {
+            return "U_238_Shells";
+        }
+        
+        // PROTOSS
+        else if ("dragoon range".equals(nameString)) {
+            return "Singularity Charge";
+        }
+        
+//        UpgradeType.U_238_Shells
+        
+        return nameString;
+    }
+    
     /**
      * Converts shortcut notations like: 
             6 - Barracks
@@ -601,13 +627,38 @@ public abstract class AtlantisBuildOrdersManager {
      * If the first character in column is # it means it's special command.
      */
     private boolean isSpecialCommand(String[] row) {
-        return (row.length >= 1 && row[0].charAt(0) == '#');
+        if (row.length >= 1) {
+            return row[0].charAt(0) == '#';
+        }
+        else {
+            return false;
+        }
     }
 
     /**
      * // Means comment - should skip it. We can also have blank lines.
      */
     private boolean isUnimportantLine(String[] row) {
+        if (row.length >= 1) {
+            
+            // Detect multi-line comment start
+            if (row[0].contains("/**")) {
+                _isCommentMode = true;
+                return true;
+            }
+            
+            // Detect multi-line comment end
+            if (row[0].contains("*/")) {
+                _isCommentMode = false;
+                return true;
+            }
+            
+            // Detect being inside multi-line comment
+            if (_isCommentMode) {
+                return true;
+            }
+        }
+        
         return row.length == 0 || row[0].isEmpty() || row[0].equals("")
                 || row[0].equals("Number") || row[0].equals("@") || row[0].equals("Order") || row[0].equals(";");
     }

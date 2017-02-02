@@ -312,26 +312,31 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * You can "Terran_Marine" or "Terran Marine" or even "Marine".
      */
-    public static AUnitType getByName(String string) {
-        string = string.replace(" ", "_").toLowerCase()
+    public static AUnitType getByName(String unitName) {
+        unitName = unitName.replace(" ", "_").toLowerCase()
                 .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
 
         for (Field field : UnitType.class.getFields()) {
             String otherTypeName = field.getName().toLowerCase()
                     .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
-            if (!otherTypeName.startsWith("Hero") && otherTypeName.equals(string)) {
+            if (!otherTypeName.startsWith("Hero") && otherTypeName.equals(unitName)) {
                 try {
                     AUnitType unitType = (AUnitType) AUnitType.class.getField(field.getName()).get(null);
 //                    return instances.get(unitType);
                     return unitType;
                 } catch (Exception e) {
                     if (!disableErrorReporting) {
-                        System.err.println("error trying to find AUnitType for: '" + string + "'\n" + e.getMessage());
+                        System.err.println("error trying to find AUnitType for: '" + unitName + "'\n" + e.getMessage());
                     }
                 }
             }
         }
-
+        
+        // If not found and ends with "s", try removing the "s"
+        if (unitName.trim().endsWith("s"))  {
+            return getByName(unitName.substring(0, unitName.trim().length() - 1));
+        }
+        
         return null;
     }
 
