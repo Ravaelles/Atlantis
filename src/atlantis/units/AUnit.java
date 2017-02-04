@@ -635,7 +635,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      */
      public boolean runFrom(AUnit nearestEnemy) {
         if (nearestEnemy == null) {
-            nearestEnemy = Select.enemyRealUnits().nearestTo(this.getPosition());
+            nearestEnemy = Select.enemyRealUnits().nearestTo(this);
         }
 
         if (nearestEnemy == null) {

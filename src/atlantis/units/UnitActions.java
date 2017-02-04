@@ -26,11 +26,12 @@ public interface UnitActions {
         
         // Do NOT issue double orders
         if (u().isAttacking() && u().getTarget() != null && unit().getTarget().equals(target)) {
-            return false;
+            return true;
         }
         else {
             unit().setUnitMission(unitMission);
-            return u().attack(target.u());
+            u().attack(target.u());
+            return true;
         }
 //        return u().attack(target.u());
     }
@@ -39,11 +40,12 @@ public interface UnitActions {
         
         // Do NOT issue double orders
         if (u().isAttacking() && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
-            return false;
+            return true;
         }
         else {
             unit().setUnitMission(unitMission);
-            return u().attack(target);
+            u().attack(target);
+            return true;
         }
     }
     
@@ -73,9 +75,11 @@ public interface UnitActions {
     }
     
     default public boolean move(Position target, UnitMission unitMission) {
+//        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
+        unit().setUnitMission(unitMission);
         if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
-            unit().setUnitMission(unitMission);
-            return u().move(target);
+            u().move(target);
+            return true;
         }
         return true;
     }

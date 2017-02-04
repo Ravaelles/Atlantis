@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.missions.UnitMissions;
 import atlantis.util.PositionUtil;
+import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwta.BWTA;
 import java.util.Collection;
@@ -53,7 +54,7 @@ public class AtlantisRunning {
         // =========================================================
         
         if (chaser == null) {
-            chaser = Select.enemyRealUnits().nearestTo(unit.getPosition());
+            chaser = Select.enemyRealUnits().nearestTo(unit);
         }
         if (chaser == null) {
             return false;
@@ -63,10 +64,10 @@ public class AtlantisRunning {
         
         AtlantisRunning running = unit.getRunning();
         if (running != null && running.nextPositionToRunTo != null) {
-            if (unit.distanceTo(running.nextPositionToRunTo) > 0.5) {
-                if (!unit.isMoving()) {
-                    unit.move(running.nextPositionToRunTo, UnitMissions.RUN_FROM_UNIT);
-                }
+            if (unit.distanceTo(running.nextPositionToRunTo) > 0.2) {
+//                if (!unit.isMoving()) {
+                unit.move(running.nextPositionToRunTo, UnitMissions.RUN_FROM_UNIT);
+//                }
                 return true;
             }
         }
@@ -114,10 +115,10 @@ public class AtlantisRunning {
         }
 
 //        if (AtlantisGame.getTimeSeconds() <= 350) {
-        return findPositionToRun_preferMainBase(unit, runAwayFrom);
+//        return findPositionToRun_preferMainBase(unit, runAwayFrom);
 //        }
 //        else {
-//            return findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
+            return findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
 //        }
     }
 
@@ -160,12 +161,15 @@ public class AtlantisRunning {
      * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
      */
     private static Position findPositionToRun_dontPreferMainBase(AUnit unit, Position runAwayFrom) {
-        int howManyTiles = 6;
-        int maxTiles = 9;
-        Position runTo = null;
+        int howManyTiles = 1;
+        int maxTiles = 4;
+        APosition runTo = null;
 
         // =========================================================
+        
+        System.out.println("############ " + AtlantisGame.getTimeFrames());
         while (howManyTiles <= maxTiles) {
+            System.out.println("----- " + howManyTiles);
             double xDirectionToUnit = runAwayFrom.getX() - unit.getPosition().getX();
             double yDirectionToUnit = runAwayFrom.getY() - unit.getPosition().getY();
 
@@ -175,32 +179,44 @@ public class AtlantisRunning {
             // Add randomness of move if distance is big enough
             //        int xRandomness = howManyTiles > 3 ? (2 - AtlantisUtilities.rand(0, 4)) : 0;
             //        int yRandomness = howManyTiles > 3 ? (2 - AtlantisUtilities.rand(0, 4)) : 0;
-            runTo = new Position(
+            runTo = new APosition(
                     (int) (unit.getPosition().getX() - ratio * xDirectionToUnit),
                     (int) (unit.getPosition().getY() - ratio * yDirectionToUnit)
             );
+//            System.out.println("      Run to: " + runTo + " / dist: " 
+//                    + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null"));
 
-//            if (howManyTiles >= 8) {
+            
+            // === Ensure position is in bounds ========================================
+            
             runTo = runTo.makeValid();
-//            }
 
-            if (Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true) && unit.hasPathTo(runTo.getPoint())
-                    & Atlantis.getBwapi().hasPath(unit.getPosition(), runTo)
-                    && BWTA.isConnected(unit.getPosition().toTilePosition(), runTo.toTilePosition())) {
+//            if (Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true) 
+//                    && unit.hasPathTo(runTo.getPoint())
+//                    && Atlantis.getBwapi().hasPath(unit.getPosition(), runTo)
+//                    && BWTA.isConnected(unit.getPosition().toTilePosition(), runTo.toTilePosition())) {
+
+//            System.out.println("Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true) = " + Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true));
+//            System.out.println("unit.hasPathTo(runTo.getPoint()) = " + unit.hasPathTo(runTo.getPoint()));
+            if (unit.hasPathTo(runTo.getPoint())) {
                 break;
             } else {
                 howManyTiles++;
             }
+            
+            break;
         }
 
         // =========================================================
         if (runTo != null) {
             double dist = unit.distanceTo(runTo);
-            if (dist >= 0.8 && dist <= maxTiles + 1) {
+            if (dist >= 0.5 && dist <= maxTiles + 1) {
                 return runTo;
             }
         }
 
+        System.err.println("Couldn't find run position - pretty f'ed up (" 
+                + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null") + ") ");
         return null;
     }
 
@@ -240,9 +256,9 @@ public class AtlantisRunning {
     /**
      * Returns the position where unit is running to (it's quite close to the unit, few tiles).
      */
-    public static Position getNextPositionToRunTo(AUnit unit) {
+    public Position getNextPositionToRunTo() {
 //    	checkRunningInfo(u);
-        return unit.getRunning().nextPositionToRunTo;
+        return nextPositionToRunTo;
     }
 
     public static int getTimeSinceLastRun(AUnit unit) {

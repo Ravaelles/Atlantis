@@ -1,6 +1,7 @@
 package atlantis.wrappers;
 
 import atlantis.debug.AtlantisPainter;
+import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import bwapi.Color;
@@ -139,7 +140,34 @@ public class APosition extends Position {
      */
     @Override
     public APosition makeValid() {
-        p = p.makeValid();
+//        p = p.makeValid();
+
+        boolean somethingChanged = false;
+        int px = p.getX();
+        int py = p.getY();
+        
+        if (px < 1) {
+            px = 1;
+            somethingChanged = true;
+        }
+        else if (px > 32 * AtlantisMap.getMapWidthInTiles()) {
+            px = 32 * AtlantisMap.getMapWidthInTiles();
+            somethingChanged = true;
+        }
+        
+        if (py < 1) {
+            py = 1;
+            somethingChanged = true;
+        }
+        else if (py > 32 * AtlantisMap.getMapHeightInTiles()) {
+            py = 32 * AtlantisMap.getMapHeightInTiles();
+            somethingChanged = true;
+        }
+        
+        if (somethingChanged) {
+            p = new Position(px, py);
+        }
+
         return this;
     }
 

@@ -127,7 +127,7 @@ public abstract class AbstractMicroManager {
     
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         if (unit.getType().isRangedUnit()) {
-            AUnit enemy = (AUnit) Select.enemyRealUnits().melee().inRadius(1.0, unit).nearestTo(unit.getPosition());
+            AUnit enemy = (AUnit) Select.enemyRealUnits().melee().inRadius(1.3, unit).nearestTo(unit);
             if (enemy != null && !unit.isStartingAttack()) {
                 unit.runFrom(enemy);
                 unit.setTooltip("Melee " + enemy.getShortName() + "!");

@@ -37,7 +37,7 @@ import java.util.Map;
  * Here you can include code that will draw extra informations over units etc.
  */
 public class AtlantisPainter {
-    
+
     public static final int MODE_NO_PAINTING = 1;
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
@@ -45,9 +45,8 @@ public class AtlantisPainter {
     public static int paintingMode = MODE_NO_PAINTING;
 //    private static int paintingMode = MODE_PARTIAL_PAINTING;
 //    private static int paintingMode = MODE_FULL_PAINTING;
-    
-    // =========================================================
 
+    // =========================================================
     private static Game bwapi;
     private static int sideMessageTopCounter = 0;
     private static int sideMessageMiddleCounter = 0;
@@ -55,7 +54,6 @@ public class AtlantisPainter {
     private static int prevTotalFindBuildPlace = 0;
 
     // =========================================================
-    
     /**
      * Executed once per frame, at the end of all other actions.
      */
@@ -63,38 +61,34 @@ public class AtlantisPainter {
 //        if (1 < 2) {
 //            return;
 //        }
-        
+
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
-        
+
         // === Dynamic PAINTING MODE ===============================
 //        paintingMode = (AtlantisGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
-                
         // =========================================================
-
         if (paintingMode == MODE_NO_PAINTING) {
             return;
         }
-        
-        // === Only text ===========================================
 
+        // === Only text ===========================================
         bwapi.setTextSize(Enum.Default);
-        
+
         paintInfo();
         paintKilledAndLost();
         paintProductionQueue();
         paintSidebarConstructionsPending();
         //        paintUnitCounters();
-        
+
         if (paintingMode == MODE_PARTIAL_PAINTING) {
             return;
         }
-        
+
         // =========================================================
-        
         bwapi.setTextSize(Enum.Small);
-        
+
         paintImportantPlaces();
         paintColoredCirclesAroundUnits();
 //        paintConstructionProgress();
@@ -154,40 +148,22 @@ public class AtlantisPainter {
 //            }
 
             // =========================================================
-            // === Paint white flags over running units
-            // =========================================================
-            if (unit.isRunning()) {
-                int flagWidth = 15;
-                int flagHeight = 8;
-                int dy = 12;
-
-                paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
-
-                paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - dy),
-                        flagWidth, flagHeight, Color.White); // White flag
-                paintRectangle(unitPosition.translateByPixels(0, -flagHeight - dy),
-                        flagWidth, flagHeight, Color.Grey); // Flag border
-                paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
-                        2, flagHeight, Color.Red); // Flag stick
-            }
-
-            // =========================================================
             // === Combat Evaluation Strength
             // =========================================================
 //            if (combatEval < 10) {
-                double eval = AtlantisCombatEvaluator.evaluateSituation(unit, true, false);
+            double eval = AtlantisCombatEvaluator.evaluateSituation(unit, true, false);
 //                if (eval < 999) {
 //                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
 //                            : AtlantisCombatEvaluator.getEvalString(unit);
-                    String combatStrength = ColorUtil.getColorString(Color.Green) 
-                            + AtlantisCombatEvaluator.getEvalString(unit, eval);
-                    paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
+            String combatStrength = ColorUtil.getColorString(Color.Green)
+                    + AtlantisCombatEvaluator.getEvalString(unit, eval);
+            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
 //                }
 
-                // =========================================================
-                // === Paint circle around units with zero ground weapon 
-                // === cooldown equal to 0 - meaning they can shoot now
-                // =========================================================
+            // =========================================================
+            // === Paint circle around units with zero ground weapon 
+            // === cooldown equal to 0 - meaning they can shoot now
+            // =========================================================
 //                if (unit.getGroundWeaponCooldown() == 0) {
 //                    paintCircle(unitPosition, 14, Color.White);
 //                }
@@ -201,9 +177,9 @@ public class AtlantisPainter {
 //            if (eval < 999) {
 //                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
 //                        : AtlantisCombatEvaluator.getEvalString(unit);
-                String combatStrength = ColorUtil.getColorString(Color.Red) 
-                            + AtlantisCombatEvaluator.getEvalString(unit, eval);
-                paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
+            String combatStrength = ColorUtil.getColorString(Color.Red)
+                    + AtlantisCombatEvaluator.getEvalString(unit, eval);
+            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
 //            }
         }
     }
@@ -218,23 +194,20 @@ public class AtlantisPainter {
 
         // =========================================================
         // Gas workers
-        
-        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests, 
+        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
                 prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
         prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
-        
+
         paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + AtlantisBuildOrdersManager.getMineralsNeeded(), Color.Grey);
         paintSideMessage("Reserved gas: " + AtlantisBuildOrdersManager.getGasNeeded(), Color.Grey);
-        
+
         // =========================================================
         // Global mission
-        
         paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
 
         // =========================================================
         // Focus point
-        
         APosition focusPoint = MissionAttack.getFocusPoint();
         AUnit mainBase = Select.mainBase();
         String desc = "";
@@ -244,7 +217,6 @@ public class AtlantisPainter {
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
         // =========================================================
-        
         paintSideMessage("Combat squad size: " + AtlantisSquadManager.getAlphaSquad().size(), Color.Blue, 0);
     }
 
@@ -344,15 +316,13 @@ public class AtlantisPainter {
      * Paints important choke point near the base.
      */
     private static void paintImportantPlaces() {
-        
+
         // === Handle UMT ==========================================
-        
         if (AtlantisGame.isUmtMode()) {
             return;
         }
-        
+
         // =========================================================
-        
         APosition position;
 
         // Main DEFEND focus point
@@ -449,7 +419,7 @@ public class AtlantisPainter {
                 paintSideMessage(order.getShortName(), Color.Red);
             }
         }
-        
+
         // Paint info if queues are empty
         if (produceNow.isEmpty() && fullQueue.isEmpty()) {
             paintSideMessage("Nothing to produce - it seems to be a bug", Color.Red);
@@ -528,6 +498,8 @@ public class AtlantisPainter {
      */
     private static void paintColoredCirclesAroundUnits() {
         for (AUnit unit : Select.ourRealUnits().listUnits()) {
+            APosition unitPosition = unit.getPosition();
+            APosition targetPosition = unit.getTargetPosition();
 
             // STARTING ATTACK
             if (unit.isStartingAttack()) {
@@ -554,66 +526,83 @@ public class AtlantisPainter {
 //                paintCircle(unit, 6, Color.Teal);
 //                paintCircle(unit, 5, Color.Teal);
 //            }
-//
-//            // RUN
-//            if (AtlantisRunning.isRunning(unit)) {
-//                paintLine(unit.getPosition(), AtlantisRunning.getNextPositionToRunTo(unit), Color.Blue);
-//            }
+
+            // RUN
+            if (unit.isRunning()) {
+                paintLine(unit.getPosition(), unit.getRunning().getNextPositionToRunTo(), Color.Blue);
+
+                // =========================================================
+                // === Paint white flags over running units
+                // =========================================================
+                if (unit.isRunning()) {
+                    int flagWidth = 15;
+                    int flagHeight = 8;
+                    int dy = 12;
+
+                    paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
+
+                    paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - dy),
+                            flagWidth, flagHeight, Color.White); // White flag
+                    paintRectangle(unitPosition.translateByPixels(0, -flagHeight - dy),
+                            flagWidth, flagHeight, Color.Grey); // Flag border
+                    paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
+                            2, flagHeight, Color.Grey); // Flag stick
+                }
+            }
 //            
 //            // Paint #ID
 //            paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
-            // BUILDER
+                // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
 //                paintCircle(unit, 15, Color.Teal);
 //                paintCircle(unit, 13, Color.Teal);
 //                paintCircle(unit, 11, Color.Teal);
 //            }
-            // Current COMMAND
+                // Current COMMAND
 //            if (!unit.isMoving()) {
 //                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
 //            }
-            // =========================================================
-            Color color = Color.Grey;
-            if (unit.getUnitMission() != null) {
-                if (unit.getUnitMission().equals(UnitMissions.MOVE)) {
-                    color = Color.Teal;
-                } else if (unit.getUnitMission().isAttacking()) {
-                    color = Color.Green;
-                } else if (unit.getUnitMission().equals(UnitMissions.RUN_FROM_UNIT)) {
-                    color = Color.Orange;
-                } else if (unit.getUnitMission().equals(UnitMissions.RETREAT)) {
-                    color = Color.Orange;
-                } else if (unit.getUnitMission().equals(UnitMissions.HEAL)) {
-                    color = Color.Blue;
-                } else if (unit.getUnitMission().equals(UnitMissions.BUILD)) {
-                    color = Color.White;
-                } else if (unit.getUnitMission().equals(UnitMissions.REPAIR)) {
-                    color = Color.White;
+                // =========================================================
+                Color color = Color.Grey;
+                if (unit.getUnitMission() != null) {
+                    if (unit.getUnitMission().equals(UnitMissions.MOVE)) {
+                        color = Color.Teal;
+                    } else if (unit.getUnitMission().isAttacking()) {
+                        color = Color.Green;
+                    } else if (unit.getUnitMission().equals(UnitMissions.RUN_FROM_UNIT)) {
+                        color = Color.Orange;
+                    } else if (unit.getUnitMission().equals(UnitMissions.RETREAT)) {
+                        color = Color.Orange;
+                    } else if (unit.getUnitMission().equals(UnitMissions.HEAL)) {
+                        color = Color.Blue;
+                    } else if (unit.getUnitMission().equals(UnitMissions.BUILD)) {
+                        color = Color.White;
+                    } else if (unit.getUnitMission().equals(UnitMissions.REPAIR)) {
+                        color = Color.White;
+                    }
+//            else if (unit.getUnitMission().equals(UnitMissions.)) {
+//                color = Color.;
+//            }
+//            else if (unit.getUnitMission().equals(UnitMissions.)) {
+//                color = Color.;
+//            }
                 }
-//            else if (unit.getUnitMission().equals(UnitMissions.)) {
-//                color = Color.;
-//            }
-//            else if (unit.getUnitMission().equals(UnitMissions.)) {
-//                color = Color.;
-//            }
-            }
 
-            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
-                paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
-            }
+                if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+                    paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
+                }
 
-            if (unit.isWorker() && unit.isIdle()) {
-                paintCircle(unit, 10, Color.Black);
-                paintCircle(unit, 8, Color.Black);
-                paintCircle(unit, 6, Color.Black);
-                paintCircle(unit, 4, Color.Black);
+                if (unit.isWorker() && unit.isIdle()) {
+                    paintCircle(unit, 10, Color.Black);
+                    paintCircle(unit, 8, Color.Black);
+                    paintCircle(unit, 6, Color.Black);
+                    paintCircle(unit, 4, Color.Black);
+                }
             }
         }
-    }
-
-    /**
-     * Paints progress bar with percent of completion over all buildings under construction.
-     */
+        /**
+         * Paints progress bar with percent of completion over all buildings under construction.
+         */
     private static void paintConstructionProgress() {
         for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
             if (unit.isCompleted()) {
@@ -818,14 +807,13 @@ public class AtlantisPainter {
         for (AUnit unit : Select.ourCombatUnits().listUnits()) {
 //            if (unit.hasTooltip()) {
             String string = "";
-            
+
             if (unit.hasTooltip()) {
                 string += unit.getTooltip();
-            }
-            else {
+            } else {
                 string += "---";
             }
-            
+
 //            string += "/";
 //            
 //            if (unit.getUnitMission() != null) {
@@ -834,7 +822,6 @@ public class AtlantisPainter {
 //            else {
 //                string += "no_mission";
 //            }
-            
             paintTextCentered(unit.getPosition(), string, Color.White);
 //            }
         }
@@ -874,16 +861,16 @@ public class AtlantisPainter {
                 boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
                         worker, AUnitType.Terran_Supply_Depot, position
                 );
-                
+
                 paintCircleFilled(position, 4, canBuild ? Color.Green : Color.Red);
-                
+
                 if (x == tileX && y == tileY) {
                     paintCircleFilled(position, 10, canBuild ? Color.Green : Color.Red);
                 }
             }
         }
     }
-    
+
     // =========================================================
     // Lo-level
     public static void paintSideMessage(String text, Color color) {

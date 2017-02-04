@@ -42,7 +42,7 @@ public class AtlantisCombatUnitManager {
 
         // =========================================================
         // Act with proper micro-manager and decide if mission manager can issue orders afterward.
-        boolean isMissionManagerAllowed = squad.getMicroManager().update(unit);
+        boolean isMissionManagerControlForbbiden = squad.getMicroManager().update(unit);
 //        if (squad != null) {
 //            isMissionManagerAllowed = squad.getMicroManager().update(unit);
 //        }
@@ -52,7 +52,7 @@ public class AtlantisCombatUnitManager {
 
         // =========================================================
         // MISSION manager execution is FORBIDDEN
-        if (!isMissionManagerAllowed) {
+        if (isMissionManagerControlForbbiden) {
             return true;
         } 
 

@@ -1,5 +1,6 @@
 package atlantis.combat.squad.missions;
 
+import atlantis.AtlantisGame;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -20,10 +21,20 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean update(AUnit unit) {
+        
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            return false;
+        }
+        
+        // =========================================================
+        
         APosition focusPoint = getFocusPoint();
         if (focusPoint == null) {
             System.err.println("Couldn't define choke point.");
-            return false;
+            throw new RuntimeException("Couldn't define choke point.");
+//            return false;
         }
 
         // =========================================================
@@ -121,6 +132,15 @@ public class MissionDefend extends Mission {
     // =========================================================
     
     public static APosition getFocusPoint() {
+        
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            return null;
+        }
+        
+        // =========================================================
+        
         if (Select.ourBases().count() <= 1) {
             return APosition.createFrom(AtlantisMap.getMainBaseChokepoint().getCenter());
         }
