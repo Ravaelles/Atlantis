@@ -60,13 +60,13 @@ public class AtlantisMineralGathering {
         }
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals = (List<AUnit>) Select.minerals().inRadius(12, base.getPosition()).listUnits();
+        List<AUnit> minerals = (List<AUnit>) Select.minerals().inRadius(12, base).listUnits();
         if (!minerals.isEmpty()) {
 
             // Count how many other workers gather this mineral
             Map<AUnit, Integer> workersPerMineral = new HashMap<>();
 
-            Collection<AUnit> ourWorkersInRange = (Collection<AUnit>) Select.ourWorkers().inRadius(12, base.getPosition()).list();
+            Collection<AUnit> ourWorkersInRange = (Collection<AUnit>) Select.ourWorkers().inRadius(12, base).list();
 //            for (AUnit otherWorker : ourWorkersInRange) {
 //                if (otherWorker.isGatheringMinerals()) {
 //                    AUnit mineralMined = otherWorker.getTarget();

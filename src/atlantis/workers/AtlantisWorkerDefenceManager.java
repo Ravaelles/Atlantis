@@ -33,9 +33,9 @@ public class AtlantisWorkerDefenceManager {
     private static boolean handleFightEnemyIfNeeded(AUnit worker) {
         
         // DESTROY ENEMY BUILDINGS that are being built close to main base.
-        if (Select.ourBases().inRadius(20, worker.getPosition()).count() > 0) {
+        if (Select.ourBases().inRadius(20, worker).count() > 0) {
             for (AUnit enemyBuilding : Select.enemy().buildings()
-                    .inRadius(20, worker.getPosition()).listUnits()) {
+                    .inRadius(20, worker).listUnits()) {
 
                 // Attack enemy building
                 worker.attackUnit(enemyBuilding);
@@ -44,7 +44,7 @@ public class AtlantisWorkerDefenceManager {
         }
         
         // FIGHT AGAINST ENEMY WORKERS
-        for (AUnit enemy : Select.enemy().inRadius(2, worker.getPosition()).listUnits()) {
+        for (AUnit enemy : Select.enemy().inRadius(2, worker).listUnits()) {
             if (enemy.isWorker() && worker.getHP() >= 11) {
                 worker.attackUnit(enemy);
                 return true;
@@ -60,7 +60,7 @@ public class AtlantisWorkerDefenceManager {
     private static boolean handleRunFromEnemyIfNeeded(AUnit worker) {
         
         // Define list of all units that are in range of shot.
-        Collection<AUnit> enemiesInRange = Select.enemy().inRadius(12, worker.getPosition())
+        Collection<AUnit> enemiesInRange = Select.enemy().inRadius(12, worker)
                 .canAttack(worker).listUnits();
         
         // Run from every combat unit...

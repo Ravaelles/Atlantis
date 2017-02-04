@@ -94,7 +94,7 @@ public abstract class AbstractMicroManager {
         }
         
         if (unit.getHitPoints() <= 16 || unit.getHPPercent() < 30) {
-            if (Select.ourCombatUnits().inRadius(4, unit.getPosition()).count() <= 6) {
+            if (Select.ourCombatUnits().inRadius(4, unit).count() <= 6) {
                 return AtlantisRunManager.run(unit);
             }
         }
@@ -107,7 +107,7 @@ public abstract class AbstractMicroManager {
      */
     protected boolean handleDontSpreadTooMuch(AUnit unit) {
         Squad squad = unit.getSquad();
-        Select ourUnits = Select.from(squad.arrayList()).inRadius(10, unit.getPosition());
+        Select ourUnits = Select.from(squad.arrayList()).inRadius(10, unit);
         int ourUnitsNearby = ourUnits.count();
         int minUnitsNearby = (int) (squad.size() * 0.66);
         
@@ -127,7 +127,7 @@ public abstract class AbstractMicroManager {
     
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         if (unit.getType().isRangedUnit()) {
-            AUnit enemy = (AUnit) Select.enemyRealUnits().melee().inRadius(1.5, unit.getPosition()).nearestTo(unit.getPosition());
+            AUnit enemy = (AUnit) Select.enemyRealUnits().melee().inRadius(1.0, unit).nearestTo(unit.getPosition());
             if (enemy != null && !unit.isStartingAttack()) {
                 unit.runFrom(enemy);
                 unit.setTooltip("Melee " + enemy.getShortName() + "!");
@@ -142,7 +142,7 @@ public abstract class AbstractMicroManager {
      * @return <b>true</b> if any of the enemy units in range can shoot at this unit.
      */
     protected boolean isInShootRangeOfAnyEnemyUnit(AUnit unit) {
-    	Collection<AUnit> enemiesInRange = (Collection<AUnit>) Select.enemy().combatUnits().inRadius(12, unit.getPosition()).listUnits();
+    	Collection<AUnit> enemiesInRange = (Collection<AUnit>) Select.enemy().combatUnits().inRadius(12, unit).listUnits();
         for (AUnit enemy : enemiesInRange) {
             WeaponType enemyWeapon = (unit.isAirUnit() ? enemy.getAirWeapon() : enemy.getGroundWeapon());
             double distToEnemy = PositionUtil.distanceTo(unit, enemy);

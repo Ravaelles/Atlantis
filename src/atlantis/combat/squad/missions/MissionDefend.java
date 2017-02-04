@@ -70,7 +70,7 @@ public class MissionDefend extends Mission {
     }
 
     private boolean isTooManyUnitsAround(AUnit unit, APosition focusPoint) {
-        return Select.ourCombatUnits().inRadius(1.0, unit.getPosition()).count() >= 3;
+        return Select.ourCombatUnits().inRadius(1.0, unit).count() >= 3;
     }
 
     private boolean isCloseEnoughToFocusPoint(AUnit unit, APosition focusPoint) {

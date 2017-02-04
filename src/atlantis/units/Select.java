@@ -343,6 +343,21 @@ public class Select<T> {
     }
 
     /**
+     * Returns all units that are closer than <b>maxDist</b> tiles from given <b>otherUnit</b>.
+     */
+    public Select<?> inRadius(double maxDist, AUnit otherUnit) {
+        Iterator<T> unitsIterator = data.iterator();// units.iterator();
+        while (unitsIterator.hasNext()) {
+            APositionedObject unit = (APositionedObject) unitsIterator.next();
+            if (unit.distanceTo(otherUnit) > maxDist) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
+    /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
     public Select<?> inRadius(double maxDist, Position position) {

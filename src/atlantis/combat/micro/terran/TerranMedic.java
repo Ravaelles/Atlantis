@@ -65,7 +65,7 @@ public class TerranMedic {
         AUnit unitAssignedForMedic = getInfantryAssignedForThisMedic(medic);
         if (unitAssignedForMedic != null) {
             if (unitAssignedForMedic.distanceTo(medic) > 1.9) {
-                if (Select.ourTerranInfantryWithoutMedics().inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic.getPosition()).count() <= 2) {
+                if (Select.ourTerranInfantryWithoutMedics().inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).count() <= 2) {
                     medic.move(unitAssignedForMedic.getPosition(), UnitMissions.MOVE);
                     return true;
                 }
@@ -81,7 +81,7 @@ public class TerranMedic {
         }
 
         AUnit nearestWoundedInfantry = (AUnit) Select.ourCombatUnits().infantry().wounded()
-                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic.getPosition()).nearestTo(medic.getPosition());
+                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).nearestTo(medic.getPosition());
 
         // =========================================================
         // If there's a wounded unit, heal it.

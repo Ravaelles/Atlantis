@@ -20,7 +20,7 @@ public class AtlantisEnemyTargeting {
         // =========================================================
         // Attack top priority units
         nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
-                .inRadius(14, unit.getPosition())
+                .inRadius(14, unit)
                 .ofType(
                         AUnitType.Terran_Siege_Tank_Siege_Mode,
                         AUnitType.Terran_Siege_Tank_Tank_Mode,

@@ -96,7 +96,7 @@ public class AtlantisPainter {
         bwapi.setTextSize(Enum.Small);
         
         paintImportantPlaces();
-        paintColorCirclesAroundUnits();
+        paintColoredCirclesAroundUnits();
 //        paintConstructionProgress();
         paintConstructionPlaces();
         paintBuildingHealth();
@@ -159,14 +159,15 @@ public class AtlantisPainter {
             if (unit.isRunning()) {
                 int flagWidth = 15;
                 int flagHeight = 8;
+                int dy = 12;
 
                 paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
 
-                paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - 2),
+                paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - dy),
                         flagWidth, flagHeight, Color.White); // White flag
-                paintRectangle(unitPosition.translateByPixels(0, -flagHeight - 2),
+                paintRectangle(unitPosition.translateByPixels(0, -flagHeight - dy),
                         flagWidth, flagHeight, Color.Grey); // Flag border
-                paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - 2),
+                paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
                         2, flagHeight, Color.Red); // Flag stick
             }
 
@@ -516,19 +517,19 @@ public class AtlantisPainter {
     /**
      * Paints circles around units which mean what's their mission.
      */
-    private static void paintColorCirclesAroundUnits() {
+    private static void paintColoredCirclesAroundUnits() {
         for (AUnit unit : Select.ourRealUnits().listUnits()) {
 
-//            // STARTING ATTACK
-//            if (unit.isStartingAttack()) {
-//                paintCircle(unit, 10, Color.Yellow);
-//                paintCircle(unit, 9, Color.Yellow);
-//            }
-//            // ATTACK FRAME
-//            if (unit.isAttackFrame()) {
-//                paintCircle(unit, 13, Color.Orange);
-//                paintCircle(unit, 14, Color.Orange);
-//            }
+            // STARTING ATTACK
+            if (unit.isStartingAttack()) {
+                paintCircle(unit, 10, Color.Brown);
+                paintCircle(unit, 9, Color.Brown);
+            }
+            // ATTACK FRAME
+            if (unit.isAttackFrame()) {
+                paintCircle(unit, 13, Color.Orange);
+                paintCircle(unit, 14, Color.Orange);
+            }
 //            // ATTACKING
 //            if (unit.isAttacking()) {
 //                paintCircle(unit, 12, Color.Red);

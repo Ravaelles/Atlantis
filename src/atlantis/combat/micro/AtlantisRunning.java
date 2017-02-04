@@ -129,7 +129,7 @@ public class AtlantisRunning {
 
         // Get all of our units that are close to this unit. 
         //TODO: this cast seems to be safe, as units will be visible
-        Collection<AUnit> ourUnitsNearby = Select.our().inRadius(1.5, ourUnit.getPosition()).listUnits();
+        Collection<AUnit> ourUnitsNearby = Select.our().inRadius(1.5, ourUnit).listUnits();
 
         // Tell them to run as well, not to block our escape route
         for (AUnit ourOtherUnit : ourUnitsNearby) {

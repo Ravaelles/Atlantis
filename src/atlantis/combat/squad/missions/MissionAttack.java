@@ -30,7 +30,7 @@ public class MissionAttack extends Mission {
         // Focus point is well known
         if (focusPoint != null) {
         	//System.out.println("-Dist to focus point: " + PositionUtil.distanceTo(focusPoint, unit.getPosition()));
-            if (unit.distanceTo(focusPoint) > 5) {
+            if (unit.distanceTo(focusPoint) > 10 && !unit.isAttacking() && !unit.isMoving()) {
                 unit.attack(focusPoint, UnitMissions.ATTACK_POSITION);
                 unit.setTooltip("Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
                 return true;

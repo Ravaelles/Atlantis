@@ -88,9 +88,9 @@ public class AtlantisWorkerCommander {
         Units baseWorkersRatios = new Units();
 //        System.out.println();
         for (AUnit base : ourBases) {
-//            int numOfWorkersNearBase = Select.ourWorkersThatGather(false).inRadius(15, ourBase.getPosition()).count();
+//            int numOfWorkersNearBase = Select.ourWorkersThatGather(false).inRadius(15, ourBase).count();
             int numOfWorkersNearBase = AtlantisWorkerManager.getHowManyWorkersGatheringAt(base);
-            int numOfMineralsNearBase = Select.minerals().inRadius(10, base.getPosition()).count() + 1;
+            int numOfMineralsNearBase = Select.minerals().inRadius(10, base).count() + 1;
 //            if (numOfWorkersNearBase <= 2) {
 //                continue;
 //            }
@@ -126,7 +126,7 @@ public class AtlantisWorkerCommander {
         // === Perform worker transfer from base to base ========================================
 
         AUnit worker = (AUnit) Select.ourWorkersThatGather(true)
-                .inRadius(12, baseWithMostWorkers.getPosition())
+                .inRadius(12, baseWithMostWorkers)
                 .nearestTo(baseWithFewestWorkers);
         if (worker != null) {
             worker.move(baseWithFewestWorkers.getPosition(), UnitMissions.MOVE);

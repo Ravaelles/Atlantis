@@ -112,12 +112,12 @@ public class AtlantisCombatEvaluator {
         // =========================================================
         // Define nearby enemy and our units
         //TODO: check safety of these casts
-        Collection<AUnit> enemyUnits = (Collection<AUnit>) Select.enemy().combatUnits().inRadius(12, unit.getPosition()).listUnits();
+        Collection<AUnit> enemyUnits = (Collection<AUnit>) Select.enemy().combatUnits().inRadius(12, unit).listUnits();
         if (enemyUnits.isEmpty()) {
 //            return updateCombatEval(unit, +999);
             return MAX_VALUE;
         }
-        Collection<AUnit> ourUnits = (Collection<AUnit>) Select.our().combatUnits().inRadius(8.5, unit.getPosition()).listUnits();
+        Collection<AUnit> ourUnits = (Collection<AUnit>) Select.our().combatUnits().inRadius(8.5, unit).listUnits();
 
         // =========================================================
         // Evaluate our and enemy strength

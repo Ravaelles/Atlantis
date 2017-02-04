@@ -81,11 +81,11 @@ public class AtlantisCombatEvaluatorExtraConditions {
         // If enemy is somewhat near, disallow attacking without support
         else {
             if (AtlantisGame.playsAsTerran()) {
-                return Select.ourCombatUnits().inRadius(2.5, unit.getPosition()).count() <= 2
-                        || Select.ourCombatUnits().inRadius(5, unit.getPosition()).count() <= 5;
+                return Select.ourCombatUnits().inRadius(2.5, unit).count() <= 2
+                        || Select.ourCombatUnits().inRadius(5, unit).count() <= 5;
             }
             else {
-                return Select.ourCombatUnits().inRadius(8, unit.getPosition()).count() <= 6;
+                return Select.ourCombatUnits().inRadius(8, unit).count() <= 6;
             }
         }
     }
