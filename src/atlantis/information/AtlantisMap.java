@@ -279,7 +279,7 @@ public class AtlantisMap {
                 // Exclude our base location if needed.
                 if (excludeOurStartLocation) {
                     AUnit mainBase = Select.mainBase();
-                    if (mainBase != null && PositionUtil.distanceTo(mainBase.getPosition(), baseLocation.getPosition()) <= 10) {
+                    if (mainBase != null && PositionUtil.distanceTo(mainBase, baseLocation.getPosition()) <= 10) {
                         continue;
                     }
                 }
@@ -371,13 +371,14 @@ public class AtlantisMap {
     public static void disableSomeOfTheChokePoints() {
         AUnit mainBase = Select.mainBase();
         if (mainBase == null) {
-            System.out.println("Error #821493a");
             return;
         }
 
         Region baseRegion = getRegion(mainBase.getPosition());
         if (baseRegion == null) {
-            System.out.println("Error #821493b");
+            System.err.println("Error #821493b");
+            System.err.println("Main base = " + mainBase);
+            System.err.println("Base region = " + baseRegion);
             return;
         }
 

@@ -19,6 +19,7 @@ import bwapi.UpgradeType;
 public class AtlantisGame {
 
     private static Player _enemy = null; // Cached enemy player
+    private static boolean umtMode = false; // Should be set to `true` on UMT (custom) maps
 
     // =========================================================
     /**
@@ -204,6 +205,23 @@ public class AtlantisGame {
         return Atlantis.getBwapi().neutral();
     }
 
+    /**
+     * UMT maps are custom made maps, which may be used to test micro-management.
+     */
+    public static boolean isUmtMode() {
+        return umtMode;
+    }
+
+    /**
+     * UMT maps are custom made maps, which may be used to test micro-management.
+     */
+    public static void setUmtMode(boolean umtMode) {
+        AtlantisGame.umtMode = umtMode;
+        if (umtMode) {
+            System.out.println("UMT mode has been enabled!");
+        }
+    }
+    
     // =========================================================
     // Auxiliary
     /**

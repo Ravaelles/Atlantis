@@ -20,11 +20,18 @@ public class AtlantisMineralGathering {
      * Assign all 4 workers to optimal (closest) minerals fields.
      */
     public static void initialAssignWorkersToMinerals() {
+        AUnit mainBase = Select.mainBase();
+        if (mainBase == null) {
+//            System.err.println("No main base found - skip initial workers assignment");
+            AtlantisGame.setUmtMode(true);
+            return;
+        }
+        
+        // =========================================================
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        //TODO check safety of this cast
-        List<AUnit> minerals = (List<AUnit>) Select.minerals().inRadius(12, Select.mainBase().getPosition())
-                .sortDataByDistanceTo(Select.mainBase().getPosition(), true);
+        List<AUnit> minerals = (List<AUnit>) Select.minerals().inRadius(12, mainBase)
+                .sortDataByDistanceTo(mainBase.getPosition(), true);
 
         // Get our workers
         Collection<AUnit> workers = Select.ourWorkers().listUnits();

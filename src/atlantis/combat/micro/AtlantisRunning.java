@@ -44,11 +44,11 @@ public class AtlantisRunning {
     public boolean runFrom(AUnit chaser) {
         
         // TEMP fix
-        if (true) {
-            _isRunning = true;
-            unit.move(Select.mainBase().getPosition(), UnitMissions.RUN_FROM_UNIT);
-            return true;
-        }
+//        if (true) {
+//            _isRunning = true;
+//            unit.move(Select.mainBase().getPosition(), UnitMissions.RUN_FROM_UNIT);
+//            return true;
+//        }
         
         // =========================================================
         

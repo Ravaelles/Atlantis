@@ -344,6 +344,15 @@ public class AtlantisPainter {
      * Paints important choke point near the base.
      */
     private static void paintImportantPlaces() {
+        
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            return;
+        }
+        
+        // =========================================================
+        
         APosition position;
 
         // Main DEFEND focus point

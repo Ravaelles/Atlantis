@@ -18,8 +18,21 @@ public class AtlantisEnemyTargeting {
         AUnit nearestEnemy = null;
         
         // =========================================================
+        // Attack deadliest shit out there
+        
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
+                .inRadius(14, unit)
+                .ofType(
+                        AUnitType.Terran_Vulture_Spider_Mine
+                ).nearestTo(unit.getPosition());
+        if (nearestEnemy != null) {
+            return nearestEnemy;
+        }
+        
+        // =========================================================
         // Attack top priority units
-        nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+        
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
                 .inRadius(14, unit)
                 .ofType(
                         AUnitType.Terran_Siege_Tank_Siege_Mode,
@@ -46,7 +59,7 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // If no real units found, try selecting important buildings
-        nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
                 .ofType(AUnitType.Protoss_Zealot, AUnitType.Protoss_Dragoon, 
                         AUnitType.Terran_Marine, AUnitType.Terran_Medic, 
                         AUnitType.Terran_Firebat, AUnitType.Zerg_Zergling, 
@@ -57,7 +70,7 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // Try selecting defensive buildings
-        nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
                 .ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony, 
                         AUnitType.Terran_Bunker).nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
@@ -73,7 +86,7 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // If no real units found, try selecting important buildings
-        nearestEnemy = (AUnit) Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
                 .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool, 
                         AUnitType.Terran_Command_Center).nearestTo(unit.getPosition());
         if (nearestEnemy != null) {

@@ -8,7 +8,10 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.missions.UnitMissions;
+import atlantis.wrappers.APosition;
+import bwapi.Position;
 import bwta.BaseLocation;
+import bwta.Region;
 import java.util.ArrayList;
 
 public class AtlantisScoutManager {
@@ -92,6 +95,12 @@ public class AtlantisScoutManager {
             return;
         }
 
+        // === Handle UMT ==========================================
+        if (AtlantisGame.isUmtMode()) {
+            handleUmtExplore(scout);
+            return;
+        }
+
         // =========================================================
         // Get nearest unexplored starting location and go there
         BaseLocation startingLocation;
@@ -118,7 +127,7 @@ public class AtlantisScoutManager {
 
         // ZERG case
         if (AtlantisGame.playsAsZerg()) {
-            
+
             // We know enemy building
             if (AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
                 if (AtlantisGame.getTimeSeconds() < 600) {
@@ -132,16 +141,12 @@ public class AtlantisScoutManager {
                         }
                     }
                 }
-            } 
-
-            // Haven't discovered any enemy building
+            } // Haven't discovered any enemy building
             else {
                 scouts.clear();
                 scouts.addAll(Select.ourCombatUnits().listUnits());
             }
-        } 
-
-        // =========================================================
+        } // =========================================================
         // TERRAN + PRTOSSS
         else if (scouts.isEmpty() && Select.ourWorkers().count() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
             scouts.add(Select.ourWorkers().first());
@@ -155,13 +160,36 @@ public class AtlantisScoutManager {
         }
     }
 
-    // =========================================================
+    private static void handleUmtExplore(AUnit scout) {
+        APosition focusPoint = getUmtFocusPoint(scout.getPosition());
+        
+        if (focusPoint != null) {
+            scout.attack(focusPoint, UnitMissions.ATTACK_POSITION);
+        }
+    }
     
+    public static APosition getUmtFocusPoint(APosition startPosition) {
+        Region region = AtlantisMap.getRegion(startPosition);
+        Region regionToVisit = null;
+        APosition regionToVisitPoint = null;
+        
+        for (Region reachableRegion : region.getReachableRegions()) {
+            if (!AtlantisMap.isExplored(reachableRegion.getCenter())) {
+                regionToVisit = reachableRegion;
+                regionToVisitPoint = APosition.createFrom(reachableRegion.getCenter());
+                return regionToVisitPoint;
+            }
+        }
+        
+        return null;
+    }
+
+    // =========================================================
     /**
      * Returns true if given unit has been assigned to explore the map.
      */
     public static boolean isScout(AUnit unit) {
         return scouts.contains(unit);
     }
-    
+
 }

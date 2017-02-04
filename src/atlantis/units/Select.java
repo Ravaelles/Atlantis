@@ -197,7 +197,7 @@ public class Select<T> {
     }
 
     /**
-     * Selects our unfinished units.
+     * Selects our units, not buildings, not spider mines, not larvae.
      */
     public static Select<AUnit> ourRealUnits() {
         List<AUnit> data = new ArrayList<>();
@@ -811,7 +811,7 @@ public class Select<T> {
     /**
      * From all units currently in selection, returns closest unit to given <b>position</b>.
      */
-    public T nearestTo(Object positionOrUnit) {
+    public AUnit nearestTo(Object positionOrUnit) {
         if (data.isEmpty() || positionOrUnit == null) {
             return null;
         }
@@ -828,7 +828,7 @@ public class Select<T> {
         }
         
         sortDataByDistanceTo(position, true);
-        return data.get(0);	//first();
+        return (AUnit) data.get(0);
     }
 
     /**

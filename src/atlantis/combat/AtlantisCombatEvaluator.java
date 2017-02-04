@@ -153,6 +153,13 @@ public class AtlantisCombatEvaluator {
     }
 
     // =========================================================
+    
+    /**
+     * Calculate total strength value of given units set. 
+     * It's always evaluated from a perspective of particular unit, in this case <b>againstUnit</b>.
+     * Also it makes sense to distguish before enemy evaluation (we will almost always understimate enemy
+     * strength) or our own evaluation (we're likely to overestimate our strength).
+     */
     private static double evaluateUnitsAgainstUnit(Collection<AUnit> units, AUnit againstUnit, boolean isEnemyEval) {
         double strength = 0;
         boolean enemyDefensiveBuildingFound = false;
@@ -205,6 +212,7 @@ public class AtlantisCombatEvaluator {
     }
 
     // =========================================================
+    
     private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
         return evaluateUnitHPandDamage(evaluate.getType(), evaluate.getHitPoints(), againstUnit);
     }
@@ -215,6 +223,12 @@ public class AtlantisCombatEvaluator {
     }
 
     private static double evaluateUnitHPandDamage(AUnitType evaluateType, int hp, AUnit againstUnit) {
+        if (evaluateType.isSpiderMine()) {
+            return 0;
+        }
+        
+        // =========================================================
+        
         double damage = ( againstUnit.isAirUnit()
             ? WeaponUtil.getDamageNormalized(evaluateType.getAirWeapon())
             : WeaponUtil.getDamageNormalized(evaluateType.getGroundWeapon())

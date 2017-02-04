@@ -749,4 +749,10 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
+    public boolean isSpiderMine() {
+        return isType(
+                AUnitType.Terran_Vulture_Spider_Mine
+        );
+    }
+
 }

@@ -1,9 +1,12 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.Atlantis;
+import atlantis.AtlantisGame;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
+import atlantis.scout.AtlantisScoutManager;
+import static atlantis.scout.AtlantisScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.missions.UnitMissions;
@@ -59,6 +62,20 @@ public class MissionAttack extends Mission {
      * because as far as we know, the enemy is/can be there and it makes sense to attack in this region.
      */
     public static APosition getFocusPoint() {
+
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            AUnit firstUnit = Select.ourRealUnits().first();
+            if (firstUnit != null) {
+                return getUmtFocusPoint(firstUnit.getPosition());
+            }
+            else {
+                return null;
+            }
+        }
+        
+        // =========================================================
 
         // Try going near enemy base
 //        Position enemyBase = AtlantisEnemyInformationManager.getEnemyBase();
