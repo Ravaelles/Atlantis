@@ -223,7 +223,7 @@ public class AtlantisCombatEvaluator {
     }
 
     private static double evaluateUnitHPandDamage(AUnitType evaluateType, int hp, AUnit againstUnit) {
-        if (evaluateType.isSpiderMine()) {
+        if (evaluateType.isSpiderMine() || evaluateType.isNeutralType() || evaluateType.isInvincible()) {
             return 0;
         }
         

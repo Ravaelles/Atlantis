@@ -42,21 +42,21 @@ public class AtlantisCombatUnitManager {
 
         // =========================================================
         // Act with proper micro-manager and decide if mission manager can issue orders afterward.
-        boolean microManagerForbidsOtherActions = false;
-        if (squad != null) {
-            microManagerForbidsOtherActions = squad.getMicroManager().update(unit);
-        }
-        else {
-            System.err.println(unit + " sq null for unit " + unit);
-        }
+        boolean isMissionManagerAllowed = squad.getMicroManager().update(unit);
+//        if (squad != null) {
+//            isMissionManagerAllowed = squad.getMicroManager().update(unit);
+//        }
+//        else {
+//            System.err.println(unit + " sq null for unit " + unit);
+//        }
 
-        // MICRO-MANAGER indicates that its orders should not be overriden by mission manager
-        if (microManagerForbidsOtherActions) {
+        // =========================================================
+        // MISSION manager execution is FORBIDDEN
+        if (!isMissionManagerAllowed) {
             return true;
         } 
 
-        // =========================================================
-        // It's okay to handle MISSION orders according to current mission (e.g. DEFEND, ATTACK)
+        // MISSION manager exection is ALLOWED
         else {
             if (squad == null) {
                 System.err.println("squad is NULLz!");

@@ -201,7 +201,7 @@ public class AtlantisRunning {
             }
         }
 
-        return Select.mainBase().getPosition();
+        return null;
     }
 
     // =========================================================

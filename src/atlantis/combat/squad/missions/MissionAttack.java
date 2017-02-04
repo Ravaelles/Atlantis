@@ -29,13 +29,13 @@ public class MissionAttack extends Mission {
     @Override
     public boolean update(AUnit unit) {
         APosition focusPoint = getFocusPoint();
-        //System.out.println("Focus point: " + focusPoint);	//TODO DEBUG
+        unit.setTooltip("#MA");
+        
         // Focus point is well known
         if (focusPoint != null) {
-        	//System.out.println("-Dist to focus point: " + PositionUtil.distanceTo(focusPoint, unit.getPosition()));
             if (unit.distanceTo(focusPoint) > 10 && !unit.isAttacking() && !unit.isMoving()) {
                 unit.attack(focusPoint, UnitMissions.ATTACK_POSITION);
-                unit.setTooltip("Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
+                unit.setTooltip("#MA:Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
                 return true;
             }
         } 
@@ -47,11 +47,13 @@ public class MissionAttack extends Mission {
             if (position != null) {
                 unit.attack(position, UnitMissions.ATTACK_POSITION);	
                 Atlantis.getBwapi().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
-                unit.setTooltip("Attack!"); //TODO: DEBUG
-//                unit.setTooltip("Mission spread");
+                unit.setTooltip("#MA:Forward!");
                 return true;
             }
         }
+        
+        unit.setTooltip("#MA:Nothing");
+        
         return false;
     }
 

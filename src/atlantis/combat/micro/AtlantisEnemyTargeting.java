@@ -21,7 +21,7 @@ public class AtlantisEnemyTargeting {
         // Attack deadliest shit out there
         
         nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
-                .inRadius(14, unit)
+                .canBeAttackedBy(unit)
                 .ofType(
                         AUnitType.Terran_Vulture_Spider_Mine
                 ).nearestTo(unit.getPosition());
@@ -33,7 +33,7 @@ public class AtlantisEnemyTargeting {
         // Attack top priority units
         
         nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
-                .inRadius(14, unit)
+                .canBeAttackedBy(unit)
                 .ofType(
                         AUnitType.Terran_Siege_Tank_Siege_Mode,
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
@@ -47,7 +47,9 @@ public class AtlantisEnemyTargeting {
         // =========================================================
         // Attack nearest enemy
         if (AtlantisGame.getTimeSeconds() < 180) {
-            nearestEnemy = Select.enemyRealUnits(canAttackGround, canAttackAir).nearestTo(unit.getPosition());
+            nearestEnemy = Select.enemyRealUnits(canAttackGround, canAttackAir)
+                    .canBeAttackedBy(unit)
+                    .nearestTo(unit.getPosition());
             if (nearestEnemy != null && nearestEnemy.getType().isWorker() 
                     && PositionUtil.distanceTo(nearestEnemy, Select.mainBase()) < 30) {
 //                return null;
@@ -59,43 +61,53 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // If no real units found, try selecting important buildings
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	
                 .ofType(AUnitType.Protoss_Zealot, AUnitType.Protoss_Dragoon, 
                         AUnitType.Terran_Marine, AUnitType.Terran_Medic, 
                         AUnitType.Terran_Firebat, AUnitType.Zerg_Zergling, 
-                        AUnitType.Zerg_Hydralisk).nearestTo(unit.getPosition());
+                        AUnitType.Zerg_Hydralisk)
+                .canBeAttackedBy(unit)
+                .nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
         
         // =========================================================
         // Try selecting defensive buildings
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	
                 .ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony, 
-                        AUnitType.Terran_Bunker).nearestTo(unit.getPosition());
+                        AUnitType.Terran_Bunker)
+                .canBeAttackedBy(unit)
+                .nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
         
         // =========================================================
         // Try selecting real units
-        nearestEnemy = Select.enemyRealUnits(canAttackGround, canAttackAir).nearestTo(unit.getPosition());
+        nearestEnemy = Select.enemyRealUnits(canAttackGround, canAttackAir)
+                .canBeAttackedBy(unit)
+                .nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
         
         // =========================================================
         // If no real units found, try selecting important buildings
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	//TODO: check safety of cast
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
                 .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool, 
-                        AUnitType.Terran_Command_Center).nearestTo(unit.getPosition());
+                        AUnitType.Terran_Command_Center)
+                .canBeAttackedBy(unit)
+                .nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
         
         // =========================================================
         // Okay, try targeting any-fuckin-thing
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir).nearestTo(unit.getPosition());
+        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
+                .canBeAttackedBy(unit)
+                .nearestTo(unit.getPosition());
         if (nearestEnemy != null) {
             return nearestEnemy;
         }

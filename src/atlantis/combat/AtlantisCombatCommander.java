@@ -16,7 +16,11 @@ public class AtlantisCombatCommander {
             Missions.handleGlobalMission();
         }
         
-        handleAllSquads();
+        // === Handle all squads ========================================
+        
+        for (Squad squad : AtlantisSquadManager.getSquads()) {
+            handleSquad(squad);
+        }
     }
 
     // =========================================================
@@ -40,15 +44,6 @@ public class AtlantisCombatCommander {
 //            System.out.println("Commander (" + (unit.getSquad() != null) + "): " + unit);
 //            unit.setTooltip("C:" + AtlantisGame.getTimeFrames());
             AtlantisCombatUnitManager.update(unit, squad);
-        }
-    }
-
-    /**
-     * Acts with all (combat) units that are part of a unit squad.
-     */
-    private static void handleAllSquads() {
-        for (Squad squad : AtlantisSquadManager.getSquads()) {
-            handleSquad(squad);
         }
     }
 

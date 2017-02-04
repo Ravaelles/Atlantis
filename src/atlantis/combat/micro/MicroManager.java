@@ -70,17 +70,16 @@ public class MicroManager extends AbstractMicroManager {
             // =========================================================
             // Attack enemy is possible
             if (AtlantisAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
-                unit.setTooltip("Attack");
+                unit.setTooltip("Attack unit");
                 return true;
             }
 
-            unit.setTooltip("Mission");
-
             // =========================================================
-            // False: Did not use micro-manager, allow mission behavior.
-            // True: Do not allow mission manager to handle this unit, because micro-manager issued command.
-            boolean canGiveCommandToMissionManager = unit.getGroundWeaponCooldown() <= 0;
-            return canGiveCommandToMissionManager;
+            // False (strategy): Did not use micro-manager, allow more generic mission behavior.
+            // True (tactics): Micro-manager issued command, do not allow mission manager to take over control.
+            boolean canPropagateCommandToMissionManager = unit.getGroundWeaponCooldown() <= 0;
+            unit.setTooltip("-> mission:" + canPropagateCommandToMissionManager);
+            return canPropagateCommandToMissionManager;
         } // =========================================================
         // Can't give orders to unit right now
         else {

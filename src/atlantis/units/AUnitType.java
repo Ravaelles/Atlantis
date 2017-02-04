@@ -516,6 +516,10 @@ public class AUnitType implements Comparable<AUnitType> {
                 AUnitType.Zerg_Lair, AUnitType.Zerg_Hive);
     }
 
+    public boolean isInvincible() {
+        return ut.isInvincible();
+    }
+
     public boolean isInfantry() {
         return ut.isOrganic();
     }
@@ -753,6 +757,10 @@ public class AUnitType implements Comparable<AUnitType> {
         return isType(
                 AUnitType.Terran_Vulture_Spider_Mine
         );
+    }
+
+    public boolean isNeutralType() {
+        return getName().charAt(0) != 'Z' && getName().charAt(0) != 'T' && getName().charAt(0) != 'P';
     }
 
 }
