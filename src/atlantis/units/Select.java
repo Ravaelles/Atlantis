@@ -587,14 +587,36 @@ public class Select<T> {
 
     /**
      * Selects only those units from current selection, which are both <b>capable of attacking</b> given unit
-     * (e.g. Zerglings can't attack Overlord) and are <b>in shot range</b> to the given <b>unit</b>.
+     * (e.g. Zerglings can't attack Overlord) and are <b>within shot range</b> to the given <b>unit</b>.
      */
     public Select<T> canAttack(AUnit targetUnit) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
-                boolean isInShotRange = unit.hasRangeToAttack(targetUnit, 0.2);
+                boolean isInShotRange = unit.hasRangeToAttack(targetUnit, 0);
+                if (!isInShotRange) {
+                    unitsIterator.remove();
+                } else {
+                    System.out.println(unit.getType().getShortName() + " in range ("
+                            + unit.distanceTo(targetUnit) + ") to attack " + targetUnit.getType().getShortName());
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Selects only those units from current selection, which are both <b>capable of attacking</b> given unit
+     * (e.g. Zerglings can't attack Overlord) and are <b>within shot range</b> with allowed 
+     * <b>distanceSafetyBonus</b> distance extra error to the given <b>unit</b>.
+     */
+    public Select<T> canAttack(AUnit targetUnit, double distanceSafetyBonus) {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.isCompleted() && unit.isAlive()) {
+                boolean isInShotRange = unit.hasRangeToAttack(targetUnit, distanceSafetyBonus);
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 } else {
@@ -1010,6 +1032,15 @@ public class Select<T> {
      */
     public List<AUnit> listUnits() {
         return (List<AUnit>) data;
+    }
+
+    /**
+     * Returns result as an <b>Units</b> object, which contains multiple useful methods to handle set of units.
+     */
+    public Units units() {
+        Units units = new Units();
+        units.addUnits((Collection<AUnit>) this.data);
+        return units;
     }
 
     /**

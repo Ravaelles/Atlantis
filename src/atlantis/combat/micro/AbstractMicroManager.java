@@ -41,18 +41,8 @@ public abstract class AbstractMicroManager {
 //            }
 //            else {
                 unit.setTooltip("Runs");
-                return AtlantisRunManager.run(unit);
+                return unit.getRunManager().isRunning();
 //            }
-        }
-        else {
-            unit.setTooltip("---");
-            
-            // If unit is running, allow it to stop running only if chances are quite favorable
-            if (unit.isRunning()) {
-                AtlantisRunManager.unitWantsStopRunning(unit);
-                unit.setTooltip("Don't run!");
-                return true;
-            }
         }
         
         return false;
@@ -95,7 +85,7 @@ public abstract class AbstractMicroManager {
         
         if (unit.getHitPoints() <= 16 || unit.getHPPercent() < 30) {
             if (Select.ourCombatUnits().inRadius(4, unit).count() <= 6) {
-                return AtlantisRunManager.run(unit);
+                return unit.getRunManager().run();
             }
         }
 

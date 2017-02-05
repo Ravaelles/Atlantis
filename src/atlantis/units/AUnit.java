@@ -1,7 +1,7 @@
 package atlantis.units;
 
 import atlantis.AtlantisGame;
-import atlantis.combat.micro.AtlantisRunning;
+import atlantis.combat.micro.AtlantisRunManager;
 import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AtlantisConstructionManager;
@@ -149,7 +149,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     private int innerID;
     private Squad squad = null;
-    private AtlantisRunning running = new AtlantisRunning(this);
+    private AtlantisRunManager runManager = new AtlantisRunManager(this);
     private int lastUnitAction = 0;
 
     private boolean _repairableMechanically = false;
@@ -536,7 +536,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return running.isRunning();
+        return runManager.isRunning();
     }
 
     /**
@@ -560,8 +560,8 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     /**
      * Returns AtlantisRunning object for this unit.
      */
-    public AtlantisRunning getRunning() {
-        return running;
+    public AtlantisRunManager getRunManager() {
+        return runManager;
     }
 
     /**
@@ -641,7 +641,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         if (nearestEnemy == null) {
             return false;
         } else {
-            return running.runFrom(nearestEnemy);
+            return runManager.runFrom(nearestEnemy);
         }
     }
 

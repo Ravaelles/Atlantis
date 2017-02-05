@@ -1,89 +1,198 @@
 package atlantis.combat.micro;
 
+import atlantis.AtlantisGame;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.Units;
+import atlantis.units.missions.UnitMissions;
+import atlantis.util.PositionUtil;
+import atlantis.wrappers.APosition;
 import bwapi.Position;
-import java.util.List;
-
 
 /**
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class AtlantisRunManager {
+    
+    private AUnit unit;
+    private APosition runTo;
+    
+    // =========================================================
 
-    private static int MIN_TIME_FRAMES_TO_STOP_RUNNING = 20;
+    public AtlantisRunManager(AUnit unit) {
+        this.unit = unit;
+    }
+    
+    // =========================================================
+
+    private boolean makeUnitRun() {
+        if (unit == null || runTo == null) {
+            return false;
+        }
+        
+        unit.move(runTo, UnitMissions.RUN_FROM_UNIT);
+        return true;
+    }
+    
+    // =========================================================
+    
+    public boolean run() {
+//        List<AUnit> closeEnemies = defineCloseEnemies(unit);
+        Units closeEnemies = defineCloseEnemies(unit);
+        
+        // Define "center of gravity" for the set of enemies
+        APosition median = closeEnemies.median();
+        
+        // Run from given position
+        return runFrom(median);
+    }
+    
+    public boolean runFrom(Object unitOrPosition) {
+        if (unitOrPosition == null) {
+            return false;
+        }
+        
+        APosition runFrom = null;
+        if (unitOrPosition instanceof AUnit) {
+            runFrom = ((AUnit) unitOrPosition).getPosition();
+        }
+        else if (unitOrPosition instanceof APosition) {
+            runFrom = (APosition) unitOrPosition;
+        }
+        
+        // === Define run to position ==========================
+        
+        runTo = getPositionAwayFrom(unit, runFrom);
+        
+        // === Actual run ======================================
+        
+        return makeUnitRun();
+    }
     
     // =========================================================
     
     /**
-     * Makes unit run (from close enemies) in the most reasonable way possible.
+     *
      */
-    public static boolean run(AUnit unit) {
-        return unit.runFrom(null); // Run from the nearest enemy
+    public static APosition getPositionAwayFrom(AUnit unit, Position runAwayFrom) {
+        if (unit == null || runAwayFrom == null) {
+            return null;
+        }
 
-//        // Define the range-wise closest enemy and run from it
-//        AUnit nearestEnemy = Select.enemyRealUnits().nearestTo(unit);
-//        if (nearestEnemy != null) {
-//            if (nearestEnemy.distanceTo(nearestEnemy) <= 6.5) {
-//                unit.runFrom(nearestEnemy);
-//                return true;
-//            }
-//        } 
-//        
-//        // =========================================================
-//        // Try running to the main base
+//        if (AtlantisGame.getTimeSeconds() <= 350) {
+//        return findPositionToRun_preferMainBase(unit, runAwayFrom);
+//        }
 //        else {
-//            AUnit mainBase = Select.mainBase();
-//            if (mainBase != null && mainBase.distanceTo(unit) > 10) {
-//                unit.setTooltip("Run to base");
-//                unit.move(mainBase);
-//                return true;
-//            }
+            return findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
 //        }
-//        
-//        // Weird case: we didn't find a way to run.
-//        System.err.println("Weird case: we didn't find a way to run");
-//        return false;
     }
     
     // =========================================================
-
+    
     /**
-     * Indicates that this unit is not running any more.
+     * Running behavior which will make unit run toward main base.
      */
-    public static void unitWantsStopRunning(AUnit unit) {
-//        if (unit.getRunning().getTimeSinceLastRun() >= defineMinFramesToStopRunning(unit)) {
-        unit.getRunning().stopRunning(); //unit.getRunning().stopRunning();
-//        }
-    }
-    
-    public static int getHowManyFramesUnitShouldStillBeRunning(AUnit unit) {
-        if (!unit.isRunning()) {
-            return 0;
-        }
-        else {
-            return Math.max(0, defineMinFramesToStopRunning(unit) - AtlantisRunning.getTimeSinceLastRun(unit));
-        }
-    }
-    
-    // =========================================================
-
-    private static int defineMinFramesToStopRunning(AUnit unit) {
-//        return MIN_TIME_FRAMES_TO_STOP_RUNNING + countNearbyUnits(unit) * 20 +
-//                (100 - unit.getHPPercent()) / 2;
-        return MIN_TIME_FRAMES_TO_STOP_RUNNING + countNearbyUnits(unit.getPosition()) * 10;
-    }
-
-    private static int countNearbyUnits(Position position) {
-        int total = 0;
-        List<AUnit> unitsInRange = (List<AUnit>) Select.our().inRadius(6, position).listUnits();	//TODO check cast safety
-        for (AUnit unit : unitsInRange) {
-            if (!unit.isRunning()) {
-                total++;
+    private static APosition findPositionToRun_preferMainBase(AUnit unit, Position runAwayFrom) {
+        AUnit mainBase = Select.mainBase();
+        if (mainBase != null) {
+            if (PositionUtil.distanceTo(mainBase, unit) > 5) {
+                return mainBase.getPosition();
+//                return mainBase.translated(0, 3 * 64);
             }
         }
-        return total;
+
+        return findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
+    }
+
+    /**
+     * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
+     */
+    private static APosition findPositionToRun_dontPreferMainBase(AUnit unit, Position runAwayFrom) {
+        int howManyTiles = 1;
+        int maxTiles = 4;
+        APosition runTo = null;
+
+        // =========================================================
+        
+        System.out.println("############ " + AtlantisGame.getTimeFrames());
+        while (howManyTiles <= maxTiles) {
+            System.out.println("----- " + howManyTiles);
+            double xDirectionToUnit = runAwayFrom.getX() - unit.getPosition().getX();
+            double yDirectionToUnit = runAwayFrom.getY() - unit.getPosition().getY();
+
+            double vectorLength = unit.distanceTo(runAwayFrom);
+            double ratio = howManyTiles / vectorLength;
+
+            // Add randomness of move if distance is big enough
+            //        int xRandomness = howManyTiles > 3 ? (2 - AtlantisUtilities.rand(0, 4)) : 0;
+            //        int yRandomness = howManyTiles > 3 ? (2 - AtlantisUtilities.rand(0, 4)) : 0;
+            runTo = new APosition(
+                    (int) (unit.getPosition().getX() - ratio * xDirectionToUnit),
+                    (int) (unit.getPosition().getY() - ratio * yDirectionToUnit)
+            );
+//            System.out.println("      Run to: " + runTo + " / dist: " 
+//                    + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null"));
+
+            
+            // === Ensure position is in bounds ========================================
+            
+            runTo = runTo.makeValid();
+
+//            if (Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true) 
+//                    && unit.hasPathTo(runTo.getPoint())
+//                    && Atlantis.getBwapi().hasPath(unit.getPosition(), runTo)
+//                    && BWTA.isConnected(unit.getPosition().toTilePosition(), runTo.toTilePosition())) {
+
+//            System.out.println("Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true) = " + Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true));
+//            System.out.println("unit.hasPathTo(runTo.getPoint()) = " + unit.hasPathTo(runTo.getPoint()));
+            if (unit.hasPathTo(runTo.getPoint())) {
+                break;
+            } else {
+                howManyTiles++;
+            }
+            
+            break;
+        }
+
+        // =========================================================
+        if (runTo != null) {
+            double dist = unit.distanceTo(runTo);
+            if (dist >= 0.5 && dist <= maxTiles + 1) {
+                return runTo;
+            }
+        }
+
+        System.err.println("Couldn't find run position - pretty f'ed up (" 
+                + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null") + ") ");
+        return null;
+    }
+    
+//    private static int countNearbyUnits(Position position) {
+//        int total = 0;
+//        List<AUnit> unitsInRange = (List<AUnit>) Select.our().inRadius(6, position).listUnits();
+//        for (AUnit unit : unitsInRange) {
+//            if (!unit.isRunning()) {
+//                total++;
+//            }
+//        }
+//        return total;
+//    }
+
+    private static Units defineCloseEnemies(AUnit unit) {
+//    private List<AUnit> defineCloseEnemies(AUnit unit) {
+//        ArrayList<AUnit> closeEnemies = new ArrayList<>();
+        return Select.enemy().combatUnits().canAttack(unit, 1.0).units();
+    }
+    
+    // === Getters ========================================
+    
+    public APosition getRunToPosition() {
+        return runTo;
+    }
+    
+    public boolean isRunning() {
+        return runTo != null;
     }
     
 }

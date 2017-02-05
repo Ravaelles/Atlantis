@@ -2,7 +2,9 @@ package atlantis.units;
 
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
+import atlantis.wrappers.APosition;
 import atlantis.wrappers.APositionedObject;
+import atlantis.wrappers.PositionOperationsHelper;
 import bwapi.Position;
 import bwapi.PositionedObject;
 import java.util.ArrayList;
@@ -122,73 +124,8 @@ public class Units {
         return (AUnit) AtlantisUtilities.getRandomElement(units.keySet());
     }
 
-    /**
-     * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
-     * after sorting first unit will be the one closest to given position.
-     */
-    public Units sortByDistanceTo(final Position position, final boolean nearestFirst) {
-        if (position == null) {
-            return null;
-        }
-        
-        ArrayList<AUnit> unitsList = new ArrayList<>();
-        unitsList.addAll(units.keySet());
-        
-        Collections.sort(unitsList, new Comparator<APositionedObject>() {
-            @Override
-            public int compare(APositionedObject p1, APositionedObject p2) {
-                if (p1 == null || !(p1 instanceof PositionedObject)) {
-                    return -1;
-                }
-                if (p2 == null || !(p2 instanceof PositionedObject)) {
-                    return 1;
-                }
-                double distance1 = p1.distanceTo(position);	//TODO: check whether this doesn't mix up position types
-                double distance2 = p2.distanceTo(position);
-                if (distance1 == distance2) {
-                    return 0;
-                }
-                else {
-                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
-                }
-            }
-        });
-        
-        // Create new mapping, with new order
-        LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
-        for (AUnit unit : unitsList) {
-            newUnits.put(unit, getValueFor(unit));
-        }
-        this.units = newUnits;
-
-        return this;
-    }
-
-    /**
-     * Returns median PX and median PY for all units.
-     */
-    public Position positionMedian() {
-        if (isEmpty()) {
-            return null;
-        }
-
-        ArrayList<Integer> xCoordinates = new ArrayList<>();
-        ArrayList<Integer> yCoordinates = new ArrayList<>();
-        for (AUnit unit : units.keySet()) {
-            xCoordinates.add(unit.getPosition().getX());	//TODO: check whether position is in Pixels
-            yCoordinates.add(unit.getPosition().getX());
-        }
-        Collections.sort(xCoordinates);
-        Collections.sort(yCoordinates);
-
-        return new Position(
-                xCoordinates.get(xCoordinates.size() / 2),
-                yCoordinates.get(yCoordinates.size() / 2)
-        );
-    }
-
-    // =========================================================
-    // Value mapping methods
+    // === Value mapping methods ===============================
+    
     public void changeValueBy(AUnit unit, double deltaValue) {
         if (units.containsKey(unit)) {
             units.put(unit, units.get(unit) + deltaValue);
@@ -258,6 +195,75 @@ public class Units {
         return bestUnit;
     }
 
+    // === Location-related ====================================
+    
+    /**
+     * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
+     * after sorting first unit will be the one closest to given position.
+     */
+    public Units sortByDistanceTo(final Position position, final boolean nearestFirst) {
+        if (position == null) {
+            return null;
+        }
+        
+        ArrayList<AUnit> unitsList = new ArrayList<>();
+        unitsList.addAll(units.keySet());
+        
+        Collections.sort(unitsList, new Comparator<APositionedObject>() {
+            @Override
+            public int compare(APositionedObject p1, APositionedObject p2) {
+                if (p1 == null || !(p1 instanceof PositionedObject)) {
+                    return -1;
+                }
+                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                    return 1;
+                }
+                double distance1 = p1.distanceTo(position);	//TODO: check whether this doesn't mix up position types
+                double distance2 = p2.distanceTo(position);
+                if (distance1 == distance2) {
+                    return 0;
+                }
+                else {
+                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
+                }
+            }
+        });
+        
+        // Create new mapping, with new order
+        LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
+        for (AUnit unit : unitsList) {
+            newUnits.put(unit, getValueFor(unit));
+        }
+        this.units = newUnits;
+
+        return this;
+    }
+
+    /**
+     * Returns median PX and median PY for all units.
+     */
+    public APosition median() {
+        if (isEmpty()) {
+            return null;
+        }
+        
+        return PositionOperationsHelper.getPositionMedian(this);
+
+//        ArrayList<Integer> xCoordinates = new ArrayList<>();
+//        ArrayList<Integer> yCoordinates = new ArrayList<>();
+//        for (AUnit unit : units.keySet()) {
+//            xCoordinates.add(unit.getPosition().getX());	//TODO: check whether position is in Pixels
+//            yCoordinates.add(unit.getPosition().getY());
+//        }
+//        Collections.sort(xCoordinates);
+//        Collections.sort(yCoordinates);
+//
+//        return new Position(
+//                xCoordinates.get(xCoordinates.size() / 2),
+//                yCoordinates.get(yCoordinates.size() / 2)
+//        );
+    }
+    
     // =========================================================
     // Override methods
     @Override

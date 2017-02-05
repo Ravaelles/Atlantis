@@ -529,7 +529,7 @@ public class AtlantisPainter {
 
             // RUN
             if (unit.isRunning()) {
-                paintLine(unit.getPosition(), unit.getRunning().getNextPositionToRunTo(), Color.Blue);
+                paintLine(unit.getPosition(), unit.getRunManager().getRunToPosition(), Color.Blue);
 
                 // =========================================================
                 // === Paint white flags over running units
