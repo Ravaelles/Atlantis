@@ -35,7 +35,6 @@ public class MissionUmt extends Mission {
         
         // === Define unit that will be center of our army =================
         AUnit flagshipUnit = Select.ourCombatUnits().first();
-        System.out.println("flagshipUnit = " + flagshipUnit);
         if (flagshipUnit == null) {
             unit.setTooltip("No flagship unit found");
             return false;
@@ -43,10 +42,10 @@ public class MissionUmt extends Mission {
 
         // === Return closest enemy ========================================
         AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
-        System.out.println(nearestEnemy);
+//        System.out.println(nearestEnemy);
         if (nearestEnemy != null) {
             enemyToAttack = nearestEnemy;
-            System.out.println("    dist: " + nearestEnemy.distanceTo(unit));
+//            System.out.println("    dist: " + nearestEnemy.distanceTo(unit));
         }
 
         // === Return location to go to ====================================

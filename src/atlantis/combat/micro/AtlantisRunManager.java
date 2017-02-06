@@ -51,23 +51,35 @@ public class AtlantisRunManager {
         }
         
         // Define "center of gravity" for the set of enemies
-        APosition median = closeEnemies.median();
-        
-        // Define closest enemy
-        AUnit nearestEnemy = Select.from(closeEnemies.list()).inRadius(13, unit).nearestTo(unit);
-        
-        // Create weighted "average" enemy position
-        ArrayList<APosition> listToWeigh = new ArrayList<>();
-        listToWeigh.add(median);
-        if (nearestEnemy != null) {
-            listToWeigh.add(nearestEnemy.getPosition());
-            listToWeigh.add(nearestEnemy.getPosition());
+        APosition median;
+        if (closeEnemies.size() <= 2) {
+            median = Select.from(closeEnemies.list()).nearestTo(unit).getPosition();
         }
-        APosition weightedEnemyPosition = PositionOperationsHelper.getPositionMedian(listToWeigh);
-        AtlantisPainter.paintCircleFilled(weightedEnemyPosition, 4, Color.Orange);
+        else {
+            median = closeEnemies.median();
+        }
+        
+        AtlantisPainter.paintCircle(median, 1, Color.Red);
+        AtlantisPainter.paintCircle(median, 3, Color.Red);
+        AtlantisPainter.paintCircle(median, 5, Color.Red);
+        AtlantisPainter.paintCircle(median, 7, Color.Red);
+        
+//        // Define closest enemy
+//        AUnit nearestEnemy = Select.from(closeEnemies.list()).inRadius(4, unit).nearestTo(unit);
+//        
+//        // Create weighted "average" enemy position
+//        ArrayList<APosition> listToWeigh = new ArrayList<>();
+//        listToWeigh.add(median);
+//        if (nearestEnemy != null) {
+//            listToWeigh.add(median);
+////            listToWeigh.add(nearestEnemy.getPosition());
+//            listToWeigh.add(nearestEnemy.getPosition());
+//        }
+//        APosition weightedEnemyPosition = PositionOperationsHelper.getPositionMedian(listToWeigh);
+//        AtlantisPainter.paintCircleFilled(weightedEnemyPosition, 4, Color.Orange);
         
         // Run from given position
-        return runFrom(weightedEnemyPosition);
+        return runFrom(median);
     }
     
     public boolean runFrom(Object unitOrPosition) {
@@ -135,28 +147,35 @@ public class AtlantisRunManager {
      * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
      */
     private static APosition findPositionToRun_dontPreferMainBase(AUnit unit, APosition runAwayFrom) {
-        int minTiles = 2;
-        int maxTiles = 6;
+        double minTiles = 1.8;
+        double maxTiles = minTiles + 2.1;
         APosition runTo = null;
 
         // =========================================================
         
         while (false && minTiles <= maxTiles) {
-            double xDirectionToUnit = runAwayFrom.getX() - unit.getPosition().getX();
-            double yDirectionToUnit = runAwayFrom.getY() - unit.getPosition().getY();
+            double vectorX = runAwayFrom.getX() - unit.getPosition().getX();
+            double vectorY = runAwayFrom.getY() - unit.getPosition().getY();
 
             double vectorLength = unit.distanceTo(runAwayFrom);
             double ratio = minTiles / vectorLength;
 
-            // Add randomness of move if distance is big enough
-            //        int xRandomness = howManyTiles > 3 ? (2 - AtlantisUtilities.rand(0, 4)) : 0;
-            //        int yRandomness = howManyTiles > 3 ? (2 - AtlantisUtilities.rand(0, 4)) : 0;
+            // Apply opposite 2D vector
+//            runTo = new APosition(
+//                    (int) (unit.getPosition().getX() - ratio * xDirectionToUnit),
+//                    (int) (unit.getPosition().getY() - ratio * yDirectionToUnit)
+//            );
+
+            double angle = 40.5;
+            double rotatedX = (vectorX * Math.cos(angle)) - (vectorY * Math.sin(angle));
+            double rotatedY = (vectorX * Math.sin(angle)) + (vectorY * Math.cos(angle));
+            vectorX = rotatedX;
+            vectorY = rotatedY;
+
             runTo = new APosition(
-                    (int) (unit.getPosition().getX() - ratio * xDirectionToUnit),
-                    (int) (unit.getPosition().getY() - ratio * yDirectionToUnit)
+                    (int) (unit.getPosition().getX() - ratio * vectorX),
+                    (int) (unit.getPosition().getY() - ratio * vectorY)
             );
-//            System.out.println("      Run to: " + runTo + " / dist: " 
-//                    + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null"));
             
             // === Ensure position is in bounds ========================================
             
@@ -181,7 +200,7 @@ public class AtlantisRunManager {
         // with the hope of getting out.
         
         if (runTo == null || unit.distanceTo(runTo) < (minTiles - 0.2)) {
-            runTo = findLongDistanceRunPoint(unit, runAwayFrom);
+            runTo = findRunPointAtAnyDirection(unit, runAwayFrom);
         }
 
         // =========================================================
@@ -201,8 +220,8 @@ public class AtlantisRunManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and
      * most distant to given runAwayFrom position.
      */
-    private static APosition findLongDistanceRunPoint(AUnit unit, APosition runAwayFrom) {
-        int minDistanceInTiles = 4;
+    private static APosition findRunPointAtAnyDirection(AUnit unit, APosition runAwayFrom) {
+        int minDistanceInTiles = 3;
         int tx = unit.getTileX();
         int ty = unit.getTileY();
         
@@ -241,21 +260,9 @@ public class AtlantisRunManager {
         return bestPosition;
     }
     
-//    private static int countNearbyUnits(Position position) {
-//        int total = 0;
-//        List<AUnit> unitsInRange = (List<AUnit>) Select.our().inRadius(6, position).listUnits();
-//        for (AUnit unit : unitsInRange) {
-//            if (!unit.isRunning()) {
-//                total++;
-//            }
-//        }
-//        return total;
-//    }
-
     private static Units defineCloseEnemies(AUnit unit) {
-//    private List<AUnit> defineCloseEnemies(AUnit unit) {
-//        ArrayList<AUnit> closeEnemies = new ArrayList<>();
-        return Select.enemy().combatUnits().canAttack(unit, 2.0).units();
+        double radius = unit.getType().isVulture() ? 6.5 : 2;
+        return Select.enemy().combatUnits().canAttack(unit, radius).units();
     }
     
     // === Getters ========================================

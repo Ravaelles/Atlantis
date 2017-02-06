@@ -121,7 +121,8 @@ public class Atlantis implements BWEventListener {
         // =========================================================
         gameCommander = new AtlantisGameCommander();
         bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED);
-        bwapi.setFrameSkip(1);
+        bwapi.setFrameSkip(2);
+//        bwapi.setGUI(false);
         bwapi.enableFlag(1);	// Enable user input - will be disabled for tournaments
     }
 

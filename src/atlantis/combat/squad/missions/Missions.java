@@ -16,7 +16,7 @@ public class Missions {
 
     public static final Mission ATTACK = new MissionAttack("Attack");
     public static final Mission DEFEND = new MissionDefend("Defend");
-    public static final Mission UMT = new MissionDefend("UMT");
+    public static final Mission UMT = new MissionUmt("UMT");
 
     // =========================================================
     
