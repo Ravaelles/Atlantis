@@ -12,7 +12,7 @@ public class AtlantisCombatCommander {
      * Acts with all battle units.
      */
     public static void update() {
-        if (AtlantisGame.getTimeFrames() % 20 == 1) {
+        if (AtlantisGame.getTimeFrames() % 20 == 0) {
             Missions.handleGlobalMission();
         }
         

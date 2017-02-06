@@ -8,6 +8,7 @@ import bwapi.Color;
 import bwapi.Position;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Atlantis uses wrapper for BWMirror native classes which can't extended.<br /><br />
@@ -150,8 +151,8 @@ public class APosition extends Position {
             px = 1;
             somethingChanged = true;
         }
-        else if (px > 32 * AtlantisMap.getMapWidthInTiles()) {
-            px = 32 * AtlantisMap.getMapWidthInTiles();
+        else if (px >= 32 * AtlantisMap.getMapWidthInTiles()) {
+            px = 32 * AtlantisMap.getMapWidthInTiles() - 1;
             somethingChanged = true;
         }
         
@@ -159,13 +160,46 @@ public class APosition extends Position {
             py = 1;
             somethingChanged = true;
         }
-        else if (py > 32 * AtlantisMap.getMapHeightInTiles()) {
-            py = 32 * AtlantisMap.getMapHeightInTiles();
+        else if (py >= 32 * AtlantisMap.getMapHeightInTiles()) {
+            py = 32 * AtlantisMap.getMapHeightInTiles() - 1;
             somethingChanged = true;
         }
         
         if (somethingChanged) {
-            p = new Position(px, py);
+            p = new APosition(px, py);
+        }
+
+        return this;
+    }
+    
+    /**
+     * Ensures that position's [x,y] are valid map coordinates and are "quite" far from map boundaries.
+     */
+    public APosition makeValidFarFromBounds() {
+        boolean somethingChanged = false;
+        int px = p.getX();
+        int py = p.getY();
+        
+        if (px < 32) {
+            px = 32;
+            somethingChanged = true;
+        }
+        else if (px >= 31 * AtlantisMap.getMapWidthInTiles()) {
+            px = 32 * AtlantisMap.getMapWidthInTiles() - 32;
+            somethingChanged = true;
+        }
+        
+        if (py < 32) {
+            py = 32;
+            somethingChanged = true;
+        }
+        else if (py >= 31 * AtlantisMap.getMapHeightInTiles()) {
+            py = 32 * AtlantisMap.getMapHeightInTiles() - 32;
+            somethingChanged = true;
+        }
+        
+        if (somethingChanged) {
+            p = new APosition(px, py);
         }
 
         return this;
@@ -174,6 +208,33 @@ public class APosition extends Position {
     @Override
     public String toString() {
         return "(" + getTileX() + ", " + getTileY() + ")";
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + Objects.hashCode(this.p);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof APosition) && !(obj instanceof Position)) {
+            return false;
+        }
+        int otherX = ((Position) obj).getX();
+        int otherY = ((Position) obj).getY();
+        final Position other = (Position) obj;
+        if (this.getX() != otherX || this.getY() != otherY) {
+            return false;
+        }
+        return true;
     }
     
 }

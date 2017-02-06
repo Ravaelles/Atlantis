@@ -113,31 +113,34 @@ public abstract class AbstractMicroManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
-        if (unit.getType().isRangedUnit()) {
-            double safetyDistance = unit.getType().isVulture() ? 6 : 2;
-            int enemyNearbyCountingRadius = 7;
+        if (unit.isGroundUnit() && unit.getType().isRangedUnit()) {
+//            double safetyDistance = unit.getType().isVulture() ? 6 : 2;
+            double safetyDistance = unit.getWeaponRangeGround() + 2.7;
+            int enemyNearbyCountingRadius = (int) safetyDistance;
             
             // Apply bonus when there are maaany enemies nearby
             int enemiesNearby = Select.enemy().inRadius(enemyNearbyCountingRadius, unit).count();
             if (enemiesNearby >= 2) {
-                safetyDistance += Math.max((double) enemiesNearby / 2, 2);
+                safetyDistance += Math.max((double) enemiesNearby / 2, 3.6);
             }
             
-            AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Green);
-            AtlantisPainter.paintTextCentered(unit, enemiesNearby + "", Color.White);
+//            AtlantisPainter.paintTextCentered(unit, "" + String.format("%.1f", safetyDistance), Color.White);
+            
+//            AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Green);
+//            AtlantisPainter.paintTextCentered(unit, enemiesNearby + "", Color.White);
 
             Select<?> closeEnemies = Select.enemyRealUnits().melee().inRadius(safetyDistance, unit);
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
             if (closeEnemy != null) {
                 
-                double dangerousDistance = unit.getType().isVulture() ? 1.9 : 1.2;
+                double dangerousDistance = unit.getType().isVulture() ? 1.9 : 1.7;
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
                 if (isEnemyDangerouslyClose || !unit.isReadyToShoot()) {
-                    boolean dontInterruptPendingAttack = unit.isAttackFrame() && closeEnemies.size() <= 3;
                     
+                    boolean dontInterruptPendingAttack = unit.isAttackFrame() && closeEnemies.size() <= 4;
                     if (!dontInterruptPendingAttack && unit.runFrom(null)) {
                         AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
-                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
+//                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
                         return true;
                     }
                 }

@@ -806,6 +806,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isStartingAttack();
     }
 
+    public boolean isStuck() {
+        return u.isStuck();
+    }
+
     public boolean isHoldingPosition() {
         return u.isHoldingPosition();
     }

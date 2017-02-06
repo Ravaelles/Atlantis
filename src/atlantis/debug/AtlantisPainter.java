@@ -511,6 +511,13 @@ public class AtlantisPainter {
                 paintCircle(unit, 13, Color.Orange);
                 paintCircle(unit, 14, Color.Orange);
             }
+            // STUCK
+            if (unit.isStuck()) {
+                paintCircle(unit, 5, Color.Teal);
+                paintCircle(unit, 8, Color.Teal);
+                paintCircle(unit, 11, Color.Teal);
+                paintCircle(unit, 14, Color.Teal);
+            }
 //            // ATTACKING
 //            if (unit.isAttacking()) {
 //                paintCircle(unit, 12, Color.Red);
