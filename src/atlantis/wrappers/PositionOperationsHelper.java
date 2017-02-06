@@ -36,4 +36,19 @@ public class PositionOperationsHelper {
         return collection.get(collection.size() / 2);
     }
     
+    public static APosition getPositionMedian(Collection<APosition> positions) {
+        ArrayList<Integer> xCoordinates = new ArrayList<>();
+        ArrayList<Integer> yCoordinates = new ArrayList<>();
+
+        for (APosition position : positions) {
+            xCoordinates.add(position.getX());
+            yCoordinates.add(position.getY());
+        }
+
+        return new APosition(
+                getPositionMedian(xCoordinates),
+                getPositionMedian(yCoordinates)
+        );
+    }
+    
 }

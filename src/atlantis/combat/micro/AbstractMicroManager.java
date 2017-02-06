@@ -4,6 +4,7 @@ import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.squad.Squad;
+import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.missions.UnitMissions;
@@ -32,7 +33,7 @@ public abstract class AbstractMicroManager {
         boolean isSituationFavorable = AtlantisCombatEvaluator.isSituationFavorable(unit, isNewFight);
 
         // If situation is unfavorable, retreat
-        if (!isSituationFavorable && !unit.isReadyToShoot() && unit.canAnyEnemyShootThisUnit()) {
+        if (!isSituationFavorable && !unit.isReadyToShoot() && unit.canAnyCloseEnemyShootThisUnit()) {
             unit.setTooltip("Retreat");
             return unit.getRunManager().isRunning();
         }
@@ -111,13 +112,14 @@ public abstract class AbstractMicroManager {
      */
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         if (unit.getType().isRangedUnit()) {
-            double safetyDistance = unit.getType().isVulture() ? 4.7 : 2;
+            double safetyDistance = unit.getType().isVulture() ? 4.9 : 2;
 
             AUnit closeEnemy = Select.enemyRealUnits().melee().inRadius(safetyDistance, unit).nearestTo(unit);
             if (closeEnemy != null) {
-                boolean isEnemyExtremelyClose = closeEnemy.distanceTo(unit) < 1.2;
+                double extremeDistance = unit.getType().isVulture() ? 3 : 1.5;
+                boolean isEnemyExtremelyClose = closeEnemy.distanceTo(unit) < extremeDistance;
                 if (isEnemyExtremelyClose || !unit.isReadyToShoot()) {
-                    if (unit.runFrom(closeEnemy)) {
+                    if (unit.runFrom(null)) {
                         unit.setTooltip("Melee-run " + closeEnemy.getShortName());
                         return true;
                     }

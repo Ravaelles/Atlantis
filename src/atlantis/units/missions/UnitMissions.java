@@ -7,6 +7,7 @@ public class UnitMissions {
     public static final UnitMission ATTACK_UNIT = new UnitMission(true);
 //    public static final UnitMission AVOID_MELEE_UNIT = new UnitMission();
     public static final UnitMission BUILD = new UnitMission();
+    public static final UnitMission EXPLORE = new UnitMission();
     public static final UnitMission FOLLOW = new UnitMission();
 //    public static final UnitMission GATHER = new UnitMission();
     public static final UnitMission GATHER_MINERALS = new UnitMission();

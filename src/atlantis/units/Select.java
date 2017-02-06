@@ -329,7 +329,7 @@ public class Select<T> {
     /**
      * Create initial search-pool of units from given collection of units.
      */
-    public static Select<AUnit> from(List<AUnit> units) {
+    public static Select<AUnit> from(Collection<AUnit> units) {
         Select<AUnit> selectUnits = new Select<AUnit>(units);
         return selectUnits;
     }
@@ -597,10 +597,11 @@ public class Select<T> {
                 boolean isInShotRange = unit.hasRangeToAttack(targetUnit, 0);
                 if (!isInShotRange) {
                     unitsIterator.remove();
-                } else {
-                    System.out.println(unit.getType().getShortName() + " in range ("
-                            + unit.distanceTo(targetUnit) + ") to attack " + targetUnit.getType().getShortName());
                 }
+//                else {
+//                    System.out.println(unit.getType().getShortName() + " in range ("
+//                            + unit.distanceTo(targetUnit) + ") to attack " + targetUnit.getType().getShortName());
+//                }
             }
         }
         return this;
@@ -619,10 +620,11 @@ public class Select<T> {
                 boolean isInShotRange = unit.hasRangeToAttack(targetUnit, distanceSafetyBonus);
                 if (!isInShotRange) {
                     unitsIterator.remove();
-                } else {
-                    System.out.println(unit.getType().getShortName() + " in range ("
-                            + unit.distanceTo(targetUnit) + ") to attack " + targetUnit.getType().getShortName());
                 }
+//                else {
+//                    System.out.println(unit.getType().getShortName() + " in range ("
+//                            + unit.distanceTo(targetUnit) + ") to attack " + targetUnit.getType().getShortName());
+//                }
             }
         }
         return this;

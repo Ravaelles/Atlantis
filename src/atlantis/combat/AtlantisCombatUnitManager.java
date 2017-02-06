@@ -43,12 +43,7 @@ public class AtlantisCombatUnitManager {
         // =========================================================
         // Act with proper micro-manager and decide if mission manager can issue orders afterward.
         boolean isMissionManagerControlForbbiden = squad.getMicroManager().update(unit);
-//        if (squad != null) {
-//            isMissionManagerAllowed = squad.getMicroManager().update(unit);
-//        }
-//        else {
-//            System.err.println(unit + " sq null for unit " + unit);
-//        }
+        System.out.println("isMissionManagerControlForbbiden = " + isMissionManagerControlForbbiden);
 
         // =========================================================
         // MISSION manager execution is FORBIDDEN
@@ -58,21 +53,21 @@ public class AtlantisCombatUnitManager {
 
         // MISSION manager exection is ALLOWED
         else {
-            if (squad == null) {
-                System.err.println("squad is NULLz!");
-                System.err.println(unit + " sq null for unit " + unit);
-                unit.setTooltip("squadIsNull");
-                return true;
-            }
-            else if (squad.getMission() == null) {
-                System.err.println("squad.getMission() is NULL!");
-                unit.setTooltip("missionIsNull");
-                return true;
-            }
-            else {
-                unit.setTooltip("updateMission");
-                return squad.getMission().update(unit);
-            }
+//            if (squad == null) {
+//                System.err.println("squad is NULLz!");
+//                System.err.println(unit + " sq null for unit " + unit);
+//                unit.setTooltip("squadIsNull");
+//                return true;
+//            }
+//            else if (squad.getMission() == null) {
+//                System.err.println("squad.getMission() is NULL!");
+//                unit.setTooltip("missionIsNull");
+//                return true;
+//            }
+//            else {
+            unit.setTooltip("Mission:" + squad.getMission().getName());
+            return squad.getMission().update(unit);
+//            }
         }
     }
 

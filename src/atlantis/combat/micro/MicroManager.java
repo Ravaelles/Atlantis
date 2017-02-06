@@ -77,9 +77,10 @@ public class MicroManager extends AbstractMicroManager {
             // =========================================================
             // False (strategy): Did not use micro-manager, allow more generic mission behavior.
             // True (tactics): Micro-manager issued command, do not allow mission manager to take over control.
-            boolean canPropagateCommandToMissionManager = unit.getGroundWeaponCooldown() <= 0;
-            unit.setTooltip("-> mission:" + canPropagateCommandToMissionManager);
-            return canPropagateCommandToMissionManager;
+//            boolean canPropagateCommandToMissionManager = unit.getGroundWeaponCooldown() <= 0;
+            boolean forbidMissionManagerControlOverThisUnit = !unit.isReadyToShoot();
+            unit.setTooltip("-> mission:" + forbidMissionManagerControlOverThisUnit);
+            return forbidMissionManagerControlOverThisUnit;
         } // =========================================================
         // Can't give orders to unit right now
         else {

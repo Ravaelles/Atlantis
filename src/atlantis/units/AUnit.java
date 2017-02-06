@@ -182,7 +182,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     /**
      * Returns true if any close enemy can either shoot or hit this unit.
      */
-    public boolean canAnyEnemyShootThisUnit() {
+    public boolean canAnyCloseEnemyShootThisUnit() {
         return !Select.enemy().inRadius(12.5, this).canAttack(this).isEmpty();
     }
 
@@ -519,10 +519,12 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      */
     public boolean hasRangeToAttack(AUnit targetUnit, double safetyMargin) {
         WeaponType weaponAgainstThisUnit = getWeaponAgainst(targetUnit);
-        double dist = this.distanceTo(targetUnit);
+        if (weaponAgainstThisUnit == WeaponType.None) {
+            return false;
+        }
         
-        return weaponAgainstThisUnit != WeaponType.None
-                && (dist + safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
+        double dist = this.distanceTo(targetUnit);
+        return (dist - safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
                 && (dist + 0.02) >= (weaponAgainstThisUnit.minRange() / 32);
     }
 
@@ -640,16 +642,23 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     /**
      * Indicates that this unit should be running from given enemy unit.
+     * If enemy parameter is null, it will try to determine the best run behavior.
+     * If enemy is not null, it will try running straight from this unit.
      */
-     public boolean runFrom(AUnit nearestEnemy) {
-        if (nearestEnemy == null) {
-            nearestEnemy = Select.enemyRealUnits().nearestTo(this);
-        }
-
-        if (nearestEnemy == null) {
-            return false;
+     public boolean runFrom(AUnit enemy) {
+//        if (nearestEnemy == null) {
+//            nearestEnemy = Select.enemyRealUnits().nearestTo(this);
+//        }
+//
+//        if (nearestEnemy == null) {
+//            return false;
+//        } else {
+//            return runManager.runFrom(nearestEnemy);
+//        }
+        if (enemy == null) {
+            return runManager.run();
         } else {
-            return runManager.runFrom(nearestEnemy);
+            return runManager.runFrom(enemy);
         }
     }
 

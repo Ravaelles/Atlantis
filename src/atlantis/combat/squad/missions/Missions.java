@@ -27,6 +27,12 @@ public class Missions {
         if (currentGlobalMission == null) {
             currentGlobalMission = getInitialMission();
         }
+        
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            return;
+        }
 
         // =========================================================
         if (currentGlobalMission == Missions.DEFEND) {
