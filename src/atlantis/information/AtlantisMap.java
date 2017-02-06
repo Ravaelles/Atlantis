@@ -272,6 +272,23 @@ public class AtlantisMap {
         return position;
     }
 
+    /**
+     * Returns nearest (preferably directly connected) region which has center of it still unexplored.
+     */
+    public static APosition getNearestUnexploredRegion(APosition position) {
+        Region region = AtlantisMap.getRegion(position);
+        Region regionToVisit = null;
+        
+        for (Region reachableRegion : region.getReachableRegions()) {
+            if (!AtlantisMap.isExplored(reachableRegion.getCenter())) {
+                regionToVisit = reachableRegion;
+                return APosition.createFrom(regionToVisit.getCenter());
+            }
+        }
+        
+        return null;
+    }
+    
     // =========================================================
     
     /**

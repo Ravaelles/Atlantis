@@ -123,7 +123,7 @@ public class AtlantisRunManager {
 
         // =========================================================
         
-        while (minTiles <= maxTiles) {
+        while (false && minTiles <= maxTiles) {
             double xDirectionToUnit = runAwayFrom.getX() - unit.getPosition().getX();
             double yDirectionToUnit = runAwayFrom.getY() - unit.getPosition().getY();
 

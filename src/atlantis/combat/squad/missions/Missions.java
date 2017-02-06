@@ -14,10 +14,12 @@ public class Missions {
      */
     private static Mission currentGlobalMission;
 
-    public static final Mission DEFEND = new MissionDefend("Defend");
     public static final Mission ATTACK = new MissionAttack("Attack");
+    public static final Mission DEFEND = new MissionDefend("Defend");
+    public static final Mission UMT = new MissionDefend("UMT");
 
     // =========================================================
+    
     /**
      * Takes care of current strategy.
      */
@@ -44,6 +46,7 @@ public class Missions {
     }
 
     // =========================================================
+    
     /**
      * Defines how many military units we should have before pushing forward towards the enemy.
      */
@@ -83,7 +86,17 @@ public class Missions {
     }
 
     // =========================================================
+    
     public static Mission getInitialMission() {
+        
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            
+        }
+        
+        // =========================================================
+        
         return Missions.DEFEND;
 //        return Missions.ATTACK;
     }

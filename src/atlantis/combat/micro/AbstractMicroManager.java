@@ -111,10 +111,9 @@ public abstract class AbstractMicroManager {
      */
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         if (unit.getType().isRangedUnit()) {
-            double safetyDistanceBonus = unit.getType().isVulture() ? 3 : 0;
+            double safetyDistance = unit.getType().isVulture() ? 4.5 : 2;
 
-            AUnit closeEnemy = Select.enemyRealUnits().melee()
-                    .inRadius(1.5 + safetyDistanceBonus, unit).nearestTo(unit);
+            AUnit closeEnemy = Select.enemyRealUnits().melee().inRadius(safetyDistance, unit).nearestTo(unit);
             if (closeEnemy != null) {
                 AUnit veryCloseEnemy = Select.enemyRealUnits().melee().inRadius(1.2, unit).nearestTo(unit);
                 if (veryCloseEnemy != null || !unit.isReadyToShoot()) {

@@ -169,19 +169,7 @@ public class AtlantisScoutManager {
     }
     
     public static APosition getUmtFocusPoint(APosition startPosition) {
-        Region region = AtlantisMap.getRegion(startPosition);
-        Region regionToVisit = null;
-        APosition regionToVisitPoint = null;
-        
-        for (Region reachableRegion : region.getReachableRegions()) {
-            if (!AtlantisMap.isExplored(reachableRegion.getCenter())) {
-                regionToVisit = reachableRegion;
-                regionToVisitPoint = APosition.createFrom(reachableRegion.getCenter());
-                return regionToVisitPoint;
-            }
-        }
-        
-        return null;
+        return AtlantisMap.getNearestUnexploredRegion(startPosition);
     }
 
     // =========================================================
