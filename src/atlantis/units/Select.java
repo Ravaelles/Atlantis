@@ -68,23 +68,27 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         // === Handle UMT ==========================================
-        
         if (AtlantisGame.isUmtMode()) {
             Player playerUs = AtlantisGame.getPlayerUs();
             for (Player player : AtlantisGame.getPlayers()) {
                 if (player.isEnemy(playerUs)) {
                     for (Unit u : player.getUnits()) {
-                        data.add(AUnit.createFrom(u));
+                        AUnit unit = AUnit.createFrom(u);
+                        if (!unit.getType().isSpecial()) {
+                            data.add(unit);
+                        }
                     }
                 }
             }
-        } 
+        }
 
         // === Non-UMT, standard 1:1 ===============================
-        
         else {
             for (Unit u : AtlantisGame.getEnemy().getUnits()) {
-                data.add(AUnit.createFrom(u));
+                AUnit unit = AUnit.createFrom(u);
+                if (!unit.getType().isSpecial()) {
+                    data.add(unit);
+                }
             }
         }
 
@@ -250,7 +254,7 @@ public class Select<T> {
 
         //TODO: check whether enemy().getUnits() has the same behavior as  getEnemyUnits()
         for (AUnit unit : enemyUnits()) {
-            if (unit.isVisible() && unit.getHitPoints() >= 1) {
+            if (!unit.getType().isSpecial()) {
                 data.add(unit);
             }
         }
@@ -266,7 +270,8 @@ public class Select<T> {
 
         for (AUnit unit : enemyUnits()) {
             if (unit.isVisible() && unit.getHitPoints() >= 1) {
-                if ((!unit.isAirUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
+                if ((!unit.isAirUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)
+                        && !unit.getType().isSpecial()) {
                     data.add(unit);
                 }
             }

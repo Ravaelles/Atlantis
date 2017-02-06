@@ -573,17 +573,17 @@ public class AtlantisPainter {
                 if (unit.getUnitMission().equals(UnitMissions.MOVE)) {
                     color = Color.Teal;
                 } else if (unit.getUnitMission().isAttacking()) {
-                    color = Color.Green;
+                    color = Color.Orange;
                 } else if (unit.getUnitMission().equals(UnitMissions.RUN_FROM_UNIT)) {
-                    color = Color.Orange;
+                    color = Color.Brown;
                 } else if (unit.getUnitMission().equals(UnitMissions.RETREAT)) {
-                    color = Color.Orange;
+                    color = Color.Brown;
                 } else if (unit.getUnitMission().equals(UnitMissions.HEAL)) {
-                    color = Color.Blue;
+                    color = Color.Purple;
                 } else if (unit.getUnitMission().equals(UnitMissions.BUILD)) {
-                    color = Color.White;
+                    color = Color.Purple;
                 } else if (unit.getUnitMission().equals(UnitMissions.REPAIR)) {
-                    color = Color.White;
+                    color = Color.Purple;
                 }
 //            else if (unit.getUnitMission().equals(UnitMissions.)) {
 //                color = Color.;
@@ -595,6 +595,7 @@ public class AtlantisPainter {
 
             if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
                 paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
+                paintCircle(unit, unit.getType().getDimensionLeft() - 2 + unit.getType().getDimensionRight(), color);
             }
 
             if (unit.isWorker() && unit.isIdle()) {

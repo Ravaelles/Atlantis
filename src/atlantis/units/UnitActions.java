@@ -33,6 +33,7 @@ public interface UnitActions {
         // Do NOT issue double orders
         if (u().isAttacking() && u().getTarget() != null && unit().getTarget().equals(target) 
                 && unit().isJustShooting()) {
+            u().attack(target.u());
             return true;
         }
         else {

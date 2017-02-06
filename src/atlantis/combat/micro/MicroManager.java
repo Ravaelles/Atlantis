@@ -67,6 +67,7 @@ public class MicroManager extends AbstractMicroManager {
             // =========================================================
             // Attack enemy is possible
             if (AtlantisAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+                AtlantisGame.sendMessage("HA! " + AtlantisGame.getTimeFrames());
                 return true;
             }
 
