@@ -37,7 +37,7 @@ public abstract class AbstractMicroManager {
         // If situation is unfavorable, retreat
         if (!isSituationFavorable && !unit.isReadyToShoot() && unit.canAnyCloseEnemyShootThisUnit()) {
             unit.setTooltip("Retreat");
-            return unit.getRunManager().isRunning();
+            return unit.runFrom(null);
         }
 
         return false;
@@ -113,11 +113,11 @@ public abstract class AbstractMicroManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
-        if (unit.isGroundUnit() && unit.getType().isRangedUnit() && (unit.getHitPoints() < 41 || unit.getHPPercent() < 100)) {
+        if (unit.isGroundUnit() && unit.getType().isRangedUnit() && (unit.getHitPoints() <= 42 || unit.getHPPercent() < 100)) {
 
             // === Define safety distance ==============================
             
-            double safetyDistance = 1.3;
+            double safetyDistance = Math.min(1.4, unit.getWeaponRangeGround() - 1.5);
             
             if (unit.getType().isVulture()) {
                 safetyDistance = unit.getWeaponRangeGround() + 2.7;
@@ -146,10 +146,11 @@ public abstract class AbstractMicroManager {
                 if (isEnemyDangerouslyClose || !unit.isReadyToShoot()) {
                     
 //                    boolean dontInterruptPendingAttack = unit.isAttackFrame() && closeEnemies.size() <= 4;
-                    boolean dontInterruptPendingAttack = unit.isAttackFrame();
+                    boolean dontInterruptPendingAttack = unit.isAttackFrame() || unit.isStartingAttack();
                     if (!dontInterruptPendingAttack && unit.runFrom(null)) {
                         AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
-                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
+//                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
+                        unit.setTooltip("Melee-run (" + closeEnemies.size() + ")");
                         return true;
                     }
                 }

@@ -37,7 +37,7 @@ public class AtlantisRunManager {
             return false;
         }
         else {
-            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Yellow);
+//            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Yellow);
             unit.move(runTo, UnitMissions.RUN_FROM_UNIT);
             return true;
         }
@@ -62,10 +62,10 @@ public class AtlantisRunManager {
             median = closeEnemies.median();
         }
         
-        AtlantisPainter.paintCircle(median, 1, Color.Red);
-        AtlantisPainter.paintCircle(median, 3, Color.Red);
-        AtlantisPainter.paintCircle(median, 5, Color.Red);
-        AtlantisPainter.paintCircle(median, 7, Color.Red);
+//        AtlantisPainter.paintCircle(median, 1, Color.Red);
+//        AtlantisPainter.paintCircle(median, 3, Color.Red);
+//        AtlantisPainter.paintCircle(median, 5, Color.Red);
+//        AtlantisPainter.paintCircle(median, 7, Color.Red);
         
 //        // Define closest enemy
 //        AUnit nearestEnemy = Select.from(closeEnemies.list()).inRadius(4, unit).nearestTo(unit);
@@ -171,9 +171,9 @@ public class AtlantisRunManager {
         if (runTo == null) {
             runTo = findRunPositionAtAnyDirection(unit);
         }
-        else {
-            AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Yellow);
-        }
+//        else {
+//            AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Yellow);
+//        }
 
         // =========================================================
         
@@ -320,7 +320,7 @@ public class AtlantisRunManager {
                 // If has path to given point, add it to the list of potential points
                 if (unit.hasPathTo(potentialPosition) && AtlantisMap.isWalkable(potentialPosition)) {
                     potentialPositionsList.add(potentialPosition);
-                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Orange);
+//                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Orange);
                 }
             }
         }
@@ -336,10 +336,10 @@ public class AtlantisRunManager {
             }
         }
         
-        AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Purple);
+//        AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Purple);
         
-        AtlantisPainter.paintLine(unit.getPosition(), bestPosition, Color.Green);
-        AtlantisPainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
+//        AtlantisPainter.paintLine(unit.getPosition(), bestPosition, Color.Green);
+//        AtlantisPainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
         return bestPosition;
     }
     
