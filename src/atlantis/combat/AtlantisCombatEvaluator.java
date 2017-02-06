@@ -53,7 +53,7 @@ public class AtlantisCombatEvaluator {
      * some safe margin. This feature avoids fighting and immediately running away and fighting again.
      */
     public static boolean isSituationFavorable(AUnit unit, boolean isPendingFight) {
-        AUnit nearestEnemy = Select.enemy().nearestTo(unit.getPosition());
+        AUnit nearestEnemy = Select.enemy().nearestTo(unit);
         if (nearestEnemy == null || unit.distanceTo(nearestEnemy) >= 15) {
             return true;
         }
@@ -75,7 +75,7 @@ public class AtlantisCombatEvaluator {
      * <b>FALSE</b> if enemy is too strong and we should pull back.
      */
     public static boolean isSituationExtremelyFavorable(AUnit unit, boolean isPendingFight) {
-        AUnit nearestEnemy = Select.enemy().nearestTo(unit.getPosition());
+        AUnit nearestEnemy = Select.enemy().nearestTo(unit);
 
         if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
             return false;

@@ -61,7 +61,7 @@ public class AtlantisMineralGathering {
     private static AUnit getMineralFieldToGather(AUnit worker) {
 
         // Get nearest base for this unit
-        AUnit base = Select.ourBases().nearestTo(worker.getPosition());
+        AUnit base = Select.ourBases().nearestTo(worker);
         if (base == null) {
             return null;
         }
@@ -115,7 +115,7 @@ public class AtlantisMineralGathering {
             return leastGatheredMineral;
         } // If no minerals found, return nearest mineral
         else {
-            return Select.minerals().nearestTo(base.getPosition());
+            return Select.minerals().nearestTo(base);
         }
     }
 

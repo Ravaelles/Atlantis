@@ -46,26 +46,32 @@ public class MissionUmt extends Mission {
         if (nearestEnemy != null) {
             enemyToAttack = nearestEnemy;
 //            System.out.println("    dist: " + nearestEnemy.distanceTo(unit));
+            unit.setTooltip("#UMT:Attack!");
+            return unit.attack(enemyToAttack, UnitMissions.ATTACK_UNIT);
         }
 
         // === Return location to go to ====================================
         
         positionToAttack = AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
-        
-        // === Either attack a unit or go forward ==========================
-        
-        if (enemyToAttack != null) {
-            unit.setTooltip("#UMT:Attack!");
-            return unit.attack(enemyToAttack, UnitMissions.ATTACK_UNIT);
-        }
-        else if (positionToAttack != null) {
+        if (positionToAttack != null) {
             unit.setTooltip("#UMT:Explore");
             return unit.attack(positionToAttack, UnitMissions.EXPLORE);
         }
-        else {
-            System.err.println("UMT action: no mission action");
-        }
-
+        
+        // === Either attack a unit or go forward ==========================
+        
+//        if (enemyToAttack != null) {
+//            unit.setTooltip("#UMT:Attack!");
+//            return unit.attack(enemyToAttack, UnitMissions.ATTACK_UNIT);
+//        }
+//        else if (positionToAttack != null) {
+//            unit.setTooltip("#UMT:Explore");
+//            return unit.attack(positionToAttack, UnitMissions.EXPLORE);
+//        }
+//        else {
+//        }
+//
+        System.err.println("UMT action: no mission action");
         return false;
     }
 

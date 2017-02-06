@@ -40,7 +40,7 @@ public class AtlantisSpecialPositionFinder {
      */
     protected static APosition findPositionForGasBuilding(AUnitType building) {
         for (AUnit base : Select.ourBases().listUnits()) {
-            AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base.getPosition());
+            AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
             if (geyser != null && geyser.distanceTo(base) < 12) {
                 APosition position = PositionUtil.translateByPixels(geyser.getPosition(), -64, -32);

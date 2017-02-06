@@ -6,6 +6,7 @@ import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.squad.Squad;
 import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.missions.UnitMissions;
@@ -114,10 +115,18 @@ public abstract class AbstractMicroManager {
      */
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         if (unit.isGroundUnit() && unit.getType().isRangedUnit() && (unit.getHitPoints() <= 42 || unit.getHPPercent() < 100)) {
-
+            
+            // === Handle Dragoons ========================================
+            
+            if (unit.getType().isDragoon() && unit.isReadyToShoot() && unit.getHP() >= 80) {
+                return false;
+            }
+            
             // === Define safety distance ==============================
             
-            double safetyDistance = Math.min(1.4, unit.getWeaponRangeGround() - 1.5);
+//            double safetyDistance = Math.min(1.4, unit.getWeaponRangeGround() - 2);
+            double safetyDistance = 1.8 + (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
+                    .inRadius(4, unit)).count() > 0) ? 2 : 0);
             
             if (unit.getType().isVulture()) {
                 safetyDistance = unit.getWeaponRangeGround() + 2.7;
@@ -129,7 +138,12 @@ public abstract class AbstractMicroManager {
             int enemyNearbyCountingRadius = 6;
             int enemiesNearby = Select.enemy().inRadius(enemyNearbyCountingRadius, unit).count();
             if (enemiesNearby >= 2) {
-                safetyDistance += Math.max((double) enemiesNearby / 2, 3.6);
+                if (unit.getType().isVulture()) {
+                    safetyDistance += Math.max((double) enemiesNearby / 2, 3.6);
+                }
+                else {
+                    safetyDistance += Math.max((double) enemiesNearby / 3, 2);
+                }
             }
             
 //            AtlantisPainter.paintTextCentered(unit, "" + String.format("%.1f", safetyDistance), Color.White);

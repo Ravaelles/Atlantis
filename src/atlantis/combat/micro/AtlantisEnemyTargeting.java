@@ -22,9 +22,8 @@ public class AtlantisEnemyTargeting {
         
         nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
                 .canBeAttackedBy(unit)
-                .ofType(
-                        AUnitType.Terran_Vulture_Spider_Mine
-                ).nearestTo(unit.getPosition());
+                .ofType(AUnitType.Terran_Vulture_Spider_Mine)
+                .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
@@ -39,7 +38,7 @@ public class AtlantisEnemyTargeting {
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
                         AUnitType.Protoss_Reaver,
                         AUnitType.Zerg_Lurker
-                ).nearestTo(unit.getPosition());
+                ).nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
@@ -47,9 +46,9 @@ public class AtlantisEnemyTargeting {
         // =========================================================
         // Attack nearest enemy
         if (AtlantisGame.getTimeSeconds() < 180) {
-            nearestEnemy = Select.enemyRealUnits(canAttackGround, canAttackAir)
+            nearestEnemy = Select.enemyRealUnits()
                     .canBeAttackedBy(unit)
-                    .nearestTo(unit.getPosition());
+                    .nearestTo(unit);
             if (nearestEnemy != null && nearestEnemy.getType().isWorker() 
                     && PositionUtil.distanceTo(nearestEnemy, Select.mainBase()) < 30) {
 //                return null;
@@ -67,7 +66,7 @@ public class AtlantisEnemyTargeting {
                         AUnitType.Terran_Firebat, AUnitType.Zerg_Zergling, 
                         AUnitType.Zerg_Hydralisk)
                 .canBeAttackedBy(unit)
-                .nearestTo(unit.getPosition());
+                .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
@@ -78,7 +77,7 @@ public class AtlantisEnemyTargeting {
                 .ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony, 
                         AUnitType.Terran_Bunker)
                 .canBeAttackedBy(unit)
-                .nearestTo(unit.getPosition());
+                .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
@@ -87,7 +86,7 @@ public class AtlantisEnemyTargeting {
         // Try selecting real units
         nearestEnemy = Select.enemyRealUnits(canAttackGround, canAttackAir)
                 .canBeAttackedBy(unit)
-                .nearestTo(unit.getPosition());
+                .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
@@ -98,7 +97,7 @@ public class AtlantisEnemyTargeting {
                 .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool, 
                         AUnitType.Terran_Command_Center)
                 .canBeAttackedBy(unit)
-                .nearestTo(unit.getPosition());
+                .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
@@ -107,7 +106,7 @@ public class AtlantisEnemyTargeting {
         // Okay, try targeting any-fuckin-thing
         nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
                 .canBeAttackedBy(unit)
-                .nearestTo(unit.getPosition());
+                .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }

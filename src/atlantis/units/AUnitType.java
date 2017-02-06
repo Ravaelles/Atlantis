@@ -373,7 +373,9 @@ public class AUnitType implements Comparable<AUnitType> {
                     // Zerg
                     AUnitType.Zerg_Drone,
                     AUnitType.Zerg_Zergling,
-                    AUnitType.Zerg_Broodling
+                    AUnitType.Zerg_Broodling,
+                    AUnitType.Zerg_Ultralisk,
+                    AUnitType.Zerg_Infested_Terran
             );
         }
         return _isMelee;
@@ -760,9 +762,11 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public boolean isVulture() {
-        return isType(
-                AUnitType.Terran_Vulture
-        );
+        return isType(AUnitType.Terran_Vulture);
+    }
+
+    public boolean isDragoon() {
+        return isType(AUnitType.Protoss_Dragoon);
     }
 
     public boolean isNeutralType() {

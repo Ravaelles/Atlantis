@@ -81,7 +81,7 @@ public class TerranMedic {
         }
 
         AUnit nearestWoundedInfantry = (AUnit) Select.ourCombatUnits().infantry().wounded()
-                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).nearestTo(medic.getPosition());
+                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).nearestTo(medic);
 
         // =========================================================
         // If there's a wounded unit, heal it.
