@@ -558,7 +558,7 @@ public class Select<T> {
             boolean isMilitaryBuilding = uData.getType().isMilitaryBuilding();
             AUnit u = uData.getUnit();	//TODO: will work only on visible units...
             if (!u.isCompleted() || u.isWorker() || (uData.getType().isBuilding() && !isMilitaryBuilding)
-                    || u.getType().isInvincible()) {
+                    || u.getType().isInvincible() || u.getType().isSpecial()) {
                 unitsIterator.remove();
             }
         }

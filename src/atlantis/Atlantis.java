@@ -79,59 +79,6 @@ public class Atlantis implements BWEventListener {
     public static int LOST_RESOURCES = 0;
 
     // =========================================================
-    // Constructors
-    /**
-     * You have to pass AtlantisConfig object to initialize Atlantis.
-     */
-    public Atlantis() {
-        instance = this; // Save static reference to this instance, act like a singleton.
-    }
-
-    /**
-     * Returns the current Atlantis instance, useful for retrieving game information
-     *
-     * @return
-     */
-    public static Atlantis getInstance() {
-        if (instance == null) {
-            instance = new Atlantis();
-        }
-        return instance;
-    }
-
-    // =========================================================
-    // Start / Pause / Unpause
-    /**
-     * Starts the bot.
-     */
-    public void run() {
-        if (!_isStarted) {
-            _isPaused = false;
-            _isStarted = true;
-
-            mirror.getModule().setEventListener(this);
-            mirror.startGame();
-        }
-    }
-
-    /**
-     * Forces all calculations to be stopped. CPU usage should be minimal. Or resumes the game after pause.
-     */
-    public void pauseOrUnpause() {
-        _isPaused = !_isPaused;
-    }
-
-    // =========================================================
-    /**
-     * This method returns bridge connector between Atlantis and Starcraft, which is a BWMirror object. It
-     * provides low-level functionality for functions like canBuildHere etc. For more details, see BWMirror
-     * project documentation.
-     */
-    public static Game getBwapi() {
-        return getInstance().bwapi;
-    }
-
-    // =========================================================
     
     /**
      * It's executed only once, before the first game frame happens.
@@ -512,6 +459,59 @@ public class Atlantis implements BWEventListener {
     public void onPlayerDropped(Player player) {
     }
 
+    // =========================================================
+    // Constructors
+    /**
+     * You have to pass AtlantisConfig object to initialize Atlantis.
+     */
+    public Atlantis() {
+        instance = this; // Save static reference to this instance, act like a singleton.
+    }
+
+    /**
+     * Returns the current Atlantis instance, useful for retrieving game information
+     *
+     * @return
+     */
+    public static Atlantis getInstance() {
+        if (instance == null) {
+            instance = new Atlantis();
+        }
+        return instance;
+    }
+
+    // =========================================================
+    // Start / Pause / Unpause
+    /**
+     * Starts the bot.
+     */
+    public void run() {
+        if (!_isStarted) {
+            _isPaused = false;
+            _isStarted = true;
+
+            mirror.getModule().setEventListener(this);
+            mirror.startGame();
+        }
+    }
+
+    /**
+     * Forces all calculations to be stopped. CPU usage should be minimal. Or resumes the game after pause.
+     */
+    public void pauseOrUnpause() {
+        _isPaused = !_isPaused;
+    }
+
+    // =========================================================
+    /**
+     * This method returns bridge connector between Atlantis and Starcraft, which is a BWMirror object. It
+     * provides low-level functionality for functions like canBuildHere etc. For more details, see BWMirror
+     * project documentation.
+     */
+    public static Game getBwapi() {
+        return getInstance().bwapi;
+    }
+    
     // =========================================================
     // Utility / Axuliary methods
     /**

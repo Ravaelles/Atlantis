@@ -218,7 +218,9 @@ public class AtlantisGame {
     public static void setUmtMode(boolean umtMode) {
         AtlantisGame.umtMode = umtMode;
         if (umtMode) {
-            System.out.println("UMT mode has been enabled!");
+            System.out.println();
+            System.out.println("### UMT mode enabled! ###");
+            System.out.println();
         }
     }
     

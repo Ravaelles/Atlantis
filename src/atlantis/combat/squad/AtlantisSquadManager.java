@@ -49,7 +49,8 @@ public class AtlantisSquadManager {
      * @return
      */
     private static boolean shouldSkipUnit(AUnit unit) {
-        return unit.getType().isBuilding() || unit.isWorker() || unit.getType().isLarva() || unit.getType().isEgg();
+        return unit.getType().isBuilding() || unit.isWorker() || unit.getType().isLarva() 
+                || unit.getType().isEgg() || unit.getType().isSpecial();
     }
 
     // =========================================================

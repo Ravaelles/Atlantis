@@ -165,13 +165,14 @@ public class AtlantisRunManager {
         // If it is, it probably means we're in the corner and that we should run even towards the enemy,
         // with the hope of getting out.
         
-        if (unit.distanceTo(runTo) < (minTiles - 0.2)) {
+        if (runTo == null || unit.distanceTo(runTo) < (minTiles - 0.2)) {
             runTo = findLongDistanceRunPoint(unit, runAwayFrom);
         }
 
         // =========================================================
         
         if (runTo != null) {
+            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Blue);
             return runTo;
         }
         else {
@@ -205,7 +206,7 @@ public class AtlantisRunManager {
                 // If has path to given point, add it to the list of potential points
                 if (unit.hasPathTo(potentialPosition)) {
                     potentialPositionsList.add(potentialPosition);
-                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Orange);
+                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Grey);
                 }
             }
         }

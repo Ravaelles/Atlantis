@@ -92,7 +92,7 @@ public class Missions {
         // === Handle UMT ==========================================
         
         if (AtlantisGame.isUmtMode()) {
-            
+            return Missions.UMT;
         }
         
         // =========================================================

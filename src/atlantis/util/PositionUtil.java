@@ -19,6 +19,9 @@ public class PositionUtil {
      * building dimensions.
      */
     public static double distanceTo(Object object1, Object object2) {
+//        if (object1 == null || object2 == null) {
+//            return -1;
+//        }
         
         // === Convert object1 to position or unit ====================
         
