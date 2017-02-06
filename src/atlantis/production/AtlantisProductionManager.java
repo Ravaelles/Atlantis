@@ -20,6 +20,14 @@ public class AtlantisProductionManager {
      */
     protected static void update() {
         
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            return;
+        }
+        
+        // =========================================================
+        
         // Get build orders (aka production orders) from the manager
         AtlantisBuildOrdersManager buildOrdersManager = AtlantisConfig.getBuildOrders();
 

@@ -1051,6 +1051,13 @@ public class Select<T> {
     }
 
     /**
+     * Returns true if there're no units that fullfilled all previous conditions.
+     */
+    public boolean isEmpty() {
+        return data.size() == 0;
+    }
+
+    /**
      * Returns number of units matching all previous conditions.
      */
     public int size() {

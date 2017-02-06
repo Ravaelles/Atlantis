@@ -529,80 +529,79 @@ public class AtlantisPainter {
 
             // RUN
             if (unit.isRunning()) {
-                paintLine(unit.getPosition(), unit.getRunManager().getRunToPosition(), Color.Blue);
+//                paintLine(unit.getPosition(), unit.getRunManager().getRunToPosition(), Color.Blue);
 
                 // =========================================================
                 // === Paint white flags over running units
                 // =========================================================
-                if (unit.isRunning()) {
-                    int flagWidth = 15;
-                    int flagHeight = 8;
-                    int dy = 12;
+                int flagWidth = 15;
+                int flagHeight = 8;
+                int dy = 12;
 
-                    paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
+                paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
 
-                    paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - dy),
-                            flagWidth, flagHeight, Color.White); // White flag
-                    paintRectangle(unitPosition.translateByPixels(0, -flagHeight - dy),
-                            flagWidth, flagHeight, Color.Grey); // Flag border
-                    paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
-                            2, flagHeight, Color.Grey); // Flag stick
-                }
+                paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - dy),
+                        flagWidth, flagHeight, Color.White); // White flag
+                paintRectangle(unitPosition.translateByPixels(0, -flagHeight - dy),
+                        flagWidth, flagHeight, Color.Grey); // Flag border
+                paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
+                        2, flagHeight, Color.Grey); // Flag stick
             }
 //            
 //            // Paint #ID
 //            paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
-                // BUILDER
+            // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
 //                paintCircle(unit, 15, Color.Teal);
 //                paintCircle(unit, 13, Color.Teal);
 //                paintCircle(unit, 11, Color.Teal);
 //            }
-                // Current COMMAND
+            // Current COMMAND
 //            if (!unit.isMoving()) {
 //                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
 //            }
-                // =========================================================
-                Color color = Color.Grey;
-                if (unit.getUnitMission() != null) {
-                    if (unit.getUnitMission().equals(UnitMissions.MOVE)) {
-                        color = Color.Teal;
-                    } else if (unit.getUnitMission().isAttacking()) {
-                        color = Color.Green;
-                    } else if (unit.getUnitMission().equals(UnitMissions.RUN_FROM_UNIT)) {
-                        color = Color.Orange;
-                    } else if (unit.getUnitMission().equals(UnitMissions.RETREAT)) {
-                        color = Color.Orange;
-                    } else if (unit.getUnitMission().equals(UnitMissions.HEAL)) {
-                        color = Color.Blue;
-                    } else if (unit.getUnitMission().equals(UnitMissions.BUILD)) {
-                        color = Color.White;
-                    } else if (unit.getUnitMission().equals(UnitMissions.REPAIR)) {
-                        color = Color.White;
-                    }
+            // =========================================================
+            Color color = Color.Grey;
+            if (unit.getUnitMission() != null) {
+                if (unit.getUnitMission().equals(UnitMissions.MOVE)) {
+                    color = Color.Teal;
+                } else if (unit.getUnitMission().isAttacking()) {
+                    color = Color.Green;
+                } else if (unit.getUnitMission().equals(UnitMissions.RUN_FROM_UNIT)) {
+                    color = Color.Orange;
+                } else if (unit.getUnitMission().equals(UnitMissions.RETREAT)) {
+                    color = Color.Orange;
+                } else if (unit.getUnitMission().equals(UnitMissions.HEAL)) {
+                    color = Color.Blue;
+                } else if (unit.getUnitMission().equals(UnitMissions.BUILD)) {
+                    color = Color.White;
+                } else if (unit.getUnitMission().equals(UnitMissions.REPAIR)) {
+                    color = Color.White;
+                }
 //            else if (unit.getUnitMission().equals(UnitMissions.)) {
 //                color = Color.;
 //            }
 //            else if (unit.getUnitMission().equals(UnitMissions.)) {
 //                color = Color.;
 //            }
-                }
+            }
 
-                if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
-                    paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
-                }
+            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+                paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
+            }
 
-                if (unit.isWorker() && unit.isIdle()) {
-                    paintCircle(unit, 10, Color.Black);
-                    paintCircle(unit, 8, Color.Black);
-                    paintCircle(unit, 6, Color.Black);
-                    paintCircle(unit, 4, Color.Black);
-                }
+            if (unit.isWorker() && unit.isIdle()) {
+                paintCircle(unit, 10, Color.Black);
+                paintCircle(unit, 8, Color.Black);
+                paintCircle(unit, 6, Color.Black);
+                paintCircle(unit, 4, Color.Black);
             }
         }
-        /**
-         * Paints progress bar with percent of completion over all buildings under construction.
-         */
+    }
+
+    /**
+     * Paints progress bar with percent of completion over all buildings under construction.
+     */
     private static void paintConstructionProgress() {
         for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
             if (unit.isCompleted()) {
@@ -942,7 +941,6 @@ public class AtlantisPainter {
             return;
         }
         bwapi.drawLineMap(start, end, color);
-        //getBwapi().drawLine(start, end, color, false);
     }
 
     public static void paintTextCentered(AUnit unit, String text, Color color) {

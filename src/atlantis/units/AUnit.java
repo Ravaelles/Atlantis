@@ -161,6 +161,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     // =========================================================
     // Important methods
+    
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
@@ -174,8 +175,15 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
         Position newPosition = new Position(getX() - dx, getY() - dy);
 
-        move(newPosition, UnitMissions.RUN_FROM_UNIT);
-        this.setTooltip("Run");
+        move(newPosition, UnitMissions.MOVE);
+        this.setTooltip("Move away");
+    }
+    
+    /**
+     * Returns true if any close enemy can either shoot or hit this unit.
+     */
+    public boolean canAnyEnemyShootThisUnit() {
+        return !Select.enemy().inRadius(12.5, this).canAttack(this).isEmpty();
     }
 
     // =========================================================
@@ -867,6 +875,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     public void setUnitMission(UnitMission unitMission) {
         this.unitMission = unitMission;
+    }
+
+    public boolean isReadyToShoot() {
+        return getGroundWeaponCooldown() <= 0 && getAirWeaponCooldown() <= 0;
     }
 
 }

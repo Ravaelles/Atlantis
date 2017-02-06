@@ -40,6 +40,29 @@ public class AtlantisMap {
     // =========================================================
     
     /**
+     * Returns map object.
+     */
+    public static BWTA getMap() {
+        return bwta;
+    }
+    
+    /**
+     * Returns map width in tiles.
+     */
+    public static int getMapWidthInTiles() {
+        return Atlantis.getBwapi().mapWidth();
+    }
+
+    /**
+     * Returns map height in tiles.
+     */
+    public static int getMapHeightInTiles() {
+        return Atlantis.getBwapi().mapHeight();
+    }
+    
+    // =========================================================
+    
+    /**
      * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
      * method returns this choke point. It's perfect position to defend (because it's *choke* point).
      */
@@ -250,14 +273,7 @@ public class AtlantisMap {
     }
 
     // =========================================================
-    // Generic methods - wrappers for JNIBWAPI methods
-    /**
-     * Returns map object.
-     */
-    public static BWTA getMap() {
-        return bwta;
-    }
-
+    
     /**
      * Returns list of places that have geyser and mineral fields so they are the places where you could build
      * a base. Starting locations are also included here.
@@ -347,17 +363,10 @@ public class AtlantisMap {
     }
 
     /**
-     * Returns map width in tiles.
+     * Returns true if given position can be traversed by land units.
      */
-    public static int getMapWidthInTiles() {
-        return Atlantis.getBwapi().mapWidth();
-    }
-
-    /**
-     * Returns map height in tiles.
-     */
-    public static int getMapHeightInTiles() {
-        return Atlantis.getBwapi().mapHeight();
+    public static boolean isWalkable(APosition position) {
+        return Atlantis.getBwapi().isWalkable(position.getX() / 8, position.getY() / 8);
     }
     
     // =========================================================

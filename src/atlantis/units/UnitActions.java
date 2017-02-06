@@ -75,13 +75,19 @@ public interface UnitActions {
     }
     
     default public boolean move(Position target, UnitMission unitMission) {
+        if (target == null) {
+            return false;
+        }
+        
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
         unit().setUnitMission(unitMission);
-        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
+        if (!u().isMoving() || !target.equals(u().getTargetPosition())) {
             u().move(target);
             return true;
         }
-        return true;
+        else {
+            return true;
+        }
     }
     
     /**

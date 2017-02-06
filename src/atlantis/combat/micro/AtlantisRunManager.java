@@ -1,6 +1,8 @@
 package atlantis.combat.micro;
 
+import atlantis.Atlantis;
 import atlantis.AtlantisGame;
+import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
@@ -30,9 +32,10 @@ public class AtlantisRunManager {
         if (unit == null || runTo == null) {
             return false;
         }
-        
-        unit.move(runTo, UnitMissions.RUN_FROM_UNIT);
-        return true;
+        else {
+            unit.move(runTo, UnitMissions.RUN_FROM_UNIT);
+            return true;
+        }
     }
     
     // =========================================================
@@ -60,6 +63,10 @@ public class AtlantisRunManager {
         else if (unitOrPosition instanceof APosition) {
             runFrom = (APosition) unitOrPosition;
         }
+        
+//        if (runFrom != null) {
+//            System.out.println("Run from " + runFrom + ", dist: " + runFrom.distanceTo(unit));
+//        }
         
         // === Define run to position ==========================
         
@@ -146,7 +153,7 @@ public class AtlantisRunManager {
 
 //            System.out.println("Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true) = " + Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true));
 //            System.out.println("unit.hasPathTo(runTo.getPoint()) = " + unit.hasPathTo(runTo.getPoint()));
-            if (unit.hasPathTo(runTo.getPoint())) {
+            if (unit.hasPathTo(runTo.getPoint()) && AtlantisMap.isWalkable(runTo)) {
                 break;
             } else {
                 howManyTiles++;
@@ -157,15 +164,16 @@ public class AtlantisRunManager {
 
         // =========================================================
         if (runTo != null) {
-            double dist = unit.distanceTo(runTo);
-            if (dist >= 0.5 && dist <= maxTiles + 1) {
-                return runTo;
-            }
+//            double dist = unit.distanceTo(runTo);
+//            if (dist >= 0.001 && dist <= maxTiles + 1) {
+            return runTo;
+//            }
         }
-
-        System.err.println("Couldn't find run position - pretty f'ed up (" 
-                + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null") + ") ");
-        return null;
+        else {
+            System.err.println("Couldn't find run position - pretty f'ed up (" 
+                    + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null") + ") ");
+            return null;
+        }
     }
     
 //    private static int countNearbyUnits(Position position) {
