@@ -154,7 +154,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
             if (unit.exists() && unit.isCompleted() && !unit.isNotActuallyUnit() && !unit.getType().isBuilding()
-                    && !unit.getType().equals(AtlantisConfig.WORKER)) {
+                    && !unit.getType().equals(AtlantisConfig.WORKER) && !unit.getType().isSpecial()) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
         }

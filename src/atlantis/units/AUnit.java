@@ -853,7 +853,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isAttacking();
     }
 
-    public boolean hasPathTo(Position point) {
+    public boolean hasPathTo(APosition point) {
         return u.hasPath(point);
     }
 

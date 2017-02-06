@@ -111,12 +111,17 @@ public abstract class AbstractMicroManager {
      */
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         if (unit.getType().isRangedUnit()) {
-            AUnit enemy = Select.enemyRealUnits().melee().inRadius(2, unit).nearestTo(unit);
-//            if (enemy != null && !unit.isStartingAttack()) {
-            if (enemy != null && !unit.isReadyToShoot()) {
-                if (unit.runFrom(enemy)) {
-                    unit.setTooltip("Melee-run " + enemy.getShortName());
-                    return true;
+            double safetyDistanceBonus = unit.getType().isVulture() ? 3 : 0;
+
+            AUnit closeEnemy = Select.enemyRealUnits().melee()
+                    .inRadius(1.5 + safetyDistanceBonus, unit).nearestTo(unit);
+            if (closeEnemy != null) {
+                AUnit veryCloseEnemy = Select.enemyRealUnits().melee().inRadius(1.2, unit).nearestTo(unit);
+                if (veryCloseEnemy != null || !unit.isReadyToShoot()) {
+                    if (unit.runFrom(closeEnemy)) {
+                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
+                        return true;
+                    }
                 }
             }
         }

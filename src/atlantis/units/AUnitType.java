@@ -759,8 +759,22 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
+    public boolean isVulture() {
+        return isType(
+                AUnitType.Terran_Vulture
+        );
+    }
+
     public boolean isNeutralType() {
         return getName().charAt(0) != 'Z' && getName().charAt(0) != 'T' && getName().charAt(0) != 'P';
+    }
+
+    /**
+     * Returns true if given unit is powerup or special map revealer etc.
+     */
+    public boolean isSpecial() {
+        String name = getName();
+        return name.startsWith("Powerup") || name.startsWith("Special");
     }
 
 }

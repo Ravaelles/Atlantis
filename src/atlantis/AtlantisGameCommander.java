@@ -5,6 +5,8 @@ import atlantis.combat.AtlantisCombatCommander;
 import atlantis.debug.AtlantisPainter;
 import atlantis.production.AtlantisProductionCommander;
 import atlantis.scout.AtlantisScoutManager;
+import atlantis.units.AUnit;
+import atlantis.units.Select;
 import atlantis.workers.AtlantisWorkerCommander;
 
 /**
@@ -29,6 +31,15 @@ public class AtlantisGameCommander {
         AtlantisCombatCommander.update();
         AtlantisScoutManager.update();
 //        AtlantisBuildingsCommander.update(); // Currently unused
+
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            AUnit unit = Select.ourCombatUnits().first();
+            if (unit != null) {
+                AtlantisViewport.centerScreenOn(unit);
+            }
+        }
     }
 
 }

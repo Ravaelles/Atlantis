@@ -1,7 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.Atlantis;
-import atlantis.AtlantisGame;
+import atlantis.debug.AtlantisPainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -9,7 +8,9 @@ import atlantis.units.Units;
 import atlantis.units.missions.UnitMissions;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
+import bwapi.Color;
 import bwapi.Position;
+import java.util.ArrayList;
 
 /**
  *
@@ -82,7 +83,7 @@ public class AtlantisRunManager {
     /**
      *
      */
-    public static APosition getPositionAwayFrom(AUnit unit, Position runAwayFrom) {
+    public static APosition getPositionAwayFrom(AUnit unit, APosition runAwayFrom) {
         if (unit == null || runAwayFrom == null) {
             return null;
         }
@@ -100,7 +101,7 @@ public class AtlantisRunManager {
     /**
      * Running behavior which will make unit run toward main base.
      */
-    private static APosition findPositionToRun_preferMainBase(AUnit unit, Position runAwayFrom) {
+    private static APosition findPositionToRun_preferMainBase(AUnit unit, APosition runAwayFrom) {
         AUnit mainBase = Select.mainBase();
         if (mainBase != null) {
             if (PositionUtil.distanceTo(mainBase, unit) > 5) {
@@ -115,21 +116,19 @@ public class AtlantisRunManager {
     /**
      * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
      */
-    private static APosition findPositionToRun_dontPreferMainBase(AUnit unit, Position runAwayFrom) {
-        int howManyTiles = 1;
+    private static APosition findPositionToRun_dontPreferMainBase(AUnit unit, APosition runAwayFrom) {
+        int minTiles = 2;
         int maxTiles = 4;
         APosition runTo = null;
 
         // =========================================================
         
-        System.out.println("############ " + AtlantisGame.getTimeFrames());
-        while (howManyTiles <= maxTiles) {
-            System.out.println("----- " + howManyTiles);
+        while (minTiles <= maxTiles) {
             double xDirectionToUnit = runAwayFrom.getX() - unit.getPosition().getX();
             double yDirectionToUnit = runAwayFrom.getY() - unit.getPosition().getY();
 
             double vectorLength = unit.distanceTo(runAwayFrom);
-            double ratio = howManyTiles / vectorLength;
+            double ratio = minTiles / vectorLength;
 
             // Add randomness of move if distance is big enough
             //        int xRandomness = howManyTiles > 3 ? (2 - AtlantisUtilities.rand(0, 4)) : 0;
@@ -153,27 +152,76 @@ public class AtlantisRunManager {
 
 //            System.out.println("Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true) = " + Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true));
 //            System.out.println("unit.hasPathTo(runTo.getPoint()) = " + unit.hasPathTo(runTo.getPoint()));
-            if (unit.hasPathTo(runTo.getPoint()) && AtlantisMap.isWalkable(runTo)) {
+            if (unit.hasPathTo(runTo) && AtlantisMap.isWalkable(runTo)) {
                 break;
             } else {
-                howManyTiles++;
+                minTiles++;
             }
             
             break;
         }
+        
+        // === Check if the place isn't too close ==================
+        // If it is, it probably means we're in the corner and that we should run even towards the enemy,
+        // with the hope of getting out.
+        
+        if (unit.distanceTo(runTo) < (minTiles - 0.2)) {
+            runTo = findLongDistanceRunPoint(unit, runAwayFrom);
+        }
 
         // =========================================================
+        
         if (runTo != null) {
-//            double dist = unit.distanceTo(runTo);
-//            if (dist >= 0.001 && dist <= maxTiles + 1) {
             return runTo;
-//            }
         }
         else {
             System.err.println("Couldn't find run position - pretty f'ed up (" 
                     + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null") + ") ");
             return null;
         }
+    }
+    
+    /**
+     *
+     */
+    private static APosition findLongDistanceRunPoint(AUnit unit, APosition runAwayFrom) {
+        int minDistanceInTiles = 4;
+        int tx = unit.getTileX();
+        int ty = unit.getTileY();
+        
+        // Build list of possible run positions, basically around the clock
+        ArrayList<APosition> potentialPositionsList = new ArrayList<>();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) {
+                    continue;
+                }
+                
+                // Define point and make sure it's inbounds
+                APosition potentialPosition = APosition.createFrom(
+                        tx + dx * minDistanceInTiles, ty + dy * minDistanceInTiles
+                ).makeValid();
+                
+                // If has path to given point, add it to the list of potential points
+                if (unit.hasPathTo(potentialPosition)) {
+                    potentialPositionsList.add(potentialPosition);
+                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Orange);
+                }
+            }
+        }
+        
+        // Find the location that would be most distant to the enemy location
+        double mostDistant = -1;
+        APosition bestPosition = null;
+        for (APosition position : potentialPositionsList) {
+            double dist = runAwayFrom.distanceTo(position);
+            if (bestPosition == null || dist >= mostDistant) {
+                bestPosition = position;
+                mostDistant = dist;
+            }
+        }
+        
+        return bestPosition;
     }
     
 //    private static int countNearbyUnits(Position position) {
