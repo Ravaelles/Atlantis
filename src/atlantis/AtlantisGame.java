@@ -10,6 +10,7 @@ import bwapi.Player;
 import bwapi.Race;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+import java.util.List;
 
 /**
  * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply
@@ -176,6 +177,13 @@ public class AtlantisGame {
      */
     public static Player getPlayerUs() {
         return Atlantis.getBwapi().self();
+    }
+
+    /**
+     * Returns all players.
+     */
+    public static List<Player> getPlayers() {
+        return Atlantis.getBwapi().getPlayers();
     }
 
     /**

@@ -321,11 +321,19 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }
 
     public int getHP() {
-        return getHitPoints();
+        return getHitPoints() + getShields();
+    }
+
+    public int getShields() {
+        return u().getShields();
+    }
+
+    public int getMaxShields() {
+        return getType().ut().maxShields();
     }
 
     public int getMaxHP() {
-        return getMaxHitPoints();
+        return getMaxHitPoints() + getMaxShields();
     }
 
     public String getShortName() {

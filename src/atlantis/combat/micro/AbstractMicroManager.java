@@ -113,12 +113,20 @@ public abstract class AbstractMicroManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
-        if (unit.isGroundUnit() && unit.getType().isRangedUnit()) {
-//            double safetyDistance = unit.getType().isVulture() ? 6 : 2;
-            double safetyDistance = unit.getWeaponRangeGround() + 2.7;
-            int enemyNearbyCountingRadius = (int) safetyDistance;
+        if (unit.isGroundUnit() && unit.getType().isRangedUnit() && (unit.getHitPoints() < 41 || unit.getHPPercent() < 100)) {
+
+            // === Define safety distance ==============================
+            
+            double safetyDistance = 1.3;
+            
+            if (unit.getType().isVulture()) {
+                safetyDistance = unit.getWeaponRangeGround() + 2.7;
+            }
+            
+            // =========================================================
             
             // Apply bonus when there are maaany enemies nearby
+            int enemyNearbyCountingRadius = 6;
             int enemiesNearby = Select.enemy().inRadius(enemyNearbyCountingRadius, unit).count();
             if (enemiesNearby >= 2) {
                 safetyDistance += Math.max((double) enemiesNearby / 2, 3.6);
@@ -133,14 +141,15 @@ public abstract class AbstractMicroManager {
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
             if (closeEnemy != null) {
                 
-                double dangerousDistance = unit.getType().isVulture() ? 1.9 : 1.7;
+                double dangerousDistance = unit.getType().isVulture() ? 1.9 : 0.9;
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
                 if (isEnemyDangerouslyClose || !unit.isReadyToShoot()) {
                     
-                    boolean dontInterruptPendingAttack = unit.isAttackFrame() && closeEnemies.size() <= 4;
+//                    boolean dontInterruptPendingAttack = unit.isAttackFrame() && closeEnemies.size() <= 4;
+                    boolean dontInterruptPendingAttack = unit.isAttackFrame();
                     if (!dontInterruptPendingAttack && unit.runFrom(null)) {
                         AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
-//                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
+                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
                         return true;
                     }
                 }

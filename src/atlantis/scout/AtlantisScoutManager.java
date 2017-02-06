@@ -27,6 +27,15 @@ public class AtlantisScoutManager {
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
     public static void update() {
+        
+        // === Handle UMT ==========================================
+        
+        if (AtlantisGame.isUmtMode()) {
+            return;
+        }
+        
+        // =========================================================
+        
         assignScoutIfNeeded();
 
         // We don't know any enemy building, scout nearest starting location.
@@ -96,10 +105,10 @@ public class AtlantisScoutManager {
         }
 
         // === Handle UMT ==========================================
-        if (AtlantisGame.isUmtMode()) {
-            handleUmtExplore(scout);
-            return;
-        }
+//        if (AtlantisGame.isUmtMode()) {
+//            handleUmtExplore(scout);
+//            return;
+//        }
 
         // =========================================================
         // Get nearest unexplored starting location and go there
@@ -160,13 +169,13 @@ public class AtlantisScoutManager {
         }
     }
 
-    private static void handleUmtExplore(AUnit scout) {
-        APosition focusPoint = getUmtFocusPoint(scout.getPosition());
-        
-        if (focusPoint != null) {
-            scout.attack(focusPoint, UnitMissions.ATTACK_POSITION);
-        }
-    }
+//    private static void handleUmtExplore(AUnit scout) {
+//        APosition focusPoint = getUmtFocusPoint(scout.getPosition());
+//        
+//        if (focusPoint != null) {
+//            scout.attack(focusPoint, UnitMissions.ATTACK_POSITION);
+//        }
+//    }
     
     public static APosition getUmtFocusPoint(APosition startPosition) {
         return AtlantisMap.getNearestUnexploredRegion(startPosition);

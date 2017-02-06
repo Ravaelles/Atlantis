@@ -265,7 +265,7 @@ public class AtlantisRunManager {
         
         // =========================================================
         
-        int expectedLength = 6;
+        int expectedLength = 5;
         int tx = unit.getTileX();
         int ty = unit.getTileY();
         
