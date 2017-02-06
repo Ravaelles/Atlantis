@@ -26,24 +26,26 @@ public class AtlantisAttackEnemyUnit {
         }
         
         // Don't interrupt when shooting or starting to shoot
-        if (unit.isAttackFrame() || unit.isStartingAttack()) { //replaces isJustShooting()
+        if (unit.isJustShooting()) {
+            unit.setTooltip("Shooting");
             return true;
         }
         
         // Check if weapon cooldown allows to attack this enemy
         if (!unit.canAttackThisKindOfUnit(enemyToAttack, true)) {
+            unit.setTooltip("Invalid target");
             return false;
         } 
         
         // =========================================================
         
         // If we already are attacking this unit, do not issue double command.
-        if (!enemyToAttack.equals(unit.getTarget())) {
-            unit.attack(enemyToAttack, UnitMissions.ATTACK_UNIT);
-            unit.setTooltip("Forward!"); //setTooltip("Forward!");
+        if (enemyToAttack != null) {
+            unit.setTooltip("Attacking " + enemyToAttack.getShortName());
+            return unit.attackUnit(enemyToAttack);
         } 
         
-        return true;
+        return false;
     }
 
 }

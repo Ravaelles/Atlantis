@@ -651,7 +651,7 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             AUnit prey = unitFrom(unitsIterator.next());
             if (predator.canAttackThisKindOfUnit(prey, false)) {
-                boolean isInShotRange = predator.hasRangeToAttack(prey, 0.2);
+                boolean isInShotRange = predator.hasRangeToAttack(prey, 0.05);
                 if (!isInShotRange) {
 //                    System.out.println(prey.getType().getShortName() + " OUT OF range ("
 //                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());

@@ -114,22 +114,31 @@ public abstract class AbstractMicroManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     protected boolean handleAvoidCloseMeleeUnits(AUnit unit) {
-        if (unit.isGroundUnit() && unit.getType().isRangedUnit() && (unit.getHitPoints() <= 42 || unit.getHPPercent() < 100)) {
+        if (unit.isGroundUnit() && unit.getType().isRangedUnit()
+                && (unit.getHitPoints() <= 42 || unit.getHPPercent() < 100)) {
             
             // === Handle Dragoons ========================================
             
-            if (unit.getType().isDragoon() && unit.isReadyToShoot() && unit.getHP() >= 80) {
+            if (unit.getType().isDragoon() && (unit.isReadyToShoot() || unit.isJustShooting()) && unit.getHPPercent()>= 85) {
                 return false;
             }
             
             // === Define safety distance ==============================
+
+            double lowHealthBonus = Math.max(((100 - unit.getHPPercent()) / 25), 1.5);
             
-//            double safetyDistance = Math.min(1.4, unit.getWeaponRangeGround() - 2);
-            double safetyDistance = 1.8 + (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
-                    .inRadius(4, unit)).count() > 0) ? 2 : 0);
+            double safetyDistance;
             
             if (unit.getType().isVulture()) {
-                safetyDistance = unit.getWeaponRangeGround() + 2.7;
+                safetyDistance = unit.getWeaponRangeGround() + 2.6;
+            }
+            else {
+                safetyDistance = 1.0 + (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
+                    .inRadius(4, unit)).count() > 0) ? 2 : 0) + lowHealthBonus;
+                
+                if (safetyDistance > unit.getWeaponRangeGround()) {
+                    safetyDistance = unit.getWeaponRangeGround() - 0.2;
+                }
             }
             
             // =========================================================
@@ -146,7 +155,8 @@ public abstract class AbstractMicroManager {
                 }
             }
             
-//            AtlantisPainter.paintTextCentered(unit, "" + String.format("%.1f", safetyDistance), Color.White);
+            AtlantisPainter.paintTextCentered(unit.getPosition().translateByPixels(0, 12), 
+                    "" + String.format("%.1f", safetyDistance), Color.Green);
             
 //            AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Green);
 //            AtlantisPainter.paintTextCentered(unit, enemiesNearby + "", Color.White);
@@ -155,16 +165,24 @@ public abstract class AbstractMicroManager {
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
             if (closeEnemy != null) {
                 
-                double dangerousDistance = unit.getType().isVulture() ? 1.9 : 0.9;
+                double dangerousDistance = unit.getType().isVulture() ? 1.9 : 1.2;
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
-                if (isEnemyDangerouslyClose || !unit.isReadyToShoot()) {
+                if (isEnemyDangerouslyClose) {
                     
-//                    boolean dontInterruptPendingAttack = unit.isAttackFrame() && closeEnemies.size() <= 4;
-                    boolean dontInterruptPendingAttack = unit.isAttackFrame() || unit.isStartingAttack();
+                    boolean dontInterruptPendingAttack;
+                    if (unit.isVulture()) {
+                        dontInterruptPendingAttack = unit.isAttackFrame() && closeEnemies.size() <= 4;
+                    }
+                    else {
+                        dontInterruptPendingAttack = (unit.isAttackFrame() || unit.isStartingAttack())
+                                && unit.getHPPercent() >= 60;
+                    }
+                    
                     if (!dontInterruptPendingAttack && unit.runFrom(null)) {
-                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
+                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
+//                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
 //                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
-                        unit.setTooltip("Melee-run (" + closeEnemies.size() + ")");
+                        unit.setTooltip("Melee-run (" + closeEnemy.getShortName() + ")");
                         return true;
                     }
                 }

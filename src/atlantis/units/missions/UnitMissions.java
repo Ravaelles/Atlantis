@@ -22,6 +22,7 @@ public class UnitMissions {
     public static final UnitMission RUN_FROM_UNIT = new UnitMission(false, true);
     public static final UnitMission RIGHT_CLICK = new UnitMission();
     public static final UnitMission SIEGE = new UnitMission();
+    public static final UnitMission STICK_CLOSER = new UnitMission();
     public static final UnitMission STOP = new UnitMission();
     public static final UnitMission UNSIEGE = new UnitMission();
 //    public static final UnitMission  = new UnitMission();

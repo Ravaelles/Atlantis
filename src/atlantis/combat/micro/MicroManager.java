@@ -57,9 +57,6 @@ public class MicroManager extends AbstractMicroManager {
             if (handleUnfavorableOdds(unit)) {
                 return true;
             }
-//            if (handleNotExtremelyFavorableOdds(unit)) {
-//                return true;
-//            }
 
             // =========================================================
             // Don't spread too much
@@ -70,7 +67,6 @@ public class MicroManager extends AbstractMicroManager {
             // =========================================================
             // Attack enemy is possible
             if (AtlantisAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
-                unit.setTooltip("Attack unit");
                 return true;
             }
 

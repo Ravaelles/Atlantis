@@ -59,19 +59,6 @@ public class AtlantisEnemyTargeting {
         }
         
         // =========================================================
-        // If no real units found, try selecting important buildings
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	
-                .ofType(AUnitType.Protoss_Zealot, AUnitType.Protoss_Dragoon, 
-                        AUnitType.Terran_Marine, AUnitType.Terran_Medic, 
-                        AUnitType.Terran_Firebat, AUnitType.Zerg_Zergling, 
-                        AUnitType.Zerg_Hydralisk)
-                .canBeAttackedBy(unit)
-                .nearestTo(unit);
-        if (nearestEnemy != null) {
-            return nearestEnemy;
-        }
-        
-        // =========================================================
         // Try selecting defensive buildings
         nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	
                 .ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony, 

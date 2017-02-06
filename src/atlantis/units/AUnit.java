@@ -341,13 +341,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }
 
     /**
-     * Has separate name not to mistake attackUnit with attackPosition.
-     */
-    public boolean attackUnit(AUnit target) {
-        return u.attack(target.u);
-    }
-
-    /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
     public double getWeaponRangeGround() {
@@ -586,7 +579,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * Returns true if unit is starting an attack or already in the attack frame animation.
      */
     public boolean isJustShooting() {
-        return isAttackFrame() || isStartingAttack();
+        return isAttacking() && (isAttackFrame() || isStartingAttack());
     }
 
     /**
@@ -860,6 +853,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     public AUnitType getBuildType() {
         return u.getBuildType() != null ? AUnitType.createFrom(u.getBuildType()) : null;
+    }
+
+    public boolean isVulture() {
+        return getType().isVulture();
     }
 
     public boolean isMorphing() {

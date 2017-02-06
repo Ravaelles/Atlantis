@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.AtlantisGame;
 import atlantis.units.missions.UnitMission;
 import atlantis.units.missions.UnitMissions;
 import atlantis.wrappers.APosition;
@@ -22,28 +23,35 @@ public interface UnitActions {
     
     // =========================================================
     
-    default boolean attack(AUnit target, UnitMission unitMission) {
+    default boolean attackUnit(AUnit target) {
+//        if (!unit().hasRangeToAttack(target, 0.05)) {
+//            unit().setTooltip("Come closer!");
+//            move(target.getPosition(), UnitMissions.ATTACK_UNIT);
+//            return false;
+//        }
         
         // Do NOT issue double orders
-        if (u().isAttacking() && u().getTarget() != null && unit().getTarget().equals(target)) {
+        if (u().isAttacking() && u().getTarget() != null && unit().getTarget().equals(target) 
+                && unit().isJustShooting()) {
             return true;
         }
         else {
-            unit().setUnitMission(unitMission);
+            unit().setUnitMission(UnitMissions.ATTACK_UNIT);
             u().attack(target.u());
             return true;
         }
 //        return u().attack(target.u());
     }
     
-    default boolean attack(APosition target, UnitMission unitMission) {
+    default boolean attackPosition(APosition target) {
         
         // Do NOT issue double orders
-        if (u().isAttacking() && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
+        if (u().isAttacking() && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)
+                 && unit().isJustShooting()) {
             return true;
         }
         else {
-            unit().setUnitMission(unitMission);
+            unit().setUnitMission(UnitMissions.ATTACK_POSITION);
             u().attack(target);
             return true;
         }
@@ -76,6 +84,7 @@ public interface UnitActions {
     
     default public boolean move(Position target, UnitMission unitMission) {
         if (target == null) {
+            System.err.println("Null move position for " + this);
             return false;
         }
         

@@ -29,15 +29,30 @@ public class MissionUmt extends Mission {
     // =========================================================
     @Override
     public boolean update(AUnit unit) {
+        if (unit.isJustShooting() || !unit.isReadyToShoot()) {
+            return false;
+        }
+        
+        // =========================================================
+        
 //        APosition focusPoint = getFocusPoint();
         AUnit enemyToAttack = null;
-        APosition positionToAttack = null;
-        
+        APosition explorePosition = null;
+
         // === Define unit that will be center of our army =================
         AUnit flagshipUnit = Select.ourCombatUnits().first();
         if (flagshipUnit == null) {
             unit.setTooltip("No flagship unit found");
             return false;
+        }
+
+        // === Stick close to flagship unit ================================
+        if (flagshipUnit.distanceTo(unit.getPosition()) > 5) {
+            if (Select.ourCombatUnits().inRadius(3, unit).count() == 0) {
+                unit.setTooltip("#Closer (" + ((int) flagshipUnit.distanceTo(unit)) + ")");
+                unit.move(flagshipUnit.getPosition(), UnitMissions.STICK_CLOSER);
+                return true;
+            }
         }
 
         // === Return closest enemy ========================================
@@ -46,20 +61,18 @@ public class MissionUmt extends Mission {
         if (nearestEnemy != null) {
             enemyToAttack = nearestEnemy;
 //            System.out.println("    dist: " + nearestEnemy.distanceTo(unit));
-            unit.setTooltip("#UMT:Attack!");
-            return unit.attack(enemyToAttack, UnitMissions.ATTACK_UNIT);
+            unit.setTooltip("#Attack!");
+            return unit.attackUnit(enemyToAttack);
         }
 
         // === Return location to go to ====================================
-        
-        positionToAttack = AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
-        if (positionToAttack != null) {
-            unit.setTooltip("#UMT:Explore");
-            return unit.attack(positionToAttack, UnitMissions.EXPLORE);
+        explorePosition = AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
+        if (explorePosition != null) {
+            unit.setTooltip("#Explore");
+            return unit.move(explorePosition, UnitMissions.EXPLORE);
         }
-        
+
         // === Either attack a unit or go forward ==========================
-        
 //        if (enemyToAttack != null) {
 //            unit.setTooltip("#UMT:Attack!");
 //            return unit.attack(enemyToAttack, UnitMissions.ATTACK_UNIT);
@@ -71,7 +84,9 @@ public class MissionUmt extends Mission {
 //        else {
 //        }
 //
-        System.err.println("UMT action: no mission action");
+//        System.err.println("UMT action: no mission action");
+        
+        unit.setTooltip("#Rock'n'Roll");
         return false;
     }
 
@@ -97,5 +112,4 @@ public class MissionUmt extends Mission {
 //        // === Return location to go to ====================================
 //        return AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
 //    }
-
 }
