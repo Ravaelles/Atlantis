@@ -1,5 +1,6 @@
 package atlantis.init;
 
+import atlantis.AtlantisGame;
 import atlantis.information.AtlantisMap;
 import atlantis.workers.AtlantisMineralGathering;
 
@@ -10,7 +11,19 @@ public class AtlantisInitialActions {
      * one-time only actions like initial assignment of workers to minerals etc.
      */
     public static void executeInitialActions() {
-        AtlantisMineralGathering.initialAssignWorkersToMinerals();
+        try {
+            AtlantisMineralGathering.initialAssignWorkersToMinerals();
+        }
+        catch (IndexOutOfBoundsException ex) {
+            AtlantisGame.setUmtMode(true);
+        }
+        catch (NullPointerException ex) {
+            AtlantisGame.setUmtMode(true);
+        }
+        catch (Exception ex) {
+            AtlantisGame.setUmtMode(true);
+        }
+            
         AtlantisMap.disableSomeOfTheChokePoints();
     }
 
