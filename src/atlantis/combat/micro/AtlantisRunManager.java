@@ -164,19 +164,28 @@ public class AtlantisRunManager {
         APosition runTo = null;
 
         // === Get standard run to position - as far from enemy as possible
-        runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
+        
+        if (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1) {
+            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
+        }
 
         // === Check if the place isn't too close ==================
         // If it is, it probably means we're in the corner and that we should run even towards the enemy,
         // with the hope of getting out.
+        
         if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, 5);
+            runTo = findRunPositionAtAnyDirection(unit, unit.isVulture() ? 6 : 4);
         }
 //        else {
 //            AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Yellow);
 //        }
 
         // === Very rarely it can still be null ====================
+        
+        if (runTo == null && unit.isVulture()) {
+            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
+        }
+        
         if (runTo == null) {
             runTo = findRunPositionAtAnyDirection(unit, 2);
         }
@@ -200,7 +209,7 @@ public class AtlantisRunManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private static APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
-        double minTiles = unit.isVulture() ? 2.7 : 2.5;
+        double minTiles = unit.isVulture() ? 1.5 : 2.5;
         double maxDist = minTiles + 2;
 
 //        while (minTiles <= maxTiles) {
@@ -212,7 +221,8 @@ public class AtlantisRunManager {
 
             // Also check if can run further (avoid corner shitholes)
             if (runTo != null) {
-                runTo = canRunByShowingBackToEnemyTo(unit, runAwayFrom, currentDist + 1, minTiles, maxDist);
+                double distBonus = unit.isVulture() ? 0.6 : 2;
+                runTo = canRunByShowingBackToEnemyTo(unit, runAwayFrom, currentDist + distBonus, minTiles, maxDist);
                 
                 // If is okay as well, return it
                 if (runTo != null) {
@@ -260,10 +270,12 @@ public class AtlantisRunManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
      * to given runAwayFrom position.
      */
-    private static APosition findRunPositionAtAnyDirection(AUnit unit, int expectedLength) {
+    private static APosition findRunPositionAtAnyDirection(AUnit unit, double expectedLength) {
 
         // === Define run from ========================================
-        APosition runAwayFrom = Select.enemyRealUnits().melee().inRadius(4, unit).units().median();
+        
+        Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
+        APosition runAwayFrom = unitsInRadius.median();
         if (runAwayFrom == null) {
             return null;
         }
@@ -312,16 +324,16 @@ public class AtlantisRunManager {
                         (int) (ty + vectorY)
                 );
 
-//                System.out.println();
-//                System.out.println(Math.sqrt(vectorX * vectorX + vectorY * vectorY));
-//                System.out.println("RUNTO length: " + potentialPosition.distanceTo(unit));
                 // Make sure it's inbounds
-                potentialPosition = potentialPosition.makeValidFarFromBounds();
+                if (unitsInRadius.size() <= 1) {
+                    potentialPosition = potentialPosition.makeValidFarFromBounds();
+                }
+                else {
+                    potentialPosition = potentialPosition.makeValid();
+                }
 
                 // If has path to given point, add it to the list of potential points
-//                if (unit.hasPathTo(potentialPosition) && AtlantisMap.isWalkable(potentialPosition)
-//                        && AtlantisMap.getGroundDistance(unit, potentialPosition) <= 1.5 * expectedLength) {
-                if (isPossibleAndReasonablePosition(unit, potentialPosition, expectedLength * 0.8, 1.6 * expectedLength)) {
+                if (isPossibleAndReasonablePosition(unit, potentialPosition, expectedLength * 0.3, 1.6 * expectedLength)) {
                     potentialPositionsList.add(potentialPosition);
 //                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Orange);
                 }

@@ -120,11 +120,10 @@ public abstract class AbstractMicroManager {
             // === Define safety distance ==============================
 
             double lowHealthBonus = Math.max(((100 - unit.getHPPercent()) / 25), 1.5);
-            
             double safetyDistance;
             
             if (unit.getType().isVulture()) {
-                safetyDistance = unit.getWeaponRangeGround() + 2.3;
+                safetyDistance = 3 + lowHealthBonus;
             }
             else {
                 safetyDistance = 2.2 + lowHealthBonus;
@@ -137,11 +136,12 @@ public abstract class AbstractMicroManager {
             // =========================================================
             
             // Apply bonus when there are maaany enemies nearby
-            int enemyNearbyCountingRadius = 6;
-            int enemiesNearby = Select.enemy().inRadius(enemyNearbyCountingRadius, unit).count();
+//            int enemyNearbyCountingRadius = 7;
+//            int enemiesNearby = Select.enemy().inRadius(enemyNearbyCountingRadius, unit).count();
+            int enemiesNearby = Select.enemy().inRadius(safetyDistance, unit).count();
             if (enemiesNearby >= 2) {
                 if (unit.getType().isVulture()) {
-                    safetyDistance += Math.max((double) enemiesNearby / 2, 4);
+                    safetyDistance += Math.max((double) enemiesNearby / 4, 3.5);
                 }
                 else {
                     safetyDistance += Math.max((double) enemiesNearby / 3, 2);
@@ -151,29 +151,34 @@ public abstract class AbstractMicroManager {
 //            AtlantisPainter.paintTextCentered(unit.getPosition().translateByPixels(0, 12), 
 //                    "" + String.format("%.1f", safetyDistance), Color.Green);
             
-//            AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Green);
+            AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Green);
 //            AtlantisPainter.paintTextCentered(unit, enemiesNearby + "", Color.White);
 
             Select<?> closeEnemies = Select.enemyRealUnits().melee().inRadius(safetyDistance, unit);
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
             if (closeEnemy != null) {
                 
-                double dangerousDistance = 2.2 + (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
-                    .inRadius(5, unit)).count() > 0) ? 1.45 : 0);
+                double base = (unit.isVulture() ? 1.5 : 2.2);
+                double numberOfNearEnemiesBonus = Math.max(0.4, 
+                        ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
+                double archonBonus = (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
+                        .inRadius(5, unit)).count() > 0) ? 1.5 : 0);
+                
+                double dangerousDistance = base + numberOfNearEnemiesBonus + archonBonus;
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
                 if (isEnemyDangerouslyClose) {
                     
                     boolean dontInterruptPendingAttack;
                     if (unit.isVulture()) {
-                        dontInterruptPendingAttack = unit.isAttackFrame() && closeEnemies.size() <= 4;
+                        dontInterruptPendingAttack = unit.isAttackFrame() && unit.getHPPercent() >= 30;
                     }
                     else {
                         dontInterruptPendingAttack = (unit.isAttackFrame() || unit.isStartingAttack())
-                                && unit.getHPPercent() >= 60;
+                                && unit.getHPPercent() >= 30;
                     }
                     
                     if (!dontInterruptPendingAttack && unit.runFrom(null)) {
-//                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
+                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
 //                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
 //                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
                         unit.setTooltip("Melee-run (" + closeEnemy.getShortName() + ")");

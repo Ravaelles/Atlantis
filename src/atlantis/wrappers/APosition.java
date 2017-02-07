@@ -182,21 +182,23 @@ public class APosition extends Position {
         int px = p.getX();
         int py = p.getY();
         
-        if (px < 32) {
-            px = 32;
+        int safetyMargin = 70;
+        
+        if (px < safetyMargin) {
+            px = safetyMargin;
             somethingChanged = true;
         }
-        else if (px >= 31 * AtlantisMap.getMapWidthInTiles()) {
-            px = 32 * AtlantisMap.getMapWidthInTiles() - 32;
+        else if (px >= (32 * AtlantisMap.getMapWidthInTiles() - safetyMargin)) {
+            px = 32 * AtlantisMap.getMapWidthInTiles() - safetyMargin;
             somethingChanged = true;
         }
         
-        if (py < 32) {
-            py = 32;
+        if (py < safetyMargin) {
+            py = safetyMargin;
             somethingChanged = true;
         }
-        else if (py >= 31 * AtlantisMap.getMapHeightInTiles()) {
-            py = 32 * AtlantisMap.getMapHeightInTiles() - 32;
+        else if (px >= (32 * AtlantisMap.getMapHeightInTiles() - safetyMargin)) {
+            py = 32 * AtlantisMap.getMapHeightInTiles() - safetyMargin;
             somethingChanged = true;
         }
         
