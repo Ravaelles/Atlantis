@@ -23,9 +23,8 @@ import bwta.Region;
 public class MissionUmt extends Mission {
 
     private static APosition _tempFocusPoint = null;
-    
+
     // =========================================================
-    
     public MissionUmt(String name) {
         super(name);
     }
@@ -33,12 +32,11 @@ public class MissionUmt extends Mission {
     // =========================================================
     @Override
     public boolean update(AUnit unit) {
-        if (unit.isJustShooting() || !unit.isReadyToShoot() || unit.isAttacking()) {
+        if (unit.isJustShooting() || !unit.isReadyToShoot()) {
             return false;
         }
-        
+
         // =========================================================
-        
 //        APosition focusPoint = getFocusPoint();
         AUnit engageEnemy = null;
         APosition explorePosition = null;
@@ -51,10 +49,9 @@ public class MissionUmt extends Mission {
         }
 
         // === Stick close to flagship unit ================================
-        
         boolean isFlagship = flagshipUnit.equals(unit);
         double distanceToFlagship = flagshipUnit.distanceTo(unit.getPosition());
-        
+
         if (isFlagship) {
             if (Select.ourCombatUnits().inRadius(3, unit).count() == 0) {
                 AUnit nearestUnit = Select.ourCombatUnits().exclude(unit).nearestTo(flagshipUnit);
@@ -63,44 +60,46 @@ public class MissionUmt extends Mission {
                     return true;
                 }
             }
-        }
-        else {
+        } else {
             if (distanceToFlagship > 5) {
                 if (distanceToFlagship > 7) {
                     unit.move(flagshipUnit.getPosition(), UnitActions.STICK_CLOSER);
                     return true;
-                }
-                else {
+                } else {
                     if (Select.ourCombatUnits().inRadius(1.5, unit).count() == 0) {
-                        unit.setTooltip("#Closer (" + ((int) flagshipUnit.distanceTo(unit)) + ")");
+                        unit.setTooltip("#Closer");
                         unit.move(flagshipUnit.getPosition(), UnitActions.STICK_CLOSER);
                         return true;
                     }
+                }
+            } else {
+                int veryCloseInRadius = Select.ourCombatUnits().inRadius(5, unit).count();
+                Select<?> inRadius = Select.ourCombatUnits().inRadius(5 / veryCloseInRadius, unit);
+                if (inRadius.count() > 0 && unit.moveAwayFrom(inRadius.nearestTo(unit).getPosition(), 0.3)) {
+                    unit.setTooltip("#Separate");
+                    return true;
                 }
             }
         }
 
         // === Return closest enemy ========================================
         AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
-//        System.out.println(nearestEnemy);
         if (nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
             engageEnemy = nearestEnemy;
-//            System.out.println("    dist: " + nearestEnemy.distanceTo(unit));
             unit.setTooltip("#Engage");
             return unit.move(engageEnemy.getPosition(), UnitActions.ENGAGE);
         }
 
         // === Return location to go to ====================================
         Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
-        explorePosition = (nearestUnexploredRegion != null 
+        explorePosition = (nearestUnexploredRegion != null
                 ? APosition.createFrom(nearestUnexploredRegion.getCenter()) : null);
         if (explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
             unit.setTooltip("#Explore");
             return unit.move(explorePosition, UnitActions.EXPLORE);
         }
-        
+
         // === Go to nearest unexplored position ===========================
-        
         if (_tempFocusPoint == null || _tempFocusPoint.distanceTo(unit) < 3) {
             _tempFocusPoint = AtlantisMap.getNearestUnexploredAccessiblePosition(unit.getPosition());
 
@@ -123,7 +122,6 @@ public class MissionUmt extends Mission {
 //        }
 //
 //        System.err.println("UMT action: no mission action");
-        
         unit.setTooltip("#SeenAllInMyLife");
         return false;
     }

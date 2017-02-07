@@ -169,7 +169,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
-    public void moveAwayFrom(Position position, double moveDistance) {
+    public boolean moveAwayFrom(APosition position, double moveDistance) {
         int dx = position.getX() - getX();
         int dy = position.getY() - getY();
         double vectorLength = Math.sqrt(dx * dx + dy * dy);
@@ -177,10 +177,18 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
         dx = (int) (dx * modifier);
         dy = (int) (dy * modifier);
 
-        Position newPosition = new Position(getX() - dx, getY() - dy);
+        APosition newPosition = new APosition(getX() - dx, getY() - dy).makeValidFarFromBounds();
 
-        move(newPosition, UnitActions.MOVE);
-        this.setTooltip("Move away");
+        if (AtlantisRunManager.isPossibleAndReasonablePosition(
+                this, newPosition, moveDistance * 0.6, moveDistance * 1.6
+        )) {
+            move(newPosition, UnitActions.MOVE);
+            this.setTooltip("Move away");
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     
     /**
