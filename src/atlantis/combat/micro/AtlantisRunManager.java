@@ -14,6 +14,7 @@ import atlantis.wrappers.APosition;
 import atlantis.wrappers.PositionOperationsHelper;
 import bwapi.Color;
 import bwapi.Position;
+import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class AtlantisRunManager {
 
     private boolean makeUnitRun() {
         if (unit == null || runTo == null || unit.isStuck()) {
-            runTo = null;
+            markAsNotRunning();
             return false;
         }
         else {
@@ -61,7 +62,7 @@ public class AtlantisRunManager {
         // Define which enemies are considered as close enough to be dangerous
         Units closeEnemies = defineCloseEnemies(unit);
         if (closeEnemies.isEmpty()) {
-            runTo = null;
+            markAsNotRunning();
 //            System.err.println("No enemies to run to for " + unit);
             return false;
         }
@@ -98,7 +99,7 @@ public class AtlantisRunManager {
     public boolean runFrom(Object unitOrPosition) {
         if (unitOrPosition == null) {
             System.err.println("Empty position to run to for " + unit);
-            runTo = null;
+            markAsNotRunning();
             return false;
         }
         
@@ -181,11 +182,17 @@ public class AtlantisRunManager {
         // with the hope of getting out.
         
         if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit);
+            runTo = findRunPositionAtAnyDirection(unit, 5);
         }
 //        else {
 //            AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Yellow);
 //        }
+
+        // === Very rarely it can still be null ====================
+        
+        if (runTo == null) {
+            runTo = findRunPositionAtAnyDirection(unit, 2);
+        }
 
         // =========================================================
         
@@ -204,8 +211,8 @@ public class AtlantisRunManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private static APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
-        double minTiles = unit.isVulture() ? 2.7 : 1;
-        double maxTiles = minTiles + 4;
+        double minTiles = unit.isVulture() ? 2.7 : 2.5;
+        double maxTiles = minTiles + 2;
         
         APosition runTo = null;
         
@@ -248,7 +255,8 @@ public class AtlantisRunManager {
 //            System.out.println("Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true) = " + Atlantis.getBwapi().isBuildable(runTo.toTilePosition(), true));
 //            System.out.println("unit.hasPathTo(runTo.getPoint()) = " + unit.hasPathTo(runTo.getPoint()));
             if (runTo.distanceTo(unit) > (minTiles - 0.2) && unit.hasPathTo(runTo) 
-                    && AtlantisMap.isWalkable(runTo)) {
+                    && AtlantisMap.isWalkable(runTo)
+                    && AtlantisMap.getGroundDistance(unit, runTo) <= 1.5 * minTiles) {
                 break;
             } else {
                 minTiles++;
@@ -267,7 +275,7 @@ public class AtlantisRunManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and
      * most distant to given runAwayFrom position.
      */
-    private static APosition findRunPositionAtAnyDirection(AUnit unit) {
+    private static APosition findRunPositionAtAnyDirection(AUnit unit, int expectedLength) {
         
         // === Define run from ========================================
         
@@ -278,7 +286,6 @@ public class AtlantisRunManager {
         
         // =========================================================
         
-        int expectedLength = unit.isVulture() ? 5 : 3;
         int tx = unit.getTileX();
         int ty = unit.getTileY();
         
@@ -331,7 +338,8 @@ public class AtlantisRunManager {
                 potentialPosition = potentialPosition.makeValidFarFromBounds();
                 
                 // If has path to given point, add it to the list of potential points
-                if (unit.hasPathTo(potentialPosition) && AtlantisMap.isWalkable(potentialPosition)) {
+                if (unit.hasPathTo(potentialPosition) && AtlantisMap.isWalkable(potentialPosition)
+                        && AtlantisMap.getGroundDistance(unit, potentialPosition) <= 1.5 * expectedLength) {
                     potentialPositionsList.add(potentialPosition);
 //                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Orange);
                 }
@@ -369,13 +377,19 @@ public class AtlantisRunManager {
         return Select.enemy().combatUnits().canAttack(unit, radius).units();
     }
     
+    /**
+     * Tell other units that might be blocking our escape route to move.
+     */
     private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
-        Select<?> units = Select.ourRealUnits().inRadius(0.5, unit);
+        double safetyRadiusSize = (unit.getType().getDimensionLeft() + unit.getType().getDimensionUp())
+                / 64 * 1.3;
+        
+        Select<?> units = Select.ourRealUnits().inRadius(safetyRadiusSize, unit);
         List<AUnit> otherUnits = units.listUnits();
         for (AUnit otherUnit : otherUnits) {
             if (!otherUnit.isRunning() && !unit.equals(otherUnit)) {
                 boolean result = otherUnit.runFrom(unit);
-                otherUnit.setTooltip("Make space (" + result + ", dist: " + otherUnit.distanceTo(unit) + ")");
+                otherUnit.setTooltip("Make space (" + otherUnit.distanceTo(unit) + ")");
             }
         }
     }
@@ -390,17 +404,21 @@ public class AtlantisRunManager {
         if (runTo != null) {
             int framesAgo = AtlantisGame.getTimeFrames() - _updated_at;
             if (framesAgo <= 1) {
-                _updated_at = AtlantisGame.getTimeFrames();
                 return true;
             }
             else {
-                runTo = null;
+                markAsNotRunning();
                 return false;
             }
         }
         else {
             return false;
         }
+    }
+
+    public void markAsNotRunning() {
+        runTo = null;
+        _updated_at = -1;
     }
     
 }

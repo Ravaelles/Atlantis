@@ -88,7 +88,7 @@ public interface AtlantisUnitOrders {
         u().research(tech);
     }
     
-    default public boolean move(Position target, UnitAction unitAction) {
+    default boolean move(Position target, UnitAction unitAction) {
         if (target == null) {
             System.err.println("Null move position for " + this);
             return false;
@@ -96,13 +96,13 @@ public interface AtlantisUnitOrders {
         
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
         unit().setUnitAction(unitAction);
-        if (!unit().isUnitAction(UnitActions.MOVE) || !target.equals(u().getTargetPosition())) {
-            u().move(target);
-            return true;
-        }
-        else {
-            return true;
-        }
+//        if (!unit().isUnitAction(UnitActions.MOVE) || !target.equals(u().getTargetPosition())) {
+        u().move(target);
+        return true;
+//        }
+//        else {
+//            return true;
+//        }
     }
     
     /**

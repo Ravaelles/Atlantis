@@ -477,4 +477,22 @@ public class AtlantisMap {
         return true;
     }
 
+    /**
+     * Warning - takes very long time.
+     * 
+     * Returns land distance (in tiles) between unit and given position.
+     */
+    public static double getGroundDistance(AUnit unit, APosition runTo) {
+        return BWTA.getGroundDistance(unit.getPosition().toTilePosition(), runTo.toTilePosition()) / 32;
+    }
+
+    /**
+     * Warning - takes very long time.
+     * 
+     * Returns shortest land distance (in tiles) between unit and given position.
+     */
+//    public static double getShortestPath(AUnit unit, APosition runTo) {
+//        return BWTA.get(unit.getPosition().toTilePosition(), runTo.toTilePosition()) / 32;
+//    }
+
 }

@@ -119,9 +119,9 @@ public abstract class AbstractMicroManager {
             
             // === Handle Dragoons ========================================
             
-            if (unit.getType().isDragoon() && (unit.isReadyToShoot() || unit.isJustShooting()) && unit.getHPPercent()>= 85) {
-                return false;
-            }
+//            if (unit.getType().isDragoon() && (unit.isReadyToShoot() || unit.isJustShooting()) && unit.getHPPercent()>= 98) {
+//                return false;
+//            }
             
             // === Define safety distance ==============================
 
@@ -133,8 +133,7 @@ public abstract class AbstractMicroManager {
                 safetyDistance = unit.getWeaponRangeGround() + 2.3;
             }
             else {
-                safetyDistance = 1.0 + (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
-                    .inRadius(4, unit)).count() > 0) ? 2 : 0) + lowHealthBonus;
+                safetyDistance = 2.2 + lowHealthBonus;
                 
                 if (safetyDistance > unit.getWeaponRangeGround()) {
                     safetyDistance = unit.getWeaponRangeGround() - 0.2;
@@ -165,7 +164,8 @@ public abstract class AbstractMicroManager {
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
             if (closeEnemy != null) {
                 
-                double dangerousDistance = unit.getType().isVulture() ? 1.85 : 1.2;
+                double dangerousDistance = 2.15 + (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
+                    .inRadius(4, unit)).count() > 0) ? 1.35 : 0);
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
                 if (isEnemyDangerouslyClose) {
                     

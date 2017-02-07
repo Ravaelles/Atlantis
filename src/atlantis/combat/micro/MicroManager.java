@@ -7,6 +7,7 @@ import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.units.missions.UnitActions;
 import bwapi.Color;
 
 /**
@@ -56,6 +57,7 @@ public class MicroManager extends AbstractMicroManager {
             // Don't interrupt running
             
             if (unit.isRunning()) {
+                unit.move(unit.getRunManager().getRunToPosition(), UnitActions.RUN_FROM_UNIT);
                 unit.setTooltip("Running");
                 return true;
             }
