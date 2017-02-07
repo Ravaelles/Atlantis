@@ -4,7 +4,7 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import bwapi.TilePosition;
@@ -69,7 +69,7 @@ public class AtlantisBuilderManager {
         
         // Move builder to the build position
         if (builder.distanceTo(buildPosition) > maxDistance) {
-            builder.move(buildPosition, UnitMissions.BUILD);
+            builder.move(buildPosition, UnitActions.BUILD);
         } 
 
         // AUnit is already at the build position, issue build order
@@ -85,7 +85,7 @@ public class AtlantisBuilderManager {
 //                buildPosition = constructionOrder.findNewBuildPosition();
                 TilePosition buildTilePosition = buildPosition.toTilePosition();
                 if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle())) {
-                    builder.build(buildingType, buildTilePosition, UnitMissions.BUILD);
+                    builder.build(buildingType, buildTilePosition, UnitActions.BUILD);
                 }
             }
         }

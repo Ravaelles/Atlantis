@@ -6,7 +6,7 @@ import atlantis.buildings.managers.AtlantisGasManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import atlantis.util.PositionUtil;
 import java.util.Collection;
 
@@ -129,7 +129,7 @@ public class AtlantisWorkerCommander {
                 .inRadius(12, baseWithMostWorkers)
                 .nearestTo(baseWithFewestWorkers);
         if (worker != null) {
-            worker.move(baseWithFewestWorkers.getPosition(), UnitMissions.MOVE);
+            worker.move(baseWithFewestWorkers.getPosition(), UnitActions.MOVE);
 //            System.err.println("Transfer from " + baseWithMostWorkers + " to " + baseWithFewestWorkers);
         }
     }

@@ -261,7 +261,7 @@ public class AtlantisMap {
     public static APosition getRandomInvisiblePosition(APosition startPoint) {
         APosition position = null;
         for (int attempts = 0; attempts < 10; attempts++) {
-            int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;	//TODO: check whether this scaling to TilePosition is oK
+            int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
             int dy = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
             position = PositionUtil.translateByPixels(startPoint, dx, dy).makeValid();
@@ -275,17 +275,45 @@ public class AtlantisMap {
     /**
      * Returns nearest (preferably directly connected) region which has center of it still unexplored.
      */
-    public static APosition getNearestUnexploredRegion(APosition position) {
+    public static Region getNearestUnexploredRegion(APosition position) {
         Region region = AtlantisMap.getRegion(position);
         Region regionToVisit = null;
         
         for (Region reachableRegion : region.getReachableRegions()) {
             if (!AtlantisMap.isExplored(reachableRegion.getCenter())) {
                 regionToVisit = reachableRegion;
-                return APosition.createFrom(regionToVisit.getCenter());
+//                return APosition.createFrom(regionToVisit.getCenter());
+                return regionToVisit;
             }
         }
         
+        return null;
+    }
+    
+    /**
+     * Returns nearest land-connected position on map which hasn't been explored.
+     */
+    public static APosition getNearestUnexploredAccessiblePosition(APosition position) {
+        int maxRadius = Math.max(getMapWidthInTiles(), getMapHeightInTiles());
+        int currentRadius = 6;
+        int step = 3;
+        
+        while (currentRadius < maxRadius) {
+            double doubleCurrentRadius = currentRadius * 2;
+            for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {
+                for (int dy = -currentRadius; dy <= currentRadius; dy += doubleCurrentRadius) {
+                    APosition potentialPosition = position.translateByTiles(dx, dy).makeValidFarFromBounds();
+                    if (!isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
+//                        System.out.println(potentialPosition);
+                        return potentialPosition;
+                    }
+                }
+            }
+            
+            currentRadius += 3;
+        }
+        
+        System.err.println("Can't find getNearestUnexploredAccessiblePosition");
         return null;
     }
     

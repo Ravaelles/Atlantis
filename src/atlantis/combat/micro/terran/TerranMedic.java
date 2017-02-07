@@ -2,7 +2,7 @@ package atlantis.combat.micro.terran;
 
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import bwapi.UnitCommandType;
 import java.util.HashMap;
 
@@ -66,7 +66,7 @@ public class TerranMedic {
         if (unitAssignedForMedic != null) {
             if (unitAssignedForMedic.distanceTo(medic) > 1.9) {
                 if (Select.ourTerranInfantryWithoutMedics().inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).count() <= 2) {
-                    medic.move(unitAssignedForMedic.getPosition(), UnitMissions.MOVE);
+                    medic.move(unitAssignedForMedic.getPosition(), UnitActions.MOVE);
                     return true;
                 }
             }

@@ -7,7 +7,7 @@ import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwta.BaseLocation;
@@ -125,7 +125,7 @@ public class AtlantisScoutManager {
         if (startingLocation != null) {
             scout.setTooltip("Scout!");
             //scout.setTooltip("Scout!");
-            scout.move(startingLocation.getPosition(), UnitMissions.MOVE);
+            scout.move(startingLocation.getPosition(), UnitActions.MOVE);
         }
     }
 
@@ -165,7 +165,7 @@ public class AtlantisScoutManager {
     private static void scoutForTheNextBase(AUnit scout) {
         BaseLocation baseLocation = AtlantisMap.getNearestUnexploredStartingLocation(scout.getPosition());
         if (baseLocation != null) {
-            scout.move(baseLocation.getPosition(), UnitMissions.MOVE);
+            scout.move(baseLocation.getPosition(), UnitActions.MOVE);
         }
     }
 
@@ -173,12 +173,13 @@ public class AtlantisScoutManager {
 //        APosition focusPoint = getUmtFocusPoint(scout.getPosition());
 //        
 //        if (focusPoint != null) {
-//            scout.attack(focusPoint, UnitMissions.ATTACK_POSITION);
+//            scout.attack(focusPoint, UnitActions.ATTACK_POSITION);
 //        }
 //    }
     
     public static APosition getUmtFocusPoint(APosition startPosition) {
-        return AtlantisMap.getNearestUnexploredRegion(startPosition);
+        Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(startPosition);
+        return nearestUnexploredRegion != null ? APosition.createFrom(nearestUnexploredRegion.getCenter()) : null;
     }
 
     // =========================================================

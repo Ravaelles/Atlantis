@@ -1,21 +1,21 @@
 package atlantis.units.missions;
 
-public class UnitMission {
+public class UnitAction {
     
     private boolean attack;
     private boolean run;
 
     // =========================================================
     
-    public UnitMission() {
+    public UnitAction() {
         this(false);
     }
 
-    public UnitMission(boolean attack) {
+    public UnitAction(boolean attack) {
         this.attack = attack;
     }
 
-    public UnitMission(boolean attack, boolean run) {
+    public UnitAction(boolean attack, boolean run) {
         this.attack = attack;
         this.run = run;
     }
@@ -24,7 +24,7 @@ public class UnitMission {
 
     @Override
     public String toString() {
-        return "UnitMission{" + "attack=" + attack + ", run=" + run + '}';
+        return "UnitAction{" + "attack=" + attack + ", run=" + run + '}';
     }
     
     // =========================================================

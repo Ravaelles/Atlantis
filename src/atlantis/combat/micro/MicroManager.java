@@ -48,15 +48,15 @@ public class MicroManager extends AbstractMicroManager {
             
             // =========================================================
             // Avoid melee units
-//            if (handleAvoidCloseMeleeUnits(unit)) {
-//                return true;
-//            }
+            if (handleAvoidCloseMeleeUnits(unit)) {
+                return true;
+            }
 
             // =========================================================
             // Check chances to win the fight
-//            if (handleUnfavorableOdds(unit)) {
-//                return true;
-//            }
+            if (handleUnfavorableOdds(unit)) {
+                return true;
+            }
 
             // =========================================================
             // Don't spread too much

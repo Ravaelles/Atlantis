@@ -1,8 +1,8 @@
 package atlantis.units;
 
 import atlantis.AtlantisGame;
-import atlantis.units.missions.UnitMission;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitAction;
+import atlantis.units.missions.UnitActions;
 import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwapi.PositionOrUnit;
@@ -16,7 +16,7 @@ import bwapi.UpgradeType;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public interface UnitActions {
+public interface AtlantisUnitOrders {
     
     Unit u();
     AUnit unit();
@@ -26,12 +26,15 @@ public interface UnitActions {
     default boolean attackUnit(AUnit target) {
         if (!unit().hasRangeToAttack(target, 0.05)) {
             unit().setTooltip("Come closer!");
-            move(target.getPosition(), UnitMissions.ATTACK_UNIT);
+            move(target.getPosition(), UnitActions.ATTACK_UNIT);
             return false;
         }
         
+        unit().setUnitAction(UnitActions.ATTACK_UNIT);
+        
         // Do NOT issue double orders
-        if (u().getTarget() != null && unit().getTarget().equals(target)) {
+        if (unit().isUnitAction(UnitActions.ATTACK_UNIT) 
+                && u().getTarget() != null && unit().getTarget().equals(target)) {
             return true;
         }
         else {
@@ -41,20 +44,20 @@ public interface UnitActions {
 //            System.out.println("getTarget = " + unit().getTarget());
 //            System.out.println(unit().getID() + " attacks " + target.getShortName());
 //            AtlantisGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
-            unit().setUnitMission(UnitMissions.ATTACK_UNIT);
             u().attack(target.u());
             return true;
         }
     }
     
     default boolean attackPosition(APosition target) {
+        unit().setUnitAction(UnitActions.ATTACK_POSITION);
         
         // Do NOT issue double orders
-        if (u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
+        if (unit().isUnitAction(UnitActions.ATTACK_POSITION) 
+                && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
             return true;
         }
         else {
-            unit().setUnitMission(UnitMissions.ATTACK_POSITION);
             u().attack(target);
             return true;
         }
@@ -68,8 +71,8 @@ public interface UnitActions {
         return u().morph(into.ut());
     }
     
-    default boolean build(AUnitType buildingType, TilePosition buildTilePosition, UnitMission unitMission) {
-        unit().setUnitMission(UnitMissions.BUILD);
+    default boolean build(AUnitType buildingType, TilePosition buildTilePosition, UnitAction unitAction) {
+        unit().setUnitAction(UnitActions.BUILD);
         return u().build(buildingType.ut(), buildTilePosition);
     }
     
@@ -85,15 +88,15 @@ public interface UnitActions {
         u().research(tech);
     }
     
-    default public boolean move(Position target, UnitMission unitMission) {
+    default public boolean move(Position target, UnitAction unitAction) {
         if (target == null) {
             System.err.println("Null move position for " + this);
             return false;
         }
         
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
-        unit().setUnitMission(unitMission);
-        if (!u().isMoving() || !target.equals(u().getTargetPosition())) {
+        unit().setUnitAction(unitAction);
+        if (!unit().isUnitAction(UnitActions.MOVE) || !target.equals(u().getTargetPosition())) {
             u().move(target);
             return true;
         }
@@ -112,8 +115,8 @@ public interface UnitActions {
      * determined that the command would fail. Note There is a small chance for a command to fail after it has
      * been passed to Broodwar. See also isPatrolling, canPatrol
      */
-    default boolean patrol(APosition target, UnitMission unitMission) {
-        unit().setUnitMission(UnitMissions.PATROL);
+    default boolean patrol(APosition target, UnitAction unitAction) {
+        unit().setUnitAction(UnitActions.PATROL);
         return u().patrol(target);
     }
 
@@ -125,7 +128,7 @@ public interface UnitActions {
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
     default boolean holdPosition() {
-        unit().setUnitMission(UnitMissions.HOLD_POSITION);
+        unit().setUnitAction(UnitActions.HOLD_POSITION);
         return u().holdPosition();
     }
 
@@ -137,7 +140,7 @@ public interface UnitActions {
      * been passed to Broodwar. See also canStop, isIdle
      */
     default boolean stop() {
-        unit().setUnitMission(UnitMissions.STOP);
+        unit().setUnitAction(UnitActions.STOP);
         return u().stop();
     }
 
@@ -151,7 +154,7 @@ public interface UnitActions {
      * See also isFollowing, canFollow, getOrderTarget
      */
     default boolean follow(AUnit target) {
-        unit().setUnitMission(UnitMissions.FOLLOW);
+        unit().setUnitAction(UnitActions.FOLLOW);
         return u().follow(target.u());
     }
 
@@ -165,10 +168,10 @@ public interface UnitActions {
      */
     default boolean gather(AUnit target) {
         if (target.getType().isMineralField()) {
-            unit().setUnitMission(UnitMissions.GATHER_MINERALS);
+            unit().setUnitAction(UnitActions.GATHER_MINERALS);
         }
         else {
-            unit().setUnitMission(UnitMissions.GATHER_GAS);
+            unit().setUnitAction(UnitActions.GATHER_GAS);
         }
         
         return u().gather(target.u());
@@ -197,7 +200,7 @@ public interface UnitActions {
      * canRepair
      */
     default boolean repair(AUnit target) {
-        unit().setUnitMission(UnitMissions.REPAIR);
+        unit().setUnitAction(UnitActions.REPAIR);
         return u().repair(target.u());
     }
 
@@ -245,7 +248,7 @@ public interface UnitActions {
      * command to fail after it has been passed to Broodwar. See also unsiege, isSieged, canSiege
      */
     default boolean siege() {
-        unit().setUnitMission(UnitMissions.SIEGE);
+        unit().setUnitAction(UnitActions.SIEGE);
         return u().siege();
     }
 
@@ -255,7 +258,7 @@ public interface UnitActions {
      * for a command to fail after it has been passed to Broodwar. See also siege, isSieged, canUnsiege
      */
     default boolean unsiege() {
-        unit().setUnitMission(UnitMissions.UNSIEGE);
+        unit().setUnitAction(UnitActions.UNSIEGE);
         return u().unsiege();
     }
 
@@ -350,7 +353,7 @@ public interface UnitActions {
     default boolean rightClick(AUnit target) {
         if (target != null) {
             if (!target.u().equals(u().getTarget())) {
-                unit().setUnitMission(UnitMissions.RIGHT_CLICK);
+                unit().setUnitAction(UnitActions.RIGHT_CLICK);
                 boolean result = u().rightClick(target.u());
             }
             return true;

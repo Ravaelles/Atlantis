@@ -4,7 +4,7 @@ import atlantis.AtlantisGame;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwapi.TilePosition;
@@ -64,7 +64,7 @@ public class MissionDefend extends Mission {
         else {
             unit.setTooltip("Positioning");
             if (unit.distanceTo(focusPoint) > 3) {
-                unit.move(focusPoint, UnitMissions.MOVE);
+                unit.move(focusPoint, UnitActions.MOVE);
                 return true;
             }
         }

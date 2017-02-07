@@ -19,7 +19,7 @@ import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
@@ -508,35 +508,41 @@ public class AtlantisPainter {
         for (AUnit unit : Select.ourRealUnits().listUnits()) {
             APosition unitPosition = unit.getPosition();
             APosition targetPosition = unit.getTargetPosition();
+            int unitRadius = unit.getType().getDimensionLeft();
 
             // STARTING ATTACK
             if (unit.isStartingAttack()) {
-                paintCircle(unit, 6, Color.Brown);
-                paintCircle(unit, 7, Color.Brown);
-                paintCircle(unit, 8, Color.Brown);
+                paintCircle(unit, unitRadius - 5, Color.Brown);
+                paintCircle(unit, unitRadius - 4, Color.Brown);
+                paintCircle(unit, unitRadius - 3, Color.Brown);
             }
             // ATTACK FRAME
             if (unit.isAttackFrame()) {
                 paintCircle(unit, 1, Color.Red);
-                paintCircle(unit, 3, Color.Red);
+                paintCircle(unit, 2, Color.Red);
+                paintCircle(unit, 4, Color.Red);
                 paintCircle(unit, 5, Color.Red);
+                paintCircle(unit, 8, Color.Red);
+                paintCircle(unit, 9, Color.Red);
             }
             // STUCK
             if (unit.isStuck()) {
-                paintCircle(unit, 5, Color.Teal);
+                unit.setTooltip("STUCK");
+                paintCircle(unit, 2, Color.Teal);
+                paintCircle(unit, 4, Color.Teal);
+                paintCircle(unit, 6, Color.Teal);
                 paintCircle(unit, 8, Color.Teal);
-                paintCircle(unit, 11, Color.Teal);
-                paintCircle(unit, 14, Color.Teal);
+                paintCircle(unit, 10, Color.Teal);
             }
             // ATTACKING
             if (unit.isAttacking()) {
-                paintCircle(unit, 13, Color.Orange);
-                paintCircle(unit, 14, Color.Orange);
+                paintCircle(unit, unitRadius - 3, Color.Orange);
+                paintCircle(unit, unitRadius - 2, Color.Orange);
             }
             // MOVE
             if (unit.isMoving()) {
-                paintCircle(unit, 8, Color.Blue);
-                paintCircle(unit, 7, Color.Blue);
+                paintCircle(unit, unitRadius - 3, Color.Blue);
+                paintCircle(unit, unitRadius - 2, Color.Blue);
                 if (unit.getTarget() != null) {
                     AtlantisPainter.paintLine(unit.getPosition(), unit.getTarget().getPosition(), Color.Blue);
                 }
@@ -582,34 +588,34 @@ public class AtlantisPainter {
 //            }
             // =========================================================
             Color color = Color.Grey;
-            if (unit.getUnitMission() != null) {
-                if (unit.getUnitMission().equals(UnitMissions.MOVE)) {
+            if (unit.getUnitAction() != null) {
+                if (unit.getUnitAction().equals(UnitActions.MOVE)) {
                     color = Color.Teal;
-                } else if (unit.getUnitMission().isAttacking()) {
+                } else if (unit.getUnitAction().isAttacking()) {
                     color = Color.Orange;
-                } else if (unit.getUnitMission().equals(UnitMissions.RUN_FROM_UNIT)) {
+                } else if (unit.getUnitAction().equals(UnitActions.RUN_FROM_UNIT)) {
                     color = Color.Brown;
-                } else if (unit.getUnitMission().equals(UnitMissions.RETREAT)) {
+                } else if (unit.getUnitAction().equals(UnitActions.RETREAT)) {
                     color = Color.Brown;
-                } else if (unit.getUnitMission().equals(UnitMissions.HEAL)) {
+                } else if (unit.getUnitAction().equals(UnitActions.HEAL)) {
                     color = Color.Purple;
-                } else if (unit.getUnitMission().equals(UnitMissions.BUILD)) {
+                } else if (unit.getUnitAction().equals(UnitActions.BUILD)) {
                     color = Color.Purple;
-                } else if (unit.getUnitMission().equals(UnitMissions.REPAIR)) {
+                } else if (unit.getUnitAction().equals(UnitActions.REPAIR)) {
                     color = Color.Purple;
                 }
-//            else if (unit.getUnitMission().equals(UnitMissions.)) {
+//            else if (unit.getUnitAction().equals(UnitActions.)) {
 //                color = Color.;
 //            }
-//            else if (unit.getUnitMission().equals(UnitMissions.)) {
+//            else if (unit.getUnitAction().equals(UnitActions.)) {
 //                color = Color.;
 //            }
             }
 
-            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
-                paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
-                paintCircle(unit, unit.getType().getDimensionLeft() - 2 + unit.getType().getDimensionRight(), color);
-            }
+//            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+//                paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
+//                paintCircle(unit, unit.getType().getDimensionLeft() - 2 + unit.getType().getDimensionRight(), color);
+//            }
 
             if (unit.isWorker() && unit.isIdle()) {
                 paintCircle(unit, 10, Color.Black);
@@ -836,8 +842,8 @@ public class AtlantisPainter {
 
 //            string += "/";
 //            
-//            if (unit.getUnitMission() != null) {
-//                string += unit.getUnitMission();
+//            if (unit.getUnitAction() != null) {
+//                string += unit.getUnitAction();
 //            }
 //            else {
 //                string += "no_mission";

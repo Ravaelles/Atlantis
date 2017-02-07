@@ -9,7 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.Units;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import bwapi.Color;
@@ -32,7 +32,7 @@ public abstract class AbstractMicroManager {
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
     protected boolean handleUnfavorableOdds(AUnit unit) {
-        boolean isNewFight = (unit.getUnitMission() != null && !unit.getUnitMission().isRunningOrRetreating());
+        boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
         boolean isSituationFavorable = AtlantisCombatEvaluator.isSituationFavorable(unit, isNewFight);
 
         // If situation is unfavorable, retreat
@@ -68,7 +68,7 @@ public abstract class AbstractMicroManager {
             if (unit.getHP() <= 7) {
                 AUnit rendezvousWithMedics = (AUnit) Select.ourBuildings().ofType(AtlantisConfig.BARRACKS).first();
                 if (rendezvousWithMedics != null && rendezvousWithMedics.distanceTo(unit) > 5) {
-                    unit.move(rendezvousWithMedics.getPosition(), UnitMissions.HEAL);
+                    unit.move(rendezvousWithMedics.getPosition(), UnitActions.HEAL);
                 }
                 return true;
             }
@@ -101,7 +101,7 @@ public abstract class AbstractMicroManager {
         if (ourUnitsNearby < minUnitsNearby && ourUnitsNearby <= 3) {
             APosition goTo = PositionUtil.averagePosition(ourUnits.list());
             if (goTo != null && goTo.distanceTo(unit) > 1) {
-                unit.move(goTo, UnitMissions.MOVE);
+                unit.move(goTo, UnitActions.MOVE);
                 unit.setTooltip("Closer");
                 return true;
             }

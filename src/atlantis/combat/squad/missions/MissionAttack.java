@@ -9,7 +9,7 @@ import atlantis.scout.AtlantisScoutManager;
 import static atlantis.scout.AtlantisScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import atlantis.wrappers.APosition;
 import bwapi.Color;
 import bwta.BaseLocation;

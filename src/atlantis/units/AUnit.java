@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.AtlantisRunManager;
 import atlantis.combat.squad.AtlantisSquadManager;
@@ -7,16 +8,19 @@ import atlantis.combat.squad.Squad;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.units.missions.UnitMission;
-import atlantis.units.missions.UnitMissions;
+import atlantis.information.AtlantisMap;
+import atlantis.units.missions.UnitAction;
+import atlantis.units.missions.UnitActions;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.APositionedObject;
 import bwapi.Player;
 import bwapi.Position;
+import bwapi.TilePosition;
 import bwapi.Unit;
 import bwapi.UnitCommand;
 import bwapi.UnitCommandType;
 import bwapi.WeaponType;
+import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +34,7 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitActions {
+public class AUnit extends APositionedObject implements Comparable<AUnit>, AtlantisUnitOrders {
 //public class AUnit implements Comparable<AUnit>, UnitActions {
 
 //    private static final Map<Unit, AUnit> instances = new HashMap<>();
@@ -41,7 +45,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     private Unit u;
     private AUnitType _lastCachedType;
 
-    private UnitMission unitMission;
+    private UnitAction unitAction;
 
     // =========================================================
     
@@ -175,7 +179,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
         Position newPosition = new Position(getX() - dx, getY() - dy);
 
-        move(newPosition, UnitMissions.MOVE);
+        move(newPosition, UnitActions.MOVE);
         this.setTooltip("Move away");
     }
     
@@ -871,6 +875,9 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isAttacking();
     }
 
+    /**
+     * Returns true if given position has land connection to given point.
+     */
     public boolean hasPathTo(APosition point) {
         return u.hasPath(point);
     }
@@ -887,12 +894,16 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.getLastCommand();
     }
 
-    public UnitMission getUnitMission() {
-        return unitMission;
+    public UnitAction getUnitAction() {
+        return unitAction;
     }
-
-    public void setUnitMission(UnitMission unitMission) {
-        this.unitMission = unitMission;
+    
+    public boolean isUnitAction(UnitAction constant) {
+        return unitAction == constant;
+    }
+    
+    public void setUnitAction(UnitAction unitAction) {
+        this.unitAction = unitAction;
     }
 
     public boolean isReadyToShoot() {

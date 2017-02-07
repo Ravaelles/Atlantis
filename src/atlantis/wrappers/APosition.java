@@ -6,6 +6,8 @@ import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import bwapi.Color;
 import bwapi.Position;
+import bwapi.TilePosition;
+import bwta.BWTA;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -235,6 +237,13 @@ public class APosition extends Position {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Returns true if given position has land connection to given point.
+     */
+    public boolean hasPathTo(APosition point) {
+        return BWTA.isConnected(this.toTilePosition(), point.toTilePosition());
     }
     
 }

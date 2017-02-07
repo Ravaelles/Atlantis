@@ -7,7 +7,7 @@ import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
-import atlantis.units.missions.UnitMissions;
+import atlantis.units.missions.UnitActions;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
@@ -42,7 +42,7 @@ public class AtlantisRunManager {
         else {
             _updated_at = AtlantisGame.getTimeFrames();
 //            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Yellow);
-            unit.move(runTo, UnitMissions.RUN_FROM_UNIT);
+            unit.move(runTo, UnitActions.RUN_FROM_UNIT);
             return true;
         }
     }
