@@ -221,7 +221,6 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-
             if (unit.exists() && unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
@@ -367,7 +366,8 @@ public class Select<T> {
     public Select<?> inRadius(double maxDist, AUnit otherUnit) {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
-            APositionedObject unit = (APositionedObject) unitsIterator.next();
+//            APositionedObject unit = (APositionedObject) unitsIterator.next();
+            AUnit unit = (AUnit) unitsIterator.next();
             if (unit.distanceTo(otherUnit) > maxDist) {
                 unitsIterator.remove();
             }
@@ -964,7 +964,7 @@ public class Select<T> {
     /**
      * @return all units except for the given one
      */
-    public Select<T> exclude(T unitToExclude) {
+    public Select<T> exclude(AUnit unitToExclude) {
         data.remove(unitToExclude);
         return this;
     }

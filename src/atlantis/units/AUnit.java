@@ -650,7 +650,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
      * If enemy parameter is null, it will try to determine the best run behavior.
      * If enemy is not null, it will try running straight from this unit.
      */
-     public boolean runFrom(AUnit enemy) {
+     public boolean runFrom(AUnit runFrom) {
 //        if (nearestEnemy == null) {
 //            nearestEnemy = Select.enemyRealUnits().nearestTo(this);
 //        }
@@ -660,10 +660,10 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
 //        } else {
 //            return runManager.runFrom(nearestEnemy);
 //        }
-        if (enemy == null) {
+        if (runFrom == null) {
             return runManager.run();
         } else {
-            return runManager.runFrom(enemy);
+            return runManager.runFrom(runFrom);
         }
     }
 

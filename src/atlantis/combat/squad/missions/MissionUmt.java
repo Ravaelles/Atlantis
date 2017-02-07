@@ -57,7 +57,7 @@ public class MissionUmt extends Mission {
         
         if (isFlagship) {
             if (Select.ourCombatUnits().inRadius(3, unit).count() == 0) {
-                AUnit nearestUnit = Select.ourCombatUnits().nearestTo(flagshipUnit);
+                AUnit nearestUnit = Select.ourCombatUnits().exclude(unit).nearestTo(flagshipUnit);
                 if (nearestUnit != null) {
                     unit.move(nearestUnit.getPosition(), UnitActions.STICK_CLOSER);
                     return true;

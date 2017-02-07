@@ -130,7 +130,7 @@ public abstract class AbstractMicroManager {
             double safetyDistance;
             
             if (unit.getType().isVulture()) {
-                safetyDistance = unit.getWeaponRangeGround() + 2.6;
+                safetyDistance = unit.getWeaponRangeGround() + 2.3;
             }
             else {
                 safetyDistance = 1.0 + (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
@@ -148,15 +148,15 @@ public abstract class AbstractMicroManager {
             int enemiesNearby = Select.enemy().inRadius(enemyNearbyCountingRadius, unit).count();
             if (enemiesNearby >= 2) {
                 if (unit.getType().isVulture()) {
-                    safetyDistance += Math.max((double) enemiesNearby / 2, 3.6);
+                    safetyDistance += Math.max((double) enemiesNearby / 2, 4);
                 }
                 else {
                     safetyDistance += Math.max((double) enemiesNearby / 3, 2);
                 }
             }
             
-            AtlantisPainter.paintTextCentered(unit.getPosition().translateByPixels(0, 12), 
-                    "" + String.format("%.1f", safetyDistance), Color.Green);
+//            AtlantisPainter.paintTextCentered(unit.getPosition().translateByPixels(0, 12), 
+//                    "" + String.format("%.1f", safetyDistance), Color.Green);
             
 //            AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Green);
 //            AtlantisPainter.paintTextCentered(unit, enemiesNearby + "", Color.White);
@@ -165,7 +165,7 @@ public abstract class AbstractMicroManager {
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
             if (closeEnemy != null) {
                 
-                double dangerousDistance = unit.getType().isVulture() ? 1.9 : 1.2;
+                double dangerousDistance = unit.getType().isVulture() ? 1.85 : 1.2;
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
                 if (isEnemyDangerouslyClose) {
                     
@@ -179,7 +179,7 @@ public abstract class AbstractMicroManager {
                     }
                     
                     if (!dontInterruptPendingAttack && unit.runFrom(null)) {
-                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
+//                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
 //                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
 //                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
                         unit.setTooltip("Melee-run (" + closeEnemy.getShortName() + ")");

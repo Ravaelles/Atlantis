@@ -53,6 +53,14 @@ public class MicroManager extends AbstractMicroManager {
             }
 
             // =========================================================
+            // Don't interrupt running
+            
+            if (unit.isRunning()) {
+                unit.setTooltip("Running");
+                return true;
+            }
+
+            // =========================================================
             // Check chances to win the fight
             if (handleUnfavorableOdds(unit)) {
                 return true;
@@ -92,6 +100,9 @@ public class MicroManager extends AbstractMicroManager {
      */
     private boolean canIssueOrderToUnit(AUnit unit) {
 //        return true;
+        if (unit.isRunning()) {
+            return true;
+        }
         return !(unit.isAttackFrame() || unit.isStartingAttack()) || 
                 unit.getGroundWeaponCooldown() > 0 || unit.getAirWeaponCooldown() > 0;
     }
