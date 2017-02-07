@@ -20,7 +20,7 @@ public class AtlantisEnemyTargeting {
         // =========================================================
         // Attack deadliest shit out there
         
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
+        nearestEnemy = Select.enemy()
                 .canBeAttackedBy(unit)
                 .ofType(AUnitType.Terran_Vulture_Spider_Mine)
                 .nearestTo(unit);

@@ -29,14 +29,14 @@ public class MissionUmt extends Mission {
     // =========================================================
     @Override
     public boolean update(AUnit unit) {
-        if (unit.isJustShooting() || !unit.isReadyToShoot()) {
+        if (unit.isJustShooting() || !unit.isReadyToShoot() || unit.isAttacking()) {
             return false;
         }
         
         // =========================================================
         
 //        APosition focusPoint = getFocusPoint();
-        AUnit enemyToAttack = null;
+        AUnit engageEnemy = null;
         APosition explorePosition = null;
 
         // === Define unit that will be center of our army =================
@@ -58,11 +58,11 @@ public class MissionUmt extends Mission {
         // === Return closest enemy ========================================
         AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
 //        System.out.println(nearestEnemy);
-        if (nearestEnemy != null) {
-            enemyToAttack = nearestEnemy;
+        if (nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
+            engageEnemy = nearestEnemy;
 //            System.out.println("    dist: " + nearestEnemy.distanceTo(unit));
-            unit.setTooltip("#Attack!");
-            return unit.attackUnit(enemyToAttack);
+            unit.setTooltip("#Engage");
+            return unit.move(engageEnemy.getPosition(), UnitMissions.ENGAGE);
         }
 
         // === Return location to go to ====================================

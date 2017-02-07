@@ -24,31 +24,33 @@ public interface UnitActions {
     // =========================================================
     
     default boolean attackUnit(AUnit target) {
-//        if (!unit().hasRangeToAttack(target, 0.05)) {
-//            unit().setTooltip("Come closer!");
-//            move(target.getPosition(), UnitMissions.ATTACK_UNIT);
-//            return false;
-//        }
+        if (!unit().hasRangeToAttack(target, 0.05)) {
+            unit().setTooltip("Come closer!");
+            move(target.getPosition(), UnitMissions.ATTACK_UNIT);
+            return false;
+        }
         
         // Do NOT issue double orders
-        if (u().isAttacking() && u().getTarget() != null && unit().getTarget().equals(target) 
-                && unit().isJustShooting()) {
-            u().attack(target.u());
+        if (u().getTarget() != null && unit().getTarget().equals(target)) {
             return true;
         }
         else {
+//            System.out.println();
+//            System.out.println("unit().isJustShooting() = " + unit().isJustShooting());
+//            System.out.println("unit().isAttacking() = " + unit().isAttacking());
+//            System.out.println("getTarget = " + unit().getTarget());
+//            System.out.println(unit().getID() + " attacks " + target.getShortName());
+//            AtlantisGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
             unit().setUnitMission(UnitMissions.ATTACK_UNIT);
             u().attack(target.u());
             return true;
         }
-//        return u().attack(target.u());
     }
     
     default boolean attackPosition(APosition target) {
         
         // Do NOT issue double orders
-        if (u().isAttacking() && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)
-                 && unit().isJustShooting()) {
+        if (u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
             return true;
         }
         else {

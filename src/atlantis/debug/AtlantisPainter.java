@@ -100,6 +100,7 @@ public class AtlantisPainter {
 //        paintTemporaryTargets();
         paintEnemyDiscovered();
         paintCombatUnits();
+        paintEnemyCombatUnits();
         paintTooltipsOverUnits();
 //        paintTestSupplyDepotLocationsNearMain();
     }
@@ -169,9 +170,16 @@ public class AtlantisPainter {
 //                }
 //            }
         }
-
-        // =========================================================
+    }
+    
+    /**
+     * Paint extra information about visible enemy combat units.
+     */
+    private static void paintEnemyCombatUnits() {
         for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
+            paintCircle(unit, unit.getType().getDimensionLeft() * 2, Color.Red);
+            paintCircle(unit, unit.getType().getDimensionLeft() * 2 - 1, Color.Red);
+            
             APosition unitPosition = unit.getPosition();
             double eval = (int) AtlantisCombatEvaluator.evaluateSituation(unit, true, true);
 //            if (eval < 999) {
@@ -503,13 +511,15 @@ public class AtlantisPainter {
 
             // STARTING ATTACK
             if (unit.isStartingAttack()) {
-                paintCircle(unit, 10, Color.Brown);
-                paintCircle(unit, 9, Color.Brown);
+                paintCircle(unit, 6, Color.Brown);
+                paintCircle(unit, 7, Color.Brown);
+                paintCircle(unit, 8, Color.Brown);
             }
             // ATTACK FRAME
             if (unit.isAttackFrame()) {
-                paintCircle(unit, 13, Color.Orange);
-                paintCircle(unit, 14, Color.Orange);
+                paintCircle(unit, 1, Color.Red);
+                paintCircle(unit, 3, Color.Red);
+                paintCircle(unit, 5, Color.Red);
             }
             // STUCK
             if (unit.isStuck()) {
@@ -518,16 +528,19 @@ public class AtlantisPainter {
                 paintCircle(unit, 11, Color.Teal);
                 paintCircle(unit, 14, Color.Teal);
             }
-//            // ATTACKING
-//            if (unit.isAttacking()) {
-//                paintCircle(unit, 12, Color.Red);
-//                paintCircle(unit, 11, Color.Red);
-//            }
-//            // MOVE
-//            if (unit.isMoving()) {
-//                paintCircle(unit, 8, Color.White);
-//                paintCircle(unit, 7, Color.White);
-//            }
+            // ATTACKING
+            if (unit.isAttacking()) {
+                paintCircle(unit, 13, Color.Orange);
+                paintCircle(unit, 14, Color.Orange);
+            }
+            // MOVE
+            if (unit.isMoving()) {
+                paintCircle(unit, 8, Color.Blue);
+                paintCircle(unit, 7, Color.Blue);
+                if (unit.getTarget() != null) {
+                    AtlantisPainter.paintLine(unit.getPosition(), unit.getTarget().getPosition(), Color.Blue);
+                }
+            }
 //            // CONSTRUCTING
 //            if (unit.isConstructing()) {
 //                paintCircle(unit, 6, Color.Teal);

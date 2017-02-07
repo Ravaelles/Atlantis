@@ -41,7 +41,7 @@ public class AtlantisAttackEnemyUnit {
         // =========================================================
         
         // If we already are attacking this unit, do not issue double command.
-        if (enemyToAttack != null) {
+        if (enemyToAttack != null && !unit.isJustShooting()) {
             unit.setTooltip("Attacking " + enemyToAttack.getShortName());
             return unit.attackUnit(enemyToAttack);
         } 
