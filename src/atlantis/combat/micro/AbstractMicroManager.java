@@ -151,7 +151,7 @@ public abstract class AbstractMicroManager {
 //            AtlantisPainter.paintTextCentered(unit.getPosition().translateByPixels(0, 12), 
 //                    "" + String.format("%.1f", safetyDistance), Color.Green);
             
-            AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Green);
+//            AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Green);
 //            AtlantisPainter.paintTextCentered(unit, enemiesNearby + "", Color.White);
 
             Select<?> closeEnemies = Select.enemyRealUnits().melee().inRadius(safetyDistance, unit);
@@ -178,7 +178,7 @@ public abstract class AbstractMicroManager {
                     }
                     
                     if (!dontInterruptPendingAttack && unit.runFrom(null)) {
-                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
+//                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
 //                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
 //                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
                         unit.setTooltip("Melee-run (" + closeEnemy.getShortName() + ")");

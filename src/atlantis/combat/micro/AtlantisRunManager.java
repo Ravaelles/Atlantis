@@ -221,7 +221,7 @@ public class AtlantisRunManager {
 
             // Also check if can run further (avoid corner shitholes)
             if (runTo != null) {
-                double distBonus = unit.isVulture() ? 0.6 : 2;
+                double distBonus = unit.isVulture() ? 0.6 : 2.6;
                 runTo = canRunByShowingBackToEnemyTo(unit, runAwayFrom, currentDist + distBonus, minTiles, maxDist);
                 
                 // If is okay as well, return it
