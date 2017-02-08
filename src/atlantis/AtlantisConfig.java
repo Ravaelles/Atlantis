@@ -74,7 +74,7 @@ public class AtlantisConfig {
     public static AUnitType BARRACKS = null;
     public static AUnitType SUPPLY = null;
     public static AUnitType GAS_BUILDING = null;
-    private static AtlantisBuildOrdersManager buildOrdersManager;
+    public static AtlantisBuildOrdersManager buildOrdersManager = null;
 
     // =========================================================
     

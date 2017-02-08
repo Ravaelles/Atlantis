@@ -49,17 +49,17 @@ public class ZergBuildOrders extends AtlantisBuildOrdersManager {
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
     public void produceZergUnit(AUnitType unitType) {
-//        for (AUnit base : Select.ourBases().listUnits()) {
-//            for (AUnit larva : base.getLarva()) {
-//                boolean result = base.train(unitType);
-//                return;
-//            }
-//        }
-        AUnit larva = Select.ourLarva().first();
-        System.out.println(larva);
-        if (larva != null) {
-            larva.train(unitType);
+        for (AUnit base : Select.ourBases().listUnits()) {
+            for (AUnit larva : base.getLarva()) {
+                boolean result = base.train(unitType);
+                return;
+            }
         }
+//        AUnit larva = Select.ourLarva().first();
+//        System.out.println(larva);
+//        if (larva != null) {
+//            larva.train(unitType);
+//        }
     }
 
 }

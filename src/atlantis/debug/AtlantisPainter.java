@@ -54,6 +54,7 @@ public class AtlantisPainter {
     private static int prevTotalFindBuildPlace = 0;
 
     // =========================================================
+    
     /**
      * Executed once per frame, at the end of all other actions.
      */
@@ -80,6 +81,7 @@ public class AtlantisPainter {
         paintKilledAndLost();
         paintProductionQueue();
         paintSidebarConstructionsPending();
+        paintConstructionPlaces();
         //        paintUnitCounters();
 
         if (paintingMode == MODE_PARTIAL_PAINTING) {
@@ -92,7 +94,6 @@ public class AtlantisPainter {
         paintImportantPlaces();
         paintColoredCirclesAroundUnits();
 //        paintConstructionProgress();
-        paintConstructionPlaces();
         paintBuildingHealth();
         paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
@@ -107,6 +108,7 @@ public class AtlantisPainter {
 
     // =========================================================
     // Hi-level
+    
     /**
      * Painting for combat units can be a little different. Put here all the related code.
      */

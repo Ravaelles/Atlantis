@@ -33,7 +33,8 @@ public abstract class AtlantisBuildOrdersManager {
      */
     private static final String BUILD_ORDERS_PATH = "bwapi-data/AI/build_orders/";
 
-    // =========================================================
+    // === Internal fields =====================================
+    
     /**
      * Ordered list of production orders as initially read from the file. It never changes
      */
@@ -55,12 +56,14 @@ public abstract class AtlantisBuildOrdersManager {
      */
     private static int gasNeeded = 0;
 
-    // =========================================================
-    // Constructor
+    // === Constructor =========================================
+    
     public AtlantisBuildOrdersManager() {
         readBuildOrdersFile();
     }
 
+    // =========================================================
+    
     /**
      * Returns name of file with build orders.
      */
@@ -98,11 +101,14 @@ public abstract class AtlantisBuildOrdersManager {
 
         // Read file into 2D String array
         String buildOrdersFile = BUILD_ORDERS_PATH + getFilename();
+        System.out.println();
         System.out.println("Using `" + getFilename() + "` build orders file.");
+        
+        // Parse CSV
         String[][] loadedFile = AtlantisUtilities.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
 
         // We can display file here, if we want to
-//        displayLoadedFile(loadedFile);
+        //displayLoadedFile(loadedFile);
 
         // =========================================================
         // Skip first row as it's CSV header
@@ -167,7 +173,7 @@ public abstract class AtlantisBuildOrdersManager {
     }
 
     // =========================================================
-    // Probably most important method in the world
+    
     /**
      * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only
      * want to get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and
@@ -253,8 +259,8 @@ public abstract class AtlantisBuildOrdersManager {
         return result;
     }
 
-    // =========================================================
-    // Abstract methods
+    // === Abstract methods ====================================
+    
     /**
      * Request to produce worker (Zerg Drone, Terran SCV or Protoss Probe) that should be handled according to
      * the race played.
@@ -272,7 +278,8 @@ public abstract class AtlantisBuildOrdersManager {
     public abstract ArrayList<AUnitType> produceWhenNoProductionOrders();
 
     // =========================================================
-    // Public defined methods
+    // Public methods
+    
     /**
      * If new unit is created (it doesn't need to exist, it's enough that it's just started training) or your
      * unit is destroyed, we need to rebuild the production orders queue from the beginning (based on initial
@@ -375,7 +382,7 @@ public abstract class AtlantisBuildOrdersManager {
     }
 
     // =========================================================
-    // Private defined methods
+    // Private methods
     
     private static boolean _isCommentMode = false;
     
@@ -585,7 +592,10 @@ public abstract class AtlantisBuildOrdersManager {
 //            System.out.println("MODIFIER: " + order.getModifier());
 
                 if (order.getModifier() != null) {
-                    int timesToMultiply = Integer.parseInt(order.getModifier().substring(1)) - 1;
+                    int timesToMultiply = 1;
+                    if (order.getModifier() != null && order.getModifier().charAt(0) == 'x') {
+                        timesToMultiply = Integer.parseInt(order.getModifier().substring(1)) - 1;
+                    }
                     for (int multiplyCounter = 0; multiplyCounter < timesToMultiply; multiplyCounter++) {
                         ProductionOrder newOrder = order.copy();
                         newInitialQueue.add(newOrder);
@@ -632,7 +642,8 @@ public abstract class AtlantisBuildOrdersManager {
     }
 
     // =========================================================
-    // Special commands
+    // Special commands used in build orders file
+    
     /**
      * If the first character in column is # it means it's special command.
      */
@@ -649,13 +660,7 @@ public abstract class AtlantisBuildOrdersManager {
      * // Means comment - should skip it. We can also have blank lines.
      */
     private boolean isUnimportantLine(String[] row) {
-        if (row.length >= 1) {
-            
-            // Detect multi-line comment start
-            if (row[0].contains("/**")) {
-                _isCommentMode = true;
-                return true;
-            }
+        if (row.length >= 1 && row[0].length() > 0) {
             
             // Detect multi-line comment end
             if (row[0].contains("*/")) {
@@ -663,8 +668,20 @@ public abstract class AtlantisBuildOrdersManager {
                 return true;
             }
             
+            // Detect multi-line comment start
+            if (row[0].contains("/**")) {
+                _isCommentMode = true;
+                return true;
+            }
+            
             // Detect being inside multi-line comment
             if (_isCommentMode) {
+                return true;
+            }
+            
+            // Detect comments like "//"
+            if (row[0].startsWith("//")) {
+                System.err.println("skip " + row[0]);
                 return true;
             }
         }
@@ -702,6 +719,7 @@ public abstract class AtlantisBuildOrdersManager {
 
     // =========================================================
     // Getters
+    
     /**
      * Number of minerals reserved to produce some units/buildings.
      */

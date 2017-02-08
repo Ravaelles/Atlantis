@@ -84,10 +84,16 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onStart() {
+        
+        // Initialize bwapi object - BWMirror wrapper of C++ BWAPI.
         bwapi = mirror.getGame();
+        
+        // Initialize Game Commander, a class to rule them all
+        gameCommander = new AtlantisGameCommander();
 
         // Uncomment this line to see list of units -> damage.
 //        AtlantisUnitTypesHelper.displayUnitTypesDamage();
+
         // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
         // =========================================================
         // Set up base configuration based on race used.
@@ -104,10 +110,37 @@ public class Atlantis implements BWEventListener {
         BWTA.readMap();
         BWTA.analyze();
         System.out.println("Map data ready.");
+        
+        // === Set some BWAPI params ===============================
+        
+        bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
+        bwapi.setFrameSkip(2); // Number of GUI frames to skip
+//        bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
+        bwapi.enableFlag(1);	// Enable user input - without it you can't control units with mouse
 
         // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
-        AtlantisConfig.useBuildOrders(AtlantisBuildOrdersManager.loadBuildOrders());
+        
+        try {
+            AtlantisConfig.useBuildOrders(AtlantisBuildOrdersManager.loadBuildOrders());
+        }
+        catch (Exception e) {
+            System.err.println("Exception when loading build orders file");
+            e.printStackTrace();
+        }
+        
+        if (AtlantisConfig.buildOrdersManager == null) {
+            System.err.println("===================================");
+            System.err.println("It seems there was critical problem");
+            System.err.println("with build orders file.");
+            System.err.println("Please check the syntax.");
+            System.err.println("===================================");
+            System.exit(-1);
+        }
+        else {
+            System.out.println("Successfully loaded build orders file!");
+            System.out.println();
+        }
 
         // =========================================================
         // Validate AtlantisConfig and exit if it's invalid
@@ -115,13 +148,6 @@ public class Atlantis implements BWEventListener {
 
         // Display ok message
         System.out.println("Atlantis config is valid.");
-
-        // =========================================================
-        gameCommander = new AtlantisGameCommander();
-        bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED);
-        bwapi.setFrameSkip(2);
-//        bwapi.setGUI(false);
-        bwapi.enableFlag(1);	// Enable user input - will be disabled for tournaments
     }
 
     /**
@@ -143,19 +169,23 @@ public class Atlantis implements BWEventListener {
         // === All game actions that take place every frame ==================================================
         
         try {
-            // Initial actions - those should be executed only once.
+            
+            // Initial actions - those should be executed only once (optimally assign mineral gatherers).
             if (!_initialActionsExecuted) {
-                _initialActionsExecuted = true;
+                
                 System.out.println("### Starting Atlantis... ###");
                 AtlantisInitialActions.executeInitialActions();
                 System.out.println("### Atlantis is working! ###");
+                _initialActionsExecuted = true;
             }
 
             // =========================================================
             // If game is running (not paused), proceed with all actions.
-//        if (!_isPaused) {
             if (gameCommander != null) {
                 gameCommander.update();
+            }
+            else {
+                System.err.println("Game Commander is null, totally screwed.");
             }
 
             // =========================================================
