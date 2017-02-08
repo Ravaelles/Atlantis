@@ -25,6 +25,7 @@ public abstract class AbstractMicroManager {
     private static AUnit _nearestEnemyThatCanShootAtThisUnit = null;
 
     // =========================================================
+    
     public abstract boolean update(AUnit unit);
 
     // =========================================================

@@ -226,8 +226,8 @@ public abstract class AtlantisBuildOrdersManager {
                 gasNeeded += unitOrBuilding.getGasPrice();
             } // UPGRADE
             else if (upgrade != null) {
-                mineralsNeeded += upgrade.mineralPrice() * upgrade.mineralPriceFactor();
-                gasNeeded += upgrade.gasPrice() * upgrade.gasPriceFactor();
+                mineralsNeeded += upgrade.mineralPrice() * (1 + AtlantisTech.getUpgradeLevel(upgrade));
+                gasNeeded += upgrade.gasPrice() * (1 + AtlantisTech.getUpgradeLevel(upgrade));
             } // TECH
             else if (tech != null) {
                 mineralsNeeded += tech.mineralPrice();
@@ -302,6 +302,7 @@ public abstract class AtlantisBuildOrdersManager {
         MappingCounter<AUnitType> virtualCounter = new MappingCounter<>();
 
         // =========================================================
+
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
 
@@ -324,12 +325,12 @@ public abstract class AtlantisBuildOrdersManager {
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
                     isOkayToAdd = true;
                 }
-            } // Upgrade
-            else if (order.getUpgrade() != null) {
-                isOkayToAdd = !AtlantisTech.isResearched(order.getUpgrade());
             } // Tech
             else if (order.getTech() != null) {
-                isOkayToAdd = !AtlantisTech.isResearched(order.getTech());
+                isOkayToAdd = !AtlantisTech.isResearched(order.getTech(), order);
+            } // Upgrade
+            else if (order.getUpgrade() != null) {
+                isOkayToAdd = !AtlantisTech.isResearched(order.getUpgrade(), order);
             }
 
             // =========================================================
@@ -476,11 +477,11 @@ public abstract class AtlantisBuildOrdersManager {
             order = new ProductionOrder(tech);
         } // Invalid entry type
         else {
-            System.out.println("Invalid entry type: " + nameString);
-            System.err.println("Invalid entry type: " + nameString);
-            System.exit(-1);
+            System.err.println("Invalid build order: " + nameString);
+            System.err.println("Please correct it.");
+            Atlantis.end();
         }
-
+        
         // =========================================================
         // Save first column from row as it may contain build order modifiers
         order.setRawFirstColumnInFile(row[0]);
@@ -594,7 +595,7 @@ public abstract class AtlantisBuildOrdersManager {
 //            System.out.println("NAME: " + order.getShortName());
 //            System.out.println("MODIFIER: " + order.getModifier());
 
-                if (order.getModifier() != null) {
+                if (order.getModifier() != null && order.getUpgrade() == null) {
                     int timesToMultiply = 1;
                     if (order.getModifier() != null && order.getModifier().charAt(0) == 'x') {
                         timesToMultiply = Integer.parseInt(order.getModifier().substring(1)) - 1;

@@ -4,7 +4,7 @@
 #SCOUT_IS_NTH_WORKER=8
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=30
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=25
 
 // === Raw build order used - taken from Liquipedia or so =============
 
@@ -34,4 +34,15 @@ http://wiki.teamliquid.net/starcraft/2_Gate_Range_Expand
 13 - Cybernetics Core
 15 - Pylon
 17 - Dragoon Range
-18 - Dragoon
+18 - Gateway
+20 - Nexus
+20 - Dragoon
+22 - Dragoon
+24 - Pylon
+25 - Dragoons - x2
+26 - Robotics Facility
+27 - Robotics Support Bay
+28 - Reaver
+31 - Reaver
+33 - Reaver
+35 - Reaver

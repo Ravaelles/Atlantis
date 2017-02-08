@@ -35,7 +35,9 @@ public class AtlantisProductionManager {
                 AtlantisBuildOrdersManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
-            System.out.println(order + ": " + order.getUpgrade());
+            if (order.getUpgrade() != null) {
+                System.out.println("produceNow " + order.getUpgrade());
+            }
 
             // =========================================================
             // Produce UNIT
@@ -52,7 +54,6 @@ public class AtlantisProductionManager {
             // Produce UPGRADE
             else if (order.getUpgrade() != null) {
                 UpgradeType upgrade = order.getUpgrade();
-                System.out.println("upgrade = " + upgrade);
                 researchUpgrade(upgrade);
             }
 
@@ -61,6 +62,11 @@ public class AtlantisProductionManager {
             else if (order.getTech()!= null) {
                 TechType tech = order.getTech();
                 researchTech(tech);
+            }
+            
+            // === Nothing! ============================================
+            else {
+                System.err.println(order + " was not handled at all!");
             }
         }
         
@@ -94,15 +100,14 @@ public class AtlantisProductionManager {
     }
 
     private static void researchUpgrade(UpgradeType upgrade) {
-        System.err.println("Research " + upgrade);
         AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades());
-        System.out.println("buildingType = " + buildingType);
+        System.out.println("Research " + upgrade + " in " + buildingType);
         if (buildingType != null) {
             AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
-            System.out.println("building = " + building);
-            if (building != null) {
-                boolean result = building.upgrade(upgrade);
-                System.out.println("result = " + result);
+            System.out.println(upgrade + " level is " + AtlantisGame.getPlayerUs().getUpgradeLevel(upgrade));
+            if (building != null && !building.isBusy()) {
+                System.out.println("   ISSUE");
+                building.upgrade(upgrade);
             }
         }
     }
@@ -111,7 +116,7 @@ public class AtlantisProductionManager {
         AUnitType buildingType = AUnitType.createFrom(tech.whatResearches());
         if (buildingType != null) {
             AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
-            if (building != null) {
+            if (building != null && !building.isBusy()) {
                 building.research(tech);
             }
         }

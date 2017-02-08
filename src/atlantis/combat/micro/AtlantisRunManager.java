@@ -27,6 +27,7 @@ public class AtlantisRunManager {
     private AUnit unit;
     private APosition runTo;
     private int _updated_at = -1;
+    private Units closeEnemies;
 
     // =========================================================
     public AtlantisRunManager(AUnit unit) {
@@ -59,16 +60,23 @@ public class AtlantisRunManager {
     public boolean run() {
 
         // Define which enemies are considered as close enough to be dangerous
-        Units closeEnemies = defineCloseEnemies(unit);
+        closeEnemies = defineCloseEnemies(unit);
         if (closeEnemies.isEmpty()) {
             markAsNotRunning();
 //            System.err.println("No enemies to run to for " + unit);
             return false;
         }
+        
+        // ===========================================
+        
+//        int maxEnemiesToRunFromNearestEnemy = unit.isVulture() ? 2 : 2;
+        int maxEnemiesToRunFromNearestEnemy = 2;
+        
+        // ===========================================
 
         // Define "center of gravity" for the set of enemies
         APosition median;
-        if (closeEnemies.size() <= 2) {
+        if (closeEnemies.size() <= maxEnemiesToRunFromNearestEnemy) {
             median = Select.from(closeEnemies.list()).nearestTo(unit).getPosition();
         } else {
             median = closeEnemies.median();
@@ -137,7 +145,7 @@ public class AtlantisRunManager {
 //        return findPositionToRun_preferMainBase(unit, runAwayFrom);
 //        }
 //        else {
-        return findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
+        return unit.getRunManager().findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
 //        }
     }
 
@@ -145,7 +153,7 @@ public class AtlantisRunManager {
     /**
      * Running behavior which will make unit run toward main base.
      */
-    private static APosition findPositionToRun_preferMainBase(AUnit unit, APosition runAwayFrom) {
+    private APosition findPositionToRun_preferMainBase(AUnit unit, APosition runAwayFrom) {
         AUnit mainBase = Select.mainBase();
         if (mainBase != null) {
             if (PositionUtil.distanceTo(mainBase, unit) > 5) {
@@ -160,12 +168,13 @@ public class AtlantisRunManager {
     /**
      * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
      */
-    private static APosition findPositionToRun_dontPreferMainBase(AUnit unit, APosition runAwayFrom) {
+    private APosition findPositionToRun_dontPreferMainBase(AUnit unit, APosition runAwayFrom) {
         APosition runTo = null;
 
         // === Get standard run to position - as far from enemy as possible
         
-        if (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1) {
+        if (closeEnemies.size() <= 2 && 
+                (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1)) {
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
 
@@ -174,7 +183,7 @@ public class AtlantisRunManager {
         // with the hope of getting out.
         
         if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, unit.isVulture() ? 6 : 4);
+            runTo = findRunPositionAtAnyDirection(unit, unit.isVulture() ? 6 : 3);
         }
 //        else {
 //            AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Yellow);
@@ -372,7 +381,7 @@ public class AtlantisRunManager {
         if (unit.getType().isVulture()) {
             radius = 5;
         } else {
-            radius = 5;
+            radius = 6;
         }
 
         return Select.enemy().combatUnits().canAttack(unit, radius).units();
