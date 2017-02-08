@@ -4,7 +4,7 @@ import atlantis.AtlantisGame;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.missions.UnitActions;
+import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import bwapi.TilePosition;
@@ -62,32 +62,52 @@ public class AtlantisBuilderManager {
 //        buildPosition = PositionUtil.translate(
 //                buildPosition, buildingType.getTileWidth() * 32 / 2, buildingType.getTileHeight() * 32 / 2
 //        );
-        
         // =========================================================
-        
-        double maxDistance = buildingType.isGasBuilding() ? 5 : 1.5;
-        
+        double maxDistance = buildingType.isGasBuilding() ? 3 : 1.5;
+
         // Move builder to the build position
         if (builder.distanceTo(buildPosition) > maxDistance) {
-            builder.move(buildPosition, UnitActions.BUILD);
+            builder.move(buildPosition, UnitActions.MOVE_TO_BUILD);
         } 
 
+        // =========================================================
         // AUnit is already at the build position, issue build order
         // If we can afford to construct this building exactly right now, issue build order which should
         // be immediate as unit is standing just right there
         else if (AtlantisGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
-//            if (!AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition)) {
-//                buildPosition = constructionOrder.findNewBuildPosition();
-//            }
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
             if (buildPosition != null && AtlantisGame.canAfford(buildingType)) {
-//                buildPosition = constructionOrder.findNewBuildPosition();
-                TilePosition buildTilePosition = buildPosition.toTilePosition();
+                buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
+                TilePosition buildTilePosition = new TilePosition(
+                        buildPosition.getTileX(), buildPosition.getTileY()
+                );
+                
                 if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle())) {
                     builder.build(buildingType, buildTilePosition, UnitActions.BUILD);
                 }
             }
+        }
+    }
+
+    /**
+     * From reasons impossible to explain sometimes it happens that we need to build Extractor
+     * one tile left from the top left position. Sometimes not. This method takes care of
+     * these cases and ensures the position is valid.
+     */
+    private static APosition applyGasBuildingFixIfNeeded(AUnit builder, APosition position, AUnitType building) {
+        if (position != null) {
+            if (building.isGasBuilding()
+                    && !AbstractPositionFinder.canPhysicallyBuildHere(builder, building, position)
+                    && AbstractPositionFinder.canPhysicallyBuildHere
+                            (builder, building, position.translateByTiles(-1, 0))) {
+                System.out.println("Applied " + building + " position FIX");
+                return position.translateByTiles(-1, 0);
+            } else {
+                return position;
+            }
+        } else {
+            return null;
         }
     }
 

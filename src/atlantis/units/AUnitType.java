@@ -438,6 +438,7 @@ public class AUnitType implements Comparable<AUnitType> {
                     .replace("Hero_", "").replace("Special_", "").replace("Powerup_", "").replace("_", " ")
                     .replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "")
                     .replace("Hero ", "").replace("Special ", "").replace("Powerup ", "")
+                    .replace("Resource ", "").replace("Resource_", "")
                     .replace("Tank Mode ", "").replace("_Tank_Mode", "");
         }
         
@@ -557,6 +558,10 @@ public class AUnitType implements Comparable<AUnitType> {
 
     public boolean isEgg() {
         return this.equals(AUnitType.Zerg_Egg);
+    }
+
+    public boolean isExtractor() {
+        return this.equals(AUnitType.Zerg_Extractor);
     }
 
     public boolean isOverlord() {

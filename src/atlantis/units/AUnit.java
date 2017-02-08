@@ -9,8 +9,8 @@ import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
-import atlantis.units.missions.UnitAction;
-import atlantis.units.missions.UnitActions;
+import atlantis.units.actions.UnitAction;
+import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.APositionedObject;
 import bwapi.Player;
@@ -206,7 +206,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
 //        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
 //        return toString;
 //        return "AUnit(" + u.getType().toString() + ")";
-        return "AUnit(" + getType().toString() + " #" + innerID + ")";
+        return "AUnit(" + getType().getShortName()+ " #" + innerID + ") at " + getPosition().toString();
     }
 
     @Override

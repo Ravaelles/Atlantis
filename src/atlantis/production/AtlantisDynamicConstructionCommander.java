@@ -16,8 +16,6 @@ import java.util.List;
 public class AtlantisDynamicConstructionCommander {
 
     public static void update() {
-        AtlantisWorkerProductionManager.handleWorkerProduction();
-        
         if (AtlantisGame.playsAsTerran()) {
             handleBuildFactoriesIfNeeded();
             handleBuildAddonsIfNeeded();

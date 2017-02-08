@@ -7,7 +7,7 @@ import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
-import atlantis.units.missions.UnitActions;
+import atlantis.units.actions.UnitActions;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;

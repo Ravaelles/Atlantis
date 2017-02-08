@@ -7,7 +7,7 @@ import atlantis.debug.AtlantisPainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.units.missions.UnitActions;
+import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
 /**

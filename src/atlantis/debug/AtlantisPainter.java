@@ -19,7 +19,7 @@ import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.units.missions.UnitActions;
+import atlantis.units.actions.UnitActions;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
@@ -70,11 +70,13 @@ public class AtlantisPainter {
         // === Dynamic PAINTING MODE ===============================
 //        paintingMode = (AtlantisGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
         // =========================================================
+        
         if (paintingMode == MODE_NO_PAINTING) {
             return;
         }
 
-        // === Only text ===========================================
+        // === PARTIAL PAINTING ====================================
+        
         bwapi.setTextSize(Enum.Default);
 
         paintInfo();
@@ -89,6 +91,7 @@ public class AtlantisPainter {
         }
 
         // =========================================================
+        
         bwapi.setTextSize(Enum.Small);
 
         paintImportantPlaces();
@@ -483,22 +486,25 @@ public class AtlantisPainter {
 
                 // Paint box
                 paintRectangle(positionToBuild,
-                        buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, Color.Teal);
+                        buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, Color.Brown);
 
                 // Draw X
                 paintLine(
                         PositionUtil.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
                         PositionUtil.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
-                        Color.Teal
+                        Color.Brown
                 );
                 paintLine(positionToBuild,
                         buildingType.getTileWidth() * 32,
                         buildingType.getTileHeight() * 32,
-                        Color.Teal
+                        Color.Brown
                 );
 
                 // Draw text
-                paintTextCentered(positionToBuild, buildingType.getShortName(), Color.Grey);
+                paintTextCentered(
+                        positionToBuild.translateByPixels(buildingType.getDimensionLeft(), 69), 
+                        buildingType.getShortName(), Color.Brown
+                );
             }
         }
     }
@@ -508,6 +514,10 @@ public class AtlantisPainter {
      */
     private static void paintColoredCirclesAroundUnits() {
         for (AUnit unit : Select.ourRealUnits().listUnits()) {
+            if (unit.isWorker() && (unit.isGatheringMinerals() || unit.isGatheringGas())) {
+                continue;
+            }
+            
             APosition unitPosition = unit.getPosition();
             APosition targetPosition = unit.getTargetPosition();
             int unitRadius = unit.getType().getDimensionLeft();

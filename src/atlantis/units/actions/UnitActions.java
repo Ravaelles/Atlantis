@@ -1,4 +1,4 @@
-package atlantis.units.missions;
+package atlantis.units.actions;
 
 public class UnitActions {
     

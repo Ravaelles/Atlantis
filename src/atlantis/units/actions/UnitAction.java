@@ -1,4 +1,4 @@
-package atlantis.units.missions;
+package atlantis.units.actions;
 
 public class UnitAction {
     
@@ -7,15 +7,15 @@ public class UnitAction {
 
     // =========================================================
     
-    public UnitAction() {
+    protected UnitAction() {
         this(false);
     }
 
-    public UnitAction(boolean attack) {
+    protected UnitAction(boolean attack) {
         this.attack = attack;
     }
 
-    public UnitAction(boolean attack, boolean run) {
+    protected UnitAction(boolean attack, boolean run) {
         this.attack = attack;
         this.run = run;
     }

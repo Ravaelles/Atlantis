@@ -93,7 +93,5 @@ public abstract class AbstractPositionFinder {
         // No collisions detected
         return false;
     }
-    
-//        double edgeToEdgeDistance = PositionUtil.getEdgeToEdgeDistanceBetween(otherBuilding, position, building);
 
 }

@@ -243,7 +243,17 @@ public class AtlantisConstructionManager {
 
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (worker.equals(constructionOrder.getBuilder())) {
-                return true;
+                
+                // Pending Protoss buildings allow builder to go away
+                if (AtlantisGame.playsAsProtoss() && ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                        .equals(constructionOrder.getStatus())) {
+                    return false;
+                }
+                
+                // Terran and Zerg need to use the worker until construction is finished
+                else {
+                    return true;
+                }
             }
         }
 

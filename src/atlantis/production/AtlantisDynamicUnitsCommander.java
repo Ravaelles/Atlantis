@@ -13,11 +13,15 @@ import bwapi.TilePosition;
 public class AtlantisDynamicUnitsCommander {
 
     public static void update() {
+        AtlantisWorkerProductionManager.handleWorkerProduction();
+        
         if (AtlantisGame.playsAsTerran()) {
             handleFactoryProductionIfNeeded();
         }
     }
 
+    // =========================================================
+    
     private static void handleFactoryProductionIfNeeded() {
         for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).listUnits()) {
             if (!factory.isTrainingAnyUnit()) {

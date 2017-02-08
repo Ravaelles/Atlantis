@@ -206,7 +206,7 @@ public abstract class AtlantisBuildOrdersManager {
 
             // ===  Protoss fix: wait for at least one Pylon ============
             if (AtlantisGame.playsAsProtoss() && unitOrBuilding != null
-                    && !AUnitType.Protoss_Pylon.equals(unitOrBuilding)
+                    && !unitOrBuilding.isType(AUnitType.Protoss_Pylon, AUnitType.Protoss_Assimilator)
                     && Select.our().countUnitsOfType(AUnitType.Protoss_Pylon) == 0) {
                 continue;
             }

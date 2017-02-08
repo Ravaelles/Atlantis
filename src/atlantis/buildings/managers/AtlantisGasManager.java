@@ -36,6 +36,10 @@ public class AtlantisGasManager {
         // =========================================================
         
         for (AUnit gasBuilding : gasBuildings) {
+            if (!gasBuilding.isCompleted()) {
+                continue;
+            }
+            
             int numberOfWorkersAssigned = AtlantisWorkerManager.getHowManyWorkersGatheringAt(gasBuilding);
             AtlantisPainter.paintTextCentered(gasBuilding, "" + numberOfWorkersAssigned, Color.Green);
             

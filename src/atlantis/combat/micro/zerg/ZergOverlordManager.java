@@ -4,7 +4,7 @@ import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.missions.UnitActions;
+import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
 
 /**

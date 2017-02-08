@@ -1,6 +1,7 @@
 package atlantis.constructing.position;
 
 import atlantis.AtlantisGame;
+import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.AtlantisPainter;
 import atlantis.information.AtlantisMap;
@@ -10,6 +11,7 @@ import atlantis.units.Select;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import bwapi.Color;
+import bwapi.TilePosition;
 import bwta.BaseLocation;
 
 public class AtlantisSpecialPositionFinder {
@@ -39,11 +41,13 @@ public class AtlantisSpecialPositionFinder {
      * that doesn't have gas extracting building.
      */
     protected static APosition findPositionForGasBuilding(AUnitType building) {
+        AUnit builder = Select.ourWorkers().first();
         for (AUnit base : Select.ourBases().listUnits()) {
             AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
             if (geyser != null && geyser.distanceTo(base) < 12) {
                 APosition position = PositionUtil.translateByPixels(geyser.getPosition(), -64, -32);
+//                System.out.println("Returned: " + position);
                 return position;
             }
         }
@@ -97,7 +101,7 @@ public class AtlantisSpecialPositionFinder {
         }
         
         APosition near = APosition.createFrom(baseLocationToExpand.getPosition()).translateByPixels(-64, -48);
-        constructionOrder.setMaxDistance(4);
+        constructionOrder.setMaxDistance(1);
 
 //        System.out.println("Main base = " + Select.mainBase());
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
@@ -123,7 +127,7 @@ public class AtlantisSpecialPositionFinder {
         ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);
-        constructionOrder.setMaxDistance(4);
+        constructionOrder.setMaxDistance(1);
         
         return AtlantisPositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
     }

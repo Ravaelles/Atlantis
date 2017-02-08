@@ -1,8 +1,9 @@
 package atlantis.units;
 
 import atlantis.AtlantisGame;
-import atlantis.units.missions.UnitAction;
-import atlantis.units.missions.UnitActions;
+import atlantis.constructing.position.AbstractPositionFinder;
+import atlantis.units.actions.UnitAction;
+import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwapi.PositionOrUnit;
@@ -17,27 +18,26 @@ import bwapi.UpgradeType;
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public interface AtlantisUnitOrders {
-    
+
     Unit u();
+
     AUnit unit();
-    
+
     // =========================================================
-    
     default boolean attackUnit(AUnit target) {
         if (!unit().hasRangeToAttack(target, 0.05)) {
             unit().setTooltip("Come closer!");
             move(target.getPosition(), UnitActions.ATTACK_UNIT);
             return false;
         }
-        
+
         unit().setUnitAction(UnitActions.ATTACK_UNIT);
-        
+
         // Do NOT issue double orders
-        if (unit().isUnitAction(UnitActions.ATTACK_UNIT) 
+        if (unit().isUnitAction(UnitActions.ATTACK_UNIT)
                 && u().getTarget() != null && unit().getTarget().equals(target)) {
             return true;
-        }
-        else {
+        } else {
 //            System.out.println();
 //            System.out.println("unit().isJustShooting() = " + unit().isJustShooting());
 //            System.out.println("unit().isAttacking() = " + unit().isAttacking());
@@ -48,52 +48,52 @@ public interface AtlantisUnitOrders {
             return true;
         }
     }
-    
+
     default boolean attackPosition(APosition target) {
         unit().setUnitAction(UnitActions.ATTACK_POSITION);
-        
+
         // Do NOT issue double orders
-        if (unit().isUnitAction(UnitActions.ATTACK_POSITION) 
+        if (unit().isUnitAction(UnitActions.ATTACK_POSITION)
                 && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
             return true;
-        }
-        else {
+        } else {
             u().attack(target);
             return true;
         }
     }
-    
+
     default boolean train(AUnitType unitToTrain) {
         return u().train(unitToTrain.ut());
     }
-    
+
     default boolean morph(AUnitType into) {
         return u().morph(into.ut());
     }
-    
+
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition, UnitAction unitAction) {
+        boolean result = u().build(buildingType.ut(), buildTilePosition);
         unit().setUnitAction(UnitActions.BUILD);
-        return u().build(buildingType.ut(), buildTilePosition);
+        return result;
     }
-    
+
     default boolean buildAddon(AUnitType addon) {
         return u().buildAddon(addon.ut());
     }
-    
+
     default void upgrade(UpgradeType upgrade) {
         u().upgrade(upgrade);
     }
-    
+
     default void reserach(TechType tech) {
         u().research(tech);
     }
-    
+
     default boolean move(Position target, UnitAction unitAction) {
         if (target == null) {
             System.err.println("Null move position for " + this);
             return false;
         }
-        
+
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
         unit().setUnitAction(unitAction);
 //        if (!unit().isUnitAction(UnitActions.MOVE) || !target.equals(u().getTargetPosition())) {
@@ -104,7 +104,7 @@ public interface AtlantisUnitOrders {
 //            return true;
 //        }
     }
-    
+
     /**
      * Orders the unit to patrol between its current position and the specified position. While patrolling,
      * units will attack and chase enemy units that they encounter, and then return u().to its patrol route.
@@ -169,22 +169,21 @@ public interface AtlantisUnitOrders {
     default boolean gather(AUnit target) {
         if (target.getType().isMineralField()) {
             unit().setUnitAction(UnitActions.GATHER_MINERALS);
-        }
-        else {
+        } else {
             unit().setUnitAction(UnitActions.GATHER_GAS);
         }
-        
+
         return u().gather(target.u());
     }
 
     /**
-     * Orders the unit to return u().its cargo to a nearby resource depot such as a Command Center. Only workers
-     * that are carrying minerals or gas can be ordered to return u().cargo. Parameters shiftQueueCommand
-     * (optional) If this value is true, then the order will be queued instead of immediately executed. If
-     * this value is omitted, then the order will be executed immediately by default. Returns true if the
-     * command was passed to Broodwar, and false if BWAPI determined that the command would fail. Note There
-     * is a small chance for a command to fail after it has been passed to Broodwar. See also isCarryingGas,
-     * isCarryingMinerals, canReturnCargo
+     * Orders the unit to return u().its cargo to a nearby resource depot such as a Command Center. Only
+     * workers that are carrying minerals or gas can be ordered to return u().cargo. Parameters
+     * shiftQueueCommand (optional) If this value is true, then the order will be queued instead of
+     * immediately executed. If this value is omitted, then the order will be executed immediately by default.
+     * Returns true if the command was passed to Broodwar, and false if BWAPI determined that the command
+     * would fail. Note There is a small chance for a command to fail after it has been passed to Broodwar.
+     * See also isCarryingGas, isCarryingMinerals, canReturnCargo
      */
     default boolean returnCargo() {
         return u().returnCargo();
@@ -268,7 +267,7 @@ public interface AtlantisUnitOrders {
     default boolean isInterruptible() {
         return isInterruptible();
     }
-    
+
     /**
      * Orders the unit to lift. Only works for liftable Terran structures. Returns true if the command was
      * passed to Broodwar, and false if BWAPI determined that the command would fail. Note There is a small
@@ -349,7 +348,6 @@ public interface AtlantisUnitOrders {
 //    default boolean rightClick(APosition target) {
 //        return u().rightClick(target);
 //    }
-
     default boolean rightClick(AUnit target) {
         if (target != null) {
             if (!target.u().equals(u().getTarget())) {
@@ -357,8 +355,7 @@ public interface AtlantisUnitOrders {
                 boolean result = u().rightClick(target.u());
             }
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -366,7 +363,6 @@ public interface AtlantisUnitOrders {
 //    default boolean rightClick(PositionOrUnit target) {
 //        return u().rightClick(target);
 //    }
-
     /**
      * Orders a SCV to stop constructing a structure. This leaves the structure in an incomplete state until
      * it is either cancelled, razed, or completed by another SCV. Returns true if the command was passed to
@@ -463,6 +459,6 @@ public interface AtlantisUnitOrders {
 
     default boolean useTech(TechType tech, PositionOrUnit target) {
         return u().useTech(tech, target);
-    }    
-    
+    }
+
 }
