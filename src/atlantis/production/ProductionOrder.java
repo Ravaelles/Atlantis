@@ -98,8 +98,18 @@ public class ProductionOrder {
 
     @Override
     public String toString() {
-//        return "Order: " + unitType.getName() + ", blocking:" + blocking + ", priority:" + priority;
-        return "Order: " + unitOrBuilding; //TODO: test replacement of getName();
+        if (unitOrBuilding != null) {
+            return "Order: " + unitOrBuilding;
+        }
+        else if (upgrade != null) {
+            return "Order: " + upgrade;
+        }
+        else if (tech != null) {
+            return "Order: " + tech;
+        }
+        else {
+            return "InvalidEmptyOrder";
+        }
     }
 
     public String getShortName() {

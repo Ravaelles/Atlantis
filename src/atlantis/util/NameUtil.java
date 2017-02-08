@@ -12,9 +12,9 @@ import java.lang.reflect.Field;
  */
 public class NameUtil {
 
-
     public static boolean disableErrorReporting = false;
 
+    // =========================================================
 
     /**
      * You can use "Terran_U-238_Shells" or "U-238_Shells" or even "U-238 Shells".

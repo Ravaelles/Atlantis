@@ -1,5 +1,6 @@
 package atlantis.production.orders;
 
+import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
@@ -149,10 +150,10 @@ public abstract class AtlantisBuildOrdersManager {
         // === Display initial production queue ====================
 //        System.out.println("Initial production order queue:");
 //        for (ProductionOrder productionOrder : initialProductionQueue) {
-//            System.out.println("   - " + productionOrder.getUnitOrBuilding().getShortName());
+//            System.out.println("   - " + productionOrder.toString());
 //        }
 //        System.out.println("END OF Initial production order queue");
-//        System.exit(-1);
+//        Atlantis.end();
     }
 
     /**
@@ -198,6 +199,9 @@ public abstract class AtlantisBuildOrdersManager {
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
             UpgradeType upgrade = order.getUpgrade();
             TechType tech = order.getTech();
+            if (upgrade != null) {
+                System.out.println("BO upgrade = " + upgrade);
+            }
 
             // Check if include only units
             if (mode == MODE_ONLY_UNITS && unitOrBuilding == null) {
@@ -434,19 +438,19 @@ public abstract class AtlantisBuildOrdersManager {
         // =========================================================
         // Try getting objects of each type as we don't know if it's unit, research or tech.
         // UNIT
-        NameUtil.disableErrorReporting = true;
+//        NameUtil.disableErrorReporting = true;
         AUnitType unitType = AUnitType.getByName(nameString);
-        NameUtil.disableErrorReporting = false;
+//        NameUtil.disableErrorReporting = false;
 
         // UPGRADE
-        NameUtil.disableErrorReporting = true;
+//        NameUtil.disableErrorReporting = true;
         UpgradeType upgrade = NameUtil.getUpgradeTypeByName(nameString); //TODO: put this in UpgradeUtil
-        NameUtil.disableErrorReporting = false;
+//        NameUtil.disableErrorReporting = false;
 
         // TECH
-        NameUtil.disableErrorReporting = true;
+//        NameUtil.disableErrorReporting = true;
         TechType tech = NameUtil.getTechTypeByName(nameString); //TODO: put this in TechUtil
-        NameUtil.disableErrorReporting = false;
+//        NameUtil.disableErrorReporting = false;
 
         // Define convienience boolean variables
         boolean isUnit = unitType != null;
@@ -575,7 +579,6 @@ public abstract class AtlantisBuildOrdersManager {
                 orderSupplyRequired = lastSupplyFromFile + 1; // Take last order supply value and increment it
             }
             lastSupplyFromFile = orderSupplyRequired;
-//            System.out.println("        orderSupplyRequired = " + orderSupplyRequired + ", order: " + order.getShortName());
 
             // =========================================================
             

@@ -544,4 +544,11 @@ public class Atlantis implements BWEventListener {
         AtlantisGame.changeSpeedTo(AtlantisConfig.DYNAMIC_GAME_SPEED_SLOWDOWN);
     }
 
+    /**
+     * Exits the game gently, killing all processes.
+     */
+    public static void end() {
+        instance.onEnd(false);
+    }
+    
 }

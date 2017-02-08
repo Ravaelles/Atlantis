@@ -81,12 +81,12 @@ public interface AtlantisUnitOrders {
         return u().buildAddon(addon.ut());
     }
 
-    default void upgrade(UpgradeType upgrade) {
-        u().upgrade(upgrade);
+    default boolean upgrade(UpgradeType upgrade) {
+        return u().upgrade(upgrade);
     }
 
-    default void reserach(TechType tech) {
-        u().research(tech);
+    default boolean research(TechType tech) {
+        return u().research(tech);
     }
 
     default boolean move(Position target, UnitAction unitAction) {
