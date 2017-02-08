@@ -130,20 +130,17 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onFrame() {
 
-        // If game is PAUSED, wait 100ms - pause is handled by Escape button
-        if (AtlantisGame.isPaused()) {
+        // === Handle PAUSE ================================================
+        // If game is paused wait 100ms - pause is handled by PauseBreak button
+        while (AtlantisGame.isPaused()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 // No need to handle
             }
-            if (_dynamicSlowdown_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
-                _dynamicSlowdown_isSlowdownActive = false;
-                AtlantisGame.changeSpeedTo(_dynamicSlowdown_previousSpeed);
-            }
-        } //        } 
+        } 
 
-        // =========================================================
+        // === All game actions that take place every frame ==================================================
         
         try {
             // Initial actions - those should be executed only once.
@@ -169,7 +166,9 @@ public class Atlantis implements BWEventListener {
                     AtlantisGame.changeSpeedTo(_dynamicSlowdown_previousSpeed);
                 }
             }
-        } // Catch any exception that occur not to "kill" the bot with one trivial error
+        } 
+
+        // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
         catch (Exception e) {
             System.err.println("### AN ERROR HAS OCCURRED ###");
             e.printStackTrace();
