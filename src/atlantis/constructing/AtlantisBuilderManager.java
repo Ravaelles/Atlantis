@@ -98,14 +98,19 @@ public class AtlantisBuilderManager {
     private static APosition applyGasBuildingFixIfNeeded(AUnit builder, APosition position, AUnitType building) {
         if (position != null) {
             if (building.isGasBuilding()
-                    && !AbstractPositionFinder.canPhysicallyBuildHere(builder, building, position)
-                    && AbstractPositionFinder.canPhysicallyBuildHere
+                    && !AbstractPositionFinder.canPhysicallyBuildHere(builder, building, position)) {
+                if (AbstractPositionFinder.canPhysicallyBuildHere
                             (builder, building, position.translateByTiles(-1, 0))) {
-                System.out.println("Applied " + building + " position FIX");
-                return position.translateByTiles(-1, 0);
-            } else {
-                return position;
-            }
+                    System.out.println("Applied [-1,0] " + building + " position FIX");
+                    return position.translateByTiles(-1, 0);
+                }
+                if (AbstractPositionFinder.canPhysicallyBuildHere
+                            (builder, building, position.translateByTiles(-2, -1))) {
+                    System.out.println("Applied [-2,-1] " + building + " position FIX");
+                    return position.translateByTiles(-2, -1);
+                }
+            } 
+            return position;
         } else {
             return null;
         }

@@ -309,17 +309,26 @@ public abstract class AtlantisBuildOrdersManager {
                 AUnitType type = order.getUnitOrBuilding();
                 virtualCounter.incrementValueFor(type);
 
-                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) + (type.isBase() ? 1 : 0)
+                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) 
+                        + (type.isBase() ? (type.isPrimaryBase() ? 1 : 0) : 0)
                         + (type.isOverlord() ? 1 : 0) + virtualCounter.getValueFor(type);
+                
                 int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
 
                 if (type.isBuilding()) {
                     weHaveThisManyUnits += AtlantisConstructionManager.countNotFinishedConstructionsOfType(type);
                 }
 
-//                System.out.println("       " + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
+//                if (type.isBase()) {
+//                    System.out.println("      " + type + ": " 
+//                            + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
+//                }
+                
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
+//                    if (type.isBase()) {
+//                        AtlantisGame.sendMessage("Request " + type.getShortName());
+//                    }
                     isOkayToAdd = true;
                 }
             } // Tech
@@ -349,7 +358,18 @@ public abstract class AtlantisBuildOrdersManager {
             return Select.ourIncludingUnfinished().ofType(type).count()
                     + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
                     + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
-        } else {
+        } 
+        else if (type.isPrimaryBase()) {
+            return Select.ourIncludingUnfinished().bases().count() 
+                    + AtlantisConstructionManager.countNotStartedConstructionsOfType(type)
+                    + AtlantisConstructionManager.countNotStartedConstructionsOfType(AUnitType.Zerg_Lair)
+                    + AtlantisConstructionManager.countNotStartedConstructionsOfType(AUnitType.Zerg_Hive);
+        }
+        else if (type.isBase() && !type.isPrimaryBase()) {
+            return Select.ourIncludingUnfinished().ofType(type).count()
+                    + AtlantisConstructionManager.countNotStartedConstructionsOfType(type);
+        }
+        else {
             return Select.ourIncludingUnfinished().ofType(type).count();
         }
     }

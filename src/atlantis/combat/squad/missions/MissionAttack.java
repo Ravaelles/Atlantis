@@ -31,6 +31,22 @@ public class MissionAttack extends Mission {
         APosition focusPoint = getFocusPoint();
         unit.setTooltip("#MA");
         
+        
+        // === Attack units nears main =============================
+        
+        AUnit mainBase = Select.mainBase();
+        if (mainBase != null) {
+            AUnit nearestEnemy = Select.enemy().visible()
+                    .canBeAttackedBy(unit)
+                    .inRadius(50, mainBase)
+                    .nearestTo(mainBase);
+            if (nearestEnemy != null) {
+                focusPoint = nearestEnemy.getPosition();
+            }
+        }
+        
+        // =========================================================
+        
         // Focus point is well known
         if (focusPoint != null) {
             if (unit.distanceTo(focusPoint) > 10 && !unit.isAttacking() && !unit.isMoving()) {

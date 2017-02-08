@@ -29,4 +29,19 @@ http://wiki.teamliquid.net/starcraft/13_Pool_Muta_(vs._Terran)
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-5 - Extractor
+4 - Mutalisk
+6 - Mutalisk - x20
+9 - Overlord
+13 - Spawning Pool
+12 - Extractor
+13 - Hatchery - NATURAL
+13 - Lair
+13 - Zergling
+14 - Zergling
+15 - Drone
+15 - Spire
+16 - Overlord
+18 - Creep Colony
+20 - Sunken Colony
+// 20 - Stop Drone production
+20 - Overlord - x2

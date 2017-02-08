@@ -200,7 +200,7 @@ public class Select<T> {
     /**
      * Selects our unfinished units.
      */
-    public static Select<AUnit> ourUnfinished() {
+    public static Select<AUnit> ourNotFinished() {
         //Units units = new AUnits();
         List<AUnit> data = new ArrayList<>();
 
@@ -527,6 +527,21 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             UnitData unit = dataFrom(unitsIterator.next());	//(unitOrData instanceof AUnit ? (AUnit) unitOrData : ((UnitData)unitOrData).getUnit()); 
             if (!unit.getType().isOrganic()) { //replaced  isInfantry()
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Selects bases only (including Lairs and Hives).
+     */
+    public Select<T> bases() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            UnitData unit = dataFrom(unitsIterator.next());
+            if (!unit.getType().isBase()) {
                 unitsIterator.remove();
             }
         }

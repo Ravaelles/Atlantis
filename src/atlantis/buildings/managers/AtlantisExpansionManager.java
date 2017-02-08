@@ -21,6 +21,10 @@ public class AtlantisExpansionManager {
 //        if (1 < 2) {
 //            return;
 //        }
+
+        if (AtlantisGame.playsAsZerg() && !AtlantisGame.hasMinerals(1300)) {
+            return;
+        }
         
         int minMinerals = 100 + (AtlantisGame.playsAsZerg() ? 268 : 356);
 

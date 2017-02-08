@@ -37,7 +37,9 @@ public abstract class AbstractMicroManager {
         boolean isSituationFavorable = AtlantisCombatEvaluator.isSituationFavorable(unit, isNewFight);
 
         // If situation is unfavorable, retreat
-        if (!isSituationFavorable && !unit.isReadyToShoot() && unit.canAnyCloseEnemyShootThisUnit()) {
+//        if (!isSituationFavorable && !unit.isReadyToShoot() && (unit.canAnyCloseEnemyShootThisUnit()
+        if (!isSituationFavorable && (unit.canAnyCloseEnemyShootThisUnit()
+                || Select.enemy().combatUnits().inRadius(8, unit).count() > 0)) {
             unit.setTooltip("Retreat");
             return unit.runFrom(null);
         }

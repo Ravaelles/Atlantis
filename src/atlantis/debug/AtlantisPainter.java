@@ -403,7 +403,7 @@ public class AtlantisPainter {
         paintSideMessage("Prod. queue:", Color.White);
 
         // Display units currently in production
-        for (AUnit unit : Select.ourUnfinished().listUnits()) {
+        for (AUnit unit : Select.ourNotFinished().listUnits()) {
             AUnitType type = unit.getType();
             if (type.equals(AUnitType.Zerg_Egg)) {
                 type = unit.getBuildType();

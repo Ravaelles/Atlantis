@@ -514,9 +514,14 @@ public class AUnitType implements Comparable<AUnitType> {
 
     // =========================================================
     // Type comparison methods
+    
     public boolean isBase() {
         return isType(AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus, AUnitType.Zerg_Hatchery,
                 AUnitType.Zerg_Lair, AUnitType.Zerg_Hive);
+    }
+    
+    public boolean isPrimaryBase() {
+        return isType(AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus, AUnitType.Zerg_Hatchery);
     }
 
     public boolean isInvincible() {

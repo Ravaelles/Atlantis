@@ -20,7 +20,7 @@ public class AtlantisWorkerCommander {
      */
     public static void update() {
         AtlantisGasManager.handleGasBuildings();
-        transferWorkersBetweenBasesIfNeeded();
+//        transferWorkersBetweenBasesIfNeeded();
 
         for (AUnit worker : Select.ourWorkers().listUnits()) {
             AtlantisWorkerManager.update(worker);

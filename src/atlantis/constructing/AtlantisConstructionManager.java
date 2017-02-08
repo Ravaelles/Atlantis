@@ -291,14 +291,14 @@ public class AtlantisConstructionManager {
         // =========================================================
         // Special case for Overlord
         if (type.equals(AUnitType.Zerg_Overlord)) {
-            total += Select.ourUnfinished().ofType(type).count();
+            total += Select.ourNotFinished().ofType(type).count();
         }
 
         return total;
     }
 
     public static int countNotFinishedConstructionsOfType(AUnitType type) {
-        return Select.ourUnfinished().ofType(type).count()
+        return Select.ourNotFinished().ofType(type).count()
                 + countNotStartedConstructionsOfType(type);
     }
 
@@ -318,7 +318,7 @@ public class AtlantisConstructionManager {
         // =========================================================
         // Special case for Overlord
         if (type.equals(AUnitType.Zerg_Overlord)) {
-            total += Select.ourUnfinished().ofType(AUnitType.Zerg_Overlord).count();
+            total += Select.ourNotFinished().ofType(AUnitType.Zerg_Overlord).count();
         }
 
         return total;

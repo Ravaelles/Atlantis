@@ -56,11 +56,11 @@ public class MicroManager extends AbstractMicroManager {
             // =========================================================
             // Don't interrupt running
             
-            if (unit.isRunning()) {
-                unit.move(unit.getRunManager().getRunToPosition(), UnitActions.RUN_FROM_UNIT);
-                unit.setTooltip("Running");
-                return true;
-            }
+//            if (unit.isRunning()) {
+//                unit.move(unit.getRunManager().getRunToPosition(), UnitActions.RUN_FROM_UNIT);
+//                unit.setTooltip("Running");
+//                return true;
+//            }
 
             // =========================================================
             // Check chances to win the fight

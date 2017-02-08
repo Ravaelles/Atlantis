@@ -16,6 +16,16 @@ public class AtlantisEnemyTargeting {
         boolean canAttackGround = unit.canAttackGroundUnits(); 
         boolean canAttackAir = unit.canAttackAirUnits(); 
         AUnit nearestEnemy = null;
+
+        // === Attack units nears main =============================
+        
+//        AUnit mainBase = Select.mainBase();
+//        if (mainBase != null) {
+//            nearestEnemy = Select.enemy().visible()
+//                    .canBeAttackedBy(unit)
+//                    .inRadius(50, mainBase)
+//                    .nearestTo(mainBase);
+//        }
         
         // =========================================================
         // Attack deadliest shit out there

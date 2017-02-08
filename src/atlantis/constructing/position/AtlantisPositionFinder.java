@@ -64,7 +64,8 @@ public class AtlantisPositionFinder {
             // If we didn't specify location where to build, build somewhere near the main base
             if (nearTo == null) {
                 if (AtlantisGame.playsAsZerg()) {
-                    nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
+//                    nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
+                    nearTo = Select.mainBase().getPosition();
                 }
                 else {
 //                    nearTo = Select.mainBase().getPosition();
