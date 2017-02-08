@@ -73,6 +73,7 @@ public interface AtlantisUnitOrders {
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition, UnitAction unitAction) {
         boolean result = u().build(buildingType.ut(), buildTilePosition);
         unit().setUnitAction(UnitActions.BUILD);
+        unit().setTooltip("Construct " + buildingType.getShortName());
         return result;
     }
 

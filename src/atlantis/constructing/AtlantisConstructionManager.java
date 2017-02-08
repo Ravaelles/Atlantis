@@ -237,7 +237,8 @@ public class AtlantisConstructionManager {
      * already in progress.
      */
     public static boolean isBuilder(AUnit worker) {
-        if (worker.isConstructing() || getConstructionOrderFor(worker) != null) {
+        if (worker.isConstructing() || 
+                (!AtlantisGame.playsAsProtoss() && getConstructionOrderFor(worker) != null)) {
             return true;
         }
 

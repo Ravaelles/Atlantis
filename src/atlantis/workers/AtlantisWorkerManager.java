@@ -18,10 +18,12 @@ public class AtlantisWorkerManager {
         worker.removeTooltip();
 
         // =========================================================
-        // Act as BUILDER
+        // Act as BUILDER if needed
         if (AtlantisConstructionManager.isBuilder(worker)) {
             AtlantisBuilderManager.update(worker);
-        } // ORDINARY WORKER
+        } 
+
+        // ORDINARY WORKER
         else {
             sendToGatherMineralsOrGasIfNeeded(worker);
         }

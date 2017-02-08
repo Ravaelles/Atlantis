@@ -28,5 +28,21 @@ http://wiki.teamliquid.net/starcraft/2_Gate_Range_Expand
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-4 - Assimilator
-
+8 - Pylon
+10 - Gateway
+12 - Assimilator
+13 - Cybernetics Core
+15 - Pylon
+17 - Dragoon Range
+18 - Gateway
+20 - Nexus
+20 - Dragoon
+22 - Dragoon
+24 - Pylon
+25 - Dragoons - x2
+31 - Robotics Facility
+33 - Robotics Support Bay
+34 - Reaver
+36 - Scarab - x4
+37 - Reaver
+39 - Scarab - x4
