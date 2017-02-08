@@ -19,6 +19,7 @@ public class AtlantisGameCommander {
      * frame).
      */
     public void update() {
+        System.out.println(AtlantisGame.getTimeFrames());
 
         // === Execute paint methods ========================================
         

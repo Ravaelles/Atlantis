@@ -45,6 +45,12 @@ public class AtlantisKeyboard implements NativeKeyListener {
         
         switch (e.getKeyCode()) {
             
+            // Key "PauseBreak"
+            case 3653:
+                AtlantisGame.pauseModeToggle();
+                System.out.println("Notice: " + (AtlantisGame.isPaused() ? "" : "UN") + " PAUSED");
+                break;
+            
             // Keys "-" and NumPad "-"
             case 12: case 3658:
                 AtlantisGame.changeSpeedBy(+20);

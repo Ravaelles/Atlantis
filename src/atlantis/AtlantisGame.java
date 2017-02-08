@@ -19,8 +19,9 @@ import java.util.List;
  */
 public class AtlantisGame {
 
-    private static Player _enemy = null; // Cached enemy player
     private static boolean umtMode = false; // Should be set to `true` on UMT (custom) maps
+    private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
+    private static Player _enemy = null; // Cached enemy player
 
     // =========================================================
     /**
@@ -79,6 +80,21 @@ public class AtlantisGame {
     }
 
     // =========================================================
+    
+    /**
+     * Enable/disable pause.
+     */
+    public static void pauseModeToggle() {
+        isPaused = !isPaused;
+    }
+    
+    /**
+     * Returns true if game is paused.
+     */
+    public static boolean isPaused() {
+        return isPaused;
+    }
+    
     /**
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */

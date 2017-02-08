@@ -65,19 +65,29 @@ public abstract class AtlantisBuildOrdersManager {
      * Returns name of file with build orders.
      */
     protected String getFilename() {
-        String ourRaceLetter = AtlantisGame.getPlayerUs().getRace().toString().substring(0, 1);
-        String enemyRaceLetter = AtlantisGame.getEnemy().getRace().toString().substring(0, 1);
-        String customBuildOrders = ourRaceLetter + "v" + enemyRaceLetter + ".csv";
-
-        // Check if user has defined his own build orders file for this race and if so, use it.
-        File buildOrdersFile = new File(BUILD_ORDERS_PATH + customBuildOrders);
-        if (buildOrdersFile.exists()) {
-            return customBuildOrders;
-        } // Return default Atlantis build orders for this race vs race matchup.
-        else {
-            String atlantisDefaultBuildOrders = "Atlantis_" + customBuildOrders;
-            return atlantisDefaultBuildOrders;
+        if (AtlantisGame.playsAsTerran()) {
+            return "Terran/Test.csv";
         }
+        else if (AtlantisGame.playsAsProtoss()) {
+            return "Protoss/2 Gate Range Expand.csv";
+        }
+        else {
+            return "Zerg/13 Pool Muta.csv";
+        }
+        
+//        String ourRaceLetter = AtlantisGame.getPlayerUs().getRace().toString().substring(0, 1);
+//        String enemyRaceLetter = AtlantisGame.getEnemy().getRace().toString().substring(0, 1);
+//        String customBuildOrders = ourRaceLetter + "v" + enemyRaceLetter + ".csv";
+//
+//        // Check if user has defined his own build orders file for this race and if so, use it.
+//        File buildOrdersFile = new File(BUILD_ORDERS_PATH + customBuildOrders);
+//        if (buildOrdersFile.exists()) {
+//            return customBuildOrders;
+//        } // Return default Atlantis build orders for this race vs race matchup.
+//        else {
+//            String atlantisDefaultBuildOrders = "Atlantis_" + customBuildOrders;
+//            return atlantisDefaultBuildOrders;
+//        }
     }
 
     /**

@@ -28,7 +28,7 @@ public class Atlantis implements BWEventListener {
      * BWMirror core class.
      */
     private static Mirror mirror = new Mirror();
-    
+
     /**
      * BWMirror game object, contains lo-level methods.
      */
@@ -79,17 +79,15 @@ public class Atlantis implements BWEventListener {
     public static int LOST_RESOURCES = 0;
 
     // =========================================================
-    
     /**
      * It's executed only once, before the first game frame happens.
      */
     @Override
     public void onStart() {
         bwapi = mirror.getGame();
-        
+
         // Uncomment this line to see list of units -> damage.
 //        AtlantisUnitTypesHelper.displayUnitTypesDamage();
-
         // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
         // =========================================================
         // Set up base configuration based on race used.
@@ -131,52 +129,51 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
-        try {
-            playerOnFrame();
-        } catch (Exception e) {
-            System.err.println("### AN ERROR HAS OCCURRED ###");
-            e.printStackTrace();
-        }
 
-    }
-
-    /**
-     * This was the previous onFrame. Now it is wrapped in a try-catch
-     */
-    private void playerOnFrame() {
-        
-        // Initial actions - those should be executed only once.
-        if (!_initialActionsExecuted) {
-            _initialActionsExecuted = true;
-            System.out.println("### Starting Atlantis... ###");
-            AtlantisInitialActions.executeInitialActions();
-            System.out.println("### Atlantis is working! ###");
-        }
-
-        // =========================================================
-        // If game is running (not paused), proceed with all actions.
-//        if (!_isPaused) {
-        if (gameCommander != null) {
-            gameCommander.update();
-        }
-
-        // =========================================================
-        // Game SPEED change using DYNAMIC SLODOWN
-        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _dynamicSlowdown_isSlowdownActive) {
+        // If game is PAUSED, wait 100ms - pause is handled by Escape button
+        if (AtlantisGame.isPaused()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // No need to handle
+            }
             if (_dynamicSlowdown_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
                 _dynamicSlowdown_isSlowdownActive = false;
                 AtlantisGame.changeSpeedTo(_dynamicSlowdown_previousSpeed);
             }
+        } //        } 
+
+        // =========================================================
+        
+        try {
+            // Initial actions - those should be executed only once.
+            if (!_initialActionsExecuted) {
+                _initialActionsExecuted = true;
+                System.out.println("### Starting Atlantis... ###");
+                AtlantisInitialActions.executeInitialActions();
+                System.out.println("### Atlantis is working! ###");
+            }
+
+            // =========================================================
+            // If game is running (not paused), proceed with all actions.
+//        if (!_isPaused) {
+            if (gameCommander != null) {
+                gameCommander.update();
+            }
+
+            // =========================================================
+            // Game SPEED change using DYNAMIC SLODOWN
+            if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _dynamicSlowdown_isSlowdownActive) {
+                if (_dynamicSlowdown_lastTimeUnitDestroyed + 3 <= AtlantisGame.getTimeSeconds()) {
+                    _dynamicSlowdown_isSlowdownActive = false;
+                    AtlantisGame.changeSpeedTo(_dynamicSlowdown_previousSpeed);
+                }
+            }
+        } // Catch any exception that occur not to "kill" the bot with one trivial error
+        catch (Exception e) {
+            System.err.println("### AN ERROR HAS OCCURRED ###");
+            e.printStackTrace();
         }
-//        } // =========================================================
-        // If game is PAUSED, wait 100ms - pause is handled by Escape button
-//        else {
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException e) {
-//                // No need to handle
-//            }
-//        }
     }
 
     /**
@@ -225,9 +222,8 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitDestroy(Unit u) {
         AUnit unit = AUnit.createFrom(u);
-        
-//        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
 
+//        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
         if (unit != null) {
             if (unit.isEnemyUnit()) {
                 AtlantisEnemyUnits.unitDestroyed(unit);
@@ -247,7 +243,7 @@ public class Atlantis implements BWEventListener {
 
         // =========================================================
         // Game SPEED change
-        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN 
+        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN
                 && !_dynamicSlowdown_isSlowdownActive && !unit.getType().isBuilding()) {
             activateDynamicSlowdownMode();
         }
@@ -294,15 +290,14 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitMorph(Unit u) {
         AUnit unit = AUnit.createFrom(u);
-        
+
         // A bit of safe approach: forget the unit and remember it again.
         // =========================================================
         // Forget unit
         if (unit != null) {
             if (unit.isOurUnit()) {
                 AtlantisSquadManager.battleUnitDestroyed(unit);
-            }
-            else {
+            } else {
                 AtlantisEnemyUnits.unitDestroyed(unit);
             }
         }
@@ -311,34 +306,30 @@ public class Atlantis implements BWEventListener {
         // Remember the unit
         if (unit != null) {
             unit.refreshType();
-            
+
             // Our unit
             if (unit.isOurUnit()) {
 
                 // === Fix for Zerg Extractor ========================================
-
                 // Detect morphed gas building meaning construction has just started
                 if (unit.getType().isGasBuilding()) {
                     for (ConstructionOrder order : AtlantisConstructionManager.getAllConstructionOrders()) {
-                        if (order.getBuildingType().equals(AtlantisConfig.GAS_BUILDING) 
+                        if (order.getBuildingType().equals(AtlantisConfig.GAS_BUILDING)
                                 && order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                             order.setConstruction(unit);
                             break;
                         }
                     }
                 }
-                
-                // =========================================================
 
+                // =========================================================
                 AtlantisGame.getBuildOrders().rebuildQueue();
 
                 // Add to combat squad if it's military unit
                 if (unit.isActualUnit()) {
                     AtlantisSquadManager.possibleCombatUnitCreated(unit);
                 }
-            }
-            
-            // Enemy unit
+            } // Enemy unit
             else {
                 AtlantisEnemyUnits.refreshEnemyUnit(unit);
             }
@@ -377,24 +368,14 @@ public class Atlantis implements BWEventListener {
      * AtlantisConfig.GAME_SPEED = 0; } AtlantisGame.changeSpeed(AtlantisConfig.GAME_SPEED); } // 109 (-) -
      * decrease game speed else if (keyCode == 109) { AtlantisConfig.GAME_SPEED += 2;
      * AtlantisGame.changeSpeed(AtlantisConfig.GAME_SPEED); }
-
-        // =========================================================
-        // 107 (+) - increase game speed
-            if (AtlantisConfig.GAME_SPEED > 2) {
-                AtlantisConfig.GAME_SPEED -= 10;
-            }
-            else {
-            }
-            
-
-        // =========================================================
-        // 109 (-) - decrease game speed
-            if (AtlantisConfig.GAME_SPEED > 2) {
-                AtlantisConfig.GAME_SPEED += 10;
-            }
-            else {
-            }
-    }
+     *
+     * // =========================================================
+     * // 107 (+) - increase game speed
+     * if (AtlantisConfig.GAME_SPEED > 2) { AtlantisConfig.GAME_SPEED -= 10; } else { }
+     *
+     *
+     * // ========================================================= // 109 (-) - decrease game speed if
+     * (AtlantisConfig.GAME_SPEED > 2) { AtlantisConfig.GAME_SPEED += 10; } else { } }
      */
     /**
      * Match has ended. Shortly after that the game will go to the menu.
@@ -435,8 +416,7 @@ public class Atlantis implements BWEventListener {
      * "Nuclear launch detected".
      * <b>Guess: I guess in this case we don't know the exact point of it.</b>
      *
-     * @Override public void nukeDetect() {
-    }
+     * @Override public void nukeDetect() { }
      */
     /**
      * Other player has left the game.
@@ -512,7 +492,7 @@ public class Atlantis implements BWEventListener {
     public static Game getBwapi() {
         return getInstance().bwapi;
     }
-    
+
     // =========================================================
     // Utility / Axuliary methods
     /**
