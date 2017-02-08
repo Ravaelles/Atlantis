@@ -471,6 +471,21 @@ public class Select<T> {
     }
 
     /**
+     * Selects only those units which are visible (not hidden).
+     */
+    public Select<T> visible() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
+            if (!unit.isVisible()) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
+    /**
      * Selects only those units which are idle. Idle is unit's class flag so be careful with that.
      */
     public Select<T> idle() {

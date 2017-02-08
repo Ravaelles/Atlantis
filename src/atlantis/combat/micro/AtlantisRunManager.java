@@ -14,6 +14,7 @@ import atlantis.wrappers.APosition;
 import atlantis.wrappers.PositionOperationsHelper;
 import bwapi.Color;
 import bwapi.Position;
+import bwapi.TilePosition;
 import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.List;
@@ -173,7 +174,7 @@ public class AtlantisRunManager {
 
         // === Get standard run to position - as far from enemy as possible
         
-        if (closeEnemies.size() <= 2 && 
+        if ((closeEnemies != null && closeEnemies.size() <= 2) && 
                 (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1)) {
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
@@ -183,7 +184,7 @@ public class AtlantisRunManager {
         // with the hope of getting out.
         
         if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, unit.isVulture() ? 6 : 3);
+            runTo = findRunPositionAtAnyDirection(unit, unit.isVulture() ? 6 : 2);
         }
 //        else {
 //            AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Yellow);
@@ -196,7 +197,7 @@ public class AtlantisRunManager {
         }
         
         if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, 2);
+            runTo = findRunPositionAtAnyDirection(unit, 5);
         }
 
         if (runTo == null) {
@@ -366,15 +367,6 @@ public class AtlantisRunManager {
         return bestPosition;
     }
 
-    /**
-     * Returns true if given run position is traversable, land-connected and not very, very far
-     */
-    public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position, double minDist, double maxDist) {
-        return position.distanceTo(unit) > (minDist - 0.2) && unit.hasPathTo(position)
-                && AtlantisMap.isWalkable(position)
-                && AtlantisMap.getGroundDistance(unit, position) <= maxDist;
-    }
-
     private static Units defineCloseEnemies(AUnit unit) {
         double radius;
 
@@ -404,6 +396,20 @@ public class AtlantisRunManager {
         }
     }
 
+    // =========================================================
+    
+    /**
+     * Returns true if given run position is traversable, land-connected and not very, very far
+     */
+    public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position, double minDist, double maxDist) {
+        return position.distanceTo(unit) > (minDist - 0.2) && unit.hasPathTo(position)
+                && AtlantisMap.isWalkable(position) 
+                && Atlantis.getBwapi().getUnitsOnTile(position.toTilePosition()).isEmpty()
+//                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
+//                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
+                && AtlantisMap.getGroundDistance(unit, position) <= maxDist;
+    }
+    
     // === Getters ========================================
     public APosition getRunToPosition() {
         return runTo;

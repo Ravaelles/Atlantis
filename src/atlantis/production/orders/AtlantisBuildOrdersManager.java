@@ -199,9 +199,6 @@ public abstract class AtlantisBuildOrdersManager {
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
             UpgradeType upgrade = order.getUpgrade();
             TechType tech = order.getTech();
-            if (upgrade != null) {
-                System.out.println("BO upgrade = " + upgrade);
-            }
 
             // Check if include only units
             if (mode == MODE_ONLY_UNITS && unitOrBuilding == null) {

@@ -35,9 +35,6 @@ public class AtlantisProductionManager {
                 AtlantisBuildOrdersManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
-            if (order.getUpgrade() != null) {
-                System.out.println("produceNow " + order.getUpgrade());
-            }
 
             // =========================================================
             // Produce UNIT
@@ -101,12 +98,12 @@ public class AtlantisProductionManager {
 
     private static void researchUpgrade(UpgradeType upgrade) {
         AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades());
-        System.out.println("Research " + upgrade + " in " + buildingType);
+//        System.out.println("Research " + upgrade + " in " + buildingType);
         if (buildingType != null) {
             AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
-            System.out.println(upgrade + " level is " + AtlantisGame.getPlayerUs().getUpgradeLevel(upgrade));
+//            System.out.println(upgrade + " level is " + AtlantisGame.getPlayerUs().getUpgradeLevel(upgrade));
             if (building != null && !building.isBusy()) {
-                System.out.println("   ISSUE");
+//                System.out.println("   ISSUE");
                 building.upgrade(upgrade);
             }
         }
