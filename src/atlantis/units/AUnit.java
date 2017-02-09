@@ -116,7 +116,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
 
     @Override
     public APosition getPosition() {
-        return APosition.createFrom(u.getPosition());
+        return APosition.create(u.getPosition());
 //        return u.getPosition();
     }
 
@@ -852,7 +852,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
     }
 
     public APosition getTargetPosition() {
-        return APosition.createFrom(u.getTargetPosition());
+        return APosition.create(u.getTargetPosition());
     }
 
     public AUnit getOrderTarget() {

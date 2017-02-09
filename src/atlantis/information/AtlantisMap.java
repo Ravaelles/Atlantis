@@ -118,7 +118,7 @@ public class AtlantisMap {
      */
     public static Chokepoint getNaturalBaseChokepoint() {
         if (cached_naturalBaseChokepoint != null) {
-            AtlantisPainter.paintCircle(APosition.createFrom(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
+            AtlantisPainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
             return cached_naturalBaseChokepoint;
         }
         
@@ -133,7 +133,7 @@ public class AtlantisMap {
         Region naturalRegion = getRegion(getNaturalBaseLocation(mainBase.getPoint()));
         
         for (Chokepoint chokepoint : naturalRegion.getChokepoints()) {
-            APosition center = APosition.createFrom(chokepoint.getCenter());
+            APosition center = APosition.create(chokepoint.getCenter());
             if (center.distanceTo(getMainBaseChokepoint().getCenter()) > 1) {
                 cached_naturalBaseChokepoint = chokepoint;
                 return cached_naturalBaseChokepoint;
@@ -439,7 +439,7 @@ public class AtlantisMap {
         Collection<Chokepoint> chokes = baseRegion.getChokepoints();
         for (Chokepoint choke : chokes) {
             if (baseRegion.getChokepoints().contains(choke)) {
-                System.out.println("Disabling choke point: " + APosition.createFrom(choke.getCenter()));
+                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
                 disabledChokepoints.add(choke);	//choke.setDisabled(true);
             }
         }

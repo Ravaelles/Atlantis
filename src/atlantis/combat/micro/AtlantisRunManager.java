@@ -145,8 +145,10 @@ public class AtlantisRunManager {
         if (unit == null || runAwayFrom == null) {
             return null;
         }
+        
+        AUnit mainBase = Select.mainBase();
 
-        if (AtlantisGame.getTimeSeconds() <= 320) {
+        if (AtlantisGame.getTimeSeconds() <= 320 && mainBase != null && mainBase.distanceTo(unit) < 12) {
             return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
         } else {
             return unit.getRunManager().findPositionToRun_dontPreferMainBase(unit, runAwayFrom);

@@ -121,7 +121,7 @@ public class MissionAttack extends Mission {
         BaseLocation startLocation = AtlantisMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
         if (startLocation != null) {
         	//System.out.println("focus on start location");	//TODO debug
-            return APosition.createFrom(startLocation.getPosition());
+            return APosition.create(startLocation.getPosition());
         }
 
         // Absolutely no enemy unit can be found

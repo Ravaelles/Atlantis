@@ -2,6 +2,7 @@ package atlantis.scout;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
+import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
@@ -27,36 +28,29 @@ public class AtlantisScoutManager {
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
     public static void update() {
-        
+
         // === Handle UMT ==========================================
-        
         if (AtlantisGame.isUmtMode()) {
             return;
         }
-        
+
         // =========================================================
-        
         assignScoutIfNeeded();
 
+        // =========================================================
         // We don't know any enemy building, scout nearest starting location.
         if (!AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
             for (AUnit scout : scouts) {
-                tryToFindEnemy(scout);
+                tryFindingEnemyBase(scout);
             }
-        } else {
+        } // Scout around enemy base
+        else {
             for (AUnit scout : scouts) {
-                scoutForTheNextBase(scout);
+                handleScoutEnemyBase(scout);
             }
 
-            // We know enemy building, but don't know any base.
-//            AUnit enemyBase = AtlantisEnemyInformationManager.hasDiscoveredEnemyBase();
-//            if (enemyBase == null) {
-//                // @TODO
-//            } // We know the exact location of enemy's base.
-//            else {
-//                for (AUnit scout : scouts) {
-//                    handleScoutWhenKnowEnemyBase(scout, enemyBase);
-//                }
+//            for (AUnit scout : scouts) {
+//                scoutForTheNextBase(scout);
 //            }
         }
     }
@@ -66,7 +60,7 @@ public class AtlantisScoutManager {
      * Behavior for the scout if we know enemy base location.
      */
     private static void handleScoutWhenKnowEnemyBase(AUnit scout, AUnit enemyBase) {
-        tryToFindEnemy(scout);
+        tryFindingEnemyBase(scout);
 
 //        // Scout already attacking
 //        if (scout.isAttacking()) {
@@ -87,7 +81,7 @@ public class AtlantisScoutManager {
     /**
      * We don't know any enemy building, scout nearest starting location.
      */
-    public static void tryToFindEnemy(AUnit scout) {
+    public static void tryFindingEnemyBase(AUnit scout) {
         if (scout == null) {
             return;
         }
@@ -109,7 +103,6 @@ public class AtlantisScoutManager {
 //            handleUmtExplore(scout);
 //            return;
 //        }
-
         // =========================================================
         // Get nearest unexplored starting location and go there
         BaseLocation startingLocation;
@@ -122,11 +115,41 @@ public class AtlantisScoutManager {
         }
 
         // =========================================================
+//        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
+//        if (enemyBase != null) {
+//            Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
+//            enemyBaseRegion.getPolygon().getCenter()
+//        }
+        // =========================================================
         if (startingLocation != null) {
             scout.setTooltip("Scout!");
-            //scout.setTooltip("Scout!");
-            scout.move(startingLocation.getPosition(), UnitActions.MOVE);
+            scout.move(startingLocation.getPosition(), UnitActions.EXPLORE);
+            return;
         }
+    }
+
+    /**
+     * Roam around enemy base to get information about build order for as long as possible.
+     */
+    private static boolean handleScoutEnemyBase(AUnit scout) {
+
+        // === Avoid melee units ===================================
+        
+        if (AtlantisAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(scout)) {
+            return true;
+        }
+
+        // === Remain at the enemy base if it's known ==============
+        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
+        if (enemyBase != null) {
+            Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
+            APosition center = APosition.create(enemyBaseRegion.getPolygon().getCenter());
+            scout.setTooltip("Scouting around");
+            scout.move(center, UnitActions.EXPLORE);
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -176,10 +199,9 @@ public class AtlantisScoutManager {
 //            scout.attack(focusPoint, UnitActions.ATTACK_POSITION);
 //        }
 //    }
-    
     public static APosition getUmtFocusPoint(APosition startPosition) {
         Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(startPosition);
-        return nearestUnexploredRegion != null ? APosition.createFrom(nearestUnexploredRegion.getCenter()) : null;
+        return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
     }
 
     // =========================================================

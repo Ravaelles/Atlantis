@@ -13,6 +13,7 @@ import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AtlantisEnemyUnits;
+import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
@@ -30,6 +31,7 @@ import bwapi.Color;
 import bwapi.Game;
 import bwapi.Position;
 import bwapi.Text.Size.Enum;
+import bwta.Region;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -94,6 +96,7 @@ public class AtlantisPainter {
         
         bwapi.setTextSize(Enum.Small);
 
+        paintEnemyRegionDetails();
         paintImportantPlaces();
         paintColoredCirclesAroundUnits();
 //        paintConstructionProgress();
@@ -111,6 +114,43 @@ public class AtlantisPainter {
 
     // =========================================================
     // Hi-level
+    
+    /**
+     * Paint focus point for global attack mission etc.
+     */
+    private static void paintInfo() {
+
+        // Time
+        paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", Color.Grey);
+
+        // =========================================================
+        // Global mission
+        paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
+        paintSideMessage("Enemy base: " + AtlantisEnemyUnits.getEnemyBase(), Color.White);
+
+        // =========================================================
+        // Focus point
+        APosition focusPoint = MissionAttack.getFocusPoint();
+        AUnit mainBase = Select.mainBase();
+        String desc = "";
+        if (focusPoint != null && mainBase != null) {
+            desc = "(" + ((int) mainBase.distanceTo(focusPoint)) + " tiles)";
+        }
+        paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
+
+        // =========================================================
+        paintSideMessage("Combat squad size: " + AtlantisSquadManager.getAlphaSquad().size(), Color.Blue, 0);
+
+        // =========================================================
+        // Gas workers
+//        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
+//                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
+//        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
+
+        paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + AtlantisBuildOrdersManager.getMineralsNeeded(), Color.Grey);
+        paintSideMessage("Reserved gas: " + AtlantisBuildOrdersManager.getGasNeeded(), Color.Grey);
+    }
     
     /**
      * Painting for combat units can be a little different. Put here all the related code.
@@ -195,42 +235,6 @@ public class AtlantisPainter {
             paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
 //            }
         }
-    }
-
-    /**
-     * Paint focus point for global attack mission etc.
-     */
-    private static void paintInfo() {
-
-        // Time
-        paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", Color.Grey);
-
-        // =========================================================
-        // Gas workers
-        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
-                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
-        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
-
-        paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + AtlantisBuildOrdersManager.getMineralsNeeded(), Color.Grey);
-        paintSideMessage("Reserved gas: " + AtlantisBuildOrdersManager.getGasNeeded(), Color.Grey);
-
-        // =========================================================
-        // Global mission
-        paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
-
-        // =========================================================
-        // Focus point
-        APosition focusPoint = MissionAttack.getFocusPoint();
-        AUnit mainBase = Select.mainBase();
-        String desc = "";
-        if (focusPoint != null && mainBase != null) {
-            desc = "(" + ((int) mainBase.distanceTo(focusPoint)) + " tiles)";
-        }
-        paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
-
-        // =========================================================
-        paintSideMessage("Combat squad size: " + AtlantisSquadManager.getAlphaSquad().size(), Color.Blue, 0);
     }
 
     /**
@@ -888,6 +892,10 @@ public class AtlantisPainter {
         }
     }
 
+    /**
+     * Every frame paint next allowed location of Supply Depot. Can be used to debug construction finding,
+     * but slows the game down impossibly.
+     */
     private static void paintTestSupplyDepotLocationsNearMain() {
         AUnit worker = Select.ourWorkers().first();
         AUnit base = Select.ourBases().first();
@@ -909,6 +917,21 @@ public class AtlantisPainter {
         }
     }
 
+    /**
+     * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
+     */
+    private static void paintEnemyRegionDetails() {
+        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
+        if (enemyBase != null) {
+            Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
+//            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
+//            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
+            for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
+                paintCircle(point, 32, Color.Yellow);
+            }
+        }
+    }
+    
     // =========================================================
     // Lo-level
     public static void paintSideMessage(String text, Color color) {

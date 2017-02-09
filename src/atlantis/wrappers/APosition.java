@@ -13,9 +13,16 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Atlantis uses wrapper for BWMirror native classes which can't extended.<br /><br />
+ * Atlantis uses wrapper for BWMirror native classes which can't extended due to private constructors.
+ * <br /><br />
+ * I've decided to implement a solution which allows to use the .jar of BWMirror library, because from
+ * my experience it turns out, that it's extremely tedious to upgrade Atlantis to use newer version of
+ * BWMirror if you work with the source code rather than the .jar library release.
+ * <br /><br />
  * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
- * you can create missing method here and you can reference original Position class via p() method.
+ * you can create them here or reference original Position class via p() method. 
+ * <br /><br />
+ * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
@@ -45,9 +52,11 @@ public class APosition extends Position {
     /**
      * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
      * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
-     * you can create missing method here and you can reference original Position class via p() method.
+     * you can create them here or reference original Position class via p() method. 
+     * <br /><br />
+     * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
      */
-    public static APosition createFrom(Position p) {
+    public static APosition create(Position p) {
         if (instances.containsKey(p)) {
             return instances.get(p);
         }
@@ -59,7 +68,12 @@ public class APosition extends Position {
     }
     
     /**
-     * Returns APosition object from (build) tile coordinates (32 pixels = 1 build tile).
+     * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
+     * you can create them here or reference original Position class via p() method. 
+     * <br /><br />
+     * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
+     * <br /><br />
+     * @return APosition object from (build) tile coordinates (32 pixels = 1 tile).
      */
     public static APosition createFrom(int tileX, int tileY) {
         return new APosition(tileX * 32, tileY * 32);

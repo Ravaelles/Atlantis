@@ -93,7 +93,7 @@ public class MissionUmt extends Mission {
         // === Return location to go to ====================================
         Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
         explorePosition = (nearestUnexploredRegion != null
-                ? APosition.createFrom(nearestUnexploredRegion.getCenter()) : null);
+                ? APosition.create(nearestUnexploredRegion.getCenter()) : null);
         if (explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
             unit.setTooltip("#Explore");
             return unit.move(explorePosition, UnitActions.EXPLORE);

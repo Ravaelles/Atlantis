@@ -55,7 +55,7 @@ public class ZergOverlordManager {
      * We don't know at any enemy building location.
      */
     private static void actWhenDontKnowEnemyLocation(AUnit unit) {
-        AtlantisScoutManager.tryToFindEnemy(unit);
+        AtlantisScoutManager.tryFindingEnemyBase(unit);
         unit.setTooltip("Find enemy");
         //unit.setTooltip("Find enemy");
     }

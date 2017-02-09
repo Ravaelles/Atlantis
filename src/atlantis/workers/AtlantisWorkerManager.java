@@ -1,10 +1,13 @@
 package atlantis.workers;
 
 import atlantis.AtlantisGame;
+import atlantis.combat.micro.AbstractMicroManager;
+import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
 import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.AtlantisPainter;
+import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import bwapi.Color;
@@ -14,22 +17,36 @@ public class AtlantisWorkerManager {
     /**
      * Executed for every worker unit.
      */
-    public static void update(AUnit worker) {
+    public static boolean update(AUnit worker) {
         worker.removeTooltip();
+        if (AtlantisScoutManager.isScout(worker)) {
+            return false;
+        }
+        
+        // =========================================================
+        // === Worker micro ========================================
+        
+        if (AtlantisAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(worker)) {
+            return true;
+        }
+        
+        // === END OF Worker micro =================================
+        // =========================================================
 
         // =========================================================
         // Act as BUILDER if needed
         if (AtlantisConstructionManager.isBuilder(worker)) {
             AtlantisBuilderManager.update(worker);
+            worker.setTooltip("Builder");
+            return true;
         } 
 
         // ORDINARY WORKER
         else {
             sendToGatherMineralsOrGasIfNeeded(worker);
+            worker.setTooltip("Gather");
+            return true;
         }
-
-        // =========================================================
-        updateTooltip(worker);
     }
 
     // =========================================================
@@ -124,48 +141,6 @@ public class AtlantisWorkerManager {
         }
         
         return false;
-    }
-
-    private static void updateTooltip(AUnit unit) {
-        String tooltip = "";
-        String newLine = "\r\n";
-        //FIXME: this is making tooltip get the empty string
-        ConstructionOrder buildingToBuild = AtlantisConstructionManager.getConstructionOrderFor(unit);
-        if (buildingToBuild != null) {
-            tooltip += "Build: " + buildingToBuild.getBuildingType().getShortName() + newLine;
-        }
-//		if (unit.getTarget() != null) {
-//			tooltip += "Target: " + unit.getTarget().getShortName() + newLine;
-//		}
-//		if (unit.getOrderTarget() != null) {
-//			tooltip += "OrderTarget: " + unit.getOrderTarget().getShortName() + newLine;
-//		}
-        // if (unit.isGatheringMinerals()) {
-        // tooltip += "Minerals" + newLine;
-        // }
-        // if (unit.isGatheringGas()) {
-        // tooltip += "Gas" + newLine;
-        // }
-        // if (unit.isConstructing()) {
-        // tooltip += "Constructing" + newLine;
-        // }
-        // if (unit.isRepairing()) {
-        // tooltip += "Repairing" + newLine;
-        // }
-        // if (unit.isMoving()) {
-        // tooltip += "Moving" + newLine;
-        // }
-        // if (unit.isAttacking()) {
-        // tooltip += "Attacking" + newLine;
-        // }
-        // if (unit.isStartingAttack()) {
-        // tooltip += "StartingAttack" + newLine;
-        // }
-        // if (unit.isIdle()) {
-        // tooltip += "Idle" + newLine;
-        // }
-        unit.setTooltip(tooltip);
-        //unit.setTooltip(tooltip);
     }
 
 }

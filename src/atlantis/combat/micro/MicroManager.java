@@ -49,7 +49,7 @@ public class MicroManager extends AbstractMicroManager {
             
             // =========================================================
             // Avoid melee units
-            if (handleAvoidCloseMeleeUnits(unit)) {
+            if (AtlantisAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(unit)) {
                 return true;
             }
 

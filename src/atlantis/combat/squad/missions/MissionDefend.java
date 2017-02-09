@@ -142,10 +142,10 @@ public class MissionDefend extends Mission {
         // =========================================================
         
         if (Select.ourBases().count() <= 1) {
-            return APosition.createFrom(AtlantisMap.getMainBaseChokepoint().getCenter());
+            return APosition.create(AtlantisMap.getMainBaseChokepoint().getCenter());
         }
         else {
-            return APosition.createFrom(AtlantisMap.getNaturalBaseChokepoint().getCenter());
+            return APosition.create(AtlantisMap.getNaturalBaseChokepoint().getCenter());
         }
     }
 

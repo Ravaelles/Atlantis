@@ -100,7 +100,7 @@ public class AtlantisSpecialPositionFinder {
             return null;
         }
         
-        APosition near = APosition.createFrom(baseLocationToExpand.getPosition()).translateByPixels(-64, -48);
+        APosition near = APosition.create(baseLocationToExpand.getPosition()).translateByPixels(-64, -48);
         constructionOrder.setMaxDistance(1);
 
 //        System.out.println("Main base = " + Select.mainBase());
@@ -122,7 +122,7 @@ public class AtlantisSpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = APosition.createFrom(
+        APosition near = APosition.create(
                 AtlantisMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().getPosition()).getPosition()
         ).translateByPixels(-64, -48);
         
