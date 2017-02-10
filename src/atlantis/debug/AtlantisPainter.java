@@ -56,7 +56,6 @@ public class AtlantisPainter {
     private static int prevTotalFindBuildPlace = 0;
 
     // =========================================================
-    
     /**
      * Executed once per frame, at the end of all other actions.
      */
@@ -72,13 +71,11 @@ public class AtlantisPainter {
         // === Dynamic PAINTING MODE ===============================
 //        paintingMode = (AtlantisGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
         // =========================================================
-        
         if (paintingMode == MODE_NO_PAINTING) {
             return;
         }
 
         // === PARTIAL PAINTING ====================================
-        
         bwapi.setTextSize(Enum.Default);
 
         paintInfo();
@@ -93,7 +90,6 @@ public class AtlantisPainter {
         }
 
         // =========================================================
-        
         bwapi.setTextSize(Enum.Small);
 
         paintEnemyRegionDetails();
@@ -114,7 +110,6 @@ public class AtlantisPainter {
 
     // =========================================================
     // Hi-level
-    
     /**
      * Paint focus point for global attack mission etc.
      */
@@ -146,12 +141,11 @@ public class AtlantisPainter {
 //        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
-
         paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + AtlantisBuildOrdersManager.getMineralsNeeded(), Color.Grey);
         paintSideMessage("Reserved gas: " + AtlantisBuildOrdersManager.getGasNeeded(), Color.Grey);
     }
-    
+
     /**
      * Painting for combat units can be a little different. Put here all the related code.
      */
@@ -216,7 +210,7 @@ public class AtlantisPainter {
 //            }
         }
     }
-    
+
     /**
      * Paint extra information about visible enemy combat units.
      */
@@ -224,7 +218,7 @@ public class AtlantisPainter {
         for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
             paintCircle(unit, unit.getType().getDimensionLeft() * 2, Color.Red);
             paintCircle(unit, unit.getType().getDimensionLeft() * 2 - 1, Color.Red);
-            
+
             APosition unitPosition = unit.getPosition();
             double eval = (int) AtlantisCombatEvaluator.evaluateSituation(unit, true, true);
 //            if (eval < 999) {
@@ -506,7 +500,7 @@ public class AtlantisPainter {
 
                 // Draw text
                 paintTextCentered(
-                        positionToBuild.translateByPixels(buildingType.getDimensionLeft(), 69), 
+                        positionToBuild.translateByPixels(buildingType.getDimensionLeft(), 69),
                         buildingType.getShortName(), Color.Brown
                 );
             }
@@ -521,7 +515,7 @@ public class AtlantisPainter {
             if (unit.isWorker() && (unit.isGatheringMinerals() || unit.isGatheringGas())) {
                 continue;
             }
-            
+
             APosition unitPosition = unit.getPosition();
             APosition targetPosition = unit.getTargetPosition();
             int unitRadius = unit.getType().getDimensionLeft();
@@ -632,7 +626,6 @@ public class AtlantisPainter {
 //                paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
 //                paintCircle(unit, unit.getType().getDimensionLeft() - 2 + unit.getType().getDimensionRight(), color);
 //            }
-
             if (unit.isWorker() && unit.isIdle()) {
                 paintCircle(unit, 10, Color.Black);
                 paintCircle(unit, 8, Color.Black);
@@ -846,15 +839,15 @@ public class AtlantisPainter {
      * from enemy" etc.
      */
     private static void paintTooltipsOverUnits() {
-        for (AUnit unit : Select.ourCombatUnits().listUnits()) {
-//            if (unit.hasTooltip()) {
-            String string = "";
-
+        for (AUnit unit : Select.our().listUnits()) {
             if (unit.hasTooltip()) {
-                string += unit.getTooltip();
-            } else {
-                string += "---";
-            }
+                String string = "";
+
+                if (unit.hasTooltip()) {
+                    string += unit.getTooltip();
+                } else {
+                    string += "---";
+                }
 
 //            string += "/";
 //            
@@ -864,8 +857,8 @@ public class AtlantisPainter {
 //            else {
 //                string += "no_mission";
 //            }
-            paintTextCentered(unit.getPosition(), string, Color.White);
-//            }
+                paintTextCentered(unit.getPosition(), string, Color.White);
+            }
         }
     }
 
@@ -893,8 +886,8 @@ public class AtlantisPainter {
     }
 
     /**
-     * Every frame paint next allowed location of Supply Depot. Can be used to debug construction finding,
-     * but slows the game down impossibly.
+     * Every frame paint next allowed location of Supply Depot. Can be used to debug construction finding, but
+     * slows the game down impossibly.
      */
     private static void paintTestSupplyDepotLocationsNearMain() {
         AUnit worker = Select.ourWorkers().first();
@@ -903,7 +896,7 @@ public class AtlantisPainter {
         int tileY = base.getPosition().getTileY();
         for (int x = tileX - 10; x <= tileX + 10; x++) {
             for (int y = tileY - 10; y <= tileY + 10; y++) {
-                APosition position = APosition.createFrom(x, y);
+                APosition position = APosition.create(x, y);
                 boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
                         worker, AUnitType.Terran_Supply_Depot, position
                 );
@@ -931,7 +924,7 @@ public class AtlantisPainter {
             }
         }
     }
-    
+
     // =========================================================
     // Lo-level
     public static void paintSideMessage(String text, Color color) {

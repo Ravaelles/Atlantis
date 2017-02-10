@@ -3,17 +3,22 @@ package atlantis.scout;
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
+import atlantis.debug.AtlantisPainter;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
+import atlantis.wrappers.Positions;
+import bwapi.Color;
 import bwapi.Position;
 import bwta.BaseLocation;
 import bwta.Region;
 import java.util.ArrayList;
+import javax.swing.ActionMap;
 
 public class AtlantisScoutManager {
 
@@ -21,6 +26,11 @@ public class AtlantisScoutManager {
      * Current scout unit.
      */
     private static ArrayList<AUnit> scouts = new ArrayList<>();
+    
+    private static Positions scoutingAroundBasePoints = new Positions();
+    private static int scoutingAroundBaseNextPolygonIndex = -1;
+    private static Position scoutingAroundBaseLastPolygonPoint = null;
+    private static boolean scoutingAroundBaseWasInterrupted = false;
 
     // =========================================================
     /**
@@ -46,7 +56,9 @@ public class AtlantisScoutManager {
         } // Scout around enemy base
         else {
             for (AUnit scout : scouts) {
-                handleScoutEnemyBase(scout);
+                if (scout.isAlive()) {
+                    handleScoutEnemyBase(scout);
+                }
             }
 
 //            for (AUnit scout : scouts) {
@@ -136,17 +148,31 @@ public class AtlantisScoutManager {
         // === Avoid melee units ===================================
         
         if (AtlantisAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(scout)) {
+            scoutingAroundBaseWasInterrupted = true;
             return true;
+        }
+        else {
+            scoutingAroundBaseWasInterrupted = false;
         }
 
         // === Remain at the enemy base if it's known ==============
         APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
             Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
-            APosition center = APosition.create(enemyBaseRegion.getPolygon().getCenter());
-            scout.setTooltip("Scouting around");
-            scout.move(center, UnitActions.EXPLORE);
-            return true;
+            
+            if (scoutingAroundBasePoints.isEmpty()) {
+                scoutingAroundBasePoints.addPositions(enemyBaseRegion.getPolygon().getPoints());
+            }
+            
+            defineNextPolygonForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
+            if (scoutingAroundBaseLastPolygonPoint != null) {
+                scout.setTooltip("Scouting around (" + scoutingAroundBaseNextPolygonIndex + ")");
+                scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE);
+                return true;
+            }
+            else {
+                scout.setTooltip("Can't find polygon");
+            }
         }
         
         return false;
@@ -192,6 +218,52 @@ public class AtlantisScoutManager {
         }
     }
 
+    private static void defineNextPolygonForEnemyBaseRoamingUnit(Region region, AUnit scout) {
+        if (scoutingAroundBaseLastPolygonPoint == null) {
+//            nextPolygon = getNearestPolygonInRegion(region, scout);
+            scoutingAroundBaseNextPolygonIndex = 0;
+            scoutingAroundBaseLastPolygonPoint = region.getPolygon().getPoints().get(0);
+        }
+        else {
+//            System.out.println("----");
+//            System.out.println("Polygon [" + scoutingAroundBaseLastPolygonPoint.getX() + "," + scoutingAroundBaseLastPolygonPoint.getY());
+//            System.out.println("dist = " + scout.distanceTo(scoutingAroundBaseLastPolygonPoint));
+            if (scout.distanceTo(scoutingAroundBaseLastPolygonPoint) <= 2.8) {
+                scoutingAroundBaseNextPolygonIndex++;
+                scoutingAroundBaseNextPolygonIndex = scoutingAroundBaseNextPolygonIndex 
+                        % region.getPolygon().getPoints().size(); 
+                scoutingAroundBaseLastPolygonPoint = region.getPolygon().getPoints()
+                        .get(scoutingAroundBaseNextPolygonIndex);
+//                System.out.println("CHANGE Polygon index " + scoutingAroundBaseNextPolygonIndex);
+//                System.out.println("dist = " + scout.distanceTo(scoutingAroundBaseLastPolygonPoint));
+            }
+        }
+        
+        APosition goTo = APosition.create(scoutingAroundBaseLastPolygonPoint);
+        
+        if (!AtlantisMap.isWalkable(APosition.create(scoutingAroundBaseLastPolygonPoint))
+                || !scout.hasPathTo(APosition.create(scoutingAroundBaseLastPolygonPoint))
+                || AtlantisMap.getGroundDistance(scout, goTo) > 2 * scout.distanceTo(goTo)) {
+//            System.out.println("REDEFINE");
+            
+            scoutingAroundBaseNextPolygonIndex++;
+            scoutingAroundBaseNextPolygonIndex = scoutingAroundBaseNextPolygonIndex 
+                    % region.getPolygon().getPoints().size();
+            scoutingAroundBaseLastPolygonPoint = region.getPolygon().getPoints()
+                    .get(scoutingAroundBaseNextPolygonIndex);
+        }
+        
+        AtlantisPainter.paintLine(scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Green);
+        AtlantisPainter.paintLine(scoutingAroundBaseLastPolygonPoint, scout.getPosition().translateByPixels(0, 1), Color.Green);
+        AtlantisPainter.paintLine(scoutingAroundBaseLastPolygonPoint, scout.getPosition().translateByPixels(1, 0), Color.Green);
+    }
+    
+//    private static APosition getNearestPolygonInRegion(Region region, AUnit scout) {
+//        APosition nearestPosition = scoutingAroundBasePoints.nearestTo(scout.getPosition());
+//        return nearestPosition;
+//    }
+    
+    
 //    private static void handleUmtExplore(AUnit scout) {
 //        APosition focusPoint = getUmtFocusPoint(scout.getPosition());
 //        

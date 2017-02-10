@@ -330,7 +330,7 @@ public class AtlantisRunManager {
                 vectorY *= expectedLength;
 
                 // Create position
-                APosition potentialPosition = APosition.createFrom(
+                APosition potentialPosition = APosition.create(
                         (int) (tx + vectorX),
                         (int) (ty + vectorY)
                 );

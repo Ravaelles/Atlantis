@@ -34,7 +34,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
                 for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
-                        APosition constructionPosition = APosition.createFrom(tileX, tileY);
+                        APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
                         }

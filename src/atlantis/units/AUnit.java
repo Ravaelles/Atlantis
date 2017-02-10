@@ -253,7 +253,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
     // =========================================================
     // Compare type methods
     public boolean isAlive() {
-        return !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
+        return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
     }
 
     public boolean canBeHealed() {

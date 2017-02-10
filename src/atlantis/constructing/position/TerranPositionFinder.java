@@ -41,7 +41,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                 for (int tileY = minTileY; tileY <= maxTileY; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
 //                        System.out.println(tileX + " / " + tileY);
-                        APosition constructionPosition = APosition.createFrom(tileX, tileY);
+                        APosition constructionPosition = APosition.create(tileX, tileY);
                         
                         // Check if position is buildable etc
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
