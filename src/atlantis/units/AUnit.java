@@ -9,6 +9,7 @@ import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
+import atlantis.information.AtlantisOurUnitsExtraInfo;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
@@ -253,7 +254,8 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
     // =========================================================
     // Compare type methods
     public boolean isAlive() {
-        return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
+//        return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
+        return (!AtlantisEnemyUnits.isEnemyUnitDestroyed(this) && !AtlantisOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this));
     }
 
     public boolean canBeHealed() {

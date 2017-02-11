@@ -15,15 +15,23 @@ public class AtlantisAvoidMeleeUnitsManager {
      */
     public static boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         if (((unit.isGroundUnit() && unit.getType().isRangedUnit()) || unit.isWorker())
-                && (unit.getHitPoints() <= 42 || unit.getHPPercent() < 100)) {
+                && (unit.getHitPoints() <= 60 || unit.getHPPercent() < 100)) {
             
             // === Define safety distance ==============================
 
             double lowHealthBonus = Math.max(((100 - unit.getHPPercent()) / 25), 1.5);
             double safetyDistance;
             
-            if (unit.getType().isVulture()) {
+            if (unit.isVulture()) {
                 safetyDistance = 3 + lowHealthBonus;
+            }
+            else if (unit.isWorker()) {
+                if (unit.isGatheringGas() || unit.isGatheringMinerals()) {
+                    safetyDistance = 0.8 + lowHealthBonus;
+                }
+                else {
+                    safetyDistance = 1.4 + lowHealthBonus;
+                }
             }
             else {
                 safetyDistance = 2.2 + lowHealthBonus;
@@ -40,7 +48,7 @@ public class AtlantisAvoidMeleeUnitsManager {
 //            int enemiesNearby = Select.enemy().inRadius(enemyNearbyCountingRadius, unit).count();
             int enemiesNearby = Select.enemy().inRadius(safetyDistance, unit).count();
             if (enemiesNearby >= 2) {
-                if (unit.getType().isVulture()) {
+                if (unit.isVulture()) {
                     safetyDistance += Math.max((double) enemiesNearby / 4, 3.5);
                 }
                 else {

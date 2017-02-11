@@ -148,7 +148,7 @@ public class AtlantisRunManager {
         
         AUnit mainBase = Select.mainBase();
 
-        if (AtlantisGame.getTimeSeconds() <= 320 && mainBase != null && mainBase.distanceTo(unit) < 12) {
+        if (!unit.isWorker() && AtlantisGame.getTimeSeconds() <= 320 && mainBase != null && mainBase.distanceTo(unit) < 30) {
             return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
         } else {
             return unit.getRunManager().findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
@@ -187,7 +187,11 @@ public class AtlantisRunManager {
         // If it is, it probably means we're in the corner and that we should run even towards the enemy,
         // with the hope of getting out.
         if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, unit.isVulture() ? 6 : 2);
+            double expectedLength = unit.isVulture() ? 6 : 2;
+            if (unit.isWorker()) {
+                expectedLength = 3;
+            }
+            runTo = findRunPositionAtAnyDirection(unit, expectedLength);
         }
 //        else {
 //            AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Yellow);
@@ -222,6 +226,10 @@ public class AtlantisRunManager {
      */
     private static APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
         double minTiles = unit.isVulture() ? 1.5 : 2.5;
+        if (unit.isWorker()) {
+            minTiles = 3;
+        }
+        
         double maxDist = minTiles + 2;
 
 //        while (minTiles <= maxTiles) {
@@ -263,7 +271,13 @@ public class AtlantisRunManager {
         // === Ensure position is in bounds ========================================
         int oldX = runTo.getX();
         int oldY = runTo.getY();
-        runTo = runTo.makeValidFarFromBounds();
+        
+        if (unit.getPosition().isCloseToMapBounds()) {
+            runTo = runTo.makeValid();
+        }
+        else {
+            runTo = runTo.makeValidFarFromBounds();
+        }
 
         // If vector changed (meaning we almost reached the map boundaries) disallow it
         if (runTo.getX() != oldX || runTo.getY() != oldY) {
@@ -336,7 +350,7 @@ public class AtlantisRunManager {
                 );
 
                 // Make sure it's inbounds
-                if (unitsInRadius.size() <= 1) {
+                if (unitsInRadius.size() <= 1 && !unit.getPosition().isCloseToMapBounds()) {
                     potentialPosition = potentialPosition.makeValidFarFromBounds();
                 } else {
                     potentialPosition = potentialPosition.makeValid();
@@ -403,7 +417,7 @@ public class AtlantisRunManager {
     public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position, double minDist, double maxDist) {
         return position.distanceTo(unit) > (minDist - 0.2) && unit.hasPathTo(position)
                 && AtlantisMap.isWalkable(position)
-                && Atlantis.getBwapi().getUnitsOnTile(position.toTilePosition()).isEmpty()
+                && Atlantis.getBwapi().getUnitsInRadius(position, 1).isEmpty()
                 //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
                 //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
                 && AtlantisMap.getGroundDistance(unit, position) <= maxDist;

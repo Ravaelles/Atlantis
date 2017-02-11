@@ -218,18 +218,27 @@ public class Positions<T extends AbstractPoint<Position>> {
         return copy;
     }
 
+    private static int _lastIndex = 0;
+    
     public APosition nearestTo(APosition position) {
         double closestDist = 9999999;
         APosition closestPosition = null;
         
+        int index = 0;
         for (T otherPosition : positions) {
             if (otherPosition.getDistance(position) < closestDist) {
                 closestDist = otherPosition.getDistance(position);
                 closestPosition = APosition.create(otherPosition.getX() / 32, otherPosition.getY() / 32);
+                _lastIndex = index;
             }
+            index++;
         }
         
         return closestPosition;
+    }
+
+    public int getLastIndex() {
+        return _lastIndex;
     }
 
 }

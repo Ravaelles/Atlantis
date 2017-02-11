@@ -6,6 +6,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.ProtossConstructionManager;
 import atlantis.enemy.AtlantisEnemyUnits;
+import atlantis.information.AtlantisOurUnitsExtraInfo;
 import atlantis.init.AtlantisInitialActions;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
@@ -256,6 +257,9 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
             if (unit.isEnemyUnit()) {
                 AtlantisEnemyUnits.unitDestroyed(unit);
+            }
+            else {
+                AtlantisOurUnitsExtraInfo.idsOfOurDestroyedUnits.add(unit.getID());
             }
 
             // Our unit

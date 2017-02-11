@@ -2,6 +2,7 @@ package atlantis.scout;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
+import atlantis.AtlantisViewport;
 import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
 import atlantis.debug.AtlantisPainter;
 import atlantis.enemy.AtlantisEnemyUnits;
@@ -27,8 +28,8 @@ public class AtlantisScoutManager {
      * Current scout unit.
      */
     private static ArrayList<AUnit> scouts = new ArrayList<>();
-    
-    private static Positions scoutingAroundBasePoints = new Positions();
+
+    public static Positions scoutingAroundBasePoints = new Positions();
     private static int scoutingAroundBaseNextPolygonIndex = -1;
     private static APosition scoutingAroundBaseLastPolygonPoint = null;
     private static boolean scoutingAroundBaseWasInterrupted = false;
@@ -119,12 +120,12 @@ public class AtlantisScoutManager {
         // =========================================================
         // Get nearest unexplored starting location and go there
         BaseLocation startingLocation;
-        if (scout.getType().equals(AUnitType.Zerg_Overlord)) {
+        if (scout.getType().equals(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
             startingLocation = AtlantisMap.getStartingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {
-            startingLocation = AtlantisMap.getNearestUnexploredStartingLocation(ourMainBase.getPosition());
+            startingLocation = AtlantisMap.getNearestUnexploredStartingLocation(scout.getPosition());
         }
 
         // =========================================================
@@ -147,40 +148,33 @@ public class AtlantisScoutManager {
     private static boolean handleScoutEnemyBase(AUnit scout) {
 
         // === Avoid melee units ===================================
-        
         if (AtlantisAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(scout)) {
             scoutingAroundBaseWasInterrupted = true;
             return true;
-        }
-        else {
-            scoutingAroundBaseWasInterrupted = false;
         }
 
         // === Remain at the enemy base if it's known ==============
         APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
             Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
-            
+
             if (scoutingAroundBasePoints.isEmpty()) {
-                initializeEnemyRegionPoints(scout, enemyBaseRegion);
+                initializeEnemyRegionPolygonPoints(scout, enemyBaseRegion);
             }
-            
+
             defineNextPolygonForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
             if (scoutingAroundBaseLastPolygonPoint != null) {
-                scout.setTooltip("Scouting around (" + scoutingAroundBaseNextPolygonIndex + ")");
                 scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE);
                 return true;
-            }
-            else {
+            } else {
                 scout.setTooltip("Can't find polygon point");
             }
         }
-        
+
         return false;
     }
 
     // =========================================================
-    
     /**
      * If we have no scout unit assigned, make one of our units a scout.
      */
@@ -222,27 +216,41 @@ public class AtlantisScoutManager {
     }
 
     private static void defineNextPolygonForEnemyBaseRoamingUnit(Region region, AUnit scout) {
-        APosition goTo = scoutingAroundBaseLastPolygonPoint != null 
+        APosition goTo = scoutingAroundBaseLastPolygonPoint != null
                 ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
-        
-        if (goTo == null) {
-            scoutingAroundBaseNextPolygonIndex = 0;
-            goTo = APosition.create(region.getPolygon().getPoints().get(0));
-        }
-        else {
-            if (scout.distanceTo(goTo) <= 0.9) {
-                scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + 1) 
-                        % region.getPolygon().getPoints().size(); 
-                goTo = APosition.create(region.getPolygon().getPoints()
-                        .get(scoutingAroundBaseNextPolygonIndex));
+
+        if (goTo == null || scoutingAroundBaseWasInterrupted) {
+            goTo = useNearestPolygonPoint(region, scout);
+        } else {
+            if (scout.distanceTo(goTo) <= 3) {
+                scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + 1)
+                        % scoutingAroundBasePoints.size();
+                goTo = (APosition) scoutingAroundBasePoints.get(scoutingAroundBaseNextPolygonIndex);
             }
         }
-        
+
+//        if (AtlantisMap.getGroundDistance(scout, goTo) < 0.1) {
+//            scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + 1)
+//                        % scoutingAroundBasePoints.size();
+//            goTo = (APosition) scoutingAroundBasePoints.get(scoutingAroundBaseNextPolygonIndex);
+//        }
+
+        scoutingAroundBaseLastPolygonPoint = goTo;
+        scoutingAroundBaseWasInterrupted = false;
+
         AtlantisPainter.paintLine(
                 scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Yellow
         );
+
+        AtlantisViewport.centerScreenOn(scout);
     }
-    
+
+    private static APosition useNearestPolygonPoint(Region region, AUnit scout) {
+        APosition nearest = scoutingAroundBasePoints.nearestTo(scout.getPosition());
+        scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.getLastIndex();
+        return nearest;
+    }
+
     public static APosition getUmtFocusPoint(APosition startPosition) {
         Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(startPosition);
         return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
@@ -256,22 +264,32 @@ public class AtlantisScoutManager {
         return scouts.contains(unit);
     }
 
-    private static void initializeEnemyRegionPoints(AUnit scout, Region enemyBaseRegion) {
+    private static void initializeEnemyRegionPolygonPoints(AUnit scout, Region enemyBaseRegion) {
         Position centerOfRegion = enemyBaseRegion.getCenter();
-        
+
         for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
             APosition position = APosition.create(point);
-            
+
+            // Calculate actual ground distance to this position
+            double groundDistance = AtlantisMap.getGroundDistance(scout, position);
+
             // Fix problem with some points being unwalkable despite isWalkable being true
-            position = PositionOperationsHelper.getPositionMovedPercentTowards(point, centerOfRegion, 1);
-            
-            if (AtlantisMap.isWalkable(APosition.create(position))
-                    && enemyBaseRegion.getPolygon().isInside(position)
-                    && scout.hasPathTo(APosition.create(position))
-                    && AtlantisMap.getGroundDistance(scout, position) <= 1.5 * scout.distanceTo(point)) {
-                scoutingAroundBasePoints.addPosition(point);
+            if (groundDistance < 2) {
+                continue;
+            }
+            position = PositionOperationsHelper.getPositionMovedPercentTowards(point, centerOfRegion, 3);
+
+            // If positions is walkable, not in different region and has path to it, it should be ok
+            if (AtlantisMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
+                    && scout.hasPathTo(position) && groundDistance >= 3
+                    && groundDistance <= 1.5 * scout.distanceTo(position)) {
+                scoutingAroundBasePoints.addPosition(position);
             }
         }
+
+        AtlantisGame.changeSpeedTo(1);
+        AtlantisGame.changeSpeedTo(1);
+        AtlantisPainter.paintingMode = AtlantisPainter.MODE_FULL_PAINTING;
     }
 
 }

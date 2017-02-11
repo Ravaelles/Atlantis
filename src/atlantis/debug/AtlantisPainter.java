@@ -17,6 +17,7 @@ import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
+import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -44,9 +45,9 @@ public class AtlantisPainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
-//    public static int paintingMode = MODE_NO_PAINTING;
+    public static int paintingMode = MODE_NO_PAINTING;
 //    public static int paintingMode = MODE_PARTIAL_PAINTING;
-    public static int paintingMode = MODE_FULL_PAINTING;
+//    public static int paintingMode = MODE_FULL_PAINTING;
 
     // =========================================================
     private static Game bwapi;
@@ -919,7 +920,7 @@ public class AtlantisPainter {
             Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
-            for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
+            for (Position point : (ArrayList<APosition>) AtlantisScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.Yellow);
             }
         }

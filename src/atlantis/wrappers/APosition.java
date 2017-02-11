@@ -28,6 +28,8 @@ import java.util.Objects;
  */
 public class APosition extends Position {
     
+    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 80;
+    
     private static final Map<Position, APosition> instances = new HashMap<>();
     
     private Position p;
@@ -196,23 +198,21 @@ public class APosition extends Position {
         int px = p.getX();
         int py = p.getY();
         
-        int safetyMargin = 70;
-        
-        if (px < safetyMargin) {
-            px = safetyMargin;
+        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
+            px = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
-        else if (px >= (32 * AtlantisMap.getMapWidthInTiles() - safetyMargin)) {
-            px = 32 * AtlantisMap.getMapWidthInTiles() - safetyMargin;
+        else if (px >= (32 * AtlantisMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
+            px = 32 * AtlantisMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
         
-        if (py < safetyMargin) {
-            py = safetyMargin;
+        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
+            py = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
-        else if (px >= (32 * AtlantisMap.getMapHeightInTiles() - safetyMargin)) {
-            py = 32 * AtlantisMap.getMapHeightInTiles() - safetyMargin;
+        else if (py >= (32 * AtlantisMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
+            py = 32 * AtlantisMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
         
@@ -261,5 +261,25 @@ public class APosition extends Position {
     public boolean hasPathTo(APosition point) {
         return BWTA.isConnected(this.toTilePosition(), point.toTilePosition());
     }
-    
+
+    public boolean isCloseToMapBounds() {
+        int px = p.getX();
+        int py = p.getY();
+        
+        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
+            return true;
+        }
+        else if (px >= (32 * AtlantisMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
+            return true;
+        }
+        
+        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
+            return true;
+        }
+        else if (py >= (32 * AtlantisMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
+            return true;
+        }
+        
+        return false;
+    }    
 }

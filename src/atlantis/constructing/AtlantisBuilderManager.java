@@ -96,6 +96,7 @@ public class AtlantisBuilderManager {
      * these cases and ensures the position is valid.
      */
     private static APosition applyGasBuildingFixIfNeeded(AUnit builder, APosition position, AUnitType building) {
+        System.out.println("GAS BUILDING");
         if (position != null) {
             if (building.isGasBuilding()
                     && !AbstractPositionFinder.canPhysicallyBuildHere(builder, building, position)) {
@@ -109,6 +110,9 @@ public class AtlantisBuilderManager {
                     System.out.println("Applied [-2,-1] " + building + " position FIX");
                     return position.translateByTiles(-2, -1);
                 }
+                
+                System.err.println("Gas building FIX was not applied");
+                System.err.println("This probably halts gas building");
             } 
             return position;
         } else {
