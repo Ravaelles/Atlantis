@@ -94,6 +94,15 @@ public interface AtlantisUnitOrders {
             System.err.println("Null move position for " + this);
             return false;
         }
+        
+        // === Handle LOADED units ========================================
+        
+        if (unit().isLoaded()) {
+            unit().unload(unit());
+            return true;
+        }
+            
+        // =========================================================
 
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
         unit().setUnitAction(unitAction);

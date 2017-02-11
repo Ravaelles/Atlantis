@@ -888,6 +888,20 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
     }
 
     /**
+     * Returns true for flying Terran building.
+     */
+    public boolean isLifted() {
+        return u.isLifted();
+    }
+
+    /**
+     * Returns true if unit is inside bunker or dropship/shuttle.
+     */
+    public boolean isLoaded() {
+        return u.isLoaded();
+    }
+
+    /**
      * Returns true if given position has land connection to given point.
      */
     public boolean hasPathTo(APosition point) {

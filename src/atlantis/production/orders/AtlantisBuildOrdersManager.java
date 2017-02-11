@@ -516,7 +516,7 @@ public abstract class AtlantisBuildOrdersManager {
     }
     
     /**
-     * Converts shortcut notations like: 
+     * Converts (and repeats if needed) shortcut build order notations like: 
             6 - Barracks
             8 - Supply Depot
             8 - Marine - x2
@@ -588,9 +588,9 @@ public abstract class AtlantisBuildOrdersManager {
 //            System.out.println("NAME: " + order.getShortName());
 //            System.out.println("MODIFIER: " + order.getModifier());
 
-                if (order.getModifier() != null && order.getUpgrade() == null) {
+                if (order.getModifier() != null && order.getModifier().charAt(0) == 'x' && order.getUpgrade() == null) {
                     int timesToMultiply = 1;
-                    if (order.getModifier() != null && order.getModifier().charAt(0) == 'x') {
+                    if (order.getModifier() != null) {
                         timesToMultiply = Integer.parseInt(order.getModifier().substring(1)) - 1;
                     }
                     for (int multiplyCounter = 0; multiplyCounter < timesToMultiply; multiplyCounter++) {
