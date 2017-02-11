@@ -28,7 +28,7 @@ public class AtlantisAvoidMeleeUnitsManager {
             else {
                 safetyDistance = 2.2 + lowHealthBonus;
                 
-                if (safetyDistance > unit.getWeaponRangeGround()) {
+                if (unit.getWeaponRangeGround() > 1 && safetyDistance > unit.getWeaponRangeGround()) {
                     safetyDistance = unit.getWeaponRangeGround() - 0.15;
                 }
             }

@@ -44,9 +44,9 @@ public class AtlantisPainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
-    public static int paintingMode = MODE_NO_PAINTING;
+//    public static int paintingMode = MODE_NO_PAINTING;
 //    public static int paintingMode = MODE_PARTIAL_PAINTING;
-//    public static int paintingMode = MODE_FULL_PAINTING;
+    public static int paintingMode = MODE_FULL_PAINTING;
 
     // =========================================================
     private static Game bwapi;
@@ -920,7 +920,7 @@ public class AtlantisPainter {
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
             for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
-                paintCircle(point, 32, Color.Yellow);
+                paintCircleFilled(point, 2, Color.Yellow);
             }
         }
     }
@@ -997,6 +997,20 @@ public class AtlantisPainter {
         }
         bwapi.drawLineMap(start, end, color);
     }
+
+    // Causes Java runtime errors
+//    public static void paintLine(Position start, Position end, Color color, int width) {
+//        if (start == null || end == null) {
+//            return;
+//        }
+//        for (int dx = 0; dx < width; dx++) {
+//            for (int dy = 0; dy < width; dx++) {
+//                bwapi.drawLineMap(new Position(start.getX() + dx, start.getY() + dy).makeValid(), 
+//                        new Position(end.getX() + dx, end.getY() + dy).makeValid(), 
+//                        color);
+//            }
+//        }
+//    }
 
     public static void paintTextCentered(AUnit unit, String text, Color color) {
         paintTextCentered(unit.getPosition(), text, color, false);

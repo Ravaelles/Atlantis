@@ -11,6 +11,8 @@ import bwapi.Race;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply
@@ -101,8 +103,16 @@ public class AtlantisGame {
         }
 
         AtlantisConfig.GAME_SPEED = speed;
-//        getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-        sendMessage("/speed " + AtlantisConfig.GAME_SPEED);
+        
+        try {
+            getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+            Thread.sleep(40);
+            getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+            Thread.sleep(40);
+        } catch (InterruptedException ex) { 
+            // Ignore
+        }
+        getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
 
         String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
         sendMessage("Game speed: " + speedString);
@@ -120,11 +130,7 @@ public class AtlantisGame {
 
         if (getBwapi() != null) {
             AtlantisConfig.GAME_SPEED = speed;
-//            getBwapi().setLocalSpeed(speed);
-            sendMessage("/speed " + AtlantisConfig.GAME_SPEED);
-
-            String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
-            sendMessage("Game speed: " + speedString);
+            changeSpeedTo(AtlantisConfig.GAME_SPEED);
         }
         else {
             System.err.println("Can't change game speed, bwapi is null.");

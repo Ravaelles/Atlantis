@@ -47,7 +47,7 @@ public class AtlantisRunManager {
 
             // Update last time run order was issued
             _updated_at = AtlantisGame.getTimeFrames();
-//            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Yellow);
+            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Orange);
             boolean hasMoved = unit.move(runTo, UnitActions.RUN_FROM_UNIT);
 
             if (hasMoved) {

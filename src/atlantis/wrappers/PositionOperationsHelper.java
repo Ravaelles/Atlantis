@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class PositionOperationsHelper {
     
+    // === Median ========================================
+    
     public static APosition getPositionMedian(Units units) {
         ArrayList<Integer> xCoordinates = new ArrayList<>();
         ArrayList<Integer> yCoordinates = new ArrayList<>();
@@ -49,6 +51,14 @@ public class PositionOperationsHelper {
                 getPositionMedian(xCoordinates),
                 getPositionMedian(yCoordinates)
         );
+    }
+    
+    // === Position between A and B ======================
+    
+    public static APosition getPositionMovedPercentTowards(Position from, Position movedToward, double percent) {
+        int finalX = (int) ((100 - percent) * from.getX() + percent * movedToward.getX()) / 100;
+        int finalY = (int) ((100 - percent) * from.getY() + percent * movedToward.getY()) / 100;
+        return new APosition(finalX, finalY);
     }
     
 }

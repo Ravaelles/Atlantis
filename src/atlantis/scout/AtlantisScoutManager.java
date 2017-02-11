@@ -12,6 +12,7 @@ import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
+import atlantis.wrappers.PositionOperationsHelper;
 import atlantis.wrappers.Positions;
 import bwapi.Color;
 import bwapi.Position;
@@ -29,7 +30,7 @@ public class AtlantisScoutManager {
     
     private static Positions scoutingAroundBasePoints = new Positions();
     private static int scoutingAroundBaseNextPolygonIndex = -1;
-    private static Position scoutingAroundBaseLastPolygonPoint = null;
+    private static APosition scoutingAroundBaseLastPolygonPoint = null;
     private static boolean scoutingAroundBaseWasInterrupted = false;
 
     // =========================================================
@@ -161,7 +162,7 @@ public class AtlantisScoutManager {
             Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
             
             if (scoutingAroundBasePoints.isEmpty()) {
-                scoutingAroundBasePoints.addPositions(enemyBaseRegion.getPolygon().getPoints());
+                initializeEnemyRegionPoints(scout, enemyBaseRegion);
             }
             
             defineNextPolygonForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
@@ -171,13 +172,15 @@ public class AtlantisScoutManager {
                 return true;
             }
             else {
-                scout.setTooltip("Can't find polygon");
+                scout.setTooltip("Can't find polygon point");
             }
         }
         
         return false;
     }
 
+    // =========================================================
+    
     /**
      * If we have no scout unit assigned, make one of our units a scout.
      */
@@ -219,58 +222,27 @@ public class AtlantisScoutManager {
     }
 
     private static void defineNextPolygonForEnemyBaseRoamingUnit(Region region, AUnit scout) {
-        if (scoutingAroundBaseLastPolygonPoint == null) {
-//            nextPolygon = getNearestPolygonInRegion(region, scout);
+        APosition goTo = scoutingAroundBaseLastPolygonPoint != null 
+                ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
+        
+        if (goTo == null) {
             scoutingAroundBaseNextPolygonIndex = 0;
-            scoutingAroundBaseLastPolygonPoint = region.getPolygon().getPoints().get(0);
+            goTo = APosition.create(region.getPolygon().getPoints().get(0));
         }
         else {
-//            System.out.println("----");
-//            System.out.println("Polygon [" + scoutingAroundBaseLastPolygonPoint.getX() + "," + scoutingAroundBaseLastPolygonPoint.getY());
-//            System.out.println("dist = " + scout.distanceTo(scoutingAroundBaseLastPolygonPoint));
-            if (scout.distanceTo(scoutingAroundBaseLastPolygonPoint) <= 2.8) {
-                scoutingAroundBaseNextPolygonIndex++;
-                scoutingAroundBaseNextPolygonIndex = scoutingAroundBaseNextPolygonIndex 
+            if (scout.distanceTo(goTo) <= 0.9) {
+                scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + 1) 
                         % region.getPolygon().getPoints().size(); 
-                scoutingAroundBaseLastPolygonPoint = region.getPolygon().getPoints()
-                        .get(scoutingAroundBaseNextPolygonIndex);
-//                System.out.println("CHANGE Polygon index " + scoutingAroundBaseNextPolygonIndex);
-//                System.out.println("dist = " + scout.distanceTo(scoutingAroundBaseLastPolygonPoint));
+                goTo = APosition.create(region.getPolygon().getPoints()
+                        .get(scoutingAroundBaseNextPolygonIndex));
             }
         }
         
-        APosition goTo = APosition.create(scoutingAroundBaseLastPolygonPoint);
-        
-        if (!AtlantisMap.isWalkable(APosition.create(scoutingAroundBaseLastPolygonPoint))
-                || !scout.hasPathTo(APosition.create(scoutingAroundBaseLastPolygonPoint))
-                || AtlantisMap.getGroundDistance(scout, goTo) > 2 * scout.distanceTo(goTo)) {
-//            System.out.println("REDEFINE");
-            
-            scoutingAroundBaseNextPolygonIndex++;
-            scoutingAroundBaseNextPolygonIndex = scoutingAroundBaseNextPolygonIndex 
-                    % region.getPolygon().getPoints().size();
-            scoutingAroundBaseLastPolygonPoint = region.getPolygon().getPoints()
-                    .get(scoutingAroundBaseNextPolygonIndex);
-        }
-        
-        AtlantisPainter.paintLine(scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Green);
-        AtlantisPainter.paintLine(scoutingAroundBaseLastPolygonPoint, scout.getPosition().translateByPixels(0, 1), Color.Green);
-        AtlantisPainter.paintLine(scoutingAroundBaseLastPolygonPoint, scout.getPosition().translateByPixels(1, 0), Color.Green);
+        AtlantisPainter.paintLine(
+                scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Yellow
+        );
     }
     
-//    private static APosition getNearestPolygonInRegion(Region region, AUnit scout) {
-//        APosition nearestPosition = scoutingAroundBasePoints.nearestTo(scout.getPosition());
-//        return nearestPosition;
-//    }
-    
-    
-//    private static void handleUmtExplore(AUnit scout) {
-//        APosition focusPoint = getUmtFocusPoint(scout.getPosition());
-//        
-//        if (focusPoint != null) {
-//            scout.attack(focusPoint, UnitActions.ATTACK_POSITION);
-//        }
-//    }
     public static APosition getUmtFocusPoint(APosition startPosition) {
         Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(startPosition);
         return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
@@ -282,6 +254,24 @@ public class AtlantisScoutManager {
      */
     public static boolean isScout(AUnit unit) {
         return scouts.contains(unit);
+    }
+
+    private static void initializeEnemyRegionPoints(AUnit scout, Region enemyBaseRegion) {
+        Position centerOfRegion = enemyBaseRegion.getCenter();
+        
+        for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
+            APosition position = APosition.create(point);
+            
+            // Fix problem with some points being unwalkable despite isWalkable being true
+            position = PositionOperationsHelper.getPositionMovedPercentTowards(point, centerOfRegion, 1);
+            
+            if (AtlantisMap.isWalkable(APosition.create(position))
+                    && enemyBaseRegion.getPolygon().isInside(position)
+                    && scout.hasPathTo(APosition.create(position))
+                    && AtlantisMap.getGroundDistance(scout, position) <= 1.5 * scout.distanceTo(point)) {
+                scoutingAroundBasePoints.addPosition(point);
+            }
+        }
     }
 
 }
