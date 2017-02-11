@@ -18,19 +18,27 @@ public class TerranBunkerPositionFinder {
     public static APosition findPosition(AUnitType building, AUnit builder, ConstructionOrder order) {
         APosition nearTo = null;
         
-        // Bunker at NATURAL CHOKEPOINT
-        if (order.getProductionOrder().getModifier() == AtlantisSpecialPositionFinder.AT_NATURAL) {
-            Chokepoint chokepointForNaturalBase = AtlantisMap.getChokepointForNaturalBase();
-            if (chokepointForNaturalBase != null) {
-                nearTo = APosition.create(chokepointForNaturalBase.getCenter()).translateTowardCenterOfRegion(10);
-            }
-        }
+        if (order.getProductionOrder().getModifier() != null) {
         
-        // Bunker at MAIN CHOKEPOINT
-        else if (order.getProductionOrder().getModifier() == AtlantisSpecialPositionFinder.NEAR_MAIN_CHOKEPOINT) {
-            Chokepoint chokepointForNaturalBase = AtlantisMap.getChokepointForMainBase();
-            if (chokepointForNaturalBase != null) {
-                nearTo = APosition.create(chokepointForNaturalBase.getCenter()).translateTowardCenterOfRegion(5);
+            // Bunker at NATURAL CHOKEPOINT
+            if (order.getProductionOrder().getModifier().equals(AtlantisSpecialPositionFinder.AT_NATURAL)) {
+                Chokepoint chokepointForNaturalBase = AtlantisMap.getChokepointForNaturalBase();
+                if (chokepointForNaturalBase != null) {
+                    nearTo = APosition.create(chokepointForNaturalBase.getCenter()).translateTowardCenterOfRegion(16);
+
+//                    System.out.println();
+//                    System.err.println(nearTo);
+//                    System.err.println("DIST TO CHOKE = " + nearTo.distanceTo(chokepointForNaturalBase.getCenter()));
+//                    System.err.println("DIST TO REGION = " + nearTo.distanceTo(nearTo.getRegion().getCenter()));
+                }
+            }
+
+            // Bunker at MAIN CHOKEPOINT
+            else if (order.getProductionOrder().getModifier().equals(AtlantisSpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
+                Chokepoint chokepointForNaturalBase = AtlantisMap.getChokepointForMainBase();
+                if (chokepointForNaturalBase != null) {
+                    nearTo = APosition.create(chokepointForNaturalBase.getCenter()).translateTowardCenterOfRegion(5);
+                }
             }
         }
         

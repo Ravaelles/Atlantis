@@ -52,6 +52,8 @@ public class AtlantisConstructionManager {
     }
 
     /**
+     * NOTICE/WARNING: passed order parameter can later override nearTo parameter.
+     * 
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */

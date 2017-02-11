@@ -11,7 +11,6 @@ import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.Chokepoint;
 
-
 public class MissionDefend extends Mission {
 
     public MissionDefend(String name) {
@@ -19,7 +18,7 @@ public class MissionDefend extends Mission {
     }
     
     // =========================================================
-
+    
     @Override
     public boolean update(AUnit unit) {
         
@@ -31,7 +30,7 @@ public class MissionDefend extends Mission {
 
         // === Load infantry into bunkers ==========================
         
-        if (tryLoadingInfantryIntoBunkerIfPossible(unit)) {
+        if (TerranInfantryManager.tryLoadingInfantryIntoBunkerIfPossible(unit)) {
             unit.setTooltip("GTFInto bunker!");
             return true;
         }
@@ -87,6 +86,7 @@ public class MissionDefend extends Mission {
     }
 
     // =========================================================
+    
     /**
      * AUnit will go towards important choke point near main base.
      */
@@ -163,39 +163,4 @@ public class MissionDefend extends Mission {
 //        }
     }
 
-    /**
-     *
-     */
-    private boolean tryLoadingInfantryIntoBunkerIfPossible(AUnit unit) {
-        
-        // Only Terran infantry get inside
-        if (!unit.type().isTerranInfantry() || unit.type().isMedic()) {
-            return false;
-        }
-        
-        // =========================================================
-        
-        AUnit nearestBunker = Select.ourBuildings().ofType(AUnitType.Terran_Bunker).nearestTo(unit);
-        if (nearestBunker != null && nearestBunker.distanceTo(unit) < 15) {
-            unit.load(nearestBunker);
-            return true;
-        }
-        
-        return false;
-    }
-
-    /**
-     * Do not interrupt unit if it is engaged in combat.
-     */
-//    @Override
-//    protected boolean canIssueOrderToUnit(AUnit unit) {
-//
-//        // If unit has far more important actions than positioning, disallow any actions here.
-//        if (unit.isAttacking() || unit.isStartingAttack() || unit.isRunning() 
-//                || unit.isAttackFrame()) {
-//            return false;
-//        }
-//
-//        return true;
-//    }
 }
