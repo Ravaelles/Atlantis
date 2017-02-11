@@ -43,7 +43,7 @@ public class AtlantisCombatCommander {
         for (AUnit unit : squad.arrayList()) {
 //            System.out.println("Commander (" + (unit.getSquad() != null) + "): " + unit);
 //            unit.setTooltip("C:" + AtlantisGame.getTimeFrames());
-            AtlantisCombatUnitManager.update(unit, squad);
+            AtlantisCombatUnitManager.update(unit);
         }
     }
 

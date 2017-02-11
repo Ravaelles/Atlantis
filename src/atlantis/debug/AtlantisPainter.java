@@ -135,7 +135,7 @@ public class AtlantisPainter {
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
         // =========================================================
-        paintSideMessage("Combat squad size: " + AtlantisSquadManager.getAlphaSquad().size(), Color.Blue, 0);
+        paintSideMessage("Combat squad size: " + AtlantisSquadManager.getAlphaSquad().size(), Color.Yellow, 0);
 
         // =========================================================
         // Gas workers

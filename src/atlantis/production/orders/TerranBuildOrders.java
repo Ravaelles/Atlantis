@@ -10,7 +10,14 @@ import atlantis.workers.AtlantisWorkerCommander;
 import java.util.ArrayList;
 
 public class TerranBuildOrders extends AtlantisBuildOrdersManager {
+    
+    @Override
+    protected String getFilename() {
+        return "Terran/1 Fact FE.csv";
+    }
 
+    // =========================================================
+    
     @Override
     public void produceWorker() {
         AtlantisWorkerProductionManager.produceWorker();

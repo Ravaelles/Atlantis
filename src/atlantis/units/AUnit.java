@@ -35,10 +35,7 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AUnit extends APositionedObject implements Comparable<AUnit>, AtlantisUnitOrders {
-//public class AUnit implements Comparable<AUnit>, UnitActions {
-
-//    private static final Map<Unit, AUnit> instances = new HashMap<>();
+public class AUnit extends APositionedObject implements Comparable, AtlantisUnitOrders {
     
     // Mapping of native unit IDs to AUnit objects
     private static final Map<Integer, AUnit> instances = new HashMap<>();
@@ -49,30 +46,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
     private UnitAction unitAction;
 
     // =========================================================
-    
-    private AUnit(Unit u) {
-        if (u == null) {
-            throw new RuntimeException("AUnit constructor: unit is null");
-        }
-
-        this.u = u;
-//        this.innerID = firstFreeID++;
-        this.innerID = u.getID();
-        this._lastCachedType = AUnitType.createFrom(u.getType());
-
-        // Repair & Heal
-        this._repairableMechanically = isBuilding() || isVehicle();
-        this._healable = isInfantry() || isWorker();
-
-        // Military building
-        this._isMilitaryBuildingAntiGround = isType(
-                AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony
-        );
-        this._isMilitaryBuildingAntiAir = isType(
-                AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
-                AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
-        );
-    }
 
     /**
      * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
@@ -91,6 +64,29 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
             instances.put(u.getID(), unit);
             return unit;
         }
+    }
+    
+    private AUnit(Unit u) {
+        if (u == null) {
+            throw new RuntimeException("AUnit constructor: unit is null");
+        }
+
+        this.u = u;
+//        this.innerID = firstFreeID++;
+        this._lastCachedType = AUnitType.createFrom(u.getType());
+
+        // Repair & Heal
+        this._repairableMechanically = isBuilding() || isVehicle();
+        this._healable = isInfantry() || isWorker();
+
+        // Military building
+        this._isMilitaryBuildingAntiGround = isType(
+                AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony
+        );
+        this._isMilitaryBuildingAntiAir = isType(
+                AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
+                AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
+        );
     }
 
     // =========================================================
@@ -118,7 +114,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
     @Override
     public APosition getPosition() {
         return APosition.create(u.getPosition());
-//        return u.getPosition();
     }
 
     /**
@@ -150,9 +145,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
     // =========================================================
     // =========================================================
     // =========================================================
-    private static int firstFreeID = 1;
 
-    private int innerID;
     private Squad squad = null;
     private AtlantisRunManager runManager = new AtlantisRunManager(this);
     private int lastUnitAction = 0;
@@ -178,16 +171,17 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
         dx = (int) (dx * modifier);
         dy = (int) (dy * modifier);
 
-        APosition newPosition = new APosition(getX() - dx, getY() - dy).makeValidFarFromBounds();
+        APosition newPosition = new APosition(getX() - dx, getY() - dy).makeValid();
 
-        if (AtlantisRunManager.isPossibleAndReasonablePosition(
-                this, newPosition, moveDistance * 0.6, moveDistance * 1.6, true
-        )) {
-            move(newPosition, UnitActions.MOVE);
+//        if (AtlantisRunManager.isPossibleAndReasonablePosition(
+//                this, newPosition, -1, 9999, true
+//        ) && move(newPosition, UnitActions.MOVE)) {
+        if (move(newPosition, UnitActions.MOVE)) {
             this.setTooltip("Move away");
             return true;
         }
         else {
+            this.setTooltip("Can't move away");
             return false;
         }
     }
@@ -207,18 +201,27 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
 //        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
 //        return toString;
 //        return "AUnit(" + u.getType().toString() + ")";
-        return "AUnit(" + getType().getShortName()+ " #" + innerID + ") at " + getPosition().toString();
+        return "AUnit(" + getType().getShortName()+ " #" + getID() + ") at " + getPosition().toString();
     }
 
     @Override
-    public int compareTo(AUnit o) {
-        return Integer.compare(this.getID(), ((AUnit) o).getID());
+    public int compareTo(Object o) {
+        int compare;
+        
+        if (o instanceof AUnit) {
+            compare = ((AUnit) o).getID();
+        }
+        else {
+            compare = o.hashCode();
+        }
+        
+        return Integer.compare(this.hashCode(), compare);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + this.getID();
+//        int hash = 7;
+        int hash = this.getID();
         return hash;
     }
 
@@ -241,14 +244,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
         if (obj instanceof AUnit) {
             AUnit other = (AUnit) obj;
 //            return getID() == other.getID();
-            return u == other.u;
+            return getID() == other.getID();
         }
-//        else if (obj instanceof Unit) {
-//            Unit other = (Unit) obj;
-//            return getID() == other.getID();
-//        }
+        else if (obj instanceof Unit) {
+            Unit other = (Unit) obj;
+            return u().getID() == other.getID();
+        }
 
-        return true;
+        return false;
     }
 
     // =========================================================
@@ -731,8 +734,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
     }
     
     public int getID() {
-//        return u.getID();
-        return innerID;
+        return u.getID();
     }
 
     // =========================================================
@@ -920,4 +922,8 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
         return getGroundWeaponCooldown() <= 0 && getAirWeaponCooldown() <= 0;
     }
 
+    public AUnitType type() {
+        return getType();
+    }
+    
 }

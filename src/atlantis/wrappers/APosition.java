@@ -4,6 +4,7 @@ import atlantis.debug.AtlantisPainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
+import bwapi.AbstractPoint;
 import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
@@ -27,7 +28,7 @@ import java.util.Objects;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class APosition extends Position {
+public class APosition extends Position implements Comparable<Position> {
     
     public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
     
@@ -235,7 +236,16 @@ public class APosition extends Position {
         hash = 29 * hash + Objects.hashCode(this.p);
         return hash;
     }
-
+    
+    @Override
+    public int compareTo(Position o) {
+        int compare = Integer.compare(getX(), o.getX());
+        if (compare == 0) {
+            compare = Integer.compare(getY(), o.getY());
+        }
+        return compare;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -244,15 +254,20 @@ public class APosition extends Position {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof APosition) && !(obj instanceof Position)) {
+//        if (!(obj instanceof APosition) && !(obj instanceof Position)) {
+//            return false;
+//        }
+        if (!(obj instanceof AbstractPoint)) {
             return false;
         }
-        int otherX = ((Position) obj).getX();
-        int otherY = ((Position) obj).getY();
+        
+        int otherX = ((AbstractPoint) obj).getX();
+        int otherY = ((AbstractPoint) obj).getY();
         final Position other = (Position) obj;
         if (this.getX() != otherX || this.getY() != otherY) {
             return false;
         }
+        
         return true;
     }
     
@@ -290,4 +305,5 @@ public class APosition extends Position {
     public Region getRegion() {
         return AtlantisMap.getRegion(this);
     }
+
 }

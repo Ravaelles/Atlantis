@@ -7,7 +7,14 @@ import atlantis.units.Select;
 import java.util.ArrayList;
 
 public class ProtossBuildOrders extends AtlantisBuildOrdersManager {
+    
+    @Override
+    protected String getFilename() {
+        return "Protoss/2 Gate Range Expand.csv";
+    }
 
+    // =========================================================
+    
     @Override
     public void produceWorker() {
         AUnit building = Select.ourOneIdle(AtlantisConfig.BASE);

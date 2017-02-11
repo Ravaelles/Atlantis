@@ -43,6 +43,7 @@ public class AtlantisRunManager {
             markAsNotRunning();
             return false;
         } else if (runTo == null && !unit.isStartingAttack()) {
+            AtlantisGame.sendMessage(unit + " RunTo empty, hold");
             unit.holdPosition();
             return false;
         } else {

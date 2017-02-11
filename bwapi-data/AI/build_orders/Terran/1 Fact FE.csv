@@ -8,6 +8,8 @@
 
 // === Raw build order used - taken from Liquipedia or so =============
 
+/**
+http://wiki.teamliquid.net/starcraft/1_Fact_FE_(vs._Terran)
 # 9/10 - Supply Depot
 # 12/18 - Barracks
 # 12/18 - Refinery
@@ -19,6 +21,7 @@
 # 28/34 - Command Center
 # 28/44 - Supply Depot
 # 32/54 - Factory
+*/
 
 // === Build order for Atlantis =======================================
 
@@ -27,10 +30,11 @@
 12 - Barracks
 12 - Refinery
 13 - Marine
-15 - Marine
+//15 - Marine
+14 - Bunker - NATURAL
 15 - Supply Depot
 16 - Factory
-18 - Vulture
+//18 - Vulture
 20 - Machine Shop
 22 - Siege Tank
 22 - Siege Mode
@@ -39,7 +43,7 @@
 28 - Supply Depot
 28 - Command Center
 28 - Factory
-30 - Vulture
+//30 - Vulture
 30 - Machine Shop
 32 - Siege Tank
 33 - Siege Tank

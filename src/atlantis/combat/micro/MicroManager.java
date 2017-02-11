@@ -103,6 +103,7 @@ public class MicroManager extends AbstractMicroManager {
     private boolean canIssueOrderToUnit(AUnit unit) {
 //        return true;
         if (unit.isRunning()) {
+            unit.setTooltip("Quit-running");
             return true;
         }
 //        return !(unit.isAttackFrame() || unit.isStartingAttack()) || 

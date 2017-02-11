@@ -13,13 +13,18 @@ import atlantis.units.AUnitType;
  */
 public class AtlantisCombatUnitManager {
 
-    protected static boolean update(AUnit unit, Squad squad) {
+    protected static boolean update(AUnit unit) {
 //        unit.removeTooltip();
         unit.setTooltip("Commander:" + AtlantisGame.getTimeFrames());
 //        System.out.println("  Manager (" + (unit.getSquad() != null) + "): " + unit + " / " + unit.getTooltip());
         
         // =========================================================
         // DON'T INTERRUPT shooting units
+        
+//        if (unit.getType().isTank()) {
+//            System.out.println("----------------------------");
+//            System.out.println(unit + " PRE DISTURB");
+//        }
         
         if (shouldNotDisturbUnit(unit)) {
             unit.setTooltip("#DontDisturb");
@@ -29,6 +34,10 @@ public class AtlantisCombatUnitManager {
         // =========================================================
         // Handle some units in special way
         
+//        if (unit.getType().isTank()) {
+//            System.out.println(unit + " PRE specialUnit");
+//        }
+            
         if (handledAsSpecialUnit(unit)) {
             unit.setTooltip(unit.getShortName());
             return true;
@@ -37,6 +46,10 @@ public class AtlantisCombatUnitManager {
         // =========================================================
         // Handle some units in semi-special way
         
+//        if (unit.getType().isTank()) {
+//            System.out.println(unit + " PRE SemiSpecial");
+//        }
+//        
         if (handledAsSemiSpecialUnit(unit)) {
             unit.setTooltip("Siege Tank");
             return true;
@@ -44,7 +57,17 @@ public class AtlantisCombatUnitManager {
 
         // =========================================================
         // Act with proper micro-manager and decide if mission manager can issue orders afterward.
+        Squad squad = unit.getSquad();
+        
+//        if (unit.getType().isTank()) {
+//            System.out.println(unit + " PRE Micro");
+//        }
+        
         boolean isMissionManagerControlForbbiden = squad.getMicroManager().update(unit);
+        
+//        if (unit.getType().isTank()) {
+//            System.out.println(unit + " mission control: " + !isMissionManagerControlForbbiden);
+//        }
 
         // =========================================================
         // MISSION manager execution is FORBIDDEN
@@ -105,7 +128,6 @@ public class AtlantisCombatUnitManager {
     private static boolean handledAsSemiSpecialUnit(AUnit unit) {
         if (unit.getType().isSiegeTank()) {
             boolean dontDoAnythingElse = TerranSiegeTankManager.update(unit);
-            System.out.println(dontDoAnythingElse);
             return dontDoAnythingElse;
         } else {
             return false;

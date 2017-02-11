@@ -244,6 +244,9 @@ public class Atlantis implements BWEventListener {
                 AtlantisSquadManager.possibleCombatUnitCreated(unit);
             }
         }
+        else {
+            System.err.println("onUnitComplete null for " + u);
+        }
     }
 
     /**

@@ -265,7 +265,7 @@ public interface AtlantisUnitOrders {
      * Returns false if unit can't stop what it's doing e.g. sieging or unsieging tank.
      */
     default boolean isInterruptible() {
-        return isInterruptible();
+        return u().isInterruptible();
     }
 
     /**

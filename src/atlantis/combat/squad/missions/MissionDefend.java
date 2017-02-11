@@ -40,14 +40,13 @@ public class MissionDefend extends Mission {
         // =========================================================
         // Too close to the chokepoint
         else if (isCriticallyCloseToFocusPoint(unit, focusPoint)) {
-            boolean result = unit.moveAwayFrom(focusPoint, 0.4);
+            boolean result = unit.moveAwayFrom(focusPoint, 0.5);
             if (result) {
                 unit.setTooltip("Too close");
                 return true;
             }
             else {
                 unit.setTooltip("FAILED Too close");
-                return false;
             }
         }
         
@@ -76,7 +75,6 @@ public class MissionDefend extends Mission {
         }
         
         unit.setTooltip("Defend");
-        
         return false;
     }
 

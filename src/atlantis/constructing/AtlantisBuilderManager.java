@@ -63,10 +63,11 @@ public class AtlantisBuilderManager {
 //                buildPosition, buildingType.getTileWidth() * 32 / 2, buildingType.getTileHeight() * 32 / 2
 //        );
         // =========================================================
-        double maxDistance = buildingType.isGasBuilding() ? 3 : 1.5;
+        double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 2.7 : 1;
+        double distance = builder.distanceTo(buildPosition);
 
         // Move builder to the build position
-        if (builder.distanceTo(buildPosition) > maxDistance) {
+        if (distance > maxDistanceToIssueBuildOrder) {
             builder.move(buildPosition, UnitActions.MOVE_TO_BUILD);
         } 
 
@@ -77,7 +78,7 @@ public class AtlantisBuilderManager {
         else if (AtlantisGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
-            if (buildPosition != null && AtlantisGame.canAfford(buildingType)) {
+            if (AtlantisGame.canAfford(buildingType)) {
                 buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
                 TilePosition buildTilePosition = new TilePosition(
                         buildPosition.getTileX(), buildPosition.getTileY()

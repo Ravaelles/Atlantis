@@ -15,7 +15,6 @@ public class TerranSiegeTankManager {
 
     public static boolean update(AUnit tank) {
         if (!tank.isInterruptible()) {
-            System.out.println("DONT FUCK WITH ME");
             tank.setTooltip("Can't interrupt");
             return true;
         }

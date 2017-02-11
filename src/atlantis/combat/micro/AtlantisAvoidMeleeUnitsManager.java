@@ -14,8 +14,10 @@ public class AtlantisAvoidMeleeUnitsManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     public static boolean handleAvoidCloseMeleeUnits(AUnit unit) {
-        if (((unit.isGroundUnit() && unit.getType().isRangedUnit()) || unit.isWorker())
-                && (unit.getHitPoints() <= 60 || unit.getHPPercent() < 100)) {
+        boolean isAllowedType = (unit.isGroundUnit() && unit.getType().isRangedUnit()) || unit.isWorker();
+        boolean isHealthyAndHasManyHP = unit.getHitPoints() >= 60 && unit.getHPPercent() >= 100;
+        
+        if (isAllowedType && isHealthyAndHasManyHP) {
             
             // === Define safety distance ==============================
 
