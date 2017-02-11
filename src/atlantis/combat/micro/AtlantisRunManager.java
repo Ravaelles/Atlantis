@@ -179,7 +179,8 @@ public class AtlantisRunManager {
 
         // === Get standard run to position - as far from enemy as possible
         if ((closeEnemies != null && closeEnemies.size() <= 2)
-                && (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1)) {
+                && (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1)
+                && !unit.getPosition().isCloseToMapBounds()) {
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
 

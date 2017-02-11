@@ -28,7 +28,7 @@ import java.util.Objects;
  */
 public class APosition extends Position {
     
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 80;
+    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
     
     private static final Map<Position, APosition> instances = new HashMap<>();
     

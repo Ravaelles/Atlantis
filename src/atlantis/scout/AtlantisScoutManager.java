@@ -33,6 +33,7 @@ public class AtlantisScoutManager {
     private static int scoutingAroundBaseNextPolygonIndex = -1;
     private static APosition scoutingAroundBaseLastPolygonPoint = null;
     private static boolean scoutingAroundBaseWasInterrupted = false;
+    private static boolean scoutingAroundBaseDirectionClockwise = true;
 
     // =========================================================
     /**
@@ -216,6 +217,17 @@ public class AtlantisScoutManager {
     }
 
     private static void defineNextPolygonForEnemyBaseRoamingUnit(Region region, AUnit scout) {
+        
+        // Change roaming direction if we were forced to run from enemy units
+        if (scoutingAroundBaseWasInterrupted) {
+            scoutingAroundBaseDirectionClockwise = !scoutingAroundBaseDirectionClockwise;
+        }
+        
+        // Define direction
+        int deltaIndex = scoutingAroundBaseDirectionClockwise ? 1 : -1;
+        
+        // =========================================================
+        
         APosition goTo = scoutingAroundBaseLastPolygonPoint != null
                 ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
 
@@ -223,8 +235,12 @@ public class AtlantisScoutManager {
             goTo = useNearestPolygonPoint(region, scout);
         } else {
             if (scout.distanceTo(goTo) <= 3) {
-                scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + 1)
+                scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + deltaIndex)
                         % scoutingAroundBasePoints.size();
+                if (scoutingAroundBaseNextPolygonIndex < 0) {
+                    scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.size() - 1;
+                }
+                
                 goTo = (APosition) scoutingAroundBasePoints.get(scoutingAroundBaseNextPolygonIndex);
             }
         }

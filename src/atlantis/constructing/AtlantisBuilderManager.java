@@ -96,7 +96,6 @@ public class AtlantisBuilderManager {
      * these cases and ensures the position is valid.
      */
     private static APosition applyGasBuildingFixIfNeeded(AUnit builder, APosition position, AUnitType building) {
-        System.out.println("GAS BUILDING");
         if (position != null) {
             if (building.isGasBuilding()
                     && !AbstractPositionFinder.canPhysicallyBuildHere(builder, building, position)) {
