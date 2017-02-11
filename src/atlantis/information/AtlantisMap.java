@@ -230,7 +230,7 @@ public class AtlantisMap {
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
-    private static BaseLocation getNaturalBaseLocation(Object mainBasePosition) {
+    public static BaseLocation getNaturalBaseLocation(Object mainBasePosition) {
         Position nearestTo = mainBasePosition instanceof Position 
                 ? (Position) mainBasePosition 
                 : ((APosition) mainBasePosition).getPoint();

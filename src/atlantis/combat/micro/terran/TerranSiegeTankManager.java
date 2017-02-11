@@ -22,6 +22,7 @@ public class TerranSiegeTankManager {
         // =========================================================
         
         AUnit enemy = Select.enemy().combatUnits().canBeAttackedBy(tank).nearestTo(tank);
+        double distanceToEnemy = enemy != null ? tank.distanceTo(enemy) : -1;
         
 //        String string = (enemy != null ? enemy.getShortName() : "NULL");
 //        if (enemy != null) {
@@ -32,14 +33,27 @@ public class TerranSiegeTankManager {
 //                Color.Red);
         
         if (enemy != null) {
-            double distanceToEnemy = tank.distanceTo(enemy);
-
-            if (tank.isSieged()) {
-                return updateWhenSieged(tank, enemy, distanceToEnemy);
-            } else {
+            if (!tank.isSieged()) {
                 return updateWhenUnsieged(tank, enemy, distanceToEnemy);
             }
         }
+        
+        // === Siege on hold =======================================
+        
+        // If tank is holding position, siege
+        if (tank.isHoldingPosition()) {
+            tank.siege();
+            tank.setTooltip("Hold & siege");
+            return true;
+        }
+        
+        // === Act when sieged =====================================
+        
+        if (updateWhenSieged(tank, enemy, distanceToEnemy)) {
+            return true;
+        }
+        
+        // =========================================================
         
         tank.setTooltip("Ta-ta-ta!");
         return false;
@@ -51,10 +65,12 @@ public class TerranSiegeTankManager {
      * Sieged
      */
     private static boolean updateWhenSieged(AUnit tank, AUnit enemy, double distanceToEnemy) {
-        if (enemy == null || distanceToEnemy >= 14) {
+        if (enemy == null || distanceToEnemy < 0 || distanceToEnemy >= 14) {
+            tank.setTooltip("Considers unsiege");
+            
             if (AtlantisUtilities.rand(1, 100) <= 10) {
                 tank.unsiege();
-                tank.setTooltip("No enemy");
+                tank.setTooltip("Unsiege");
                 return true;
             }
         }
@@ -66,13 +82,6 @@ public class TerranSiegeTankManager {
      * Not sieged
      */
     private static boolean updateWhenUnsieged(AUnit tank, AUnit enemy, double distanceToEnemy) {
-        
-        // If tank is holding position, siege
-        if (tank.isHoldingPosition()) {
-            tank.siege();
-            tank.setTooltip("Hold & siege");
-            return true;
-        }
         
         // === Enemy is BUILDING ========================================
         if (enemy.isBuilding()) {

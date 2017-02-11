@@ -32,6 +32,7 @@ import bwapi.Color;
 import bwapi.Game;
 import bwapi.Position;
 import bwapi.Text.Size.Enum;
+import bwapi.Unit;
 import bwta.Region;
 import java.util.ArrayList;
 import java.util.Map;
@@ -997,6 +998,13 @@ public class AtlantisPainter {
             return;
         }
         bwapi.drawLineMap(start, end, color);
+    }
+
+    public static void paintLine(AUnit unit, Position end, Color color) {
+        if (unit == null || end == null) {
+            return;
+        }
+        bwapi.drawLineMap(unit.getPosition(), end, color);
     }
 
     // Causes Java runtime errors

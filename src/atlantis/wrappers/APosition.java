@@ -7,6 +7,7 @@ import atlantis.util.PositionUtil;
 import bwapi.AbstractPoint;
 import bwapi.Color;
 import bwapi.Position;
+import bwapi.PositionedObject;
 import bwapi.TilePosition;
 import bwta.BWTA;
 import bwta.Region;
@@ -157,13 +158,11 @@ public class APosition extends Position implements Comparable<Position> {
     // === High-abstraction ========================================
     
     /**
-     * Returns new position which is moved e.g. 15% in direction of the center of the region which 
-     * contains this position.
+     * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
      */
-    public APosition translateTowardCenterOfRegion(int percentTowardsCenter) {
-        Region region = this.getRegion();
+    public APosition translateTowards(AbstractPoint<Position> towards, int percentTowardsCenter) {
         return PositionOperationsHelper.getPositionMovedPercentTowards(
-                this, region.getCenter(), percentTowardsCenter
+                this, towards, percentTowardsCenter
         );
     }
     

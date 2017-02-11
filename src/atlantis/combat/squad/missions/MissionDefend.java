@@ -1,12 +1,14 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.AtlantisGame;
+import atlantis.debug.AtlantisPainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
+import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.Chokepoint;
@@ -17,7 +19,7 @@ public class MissionDefend extends Mission {
         super(name);
     }
     
-    // =========================================================
+    // =============================================================
     
     @Override
     public boolean update(AUnit unit) {
@@ -38,6 +40,8 @@ public class MissionDefend extends Mission {
         // =========================================================
         
         APosition focusPoint = getFocusPoint();
+        AtlantisPainter.paintLine(unit, focusPoint, Color.Purple);
+        
         if (focusPoint == null) {
             System.err.println("Couldn't define choke point.");
             throw new RuntimeException("Couldn't define choke point.");
@@ -49,7 +53,7 @@ public class MissionDefend extends Mission {
         else if (isCriticallyCloseToFocusPoint(unit, focusPoint)) {
             boolean result = unit.moveAwayFrom(focusPoint, 0.5);
             if (result) {
-                unit.setTooltip("Too close");
+                unit.setTooltip("Too close (" + unit.distanceTo(focusPoint) + ")");
                 return true;
             }
             else {
@@ -69,6 +73,13 @@ public class MissionDefend extends Mission {
                     return true;
                 }
             } 
+            
+            // Everything is okay, be here
+            else {
+                unit.holdPosition();
+                unit.setTooltip("Hold");
+                return true;
+            }
         } 
         
         // =========================================================
@@ -102,20 +113,23 @@ public class MissionDefend extends Mission {
         if (unit == null || focusPoint == null) {
             return false;
         }
+        
 
         // Bigger this value is, farther from choke will units stand
-        double unitShootRangeExtra = +0.3;
+//        double unitShootRangeExtra = +0.3;
 
         // Distance to the center of choke point.
         double distToChoke = unit.distanceTo(focusPoint);
-
-        // How far can the unit shoot
-        double unitShootRange =  unit.getWeaponRangeGround();
-
-        // Define max allowed distance from choke point to consider "still close"
-        double maxDistanceAllowed = unitShootRange + unitShootRangeExtra;
-
-        return distToChoke <= maxDistanceAllowed;
+        
+        return distToChoke < 3 + Select.ourCombatUnits().inRadius(3, unit).count() / 6;
+//
+//        // How far can the unit shoot
+//        double unitShootRange =  unit.getWeaponRangeGround();
+//
+//        // Define max allowed distance from choke point to consider "still close"
+//        double maxDistanceAllowed = unitShootRange + unitShootRangeExtra;
+//
+//        return distToChoke <= maxDistanceAllowed;
     }
 
     private boolean isCriticallyCloseToFocusPoint(AUnit unit, APosition focusPoint) {
@@ -127,20 +141,22 @@ public class MissionDefend extends Mission {
         double distToChoke = unit.distanceTo(focusPoint);
 
         // Can't be closer than X from choke point
-        if (distToChoke <= 4.2) {
+        if (distToChoke > 0.01 && distToChoke <= 1.2) {
             return true;
         }
 
-        // Bigger this value is, farther from choke will units stand
-        double standFarther = 1;
+//        // Bigger this value is, farther from choke will units stand
+//        double standFarther = 1;
+//
+//        // How far can the unit shoot (in build tiles)
+//        double unitShootRange = unit.getWeaponRangeGround();
+//
+//        // Define max distance
+//        double maxDistance = unitShootRange + standFarther;
+//
+//        return distToChoke <= maxDistance;
 
-        // How far can the unit shoot (in build tiles)
-        double unitShootRange = unit.getWeaponRangeGround();
-
-        // Define max distance
-        double maxDistance = unitShootRange + standFarther;
-
-        return distToChoke <= maxDistance;
+        return false;
     }
 
     // =========================================================

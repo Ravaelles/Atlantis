@@ -6,6 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.wrappers.APosition;
+import bwta.BaseLocation;
 import bwta.Chokepoint;
 import bwta.Region;
 
@@ -19,12 +20,15 @@ public class TerranBunkerPositionFinder {
         APosition nearTo = null;
         
         if (order.getProductionOrder().getModifier() != null) {
+            AUnit mainBase = Select.mainBase();
         
             // Bunker at NATURAL CHOKEPOINT
             if (order.getProductionOrder().getModifier().equals(AtlantisSpecialPositionFinder.AT_NATURAL)) {
                 Chokepoint chokepointForNaturalBase = AtlantisMap.getChokepointForNaturalBase();
-                if (chokepointForNaturalBase != null) {
-                    nearTo = APosition.create(chokepointForNaturalBase.getCenter()).translateTowardCenterOfRegion(16);
+                if (chokepointForNaturalBase != null && mainBase != null) {
+                    BaseLocation naturalBase = AtlantisMap.getNaturalBaseLocation(Select.mainBase().getPosition());
+                    nearTo = APosition.create(chokepointForNaturalBase.getCenter())
+                            .translateTowards(naturalBase, 25);
 
 //                    System.out.println();
 //                    System.err.println(nearTo);
@@ -37,7 +41,8 @@ public class TerranBunkerPositionFinder {
             else if (order.getProductionOrder().getModifier().equals(AtlantisSpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
                 Chokepoint chokepointForNaturalBase = AtlantisMap.getChokepointForMainBase();
                 if (chokepointForNaturalBase != null) {
-                    nearTo = APosition.create(chokepointForNaturalBase.getCenter()).translateTowardCenterOfRegion(5);
+                    nearTo = APosition.create(chokepointForNaturalBase.getCenter())
+                            .translateTowards(mainBase.getPosition(), 5);
                 }
             }
         }

@@ -95,10 +95,14 @@ public interface AtlantisUnitOrders {
             return false;
         }
         
-        // === Handle LOADED units ========================================
+        // === Handle LOADED/SIEGED units ========================================
         
         if (unit().isLoaded()) {
             unit().unload(unit());
+            return true;
+        }
+        else if (unit().isSieged()) {
+            unit().unsiege();
             return true;
         }
             

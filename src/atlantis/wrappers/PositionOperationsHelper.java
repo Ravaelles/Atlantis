@@ -2,6 +2,7 @@ package atlantis.wrappers;
 
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import bwapi.AbstractPoint;
 import bwapi.Position;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +56,7 @@ public class PositionOperationsHelper {
     
     // === Position between A and B ======================
     
-    public static APosition getPositionMovedPercentTowards(Position from, Position movedToward, double percent) {
+    public static APosition getPositionMovedPercentTowards(Position from, AbstractPoint<Position> movedToward, double percent) {
         int finalX = (int) ((100 - percent) * from.getX() + percent * movedToward.getX()) / 100;
         int finalY = (int) ((100 - percent) * from.getY() + percent * movedToward.getY()) / 100;
         return new APosition(finalX, finalY);

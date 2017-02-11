@@ -16,7 +16,7 @@ public abstract class TerranInfantryManager {
     public static boolean tryLoadingInfantryIntoBunkerIfPossible(AUnit unit) {
         
         // Only Terran infantry get inside
-        if (!unit.type().isTerranInfantry() || unit.type().isMedic()) {
+        if (!unit.type().isTerranInfantry() || unit.type().isMedic() || unit.isLoaded()) {
             return false;
         }
         
