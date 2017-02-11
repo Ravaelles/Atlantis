@@ -154,6 +154,19 @@ public class APosition extends Position implements Comparable<Position> {
         AtlantisPainter.paintRectangle(this, widthTiles * 32, heightTiles * 32, color);
     }
     
+    // === High-abstraction ========================================
+    
+    /**
+     * Returns new position which is moved e.g. 15% in direction of the center of the region which 
+     * contains this position.
+     */
+    public APosition translateTowardCenterOfRegion(int percentTowardsCenter) {
+        Region region = this.getRegion();
+        return PositionOperationsHelper.getPositionMovedPercentTowards(
+                this, region.getCenter(), percentTowardsCenter
+        );
+    }
+    
     // =========================================================
     
     /**

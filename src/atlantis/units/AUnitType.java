@@ -532,6 +532,14 @@ public class AUnitType implements Comparable<AUnitType> {
         return ut.isOrganic();
     }
 
+    public boolean isBunker() {
+        return isType(Terran_Bunker);
+    }
+
+    public boolean isCannon() {
+        return isType(Protoss_Photon_Cannon);
+    }
+
     public boolean isVehicle() {
         return ut.isMechanical();
     }

@@ -31,13 +31,11 @@ public class AtlantisRunManager {
     private Units closeEnemies;
 
     // =========================================================
-    
     public AtlantisRunManager(AUnit unit) {
         this.unit = unit;
     }
 
     // =========================================================
-    
     private boolean makeUnitRun() {
         if (unit == null || unit.isStuck()) {
             markAsNotRunning();
@@ -52,14 +50,18 @@ public class AtlantisRunManager {
             _updated_at = AtlantisGame.getTimeFrames();
             AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Orange);
             boolean hasMoved = unit.move(runTo, UnitActions.RUN_FROM_UNIT);
-            
+
             // Make all other units very close to it run as well
             notifyNearbyUnitsToMakeSpace(unit);
 
             if (hasMoved) {
                 return true;
             } else {
-                AtlantisGame.sendMessage(unit + " fucker ain't running");
+                APosition position = unit.getPosition();
+                AtlantisPainter.paintLine(position.translateByPixels(-26, -26), position.translateByPixels(25, 25), Color.Red);
+                AtlantisPainter.paintLine(position.translateByPixels(-25, -25), position.translateByPixels(26, 26), Color.Red);
+                AtlantisPainter.paintLine(position.translateByPixels(-26, 26), position.translateByPixels(25, -25), Color.Red);
+                AtlantisPainter.paintLine(position.translateByPixels(-25, 25), position.translateByPixels(26, -26), Color.Red);
                 markAsNotRunning();
                 return false;
             }
@@ -67,7 +69,6 @@ public class AtlantisRunManager {
     }
 
     // =========================================================
-    
     public boolean run() {
 
         // Define which enemies are considered as close enough to be dangerous
@@ -149,13 +150,13 @@ public class AtlantisRunManager {
         if (unit == null || runAwayFrom == null) {
             return null;
         }
-        
+
         AUnit mainBase = Select.mainBase();
 
         if (!unit.isWorker() && AtlantisGame.getTimeSeconds() <= 320 && mainBase != null && mainBase.distanceTo(unit) > 22) {
             return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
         } else {
-            return unit.getRunManager().findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
+            return unit.getRunManager().findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
         }
     }
 
@@ -172,19 +173,20 @@ public class AtlantisRunManager {
             }
         }
 
-        return findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
+        return findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
     }
 
     /**
      * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
      */
-    private APosition findPositionToRun_dontPreferMainBase(AUnit unit, APosition runAwayFrom) {
+    private APosition findPositionToRun_preferAwayFromEnemy(AUnit unit, APosition runAwayFrom) {
         APosition runTo = null;
 
         // === Get standard run to position - as far from enemy as possible
-        if ((closeEnemies != null && closeEnemies.size() <= 2)
-                && (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1)
-                && (!unit.isWorker() || !unit.getPosition().isCloseToMapBounds())) {
+        if (closeEnemies != null && !unit.getPosition().isCloseToMapBounds()) {
+//        if ((closeEnemies != null && closeEnemies.size() <= 3) && !unit.getPosition().isCloseToMapBounds()) {
+//                && (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1)
+//                && (!unit.isWorker() || !unit.getPosition().isCloseToMapBounds())) {
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
 
@@ -203,18 +205,14 @@ public class AtlantisRunManager {
 //        }
 
         // === Very rarely it can still be null ====================
-        if (runTo == null && unit.isVulture()) {
-            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
-        }
 
-        if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, 5);
-        }
-
-        if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, 10);
-        }
-
+//        if (runTo == null) {
+//            runTo = findRunPositionAtAnyDirection(unit, 5);
+//        }
+//
+//        if (runTo == null) {
+//            runTo = findRunPositionAtAnyDirection(unit, 10);
+//        }
         // =========================================================
         if (runTo != null) {
 //            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Yellow);
@@ -234,7 +232,7 @@ public class AtlantisRunManager {
         if (unit.isWorker()) {
             minTiles = 3;
         }
-        
+
         double maxDist = minTiles + 2;
 
 //        while (minTiles <= maxTiles) {
@@ -276,11 +274,10 @@ public class AtlantisRunManager {
         // === Ensure position is in bounds ========================================
         int oldX = runTo.getX();
         int oldY = runTo.getY();
-        
+
         if (unit.getPosition().isCloseToMapBounds()) {
             runTo = runTo.makeValid();
-        }
-        else {
+        } else {
             runTo = runTo.makeValidFarFromBounds();
         }
 
@@ -301,7 +298,7 @@ public class AtlantisRunManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
      * to given runAwayFrom position.
      */
-    private static APosition findRunPositionAtAnyDirection(AUnit unit, double expectedLength) {
+    private static APosition findRunPositionAtAnyDirection(AUnit unit, double minLength) {
 
         // === Define run from ========================================
         Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
@@ -316,11 +313,15 @@ public class AtlantisRunManager {
 
         // Build list of possible run positions, basically around the clock
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
-        for (int dx = -3; dx <= 3; dx++) {
-            for (int dy = -3; dy <= 3; dy++) {
-                if (dx == 0 && dy == 0) {
-                    continue;
-                }
+        double currentLength = minLength;
+        double maxLength = minLength + 3;
+
+        while (currentLength < maxLength) {
+            for (int dx = -3; dx <= 3; dx++) {
+                for (int dy = -3; dy <= 3; dy++) {
+                    if (dx == 0 && dy == 0) {
+                        continue;
+                    }
 
 //                // Define point
 //                APosition potentialPosition = APosition.createFrom(
@@ -335,43 +336,47 @@ public class AtlantisRunManager {
 //                            (int) (ty + dy * expectedVectorLength / vectorLength)
 //                    );
 //                }
-                // Define vevtor
-                int vectorX = dx;
-                int vectorY = dy;
-                double length = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+                    // Define vevtor
+                    int vectorX = dx;
+                    int vectorY = dy;
+                    double length = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
 
-                // Normalize
-                vectorX /= length;
-                vectorY /= length;
+                    // Normalize
+                    vectorX /= length;
+                    vectorY /= length;
 
-                // Scale vector
-                vectorX *= expectedLength;
-                vectorY *= expectedLength;
+                    // Scale vector
+                    vectorX *= minLength;
+                    vectorY *= minLength;
 
-                // Create position
-                APosition potentialPosition = APosition.create(
-                        (int) (tx + vectorX),
-                        (int) (ty + vectorY)
-                );
+                    // Create position
+                    APosition potentialPosition = APosition.create(
+                            (int) (tx + vectorX),
+                            (int) (ty + vectorY)
+                    );
 
-                // Make sure it's inbounds
-                
-                if (unitsInRadius.size() <= 1 && 
-                        (!unit.isWorker() || !unit.getPosition().isCloseToMapBounds())) {
-                    potentialPosition = potentialPosition.makeValidFarFromBounds();
-                } else {
-                    potentialPosition = potentialPosition.makeValid();
-                }
+                    // Make sure it's inbounds
+//                    if (unitsInRadius.size() <= 1
+//                            && (!unit.isWorker() || !unit.getPosition().isCloseToMapBounds())) {
+                    if (!unit.isWorker() || !unit.getPosition().isCloseToMapBounds()) {
+                        potentialPosition = potentialPosition.makeValidFarFromBounds();
+                    } else {
+                        potentialPosition = potentialPosition.makeValid();
+                    }
 
-                // If has path to given point, add it to the list of potential points
-                if (isPossibleAndReasonablePosition(unit, potentialPosition, 
-                        expectedLength * 0.3, 1.6 * expectedLength, false)) {
-                    potentialPositionsList.add(potentialPosition);
+                    // If has path to given point, add it to the list of potential points
+                    if (isPossibleAndReasonablePosition(unit, potentialPosition,
+                            currentLength * 0.8, 1.6 * currentLength, false)) {
+                        potentialPositionsList.add(potentialPosition);
 //                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Orange);
+                    }
                 }
             }
+            
+            currentLength++;
         }
 
+        // =========================================================
         // Find the location that would be most distant to the enemy location
         double mostDistant = -1;
         APosition bestPosition = null;
@@ -382,6 +387,8 @@ public class AtlantisRunManager {
                 mostDistant = dist;
             }
         }
+        
+        // =========================================================
 
 //        AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Purple);
 //        AtlantisPainter.paintLine(unit.getPosition(), bestPosition, Color.Green);
@@ -422,20 +429,20 @@ public class AtlantisRunManager {
     /**
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
-    public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position, 
+    public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position,
             double minDist, double maxDist, boolean allowCornerPointsEtc) {
         boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) && unit.hasPathTo(position)
                 && AtlantisMap.isWalkable(position)
-                && Select.all().inRadius(0.8, unit).isEmpty()
-//                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
+                && Select.all().inRadius(0.8, position).isEmpty()
+                //                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
                 //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
                 //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
                 && AtlantisMap.getGroundDistance(unit, position) <= maxDist;
-        
+
         if (isOkay && !allowCornerPointsEtc) {
             isOkay = AtlantisMap.isPositionFarFromAnyRegionPolygonPoint(unit);
         }
-        
+
         return isOkay;
     }
 

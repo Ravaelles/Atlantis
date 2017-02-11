@@ -841,7 +841,7 @@ public class AtlantisPainter {
      */
     private static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().listUnits()) {
-            if (unit.hasTooltip()) {
+            if (unit.hasTooltip() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
                 String string = "";
 
                 if (unit.hasTooltip()) {

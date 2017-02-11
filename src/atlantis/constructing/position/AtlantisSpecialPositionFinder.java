@@ -20,19 +20,23 @@ public class AtlantisSpecialPositionFinder {
      * Constant used as a hint to indicate that base should be built in the nearest base location 
      * (to the main base) that's still free.
      */
-    public static final String BASE_NEAREST_FREE = "NEAREST_FREE";
+    public static final String BASE_AT_NEAREST_FREE = "NEAREST_FREE";
     
     /**
-     * Constant used as a hint to indicate that base should be built in the main base (not as much 
-     * expansion as additional slots in base).
+     * Constant used as a hint to indicate that building should be placed in the main base region.
      */
-    public static final String BASE_NEAR_MAIN = "MAIN";
+    public static final String NEAR_MAIN = "MAIN";
     
     /**
-     * Constant used as a hint to indicate that base should be built in the "natural" 
-     * (also called "expansion").
+     * Constant used as a hint to indicate that building should be placed in the chokepoints of the main base.
      */
-    public static final String BASE_NATURAL = "NATURAL";
+    public static final String NEAR_MAIN_CHOKEPOINT = "MAIN_CHOKEPOINT";
+    
+    /**
+     * Constant used as a hint to indicate that building should be placed in the "natural" 
+     * (also called the "expansion").
+     */
+    public static final String AT_NATURAL = "NATURAL";
     
     // =========================================================
 
@@ -68,10 +72,10 @@ public class AtlantisSpecialPositionFinder {
 //        System.err.println(constructionOrder.getProductionOrder());
 //        System.err.println("=== modifier /" + modifier + "/ ===");
         if (modifier != null) {
-            if (modifier.equals(BASE_NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
+            if (modifier.equals(NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
                 return findPositionForBase_nearMainBase(building, builder, constructionOrder);
             }
-            else if (modifier.equals(BASE_NATURAL)) {
+            else if (modifier.equals(AT_NATURAL)) {
                 return findPositionForBase_natural(building, builder, constructionOrder);
             }
         }

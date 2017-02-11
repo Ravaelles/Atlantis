@@ -59,14 +59,14 @@ public class AtlantisMap {
     public static int getMapHeightInTiles() {
         return Atlantis.getBwapi().mapHeight();
     }
-    
-    // =========================================================
+
+    // === Choke points ========================================    
     
     /**
      * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
      * method returns this choke point. It's perfect position to defend (because it's *choke* point).
      */
-    public static Chokepoint getMainBaseChokepoint() {
+    public static Chokepoint getChokepointForMainBase() {
         if (cached_mainBaseChokepoint == null) {
             AUnit mainBase = Select.mainBase();
             if (mainBase != null) {
@@ -116,7 +116,7 @@ public class AtlantisMap {
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
-    public static Chokepoint getNaturalBaseChokepoint() {
+    public static Chokepoint getChokepointForNaturalBase() {
         if (cached_naturalBaseChokepoint != null) {
             AtlantisPainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
             return cached_naturalBaseChokepoint;
@@ -134,7 +134,7 @@ public class AtlantisMap {
         
         for (Chokepoint chokepoint : naturalRegion.getChokepoints()) {
             APosition center = APosition.create(chokepoint.getCenter());
-            if (center.distanceTo(getMainBaseChokepoint().getCenter()) > 1) {
+            if (center.distanceTo(getChokepointForMainBase().getCenter()) > 1) {
                 cached_naturalBaseChokepoint = chokepoint;
                 return cached_naturalBaseChokepoint;
             }

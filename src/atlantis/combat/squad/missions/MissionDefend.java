@@ -3,6 +3,7 @@ package atlantis.combat.squad.missions;
 import atlantis.AtlantisGame;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
@@ -26,6 +27,13 @@ public class MissionDefend extends Mission {
         
         if (AtlantisGame.isUmtMode()) {
             return false;
+        }
+
+        // === Load infantry into bunkers ==========================
+        
+        if (tryLoadingInfantryIntoBunkerIfPossible(unit)) {
+            unit.setTooltip("GTFInto bunker!");
+            return true;
         }
         
         // =========================================================
@@ -147,12 +155,33 @@ public class MissionDefend extends Mission {
         
         // =========================================================
         
-        if (Select.ourBases().count() <= 1) {
-            return APosition.create(AtlantisMap.getMainBaseChokepoint().getCenter());
+//        if (Select.ourBases().count() <= 1) {
+//            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());
+//        }
+//        else {
+            return APosition.create(AtlantisMap.getChokepointForNaturalBase().getCenter());
+//        }
+    }
+
+    /**
+     *
+     */
+    private boolean tryLoadingInfantryIntoBunkerIfPossible(AUnit unit) {
+        
+        // Only Terran infantry get inside
+        if (!unit.type().isTerranInfantry() || unit.type().isMedic()) {
+            return false;
         }
-        else {
-            return APosition.create(AtlantisMap.getNaturalBaseChokepoint().getCenter());
+        
+        // =========================================================
+        
+        AUnit nearestBunker = Select.ourBuildings().ofType(AUnitType.Terran_Bunker).nearestTo(unit);
+        if (nearestBunker != null && nearestBunker.distanceTo(unit) < 15) {
+            unit.load(nearestBunker);
+            return true;
         }
+        
+        return false;
     }
 
     /**

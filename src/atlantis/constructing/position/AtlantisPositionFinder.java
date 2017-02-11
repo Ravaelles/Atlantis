@@ -52,6 +52,13 @@ public class AtlantisPositionFinder {
         } 
 
         // =========================================================
+        // BUNKER
+        else if (building.isBunker()) {
+            APosition position = TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
+            return position;
+        } 
+
+        // =========================================================
         // Creep colony
         else if (building.equals(AUnitType.Zerg_Creep_Colony)) {
             return ZergCreepColony.findPosition(building, builder, constructionOrder);
