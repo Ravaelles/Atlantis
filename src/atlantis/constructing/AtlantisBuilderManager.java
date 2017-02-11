@@ -84,6 +84,12 @@ public class AtlantisBuilderManager {
                 );
                 
                 if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle())) {
+                    if (buildingType.isGasBuilding()) {
+                        AtlantisGame.sendMessage("Build GAS "
+                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
+                        System.err.println("Build GAS "
+                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
+                    }
                     builder.build(buildingType, buildTilePosition, UnitActions.BUILD);
                 }
             }

@@ -181,7 +181,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, Atlan
         APosition newPosition = new APosition(getX() - dx, getY() - dy).makeValidFarFromBounds();
 
         if (AtlantisRunManager.isPossibleAndReasonablePosition(
-                this, newPosition, moveDistance * 0.6, moveDistance * 1.6
+                this, newPosition, moveDistance * 0.6, moveDistance * 1.6, true
         )) {
             move(newPosition, UnitActions.MOVE);
             this.setTooltip("Move away");

@@ -15,7 +15,8 @@ public class TerranSiegeTankManager {
 
     public static boolean update(AUnit tank) {
         if (!tank.isInterruptible()) {
-            tank.setTooltip("Busy");
+            System.out.println("DONT FUCK WITH ME");
+            tank.setTooltip("Can't interrupt");
             return true;
         }
         
@@ -23,13 +24,13 @@ public class TerranSiegeTankManager {
         
         AUnit enemy = Select.enemy().combatUnits().canBeAttackedBy(tank).nearestTo(tank);
         
-        String string = (enemy != null ? enemy.getShortName() : "NULL");
-        if (enemy != null) {
-             string += " (" + enemy.distanceTo(tank) + ")";
-        }
-        AtlantisPainter.paintTextCentered(tank.getPosition().translateByPixels(0, 16), 
-                string, 
-                Color.Red);
+//        String string = (enemy != null ? enemy.getShortName() : "NULL");
+//        if (enemy != null) {
+//             string += " (" + enemy.distanceTo(tank) + ")";
+//        }
+//        AtlantisPainter.paintTextCentered(tank.getPosition().translateByPixels(0, 16), 
+//                string, 
+//                Color.Red);
         
         if (enemy != null) {
             double distanceToEnemy = tank.distanceTo(enemy);
@@ -40,6 +41,8 @@ public class TerranSiegeTankManager {
                 return updateWhenUnsieged(tank, enemy, distanceToEnemy);
             }
         }
+        
+        tank.setTooltip("Ta-ta-ta!");
         return false;
     }
 

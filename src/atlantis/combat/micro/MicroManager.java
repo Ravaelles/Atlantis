@@ -105,7 +105,9 @@ public class MicroManager extends AbstractMicroManager {
         if (unit.isRunning()) {
             return true;
         }
-        return !(unit.isAttackFrame() || unit.isStartingAttack()) || 
+//        return !(unit.isAttackFrame() || unit.isStartingAttack()) || 
+//                unit.getGroundWeaponCooldown() > 0 || unit.getAirWeaponCooldown() > 0;
+        return !(unit.isAttackFrame()) || 
                 unit.getGroundWeaponCooldown() > 0 || unit.getAirWeaponCooldown() > 0;
     }
 

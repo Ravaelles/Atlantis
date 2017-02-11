@@ -31,11 +31,13 @@ public class AtlantisRunManager {
     private Units closeEnemies;
 
     // =========================================================
+    
     public AtlantisRunManager(AUnit unit) {
         this.unit = unit;
     }
 
     // =========================================================
+    
     private boolean makeUnitRun() {
         if (unit == null || unit.isStuck()) {
             markAsNotRunning();
@@ -49,14 +51,14 @@ public class AtlantisRunManager {
             _updated_at = AtlantisGame.getTimeFrames();
             AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Orange);
             boolean hasMoved = unit.move(runTo, UnitActions.RUN_FROM_UNIT);
+            
+            // Make all other units very close to it run as well
+            notifyNearbyUnitsToMakeSpace(unit);
 
             if (hasMoved) {
-                // Make all other units very close to it run as well
-                notifyNearbyUnitsToMakeSpace(unit);
-
                 return true;
             } else {
-                AtlantisGame.sendMessage("Not running");
+                AtlantisGame.sendMessage(unit + " fucker ain't running");
                 markAsNotRunning();
                 return false;
             }
@@ -64,6 +66,7 @@ public class AtlantisRunManager {
     }
 
     // =========================================================
+    
     public boolean run() {
 
         // Define which enemies are considered as close enough to be dangerous
@@ -76,7 +79,7 @@ public class AtlantisRunManager {
 
         // ===========================================
 //        int maxEnemiesToRunFromNearestEnemy = unit.isVulture() ? 2 : 2;
-        int maxEnemiesToRunFromNearestEnemy = 2;
+        int maxEnemiesToRunFromNearestEnemy = 1;
 
         // ===========================================
         // Define "center of gravity" for the set of enemies
@@ -148,7 +151,7 @@ public class AtlantisRunManager {
         
         AUnit mainBase = Select.mainBase();
 
-        if (!unit.isWorker() && AtlantisGame.getTimeSeconds() <= 320 && mainBase != null && mainBase.distanceTo(unit) < 30) {
+        if (!unit.isWorker() && AtlantisGame.getTimeSeconds() <= 320 && mainBase != null && mainBase.distanceTo(unit) > 22) {
             return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
         } else {
             return unit.getRunManager().findPositionToRun_dontPreferMainBase(unit, runAwayFrom);
@@ -180,7 +183,7 @@ public class AtlantisRunManager {
         // === Get standard run to position - as far from enemy as possible
         if ((closeEnemies != null && closeEnemies.size() <= 2)
                 && (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1)
-                && !unit.getPosition().isCloseToMapBounds()) {
+                && (!unit.isWorker() || !unit.getPosition().isCloseToMapBounds())) {
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
 
@@ -286,7 +289,7 @@ public class AtlantisRunManager {
         }
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (isPossibleAndReasonablePosition(unit, runTo, dist * 0.8, 1.6 * dist)) {
+        if (isPossibleAndReasonablePosition(unit, runTo, dist * 0.8, 1.6 * dist, false)) {
             return runTo;
         } else {
             return null;
@@ -351,14 +354,17 @@ public class AtlantisRunManager {
                 );
 
                 // Make sure it's inbounds
-                if (unitsInRadius.size() <= 1 && !unit.getPosition().isCloseToMapBounds()) {
+                
+                if (unitsInRadius.size() <= 1 && 
+                        (!unit.isWorker() || !unit.getPosition().isCloseToMapBounds())) {
                     potentialPosition = potentialPosition.makeValidFarFromBounds();
                 } else {
                     potentialPosition = potentialPosition.makeValid();
                 }
 
                 // If has path to given point, add it to the list of potential points
-                if (isPossibleAndReasonablePosition(unit, potentialPosition, expectedLength * 0.3, 1.6 * expectedLength)) {
+                if (isPossibleAndReasonablePosition(unit, potentialPosition, 
+                        expectedLength * 0.3, 1.6 * expectedLength, false)) {
                     potentialPositionsList.add(potentialPosition);
 //                    AtlantisPainter.paintLine(unit.getPosition(), potentialPosition, Color.Orange);
                 }
@@ -415,13 +421,21 @@ public class AtlantisRunManager {
     /**
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
-    public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position, double minDist, double maxDist) {
-        return position.distanceTo(unit) > (minDist - 0.2) && unit.hasPathTo(position)
+    public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position, 
+            double minDist, double maxDist, boolean allowCornerPointsEtc) {
+        boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) && unit.hasPathTo(position)
                 && AtlantisMap.isWalkable(position)
-                && Atlantis.getBwapi().getUnitsInRadius(position, 1).isEmpty()
+                && Select.all().inRadius(0.8, unit).isEmpty()
+//                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
                 //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
                 //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
                 && AtlantisMap.getGroundDistance(unit, position) <= maxDist;
+        
+        if (isOkay && !allowCornerPointsEtc) {
+            isOkay = AtlantisMap.isPositionFarFromAnyRegionPolygonPoint(unit);
+        }
+        
+        return isOkay;
     }
 
     // === Getters ========================================

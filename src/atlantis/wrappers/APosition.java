@@ -8,6 +8,7 @@ import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.BWTA;
+import bwta.Region;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -282,4 +283,11 @@ public class APosition extends Position {
         
         return false;
     }    
+
+    /**
+     * Return BWTA region for this position.
+     */
+    public Region getRegion() {
+        return AtlantisMap.getRegion(this);
+    }
 }

@@ -317,6 +317,23 @@ public class AtlantisMap {
         return null;
     }
     
+    /**
+     * Can be used to avoid getting to close to the region edges, which may cause unit to get stuck.
+     */
+    public static boolean isPositionFarFromAnyRegionPolygonPoint(AUnit unit) {
+        Region region = unit.getPosition().getRegion();
+        Positions polygonPoints = new Positions();
+        polygonPoints.addPositions(region.getPolygon().getPoints());
+        APosition nearestPolygon = polygonPoints.nearestTo(unit.getPosition());
+        
+        if (nearestPolygon != null && nearestPolygon.distanceTo(unit) < 3) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    
     // =========================================================
     
     /**

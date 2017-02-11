@@ -15,7 +15,7 @@ public class AtlantisCombatUnitManager {
 
     protected static boolean update(AUnit unit, Squad squad) {
 //        unit.removeTooltip();
-        unit.setTooltip("M:" + AtlantisGame.getTimeFrames());
+        unit.setTooltip("Commander:" + AtlantisGame.getTimeFrames());
 //        System.out.println("  Manager (" + (unit.getSquad() != null) + "): " + unit + " / " + unit.getTooltip());
         
         // =========================================================
@@ -30,6 +30,7 @@ public class AtlantisCombatUnitManager {
         // Handle some units in special way
         
         if (handledAsSpecialUnit(unit)) {
+            unit.setTooltip(unit.getShortName());
             return true;
         }
         
@@ -37,6 +38,7 @@ public class AtlantisCombatUnitManager {
         // Handle some units in semi-special way
         
         if (handledAsSemiSpecialUnit(unit)) {
+            unit.setTooltip("Siege Tank");
             return true;
         }
 
@@ -90,7 +92,6 @@ public class AtlantisCombatUnitManager {
     private static boolean handledAsSpecialUnit(AUnit unit) {
         if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
             ZergOverlordManager.update(unit);
-            unit.setTooltip("Overlord");
             return true;
         } else {
             return false;
@@ -104,6 +105,7 @@ public class AtlantisCombatUnitManager {
     private static boolean handledAsSemiSpecialUnit(AUnit unit) {
         if (unit.getType().isSiegeTank()) {
             boolean dontDoAnythingElse = TerranSiegeTankManager.update(unit);
+            System.out.println(dontDoAnythingElse);
             return dontDoAnythingElse;
         } else {
             return false;

@@ -85,12 +85,18 @@ public class AtlantisAvoidMeleeUnitsManager {
                                 && unit.getHPPercent() >= 30;
                     }
                     
-                    if (!dontInterruptPendingAttack && unit.runFrom(null)) {
-//                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
-//                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
-//                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
-                        unit.setTooltip("Melee-run (" + closeEnemy.getShortName() + ")");
-                        return true;
+                    if (dontInterruptPendingAttack) {
+                        unit.setTooltip("Shooting" + (unit.getTarget() != null 
+                                ? " " + unit.getTarget().getShortName() : ""));
+                    }
+                    else {
+                        if (unit.runFrom(null)) {
+    //                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
+    //                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
+    //                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
+                            unit.setTooltip("Melee-run (" + closeEnemy.getShortName() + ")");
+                            return true;
+                        }
                     }
                 }
             }

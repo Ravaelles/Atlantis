@@ -98,8 +98,7 @@ public interface AtlantisUnitOrders {
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
         unit().setUnitAction(unitAction);
 //        if (!unit().isUnitAction(UnitActions.MOVE) || !target.equals(u().getTargetPosition())) {
-        u().move(target);
-        return true;
+        return u().move(target);
 //        }
 //        else {
 //            return true;

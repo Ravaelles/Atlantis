@@ -24,6 +24,11 @@ import javax.swing.ActionMap;
 
 public class AtlantisScoutManager {
 
+//    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = true;
+    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = false;
+    
+    // =========================================================
+    
     /**
      * Current scout unit.
      */
@@ -258,28 +263,11 @@ public class AtlantisScoutManager {
                 scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Yellow
         );
 
-        AtlantisViewport.centerScreenOn(scout);
+        if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
+            AtlantisViewport.centerScreenOn(scout);
+        }
     }
-
-    private static APosition useNearestPolygonPoint(Region region, AUnit scout) {
-        APosition nearest = scoutingAroundBasePoints.nearestTo(scout.getPosition());
-        scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.getLastIndex();
-        return nearest;
-    }
-
-    public static APosition getUmtFocusPoint(APosition startPosition) {
-        Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(startPosition);
-        return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
-    }
-
-    // =========================================================
-    /**
-     * Returns true if given unit has been assigned to explore the map.
-     */
-    public static boolean isScout(AUnit unit) {
-        return scouts.contains(unit);
-    }
-
+    
     private static void initializeEnemyRegionPolygonPoints(AUnit scout, Region enemyBaseRegion) {
         Position centerOfRegion = enemyBaseRegion.getCenter();
 
@@ -303,9 +291,30 @@ public class AtlantisScoutManager {
             }
         }
 
-        AtlantisGame.changeSpeedTo(1);
-        AtlantisGame.changeSpeedTo(1);
-        AtlantisPainter.paintingMode = AtlantisPainter.MODE_FULL_PAINTING;
+        if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
+            AtlantisGame.changeSpeedTo(1);
+            AtlantisGame.changeSpeedTo(1);
+            AtlantisPainter.paintingMode = AtlantisPainter.MODE_FULL_PAINTING;
+        }
+    }
+
+    private static APosition useNearestPolygonPoint(Region region, AUnit scout) {
+        APosition nearest = scoutingAroundBasePoints.nearestTo(scout.getPosition());
+        scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.getLastIndex();
+        return nearest;
+    }
+
+    public static APosition getUmtFocusPoint(APosition startPosition) {
+        Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(startPosition);
+        return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
+    }
+
+    // =========================================================
+    /**
+     * Returns true if given unit has been assigned to explore the map.
+     */
+    public static boolean isScout(AUnit unit) {
+        return scouts.contains(unit);
     }
 
 }
