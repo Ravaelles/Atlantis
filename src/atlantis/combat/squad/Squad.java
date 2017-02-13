@@ -3,6 +3,7 @@ package atlantis.combat.squad;
 import atlantis.combat.micro.AbstractMicroManager;
 import atlantis.combat.micro.MicroManager;
 import atlantis.combat.squad.missions.Mission;
+import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.wrappers.APosition;
@@ -135,6 +136,12 @@ public class Squad extends Units {
      */
     public int getID() {
         return ID;
+    }
+    
+    // =========================================================
+
+    public boolean isMissionDefend() {
+        return Missions.DEFEND.equals(getMission());
     }
 
 }

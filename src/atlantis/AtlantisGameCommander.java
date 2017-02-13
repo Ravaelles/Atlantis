@@ -1,6 +1,7 @@
 package atlantis;
 
 //import atlantis.buildings.AtlantisBuildingsCommander;
+import atlantis.buildings.managers.FlyingBuildingManager;
 import atlantis.combat.AtlantisCombatCommander;
 import atlantis.debug.AtlantisPainter;
 import atlantis.production.AtlantisProductionCommander;
@@ -32,6 +33,7 @@ public class AtlantisGameCommander {
         AtlantisCombatCommander.update();
         AtlantisScoutManager.update();
 //        AtlantisBuildingsCommander.update(); // Currently unused
+        FlyingBuildingManager.update();
 
         // === Handle UMT ==========================================
         

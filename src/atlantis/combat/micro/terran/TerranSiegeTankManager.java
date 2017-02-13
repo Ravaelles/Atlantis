@@ -31,32 +31,20 @@ public class TerranSiegeTankManager {
 //        AtlantisPainter.paintTextCentered(tank.getPosition().translateByPixels(0, 16), 
 //                string, 
 //                Color.Red);
-        
-        if (enemy != null) {
-            if (!tank.isSieged()) {
-                return updateWhenUnsieged(tank, enemy, distanceToEnemy);
-            }
-        }
-        
-        // === Siege on hold =======================================
-        
-        // If tank is holding position, siege
-        if (tank.isHoldingPosition()) {
-            tank.siege();
-            tank.setTooltip("Hold & siege");
-            return true;
-        }
-        
-        // === Act when sieged =====================================
-        
-        if (updateWhenSieged(tank, enemy, distanceToEnemy)) {
-            return true;
-        }
-        
+
         // =========================================================
         
-        tank.setTooltip("Ta-ta-ta!");
-        return false;
+        if (!tank.isSieged()) {
+            return updateWhenUnsieged(tank, enemy, distanceToEnemy);
+        }
+        else {
+            return updateWhenSieged(tank, enemy, distanceToEnemy);
+        }
+        
+//        // =========================================================
+//        
+//        tank.setTooltip("Ta-ta-ta!");
+//        return false;
     }
 
     // =========================================================
@@ -68,7 +56,7 @@ public class TerranSiegeTankManager {
         if (enemy == null || distanceToEnemy < 0 || distanceToEnemy >= 14) {
             tank.setTooltip("Considers unsiege");
             
-            if (AtlantisUtilities.rand(1, 100) <= 10) {
+            if (!tank.getSquad().isMissionDefend() && AtlantisUtilities.rand(1, 100) <= 10) {
                 tank.unsiege();
                 tank.setTooltip("Unsiege");
                 return true;
@@ -82,6 +70,15 @@ public class TerranSiegeTankManager {
      * Not sieged
      */
     private static boolean updateWhenUnsieged(AUnit tank, AUnit enemy, double distanceToEnemy) {
+        
+        // === Siege on hold =======================================
+        
+        // If tank is holding position, siege
+        if (tank.isHoldingPosition()) {
+            tank.siege();
+            tank.setTooltip("Hold & siege");
+            return true;
+        }
         
         // === Enemy is BUILDING ========================================
         if (enemy.isBuilding()) {

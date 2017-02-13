@@ -79,7 +79,8 @@ public class MissionAttack extends Mission {
      * Returns the <b>position</b> (not the unit itself) where we should point our units to in hope 
      * because as far as we know, the enemy is/can be there and it makes sense to attack in this region.
      */
-    public static APosition getFocusPoint() {
+    @Override
+    public APosition getFocusPoint() {
 
         // === Handle UMT ==========================================
         

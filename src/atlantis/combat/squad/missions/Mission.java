@@ -1,6 +1,7 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.units.AUnit;
+import atlantis.wrappers.APosition;
 
 
 
@@ -24,6 +25,8 @@ public abstract class Mission {
      */
     public abstract boolean update(AUnit unit);
 
+    public abstract APosition getFocusPoint();
+    
     // =========================================================
 
     public String getName() {

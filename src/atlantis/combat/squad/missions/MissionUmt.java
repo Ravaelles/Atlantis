@@ -23,6 +23,7 @@ import bwta.Region;
 public class MissionUmt extends Mission {
 
     private static APosition _tempFocusPoint = null;
+    private static AUnit flagshipUnit = null;
 
     // =========================================================
     public MissionUmt(String name) {
@@ -42,7 +43,7 @@ public class MissionUmt extends Mission {
         APosition explorePosition = null;
 
         // === Define unit that will be center of our army =================
-        AUnit flagshipUnit = Select.ourCombatUnits().first();
+        flagshipUnit = Select.ourCombatUnits().first();
         if (flagshipUnit == null) {
             unit.setTooltip("No flagship unit found");
             return false;
@@ -100,8 +101,9 @@ public class MissionUmt extends Mission {
         }
 
         // === Go to nearest unexplored position ===========================
+        
         if (_tempFocusPoint == null || _tempFocusPoint.distanceTo(unit) < 3) {
-            _tempFocusPoint = AtlantisMap.getNearestUnexploredAccessiblePosition(unit.getPosition());
+            _tempFocusPoint = getFocusPoint();
 
             if (_tempFocusPoint != null && _tempFocusPoint.distanceTo(unit) > 1.5) {
                 unit.setTooltip(isFlagship ? "Hernan Cortes" : "Companero");
@@ -148,4 +150,11 @@ public class MissionUmt extends Mission {
 //        // === Return location to go to ====================================
 //        return AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
 //    }
+    
+    @Override
+    public APosition getFocusPoint() {
+        _tempFocusPoint = AtlantisMap.getNearestUnexploredAccessiblePosition(flagshipUnit.getPosition());
+        return _tempFocusPoint;
+    }
+    
 }

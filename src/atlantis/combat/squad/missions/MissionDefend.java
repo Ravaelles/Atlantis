@@ -160,8 +160,9 @@ public class MissionDefend extends Mission {
     }
 
     // =========================================================
-    
-    public static APosition getFocusPoint() {
+
+    @Override
+    public APosition getFocusPoint() {
         
         // === Handle UMT ==========================================
         
