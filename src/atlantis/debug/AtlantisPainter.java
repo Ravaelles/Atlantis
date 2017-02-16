@@ -127,7 +127,7 @@ public class AtlantisPainter {
 
         // =========================================================
         // Focus point
-        APosition focusPoint = MissionAttack.getFocusPoint();
+        APosition focusPoint = MissionAttack.getInstance().getFocusPoint();
         AUnit mainBase = Select.mainBase();
         String desc = "";
         if (focusPoint != null && mainBase != null) {
@@ -339,15 +339,16 @@ public class AtlantisPainter {
         APosition position;
 
         // Main DEFEND focus point
-        if (MissionDefend.getFocusPoint() != null && MissionDefend.getFocusPoint() != null) {
-            position = MissionDefend.getFocusPoint();
+        position = MissionAttack.getInstance().getFocusPoint();
+        if (position != null) {
+            position = MissionDefend.getInstance().getFocusPoint();
             paintCircle(position, 20, Color.Orange);
             paintCircle(position, 19, Color.Orange);
             paintTextCentered(position, "DEFEND", Color.Orange);
         }
 
         // Mission ATTACK focus point
-        position = MissionAttack.getFocusPoint();
+        position = MissionAttack.getInstance().getFocusPoint();
         if (position != null) {
             paintCircle(position, 20, Color.Red);
             //        paintCircle(position, 19, Color.Black);

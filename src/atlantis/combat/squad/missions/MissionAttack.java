@@ -19,9 +19,14 @@ import bwta.BaseLocation;
  * the enemy at the <b>getFocusPoint</b>.
  */
 public class MissionAttack extends Mission {
+    
+    private static MissionAttack instance;
+    
+    // =========================================================
 
-    public MissionAttack(String name) {
+    protected MissionAttack(String name) {
         super(name);
+        instance = this;
     }
     
     // =========================================================
@@ -127,6 +132,12 @@ public class MissionAttack extends Mission {
 
         // Absolutely no enemy unit can be found
         return null;
+    }
+    
+    // =========================================================
+    
+    public static MissionAttack getInstance() {
+        return instance;
     }
 
 }

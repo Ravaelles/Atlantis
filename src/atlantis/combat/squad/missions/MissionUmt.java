@@ -26,11 +26,18 @@ public class MissionUmt extends Mission {
     private static AUnit flagshipUnit = null;
 
     // =========================================================
-    public MissionUmt(String name) {
-        super(name);
-    }
-
+    
+    private static MissionUmt instance;
+    
     // =========================================================
+
+    protected MissionUmt(String name) {
+        super(name);
+        instance = this;
+    }
+    
+    // =========================================================
+    
     @Override
     public boolean update(AUnit unit) {
         if (unit.isJustShooting() || !unit.isReadyToShoot()) {
@@ -155,6 +162,12 @@ public class MissionUmt extends Mission {
     public APosition getFocusPoint() {
         _tempFocusPoint = AtlantisMap.getNearestUnexploredAccessiblePosition(flagshipUnit.getPosition());
         return _tempFocusPoint;
+    }
+    
+    // =========================================================
+    
+    public static MissionUmt getInstance() {
+        return instance;
     }
     
 }

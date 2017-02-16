@@ -14,9 +14,14 @@ import bwapi.TilePosition;
 import bwta.Chokepoint;
 
 public class MissionDefend extends Mission {
+    
+    private static MissionDefend instance;
+    
+    // =========================================================
 
-    public MissionDefend(String name) {
+    protected MissionDefend(String name) {
         super(name);
+        instance = this;
     }
     
     // =============================================================
@@ -178,6 +183,12 @@ public class MissionDefend extends Mission {
 //        else {
             return APosition.create(AtlantisMap.getChokepointForNaturalBase().getCenter());
 //        }
+    }
+    
+    // =========================================================
+    
+    public static MissionDefend getInstance() {
+        return instance;
     }
 
 }
