@@ -23,7 +23,7 @@ public class AtlantisDynamicUnitsCommander {
     // =========================================================
     
     private static void handleFactoryProductionIfNeeded() {
-        for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).listUnits()) {
+        for (AUnit factory : Select.ourUnitsOfType(AUnitType.Terran_Factory).listUnits()) {
             if (!factory.isTrainingAnyUnit()) {
                 boolean cantAffordTankButCanAffordVulture = AtlantisGame.hasMinerals(250)
                         && !AtlantisGame.hasGas(70);

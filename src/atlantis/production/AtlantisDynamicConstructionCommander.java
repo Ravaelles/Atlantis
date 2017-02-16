@@ -31,7 +31,7 @@ public class AtlantisDynamicConstructionCommander {
      */
     private static void handleBuildFactoriesIfNeeded() {
         if (canAfford(250, 100)) {
-            Select<?> factories = Select.ourOfType(AUnitType.Terran_Factory);
+            Select<?> factories = Select.ourUnitsOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
                     AtlantisConstructionManager.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);

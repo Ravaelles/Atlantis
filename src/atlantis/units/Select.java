@@ -5,6 +5,7 @@ import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.information.UnitData;
+import atlantis.repair.ARepairManager;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
@@ -151,7 +152,7 @@ public class Select<T> {
     /**
      * Selects our units of given type(s).
      */
-    public static Select<?> ourOfType(AUnitType type) {
+    public static Select<AUnit> ourUnitsOfType(AUnitType type) {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
@@ -613,19 +614,31 @@ public class Select<T> {
     }
 
     /**
-     * Selects only those Terran vehicles that can be repaired so it has to be:<br />
+     * Selects only those Terran vehicles/buildings that can be repaired so it has to be:<br />
      * - mechanical<br />
      * - not 100% healthy<br />
      */
-    public Select<T> toRepair() {
+    public Select<T> repairable(boolean checkIfHealthIsNotMax) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-
-            //isMechanical replaces  isRepairableMechanically
-            //unit.getHitPoints() >= unit.getType().maxHitPoints() replaces isFullyHealthy
-            if (!unit.getType().isMechanical() || unit.getHitPoints() >= unit.getMaxHitPoints()
+            if (!unit.getType().isMechanical() || unit.getType().isBuilding()
+                    || (checkIfHealthIsNotMax && unit.getHitPoints() >= unit.getMaxHitPoints())
                     || !unit.isCompleted()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Selects these units (makes sense only for workers) who aren't assigned to repair any other unit.
+     */
+    public Select<T> notRepairing() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.isRepairing() || ARepairManager.isRepairerOfAnyKind(unit)) {
                 unitsIterator.remove();
             }
         }

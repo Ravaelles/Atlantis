@@ -357,6 +357,10 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
         return getType().getShortName();
     }
 
+    public String getShortNamePlusId() {
+        return getType().getShortName() + " #" + getID();
+    }
+
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */

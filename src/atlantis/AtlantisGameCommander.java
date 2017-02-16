@@ -5,6 +5,7 @@ import atlantis.buildings.managers.FlyingBuildingManager;
 import atlantis.combat.AtlantisCombatCommander;
 import atlantis.debug.AtlantisPainter;
 import atlantis.production.AtlantisProductionCommander;
+import atlantis.repair.AtlantisRepairCommander;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -33,9 +34,15 @@ public class AtlantisGameCommander {
         AtlantisCombatCommander.update();
         AtlantisScoutManager.update();
 //        AtlantisBuildingsCommander.update(); // Currently unused
-        FlyingBuildingManager.update();
 
-        // === Handle UMT ==========================================
+        // === Terran only ==================================================
+
+        if (AtlantisGame.playsAsTerran()) {
+            FlyingBuildingManager.update();
+            AtlantisRepairCommander.update();
+        }
+
+        // === Handle UMT ===================================================
         
         if (AtlantisGame.isUmtMode()) {
             AUnit unit = Select.ourCombatUnits().first();
