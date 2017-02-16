@@ -30,7 +30,7 @@ public class AtlantisRepairCommander {
         }
 
         for (AUnit unitRepairer : ARepairManager.repairersToUnit.keySet()) {
-            ABunkerRepairManager.updateUnitRepairer(unitRepairer);
+            ARepairManager.updateUnitRepairer(unitRepairer);
         }
     }
 

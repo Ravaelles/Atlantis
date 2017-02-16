@@ -19,17 +19,5 @@ public class ABunkerRepairManager {
             ARepairManager.removeConstantBunkerRepairer(repairer);
         }
     }
-
-    public static void updateUnitRepairer(AUnit repairer) {
-        AUnit unitToRepair = ARepairManager.getUnitToRepairFor(repairer);
-        if (unitToRepair != null) {
-            repairer.setTooltip("Repair " + unitToRepair.getShortNamePlusId());
-            repairer.repair(unitToRepair);
-        }
-        else {
-            repairer.setTooltip("Null unit2repair");
-            ARepairManager.removeUnitRepairer(repairer);
-        }
-    }
     
 }

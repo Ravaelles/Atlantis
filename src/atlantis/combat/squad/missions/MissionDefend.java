@@ -81,9 +81,15 @@ public class MissionDefend extends Mission {
             
             // Everything is okay, be here
             else {
-                unit.holdPosition();
-                unit.setTooltip("Hold");
-                return true;
+                if (unit.type().isTank() && !unit.isSieged()) {
+                    unit.siege();
+                    return true;
+                }
+                else {
+                    unit.holdPosition();
+                    unit.setTooltip("Hold");
+                    return true;
+                }
             }
         } 
         

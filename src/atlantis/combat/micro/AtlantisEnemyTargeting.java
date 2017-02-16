@@ -16,12 +16,15 @@ public class AtlantisEnemyTargeting {
         boolean canAttackGround = unit.canAttackGroundUnits(); 
         boolean canAttackAir = unit.canAttackAirUnits(); 
         AUnit nearestEnemy = null;
+        
+        Select<AUnit> enemySelector = Select.enemy();
+        Select<AUnit> enemiesThatCanBeAttackedSelector = Select.enemy(canAttackGround, canAttackAir);
 
         // === Attack units nears main =============================
         
 //        AUnit mainBase = Select.mainBase();
 //        if (mainBase != null) {
-//            nearestEnemy = Select.enemy().visible()
+//            nearestEnemy = enemySelector.visible()
 //                    .canBeAttackedBy(unit)
 //                    .inRadius(50, mainBase)
 //                    .nearestTo(mainBase);
@@ -30,7 +33,7 @@ public class AtlantisEnemyTargeting {
         // =========================================================
         // Attack deadliest shit out there
         
-        nearestEnemy = Select.enemy().visible()
+        nearestEnemy = enemySelector.visible()
                 .canBeAttackedBy(unit)
                 .ofType(AUnitType.Terran_Vulture_Spider_Mine)
                 .nearestTo(unit);
@@ -41,7 +44,7 @@ public class AtlantisEnemyTargeting {
         // =========================================================
         // Attack top priority units
         
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
+        nearestEnemy = enemiesThatCanBeAttackedSelector
                 .canBeAttackedBy(unit)
                 .ofType(
                         AUnitType.Terran_Siege_Tank_Siege_Mode,
@@ -70,7 +73,7 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // Try selecting defensive buildings
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)	
+        nearestEnemy = enemiesThatCanBeAttackedSelector	
                 .ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony, 
                         AUnitType.Terran_Bunker)
                 .canBeAttackedBy(unit)
@@ -90,7 +93,7 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // If no real units found, try selecting important buildings
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
+        nearestEnemy = enemiesThatCanBeAttackedSelector
                 .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool, 
                         AUnitType.Terran_Command_Center)
                 .canBeAttackedBy(unit)
@@ -101,7 +104,7 @@ public class AtlantisEnemyTargeting {
         
         // =========================================================
         // Okay, try targeting any-fuckin-thing
-        nearestEnemy = Select.enemy(canAttackGround, canAttackAir)
+        nearestEnemy = enemiesThatCanBeAttackedSelector
                 .canBeAttackedBy(unit)
                 .nearestTo(unit);
         if (nearestEnemy != null) {

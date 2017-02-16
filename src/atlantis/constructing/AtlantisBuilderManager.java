@@ -69,6 +69,7 @@ public class AtlantisBuilderManager {
         // Move builder to the build position
         if (distance > maxDistanceToIssueBuildOrder) {
             builder.move(buildPosition, UnitActions.MOVE_TO_BUILD);
+            builder.setTooltip("Build " + buildingType.getShortName());
         } 
 
         // =========================================================
@@ -85,13 +86,14 @@ public class AtlantisBuilderManager {
                 );
                 
                 if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle())) {
-                    if (buildingType.isGasBuilding()) {
-                        AtlantisGame.sendMessage("Build GAS "
-                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
-                        System.err.println("Build GAS "
-                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
-                    }
+//                    if (buildingType.isGasBuilding()) {
+//                        AtlantisGame.sendMessage("Build GAS "
+//                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
+//                        System.err.println("Build GAS "
+//                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
+//                    }
                     builder.build(buildingType, buildTilePosition, UnitActions.BUILD);
+                    builder.setTooltip("Constructing " + buildingType.getShortName());
                 }
             }
         }

@@ -81,12 +81,19 @@ public class TerranSiegeTankManager {
         }
         
         // === Enemy is BUILDING ========================================
-        if (enemy.isBuilding()) {
-            return nearestEnemyIsBuilding(tank, enemy, distanceToEnemy);
-        } // === Enemy is UNIT ========================================
-        else {
-            return nearestEnemyIsUnit(tank, enemy, distanceToEnemy);
+        
+        if (enemy != null) {
+            if (enemy.isBuilding()) {
+                return nearestEnemyIsBuilding(tank, enemy, distanceToEnemy);
+            } 
+
+            // === Enemy is UNIT ========================================
+            else if (Select.ourCombatUnits().inRadius(10, tank).count() >= 4) {
+                return nearestEnemyIsUnit(tank, enemy, distanceToEnemy);
+            }
         }
+        
+        return false;
     }
     
     // =========================================================

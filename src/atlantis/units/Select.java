@@ -305,7 +305,7 @@ public class Select<T> {
         for (AUnit unit : enemyUnits()) {
             if (unit.exists() && unit.isVisible() && !unit.getType().isBuilding()
                     && !unit.isType(AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
-                if ((!unit.isAirUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
+                if ((unit.isGroundUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
                     data.add(unit);
                 }
             }

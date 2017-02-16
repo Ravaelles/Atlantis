@@ -212,8 +212,18 @@ public interface AtlantisUnitOrders {
      * canRepair
      */
     default boolean repair(AUnit target) {
-        unit().setUnitAction(UnitActions.REPAIR);
-        return u().repair(target.u());
+        if (target != null && target.distanceTo(unit()) > 0.5) {
+            return unit().move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
+        }
+        else {
+            unit().setUnitAction(UnitActions.REPAIR);
+            if (unit().getTarget() == null || !unit().getTarget().equals(target) || !unit().isRepairing()) {
+                return u().repair(target.u());
+            }
+            else {
+                return true;
+            }
+        }
     }
 
     /**

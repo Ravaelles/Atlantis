@@ -17,6 +17,7 @@ public class UnitActions {
     public static final UnitAction HOLD_POSITION = new UnitAction();
     public static final UnitAction MOVE = new UnitAction();
     public static final UnitAction MOVE_TO_BUILD = new UnitAction();
+    public static final UnitAction MOVE_TO_REPAIR = new UnitAction();
     public static final UnitAction PATROL = new UnitAction();
     public static final UnitAction REPAIR = new UnitAction();
     public static final UnitAction RETREAT = new UnitAction(false, true);
