@@ -1,10 +1,13 @@
 package atlantis.buildings.managers;
 
 import atlantis.AtlantisGame;
+import atlantis.combat.squad.missions.Mission;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.units.actions.UnitActions;
+import atlantis.wrappers.APosition;
 import java.util.ArrayList;
 
 /**
@@ -31,8 +34,32 @@ public class FlyingBuildingManager {
     
     // =========================================================
     
-    private static void updateFlyingBuilding(AUnit flyingBuilding) {
-        Missions.getCurrentGlobalMission().getFocusPoint();
+    private static boolean updateFlyingBuilding(AUnit flyingBuilding) {
+        
+        // Define focus point for current mission
+        Mission currentMission = Missions.getCurrentGlobalMission();
+        APosition focusPoint = currentMission.getFocusPoint();
+        
+        // Move towards focus point if needed
+        if (focusPoint != null) {
+            double distToFocusPoint = focusPoint.distanceTo(flyingBuilding);
+            
+            if (distToFocusPoint > 2) {
+                flyingBuilding.move(focusPoint, UnitActions.MOVE);
+            }
+            
+            if (distToFocusPoint > 5) {
+                return true;
+            }
+        }
+        
+        // Fly away from nearest tank if it's too close
+        AUnit tankTooNear = Select.ourTanks().nearestToOrNull(flyingBuilding, 2);
+        if (tankTooNear != null) {
+            return flyingBuilding.moveAwayFrom(tankTooNear.getPosition(), 1);
+        }
+        
+        return false;
     }
     
     // =========================================================

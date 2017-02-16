@@ -876,6 +876,7 @@ public class Select<T> {
 
     // =========================================================
     // Localization-related methods
+    
     /**
      * From all units currently in selection, returns closest unit to given <b>position</b>.
      */
@@ -895,6 +896,34 @@ public class Select<T> {
 
         sortDataByDistanceTo(position, true);
         return (AUnit) data.get(0);
+    }
+    
+    /**
+     * From all units currently in selection, returns closest unit to given <b>position</b>.
+     */
+    public AUnit nearestToOrNull(Object positionOrUnit, double maxLength) {
+        if (data.isEmpty() || positionOrUnit == null) {
+            return null;
+        }
+
+        Position position;
+        if (positionOrUnit instanceof APosition) {
+            position = (APosition) positionOrUnit;
+        } else if (positionOrUnit instanceof Position) {
+            position = (Position) positionOrUnit;
+        } else {
+            position = ((AUnit) positionOrUnit).getPosition();
+        }
+
+        sortDataByDistanceTo(position, true);
+        AUnit nearestUnit = (AUnit) data.get(0);
+        
+        if (nearestUnit != null && nearestUnit.distanceTo(position) < maxLength) {
+            return nearestUnit;
+        }
+        else {
+            return null;
+        }
     }
 
     /**

@@ -36,5 +36,17 @@ public abstract class Mission {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isMissionDefend() {
+        return this.equals(Missions.DEFEND);
+    }
+
+    public boolean isMissionAttack() {
+        return this.equals(Missions.ATTACK);
+    }
+
+    public boolean isMissionUmt() {
+        return this.equals(Missions.UMT);
+    }
     
 }
