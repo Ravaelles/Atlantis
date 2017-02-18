@@ -63,7 +63,7 @@ public class AtlantisBuilderManager {
 //                buildPosition, buildingType.getTileWidth() * 32 / 2, buildingType.getTileHeight() * 32 / 2
 //        );
         // =========================================================
-        double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 2.7 : 1;
+        double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.2 : 1;
         double distance = builder.distanceTo(buildPosition);
 
         // Move builder to the build position
@@ -85,7 +85,8 @@ public class AtlantisBuilderManager {
                         buildPosition.getTileX(), buildPosition.getTileY()
                 );
                 
-                if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle())) {
+                if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
+                        AtlantisGame.getTimeFrames() % 30 == 0)) {
 //                    if (buildingType.isGasBuilding()) {
 //                        AtlantisGame.sendMessage("Build GAS "
 //                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));

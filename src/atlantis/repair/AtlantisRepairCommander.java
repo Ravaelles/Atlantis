@@ -7,6 +7,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 /**
  *
@@ -15,21 +17,21 @@ import java.util.ArrayList;
 public class AtlantisRepairCommander {
 
     public static void update() {
-        if (AtlantisGame.getTimeFrames() % 30 == 0) {
+        if (AtlantisGame.getTimeFrames() % 20 == 0) {
             assignConstantBunkerRepairersIfNeeded();
         }
         
-        if (AtlantisGame.getTimeFrames() % 20 == 0) {
+        if (AtlantisGame.getTimeFrames() % 5 == 0) {
             assignUnitRepairersToWoundedUnits();
         }
         
         // =========================================================
-
-        for (AUnit bunkerRepairer : ARepairManager.repairersConstantToBunker.keySet()) {
+        
+        for (AUnit bunkerRepairer : ARepairManager.getConstantBunkerRepairers()) {
             ARepairManager.updateBunkerRepairer(bunkerRepairer);
         }
 
-        for (AUnit unitRepairer : ARepairManager.repairersToUnit.keySet()) {
+        for (AUnit unitRepairer : ARepairManager.getUnitRepairers()) {
             ARepairManager.updateUnitRepairer(unitRepairer);
         }
     }
@@ -85,7 +87,7 @@ public class AtlantisRepairCommander {
 
     private static void assignConstantBunkerRepairers(AUnit bunker, int numberOfRepairersToAssign) {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
-            AUnit worker = defineBestRepairerFor(bunker);
+            AUnit worker = defineBestRepairerFor(bunker, false);
             if (worker != null) {
                 ARepairManager.addConstantBunkerRepairer(worker, bunker);
             }
@@ -94,7 +96,7 @@ public class AtlantisRepairCommander {
 
     private static void assignUnitRepairers(AUnit unitToRepair, int numberOfRepairersToAssign) {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
-            AUnit worker = defineBestRepairerFor(unitToRepair);
+            AUnit worker = defineBestRepairerFor(unitToRepair, true);
             if (worker != null) {
                 ARepairManager.addUnitRepairer(worker, unitToRepair);
             }
@@ -124,8 +126,13 @@ public class AtlantisRepairCommander {
         return Math.min(7, (int) Math.ceil(optimalNumber));
     }
     
-    private static AUnit defineBestRepairerFor(AUnit unitToRepair) {
-        return Select.ourWorkers().notRepairing().nearestTo(unitToRepair);
+    private static AUnit defineBestRepairerFor(AUnit unitToRepair, boolean criticallyImportant) {
+        if (criticallyImportant) {
+            return Select.ourWorkers().notRepairing().notConstructing().nearestTo(unitToRepair);
+        }
+        else {
+            return Select.ourWorkers().notCarrying().notRepairing().notConstructing().nearestTo(unitToRepair);
+        }
     }
 
 }

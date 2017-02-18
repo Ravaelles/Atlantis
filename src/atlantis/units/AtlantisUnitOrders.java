@@ -110,12 +110,14 @@ public interface AtlantisUnitOrders {
 
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
         unit().setUnitAction(unitAction);
-//        if (!unit().isUnitAction(UnitActions.MOVE) || !target.equals(u().getTargetPosition())) {
-        return u().move(target);
-//        }
-//        else {
-//            return true;
-//        }
+        
+        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving() ||
+                AtlantisGame.getTimeFrames() % 10 == 0) {
+            return u().move(target);
+        }
+        else {
+            return true;
+        }
     }
 
     /**

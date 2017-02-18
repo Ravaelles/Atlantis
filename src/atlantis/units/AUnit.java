@@ -10,6 +10,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.information.AtlantisOurUnitsExtraInfo;
+import atlantis.repair.ARepairManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.APosition;
@@ -937,6 +938,11 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
         return unitAction == constant;
     }
     
+    public boolean isUnitActionMove() {
+        return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_BUILD 
+                || unitAction == UnitActions.MOVE_TO_REPAIR;
+    }
+    
     public void setUnitAction(UnitAction unitAction) {
         this.unitAction = unitAction;
     }
@@ -947,6 +953,10 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
 
     public AUnitType type() {
         return getType();
+    }
+
+    public boolean isRepairerOfAnyKind() {
+        return ARepairManager.isRepairerOfAnyKind(this);
     }
     
 }

@@ -646,6 +646,34 @@ public class Select<T> {
     }
 
     /**
+     * Selects these units (makes sense only for workers) who aren't assigned to construct anything.
+     */
+    public Select<T> notConstructing() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.isConstructing() || unit.isBuilder()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Selects these units which are not carrynig nor minerals, nor gas.
+     */
+    public Select<T> notCarrying() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.isCarryingGas()|| unit.isCarryingMinerals()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    /**
      * Selects only those units from current selection, which are both <b>capable of attacking</b> given unit
      * (e.g. Zerglings can't attack Overlord) and are <b>within shot range</b> to the given <b>unit</b>.
      */
@@ -783,7 +811,7 @@ public class Select<T> {
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
             if (unit.isConstructing() || unit.isRepairing() || AtlantisConstructionManager.isBuilder(unit)
-                    || AtlantisScoutManager.isScout(unit)) {
+                    || AtlantisScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()) {
                 unitIter.remove();
             }
         }

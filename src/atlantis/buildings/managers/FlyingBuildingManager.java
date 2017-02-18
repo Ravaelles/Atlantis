@@ -54,9 +54,9 @@ public class FlyingBuildingManager {
         }
         
         // Fly away from nearest tank if it's too close
-        AUnit tankTooNear = Select.ourTanks().nearestToOrNull(flyingBuilding, 3.7);
+        AUnit tankTooNear = Select.ourTanks().nearestToOrNull(flyingBuilding, 4.2);
         if (tankTooNear != null) {
-            return flyingBuilding.moveAwayFrom(tankTooNear.getPosition(), 1);
+            return flyingBuilding.moveAwayFrom(tankTooNear.getPosition(), 0.6);
         }
         
         return false;
