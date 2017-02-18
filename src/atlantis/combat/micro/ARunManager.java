@@ -37,10 +37,18 @@ public class ARunManager {
 
     // =========================================================
     private boolean makeUnitRun() {
-        if (unit == null || unit.isStuck()) {
-            markAsNotRunning();
+        if (unit == null) {
             return false;
-        } else if (runTo == null && !unit.isStartingAttack()) {
+        } 
+        else if (unit.isStuck()) {
+            unit.setTooltip("Stuck!!!");
+            if (unit.isMoving()) {
+                unit.stop();
+                markAsNotRunning();
+            }
+            return false;
+        }
+        else if (runTo == null) {
 //            AGame.sendMessage(unit + " RunTo empty, hold");
             if (!unit.type().isTank()) {
                 System.out.println(unit.getShortNamePlusId() + " RunTo empty");
@@ -50,6 +58,13 @@ public class ARunManager {
 //            }
 //            unit.holdPosition();
             markAsNotRunning();
+
+            if (unit.isMoving()) {
+                unit.holdPosition();
+            }
+            
+            unit.setTooltip("Where?!?");
+
             return false;
         } else {
 
@@ -92,30 +107,16 @@ public class ARunManager {
 
         // ===========================================
         // Define "center of gravity" for the set of enemies
-        APosition median;
+        APosition medianRunFrom;
         if (closeEnemies.size() <= maxEnemiesToRunFromNearestEnemy) {
-            median = Select.from(closeEnemies.list()).nearestTo(unit).getPosition();
+            medianRunFrom = Select.from(closeEnemies.list()).nearestTo(unit).getPosition();
         } else {
-            median = closeEnemies.median();
+            medianRunFrom = closeEnemies.median();
         }
+        medianRunFrom = medianRunFrom.makeValid();
 
-        median = median.makeValidFarFromBounds();
-
-//        // Define closest enemy
-//        AUnit nearestEnemy = Select.from(closeEnemies.list()).inRadius(4, unit).nearestTo(unit);
-//        
-//        // Create weighted "average" enemy position
-//        ArrayList<APosition> listToWeigh = new ArrayList<>();
-//        listToWeigh.add(median);
-//        if (nearestEnemy != null) {
-//            listToWeigh.add(median);
-////            listToWeigh.add(nearestEnemy.getPosition());
-//            listToWeigh.add(nearestEnemy.getPosition());
-//        }
-//        APosition weightedEnemyPosition = PositionOperationsHelper.getPositionMedian(listToWeigh);
-//        AtlantisPainter.paintCircleFilled(weightedEnemyPosition, 4, Color.Orange);
         // Run from given position
-        return runFrom(median);
+        return runFrom(medianRunFrom);
     }
 
     public boolean runFrom(Object unitOrPosition) {
@@ -414,7 +415,7 @@ public class ARunManager {
         if (unit.getType().isVulture()) {
             radius = 5;
         } else {
-            radius = 6;
+            radius = 5;
         }
 
         return Select.enemy().combatUnits().canAttack(unit, radius).units();
@@ -425,7 +426,7 @@ public class ARunManager {
      */
     private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
         double safetyRadiusSize = (unit.getType().getDimensionLeft() + unit.getType().getDimensionUp())
-                / 64 * 1.3;
+                / 64 * 1.35;
 
         Select<?> units = Select.ourRealUnits().inRadius(safetyRadiusSize, unit);
         List<AUnit> otherUnits = units.listUnits();
@@ -445,11 +446,14 @@ public class ARunManager {
             double minDist, double maxDist, boolean allowCornerPointsEtc) {
         boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) 
                 && AtlantisMap.isWalkable(position) && unit.hasPathTo(position)
-                && Select.all().inRadius(0.5, position).isEmpty()
+                && Select.all().inRadius(0.2, position).count() <= 1
                 //                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
                 //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
                 //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
                 && AtlantisMap.getGroundDistance(unit, position) <= maxDist;
+                ;
+        
+//        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
 
         if (isOkay && !allowCornerPointsEtc) {
             isOkay = AtlantisMap.isPositionFarFromAnyRegionPolygonPoint(unit);

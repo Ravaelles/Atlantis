@@ -22,7 +22,7 @@ public interface AtlantisUnitOrders {
     Unit u();
 
     AUnit unit();
-
+    
     // =========================================================
     default boolean attackUnit(AUnit target) {
         if (!unit().hasRangeToAttack(target, 0.05)) {
@@ -45,6 +45,7 @@ public interface AtlantisUnitOrders {
 //            System.out.println(unit().getID() + " attacks " + target.getShortName());
 //            AGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
             u().attack(target.u());
+            unit().setOrderWasIssued();
             return true;
         }
     }
@@ -58,6 +59,7 @@ public interface AtlantisUnitOrders {
             return true;
         } else {
             u().attack(target);
+            unit().setLastUnitActionNow();
             return true;
         }
     }
@@ -74,6 +76,7 @@ public interface AtlantisUnitOrders {
         boolean result = u().build(buildingType.ut(), buildTilePosition);
         unit().setUnitAction(UnitActions.BUILD);
         unit().setTooltip("Construct " + buildingType.getShortName());
+        unit().setLastUnitActionNow();
         return result;
     }
 
@@ -111,17 +114,23 @@ public interface AtlantisUnitOrders {
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
         unit().setUnitAction(unitAction);
         
-        if (unit().isMoving() && AGame.getTimeFrames() % 4 != 0) {
+//        if (unit().isMoving() && AGame.getTimeFrames() % 4 != 0) {
+//            return true;
+//        }
+//        
+//        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
+//            System.out.println(u().getID() + " MOVE at " + AGame.getTimeFrames());
+        if (!unit().isMoving() || AGame.getTimeFrames() % 4 != 0) {
+            u().move(target);
+            unit().setOrderWasIssued();
             return true;
         }
         
-        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
-//            System.out.println(u().getID() + " MOVE at " + AGame.getTimeFrames());
-            return u().move(target);
-        }
-        else {
-            return true;
-        }
+        return true;
+//        }
+//        else {
+//            return true;
+//        }
     }
 
     /**
@@ -191,6 +200,7 @@ public interface AtlantisUnitOrders {
         } else {
             unit().setUnitAction(UnitActions.GATHER_GAS);
         }
+        unit().setLastUnitActionNow();
 
         return u().gather(target.u());
     }
@@ -224,6 +234,7 @@ public interface AtlantisUnitOrders {
         else {
             unit().setUnitAction(UnitActions.REPAIR);
             if (unit().getTarget() == null || !unit().getTarget().equals(target) || !unit().isRepairing()) {
+                unit().setLastUnitActionNow();
                 return u().repair(target.u());
             }
             else {
@@ -277,6 +288,7 @@ public interface AtlantisUnitOrders {
      */
     default boolean siege() {
         unit().setUnitAction(UnitActions.SIEGE);
+        unit().setLastUnitActionNow();
         return u().siege();
     }
 
@@ -287,6 +299,7 @@ public interface AtlantisUnitOrders {
      */
     default boolean unsiege() {
         unit().setUnitAction(UnitActions.UNSIEGE);
+        unit().setLastUnitActionNow();
         return u().unsiege();
     }
 
@@ -326,6 +339,7 @@ public interface AtlantisUnitOrders {
      * been passed to Broodwar. See also unload, unloadAll, getLoadedUnits, isLoaded
      */
     default boolean load(AUnit target) {
+        unit().setLastUnitActionNow();
         return u().load(target.u());
     }
 
@@ -337,6 +351,7 @@ public interface AtlantisUnitOrders {
      * Broodwar. See also load, unloadAll, getLoadedUnits, isLoaded, canUnload, canUnloadAtPosition
      */
     default boolean unload(AUnit target) {
+        unit().setLastUnitActionNow();
         return u().unload(target.u());
     }
 
@@ -350,6 +365,7 @@ public interface AtlantisUnitOrders {
      * isLoaded, canUnloadAll, canUnloadAtPosition
      */
     default boolean unloadAll() {
+        unit().setLastUnitActionNow();
         return u().unloadAll();
     }
 
@@ -363,6 +379,7 @@ public interface AtlantisUnitOrders {
      * isLoaded, canUnloadAll, canUnloadAtPosition
      */
     default boolean unloadAll(APosition target) {
+        unit().setLastUnitActionNow();
         return u().unloadAll(target);
     }
 

@@ -24,6 +24,7 @@ public class AtlantisWorkerCommander {
 
         for (AUnit worker : Select.ourWorkers().listUnits()) {
             AtlantisWorkerManager.update(worker);
+            worker.setTooltip(worker.getFramesSinceLastOrderWasIssued()+ " ago");
         }
     }
 

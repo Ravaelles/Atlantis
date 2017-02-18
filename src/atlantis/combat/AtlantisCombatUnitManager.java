@@ -101,8 +101,10 @@ public class AtlantisCombatUnitManager {
      */
     private static boolean shouldNotDisturbUnit(AUnit unit) {
 //        return false;
-        return (unit.isAttackFrame() || unit.isStartingAttack()) &&
-                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
+//        return (unit.isAttackFrame() || unit.isStartingAttack()) &&
+//                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
+//        return (unit.isAttackFrame() || unit.isStartingAttack());
+        return (unit.isAttackFrame());
     }
 
     /**

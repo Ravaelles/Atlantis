@@ -45,6 +45,7 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
     private AUnitType _lastCachedType;
 
     private UnitAction unitAction;
+    private int _lastTimeOrderWasIssued = -1;
 
     // =========================================================
 
@@ -962,6 +963,14 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
 
     public boolean isRepairerOfAnyKind() {
         return ARepairManager.isRepairerOfAnyKind(this);
+    }
+    
+    public void setOrderWasIssued() {
+        _lastTimeOrderWasIssued = AGame.getTimeFrames();
+    }
+    
+    public int getFramesSinceLastOrderWasIssued() {
+        return AGame.getTimeFrames() - _lastTimeOrderWasIssued;
     }
     
 }

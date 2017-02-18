@@ -2,6 +2,7 @@ package atlantis.combat.micro;
 
 import atlantis.AGame;
 import atlantis.debug.APainter;
+import static atlantis.debug.APainter.paintCircle;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -17,12 +18,18 @@ public class AtlantisAvoidMeleeUnitsManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     public static boolean handleAvoidCloseMeleeUnits(AUnit unit) {
+        if (unit.getFramesSinceLastOrderWasIssued() <= 3) {
+            return true;
+        }
+        
+        // =========================================================
+        
         boolean isAllowedType = (unit.isGroundUnit() && unit.getType().isRangedUnit()) || unit.isWorker();
         boolean isHealthyAndHasManyHP = unit.getHitPoints() >= 60 && unit.getHPPercent() >= 100;
         
         Select<AUnit> enemyRealUnitsSelector = Select.enemyRealUnits().combatUnits();
         
-        APainter.paintTextCentered(unit, "" + unit.getID(), Color.Black);
+//        APainter.paintTextCentered(unit, "" + unit.getID(), Color.Black);
         
         if (isAllowedType && (!isHealthyAndHasManyHP || unit.isVulture())
                 && enemyRealUnitsSelector.inRadius(5, unit).count() > 0) {
@@ -74,7 +81,7 @@ public class AtlantisAvoidMeleeUnitsManager {
 
             Select<?> closeEnemies = enemyRealUnitsSelector.melee().inRadius(safetyDistance, unit);
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
-            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
+//            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
             if (closeEnemy != null) {
                 
                 double baseCriticalDistance = (unit.isVulture() ? 1.5 : 1.5);
@@ -85,11 +92,11 @@ public class AtlantisAvoidMeleeUnitsManager {
                 
                 double dangerousDistance = baseCriticalDistance + numberOfNearEnemiesBonus + archonBonus;
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
-                APainter.paintCircleFilled(unit.getPosition(), 11, Color.Yellow);
+//                APainter.paintCircleFilled(unit.getPosition(), 11, Color.Yellow);
                 
                 if (isEnemyDangerouslyClose && (unit.type().isMechanical() || unit.isWounded())) {
                     
-                    APainter.paintCircleFilled(unit.getPosition(), 11, Color.Blue);
+//                    APainter.paintCircleFilled(unit.getPosition(), 11, Color.Blue);
                     
                     boolean dontInterruptPendingAttack;
                     if (unit.isVulture()) {
@@ -109,8 +116,13 @@ public class AtlantisAvoidMeleeUnitsManager {
     //                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
     //                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);
     //                        unit.setTooltip("Melee-run " + closeEnemy.getShortName());
-                            unit.setTooltip("Melee-run (" + closeEnemy.getShortName() + ")");
+//                            unit.setTooltip("Melee-run (" + closeEnemy.getShortName() + ")");
+                            unit.setTooltip("Melee-run (" + String.format("%.1f", closeEnemy.distanceTo(unit)) + ")");
                             return true;
+                        }
+                        else {
+                            unit.setTooltip("Unable to run");
+                            return false;
                         }
                     }
                 }

@@ -32,7 +32,7 @@ import java.util.Objects;
 public class APosition extends Position implements Comparable<Position> {
     
 //    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 48;
+    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 32;
     
     private static final Map<Position, APosition> instances = new HashMap<>();
     
@@ -199,10 +199,12 @@ public class APosition extends Position implements Comparable<Position> {
         }
         
         if (somethingChanged) {
-            p = new APosition(px, py);
+//            p = new APosition(px, py);
+            return new APosition(px, py);
         }
-
-        return this;
+        else {
+            return this;
+        }
     }
     
     /**
@@ -232,10 +234,15 @@ public class APosition extends Position implements Comparable<Position> {
         }
         
         if (somethingChanged) {
-            p = new APosition(px, py);
+            APosition newPosition = new APosition(px, py);
+//            instances.put(p, newPosition);
+//            p 
+//            instances.put(p, newPosition);
+            return newPosition;
         }
-
-        return this;
+        else {
+            return this;
+        }
     }
 
     @Override

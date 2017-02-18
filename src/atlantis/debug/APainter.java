@@ -602,21 +602,21 @@ public class APainter {
             // =========================================================
             Color color = Color.Grey;
             if (unit.getUnitAction() != null) {
-                if (unit.getUnitAction().equals(UnitActions.MOVE)) {
-                    color = Color.Teal;
-                } else if (unit.getUnitAction().isAttacking()) {
-                    color = Color.Orange;
-                } else if (unit.getUnitAction().equals(UnitActions.RUN)) {
-                    color = Color.Brown;
-                } else if (unit.getUnitAction().equals(UnitActions.RETREAT)) {
-                    color = Color.Brown;
-                } else if (unit.getUnitAction().equals(UnitActions.HEAL)) {
-                    color = Color.Purple;
-                } else if (unit.getUnitAction().equals(UnitActions.BUILD)) {
-                    color = Color.Purple;
-                } else if (unit.getUnitAction().equals(UnitActions.REPAIR)) {
-                    color = Color.Purple;
-                }
+//                if (unit.getUnitAction().equals(UnitActions.MOVE)) {
+//                    color = Color.Teal;
+//                } else if (unit.getUnitAction().isAttacking()) {
+//                    color = Color.Orange;
+//                } else if (unit.getUnitAction().equals(UnitActions.RUN)) {
+//                    color = Color.Brown;
+//                } else if (unit.getUnitAction().equals(UnitActions.RETREAT)) {
+//                    color = Color.Brown;
+//                } else if (unit.getUnitAction().equals(UnitActions.HEAL)) {
+//                    color = Color.Purple;
+//                } else if (unit.getUnitAction().equals(UnitActions.BUILD)) {
+//                    color = Color.Purple;
+//                } else if (unit.getUnitAction().equals(UnitActions.REPAIR)) {
+//                    color = Color.Purple;
+//                }
 //            else if (unit.getUnitAction().equals(UnitActions.)) {
 //                color = Color.;
 //            }
