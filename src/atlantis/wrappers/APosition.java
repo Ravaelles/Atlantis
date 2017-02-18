@@ -1,6 +1,6 @@
 package atlantis.wrappers;
 
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
@@ -152,7 +152,7 @@ public class APosition extends Position implements Comparable<Position> {
      * Paint it on screen for testing.
      */
     public void paintIt(int widthTiles, int heightTiles, Color color) {
-        AtlantisPainter.paintRectangle(this, widthTiles * 32, heightTiles * 32, color);
+        APainter.paintRectangle(this, widthTiles * 32, heightTiles * 32, color);
     }
     
     // === High-abstraction ========================================

@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -118,7 +118,7 @@ public class AtlantisMap {
      */
     public static Chokepoint getChokepointForNaturalBase() {
         if (cached_naturalBaseChokepoint != null) {
-            AtlantisPainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
+            APainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
             return cached_naturalBaseChokepoint;
         }
         

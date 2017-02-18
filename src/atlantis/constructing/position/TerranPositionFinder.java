@@ -116,11 +116,11 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
-        if (nearestBase != null && nearestBase.distanceTo(position) <= 4.5) {
+        if (nearestBase != null && nearestBase.distanceTo(position) <= 1.7) {
             Collection<AUnit> mineralsInRange
-                    = (Collection<AUnit>) Select.minerals().inRadius(6, position).listUnits();
+                    = (Collection<AUnit>) Select.minerals().inRadius(3, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
-                if (mineral.distanceTo(position) <= 4) {
+                if (mineral.distanceTo(position) <= 2.5) {
                     _CONDITION_THAT_FAILED = "MINERAL TOO CLOSE";
                     return true;
                 }
@@ -131,6 +131,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
     private static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
         boolean canThisBuildingHaveAddon = building.canHaveAddon();
+        boolean isBase = building.isBase();
         
         // === Compare against existing buildings ========================================
         
@@ -138,16 +139,16 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             double distance = otherBuilding.getPosition().distanceTo(position);
 
             // Check for this building's addon if needed
-            if (canThisBuildingHaveAddon) {
-                if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(3, 0))) {
+            if (canThisBuildingHaveAddon && !isBase) {
+                if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(2, 0))) {
                     _CONDITION_THAT_FAILED = "MY_ADDON_COULDNT_BE_BUILT_HERE";
                     return true;
                 }
             }
 
             // Check for other buildings' addons
-            if (otherBuilding.canHaveAddon()) {
-                if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(-3, 0))) {
+            if (!isBase && otherBuilding.canHaveAddon()) {
+                if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(-2, 0))) {
                     _CONDITION_THAT_FAILED = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
                     return true;
                 }

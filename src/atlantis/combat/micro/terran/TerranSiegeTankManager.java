@@ -1,6 +1,6 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

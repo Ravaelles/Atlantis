@@ -4,7 +4,7 @@ import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.squad.Squad;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

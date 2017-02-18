@@ -3,7 +3,7 @@ package atlantis.combat.micro;
 import atlantis.AtlantisGame;
 import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

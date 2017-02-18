@@ -21,16 +21,54 @@ public class ARepairManager {
     
     // =========================================================
     
-    public static void updateUnitRepairer(AUnit repairer) {
+    public static boolean updateUnitRepairer(AUnit repairer) {
         AUnit unitToRepair = ARepairManager.getUnitToRepairFor(repairer);
-        if (unitToRepair != null) {
-            repairer.setTooltip("Repair " + unitToRepair.getShortNamePlusId());
-            repairer.repair(unitToRepair);
+        if (unitToRepair != null && unitToRepair.isAlive()) {
+            if (unitToRepair.getHPPercent() < 100) {
+                repairer.setTooltip("Repair " + unitToRepair.getShortNamePlusId());
+                repairer.repair(unitToRepair);
+                return true;
+            }
+            else {
+                repairer.setTooltip("Protect " + unitToRepair.getShortNamePlusId());
+            }
         }
         else {
             repairer.setTooltip("Null unit2repair");
             ARepairManager.removeUnitRepairer(repairer);
         }
+        
+        return handleRepairerWhenIdle(repairer);
+    }
+    
+    public static boolean updateBunkerRepairer(AUnit repairer) {
+        AUnit bunker = ARepairManager.getConstantBunkerToRepairFor(repairer);
+        if (bunker != null && bunker.isAlive()) {
+            if (bunker.getHPPercent() < 100) {
+                repairer.setTooltip("Repair " + bunker.getShortNamePlusId());
+                repairer.repair(bunker);
+                return true;
+            }
+            else {
+                repairer.setTooltip("Protect " + bunker.getShortNamePlusId());
+            }
+        }
+        else {
+            repairer.setTooltip("Null bunker");
+            ARepairManager.removeConstantBunkerRepairer(repairer);
+        }
+        
+        return handleRepairerWhenIdle(repairer);
+    }
+    
+    private static boolean handleRepairerWhenIdle(AUnit repairer) {
+        if (!repairer.isRepairing() || repairer.isIdle()) {
+            
+            // Try finding any repairable and wounded unit nearby
+            
+        }
+        
+        return false;
     }
     
     // =========================================================

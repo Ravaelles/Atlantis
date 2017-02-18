@@ -17,7 +17,7 @@ public class AtlantisAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackEnemyUnits(AUnit unit) {
-        AUnit enemyToAttack = AtlantisEnemyTargeting.defineBestEnemyToAttackFor(unit);
+        AUnit enemyToAttack = AEnemyTargeting.defineBestEnemyToAttackFor(unit);
         
         // =========================================================
         

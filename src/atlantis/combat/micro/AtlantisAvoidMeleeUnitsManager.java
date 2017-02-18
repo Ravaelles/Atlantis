@@ -17,7 +17,8 @@ public class AtlantisAvoidMeleeUnitsManager {
         boolean isAllowedType = (unit.isGroundUnit() && unit.getType().isRangedUnit()) || unit.isWorker();
         boolean isHealthyAndHasManyHP = unit.getHitPoints() >= 60 && unit.getHPPercent() >= 100;
         
-        if (isAllowedType && isHealthyAndHasManyHP) {
+        if (isAllowedType && isHealthyAndHasManyHP 
+                && Select.enemyRealUnits().combatUnits().inRadius(5, unit).count() > 0) {
             
             // === Define safety distance ==============================
 

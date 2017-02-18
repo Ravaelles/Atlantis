@@ -3,7 +3,7 @@ package atlantis;
 //import atlantis.buildings.AtlantisBuildingsCommander;
 import atlantis.buildings.managers.FlyingBuildingManager;
 import atlantis.combat.AtlantisCombatCommander;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.production.AtlantisProductionCommander;
 import atlantis.repair.AtlantisRepairCommander;
 import atlantis.scout.AtlantisScoutManager;
@@ -25,7 +25,7 @@ public class AtlantisGameCommander {
 
         // === Execute paint methods ========================================
         
-        AtlantisPainter.paint();
+        APainter.paint();
 
         // === Execute code of every Commander and Manager ==================
         

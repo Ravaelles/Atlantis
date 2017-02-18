@@ -2,7 +2,7 @@ package atlantis.buildings.managers;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.workers.AtlantisWorkerManager;
@@ -41,7 +41,7 @@ public class AtlantisGasManager {
             }
             
             int numberOfWorkersAssigned = AtlantisWorkerManager.getHowManyWorkersGatheringAt(gasBuilding);
-            AtlantisPainter.paintTextCentered(gasBuilding, "" + numberOfWorkersAssigned, Color.Green);
+            APainter.paintTextCentered(gasBuilding, "" + numberOfWorkersAssigned, Color.Green);
             
             // Assign when LOWER THAN MIN
             if (numberOfWorkersAssigned < minGasWorkersPerBuilding) {

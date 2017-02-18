@@ -258,7 +258,8 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
     // Compare type methods
     public boolean isAlive() {
 //        return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
-        return (!AtlantisEnemyUnits.isEnemyUnitDestroyed(this) && !AtlantisOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this));
+        return isExists() && (!AtlantisEnemyUnits.isEnemyUnitDestroyed(this) 
+                && !AtlantisOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this));
     }
 
     public boolean canBeHealed() {
@@ -335,6 +336,10 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
 
     public boolean isWounded() {
         return getHitPoints() < getMaxHP();
+    }
+
+    public boolean isExists() {
+        return u().exists();
     }
 
     public int getHP() {

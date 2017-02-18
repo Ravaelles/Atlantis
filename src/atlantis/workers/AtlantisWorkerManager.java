@@ -6,7 +6,7 @@ import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
 import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.repair.ARepairManager;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;

@@ -4,7 +4,7 @@ import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
 import atlantis.AtlantisViewport;
 import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
@@ -259,7 +259,7 @@ public class AtlantisScoutManager {
         scoutingAroundBaseLastPolygonPoint = goTo;
         scoutingAroundBaseWasInterrupted = false;
 
-        AtlantisPainter.paintLine(
+        APainter.paintLine(
                 scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Yellow
         );
 
@@ -294,7 +294,7 @@ public class AtlantisScoutManager {
         if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
             AtlantisGame.changeSpeedTo(1);
             AtlantisGame.changeSpeedTo(1);
-            AtlantisPainter.paintingMode = AtlantisPainter.MODE_FULL_PAINTING;
+            APainter.paintingMode = APainter.MODE_FULL_PAINTING;
         }
     }
 

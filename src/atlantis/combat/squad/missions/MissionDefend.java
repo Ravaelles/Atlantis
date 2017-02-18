@@ -1,7 +1,7 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.AtlantisGame;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -45,7 +45,7 @@ public class MissionDefend extends Mission {
         // =========================================================
         
         APosition focusPoint = getFocusPoint();
-        AtlantisPainter.paintLine(unit, focusPoint, Color.Purple);
+        APainter.paintLine(unit, focusPoint, Color.Purple);
         
         if (focusPoint == null) {
             System.err.println("Couldn't define choke point.");

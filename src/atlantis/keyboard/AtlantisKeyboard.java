@@ -2,7 +2,7 @@ package atlantis.keyboard;
 
 import atlantis.AtlantisConfig;
 import atlantis.AtlantisGame;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jnativehook.GlobalScreen;
@@ -72,17 +72,17 @@ public class AtlantisKeyboard implements NativeKeyListener {
 
             // Key "1"
             case 2: 
-                changePaintingMode(AtlantisPainter.MODE_NO_PAINTING);
+                changePaintingMode(APainter.MODE_NO_PAINTING);
                 break;
 
             // Key "2"
             case 3: 
-                changePaintingMode(AtlantisPainter.MODE_PARTIAL_PAINTING);
+                changePaintingMode(APainter.MODE_PARTIAL_PAINTING);
                 break;
 
             // Key "3"
             case 4: 
-                changePaintingMode(AtlantisPainter.MODE_FULL_PAINTING);
+                changePaintingMode(APainter.MODE_FULL_PAINTING);
                 break;
         }
     }
@@ -100,17 +100,17 @@ public class AtlantisKeyboard implements NativeKeyListener {
     // =========================================================
 
     private void changePaintingMode(int mode) {
-        AtlantisPainter.paintingMode = mode;
+        APainter.paintingMode = mode;
         
         String string;
         switch (mode) {
-            case AtlantisPainter.MODE_NO_PAINTING:
+            case APainter.MODE_NO_PAINTING:
                 string = "Paint mode #1: PAINTING DISABLED";
                 break;
-            case AtlantisPainter.MODE_PARTIAL_PAINTING:
+            case APainter.MODE_PARTIAL_PAINTING:
                 string = "Paint mode #2: PAINT ONLY INFO";
                 break;
-            case AtlantisPainter.MODE_FULL_PAINTING:
+            case APainter.MODE_FULL_PAINTING:
                 string = "Paint mode #3: FULL PAINT MODE";
                 break;
             default:

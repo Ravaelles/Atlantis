@@ -6,18 +6,22 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.PositionUtil;
 
-public class AtlantisEnemyTargeting {
+public class AEnemyTargeting {
 
     /**
      * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
+        Select<AUnit> enemySelector = Select.enemy();
+        if (enemySelector.inRadius(14, unit).count() == 0) {
+            return null;
+        }
+        
         boolean canAttackGround = unit.canAttackGroundUnits(); 
         boolean canAttackAir = unit.canAttackAirUnits(); 
         AUnit nearestEnemy = null;
         
-        Select<AUnit> enemySelector = Select.enemy();
         Select<AUnit> enemiesThatCanBeAttackedSelector = Select.enemy(canAttackGround, canAttackAir);
 
         // === Attack units nears main =============================

@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * Here you can include code that will draw extra informations over units etc.
  */
-public class AtlantisPainter {
+public class APainter {
 
     public static final int MODE_NO_PAINTING = 1;
     public static final int MODE_PARTIAL_PAINTING = 2;
@@ -557,7 +557,7 @@ public class AtlantisPainter {
                 paintCircle(unit, unitRadius - 3, Color.Blue);
                 paintCircle(unit, unitRadius - 2, Color.Blue);
                 if (unit.getTarget() != null) {
-                    AtlantisPainter.paintLine(unit.getPosition(), unit.getTarget().getPosition(), Color.Blue);
+                    APainter.paintLine(unit.getPosition(), unit.getTarget().getPosition(), Color.Blue);
                 }
             }
 //            // CONSTRUCTING

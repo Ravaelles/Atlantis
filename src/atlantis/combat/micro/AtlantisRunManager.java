@@ -2,7 +2,7 @@ package atlantis.combat.micro;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisGame;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -49,7 +49,7 @@ public class AtlantisRunManager {
 
             // Update last time run order was issued
             _updated_at = AtlantisGame.getTimeFrames();
-            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Orange);
+            APainter.paintLine(unit.getPosition(), runTo, Color.Orange);
             boolean hasMoved = unit.move(runTo, UnitActions.RUN_FROM_UNIT);
 
             // Make all other units very close to it run as well
@@ -59,10 +59,10 @@ public class AtlantisRunManager {
                 return true;
             } else {
                 APosition position = unit.getPosition();
-                AtlantisPainter.paintLine(position.translateByPixels(-26, -26), position.translateByPixels(25, 25), Color.Red);
-                AtlantisPainter.paintLine(position.translateByPixels(-25, -25), position.translateByPixels(26, 26), Color.Red);
-                AtlantisPainter.paintLine(position.translateByPixels(-26, 26), position.translateByPixels(25, -25), Color.Red);
-                AtlantisPainter.paintLine(position.translateByPixels(-25, 25), position.translateByPixels(26, -26), Color.Red);
+                APainter.paintLine(position.translateByPixels(-26, -26), position.translateByPixels(25, 25), Color.Red);
+                APainter.paintLine(position.translateByPixels(-25, -25), position.translateByPixels(26, 26), Color.Red);
+                APainter.paintLine(position.translateByPixels(-26, 26), position.translateByPixels(25, -25), Color.Red);
+                APainter.paintLine(position.translateByPixels(-25, 25), position.translateByPixels(26, -26), Color.Red);
                 markAsNotRunning();
                 return false;
             }

@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisUnitTypesHelper {
+public class AUnitTypesHelper {
 
     /**
      * Auxiliary function that ensures that damages units inflict are properly calculated.

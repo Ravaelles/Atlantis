@@ -26,7 +26,7 @@ public class AtlantisRepairCommander {
         // =========================================================
 
         for (AUnit bunkerRepairer : ARepairManager.repairersConstantToBunker.keySet()) {
-            ABunkerRepairManager.updateBunkerRepairer(bunkerRepairer);
+            ARepairManager.updateBunkerRepairer(bunkerRepairer);
         }
 
         for (AUnit unitRepairer : ARepairManager.repairersToUnit.keySet()) {

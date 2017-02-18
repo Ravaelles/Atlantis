@@ -3,7 +3,7 @@ package atlantis.constructing.position;
 import atlantis.AtlantisGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.debug.AtlantisPainter;
+import atlantis.debug.APainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
