@@ -21,8 +21,8 @@ public class TerranSiegeTankManager {
         
         // =========================================================
         
-        AUnit enemy = Select.enemy().combatUnits().canBeAttackedBy(tank).nearestTo(tank);
-        double distanceToEnemy = enemy != null ? tank.distanceTo(enemy) : -1;
+        AUnit nearestAttackableEnemy = Select.enemy().combatUnits().canBeAttackedBy(tank).nearestTo(tank);
+        double distanceToEnemy = nearestAttackableEnemy != null ? tank.distanceTo(nearestAttackableEnemy) : -1;
         
 //        String string = (enemy != null ? enemy.getShortName() : "NULL");
 //        if (enemy != null) {
@@ -35,10 +35,10 @@ public class TerranSiegeTankManager {
         // =========================================================
         
         if (!tank.isSieged()) {
-            return updateWhenUnsieged(tank, enemy, distanceToEnemy);
+            return updateWhenUnsieged(tank, nearestAttackableEnemy, distanceToEnemy);
         }
         else {
-            return updateWhenSieged(tank, enemy, distanceToEnemy);
+            return updateWhenSieged(tank, nearestAttackableEnemy, distanceToEnemy);
         }
         
 //        // =========================================================
@@ -69,7 +69,7 @@ public class TerranSiegeTankManager {
     /**
      * Not sieged
      */
-    private static boolean updateWhenUnsieged(AUnit tank, AUnit enemy, double distanceToEnemy) {
+    private static boolean updateWhenUnsieged(AUnit tank, AUnit nearestAttackableEnemy, double distanceToEnemy) {
         
         // === Siege on hold =======================================
         
@@ -82,14 +82,14 @@ public class TerranSiegeTankManager {
         
         // === Enemy is BUILDING ========================================
         
-        if (enemy != null) {
-            if (enemy.isBuilding()) {
-                return nearestEnemyIsBuilding(tank, enemy, distanceToEnemy);
+        if (nearestAttackableEnemy != null) {
+            if (nearestAttackableEnemy.isBuilding()) {
+                return nearestEnemyIsBuilding(tank, nearestAttackableEnemy, distanceToEnemy);
             } 
 
             // === Enemy is UNIT ========================================
             else if (Select.ourCombatUnits().inRadius(10, tank).count() >= 4) {
-                return nearestEnemyIsUnit(tank, enemy, distanceToEnemy);
+                return nearestEnemyIsUnit(tank, nearestAttackableEnemy, distanceToEnemy);
             }
         }
         
@@ -98,7 +98,7 @@ public class TerranSiegeTankManager {
     
     // =========================================================
     
-    private static boolean nearestEnemyIsBuilding(AUnit tank, AUnit enemy, double distanceToEnemy) {
+    private static boolean nearestEnemyIsBuilding(AUnit tank, AUnit nearestAttackableEnemy, double distanceToEnemy) {
         if (distanceToEnemy <= 10.3) {
             tank.siege();
             tank.setTooltip("Siege - building");

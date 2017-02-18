@@ -2,6 +2,7 @@ package atlantis.repair;
 
 import atlantis.AtlantisGame;
 import atlantis.buildings.managers.FlyingBuildingManager;
+import atlantis.combat.squad.missions.Missions;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -17,11 +18,11 @@ import java.util.Set;
 public class AtlantisRepairCommander {
 
     public static void update() {
-        if (AtlantisGame.getTimeFrames() % 20 == 0) {
+        if (AtlantisGame.getTimeFrames() % 15 == 0) {
             assignConstantBunkerRepairersIfNeeded();
         }
         
-        if (AtlantisGame.getTimeFrames() % 5 == 0) {
+        if (AtlantisGame.getTimeFrames() % 15 == 0) {
             assignUnitRepairersToWoundedUnits();
         }
         
@@ -68,6 +69,17 @@ public class AtlantisRepairCommander {
     }
 
     private static void assignConstantBunkerRepairersIfNeeded() {
+        
+        // If mission is not DEFEND, release all bunker repairers
+        if (!Missions.getGlobalMission().isMissionDefend()) {
+            for (AUnit bunkerRepairer : ARepairManager.getConstantBunkerRepairers()) {
+                ARepairManager.removeConstantBunkerRepairer(bunkerRepairer);
+            }
+            return;
+        }
+        
+        // =========================================================
+        
         Select<AUnit> bunkers = Select.ourUnitsOfType(AUnitType.Terran_Bunker);
         int bunkersCounter = bunkers.count();
 
@@ -77,7 +89,9 @@ public class AtlantisRepairCommander {
                 int numberOfCombatUnitsNearby = Select.ourCombatUnits().inRadius(6, bunker).count();
                 if (numberOfCombatUnitsNearby <= 7) {
                     int numberOfRepairersAssigned = ARepairManager.countConstantRepairersForBunker(bunker);
-                    assignConstantBunkerRepairers(bunker, 2 - numberOfRepairersAssigned);
+                    assignConstantBunkerRepairers(
+                            bunker, defineOptimalConstantBunkerRepairers() - numberOfRepairersAssigned
+                    );
                 }
             }
         }
@@ -104,6 +118,15 @@ public class AtlantisRepairCommander {
     }
     
     // =========================================================
+    
+    private static int defineOptimalConstantBunkerRepairers() {
+        if (Missions.isGlobalMissionDefend()) {
+            return 1 + (AtlantisGame.getTimeSeconds() > 230 ? 1 : 0);
+        }
+        else {
+            return 0;
+        }
+    }
     
     private static int defineOptimalRepairersForBunker(AUnit bunker) {
         int enemiesNearby = Select.enemy().combatUnits().inRadius(10, bunker).count();

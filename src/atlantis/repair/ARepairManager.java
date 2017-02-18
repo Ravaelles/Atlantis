@@ -1,6 +1,7 @@
 package atlantis.repair;
 
 import atlantis.AtlantisGame;
+import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
@@ -29,7 +30,7 @@ public class ARepairManager {
         AUnit unitToRepair = ARepairManager.getUnitToRepairFor(repairer);
         if (unitToRepair != null && unitToRepair.isAlive()) {
             if (unitToRepair.getHPPercent() < 100) {
-                repairer.setTooltip("Repair " + unitToRepair.getShortNamePlusId());
+                repairer.setTooltip("Repair " + unitToRepair.getShortName());
                 repairer.repair(unitToRepair);
                 return true;
             }
@@ -41,7 +42,7 @@ public class ARepairManager {
                     return true;
                 }
                 else {
-                    repairer.setTooltip("Protect " + unitToRepair.getShortNamePlusId());
+                    repairer.setTooltip("Protect");
                 }
             }
         }
@@ -51,6 +52,15 @@ public class ARepairManager {
             return true;
         }
         
+        // === Check if should stop being repairer =================
+        
+        if (!unitToRepair.isWounded() && countRepairersForUnit(unitToRepair) > 1) {
+            removeUnitRepairer(repairer);
+            return true;
+        }
+        
+        // =========================================================
+        
         return handleRepairerWhenIdle(repairer);
     }
     
@@ -58,24 +68,23 @@ public class ARepairManager {
         AUnit bunker = ARepairManager.getConstantBunkerToRepairFor(repairer);
         if (bunker != null && bunker.isAlive()) {
             if (bunker.getHPPercent() < 100) {
-                repairer.setTooltip("Repair " + bunker.getShortNamePlusId());
+                repairer.setTooltip("Repair " + bunker.getShortName());
                 repairer.repair(bunker);
                 return true;
             }
             else {
                 double distanceToUnit = bunker.distanceTo(repairer);
                 if (distanceToUnit > 1) {
-                    repairer.setTooltip("Go to " + bunker.getShortNamePlusId());
+                    repairer.setTooltip("Go to " + bunker.getShortName());
                     repairer.move(bunker.getPosition(), UnitActions.MOVE_TO_REPAIR);
                     return true;
                 }
                 else {
-                    repairer.setTooltip("Protect " + bunker.getShortNamePlusId());
+                    repairer.setTooltip("Protect " + bunker.getShortName());
                 }
             }
         }
         else {
-            System.err.println("Bunker is alive: " + bunker.isAlive() + ": " + bunker.isExists());
             repairer.setTooltip("Null bunker");
             ARepairManager.removeConstantBunkerRepairer(repairer);
             return true;
@@ -86,9 +95,11 @@ public class ARepairManager {
     
     private static boolean handleRepairerWhenIdle(AUnit repairer) {
         if (!repairer.isRepairing() || repairer.isIdle()) {
+            int maxAllowedDistToRoam = Missions.getGlobalMission().isMissionDefend() ? 3 : 8;
             
             // Try finding any repairable and wounded unit nearby
-            AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(3, repairer).nearestTo(repairer);
+            AUnit nearestWoundedUnit = Select.our().repairable(true)
+                    .inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null) {
                 repairer.repair(nearestWoundedUnit);
                 return true;

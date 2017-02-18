@@ -32,8 +32,8 @@ public class AtlantisCombatCommander {
     private static void handleSquad(Squad squad) {
 
         // Make sure this battle squad has up-to-date strategy
-        if (!Missions.getCurrentGlobalMission().equals(squad.getMission())) {
-            squad.setMission(Missions.getCurrentGlobalMission());
+        if (!Missions.getGlobalMission().equals(squad.getMission())) {
+            squad.setMission(Missions.getGlobalMission());
         }
 
         // =========================================================

@@ -37,7 +37,7 @@ public class FlyingBuildingManager {
     private static boolean updateFlyingBuilding(AUnit flyingBuilding) {
         
         // Define focus point for current mission
-        Mission currentMission = Missions.getCurrentGlobalMission();
+        Mission currentMission = Missions.getGlobalMission();
         APosition focusPoint = currentMission.getFocusPoint();
         
         // Move towards focus point if needed

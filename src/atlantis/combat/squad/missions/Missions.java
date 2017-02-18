@@ -111,8 +111,16 @@ public class Missions {
      * Global mission is the military stance that all non-special battle squads should follow and it should
      * always correspond to the mission of our main Alpha battle squad.
      */
-    public static Mission getCurrentGlobalMission() {
+    public static Mission getGlobalMission() {
         return currentGlobalMission;
+    }
+
+    public static boolean isGlobalMissionDefend() {
+        return getGlobalMission().isMissionDefend();
+    }
+
+    public static boolean isGlobalMissionAttack() {
+        return getGlobalMission().isMissionAttack();
     }
 
 }
