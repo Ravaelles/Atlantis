@@ -1,7 +1,7 @@
 package atlantis.information;
 
 import atlantis.Atlantis;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;

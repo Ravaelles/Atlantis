@@ -1,6 +1,6 @@
 package atlantis.repair;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -156,7 +156,7 @@ public class ARepairManager {
         }
         bunkersToRepairers.get(bunker).add(repairer);
         
-        AtlantisGame.sendMessage("Repairer for bunker");
+        AGame.sendMessage("Repairer for bunker");
     }
     
     public static void addUnitRepairer(AUnit repairer, AUnit unitToRepair) {
@@ -165,7 +165,7 @@ public class ARepairManager {
             unitsToRepairers.put(unitToRepair, new ArrayList<>());
         }
         unitsToRepairers.get(unitToRepair).add(repairer);
-        AtlantisGame.sendMessage("Repairer for " + unitToRepair.getShortName());
+        AGame.sendMessage("Repairer for " + unitToRepair.getShortName());
     }
 
     public static int countConstantRepairersForBunker(AUnit bunker) {

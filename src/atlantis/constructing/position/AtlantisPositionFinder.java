@@ -1,6 +1,6 @@
 package atlantis.constructing.position;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
@@ -70,7 +70,7 @@ public class AtlantisPositionFinder {
 
             // If we didn't specify location where to build, build somewhere near the main base
             if (nearTo == null) {
-                if (AtlantisGame.playsAsZerg()) {
+                if (AGame.playsAsZerg()) {
 //                    nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
                     nearTo = Select.mainBase().getPosition();
                 }
@@ -114,17 +114,17 @@ public class AtlantisPositionFinder {
         // ===========================================================
         
         // Terran
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         } // Protoss
-        else if (AtlantisGame.playsAsProtoss()) {
+        else if (AGame.playsAsProtoss()) {
             return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         } // Zerg
-        else if (AtlantisGame.playsAsZerg()) {
+        else if (AGame.playsAsZerg()) {
             return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }
         else {
-            System.err.println("Invalid race: " + AtlantisGame.getPlayerUs().getRace());
+            System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
             System.exit(-1);
             return null;
         }

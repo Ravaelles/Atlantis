@@ -1,6 +1,6 @@
 package atlantis.constructing;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.constructing.position.TerranAddonManager;
 import atlantis.production.ProductionOrder;
@@ -31,7 +31,7 @@ public class AtlantisSpecificConstructionManager {
     // === Terran ========================================    
 
     private static boolean handledTerranSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (!AtlantisGame.playsAsTerran()) {
+        if (!AGame.playsAsTerran()) {
             return false;
         }
         
@@ -46,7 +46,7 @@ public class AtlantisSpecificConstructionManager {
     // === Zerg ========================================
 
     private static boolean handledZergSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (!AtlantisGame.playsAsZerg()) {
+        if (!AGame.playsAsZerg()) {
             return false;
         }
         

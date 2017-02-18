@@ -1,6 +1,6 @@
 package atlantis.workers;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.micro.AbstractMicroManager;
 import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
 import atlantis.constructing.AtlantisBuilderManager;

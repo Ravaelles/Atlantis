@@ -21,7 +21,7 @@ public class AtlantisGameCommander {
      * frame).
      */
     public void update() {
-//        System.out.println("Frame: " + AtlantisGame.getTimeFrames());
+//        System.out.println("Frame: " + AGame.getTimeFrames());
 
         // === Execute paint methods ========================================
         
@@ -37,14 +37,14 @@ public class AtlantisGameCommander {
 
         // === Terran only ==================================================
 
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             FlyingBuildingManager.update();
             AtlantisRepairCommander.update();
         }
 
         // === Handle UMT ===================================================
         
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             AUnit unit = Select.ourCombatUnits().first();
             if (unit != null) {
                 AtlantisViewport.centerScreenOn(unit);

@@ -1,7 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.squad.Squad;
 import atlantis.debug.APainter;
@@ -68,7 +68,7 @@ public abstract class AbstractMicroManager {
      * If unit is severly wounded, it should run.
      */
     protected boolean handleLowHealthIfNeeded(AUnit unit) {
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             if (unit.getHP() <= 7) {
                 AUnit rendezvousWithMedics = (AUnit) Select.ourBuildings().ofType(AtlantisConfig.BARRACKS).first();
                 if (rendezvousWithMedics != null && rendezvousWithMedics.distanceTo(unit) > 5) {

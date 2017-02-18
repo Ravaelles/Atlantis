@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * (from our point of view), game speed, enemy player etc.<br />
  * <br /><b>It's worth to study this class carefully as it contains some really useful methods.</b>
  */
-public class AtlantisGame {
+public class AGame {
 
     private static boolean umtMode = false; // Should be set to `true` on UMT (custom) maps
     private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
@@ -245,7 +245,7 @@ public class AtlantisGame {
      * UMT maps are custom made maps, which may be used to test micro-management.
      */
     public static void setUmtMode(boolean umtMode) {
-        AtlantisGame.umtMode = umtMode;
+        AGame.umtMode = umtMode;
         if (umtMode) {
             System.out.println();
             System.out.println("### UMT mode enabled! ###");
@@ -287,21 +287,21 @@ public class AtlantisGame {
      * Returns true if enemy plays as Terran.
      */
     public static boolean isEnemyTerran() {
-        return AtlantisGame.enemy().getRace().equals(Race.Terran);
+        return AGame.enemy().getRace().equals(Race.Terran);
     }
 
     /**
      * Returns true if enemy plays as Protoss.
      */
     public static boolean isEnemyProtoss() {
-        return AtlantisGame.enemy().getRace().equals(Race.Protoss);
+        return AGame.enemy().getRace().equals(Race.Protoss);
     }
 
     /**
      * Returns true if enemy plays as Zerg.
      */
     public static boolean isEnemyZerg() {
-        return AtlantisGame.enemy().getRace().equals(Race.Zerg);
+        return AGame.enemy().getRace().equals(Race.Zerg);
     }
 
     /**

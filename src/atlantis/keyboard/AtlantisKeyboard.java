@@ -1,7 +1,7 @@
 package atlantis.keyboard;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.debug.APainter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,19 +47,19 @@ public class AtlantisKeyboard implements NativeKeyListener {
             
             // Key "PauseBreak"
             case 3653:
-                AtlantisGame.pauseModeToggle();
-                System.out.println("Notice: " + (AtlantisGame.isPaused() ? "" : "UN") + "PAUSED");
+                AGame.pauseModeToggle();
+                System.out.println("Notice: " + (AGame.isPaused() ? "" : "UN") + "PAUSED");
                 break;
             
             // Keys "-" and NumPad "-"
             case 12: case 3658:
-                AtlantisGame.changeSpeedBy(+20);
+                AGame.changeSpeedBy(+20);
                 System.out.println("Notice: SPEED SLOWER (" + AtlantisConfig.GAME_SPEED + ")");
                 break;
 
             // Keys "+" and NumPad "+"
             case 13: case 3662: 
-                AtlantisGame.changeSpeedBy(-20);
+                AGame.changeSpeedBy(-20);
                 System.out.println("Notice: SPEED FASTER (" + AtlantisConfig.GAME_SPEED + ")");
                 break;
 
@@ -118,7 +118,7 @@ public class AtlantisKeyboard implements NativeKeyListener {
                 break;
         }
         
-        AtlantisGame.sendMessage(string);
+        AGame.sendMessage(string);
     }
     
 }

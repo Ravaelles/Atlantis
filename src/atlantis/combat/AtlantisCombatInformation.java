@@ -1,6 +1,6 @@
 package atlantis.combat;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.units.AUnit;
 
 /**
@@ -23,12 +23,12 @@ public class AtlantisCombatInformation {
      * Caches combat eval of this unit for the time of one frame.
      */
     public void updateCombatEval(double eval) {
-        _lastTimeCombatEval = AtlantisGame.getTimeFrames();
+        _lastTimeCombatEval = AGame.getTimeFrames();
         _lastCombatEval = eval;
     }
 
     public double getCombatEvalCachedValueIfNotExpired() {
-        if (AtlantisGame.getTimeFrames() <= _lastTimeCombatEval) {
+        if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
             return _lastCombatEval;
         } else {
             return (int) -123456;

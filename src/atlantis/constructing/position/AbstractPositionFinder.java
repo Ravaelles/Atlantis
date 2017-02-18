@@ -1,7 +1,7 @@
 package atlantis.constructing.position;
 
 import atlantis.Atlantis;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
@@ -77,7 +77,7 @@ public abstract class AbstractPositionFinder {
                     && !builder.equals(constructionOrder.getBuilder())) {
                 if (constructionOrder.getPositionToBuild() != null) {
                     double distance = PositionUtil.distanceTo(constructionOrder.getPositionToBuild(), position);
-                    boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AtlantisGame.playsAsZerg()
+                    boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AGame.playsAsZerg()
                             && building.isBase() && constructionOrder.getBuildingType().isBase());
                     
                     // Look for two bases that would be built too close one to another

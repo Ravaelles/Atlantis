@@ -21,7 +21,7 @@ public class UnitActions {
     public static final UnitAction PATROL = new UnitAction();
     public static final UnitAction REPAIR = new UnitAction();
     public static final UnitAction RETREAT = new UnitAction(false, true);
-    public static final UnitAction RUN_FROM_UNIT = new UnitAction(false, true);
+    public static final UnitAction RUN = new UnitAction(false, true);
     public static final UnitAction RIGHT_CLICK = new UnitAction();
     public static final UnitAction SIEGE = new UnitAction();
     public static final UnitAction STICK_CLOSER = new UnitAction();

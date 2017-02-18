@@ -1,6 +1,6 @@
 package atlantis.wrappers;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.production.ProductionOrder;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -41,13 +41,13 @@ public class AtlantisTech {
      * Returns level of given upgrade. 0 is initially, it can raise up to 3.
      */
     public static int getUpgradeLevel(UpgradeType upgrade) {
-        return AtlantisGame.getPlayerUs().getUpgradeLevel(upgrade);
+        return AGame.getPlayerUs().getUpgradeLevel(upgrade);
     }
     
     // =========================================================
 
     private static boolean isResearchedTech(TechType tech) {
-        return AtlantisGame.getPlayerUs().hasResearched(tech);
+        return AGame.getPlayerUs().hasResearched(tech);
     }
     
     private static boolean isResearchedUpgrade(UpgradeType upgrade, int expectedUpgradeLevel) {

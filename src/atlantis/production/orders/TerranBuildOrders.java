@@ -1,7 +1,7 @@
 package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.production.AtlantisWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -51,7 +51,7 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
         
 //        boolean shouldProduceTanks = Select.ourTanks().count() < 30;
 //        
-//        if (AtlantisGame.canAfford(400, 0) && !AtlantisGame.canAfford(0, 200)) {
+//        if (AGame.canAfford(400, 0) && !AGame.canAfford(0, 200)) {
 //            units.add(AUnitType.Terran_Vulture);
 //            units.add(AUnitType.Terran_Vulture);
 //        }

@@ -1,6 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -62,7 +62,7 @@ public class AEnemyTargeting {
         
         // =========================================================
         // Attack nearest enemy
-        if (AtlantisGame.getTimeSeconds() < 180) {
+        if (AGame.getTimeSeconds() < 180) {
             nearestEnemy = Select.enemyRealUnits()
                     .canBeAttackedBy(unit)
                     .nearestTo(unit);

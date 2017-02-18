@@ -1,6 +1,6 @@
 package atlantis.combat.squad.missions;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.debug.APainter;
 import atlantis.information.AtlantisMap;
 import atlantis.units.AUnit;
@@ -31,7 +31,7 @@ public class MissionDefend extends Mission {
         
         // === Handle UMT ==========================================
         
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             return false;
         }
 
@@ -177,7 +177,7 @@ public class MissionDefend extends Mission {
         
         // === Handle UMT ==========================================
         
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             return null;
         }
         

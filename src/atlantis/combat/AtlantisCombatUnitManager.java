@@ -1,6 +1,6 @@
 package atlantis.combat;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.micro.terran.TerranSiegeTankManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.combat.squad.Squad;
@@ -15,7 +15,7 @@ public class AtlantisCombatUnitManager {
 
     protected static boolean update(AUnit unit) {
 //        unit.removeTooltip();
-        unit.setTooltip("Commander:" + AtlantisGame.getTimeFrames());
+        unit.setTooltip("Commander:" + AGame.getTimeFrames());
 //        System.out.println("  Manager (" + (unit.getSquad() != null) + "): " + unit + " / " + unit.getTooltip());
         
         // =========================================================

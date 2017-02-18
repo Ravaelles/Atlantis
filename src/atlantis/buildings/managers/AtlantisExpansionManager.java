@@ -1,7 +1,7 @@
 package atlantis.buildings.managers;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import static atlantis.constructing.AtlantisConstructionManager.requestConstructionOf;
 import atlantis.constructing.ConstructionOrderStatus;
@@ -22,21 +22,21 @@ public class AtlantisExpansionManager {
 //            return;
 //        }
 
-        if (AtlantisGame.playsAsZerg() && !AtlantisGame.hasMinerals(1300)) {
+        if (AGame.playsAsZerg() && !AGame.hasMinerals(1300)) {
             return;
         }
         
-        int minMinerals = 100 + (AtlantisGame.playsAsZerg() ? 268 : 356);
+        int minMinerals = 100 + (AGame.playsAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AtlantisGame.hasMinerals(minMinerals)) {
+        if (!AGame.hasMinerals(minMinerals)) {
             return;
         }
 
         // If there're still things to produce, don't auto-expand.
         ArrayList<ProductionOrder> nextOrders
                 = AtlantisBuildOrdersManager.getBuildOrders().getProductionQueueNext(5);
-        if (nextOrders.size() >= 3 && !AtlantisGame.hasMinerals(minMinerals + 50)) {
+        if (nextOrders.size() >= 3 && !AGame.hasMinerals(minMinerals + 50)) {
             return;
         }
         
@@ -46,7 +46,7 @@ public class AtlantisExpansionManager {
                 + AtlantisConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
         
         // Enforce too have a lot of tanks before expansion
-        if (AtlantisGame.playsAsTerran() && numberOfBases >= 2) {
+        if (AGame.playsAsTerran() && numberOfBases >= 2) {
             if (Select.ourTanks().count() <= 8) {
                 return;
             }
@@ -62,18 +62,18 @@ public class AtlantisExpansionManager {
         int numberOfUnfinishedBases
                 = AtlantisConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
 
-        boolean haveEnoughMinerals = AtlantisGame.hasMinerals(minMinerals);
+        boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
         boolean haveEnoughBases = numberOfBases >= 7
-                && AtlantisGame.playsAsZerg() && Select.ourLarva().count() >= 2;
+                && AGame.playsAsZerg() && Select.ourLarva().count() >= 2;
         boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
-        boolean allowExtraExpansion = AtlantisGame.hasMinerals(minMinerals + 200)
+        boolean allowExtraExpansion = AGame.hasMinerals(minMinerals + 200)
                 && numberOfUnfinishedBases <= 1;
 
         // Check if it makes sense to request new base
         if (haveEnoughMinerals && !haveEnoughBases && (noBaseToConstruct || allowExtraExpansion)) {
             
             // ZERG case
-            if (AtlantisGame.playsAsZerg() && AtlantisGame.hasMinerals(minMinerals)) {
+            if (AGame.playsAsZerg() && AGame.hasMinerals(minMinerals)) {
                 ProductionOrder fakeProductionOrder = new ProductionOrder(AtlantisConfig.BASE);
                 fakeProductionOrder.setModifier(ProductionOrder.BASE_POSITION_MAIN);
                 

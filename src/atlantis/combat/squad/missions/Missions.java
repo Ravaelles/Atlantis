@@ -1,6 +1,6 @@
 package atlantis.combat.squad.missions;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.units.Select;
 
 /**
@@ -30,14 +30,14 @@ public class Missions {
         
         // === Handle UMT ==========================================
         
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             return;
         }
 
         // =========================================================
         if (currentGlobalMission == Missions.DEFEND) {
             if (canChangeMissionToAttack()) {
-//                if (AtlantisGame.playsAsTerran()) {
+//                if (AGame.playsAsTerran()) {
 //                    if (Select.our().countUnitsOfType(AUnitType.UnitTypes.Terran_Medic) < 4) {
 //                        return;
 //                    }
@@ -45,7 +45,7 @@ public class Missions {
                 currentGlobalMission = Missions.ATTACK;
             }
         } else if (currentGlobalMission == Missions.ATTACK) {
-            if (AtlantisGame.getTimeSeconds() > 350 && Select.ourCombatUnits().count() <= 5) {
+            if (AGame.getTimeSeconds() > 350 && Select.ourCombatUnits().count() <= 5) {
                 currentGlobalMission = Missions.DEFEND;
             }
         }
@@ -59,11 +59,11 @@ public class Missions {
     private static int defineMinUnitsToForFirstAttack() {
 
         // We're TERRAN
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             return 6;
         } // =========================================================
         // We're PROTOSS
-        else if (AtlantisGame.playsAsProtoss()) {
+        else if (AGame.playsAsProtoss()) {
             return 2;
         } // =========================================================
         // We're ZERG
@@ -76,7 +76,7 @@ public class Missions {
         
         // === Terran ========================================
         
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             if (Select.ourTanks().count() < 4) {
                 return false;
             }
@@ -97,7 +97,7 @@ public class Missions {
         
         // === Handle UMT ==========================================
         
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             return Missions.UMT;
         }
         

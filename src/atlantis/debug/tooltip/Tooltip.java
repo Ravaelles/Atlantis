@@ -1,6 +1,6 @@
 package atlantis.debug.tooltip;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.units.AUnit;
 
 
@@ -21,11 +21,11 @@ public class Tooltip {
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
-        this.tooltipStartInFrames = AtlantisGame.getTimeFrames();
+        this.tooltipStartInFrames = AGame.getTimeFrames();
     }
 
     public String getTooltip() {
-        if (AtlantisGame.getTimeFrames() - tooltipStartInFrames > 30) {
+        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
             String tooltipToReturn = this.tooltip;
             this.removeTooltip();
             return tooltipToReturn;

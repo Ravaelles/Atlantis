@@ -1,7 +1,7 @@
 package atlantis.workers;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.buildings.managers.AtlantisGasManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -31,12 +31,12 @@ public class AtlantisWorkerCommander {
     public static boolean shouldTrainWorkers(boolean checkSupplyAndMinerals) {
 
         // Check MINERALS
-        if (checkSupplyAndMinerals && AtlantisGame.getMinerals() < 50) {
+        if (checkSupplyAndMinerals && AGame.getMinerals() < 50) {
             return false;
         }
 
         // Check FREE SUPPLY
-        if (checkSupplyAndMinerals && AtlantisGame.getSupplyFree() == 0) {
+        if (checkSupplyAndMinerals && AGame.getSupplyFree() == 0) {
             return false;
         }
 
@@ -53,10 +53,10 @@ public class AtlantisWorkerCommander {
         }
 
         // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
-//        if (!AtlantisGame.getBuildOrders().shouldProduceNow(AtlantisConfig.WORKER)) {
+//        if (!AGame.getBuildOrders().shouldProduceNow(AtlantisConfig.WORKER)) {
 //            return false;
 //        }
-//        if (!AtlantisGame.getBuildOrders().getThingsToProduceRightNow(true).isEmpty()) {
+//        if (!AGame.getBuildOrders().getThingsToProduceRightNow(true).isEmpty()) {
 //            return false;
 //        }
         // // Check if not TOO MANY WORKERS
@@ -74,7 +74,7 @@ public class AtlantisWorkerCommander {
     private static void transferWorkersBetweenBasesIfNeeded() {
 
         // Don't run every frame
-        if (AtlantisGame.getTimeFrames() % 3 != 0) {
+        if (AGame.getTimeFrames() % 3 != 0) {
             return;
         }
 

@@ -1,8 +1,8 @@
 package atlantis.units;
 
 import atlantis.Atlantis;
-import atlantis.AtlantisGame;
-import atlantis.combat.micro.AtlantisRunManager;
+import atlantis.AGame;
+import atlantis.combat.micro.ARunManager;
 import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AtlantisConstructionManager;
@@ -88,6 +88,9 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
                 AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
                 AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
         );
+        
+        // Cached type helpers
+        _isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
     }
 
     // =========================================================
@@ -148,13 +151,14 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
     // =========================================================
 
     private Squad squad = null;
-    private AtlantisRunManager runManager = new AtlantisRunManager(this);
+    private ARunManager runManager = new ARunManager(this);
     private int lastUnitAction = 0;
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
     private boolean _isMilitaryBuildingAntiGround = false;
     private boolean _isMilitaryBuildingAntiAir = false;
+    private boolean _isWorker;
     private double _lastCombatEval;
     private int _lastTimeCombatEval = 0;
 
@@ -283,7 +287,7 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
     }
 
     public boolean isWorker() {
-        return isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
+        return _isWorker;
     }
 
     public boolean isBunker() {
@@ -413,11 +417,11 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
-//        this.tooltipStartInFrames = AtlantisGame.getTimeFrames();
+//        this.tooltipStartInFrames = AGame.getTimeFrames();
     }
 
     public String getTooltip() {
-//        if (AtlantisGame.getTimeFrames() - tooltipStartInFrames > 30) {
+//        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
 //            String tooltipToReturn = this.tooltip;
 //            this.tooltip = null;
 //            return tooltipToReturn;
@@ -598,7 +602,7 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
     /**
      * Returns AtlantisRunning object for this unit.
      */
-    public AtlantisRunManager getRunManager() {
+    public ARunManager getRunManager() {
         return runManager;
     }
 
@@ -620,14 +624,14 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
      * Returns the frames counter (time) since the unit had been issued any command.
      */
     public int getLastUnitActionWasFramesAgo() {
-        return AtlantisGame.getTimeFrames() - lastUnitAction;
+        return AGame.getTimeFrames() - lastUnitAction;
     }
 
     /**
      * Indicate that in this frame unit received some command (attack, move etc).
      */
     public void setLastUnitActionNow() {
-        this.lastUnitAction = AtlantisGame.getTimeFrames();
+        this.lastUnitAction = AGame.getTimeFrames();
     }
 
     /**
@@ -648,12 +652,12 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
      * Caches combat eval of this unit for the time of one frame.
      */
     public void updateCombatEval(double eval) {
-        _lastTimeCombatEval = AtlantisGame.getTimeFrames();
+        _lastTimeCombatEval = AGame.getTimeFrames();
         _lastCombatEval = eval;
     }
 
     public double getCombatEvalCachedValueIfNotExpired() {
-        if (AtlantisGame.getTimeFrames() <= _lastTimeCombatEval) {
+        if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
             return _lastCombatEval;
         } else {
             return (int) -123456;
@@ -711,29 +715,29 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemyUnit() {
-//        return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
-        return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
+//        return getPlayer().isEnemy(AGame.getPlayerUs());
+        return getPlayer().isEnemy(AGame.getPlayerUs());
     }
 
     /**
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemy() {
-        return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
+        return getPlayer().isEnemy(AGame.getPlayerUs());
     }
 
     /**
      * Returns true if this unit belongs to us.
      */
     public boolean isOurUnit() {
-        return getPlayer().equals(AtlantisGame.getPlayerUs());
+        return getPlayer().equals(AGame.getPlayerUs());
     }
 
     /**
      * Returns true if this unit is neutral (minerals, geysers, critters).
      */
     public boolean isNeutralUnit() {
-        return getPlayer().equals(AtlantisGame.getNeutralPlayer());
+        return getPlayer().equals(AGame.getNeutralPlayer());
     }
 
     /**
@@ -940,7 +944,8 @@ public class AUnit extends APositionedObject implements Comparable, AtlantisUnit
     
     public boolean isUnitActionMove() {
         return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_BUILD 
-                || unitAction == UnitActions.MOVE_TO_REPAIR;
+                || unitAction == UnitActions.MOVE_TO_REPAIR || unitAction == UnitActions.RETREAT
+                || unitAction == UnitActions.STICK_CLOSER || unitAction == UnitActions.RUN;
     }
     
     public void setUnitAction(UnitAction unitAction) {

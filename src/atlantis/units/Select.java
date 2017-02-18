@@ -2,7 +2,7 @@ package atlantis.units;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.information.UnitData;
 import atlantis.repair.ARepairManager;
@@ -53,8 +53,8 @@ public class Select<T> {
     private static List<AUnit> ourUnits() {
         List<AUnit> data = new ArrayList<>();
 
-//        System.out.println("AtlantisGame.getPlayerUs().getUnits() = " + AtlantisGame.getPlayerUs().getUnits().size());
-        for (Unit u : AtlantisGame.getPlayerUs().getUnits()) {
+//        System.out.println("AGame.getPlayerUs().getUnits() = " + AGame.getPlayerUs().getUnits().size());
+        for (Unit u : AGame.getPlayerUs().getUnits()) {
 //            System.out.println(u);
 //            System.out.println("******** " + AUnit.createFrom(u));
             data.add(AUnit.createFrom(u));
@@ -69,9 +69,9 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         // === Handle UMT ==========================================
-        if (AtlantisGame.isUmtMode()) {
-            Player playerUs = AtlantisGame.getPlayerUs();
-            for (Player player : AtlantisGame.getPlayers()) {
+        if (AGame.isUmtMode()) {
+            Player playerUs = AGame.getPlayerUs();
+            for (Player player : AGame.getPlayers()) {
                 if (player.isEnemy(playerUs)) {
                     for (Unit u : player.getUnits()) {
                         AUnit unit = AUnit.createFrom(u);
@@ -85,7 +85,7 @@ public class Select<T> {
 
         // === Non-UMT, standard 1:1 ===============================
         else {
-            for (Unit u : AtlantisGame.getEnemy().getUnits()) {
+            for (Unit u : AGame.getEnemy().getUnits()) {
                 AUnit unit = AUnit.createFrom(u);
                 if (!unit.getType().isSpecial()) {
                     data.add(unit);
@@ -751,14 +751,14 @@ public class Select<T> {
      * Selects all of our bases.
      */
     public static Select<AUnit> ourBases() {
-//        if (AtlantisGame.playsAsZerg()) {
+//        if (AGame.playsAsZerg()) {
 //            return (Select<AUnit>) ourIncludingUnfinished().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, 
 //                    AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
 //        }
 //        else {
 //            return (Select<AUnit>) ourIncludingUnfinished().ofType(AtlantisConfig.BASE);
 //        }
-        if (AtlantisGame.playsAsZerg()) {
+        if (AGame.playsAsZerg()) {
             return (Select<AUnit>) our().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
                     AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
         } else {

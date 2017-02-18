@@ -1,6 +1,6 @@
 package atlantis.combat;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.missions.Missions;
@@ -12,7 +12,7 @@ public class AtlantisCombatCommander {
      * Acts with all battle units.
      */
     public static void update() {
-        if (AtlantisGame.getTimeFrames() % 20 == 0) {
+        if (AGame.getTimeFrames() % 20 == 0) {
             Missions.handleGlobalMission();
         }
         
@@ -42,7 +42,7 @@ public class AtlantisCombatCommander {
 //        System.out.println("--- (" + squad.size() + ") ---------------");
         for (AUnit unit : squad.arrayList()) {
 //            System.out.println("Commander (" + (unit.getSquad() != null) + "): " + unit);
-//            unit.setTooltip("C:" + AtlantisGame.getTimeFrames());
+//            unit.setTooltip("C:" + AGame.getTimeFrames());
             AtlantisCombatUnitManager.update(unit);
         }
     }

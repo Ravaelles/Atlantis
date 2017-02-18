@@ -1,7 +1,7 @@
 package atlantis.production;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
@@ -22,7 +22,7 @@ public class AtlantisProductionManager {
         
         // === Handle UMT ==========================================
         
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             return;
         }
         
@@ -78,7 +78,7 @@ public class AtlantisProductionManager {
     private static void produceUnit(AUnitType unitType) {
         
         // Supply: OVERLORD / PYLON / DEPOT
-        if (AtlantisGame.getSupplyFree() == 0 && !unitType.isSupplyUnit() && !unitType.isBuilding()) {
+        if (AGame.getSupplyFree() == 0 && !unitType.isSupplyUnit() && !unitType.isBuilding()) {
             // Supply production is handled by AtlantisSupplyManager
             return;
         }
@@ -101,7 +101,7 @@ public class AtlantisProductionManager {
 //        System.out.println("Research " + upgrade + " in " + buildingType);
         if (buildingType != null) {
             AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
-//            System.out.println(upgrade + " level is " + AtlantisGame.getPlayerUs().getUpgradeLevel(upgrade));
+//            System.out.println(upgrade + " level is " + AGame.getPlayerUs().getUpgradeLevel(upgrade));
             if (building != null && !building.isBusy()) {
 //                System.out.println("   ISSUE");
                 building.upgrade(upgrade);

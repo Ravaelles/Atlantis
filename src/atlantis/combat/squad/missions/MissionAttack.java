@@ -1,7 +1,7 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.Atlantis;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
@@ -89,7 +89,7 @@ public class MissionAttack extends Mission {
 
         // === Handle UMT ==========================================
         
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             AUnit firstUnit = Select.ourRealUnits().first();
             if (firstUnit != null) {
                 return getUmtFocusPoint(firstUnit.getPosition());

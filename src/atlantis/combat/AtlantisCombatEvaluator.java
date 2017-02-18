@@ -1,6 +1,6 @@
 package atlantis.combat;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -148,7 +148,7 @@ public class AtlantisCombatEvaluator {
     
     private static double calculateFavorableValueThreshold(boolean isPendingFight) {
 //        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK) 
-//                + Math.min(0.1, AtlantisGame.getTimeSeconds() / 3000);
+//                + Math.min(0.1, AGame.getTimeSeconds() / 3000);
         return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK);
     }
 

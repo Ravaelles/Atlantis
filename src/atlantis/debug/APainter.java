@@ -1,7 +1,7 @@
 package atlantis.debug;
 
 import atlantis.Atlantis;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.buildings.managers.AtlantisGasManager;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.squad.AtlantisSquadManager;
@@ -71,7 +71,7 @@ public class APainter {
         bwapi = Atlantis.getBwapi();
 
         // === Dynamic PAINTING MODE ===============================
-//        paintingMode = (AtlantisGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
+//        paintingMode = (AGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
         // =========================================================
         if (paintingMode == MODE_NO_PAINTING) {
             return;
@@ -118,7 +118,7 @@ public class APainter {
     private static void paintInfo() {
 
         // Time
-        paintSideMessage("Time: " + AtlantisGame.getTimeSeconds() + "s", Color.Grey);
+        paintSideMessage("Time: " + AGame.getTimeSeconds() + "s", Color.Grey);
 
         // =========================================================
         // Global mission
@@ -331,7 +331,7 @@ public class APainter {
     private static void paintImportantPlaces() {
 
         // === Handle UMT ==========================================
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             return;
         }
 
@@ -413,7 +413,7 @@ public class APainter {
         }
 
         // Display units that should be produced right now or any time
-        ArrayList<ProductionOrder> produceNow = AtlantisGame.getBuildOrders().getThingsToProduceRightNow(
+        ArrayList<ProductionOrder> produceNow = AGame.getBuildOrders().getThingsToProduceRightNow(
                 AtlantisBuildOrdersManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
@@ -421,13 +421,13 @@ public class APainter {
         }
 
         // Display next units to produce
-        ArrayList<ProductionOrder> fullQueue = AtlantisGame.getBuildOrders().getProductionQueueNext(
+        ArrayList<ProductionOrder> fullQueue = AGame.getBuildOrders().getProductionQueueNext(
                 5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);
             if (order != null && order.getShortName() != null) {
                 if (order.getUnitOrBuilding() != null
-                        && !AtlantisGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
+                        && !AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
                     continue;
                 }
                 paintSideMessage(order.getShortName(), Color.Red);
@@ -606,7 +606,7 @@ public class APainter {
                     color = Color.Teal;
                 } else if (unit.getUnitAction().isAttacking()) {
                     color = Color.Orange;
-                } else if (unit.getUnitAction().equals(UnitActions.RUN_FROM_UNIT)) {
+                } else if (unit.getUnitAction().equals(UnitActions.RUN)) {
                     color = Color.Brown;
                 } else if (unit.getUnitAction().equals(UnitActions.RETREAT)) {
                     color = Color.Brown;

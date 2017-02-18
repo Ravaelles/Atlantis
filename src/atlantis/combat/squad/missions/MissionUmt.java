@@ -1,7 +1,7 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.Atlantis;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
@@ -81,11 +81,13 @@ public class MissionUmt extends Mission {
                     }
                 }
             } else {
-                int veryCloseInRadius = Select.ourCombatUnits().inRadius(5, unit).count();
-                Select<?> inRadius = Select.ourCombatUnits().inRadius(5 / veryCloseInRadius, unit);
-                if (inRadius.count() > 0 && unit.moveAwayFrom(inRadius.nearestTo(unit).getPosition(), 0.3)) {
-                    unit.setTooltip("#Separate");
-                    return true;
+                int veryCloseInRadius = Select.ourCombatUnits().inRadius(4, unit).count();
+                if (veryCloseInRadius > 0) {
+                    Select<?> inRadius = Select.ourCombatUnits().inRadius(2 / veryCloseInRadius, unit);
+                    if (inRadius.count() > 0 && unit.moveAwayFrom(inRadius.nearestTo(unit).getPosition(), 0.3)) {
+                        unit.setTooltip("#Separate");
+                        return true;
+                    }
                 }
             }
         }

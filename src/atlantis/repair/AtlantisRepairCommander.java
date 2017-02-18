@@ -1,6 +1,6 @@
 package atlantis.repair;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.buildings.managers.FlyingBuildingManager;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.scout.AtlantisScoutManager;
@@ -18,11 +18,11 @@ import java.util.Set;
 public class AtlantisRepairCommander {
 
     public static void update() {
-        if (AtlantisGame.getTimeFrames() % 15 == 0) {
+        if (AGame.getTimeFrames() % 15 == 0) {
             assignConstantBunkerRepairersIfNeeded();
         }
         
-        if (AtlantisGame.getTimeFrames() % 15 == 0) {
+        if (AGame.getTimeFrames() % 15 == 0) {
             assignUnitRepairersToWoundedUnits();
         }
         
@@ -121,7 +121,7 @@ public class AtlantisRepairCommander {
     
     private static int defineOptimalConstantBunkerRepairers() {
         if (Missions.isGlobalMissionDefend()) {
-            return 1 + (AtlantisGame.getTimeSeconds() > 230 ? 1 : 0);
+            return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0);
         }
         else {
             return 0;
@@ -132,10 +132,10 @@ public class AtlantisRepairCommander {
         int enemiesNearby = Select.enemy().combatUnits().inRadius(10, bunker).count();
         double optimalNumber;
         
-        if (AtlantisGame.isEnemyProtoss()) {
+        if (AGame.isEnemyProtoss()) {
             optimalNumber = enemiesNearby * 1;
         }
-        else if (AtlantisGame.isEnemyTerran()) {
+        else if (AGame.isEnemyTerran()) {
             optimalNumber = enemiesNearby * 0.5;
         }
         else {

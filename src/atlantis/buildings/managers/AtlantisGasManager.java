@@ -1,7 +1,7 @@
 package atlantis.buildings.managers;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -22,7 +22,7 @@ public class AtlantisGasManager {
     public static void handleGasBuildings() {
         
         // Only once per second
-        if (AtlantisGame.getTimeFrames() % 5 != 0) {
+        if (AGame.getTimeFrames() % 5 != 0) {
             return;
         }
         int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
@@ -82,7 +82,7 @@ public class AtlantisGasManager {
     public static int defineMinGasWorkersPerBuilding() {
         return 3;
         
-//        int seconds = AtlantisGame.getTimeSeconds();
+//        int seconds = AGame.getTimeSeconds();
 //        
 //        if (seconds < 150) {
 //            return 1;

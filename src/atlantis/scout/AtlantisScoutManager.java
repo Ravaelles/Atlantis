@@ -1,7 +1,7 @@
 package atlantis.scout;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.AtlantisViewport;
 import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
 import atlantis.debug.APainter;
@@ -48,7 +48,7 @@ public class AtlantisScoutManager {
     public static void update() {
 
         // === Handle UMT ==========================================
-        if (AtlantisGame.isUmtMode()) {
+        if (AGame.isUmtMode()) {
             return;
         }
 
@@ -119,7 +119,7 @@ public class AtlantisScoutManager {
         }
 
         // === Handle UMT ==========================================
-//        if (AtlantisGame.isUmtMode()) {
+//        if (AGame.isUmtMode()) {
 //            handleUmtExplore(scout);
 //            return;
 //        }
@@ -187,11 +187,11 @@ public class AtlantisScoutManager {
     private static void assignScoutIfNeeded() {
 
         // ZERG case
-        if (AtlantisGame.playsAsZerg()) {
+        if (AGame.playsAsZerg()) {
 
             // We know enemy building
             if (AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
-                if (AtlantisGame.getTimeSeconds() < 600) {
+                if (AGame.getTimeSeconds() < 600) {
                     if (scouts.isEmpty()) {
                         for (AUnit worker : Select.ourWorkers().list()) {
                             if (!worker.isBuilder()) {
@@ -292,8 +292,8 @@ public class AtlantisScoutManager {
         }
 
         if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
-            AtlantisGame.changeSpeedTo(1);
-            AtlantisGame.changeSpeedTo(1);
+            AGame.changeSpeedTo(1);
+            AGame.changeSpeedTo(1);
             APainter.paintingMode = APainter.MODE_FULL_PAINTING;
         }
     }

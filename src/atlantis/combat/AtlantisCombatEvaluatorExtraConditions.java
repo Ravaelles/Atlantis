@@ -1,6 +1,6 @@
 package atlantis.combat;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.PositionUtil;
@@ -80,7 +80,7 @@ public class AtlantisCombatEvaluatorExtraConditions {
         
         // If enemy is somewhat near, disallow attacking without support
         else {
-            if (AtlantisGame.playsAsTerran()) {
+            if (AGame.playsAsTerran()) {
                 return Select.ourCombatUnits().inRadius(2.5, unit).count() <= 2
                         || Select.ourCombatUnits().inRadius(5, unit).count() <= 5;
             }

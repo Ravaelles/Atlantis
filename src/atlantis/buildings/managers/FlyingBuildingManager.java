@@ -1,6 +1,6 @@
 package atlantis.buildings.managers;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.squad.missions.Mission;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
@@ -21,7 +21,7 @@ public class FlyingBuildingManager {
     // =========================================================
     
     public static void update() {
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             if (shouldLiftABuilding()) {
                 liftABuildingAndFlyAmongTheStars();
             }

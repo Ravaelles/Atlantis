@@ -1,7 +1,7 @@
 package atlantis.production;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -18,7 +18,7 @@ public class AtlantisWorkerProductionManager {
     public static void handleWorkerProduction() {
         
         // Leave minerals for reserved constructions
-        if (!AtlantisGame.canAfford(AtlantisBuildOrdersManager.getMineralsNeeded() + 50, 0)) {
+        if (!AGame.canAfford(AtlantisBuildOrdersManager.getMineralsNeeded() + 50, 0)) {
             return;
         }
         

@@ -1,8 +1,11 @@
 package atlantis.combat.micro;
 
+import atlantis.AGame;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import bwapi.Color;
 
 /**
  *
@@ -17,8 +20,12 @@ public class AtlantisAvoidMeleeUnitsManager {
         boolean isAllowedType = (unit.isGroundUnit() && unit.getType().isRangedUnit()) || unit.isWorker();
         boolean isHealthyAndHasManyHP = unit.getHitPoints() >= 60 && unit.getHPPercent() >= 100;
         
-        if (isAllowedType && isHealthyAndHasManyHP 
-                && Select.enemyRealUnits().combatUnits().inRadius(5, unit).count() > 0) {
+        Select<AUnit> enemyRealUnitsSelector = Select.enemyRealUnits().combatUnits();
+        
+        APainter.paintTextCentered(unit, "" + unit.getID(), Color.Black);
+        
+        if (isAllowedType && (!isHealthyAndHasManyHP || unit.isVulture())
+                && enemyRealUnitsSelector.inRadius(5, unit).count() > 0) {
             
             // === Define safety distance ==============================
 
@@ -49,7 +56,7 @@ public class AtlantisAvoidMeleeUnitsManager {
             // Apply bonus when there are maaany enemies nearby
 //            int enemyNearbyCountingRadius = 7;
 //            int enemiesNearby = Select.enemy().inRadius(enemyNearbyCountingRadius, unit).count();
-            int enemiesNearby = Select.enemy().inRadius(safetyDistance, unit).count();
+            int enemiesNearby = enemyRealUnitsSelector.inRadius(safetyDistance, unit).count();
             if (enemiesNearby >= 2) {
                 if (unit.isVulture()) {
                     safetyDistance += Math.max((double) enemiesNearby / 4, 3.5);
@@ -65,19 +72,24 @@ public class AtlantisAvoidMeleeUnitsManager {
 //            AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Green);
 //            AtlantisPainter.paintTextCentered(unit, enemiesNearby + "", Color.White);
 
-            Select<?> closeEnemies = Select.enemyRealUnits().melee().inRadius(safetyDistance, unit);
+            Select<?> closeEnemies = enemyRealUnitsSelector.melee().inRadius(safetyDistance, unit);
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
+            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
             if (closeEnemy != null) {
                 
-                double base = (unit.isVulture() ? 1.5 : 2.2);
+                double baseCriticalDistance = (unit.isVulture() ? 1.5 : 1.5);
                 double numberOfNearEnemiesBonus = Math.max(0.4, 
                         ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
-                double archonBonus = (((Select.enemyRealUnits().ofType(AUnitType.Protoss_Archon)
-                        .inRadius(5, unit)).count() > 0) ? 1.5 : 0);
+                double archonBonus = (((enemyRealUnitsSelector.ofType(AUnitType.Protoss_Archon)
+                        .inRadius(5, unit)).count() > 0) ? 2.2 : 0);
                 
-                double dangerousDistance = base + numberOfNearEnemiesBonus + archonBonus;
+                double dangerousDistance = baseCriticalDistance + numberOfNearEnemiesBonus + archonBonus;
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
-                if (isEnemyDangerouslyClose) {
+                APainter.paintCircleFilled(unit.getPosition(), 11, Color.Yellow);
+                
+                if (isEnemyDangerouslyClose && (unit.type().isMechanical() || unit.isWounded())) {
+                    
+                    APainter.paintCircleFilled(unit.getPosition(), 11, Color.Blue);
                     
                     boolean dontInterruptPendingAttack;
                     if (unit.isVulture()) {

@@ -2,7 +2,7 @@ package atlantis.production.orders;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -136,11 +136,11 @@ public abstract class AtlantisBuildOrdersManager {
      * Returns default production strategy according to the race played.
      */
     public static AtlantisBuildOrdersManager loadBuildOrders() {
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             return new TerranBuildOrders();
-        } else if (AtlantisGame.playsAsProtoss()) {
+        } else if (AGame.playsAsProtoss()) {
             return new ProtossBuildOrders();
-        } else if (AtlantisGame.playsAsZerg()) {
+        } else if (AGame.playsAsZerg()) {
             return new ZergBuildOrders();
         }
 
@@ -182,7 +182,7 @@ public abstract class AtlantisBuildOrdersManager {
             }
 
             // ===  Protoss fix: wait for at least one Pylon ============
-            if (AtlantisGame.playsAsProtoss() && unitOrBuilding != null
+            if (AGame.playsAsProtoss() && unitOrBuilding != null
                     && !unitOrBuilding.isType(AUnitType.Protoss_Pylon, AUnitType.Protoss_Assimilator)
                     && Select.our().countUnitsOfType(AUnitType.Protoss_Pylon) == 0) {
                 continue;
@@ -191,7 +191,7 @@ public abstract class AtlantisBuildOrdersManager {
             // === Define order type: UNIT/BUILDING or UPGRADE or TECH ==
             // UNIT/BUILDING
             if (unitOrBuilding != null) {
-                if (!AtlantisGame.hasBuildingsToProduce(unitOrBuilding, true)) {
+                if (!AGame.hasBuildingsToProduce(unitOrBuilding, true)) {
                     continue;
                 }
 
@@ -209,7 +209,7 @@ public abstract class AtlantisBuildOrdersManager {
 
             // =========================================================
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
-            if (AtlantisGame.canAfford(mineralsNeeded, gasNeeded)) {
+            if (AGame.canAfford(mineralsNeeded, gasNeeded)) {
                 result.add(order);
             } // We can't afford to produce this order (possibly other, previous orders are blocking it). 
             // Return current list of production orders (can be empty).
@@ -224,10 +224,10 @@ public abstract class AtlantisBuildOrdersManager {
         // Produce some generic units (preferably combat units) if queue is empty.
         // This can mean that we run out of build orders from build order file.
         // For proper build order files this feature will activate in late game.
-        if (result.isEmpty() && AtlantisGame.canAfford(300, 200)
-                && (AtlantisGame.getSupplyUsed() >= 30 || initialProductionQueue.isEmpty())) {
+        if (result.isEmpty() && AGame.canAfford(300, 200)
+                && (AGame.getSupplyUsed() >= 30 || initialProductionQueue.isEmpty())) {
             for (AUnitType unitType : produceWhenNoProductionOrders()) {
-                if (AtlantisGame.hasBuildingsToProduce(unitType, false)) {
+                if (AGame.hasBuildingsToProduce(unitType, false)) {
                     result.add(new ProductionOrder(unitType));
                 }
             }
@@ -303,7 +303,7 @@ public abstract class AtlantisBuildOrdersManager {
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
 //                    if (type.isBase()) {
-//                        AtlantisGame.sendMessage("Request " + type.getShortName());
+//                        AGame.sendMessage("Request " + type.getShortName());
 //                    }
                     isOkayToAdd = true;
                 }
@@ -359,7 +359,7 @@ public abstract class AtlantisBuildOrdersManager {
         for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
             ProductionOrder productionOrder = currentProductionQueue.get(i);
 //            if (productionOrder.getUnitType() != null 
-//                    && !AtlantisGame.hasBuildingsToProduce(productionOrder.getUnitType())) {
+//                    && !AGame.hasBuildingsToProduce(productionOrder.getUnitType())) {
 //                continue;
 //            }
             result.add(productionOrder);

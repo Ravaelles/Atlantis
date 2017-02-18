@@ -1,7 +1,7 @@
 package atlantis.production;
 
 import atlantis.AtlantisConfig;
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.units.AUnit;
@@ -16,7 +16,7 @@ import java.util.List;
 public class AtlantisDynamicConstructionCommander {
 
     public static void update() {
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             handleBuildFactoriesIfNeeded();
             handleBuildAddonsIfNeeded();
         }
@@ -43,7 +43,7 @@ public class AtlantisDynamicConstructionCommander {
                 if (unfinishedFactories == 0) {
                     AtlantisConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
                 }
-                else if (unfinishedFactories >= 1 && AtlantisGame.canAfford(
+                else if (unfinishedFactories >= 1 && AGame.canAfford(
                         100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
                 )) {
                     AtlantisConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
@@ -73,7 +73,7 @@ public class AtlantisDynamicConstructionCommander {
      * Build Refineries/ Assimilators/ Extractors when it makes sense.
      */
     private static void handleBuildGasBuildingsIfNeeded() {
-        if (AtlantisGame.getTimeSeconds() % 3 != 0) {
+        if (AGame.getTimeSeconds() % 3 != 0) {
             return;
         }
         
@@ -82,7 +82,7 @@ public class AtlantisDynamicConstructionCommander {
         int numberOfBases = Select.ourBases().count();
         if (numberOfBases >= 2) {
             int numberOfGasBuildings = Select.ourIncludingUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
-            if (numberOfBases > numberOfGasBuildings && !AtlantisGame.canAfford(0, 350) 
+            if (numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350) 
                     && AtlantisConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0) {
                 AtlantisConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
             }
@@ -92,7 +92,7 @@ public class AtlantisDynamicConstructionCommander {
     // =========================================================
     
     private static boolean canAfford(int minerals, int gas) {
-        return AtlantisGame.canAfford(
+        return AGame.canAfford(
                 minerals + AtlantisBuildOrdersManager.getMineralsNeeded(), gas + AtlantisBuildOrdersManager.getGasNeeded()
         );
     }

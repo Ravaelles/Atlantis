@@ -1,6 +1,6 @@
 package atlantis.init;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.information.AtlantisMap;
 import atlantis.workers.AtlantisMineralGathering;
 
@@ -15,13 +15,13 @@ public class AtlantisInitialActions {
             AtlantisMineralGathering.initialAssignWorkersToMinerals();
         }
         catch (IndexOutOfBoundsException ex) {
-            AtlantisGame.setUmtMode(true);
+            AGame.setUmtMode(true);
         }
         catch (NullPointerException ex) {
-            AtlantisGame.setUmtMode(true);
+            AGame.setUmtMode(true);
         }
         catch (Exception ex) {
-            AtlantisGame.setUmtMode(true);
+            AGame.setUmtMode(true);
         }
             
         AtlantisMap.disableSomeOfTheChokePoints();

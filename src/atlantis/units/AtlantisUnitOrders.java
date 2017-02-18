@@ -1,6 +1,6 @@
 package atlantis.units;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
@@ -43,7 +43,7 @@ public interface AtlantisUnitOrders {
 //            System.out.println("unit().isAttacking() = " + unit().isAttacking());
 //            System.out.println("getTarget = " + unit().getTarget());
 //            System.out.println(unit().getID() + " attacks " + target.getShortName());
-//            AtlantisGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
+//            AGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
             u().attack(target.u());
             return true;
         }
@@ -111,8 +111,12 @@ public interface AtlantisUnitOrders {
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
         unit().setUnitAction(unitAction);
         
-        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving() ||
-                AtlantisGame.getTimeFrames() % 10 == 0) {
+        if (unit().isMoving() && AGame.getTimeFrames() % 4 != 0) {
+            return true;
+        }
+        
+        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
+//            System.out.println(u().getID() + " MOVE at " + AGame.getTimeFrames());
             return u().move(target);
         }
         else {

@@ -1,6 +1,6 @@
 package atlantis.constructing;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -76,19 +76,19 @@ public class AtlantisBuilderManager {
         // AUnit is already at the build position, issue build order
         // If we can afford to construct this building exactly right now, issue build order which should
         // be immediate as unit is standing just right there
-        else if (AtlantisGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
+        else if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
-            if (AtlantisGame.canAfford(buildingType)) {
+            if (AGame.canAfford(buildingType)) {
                 buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
                 TilePosition buildTilePosition = new TilePosition(
                         buildPosition.getTileX(), buildPosition.getTileY()
                 );
                 
                 if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
-                        AtlantisGame.getTimeFrames() % 30 == 0)) {
+                        AGame.getTimeFrames() % 30 == 0)) {
 //                    if (buildingType.isGasBuilding()) {
-//                        AtlantisGame.sendMessage("Build GAS "
+//                        AGame.sendMessage("Build GAS "
 //                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
 //                        System.err.println("Build GAS "
 //                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));

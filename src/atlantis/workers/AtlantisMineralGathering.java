@@ -1,6 +1,6 @@
 package atlantis.workers;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class AtlantisMineralGathering {
         AUnit mainBase = Select.mainBase();
         if (mainBase == null) {
 //            System.err.println("No main base found - skip initial workers assignment");
-            AtlantisGame.setUmtMode(true);
+            AGame.setUmtMode(true);
             return;
         }
         

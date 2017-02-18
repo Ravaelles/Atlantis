@@ -1,6 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.debug.APainter;
@@ -119,7 +119,7 @@ public class MicroManager extends AbstractMicroManager {
     private boolean handleSpecialUnit(AUnit unit) {
 
         // ZERG
-//        if (AtlantisGame.playsAsZerg()) {
+//        if (AGame.playsAsZerg()) {
 //            if (unit.isType(AUnitType.Zerg_Overlord)) {
 //                ZergOverlordManager.update(unit);
 //                return true;
@@ -127,7 +127,7 @@ public class MicroManager extends AbstractMicroManager {
 //        }
 
         // TERRAN
-        if (AtlantisGame.playsAsTerran()) {
+        if (AGame.playsAsTerran()) {
             if (unit.isType(AUnitType.Terran_Medic)) {
                 unit.setTooltip("Medic");
                 return TerranMedic.update(unit);

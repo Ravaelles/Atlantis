@@ -1,6 +1,6 @@
 package atlantis.buildings.managers;
 
-import atlantis.AtlantisGame;
+import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -8,7 +8,7 @@ import atlantis.units.Select;
 public class AtlantisBarracksManager {
 
     public static void update(AUnit barracks) {
-//        if (!AtlantisGame.playsAsZerg()) {
+//        if (!AGame.playsAsZerg()) {
 //            if (shouldTrainUnit(barracks)) {
 //                if (hasEmptySlot(barracks)) {
 //                    buildUnit(barracks);
@@ -22,22 +22,22 @@ public class AtlantisBarracksManager {
 //    private static boolean shouldTrainUnit(AUnit barracks) {
 //
 //        // Plays as TERRAN
-//        if (AtlantisGame.playsAsTerran()) {
+//        if (AGame.playsAsTerran()) {
 //
 //            // Check MINERALS
-//            if (AtlantisGame.getMinerals() < 50) {
+//            if (AGame.getMinerals() < 50) {
 //                return false;
 //            }
 //
 //            // Check SUPPLY
-//            if (AtlantisGame.getSupplyFree() == 0) {
+//            if (AGame.getSupplyFree() == 0) {
 //                return false;
 //            }
 //        }
 //
 //        // =========================================================
 //        // Check PRODUCTION QUEUE
-//        ArrayList<ProductionOrder> unitsToProduce = AtlantisGame.getBuildOrders().getThingsToProduceRightNow(
+//        ArrayList<ProductionOrder> unitsToProduce = AGame.getBuildOrders().getThingsToProduceRightNow(
 //                true);
 //
 //        // EMPTY PRODUCTION QUEUE - can build
@@ -69,7 +69,7 @@ public class AtlantisBarracksManager {
     }
 
     private static boolean hasEmptySlot(AUnit barracks) {
-        if (AtlantisGame.playsAsZerg()) {
+        if (AGame.playsAsZerg()) {
             return Select.ourLarva().count() > 0;
         } else {
             return barracks.getTrainingQueue().size() == 0;
