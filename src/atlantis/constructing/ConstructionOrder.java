@@ -2,7 +2,7 @@ package atlantis.constructing;
 
 import atlantis.constructing.position.AtlantisPositionFinder;
 import atlantis.production.ProductionOrder;
-import atlantis.scout.AtlantisScoutManager;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

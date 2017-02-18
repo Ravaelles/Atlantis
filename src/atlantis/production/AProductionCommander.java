@@ -7,8 +7,11 @@ import atlantis.constructing.AtlantisConstructionManager;
 /**
  * Manages construction of new buildings.
  */
-public class AtlantisProductionCommander {
+public class AProductionCommander {
 
+    /**
+     * Produce units and buildings according to build orders.
+     */
     public static void update() {
         
         // Check if need to increase supply and if so, take care of it.

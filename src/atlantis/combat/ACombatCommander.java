@@ -6,7 +6,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 
-public class AtlantisCombatCommander {
+public class ACombatCommander {
     
     /**
      * Acts with all battle units.

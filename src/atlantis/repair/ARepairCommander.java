@@ -3,7 +3,7 @@ package atlantis.repair;
 import atlantis.AGame;
 import atlantis.buildings.managers.FlyingBuildingManager;
 import atlantis.combat.squad.missions.Missions;
-import atlantis.scout.AtlantisScoutManager;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -43,7 +43,7 @@ public class ARepairCommander {
         for (AUnit woundedUnit : Select.our().repairable(true).listUnits()) {
             
             // Some units shouldn't be repaired
-            if (AtlantisScoutManager.isScout(woundedUnit) || FlyingBuildingManager.isFlyingBuilding(woundedUnit)
+            if (AScoutManager.isScout(woundedUnit) || FlyingBuildingManager.isFlyingBuilding(woundedUnit)
                     || ARepairManager.isConstantBunkerRepairer(woundedUnit)) {
                 continue;
             }
@@ -120,9 +120,18 @@ public class ARepairCommander {
     // =========================================================
     
     private static int defineOptimalConstantBunkerRepairers() {
+        
+        // === Mission DEFEND  =================================
         if (Missions.isGlobalMissionDefend()) {
-            return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0);
+            if (AGame.playsAsTerran()) {
+                return 0;
+            }
+            else {
+                return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0);
+            }
         }
+        
+        // === Mission ATTACK ==================================
         else {
             return 0;
         }

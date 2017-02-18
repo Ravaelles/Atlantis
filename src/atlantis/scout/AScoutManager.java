@@ -22,7 +22,7 @@ import bwta.Region;
 import java.util.ArrayList;
 import javax.swing.ActionMap;
 
-public class AtlantisScoutManager {
+public class AScoutManager {
 
 //    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = true;
     public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = false;

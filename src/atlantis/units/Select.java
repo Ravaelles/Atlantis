@@ -6,7 +6,7 @@ import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.information.UnitData;
 import atlantis.repair.ARepairManager;
-import atlantis.scout.AtlantisScoutManager;
+import atlantis.scout.AScoutManager;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
@@ -811,7 +811,7 @@ public class Select<T> {
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
             if (unit.isConstructing() || unit.isRepairing() || AtlantisConstructionManager.isBuilder(unit)
-                    || AtlantisScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()) {
+                    || AScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()) {
                 unitIter.remove();
             }
         }

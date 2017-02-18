@@ -8,7 +8,7 @@ import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.repair.ARepairManager;
-import atlantis.scout.AtlantisScoutManager;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import bwapi.Color;
@@ -20,7 +20,7 @@ public class AWorkerManager {
      */
     public static boolean update(AUnit worker) {
         worker.removeTooltip();
-        if (AtlantisScoutManager.isScout(worker)) {
+        if (AScoutManager.isScout(worker)) {
             return false;
         }
         if (ARepairManager.isRepairerOfAnyKind(worker)) {

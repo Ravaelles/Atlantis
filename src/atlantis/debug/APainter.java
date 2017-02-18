@@ -17,7 +17,7 @@ import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
-import atlantis.scout.AtlantisScoutManager;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -922,7 +922,7 @@ public class APainter {
             Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
-            for (Position point : (ArrayList<APosition>) AtlantisScoutManager.scoutingAroundBasePoints.arrayList()) {
+            for (Position point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.Yellow);
             }
         }

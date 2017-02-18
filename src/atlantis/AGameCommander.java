@@ -2,11 +2,12 @@ package atlantis;
 
 //import atlantis.buildings.AtlantisBuildingsCommander;
 import atlantis.buildings.managers.FlyingBuildingManager;
-import atlantis.combat.AtlantisCombatCommander;
+import atlantis.combat.ACombatCommander;
 import atlantis.debug.APainter;
-import atlantis.production.AtlantisProductionCommander;
+import atlantis.production.AProductionCommander;
 import atlantis.repair.ARepairCommander;
-import atlantis.scout.AtlantisScoutManager;
+import atlantis.scout.AScoutManager;
+import atlantis.strategy.AStrategyCommander;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.workers.AWorkerCommander;
@@ -29,11 +30,11 @@ public class AGameCommander {
 
         // === Execute code of every Commander and Manager ==================
         
-        AtlantisProductionCommander.update();
+        AStrategyCommander.update();
+        AProductionCommander.update();
         AWorkerCommander.update();
-        AtlantisCombatCommander.update();
-        AtlantisScoutManager.update();
-//        AtlantisBuildingsCommander.update(); // Currently unused
+        ACombatCommander.update();
+        AScoutManager.update();
 
         // === Terran only ==================================================
 
