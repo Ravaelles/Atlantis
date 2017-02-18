@@ -9,7 +9,7 @@ import atlantis.repair.ARepairCommander;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.workers.AtlantisWorkerCommander;
+import atlantis.workers.AWorkerCommander;
 
 /**
  * Top abstraction level entity that issues orders to all other modules (managers).
@@ -30,7 +30,7 @@ public class AGameCommander {
         // === Execute code of every Commander and Manager ==================
         
         AtlantisProductionCommander.update();
-        AtlantisWorkerCommander.update();
+        AWorkerCommander.update();
         AtlantisCombatCommander.update();
         AtlantisScoutManager.update();
 //        AtlantisBuildingsCommander.update(); // Currently unused

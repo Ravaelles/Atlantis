@@ -13,7 +13,7 @@ import java.util.Collection;
 /**
  * Manages all worker (SCV, Probe, Drone) actions.
  */
-public class AtlantisWorkerCommander {
+public class AWorkerCommander {
 
     /**
      * Executed only once per frame.
@@ -23,7 +23,7 @@ public class AtlantisWorkerCommander {
 //        transferWorkersBetweenBasesIfNeeded();
 
         for (AUnit worker : Select.ourWorkers().listUnits()) {
-            AtlantisWorkerManager.update(worker);
+            AWorkerManager.update(worker);
             worker.setTooltip(worker.getFramesSinceLastOrderWasIssued()+ " ago");
         }
     }
@@ -90,7 +90,7 @@ public class AtlantisWorkerCommander {
 //        System.out.println();
         for (AUnit base : ourBases) {
 //            int numOfWorkersNearBase = Select.ourWorkersThatGather(false).inRadius(15, ourBase).count();
-            int numOfWorkersNearBase = AtlantisWorkerManager.getHowManyWorkersGatheringAt(base);
+            int numOfWorkersNearBase = AWorkerManager.getHowManyWorkersGatheringAt(base);
             int numOfMineralsNearBase = Select.minerals().inRadius(10, base).count() + 1;
 //            if (numOfWorkersNearBase <= 2) {
 //                continue;

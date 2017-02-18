@@ -6,7 +6,7 @@ import atlantis.production.AtlantisWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.workers.AtlantisWorkerCommander;
+import atlantis.workers.AWorkerCommander;
 import java.util.ArrayList;
 
 public class TerranBuildOrders extends AtlantisBuildOrdersManager {
@@ -40,7 +40,7 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
         
 //        System.out.println("Notice: No production orders, auto-produce.");
 
-        if (AtlantisWorkerCommander.shouldTrainWorkers(true)) {
+        if (AWorkerCommander.shouldTrainWorkers(true)) {
             units.add(AtlantisConfig.WORKER);
             units.add(AtlantisConfig.WORKER);
             units.add(AtlantisConfig.WORKER);

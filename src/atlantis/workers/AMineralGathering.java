@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 /**
  * Auxiliary class that's supposed to assign workers to minerals at the beginning of game.
  */
-public class AtlantisMineralGathering {
+public class AMineralGathering {
 
     /**
      * Assign all 4 workers to optimal (closest) minerals fields.

@@ -5,7 +5,7 @@ import atlantis.AGame;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.workers.AtlantisWorkerManager;
+import atlantis.workers.AWorkerManager;
 import bwapi.Color;
 import java.util.Collection;
 
@@ -40,7 +40,7 @@ public class AGasManager {
                 continue;
             }
             
-            int numberOfWorkersAssigned = AtlantisWorkerManager.getHowManyWorkersGatheringAt(gasBuilding);
+            int numberOfWorkersAssigned = AWorkerManager.getHowManyWorkersGatheringAt(gasBuilding);
             APainter.paintTextCentered(gasBuilding, "" + numberOfWorkersAssigned, Color.Green);
             
             // Assign when LOWER THAN MIN
@@ -54,7 +54,7 @@ public class AGasManager {
             
             // Deassign when MORE THAN MAX
             else if (numberOfWorkersAssigned > MAX_GAS_WORKERS_PER_BUILDING) {
-                AUnit worker = AtlantisWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
+                AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null) {
                     worker.stop();
                 }

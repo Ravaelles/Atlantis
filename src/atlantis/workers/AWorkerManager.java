@@ -13,7 +13,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import bwapi.Color;
 
-public class AtlantisWorkerManager {
+public class AWorkerManager {
 
     /**
      * Executed for every worker unit.
@@ -78,7 +78,7 @@ public class AtlantisWorkerManager {
                 || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
                 && !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
             worker.setTooltip("Move ya ass!");
-            AtlantisMineralGathering.gatherResources(worker);
+            AMineralGathering.gatherResources(worker);
         }
     }
 

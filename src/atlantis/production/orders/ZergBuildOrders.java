@@ -4,7 +4,7 @@ import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.workers.AtlantisWorkerCommander;
+import atlantis.workers.AWorkerCommander;
 import java.util.ArrayList;
 
 public class ZergBuildOrders extends AtlantisBuildOrdersManager {
@@ -30,7 +30,7 @@ public class ZergBuildOrders extends AtlantisBuildOrdersManager {
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
         
-        boolean shouldTrainWorkers = AtlantisWorkerCommander.shouldTrainWorkers(false);
+        boolean shouldTrainWorkers = AWorkerCommander.shouldTrainWorkers(false);
         
         if (shouldTrainWorkers) {
             units.add(AUnitType.Zerg_Drone);

@@ -2,7 +2,7 @@ package atlantis.init;
 
 import atlantis.AGame;
 import atlantis.information.AtlantisMap;
-import atlantis.workers.AtlantisMineralGathering;
+import atlantis.workers.AMineralGathering;
 
 public class AtlantisInitialActions {
 
@@ -12,7 +12,7 @@ public class AtlantisInitialActions {
      */
     public static void executeInitialActions() {
         try {
-            AtlantisMineralGathering.initialAssignWorkersToMinerals();
+            AMineralGathering.initialAssignWorkersToMinerals();
         }
         catch (IndexOutOfBoundsException ex) {
             AGame.setUmtMode(true);

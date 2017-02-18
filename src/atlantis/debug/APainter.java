@@ -25,7 +25,7 @@ import atlantis.units.actions.UnitActions;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
-import atlantis.workers.AtlantisWorkerManager;
+import atlantis.workers.AWorkerManager;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.MappingCounter;
 import bwapi.Color;
@@ -744,7 +744,7 @@ public class APainter {
         for (AUnit building : Select.ourBuildings().listUnits()) {
 
             // Paint text
-            int workers = AtlantisWorkerManager.getHowManyWorkersGatheringAt(building);
+            int workers = AWorkerManager.getHowManyWorkersGatheringAt(building);
             if (workers > 0) {
                 String workersAssigned = workers + " WRK";
                 paintTextCentered(PositionUtil.translateByPixels(building.getPosition(), 0, -15), workersAssigned, Color.Blue);

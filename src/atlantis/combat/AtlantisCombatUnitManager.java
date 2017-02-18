@@ -100,11 +100,13 @@ public class AtlantisCombatUnitManager {
      *
      */
     private static boolean shouldNotDisturbUnit(AUnit unit) {
+        return (unit.isAttackFrame() || (!unit.type().isTank() && unit.isStartingAttack())) &&
+                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
 //        return false;
 //        return (unit.isAttackFrame() || unit.isStartingAttack()) &&
 //                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
-//        return (unit.isAttackFrame() || unit.isStartingAttack());
-        return (unit.isAttackFrame());
+//        return unit.isAttackFrame() || (!unit.type().isTank() && unit.isStartingAttack());
+//        return (unit.isAttackFrame());
     }
 
     /**

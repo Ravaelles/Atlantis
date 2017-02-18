@@ -8,7 +8,7 @@ import java.util.Collection;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisWorkerDefenceManager {
+public class AWorkerDefenceManager {
 
     /**
      * Attack other workers, run from enemies etc.
