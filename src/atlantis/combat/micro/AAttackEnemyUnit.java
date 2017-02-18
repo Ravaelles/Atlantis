@@ -8,7 +8,7 @@ import atlantis.units.actions.UnitActions;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisAttackEnemyUnit {
+public class AAttackEnemyUnit {
 
     /**
      * Selects the best enemy unit and issues attack order.

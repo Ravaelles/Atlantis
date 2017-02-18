@@ -5,7 +5,7 @@ import atlantis.buildings.managers.FlyingBuildingManager;
 import atlantis.combat.AtlantisCombatCommander;
 import atlantis.debug.APainter;
 import atlantis.production.AtlantisProductionCommander;
-import atlantis.repair.AtlantisRepairCommander;
+import atlantis.repair.ARepairCommander;
 import atlantis.scout.AtlantisScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -14,7 +14,7 @@ import atlantis.workers.AtlantisWorkerCommander;
 /**
  * Top abstraction level entity that issues orders to all other modules (managers).
  */
-public class AtlantisGameCommander {
+public class AGameCommander {
 
     /**
      * Executed every time when game has new frame. It represents minimal passage of game-time (one action
@@ -39,7 +39,7 @@ public class AtlantisGameCommander {
 
         if (AGame.playsAsTerran()) {
             FlyingBuildingManager.update();
-            AtlantisRepairCommander.update();
+            ARepairCommander.update();
         }
 
         // === Handle UMT ===================================================
@@ -47,7 +47,7 @@ public class AtlantisGameCommander {
         if (AGame.isUmtMode()) {
             AUnit unit = Select.ourCombatUnits().first();
             if (unit != null) {
-                AtlantisViewport.centerScreenOn(unit);
+                AViewport.centerScreenOn(unit);
             }
         }
     }

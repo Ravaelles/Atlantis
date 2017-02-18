@@ -38,7 +38,7 @@ public class Atlantis implements BWEventListener {
     /**
      * Top abstraction-level class that governs all units, buildings etc.
      */
-    private AtlantisGameCommander gameCommander;
+    private AGameCommander gameCommander;
 
     // =========================================================
     // Other variables
@@ -90,7 +90,7 @@ public class Atlantis implements BWEventListener {
         bwapi = mirror.getGame();
         
         // Initialize Game Commander, a class to rule them all
-        gameCommander = new AtlantisGameCommander();
+        gameCommander = new AGameCommander();
 
         // Uncomment this line to see list of units -> damage.
 //        AtlantisUnitTypesHelper.displayUnitTypesDamage();

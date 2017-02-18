@@ -1,7 +1,7 @@
 package atlantis.production;
 
-import atlantis.buildings.managers.AtlantisExpansionManager;
-import atlantis.buildings.managers.AtlantisSupplyManager;
+import atlantis.buildings.managers.AExpansionManager;
+import atlantis.buildings.managers.ASupplyManager;
 import atlantis.constructing.AtlantisConstructionManager;
 
 /**
@@ -12,7 +12,7 @@ public class AtlantisProductionCommander {
     public static void update() {
         
         // Check if need to increase supply and if so, take care of it.
-        AtlantisSupplyManager.update();
+        ASupplyManager.update();
         
         // See what units/buildings we need to create and take care of it.
         AtlantisProductionManager.update();
@@ -21,7 +21,7 @@ public class AtlantisProductionCommander {
         AtlantisConstructionManager.update();
         
         // Check if we should automatically build new base, because we have shitload of minerals.
-        AtlantisExpansionManager.requestNewBaseIfNeeded();
+        AExpansionManager.requestNewBaseIfNeeded();
         
         // When it can be applied and makes sense, automatically produce units like workers, factories.
         AtlantisDynamicConstructionCommander.update();

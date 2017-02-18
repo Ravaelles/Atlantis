@@ -2,8 +2,8 @@ package atlantis.scout;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.AtlantisViewport;
-import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
+import atlantis.AViewport;
+import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.debug.APainter;
 import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
@@ -154,7 +154,7 @@ public class AtlantisScoutManager {
     private static boolean handleScoutEnemyBase(AUnit scout) {
 
         // === Avoid melee units ===================================
-        if (AtlantisAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(scout)) {
+        if (AAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(scout)) {
             scoutingAroundBaseWasInterrupted = true;
             return true;
         }
@@ -264,7 +264,7 @@ public class AtlantisScoutManager {
         );
 
         if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
-            AtlantisViewport.centerScreenOn(scout);
+            AViewport.centerScreenOn(scout);
         }
     }
     

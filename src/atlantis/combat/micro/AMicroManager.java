@@ -13,7 +13,7 @@ import bwapi.Color;
 /**
  * Default micro manager that will be used for all melee units.
  */
-public class MicroManager extends AbstractMicroManager {
+public class AMicroManager extends AbstractMicroManager {
 
     @Override
     public boolean update(AUnit unit) {
@@ -49,7 +49,7 @@ public class MicroManager extends AbstractMicroManager {
             
             // =========================================================
             // Avoid melee units
-            if (AtlantisAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(unit)) {
+            if (AAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(unit)) {
                 return true;
             }
 
@@ -76,7 +76,7 @@ public class MicroManager extends AbstractMicroManager {
 
             // =========================================================
             // Attack enemy is possible
-            if (AtlantisAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+            if (AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
                 return true;
             }
 

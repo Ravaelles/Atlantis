@@ -7,7 +7,7 @@ import atlantis.wrappers.APosition;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisViewport {
+public class AViewport {
     
     protected static int SCREEN_WIDTH = 640;
     protected static int SCREEN_HEIGHT = 480;

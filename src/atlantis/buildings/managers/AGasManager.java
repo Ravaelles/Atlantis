@@ -9,7 +9,7 @@ import atlantis.workers.AtlantisWorkerManager;
 import bwapi.Color;
 import java.util.Collection;
 
-public class AtlantisGasManager {
+public class AGasManager {
 
     private static final int MAX_GAS_WORKERS_PER_BUILDING = 3;
 

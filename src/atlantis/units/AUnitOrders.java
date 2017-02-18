@@ -17,13 +17,14 @@ import bwapi.UpgradeType;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public interface AtlantisUnitOrders {
+public interface AUnitOrders {
 
     Unit u();
 
     AUnit unit();
     
     // =========================================================
+    
     default boolean attackUnit(AUnit target) {
         if (!unit().hasRangeToAttack(target, 0.05)) {
             unit().setTooltip("Come closer!");
@@ -112,7 +113,6 @@ public interface AtlantisUnitOrders {
         // =========================================================
 
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
-        unit().setUnitAction(unitAction);
         
 //        if (unit().isMoving() && AGame.getTimeFrames() % 4 != 0) {
 //            return true;
@@ -120,11 +120,14 @@ public interface AtlantisUnitOrders {
 //        
 //        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
 //            System.out.println(u().getID() + " MOVE at " + AGame.getTimeFrames());
-        if (!unit().isMoving() || AGame.getTimeFrames() % 4 != 0) {
+//        if (!unit().isMoving() || AGame.getTimeFrames() % 4 != 0) {
+        if (!unit().isUnitActionMove() || AGame.getTimeFrames() % 90 == 0) {
             u().move(target);
             unit().setOrderWasIssued();
             return true;
         }
+        
+        unit().setUnitAction(unitAction);
         
         return true;
 //        }

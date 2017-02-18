@@ -36,7 +36,7 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AUnit extends APositionedObject implements Comparable, AtlantisUnitOrders {
+public class AUnit extends APositionedObject implements Comparable, AUnitOrders {
     
     // Mapping of native unit IDs to AUnit objects
     private static final Map<Integer, AUnit> instances = new HashMap<>();

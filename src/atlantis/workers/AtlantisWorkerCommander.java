@@ -2,7 +2,7 @@ package atlantis.workers;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.buildings.managers.AtlantisGasManager;
+import atlantis.buildings.managers.AGasManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
@@ -19,7 +19,7 @@ public class AtlantisWorkerCommander {
      * Executed only once per frame.
      */
     public static void update() {
-        AtlantisGasManager.handleGasBuildings();
+        AGasManager.handleGasBuildings();
 //        transferWorkersBetweenBasesIfNeeded();
 
         for (AUnit worker : Select.ourWorkers().listUnits()) {

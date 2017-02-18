@@ -6,7 +6,7 @@ import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.production.orders.ZergBuildOrders;
 import atlantis.units.AUnitType;
 
-public class AtlantisSupplyManager {
+public class ASupplyManager {
 
     private static int supplyTotal;
     private static int supplyFree;

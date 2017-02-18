@@ -1,7 +1,7 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.micro.AbstractMicroManager;
-import atlantis.combat.micro.MicroManager;
+import atlantis.combat.micro.AMicroManager;
 import atlantis.combat.squad.missions.Mission;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
@@ -39,7 +39,7 @@ public class Squad extends Units {
         super();
         this.name = name;
         this.setMission(mission);
-        this.setMicroManager(new MicroManager());
+        this.setMicroManager(new AMicroManager());
     }
 
     // =========================================================

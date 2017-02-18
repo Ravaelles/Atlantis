@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisExpansionManager {
+public class AExpansionManager {
 
     public static void requestNewBaseIfNeeded() {
 //        if (1 < 2) {

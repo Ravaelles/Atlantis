@@ -5,7 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-public class AtlantisBarracksManager {
+public class ABarracksManager {
 
     public static void update(AUnit barracks) {
 //        if (!AGame.playsAsZerg()) {

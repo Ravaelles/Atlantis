@@ -15,7 +15,7 @@ import java.util.Set;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisRepairCommander {
+public class ARepairCommander {
 
     public static void update() {
         if (AGame.getTimeFrames() % 15 == 0) {

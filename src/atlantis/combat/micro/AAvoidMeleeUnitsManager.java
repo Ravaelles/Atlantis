@@ -12,7 +12,7 @@ import bwapi.Color;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisAvoidMeleeUnitsManager {
+public class AAvoidMeleeUnitsManager {
     
     /**
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.

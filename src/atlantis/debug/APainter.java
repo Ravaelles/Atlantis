@@ -2,7 +2,7 @@ package atlantis.debug;
 
 import atlantis.Atlantis;
 import atlantis.AGame;
-import atlantis.buildings.managers.AtlantisGasManager;
+import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.AtlantisCombatEvaluator;
 import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.combat.squad.missions.MissionAttack;
@@ -143,7 +143,7 @@ public class APainter {
 //        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
-        paintSideMessage("Gas workers: " + AtlantisGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + AtlantisBuildOrdersManager.getMineralsNeeded(), Color.Grey);
         paintSideMessage("Reserved gas: " + AtlantisBuildOrdersManager.getGasNeeded(), Color.Grey);
     }

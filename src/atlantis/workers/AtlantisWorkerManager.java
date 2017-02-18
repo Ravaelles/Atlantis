@@ -2,7 +2,7 @@ package atlantis.workers;
 
 import atlantis.AGame;
 import atlantis.combat.micro.AbstractMicroManager;
-import atlantis.combat.micro.AtlantisAvoidMeleeUnitsManager;
+import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.constructing.AtlantisBuilderManager;
 import atlantis.constructing.AtlantisConstructionManager;
 import atlantis.constructing.ConstructionOrder;
@@ -30,7 +30,7 @@ public class AtlantisWorkerManager {
         // =========================================================
         // === Worker micro ========================================
         
-        if (AtlantisAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(worker)) {
+        if (AAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(worker)) {
             return true;
         }
         
