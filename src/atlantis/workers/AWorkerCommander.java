@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.CodeProfiler;
 import atlantis.util.PositionUtil;
 import java.util.Collection;
 
@@ -19,13 +20,23 @@ public class AWorkerCommander {
      * Executed only once per frame.
      */
     public static void update() {
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_WORKERS);
+
+        // === Handle assigning workers to gas / bases ============================
+        
         AGasManager.handleGasBuildings();
 //        transferWorkersBetweenBasesIfNeeded();
+
+        // === Act individually with every worker =================================
 
         for (AUnit worker : Select.ourWorkers().listUnits()) {
             AWorkerManager.update(worker);
 //            worker.setTooltip(worker.getFramesSinceLastOrderWasIssued()+ " ago");
         }
+        
+        // =========================================================
+        
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_WORKERS);
     }
 
     // =========================================================

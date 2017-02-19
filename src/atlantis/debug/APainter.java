@@ -80,8 +80,7 @@ public class APainter {
         }
 
         // === PARTIAL PAINTING ====================================
-        
-        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
+//        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
         bwapi.setTextSize(Enum.Default);
 
         paintInfo();
@@ -99,24 +98,23 @@ public class APainter {
         // =========================================================
         bwapi.setTextSize(Enum.Small);
 
+        paintCodeProfiler();
+//        paintTestSupplyDepotLocationsNearMain();
+        paintConstructionProgress();
         paintEnemyRegionDetails();
         paintImportantPlaces();
         paintColoredCirclesAroundUnits();
-//        paintConstructionProgress();
         paintBuildingHealth();
         paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
         paintBarsUnderUnits();
-//        paintTemporaryTargets();
         paintEnemyDiscovered();
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
-//        paintTestSupplyDepotLocationsNearMain();
 
         // =========================================================
-        
-        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
+//        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
     }
 
     // =========================================================
@@ -131,8 +129,8 @@ public class APainter {
 
         // =========================================================
         // Global mission
-        paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown() ? 
-                AEnemyStrategy.getEnemyStrategy() : "Unknown"), 
+        paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
+                ? AEnemyStrategy.getEnemyStrategy() : "Unknown"),
                 AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
         paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
         paintSideMessage("Enemy base: " + AtlantisEnemyUnits.getEnemyBase(), Color.White);
@@ -668,13 +666,13 @@ public class APainter {
 
             double progress = (double) unit.getHitPoints() / unit.getMaxHitPoints();
             int labelProgress = (int) (1 + 99 * progress);
-            String color = AtlantisUtilities.assignStringForValue(
-                    progress,
-                    1.0,
-                    0.0,
-                    new String[]{ColorUtil.getColorString(Color.Red), ColorUtil.getColorString(Color.Yellow),
-                        ColorUtil.getColorString(Color.Green)});
-            stringToDisplay = color + labelProgress + "%";
+//            String color = AtlantisUtilities.assignStringForValue(
+//                    progress,
+//                    1.0,
+//                    0.0,
+//                    new String[]{ColorUtil.getColorString(Color.Red), ColorUtil.getColorString(Color.Yellow),
+//                        ColorUtil.getColorString(Color.Green)});
+            stringToDisplay = labelProgress + "%";
 
             // Paint box
             bwapi.drawBoxMap(
@@ -695,12 +693,12 @@ public class APainter {
             //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.Black, false, false);
 
             // Paint label
-            paintTextCentered(new APosition(labelLeft, labelTop - 3), stringToDisplay, false);
+            paintTextCentered(new APosition(labelLeft + labelMaxWidth * 50 / 100, labelTop - 3), stringToDisplay, false);
 
             // Display name of unit
             String name = unit.getBuildType().getShortName();
-            paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 4), ColorUtil.getColorString(Color.Green)
-                    + name, false);
+            paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 1), 
+                    name, Color.Green);
         }
     }
 
@@ -837,19 +835,6 @@ public class APainter {
     }
 
     /**
-     * Paint red "X" on every enemy unit that has been targetted.
-     */
-//    private static void paintTemporaryTargets() {
-//        for (AUnit ourUnit : Select.our().listUnits()) {
-//
-//            // Paint "x" on every unit that has been targetted by one of our units.
-//            if (ourUnit.isAttacking() && ourUnit.getTarget() != null) {
-////                paintMessage("X", Color.Red, ourUnit.getTarget().getPX(), ourUnit.getTarget().getPY(), false);
-//                paintLine(ourUnit.getPosition(), ourUnit.getTarget().getPosition(), Color.Red);
-//            }
-//        }
-//    }
-    /**
      * Tooltips are units messages that appear over them and allow to report actions like "Repairing" or "Run
      * from enemy" etc.
      */
@@ -937,6 +922,44 @@ public class APainter {
             for (Position point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.Yellow);
             }
+        }
+    }
+
+    private static final int timeConsumptionLeftOffset = 572;
+    private static final int timeConsumptionTopOffset = 65;
+    private static final int timeConsumptionBarMaxWidth = 50;
+    private static final int timeConsumptionBarHeight = 14;
+    private static final int timeConsumptionYInterval = 16;
+    
+    /**
+     * Paints bars showing CPU time usage by game aspect (like "Production", "Combat", "Workers", "Scouting").
+     */
+    private static void paintCodeProfiler() {
+        int counter = 0;
+        double maxValue = AtlantisUtilities.getMaxElement(
+                CodeProfiler.getAspectsTimeConsumption().values()
+        );
+
+        for (String aspectTitle : CodeProfiler.getAspectsTimeConsumption().keySet()) {
+            int x = timeConsumptionLeftOffset;
+            int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++;
+
+            int value = CodeProfiler.getAspectsTimeConsumption().get(aspectTitle).intValue();
+
+            // Draw aspect time consumption bar
+            int barWidth = (int) (timeConsumptionBarMaxWidth * value / maxValue);
+            if (barWidth < 3) {
+                barWidth = 3;
+            }
+            if (barWidth > timeConsumptionBarMaxWidth) {
+                barWidth = timeConsumptionBarMaxWidth;
+            }
+
+            bwapi.drawBoxScreen(x, y, x + barWidth, y + timeConsumptionBarHeight, Color.Grey, true);
+            bwapi.drawBoxScreen(x, y, x + timeConsumptionBarMaxWidth, y + timeConsumptionBarHeight, Color.Black);
+
+            // Draw aspect label
+            paintMessage(aspectTitle, Color.White, x + 4, y + 1, true);
         }
     }
 
@@ -1033,7 +1056,6 @@ public class APainter {
 //            }
 //        }
 //    }
-
     public static void paintTextCentered(AUnit unit, String text, Color color) {
         paintTextCentered(unit.getPosition(), text, color, false);
     }

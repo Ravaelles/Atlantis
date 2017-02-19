@@ -12,6 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.CodeProfiler;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.PositionOperationsHelper;
 import atlantis.wrappers.Positions;
@@ -51,8 +52,11 @@ public class AScoutManager {
         if (AGame.isUmtMode()) {
             return;
         }
+        
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_SCOUTING);
 
         // =========================================================
+        
         assignScoutIfNeeded();
 
         // =========================================================
@@ -73,6 +77,10 @@ public class AScoutManager {
 //                scoutForTheNextBase(scout);
 //            }
         }
+        
+        // =========================================================
+        
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_SCOUTING);
     }
 
     // =========================================================

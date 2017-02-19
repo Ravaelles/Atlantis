@@ -5,6 +5,7 @@ import atlantis.combat.squad.AtlantisSquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
+import atlantis.util.CodeProfiler;
 
 public class ACombatCommander {
     
@@ -12,6 +13,10 @@ public class ACombatCommander {
      * Acts with all battle units.
      */
     public static void update() {
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
+        
+        // =========================================================
+        
         if (AGame.getTimeFrames() % 20 == 0) {
             Missions.handleGlobalMission();
         }
@@ -21,6 +26,10 @@ public class ACombatCommander {
         for (Squad squad : AtlantisSquadManager.getSquads()) {
             handleSquad(squad);
         }
+        
+        // =========================================================
+        
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_COMBAT);
     }
 
     // =========================================================
