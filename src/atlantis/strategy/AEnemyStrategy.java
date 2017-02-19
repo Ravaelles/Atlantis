@@ -94,7 +94,7 @@ public class AEnemyStrategy {
         return enemyStrategy;
     }
 
-    public static void setEnemyStrategy(AEnemyStrategy enemyStrategy) {
+    protected static void setEnemyStrategy(AEnemyStrategy enemyStrategy) {
         AEnemyStrategy.enemyStrategy = enemyStrategy;
     }
 

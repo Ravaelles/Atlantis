@@ -28,7 +28,10 @@ public class AStrategyCommander {
     }
 
     private static void defineEnemyStrategyWhenEnemyIsTerran() {
-        changeEnemyStrategyTo(AEnemyStrategy.TERRAN_Double_Rax_MnM);
+        AEnemyStrategy detectedStrategy = TerranStrategyDetector.detectStrategy();
+        if (detectedStrategy != null) {
+            changeEnemyStrategyTo(detectedStrategy);
+        }
     }
 
     private static void defineEnemyStrategyWhenEnemyIsZerg() {
@@ -37,8 +40,9 @@ public class AStrategyCommander {
     
     // =========================================================
 
-    private static void changeEnemyStrategyTo(AEnemyStrategy TERRAN_Double_Rax_MnM) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private static void changeEnemyStrategyTo(AEnemyStrategy strategy) {
+        AGame.sendMessage("Enemy strategy: " + strategy);
+        AEnemyStrategy.setEnemyStrategy(strategy);
     }
     
 }

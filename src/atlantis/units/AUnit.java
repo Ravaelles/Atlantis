@@ -946,6 +946,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     public boolean isUnitActionMove() {
         return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_BUILD 
                 || unitAction == UnitActions.MOVE_TO_REPAIR || unitAction == UnitActions.RETREAT
+                || unitAction == UnitActions.EXPLORE
                 || unitAction == UnitActions.STICK_CLOSER || unitAction == UnitActions.RUN;
     }
     

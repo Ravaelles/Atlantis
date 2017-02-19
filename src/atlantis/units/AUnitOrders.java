@@ -121,9 +121,10 @@ public interface AUnitOrders {
 //        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
 //            System.out.println(u().getID() + " MOVE at " + AGame.getTimeFrames());
 //        if (!unit().isMoving() || AGame.getTimeFrames() % 4 != 0) {
-        if (!unit().isUnitActionMove() || AGame.getTimeFrames() % 90 == 0) {
+        if (!unit().isUnitActionMove() || AGame.getTimeFrames() % 5 == 0) {
             u().move(target);
             unit().setOrderWasIssued();
+            unit().setUnitAction(unitAction);
             return true;
         }
         

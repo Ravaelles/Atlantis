@@ -24,8 +24,8 @@ import javax.swing.ActionMap;
 
 public class AScoutManager {
 
-//    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = true;
-    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = false;
+    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = true;
+//    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = false;
     
     // =========================================================
     
@@ -168,7 +168,7 @@ public class AScoutManager {
                 initializeEnemyRegionPolygonPoints(scout, enemyBaseRegion);
             }
 
-            defineNextPolygonForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
+            defineNextPolygonPointForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
             if (scoutingAroundBaseLastPolygonPoint != null) {
                 scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE);
                 return true;
@@ -221,7 +221,7 @@ public class AScoutManager {
         }
     }
 
-    private static void defineNextPolygonForEnemyBaseRoamingUnit(Region region, AUnit scout) {
+    private static void defineNextPolygonPointForEnemyBaseRoamingUnit(Region region, AUnit scout) {
         
         // Change roaming direction if we were forced to run from enemy units
         if (scoutingAroundBaseWasInterrupted) {
@@ -281,12 +281,12 @@ public class AScoutManager {
             if (groundDistance < 2) {
                 continue;
             }
-            position = PositionOperationsHelper.getPositionMovedPercentTowards(point, centerOfRegion, 3);
+            position = PositionOperationsHelper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
 
             // If positions is walkable, not in different region and has path to it, it should be ok
             if (AtlantisMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
-                    && scout.hasPathTo(position) && groundDistance >= 3
-                    && groundDistance <= 1.5 * scout.distanceTo(position)) {
+                    && scout.hasPathTo(position) && groundDistance >= 4
+                    && groundDistance <= 1.7 * scout.distanceTo(position)) {
                 scoutingAroundBasePoints.addPosition(position);
             }
         }

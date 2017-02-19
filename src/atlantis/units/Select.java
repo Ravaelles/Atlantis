@@ -252,7 +252,7 @@ public class Select<T> {
     public static Select<AUnit> enemy() {
         List<AUnit> data = new ArrayList<>();
 
-        //TODO: check whether enemy().getUnits() has the same behavior as  getEnemyUnits()
+        //TODO: check whether enemy().getUnits() has the same behavior as getEnemyUnits()
         for (AUnit unit : enemyUnits()) {
             if (!unit.getType().isSpecial()) {
                 data.add(unit);

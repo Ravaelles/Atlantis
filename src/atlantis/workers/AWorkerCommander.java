@@ -24,7 +24,7 @@ public class AWorkerCommander {
 
         for (AUnit worker : Select.ourWorkers().listUnits()) {
             AWorkerManager.update(worker);
-            worker.setTooltip(worker.getFramesSinceLastOrderWasIssued()+ " ago");
+//            worker.setTooltip(worker.getFramesSinceLastOrderWasIssued()+ " ago");
         }
     }
 

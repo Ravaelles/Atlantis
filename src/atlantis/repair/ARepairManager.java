@@ -30,7 +30,7 @@ public class ARepairManager {
         AUnit unitToRepair = ARepairManager.getUnitToRepairFor(repairer);
         if (unitToRepair != null && unitToRepair.isAlive()) {
             if (unitToRepair.getHPPercent() < 100) {
-                repairer.setTooltip("Repair " + unitToRepair.getShortName());
+                repairer.setTooltip("Repair " + unitToRepair.getShortName() + "(alive:" + unitToRepair.isAlive());
                 repairer.repair(unitToRepair);
                 return true;
             }

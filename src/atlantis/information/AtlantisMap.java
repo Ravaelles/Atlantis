@@ -242,7 +242,7 @@ public class AtlantisMap {
         baseLocations.addPositions(getBaseLocations());
 
         // Sort them all by closest to given nearestTo position
-        baseLocations.sortByDistanceTo(nearestTo, true);
+        baseLocations.sortByGroundDistanceTo(nearestTo, true);
 
         // Return second nearest location.
         int counter = 0;
