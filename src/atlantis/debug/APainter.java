@@ -24,6 +24,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.AtlantisUtilities;
+import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
 import atlantis.workers.AWorkerManager;
@@ -79,6 +80,8 @@ public class APainter {
         }
 
         // === PARTIAL PAINTING ====================================
+        
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
         bwapi.setTextSize(Enum.Default);
 
         paintInfo();
@@ -89,6 +92,7 @@ public class APainter {
         //        paintUnitCounters();
 
         if (paintingMode == MODE_PARTIAL_PAINTING) {
+            CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
             return;
         }
 
@@ -109,6 +113,10 @@ public class APainter {
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
 //        paintTestSupplyDepotLocationsNearMain();
+
+        // =========================================================
+        
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
     }
 
     // =========================================================

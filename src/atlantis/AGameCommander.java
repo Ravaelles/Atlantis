@@ -10,6 +10,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.util.CodeProfiler;
 import atlantis.workers.AWorkerCommander;
 
 /**

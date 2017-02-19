@@ -3,6 +3,7 @@ package atlantis.combat.micro;
 import atlantis.AGame;
 import atlantis.debug.APainter;
 import static atlantis.debug.APainter.paintCircle;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -19,7 +20,11 @@ public class AAvoidMeleeUnitsManager {
      */
     public static boolean handleAvoidCloseMeleeUnits(AUnit unit) {
         if (unit.getFramesSinceLastOrderWasIssued() <= 3) {
-            return true;
+            
+            // Scout mustn't exit here, otherwise scouting behavior will override this behavior.
+            if (!AScoutManager.isScout(unit)) {
+                return true;
+            }
         }
         
         // =========================================================

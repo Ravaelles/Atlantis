@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.buildings.managers.FlyingBuildingManager;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.scout.AScoutManager;
+import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -124,7 +125,15 @@ public class ARepairCommander {
         // === Mission DEFEND  =================================
         if (Missions.isGlobalMissionDefend()) {
             if (AGame.playsAsTerran()) {
-                return 0;
+               if (AEnemyStrategy.isEnemyStrategyKnown()) {
+                   if (AEnemyStrategy.getEnemyStrategy().isGoingAllInRush()) {
+                       return 3;
+                   }
+                   if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {
+                       return 2;
+                   }
+               }
+               return 0;
             }
             else {
                 return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0);
