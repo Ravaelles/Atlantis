@@ -18,6 +18,7 @@ import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AtlantisBuildOrdersManager;
 import atlantis.scout.AScoutManager;
+import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -122,6 +123,9 @@ public class APainter {
 
         // =========================================================
         // Global mission
+        paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown() ? 
+                AEnemyStrategy.getEnemyStrategy() : "Unknown"), 
+                AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
         paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
         paintSideMessage("Enemy base: " + AtlantisEnemyUnits.getEnemyBase(), Color.White);
 
