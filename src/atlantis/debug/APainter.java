@@ -961,6 +961,12 @@ public class APainter {
             // Draw aspect label
             paintMessage(aspectTitle, Color.White, x + 4, y + 1, true);
         }
+        
+        // Paint total time
+        int x = timeConsumptionLeftOffset;
+        int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++ + 3;
+        int frameLength = (int) CodeProfiler.getTotalFrameLength();
+        paintMessage("Length: " + frameLength, Color.White, x + 4, y + 1, true);
     }
 
     // =========================================================

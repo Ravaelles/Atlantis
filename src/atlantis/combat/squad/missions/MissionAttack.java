@@ -36,7 +36,6 @@ public class MissionAttack extends Mission {
         APosition focusPoint = getFocusPoint();
         unit.setTooltip("#MA");
         
-        
         // === Attack units nears main =============================
         
         AUnit mainBase = Select.mainBase();

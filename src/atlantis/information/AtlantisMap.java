@@ -322,6 +322,16 @@ public class AtlantisMap {
      */
     public static boolean isPositionFarFromAnyRegionPolygonPoint(AUnit unit) {
         Region region = unit.getPosition().getRegion();
+        
+        if (region == null) {
+            System.err.println("isPositionFarFromAnyRegionPolygonPoint -> Region is null");
+            return false;
+        }
+        if (region.getPolygon() == null) {
+            System.err.println("isPositionFarFromAnyRegionPolygonPoint -> region.getPolygon() is null");
+            return false;
+        }
+        
         Positions polygonPoints = new Positions();
         polygonPoints.addPositions(region.getPolygon().getPoints());
         APosition nearestPolygon = polygonPoints.nearestTo(unit.getPosition());

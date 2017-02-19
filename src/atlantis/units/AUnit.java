@@ -75,7 +75,9 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 
         this.u = u;
 //        this.innerID = firstFreeID++;
-        this._lastCachedType = AUnitType.createFrom(u.getType());
+        
+        // Cached type helpers
+        refreshType();
 
         // Repair & Heal
         this._repairableMechanically = isBuilding() || isVehicle();
@@ -89,9 +91,6 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
                 AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
                 AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
         );
-        
-        // Cached type helpers
-        _isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
     }
 
     // =========================================================
@@ -114,6 +113,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     
     public void refreshType() {
         _lastCachedType = AUnitType.createFrom(u.getType());
+        _isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
     }
 
     @Override

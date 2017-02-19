@@ -15,7 +15,7 @@ public class AtlantisCombatUnitManager {
 
     protected static boolean update(AUnit unit) {
 //        unit.removeTooltip();
-        unit.setTooltip("Commander:" + AGame.getTimeFrames());
+//        unit.setTooltip("Commander:" + AGame.getTimeFrames());
 //        System.out.println("  Manager (" + (unit.getSquad() != null) + "): " + unit + " / " + unit.getTooltip());
         
         // =========================================================

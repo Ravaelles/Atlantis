@@ -52,14 +52,15 @@ public interface AUnitOrders {
     }
 
     default boolean attackPosition(APosition target) {
-        unit().setUnitAction(UnitActions.ATTACK_POSITION);
 
         // Do NOT issue double orders
         if (unit().isUnitAction(UnitActions.ATTACK_POSITION)
                 && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
+            unit().setUnitAction(UnitActions.ATTACK_POSITION);
             return true;
         } else {
             u().attack(target);
+            unit().setUnitAction(UnitActions.ATTACK_POSITION);
             unit().setLastUnitActionNow();
             return true;
         }

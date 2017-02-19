@@ -24,15 +24,24 @@ public class CodeProfiler {
     public static void endMeasuring(String title) {
         long measured = now() - aspectsStart.get(title);
 
-        if (!aspectsLength.containsKey(title)) {
+//        if (!aspectsLength.containsKey(title)) {
+//            aspectsLength.put(title, (double) measured);
+//        } else {
+//            aspectsLength.put(title, aspectsLength.get(title) * 0.6 + measured * 0.4);
             aspectsLength.put(title, (double) measured);
-        } else {
-            aspectsLength.put(title, aspectsLength.get(title) * 0.6 + measured * 0.4);
-        }
+//        }
     }
 
     public static HashMap<String, Double> getAspectsTimeConsumption() {
         return aspectsLength;
+    }
+    
+    public static double getTotalFrameLength() {
+        double total = 0;
+        for (Double value : aspectsLength.values()) {
+            total += value;
+        }
+        return (int) Math.pow(total / 12, 0.35);
     }
     
     // =========================================================
@@ -47,6 +56,7 @@ public class CodeProfiler {
 
     private static long now() {
         return System.nanoTime();
+//        return System.currentTimeMillis();
     }
 
 }
