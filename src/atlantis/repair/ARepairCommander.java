@@ -22,13 +22,12 @@ public class ARepairCommander {
         if (AGame.getTimeFrames() % 15 == 0) {
             assignConstantBunkerRepairersIfNeeded();
         }
-        
+
         if (AGame.getTimeFrames() % 15 == 0) {
             assignUnitRepairersToWoundedUnits();
         }
-        
+
         // =========================================================
-        
         for (AUnit bunkerRepairer : ARepairManager.getConstantBunkerRepairers()) {
             ARepairManager.updateBunkerRepairer(bunkerRepairer);
         }
@@ -39,30 +38,24 @@ public class ARepairCommander {
     }
 
     // === Asign repairers if needed =============================
-    
     private static void assignUnitRepairersToWoundedUnits() {
         for (AUnit woundedUnit : Select.our().repairable(true).listUnits()) {
-            
+
             // Some units shouldn't be repaired
             if (AScoutManager.isScout(woundedUnit) || FlyingBuildingManager.isFlyingBuilding(woundedUnit)
                     || ARepairManager.isConstantBunkerRepairer(woundedUnit)) {
                 continue;
             }
-            
+
             // =========================================================
-            
             int numberOfRepairers = ARepairManager.countRepairersForUnit(woundedUnit)
                     + ARepairManager.countConstantRepairersForBunker(woundedUnit);
-            
+
             // === Bunker ========================================
-            
             if (woundedUnit.type().isBunker()) {
                 int shouldHaveThisManyRepairers = defineOptimalRepairersForBunker(woundedUnit);
                 assignConstantBunkerRepairers(woundedUnit, shouldHaveThisManyRepairers - numberOfRepairers);
-            }
-            
-            // === Ordinary unit =================================
-            
+            } // === Ordinary unit =================================
             else {
                 assignUnitRepairers(woundedUnit, 2 - numberOfRepairers);
             }
@@ -70,7 +63,7 @@ public class ARepairCommander {
     }
 
     private static void assignConstantBunkerRepairersIfNeeded() {
-        
+
         // If mission is not DEFEND, release all bunker repairers
         if (!Missions.getGlobalMission().isMissionDefend()) {
             for (AUnit bunkerRepairer : ARepairManager.getConstantBunkerRepairers()) {
@@ -78,9 +71,8 @@ public class ARepairCommander {
             }
             return;
         }
-        
+
         // =========================================================
-        
         Select<AUnit> bunkers = Select.ourUnitsOfType(AUnitType.Terran_Bunker);
         int bunkersCounter = bunkers.count();
 
@@ -99,7 +91,6 @@ public class ARepairCommander {
     }
 
     // =========================================================
-
     private static void assignConstantBunkerRepairers(AUnit bunker, int numberOfRepairersToAssign) {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
             AUnit worker = defineBestRepairerFor(bunker, false);
@@ -117,61 +108,62 @@ public class ARepairCommander {
             }
         }
     }
-    
+
     // =========================================================
-    
     private static int defineOptimalConstantBunkerRepairers() {
-        
+
         // === Mission DEFEND  =================================
         if (Missions.isGlobalMissionDefend()) {
             if (AGame.playsAsTerran()) {
-               if (AEnemyStrategy.isEnemyStrategyKnown()) {
-                   if (AEnemyStrategy.getEnemyStrategy().isGoingAllInRush()) {
-                       return 3;
-                   }
-                   if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {
-                       return 2;
-                   }
-               }
-               return 0;
-            }
+
+                // === We know enemy strategy ========================================
+                if (AEnemyStrategy.isEnemyStrategyKnown()) {
+                    if (AEnemyStrategy.getEnemyStrategy().isGoingAllInRush()) {
+                        return 3;
+                    }
+                    if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {
+                        return 2;
+                    }
+                } 
+                
+                // === We don't know enemy strategy ==================================
+                else {
+                    return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0);
+                }
+            } 
+
+            // === Only Terran can repair buildings ==================================
             else {
-                return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0);
+                return 0;
             }
-        }
-        
-        // === Mission ATTACK ==================================
-        else {
-            return 0;
-        }
+        } 
+
+        return 0;
     }
-    
+
     private static int defineOptimalRepairersForBunker(AUnit bunker) {
         int enemiesNearby = Select.enemy().combatUnits().inRadius(10, bunker).count();
         double optimalNumber;
-        
+
         if (AGame.isEnemyProtoss()) {
             optimalNumber = enemiesNearby * 1;
-        }
-        else if (AGame.isEnemyTerran()) {
+        } else if (AGame.isEnemyTerran()) {
+            optimalNumber = enemiesNearby * 0.5;
+        } else {
             optimalNumber = enemiesNearby * 0.5;
         }
-        else {
-            optimalNumber = enemiesNearby * 0.5;
-        }
-        
+
         if (bunker.getHP() < 100) {
             optimalNumber += 2;
         }
-        
+
         return Math.min(7, (int) Math.ceil(optimalNumber));
     }
-    
+
     private static AUnit defineBestRepairerFor(AUnit unitToRepair, boolean criticallyImportant) {
         if (criticallyImportant) {
             return Select.ourWorkers().notRepairing().notConstructing().nearestTo(unitToRepair);
-        }
-        else {
+        } else {
             return Select.ourWorkers().notCarrying().notRepairing().notConstructing().nearestTo(unitToRepair);
         }
     }

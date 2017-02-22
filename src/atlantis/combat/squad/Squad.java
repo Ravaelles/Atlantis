@@ -1,7 +1,6 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.micro.AbstractMicroManager;
-import atlantis.combat.micro.AMicroManager;
 import atlantis.combat.squad.missions.Mission;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
@@ -31,7 +30,7 @@ public class Squad extends Units {
     /**
      * Manager that handles microing of units.
      */
-    private AbstractMicroManager microManager;
+//    private AbstractMicroManager microManager;
     
     // =========================================================
     
@@ -39,7 +38,7 @@ public class Squad extends Units {
         super();
         this.name = name;
         this.setMission(mission);
-        this.setMicroManager(new AMicroManager());
+//        this.setMicroManager(new AMicroManager());
     }
 
     // =========================================================
@@ -117,19 +116,19 @@ public class Squad extends Units {
     /**
      * Manager for microing units.
      */
-    public AbstractMicroManager getMicroManager() {
-        return microManager;
-    }
-
-    /**
-     * Manager for microing units.
-     */
-    public void setMicroManager(AbstractMicroManager microManager) {
-        if (microManager == null) {
-            throw new RuntimeException("Assigned null MicroManager to squad");
-        }
-        this.microManager = microManager;
-    }
+//    public AbstractMicroManager getMicroManager() {
+//        return microManager;
+//    }
+//
+//    /**
+//     * Manager for microing units.
+//     */
+//    public void setMicroManager(AbstractMicroManager microManager) {
+//        if (microManager == null) {
+//            throw new RuntimeException("Assigned null MicroManager to squad");
+//        }
+//        this.microManager = microManager;
+//    }
 
     /**
      * Returns ID for this battle squad (1, 2, 3, 4 etc).

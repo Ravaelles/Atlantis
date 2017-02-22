@@ -26,13 +26,13 @@ public abstract class AbstractMicroManager {
 
     // =========================================================
     
-    public abstract boolean update(AUnit unit);
+//    public abstract boolean update(AUnit unit);
 
     // =========================================================
     /**
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
-    protected boolean handleUnfavorableOdds(AUnit unit) {
+    protected static boolean handleUnfavorableOdds(AUnit unit) {
         boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit, isNewFight);
 

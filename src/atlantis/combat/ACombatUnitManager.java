@@ -1,6 +1,10 @@
 package atlantis.combat;
 
 import atlantis.AGame;
+import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.AAvoidMeleeUnitsManager;
+import atlantis.combat.micro.AbstractMicroManager;
+import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.terran.TerranSiegeTankManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.combat.squad.Squad;
@@ -11,20 +15,12 @@ import atlantis.units.AUnitType;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class ACombatUnitManager {
+public class ACombatUnitManager extends AbstractMicroManager {
 
     protected static boolean update(AUnit unit) {
-//        unit.removeTooltip();
-//        unit.setTooltip("Commander:" + AGame.getTimeFrames());
-//        System.out.println("  Manager (" + (unit.getSquad() != null) + "): " + unit + " / " + unit.getTooltip());
         
         // =========================================================
-        // DON'T INTERRUPT shooting units
-        
-//        if (unit.getType().isTank()) {
-//            System.out.println("----------------------------");
-//            System.out.println(unit + " PRE DISTURB");
-//        }
+        // Don't INTERRUPT shooting units
         
         if (shouldNotDisturbUnit(unit)) {
             unit.setTooltip("#DontDisturb");
@@ -34,10 +30,6 @@ public class ACombatUnitManager {
         // =========================================================
         // Handle some units in special way
         
-//        if (unit.getType().isTank()) {
-//            System.out.println(unit + " PRE specialUnit");
-//        }
-            
         if (handledAsSpecialUnit(unit)) {
             unit.setTooltip(unit.getShortName());
             return true;
@@ -46,52 +38,47 @@ public class ACombatUnitManager {
         // =========================================================
         // Handle some units in semi-special way
         
-//        if (unit.getType().isTank()) {
-//            System.out.println(unit + " PRE SemiSpecial");
-//        }
-//        
         if (handledAsSemiSpecialUnit(unit)) {
             unit.setTooltip("Siege Tank");
             return true;
         }
 
         // =========================================================
-        // Act with proper micro-manager and decide if mission manager can issue orders afterward.
-        Squad squad = unit.getSquad();
+        // Avoid melee units
+        if (AAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(unit)) {
+            return true;
+        }
         
-//        if (unit.getType().isTank()) {
-//            System.out.println(unit + " PRE Micro");
-//        }
+        // =========================================================
+        // If we couldn't beat nearby enemies, retreat
+        if (handleUnfavorableOdds(unit)) {
+            return true;
+        }
         
-        boolean isMissionManagerControlForbbiden = squad.getMicroManager().update(unit);
-        
-//        if (unit.getType().isTank()) {
-//            System.out.println(unit + " mission control: " + !isMissionManagerControlForbbiden);
-//        }
+        // =========================================================
+        // Attack enemy units when in range (and choose the best target)
+        if (AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+            return true;
+        }
 
         // =========================================================
-        // MISSION manager execution is FORBIDDEN
-        if (isMissionManagerControlForbbiden) {
-            return true;
-        } 
+        // =========================================================
+        // === If we're here, it means mission manager is allowed ==
+        // === to take control over this unit, due to no action   ==
+        // === needed on tactics level (proceed to strategy).     ==
+        // =========================================================
+        // =========================================================
 
-        // MISSION manager exection is ALLOWED
+        Squad squad = unit.getSquad();
+        
+        if (squad == null) {
+            System.err.println("Unit " + unit + " has no squad assigned.");
+            unit.setTooltip("Empty squad!");
+            return false;
+        }
         else {
-//            if (squad == null) {
-//                System.err.println("squad is NULLz!");
-//                System.err.println(unit + " sq null for unit " + unit);
-//                unit.setTooltip("squadIsNull");
-//                return true;
-//            }
-//            else if (squad.getMission() == null) {
-//                System.err.println("squad.getMission() is NULL!");
-//                unit.setTooltip("missionIsNull");
-//                return true;
-//            }
-//            else {
             unit.setTooltip("Mission:" + squad.getMission().getName());
             return squad.getMission().update(unit);
-//            }
         }
     }
 
@@ -117,12 +104,31 @@ public class ACombatUnitManager {
      * 
      */
     private static boolean handledAsSpecialUnit(AUnit unit) {
-        if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
-            ZergOverlordManager.update(unit);
-            return true;
-        } else {
-            return false;
+        
+        // === Terran ========================================
+        if (AGame.playsAsTerran()) {
+            
+            // MEDIC
+            if (unit.isType(AUnitType.Terran_Medic)) {
+                unit.setTooltip("Medic");
+                return TerranMedic.update(unit);
+            }
         }
+        
+        // === Zerg ========================================
+        
+        else if (AGame.playsAsZerg()) {
+            
+            // OVERLORD
+            if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
+                ZergOverlordManager.update(unit);
+                return true;
+            } 
+        } 
+        
+        // =========================================================
+        
+        return false;
     }
 
     /**
