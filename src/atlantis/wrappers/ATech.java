@@ -9,7 +9,7 @@ import bwapi.UpgradeType;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisTech {
+public class ATech {
 
     public static boolean isResearched(TechType tech) {
         return isResearchedTech(tech);

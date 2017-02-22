@@ -7,19 +7,19 @@
 It is being ported to BWMirror 2.5, which runs with BWAPI 4.1.2. Atlantis wraps everything heavily, so you don't need to write yourself countless lines of tedious code that every bot unfortunately needs to have to do the simplest stuff.
 
 # What it can do
-Modular approach with cleanest code possible (that's our priority) is offered by core classes which are prefixed with "Atlantis". So what has been implemented so far is:
+Modular approach with cleanest code possible (that's the priority) is offered by core classes which are prefixed with "Atlantis". So what has been implemented so far is:
 - all three races are supported
-- build orders are customizable using files in bwapi/read/build_orders, files are pretty self-explanatory
-- takes care of the economy for you, allowing you to focus on the military instead (just define build orders)
+- build orders are customizable using files in bwapi/read/build_orders, multiple notations are accepted including Liquipedia notaton
+- takes care of the economy for you (gathering, construction)
 - workers are assigned to optimal mineral fields
-- customizable auto-scouting for the enemy location
-- basic micro-managers that handle unit's behavior in the fight
-- auto-expansion once minerals exceed e.g. 350 minerals
-- evaluating chances to win the combat and retreating if needed
-- advanced and clean code wrappers for selecting units, types and so on
+- scouts in order to find enemy base and detect the build order used
+- micro-managers that handle unit's behavior (e.g. run from nearby Zealots)
+- auto-expansion when minerals exceed e.g. 450 minerals
+- evaluation of unit chance to win the nearby skirmish and retreating when needed
+- advanced and clean code wrappers for selecting units, types etc
 
 # What actually is Atlantis?
-It's powerful set of tools that are based on [BWMirror](https://github.com/vjurenka/BWMirror) in version 2.5. The library (BWMirror) is heavily wrapped in numerous helper methods / modules as BWMIrror pretty much doesn't do anything by itself and most people are interested in combat, not searching for nearest free mineral field for harvesting or debugging Extractor construction. Trust me, it can take tens of hours to solve these problems. Prior to Atlantis I've written three bots, so I know how it is ;__:
+It's powerful set of tools that are based on [BWMirror](https://github.com/vjurenka/BWMirror) in version 2.5. The library (BWMirror) is heavily wrapped in numerous helper methods/modules as BWMIrror pretty much doesn't do anything by itself and most people are interested in combat, not searching for nearest free mineral field for harvesting or debugging Extractor construction. Trust me, it can take tens of hours to solve these problems. Prior to Atlantis I've written three bots, so I know how it is ;__:
 
 # How to install
 Atlantis is actively developed, but it's quite capable already. The latest stable version is in the `master` branch. In `develop` you will find latest changes, but they might not work as expected.
@@ -32,31 +32,35 @@ Atlantis is actively developed, but it's quite capable already. The latest stabl
 * Atlantis is capable of auto-detecting the race it plays. If you want to change your race, modify this line "race = Protoss" in your bwapi.ini file.
 
 # Code structure
-To be explained and improved...
+
+Main framework class is called `Atlantis` and it's built on top of BWMirror `BWEventListener` class. It contains all events like: new game frame, unit destroyed, unit created etc.
+
   * Atlantis.matchFrame()
     * AtlantisGameCommander.update()
-	  * AtlantisWorkerCommander.update();
-	  	- gathering resources
-	  	- transfers workers between bases if needed
-	  	- defence against rushes
-	  * AtlantisCombatCommander.update();
-	  	- controls all combat units
-	  	- decides whether to fight or retreat
-	  	- chooses best targets to attack
-	  	- checks if unit is wounded and if so, retreats
-	  * AtlantisScoutManager.update();
-	  	- sends unit to scout the map in search of enemy
-	  	- scouts the possible location for the next base
-	  * AtlantisProductionCommander.update();
+	  * AStrategyCommander.update()
+	    - responsible for detecting enemy strategy
+	  * AtlantisProductionCommander.update()
 	  	- takes care of build orders and issues proper commands
-	  	- automatically builds supply units when needed 
-	  	- ensures constructions are finished and have proper builders
-	  	- requests construction of new base (expands)
-	  * AtlantisPainter.paint();
-    		- paints life bars over units
-    		- displays places of construction that haven't started yet
-    		- displays current production queue
-    		- displays tooltips over units that make debugging easier
+	  	- automatically builds supply units (Supply Depots, Pylons, Overlords) when needed 
+	  	- ensures constructions are finished and have builders assigned
+	  	- handles expansion (new bases)
+	  * AtlantisWorkerCommander.update()
+	  	- assign workers to gather resources
+	  	- transfer workers between bases when needed
+	  	- @ToDo: defend against rushes and enemy units (Cannon Rush, Gas steal)
+	  * AtlantisCombatCommander.update()
+	  	- takes control of every combat unit
+	  	- decide whether to fight or retreat
+		- avoid close or hidden melee units
+	  	- choose best targets to attack (prioritize Siege Tanks)
+	  * AtlantisScoutManager.update()
+	  	- send worker to scout the map in search of enemy
+	  	- roam around enemy base for as long possible in order to detect his build order	  
+	  * AtlantisPainter.paint()
+    	- paints life bars over units
+    	- displays places of construction that haven't started yet
+    	- displays current production queue
+    	- displays tooltips over units that make debugging easier
 
 # AI tournaments
 Take a look at this site: http://sscaitournament.com/
