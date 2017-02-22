@@ -25,8 +25,8 @@ import javax.swing.ActionMap;
 
 public class AScoutManager {
 
-//    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = true;
-    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = false;
+    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = true;
+//    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = false;
     
     // =========================================================
     

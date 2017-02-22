@@ -17,19 +17,25 @@ public class CodeProfiler {
     
     // =========================================================
 
+    /**
+     * Indicates that from now on, until endMeasuring is executed, the bot is calculating things related
+     * to <b>title</b>.
+     * <br />Used for determining total time that it took to handle given type of activity.
+     */
     public static void startMeasuring(String title) {
         measureAspect(title);
     }
 
+    /**
+     * Indicates that we've stopped handling <b>title</b>-related stuff. Now we can calculate how long
+     * it took by comparing two timestamps.
+     * <br />Used for determining total time that it took to handle given type of activity.
+     */
     public static void endMeasuring(String title) {
-        long measured = now() - aspectsStart.get(title);
-
-//        if (!aspectsLength.containsKey(title)) {
-//            aspectsLength.put(title, (double) measured);
-//        } else {
-//            aspectsLength.put(title, aspectsLength.get(title) * 0.6 + measured * 0.4);
+        if (aspectsStart.containsKey(title)) {
+            long measured = now() - aspectsStart.get(title);
             aspectsLength.put(title, (double) measured);
-//        }
+        }
     }
 
     public static HashMap<String, Double> getAspectsTimeConsumption() {

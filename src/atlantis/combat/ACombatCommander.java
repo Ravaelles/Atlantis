@@ -47,11 +47,8 @@ public class ACombatCommander {
 
         // =========================================================
         
-        // Act with every unit
-//        System.out.println("--- (" + squad.size() + ") ---------------");
+        // Act with every combat unit
         for (AUnit unit : squad.arrayList()) {
-//            System.out.println("Commander (" + (unit.getSquad() != null) + "): " + unit);
-//            unit.setTooltip("C:" + AGame.getTimeFrames());
             ACombatUnitManager.update(unit);
         }
     }

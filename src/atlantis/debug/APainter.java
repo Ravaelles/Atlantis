@@ -72,8 +72,6 @@ public class APainter {
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.getBwapi();
 
-        // === Dynamic PAINTING MODE ===============================
-//        paintingMode = (AGame.getSupplyUsed() >= 29 ? MODE_FULL_PAINTING : MODE_NO_PAINTING);
         // =========================================================
         if (paintingMode == MODE_NO_PAINTING) {
             return;

@@ -237,6 +237,8 @@ public class Atlantis implements BWEventListener {
     public void onUnitComplete(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
+            unit.refreshType();
+            
             AGame.getBuildOrders().rebuildQueue();
 
             // Our unit
