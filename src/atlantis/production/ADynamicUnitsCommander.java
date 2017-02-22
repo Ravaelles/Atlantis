@@ -10,10 +10,10 @@ import bwapi.TilePosition;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisDynamicUnitsCommander {
+public class ADynamicUnitsCommander {
 
     public static void update() {
-        AtlantisWorkerProductionManager.handleWorkerProduction();
+        AWorkerProductionManager.handleWorkerProduction();
         
         if (AGame.playsAsTerran()) {
             handleFactoryProductionIfNeeded();

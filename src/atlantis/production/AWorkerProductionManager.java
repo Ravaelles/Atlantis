@@ -2,7 +2,7 @@ package atlantis.production;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.production.orders.AtlantisBuildOrdersManager;
+import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 
@@ -10,7 +10,7 @@ import atlantis.units.Select;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisWorkerProductionManager {
+public class AWorkerProductionManager {
 
     /**
      * Selects the least worker-saturated base to build a worker.
@@ -18,7 +18,7 @@ public class AtlantisWorkerProductionManager {
     public static void handleWorkerProduction() {
         
         // Leave minerals for reserved constructions
-        if (!AGame.canAfford(AtlantisBuildOrdersManager.getMineralsNeeded() + 50, 0)) {
+        if (!AGame.canAfford(ABuildOrdersManager.getMineralsNeeded() + 50, 0)) {
             return;
         }
         

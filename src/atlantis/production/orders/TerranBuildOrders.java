@@ -2,14 +2,14 @@ package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.production.AtlantisWorkerProductionManager;
+import atlantis.production.AWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.workers.AWorkerCommander;
 import java.util.ArrayList;
 
-public class TerranBuildOrders extends AtlantisBuildOrdersManager {
+public class TerranBuildOrders extends ABuildOrdersManager {
     
     @Override
     protected String getFilename() {
@@ -20,7 +20,7 @@ public class TerranBuildOrders extends AtlantisBuildOrdersManager {
     
     @Override
     public void produceWorker() {
-        AtlantisWorkerProductionManager.produceWorker();
+        AWorkerProductionManager.produceWorker();
     }
 
     @Override

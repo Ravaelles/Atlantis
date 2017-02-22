@@ -1,11 +1,11 @@
 package atlantis;
 
 import static atlantis.Atlantis.getBwapi;
-import atlantis.production.orders.AtlantisBuildOrdersManager;
+import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
-import atlantis.wrappers.AtlantisTech;
+import atlantis.wrappers.ATech;
 import bwapi.Player;
 import bwapi.Race;
 import bwapi.TechType;
@@ -29,7 +29,7 @@ public class AGame {
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static AtlantisBuildOrdersManager getBuildOrders() {
+    public static ABuildOrdersManager getBuildOrders() {
         return AtlantisConfig.getBuildOrders();
     }
 
@@ -40,7 +40,7 @@ public class AGame {
 
         // Needs to have tech
         TechType techType = unitType.getRequiredTech();
-        if (techType != null && techType != TechType.None && !AtlantisTech.isResearched(techType)) {
+        if (techType != null && techType != TechType.None && !ATech.isResearched(techType)) {
             return false;
         }
 

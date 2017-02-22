@@ -9,7 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.NameUtil;
-import atlantis.wrappers.AtlantisTech;
+import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
 import bwapi.TechType;
 import bwapi.UnitType;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * Orders", because you can produce both units and buildings and one couldn't say you build marines, rather
  * produce.
  */
-public abstract class AtlantisBuildOrdersManager {
+public abstract class ABuildOrdersManager {
 
     public static final int MODE_ALL_ORDERS = 1;
     public static final int MODE_ONLY_UNITS = 2;
@@ -59,7 +59,7 @@ public abstract class AtlantisBuildOrdersManager {
 
     // === Constructor =========================================
     
-    public AtlantisBuildOrdersManager() {
+    public ABuildOrdersManager() {
         readBuildOrdersFile();
     }
 
@@ -135,7 +135,7 @@ public abstract class AtlantisBuildOrdersManager {
     /**
      * Returns default production strategy according to the race played.
      */
-    public static AtlantisBuildOrdersManager loadBuildOrders() {
+    public static ABuildOrdersManager loadBuildOrders() {
         if (AGame.playsAsTerran()) {
             return new TerranBuildOrders();
         } else if (AGame.playsAsProtoss()) {
@@ -199,8 +199,8 @@ public abstract class AtlantisBuildOrdersManager {
                 gasNeeded += unitOrBuilding.getGasPrice();
             } // UPGRADE
             else if (upgrade != null) {
-                mineralsNeeded += upgrade.mineralPrice() * (1 + AtlantisTech.getUpgradeLevel(upgrade));
-                gasNeeded += upgrade.gasPrice() * (1 + AtlantisTech.getUpgradeLevel(upgrade));
+                mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
+                gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
             } // TECH
             else if (tech != null) {
                 mineralsNeeded += tech.mineralPrice();
@@ -309,10 +309,10 @@ public abstract class AtlantisBuildOrdersManager {
                 }
             } // Tech
             else if (order.getTech() != null) {
-                isOkayToAdd = !AtlantisTech.isResearched(order.getTech(), order);
+                isOkayToAdd = !ATech.isResearched(order.getTech(), order);
             } // Upgrade
             else if (order.getUpgrade() != null) {
-                isOkayToAdd = !AtlantisTech.isResearched(order.getUpgrade(), order);
+                isOkayToAdd = !ATech.isResearched(order.getUpgrade(), order);
             }
 
             // =========================================================
@@ -375,7 +375,7 @@ public abstract class AtlantisBuildOrdersManager {
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static AtlantisBuildOrdersManager getBuildOrders() {
+    public static ABuildOrdersManager getBuildOrders() {
         return AtlantisConfig.getBuildOrders();
     }
 

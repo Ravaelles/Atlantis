@@ -1,6 +1,6 @@
 package atlantis;
 
-import atlantis.production.orders.AtlantisBuildOrdersManager;
+import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 
@@ -74,7 +74,7 @@ public class AtlantisConfig {
     public static AUnitType BARRACKS = null;
     public static AUnitType SUPPLY = null;
     public static AUnitType GAS_BUILDING = null;
-    public static AtlantisBuildOrdersManager buildOrdersManager = null;
+    public static ABuildOrdersManager buildOrdersManager = null;
 
     // =========================================================
     
@@ -183,14 +183,14 @@ public class AtlantisConfig {
      * Pass an object that will be responsible for the production queue. See e.g. class named
      * DefaultTerranBuildOrders.
      */
-    public static void useBuildOrders(AtlantisBuildOrdersManager buildOrdersManager) {
+    public static void useBuildOrders(ABuildOrdersManager buildOrdersManager) {
         AtlantisConfig.buildOrdersManager = buildOrdersManager;
     }
 
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static AtlantisBuildOrdersManager getBuildOrders() {
+    public static ABuildOrdersManager getBuildOrders() {
         return buildOrdersManager;
     }
 

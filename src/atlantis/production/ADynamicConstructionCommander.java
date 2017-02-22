@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
-import atlantis.production.orders.AtlantisBuildOrdersManager;
+import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisDynamicConstructionCommander {
+public class ADynamicConstructionCommander {
 
     public static void update() {
         if (AGame.playsAsTerran()) {
@@ -92,8 +92,7 @@ public class AtlantisDynamicConstructionCommander {
     // =========================================================
     
     private static boolean canAfford(int minerals, int gas) {
-        return AGame.canAfford(
-                minerals + AtlantisBuildOrdersManager.getMineralsNeeded(), gas + AtlantisBuildOrdersManager.getGasNeeded()
+        return AGame.canAfford(minerals + ABuildOrdersManager.getMineralsNeeded(), gas + ABuildOrdersManager.getGasNeeded()
         );
     }
     

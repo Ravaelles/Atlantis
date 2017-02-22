@@ -10,7 +10,7 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
-public class AtlantisKeyboard implements NativeKeyListener {
+public class AKeyboard implements NativeKeyListener {
 
     public static void listenForKeyEvents() {
         turnOffLibraryLogging();
@@ -24,7 +24,7 @@ public class AtlantisKeyboard implements NativeKeyListener {
             System.exit(1);
         }
 
-        GlobalScreen.addNativeKeyListener(new AtlantisKeyboard());
+        GlobalScreen.addNativeKeyListener(new AKeyboard());
     }
 
     private static void turnOffLibraryLogging() {

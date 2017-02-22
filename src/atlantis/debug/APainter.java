@@ -16,7 +16,7 @@ import atlantis.enemy.AtlantisEnemyUnits;
 import atlantis.information.AtlantisMap;
 import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.AtlantisBuildOrdersManager;
+import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
@@ -154,8 +154,8 @@ public class APainter {
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
         paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + AtlantisBuildOrdersManager.getMineralsNeeded(), Color.Grey);
-        paintSideMessage("Reserved gas: " + AtlantisBuildOrdersManager.getGasNeeded(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + ABuildOrdersManager.getMineralsNeeded(), Color.Grey);
+        paintSideMessage("Reserved gas: " + ABuildOrdersManager.getGasNeeded(), Color.Grey);
     }
 
     /**
@@ -423,8 +423,7 @@ public class APainter {
         }
 
         // Display units that should be produced right now or any time
-        ArrayList<ProductionOrder> produceNow = AGame.getBuildOrders().getThingsToProduceRightNow(
-                AtlantisBuildOrdersManager.MODE_ALL_ORDERS
+        ArrayList<ProductionOrder> produceNow = AGame.getBuildOrders().getThingsToProduceRightNow(ABuildOrdersManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
             paintSideMessage(order.getShortName(), Color.Yellow);

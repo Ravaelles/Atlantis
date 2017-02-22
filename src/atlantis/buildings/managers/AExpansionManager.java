@@ -7,7 +7,7 @@ import static atlantis.constructing.AtlantisConstructionManager.requestConstruct
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.information.AtlantisMap;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.AtlantisBuildOrdersManager;
+import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.Select;
 import java.util.ArrayList;
 
@@ -35,7 +35,7 @@ public class AExpansionManager {
 
         // If there're still things to produce, don't auto-expand.
         ArrayList<ProductionOrder> nextOrders
-                = AtlantisBuildOrdersManager.getBuildOrders().getProductionQueueNext(5);
+                = ABuildOrdersManager.getBuildOrders().getProductionQueueNext(5);
         if (nextOrders.size() >= 3 && !AGame.hasMinerals(minMinerals + 50)) {
             return;
         }

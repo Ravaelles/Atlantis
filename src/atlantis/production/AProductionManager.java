@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
 import atlantis.constructing.AtlantisConstructionManager;
-import atlantis.production.orders.AtlantisBuildOrdersManager;
+import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AtlantisProductionManager {
+public class AProductionManager {
 
     /**
      * Is responsible for training new units and issuing construction requests for buildings.
@@ -29,10 +29,9 @@ public class AtlantisProductionManager {
         // =========================================================
         
         // Get build orders (aka production orders) from the manager
-        AtlantisBuildOrdersManager buildOrdersManager = AtlantisConfig.getBuildOrders();
+        ABuildOrdersManager buildOrdersManager = AtlantisConfig.getBuildOrders();
 
-        ArrayList<ProductionOrder> produceNow = buildOrdersManager.getThingsToProduceRightNow(
-                AtlantisBuildOrdersManager.MODE_ALL_ORDERS
+        ArrayList<ProductionOrder> produceNow = buildOrdersManager.getThingsToProduceRightNow(ABuildOrdersManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
 
@@ -69,7 +68,7 @@ public class AtlantisProductionManager {
         
         // === Fix - refresh entire queue ==============================
         
-        AtlantisBuildOrdersManager.getBuildOrders().getProductionQueueNext(20);
+        ABuildOrdersManager.getBuildOrders().getProductionQueueNext(20);
     }
 
     // =========================================================
@@ -86,13 +85,13 @@ public class AtlantisProductionManager {
         // =========================================================
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
-            AtlantisBuildOrdersManager.getBuildOrders().produceWorker();
+            ABuildOrdersManager.getBuildOrders().produceWorker();
         } 
 
         // =========================================================
         // Non-worker so combat units and special units like Scarabs etc.
         else { 
-            AtlantisBuildOrdersManager.getBuildOrders().produceUnit(unitType);
+            ABuildOrdersManager.getBuildOrders().produceUnit(unitType);
         } 
     }
 

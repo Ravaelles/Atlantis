@@ -20,11 +20,11 @@ public class AProductionCommander {
         ASupplyManager.update();
         
         // See what units/buildings we need to create and take care of it.
-        AtlantisProductionManager.update();
+        AProductionManager.update();
         
         // When it can be applied and makes sense, automatically produce units like workers, factories.
-        AtlantisDynamicConstructionCommander.update();
-        AtlantisDynamicUnitsCommander.update();
+        ADynamicConstructionCommander.update();
+        ADynamicUnitsCommander.update();
         
         
         // Take care of any unfinished constructions, make sure they have builders assigned etc.

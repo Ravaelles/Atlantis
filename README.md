@@ -9,7 +9,9 @@ It is being ported to BWMirror 2.5, which runs with BWAPI 4.1.2. Atlantis wraps 
 # What it can do
 Modular approach with cleanest code possible (that's the priority) is offered by core classes which are prefixed with "Atlantis". So what has been implemented so far is:
 - all three races are supported
-- build orders are customizable using files in bwapi/read/build_orders, multiple notations are accepted including Liquipedia notaton
+- enables to you to run your bot in *one* click from your IDE, just run it and it will run Chaoslauncher and Starcraft
+- provides keyboard shortcuts like speed faster/slower (+/-), exit (Esc), painting modes (1,2,3)
+- build orders are fully customizable, see bwapi/read/build_orders files; multiple notations are accepted including Liquipedia notaton
 - takes care of the economy for you (gathering, construction)
 - workers are assigned to optimal mineral fields
 - scouts in order to find enemy base and detect the build order used
@@ -36,27 +38,27 @@ Atlantis is actively developed, but it's quite capable already. The latest stabl
 Main framework class is called `Atlantis` and it's built on top of BWMirror `BWEventListener` class. It contains all events like: new game frame, unit destroyed, unit created etc.
 
   * Atlantis.matchFrame()
-    * AtlantisGameCommander.update()
+    * AGameCommander.update()
 	  * AStrategyCommander.update()
 	    - responsible for detecting enemy strategy
-	  * AtlantisProductionCommander.update()
+	  * AProductionCommander.update()
 	  	- takes care of build orders and issues proper commands
 	  	- automatically builds supply units (Supply Depots, Pylons, Overlords) when needed 
 	  	- ensures constructions are finished and have builders assigned
 	  	- handles expansion (new bases)
-	  * AtlantisWorkerCommander.update()
+	  * AWorkerCommander.update()
 	  	- assign workers to gather resources
 	  	- transfer workers between bases when needed
 	  	- @ToDo: defend against rushes and enemy units (Cannon Rush, Gas steal)
-	  * AtlantisCombatCommander.update()
+	  * ACombatCommander.update()
 	  	- takes control of every combat unit
 	  	- decide whether to fight or retreat
 		- avoid close or hidden melee units
 	  	- choose best targets to attack (prioritize Siege Tanks)
-	  * AtlantisScoutManager.update()
+	  * AScoutManager.update()
 	  	- send worker to scout the map in search of enemy
 	  	- roam around enemy base for as long possible in order to detect his build order	  
-	  * AtlantisPainter.paint()
+	  * APainter.paint()
     	- paints life bars over units
     	- displays places of construction that haven't started yet
     	- displays current production queue

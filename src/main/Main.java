@@ -1,7 +1,7 @@
 package main;
 
 import atlantis.Atlantis;
-import atlantis.keyboard.AtlantisKeyboard;
+import atlantis.keyboard.AKeyboard;
 import atlantis.util.ProcessHelper;
 
 /**
@@ -37,7 +37,7 @@ public class Main {
         Atlantis atlantis = new Atlantis();
         
         // Listen for keyboard events
-        AtlantisKeyboard.listenForKeyEvents();
+        AKeyboard.listenForKeyEvents();
 
         // Starts bot.
         atlantis.run();

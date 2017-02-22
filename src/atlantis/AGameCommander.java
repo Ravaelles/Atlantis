@@ -23,7 +23,7 @@ public class AGameCommander {
      * frame).
      */
     public void update() {
-//        System.out.println("Frame: " + AGame.getTimeFrames());
+//        System.out.println("Frame number: " + AGame.getTimeFrames());
 
         // === Execute paint methods ========================================
         
