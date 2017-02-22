@@ -9,7 +9,7 @@ import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import bwapi.TilePosition;
 
-public class AtlantisBuilderManager {
+public class ABuilderManager {
 
     public static void update(AUnit builder) {
         if (builder == null) {
@@ -28,7 +28,7 @@ public class AtlantisBuilderManager {
     // =========================================================
     
     private static void handleConstruction(AUnit builder) {
-        ConstructionOrder constructionOrder = AtlantisConstructionManager.getConstructionOrderFor(builder);
+        ConstructionOrder constructionOrder = AConstructionManager.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place

@@ -2,7 +2,7 @@ package atlantis.combat.micro;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.combat.AtlantisCombatEvaluator;
+import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.squad.Squad;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
@@ -34,7 +34,7 @@ public abstract class AbstractMicroManager {
      */
     protected boolean handleUnfavorableOdds(AUnit unit) {
         boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
-        boolean isSituationFavorable = AtlantisCombatEvaluator.isSituationFavorable(unit, isNewFight);
+        boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit, isNewFight);
 
         // If situation is unfavorable, retreat
 //        if (!isSituationFavorable && !unit.isReadyToShoot() && (unit.canAnyCloseEnemyShootThisUnit()

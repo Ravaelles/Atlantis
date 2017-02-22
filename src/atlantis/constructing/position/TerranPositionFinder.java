@@ -1,6 +1,6 @@
 package atlantis.constructing.position;
 
-import atlantis.information.AtlantisMap;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -32,12 +32,12 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
             // Search horizontally
             int minTileX = Math.max(0, nearTo.getTileX() - searchRadius);
-            int maxTileX = Math.min(nearTo.getTileX() + searchRadius, AtlantisMap.getMapWidthInTiles() - 1);
+            int maxTileX = Math.min(nearTo.getTileX() + searchRadius, AMap.getMapWidthInTiles() - 1);
             for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
                 
                 // Search veritcally
                 int minTileY = Math.max(0, nearTo.getTileY() - searchRadius);
-                int maxTileY = Math.min(nearTo.getTileY() + searchRadius, AtlantisMap.getMapHeightInTiles() - 1);
+                int maxTileY = Math.min(nearTo.getTileY() + searchRadius, AMap.getMapHeightInTiles() - 1);
                 for (int tileY = minTileY; tileY <= maxTileY; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
 //                        System.out.println(tileX + " / " + tileY);

@@ -1,13 +1,13 @@
 package atlantis;
 
-import atlantis.combat.squad.AtlantisSquadManager;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.combat.squad.ASquadManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.ProtossConstructionManager;
-import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.information.AtlantisOurUnitsExtraInfo;
-import atlantis.init.AtlantisInitialActions;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AOurUnitsExtraInfo;
+import atlantis.init.AInitialActions;
 import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -175,7 +175,7 @@ public class Atlantis implements BWEventListener {
             if (!_initialActionsExecuted) {
                 
                 System.out.println("### Starting Atlantis... ###");
-                AtlantisInitialActions.executeInitialActions();
+                AInitialActions.executeInitialActions();
                 System.out.println("### Atlantis is working! ###");
                 _initialActionsExecuted = true;
             }
@@ -241,7 +241,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOurUnit()) {
-                AtlantisSquadManager.possibleCombatUnitCreated(unit);
+                ASquadManager.possibleCombatUnitCreated(unit);
             }
         }
         else {
@@ -259,17 +259,17 @@ public class Atlantis implements BWEventListener {
 //        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
         if (unit != null) {
             if (unit.isEnemyUnit()) {
-                AtlantisEnemyUnits.unitDestroyed(unit);
+                AEnemyUnits.unitDestroyed(unit);
             }
             else {
-                AtlantisOurUnitsExtraInfo.idsOfOurDestroyedUnits.add(unit.getID());
+                AOurUnitsExtraInfo.idsOfOurDestroyedUnits.add(unit.getID());
 //                System.err.println(unit.getID() + " destroyed [*]");
             }
 
             // Our unit
             if (unit.isOurUnit()) {
                 AGame.getBuildOrders().rebuildQueue();
-                AtlantisSquadManager.battleUnitDestroyed(unit);
+                ASquadManager.battleUnitDestroyed(unit);
                 LOST++;
                 LOST_RESOURCES += unit.getType().getTotalResources();
             } else {
@@ -297,7 +297,7 @@ public class Atlantis implements BWEventListener {
 
             // Enemy unit
             if (unit.isEnemyUnit()) {
-                AtlantisEnemyUnits.discoveredEnemyUnit(unit);
+                AEnemyUnits.discoveredEnemyUnit(unit);
             }
         }
     }
@@ -333,9 +333,9 @@ public class Atlantis implements BWEventListener {
         // Forget unit
         if (unit != null) {
             if (unit.isOurUnit()) {
-                AtlantisSquadManager.battleUnitDestroyed(unit);
+                ASquadManager.battleUnitDestroyed(unit);
             } else {
-                AtlantisEnemyUnits.unitDestroyed(unit);
+                AEnemyUnits.unitDestroyed(unit);
             }
         }
 
@@ -350,7 +350,7 @@ public class Atlantis implements BWEventListener {
                 // === Fix for Zerg Extractor ========================================
                 // Detect morphed gas building meaning construction has just started
                 if (unit.getType().isGasBuilding()) {
-                    for (ConstructionOrder order : AtlantisConstructionManager.getAllConstructionOrders()) {
+                    for (ConstructionOrder order : AConstructionManager.getAllConstructionOrders()) {
                         if (order.getBuildingType().equals(AtlantisConfig.GAS_BUILDING)
                                 && order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                             order.setConstruction(unit);
@@ -364,11 +364,11 @@ public class Atlantis implements BWEventListener {
 
                 // Add to combat squad if it's military unit
                 if (unit.isActualUnit()) {
-                    AtlantisSquadManager.possibleCombatUnitCreated(unit);
+                    ASquadManager.possibleCombatUnitCreated(unit);
                 }
             } // Enemy unit
             else {
-                AtlantisEnemyUnits.refreshEnemyUnit(unit);
+                AEnemyUnits.refreshEnemyUnit(unit);
             }
         }
     }
@@ -380,7 +380,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitShow(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit.isEnemyUnit()) {
-            AtlantisEnemyUnits.updateEnemyUnitPosition(unit);
+            AEnemyUnits.updateEnemyUnitPosition(unit);
         }
     }
 

@@ -2,7 +2,7 @@ package atlantis.production;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -34,19 +34,19 @@ public class ADynamicConstructionCommander {
             Select<?> factories = Select.ourUnitsOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
-                    AtlantisConstructionManager.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);
+                    AConstructionManager.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);
             int numberOfFactories = factories.size() + unfinishedFactories;
             
             // Proceed only if all factories are busy
             if (numberOfFactories >= 1 && factories.areAllBusy()) {
                 
                 if (unfinishedFactories == 0) {
-                    AtlantisConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
+                    AConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
                 }
                 else if (unfinishedFactories >= 1 && AGame.canAfford(
                         100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
                 )) {
-                    AtlantisConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
+                    AConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
                 }
             }
         }
@@ -83,8 +83,8 @@ public class ADynamicConstructionCommander {
         if (numberOfBases >= 2) {
             int numberOfGasBuildings = Select.ourIncludingUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
             if (numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350) 
-                    && AtlantisConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0) {
-                AtlantisConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
+                    && AConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0) {
+                AConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
             }
         }
     }

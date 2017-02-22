@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Commands all existing battle squads.
  */
-public class AtlantisSquadManager {
+public class ASquadManager {
 
     /**
      * List of all unit squads.
@@ -82,7 +82,7 @@ public class AtlantisSquadManager {
     }
 
     public static void setSquads(ArrayList<Squad> squads) {
-        AtlantisSquadManager.squads = squads;
+        ASquadManager.squads = squads;
     }
 
 }

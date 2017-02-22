@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisCombatEvaluator {
+public class ACombatEvaluator {
     
     /**
      * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
@@ -42,7 +42,7 @@ public class AtlantisCombatEvaluator {
     /**
      * Stores the instances of AtlantisCombatInformation for each unit
      */
-    private static Map<AUnit, AtlantisCombatInformation> combatInfo = new HashMap<>();
+    private static Map<AUnit, ACombatInformation> combatInfo = new HashMap<>();
 
     // =========================================================
     /**
@@ -58,7 +58,7 @@ public class AtlantisCombatEvaluator {
             return true;
         }
 
-        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysFight(unit, nearestEnemy)) {
+        if (ACombatEvaluatorExtraConditions.shouldAlwaysFight(unit, nearestEnemy)) {
             return true;
         }
 
@@ -77,7 +77,7 @@ public class AtlantisCombatEvaluator {
     public static boolean isSituationExtremelyFavorable(AUnit unit, boolean isPendingFight) {
         AUnit nearestEnemy = Select.enemy().nearestTo(unit);
 
-        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
+        if (ACombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
             return false;
         }
 
@@ -292,7 +292,7 @@ public class AtlantisCombatEvaluator {
      */
     private static void checkCombatInfo(AUnit unit) {
         if (!combatInfo.containsKey(unit)) {
-            combatInfo.put(unit, new AtlantisCombatInformation(unit));
+            combatInfo.put(unit, new ACombatInformation(unit));
         }
     }
 

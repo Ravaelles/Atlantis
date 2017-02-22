@@ -7,7 +7,7 @@ import java.util.ArrayList;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisOurUnitsExtraInfo {
+public class AOurUnitsExtraInfo {
     
     public static ArrayList<Integer> idsOfOurDestroyedUnits = new ArrayList<>();
     

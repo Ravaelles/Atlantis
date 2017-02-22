@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AtlantisEnemyUnits {
+public class AEnemyUnits {
 
     protected static Map<AUnit, UnitData> enemyUnitsDiscovered = new HashMap<>();
     protected static ArrayList<AUnit> enemyUnitsDestroyed = new ArrayList<>();

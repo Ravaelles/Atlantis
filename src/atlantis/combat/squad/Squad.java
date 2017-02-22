@@ -53,7 +53,7 @@ public class Squad extends Units {
         // Name is null, use autonaming
         if (name == null) {
             String[] names = new String[]{"Alpha", "Bravo", "Charlie", "Delta", "Echo"};
-            name = names[AtlantisSquadManager.squads.size()];
+            name = names[ASquadManager.squads.size()];
         }
 
         Squad squad = new Squad(name, mission);

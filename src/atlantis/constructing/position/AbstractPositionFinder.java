@@ -2,7 +2,7 @@ package atlantis.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.AGame;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.units.AUnit;
@@ -72,7 +72,7 @@ public abstract class AbstractPositionFinder {
     protected static boolean isOtherBuildingTooClose(AUnit builder, AUnitType building, Position position) {
         
         // Compare against planned construction places
-        for (ConstructionOrder constructionOrder : AtlantisConstructionManager.getAllConstructionOrders()) {
+        for (ConstructionOrder constructionOrder : AConstructionManager.getAllConstructionOrders()) {
             if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.getStatus())
                     && !builder.equals(constructionOrder.getBuilder())) {
                 if (constructionOrder.getPositionToBuild() != null) {

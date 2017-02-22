@@ -1,6 +1,6 @@
 package atlantis.constructing;
 
-import atlantis.constructing.position.AtlantisPositionFinder;
+import atlantis.constructing.position.APositionFinder;
 import atlantis.production.ProductionOrder;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
@@ -41,7 +41,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
     public APosition findNewBuildPosition() {
-        return AtlantisPositionFinder.getPositionForNew(builder, buildingType, this);
+        return APositionFinder.getPositionForNew(builder, buildingType, this);
     }
 
     /**
@@ -75,7 +75,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
             builder = null;
         }
         
-        AtlantisConstructionManager.removeOrder(this);
+        AConstructionManager.removeOrder(this);
 //        status = ConstructionOrderStatus.CONSTRUCTION_FINISHED;
     }
     

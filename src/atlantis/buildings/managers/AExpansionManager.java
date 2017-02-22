@@ -2,10 +2,10 @@ package atlantis.buildings.managers;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.constructing.AtlantisConstructionManager;
-import static atlantis.constructing.AtlantisConstructionManager.requestConstructionOf;
+import atlantis.constructing.AConstructionManager;
+import static atlantis.constructing.AConstructionManager.requestConstructionOf;
 import atlantis.constructing.ConstructionOrderStatus;
-import atlantis.information.AtlantisMap;
+import atlantis.information.AMap;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.Select;
@@ -43,7 +43,7 @@ public class AExpansionManager {
         // === Force decent army before 3rd base =========================================
         
         int numberOfBases = Select.ourBases().count() 
-                + AtlantisConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
+                + AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
         
         // Enforce too have a lot of tanks before expansion
         if (AGame.playsAsTerran() && numberOfBases >= 2) {
@@ -54,13 +54,13 @@ public class AExpansionManager {
         
         // === Check if we have almost as many bases as base locations; if so, exit ======
         
-        if (numberOfBases >= AtlantisMap.getBaseLocations().size() - 2) {
+        if (numberOfBases >= AMap.getBaseLocations().size() - 2) {
             return;
         }
 
         // ===============================================================================
         int numberOfUnfinishedBases
-                = AtlantisConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
+                = AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
 
         boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
         boolean haveEnoughBases = numberOfBases >= 7

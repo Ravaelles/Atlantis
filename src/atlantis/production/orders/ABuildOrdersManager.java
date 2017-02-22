@@ -3,7 +3,7 @@ package atlantis.production.orders;
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -163,7 +163,7 @@ public abstract class ABuildOrdersManager {
     public ArrayList<ProductionOrder> getThingsToProduceRightNow(int mode) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
         int[] resourcesNeededForNotStartedBuildings
-                = AtlantisConstructionManager.countResourcesNeededForNotStartedConstructions();
+                = AConstructionManager.countResourcesNeededForNotStartedConstructions();
         mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
@@ -292,7 +292,7 @@ public abstract class ABuildOrdersManager {
                 int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
 
                 if (type.isBuilding()) {
-                    weHaveThisManyUnits += AtlantisConstructionManager.countNotFinishedConstructionsOfType(type);
+                    weHaveThisManyUnits += AConstructionManager.countNotFinishedConstructionsOfType(type);
                 }
 
 //                if (type.isBase()) {
@@ -337,13 +337,13 @@ public abstract class ABuildOrdersManager {
         } 
         else if (type.isPrimaryBase()) {
             return Select.ourIncludingUnfinished().bases().count() 
-                    + AtlantisConstructionManager.countNotStartedConstructionsOfType(type)
-                    + AtlantisConstructionManager.countNotStartedConstructionsOfType(AUnitType.Zerg_Lair)
-                    + AtlantisConstructionManager.countNotStartedConstructionsOfType(AUnitType.Zerg_Hive);
+                    + AConstructionManager.countNotStartedConstructionsOfType(type)
+                    + AConstructionManager.countNotStartedConstructionsOfType(AUnitType.Zerg_Lair)
+                    + AConstructionManager.countNotStartedConstructionsOfType(AUnitType.Zerg_Hive);
         }
         else if (type.isBase() && !type.isPrimaryBase()) {
             return Select.ourIncludingUnfinished().ofType(type).count()
-                    + AtlantisConstructionManager.countNotStartedConstructionsOfType(type);
+                    + AConstructionManager.countNotStartedConstructionsOfType(type);
         }
         else {
             return Select.ourIncludingUnfinished().ofType(type).count();

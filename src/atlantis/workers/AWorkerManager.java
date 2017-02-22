@@ -3,8 +3,8 @@ package atlantis.workers;
 import atlantis.AGame;
 import atlantis.combat.micro.AbstractMicroManager;
 import atlantis.combat.micro.AAvoidMeleeUnitsManager;
-import atlantis.constructing.AtlantisBuilderManager;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.ABuilderManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.repair.ARepairManager;
@@ -39,8 +39,8 @@ public class AWorkerManager {
 
         // =========================================================
         // Act as BUILDER if needed
-        if (AtlantisConstructionManager.isBuilder(worker)) {
-            AtlantisBuilderManager.update(worker);
+        if (AConstructionManager.isBuilder(worker)) {
+            ABuilderManager.update(worker);
             worker.setTooltip("Builder");
             return true;
         } 

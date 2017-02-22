@@ -3,17 +3,17 @@ package atlantis.debug;
 import atlantis.Atlantis;
 import atlantis.AGame;
 import atlantis.buildings.managers.AGasManager;
-import atlantis.combat.AtlantisCombatEvaluator;
-import atlantis.combat.squad.AtlantisSquadManager;
+import atlantis.combat.ACombatEvaluator;
+import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.missions.MissionAttack;
 import atlantis.combat.squad.missions.MissionDefend;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
-import atlantis.constructing.position.AtlantisPositionFinder;
+import atlantis.constructing.position.APositionFinder;
 import atlantis.constructing.position.TerranPositionFinder;
-import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.information.AtlantisMap;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AMap;
 import atlantis.information.UnitData;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ABuildOrdersManager;
@@ -132,8 +132,8 @@ public class APainter {
         paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
                 ? AEnemyStrategy.getEnemyStrategy() : "Unknown"),
                 AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
-        paintSideMessage("Mission: " + AtlantisSquadManager.getAlphaSquad().getMission().getName(), Color.White);
-        paintSideMessage("Enemy base: " + AtlantisEnemyUnits.getEnemyBase(), Color.White);
+        paintSideMessage("Mission: " + ASquadManager.getAlphaSquad().getMission().getName(), Color.White);
+        paintSideMessage("Enemy base: " + AEnemyUnits.getEnemyBase(), Color.White);
 
         // =========================================================
         // Focus point
@@ -146,7 +146,7 @@ public class APainter {
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
         // =========================================================
-        paintSideMessage("Combat squad size: " + AtlantisSquadManager.getAlphaSquad().size(), Color.Yellow, 0);
+        paintSideMessage("Combat squad size: " + ASquadManager.getAlphaSquad().size(), Color.Yellow, 0);
 
         // =========================================================
         // Gas workers
@@ -164,7 +164,7 @@ public class APainter {
     private static void paintCombatUnits() {
         for (AUnit unit : Select.ourCombatUnits().listUnits()) {
             APosition unitPosition = unit.getPosition();
-            double combatEval = AtlantisCombatEvaluator.evaluateSituation(unit);
+            double combatEval = ACombatEvaluator.evaluateSituation(unit);
 
             // =========================================================
             // === Paint life bars bars over wounded units
@@ -203,12 +203,12 @@ public class APainter {
             // === Combat Evaluation Strength
             // =========================================================
 //            if (combatEval < 10) {
-            double eval = AtlantisCombatEvaluator.evaluateSituation(unit, true, false);
+            double eval = ACombatEvaluator.evaluateSituation(unit, true, false);
 //                if (eval < 999) {
 //                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
 //                            : AtlantisCombatEvaluator.getEvalString(unit);
             String combatStrength = ColorUtil.getColorString(Color.Green)
-                    + AtlantisCombatEvaluator.getEvalString(unit, eval);
+                    + ACombatEvaluator.getEvalString(unit, eval);
             paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
 //                }
 
@@ -232,12 +232,12 @@ public class APainter {
             paintCircle(unit, unit.getType().getDimensionLeft() * 2 - 1, Color.Red);
 
             APosition unitPosition = unit.getPosition();
-            double eval = (int) AtlantisCombatEvaluator.evaluateSituation(unit, true, true);
+            double eval = (int) ACombatEvaluator.evaluateSituation(unit, true, true);
 //            if (eval < 999) {
 //                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
 //                        : AtlantisCombatEvaluator.getEvalString(unit);
             String combatStrength = ColorUtil.getColorString(Color.Red)
-                    + AtlantisCombatEvaluator.getEvalString(unit, eval);
+                    + ACombatEvaluator.getEvalString(unit, eval);
             paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
 //            }
         }
@@ -454,7 +454,7 @@ public class APainter {
      */
     private static void paintSidebarConstructionsPending() {
         int yOffset = 220;
-        ArrayList<ConstructionOrder> allOrders = AtlantisConstructionManager.getAllConstructionOrders();
+        ArrayList<ConstructionOrder> allOrders = AConstructionManager.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
@@ -486,7 +486,7 @@ public class APainter {
      * Paints places where buildings that do not yet exist are planned to be placed.
      */
     private static void paintConstructionPlaces() {
-        for (ConstructionOrder order : AtlantisConstructionManager.getAllConstructionOrders()) {
+        for (ConstructionOrder order : AConstructionManager.getAllConstructionOrders()) {
             if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 APosition positionToBuild = order.getPositionToBuild();
                 AUnitType buildingType = order.getBuildingType();
@@ -865,7 +865,7 @@ public class APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     private static void paintEnemyDiscovered() {
-        for (UnitData enemyUnitData : AtlantisEnemyUnits.getDiscoveredAndAliveUnits()) {
+        for (UnitData enemyUnitData : AEnemyUnits.getDiscoveredAndAliveUnits()) {
             APosition topLeft;
 //            if (enemyUnitData.getType().isBuilding()) {
             topLeft = enemyUnitData.getPosition().translateByPixels(
@@ -913,9 +913,9 @@ public class APainter {
      * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
      */
     private static void paintEnemyRegionDetails() {
-        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
+        APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-            Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
+            Region enemyBaseRegion = AMap.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
             for (Position point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {

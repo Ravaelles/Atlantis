@@ -2,10 +2,10 @@ package atlantis.information;
 
 import atlantis.Atlantis;
 import atlantis.AGame;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
-import atlantis.enemy.AtlantisEnemyUnits;
+import atlantis.enemy.AEnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
@@ -29,7 +29,7 @@ import java.util.Set;
  * This class provides information about high-abstraction level map operations like returning place for the
  * next base or returning important choke point near the main base.
  */
-public class AtlantisMap {
+public class AMap {
 
     private static List<Chokepoint> cached_chokePoints = null;
     private static Chokepoint cached_mainBaseChokepoint = null;
@@ -202,7 +202,7 @@ public class AtlantisMap {
      * Returns free base location which is as far from enemy starting location as possible.
      */
     public static BaseLocation getExpansionBaseLocationMostDistantToEnemy() {
-        APosition farthestTo = AtlantisEnemyUnits.getEnemyBase();
+        APosition farthestTo = AEnemyUnits.getEnemyBase();
         if (farthestTo == null) {
             return getExpansionFreeBaseLocationNearestTo(Select.ourBases().first().getPosition());
         }
@@ -276,11 +276,11 @@ public class AtlantisMap {
      * Returns nearest (preferably directly connected) region which has center of it still unexplored.
      */
     public static Region getNearestUnexploredRegion(APosition position) {
-        Region region = AtlantisMap.getRegion(position);
+        Region region = AMap.getRegion(position);
         Region regionToVisit = null;
         
         for (Region reachableRegion : region.getReachableRegions()) {
-            if (!AtlantisMap.isExplored(reachableRegion.getCenter())) {
+            if (!AMap.isExplored(reachableRegion.getCenter())) {
                 regionToVisit = reachableRegion;
 //                return APosition.createFrom(regionToVisit.getCenter());
                 return regionToVisit;
@@ -361,7 +361,7 @@ public class AtlantisMap {
      */
     public static List<BaseLocation> getStartingLocations(boolean excludeOurStartLocation) {
         ArrayList<BaseLocation> startingLocations = new ArrayList<>();
-        for (BaseLocation baseLocation : AtlantisMap.getBaseLocations()) {
+        for (BaseLocation baseLocation : AMap.getBaseLocations()) {
             if (baseLocation.isStartLocation()) {
                 
                 // Exclude our base location if needed.
@@ -493,7 +493,7 @@ public class AtlantisMap {
         }
         
         // Check for planned constructions
-        for (ConstructionOrder constructionOrder : AtlantisConstructionManager.getAllConstructionOrders()) {
+        for (ConstructionOrder constructionOrder : AConstructionManager.getAllConstructionOrders()) {
             APosition constructionPlace = constructionOrder.getPositionToBuildCenter();
             if (constructionPlace != null && constructionPlace.distanceTo(baseLocation.getPosition()) < 8) {
                 return false;

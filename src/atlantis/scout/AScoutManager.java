@@ -5,8 +5,8 @@ import atlantis.AGame;
 import atlantis.AViewport;
 import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.debug.APainter;
-import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.information.AtlantisMap;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -61,7 +61,7 @@ public class AScoutManager {
 
         // =========================================================
         // We don't know any enemy building, scout nearest starting location.
-        if (!AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
+        if (!AEnemyUnits.hasDiscoveredEnemyBuilding()) {
             for (AUnit scout : scouts) {
                 tryFindingEnemyBase(scout);
             }
@@ -135,11 +135,11 @@ public class AScoutManager {
         // Get nearest unexplored starting location and go there
         BaseLocation startingLocation;
         if (scout.getType().equals(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
-            startingLocation = AtlantisMap.getStartingLocationBasedOnIndex(
+            startingLocation = AMap.getStartingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {
-            startingLocation = AtlantisMap.getNearestUnexploredStartingLocation(scout.getPosition());
+            startingLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
         }
 
         // =========================================================
@@ -168,9 +168,9 @@ public class AScoutManager {
         }
 
         // === Remain at the enemy base if it's known ==============
-        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
+        APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-            Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
+            Region enemyBaseRegion = AMap.getRegion(enemyBase);
 
             if (scoutingAroundBasePoints.isEmpty()) {
                 initializeEnemyRegionPolygonPoints(scout, enemyBaseRegion);
@@ -198,7 +198,7 @@ public class AScoutManager {
         if (AGame.playsAsZerg()) {
 
             // We know enemy building
-            if (AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
+            if (AEnemyUnits.hasDiscoveredEnemyBuilding()) {
                 if (AGame.getTimeSeconds() < 600) {
                     if (scouts.isEmpty()) {
                         for (AUnit worker : Select.ourWorkers().list()) {
@@ -223,7 +223,7 @@ public class AScoutManager {
     }
 
     private static void scoutForTheNextBase(AUnit scout) {
-        BaseLocation baseLocation = AtlantisMap.getNearestUnexploredStartingLocation(scout.getPosition());
+        BaseLocation baseLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
         if (baseLocation != null) {
             scout.move(baseLocation.getPosition(), UnitActions.MOVE);
         }
@@ -283,7 +283,7 @@ public class AScoutManager {
             APosition position = APosition.create(point);
 
             // Calculate actual ground distance to this position
-            double groundDistance = AtlantisMap.getGroundDistance(scout, position);
+            double groundDistance = AMap.getGroundDistance(scout, position);
 
             // Fix problem with some points being unwalkable despite isWalkable being true
             if (groundDistance < 2) {
@@ -292,7 +292,7 @@ public class AScoutManager {
             position = PositionOperationsHelper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
 
             // If positions is walkable, not in different region and has path to it, it should be ok
-            if (AtlantisMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
+            if (AMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
                     && scout.hasPathTo(position) && groundDistance >= 4
                     && groundDistance <= 1.7 * scout.distanceTo(position)) {
                 scoutingAroundBasePoints.addPosition(position);
@@ -313,7 +313,7 @@ public class AScoutManager {
     }
 
     public static APosition getUmtFocusPoint(APosition startPosition) {
-        Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(startPosition);
+        Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(startPosition);
         return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
     }
 

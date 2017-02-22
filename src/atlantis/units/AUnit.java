@@ -3,13 +3,13 @@ package atlantis.units;
 import atlantis.Atlantis;
 import atlantis.AGame;
 import atlantis.combat.micro.ARunManager;
-import atlantis.combat.squad.AtlantisSquadManager;
+import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.information.AtlantisMap;
-import atlantis.information.AtlantisOurUnitsExtraInfo;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AMap;
+import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.repair.ARepairManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
@@ -264,8 +264,8 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     // Compare type methods
     public boolean isAlive() {
 //        return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
-        return isExists() && (!AtlantisEnemyUnits.isEnemyUnitDestroyed(this) 
-                && !AtlantisOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this));
+        return isExists() && (!AEnemyUnits.isEnemyUnitDestroyed(this) 
+                && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this));
     }
 
     public boolean canBeHealed() {
@@ -701,7 +701,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
      * so it will return true.
      */
     public boolean isBuilder() {
-        return AtlantisConstructionManager.isBuilder(this);
+        return AConstructionManager.isBuilder(this);
     }
 
     /**
@@ -709,7 +709,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
      * construction.
      */
     public ConstructionOrder getConstructionOrder() {
-        return AtlantisConstructionManager.getConstructionOrderFor(this);
+        return AConstructionManager.getConstructionOrderFor(this);
     }
 
     /**

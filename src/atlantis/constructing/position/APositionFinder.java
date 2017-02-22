@@ -9,7 +9,7 @@ import atlantis.units.Select;
 import atlantis.wrappers.APosition;
 import bwapi.Position;
 
-public class AtlantisPositionFinder {
+public class APositionFinder {
 
     public static int totalRequests = 0;
     
@@ -41,13 +41,13 @@ public class AtlantisPositionFinder {
         // =========================================================
         // Buildings extracting GAS
         if (building.isGasBuilding()) {
-            return AtlantisSpecialPositionFinder.findPositionForGasBuilding(building);
+            return ASpecialPositionFinder.findPositionForGasBuilding(building);
         } 
 
         // =========================================================
         // BASE
         else if (building.isBase()) {
-            APosition position = AtlantisSpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
+            APosition position = ASpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
             return position;
         } 
 

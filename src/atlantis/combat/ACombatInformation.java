@@ -9,13 +9,13 @@ import atlantis.units.AUnit;
  * @author Anderson
  *
  */
-public class AtlantisCombatInformation {
+public class ACombatInformation {
 
     private AUnit unit;
     private int _lastTimeCombatEval;
     private double _lastCombatEval;
 
-    public AtlantisCombatInformation(AUnit u) {
+    public ACombatInformation(AUnit u) {
         unit = u;
     }
 

@@ -2,8 +2,8 @@ package atlantis.combat.squad.missions;
 
 import atlantis.Atlantis;
 import atlantis.AGame;
-import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.information.AtlantisMap;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AMap;
 import atlantis.information.UnitData;
 import atlantis.scout.AScoutManager;
 import static atlantis.scout.AScoutManager.getUmtFocusPoint;
@@ -101,7 +101,7 @@ public class MissionUmt extends Mission {
         }
 
         // === Return location to go to ====================================
-        Region nearestUnexploredRegion = AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
+        Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
         explorePosition = (nearestUnexploredRegion != null
                 ? APosition.create(nearestUnexploredRegion.getCenter()) : null);
         if (explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
@@ -162,7 +162,7 @@ public class MissionUmt extends Mission {
     
     @Override
     public APosition getFocusPoint() {
-        _tempFocusPoint = AtlantisMap.getNearestUnexploredAccessiblePosition(flagshipUnit.getPosition());
+        _tempFocusPoint = AMap.getNearestUnexploredAccessiblePosition(flagshipUnit.getPosition());
         return _tempFocusPoint;
     }
     

@@ -3,7 +3,7 @@ package atlantis.combat.micro;
 import atlantis.Atlantis;
 import atlantis.AGame;
 import atlantis.debug.APainter;
-import atlantis.information.AtlantisMap;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
@@ -445,18 +445,18 @@ public class ARunManager {
     public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position,
             double minDist, double maxDist, boolean allowCornerPointsEtc) {
         boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) 
-                && AtlantisMap.isWalkable(position) && unit.hasPathTo(position)
+                && AMap.isWalkable(position) && unit.hasPathTo(position)
                 && Select.all().inRadius(0.2, position).count() <= 1
                 //                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
                 //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
                 //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
-                && AtlantisMap.getGroundDistance(unit, position) <= maxDist;
+                && AMap.getGroundDistance(unit, position) <= maxDist;
                 ;
         
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
 
         if (isOkay && !allowCornerPointsEtc) {
-            isOkay = AtlantisMap.isPositionFarFromAnyRegionPolygonPoint(unit);
+            isOkay = AMap.isPositionFarFromAnyRegionPolygonPoint(unit);
         }
 
         return isOkay;

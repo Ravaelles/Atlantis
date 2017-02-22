@@ -2,7 +2,7 @@ package atlantis.production;
 
 import atlantis.buildings.managers.AExpansionManager;
 import atlantis.buildings.managers.ASupplyManager;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.util.CodeProfiler;
 
 /**
@@ -28,7 +28,7 @@ public class AProductionCommander {
         
         
         // Take care of any unfinished constructions, make sure they have builders assigned etc.
-        AtlantisConstructionManager.update();
+        AConstructionManager.update();
         
         // Check if we should automatically build new base, because we have shitload of minerals.
         AExpansionManager.requestNewBaseIfNeeded();

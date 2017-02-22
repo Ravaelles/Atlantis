@@ -1,7 +1,7 @@
 package atlantis.constructing.position;
 
 import atlantis.constructing.ConstructionOrder;
-import atlantis.information.AtlantisMap;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -23,10 +23,10 @@ public class TerranBunkerPositionFinder {
             AUnit mainBase = Select.mainBase();
         
             // Bunker at NATURAL CHOKEPOINT
-            if (order.getProductionOrder().getModifier().equals(AtlantisSpecialPositionFinder.AT_NATURAL)) {
-                Chokepoint chokepointForNaturalBase = AtlantisMap.getChokepointForNaturalBase();
+            if (order.getProductionOrder().getModifier().equals(ASpecialPositionFinder.AT_NATURAL)) {
+                Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
                 if (chokepointForNaturalBase != null && mainBase != null) {
-                    BaseLocation naturalBase = AtlantisMap.getNaturalBaseLocation(Select.mainBase().getPosition());
+                    BaseLocation naturalBase = AMap.getNaturalBaseLocation(Select.mainBase().getPosition());
                     nearTo = APosition.create(chokepointForNaturalBase.getCenter())
                             .translateTowards(naturalBase, 25);
 
@@ -38,8 +38,8 @@ public class TerranBunkerPositionFinder {
             }
 
             // Bunker at MAIN CHOKEPOINT
-            else if (order.getProductionOrder().getModifier().equals(AtlantisSpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
-                Chokepoint chokepointForNaturalBase = AtlantisMap.getChokepointForMainBase();
+            else if (order.getProductionOrder().getModifier().equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
+                Chokepoint chokepointForNaturalBase = AMap.getChokepointForMainBase();
                 if (chokepointForNaturalBase != null) {
                     nearTo = APosition.create(chokepointForNaturalBase.getCenter())
                             .translateTowards(mainBase.getPosition(), 5);
@@ -55,7 +55,7 @@ public class TerranBunkerPositionFinder {
         
         // =========================================================
         // Find position near specified place
-        return AtlantisPositionFinder.findStandardPosition(builder, building, nearTo, 30);
+        return APositionFinder.findStandardPosition(builder, building, nearTo, 30);
     }
     
 }

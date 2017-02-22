@@ -12,7 +12,7 @@ import atlantis.units.Select;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisSpecificConstructionManager {
+public class ASpecificConstructionManager {
 
     /**
      * Some buildings like Zerg SUnken Colony need special treatment.

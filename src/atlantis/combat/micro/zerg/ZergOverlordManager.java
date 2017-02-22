@@ -1,7 +1,7 @@
 package atlantis.combat.micro.zerg;
 
-import atlantis.combat.squad.AtlantisSquadManager;
-import atlantis.enemy.AtlantisEnemyUnits;
+import atlantis.combat.squad.ASquadManager;
+import atlantis.enemy.AEnemyUnits;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
@@ -16,7 +16,7 @@ public class ZergOverlordManager {
     public static void update(AUnit unit) {
 
         // We know enemy building
-        if (AtlantisEnemyUnits.hasDiscoveredEnemyBuilding()) {
+        if (AEnemyUnits.hasDiscoveredEnemyBuilding()) {
             actWhenWeKnowEnemy(unit);
         } 
 
@@ -43,7 +43,7 @@ public class ZergOverlordManager {
 //            unit.move(goTo, false);
 //        }
 
-        APosition medianUnitPosition = AtlantisSquadManager.getAlphaSquad().getMedianUnitPosition();
+        APosition medianUnitPosition = ASquadManager.getAlphaSquad().getMedianUnitPosition();
         if (medianUnitPosition != null) {
             if (overlord.distanceTo(medianUnitPosition) > 2.5) {
                 overlord.move(medianUnitPosition, UnitActions.MOVE);

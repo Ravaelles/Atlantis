@@ -3,7 +3,7 @@ package atlantis.constructing;
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
 import atlantis.constructing.position.AbstractPositionFinder;
-import atlantis.constructing.position.AtlantisPositionFinder;
+import atlantis.constructing.position.APositionFinder;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -13,7 +13,7 @@ import bwapi.Color;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class AtlantisConstructionManager {
+public class AConstructionManager {
 
     /**
      * List of all unfinished (started or pending) constructions.
@@ -65,7 +65,7 @@ public class AtlantisConstructionManager {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
 
-        if (AtlantisSpecificConstructionManager.handledAsSpecialBuilding(building, order)) {
+        if (ASpecificConstructionManager.handledAsSpecialBuilding(building, order)) {
             return;
         }
 
@@ -210,7 +210,7 @@ public class AtlantisConstructionManager {
         } // Building doesn't exist yet, means builder is travelling to the construction place
         else if (builder != null && !builder.isMoving()) {
             if (constructionOrder.getPositionToBuild() == null) {
-                APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
+                APosition positionToBuild = APositionFinder.getPositionForNew(
                         constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
                 );
                 constructionOrder.setPositionToBuild(positionToBuild);
@@ -361,7 +361,7 @@ public class AtlantisConstructionManager {
     public static int[] countResourcesNeededForNotStartedConstructions() {
         int mineralsNeeded = 0;
         int gasNeeded = 0;
-        for (ConstructionOrder constructionOrder : AtlantisConstructionManager.getNotStartedConstructionsOfType(null)) {
+        for (ConstructionOrder constructionOrder : AConstructionManager.getNotStartedConstructionsOfType(null)) {
             mineralsNeeded += constructionOrder.getBuildingType().getMineralPrice();
             gasNeeded += constructionOrder.getBuildingType().getGasPrice();
         }
@@ -378,7 +378,7 @@ public class AtlantisConstructionManager {
      */
     private static void handleZergConstructionsWhichBecameBuildings() {
         if (AGame.playsAsZerg()) {
-            ArrayList<ConstructionOrder> allOrders = AtlantisConstructionManager.getAllConstructionOrders();
+            ArrayList<ConstructionOrder> allOrders = AConstructionManager.getAllConstructionOrders();
             if (!allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.getBuilder();

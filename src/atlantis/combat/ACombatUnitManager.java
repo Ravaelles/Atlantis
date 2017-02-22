@@ -11,7 +11,7 @@ import atlantis.units.AUnitType;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisCombatUnitManager {
+public class ACombatUnitManager {
 
     protected static boolean update(AUnit unit) {
 //        unit.removeTooltip();

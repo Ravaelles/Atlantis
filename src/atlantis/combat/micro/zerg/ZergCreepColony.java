@@ -1,7 +1,7 @@
 package atlantis.combat.micro.zerg;
 
 import atlantis.constructing.ConstructionOrder;
-import atlantis.constructing.position.AtlantisPositionFinder;
+import atlantis.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -16,7 +16,7 @@ public class ZergCreepColony {
     public static APosition findPosition(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
         AUnit secondBase = Select.secondBaseOrMainIfNoSecond();
         if (secondBase != null) {
-            return AtlantisPositionFinder.findStandardPosition(builder, building, secondBase.getPosition(), 10);
+            return APositionFinder.findStandardPosition(builder, building, secondBase.getPosition(), 10);
         }
         else {
             return null;

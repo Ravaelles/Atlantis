@@ -2,7 +2,7 @@ package atlantis.combat.squad.missions;
 
 import atlantis.AGame;
 import atlantis.debug.APainter;
-import atlantis.information.AtlantisMap;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -187,7 +187,7 @@ public class MissionDefend extends Mission {
 //            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());
 //        }
 //        else {
-            return APosition.create(AtlantisMap.getChokepointForNaturalBase().getCenter());
+            return APosition.create(AMap.getChokepointForNaturalBase().getCenter());
 //        }
     }
     

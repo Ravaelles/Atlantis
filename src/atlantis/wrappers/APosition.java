@@ -1,7 +1,7 @@
 package atlantis.wrappers;
 
 import atlantis.debug.APainter;
-import atlantis.information.AtlantisMap;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import bwapi.AbstractPoint;
@@ -184,8 +184,8 @@ public class APosition extends Position implements Comparable<Position> {
             px = 1;
             somethingChanged = true;
         }
-        else if (px >= 32 * AtlantisMap.getMapWidthInTiles()) {
-            px = 32 * AtlantisMap.getMapWidthInTiles() - 1;
+        else if (px >= 32 * AMap.getMapWidthInTiles()) {
+            px = 32 * AMap.getMapWidthInTiles() - 1;
             somethingChanged = true;
         }
         
@@ -193,8 +193,8 @@ public class APosition extends Position implements Comparable<Position> {
             py = 1;
             somethingChanged = true;
         }
-        else if (py >= 32 * AtlantisMap.getMapHeightInTiles()) {
-            py = 32 * AtlantisMap.getMapHeightInTiles() - 1;
+        else if (py >= 32 * AMap.getMapHeightInTiles()) {
+            py = 32 * AMap.getMapHeightInTiles() - 1;
             somethingChanged = true;
         }
         
@@ -219,8 +219,8 @@ public class APosition extends Position implements Comparable<Position> {
             px = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
-        else if (px >= (32 * AtlantisMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            px = 32 * AtlantisMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
+        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
+            px = 32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
         
@@ -228,8 +228,8 @@ public class APosition extends Position implements Comparable<Position> {
             py = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
-        else if (py >= (32 * AtlantisMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            py = 32 * AtlantisMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
+        else if (py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
+            py = 32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
         
@@ -305,14 +305,14 @@ public class APosition extends Position implements Comparable<Position> {
         if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
             return true;
         }
-        else if (px >= (32 * AtlantisMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
+        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
             return true;
         }
         
         if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
             return true;
         }
-        else if (py >= (32 * AtlantisMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
+        else if (py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
             return true;
         }
         
@@ -323,7 +323,7 @@ public class APosition extends Position implements Comparable<Position> {
      * Return BWTA region for this position.
      */
     public Region getRegion() {
-        return AtlantisMap.getRegion(this);
+        return AMap.getRegion(this);
     }
 
 }

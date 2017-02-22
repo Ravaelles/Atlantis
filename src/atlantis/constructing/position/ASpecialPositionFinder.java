@@ -1,10 +1,10 @@
 package atlantis.constructing.position;
 
 import atlantis.AGame;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
-import atlantis.information.AtlantisMap;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -14,7 +14,7 @@ import bwapi.Color;
 import bwapi.TilePosition;
 import bwta.BaseLocation;
 
-public class AtlantisSpecialPositionFinder {
+public class ASpecialPositionFinder {
     
     /**
      * Constant used as a hint to indicate that base should be built in the nearest base location 
@@ -89,12 +89,12 @@ public class AtlantisSpecialPositionFinder {
         BaseLocation baseLocationToExpand;
         int ourBasesCount = Select.ourBases().count();
         if (ourBasesCount <= 2) {
-            baseLocationToExpand = AtlantisMap.getExpansionFreeBaseLocationNearestTo(
+            baseLocationToExpand = AMap.getExpansionFreeBaseLocationNearestTo(
                     Select.mainBase().getPosition()
             );
         }
         else {
-            baseLocationToExpand = AtlantisMap.getExpansionBaseLocationMostDistantToEnemy();
+            baseLocationToExpand = AMap.getExpansionBaseLocationMostDistantToEnemy();
         }
         
         if (baseLocationToExpand == null) {
@@ -111,7 +111,7 @@ public class AtlantisSpecialPositionFinder {
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
 //        System.out.println(builder + " / " + building + " / " +  APosition.createFrom(baseLocationToExpand.getPosition()));
 
-        return AtlantisPositionFinder.findStandardPosition(
+        return APositionFinder.findStandardPosition(
                 builder, building, near, constructionOrder.getMaxDistance()
         );
     }
@@ -122,18 +122,17 @@ public class AtlantisSpecialPositionFinder {
         constructionOrder.setNearTo(near);
         constructionOrder.setMaxDistance(30);
         
-        return AtlantisPositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
+        return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = APosition.create(
-                AtlantisMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().getPosition()).getPosition()
+        APosition near = APosition.create(AMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().getPosition()).getPosition()
         ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);
         constructionOrder.setMaxDistance(1);
         
-        return AtlantisPositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
+        return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
     }
 
 }

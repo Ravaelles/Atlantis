@@ -3,7 +3,7 @@ package atlantis.units;
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.constructing.AtlantisConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.information.UnitData;
 import atlantis.repair.ARepairManager;
 import atlantis.scout.AScoutManager;
@@ -810,7 +810,7 @@ public class Select<T> {
 
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (unit.isConstructing() || unit.isRepairing() || AtlantisConstructionManager.isBuilder(unit)
+            if (unit.isConstructing() || unit.isRepairing() || AConstructionManager.isBuilder(unit)
                     || AScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()) {
                 unitIter.remove();
             }

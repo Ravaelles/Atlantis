@@ -10,7 +10,7 @@ import atlantis.util.PositionUtil;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AtlantisCombatEvaluatorExtraConditions {
+public class ACombatEvaluatorExtraConditions {
 
     private static AUnit unit = null;
     private static AUnit nearestEnemy = null;
@@ -18,8 +18,8 @@ public class AtlantisCombatEvaluatorExtraConditions {
     // =========================================================
     
     protected static boolean shouldAlwaysFight(AUnit unit, AUnit nearestEnemy) {
-        AtlantisCombatEvaluatorExtraConditions.unit = unit;
-        AtlantisCombatEvaluatorExtraConditions.nearestEnemy = nearestEnemy;
+        ACombatEvaluatorExtraConditions.unit = unit;
+        ACombatEvaluatorExtraConditions.nearestEnemy = nearestEnemy;
         
         if (shouldFightToProtectMainBaseAtAllCosts()) {
             return true;
@@ -29,8 +29,8 @@ public class AtlantisCombatEvaluatorExtraConditions {
     }
     
     protected static boolean shouldAlwaysRetreat(AUnit unit, AUnit nearestEnemy) {
-        AtlantisCombatEvaluatorExtraConditions.unit = unit;
-        AtlantisCombatEvaluatorExtraConditions.nearestEnemy = nearestEnemy;
+        ACombatEvaluatorExtraConditions.unit = unit;
+        ACombatEvaluatorExtraConditions.nearestEnemy = nearestEnemy;
         
 //        if (shouldRetreatBecauseTooFewOurUnitsAround()) {
 //            unit.setTooltip("Closer!");
