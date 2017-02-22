@@ -109,6 +109,15 @@ public class TerranSiegeTankManager {
     }
 
     private static boolean nearestEnemyIsUnit(AUnit tank, AUnit enemy, double distanceToEnemy) {
+        
+        // Don't siege when enemy is too close
+        if (distanceToEnemy < 5) {
+            tank.setTooltip("Dont siege");
+            return false;
+        }
+        
+        // =========================================================
+        
         if (distanceToEnemy < 14) {
             if (AtlantisUtilities.rand(1, 100) < 8 || enemy.getType().isDangerousGroundUnit()) {
                 tank.siege();
