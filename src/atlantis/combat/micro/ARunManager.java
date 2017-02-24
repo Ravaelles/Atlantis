@@ -70,7 +70,7 @@ public class ARunManager {
 
             // Update last time run order was issued
             _updated_at = AGame.getTimeFrames();
-            APainter.paintLine(unit.getPosition(), runTo, Color.Orange);
+//            APainter.paintLine(unit.getPosition(), runTo, Color.Orange);
             boolean hasMoved = unit.move(runTo, UnitActions.RUN);
 
             // Make all other units very close to it run as well
@@ -80,10 +80,10 @@ public class ARunManager {
                 return true;
             } else {
                 APosition position = unit.getPosition();
-                APainter.paintLine(position.translateByPixels(-26, -26), position.translateByPixels(25, 25), Color.Red);
-                APainter.paintLine(position.translateByPixels(-25, -25), position.translateByPixels(26, 26), Color.Red);
-                APainter.paintLine(position.translateByPixels(-26, 26), position.translateByPixels(25, -25), Color.Red);
-                APainter.paintLine(position.translateByPixels(-25, 25), position.translateByPixels(26, -26), Color.Red);
+//                APainter.paintLine(position.translateByPixels(-26, -26), position.translateByPixels(25, 25), Color.Red);
+//                APainter.paintLine(position.translateByPixels(-25, -25), position.translateByPixels(26, 26), Color.Red);
+//                APainter.paintLine(position.translateByPixels(-26, 26), position.translateByPixels(25, -25), Color.Red);
+//                APainter.paintLine(position.translateByPixels(-25, 25), position.translateByPixels(26, -26), Color.Red);
                 markAsNotRunning();
                 return false;
             }

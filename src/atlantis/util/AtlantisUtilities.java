@@ -1012,7 +1012,7 @@ public class AtlantisUtilities {
     }
 
     /**
-     * Loads .csv file.
+     * Loads .csv file or file formatted on csv base i.e. value1 delimiter value2 delimiter value3.
      */
     public static String[][] loadCsv(String path, int numberOfFields) {
         ArrayList<String[]> listOfArrays = new ArrayList<>();

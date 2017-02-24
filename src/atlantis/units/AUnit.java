@@ -957,6 +957,10 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     public boolean isReadyToShoot() {
         return getGroundWeaponCooldown() <= 0 && getAirWeaponCooldown() <= 0;
     }
+    
+    public int getScarabCount() {
+        return u().getScarabCount();
+    }
 
     public AUnitType type() {
         return getType();

@@ -10,7 +10,8 @@ public class ProtossBuildOrders extends ABuildOrdersManager {
     
     @Override
     protected String getFilename() {
-        return "Protoss/2 Gate Range Expand.csv";
+//        return "Protoss/2 Gate Range Expand.txt";
+        return "Protoss/Two Gateway Zealot.txt";
     }
 
     // =========================================================

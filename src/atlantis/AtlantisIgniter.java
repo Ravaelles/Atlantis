@@ -11,13 +11,13 @@ import java.util.List;
  */
 public class AtlantisIgniter {
 
-//    private static final String RACE = "Terran";
-//    private static final String RACE = "Protoss";
-    private static final String OUR_RACE = "Zerg";
+//    private static final String OUR_RACE = "Terran";
+    private static final String OUR_RACE = "Protoss";
+//    private static final String OUR_RACE = "Zerg";
 
 //    private static final String ENEMY_RACE = "Terran";
-//    private static final String ENEMY_RACE = "Protoss";
-    private static final String ENEMY_RACE = "Zerg";
+    private static final String ENEMY_RACE = "Protoss";
+//    private static final String ENEMY_RACE = "Zerg";
     
     // =========================================================
     

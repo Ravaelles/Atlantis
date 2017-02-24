@@ -13,7 +13,7 @@ public class TerranBuildOrders extends ABuildOrdersManager {
     
     @Override
     protected String getFilename() {
-        return "Terran/1 Fact FE.csv";
+        return "Terran/1 Fact FE.txt";
     }
 
     // =========================================================

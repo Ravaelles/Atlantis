@@ -73,7 +73,7 @@ public class ARepairCommander {
         }
 
         // =========================================================
-        Select<AUnit> bunkers = Select.ourUnitsOfType(AUnitType.Terran_Bunker);
+        Select<AUnit> bunkers = Select.ourOfType(AUnitType.Terran_Bunker);
         int bunkersCounter = bunkers.count();
 
         // Assign two repairers to a bunker if it's not surrounded by many of our combat units

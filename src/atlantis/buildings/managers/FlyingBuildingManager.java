@@ -77,13 +77,13 @@ public class FlyingBuildingManager {
     }
 
     private static void liftABuildingAndFlyAmongTheStars() {
-        AUnit barracks = Select.ourUnitsOfType(AUnitType.Terran_Barracks).idle().first();
+        AUnit barracks = Select.ourOfType(AUnitType.Terran_Barracks).idle().first();
         if (barracks != null) {
             barracks.lift();
             flyingBuildings.add(barracks);
         }
         else {
-            AUnit engBay = Select.ourUnitsOfType(AUnitType.Terran_Engineering_Bay).idle().first();
+            AUnit engBay = Select.ourOfType(AUnitType.Terran_Engineering_Bay).idle().first();
             engBay.lift();
             flyingBuildings.add(engBay);
         }

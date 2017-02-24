@@ -455,7 +455,7 @@ public abstract class ABuildOrdersManager {
         if (!isUnit && !isUpgrade && !isTech) {
             System.out.println("Invalid production order entry: " + nameString);
             System.err.println("Invalid production order entry: " + nameString);
-            System.exit(-1);
+            Atlantis.getInstance().onEnd(false);
         }
 
         // =========================================================

@@ -152,7 +152,7 @@ public class Select<T> {
     /**
      * Selects our units of given type(s).
      */
-    public static Select<AUnit> ourUnitsOfType(AUnitType type) {
+    public static Select<AUnit> ourOfType(AUnitType type) {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {

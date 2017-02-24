@@ -1,0 +1,56 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=8
+
+// When supply is bigger than N, then start auto-producing supply units
+#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=20
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+http://wiki.teamliquid.net/starcraft/2_Gate_Zealot_(vs._Terran)
+8 - Pylon
+10 - Gateway
+12 - Gateway
+12 - Zealot - x2
+Probe x2
+Zealot x2
+15 - Pylon
+Probe x2
+Zealot x2
+Probe x2
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+8 - Pylon
+10 - Gateway
+12 - Gateway
+12 - Zealot - x2
+Probe - x2
+Zealot - x2
+15 - Pylon
+Probe - x2
+Zealot - x2
+Probe - x2
+12 - Assimilator
+13 - Cybernetics Core
+15 - Pylon
+18 - Gateway
+;20 - Nexus
+20 - Gateway
+20 - Dragoon
+22 - Dragoon
+23 - Dragoon Range
+24 - Pylon
+25 - Dragoons - x2
+26 - Robotics Facility
+27 - Robotics Support Bay
+27 - Observatory
+28 - Reaver
+28 - Observer
+31 - Reaver
+33 - Reaver
+35 - Reaver
