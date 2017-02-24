@@ -187,8 +187,13 @@ public class MissionDefend extends Mission {
 //            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());
 //        }
 //        else {
-            return APosition.create(AMap.getChokepointForNaturalBase().getCenter());
-//        }
+        Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
+        if (chokepointForNaturalBase != null) {
+            return APosition.create(chokepointForNaturalBase.getCenter());
+        }
+        else {
+            return null;
+        }
     }
     
     // =========================================================

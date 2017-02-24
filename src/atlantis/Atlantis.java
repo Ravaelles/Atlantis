@@ -216,6 +216,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitCreate(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
+            unit.removeTooltip();
 
             // Our unit
             if (unit.isOurUnit()) {

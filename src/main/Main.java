@@ -1,6 +1,7 @@
 package main;
 
 import atlantis.Atlantis;
+import atlantis.AtlantisIgniter;
 import atlantis.keyboard.AKeyboard;
 import atlantis.util.ProcessHelper;
 
@@ -21,6 +22,10 @@ public class Main {
         
         // Kill previous Chaoslauncher.exe process
         ProcessHelper.killChaosLauncherProcess();
+        
+        // Dynamically modify bwapi.ini file, change race/enemy race etc
+        // To change the race/enemy race, edit AtlantisIgniter constants
+        AtlantisIgniter.modifyBwapiFileIfNeeded();
         
         // Autostart Chaoslauncher
         // Combined with Chaoslauncher -> Settings -> Run Starcraft on Startup 
