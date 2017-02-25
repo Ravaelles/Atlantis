@@ -22,14 +22,11 @@ public class AProductionCommander {
         // See what units/buildings we need to create and take care of it.
         AProductionManager.update();
         
-        // When it can be applied and makes sense, automatically produce units like workers, factories.
-        ADynamicProductionCommander.update();
-        
         // Take care of any unfinished constructions, make sure they have builders assigned etc.
         AConstructionManager.update();
         
-        // Check if we should automatically build new base, because we have shitload of minerals.
-        AExpansionManager.requestNewBaseIfNeeded();
+        // When it can be applied and makes sense, automatically produce units like workers, factories.
+        ADynamicProductionCommander.update();
         
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PRODUCTION);
     }

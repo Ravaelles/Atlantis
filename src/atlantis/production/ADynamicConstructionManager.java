@@ -2,6 +2,7 @@ package atlantis.production;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
+import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionManager;
 import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.units.AUnit;
@@ -16,12 +17,19 @@ import java.util.List;
 public class ADynamicConstructionManager {
 
     public static void update() {
+        
+        // Check if we should automatically build new base, because we have shitload of minerals.
+        AExpansionManager.requestNewBaseIfNeeded();
+        
+        // If number of bases is bigger than gas buildings, it usually makes sense to build new gas extractor
+        buildGasBuildingsIfNeeded();
+        
+        // === Terran only ========================================
+        
         if (AGame.playsAsTerran()) {
             handleBuildFactoriesIfNeeded();
             handleBuildAddonsIfNeeded();
         }
-        
-        handleBuildGasBuildingsIfNeeded();
     }
     
     // =========================================================
@@ -72,7 +80,7 @@ public class ADynamicConstructionManager {
     /**
      * Build Refineries/ Assimilators/ Extractors when it makes sense.
      */
-    private static void handleBuildGasBuildingsIfNeeded() {
+    private static void buildGasBuildingsIfNeeded() {
         if (AGame.getTimeSeconds() % 3 != 0) {
             return;
         }

@@ -2,7 +2,7 @@ package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.production.AWorkerProductionManager;
+import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -20,7 +20,7 @@ public class TerranBuildOrders extends ABuildOrdersManager {
     
     @Override
     public void produceWorker() {
-        AWorkerProductionManager.produceWorker();
+        ADynamicWorkerProductionManager.produceWorker();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class TerranBuildOrders extends ABuildOrdersManager {
         
 //        System.out.println("Notice: No production orders, auto-produce.");
 
-        if (AWorkerCommander.shouldTrainWorkers(true)) {
+        if (ADynamicWorkerProductionManager.shouldTrainWorkers(true)) {
             units.add(AtlantisConfig.WORKER);
             units.add(AtlantisConfig.WORKER);
             units.add(AtlantisConfig.WORKER);

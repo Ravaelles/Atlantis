@@ -1,6 +1,7 @@
 package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
+import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -30,7 +31,7 @@ public class ZergBuildOrders extends ABuildOrdersManager {
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
         
-        boolean shouldTrainWorkers = AWorkerCommander.shouldTrainWorkers(false);
+        boolean shouldTrainWorkers = ADynamicWorkerProductionManager.shouldTrainWorkers(false);
         
         if (shouldTrainWorkers) {
             units.add(AUnitType.Zerg_Drone);

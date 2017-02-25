@@ -25,13 +25,12 @@ public class AWorkerCommander {
         // === Handle assigning workers to gas / bases ============================
         
         AGasManager.handleGasBuildings();
-//        transferWorkersBetweenBasesIfNeeded();
+//        transferWorkersBetweenBasesIfNeeded(); // @FIX: Doesn't work and is buggy
 
         // === Act individually with every worker =================================
 
         for (AUnit worker : Select.ourWorkers().listUnits()) {
             AWorkerManager.update(worker);
-//            worker.setTooltip(worker.getFramesSinceLastOrderWasIssued()+ " ago");
         }
         
         // =========================================================
@@ -40,46 +39,7 @@ public class AWorkerCommander {
     }
 
     // =========================================================
-    public static boolean shouldTrainWorkers(boolean checkSupplyAndMinerals) {
-
-        // Check MINERALS
-        if (checkSupplyAndMinerals && AGame.getMinerals() < 50) {
-            return false;
-        }
-
-        // Check FREE SUPPLY
-        if (checkSupplyAndMinerals && AGame.getSupplyFree() == 0) {
-            return false;
-        }
-
-        int workers = Select.ourWorkers().count();
-
-        // Check if not TOO MANY WORKERS
-        if (workers >= 27 * Select.ourBases().count()) {
-            return false;
-        }
-
-        // Check if AUTO-PRODUCTION of WORKERS is active.
-        if (workers < AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS) {
-            return true;
-        }
-
-        // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
-//        if (!AGame.getBuildOrders().shouldProduceNow(AtlantisConfig.WORKER)) {
-//            return false;
-//        }
-//        if (!AGame.getBuildOrders().getThingsToProduceRightNow(true).isEmpty()) {
-//            return false;
-//        }
-        // // Check if not TOO MANY WORKERS
-        // if (AtlantisUnitInformationManager.countOurWorkers() >= 27 * AtlantisUnitInformationManager.countOurBases())
-        // {
-        // return false;
-        // }
-        return false;
-    }
-
-    // =========================================================
+    
     /**
      * Every base should have similar number of workers, more or less.
      */

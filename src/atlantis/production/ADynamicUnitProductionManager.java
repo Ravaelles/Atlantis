@@ -13,7 +13,7 @@ import java.util.List;
 public class ADynamicUnitProductionManager {
 
     public static void update() {
-        AWorkerProductionManager.handleWorkerProduction();
+        ADynamicWorkerProductionManager.handleDynamicWorkerProduction();
         
         if (AGame.playsAsTerran()) {
             handleFactoryProductionIfNeeded();

@@ -20,7 +20,9 @@ public class CodeProfiler {
     /**
      * Indicates that from now on, until endMeasuring is executed, the bot is calculating things related
      * to <b>title</b>.
-     * <br />Used for determining total time that it took to handle given type of activity.
+     * <br />Used for determining total time that it took to handle given type of activity e.g.
+     * `production related stuff`. Displayed in full painting mode (press 3 in game) as relative 
+     * time-consumptions bars.
      */
     public static void startMeasuring(String title) {
         measureAspect(title);
@@ -29,7 +31,8 @@ public class CodeProfiler {
     /**
      * Indicates that we've stopped handling <b>title</b>-related stuff. Now we can calculate how long
      * it took by comparing two timestamps.
-     * <br />Used for determining total time that it took to handle given type of activity.
+     * <br />Used for determining total time that it took to handle given type of activity and
+     * displayed in full painting mode (press 3 in game) as relative time-consumptions bars.
      */
     public static void endMeasuring(String title) {
         if (aspectsStart.containsKey(title)) {

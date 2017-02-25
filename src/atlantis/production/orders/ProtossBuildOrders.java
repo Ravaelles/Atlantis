@@ -1,6 +1,7 @@
 package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
+import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -39,7 +40,14 @@ public class ProtossBuildOrders extends ABuildOrdersManager {
     @Override
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
+        
+        if (ADynamicWorkerProductionManager.shouldTrainWorkers(false)) {
+            units.add(AUnitType.Protoss_Probe);
+        }
+                
+        units.add(AUnitType.Protoss_Dragoon);
         units.add(AUnitType.Protoss_Zealot);
+        
         return units;
     }
 
