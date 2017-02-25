@@ -1,17 +1,16 @@
 # Atlantis
-...is an extensive framework based on BWMirror 2.5 to write your very own Starcraft Broodwar bot in Java and it aims to achieve one thing:
+...is an extensive Java framework based on BWMirror 2.5 and BWAPI 4.1.2 with one goal in mind:
 *Make it much, much easier to create new bot starting from zero*.
 
 ![alt tag](http://s15.postimg.org/mnsu7qnt7/Atlantis_Tide.png)
 
-It is being ported to BWMirror 2.5, which runs with BWAPI 4.1.2. Atlantis wraps everything heavily, so you don't need to write yourself countless lines of tedious code that every bot unfortunately needs to have to do the simplest stuff.
+Atlantis wraps everything heavily, so you don't need to write yourself countless lines of tedious code that every bot unfortunately needs to have to do the simplest stuff. It has quite clean and re-usable code (at least it has high priority on my list). 
 
 # What it can do
-Modular approach with cleanest code possible (that's the priority) is offered by core classes which are prefixed with "Atlantis". So what has been implemented so far is:
 - all three races are supported
 - enables to you to run your bot in *one* click from your IDE, just run it and it will run Chaoslauncher and Starcraft
-- provides keyboard shortcuts like speed faster/slower (+/-), exit (Esc), painting modes (1,2,3)
-- build orders are fully customizable, see bwapi/read/build_orders files; multiple notations are accepted including Liquipedia notaton
+- build orders are fully customizable and very easy to use, see bwapi/read/build_orders files; multiple notations are accepted including Liquipedia notation, see an example [here](https://github.com/Ravaelles/Atlantis/blob/develop/bwapi-data/AI/build_orders/Terran/1%20Fact%20FE.txt#L26)
+- provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (Esc), painting modes (1,2,3)
 - takes care of the economy for you (gathering, construction)
 - workers are assigned to optimal mineral fields
 - scouts in order to find enemy base and detect the build order used
