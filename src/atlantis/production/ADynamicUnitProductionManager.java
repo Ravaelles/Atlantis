@@ -4,14 +4,13 @@ import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.TilePosition;
 import java.util.List;
 
 /**
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class ADynamicUnitsCommander {
+public class ADynamicUnitProductionManager {
 
     public static void update() {
         AWorkerProductionManager.handleWorkerProduction();
@@ -23,7 +22,7 @@ public class ADynamicUnitsCommander {
             handleScarabProductionIfNeeded();
         }
     }
-
+    
     // === Terran ========================================
     
     private static void handleFactoryProductionIfNeeded() {

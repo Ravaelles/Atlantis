@@ -26,14 +26,23 @@ public class AtlantisConfig {
      */
     public static int GAME_SPEED = 0;
     
+    /**
+     * Race used by the Atlantis.
+     */
     public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Protoss";
 //    public static final String OUR_RACE = "Zerg";
 
+    /**
+     * Single player enemy race.
+     */
 //    public static final String ENEMY_RACE = "Terran";
     public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Zerg";
     
+    // =========================================================
+    // === These are default values that can be overriden in ===
+    // === specific build order file. See `build_orders` dir ===
     // =========================================================
     
     /**
@@ -57,8 +66,12 @@ public class AtlantisConfig {
     /**
      * We must reach at least N workers (SCVs, Probes) to scout for the enemy location.
      */
-    public static int SCOUT_IS_NTH_WORKER = 201;
+    public static int SCOUT_IS_NTH_WORKER = 8;
 
+    // =========================================================
+    // =========================================================
+    // =========================================================
+    // =========================================================
     // =========================================================
     // Do not customize - see methods "useConfigFor{Race}"
     

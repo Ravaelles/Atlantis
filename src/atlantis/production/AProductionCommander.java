@@ -23,9 +23,7 @@ public class AProductionCommander {
         AProductionManager.update();
         
         // When it can be applied and makes sense, automatically produce units like workers, factories.
-        ADynamicConstructionCommander.update();
-        ADynamicUnitsCommander.update();
-        
+        ADynamicProductionCommander.update();
         
         // Take care of any unfinished constructions, make sure they have builders assigned etc.
         AConstructionManager.update();

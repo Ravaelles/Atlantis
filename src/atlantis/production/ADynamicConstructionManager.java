@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class ADynamicConstructionCommander {
+public class ADynamicConstructionManager {
 
     public static void update() {
         if (AGame.playsAsTerran()) {
