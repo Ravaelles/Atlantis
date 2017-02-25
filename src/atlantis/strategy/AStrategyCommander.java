@@ -8,7 +8,9 @@ public class AStrategyCommander {
      * Detect enemy strategy and use our strategy accordingly.
      */
     public static void update() {
-        if (!AEnemyStrategy.isEnemyStrategyKnown() && AGame.getTimeFrames() % 10 == 0) {
+        
+        // If we don't know enemy strategy, try to define it based on enemy buildings/units we know
+        if (AGame.getTimeFrames() < 350 && AGame.getTimeFrames() % 10 == 0) {
             if (AGame.isEnemyProtoss()) {
                 defineEnemyStrategyWhenEnemyIsProtoss();
             }
@@ -24,18 +26,24 @@ public class AStrategyCommander {
     // =========================================================
 
     private static void defineEnemyStrategyWhenEnemyIsProtoss() {
-        
+        AEnemyStrategy detectedStrategy = AEnemyProtossStrategy.detectStrategy();
+        if (detectedStrategy != null) {
+            changeEnemyStrategyTo(detectedStrategy);
+        }
     }
 
     private static void defineEnemyStrategyWhenEnemyIsTerran() {
-        AEnemyStrategy detectedStrategy = TerranStrategyDetector.detectStrategy();
+        AEnemyStrategy detectedStrategy = AEnemyTerranStrategy.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }
     }
 
     private static void defineEnemyStrategyWhenEnemyIsZerg() {
-        
+        AEnemyStrategy detectedStrategy = AEnemyZergStrategy.detectStrategy();
+        if (detectedStrategy != null) {
+            changeEnemyStrategyTo(detectedStrategy);
+        }
     }
     
     // =========================================================

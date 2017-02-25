@@ -124,7 +124,7 @@ public class ARepairCommander {
 
                 // === We know enemy strategy ========================================
                 if (AEnemyStrategy.isEnemyStrategyKnown()) {
-                    if (AEnemyStrategy.getEnemyStrategy().isGoingAllInRush()) {
+                    if (AEnemyStrategy.getEnemyStrategy().isGoingCheese()) {
                         return 5;
                     }
                     if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {

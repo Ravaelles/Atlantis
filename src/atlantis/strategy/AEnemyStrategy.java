@@ -11,12 +11,6 @@ public class AEnemyStrategy {
     
     private static final List<AEnemyStrategy> allStrategies = new ArrayList<>();
     
-    public static final AEnemyStrategy TERRAN_BBS = new AEnemyStrategy();
-    public static final AEnemyStrategy TERRAN_1_Rax_FE = new AEnemyStrategy();
-    public static final AEnemyStrategy TERRAN_Double_Rax_MnM = new AEnemyStrategy();
-    public static final AEnemyStrategy TERRAN_Tri_Rax_MnM = new AEnemyStrategy();
-    public static final AEnemyStrategy TERRAN_Three_Factory_Vultures = new AEnemyStrategy();
-
     // Auto load this class
     private static final Object autoInitializer = autoInitialize();
     
@@ -32,13 +26,13 @@ public class AEnemyStrategy {
     private boolean protoss = false;
     private boolean zerg = false;
     private boolean goingRush = false;
-    private boolean goingAllInRush = false;
+    private boolean goingCheese = false;
     private boolean goingExpansion = false;
     private boolean goingTech = false;
     
     // =========================================================
 
-    private AEnemyStrategy() {
+    protected AEnemyStrategy() {
         allStrategies.add(this);
     }
 //    private AEnemyStrategy(String name, String url) {
@@ -52,30 +46,9 @@ public class AEnemyStrategy {
      * Executed on class load.
      */
     private static Object autoInitialize() {
-        
-        // Rushes
-        TERRAN_Double_Rax_MnM.setTerran().setName("Double Rax MnM")
-                .setGoingRush(true)
-                .setUrl("http://strategywiki.org/wiki/StarCraft/Terran_strategies#Terran_Double_Rax_MnM");
-        
-        // All-in rushes
-        TERRAN_BBS.setTerran().setName("BBS")
-                .setGoingRush(true).setGoingAllInRush(true)
-                .setUrl("http://wiki.teamliquid.net/starcraft/Barracks_Barracks_Supply_(vs._Terran)");
-        TERRAN_Tri_Rax_MnM.setTerran().setName("Tri-Rax MnM Rush")
-                .setGoingRush(true)
-                .setUrl("http://strategywiki.org/wiki/StarCraft/Terran_strategies#Terran_Tri-Rax_MnM_Rush");
-        
-        // Expansion
-        TERRAN_1_Rax_FE.setTerran().setName("1 Rax FE")
-                .setGoingExpansion(true).setGoingTech(true)
-                .setUrl("http://wiki.teamliquid.net/starcraft/1_Rax_FE_(vs._Terran)");
-        
-        // Tech 
-        TERRAN_Three_Factory_Vultures.setTerran().setName("Three Factory Vultures")
-                .setGoingTech(true)
-                .setUrl("http://wiki.teamliquid.net/starcraft/Three_Factory_Vultures");
-        
+        AEnemyTerranStrategy.initialize();
+        AEnemyProtossStrategy.initialize();
+        AEnemyZergStrategy.initialize();
         return true;
     }
 
@@ -120,17 +93,17 @@ public class AEnemyStrategy {
         return goingRush;
     }
 
-    public AEnemyStrategy setGoingRush(boolean goingRush) {
-        this.goingRush = goingRush;
+    public AEnemyStrategy setGoingRush() {
+        this.goingRush = true;
         return this;
     }
 
-    public boolean isGoingAllInRush() {
-        return goingAllInRush;
+    public boolean isGoingCheese() {
+        return goingCheese;
     }
 
-    public AEnemyStrategy setGoingAllInRush(boolean goingExtremeRush) {
-        this.goingAllInRush = goingExtremeRush;
+    public AEnemyStrategy setGoingCheese() {
+        this.goingCheese = true;
         return this;
     }
 
@@ -138,8 +111,8 @@ public class AEnemyStrategy {
         return goingExpansion;
     }
 
-    public AEnemyStrategy setGoingExpansion(boolean goingExpansion) {
-        this.goingExpansion = goingExpansion;
+    public AEnemyStrategy setGoingExpansion() {
+        this.goingExpansion = true;
         return this;
     }
 
@@ -147,8 +120,8 @@ public class AEnemyStrategy {
         return goingTech;
     }
 
-    public AEnemyStrategy setGoingTech(boolean goingTech) {
-        this.goingTech = goingTech;
+    public AEnemyStrategy setGoingTech() {
+        this.goingTech = true;
         return this;
     }
 
