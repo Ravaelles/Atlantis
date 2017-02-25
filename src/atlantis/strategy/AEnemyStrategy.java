@@ -29,6 +29,8 @@ public class AEnemyStrategy {
     private boolean goingCheese = false;
     private boolean goingExpansion = false;
     private boolean goingTech = false;
+    private boolean goingHiddenUnits = false;
+    private boolean goingAirUnits = false;
     
     // =========================================================
 
@@ -122,6 +124,24 @@ public class AEnemyStrategy {
 
     public AEnemyStrategy setGoingTech() {
         this.goingTech = true;
+        return this;
+    }
+
+    public boolean isGoingHiddenUnits() {
+        return goingHiddenUnits;
+    }
+
+    public AEnemyStrategy setGoingHiddenUnits() {
+        this.goingHiddenUnits = true;
+        return this;
+    }
+
+    public boolean isGoingAirUnits() {
+        return goingAirUnits;
+    }
+
+    public AEnemyStrategy setGoingAirUnits() {
+        this.goingAirUnits = true;
         return this;
     }
 

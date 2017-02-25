@@ -55,31 +55,32 @@ public class AEnemyProtossStrategy extends AEnemyStrategy {
     // =========================================================
     
     public static AEnemyStrategy detectStrategy() {
+        int seconds = AGame.getTimeSeconds();
         int gateways = Select.enemy().countUnitsOfType(AUnitType.Protoss_Gateway);
         int nexus = Select.enemy().countUnitsOfType(AUnitType.Protoss_Nexus);
         int citadel = Select.enemy().countUnitsOfType(AUnitType.Protoss_Citadel_of_Adun);
 
         // === Dark Templar ========================================
         
-        if (citadel >= 1 && AGame.getTimeSeconds() < 320) {
+        if (citadel >= 1 && seconds < 320) {
             return AEnemyProtossStrategy.PROTOSS_2_Gate_DT;
         }
 
         // === Three Gateway ========================================
         
-        if (gateways >= 3 && AGame.getTimeSeconds() < 300) {
+        if (gateways >= 3 && seconds < 300) {
             return AEnemyProtossStrategy.PROTOSS_3_Gate;
         }
 
         // === Two Gateway ========================================
         
-        if (gateways == 2 && AGame.getTimeSeconds() < 290) {
+        if (gateways == 2 && seconds < 290) {
             return AEnemyProtossStrategy.PROTOSS_2_Gate;
         }
 
         // === 12 Nexus ========================================
         
-        if (nexus == 2 && AGame.getTimeSeconds() < 290) {
+        if (nexus == 2 && seconds < 290) {
             return AEnemyProtossStrategy.PROTOSS_12_Nexus;
         }
         

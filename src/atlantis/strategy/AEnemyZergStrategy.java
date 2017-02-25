@@ -1,12 +1,6 @@
 package atlantis.strategy;
 
 import atlantis.AGame;
-import static atlantis.strategy.AEnemyProtossStrategy.PROTOSS_3_Gate;
-import static atlantis.strategy.AEnemyStrategy.TERRAN_1_Rax_FE;
-import static atlantis.strategy.AEnemyStrategy.TERRAN_BBS;
-import static atlantis.strategy.AEnemyStrategy.TERRAN_Double_Rax_MnM;
-import static atlantis.strategy.AEnemyStrategy.TERRAN_Three_Factory_Vultures;
-import static atlantis.strategy.AEnemyStrategy.TERRAN_Tri_Rax_MnM;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -18,7 +12,7 @@ import atlantis.units.Select;
 public class AEnemyZergStrategy extends AEnemyStrategy {
     
     // Rush
-    public static final AEnemyStrategy ZERG_ = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_9_Pool = new AEnemyStrategy();
     
     // Cheese
     public static final AEnemyStrategy ZERG_4_Pool = new AEnemyStrategy();
@@ -26,10 +20,12 @@ public class AEnemyZergStrategy extends AEnemyStrategy {
     public static final AEnemyStrategy ZERG_6_Pool = new AEnemyStrategy();
     
     // Expansion
-    public static final AEnemyStrategy ZERG_ = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_3_Hatch_Before_Pool = new AEnemyStrategy();
     
     // Tech
-    public static final AEnemyStrategy ZERG_ = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_1_Hatch_Lurker = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_2_Hatch_Lurker = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_13_Pool_Muta = new AEnemyStrategy();
     
     // =========================================================
 
@@ -37,6 +33,9 @@ public class AEnemyZergStrategy extends AEnemyStrategy {
         
         // === Rushes ========================================
         
+        ZERG_9_Pool.setProtoss().setName("9 Pool")
+                .setGoingRush()
+                .setUrl("http://wiki.teamliquid.net/starcraft/9_Pool_(vs._Terran)");
 
         // === Cheese ========================================
         
@@ -48,34 +47,81 @@ public class AEnemyZergStrategy extends AEnemyStrategy {
                 .setGoingRush().setGoingCheese()
                 .setUrl("http://wiki.teamliquid.net/starcraft/5_Pool_(vs._Terran)");
         
-        ZERG_6_Pool.setProtoss().setName("4 Pool")
+        ZERG_6_Pool.setProtoss().setName("6 Pool")
                 .setGoingRush().setGoingCheese()
                 .setUrl("---");
 
         // === Expansion =====================================
         
+        ZERG_3_Hatch_Before_Pool.setProtoss().setName("3_Hatch_Before_Pool")
+                .setGoingExpansion()
+                .setUrl("http://wiki.teamliquid.net/starcraft/3_Hatch_Before_Pool_(vs._Terran)");
 
         // === Tech ==========================================
+        
+        ZERG_1_Hatch_Lurker.setProtoss().setName("1 Hatch Lurker")
+                .setGoingTech().setGoingHiddenUnits()
+                .setUrl("http://wiki.teamliquid.net/starcraft/1_Hatch_Lurker");
+        
+        ZERG_2_Hatch_Lurker.setProtoss().setName("1 Hatch Lurker")
+                .setGoingTech().setGoingHiddenUnits()
+                .setUrl("http://wiki.teamliquid.net/starcraft/1_Hatch_Lurker");
+        
+        ZERG_13_Pool_Muta.setProtoss().setName("13 Pool Muta")
+                .setGoingTech().setGoingAirUnits()
+                .setUrl("http://wiki.teamliquid.net/starcraft/13_Pool_Muta_(vs._Terran)");
         
     }
     
     public static AEnemyStrategy detectStrategy() {
+        int seconds = AGame.getTimeSeconds();
+        int bases = Select.enemy().bases().count();
+        int lair = Select.enemy().countUnitsOfType(AUnitType.Zerg_Lair);
         int pool = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spawning_Pool);
+        int extractor = Select.enemy().countUnitsOfType(AUnitType.Zerg_Extractor);
+        int spires = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spire);
+        int hydraliskDen = Select.enemy().countUnitsOfType(AUnitType.Zerg_Hydralisk_Den);
         int drones = Select.enemy().countUnitsOfType(AUnitType.Zerg_Drone);
         int lings = Select.enemy().countUnitsOfType(AUnitType.Zerg_Zergling);
-
-        // === Detect N-pools ========================================
         
-        if (pool == 1 && drones <= 4 && AGame.getTimeSeconds() < 220) {
+        // === Expansion ===========================================
+        
+        if (pool == 0 && bases >= 3 && seconds <= 350) {
+            return ZERG_3_Hatch_Before_Pool;
+        }
+        
+        // === Tech ================================================
+        
+        if (extractor >= 1 && hydraliskDen == 0 && bases >= 2 && drones >= 12 || spires >= 1) {
+            return ZERG_13_Pool_Muta;
+        }
+        
+        if (extractor >= 1 && pool >= 1 && lair >= 1 && bases < 2) {
+            return ZERG_1_Hatch_Lurker;
+        }
+        
+        if (extractor >= 1 && pool >= 1 && lair >= 1 && bases >= 2) {
+            return ZERG_2_Hatch_Lurker;
+        }
+        
+        // === Cheese ==============================================
+        
+        if (pool == 1 && drones <= 4 && seconds < 120) {
             return AEnemyZergStrategy.ZERG_4_Pool;
         }
         
-        if (pool == 1 && drones <= 5 && AGame.getTimeSeconds() < 220) {
+        if (pool == 1 && drones <= 5 && seconds < 140) {
             return AEnemyZergStrategy.ZERG_5_Pool;
         }
         
-        if (pool == 1 && drones <= 6 && AGame.getTimeSeconds() < 220) {
+        if (pool == 1 && drones <= 6 && seconds < 160) {
             return AEnemyZergStrategy.ZERG_6_Pool;
+        }
+        
+        // === Rushes ==============================================
+        
+        if (pool == 1 && drones <= 10 && seconds < 220) {
+            return AEnemyZergStrategy.ZERG_9_Pool;
         }
         
         // =========================================================

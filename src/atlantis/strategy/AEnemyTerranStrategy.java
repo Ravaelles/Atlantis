@@ -58,11 +58,12 @@ public class AEnemyTerranStrategy extends AEnemyStrategy {
     // =========================================================
     
     public static AEnemyStrategy detectStrategy() {
+        int seconds = AGame.getTimeSeconds();
         int barracks = Select.enemy().countUnitsOfType(AUnitType.Terran_Barracks);
 
         // === Double Rax MnM ========================================
         
-        if (barracks == 2 && AGame.getTimeSeconds() < 290) {
+        if (barracks == 2 && seconds < 290) {
             return AEnemyTerranStrategy.TERRAN_Double_Rax_MnM;
         }
         
