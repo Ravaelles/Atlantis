@@ -10,7 +10,7 @@ import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import bwapi.Color;
 import bwta.BaseLocation;
 
@@ -44,7 +44,7 @@ public class MissionAttack extends Mission {
 //                    .canBeAttackedBy(unit)
 //                    .inRadius(50, mainBase)
                     .nearestTo(mainBase);
-            System.out.println(nearestEnemy);
+//            System.out.println(nearestEnemy);
             if (nearestEnemy != null) {
                 focusPoint = nearestEnemy.getPosition();
             }

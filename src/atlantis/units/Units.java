@@ -2,9 +2,9 @@ package atlantis.units;
 
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.APosition;
-import atlantis.wrappers.APositionedObject;
-import atlantis.wrappers.PositionOperationsWrapper;
+import atlantis.position.APosition;
+import atlantis.position.APositionedObject;
+import atlantis.position.PositionOperationsWrapper;
 import bwapi.Position;
 import bwapi.PositionedObject;
 import java.util.ArrayList;

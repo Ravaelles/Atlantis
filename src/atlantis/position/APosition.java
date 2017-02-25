@@ -1,9 +1,10 @@
-package atlantis.wrappers;
+package atlantis.position;
 
 import atlantis.util.PositionUtil;
 import atlantis.debug.APainter;
 import atlantis.information.AMap;
 import atlantis.units.AUnit;
+import atlantis.wrappers.ACachedValue;
 import bwapi.AbstractPoint;
 import bwapi.Color;
 import bwapi.Position;
@@ -110,7 +111,6 @@ public class APosition extends Position implements Comparable<Position> {
      * building dimensions.
      */
     public double distanceTo(AUnit unit) {
-//        return PositionUtil.distanceTo(getPoint(), unit.getPosition());
         return PositionUtil.distanceTo(getPoint(), unit);
     }
     

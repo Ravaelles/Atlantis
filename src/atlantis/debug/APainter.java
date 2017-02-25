@@ -28,9 +28,9 @@ import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
 import atlantis.workers.AWorkerManager;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import atlantis.wrappers.MappingCounter;
-import atlantis.wrappers.PositionOperationsWrapper;
+import atlantis.position.PositionOperationsWrapper;
 import bwapi.Color;
 import bwapi.Game;
 import bwapi.Position;
@@ -80,7 +80,7 @@ public class APainter {
 
         // === PARTIAL PAINTING ====================================
 //        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
-        bwapi.setTextSize(Enum.Default);
+        setTextSizeMedium();
 
         paintInfo();
         paintKilledAndLost();
@@ -95,7 +95,7 @@ public class APainter {
         }
 
         // =========================================================
-        bwapi.setTextSize(Enum.Small);
+        setTextSizeSmall();
 
         paintCodeProfiler();
 //        paintTestSupplyDepotLocationsNearMain();
@@ -348,13 +348,13 @@ public class APainter {
         APosition position;
 
         // Main DEFEND focus point
-        position = MissionAttack.getInstance().getFocusPoint();
-        if (position != null) {
-            position = MissionDefend.getInstance().getFocusPoint();
-            paintCircle(position, 20, Color.Orange);
-            paintCircle(position, 19, Color.Orange);
-            paintTextCentered(position, "DEFEND", Color.Orange);
-        }
+//        position = MissionAttack.getInstance().getFocusPoint();
+//        if (position != null) {
+//            position = MissionDefend.getInstance().getFocusPoint();
+//            paintCircle(position, 20, Color.Orange);
+//            paintCircle(position, 19, Color.Orange);
+//            paintTextCentered(position, "DEFEND", Color.Orange);
+//        }
 
         // Mission ATTACK focus point
         position = MissionAttack.getInstance().getFocusPoint();
@@ -485,6 +485,7 @@ public class APainter {
      * Paints places where buildings that do not yet exist are planned to be placed.
      */
     private static void paintConstructionPlaces() {
+        Color color = Color.Grey;
         for (ConstructionOrder order : AConstructionManager.getAllConstructionOrders()) {
             if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 APosition positionToBuild = order.getPositionToBuild();
@@ -495,23 +496,23 @@ public class APainter {
 
                 // Paint box
                 paintRectangle(positionToBuild,
-                        buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, Color.Brown);
+                        buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, color);
 
                 // Draw X
                 paintLine(PositionOperationsWrapper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
                         PositionOperationsWrapper.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
-                        Color.Brown
+                        color
                 );
                 paintLine(positionToBuild,
                         buildingType.getTileWidth() * 32,
                         buildingType.getTileHeight() * 32,
-                        Color.Brown
+                        color
                 );
 
                 // Draw text
                 paintTextCentered(
                         positionToBuild.translateByPixels(buildingType.getDimensionLeft(), 69),
-                        buildingType.getShortName(), Color.Brown
+                        buildingType.getShortName(), color
                 );
             }
         }
@@ -649,6 +650,7 @@ public class APainter {
      * Paints progress bar with percent of completion over all buildings under construction.
      */
     private static void paintConstructionProgress() {
+        setTextSizeMedium();
         for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
             if (unit.isCompleted()) {
                 continue;
@@ -656,20 +658,13 @@ public class APainter {
 
             String stringToDisplay;
 
-            int labelMaxWidth = 56;
-            int labelHeight = 6;
+            int labelMaxWidth = 60;
+            int labelHeight = 14;
             int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
-            int labelTop = unit.getPosition().getY() + 13;
+            int labelTop = unit.getPosition().getY() + 8;
 
             double progress = (double) unit.getHitPoints() / unit.getMaxHitPoints();
             int labelProgress = (int) (1 + 99 * progress);
-//            String color = AtlantisUtilities.assignStringForValue(
-//                    progress,
-//                    1.0,
-//                    0.0,
-//                    new String[]{ColorUtil.getColorString(Color.Red), ColorUtil.getColorString(Color.Yellow),
-//                        ColorUtil.getColorString(Color.Green)});
-            stringToDisplay = labelProgress + "%";
 
             // Paint box
             bwapi.drawBoxMap(
@@ -689,14 +684,38 @@ public class APainter {
             );
             //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.Black, false, false);
 
-            // Paint label
-            paintTextCentered(new APosition(labelLeft + labelMaxWidth * 50 / 100, labelTop - 3), stringToDisplay, false);
-
+            
+            // =========================================================
+            // Paint progress text
+            
+            Color progressColor;
+            if (labelProgress < 26) {
+                progressColor = Color.Red;
+            }
+            else if (labelProgress < 67) {
+                progressColor = Color.Yellow;
+            }
+            else {
+                progressColor = Color.Green;
+            }
+            stringToDisplay = labelProgress + "%%";
+            
+            paintTextCentered(
+                    new APosition(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2), 
+                    stringToDisplay, progressColor
+            );
+            
+            // =========================================================
+            
             // Display name of unit
             String name = unit.getBuildType().getShortName();
-            paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 1), 
-                    name, Color.Green);
+
+            // Paint building name            
+            paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 7), 
+                    name, Color.White);
         }
+        
+        setTextSizeSmall();
     }
 
     /**
@@ -704,7 +723,7 @@ public class APainter {
      */
     private static void paintBuildingHealth() {
         for (AUnit unit : Select.ourBuildings().listUnits()) {
-            if (unit.getHitPoints() >= unit.getMaxHitPoints()) { //isWounded()
+            if (unit.isBunker() || unit.getHitPoints() >= unit.getMaxHitPoints()) { //isWounded()
                 continue;
             }
             int labelMaxWidth = 56;
@@ -747,32 +766,36 @@ public class APainter {
      * Paints the number of workers that are gathering to this building.
      */
     private static void paintWorkersAssignedToBuildings() {
-        bwapi.setTextSize(Enum.Default);
+        setTextSizeLarge();
         for (AUnit building : Select.ourBuildings().listUnits()) {
 
             // Paint text
             int workers = AWorkerManager.getHowManyWorkersGatheringAt(building);
             if (workers > 0) {
-                String workersAssigned = workers + " WRK";
-                paintTextCentered(PositionOperationsWrapper.translateByPixels(building.getPosition(), 0, -15), workersAssigned, Color.Blue);
+                String workersAssigned = workers + "";
+                paintTextCentered(
+                        PositionOperationsWrapper.translateByPixels(building.getPosition(), -5, -36), 
+                        workersAssigned, Color.Grey
+                );
             }
         }
-        bwapi.setTextSize(Enum.Small);
+        setTextSizeSmall();
     }
 
     /**
      * If buildings are training units, it paints what unit is trained and the progress.
      */
     private static void paintUnitsBeingTrainedInBuildings() {
+        setTextSizeMedium();
         for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
             if (!unit.getType().isBuilding() || !unit.isTrainingAnyUnit()) {
                 continue;
             }
 
-            int labelMaxWidth = 100;
-            int labelHeight = 10;
+            int labelMaxWidth = 90;
+            int labelHeight = 14;
             int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
-            int labelTop = unit.getPosition().getY() + 5;
+            int labelTop = unit.getPosition().getY();
 
             int operationProgress = 1;
             AUnit trained = unit.getBuildUnit();
@@ -786,7 +809,7 @@ public class APainter {
             bwapi.drawBoxMap(
                     new APosition(labelLeft, labelTop),
                     new APosition(labelLeft + labelMaxWidth * operationProgress / 100, labelTop + labelHeight),
-                    Color.White,
+                    Color.Grey,
                     true
             );
             //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth * operationProgress / 100, labelTop + labelHeight), Color.White, true, false);
@@ -803,10 +826,11 @@ public class APainter {
             // =========================================================
             // Display label
             paintTextCentered(
-                    new APosition(unit.getPosition().getX() - 4 * trainedUnitString.length(), unit.getPosition().getY() + 16),
-                    ColorUtil.getColorString(Color.White) + trainedUnitString, false
+                    new APosition(labelLeft + labelMaxWidth / 2, labelTop + 2),
+                    trainedUnitString, Color.White
             );
         }
+        setTextSizeSmall();
     }
 
     /**
@@ -1097,6 +1121,18 @@ public class APainter {
         }
 
         bwapi.drawTextMap(position, ColorUtil.getColorString(color) + text);
+    }
+
+    private static void setTextSizeMedium() {
+        bwapi.setTextSize(Enum.Default);
+    }
+
+    private static void setTextSizeSmall() {
+        bwapi.setTextSize(Enum.Small);
+    }
+
+    private static void setTextSizeLarge() {
+        bwapi.setTextSize(Enum.Large);
     }
 
 }

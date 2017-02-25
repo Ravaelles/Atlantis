@@ -439,7 +439,8 @@ public class AUnitType implements Comparable<AUnitType> {
                     .replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "")
                     .replace("Hero ", "").replace("Special ", "").replace("Powerup ", "")
                     .replace("Resource ", "").replace("Resource_", "")
-                    .replace("Tank Mode ", "").replace("_Tank_Mode", "");
+                    .replace("Siege Mode", "").replace("_Siege_Mode", "")
+                    .replace("Tank Mode", "").replace("_Tank_Mode", "").trim();
         }
         
         if (_shortName == "Unknown") {

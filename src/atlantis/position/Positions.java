@@ -1,4 +1,4 @@
-package atlantis.wrappers;
+package atlantis.position;
 
 import atlantis.units.AUnit;
 import atlantis.util.AtlantisUtilities;

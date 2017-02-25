@@ -5,7 +5,7 @@ import atlantis.combat.squad.missions.Mission;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import java.util.ArrayList;
 import java.util.Collections;
 

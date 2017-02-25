@@ -11,7 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import bwapi.Color;
 import bwapi.Position;
 import bwta.BaseLocation;

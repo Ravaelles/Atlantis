@@ -5,7 +5,7 @@ import atlantis.enemy.AEnemyUnits;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 
 /**
  *

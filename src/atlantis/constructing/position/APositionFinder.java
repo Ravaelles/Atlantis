@@ -6,7 +6,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import bwapi.Position;
 
 public class APositionFinder {

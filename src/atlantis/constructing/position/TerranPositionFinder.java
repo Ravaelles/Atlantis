@@ -5,7 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import java.util.Collection;
 
 public class TerranPositionFinder extends AbstractPositionFinder {

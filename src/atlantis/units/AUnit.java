@@ -13,8 +13,9 @@ import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.repair.ARepairManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
-import atlantis.wrappers.APosition;
-import atlantis.wrappers.APositionedObject;
+import atlantis.position.APosition;
+import atlantis.position.APositionedObject;
+import atlantis.wrappers.ACachedValue;
 import bwapi.Player;
 import bwapi.Position;
 import bwapi.TilePosition;
@@ -40,6 +41,9 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     
     // Mapping of native unit IDs to AUnit objects
     private static final Map<Integer, AUnit> instances = new HashMap<>();
+    
+    // Cached distances to other units - reduces time on calculating unit1.distanceTo(unit2)
+    public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
 
     private Unit u;
     private AUnitType _lastCachedType;

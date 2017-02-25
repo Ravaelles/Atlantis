@@ -2,8 +2,8 @@ package atlantis.util;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.wrappers.APosition;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
+import atlantis.position.APosition;
 import bwapi.Position;
 import bwapi.PositionOrUnit;
 import bwapi.TilePosition;
@@ -70,6 +70,7 @@ public class PositionUtil {
         
         // =========================================================
 
+        // From is POSITION
         if (fromPosition != null) {
             if (toPosition != null) {
                 return (double) fromPosition.getDistance(toPosition) / 32;
@@ -78,12 +79,17 @@ public class PositionUtil {
                 return (double) fromPosition.getDistance(toUnit) / 32;
             }
         }
+        
+        // From is UNIT
         else {
             if (toPosition != null) {
                 return (double) fromUnit.getDistance(toPosition) / 32;
             }
+            
+            // UNIT to UNIT distance - can be cached
             else {
-                return (double) fromUnit.getDistance(toUnit) / 32;
+//                return (double) fromUnit.getDistance(toUnit) / 32;
+                return AUnit.unitDistancesCached.getDistanceBetweenUnits(fromUnit, toUnit);
             }
         }
     }

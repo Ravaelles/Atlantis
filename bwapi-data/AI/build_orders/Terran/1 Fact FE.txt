@@ -28,7 +28,7 @@ http://wiki.teamliquid.net/starcraft/1_Fact_FE_(vs._Terran)
 @ - Name - Modifier
 9 - Supply Depot
 12 - Barracks
-12 - Refinery
+13 - Refinery
 13 - Marine
 14 - Bunker - NATURAL
 15 - Supply Depot

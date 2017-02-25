@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import bwapi.TilePosition;
 
 public class ABuilderManager {

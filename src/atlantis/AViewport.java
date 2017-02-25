@@ -1,7 +1,7 @@
 package atlantis;
 
 import atlantis.units.AUnit;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 
 /**
  *

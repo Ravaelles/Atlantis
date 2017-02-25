@@ -8,7 +8,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import bwapi.Color;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;

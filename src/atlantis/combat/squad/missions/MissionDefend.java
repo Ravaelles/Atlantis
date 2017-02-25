@@ -7,7 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
@@ -45,7 +45,7 @@ public class MissionDefend extends Mission {
         // =========================================================
         
         APosition focusPoint = getFocusPoint();
-        APainter.paintLine(unit, focusPoint, Color.Purple);
+//        APainter.paintLine(unit, focusPoint, Color.Purple);
         
         if (focusPoint == null) {
             System.err.println("Couldn't define choke point.");

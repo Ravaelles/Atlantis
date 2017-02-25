@@ -6,7 +6,7 @@ import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import bwapi.Color;
 import bwapi.Position;
 import java.util.Collection;

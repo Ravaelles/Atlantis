@@ -5,7 +5,7 @@ import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.wrappers.APosition;
+import atlantis.position.APosition;
 import bwta.BaseLocation;
 import bwta.Chokepoint;
 import bwta.Region;

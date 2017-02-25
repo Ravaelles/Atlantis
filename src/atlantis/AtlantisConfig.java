@@ -26,13 +26,13 @@ public class AtlantisConfig {
      */
     public static int GAME_SPEED = 0;
     
-//    private static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Protoss";
-    public static final String OUR_RACE = "Zerg";
+//    public static final String OUR_RACE = "Zerg";
 
-//    private static final String ENEMY_RACE = "Terran";
+//    public static final String ENEMY_RACE = "Terran";
     public static final String ENEMY_RACE = "Protoss";
-//    private static final String ENEMY_RACE = "Zerg";
+//    public static final String ENEMY_RACE = "Zerg";
     
     // =========================================================
     
