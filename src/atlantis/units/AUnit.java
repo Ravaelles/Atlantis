@@ -894,6 +894,10 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         return getType().isVulture();
     }
 
+    public boolean isTank() {
+        return getType().isTank();
+    }
+
     public boolean isMorphing() {
         return u.isMorphing();
     }

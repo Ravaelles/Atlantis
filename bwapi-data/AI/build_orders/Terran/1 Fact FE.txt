@@ -10,7 +10,7 @@
 #AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS=1
 
 // Max number of workers for workers auto-production to remain active
-#AUTO_PRODUCE_WORKERS_MAX_WORKERS=13
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=12
 
 // === Raw build order used - taken from Liquipedia or so =============
 
@@ -34,11 +34,11 @@ http://wiki.teamliquid.net/starcraft/1_Fact_FE_(vs._Terran)
 @ - Name - Modifier
 9 - Supply Depot
 12 - Barracks
-13 - Refinery
-13 - Marine
+14 - Marine
 14 - Bunker - NATURAL
-15 - Supply Depot
+14 - Refinery
 16 - Factory
+16 - Supply Depot
 16 - Marine
 20 - Machine Shop
 20 - Marine

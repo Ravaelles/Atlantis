@@ -41,7 +41,9 @@ public class AWorkerManager {
         // Act as BUILDER if needed
         if (AConstructionManager.isBuilder(worker)) {
             ABuilderManager.update(worker);
-            worker.setTooltip("Builder");
+            if (worker.getTooltip() == null) {
+                worker.setTooltip("Builder");
+            }
             return true;
         } 
 

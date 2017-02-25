@@ -132,7 +132,11 @@ public class MissionDefend extends Mission {
         // Distance to the center of choke point.
         double distToChoke = unit.distanceTo(focusPoint);
         
-        return distToChoke < 3 + Select.ourCombatUnits().inRadius(3, unit).count() / 6;
+        // Define distance which is considered "Close enough"
+        double acceptableDistance = getCloseEnoughDistanceToFocusPoint(unit) 
+                + Select.ourCombatUnits().inRadius(3, unit).count() / 6;
+        
+        return distToChoke < acceptableDistance;
 //
 //        // How far can the unit shoot
 //        double unitShootRange =  unit.getWeaponRangeGround();
@@ -141,6 +145,17 @@ public class MissionDefend extends Mission {
 //        double maxDistanceAllowed = unitShootRange + unitShootRangeExtra;
 //
 //        return distToChoke <= maxDistanceAllowed;
+    }
+    
+    private int getCloseEnoughDistanceToFocusPoint(AUnit unit) {
+        int base = 3;
+        
+        if (unit.isTank()) {
+            return base + (AGame.isEnemyTerran() ? 0 : 2);
+        }
+        else {
+            return base;
+        }
     }
 
     private boolean isCriticallyCloseToFocusPoint(AUnit unit, APosition focusPoint) {
@@ -152,7 +167,7 @@ public class MissionDefend extends Mission {
         double distToChoke = unit.distanceTo(focusPoint);
 
         // Can't be closer than X from choke point
-        if (distToChoke > 0.01 && distToChoke <= 1.2) {
+        if (distToChoke > 0.01 && distToChoke <= getCriticallyCloseDistanceToFocusPoint(unit)) {
             return true;
         }
 
@@ -169,6 +184,17 @@ public class MissionDefend extends Mission {
 
         return false;
     }
+    
+    private double getCriticallyCloseDistanceToFocusPoint(AUnit unit) {
+        double base = 1.2;
+        
+        if (unit.isTank()) {
+            return base + (AGame.isEnemyTerran() ? 0 : 2);
+        }
+        else {
+            return base;
+        }
+    }
 
     // =========================================================
 
@@ -181,7 +207,17 @@ public class MissionDefend extends Mission {
             return null;
         }
         
-        // =========================================================
+        // === Focus enemy attacking the main base =================
+        
+        AUnit mainBase = Select.mainBase();
+        if (mainBase != null) {
+            AUnit nearEnemy = Select.enemy().combatUnits().nearestTo(mainBase);
+            if (nearEnemy != null) {
+                return nearEnemy.getPosition();
+            }
+        }
+
+        // === Return position near the choke point ================
         
 //        if (Select.ourBases().count() <= 1) {
 //            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());

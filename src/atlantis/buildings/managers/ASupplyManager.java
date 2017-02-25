@@ -19,12 +19,12 @@ public class ASupplyManager {
         /**
          * Check if should use auto supply manager
          */
-        if (AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS <= supplyTotal) {
+        if (supplyTotal >= AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS) {
             supplyFree = AGame.getSupplyFree();
 
             int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
-            if (supplyTotal <= 10) {
+            if (supplyTotal <= 11) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
@@ -51,11 +51,15 @@ public class ASupplyManager {
     // =========================================================
     
     private static void requestAdditionalSupply() {
+        AGame.sendMessage("SUPPLY requested at " + AGame.getSupplyTotal());
+        System.err.println("SUPPLY requested at " + AGame.getSupplyTotal());
 
-        // Zerg
+        // Zerg handles supply a bit differently
         if (AGame.playsAsZerg()) {
             ((ZergBuildOrders) AGame.getBuildOrders()).produceZergUnit(AUnitType.Zerg_Overlord);
-        } // Terran + Protoss
+        } 
+
+        // Terran + Protoss
         else {
             AConstructionManager.requestConstructionOf(AtlantisConfig.SUPPLY);
         }

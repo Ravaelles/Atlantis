@@ -318,6 +318,22 @@ public class AMap {
         return null;
     }
     
+    public static Chokepoint getNearestChokepoint(APosition position) {
+        double bestDistance = 99999;
+        Chokepoint bestChoke = null;
+        
+        for (Chokepoint chokePoint : getChokePoints()) {
+            System.out.println(chokePoint.getWidth());
+            double dist = position.distanceTo(chokePoint.getCenter()) - chokePoint.getWidth() / 32 / 2;
+            if (dist < bestDistance) {
+                bestDistance = dist;
+                bestChoke = chokePoint;
+            }
+        }
+        
+        return bestChoke;
+    }
+    
     /**
      * Can be used to avoid getting to close to the region edges, which may cause unit to get stuck.
      */

@@ -1,11 +1,13 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.debug.APainter;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
 import bwapi.Color;
+import bwta.Chokepoint;
 
 /**
  *
@@ -34,11 +36,11 @@ public class TerranSiegeTankManager {
 
         // =========================================================
         
-        if (!tank.isSieged()) {
-            return updateWhenUnsieged(tank, nearestAttackableEnemy, distanceToEnemy);
+        if (tank.isSieged()) {
+            return updateWhenSieged(tank, nearestAttackableEnemy, distanceToEnemy);
         }
         else {
-            return updateWhenSieged(tank, nearestAttackableEnemy, distanceToEnemy);
+            return updateWhenUnsieged(tank, nearestAttackableEnemy, distanceToEnemy);
         }
         
 //        // =========================================================
@@ -74,7 +76,7 @@ public class TerranSiegeTankManager {
         // === Siege on hold =======================================
         
         // If tank is holding position, siege
-        if (tank.isHoldingPosition()) {
+        if (tank.isHoldingPosition() && canSiegeHere(tank)) {
             tank.siege();
             tank.setTooltip("Hold & siege");
             return true;
@@ -83,14 +85,17 @@ public class TerranSiegeTankManager {
         // === Enemy is BUILDING ========================================
         
         if (nearestAttackableEnemy != null) {
-            if (nearestAttackableEnemy.isBuilding()) {
-                return nearestEnemyIsBuilding(tank, nearestAttackableEnemy, distanceToEnemy);
-            } 
 
-            // === Enemy is UNIT ========================================
-            else if (Select.ourCombatUnits().inRadius(10, tank).count() >= 4) {
+            // === Enemy is COMBAT UNIT ========================================
+            
+            if (Select.ourCombatUnits().inRadius(10, tank).count() >= 4) {
                 return nearestEnemyIsUnit(tank, nearestAttackableEnemy, distanceToEnemy);
             }
+            
+            // Enemy is BUILDING
+            else if (nearestAttackableEnemy.isBuilding()) {
+                return nearestEnemyIsBuilding(tank, nearestAttackableEnemy, distanceToEnemy);
+            } 
         }
         
         return false;
@@ -119,20 +124,32 @@ public class TerranSiegeTankManager {
         // =========================================================
         
         if (distanceToEnemy < 14) {
-            if (AtlantisUtilities.rand(1, 100) < 8 || enemy.getType().isDangerousGroundUnit()) {
+            if ((AtlantisUtilities.rand(1, 100) < 8 || enemy.getType().isDangerousGroundUnit()) && canSiegeHere(tank)) {
                 tank.siege();
                 tank.setTooltip("Better siege");
                 return true;
             }
         }
 
-        if (distanceToEnemy <= 10.8) {
+        if (distanceToEnemy <= 10.8 && canSiegeHere(tank)) {
             tank.siege();
             tank.setTooltip("Siege!");
             return true;
         }
 
         return false;
+    }
+    
+    // =========================================================
+    
+    private static boolean canSiegeHere(AUnit tank) {
+        Chokepoint choke = AMap.getNearestChokepoint(tank.getPosition());
+        if (choke == null) {
+            return true;
+        }
+        else {
+            return tank.distanceTo(choke.getCenter()) > 1 || choke.getWidth() / 32 > 3.5;
+        }
     }
 
 }

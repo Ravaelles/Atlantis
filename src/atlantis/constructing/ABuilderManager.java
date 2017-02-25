@@ -63,13 +63,15 @@ public class ABuilderManager {
 //                buildPosition, buildingType.getTileWidth() * 32 / 2, buildingType.getTileHeight() * 32 / 2
 //        );
         // =========================================================
-        double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.2 : 1;
+        double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.03 : 1;
         double distance = builder.distanceTo(buildPosition);
 
         // Move builder to the build position
         if (distance > maxDistanceToIssueBuildOrder) {
-            builder.move(buildPosition, UnitActions.MOVE_TO_BUILD);
-            builder.setTooltip("Build " + buildingType.getShortName());
+            if (!builder.isMoving() || AGame.getTimeFrames() % 10 == 0) {
+                builder.move(buildPosition, UnitActions.MOVE_TO_BUILD);
+            }
+            builder.setTooltip("Build " + buildingType.getShortName() + " (" + distance);
         } 
 
         // =========================================================

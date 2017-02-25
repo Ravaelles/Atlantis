@@ -28,6 +28,7 @@ public class ARepairCommander {
         }
 
         // =========================================================
+        
         for (AUnit bunkerRepairer : ARepairManager.getConstantBunkerRepairers()) {
             ARepairManager.updateBunkerRepairer(bunkerRepairer);
         }
@@ -39,6 +40,7 @@ public class ARepairCommander {
 
     // === Asign repairers if needed =============================
     private static void assignUnitRepairersToWoundedUnits() {
+        
         for (AUnit woundedUnit : Select.our().repairable(true).listUnits()) {
 
             // Some units shouldn't be repaired
@@ -48,14 +50,18 @@ public class ARepairCommander {
             }
 
             // =========================================================
+            
             int numberOfRepairers = ARepairManager.countRepairersForUnit(woundedUnit)
                     + ARepairManager.countConstantRepairersForBunker(woundedUnit);
 
-            // === Bunker ========================================
+            // === Repair bunker ========================================
+            
             if (woundedUnit.type().isBunker()) {
                 int shouldHaveThisManyRepairers = defineOptimalRepairersForBunker(woundedUnit);
                 assignConstantBunkerRepairers(woundedUnit, shouldHaveThisManyRepairers - numberOfRepairers);
-            } // === Ordinary unit =================================
+            } 
+
+            // === Repair ordinary unit =================================
             else {
                 assignUnitRepairers(woundedUnit, 2 - numberOfRepairers);
             }
@@ -119,16 +125,17 @@ public class ARepairCommander {
                 // === We know enemy strategy ========================================
                 if (AEnemyStrategy.isEnemyStrategyKnown()) {
                     if (AEnemyStrategy.getEnemyStrategy().isGoingAllInRush()) {
-                        return 3;
+                        return 5;
                     }
                     if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {
-                        return 2;
+                        return 3;
                     }
                 } 
                 
                 // === We don't know enemy strategy ==================================
                 else {
-                    return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0);
+                    int enemyRaceBonus = !AGame.isEnemyTerran() && AGame.getTimeSeconds() > 175 ? 1 : 0;
+                    return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0) + enemyRaceBonus;
                 }
             } 
 
