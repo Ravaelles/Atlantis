@@ -21,27 +21,21 @@ public class AtlantisConfig {
     // Customizable variables
 
     /**
-     * If not empty, then before the game starts, player race in the bwapi.ini will be overriden to match 
-     * currently played one.
-     */
-    public static String BWAPI_INI_PATH = "";
-    
-    /**
      * Game speed. Lower is faster. 0 is fastest, 20 is about normal game speed.
      * In game you can use buttons -/+ to change the game speed.
      */
     public static int GAME_SPEED = 0;
     
-    /**
-     * If true, game will slow down on fighting, but normally it will run quicker.
-     */
-    public static boolean USE_DYNAMIC_GAME_SPEED_SLOWDOWN = false;
-    
-    /** 
-     * Amount of game speed units to be used for dynamic game speed slowdown.
-     */
-    public static int DYNAMIC_GAME_SPEED_SLOWDOWN = 3;
+//    private static final String OUR_RACE = "Terran";
+//    public static final String OUR_RACE = "Protoss";
+    public static final String OUR_RACE = "Zerg";
 
+//    private static final String ENEMY_RACE = "Terran";
+    public static final String ENEMY_RACE = "Protoss";
+//    private static final String ENEMY_RACE = "Zerg";
+    
+    // =========================================================
+    
     /**
      * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They
      * will be <b>automatically built only if your total supply exceeds this value</b>.

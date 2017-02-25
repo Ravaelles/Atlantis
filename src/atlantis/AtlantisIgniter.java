@@ -10,16 +10,6 @@ import java.util.List;
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class AtlantisIgniter {
-
-//    private static final String OUR_RACE = "Terran";
-    private static final String OUR_RACE = "Protoss";
-//    private static final String OUR_RACE = "Zerg";
-
-//    private static final String ENEMY_RACE = "Terran";
-    private static final String ENEMY_RACE = "Protoss";
-//    private static final String ENEMY_RACE = "Zerg";
-    
-    // =========================================================
     
     private static boolean shouldUpdateFileContent = false;
     private static String bwapiIniPath = null;
@@ -60,36 +50,32 @@ public class AtlantisIgniter {
         File file;
         String path;
         
-        path = "D:/GRY/StarCraft/bwapi-data/bwapi.ini";
-        file = new File(path);
-        if (file.exists()) {
-            return path;
-        }
-        
-        path = "C:/Program files/StarCraft/bwapi-data/bwapi.ini";
-        file = new File(path);
-        if (file.exists()) {
-            return path;
-        }
-        
-        path = "C:/Program files (x86)/StarCraft/bwapi-data/bwapi.ini";
-        file = new File(path);
-        if (file.exists()) {
-            return path;
+        String[] potentialBwapiPaths = new String[] {
+            "C:/StarCraft/bwapi-data/bwapi.ini",
+            "D:/GRY/StarCraft/bwapi-data/bwapi.ini",
+            "C:/Program files/StarCraft/bwapi-data/bwapi.ini",
+            "C:/Program files (x86)/StarCraft/bwapi-data/bwapi.ini"
+        };
+
+        for (String potentialBwapiPath : potentialBwapiPaths) {
+            file = new File(potentialBwapiPath);
+            if (file.exists()) {
+                return potentialBwapiPath;
+            }
         }
         
         return null;
     }
-
+    
     private static void updateOurRace() {
         for (int i = 0; i < fileContent.length; i++) {
             String line = fileContent[i];
             if (line.startsWith("race = ")) {
-                fileContent[i] = "race = " + OUR_RACE;
+                fileContent[i] = "race = " + AtlantisConfig.OUR_RACE;
                 
                 if (!fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
-                    System.out.println("Updated our race in bwapi.ini to: " + OUR_RACE);
+                    System.out.println("Updated our race in bwapi.ini to: " + AtlantisConfig.OUR_RACE);
                 }
                 return;
             }
@@ -100,11 +86,11 @@ public class AtlantisIgniter {
         for (int i = 0; i < fileContent.length; i++) {
             String line = fileContent[i];
             if (line.startsWith("enemy_race = ")) {
-                fileContent[i] = "enemy_race = " + ENEMY_RACE;
+                fileContent[i] = "enemy_race = " + AtlantisConfig.ENEMY_RACE;
                 
                 if (!fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
-                    System.out.println("Updated enemy race in bwapi.ini to: " + ENEMY_RACE);
+                    System.out.println("Updated enemy race in bwapi.ini to: " + AtlantisConfig.ENEMY_RACE);
                 }
                 return;
             }

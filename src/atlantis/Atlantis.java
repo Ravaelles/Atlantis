@@ -188,15 +188,6 @@ public class Atlantis implements BWEventListener {
             else {
                 System.err.println("Game Commander is null, totally screwed.");
             }
-
-            // =========================================================
-            // Game SPEED change using DYNAMIC SLODOWN
-            if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN && _dynamicSlowdown_isSlowdownActive) {
-                if (_dynamicSlowdown_lastTimeUnitDestroyed + 3 <= AGame.getTimeSeconds()) {
-                    _dynamicSlowdown_isSlowdownActive = false;
-                    AGame.changeSpeedTo(_dynamicSlowdown_previousSpeed);
-                }
-            }
         } 
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
@@ -279,13 +270,6 @@ public class Atlantis implements BWEventListener {
                 KILLED++;
                 KILLED_RESOURCES += unit.getType().getTotalResources();
             }
-        }
-
-        // =========================================================
-        // Game SPEED change
-        if (AtlantisConfig.USE_DYNAMIC_GAME_SPEED_SLOWDOWN
-                && !_dynamicSlowdown_isSlowdownActive && !unit.getType().isBuilding()) {
-            activateDynamicSlowdownMode();
         }
     }
 
@@ -552,7 +536,6 @@ public class Atlantis implements BWEventListener {
         _dynamicSlowdown_previousSpeed = AtlantisConfig.GAME_SPEED;
         _dynamicSlowdown_lastTimeUnitDestroyed = AGame.getTimeSeconds();
         _dynamicSlowdown_isSlowdownActive = true;
-        AGame.changeSpeedTo(AtlantisConfig.DYNAMIC_GAME_SPEED_SLOWDOWN);
     }
 
     /**
