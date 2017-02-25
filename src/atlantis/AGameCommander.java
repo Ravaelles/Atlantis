@@ -1,7 +1,7 @@
 package atlantis;
 
 //import atlantis.buildings.AtlantisBuildingsCommander;
-import atlantis.buildings.managers.FlyingBuildingManager;
+import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.ACombatCommander;
 import atlantis.debug.APainter;
 import atlantis.production.AProductionCommander;
@@ -40,7 +40,7 @@ public class AGameCommander {
         // === Terran only ==================================================
 
         if (AGame.playsAsTerran()) {
-            FlyingBuildingManager.update();
+            TerranFlyingBuildingManager.update();
             ARepairCommander.update();
         }
 

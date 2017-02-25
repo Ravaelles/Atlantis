@@ -1,7 +1,7 @@
 package atlantis.repair;
 
 import atlantis.AGame;
-import atlantis.buildings.managers.FlyingBuildingManager;
+import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AEnemyStrategy;
@@ -42,7 +42,7 @@ public class ARepairCommander {
         for (AUnit woundedUnit : Select.our().repairable(true).listUnits()) {
 
             // Some units shouldn't be repaired
-            if (AScoutManager.isScout(woundedUnit) || FlyingBuildingManager.isFlyingBuilding(woundedUnit)
+            if (AScoutManager.isScout(woundedUnit) || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
                     || ARepairManager.isConstantBunkerRepairer(woundedUnit)) {
                 continue;
             }

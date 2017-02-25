@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class FlyingBuildingManager {
+public class TerranFlyingBuildingManager {
 
     private static ArrayList<AUnit> flyingBuildings = new ArrayList<>();
     
