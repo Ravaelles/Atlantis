@@ -182,12 +182,12 @@ public class AScoutManager {
         }
         
         for (UnitData enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
-            if (enemyUnitData.getUnitType().isBase()) {
+            if (enemyUnitData.getUnit().getType().isBase()) {
                 boolean isBaseAtStartingLocation = false;
                 APosition discoveredBase = enemyUnitData.getPosition();
                 
                 for (BaseLocation startingLocation : AMap.getStartingLocations(false)) {
-                    if (discoveredBase.distanceTo(startingLocation.getPosition()) <= 5) {
+                    if (discoveredBase.distanceTo(startingLocation.getPosition()) <= 7) {
                         AGame.sendMessage("Discovered main enemy base");
                         return true;
                     }

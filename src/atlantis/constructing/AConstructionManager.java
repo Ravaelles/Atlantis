@@ -382,7 +382,7 @@ public class AConstructionManager {
             if (!allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.getBuilder();
-//                    System.out.println("--- " + constructionOrder.getBuildingType()+ " ----------");
+//                    System.out.println("&&& " + constructionOrder.getBuildingType()+ " &&&&&&&");
 //                    System.out.println("BUILDER = " + builder);
 //                    System.out.println(builder.getBuildUnit());
 //                    System.out.println(builder.getBuildType());

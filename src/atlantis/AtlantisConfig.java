@@ -81,6 +81,8 @@ public class AtlantisConfig {
     public static AUnitType BARRACKS = null;
     public static AUnitType SUPPLY = null;
     public static AUnitType GAS_BUILDING = null;
+    public static AUnitType DEFENSIVE_BUILDING_ANTI_LAND = null;
+    public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
     public static ABuildOrdersManager buildOrdersManager = null;
 
     // =========================================================
@@ -97,20 +99,9 @@ public class AtlantisConfig {
         AtlantisConfig.BARRACKS = AUnitType.Terran_Barracks;
         AtlantisConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
         AtlantisConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
-    }
-
-    /**
-     * Helper method for using Zerg race.
-     */
-    public static void useConfigForZerg() {
-        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 8;
-
-        AtlantisConfig.MY_RACE = Race.Zerg;
-        AtlantisConfig.BASE = AUnitType.Zerg_Hatchery;
-        AtlantisConfig.WORKER = AUnitType.Zerg_Drone;
-        AtlantisConfig.BARRACKS = AUnitType.Zerg_Spawning_Pool;
-        AtlantisConfig.SUPPLY = AUnitType.Zerg_Overlord;
-        AtlantisConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
+        
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
     }
 
     /**
@@ -126,7 +117,25 @@ public class AtlantisConfig {
         AtlantisConfig.SUPPLY = AUnitType.Protoss_Pylon;
         AtlantisConfig.GAS_BUILDING = AUnitType.Protoss_Assimilator;
         
-//        overrideBwapiIniRace("Protoss");
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Protoss_Photon_Cannon;
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Protoss_Photon_Cannon;
+    }
+    
+    /**
+     * Helper method for using Zerg race.
+     */
+    public static void useConfigForZerg() {
+        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 8;
+
+        AtlantisConfig.MY_RACE = Race.Zerg;
+        AtlantisConfig.BASE = AUnitType.Zerg_Hatchery;
+        AtlantisConfig.WORKER = AUnitType.Zerg_Drone;
+        AtlantisConfig.BARRACKS = AUnitType.Zerg_Spawning_Pool;
+        AtlantisConfig.SUPPLY = AUnitType.Zerg_Overlord;
+        AtlantisConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
+        
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Zerg_Creep_Colony;
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Zerg_Creep_Colony;
     }
     
     // =========================================================

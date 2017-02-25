@@ -19,7 +19,7 @@ public class TerranBunkerPositionFinder {
     public static APosition findPosition(AUnitType building, AUnit builder, ConstructionOrder order) {
         APosition nearTo = null;
         
-        if (order.getProductionOrder().getModifier() != null) {
+        if (order.getProductionOrder() != null && order.getProductionOrder().getModifier() != null) {
             AUnit mainBase = Select.mainBase();
         
             // Bunker at NATURAL CHOKEPOINT
@@ -49,8 +49,17 @@ public class TerranBunkerPositionFinder {
         
         // =========================================================
         
-        if (nearTo == null && Select.mainBase() != null) {
-            nearTo = Select.mainBase().getPosition();
+        if (nearTo == null) {
+            AUnit existingBunker = Select.ourOfType(AUnitType.Terran_Bunker).first();
+            if (existingBunker != null) {
+                nearTo = existingBunker.getPosition();
+            }
+            else {
+                AUnit mainBase = Select.mainBase();
+                if (mainBase != null) {
+                    nearTo = Select.mainBase().getPosition();
+                }
+            }
         }
         
         // =========================================================

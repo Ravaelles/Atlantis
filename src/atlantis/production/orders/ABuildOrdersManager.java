@@ -584,7 +584,6 @@ public abstract class ABuildOrdersManager {
             
             // Add build order from file
             else {
-//            System.out.println("---------");
 //            System.out.println("NAME: " + order.getShortName());
 //            System.out.println("MODIFIER: " + order.getModifier());
 

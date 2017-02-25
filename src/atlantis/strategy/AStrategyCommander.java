@@ -71,6 +71,7 @@ public class AStrategyCommander {
             AGame.sendMessage("Enemy strategy: " + strategy);
         }
         AEnemyStrategy.setEnemyStrategy(strategy);
+        AStrategyResponse.updateWhenEnemyStrategyChanged();
     }
     
 }
