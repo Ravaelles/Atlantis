@@ -26,12 +26,20 @@ It's powerful set of tools that are based on [BWMirror](https://github.com/vjure
 # How to install
 Atlantis is actively developed, but it's quite capable already. The latest stable version is in the `master` branch. In `develop` you will find latest changes, but they might not work as expected.
 
-* First install BWAPI in version 3.7.5 (link: https://github.com/bwapi/bwapi/releases/download/v3.7.5/BWAPI.3.7.5.7z)
-* Make sure to read the readme absolutely carefully. The installation of BWAPI can be really hard thing.
-* At least take a quick look at tutorial here (http://sscaitournament.com/index.php?action=tutorial) to understand how the bridge between the game actually works and what it does
-* Checkout this repository and make a new project in either NetBeans or Eclipse, for more instructions see the tutorial above. For all the bugfixing, again, follow the tutorial.
-* If you've done everything correctly, you're free to go. The main class is of AtlantisTide is called Main. Atlantis is only a family of all products that will be built upon this framework.
-* Atlantis is capable of auto-detecting the race it plays. If you want to change your race, modify this line "race = Protoss" in your bwapi.ini file.
+* IMPORTANT: In order to use BWAPI you have to create player profile in StarCraft. Just run StarCraft, click Single Player, BroodWar and create profile with any name. If you skip this step you will get an error.
+* First install BWAPI in version 4.1.2 (link: https://github.com/bwapi/bwapi/releases/download/v4.1.2/BWAPI_412_Setup.exe)
+* Make sure to read the readme very carefully. The installation of BWAPI is a hard thing for beginners, so make sure you understand it.
+* I suggest to take a quick look at the tutorial here (http://sscaitournament.com/index.php?action=tutorial) to understand how the bridge between the game actually works and what it does.
+* Checkout this repository and make a new project in either NetBeans or Eclipse, for more instructions see the tutorial above. If you encounter any problem with the install, again, follow the tutorial.
+* If you've done everything correctly, you're free to go. The main class is of Atlantis is called Main. Most of Atlantis classes and wrappers are prefixed with "A".
+
+# Quick usage
+- Install Atlantis and open your preferred IDE.
+- (optional) Go to `atlantis/AtlantisConfig` class and edit our race and enemy race as Atlantis can play all three races.
+- Run the application and that's it, it will automatically run StarCraft and Chaoslauncher.
+- If you got any error it probably means you've screwed the BWAPI installation.
+- Use keys 1,2,3 to change painting mode level; more painting, slower it runs, but gives more information.
+- Use keys +/- to change the game speed.
 
 # Code structure
 
