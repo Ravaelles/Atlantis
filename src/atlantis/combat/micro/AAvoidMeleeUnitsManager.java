@@ -19,12 +19,8 @@ public class AAvoidMeleeUnitsManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     public static boolean handleAvoidCloseMeleeUnits(AUnit unit) {
-        if (unit.getFramesSinceLastOrderWasIssued() <= 3) {
-            
-            // Scout mustn't exit here, otherwise scouting behavior will override this behavior.
-            if (!AScoutManager.isScout(unit)) {
-                return true;
-            }
+        if (shouldSkip(unit)) {
+            return true;
         }
         
         // =========================================================
@@ -134,6 +130,32 @@ public class AAvoidMeleeUnitsManager {
             }
         }
 
+        return false;
+    }
+    
+    // =========================================================
+
+    private static boolean shouldSkip(AUnit unit) {
+        
+        // === Issue orders every 3 frames or so ========================================
+        if (unit.getFramesSinceLastOrderWasIssued() <= 2 && !unit.isIdle()) {
+            
+            // Scout mustn't exit here, otherwise scouting behavior will override this behavior.
+            if (!AScoutManager.isScout(unit)) {
+                return true;
+            }
+        }
+        
+        // === Reaver should not avoid if has no cooldown ===============================
+        
+        if (AGame.playsAsProtoss()) {
+            if (unit.isType(AUnitType.Protoss_Reaver) && unit.getGroundWeaponCooldown() <= 0) {
+                return true;
+            }
+        }
+        
+        // ==============================================================================
+        
         return false;
     }
     

@@ -50,14 +50,21 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
         
         // =========================================================
+        // Early mode - Attack enemy units when in range (and choose the best target)
+        boolean isAllowedToAttackWhenRetreating = isAllowedToAttackWhenRetreating(unit);
+        if (isAllowedToAttackWhenRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+            return true;
+        }
+        
+        // =========================================================
         // If we couldn't beat nearby enemies, retreat
         if (handleUnfavorableOdds(unit)) {
             return true;
         }
         
         // =========================================================
-        // Attack enemy units when in range (and choose the best target)
-        if (AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+        // Normal mode - Attack enemy units when in range (and choose the best target)
+        if (!isAllowedToAttackWhenRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
         }
 
@@ -142,6 +149,14 @@ public class ACombatUnitManager extends AbstractMicroManager {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Some units like Reavers should open fire to nearby enemies even when retreating, otherwise they'll
+     * just get destroyed without firing even once.
+     */
+    private static boolean isAllowedToAttackWhenRetreating(AUnit unit) {
+        return unit.isType(AUnitType.Protoss_Reaver);
     }
 
 }
