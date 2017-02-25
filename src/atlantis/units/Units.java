@@ -4,7 +4,7 @@ import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.APositionedObject;
-import atlantis.wrappers.PositionOperationsHelper;
+import atlantis.wrappers.PositionOperationsWrapper;
 import bwapi.Position;
 import bwapi.PositionedObject;
 import java.util.ArrayList;
@@ -247,7 +247,7 @@ public class Units {
             return null;
         }
         
-        return PositionOperationsHelper.getPositionMedian(this);
+        return PositionOperationsWrapper.getPositionMedian(this);
 
 //        ArrayList<Integer> xCoordinates = new ArrayList<>();
 //        ArrayList<Integer> yCoordinates = new ArrayList<>();

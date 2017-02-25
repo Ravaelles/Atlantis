@@ -2,7 +2,6 @@ package atlantis.wrappers;
 
 import atlantis.units.AUnit;
 import atlantis.util.AtlantisUtilities;
-import atlantis.util.PositionUtil;
 import bwapi.AbstractPoint;
 import bwapi.Position;
 import bwapi.PositionedObject;

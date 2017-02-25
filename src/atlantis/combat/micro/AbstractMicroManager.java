@@ -12,6 +12,7 @@ import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
+import atlantis.wrappers.PositionOperationsWrapper;
 import bwapi.Color;
 import bwapi.WeaponType;
 import java.util.Collection;
@@ -103,7 +104,7 @@ public abstract class AbstractMicroManager {
 
         // =========================================================
         if (ourUnitsNearby < minUnitsNearby && ourUnitsNearby <= 3) {
-            APosition goTo = PositionUtil.averagePosition(ourUnits.list());
+            APosition goTo = PositionOperationsWrapper.averagePosition(ourUnits.list());
             if (goTo != null && goTo.distanceTo(unit) > 1) {
                 unit.move(goTo, UnitActions.MOVE);
                 unit.setTooltip("Closer");

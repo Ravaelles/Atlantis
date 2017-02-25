@@ -3,6 +3,7 @@ package atlantis.util;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.wrappers.APosition;
+import atlantis.wrappers.APosition;
 import bwapi.Position;
 import bwapi.PositionOrUnit;
 import bwapi.TilePosition;
@@ -163,66 +164,6 @@ public class PositionUtil {
             }
         }
         return PositionUtil.distanceTo(new Position(0, 0), new Position(xDist, yDist));
-    }
-    
-    // =========================================================
-    
-    /**
-     * Returns a <b>new</b> Position that represents the effect of moving this position by 
-     * [deltaTileX, deltaTileY].
-     */
-    public static APosition translateByTiles(APosition position, int deltaTileX, int deltaTileY) {
-        return new APosition(position.getX() + deltaTileX * 32, position.getY() + deltaTileY * 32);
-    }
-    
-    /**
-     * Returns a <b>new</b> Position that represents the effect of moving this position by [deltaX, deltaY].
-     */
-    public static APosition translateByPixels(APosition position, int deltaPixelX, int deltaPixelY) {
-        return new APosition(position.getX() + deltaPixelX, position.getY() + deltaPixelY);
-    }
-
-    /**
-     * Returns median PX and median PY for all passed units.
-     */
-    public static APosition medianPosition(Collection<AUnit> units) {
-        if (units.isEmpty()) {
-            return null;
-        }
-
-        ArrayList<Integer> xCoordinates = new ArrayList<>();
-        ArrayList<Integer> yCoordinates = new ArrayList<>();
-        for (AUnit unit : units) {
-            xCoordinates.add(unit.getPosition().getX());	//TODO: check whether position is in Pixels
-            yCoordinates.add(unit.getPosition().getX());
-        }
-        Collections.sort(xCoordinates);
-        Collections.sort(yCoordinates);
-
-        return new APosition(
-                xCoordinates.get(xCoordinates.size() / 2),
-                yCoordinates.get(yCoordinates.size() / 2)
-        );
-    }
-
-    /**
-     * Returns average PX and average PY for all passed units.
-     */
-    public static APosition averagePosition(Collection<AUnit> units) {
-        if (units.isEmpty()) {
-            return null;
-        }
-
-        int totalX = 0;
-        int totalY = 0;
-        for (AUnit unit : units) {
-            totalX += unit.getPosition().getX();
-            totalY += unit.getPosition().getY();
-        }
-        return new APosition(
-            totalX / units.size(),
-            totalY / units.size()
-        );
     }
     
 }

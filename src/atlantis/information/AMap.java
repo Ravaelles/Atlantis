@@ -11,6 +11,7 @@ import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
+import atlantis.wrappers.PositionOperationsWrapper;
 import atlantis.wrappers.Positions;
 import bwapi.Color;
 import bwapi.Position;
@@ -264,7 +265,7 @@ public class AMap {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
             int dy = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
-            position = PositionUtil.translateByPixels(startPoint, dx, dy).makeValid();
+            position = PositionOperationsWrapper.translateByPixels(startPoint, dx, dy).makeValid();
             if (!isVisible(position)) {
                 return position;
             }

@@ -30,6 +30,7 @@ import atlantis.util.PositionUtil;
 import atlantis.workers.AWorkerManager;
 import atlantis.wrappers.APosition;
 import atlantis.wrappers.MappingCounter;
+import atlantis.wrappers.PositionOperationsWrapper;
 import bwapi.Color;
 import bwapi.Game;
 import bwapi.Position;
@@ -497,9 +498,8 @@ public class APainter {
                         buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, Color.Brown);
 
                 // Draw X
-                paintLine(
-                        PositionUtil.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
-                        PositionUtil.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
+                paintLine(PositionOperationsWrapper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
+                        PositionOperationsWrapper.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
                         Color.Brown
                 );
                 paintLine(positionToBuild,
@@ -754,7 +754,7 @@ public class APainter {
             int workers = AWorkerManager.getHowManyWorkersGatheringAt(building);
             if (workers > 0) {
                 String workersAssigned = workers + " WRK";
-                paintTextCentered(PositionUtil.translateByPixels(building.getPosition(), 0, -15), workersAssigned, Color.Blue);
+                paintTextCentered(PositionOperationsWrapper.translateByPixels(building.getPosition(), 0, -15), workersAssigned, Color.Blue);
             }
         }
         bwapi.setTextSize(Enum.Small);
@@ -1000,14 +1000,14 @@ public class APainter {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionUtil.translateByPixels(position, width, height), color, false);
+        bwapi.drawBoxMap(position, PositionOperationsWrapper.translateByPixels(position, width, height), color, false);
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionUtil.translateByPixels(position, width, height), color, true);
+        bwapi.drawBoxMap(position, PositionOperationsWrapper.translateByPixels(position, width, height), color, true);
     }
 
     public static void paintCircle(AUnit unit, int radius, Color color) {
@@ -1029,7 +1029,7 @@ public class APainter {
     }
 
     public static void paintLine(APosition start, int dx, int dy, Color color) {
-        paintLine(start, PositionUtil.translateByPixels(start, dx, dy), color);
+        paintLine(start, PositionOperationsWrapper.translateByPixels(start, dx, dy), color);
     }
 
     public static void paintLine(Position start, Position end, Color color) {
@@ -1081,13 +1081,11 @@ public class APainter {
         }
 
         if (screenCoords) {
-            bwapi.drawTextScreen(
-                    PositionUtil.translateByPixels(position, (int) (-2.7 * text.length()), -2),
+            bwapi.drawTextScreen(PositionOperationsWrapper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         } else {
-            bwapi.drawTextMap(
-                    PositionUtil.translateByPixels(position, (int) (-2.7 * text.length()), -2),
+            bwapi.drawTextMap(PositionOperationsWrapper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         }

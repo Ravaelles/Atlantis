@@ -11,7 +11,7 @@ import atlantis.units.actions.UnitActions;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
-import atlantis.wrappers.PositionOperationsHelper;
+import atlantis.wrappers.PositionOperationsWrapper;
 import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;

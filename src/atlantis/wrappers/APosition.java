@@ -1,9 +1,9 @@
 package atlantis.wrappers;
 
+import atlantis.util.PositionUtil;
 import atlantis.debug.APainter;
 import atlantis.information.AMap;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
 import bwapi.AbstractPoint;
 import bwapi.Color;
 import bwapi.Position;
@@ -162,7 +162,7 @@ public class APosition extends Position implements Comparable<Position> {
      * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
      */
     public APosition translateTowards(AbstractPoint<Position> towards, int percentTowardsCenter) {
-        return PositionOperationsHelper.getPositionMovedPercentTowards(
+        return PositionOperationsWrapper.getPositionMovedPercentTowards(
                 this, towards, percentTowardsCenter
         );
     }

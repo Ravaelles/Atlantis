@@ -10,6 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.PositionUtil;
 import atlantis.wrappers.APosition;
+import atlantis.wrappers.PositionOperationsWrapper;
 import bwapi.Color;
 import bwapi.TilePosition;
 import bwta.BaseLocation;
@@ -50,8 +51,7 @@ public class ASpecialPositionFinder {
             AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
             if (geyser != null && geyser.distanceTo(base) < 12) {
-                APosition position = PositionUtil.translateByPixels(geyser.getPosition(), -64, -32);
-//                System.out.println("Returned: " + position);
+                APosition position = geyser.getPosition().translateByPixels(-64, -32);
                 return position;
             }
         }

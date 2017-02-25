@@ -14,7 +14,7 @@ import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.CodeProfiler;
 import atlantis.wrappers.APosition;
-import atlantis.wrappers.PositionOperationsHelper;
+import atlantis.wrappers.PositionOperationsWrapper;
 import atlantis.wrappers.Positions;
 import bwapi.Color;
 import bwapi.Position;
@@ -289,7 +289,7 @@ public class AScoutManager {
             if (groundDistance < 2) {
                 continue;
             }
-            position = PositionOperationsHelper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
+            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
 
             // If positions is walkable, not in different region and has path to it, it should be ok
             if (AMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
