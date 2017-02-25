@@ -440,7 +440,7 @@ public class Select<T> {
 
         for (AUnitType type : haystack) {
             if (needle.getType().equals(type)
-                    || (needle.getType().equals(AUnitType.Zerg_Egg) && needle.getBuildType().equals(type))) {
+                    || (needle.getType().equals(AUnitType.Zerg_Egg) && needle.getUnitType().equals(type))) {
                 return true;
             }
         }

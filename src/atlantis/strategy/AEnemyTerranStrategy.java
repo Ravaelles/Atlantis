@@ -11,17 +11,17 @@ import atlantis.units.Select;
 public class AEnemyTerranStrategy extends AEnemyStrategy {
     
     // Rush
-    public static final AEnemyStrategy TERRAN_Double_Rax_MnM = new AEnemyStrategy();
-    public static final AEnemyStrategy TERRAN_Tri_Rax_MnM = new AEnemyStrategy();
+    public static final AEnemyStrategy TERRAN_2_Rax_MnM = new AEnemyTerranStrategy();
+    public static final AEnemyStrategy TERRAN_3_Rax_MnM = new AEnemyTerranStrategy();
     
     // Cheese
-    public static final AEnemyStrategy TERRAN_BBS = new AEnemyStrategy();
+    public static final AEnemyStrategy TERRAN_BBS = new AEnemyTerranStrategy();
     
     // Expansion
-    public static final AEnemyStrategy TERRAN_1_Rax_FE = new AEnemyStrategy();
+    public static final AEnemyStrategy TERRAN_1_Rax_FE = new AEnemyTerranStrategy();
     
     // Tech
-    public static final AEnemyStrategy TERRAN_Three_Factory_Vultures = new AEnemyStrategy();
+    public static final AEnemyStrategy TERRAN_Three_Factory_Vultures = new AEnemyTerranStrategy();
     
     // =========================================================
 
@@ -29,7 +29,7 @@ public class AEnemyTerranStrategy extends AEnemyStrategy {
 
         // === Rushes ========================================
         
-        TERRAN_Double_Rax_MnM.setTerran().setName("Double Rax MnM")
+        TERRAN_2_Rax_MnM.setTerran().setName("Double Rax MnM")
                 .setGoingRush()
                 .setUrl("http://strategywiki.org/wiki/StarCraft/Terran_strategies#Terran_Double_Rax_MnM");
 
@@ -38,7 +38,7 @@ public class AEnemyTerranStrategy extends AEnemyStrategy {
         TERRAN_BBS.setTerran().setName("BBS")
                 .setGoingRush().setGoingCheese()
                 .setUrl("http://wiki.teamliquid.net/starcraft/Barracks_Barracks_Supply_(vs._Terran)");
-        TERRAN_Tri_Rax_MnM.setTerran().setName("Tri-Rax MnM Rush")
+        TERRAN_3_Rax_MnM.setTerran().setName("Tri-Rax MnM Rush")
                 .setGoingRush()
                 .setUrl("http://strategywiki.org/wiki/StarCraft/Terran_strategies#Terran_Tri-Rax_MnM_Rush");
 
@@ -60,11 +60,32 @@ public class AEnemyTerranStrategy extends AEnemyStrategy {
     public static AEnemyStrategy detectStrategy() {
         int seconds = AGame.getTimeSeconds();
         int barracks = Select.enemy().countUnitsOfType(AUnitType.Terran_Barracks);
-
-        // === Double Rax MnM ========================================
+        int bases = Select.enemy().countUnitsOfType(AUnitType.Terran_Command_Center);
+        int factories = Select.enemy().countUnitsOfType(AUnitType.Terran_Factory);
+        int bunkers = Select.enemy().countUnitsOfType(AUnitType.Terran_Bunker);
+        int marines = Select.enemy().countUnitsOfType(AUnitType.Terran_Marine);
+        int medics = Select.enemy().countUnitsOfType(AUnitType.Terran_Medic);
         
-        if (barracks == 2 && seconds < 290) {
-            return AEnemyTerranStrategy.TERRAN_Double_Rax_MnM;
+        // === Cheese ==============================================
+        
+        if (barracks >= 3 && seconds < 350) {
+            return AEnemyTerranStrategy.TERRAN_3_Rax_MnM;
+        }
+        
+        if (barracks >= 2 && seconds < 200) {
+            return AEnemyTerranStrategy.TERRAN_BBS;
+        }
+
+        // === Expansion ===========================================
+        
+        if (bases >= 2 && factories >= 1 && seconds < 300) {
+            return AEnemyTerranStrategy.TERRAN_1_Rax_FE;
+        }
+
+        // === Rush ================================================
+        
+        if (barracks >= 2 && seconds < 350) {
+            return AEnemyTerranStrategy.TERRAN_2_Rax_MnM;
         }
         
         // =========================================================

@@ -11,16 +11,17 @@ import atlantis.units.Select;
 public class AEnemyProtossStrategy extends AEnemyStrategy {
     
     // Rush
-    public static final AEnemyStrategy PROTOSS_2_Gate = new AEnemyStrategy();
+    public static final AEnemyStrategy PROTOSS_2_Gate = new AEnemyProtossStrategy();
     
     // Cheese
-    public static final AEnemyStrategy PROTOSS_3_Gate = new AEnemyStrategy();
+    public static final AEnemyStrategy PROTOSS_3_Gate = new AEnemyProtossStrategy();
     
     // Expansion
-    public static final AEnemyStrategy PROTOSS_12_Nexus = new AEnemyStrategy();
+    public static final AEnemyStrategy PROTOSS_12_Nexus = new AEnemyProtossStrategy();
     
     // Tech
-    public static final AEnemyStrategy PROTOSS_2_Gate_DT = new AEnemyStrategy();
+    public static final AEnemyStrategy PROTOSS_2_Gate_DT = new AEnemyProtossStrategy();
+    public static final AEnemyStrategy PROTOSS_Carrier_Push = new AEnemyProtossStrategy();
     
     // =========================================================
 
@@ -42,14 +43,17 @@ public class AEnemyProtossStrategy extends AEnemyStrategy {
         
         PROTOSS_12_Nexus.setProtoss().setName("12 Nexus")
                 .setGoingExpansion()
-                .setUrl("http://wiki.teamliquid.net/starcraft/Barracks_Barracks_Supply_(vs._Terran)");
+                .setUrl("http://wiki.teamliquid.net/starcraft/12_Nexus");
 
         // === Tech ==========================================
         
         PROTOSS_2_Gate_DT.setProtoss().setName("2 Gate DT")
-                .setGoingTech()
+                .setGoingTech().setGoingHiddenUnits()
                 .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_DT");
         
+        PROTOSS_Carrier_Push.setProtoss().setName("Carrier Push")
+                .setGoingTech().setGoingAirUnits()
+                .setUrl("---");
     }
     
     // =========================================================

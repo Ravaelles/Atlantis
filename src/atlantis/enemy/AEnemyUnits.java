@@ -28,7 +28,7 @@ public class AEnemyUnits {
     /**
      * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */
-    public static boolean hasDiscoveredEnemyBuilding() {
+    public static boolean hasDiscoveredAnyEnemyBuilding() {
         for (AUnit enemyUnit : enemyUnitsDiscovered.keySet()) {
             if (enemyUnit.isBuilding()) {
                 return true;
@@ -66,7 +66,7 @@ public class AEnemyUnits {
         return best; // Can be null
     }
     
-    public static Collection<UnitData> getDiscoveredAndAliveUnits() {
+    public static Collection<UnitData> getEnemyDiscoveredAndAliveUnits() {
         return enemyUnitsDiscovered.values();
     }
     

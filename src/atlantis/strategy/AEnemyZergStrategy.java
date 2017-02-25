@@ -12,20 +12,20 @@ import atlantis.units.Select;
 public class AEnemyZergStrategy extends AEnemyStrategy {
     
     // Rush
-    public static final AEnemyStrategy ZERG_9_Pool = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_9_Pool = new AEnemyZergStrategy();
     
     // Cheese
-    public static final AEnemyStrategy ZERG_4_Pool = new AEnemyStrategy();
-    public static final AEnemyStrategy ZERG_5_Pool = new AEnemyStrategy();
-    public static final AEnemyStrategy ZERG_6_Pool = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_4_Pool = new AEnemyZergStrategy();
+    public static final AEnemyStrategy ZERG_5_Pool = new AEnemyZergStrategy();
+    public static final AEnemyStrategy ZERG_6_Pool = new AEnemyZergStrategy();
     
     // Expansion
-    public static final AEnemyStrategy ZERG_3_Hatch_Before_Pool = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_3_Hatch_Before_Pool = new AEnemyZergStrategy();
     
     // Tech
-    public static final AEnemyStrategy ZERG_1_Hatch_Lurker = new AEnemyStrategy();
-    public static final AEnemyStrategy ZERG_2_Hatch_Lurker = new AEnemyStrategy();
-    public static final AEnemyStrategy ZERG_13_Pool_Muta = new AEnemyStrategy();
+    public static final AEnemyStrategy ZERG_1_Hatch_Lurker = new AEnemyZergStrategy();
+    public static final AEnemyStrategy ZERG_2_Hatch_Lurker = new AEnemyZergStrategy();
+    public static final AEnemyStrategy ZERG_13_Pool_Muta = new AEnemyZergStrategy();
     
     // =========================================================
 

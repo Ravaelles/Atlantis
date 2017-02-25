@@ -11,9 +11,6 @@ public class AEnemyStrategy {
     
     private static final List<AEnemyStrategy> allStrategies = new ArrayList<>();
     
-    // Auto load this class
-    private static final Object autoInitializer = autoInitialize();
-    
     // =========================================================
     
     private static AEnemyStrategy enemyStrategy = null;
@@ -37,22 +34,8 @@ public class AEnemyStrategy {
     protected AEnemyStrategy() {
         allStrategies.add(this);
     }
-//    private AEnemyStrategy(String name, String url) {
-//        this.name = name;
-//        this.url = url;
-//    }
     
     // =========================================================
-    
-    /**
-     * Executed on class load.
-     */
-    private static Object autoInitialize() {
-        AEnemyTerranStrategy.initialize();
-        AEnemyProtossStrategy.initialize();
-        AEnemyZergStrategy.initialize();
-        return true;
-    }
 
     @Override
     public String toString() {

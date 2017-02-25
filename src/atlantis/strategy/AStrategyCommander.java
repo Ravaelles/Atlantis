@@ -3,14 +3,21 @@ package atlantis.strategy;
 import atlantis.AGame;
 
 public class AStrategyCommander {
+    
+    private static boolean hasBeenInitialized = false;
+    
+    // =========================================================
 
     /**
      * Detect enemy strategy and use our strategy accordingly.
      */
     public static void update() {
+        if (!hasBeenInitialized) {
+            autoInitialize();
+        }
         
         // If we don't know enemy strategy, try to define it based on enemy buildings/units we know
-        if (AGame.getTimeFrames() < 350 && AGame.getTimeFrames() % 10 == 0) {
+        if (AGame.getTimeSeconds() < 350 && AGame.getTimeFrames() % 12 == 0) {
             if (AGame.isEnemyProtoss()) {
                 defineEnemyStrategyWhenEnemyIsProtoss();
             }
@@ -21,6 +28,17 @@ public class AStrategyCommander {
                 defineEnemyStrategyWhenEnemyIsZerg();
             }
         }
+    }
+    
+    // =========================================================
+    
+    /**
+     * Executed on class load.
+     */
+    private static void autoInitialize() {
+        AEnemyTerranStrategy.initialize();
+        AEnemyProtossStrategy.initialize();
+        AEnemyZergStrategy.initialize();
     }
     
     // =========================================================
@@ -49,7 +67,9 @@ public class AStrategyCommander {
     // =========================================================
 
     private static void changeEnemyStrategyTo(AEnemyStrategy strategy) {
-        AGame.sendMessage("Enemy strategy: " + strategy);
+        if (!AEnemyStrategy.isEnemyStrategyKnown()) {
+            AGame.sendMessage("Enemy strategy: " + strategy);
+        }
         AEnemyStrategy.setEnemyStrategy(strategy);
     }
     

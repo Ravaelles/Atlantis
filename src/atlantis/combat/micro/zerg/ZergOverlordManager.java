@@ -16,7 +16,7 @@ public class ZergOverlordManager {
     public static void update(AUnit unit) {
 
         // We know enemy building
-        if (AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+        if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
             actWhenWeKnowEnemy(unit);
         } 
 

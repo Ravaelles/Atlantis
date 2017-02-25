@@ -59,7 +59,7 @@ public class UnitData extends APositionedObject {
         }
     }
 
-    public AUnitType getBuildType() {
+    public AUnitType getUnitType() {
         return buildType;
     }
 

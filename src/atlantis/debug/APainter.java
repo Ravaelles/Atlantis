@@ -129,7 +129,7 @@ public class APainter {
         // =========================================================
         // Global mission
         paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
-                ? AEnemyStrategy.getEnemyStrategy() : "Unknown"),
+                ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
                 AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
         paintSideMessage("Mission: " + ASquadManager.getAlphaSquad().getMission().getName(), Color.White);
         paintSideMessage("Enemy base: " + AEnemyUnits.getEnemyBase(), Color.White);
@@ -887,7 +887,7 @@ public class APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     private static void paintEnemyDiscovered() {
-        for (UnitData enemyUnitData : AEnemyUnits.getDiscoveredAndAliveUnits()) {
+        for (UnitData enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
             APosition topLeft;
 //            if (enemyUnitData.getType().isBuilding()) {
             topLeft = enemyUnitData.getPosition().translateByPixels(

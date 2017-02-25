@@ -7,6 +7,7 @@ import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
+import atlantis.information.UnitData;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -42,6 +43,7 @@ public class AScoutManager {
     private static boolean scoutingAroundBaseDirectionClockwise = true;
 
     // =========================================================
+    
     /**
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.
@@ -49,23 +51,25 @@ public class AScoutManager {
     public static void update() {
 
         // === Handle UMT ==========================================
+        
         if (AGame.isUmtMode()) {
             return;
         }
-        
-        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_SCOUTING);
 
         // =========================================================
         
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_SCOUTING);
         assignScoutIfNeeded();
 
         // =========================================================
         // We don't know any enemy building, scout nearest starting location.
-        if (!AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+        if (!hasDiscoveredMainEnemyBase()) {
             for (AUnit scout : scouts) {
                 tryFindingEnemyBase(scout);
             }
-        } // Scout around enemy base
+        } 
+
+        // Scout around enemy base
         else {
             for (AUnit scout : scouts) {
                 if (scout.isAlive()) {
@@ -84,27 +88,6 @@ public class AScoutManager {
     }
 
     // =========================================================
-    /**
-     * Behavior for the scout if we know enemy base location.
-     */
-    private static void handleScoutWhenKnowEnemyBase(AUnit scout, AUnit enemyBase) {
-        tryFindingEnemyBase(scout);
-
-//        // Scout already attacking
-//        if (scout.isAttacking()) {
-//
-//            // Scout is relatively healthy
-//            if (scout.getHPPercent() >= 99) {
-//                // OK
-//            } // Scout is wounded
-//            else {
-//                scout.move(Select.mainBase(), false);
-//            }
-//        } // Attack
-//        else if (!scout.isStartingAttack()) {
-//            scout.attack(enemyBase, false);
-//        }
-    }
 
     /**
      * We don't know any enemy building, scout nearest starting location.
@@ -187,6 +170,36 @@ public class AScoutManager {
 
         return false;
     }
+    
+    /**
+     * Returns true if we've discovered the main base of enemy (natural base doesn't count).
+     */
+    private static boolean hasDiscoveredMainEnemyBase() {
+        
+        // We don't know any enemy building
+        if (!AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
+            return false;
+        }
+        
+        for (UnitData enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
+            if (enemyUnitData.getUnitType().isBase()) {
+                boolean isBaseAtStartingLocation = false;
+                APosition discoveredBase = enemyUnitData.getPosition();
+                
+                for (BaseLocation startingLocation : AMap.getStartingLocations(false)) {
+                    if (discoveredBase.distanceTo(startingLocation.getPosition()) <= 5) {
+                        AGame.sendMessage("Discovered main enemy base");
+                        return true;
+                    }
+                    else {
+                        AGame.sendMessage("Ha! This ain't main enemy base!");
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
 
     // =========================================================
     /**
@@ -198,7 +211,7 @@ public class AScoutManager {
         if (AGame.playsAsZerg()) {
 
             // We know enemy building
-            if (AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+            if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
                 if (AGame.getTimeSeconds() < 600) {
                     if (scouts.isEmpty()) {
                         for (AUnit worker : Select.ourWorkers().list()) {

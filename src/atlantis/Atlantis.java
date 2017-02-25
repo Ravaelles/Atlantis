@@ -188,6 +188,8 @@ public class Atlantis implements BWEventListener {
             else {
                 System.err.println("Game Commander is null, totally screwed.");
             }
+            
+            return;
         } 
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================

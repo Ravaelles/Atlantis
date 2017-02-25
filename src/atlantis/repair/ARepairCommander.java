@@ -71,7 +71,7 @@ public class ARepairCommander {
     private static void assignConstantBunkerRepairersIfNeeded() {
 
         // If mission is not DEFEND, release all bunker repairers
-        if (!Missions.getGlobalMission().isMissionDefend()) {
+        if (Missions.getGlobalMission() == null || !Missions.getGlobalMission().isMissionDefend()) {
             for (AUnit bunkerRepairer : ARepairManager.getConstantBunkerRepairers()) {
                 ARepairManager.removeConstantBunkerRepairer(bunkerRepairer);
             }
