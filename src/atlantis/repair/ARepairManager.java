@@ -104,6 +104,7 @@ public class ARepairManager {
                     .inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null) {
                 repairer.repair(nearestWoundedUnit);
+                repairer.setTooltip("Help near " + nearestWoundedUnit.getShortName());
                 return true;
             }
         }
@@ -152,6 +153,10 @@ public class ARepairManager {
     }
     
     public static void addConstantBunkerRepairer(AUnit repairer, AUnit bunker) {
+        if (!bunker.isBunker()) {
+            System.err.println("Repair: this ain't no bunker dude (" + bunker + ")");
+        }
+        
         repairersConstantToBunker.put(repairer, bunker);
         if (!bunkersToRepairers.containsKey(bunker)) {
             bunkersToRepairers.put(bunker, new ArrayList<>());

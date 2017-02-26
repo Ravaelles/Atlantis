@@ -3,11 +3,13 @@ package atlantis.repair;
 import atlantis.AGame;
 import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.squad.missions.Missions;
+import atlantis.information.AMap;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import bwta.Chokepoint;
 
 /**
  *
@@ -36,6 +38,7 @@ public class ARepairCommander {
     }
 
     // === Asign repairers if needed =============================
+    
     private static void assignUnitRepairersToWoundedUnits() {
         
         for (AUnit woundedUnit : Select.our().repairable(true).listUnits()) {
@@ -78,10 +81,16 @@ public class ARepairCommander {
         // =========================================================
         Select<AUnit> bunkers = Select.ourOfType(AUnitType.Terran_Bunker);
 //        int bunkersCounter = bunkers.count();
-
         // Assign two repairers to a bunker if it's not surrounded by many of our combat units
 //        if (bunkersCounter == 1) {
-        for (AUnit bunker : bunkers.list()) {
+//        for (AUnit bunker : bunkers.list()) {
+        Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
+        if (chokepointForNaturalBase != null) {
+            AUnit bunker = bunkers.nearestTo(chokepointForNaturalBase.getCenter());
+            if (bunker == null) {
+                return;
+            }
+                    
             int numberOfCombatUnitsNearby = Select.ourCombatUnits().inRadius(6, bunker).count();
             if (numberOfCombatUnitsNearby <= 7) {
                 int numberOfRepairersAssigned = ARepairManager.countConstantRepairersForBunker(bunker);
@@ -91,6 +100,7 @@ public class ARepairCommander {
                 );
             }
         }
+//        }
 //        }
     }
 

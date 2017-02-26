@@ -24,7 +24,7 @@ public abstract class AbstractPositionFinder {
     public static boolean isForbiddenByStreetBlock(AUnit builder, AUnitType building, APosition position) {
         
         // Special buildings can be build anywhere
-        if (building.isBase() || building.isGasBuilding()) {
+        if (building.isBase() || building.isGasBuilding() || building.isBunker()) {
             return false;
         }
         
@@ -68,7 +68,7 @@ public abstract class AbstractPositionFinder {
      * add-on place of another. Buildings can be stacked, but it needs to be done properly e.g. Supply Depots
      * could be stacked.
      */
-    protected static boolean isOtherBuildingTooClose(AUnit builder, AUnitType building, Position position) {
+    protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, Position position) {
         
         // Compare against planned construction places
         for (ConstructionOrder constructionOrder : AConstructionManager.getAllConstructionOrders()) {

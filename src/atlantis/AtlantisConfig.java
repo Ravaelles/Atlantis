@@ -94,7 +94,7 @@ public class AtlantisConfig {
      * Helper method for using Terran race.
      */
     public static void useConfigForTerran() {
-        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_FE;
+        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_Nada_2_Fact;
         
         AtlantisConfig.MY_RACE = Race.Terran;
         AtlantisConfig.BASE = AUnitType.Terran_Command_Center;

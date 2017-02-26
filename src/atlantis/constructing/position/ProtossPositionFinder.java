@@ -71,7 +71,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         }
 
         // If other buildings too close
-        if (isOtherBuildingTooClose(builder, building, position)) {
+        if (isOtherConstructionTooClose(builder, building, position)) {
             return false;
         }
 

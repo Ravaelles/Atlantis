@@ -37,10 +37,6 @@ public class AGameCommander {
         AWorkerCommander.update();
         ACombatCommander.update();
         AScoutManager.update();
-        
-        if (AGame.getTimeFrames() == 600) {
-            ABuildOrderManager.switchToBuildOrder(TerranBuildOrder.TERRAN_Nada_2_Fact);
-        }
 
         // === Terran only ==================================================
 

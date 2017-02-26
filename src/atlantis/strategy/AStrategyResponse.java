@@ -39,7 +39,7 @@ public class AStrategyResponse {
         
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
         if (previousBuilding != null) {
-            AGame.sendMessage("New bunker near " + previousBuilding);
+//            AGame.sendMessage("New bunker near " + previousBuilding);
             System.out.println("New bunker near " + previousBuilding);
             nearTo = previousBuilding.getPosition();
         }

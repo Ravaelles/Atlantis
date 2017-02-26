@@ -1,6 +1,7 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.AGame;
+import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 /**
@@ -77,6 +78,9 @@ public class Missions {
         // === Terran ========================================
         
         if (AGame.playsAsTerran()) {
+            if (Select.ourOfType(AUnitType.Terran_Vulture).count() > 0) {
+                return true;
+            }
             if (Select.ourTanks().count() < 4) {
                 return false;
             }
