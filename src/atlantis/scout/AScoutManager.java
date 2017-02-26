@@ -7,7 +7,7 @@ import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
-import atlantis.information.UnitData;
+import atlantis.information.AFoggedUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -63,7 +63,7 @@ public class AScoutManager {
 
         // =========================================================
         // We don't know any enemy building, scout nearest starting location.
-        if (!hasDiscoveredMainEnemyBase()) {
+        if (!AEnemyUnits.hasDiscoveredMainEnemyBase()) {
             for (AUnit scout : scouts) {
                 tryFindingEnemyBase(scout);
             }
@@ -171,36 +171,6 @@ public class AScoutManager {
         return false;
     }
     
-    /**
-     * Returns true if we've discovered the main base of enemy (natural base doesn't count).
-     */
-    private static boolean hasDiscoveredMainEnemyBase() {
-        
-        // We don't know any enemy building
-        if (!AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-            return false;
-        }
-        
-        for (UnitData enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
-            if (enemyUnitData.getUnit().getType().isBase()) {
-                boolean isBaseAtStartingLocation = false;
-                APosition discoveredBase = enemyUnitData.getPosition();
-                
-                for (BaseLocation startingLocation : AMap.getStartingLocations(false)) {
-                    if (discoveredBase.distanceTo(startingLocation.getPosition()) <= 7) {
-                        AGame.sendMessage("Discovered main enemy base");
-                        return true;
-                    }
-                    else {
-                        AGame.sendMessage("Ha! This ain't main enemy base!");
-                    }
-                }
-            }
-        }
-        
-        return false;
-    }
-
     // =========================================================
     /**
      * If we have no scout unit assigned, make one of our units a scout.

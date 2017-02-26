@@ -97,6 +97,7 @@ public class ARepairCommander {
     }
 
     // =========================================================
+    
     private static void assignConstantBunkerRepairers(AUnit bunker, int numberOfRepairersToAssign) {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
             AUnit worker = defineBestRepairerFor(bunker, false);
@@ -116,6 +117,7 @@ public class ARepairCommander {
     }
 
     // =========================================================
+    
     private static int defineOptimalConstantBunkerRepairers() {
 
         // === Mission DEFEND  =================================
@@ -124,11 +126,15 @@ public class ARepairCommander {
 
                 // === We know enemy strategy ========================================
                 if (AEnemyStrategy.isEnemyStrategyKnown()) {
+                    int rushBase = 1 
+                            + (AGame.getTimeSeconds() > 180 ? 1 : 0)
+                            + (AGame.getTimeSeconds() > 200 ? 1 : 0);
+                    
                     if (AEnemyStrategy.getEnemyStrategy().isGoingCheese()) {
-                        return 5;
+                        return rushBase + 2;
                     }
                     if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {
-                        return 3;
+                        return rushBase;
                     }
                 } 
                 

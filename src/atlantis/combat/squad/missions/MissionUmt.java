@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.AGame;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
-import atlantis.information.UnitData;
+import atlantis.information.AFoggedUnit;
 import atlantis.scout.AScoutManager;
 import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;

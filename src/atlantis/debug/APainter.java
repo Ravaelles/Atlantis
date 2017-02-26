@@ -14,7 +14,7 @@ import atlantis.constructing.position.APositionFinder;
 import atlantis.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
-import atlantis.information.UnitData;
+import atlantis.information.AFoggedUnit;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ABuildOrdersManager;
 import atlantis.scout.AScoutManager;
@@ -887,7 +887,7 @@ public class APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     private static void paintEnemyDiscovered() {
-        for (UnitData enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
+        for (AFoggedUnit enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
             APosition topLeft;
 //            if (enemyUnitData.getType().isBuilding()) {
             topLeft = enemyUnitData.getPosition().translateByPixels(

@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
 import atlantis.constructing.AConstructionManager;
-import atlantis.information.UnitData;
+import atlantis.information.AFoggedUnit;
 import atlantis.repair.ARepairManager;
 import atlantis.scout.AScoutManager;
 import atlantis.util.AtlantisUtilities;
@@ -356,8 +356,8 @@ public class Select<T> {
     /**
      * Create initial search-pool of units from given collection of units.
      */
-    public static Select<UnitData> fromData(Collection<UnitData> units) {
-        Select<UnitData> selectUnits = new Select<UnitData>(units);
+    public static Select<AFoggedUnit> fromData(Collection<AFoggedUnit> units) {
+        Select<AFoggedUnit> selectUnits = new Select<AFoggedUnit>(units);
         return selectUnits;
     }
 
@@ -401,7 +401,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             Object unitOrData = unitsIterator.next();
-            boolean typeMatches = (unitOrData instanceof AUnit ? typeMatches((AUnit) unitOrData, types) : typeMatches((UnitData) unitOrData, types));
+            boolean typeMatches = (unitOrData instanceof AUnit ? typeMatches((AUnit) unitOrData, types) : typeMatches((AFoggedUnit) unitOrData, types));
             if (!typeMatches) {
                 unitsIterator.remove();
             }
@@ -436,7 +436,7 @@ public class Select<T> {
      * @param haystack
      * @return
      */
-    private boolean typeMatches(UnitData needle, AUnitType... haystack) {
+    private boolean typeMatches(AFoggedUnit needle, AUnitType... haystack) {
 
         for (AUnitType type : haystack) {
             if (needle.getType().equals(type)
@@ -526,7 +526,7 @@ public class Select<T> {
     public Select<T> infantry() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
-            UnitData unit = dataFrom(unitsIterator.next());	//(unitOrData instanceof AUnit ? (AUnit) unitOrData : ((UnitData)unitOrData).getUnit()); 
+            AFoggedUnit unit = dataFrom(unitsIterator.next());	//(unitOrData instanceof AUnit ? (AUnit) unitOrData : ((UnitData)unitOrData).getUnit()); 
             if (!unit.getType().isOrganic()) { //replaced  isInfantry()
                 unitsIterator.remove();
             }
@@ -541,7 +541,7 @@ public class Select<T> {
     public Select<T> bases() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
-            UnitData unit = dataFrom(unitsIterator.next());
+            AFoggedUnit unit = dataFrom(unitsIterator.next());
             if (!unit.getType().isBase()) {
                 unitsIterator.remove();
             }
@@ -556,7 +556,7 @@ public class Select<T> {
     public Select<T> melee() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
-            UnitData unit = dataFrom(unitsIterator.next());
+            AFoggedUnit unit = dataFrom(unitsIterator.next());
             if (!unit.getType().isMeleeUnit()) {
                 unitsIterator.remove();
             }
@@ -587,7 +587,7 @@ public class Select<T> {
     public Select<T> buildings() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
-            UnitData uData = dataFrom(unitsIterator.next());
+            AFoggedUnit uData = dataFrom(unitsIterator.next());
             if (!uData.getType().isBuilding()) {
                 unitsIterator.remove();
             }
@@ -602,7 +602,7 @@ public class Select<T> {
     public Select<T> combatUnits() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
-            UnitData uData = dataFrom(unitsIterator.next());
+            AFoggedUnit uData = dataFrom(unitsIterator.next());
             boolean isMilitaryBuilding = uData.getType().isMilitaryBuilding();
             AUnit u = uData.getUnit();	//TODO: will work only on visible units...
             if (!u.isCompleted() || u.isWorker() || (uData.getType().isBuilding() && !isMilitaryBuilding)
@@ -1084,7 +1084,7 @@ public class Select<T> {
      * @return
      */
     private AUnit unitFrom(Object unitOrData) {
-        return (unitOrData instanceof AUnit ? (AUnit) unitOrData : ((UnitData) unitOrData).getUnit());
+        return (unitOrData instanceof AUnit ? (AUnit) unitOrData : ((AFoggedUnit) unitOrData).getUnit());
     }
 
     /**
@@ -1093,8 +1093,8 @@ public class Select<T> {
      * @param unitOrData
      * @return
      */
-    private UnitData dataFrom(Object unitOrData) {
-        return (unitOrData instanceof UnitData ? (UnitData) unitOrData : new UnitData((AUnit) unitOrData));
+    private AFoggedUnit dataFrom(Object unitOrData) {
+        return (unitOrData instanceof AFoggedUnit ? (AFoggedUnit) unitOrData : new AFoggedUnit((AUnit) unitOrData));
     }
 
     @SuppressWarnings("unused")
@@ -1195,8 +1195,8 @@ public class Select<T> {
                 if (p2 == null || !(p2 instanceof PositionedObject)) {
                     return 1;
                 }
-                UnitData data1 = dataFrom(p1);
-                UnitData data2 = dataFrom(p2);
+                AFoggedUnit data1 = dataFrom(p1);
+                AFoggedUnit data2 = dataFrom(p2);
                 double distance1 = PositionUtil.distanceTo(position, data1.getPosition());	//TODO: check whether this doesn't mix up position types
                 double distance2 = PositionUtil.distanceTo(position, data2.getPosition());
                 if (distance1 == distance2) {

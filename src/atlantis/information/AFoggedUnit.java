@@ -11,7 +11,7 @@ import atlantis.position.APositionedObject;
  * @author Anderson
  *
  */
-public class UnitData extends APositionedObject {
+public class AFoggedUnit extends APositionedObject {
 
     private APosition position;
     private final AUnit unit;
@@ -21,10 +21,11 @@ public class UnitData extends APositionedObject {
     
     // =========================================================
 
-    public UnitData(AUnit unit) {
+    public AFoggedUnit(AUnit unit) {
         this.unit = unit;
         position = new APosition(unit.getPosition());
-        type = unit.getType();
+//        type = unit.getType();
+        type = AUnitType.createFrom(unit.u().getType());
         _lastCachedType = type;
         buildType = unit.getBuildType();
     }
@@ -67,7 +68,7 @@ public class UnitData extends APositionedObject {
         return unit;
     }
 
-    public UnitData update(AUnit updated) {
+    public AFoggedUnit update(AUnit updated) {
         if (updated.getID() != unit.getID()) {
             throw new RuntimeException(
                     String.format("Unexpected unit ID. Expected %d, received %d", unit.getID(), updated.getID())

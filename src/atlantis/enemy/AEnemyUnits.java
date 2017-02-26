@@ -1,10 +1,13 @@
 package atlantis.enemy;
 
-import atlantis.information.UnitData;
+import atlantis.AGame;
+import atlantis.information.AFoggedUnit;
+import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.position.APosition;
+import bwta.BaseLocation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,7 +15,7 @@ import java.util.Map;
 
 public class AEnemyUnits {
 
-    protected static Map<AUnit, UnitData> enemyUnitsDiscovered = new HashMap<>();
+    protected static Map<AUnit, AFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
     protected static ArrayList<AUnit> enemyUnitsDestroyed = new ArrayList<>();
 
     // =========================================================
@@ -37,6 +40,38 @@ public class AEnemyUnits {
         return false;
     }
     
+    /**
+     * Returns true if we've discovered the main base of enemy (natural base doesn't count).
+     */
+    public static boolean hasDiscoveredMainEnemyBase() {
+        
+        // We don't know any enemy building
+        if (!AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
+            return false;
+        }
+        
+//        System.out.println("-------");
+        for (AFoggedUnit enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
+//            System.out.println(enemyUnitData.getType());
+            if (enemyUnitData.getType().isBase()) {
+                boolean isBaseAtStartingLocation = false;
+                APosition discoveredBase = enemyUnitData.getPosition();
+                
+                for (BaseLocation startingLocation : AMap.getStartingLocations(false)) {
+                    if (discoveredBase.distanceTo(startingLocation.getPosition()) <= 7) {
+//                        System.out.println("Discovered main enemy base");
+                        return true;
+                    }
+//                    else {
+//                        System.out.println("Ha! This ain't main enemy base!");
+//                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     public static APosition getEnemyBase() {
         for (AUnit enemyUnit : enemyUnitsDiscovered.keySet()) {
             if (enemyUnit.isBase()) {
@@ -46,13 +81,13 @@ public class AEnemyUnits {
         return null;
     }
     
-    public static UnitData getNearestEnemyBuilding() {
+    public static AFoggedUnit getNearestEnemyBuilding() {
         AUnit ourMainBase = Select.mainBase();
-        UnitData best = null;
+        AFoggedUnit best = null;
         if (ourMainBase != null) {
             double minDist = 999999;
             
-            for (UnitData enemy : enemyUnitsDiscovered.values()) {
+            for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
                 if (enemy.getType().isBuilding()) {
                     double dist = enemy.getPosition().distanceTo(ourMainBase);
                     if (minDist > dist) {
@@ -66,7 +101,7 @@ public class AEnemyUnits {
         return best; // Can be null
     }
     
-    public static Collection<UnitData> getEnemyDiscoveredAndAliveUnits() {
+    public static Collection<AFoggedUnit> getEnemyDiscoveredAndAliveUnits() {
         return enemyUnitsDiscovered.values();
     }
     
@@ -77,7 +112,7 @@ public class AEnemyUnits {
      * Saves information about enemy unit that we see for the first time.
      */
     public static void discoveredEnemyUnit(AUnit enemyUnit) {
-        enemyUnitsDiscovered.put(enemyUnit, new UnitData(enemyUnit));
+        enemyUnitsDiscovered.put(enemyUnit, new AFoggedUnit(enemyUnit));
     }
 
     /**

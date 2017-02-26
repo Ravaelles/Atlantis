@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.AGame;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
-import atlantis.information.UnitData;
+import atlantis.information.AFoggedUnit;
 import atlantis.scout.AScoutManager;
 import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
@@ -110,7 +110,7 @@ public class MissionAttack extends Mission {
         }
 
         // Try going near any enemy building
-        UnitData enemyBuilding = AEnemyUnits.getNearestEnemyBuilding();
+        AFoggedUnit enemyBuilding = AEnemyUnits.getNearestEnemyBuilding();
         if (enemyBuilding != null) {
 //        	System.out.println("focus on enemy bldg " + enemyBuilding.getPosition());	//TODO debug
             return enemyBuilding.getPosition();
