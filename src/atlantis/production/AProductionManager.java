@@ -1,7 +1,7 @@
 package atlantis.production;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
+import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
@@ -10,8 +10,6 @@ import atlantis.units.Select;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class AProductionManager {
 
@@ -29,9 +27,8 @@ public class AProductionManager {
         // =========================================================
         
         // Get build orders (aka production orders) from the manager
-        ABuildOrderManager buildOrdersManager = AtlantisConfig.getBuildOrders();
-
-        ArrayList<ProductionOrder> produceNow = buildOrdersManager.getThingsToProduceRightNow(ABuildOrderManager.MODE_ALL_ORDERS
+        ArrayList<ProductionOrder> produceNow = ABuildOrderManager.getThingsToProduceRightNow(
+                ABuildOrderManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
 
@@ -68,7 +65,7 @@ public class AProductionManager {
         
         // === Fix - refresh entire queue ==============================
         
-        ABuildOrderManager.getBuildOrders().getProductionQueueNext(20);
+        ABuildOrderManager.getProductionQueueNext(20);
     }
 
     // =========================================================
@@ -85,13 +82,13 @@ public class AProductionManager {
         // =========================================================
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
-            ABuildOrderManager.getBuildOrders().produceWorker();
+            ABuildOrderManager.getCurrentBuildOrder().produceWorker();
         } 
 
         // =========================================================
         // Non-worker so combat units and special units like Scarabs etc.
         else { 
-            ABuildOrderManager.getBuildOrders().produceUnit(unitType);
+            ABuildOrderManager.getCurrentBuildOrder().produceUnit(unitType);
         } 
     }
 

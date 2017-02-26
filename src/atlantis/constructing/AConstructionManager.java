@@ -1,15 +1,15 @@
 package atlantis.constructing;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.constructing.position.AbstractPositionFinder;
+import atlantis.AtlantisConfig;
 import atlantis.constructing.position.APositionFinder;
+import atlantis.constructing.position.AbstractPositionFinder;
+import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
+import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.position.APosition;
-import bwapi.Color;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -109,7 +109,7 @@ public class AConstructionManager {
             constructionOrders.add(newConstructionOrder);
 
             // Rebuild production queue as new building is about to be built
-            AGame.getBuildOrders().rebuildQueue();
+            ABuildOrderManager.rebuildQueue();
         } 
 
         // Couldn't find place for building! That's bad, print descriptive explanation.

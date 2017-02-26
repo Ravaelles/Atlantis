@@ -1,14 +1,13 @@
 package atlantis.production;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
+import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionManager;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import java.util.List;
 
 /**
  *
@@ -100,7 +99,7 @@ public class ADynamicConstructionManager {
     // =========================================================
     
     private static boolean canAfford(int minerals, int gas) {
-        return AGame.canAfford(minerals + ABuildOrderManager.getMineralsNeeded(), gas + ABuildOrderManager.getGasNeeded()
+        return AGame.canAfford(minerals + ABuildOrderManager.getMineralsReserved(), gas + ABuildOrderManager.getGasReserved()
         );
     }
     

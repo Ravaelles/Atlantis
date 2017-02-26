@@ -1,9 +1,7 @@
 package atlantis.combat.squad;
 
-import atlantis.AGame;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import java.util.ArrayList;
 
 /**

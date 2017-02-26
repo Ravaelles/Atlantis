@@ -2,11 +2,10 @@ package atlantis.constructing;
 
 import atlantis.AGame;
 import atlantis.constructing.position.AbstractPositionFinder;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
-import atlantis.util.PositionUtil;
-import atlantis.position.APosition;
 import bwapi.TilePosition;
 
 public class ABuilderManager {
@@ -63,7 +62,7 @@ public class ABuilderManager {
 //                buildPosition, buildingType.getTileWidth() * 32 / 2, buildingType.getTileHeight() * 32 / 2
 //        );
         // =========================================================
-        double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.03 : 1;
+        double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.6 : 1;
         double distance = builder.distanceTo(buildPosition);
 
         // Move builder to the build position

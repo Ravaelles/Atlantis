@@ -1,10 +1,10 @@
 package atlantis.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.position.APosition;
 import java.util.Collection;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {

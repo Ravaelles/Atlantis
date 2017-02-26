@@ -1,28 +1,25 @@
 package atlantis.scout;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
 import atlantis.AViewport;
+import atlantis.AtlantisConfig;
 import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
-import atlantis.information.AFoggedUnit;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import atlantis.units.Units;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.CodeProfiler;
 import atlantis.position.APosition;
 import atlantis.position.PositionOperationsWrapper;
 import atlantis.position.Positions;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.Select;
+import atlantis.units.actions.UnitActions;
+import atlantis.util.CodeProfiler;
 import bwapi.Color;
 import bwapi.Position;
 import bwta.BaseLocation;
 import bwta.Region;
 import java.util.ArrayList;
-import javax.swing.ActionMap;
 
 public class AScoutManager {
 

@@ -5,12 +5,13 @@ import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.ACombatCommander;
 import atlantis.debug.APainter;
 import atlantis.production.AProductionCommander;
+import atlantis.production.orders.ABuildOrderManager;
+import atlantis.production.orders.TerranBuildOrder;
 import atlantis.repair.ARepairCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.util.CodeProfiler;
 import atlantis.workers.AWorkerCommander;
 
 /**
@@ -36,6 +37,10 @@ public class AGameCommander {
         AWorkerCommander.update();
         ACombatCommander.update();
         AScoutManager.update();
+        
+        if (AGame.getTimeFrames() == 600) {
+            ABuildOrderManager.switchToBuildOrder(TerranBuildOrder.TERRAN_Nada_2_Fact);
+        }
 
         // === Terran only ==================================================
 

@@ -1,7 +1,6 @@
 package atlantis;
 
 import static atlantis.Atlantis.getBwapi;
-import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
@@ -11,8 +10,6 @@ import bwapi.Race;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply
@@ -29,9 +26,9 @@ public class AGame {
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static ABuildOrderManager getBuildOrders() {
-        return AtlantisConfig.getBuildOrders();
-    }
+//    public static ABuildOrderManager getBuildOrders() {
+//        return AtlantisConfig.getBuildOrders();
+//    }
 
     /**
      * Returns true if we have all techs needed for given unit (but we may NOT have some of the buildings!).
@@ -79,6 +76,13 @@ public class AGame {
     }
 
     // =========================================================
+    
+    /**
+     * Quits the game gently, killing all processes and cleaning up.
+     */
+    public static void exit() {
+        Atlantis.getInstance().onEnd(false);
+    }
     
     /**
      * Enable/disable pause.

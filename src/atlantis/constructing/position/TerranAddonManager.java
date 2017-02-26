@@ -1,6 +1,5 @@
 package atlantis.constructing.position;
 
-import atlantis.AGame;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

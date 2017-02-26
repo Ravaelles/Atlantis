@@ -1,8 +1,7 @@
 package atlantis.production;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
-import atlantis.production.orders.ABuildOrderManager;
+import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 

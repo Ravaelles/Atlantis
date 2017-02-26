@@ -1,15 +1,14 @@
 package atlantis.constructing.position;
 
-import atlantis.Atlantis;
 import atlantis.AGame;
+import atlantis.Atlantis;
 import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
 import atlantis.util.PositionUtil;
-import atlantis.position.APosition;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {

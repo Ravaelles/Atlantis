@@ -1,10 +1,9 @@
 package atlantis.units;
 
 import atlantis.AGame;
-import atlantis.constructing.position.AbstractPositionFinder;
+import atlantis.position.APosition;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
-import atlantis.position.APosition;
 import bwapi.Position;
 import bwapi.PositionOrUnit;
 import bwapi.TechType;

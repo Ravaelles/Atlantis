@@ -1,12 +1,11 @@
 package atlantis.enemy;
 
-import atlantis.AGame;
 import atlantis.information.AFoggedUnit;
 import atlantis.information.AMap;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.position.APosition;
 import bwta.BaseLocation;
 import java.util.ArrayList;
 import java.util.Collection;

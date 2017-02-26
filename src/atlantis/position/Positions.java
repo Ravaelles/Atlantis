@@ -1,10 +1,8 @@
 package atlantis.position;
 
-import atlantis.units.AUnit;
 import atlantis.util.AtlantisUtilities;
 import bwapi.AbstractPoint;
 import bwapi.Position;
-import bwapi.PositionedObject;
 import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.Collection;

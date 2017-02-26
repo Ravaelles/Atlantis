@@ -3,13 +3,12 @@ package atlantis.constructing.position;
 import atlantis.combat.squad.missions.MissionDefend;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.information.AMap;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.position.APosition;
 import bwta.BaseLocation;
 import bwta.Chokepoint;
-import bwta.Region;
 
 /**
  *

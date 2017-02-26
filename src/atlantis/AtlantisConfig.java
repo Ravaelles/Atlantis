@@ -1,6 +1,9 @@
 package atlantis;
 
-import atlantis.production.orders.ABuildOrderManager;
+import atlantis.production.orders.ABuildOrder;
+import atlantis.production.orders.ProtossBuildOrder;
+import atlantis.production.orders.TerranBuildOrder;
+import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 
@@ -83,7 +86,7 @@ public class AtlantisConfig {
     public static AUnitType GAS_BUILDING = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_LAND = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
-    public static ABuildOrderManager buildOrdersManager = null;
+    public static ABuildOrder DEFAULT_BUILD_ORDER = null;
 
     // =========================================================
     
@@ -91,8 +94,8 @@ public class AtlantisConfig {
      * Helper method for using Terran race.
      */
     public static void useConfigForTerran() {
-        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 11;
-
+        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_FE;
+        
         AtlantisConfig.MY_RACE = Race.Terran;
         AtlantisConfig.BASE = AUnitType.Terran_Command_Center;
         AtlantisConfig.WORKER = AUnitType.Terran_SCV;
@@ -108,8 +111,8 @@ public class AtlantisConfig {
      * Helper method for using Protoss race.
      */
     public static void useConfigForProtoss() {
-        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 11;
-
+        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATEWAY_ZEALOT;
+        
         AtlantisConfig.MY_RACE = Race.Protoss;
         AtlantisConfig.BASE = AUnitType.Protoss_Nexus;
         AtlantisConfig.WORKER = AUnitType.Protoss_Probe;
@@ -125,8 +128,8 @@ public class AtlantisConfig {
      * Helper method for using Zerg race.
      */
     public static void useConfigForZerg() {
-        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 8;
-
+        AtlantisConfig.DEFAULT_BUILD_ORDER = ZergBuildOrder.ZERG_13_POOL_MUTA;
+        
         AtlantisConfig.MY_RACE = Race.Zerg;
         AtlantisConfig.BASE = AUnitType.Zerg_Hatchery;
         AtlantisConfig.WORKER = AUnitType.Zerg_Drone;
@@ -160,7 +163,7 @@ public class AtlantisConfig {
         validate("BARRACKS", BARRACKS);
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
-        validate("You have to specify production strategy\n-> AtlantisConfig.useBuildOrders", buildOrdersManager);
+        validate("You have to define default build order\n-> AtlantisConfig.DEFAULT_BUILD_ORDER", DEFAULT_BUILD_ORDER);
     }
 
     // =========================================================
@@ -190,24 +193,6 @@ public class AtlantisConfig {
         System.err.println("");
         System.err.println("Program has stopped");
         System.exit(-1);
-    }
-
-    // =========================================================
-    // Hi-level configs
-    
-    /**
-     * Pass an object that will be responsible for the production queue. See e.g. class named
-     * DefaultTerranBuildOrders.
-     */
-    public static void useBuildOrders(ABuildOrderManager buildOrdersManager) {
-        AtlantisConfig.buildOrdersManager = buildOrdersManager;
-    }
-
-    /**
-     * Returns object that is responsible for the production queue.
-     */
-    public static ABuildOrderManager getBuildOrders() {
-        return buildOrdersManager;
     }
 
 }

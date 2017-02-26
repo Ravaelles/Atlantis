@@ -1,7 +1,7 @@
 package atlantis.buildings.managers;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
+import atlantis.AtlantisConfig;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;

@@ -1,17 +1,15 @@
 package atlantis.units;
 
-import atlantis.util.AtlantisUtilities;
-import atlantis.util.PositionUtil;
 import atlantis.position.APosition;
 import atlantis.position.APositionedObject;
 import atlantis.position.PositionOperationsWrapper;
+import atlantis.util.AtlantisUtilities;
 import bwapi.Position;
 import bwapi.PositionedObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;

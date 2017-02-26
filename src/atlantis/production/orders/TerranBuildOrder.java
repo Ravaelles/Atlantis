@@ -1,25 +1,23 @@
 package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
-import atlantis.AGame;
 import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.workers.AWorkerCommander;
 import java.util.ArrayList;
 
-public class TerranBuildOrder extends ABuildOrderManager {
+public class TerranBuildOrder extends ABuildOrder {
     
-    public static final TerranBuildOrder TERRAN_1_FE = new TerranBuildOrder();
-    
+    public static final TerranBuildOrder TERRAN_1_FE = new TerranBuildOrder("1 Fact FE");
+    public static final TerranBuildOrder TERRAN_Nada_2_Fact = new TerranBuildOrder("Nada 2 Fact");
+
     // =========================================================
     
-    @Override
-    protected String getFilename() {
-        return "Terran/1 Fact FE.txt";
+    private TerranBuildOrder(String relativePath) {
+        super("Terran/" + relativePath);
     }
-
+    
     // =========================================================
     
     @Override

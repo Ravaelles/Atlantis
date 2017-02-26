@@ -5,14 +5,16 @@ import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.workers.AWorkerCommander;
 import java.util.ArrayList;
 
-public class ZergBuildOrder extends ABuildOrderManager {
+public class ZergBuildOrder extends ABuildOrder {
     
-    @Override
-    protected String getFilename() {
-        return "Zerg/13 Pool Muta.txt";
+    public static final ZergBuildOrder ZERG_13_POOL_MUTA = new ZergBuildOrder("13 Pool Muta");
+    
+    // =========================================================
+    
+    private ZergBuildOrder(String relativePath) {
+        super("Zerg/" + relativePath);
     }
 
     // =========================================================
@@ -39,14 +41,13 @@ public class ZergBuildOrder extends ABuildOrderManager {
         
         units.add(AUnitType.Zerg_Hydralisk);
         units.add(AUnitType.Zerg_Zergling);
-        units.add(AUnitType.Zerg_Hydralisk);
         
         if (shouldTrainWorkers) {
             units.add(AUnitType.Zerg_Drone);
         }
         
-        units.add(AUnitType.Zerg_Zergling);
-        units.add(AUnitType.Zerg_Zergling);
+        units.add(AUnitType.Zerg_Mutalisk);
+        units.add(AUnitType.Zerg_Mutalisk);
         
         return units;
     }

@@ -1,13 +1,11 @@
 package atlantis.constructing;
 
 import atlantis.constructing.position.APositionFinder;
+import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.position.APosition;
-import java.util.List;
 
 /**
  * Represents construction of a building, including ones not yet started.

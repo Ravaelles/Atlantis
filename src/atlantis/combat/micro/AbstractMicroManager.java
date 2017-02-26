@@ -1,19 +1,15 @@
 package atlantis.combat.micro;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
+import atlantis.AtlantisConfig;
 import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.squad.Squad;
-import atlantis.debug.APainter;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import atlantis.units.Units;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.PositionUtil;
 import atlantis.position.APosition;
 import atlantis.position.PositionOperationsWrapper;
-import bwapi.Color;
+import atlantis.units.AUnit;
+import atlantis.units.Select;
+import atlantis.units.actions.UnitActions;
+import atlantis.util.PositionUtil;
 import bwapi.WeaponType;
 import java.util.Collection;
 

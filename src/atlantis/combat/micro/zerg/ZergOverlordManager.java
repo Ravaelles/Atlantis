@@ -2,10 +2,10 @@ package atlantis.combat.micro.zerg;
 
 import atlantis.combat.squad.ASquadManager;
 import atlantis.enemy.AEnemyUnits;
+import atlantis.position.APosition;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
-import atlantis.position.APosition;
 
 /**
  *

@@ -1,20 +1,20 @@
 package atlantis.debug;
 
-import atlantis.Atlantis;
 import atlantis.AGame;
+import atlantis.Atlantis;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.missions.MissionAttack;
-import atlantis.combat.squad.missions.MissionDefend;
 import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
-import atlantis.constructing.position.APositionFinder;
 import atlantis.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AMap;
 import atlantis.information.AFoggedUnit;
+import atlantis.information.AMap;
+import atlantis.position.APosition;
+import atlantis.position.PositionOperationsWrapper;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.scout.AScoutManager;
@@ -22,20 +22,15 @@ import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.units.actions.UnitActions;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
-import atlantis.util.PositionUtil;
 import atlantis.workers.AWorkerManager;
-import atlantis.position.APosition;
 import atlantis.wrappers.MappingCounter;
-import atlantis.position.PositionOperationsWrapper;
 import bwapi.Color;
 import bwapi.Game;
 import bwapi.Position;
 import bwapi.Text.Size.Enum;
-import bwapi.Unit;
 import bwta.Region;
 import java.util.ArrayList;
 import java.util.Map;
@@ -153,8 +148,8 @@ public class APainter {
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
         paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + ABuildOrderManager.getMineralsNeeded(), Color.Grey);
-        paintSideMessage("Reserved gas: " + ABuildOrderManager.getGasNeeded(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + ABuildOrderManager.getMineralsReserved(), Color.Grey);
+        paintSideMessage("Reserved gas: " + ABuildOrderManager.getGasReserved(), Color.Grey);
     }
 
     /**
@@ -422,14 +417,14 @@ public class APainter {
         }
 
         // Display units that should be produced right now or any time
-        ArrayList<ProductionOrder> produceNow = AGame.getBuildOrders().getThingsToProduceRightNow(ABuildOrderManager.MODE_ALL_ORDERS
+        ArrayList<ProductionOrder> produceNow = ABuildOrderManager.getThingsToProduceRightNow(ABuildOrderManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
             paintSideMessage(order.getShortName(), Color.Yellow);
         }
 
         // Display next units to produce
-        ArrayList<ProductionOrder> fullQueue = AGame.getBuildOrders().getProductionQueueNext(
+        ArrayList<ProductionOrder> fullQueue = ABuildOrderManager.getProductionQueueNext(
                 5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);

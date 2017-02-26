@@ -2,10 +2,10 @@ package atlantis.combat.micro.zerg;
 
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.position.APositionFinder;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.position.APosition;
 
 /**
  *

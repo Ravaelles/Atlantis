@@ -1,16 +1,11 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.AGame;
-import atlantis.debug.APainter;
 import atlantis.information.AMap;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import atlantis.position.APosition;
-import bwapi.Color;
-import bwapi.Position;
-import bwapi.TilePosition;
 import bwta.Chokepoint;
 
 public class MissionDefend extends Mission {

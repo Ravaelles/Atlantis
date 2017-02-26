@@ -1,10 +1,5 @@
 package atlantis.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Kills and starts processes, including Starcraft game itself and Chaoslauncher.
  */

@@ -3,11 +3,10 @@ package atlantis.constructing.position;
 import atlantis.AGame;
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.constructing.ConstructionOrder;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.position.APosition;
-import bwapi.Position;
 
 public class APositionFinder {
 

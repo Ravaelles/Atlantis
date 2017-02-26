@@ -8,9 +8,6 @@ import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  *

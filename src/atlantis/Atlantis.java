@@ -10,7 +10,6 @@ import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 import bwta.BWTA;
@@ -115,7 +114,7 @@ public class Atlantis implements BWEventListener {
         // === Set some BWAPI params ===============================
         
         bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
-        bwapi.setFrameSkip(2); // Number of GUI frames to skip
+//        bwapi.setFrameSkip(2); // Number of GUI frames to skip
 //        bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
         bwapi.enableFlag(1);	// Enable user input - without it you can't control units with mouse
 
@@ -123,25 +122,34 @@ public class Atlantis implements BWEventListener {
         // Set production strategy (build orders) to use. It can be always changed dynamically.
         
         try {
-            AtlantisConfig.useBuildOrders(ABuildOrderManager.loadBuildOrders());
+            ABuildOrderManager.switchToBuildOrder(AtlantisConfig.DEFAULT_BUILD_ORDER);
+            
+            System.out.println();
+            if (ABuildOrderManager.getCurrentBuildOrder() != null) {
+                System.out.println("Use build order: " + ABuildOrderManager.getCurrentBuildOrder().getName());
+            }
+            else {
+                System.err.println("Invalid (empty) build order in AtlantisConfig!");
+                AGame.exit();
+            }
         }
         catch (Exception e) {
             System.err.println("Exception when loading build orders file");
             e.printStackTrace();
         }
         
-        if (AtlantisConfig.buildOrdersManager == null) {
-            System.err.println("===================================");
-            System.err.println("It seems there was critical problem");
-            System.err.println("with build orders file.");
-            System.err.println("Please check the syntax.");
-            System.err.println("===================================");
-            System.exit(-1);
-        }
-        else {
-            System.out.println("Successfully loaded build orders file!");
-            System.out.println();
-        }
+//        if (AtlantisConfig.buildOrdersManager == null) {
+//            System.err.println("===================================");
+//            System.err.println("It seems there was critical problem");
+//            System.err.println("with build orders file.");
+//            System.err.println("Please check the syntax.");
+//            System.err.println("===================================");
+//            System.exit(-1);
+//        }
+//        else {
+//            System.out.println("Successfully loaded build orders file!");
+//            System.out.println();
+//        }
 
         // =========================================================
         // Validate AtlantisConfig and exit if it's invalid
@@ -149,6 +157,7 @@ public class Atlantis implements BWEventListener {
 
         // Display ok message
         System.out.println("Atlantis config is valid.");
+        System.out.println();
     }
 
     /**
@@ -213,7 +222,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOurUnit()) {
-                AGame.getBuildOrders().rebuildQueue();
+                ABuildOrderManager.rebuildQueue();
 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
                 if (AGame.playsAsProtoss() && unit.getType().isBuilding()) {
@@ -233,7 +242,7 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
             unit.refreshType();
             
-            AGame.getBuildOrders().rebuildQueue();
+            ABuildOrderManager.rebuildQueue();
 
             // Our unit
             if (unit.isOurUnit()) {
@@ -264,7 +273,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOurUnit()) {
-                AGame.getBuildOrders().rebuildQueue();
+                ABuildOrderManager.rebuildQueue();
                 ASquadManager.battleUnitDestroyed(unit);
                 LOST++;
                 LOST_RESOURCES += unit.getType().getTotalResources();
@@ -349,7 +358,7 @@ public class Atlantis implements BWEventListener {
                 }
 
                 // =========================================================
-                AGame.getBuildOrders().rebuildQueue();
+                ABuildOrderManager.rebuildQueue();
 
                 // Add to combat squad if it's military unit
                 if (unit.isActualUnit()) {
@@ -538,13 +547,6 @@ public class Atlantis implements BWEventListener {
         _dynamicSlowdown_previousSpeed = AtlantisConfig.GAME_SPEED;
         _dynamicSlowdown_lastTimeUnitDestroyed = AGame.getTimeSeconds();
         _dynamicSlowdown_isSlowdownActive = true;
-    }
-
-    /**
-     * Exits the game gently, killing all processes.
-     */
-    public static void end() {
-        instance.onEnd(false);
     }
     
 }

@@ -1,9 +1,9 @@
 package atlantis.information;
 
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.position.APosition;
 import atlantis.position.APositionedObject;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 
 /**
  * Stores information about units in order to retrieve them when they are out of sight

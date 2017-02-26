@@ -1,6 +1,5 @@
 package atlantis.workers;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.units.AUnit;

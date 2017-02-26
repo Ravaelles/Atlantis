@@ -1,8 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.AGame;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
 
 /**
  *

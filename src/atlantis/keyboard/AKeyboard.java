@@ -1,7 +1,7 @@
 package atlantis.keyboard;
 
-import atlantis.AtlantisConfig;
 import atlantis.AGame;
+import atlantis.AtlantisConfig;
 import atlantis.debug.APainter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,7 +67,7 @@ public class AKeyboard implements NativeKeyListener {
             case 1: 
                 System.out.println();
                 System.out.println("ESC pressed: exit requested by the user");
-                atlantis.Atlantis.getInstance().onEnd(false);
+                AGame.exit();
                 break;
 
             // Key "1"

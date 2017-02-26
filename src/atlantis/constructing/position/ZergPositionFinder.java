@@ -2,12 +2,10 @@ package atlantis.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
-import atlantis.debug.APainter;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.position.APosition;
-import bwapi.Color;
 import bwapi.Position;
 import java.util.Collection;
 

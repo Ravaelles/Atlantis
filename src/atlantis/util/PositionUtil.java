@@ -1,16 +1,10 @@
 package atlantis.util;
 
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.position.APosition;
-import atlantis.position.APosition;
 import bwapi.Position;
-import bwapi.PositionOrUnit;
-import bwapi.TilePosition;
 import bwapi.Unit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 public class PositionUtil {
 

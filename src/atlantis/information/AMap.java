@@ -1,18 +1,17 @@
 package atlantis.information;
 
 import atlantis.Atlantis;
-import atlantis.AGame;
 import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
+import atlantis.position.APosition;
+import atlantis.position.PositionOperationsWrapper;
+import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
-import atlantis.position.APosition;
-import atlantis.position.PositionOperationsWrapper;
-import atlantis.position.Positions;
 import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;

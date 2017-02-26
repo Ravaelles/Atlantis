@@ -1,6 +1,5 @@
 package atlantis.production;
 
-import atlantis.buildings.managers.AExpansionManager;
 import atlantis.buildings.managers.ASupplyManager;
 import atlantis.constructing.AConstructionManager;
 import atlantis.util.CodeProfiler;

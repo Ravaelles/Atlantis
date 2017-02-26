@@ -1,15 +1,12 @@
 package atlantis.position;
 
-import atlantis.util.PositionUtil;
 import atlantis.debug.APainter;
 import atlantis.information.AMap;
 import atlantis.units.AUnit;
-import atlantis.wrappers.ACachedValue;
+import atlantis.util.PositionUtil;
 import bwapi.AbstractPoint;
 import bwapi.Color;
 import bwapi.Position;
-import bwapi.PositionedObject;
-import bwapi.TilePosition;
 import bwta.BWTA;
 import bwta.Region;
 import java.util.HashMap;

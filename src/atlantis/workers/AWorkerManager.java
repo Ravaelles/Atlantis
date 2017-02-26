@@ -1,17 +1,12 @@
 package atlantis.workers;
 
-import atlantis.AGame;
-import atlantis.combat.micro.AbstractMicroManager;
 import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.constructing.ABuilderManager;
 import atlantis.constructing.AConstructionManager;
-import atlantis.constructing.ConstructionOrder;
-import atlantis.debug.APainter;
 import atlantis.repair.ARepairManager;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import bwapi.Color;
 
 public class AWorkerManager {
 

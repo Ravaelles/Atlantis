@@ -1,12 +1,9 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.debug.APainter;
 import atlantis.information.AMap;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
-import bwapi.Color;
 import bwta.Chokepoint;
 
 /**

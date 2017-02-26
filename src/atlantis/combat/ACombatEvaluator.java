@@ -1,6 +1,5 @@
 package atlantis.combat;
 
-import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

@@ -1,11 +1,10 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.micro.AbstractMicroManager;
 import atlantis.combat.squad.missions.Mission;
 import atlantis.combat.squad.missions.Missions;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.position.APosition;
 import java.util.ArrayList;
 import java.util.Collections;
 

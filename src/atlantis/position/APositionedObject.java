@@ -1,12 +1,7 @@
 package atlantis.position;
 
 import atlantis.util.PositionUtil;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import bwapi.Position;
-import bwapi.PositionOrUnit;
 import bwapi.PositionedObject;
-import bwapi.Unit;
 
 /**
  *

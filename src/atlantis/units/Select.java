@@ -1,16 +1,16 @@
 package atlantis.units;
 
+import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
-import atlantis.AGame;
 import atlantis.constructing.AConstructionManager;
 import atlantis.information.AFoggedUnit;
+import atlantis.position.APosition;
+import atlantis.position.APositionedObject;
 import atlantis.repair.ARepairManager;
 import atlantis.scout.AScoutManager;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
-import atlantis.position.APosition;
-import atlantis.position.APositionedObject;
 import bwapi.Player;
 import bwapi.Position;
 import bwapi.PositionedObject;

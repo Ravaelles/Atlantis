@@ -1,16 +1,14 @@
 package atlantis.combat.squad.missions;
 
-import atlantis.Atlantis;
 import atlantis.AGame;
+import atlantis.Atlantis;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AMap;
 import atlantis.information.AFoggedUnit;
-import atlantis.scout.AScoutManager;
+import atlantis.information.AMap;
+import atlantis.position.APosition;
 import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.units.actions.UnitActions;
-import atlantis.position.APosition;
 import bwapi.Color;
 import bwta.BaseLocation;
 
