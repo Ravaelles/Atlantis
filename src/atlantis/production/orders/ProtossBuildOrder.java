@@ -7,7 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import java.util.ArrayList;
 
-public class ProtossBuildOrders extends ABuildOrdersManager {
+public class ProtossBuildOrder extends ABuildOrderManager {
     
     @Override
     protected String getFilename() {

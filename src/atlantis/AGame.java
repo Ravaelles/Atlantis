@@ -1,7 +1,7 @@
 package atlantis;
 
 import static atlantis.Atlantis.getBwapi;
-import atlantis.production.orders.ABuildOrdersManager;
+import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
@@ -29,7 +29,7 @@ public class AGame {
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static ABuildOrdersManager getBuildOrders() {
+    public static ABuildOrderManager getBuildOrders() {
         return AtlantisConfig.getBuildOrders();
     }
 

@@ -42,7 +42,9 @@ public class ARepairManager {
                     return true;
                 }
                 else {
-                    repairer.setTooltip("Protect");
+                    repairer.setTooltip("Repaired!");
+                    removeUnitRepairer(repairer);
+                    return true;
                 }
             }
         }
@@ -52,16 +54,16 @@ public class ARepairManager {
             return true;
         }
         
-        // === Check if should stop being repairer =================
-        
-        if (!unitToRepair.isWounded() && countRepairersForUnit(unitToRepair) > 1) {
-            removeUnitRepairer(repairer);
-            return true;
-        }
-        
-        // =========================================================
-        
-        return handleRepairerWhenIdle(repairer);
+//        // === Check if should stop being repairer =================
+//        
+//        if (!unitToRepair.isWounded() && countRepairersForUnit(unitToRepair) > 1) {
+//            removeUnitRepairer(repairer);
+//            return true;
+//        }
+//        
+//        // =========================================================
+//        
+//        return handleRepairerWhenIdle(repairer);
     }
     
     public static boolean updateBunkerRepairer(AUnit repairer) {

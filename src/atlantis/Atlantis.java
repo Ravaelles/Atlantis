@@ -8,7 +8,7 @@ import atlantis.constructing.ProtossConstructionManager;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
-import atlantis.production.orders.ABuildOrdersManager;
+import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.ProcessHelper;
@@ -123,7 +123,7 @@ public class Atlantis implements BWEventListener {
         // Set production strategy (build orders) to use. It can be always changed dynamically.
         
         try {
-            AtlantisConfig.useBuildOrders(ABuildOrdersManager.loadBuildOrders());
+            AtlantisConfig.useBuildOrders(ABuildOrderManager.loadBuildOrders());
         }
         catch (Exception e) {
             System.err.println("Exception when loading build orders file");

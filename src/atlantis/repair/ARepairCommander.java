@@ -44,8 +44,8 @@ public class ARepairCommander {
         for (AUnit woundedUnit : Select.our().repairable(true).listUnits()) {
 
             // Some units shouldn't be repaired
-            if (AScoutManager.isScout(woundedUnit) || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
-                    || ARepairManager.isConstantBunkerRepairer(woundedUnit)) {
+            if (AScoutManager.isScout(woundedUnit) || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)) {
+//                    || ARepairManager.isConstantBunkerRepairer(woundedUnit)) {
                 continue;
             }
 
@@ -80,20 +80,21 @@ public class ARepairCommander {
 
         // =========================================================
         Select<AUnit> bunkers = Select.ourOfType(AUnitType.Terran_Bunker);
-        int bunkersCounter = bunkers.count();
+//        int bunkersCounter = bunkers.count();
 
         // Assign two repairers to a bunker if it's not surrounded by many of our combat units
-        if (bunkersCounter == 1) {
-            for (AUnit bunker : bunkers.list()) {
-                int numberOfCombatUnitsNearby = Select.ourCombatUnits().inRadius(6, bunker).count();
-                if (numberOfCombatUnitsNearby <= 7) {
-                    int numberOfRepairersAssigned = ARepairManager.countConstantRepairersForBunker(bunker);
-                    assignConstantBunkerRepairers(
-                            bunker, defineOptimalConstantBunkerRepairers() - numberOfRepairersAssigned
-                    );
-                }
+//        if (bunkersCounter == 1) {
+        for (AUnit bunker : bunkers.list()) {
+            int numberOfCombatUnitsNearby = Select.ourCombatUnits().inRadius(6, bunker).count();
+            if (numberOfCombatUnitsNearby <= 7) {
+                int numberOfRepairersAssigned = ARepairManager.countConstantRepairersForBunker(bunker);
+                System.out.println(defineOptimalConstantBunkerRepairers());
+                assignConstantBunkerRepairers(
+                        bunker, defineOptimalConstantBunkerRepairers() - numberOfRepairersAssigned
+                );
             }
         }
+//        }
     }
 
     // =========================================================
@@ -126,15 +127,17 @@ public class ARepairCommander {
 
                 // === We know enemy strategy ========================================
                 if (AEnemyStrategy.isEnemyStrategyKnown()) {
-                    int rushBase = 1 
+                    int repairersWhenRush = 1 
                             + (AGame.getTimeSeconds() > 180 ? 1 : 0)
                             + (AGame.getTimeSeconds() > 200 ? 1 : 0);
                     
                     if (AEnemyStrategy.getEnemyStrategy().isGoingCheese()) {
-                        return rushBase + 2;
+                        return repairersWhenRush 
+                                + 2
+                                + (AGame.getTimeSeconds() > 210 ? 1 : 0);
                     }
                     if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {
-                        return rushBase;
+                        return repairersWhenRush;
                     }
                 } 
                 

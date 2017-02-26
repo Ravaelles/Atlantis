@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * Orders", because you can produce both units and buildings and one couldn't say you build marines, rather
  * produce.
  */
-public abstract class ABuildOrdersManager {
+public abstract class ABuildOrderManager {
 
     public static final int MODE_ALL_ORDERS = 1;
     public static final int MODE_ONLY_UNITS = 2;
@@ -59,11 +59,13 @@ public abstract class ABuildOrdersManager {
 
     // === Constructor =========================================
     
-    public ABuildOrdersManager() {
+    public ABuildOrderManager() {
         readBuildOrdersFile();
     }
 
     // =========================================================
+    
+    
     
     /**
      * Returns name of file with build orders.
@@ -135,13 +137,13 @@ public abstract class ABuildOrdersManager {
     /**
      * Returns default production strategy according to the race played.
      */
-    public static ABuildOrdersManager loadBuildOrders() {
+    public static ABuildOrderManager loadBuildOrders() {
         if (AGame.playsAsTerran()) {
-            return new TerranBuildOrders();
+            return new TerranBuildOrder();
         } else if (AGame.playsAsProtoss()) {
-            return new ProtossBuildOrders();
+            return new ProtossBuildOrder();
         } else if (AGame.playsAsZerg()) {
-            return new ZergBuildOrders();
+            return new ZergBuildOrder();
         }
 
         System.err.println("getAccordingToRace: Unknown race");
@@ -375,7 +377,7 @@ public abstract class ABuildOrdersManager {
     /**
      * Returns object that is responsible for the production queue.
      */
-    public static ABuildOrdersManager getBuildOrders() {
+    public static ABuildOrderManager getBuildOrders() {
         return AtlantisConfig.getBuildOrders();
     }
 

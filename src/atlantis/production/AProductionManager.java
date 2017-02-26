@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.AtlantisConfig;
 import atlantis.AGame;
 import atlantis.constructing.AConstructionManager;
-import atlantis.production.orders.ABuildOrdersManager;
+import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -29,9 +29,9 @@ public class AProductionManager {
         // =========================================================
         
         // Get build orders (aka production orders) from the manager
-        ABuildOrdersManager buildOrdersManager = AtlantisConfig.getBuildOrders();
+        ABuildOrderManager buildOrdersManager = AtlantisConfig.getBuildOrders();
 
-        ArrayList<ProductionOrder> produceNow = buildOrdersManager.getThingsToProduceRightNow(ABuildOrdersManager.MODE_ALL_ORDERS
+        ArrayList<ProductionOrder> produceNow = buildOrdersManager.getThingsToProduceRightNow(ABuildOrderManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
 
@@ -68,7 +68,7 @@ public class AProductionManager {
         
         // === Fix - refresh entire queue ==============================
         
-        ABuildOrdersManager.getBuildOrders().getProductionQueueNext(20);
+        ABuildOrderManager.getBuildOrders().getProductionQueueNext(20);
     }
 
     // =========================================================
@@ -85,13 +85,13 @@ public class AProductionManager {
         // =========================================================
         // Worker
         if (unitType.equals(AtlantisConfig.WORKER)) {
-            ABuildOrdersManager.getBuildOrders().produceWorker();
+            ABuildOrderManager.getBuildOrders().produceWorker();
         } 
 
         // =========================================================
         // Non-worker so combat units and special units like Scarabs etc.
         else { 
-            ABuildOrdersManager.getBuildOrders().produceUnit(unitType);
+            ABuildOrderManager.getBuildOrders().produceUnit(unitType);
         } 
     }
 

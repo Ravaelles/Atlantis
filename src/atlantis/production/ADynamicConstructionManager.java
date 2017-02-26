@@ -4,7 +4,7 @@ import atlantis.AtlantisConfig;
 import atlantis.AGame;
 import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionManager;
-import atlantis.production.orders.ABuildOrdersManager;
+import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -100,7 +100,7 @@ public class ADynamicConstructionManager {
     // =========================================================
     
     private static boolean canAfford(int minerals, int gas) {
-        return AGame.canAfford(minerals + ABuildOrdersManager.getMineralsNeeded(), gas + ABuildOrdersManager.getGasNeeded()
+        return AGame.canAfford(minerals + ABuildOrderManager.getMineralsNeeded(), gas + ABuildOrderManager.getGasNeeded()
         );
     }
     
