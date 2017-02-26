@@ -322,7 +322,6 @@ public class AMap {
         Chokepoint bestChoke = null;
         
         for (Chokepoint chokePoint : getChokePoints()) {
-            System.out.println(chokePoint.getWidth());
             double dist = position.distanceTo(chokePoint.getCenter()) - chokePoint.getWidth() / 32 / 2;
             if (dist < bestDistance) {
                 bestDistance = dist;

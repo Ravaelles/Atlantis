@@ -19,7 +19,7 @@ public class AStrategyResponse {
         
         // === Rush ========================================
         
-        if (true || enemyStrategy.isGoingRush()) {
+        if (enemyStrategy.isGoingRush() && !AGame.isEnemyProtoss()) {
             int defensiveBuildings = countBuildingsFinishedAndPlanned(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
             
             for (int i = defensiveBuildings; i < 2; i++) {
@@ -40,11 +40,11 @@ public class AStrategyResponse {
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
         if (previousBuilding != null) {
 //            AGame.sendMessage("New bunker near " + previousBuilding);
-            System.out.println("New bunker near " + previousBuilding);
+//            System.out.println("New bunker near " + previousBuilding);
             nearTo = previousBuilding.getPosition();
         }
         else {
-            System.out.println("New bunker at default");
+//            System.out.println("New bunker at default");
             nearTo = null;
         }
         

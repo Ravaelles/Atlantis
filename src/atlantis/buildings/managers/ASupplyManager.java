@@ -52,8 +52,6 @@ public class ASupplyManager {
     // =========================================================
     
     private static void requestAdditionalSupply() {
-        AGame.sendMessage("SUPPLY requested at " + AGame.getSupplyTotal());
-        System.err.println("SUPPLY requested at " + AGame.getSupplyTotal());
 
         // Zerg handles supply a bit differently
         if (AGame.playsAsZerg()) {

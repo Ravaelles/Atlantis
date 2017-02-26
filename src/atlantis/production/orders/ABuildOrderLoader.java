@@ -29,6 +29,8 @@ public class ABuildOrderLoader {
         
         ABuildOrderLoader loader = new ABuildOrderLoader();
         loader.readBuildOrdersFile(filePath);
+        
+        System.out.println("LOADING " + filePath);
     }
     
     // =========================================================
