@@ -21,7 +21,7 @@ public class AStrategyResponse {
         // === Rush ========================================
         
         if (enemyStrategy.isGoingRush() && !AGame.isEnemyProtoss()) {
-            int defensiveBuildings = AConstructionManager.countOurBuildingsFinishedAndPlanned(
+            int defensiveBuildings = AConstructionManager.countExistingAndPlannedConstructions(
                     AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND
             );
             for (int i = defensiveBuildings; i < 2; i++) {
@@ -36,7 +36,7 @@ public class AStrategyResponse {
         }
         
         if (enemyStrategy.isGoingAirUnitsQuickly()) {
-            if (AGame.getTimeFrames() % 28) {
+            if (AGame.getTimeFrames() % 28 == 0) {
                 ARequests.getInstance().requestAntiAirQuick(null);
             }
         }

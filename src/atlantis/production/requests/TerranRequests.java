@@ -17,8 +17,8 @@ public class TerranRequests extends ARequests {
 
     @Override
     public void requestDetectorQuick(APosition where) {
-        int turrets = AConstructionManager.countOurBuildingsFinishedAndPlanned(AUnitType.Terran_Missile_Turret);
-        int comsats = AConstructionManager.countOurBuildingsFinishedAndPlanned(AUnitType.Terran_Comsat_Station);
+        int turrets = AConstructionManager.countExistingAndPlannedConstructions(AUnitType.Terran_Missile_Turret);
+        int comsats = AConstructionManager.countExistingAndPlannedConstructions(AUnitType.Terran_Comsat_Station);
     }
 
 }

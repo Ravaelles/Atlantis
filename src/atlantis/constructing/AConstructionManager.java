@@ -298,10 +298,34 @@ public class AConstructionManager {
 
         return total;
     }
+    
+    public static int countNotStartedConstructionsOfTypeInRadius(AUnitType type, double radius, APosition position) {
+        int total = 0;
+        for (ConstructionOrder constructionOrder : constructionOrders) {
+            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                    && constructionOrder.getBuildingType().equals(type)
+                    && position.distanceTo(constructionOrder.getPositionToBuildCenter()) <= radius) {
+                total++;
+            }
+        }
+
+        // =========================================================
+        // Special case for Overlord
+        if (type.equals(AUnitType.Zerg_Overlord)) {
+            total += Select.ourNotFinished().ofType(type).count();
+        }
+
+        return total;
+    }
 
     public static int countNotFinishedConstructionsOfType(AUnitType type) {
         return Select.ourNotFinished().ofType(type).count()
                 + countNotStartedConstructionsOfType(type);
+    }
+
+    public static int countNotFinishedConstructionsOfTypeInRadius(AUnitType type, double radius, APosition position) {
+        return Select.ourNotFinished().ofType(type).inRadius(radius, position).count()
+                + countNotStartedConstructionsOfTypeInRadius(type, radius, position);
     }
 
     /**
@@ -326,8 +350,13 @@ public class AConstructionManager {
         return total;
     }
     
-    public static int countOurBuildingsFinishedAndPlanned(AUnitType type) {
+    public static int countExistingAndPlannedConstructions(AUnitType type) {
         return Select.ourOfType(type).count() + AConstructionManager.countNotFinishedConstructionsOfType(type);
+    }
+    
+    public static int countExistingAndPlannedConstructionsInRadius(AUnitType type, double radius, APosition position) {
+        return Select.ourOfType(type).inRadius(radius, position).count() 
+                + AConstructionManager.countNotFinishedConstructionsOfTypeInRadius(type, radius, position);
     }
 
     /**

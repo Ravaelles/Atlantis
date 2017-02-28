@@ -34,7 +34,12 @@ public abstract class ARequests {
 
     // =========================================================
     
-    protected static void requestDefensiveBuildingAntiLand(AUnitType building) {
+//    public void requestDefensiveBuildingAntiAir(APosition where) {
+//        requestDefensiveBuildingAntiLand(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
+//    }
+    
+    public void requestDefensiveBuildingAntiLand(APosition where) {
+        AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
         APosition nearTo = null;
         
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
@@ -50,27 +55,18 @@ public abstract class ARequests {
         
         AConstructionManager.requestConstructionOf(building, nearTo);
     }
-
-
-//    public void requestDefensiveBuildingAntiAir(APosition where) {
-//        requestDefensiveBuildingAntiLand(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
-//    }
-    
-    public void requestDefensiveBuildingAntiLand(APosition where) {
-        requestDefensiveBuildingAntiLand(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
-    }
     
     /**
      * Quick air units are: Mutalisk, Wraith, Protoss Scout.
      */
 //    public abstract void requestAntiAirQuick(APosition where);
     public void requestAntiAirQuick(APosition where) {
-        AUnitType antiAirBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
-        int antiAirBuildings = AConstructionManager.countOurBuildingsFinishedAndPlanned(antiAirBuilding);
+        AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
+        int antiAirBuildings = AConstructionManager.countExistingAndPlannedConstructions(building);
 
         // === Ensure parent exists ========================================
         
-        int requiredParents = AConstructionManager.countOurBuildingsFinishedAndPlanned(antiAirBuilding.getWhatIsRequired());
+        int requiredParents = AConstructionManager.countExistingAndPlannedConstructions(building.getWhatIsRequired());
         if (requiredParents == 0) {
             AConstructionManager.requestConstructionOf(AUnitType.Buildings);
             return;
@@ -79,7 +75,13 @@ public abstract class ARequests {
         // === Protect every base ==========================================
         
         for (AUnit base : Select.ourBases().listUnits()) {
-            Select.ourBuildingsIncludingUnfinished()
+            int numberOfAntiAirBuildingsNearBase = AConstructionManager.countExistingAndPlannedConstructionsInRadius(
+                    building, 8, base.getPosition()
+            );
+            
+            for (int i = 0; i < 2 - numberOfAntiAirBuildingsNearBase; i++) {
+                
+            }
         }
     }
     
