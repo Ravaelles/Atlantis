@@ -69,14 +69,18 @@ public class ARepairManager {
     public static boolean updateBunkerRepairer(AUnit repairer) {
         AUnit bunker = ARepairManager.getConstantBunkerToRepairFor(repairer);
         if (bunker != null && bunker.isAlive()) {
+            
+            // Bunker WOUNDED
             if (bunker.getHPPercent() < 100) {
                 repairer.setTooltip("Repair " + bunker.getShortName());
                 repairer.repair(bunker);
                 return true;
             }
+            
+            // Bunker fully HEALTHY
             else {
                 double distanceToUnit = bunker.distanceTo(repairer);
-                if (distanceToUnit > 1) {
+                if (distanceToUnit > 1 && !repairer.isMoving()) {
                     repairer.setTooltip("Go to " + bunker.getShortName());
                     repairer.move(bunker.getPosition(), UnitActions.MOVE_TO_REPAIR);
                     return true;
@@ -96,8 +100,8 @@ public class ARepairManager {
     }
     
     private static boolean handleRepairerWhenIdle(AUnit repairer) {
-        if (!repairer.isRepairing() || repairer.isIdle()) {
-            int maxAllowedDistToRoam = Missions.getGlobalMission().isMissionDefend() ? 3 : 8;
+        if (repairer.isMoving() || !repairer.isRepairing() || repairer.isIdle()) {
+            int maxAllowedDistToRoam = Missions.getGlobalMission().isMissionDefend() ? 4 : 12;
             
             // Try finding any repairable and wounded unit nearby
             AUnit nearestWoundedUnit = Select.our().repairable(true)

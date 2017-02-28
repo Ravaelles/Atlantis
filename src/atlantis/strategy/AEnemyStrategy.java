@@ -27,7 +27,8 @@ public class AEnemyStrategy {
     private boolean goingExpansion = false;
     private boolean goingTech = false;
     private boolean goingHiddenUnits = false;
-    private boolean goingAirUnits = false;
+    private boolean goingAirUnitsQuickly = false;
+    private boolean goingAirUnitsLate = false;
     
     // =========================================================
 
@@ -119,12 +120,33 @@ public class AEnemyStrategy {
         return this;
     }
 
-    public boolean isGoingAirUnits() {
-        return goingAirUnits;
+    /**
+     * Quick air units are: Mutalisk, Wraith, Protoss Scout.
+     */
+    public boolean isGoingAirUnitsQuickly() {
+        return goingAirUnitsQuickly;
     }
 
-    public AEnemyStrategy setGoingAirUnits() {
-        this.goingAirUnits = true;
+    /**
+     * Quick air units are: Mutalisk, Wraith, Protoss Scout.
+     */
+    public AEnemyStrategy setGoingAirUnitsQuickly() {
+        this.goingAirUnitsQuickly = true;
+        return this;
+    }
+
+    /**
+     * Late units are: Carrier, Guardian, Battlecruiser.
+     */
+    public boolean isGoingAirUnitsLate() {
+        return goingAirUnitsLate;
+    }
+
+    /**
+     * Late units are: Carrier, Guardian, Battlecruiser.
+     */
+    public AEnemyStrategy setGoingAirUnitsLate() {
+        this.goingAirUnitsLate = true;
         return this;
     }
 

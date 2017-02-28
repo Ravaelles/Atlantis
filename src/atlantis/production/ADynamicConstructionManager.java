@@ -4,7 +4,9 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.production.orders.ABuildOrderManager;
+import atlantis.production.requests.TerranRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -26,61 +28,17 @@ public class ADynamicConstructionManager {
         // === Terran only ========================================
         
         if (AGame.playsAsTerran()) {
-            handleBuildFactoriesIfNeeded();
-            handleBuildAddonsIfNeeded();
+            TerranDynamicConstructionManager.update();
         }
     }
     
     // =========================================================
 
     /**
-     * If all factories are busy (training units) request new ones.
-     */
-    private static void handleBuildFactoriesIfNeeded() {
-        if (canAfford(250, 100)) {
-            Select<?> factories = Select.ourOfType(AUnitType.Terran_Factory);
-            
-            int unfinishedFactories = 
-                    AConstructionManager.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);
-            int numberOfFactories = factories.size() + unfinishedFactories;
-            
-            // Proceed only if all factories are busy
-            if (numberOfFactories >= 1 && factories.areAllBusy()) {
-                
-                if (unfinishedFactories == 0) {
-                    AConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
-                }
-                else if (unfinishedFactories >= 1 && AGame.canAfford(
-                        100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
-                )) {
-                    AConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
-                }
-            }
-        }
-    }
-
-    /**
-     * If there are buildings without addons, build them.
-     */
-    private static void handleBuildAddonsIfNeeded() {
-        if (canAfford(100, 50)) {
-            for (AUnit building : Select.ourBuildings().list()) {
-                if (building.getType().isFactory() && !building.isBusy() && !building.hasAddon()) {
-                    AUnitType addonType = building.getType().getRelatedAddon();
-                    if (addonType != null) {
-                        building.buildAddon(addonType);
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Build Refineries/ Assimilators/ Extractors when it makes sense.
      */
     private static void buildGasBuildingsIfNeeded() {
-        if (AGame.getTimeSeconds() % 3 != 0) {
+        if (AGame.getTimeSeconds() % 10 != 0) {
             return;
         }
         
@@ -95,10 +53,10 @@ public class ADynamicConstructionManager {
             }
         }
     }
-
+    
     // =========================================================
     
-    private static boolean canAfford(int minerals, int gas) {
+    protected static boolean canAfford(int minerals, int gas) {
         return AGame.canAfford(minerals + ABuildOrderManager.getMineralsReserved(), gas + ABuildOrderManager.getGasReserved()
         );
     }
