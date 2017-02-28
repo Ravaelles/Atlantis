@@ -1,5 +1,7 @@
 package atlantis.production.requests;
 
+import atlantis.position.APosition;
+
 /**
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>

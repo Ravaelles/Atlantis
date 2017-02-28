@@ -2,6 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.production.ADynamicConstructionManager;
 import atlantis.AGame;
+import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -20,9 +21,4 @@ public class TerranRequests extends ARequests {
         int comsats = AConstructionManager.countOurBuildingsFinishedAndPlanned(AUnitType.Terran_Comsat_Station);
     }
 
-    @Override
-    public void requestAntiAirQuick(APosition where) {
-        
-    }
-    
 }

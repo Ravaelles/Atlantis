@@ -34,7 +34,7 @@ public abstract class ARequests {
 
     // =========================================================
     
-    protected static void requestDefensiveBuilding(AUnitType building) {
+    protected static void requestDefensiveBuildingAntiLand(AUnitType building) {
         APosition nearTo = null;
         
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
@@ -51,12 +51,36 @@ public abstract class ARequests {
         AConstructionManager.requestConstructionOf(building, nearTo);
     }
 
-    public void requestDefensiveBuildingAntiLand(APosition where) {
-        requestDefensiveBuilding(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
-    }
 
-    public void requestDefensiveBuildingAntiAir(APosition where) {
-        requestDefensiveBuilding(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
+//    public void requestDefensiveBuildingAntiAir(APosition where) {
+//        requestDefensiveBuildingAntiLand(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
+//    }
+    
+    public void requestDefensiveBuildingAntiLand(APosition where) {
+        requestDefensiveBuildingAntiLand(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
+    }
+    
+    /**
+     * Quick air units are: Mutalisk, Wraith, Protoss Scout.
+     */
+//    public abstract void requestAntiAirQuick(APosition where);
+    public void requestAntiAirQuick(APosition where) {
+        AUnitType antiAirBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
+        int antiAirBuildings = AConstructionManager.countOurBuildingsFinishedAndPlanned(antiAirBuilding);
+
+        // === Ensure parent exists ========================================
+        
+        int requiredParents = AConstructionManager.countOurBuildingsFinishedAndPlanned(antiAirBuilding.getWhatIsRequired());
+        if (requiredParents == 0) {
+            AConstructionManager.requestConstructionOf(AUnitType.Buildings);
+            return;
+        }
+
+        // === Protect every base ==========================================
+        
+        for (AUnit base : Select.ourBases().listUnits()) {
+            Select.ourBuildingsIncludingUnfinished()
+        }
     }
     
     // === To be overriden =====================================
@@ -65,10 +89,5 @@ public abstract class ARequests {
      * Request quickest possible detector to be built (e.g. Comsat Station for Terran, not Science Vessel).
      */
     public abstract void requestDetectorQuick(APosition where);
-
-    /**
-     * Quick air units are: Mutalisk, Wraith, Protoss Scout.
-     */
-    public abstract void requestAntiAirQuick(APosition where);
     
 }

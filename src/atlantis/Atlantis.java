@@ -10,6 +10,7 @@ import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 import bwta.BWTA;

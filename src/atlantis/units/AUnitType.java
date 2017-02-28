@@ -810,4 +810,27 @@ public class AUnitType implements Comparable<AUnitType> {
         return name.startsWith("Powerup") || name.startsWith("Special");
     }
 
+    /**
+     * For buildings it returns what type of building is required to build it (e.g. Engineering Bay for Turret).
+     * <br /><br />
+     * For units it returns what type of building produces them (e.g. Barracks for Marines).
+     */
+    public AUnitType getWhatIsRequired() {
+        if (isBuilding()) {
+            for (AUnitType requiredUnit : getRequiredUnits().keySet()) {
+                if (requiredUnit.isBuilding()) {
+                    return requiredUnit;
+                }
+            }
+            System.err.println("getWhatTypeIsRequired reached end for: " + this);
+            for (AUnitType requiredUnit : getRequiredUnits().keySet()) {
+                System.err.println(requiredUnit + " x" + getRequiredUnits().get(requiredUnit));
+            }
+            return null;
+        }
+        else {
+            return getWhatBuildsIt();
+        }
+    }
+
 }

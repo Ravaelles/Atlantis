@@ -36,7 +36,9 @@ public class AStrategyResponse {
         }
         
         if (enemyStrategy.isGoingAirUnitsQuickly()) {
-            ARequests.getInstance().requestAntiAirQuick(null);
+            if (AGame.getTimeFrames() % 28) {
+                ARequests.getInstance().requestAntiAirQuick(null);
+            }
         }
     }
     
