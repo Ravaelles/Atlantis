@@ -21,28 +21,23 @@ public class AStrategyResponse {
         // === Rush ========================================
         
         if (enemyStrategy.isGoingRush() && !AGame.isEnemyProtoss()) {
-            int defensiveBuildings = countBuildingsFinishedAndPlanned(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
-            
+            int defensiveBuildings = AConstructionManager.countOurBuildingsFinishedAndPlanned(
+                    AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND
+            );
             for (int i = defensiveBuildings; i < 2; i++) {
-                requestDefensiveBuilding(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
+                ARequests.getInstance().requestDefensiveBuildingAntiLand(null);
             }
         }
         
         // === Tech ========================================
         
         if (enemyStrategy.isGoingHiddenUnits()) {
-            ARequests.getInstance().requestDetectorQuick();
+            ARequests.getInstance().requestDetectorQuick(null);
         }
         
         if (enemyStrategy.isGoingAirUnitsQuickly()) {
-            ARequests.getInstance().requestAntiAirQuick();
+            ARequests.getInstance().requestAntiAirQuick(null);
         }
-    }
-    
-    // =========================================================
-    
-    private static int countBuildingsFinishedAndPlanned(AUnitType type) {
-        return Select.ourOfType(type).count() + AConstructionManager.countNotFinishedConstructionsOfType(type);
     }
     
 }

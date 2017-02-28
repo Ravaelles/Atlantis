@@ -67,7 +67,7 @@ public class AEnemyZergStrategy extends AEnemyStrategy {
                 .setUrl("http://wiki.teamliquid.net/starcraft/1_Hatch_Lurker");
         
         ZERG_13_Pool_Muta.setProtoss().setName("13 Pool Muta")
-                .setGoingTech().setGoingAirUnits()
+                .setGoingTech().setGoingAirUnitsQuickly()
                 .setUrl("http://wiki.teamliquid.net/starcraft/13_Pool_Muta_(vs._Terran)");
         
     }

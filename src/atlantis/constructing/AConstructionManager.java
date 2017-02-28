@@ -325,6 +325,10 @@ public class AConstructionManager {
 
         return total;
     }
+    
+    public static int countOurBuildingsFinishedAndPlanned(AUnitType type) {
+        return Select.ourOfType(type).count() + AConstructionManager.countNotFinishedConstructionsOfType(type);
+    }
 
     /**
      * If we requested to build building A and even assigned worker who's travelling to the building site,

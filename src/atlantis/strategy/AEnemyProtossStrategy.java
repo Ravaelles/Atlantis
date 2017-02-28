@@ -52,7 +52,7 @@ public class AEnemyProtossStrategy extends AEnemyStrategy {
                 .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_DT");
         
         PROTOSS_Carrier_Push.setProtoss().setName("Carrier Push")
-                .setGoingTech().setGoingAirUnits()
+                .setGoingTech().setGoingAirUnitsLate()
                 .setUrl("---");
     }
     
@@ -70,22 +70,29 @@ public class AEnemyProtossStrategy extends AEnemyStrategy {
             return AEnemyProtossStrategy.PROTOSS_2_Gate_DT;
         }
 
-        // === Three Gateway ========================================
+        // === Three Gateway =======================================
         
         if (gateways >= 3 && seconds < 300) {
             return AEnemyProtossStrategy.PROTOSS_3_Gate;
         }
 
-        // === Two Gateway ========================================
+        // === Two Gateway =========================================
         
         if (gateways == 2 && seconds < 290) {
             return AEnemyProtossStrategy.PROTOSS_2_Gate;
         }
 
-        // === 12 Nexus ========================================
+        // === 12 Nexus ============================================
         
         if (nexus == 2 && seconds < 290) {
             return AEnemyProtossStrategy.PROTOSS_12_Nexus;
+        }
+        
+        // === Carrier Push ========================================
+        
+        int cannons = Select.enemy().countUnitsOfType(AUnitType.Protoss_Photon_Cannon);
+        if (cannons >= 1 && nexus >= 2) {
+            return PROTOSS_Carrier_Push;
         }
         
         // =========================================================

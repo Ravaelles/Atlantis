@@ -1,6 +1,7 @@
 package atlantis.production.requests;
 
 import atlantis.AGame;
+import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import atlantis.position.APosition;
 import atlantis.production.ADynamicConstructionManager;
@@ -12,7 +13,7 @@ import atlantis.units.Select;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class ARequests {
+public abstract class ARequests {
     
     private static ARequests instance = null;
     
@@ -49,19 +50,25 @@ public class ARequests {
         
         AConstructionManager.requestConstructionOf(building, nearTo);
     }
+
+    public void requestDefensiveBuildingAntiLand(APosition where) {
+        requestDefensiveBuilding(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
+    }
+
+    public void requestDefensiveBuildingAntiAir(APosition where) {
+        requestDefensiveBuilding(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
+    }
     
     // === To be overriden =====================================
-    // These are not abstract not to make working with one race only easier.
     
     /**
      * Request quickest possible detector to be built (e.g. Comsat Station for Terran, not Science Vessel).
      */
-    public void requestDetectorQuick() {
-        // To be overriden in race-specific class
-    }
+    public abstract void requestDetectorQuick(APosition where);
 
-    public void requestAntiAirQuick() {
-        // To be overriden in race-specific class
-    }
+    /**
+     * Quick air units are: Mutalisk, Wraith, Protoss Scout.
+     */
+    public abstract void requestAntiAirQuick(APosition where);
     
 }
