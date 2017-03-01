@@ -43,6 +43,12 @@ public class AtlantisConfig {
     public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Zerg";
     
+    /**
+     * Will modify bwapi.ini to use this map.
+     */
+//    public static final String MAP = "maps/sscai/(?)*.sc?";
+    public static final String MAP = "Maps/BroodWar/umt/vultureDrive.scx";
+    
     // =========================================================
     // === These are default values that can be overriden in ===
     // === specific build order file. See `build_orders` dir ===

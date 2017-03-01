@@ -29,7 +29,7 @@ public class TerranVultureManager {
         
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
-        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.isStuck()) {
+        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || !unit.isInterruptible())) {
             unit.setUnitAction(null);
         }
         

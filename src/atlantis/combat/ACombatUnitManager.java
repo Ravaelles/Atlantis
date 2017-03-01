@@ -102,8 +102,9 @@ public class ACombatUnitManager extends AbstractMicroManager {
      *
      */
     private static boolean shouldNotDisturbUnit(AUnit unit) {
-        return (unit.isAttackFrame() || (!unit.type().isTank() && unit.isStartingAttack())) &&
-                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
+        return (unit.isAttackFrame() 
+                || ((!unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack())) 
+                && unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
 //        return false;
 //        return (unit.isAttackFrame() || unit.isStartingAttack()) &&
 //                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
