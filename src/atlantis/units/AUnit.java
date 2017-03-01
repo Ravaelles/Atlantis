@@ -362,6 +362,14 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         return getMaxHitPoints() + getMaxShields();
     }
 
+    public int getMinesCount() {
+        return u().getSpiderMineCount();
+    }
+
+    public int getSpiderMinesCount() {
+        return u().getSpiderMineCount();
+    }
+
     public String getShortName() {
         return getType().getShortName();
     }

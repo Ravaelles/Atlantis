@@ -15,15 +15,8 @@
 // === Raw build order used - taken from Liquipedia or so =============
 
 /**
+This build is modified Nada 2 Fact, only with focus on Vultures
 http://wiki.teamliquid.net/starcraft/Nada_2_Fac
-8/9 Supply Depot
-10/11 Barracks
-11/12 Refinery
-16 Factory
-16 Supply Depot[1]
-18 Factory
-@100% Factories - Machine Shop[2]
-22/23 Supply Depot
 */
 
 // === Build order for Atlantis =======================================
@@ -36,14 +29,15 @@ http://wiki.teamliquid.net/starcraft/Nada_2_Fac
 18 - Vulture
 18 - Factory
 20 - Vulture
-21 - Machine Shop
 22 - Vulture
+23 - Machine Shop
 23 - Supply Depot
-24 - Siege Tank
-26 - Ion Thrusters
-26 - Tank
-27 - Siege Mode
-28 - Tank
+29 - Mines
+24 - Vulture
+26 - Vulture
+27 - Ion Thrusters
+28 - Vulture
+29 - Siege Mode
 30 - Tank
-33 - Tank
-
+32 - Tank
+34 - Tank

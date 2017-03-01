@@ -230,6 +230,13 @@ public class AMap {
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
+    public static BaseLocation getNaturalBaseLocation() {
+        return getNaturalBaseLocation(Select.mainBase().getPosition());
+    }
+
+    /**
+     * Returns nearest base location (by the actual ground distance) to the given base location.
+     */
     public static BaseLocation getNaturalBaseLocation(Object mainBasePosition) {
         Position nearestTo = mainBasePosition instanceof Position 
                 ? (Position) mainBasePosition 

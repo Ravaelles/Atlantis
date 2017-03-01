@@ -357,6 +357,9 @@ public class ABuildOrderLoader {
         else if ("marine range".equals(nameString)) {
             return "U_238_Shells";
         }
+        else if ("mines".equals(nameString) || "mine".equals(nameString)) {
+            return "Spider_Mines";
+        }
         
         // PROTOSS
         else if ("dragoon range".equals(nameString)) {

@@ -6,6 +6,7 @@ import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.combat.micro.AbstractMicroManager;
 import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.terran.TerranSiegeTankManager;
+import atlantis.combat.micro.terran.TerranVultureManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
@@ -39,7 +40,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // Handle some units in semi-special way
         
         if (handledAsSemiSpecialUnit(unit)) {
-            unit.setTooltip("Siege Tank");
             return true;
         }
 
@@ -144,9 +144,15 @@ public class ACombatUnitManager extends AbstractMicroManager {
      */
     private static boolean handledAsSemiSpecialUnit(AUnit unit) {
         if (unit.getType().isSiegeTank()) {
-            boolean dontDoAnythingElse = TerranSiegeTankManager.update(unit);
-            return dontDoAnythingElse;
-        } else {
+            return TerranSiegeTankManager.update(unit);
+        } 
+        
+        else if (unit.getType().isVulture()) {
+            return TerranVultureManager.update(unit);
+        } 
+        
+        // Not semi-special unit
+        else {
             return false;
         }
     }

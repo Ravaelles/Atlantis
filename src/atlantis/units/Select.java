@@ -974,7 +974,7 @@ public class Select<T> {
     public static AUnit mainBase() {
         if (_cached_mainBase == null || !_cached_mainBase.isAlive()) {
             List<AUnit> bases = ourBases().list();
-            _cached_mainBase = bases.isEmpty() ? null : bases.get(0);
+            _cached_mainBase = bases.isEmpty() ? Select.ourBuildings().first() : bases.get(0);
         }
         return _cached_mainBase;
     }

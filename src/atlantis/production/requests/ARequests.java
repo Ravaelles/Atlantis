@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.combat.squad.missions.MissionDefend;
 import atlantis.constructing.AConstructionManager;
+import atlantis.information.AMap;
 import atlantis.position.APosition;
 import atlantis.production.ADynamicConstructionManager;
 import atlantis.units.AUnit;
@@ -145,6 +146,10 @@ public abstract class ARequests {
             if (nearestBunker != null) {
                 where = nearestBunker.getPosition();
             }
+        }
+        
+        if (where == null) {
+            where = MissionDefend.getInstance().getFocusPoint().translateTowards(AMap.getNaturalBaseLocation(), 32);
         }
         
         int numberOfDetectors = AConstructionManager.countExistingAndPlannedConstructionsInRadius(

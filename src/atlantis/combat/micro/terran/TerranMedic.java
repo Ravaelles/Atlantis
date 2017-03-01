@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
+import bwapi.TechType;
 import bwapi.UnitCommandType;
 import java.util.HashMap;
 
@@ -43,7 +44,7 @@ public class TerranMedic {
     // =========================================================
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
         if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.getTarget())) {
-            medic.rightClick(unitToHeal);
+            medic.useTech(TechType.Healing, unitToHeal);
         }
     }
 

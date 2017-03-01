@@ -66,30 +66,35 @@ public interface AUnitOrders {
     }
 
     default boolean train(AUnitType unitToTrain) {
+        unit().setUnitAction(UnitActions.TRAIN);
         return u().train(unitToTrain.ut());
     }
 
     default boolean morph(AUnitType into) {
+        unit().setUnitAction(UnitActions.MORPH);
         return u().morph(into.ut());
     }
 
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition, UnitAction unitAction) {
-        boolean result = u().build(buildingType.ut(), buildTilePosition);
         unit().setUnitAction(UnitActions.BUILD);
+        boolean result = u().build(buildingType.ut(), buildTilePosition);
         unit().setTooltip("Construct " + buildingType.getShortName());
         unit().setLastUnitActionNow();
         return result;
     }
 
     default boolean buildAddon(AUnitType addon) {
+        unit().setUnitAction(UnitActions.BUILD);
         return u().buildAddon(addon.ut());
     }
 
     default boolean upgrade(UpgradeType upgrade) {
+        unit().setUnitAction(UnitActions.RESEARCH_OR_UPGRADE);
         return u().upgrade(upgrade);
     }
 
     default boolean research(TechType tech) {
+        unit().setUnitAction(UnitActions.RESEARCH_OR_UPGRADE);
         return u().research(tech);
     }
 
@@ -98,6 +103,8 @@ public interface AUnitOrders {
             System.err.println("Null move position for " + this);
             return false;
         }
+        
+        unit().setUnitAction(unitAction);
         
         // === Handle LOADED/SIEGED units ========================================
         
@@ -127,8 +134,6 @@ public interface AUnitOrders {
             unit().setUnitAction(unitAction);
             return true;
         }
-        
-        unit().setUnitAction(unitAction);
         
         return true;
 //        }
@@ -219,6 +224,7 @@ public interface AUnitOrders {
      * See also isCarryingGas, isCarryingMinerals, canReturnCargo
      */
     default boolean returnCargo() {
+        unit().setUnitAction(UnitActions.MOVE);
         return u().returnCargo();
     }
 
@@ -255,6 +261,7 @@ public interface AUnitOrders {
      * canBurrow
      */
     default boolean burrow() {
+        unit().setUnitAction(UnitActions.BURROW);
         return u().burrow();
     }
 
@@ -264,6 +271,7 @@ public interface AUnitOrders {
      * it has been passed to Broodwar. See also burrow, isBurrowed, canUnburrow
      */
     default boolean unburrow() {
+        unit().setUnitAction(UnitActions.UNBURROW);
         return u().unburrow();
     }
 
@@ -273,6 +281,7 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also decloak, isCloaked, canCloak
      */
     default boolean cloak() {
+        unit().setUnitAction(UnitActions.CLOAK);
         return u().cloak();
     }
 
@@ -282,6 +291,7 @@ public interface AUnitOrders {
      * it has been passed to Broodwar. See also cloak, isCloaked, canDecloak
      */
     default boolean decloak() {
+        unit().setUnitAction(UnitActions.LOAD);
         return u().decloak();
     }
 
@@ -320,6 +330,7 @@ public interface AUnitOrders {
      * chance for a command to fail after it has been passed to Broodwar. See also land, isLifted, canLift
      */
     default boolean lift() {
+        unit().setUnitAction(UnitActions.LIFT);
         return u().lift();
     }
 
@@ -330,6 +341,7 @@ public interface AUnitOrders {
      * fail after it has been passed to Broodwar. See also lift, isLifted, canLand
      */
     default boolean land(TilePosition target) {
+        unit().setUnitAction(UnitActions.LAND);
         return u().land(target);
     }
 
@@ -343,6 +355,7 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also unload, unloadAll, getLoadedUnits, isLoaded
      */
     default boolean load(AUnit target) {
+        unit().setUnitAction(UnitActions.LOAD);
         unit().setLastUnitActionNow();
         return u().load(target.u());
     }
@@ -355,6 +368,7 @@ public interface AUnitOrders {
      * Broodwar. See also load, unloadAll, getLoadedUnits, isLoaded, canUnload, canUnloadAtPosition
      */
     default boolean unload(AUnit target) {
+        unit().setUnitAction(UnitActions.UNLOAD);
         unit().setLastUnitActionNow();
         return u().unload(target.u());
     }
@@ -369,6 +383,7 @@ public interface AUnitOrders {
      * isLoaded, canUnloadAll, canUnloadAtPosition
      */
     default boolean unloadAll() {
+        unit().setUnitAction(UnitActions.UNLOAD);
         unit().setLastUnitActionNow();
         return u().unloadAll();
     }
@@ -383,36 +398,30 @@ public interface AUnitOrders {
      * isLoaded, canUnloadAll, canUnloadAtPosition
      */
     default boolean unloadAll(APosition target) {
+        unit().setUnitAction(UnitActions.UNLOAD);
         unit().setLastUnitActionNow();
         return u().unloadAll(target);
     }
 
     /**
-     * Works like the right click in the GUI. Parameters target The target position or target unit to right
-     * click. shiftQueueCommand (optional) If this value is true, then the order will be queued instead of
-     * immediately executed. If this value is omitted, then the order will be executed immediately by default.
-     * Returns true if the command was passed to Broodwar, and false if BWAPI determined that the command
-     * would fail. Note There is a small chance for a command to fail after it has been passed to Broodwar.
-     * See also canRightClick, canRightClickPosition, canRightClickUnit
+     * AVOID USAGE cause it's very tough to debug, don't really know what's it is doing!
      */
-//    default boolean rightClick(APosition target) {
-//        return u().rightClick(target);
+//    default boolean rightClick(AUnit target) {
+//        if (target != null) {
+//            if (!target.u().equals(u().getTarget())) {
+//                unit().setUnitAction(UnitActions.RIGHT_CLICK);
+//                boolean result = u().rightClick(target.u());
+//            }
+//            return true;
+//        } else {
+//            return false;
+//        }
 //    }
-    default boolean rightClick(AUnit target) {
-        if (target != null) {
-            if (!target.u().equals(u().getTarget())) {
-                unit().setUnitAction(UnitActions.RIGHT_CLICK);
-                boolean result = u().rightClick(target.u());
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
 
 //    default boolean rightClick(PositionOrUnit target) {
 //        return u().rightClick(target);
 //    }
+    
     /**
      * Orders a SCV to stop constructing a structure. This leaves the structure in an incomplete state until
      * it is either cancelled, razed, or completed by another SCV. Returns true if the command was passed to
@@ -420,6 +429,7 @@ public interface AUnitOrders {
      * command to fail after it has been passed to Broodwar. See also isConstructing, canHaltConstruction
      */
     default boolean haltConstruction() {
+        unit().setUnitAction(null);
         return u().haltConstruction();
     }
 
@@ -430,6 +440,7 @@ public interface AUnitOrders {
      * canCancelConstruction
      */
     default boolean cancelConstruction() {
+        unit().setUnitAction(null);
         return u().cancelConstruction();
     }
 
@@ -440,6 +451,7 @@ public interface AUnitOrders {
      * buildAddon
      */
     default boolean cancelAddon() {
+        unit().setUnitAction(null);
         return u().cancelAddon();
     }
 
@@ -452,10 +464,12 @@ public interface AUnitOrders {
      * canCancelTrain, canCancelTrainSlot
      */
     default boolean cancelTrain() {
+        unit().setUnitAction(null);
         return u().cancelTrain();
     }
 
     default boolean cancelTrain(int slot) {
+        unit().setUnitAction(null);
         return u().cancelTrain(slot);
     }
 
@@ -496,18 +510,22 @@ public interface AUnitOrders {
      * canUseTech, canUseTechWithoutTarget, canUseTechUnit, canUseTechPosition, TechTypes
      */
     default boolean useTech(TechType tech) {
+        unit().setUnitAction(UnitActions.USING_TECH);
         return u().useTech(tech);
     }
 
     default boolean useTech(TechType tech, APosition target) {
+        unit().setUnitAction(UnitActions.USING_TECH);
         return u().useTech(tech, target);
     }
 
     default boolean useTech(TechType tech, AUnit target) {
+        unit().setUnitAction(UnitActions.USING_TECH);
         return u().useTech(tech, target.u());
     }
 
     default boolean useTech(TechType tech, PositionOrUnit target) {
+        unit().setUnitAction(UnitActions.USING_TECH);
         return u().useTech(tech, target);
     }
 
