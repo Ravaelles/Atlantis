@@ -3,6 +3,7 @@ package atlantis.combat.micro;
 import atlantis.AGame;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
@@ -153,7 +154,7 @@ public class ARunManager {
 
         AUnit mainBase = Select.mainBase();
 
-        if (AGame.getTimeSeconds() <= 320 && mainBase != null && !unit.isWorker() && mainBase.distanceTo(unit) > 22) {
+        if (AGame.getTimeSeconds() <= 310 && mainBase != null && !unit.isWorker() && mainBase.distanceTo(unit) > 22) {
             return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
         } else {
             return unit.getRunManager().findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
@@ -182,60 +183,32 @@ public class ARunManager {
     private APosition findPositionToRun_preferAwayFromEnemy(AUnit unit, APosition runAwayFrom) {
         APosition runTo = null;
 
-        // === Get standard run to position - as far from enemy as possible
+        // === Run directly away from the enemy ========================================
+        
         if (closeEnemies != null && !unit.getPosition().isCloseToMapBounds()) {
-//        if ((closeEnemies != null && closeEnemies.size() <= 3) && !unit.getPosition().isCloseToMapBounds()) {
-//                && (!unit.isVulture() || Select.enemyRealUnits().inRadius(2.8, unit).count() <= 1)
-//                && (!unit.isWorker() || !unit.getPosition().isCloseToMapBounds())) {
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
+        
+        // === Get run to position - as far from enemy as possible =====================
 
-        // === Check if the place isn't too close ==================
-        // If it is, it probably means we're in the corner and that we should run even towards the enemy,
-        // with the hope of getting out.
         if (runTo == null) {
-            double expectedLength = unit.isVulture() ? 5 : 2;
-            if (unit.isWorker()) {
-                expectedLength = 3;
-            }
+            double expectedLength = unit.isVulture() ? 5 : (unit.isWorker() ? 3 : 2);
             runTo = findRunPositionAtAnyDirection(unit, expectedLength);
         }
-//        else {
-//            AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Yellow);
-//        }
-
-        // === Very rarely it can still be null ====================
-
-//        if (runTo == null) {
-//            runTo = findRunPositionAtAnyDirection(unit, 5);
-//        }
-//
-//        if (runTo == null) {
-//            runTo = findRunPositionAtAnyDirection(unit, 10);
-//        }
-        // =========================================================
-//        if (runTo != null) {
-//            AtlantisPainter.paintLine(unit.getPosition(), runTo, Color.Yellow);
+        
+        // =============================================================================
+        
         return runTo;
-//        } else {
-////            System.err.println("Couldn't find run position - pretty f'ed up ("
-////                    + (runTo != null ? APosition.createFrom(runTo).distanceTo(unit) : "null") + ") ");
-//            return null;
-//        }
     }
 
     /**
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private static APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
-        double minTiles = unit.isVulture() ? 1.5 : 1.2;
-        if (unit.isWorker()) {
-            minTiles = 3;
-        }
+        double minTiles = unit.isVulture() ? 1.5 : (unit.isWorker() ? 3 : 1.2);
 
         double maxDist = minTiles;
 
-//        while (minTiles <= maxTiles) {
         double currentDist = maxDist;
         while (currentDist >= minTiles) {
 
@@ -436,13 +409,22 @@ public class ARunManager {
      */
     public static boolean isPossibleAndReasonablePosition(AUnit unit, APosition position,
             double minDist, double maxDist, boolean allowCornerPointsEtc) {
-        boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) 
-                && AMap.isWalkable(position) && unit.hasPathTo(position)
-                && Select.all().inRadius(0.2, position).count() <= 1
+        
+//        boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) 
+//                && AMap.isWalkable(position) && unit.hasPathTo(position)
+//                && Select.all().inRadius(0.2, position).count() <= 1
+//                //                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
+//                //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
+//                //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
+//                && AMap.getGroundDistance(unit, position) <= maxDist;
+//                ;
+
+        boolean isOkay = AMap.isWalkable(position)
+                && Select.all().inRadius(0.4, position).count() <= 1
                 //                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
                 //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
                 //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
-                && AMap.getGroundDistance(unit, position) <= maxDist;
+//                && AMap.getGroundDistance(unit, position) <= maxDist;
                 ;
         
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));

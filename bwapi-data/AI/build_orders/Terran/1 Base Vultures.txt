@@ -32,7 +32,7 @@ http://wiki.teamliquid.net/starcraft/Nada_2_Fac
 22 - Vulture
 23 - Machine Shop
 23 - Supply Depot
-29 - Mines
+24 - Mines
 24 - Vulture
 26 - Vulture
 27 - Ion Thrusters

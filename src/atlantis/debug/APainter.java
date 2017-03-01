@@ -26,11 +26,14 @@ import atlantis.util.AtlantisUtilities;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.workers.AWorkerManager;
+import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
 import bwapi.Color;
 import bwapi.Game;
 import bwapi.Position;
+import bwapi.TechType;
 import bwapi.Text.Size.Enum;
+import bwapi.UpgradeType;
 import bwta.Region;
 import java.util.ArrayList;
 import java.util.Map;
@@ -407,7 +410,9 @@ public class APainter {
         paintSideMessage("", Color.White);
         paintSideMessage("Prod. queue:", Color.White);
 
-        // Display units currently in production
+        // === Display units currently in production ========================================
+        
+        // Units
         for (AUnit unit : Select.ourNotFinished().listUnits()) {
             AUnitType type = unit.getType();
             if (type.equals(AUnitType.Zerg_Egg)) {
@@ -415,15 +420,27 @@ public class APainter {
             }
             paintSideMessage(type.getShortName(), Color.Green);
         }
+        
+        // Techs
+        for (TechType techType : ATech.getCurrentlyResearching()) {
+            paintSideMessage(techType.toString(), Color.Green);
+        }
+        
+        // Upgrades
+        for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
+            paintSideMessage(upgradeType.toString(), Color.Green);
+        }
 
-        // Display units that should be produced right now or any time
+        // === Display units that should be produced right now or any time ==================
+        
         ArrayList<ProductionOrder> produceNow = ABuildOrderManager.getThingsToProduceRightNow(ABuildOrderManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
             paintSideMessage(order.getShortName(), Color.Yellow);
         }
 
-        // Display next units to produce
+        // === Display next units to produce ================================================
+        
         ArrayList<ProductionOrder> fullQueue = ABuildOrderManager.getProductionQueueNext(
                 5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
@@ -437,7 +454,8 @@ public class APainter {
             }
         }
 
-        // Paint info if queues are empty
+        // === Paint info if queues are empty ===============================================
+        
         if (produceNow.isEmpty() && fullQueue.isEmpty()) {
             paintSideMessage("Nothing to produce - it seems to be a bug", Color.Red);
         }

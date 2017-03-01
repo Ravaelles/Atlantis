@@ -26,13 +26,15 @@ public class TerranVultureManager {
     // =========================================================
 
     private static boolean handlePlantMines(AUnit unit) {
-        if (unit.getMinesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines) || unit.isUnitAction(UnitActions.USING_TECH)) {
+        
+        if (unit.getMinesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) {
             return false;
         }
         
-        if (unit.isAttackFrame()) {
-//        if (unit.isAttacking() && unit.getGroundWeaponCooldown() <= 0) {
-            return false;
+        // Can't allow to interrupt
+        if (unit.isUnitAction(UnitActions.USING_TECH)) {
+            unit.setTooltip("Planting mine");
+            return true;
         }
         
         // Disallow mines close to buildings
@@ -52,7 +54,7 @@ public class TerranVultureManager {
         if ((nearbyMines.count() <= 3 || (unit.getMinesCount() >= 3 && nearbyMines.count() <= 4)) 
                 && nearbyMines.inRadius(1, unit).count() == 0) {
             unit.useTech(TechType.Spider_Mines, unit.getPosition());
-            unit.setTooltip("Planting mine");
+            unit.setTooltip("Plant mine");
             return true;
         }
         

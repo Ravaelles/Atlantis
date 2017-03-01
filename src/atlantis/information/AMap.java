@@ -21,8 +21,10 @@ import bwta.Chokepoint;
 import bwta.Region;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,11 +33,12 @@ import java.util.Set;
  */
 public class AMap {
 
+    private static BWTA bwta = new BWTA(); // all methods in BWTA are static, but I keep a class instance to return it in getMap()
+    private static Set<Chokepoint> disabledChokepoints = new HashSet<>();
     private static List<Chokepoint> cached_chokePoints = null;
     private static Chokepoint cached_mainBaseChokepoint = null;
     private static Chokepoint cached_naturalBaseChokepoint = null;
-    private static Set<Chokepoint> disabledChokepoints = new HashSet<>();
-    private static BWTA bwta = new BWTA(); // all methods in BWTA are static, but I keep a class instance to return it in getMap()
+    private static Map<String, Positions> regionsToPolygonPoints = new HashMap<>();
 
     // =========================================================
     
@@ -353,10 +356,21 @@ public class AMap {
             System.err.println("isPositionFarFromAnyRegionPolygonPoint -> region.getPolygon() is null");
             return false;
         }
+
+        // === Define polygon points for given region ==============
         
         Positions polygonPoints = new Positions();
-        polygonPoints.addPositions(region.getPolygon().getPoints());
+        if (regionsToPolygonPoints.containsKey(region.toString())) {
+            polygonPoints = regionsToPolygonPoints.get(region.toString());
+        }
+        else {
+            polygonPoints = new Positions();
+            polygonPoints.addPositions(region.getPolygon().getPoints());
+            regionsToPolygonPoints.put(region.toString(), polygonPoints);
+        }
         APosition nearestPolygon = polygonPoints.nearestTo(unit.getPosition());
+        
+        // =========================================================
         
         if (nearestPolygon != null && nearestPolygon.distanceTo(unit) < 3) {
             return false;

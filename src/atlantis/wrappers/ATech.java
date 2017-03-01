@@ -4,12 +4,18 @@ import atlantis.AGame;
 import atlantis.production.ProductionOrder;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+import java.util.ArrayList;
 
 /**
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class ATech {
+    
+    private static ArrayList<TechType> currentlyResearching = new ArrayList<>();
+    private static ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
+    
+    // =========================================================
 
     public static boolean isResearched(TechType tech) {
         return isResearchedTech(tech);
@@ -46,12 +52,30 @@ public class ATech {
     
     // =========================================================
 
+    public static void markAsBeingResearched(TechType tech) {
+        currentlyResearching.add(tech);
+    }
+
+    public static void markAsBeingUpgraded(UpgradeType upgrade) {
+        currentlyUpgrading.add(upgrade);
+    }
+    
+    // =========================================================
+    
     private static boolean isResearchedTech(TechType tech) {
         return AGame.getPlayerUs().hasResearched(tech);
     }
     
     private static boolean isResearchedUpgrade(UpgradeType upgrade, int expectedUpgradeLevel) {
         return getUpgradeLevel(upgrade) >= Math.min(expectedUpgradeLevel, 3);
+    }
+
+    public static ArrayList<TechType> getCurrentlyResearching() {
+        return currentlyResearching;
+    }
+
+    public static ArrayList<UpgradeType> getCurrentlyUpgrading() {
+        return currentlyUpgrading;
     }
 
 }

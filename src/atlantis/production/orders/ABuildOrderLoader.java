@@ -20,7 +20,7 @@ public class ABuildOrderLoader {
     /**
      * Directory that contains build orders.
      */
-    private static final String BUILD_ORDERS_PATH = "bwapi-data/AI/build_orders/";
+    public static final String BUILD_ORDERS_PATH = "bwapi-data/AI/build_orders/";
     
     // =========================================================
     
@@ -29,8 +29,6 @@ public class ABuildOrderLoader {
         
         ABuildOrderLoader loader = new ABuildOrderLoader();
         loader.readBuildOrdersFile(filePath);
-        
-        System.out.println("LOADING " + filePath);
     }
     
     // =========================================================

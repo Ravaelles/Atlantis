@@ -8,6 +8,7 @@ import atlantis.constructing.ProtossConstructionManager;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
+import atlantis.production.orders.ABuildOrderLoader;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -127,7 +128,8 @@ public class Atlantis implements BWEventListener {
             
             System.out.println();
             if (ABuildOrderManager.getCurrentBuildOrder() != null) {
-                System.out.println("Use build order: " + ABuildOrderManager.getCurrentBuildOrder().getName());
+                System.out.println("Use build order: " + ABuildOrderManager.getCurrentBuildOrder().getName()
+                        .replace(ABuildOrderLoader.BUILD_ORDERS_PATH, ""));
             }
             else {
                 System.err.println("Invalid (empty) build order in AtlantisConfig!");
