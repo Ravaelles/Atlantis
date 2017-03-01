@@ -18,9 +18,9 @@ public class AtlantisIgniter {
     
     public static void modifyBwapiFileIfNeeded() {
         
-        // Only allow bwapi.ini modification if file ENV_LOCAL is found
+        // Only allow bwapi.ini modification if file MODIFY_BWAPI is found
         // in project root or level up
-        if (!(new File("ENV_LOCAL")).exists() && !(new File("../ENV_LOCAL")).exists()) {
+        if (!(new File("MODIFY_BWAPI")).exists() && !(new File("../MODIFY_BWAPI")).exists()) {
             System.out.println("Tournament mode: don't modify bwapi.ini");
             return;
         }
