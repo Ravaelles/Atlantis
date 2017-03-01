@@ -9,11 +9,12 @@ Atlantis wraps everything heavily, so you don't need to write yourself countless
 # What it can do
 - all three races are supported
 - enables to you to run your bot in *one* click from your IDE, just run it and it will run Chaoslauncher and Starcraft
-- build orders are fully customizable and very easy to use, see bwapi/read/build_orders files; multiple notations are accepted including Liquipedia notation, see an example [here](https://github.com/Ravaelles/Atlantis/blob/develop/bwapi-data/AI/build_orders/Terran/1%20Fact%20FE.txt#L26)
+- build orders are fully customizable and very easy to use, see bwapi/read/build_orders files; multiple notations are accepted including Liquipedia notation, see an example [here](https://github.com/Ravaelles/Atlantis/blob/develop/bwapi-data/AI/build_orders/Terran/1%20Fact%20FE.txt#L26); you can also switch active build order easily
 - provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (Esc), painting modes (1,2,3)
 - takes care of the economy for you (gathering, construction)
-- workers are assigned to optimal mineral fields
-- scouts in order to find enemy base and detect the build order used
+- assigns workers to optimal mineral fields
+- scouts to find enemy base and detects the build order used
+- if enemy goes air/hidden units responds by building e.g. Missile Turrets
 - micro-managers that handle unit's behavior (e.g. run from nearby Zealots)
 - auto-expansion when minerals exceed e.g. 450 minerals
 - evaluation of unit chance to win the nearby skirmish and retreating when needed
