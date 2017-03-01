@@ -10,7 +10,6 @@ Atlantis wraps everything heavily, so you don't need to write yourself countless
 - all three races are supported
 - enables to you to run your bot in *one* click from your IDE, just run it and it will run Chaoslauncher and Starcraft
 - build orders are fully customizable and very easy to use, see bwapi/read/build_orders files; multiple notations are accepted including Liquipedia notation, see an example [here](https://github.com/Ravaelles/Atlantis/blob/develop/bwapi-data/AI/build_orders/Terran/1%20Fact%20FE.txt#L26); you can also switch active build order easily
-- provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (Esc), painting modes (1,2,3)
 - takes care of the economy for you (gathering, construction)
 - assigns workers to optimal mineral fields
 - scouts to find enemy base and detects the build order used
@@ -20,6 +19,10 @@ Atlantis wraps everything heavily, so you don't need to write yourself countless
 - evaluation of unit chance to win the nearby skirmish and retreating when needed
 - advanced and clean code wrappers for selecting units, types etc
 
+And some extras:
+- provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (Esc), painting modes (1,2,3)
+- modifies bwapi.ini so you don't need to do it yourself! Can change your race, enemy race, map played and game type (for UMT maps which are great for micro tweaking)
+
 # What actually is Atlantis?
 It's powerful set of tools that are based on [BWMirror](https://github.com/vjurenka/BWMirror) in version 2.5. The library (BWMirror) is heavily wrapped in numerous helper methods/modules as BWMIrror pretty much doesn't do anything by itself and most people are interested in combat, not searching for nearest free mineral field for harvesting or debugging Extractor construction. Trust me, it can take tens of hours to solve these problems. Prior to Atlantis I've written three bots, so I know how it is ;__:
 
@@ -27,10 +30,9 @@ It's powerful set of tools that are based on [BWMirror](https://github.com/vjure
 Atlantis is actively developed, but it's quite capable already. The latest stable version is in the `master` branch. In `develop` you will find latest changes, but they might not work as expected.
 
 * IMPORTANT: In order to use BWAPI you have to create player profile in StarCraft. Just run StarCraft, click Single Player, BroodWar and create profile with any name. If you skip this step you will get an error.
-* First install BWAPI in version 4.1.2 (link: https://github.com/bwapi/bwapi/releases/download/v4.1.2/BWAPI_412_Setup.exe)
-* Make sure to read the readme very carefully. The installation of BWAPI is a hard thing for beginners, so make sure you understand it.
-* I suggest to take a quick look at the tutorial here (http://sscaitournament.com/index.php?action=tutorial) to understand how the bridge between the game actually works and what it does.
-* Checkout this repository and make a new project in either NetBeans or Eclipse, for more instructions see the tutorial above. If you encounter any problem with the install, again, follow the tutorial.
+* First we need to install BWAPI in version 4.1.2, so [click here to get BWAPI_412_Setup](https://github.com/bwapi/bwapi/releases/download/v4.1.2/BWAPI_412_Setup.exe). Installation of BWAPI is a hard thing for beginners, so make sure you follow [this tutorial](http://sscaitournament.com/index.php?action=tutorial) closely.
+* Feel free to read the tutorial even further to see how a simple non-Atlantis bot would look like.
+* If you installed BWAPI checkout this repository and make new project in either NetBeans or Eclipse (New Project -> Java project with existing sources). For more instructions see the tutorial above. If you encounter any problem with the install, again, follow the tutorial.
 * If you've done everything correctly, you're free to go. The main class is of Atlantis is called Main. Most of Atlantis classes and wrappers are prefixed with "A".
 
 # Quick usage
