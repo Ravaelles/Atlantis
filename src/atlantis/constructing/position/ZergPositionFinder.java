@@ -2,10 +2,10 @@ package atlantis.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.wrappers.APosition;
 import bwapi.Position;
 import java.util.Collection;
 
@@ -21,10 +21,9 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo, 
             double maxDistance) {
         _CONDITION_THAT_FAILED = null;
-
-        AtlantisPositionFinder.building = building;
-        AtlantisPositionFinder.nearTo = nearTo;
-        AtlantisPositionFinder.maxDistance = maxDistance;
+//        building = building;
+//        AtlantisPositionFinder.nearTo = nearTo;
+//        AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
         int searchRadius = 6;
@@ -46,10 +45,14 @@ public class ZergPositionFinder extends AbstractPositionFinder {
             for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
                 for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
-                        APosition constructionPosition = new APosition(tileX * 32, tileY * 32);
-                        if (doesPositionFulfillAllConditions(builder, constructionPosition)) {
+                        APosition constructionPosition = APosition.create(tileX, tileY);
+                        if (doesPositionFulfillAllConditions(builder,building, constructionPosition)) {
+//                            AtlantisPainter.paintRectangle(constructionPosition, 32, 32, Color.Green);
                             return constructionPosition;
                         }
+//                        else {
+//                            AtlantisPainter.paintRectangle(constructionPosition, 32, 32, Color.Red);
+//                        }
                     }
 
                     yCounter++;
@@ -60,7 +63,8 @@ public class ZergPositionFinder extends AbstractPositionFinder {
             searchRadius++;
         }
 //        System.out.println("##### No success with searchRadius = " + searchRadius);
-//        System.err.println("##### Last condition that failed = `" + _CONDITION_THAT_FAILED + "` for " + building + " with searchRadius = " + searchRadius);
+//        System.err.println("##### Last condition that failed = `" + _CONDITION_THAT_FAILED + "` for " 
+//              + building + " with searchRadius = " + searchRadius);
 
         return null;
     }
@@ -71,30 +75,30 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
-    private static boolean doesPositionFulfillAllConditions(AUnit builder, Position position) {
+    public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
 
         // Check for CREEP
-        if (!isCreepConditionFulfilled(position)) {
+        if (!isCreepConditionFulfilled(building, position)) {
             _CONDITION_THAT_FAILED = "CREEP";
             return false;
         }
 
         // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, AtlantisPositionFinder.building, position)) {
+        if (!canPhysicallyBuildHere(builder, building, position)) {
 //            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);
             _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
             return false;
         }
 
         // If other buildings too close
-        if (otherBuildingsTooClose(builder, AtlantisPositionFinder.building, position)) {
+        if (isOtherConstructionTooClose(builder, building, position)) {
 //            _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isTooCloseToMineralsOrGeyser(AtlantisPositionFinder.building, position)) {
+        if (isTooCloseToMineralsOrGeyser(building, position)) {
             _CONDITION_THAT_FAILED = "TOO CLOSE TO MINERALS OR GEYSER";
             return false;
         }
@@ -106,6 +110,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Lo-level
+    
     private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, Position position) {
 
         // We have problem only if building is both close to base and to minerals or to geyser
@@ -121,10 +126,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         return false;
     }
 
-    private static boolean isCreepConditionFulfilled(Position position) {
+    private static boolean isCreepConditionFulfilled(AUnitType building, Position position) {
         return Atlantis.getBwapi().hasCreep(position.toTilePosition())
-                || AtlantisPositionFinder.building.equals(AUnitType.Zerg_Hatchery)
-                || AtlantisPositionFinder.building.equals(AUnitType.Zerg_Extractor);
+                || building.equals(AUnitType.Zerg_Hatchery)
+                || building.equals(AUnitType.Zerg_Extractor);
     }
 
 }

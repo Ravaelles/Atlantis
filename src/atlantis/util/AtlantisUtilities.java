@@ -1012,7 +1012,7 @@ public class AtlantisUtilities {
     }
 
     /**
-     * Loads .csv file.
+     * Loads .csv file or file formatted on csv base i.e. value1 delimiter value2 delimiter value3.
      */
     public static String[][] loadCsv(String path, int numberOfFields) {
         ArrayList<String[]> listOfArrays = new ArrayList<>();
@@ -1023,15 +1023,19 @@ public class AtlantisUtilities {
             while (inputStream.hasNextLine()) {
                 String line = inputStream.nextLine();
                 String[] fields = line.split(";");
-
-                if (!line.isEmpty() && line.charAt(0) != '#' && !line.startsWith("//")) {
-                    if (numberOfFields > 0 && fields.length < numberOfFields) {
-                        System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
-                        System.err.println("fields.length = " + fields.length);
-                        System.err.println("numberOfFields = " + numberOfFields);
-                        System.exit(-1);
-                    }
+                
+                if (fields.length == 1 && line.contains(" - ")) {
+                    fields = line.split(" - ");
                 }
+
+//                if (!line.isEmpty() && line.charAt(0) != '#' && !line.startsWith("//")) {
+//                    if (numberOfFields > 0 && fields.length < numberOfFields && !line.contains(" - ")) {
+//                        System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
+//                        System.err.println("fields.length = " + fields.length);
+//                        System.err.println("numberOfFields = " + numberOfFields);
+//                        System.exit(-1);
+//                    }
+//                }
 
                 if (!line.isEmpty() && !line.startsWith("//")) {
                     listOfArrays.add(fields);

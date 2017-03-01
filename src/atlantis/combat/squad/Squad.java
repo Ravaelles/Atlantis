@@ -1,13 +1,10 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.micro.DefaultMeleeManager;
-import atlantis.combat.micro.DefaultRangedManager;
-import atlantis.combat.micro.MicroMeleeManager;
-import atlantis.combat.micro.MicroRangedManager;
 import atlantis.combat.squad.missions.Mission;
+import atlantis.combat.squad.missions.Missions;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.wrappers.APosition;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -20,7 +17,7 @@ public class Squad extends Units {
     private int ID = firstFreeID++;
 
     /**
-     * Convenience name for the squad e.g. "Alpha", "Bravo", "Delta".
+     * Auxilary name for the squad e.g. "Alpha", "Bravo", "Delta".
      */
     private String name;
 
@@ -30,47 +27,17 @@ public class Squad extends Units {
     private Mission mission;
 
     /**
-     * Manager for microing ranged units.
+     * Manager that handles microing of units.
      */
-    private MicroRangedManager microRangedManager;
-
-    /**
-     * Manager for microing melee units.
-     */
-    private MicroMeleeManager microMeleeManager;
+//    private AbstractMicroManager microManager;
     
-    /**
-     * Stores the squad that each unit belongs to. Intends to replace Unit.setSquad() and getSquad() methods.
-     */
-//    private static java.util.Map<AUnit, Squad> squadOfUnit = new HashMap<>();
-    
-    
-    /**
-     * Stores that a AUnit belongs to a Squad
-     * @param unit
-     * @param g
-     */
-//    public static void setSquadOfUnit(AUnit unit, Squad g){
-//    	squadOfUnit.put(unit, g);
-//    }
-    
-    /**
-     * Retrieves the squad that the unit belongs to
-     * @param unit
-     * @return
-     */
-//    public static Squad getSquadOfUnit(AUnit unit){
-//    	return squadOfUnit.get(unit);
-//    }
-
     // =========================================================
     
     private Squad(String name, Mission mission) {
         super();
         this.name = name;
-        this.mission = mission;
-        this.microRangedManager = new DefaultRangedManager();
-        this.microMeleeManager = new DefaultMeleeManager();
+        this.setMission(mission);
+//        this.setMicroManager(new AMicroManager());
     }
 
     // =========================================================
@@ -84,7 +51,7 @@ public class Squad extends Units {
         // Name is null, use autonaming
         if (name == null) {
             String[] names = new String[]{"Alpha", "Bravo", "Charlie", "Delta", "Echo"};
-            name = names[AtlantisSquadManager.squads.size()];
+            name = names[ASquadManager.squads.size()];
         }
 
         Squad squad = new Squad(name, mission);
@@ -139,42 +106,40 @@ public class Squad extends Units {
      * Current mission object for this squad.
      */
     public void setMission(Mission mission) {
+        if (mission == null) {
+            throw new RuntimeException("Assigned null Mission to squad");
+        }
         this.mission = mission;
     }
 
     /**
-     * Manager for microing ranged units.
+     * Manager for microing units.
      */
-    public MicroRangedManager getMicroRangedManager() {
-        return microRangedManager;
-    }
-
-    /**
-     * Manager for microing ranged units.
-     */
-    public void setMicroRangedManager(MicroRangedManager microRangedManager) {
-        this.microRangedManager = microRangedManager;
-    }
-
-    /**
-     * Manager for microing melee units.
-     */
-    public MicroMeleeManager getMicroMeleeManager() {
-        return microMeleeManager;
-    }
-
-    /**
-     * Manager for microing melee units.
-     */
-    public void setMicroMeleeManager(MicroMeleeManager microMeleeManager) {
-        this.microMeleeManager = microMeleeManager;
-    }
+//    public AbstractMicroManager getMicroManager() {
+//        return microManager;
+//    }
+//
+//    /**
+//     * Manager for microing units.
+//     */
+//    public void setMicroManager(AbstractMicroManager microManager) {
+//        if (microManager == null) {
+//            throw new RuntimeException("Assigned null MicroManager to squad");
+//        }
+//        this.microManager = microManager;
+//    }
 
     /**
      * Returns ID for this battle squad (1, 2, 3, 4 etc).
      */
     public int getID() {
         return ID;
+    }
+    
+    // =========================================================
+
+    public boolean isMissionDefend() {
+        return Missions.DEFEND.equals(getMission());
     }
 
 }

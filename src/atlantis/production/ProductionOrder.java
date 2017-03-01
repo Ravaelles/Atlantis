@@ -5,6 +5,9 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class ProductionOrder {
+    
+    public static final String BASE_POSITION_NATURAL = "NATURAL";
+    public static final String BASE_POSITION_MAIN = "MAIN";
 
     private static final int PRIORITY_LOWEST = 1;
     private static final int PRIORITY_NORMAL = 4;
@@ -17,7 +20,7 @@ public class ProductionOrder {
     /**
      * AUnit type to be build. Can be null if this production order is for something else than upgrade.
      */
-    private AUnitType unitType = null;
+    private AUnitType unitOrBuilding = null;
 
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
@@ -33,6 +36,16 @@ public class ProductionOrder {
      * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
      */
     private String modifier = null;
+    
+    /**
+     * Contains first column 
+     */
+    private String rawFirstColumnInFile;
+    
+    /**
+     * Number of row columns of line in build orders file.
+     */
+    private int numberOfColumnsInRow;
 
     /**
      *
@@ -46,9 +59,9 @@ public class ProductionOrder {
 
     // =========================================================
     
-    public ProductionOrder(AUnitType unitType) {
+    public ProductionOrder(AUnitType unitOrBuilding) {
         this();
-        this.unitType = unitType;
+        this.unitOrBuilding = unitOrBuilding;
     }
 
     public ProductionOrder(UpgradeType upgrade) {
@@ -62,35 +75,7 @@ public class ProductionOrder {
     }
 
     private ProductionOrder() {
-//        priority = PRIORITY_NORMAL;
     }
-
-    // =========================================================
-    /**
-     * If true, no other order that comes after this order in the ProductionQueue can be started.
-     */
-//    protected boolean isBlocking() {
-//        return blocking;
-//    }
-
-    /**
-     * If true, no other order that comes after this order in the ProductionQueue can be started.
-     */
-//    public ProductionOrder markAsBlocking() {
-//        this.blocking = true;
-//        this.priority = PRIORITY_HIGHEST;
-//        return this;
-//    }
-
-//    public ProductionOrder priorityLowest() {
-//        this.priority = PRIORITY_LOWEST;
-//        return this;
-//    }
-
-//    public ProductionOrder priorityHighest() {
-//        this.priority = PRIORITY_HIGHEST;
-//        return this;
-//    }
 
     // =========================================================
     // Override
@@ -113,20 +98,44 @@ public class ProductionOrder {
 
     @Override
     public String toString() {
-//        return "Order: " + unitType.getName() + ", blocking:" + blocking + ", priority:" + priority;
-        return "Order: " + unitType; //TODO: test replacement of getName();
+        if (unitOrBuilding != null) {
+            return "Order: " + unitOrBuilding;
+        }
+        else if (upgrade != null) {
+            return "Order: " + upgrade;
+        }
+        else if (tech != null) {
+            return "Order: " + tech;
+        }
+        else {
+            return "InvalidEmptyOrder";
+        }
     }
 
     public String getShortName() {
-        if (unitType != null) {
-            return unitType.getShortName();
+        if (unitOrBuilding != null) {
+            return unitOrBuilding.getShortName();
         } else if (upgrade != null) {
-            return upgrade.toString(); //replaces .getName();
+            return upgrade.toString();
         } else {
             return "Unknown";
         }
     }
 
+    public ProductionOrder copy() {
+        ProductionOrder clone = new ProductionOrder();
+        
+        clone.id = firstFreeId++;
+        clone.modifier = this.modifier;
+        clone.numberOfColumnsInRow = this.numberOfColumnsInRow;
+        clone.rawFirstColumnInFile = this.rawFirstColumnInFile;
+        clone.tech = this.tech;
+        clone.unitOrBuilding = this.unitOrBuilding;
+        clone.upgrade = this.upgrade;
+        
+        return clone;
+    }
+    
     // =========================================================
     // Getters
     
@@ -134,8 +143,8 @@ public class ProductionOrder {
      * If this production order concerns unit to be build (or building, AUnit class), it will return non-null
      * value being unit type.
      */
-    public AUnitType getUnitType() {
-        return unitType;
+    public AUnitType getUnitOrBuilding() {
+        return unitOrBuilding;
     }
 
     /**
@@ -162,10 +171,29 @@ public class ProductionOrder {
     }
 
     /**
-     * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
+     * Special modifier e.g. base position modifier. See ProductionOrder constants.
      */
     public void setModifier(String modifier) {
+        if (modifier != null) {
+            modifier = modifier.trim();
+        }
         this.modifier = modifier;
+    }
+
+    public String getRawFirstColumnInFile() {
+        return rawFirstColumnInFile;
+    }
+
+    public void setRawFirstColumnInFile(String rawFirstColumnInFile) {
+        this.rawFirstColumnInFile = rawFirstColumnInFile;
+    }
+
+    public int getNumberOfColumnsInRow() {
+        return numberOfColumnsInRow;
+    }
+
+    public void setNumberOfColumnsInRow(int numberOfColumnsInRow) {
+        this.numberOfColumnsInRow = numberOfColumnsInRow;
     }
     
 }

@@ -2,6 +2,8 @@ package atlantis.combat.micro.terran;
 
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.actions.UnitActions;
+import bwapi.TechType;
 import bwapi.UnitCommandType;
 import java.util.HashMap;
 
@@ -42,7 +44,7 @@ public class TerranMedic {
     // =========================================================
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
         if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.getTarget())) {
-            medic.rightClick(unitToHeal);
+            medic.useTech(TechType.Healing, unitToHeal);
         }
     }
 
@@ -64,8 +66,8 @@ public class TerranMedic {
         AUnit unitAssignedForMedic = getInfantryAssignedForThisMedic(medic);
         if (unitAssignedForMedic != null) {
             if (unitAssignedForMedic.distanceTo(medic) > 1.9) {
-                if (Select.ourTerranInfantryWithoutMedics().inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic.getPosition()).count() <= 2) {
-                    medic.move(unitAssignedForMedic.getPosition());
+                if (Select.ourTerranInfantryWithoutMedics().inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).count() <= 2) {
+                    medic.move(unitAssignedForMedic.getPosition(), UnitActions.MOVE);
                     return true;
                 }
             }
@@ -80,7 +82,7 @@ public class TerranMedic {
         }
 
         AUnit nearestWoundedInfantry = (AUnit) Select.ourCombatUnits().infantry().wounded()
-                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic.getPosition()).nearestTo(medic.getPosition());
+                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).nearestTo(medic);
 
         // =========================================================
         // If there's a wounded unit, heal it.

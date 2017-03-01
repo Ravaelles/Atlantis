@@ -1,5 +1,6 @@
 package atlantis.combat.squad.missions;
 
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
 
@@ -24,6 +25,8 @@ public abstract class Mission {
      */
     public abstract boolean update(AUnit unit);
 
+    public abstract APosition getFocusPoint();
+    
     // =========================================================
 
     public String getName() {
@@ -32,6 +35,18 @@ public abstract class Mission {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isMissionDefend() {
+        return this.equals(Missions.DEFEND);
+    }
+
+    public boolean isMissionAttack() {
+        return this.equals(Missions.ATTACK);
+    }
+
+    public boolean isMissionUmt() {
+        return this.equals(Missions.UMT);
     }
     
 }

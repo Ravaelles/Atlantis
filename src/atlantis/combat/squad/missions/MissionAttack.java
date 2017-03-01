@@ -1,12 +1,14 @@
 package atlantis.combat.squad.missions;
 
+import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.information.AtlantisMap;
-import atlantis.information.UnitData;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AFoggedUnit;
+import atlantis.information.AMap;
+import atlantis.position.APosition;
+import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.wrappers.APosition;
 import bwapi.Color;
 import bwta.BaseLocation;
 
@@ -15,9 +17,14 @@ import bwta.BaseLocation;
  * the enemy at the <b>getFocusPoint</b>.
  */
 public class MissionAttack extends Mission {
+    
+    private static MissionAttack instance;
+    
+    // =========================================================
 
-    public MissionAttack(String name) {
+    protected MissionAttack(String name) {
         super(name);
+        instance = this;
     }
     
     // =========================================================
@@ -25,13 +32,29 @@ public class MissionAttack extends Mission {
     @Override
     public boolean update(AUnit unit) {
         APosition focusPoint = getFocusPoint();
-        //System.out.println("Focus point: " + focusPoint);	//TODO DEBUG
+        unit.setTooltip("#MA");
+        
+        // === Attack units nears main =============================
+        
+        AUnit mainBase = Select.mainBase();
+        if (mainBase != null) {
+            AUnit nearestEnemy = Select.enemy().visible()
+//                    .canBeAttackedBy(unit)
+//                    .inRadius(50, mainBase)
+                    .nearestTo(mainBase);
+//            System.out.println(nearestEnemy);
+            if (nearestEnemy != null) {
+                focusPoint = nearestEnemy.getPosition();
+            }
+        }
+        
+        // =========================================================
+        
         // Focus point is well known
         if (focusPoint != null) {
-        	//System.out.println("-Dist to focus point: " + PositionUtil.distanceTo(focusPoint, unit.getPosition()));
-            if (unit.distanceTo(focusPoint) > 5) {
-                unit.attack(focusPoint);
-                unit.setTooltip("Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
+            if (unit.distanceTo(focusPoint) > 10 && !unit.isAttacking() && !unit.isMoving()) {
+                unit.attackPosition(focusPoint);
+                unit.setTooltip("#MA:Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
                 return true;
             }
         } 
@@ -39,15 +62,17 @@ public class MissionAttack extends Mission {
         // =========================================================
         // Invalid focus point, no enemy can be found, scatter
         else {
-            APosition position = AtlantisMap.getRandomInvisiblePosition(unit.getPosition());
+            APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());
             if (position != null) {
-                unit.attack(position);	
+                unit.attackPosition(position);	
                 Atlantis.getBwapi().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
-                unit.setTooltip("Attack!"); //TODO: DEBUG
-//                unit.setTooltip("Mission spread");
+                unit.setTooltip("#MA:Forward!");
                 return true;
             }
         }
+        
+        unit.setTooltip("#MA:Nothing");
+        
         return false;
     }
 
@@ -57,18 +82,33 @@ public class MissionAttack extends Mission {
      * Returns the <b>position</b> (not the unit itself) where we should point our units to in hope 
      * because as far as we know, the enemy is/can be there and it makes sense to attack in this region.
      */
-    public static APosition getFocusPoint() {
+    @Override
+    public APosition getFocusPoint() {
+
+        // === Handle UMT ==========================================
+        
+        if (AGame.isUmtMode()) {
+            AUnit firstUnit = Select.ourRealUnits().first();
+            if (firstUnit != null) {
+                return getUmtFocusPoint(firstUnit.getPosition());
+            }
+            else {
+                return null;
+            }
+        }
+        
+        // =========================================================
 
         // Try going near enemy base
 //        Position enemyBase = AtlantisEnemyInformationManager.getEnemyBase();
-        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
+        APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
 //        	System.out.println("focus on enemy base " + enemyBase);	//TODO debug
             return enemyBase;
         }
 
         // Try going near any enemy building
-        UnitData enemyBuilding = AtlantisEnemyUnits.getNearestEnemyBuilding();
+        AFoggedUnit enemyBuilding = AEnemyUnits.getNearestEnemyBuilding();
         if (enemyBuilding != null) {
 //        	System.out.println("focus on enemy bldg " + enemyBuilding.getPosition());	//TODO debug
             return enemyBuilding.getPosition();
@@ -82,14 +122,20 @@ public class MissionAttack extends Mission {
         }
         
         // Try to go to some starting location, hoping to find enemy there.
-        BaseLocation startLocation = AtlantisMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
+        BaseLocation startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
         if (startLocation != null) {
         	//System.out.println("focus on start location");	//TODO debug
-            return APosition.createFrom(startLocation.getPosition());
+            return APosition.create(startLocation.getPosition());
         }
 
         // Absolutely no enemy unit can be found
         return null;
+    }
+    
+    // =========================================================
+    
+    public static MissionAttack getInstance() {
+        return instance;
     }
 
 }

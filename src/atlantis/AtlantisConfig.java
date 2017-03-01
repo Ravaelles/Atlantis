@@ -1,6 +1,9 @@
 package atlantis;
 
-import atlantis.production.orders.AtlantisBuildOrders;
+import atlantis.production.orders.ABuildOrder;
+import atlantis.production.orders.ProtossBuildOrder;
+import atlantis.production.orders.TerranBuildOrder;
+import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 
@@ -21,37 +24,41 @@ public class AtlantisConfig {
     // Customizable variables
 
     /**
-     * If not empty, then before the game starts, player race in the bwapi.ini will be overriden to match 
-     * currently played one.
-     */
-    public static String BWAPI_INI_PATH = "";
-    
-    /**
      * Game speed. Lower is faster. 0 is fastest, 20 is about normal game speed.
      * In game you can use buttons -/+ to change the game speed.
      */
     public static int GAME_SPEED = 0;
     
     /**
-     * If true, game will slow down on fighting, but normally it will run quicker.
+     * Race used by the Atlantis.
      */
-    public static boolean USE_DYNAMIC_GAME_SPEED_SLOWDOWN = false;
-    
-    /** 
-     * Amount of game speed units to be used for dynamic game speed slowdown.
-     */
-    public static int DYNAMIC_GAME_SPEED_SLOWDOWN = 3;
+    public static final String OUR_RACE = "Terran";
+//    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Zerg";
 
+    /**
+     * Single player enemy race.
+     */
+//    public static final String ENEMY_RACE = "Terran";
+    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Zerg";
+    
+    /**
+     * Will modify bwapi.ini to use this map.
+     */
+//    public static final String MAP = "maps/sscai/(?)*.sc?";
+    public static final String MAP = "Maps/BroodWar/umt/vultureDrive.scx";
+    
+    // =========================================================
+    // === These are default values that can be overriden in ===
+    // === specific build order file. See `build_orders` dir ===
+    // =========================================================
+    
     /**
      * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They
      * will be <b>automatically built only if your total supply exceeds this value</b>.
      */
     public static int USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
-
-    /**
-     * Force production of a worker whenever you have 50 minerals and less than N workers.
-     */
-    public static int AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = 0;
 
     /**
      * Force production of a worker whenever you have 50 minerals and more than N workers, but less than
@@ -68,8 +75,12 @@ public class AtlantisConfig {
     /**
      * We must reach at least N workers (SCVs, Probes) to scout for the enemy location.
      */
-    public static int SCOUT_IS_NTH_WORKER = 7;
+    public static int SCOUT_IS_NTH_WORKER = 8;
 
+    // =========================================================
+    // =========================================================
+    // =========================================================
+    // =========================================================
     // =========================================================
     // Do not customize - see methods "useConfigFor{Race}"
     
@@ -79,7 +90,9 @@ public class AtlantisConfig {
     public static AUnitType BARRACKS = null;
     public static AUnitType SUPPLY = null;
     public static AUnitType GAS_BUILDING = null;
-    private static AtlantisBuildOrders productionStrategy;
+    public static AUnitType DEF_BUILDING_ANTI_LAND = null;
+    public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
+    public static ABuildOrder DEFAULT_BUILD_ORDER = null;
 
     // =========================================================
     
@@ -87,36 +100,25 @@ public class AtlantisConfig {
      * Helper method for using Terran race.
      */
     public static void useConfigForTerran() {
-        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 11;
-
+        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_Base_Vultures;
+        
         AtlantisConfig.MY_RACE = Race.Terran;
         AtlantisConfig.BASE = AUnitType.Terran_Command_Center;
         AtlantisConfig.WORKER = AUnitType.Terran_SCV;
         AtlantisConfig.BARRACKS = AUnitType.Terran_Barracks;
         AtlantisConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
         AtlantisConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
-    }
-
-    /**
-     * Helper method for using Zerg race.
-     */
-    public static void useConfigForZerg() {
-        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 8;
-
-        AtlantisConfig.MY_RACE = Race.Zerg;
-        AtlantisConfig.BASE = AUnitType.Zerg_Hatchery;
-        AtlantisConfig.WORKER = AUnitType.Zerg_Drone;
-        AtlantisConfig.BARRACKS = AUnitType.Zerg_Spawning_Pool;
-        AtlantisConfig.SUPPLY = AUnitType.Zerg_Overlord;
-        AtlantisConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
+        
+        AtlantisConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
     }
 
     /**
      * Helper method for using Protoss race.
      */
     public static void useConfigForProtoss() {
-        AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 11;
-
+        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATEWAY_ZEALOT;
+        
         AtlantisConfig.MY_RACE = Race.Protoss;
         AtlantisConfig.BASE = AUnitType.Protoss_Nexus;
         AtlantisConfig.WORKER = AUnitType.Protoss_Probe;
@@ -124,7 +126,25 @@ public class AtlantisConfig {
         AtlantisConfig.SUPPLY = AUnitType.Protoss_Pylon;
         AtlantisConfig.GAS_BUILDING = AUnitType.Protoss_Assimilator;
         
-//        overrideBwapiIniRace("Protoss");
+        AtlantisConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Protoss_Photon_Cannon;
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Protoss_Photon_Cannon;
+    }
+    
+    /**
+     * Helper method for using Zerg race.
+     */
+    public static void useConfigForZerg() {
+        AtlantisConfig.DEFAULT_BUILD_ORDER = ZergBuildOrder.ZERG_13_POOL_MUTA;
+        
+        AtlantisConfig.MY_RACE = Race.Zerg;
+        AtlantisConfig.BASE = AUnitType.Zerg_Hatchery;
+        AtlantisConfig.WORKER = AUnitType.Zerg_Drone;
+        AtlantisConfig.BARRACKS = AUnitType.Zerg_Spawning_Pool;
+        AtlantisConfig.SUPPLY = AUnitType.Zerg_Overlord;
+        AtlantisConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
+        
+        AtlantisConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Zerg_Creep_Colony;
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Zerg_Creep_Colony;
     }
     
     // =========================================================
@@ -149,7 +169,7 @@ public class AtlantisConfig {
         validate("BARRACKS", BARRACKS);
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
-        validate("You have to specify production strategy\n-> AtlantisConfig.useBuildOrders", productionStrategy);
+        validate("You have to define default build order\n-> AtlantisConfig.DEFAULT_BUILD_ORDER", DEFAULT_BUILD_ORDER);
     }
 
     // =========================================================
@@ -179,24 +199,6 @@ public class AtlantisConfig {
         System.err.println("");
         System.err.println("Program has stopped");
         System.exit(-1);
-    }
-
-    // =========================================================
-    // Hi-level configs
-    
-    /**
-     * Pass an object that will be responsible for the production queue. See e.g. class named
-     * DefaultTerranBuildOrders.
-     */
-    public static void useBuildOrders(AtlantisBuildOrders productionStrategy) {
-        AtlantisConfig.productionStrategy = productionStrategy;
-    }
-
-    /**
-     * Returns object that is responsible for the production queue.
-     */
-    public static AtlantisBuildOrders getBuildOrders() {
-        return productionStrategy;
     }
 
 }

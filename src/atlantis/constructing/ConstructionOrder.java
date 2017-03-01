@@ -1,11 +1,11 @@
 package atlantis.constructing;
 
-import atlantis.constructing.position.AtlantisPositionFinder;
+import atlantis.constructing.position.APositionFinder;
+import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.wrappers.APosition;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -18,6 +18,8 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     private AUnit construction;
     private AUnit builder;
     private APosition positionToBuild;
+    private APosition near;
+    private double maxDistance;
     private ProductionOrder productionOrder;
     private ConstructionOrderStatus status;
 
@@ -28,7 +30,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.buildingType = buildingType;
 
         status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
-        // issueFrameTime = AtlantisGame.getTimeFrames();
+        // issueFrameTime = AGame.getTimeFrames();
     }
 
     // =========================================================
@@ -37,7 +39,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
     public APosition findNewBuildPosition() {
-        return AtlantisPositionFinder.getPositionForNew(builder, buildingType, this);
+        return APositionFinder.getPositionForNew(builder, buildingType, this);
     }
 
     /**
@@ -71,7 +73,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
             builder = null;
         }
         
-        AtlantisConstructingManager.removeOrder(this);
+        AConstructionManager.removeOrder(this);
 //        status = ConstructionOrderStatus.CONSTRUCTION_FINISHED;
     }
     
@@ -113,6 +115,18 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     }
     
     // =========================================================
+    
+    public APosition getPositionToBuildCenter() {
+        APosition positionToBuild = getPositionToBuild();
+        if (positionToBuild != null) {
+            return positionToBuild.translateByPixels(
+                    getBuildingType().getDimensionLeft(), getBuildingType().getDimensionUp()
+            );
+        }
+        else {
+            return null;
+        }
+    }
     
     public AUnitType getBuildingType() {
         return buildingType;
@@ -164,6 +178,22 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     public void setProductionOrder(ProductionOrder productionOrder) {
         this.productionOrder = productionOrder;
+    }
+
+    public APosition getNearTo() {
+        return near;
+    }
+
+    public void setNearTo(APosition near) {
+        this.near = near;
+    }
+
+    public double getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(double maxDistance) {
+        this.maxDistance = maxDistance;
     }
     
 }

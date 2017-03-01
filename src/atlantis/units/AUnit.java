@@ -1,13 +1,18 @@
 package atlantis.units;
 
-import atlantis.AtlantisGame;
-import atlantis.combat.micro.AtlantisRunning;
+import atlantis.AGame;
+import atlantis.combat.micro.ARunManager;
 import atlantis.combat.squad.Squad;
-import atlantis.constructing.AtlantisConstructingManager;
+import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.enemy.AtlantisEnemyUnits;
-import atlantis.wrappers.APosition;
-import atlantis.wrappers.APositionedObject;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AOurUnitsExtraInfo;
+import atlantis.position.APosition;
+import atlantis.position.APositionedObject;
+import atlantis.repair.ARepairManager;
+import atlantis.units.actions.UnitAction;
+import atlantis.units.actions.UnitActions;
+import atlantis.wrappers.ACachedValue;
 import bwapi.Player;
 import bwapi.Position;
 import bwapi.Unit;
@@ -22,29 +27,56 @@ import java.util.Map;
 /**
  * Wrapper for BWMirror Unit class that makes units much easier to use.<br /><br />
  * Atlantis uses wrappers for BWMirror native classes which can't be extended.<br /><br />
- * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing
- * you can create missing method here and you can reference original Unit class via u() method.
+ * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
+ * create missing method here and you can reference original Unit class via u() method.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitActions {
-//public class AUnit implements Comparable<AUnit>, UnitActions {
+public class AUnit extends APositionedObject implements Comparable, AUnitOrders {
     
-    private static final Map<Unit, AUnit> instances = new HashMap<>();
+    // Mapping of native unit IDs to AUnit objects
+    private static final Map<Integer, AUnit> instances = new HashMap<>();
     
+    // Cached distances to other units - reduces time on calculating unit1.distanceTo(unit2)
+    public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
+
     private Unit u;
     private AUnitType _lastCachedType;
-    
+
+    private UnitAction unitAction;
+    private int _lastTimeOrderWasIssued = -1;
+
     // =========================================================
 
+    /**
+     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
+     * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
+     * create missing method here and you can reference original Unit class via u() method.
+     */
+    public static AUnit createFrom(Unit u) {
+        if (u == null) {
+            throw new RuntimeException("AUnit constructor: unit is null");
+        }
+
+        if (instances.containsKey(u.getID())) {
+            return instances.get(u.getID());
+        } else {
+            AUnit unit = new AUnit(u);
+            instances.put(u.getID(), unit);
+            return unit;
+        }
+    }
+    
     private AUnit(Unit u) {
         if (u == null) {
             throw new RuntimeException("AUnit constructor: unit is null");
         }
-        
+
         this.u = u;
-        this.innerID = firstFreeID++;
-        this._lastCachedType = AUnitType.createFrom(u.getType());
+//        this.innerID = firstFreeID++;
+        
+        // Cached type helpers
+        refreshType();
 
         // Repair & Heal
         this._repairableMechanically = isBuilding() || isVehicle();
@@ -60,58 +92,43 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         );
     }
 
-    /**
-     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
-     * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing
-     * you can create missing method here and you can reference original Unit class via u() method.
-     */
-    public static AUnit createFrom(Unit u) {
-        if (u == null) {
-            throw new RuntimeException("AUnit constructor: unit is null");
-        }
-
-        if (instances.containsKey(u)) {
-            return instances.get(u);
-        }
-        else {
-            AUnit unit = new AUnit(u);
-            instances.put(u, unit);
-            return unit;
-        }
-    }
-    
     // =========================================================
-    
     /**
-     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached 
+     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached
      * type.
      */
     public AUnitType getType() {
         AUnitType type = AUnitType.createFrom(u.getType());
-        if (type.equals(AUnitType.Unknown)) {
+        if (AUnitType.Unknown.equals(type)) {
+            if (this.isOurUnit()) {
+                System.err.println("Our unit (" + this + ") returned Unknown type");
+            }
             return _lastCachedType;
-        }
-        else {
+        } else {
             _lastCachedType = type;
             return type;
         }
     }
     
+    public void refreshType() {
+        _lastCachedType = AUnitType.createFrom(u.getType());
+        _isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
+    }
+
     @Override
     public APosition getPosition() {
-        return APosition.createFrom(u.getPosition());
-//        return u.getPosition();
+        return APosition.create(u.getPosition());
     }
-    
+
     /**
-     * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside AUnit class.
-     * AUnit class should be used always in place of Unit.
+     * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside AUnit class. AUnit class should be used always in place
+     * of Unit.
      */
     @Override
     public Unit u() {
         return u;
     }
-    
+
     /**
      * This method exists only to allow reference in UnitActions class.
      */
@@ -119,7 +136,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public AUnit unit() {
         return this;
     }
-    
+
     private static AUnit getBWMirrorUnit(Unit u) {
         for (AUnit unit : instances.values()) {
             if (unit.u.equals(u)) {
@@ -128,31 +145,30 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         }
         return null;
     }
-    
+
     // =========================================================
     // =========================================================
     // =========================================================
 
-    private static int firstFreeID = 1;
-
-    private int innerID;
     private Squad squad = null;
-    private AtlantisRunning running = new AtlantisRunning(this);
+    private ARunManager runManager = new ARunManager(this);
     private int lastUnitAction = 0;
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
     private boolean _isMilitaryBuildingAntiGround = false;
     private boolean _isMilitaryBuildingAntiAir = false;
+    private boolean _isWorker;
     private double _lastCombatEval;
     private int _lastTimeCombatEval = 0;
 
     // =========================================================
     // Important methods
+    
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
-    public void moveAwayFrom(Position position, double moveDistance) {
+    public boolean moveAwayFrom(Position position, double moveDistance) {
         int dx = position.getX() - getX();
         int dy = position.getY() - getY();
         double vectorLength = Math.sqrt(dx * dx + dy * dy);
@@ -160,12 +176,28 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         dx = (int) (dx * modifier);
         dy = (int) (dy * modifier);
 
-        Position newPosition = new Position(getX() - dx, getY() - dy);
+        APosition newPosition = new APosition(getX() - dx, getY() - dy).makeValid();
 
-        move(newPosition);
-        this.setTooltip("Run");
+//        if (AtlantisRunManager.isPossibleAndReasonablePosition(
+//                this, newPosition, -1, 9999, true
+//        ) && move(newPosition, UnitActions.MOVE)) {
+        if (move(newPosition, UnitActions.MOVE)) {
+            this.setTooltip("Move away");
+            return true;
+        }
+        else {
+            this.setTooltip("Can't move away");
+            return false;
+        }
     }
     
+    /**
+     * Returns true if any close enemy can either shoot or hit this unit.
+     */
+    public boolean canAnyCloseEnemyShootThisUnit() {
+        return !Select.enemy().inRadius(12.5, this).canAttack(this).isEmpty();
+    }
+
     // =========================================================
     @Override
     public String toString() {
@@ -174,18 +206,27 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 //        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
 //        return toString;
 //        return "AUnit(" + u.getType().toString() + ")";
-        return "AUnit(" + getType().toString() + " #" + innerID + ")";
+        return "AUnit(" + getType().getShortName()+ " #" + getID() + ") at " + getPosition().toString();
     }
-    
+
     @Override
-    public int compareTo(AUnit o) {
-        return Integer.compare(this.getID(), ((AUnit) o).getID());
+    public int compareTo(Object o) {
+        int compare;
+        
+        if (o instanceof AUnit) {
+            compare = ((AUnit) o).getID();
+        }
+        else {
+            compare = o.hashCode();
+        }
+        
+        return Integer.compare(this.hashCode(), compare);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + this.getID();
+//        int hash = 7;
+        int hash = this.getID();
         return hash;
     }
 
@@ -208,21 +249,22 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         if (obj instanceof AUnit) {
             AUnit other = (AUnit) obj;
 //            return getID() == other.getID();
-            return u == other.u;
+            return getID() == other.getID();
         }
-//        else if (obj instanceof Unit) {
-//            Unit other = (Unit) obj;
-//            return getID() == other.getID();
-//        }
+        else if (obj instanceof Unit) {
+            Unit other = (Unit) obj;
+            return u().getID() == other.getID();
+        }
 
-        return true;
+        return false;
     }
 
     // =========================================================
     // Compare type methods
-    
     public boolean isAlive() {
-        return !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
+//        return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
+        return isExists() && (!AEnemyUnits.isEnemyUnitDestroyed(this) 
+                && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this));
     }
 
     public boolean canBeHealed() {
@@ -245,7 +287,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }
 
     public boolean isWorker() {
-        return isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
+        return _isWorker;
     }
 
     public boolean isBunker() {
@@ -281,7 +323,6 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
 
     // =========================================================
     // Auxiliary methods
-    
     public boolean ofType(AUnitType type) {
         return getType().equals(type);
     }
@@ -302,43 +343,60 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return getHitPoints() < getMaxHP();
     }
 
+    public boolean isExists() {
+        return u().exists();
+    }
+
     public int getHP() {
         return getHitPoints();
     }
 
+    public int getShields() {
+        return u().getShields();
+    }
+
+    public int getMaxShields() {
+        return getType().ut().maxShields();
+    }
+
     public int getMaxHP() {
-        return getMaxHitPoints();
+        return getMaxHitPoints() + getMaxShields();
+    }
+
+    public int getMinesCount() {
+        return u().getSpiderMineCount();
+    }
+
+    public int getSpiderMinesCount() {
+        return u().getSpiderMineCount();
     }
 
     public String getShortName() {
         return getType().getShortName();
     }
 
-    /**
-     * Has separate name not to mistake attackUnit with attackPosition.
-     */
-    public boolean attackUnit(AUnit target) {
-        return u.attack(target.u);
+    public String getShortNamePlusId() {
+        return getType().getShortName() + " #" + getID();
     }
-    
+
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double getShootRangeGround() {
+    public double getWeaponRangeGround() {
         return getType().getGroundWeapon().maxRange() / 32;
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double getShootRangeAir() {
+    public double getWeaponRangeAir() {
         return getType().getAirWeapon().maxRange() / 32;
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against given <b>opponentUnit</b>.
      */
-    public double getShootRangeAgainst(AUnit opponentUnit) {
+    public int getWeaponRangeAgainst(AUnit opponentUnit) {
         if (opponentUnit.isAirUnit()) {
             return getType().getAirWeapon().maxRange() / 32;
         } else {
@@ -360,25 +418,24 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return index;
     }
 
-    // =========================================================
-    // Debugging / Painting methods
+    // ===  Debugging / Painting methods ========================================
     
     private String tooltip;
-    private int tooltipStartInFrames;
+//    private int tooltipStartInFrames;
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
-        this.tooltipStartInFrames = AtlantisGame.getTimeFrames();
+//        this.tooltipStartInFrames = AGame.getTimeFrames();
     }
 
     public String getTooltip() {
-        if (AtlantisGame.getTimeFrames() - tooltipStartInFrames > 30) {
-            String tooltipToReturn = this.tooltip;
-            this.tooltip = null;
-            return tooltipToReturn;
-        } else {
-            return tooltip;
-        }
+//        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
+//            String tooltipToReturn = this.tooltip;
+//            this.tooltip = null;
+//            return tooltipToReturn;
+//        } else {
+        return tooltip;
+//        }
     }
 
     public void removeTooltip() {
@@ -444,10 +501,9 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public boolean isActualUnit() {
         return !isNotActuallyUnit();
     }
-    
+
     // =========================================================
     // Auxiliary
-    
     /**
      * Converts collection of <b>Unit</b> variables into collection of <b>AUnit</b> variables.
      */
@@ -460,8 +516,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
                 result.put(unit, (Integer) ((Map) collection).get(u));
             }
             return result;
-        }
-        else if (collection instanceof List) {
+        } else if (collection instanceof List) {
             List<AUnit> result = new ArrayList<>();
             for (Object key : (List) collection) {
                 Unit u = (Unit) key;
@@ -469,16 +524,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
                 result.add(unit);
             }
             return result;
-        }
-        else {
-            throw new RuntimeException("I don't know how to convert collection of type: " 
+        } else {
+            throw new RuntimeException("I don't know how to convert collection of type: "
                     + collection.toString());
         }
     }
-    
+
     // =========================================================
     // RANGE and ATTACK methods
-    
     /**
      * Returns true if this unit is capable of attacking <b>otherUnit</b>. For example Zerglings can't attack
      * flying targets and Corsairs can't attack ground targets.
@@ -487,55 +540,63 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * the last shot allows it
      */
     public boolean canAttackThisKindOfUnit(AUnit otherUnit, boolean includeCooldown) {
-
         // Enemy is GROUND unit
         if (otherUnit.isGroundUnit()) {
             return canAttackGroundUnits() && (!includeCooldown || getGroundWeaponCooldown() == 0);
-        } // Enemy is AIR unit
+        } 
+
+        // Enemy is AIR unit
         else {
             return canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
         }
     }
 
-/**
-     * Returns <b>true</b> if this unit can attack <b>targetUnit</b> in terms of both min and max range 
+    /**
+     * Returns <b>true</b> if this unit can attack <b>targetUnit</b> in terms of both min and max range
      * conditions fulfilled.
+     *
      * @param safetyMargin allowed error (in tiles) applied to the max distance condition
      */
     public boolean hasRangeToAttack(AUnit targetUnit, double safetyMargin) {
         WeaponType weaponAgainstThisUnit = getWeaponAgainst(targetUnit);
+        if (weaponAgainstThisUnit == WeaponType.None) {
+            return false;
+        }
+        
         double dist = this.distanceTo(targetUnit);
-        return weaponAgainstThisUnit != WeaponType.None 
-                && weaponAgainstThisUnit.maxRange() <= (dist + safetyMargin) 
-                && weaponAgainstThisUnit.minRange() >= dist;
+        return (dist - safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
+                && (dist + 0.02) >= (weaponAgainstThisUnit.minRange() / 32);
     }
-    
+
     /**
-     * Returns weapon that would be used to attack given target. 
-     * If no such weapon, then WeaponTypes.None will be returned.
+     * Returns weapon that would be used to attack given target. If no such weapon, then WeaponTypes.None will
+     * be returned.
      */
     public WeaponType getWeaponAgainst(AUnit target) {
         if (target.isGroundUnit()) {
             return getGroundWeapon();
-        }
-        else {
+        } else {
             return getAirWeapon();
         }
     }
-    
+
     // =========================================================
     // Getters & setters
     /**
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return running.isRunning();
+        return runManager.isRunning();
     }
 
     /**
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad getSquad() {
+//        if (squad == null) {
+//            System.err.println("still squad in unit was fuckin null");
+//            squad = AtlantisSquadManager.getAlphaSquad();
+//        }
         return squad;
     }
 
@@ -549,15 +610,15 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     /**
      * Returns AtlantisRunning object for this unit.
      */
-    public AtlantisRunning getRunning() {
-        return running;
+    public ARunManager getRunManager() {
+        return runManager;
     }
 
     /**
      * Returns true if unit is starting an attack or already in the attack frame animation.
      */
     public boolean isJustShooting() {
-        return isAttackFrame() || isStartingAttack();
+        return isAttacking() && (isAttackFrame() || isStartingAttack());
     }
 
     /**
@@ -571,14 +632,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * Returns the frames counter (time) since the unit had been issued any command.
      */
     public int getLastUnitActionWasFramesAgo() {
-        return AtlantisGame.getTimeFrames() - lastUnitAction;
+        return AGame.getTimeFrames() - lastUnitAction;
     }
 
     /**
      * Indicate that in this frame unit received some command (attack, move etc).
      */
     public void setLastUnitActionNow() {
-        this.lastUnitAction = AtlantisGame.getTimeFrames();
+        this.lastUnitAction = AGame.getTimeFrames();
     }
 
     /**
@@ -599,12 +660,12 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * Caches combat eval of this unit for the time of one frame.
      */
     public void updateCombatEval(double eval) {
-        _lastTimeCombatEval = AtlantisGame.getTimeFrames();
+        _lastTimeCombatEval = AGame.getTimeFrames();
         _lastCombatEval = eval;
     }
 
     public double getCombatEvalCachedValueIfNotExpired() {
-        if (AtlantisGame.getTimeFrames() <= _lastTimeCombatEval) {
+        if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
             return _lastCombatEval;
         } else {
             return (int) -123456;
@@ -618,29 +679,36 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     public WeaponType getGroundWeapon() {
         return getType().getGroundWeapon();
     }
-    
+
     /**
      * Indicates that this unit should be running from given enemy unit.
+     * If enemy parameter is null, it will try to determine the best run behavior.
+     * If enemy is not null, it will try running straight from this unit.
      */
-    public boolean runFrom(AUnit nearestEnemy) {
-        if (nearestEnemy == null) {
-            nearestEnemy = Select.enemyRealUnits().nearestTo(this.getPosition());
-        }
-
-        if (nearestEnemy == null) {
-            return false;
+     public boolean runFrom(AUnit runFrom) {
+//        if (nearestEnemy == null) {
+//            nearestEnemy = Select.enemyRealUnits().nearestTo(this);
+//        }
+//
+//        if (nearestEnemy == null) {
+//            return false;
+//        } else {
+//            return runManager.runFrom(nearestEnemy);
+//        }
+        if (runFrom == null) {
+            return runManager.run();
         } else {
-            return running.runFrom(nearestEnemy);
+            return runManager.runFrom(runFrom);
         }
     }
-    
+
     /**
      * Returns <b>true</b> if this unit is supposed to "build" something. It will return true even if the unit
      * wasn't issued yet actual build order, but we've created ConstructionOrder and assigned it as a builder,
      * so it will return true.
      */
     public boolean isBuilder() {
-        return AtlantisConstructingManager.isBuilder(this);
+        return AConstructionManager.isBuilder(this);
     }
 
     /**
@@ -648,46 +716,51 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
      * construction.
      */
     public ConstructionOrder getConstructionOrder() {
-        return AtlantisConstructingManager.getConstructionOrderFor(this);
+        return AConstructionManager.getConstructionOrderFor(this);
     }
 
     /**
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemyUnit() {
-//        return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
-        return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
+//        return getPlayer().isEnemy(AGame.getPlayerUs());
+        return getPlayer().isEnemy(AGame.getPlayerUs());
     }
 
     /**
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemy() {
-        return getPlayer().isEnemy(AtlantisGame.getPlayerUs());
+        return getPlayer().isEnemy(AGame.getPlayerUs());
     }
-    
+
     /**
      * Returns true if this unit belongs to us.
      */
     public boolean isOurUnit() {
-        return getPlayer().equals(AtlantisGame.getPlayerUs());
+        return getPlayer().equals(AGame.getPlayerUs());
     }
 
     /**
      * Returns true if this unit is neutral (minerals, geysers, critters).
      */
     public boolean isNeutralUnit() {
-        return getPlayer().equals(AtlantisGame.getNeutralPlayer());
-    }    
+        return getPlayer().equals(AGame.getNeutralPlayer());
+    }
+
+    /**
+     * Returns true if given building is able to build add-on like Terran Machine Shop.
+     */
+    public boolean canHaveAddon() {
+        return getType().canHaveAddon();
+    }
     
     public int getID() {
-//        return u.getID();
-        return innerID;
+        return u.getID();
     }
 
     // =========================================================
     // Method intermediates between BWMirror and Atlantis
-    
     public Player getPlayer() {
         return u.getPlayer();
     }
@@ -712,16 +785,24 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isConstructing();
     }
 
+    public boolean hasAddon() {
+        return u().getAddon() != null;
+    }
+    
     public int getHitPoints() {
-        return u.getHitPoints();
+        return u.getHitPoints() + getShields();
     }
 
     public int getMaxHitPoints() {
-        return u.getType().maxHitPoints();
+        return u.getType().maxHitPoints() + getMaxShields();
     }
 
     public boolean isIdle() {
         return u.isIdle() || u.getLastCommand().getUnitCommandType().equals(UnitCommandType.None);
+    }
+
+    public boolean isBusy() {
+        return !isIdle();
     }
 
     public boolean isVisible() {
@@ -744,6 +825,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isCarryingGas();
     }
 
+    public boolean isCloaked() {
+        return u.isCloaked();
+    }
+
+    public boolean isBurrowed() {
+        return u.isBurrowed();
+    }
+
     public boolean isRepairing() {
         return u.isRepairing();
     }
@@ -764,6 +853,22 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isStartingAttack();
     }
 
+    public boolean isStuck() {
+        return u.isStuck();
+    }
+
+    public boolean isHoldingPosition() {
+        return u.isHoldingPosition();
+    }
+
+    public boolean isSieged() {
+        return u.isSieged();
+    }
+
+    public boolean isUnsieged() {
+        return !u.isSieged();
+    }
+
     public List<AUnitType> getTrainingQueue() {
         return (List<AUnitType>) AUnitType.convertToAUnitTypesCollection(u.getTrainingQueue());
     }
@@ -781,7 +886,7 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
     }
 
     public APosition getTargetPosition() {
-        return APosition.createFrom(u.getTargetPosition());
+        return APosition.create(u.getTargetPosition());
     }
 
     public AUnit getOrderTarget() {
@@ -796,6 +901,14 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.getBuildType() != null ? AUnitType.createFrom(u.getBuildType()) : null;
     }
 
+    public boolean isVulture() {
+        return getType().isVulture();
+    }
+
+    public boolean isTank() {
+        return getType().isTank();
+    }
+
     public boolean isMorphing() {
         return u.isMorphing();
     }
@@ -808,11 +921,40 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.isAttacking();
     }
 
-    public boolean hasPathTo(Position point) {
+    /**
+     * Returns true for flying Terran building.
+     */
+    public boolean isLifted() {
+        return u.isLifted();
+    }
+
+    /**
+     * Returns true if unit is inside bunker or dropship/shuttle.
+     */
+    public boolean isLoaded() {
+        return u.isLoaded();
+    }
+    
+    public boolean isUnderDisruptionWeb() {
+        return u().isUnderDisruptionWeb();
+    }
+    
+    public boolean isUnderDarkSwarm() {
+        return u().isUnderDarkSwarm();
+    }
+    
+    public boolean isUnderStorm() {
+        return u().isUnderStorm();
+    }
+
+    /**
+     * Returns true if given position has land connection to given point.
+     */
+    public boolean hasPathTo(APosition point) {
         return u.hasPath(point);
     }
 
-    public boolean isTraining() {
+    public boolean isTrainingAnyUnit() {
         return u.isTraining();
     }
 
@@ -824,4 +966,47 @@ public class AUnit extends APositionedObject implements Comparable<AUnit>, UnitA
         return u.getLastCommand();
     }
 
+    public UnitAction getUnitAction() {
+        return unitAction;
+    }
+    
+    public boolean isUnitAction(UnitAction constant) {
+        return unitAction == constant;
+    }
+    
+    public boolean isUnitActionMove() {
+        return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_BUILD 
+                || unitAction == UnitActions.MOVE_TO_REPAIR || unitAction == UnitActions.RETREAT
+                || unitAction == UnitActions.EXPLORE
+                || unitAction == UnitActions.STICK_CLOSER || unitAction == UnitActions.RUN;
+    }
+    
+    public void setUnitAction(UnitAction unitAction) {
+        this.unitAction = unitAction;
+    }
+
+    public boolean isReadyToShoot() {
+        return getGroundWeaponCooldown() <= 0 && getAirWeaponCooldown() <= 0;
+    }
+    
+    public int getScarabCount() {
+        return u().getScarabCount();
+    }
+
+    public AUnitType type() {
+        return getType();
+    }
+
+    public boolean isRepairerOfAnyKind() {
+        return ARepairManager.isRepairerOfAnyKind(this);
+    }
+    
+    public void setOrderWasIssued() {
+        _lastTimeOrderWasIssued = AGame.getTimeFrames();
+    }
+    
+    public int getFramesSinceLastOrderWasIssued() {
+        return AGame.getTimeFrames() - _lastTimeOrderWasIssued;
+    }
+    
 }

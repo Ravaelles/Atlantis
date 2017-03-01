@@ -7,7 +7,7 @@ desktop.ini
 .mtj.tmp/
 
 # Package Files #
-*.jar
+
 *.war
 *.ear
 
