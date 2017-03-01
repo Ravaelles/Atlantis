@@ -42,7 +42,8 @@ public class ABuildOrderLoader {
         // Read file into 2D String array
         String buildOrdersFile = filePath;
         System.out.println();
-        System.out.println("Using `" + filePath + "` build orders file.");
+        System.out.println("Using `" + filePath.replace(ABuildOrderLoader.BUILD_ORDERS_PATH, "") 
+                + "` build orders file.");
         
         // Parse CSV
         String[][] loadedFile = AtlantisUtilities.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);

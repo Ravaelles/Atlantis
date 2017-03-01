@@ -25,7 +25,7 @@ public class AWorkerManager {
         // =========================================================
         // === Worker micro ========================================
         
-        if (AAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(worker)) {
+        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(worker)) {
             return true;
         }
         

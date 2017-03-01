@@ -3,6 +3,7 @@ package atlantis.combat;
 import atlantis.AGame;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidMeleeUnitsManager;
+import atlantis.combat.micro.ABadWeather;
 import atlantis.combat.micro.AbstractMicroManager;
 import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.terran.TerranSiegeTankManager;
@@ -29,6 +30,13 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         // =========================================================
+        // Avoid bad weather like raining Psionic Storm or active spider mines.
+        
+        if (ABadWeather.avoidPsionicStormAndActiveMines(unit)) {
+            return true;
+        }
+
+        // =========================================================
         // Handle some units in special way
         
         if (handledAsSpecialUnit(unit)) {
@@ -45,7 +53,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
         // =========================================================
         // Avoid melee units
-        if (AAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(unit)) {
+        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
             return true;
         }
         

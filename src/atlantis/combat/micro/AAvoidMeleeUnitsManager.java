@@ -15,7 +15,7 @@ public class AAvoidMeleeUnitsManager {
     /**
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
-    public static boolean handleAvoidCloseMeleeUnits(AUnit unit) {
+    public static boolean avoidCloseMeleeUnits(AUnit unit) {
         if (shouldSkip(unit)) {
             return true;
         }
@@ -92,7 +92,9 @@ public class AAvoidMeleeUnitsManager {
                 boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
 //                APainter.paintCircleFilled(unit.getPosition(), 11, Color.Yellow);
                 
-                if (isEnemyDangerouslyClose && (unit.type().isMechanical() || unit.isWounded())) {
+                boolean standardEnemyIsDangerouslyClose = 
+                        isEnemyDangerouslyClose && (unit.type().isMechanical() || unit.isWounded());
+                if (standardEnemyIsDangerouslyClose) {
                     
 //                    APainter.paintCircleFilled(unit.getPosition(), 11, Color.Blue);
                     

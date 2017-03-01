@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.AtlantisIgniter;
 import atlantis.keyboard.AKeyboard;
 import atlantis.util.ProcessHelper;
+import java.math.BigInteger;
 
 /**
  * This is the main class of the bot. Here everything starts.
@@ -11,12 +12,12 @@ import atlantis.util.ProcessHelper;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-
+    
     /**
      * Sets up Atlantis config and runs the bot.
      */
     public static void main(String[] args) {
-        
+
         // Kill previous Starcraft.exe process
         ProcessHelper.killStarcraftProcess();
         
@@ -31,7 +32,7 @@ public class Main {
         // Combined with Chaoslauncher -> Settings -> Run Starcraft on Startup 
         // SC will be autostarted at this moment
         ProcessHelper.startChaosLauncherProcess();
-
+        
         // =============================================================
         // =============================================================
         // ==== See AtlantisConfig class to customize execution ========

@@ -126,7 +126,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.exists() && unit.isCompleted() && !unit.isType(
+            if (unit.isCompleted() && !unit.isType(
                     AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
@@ -150,13 +150,28 @@ public class Select<T> {
     }
 
     /**
+     * Selects all units of given type(s).
+     */
+    public static Select<AUnit> allOfType(AUnitType type) {
+        List<AUnit> data = new ArrayList<>();
+
+        for (AUnit unit : allUnits()) {
+            if (unit.isCompleted() && unit.isType(type)) {
+                data.add(unit);
+            }
+        }
+
+        return new Select<AUnit>(data);
+    }
+
+    /**
      * Selects our units of given type(s).
      */
     public static Select<AUnit> ourOfType(AUnitType type) {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.exists() && unit.isCompleted() && unit.isType(type)) {
+            if (unit.isCompleted() && unit.isType(type)) {
                 data.add(unit);
             }
         }
@@ -172,7 +187,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.exists() && unit.isCompleted() && !unit.isNotActuallyUnit() && !unit.getType().isBuilding()
+            if (unit.isCompleted() && !unit.isNotActuallyUnit() && !unit.getType().isBuilding()
                     && !unit.getType().equals(AtlantisConfig.WORKER) && !unit.getType().isSpecial()) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
@@ -190,7 +205,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (unit.exists() && !unit.getType().equals(AUnitType.Terran_Vulture_Spider_Mine)) {
+            if (!unit.getType().equals(AUnitType.Terran_Vulture_Spider_Mine)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
         }
@@ -207,7 +222,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (unit.exists() && !unit.isCompleted()) {
+            if (!unit.isCompleted()) {
                 data.add(unit);
             }
         }
@@ -222,7 +237,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.exists() && unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
+            if (unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
         }
@@ -238,7 +253,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (unit.exists() && !unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
+            if (!unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
         }
@@ -287,7 +302,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (unit.exists() && unit.isVisible() && !unit.getType().isBuilding()
+            if (unit.isVisible() && !unit.getType().isBuilding()
                     && !unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
@@ -303,7 +318,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (unit.exists() && unit.isVisible() && !unit.getType().isBuilding()
+            if (unit.isVisible() && !unit.getType().isBuilding()
                     && !unit.isType(AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 if ((unit.isGroundUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
                     data.add(unit);

@@ -14,6 +14,7 @@ import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.ACachedValue;
 import bwapi.Player;
+import bwapi.Position;
 import bwapi.Unit;
 import bwapi.UnitCommand;
 import bwapi.UnitCommandType;
@@ -167,7 +168,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
-    public boolean moveAwayFrom(APosition position, double moveDistance) {
+    public boolean moveAwayFrom(Position position, double moveDistance) {
         int dx = position.getX() - getX();
         int dy = position.getY() - getY();
         double vectorLength = Math.sqrt(dx * dx + dy * dy);
@@ -824,6 +825,14 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         return u.isCarryingGas();
     }
 
+    public boolean isCloaked() {
+        return u.isCloaked();
+    }
+
+    public boolean isBurrowed() {
+        return u.isBurrowed();
+    }
+
     public boolean isRepairing() {
         return u.isRepairing();
     }
@@ -924,6 +933,18 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
      */
     public boolean isLoaded() {
         return u.isLoaded();
+    }
+    
+    public boolean isUnderDisruptionWeb() {
+        return u().isUnderDisruptionWeb();
+    }
+    
+    public boolean isUnderDarkSwarm() {
+        return u().isUnderDarkSwarm();
+    }
+    
+    public boolean isUnderStorm() {
+        return u().isUnderStorm();
     }
 
     /**

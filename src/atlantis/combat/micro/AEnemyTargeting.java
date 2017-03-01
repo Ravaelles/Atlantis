@@ -22,7 +22,8 @@ public class AEnemyTargeting {
         boolean canAttackAir = unit.canAttackAirUnits(); 
         AUnit nearestEnemy = null;
         
-        Select<AUnit> enemiesThatCanBeAttackedSelector = Select.enemy(canAttackGround, canAttackAir);
+//        Select<AUnit> enemiesThatCanBeAttackedSelector = Select.enemy(canAttackGround, canAttackAir).visible();
+        Select<AUnit> enemiesThatCanBeAttackedSelector = Select.enemy().canBeAttackedBy(unit).visible();
 
         // === Attack units nears main =============================
         
@@ -38,7 +39,6 @@ public class AEnemyTargeting {
         // Attack deadliest shit out there
         
         nearestEnemy = enemySelector.visible()
-                .canBeAttackedBy(unit)
                 .ofType(AUnitType.Terran_Vulture_Spider_Mine)
                 .nearestTo(unit);
         if (nearestEnemy != null) {

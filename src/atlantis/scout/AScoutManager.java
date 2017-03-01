@@ -145,7 +145,7 @@ public class AScoutManager {
     private static boolean handleScoutEnemyBase(AUnit scout) {
 
         // === Avoid melee units ===================================
-        if (AAvoidMeleeUnitsManager.handleAvoidCloseMeleeUnits(scout)) {
+        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(scout)) {
             scoutingAroundBaseWasInterrupted = true;
             return true;
         }

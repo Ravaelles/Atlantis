@@ -27,6 +27,13 @@ public class TerranVultureManager {
 
     private static boolean handlePlantMines(AUnit unit) {
         
+        // Unit gets status "stuck" after mine has been planted, being the only way I know of to
+        // define that a mine planting has been finished.
+        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.isStuck()) {
+            unit.setUnitAction(null);
+        }
+        
+        // If out of mines or mines ain't researched, don't do anything.
         if (unit.getMinesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) {
             return false;
         }
