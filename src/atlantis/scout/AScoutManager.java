@@ -20,6 +20,7 @@ import bwapi.Position;
 import bwta.BaseLocation;
 import bwta.Region;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class AScoutManager {
 
@@ -33,6 +34,8 @@ public class AScoutManager {
      */
     private static ArrayList<AUnit> scouts = new ArrayList<>();
 
+    private static boolean anyScoutBeenKilled = false;
+    
     public static Positions scoutingAroundBasePoints = new Positions();
     private static int scoutingAroundBaseNextPolygonIndex = -1;
     private static APosition scoutingAroundBaseLastPolygonPoint = null;
@@ -173,13 +176,25 @@ public class AScoutManager {
      * If we have no scout unit assigned, make one of our units a scout.
      */
     private static void assignScoutIfNeeded() {
+        
+        // === Remove dead scouts ========================================
+        
+        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+            AUnit scout = iterator.next();
+            if (!scout.isAlive()) {
+                iterator.remove();
+                anyScoutBeenKilled = true;
+            }
+        }
+        
+        // =========================================================
 
         // ZERG case
         if (AGame.playsAsZerg()) {
 
             // We know enemy building
             if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-                if (AGame.getTimeSeconds() < 600) {
+                if (AGame.getTimeSeconds() < 500) {
                     if (scouts.isEmpty()) {
                         for (AUnit worker : Select.ourWorkers().list()) {
                             if (!worker.isBuilder()) {
@@ -303,6 +318,10 @@ public class AScoutManager {
      */
     public static boolean isScout(AUnit unit) {
         return scouts.contains(unit);
+    }
+
+    public static boolean hasAnyScoutBeenKilled() {
+        return anyScoutBeenKilled;
     }
 
 }

@@ -2,10 +2,12 @@ package atlantis.constructing;
 
 import atlantis.AGame;
 import atlantis.constructing.position.AbstractPositionFinder;
+import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
+import bwapi.Color;
 import bwapi.TilePosition;
 
 public class ABuilderManager {
@@ -45,7 +47,8 @@ public class ABuilderManager {
 
     private static void travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
         //TODO: check possible confusion with Position and TilePosition here
-        APosition buildPosition = constructionOrder.getPositionToBuildCenter();
+        APosition buildPosition = constructionOrder.getPositionToBuild();
+        APosition buildPositionCenter = constructionOrder.getPositionToBuildCenter();
         AUnitType buildingType = constructionOrder.getBuildingType();
 
         if (builder == null) {
@@ -63,12 +66,12 @@ public class ABuilderManager {
 //        );
         // =========================================================
         double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.6 : 1;
-        double distance = builder.distanceTo(buildPosition);
-
+        double distance = builder.distanceTo(buildPositionCenter);
+        
         // Move builder to the build position
         if (distance > maxDistanceToIssueBuildOrder) {
             if (!builder.isMoving() || AGame.getTimeFrames() % 10 == 0) {
-                builder.move(buildPosition, UnitActions.MOVE_TO_BUILD);
+                builder.move(constructionOrder.getPositionToBuildCenter(), UnitActions.MOVE_TO_BUILD);
             }
             builder.setTooltip("Build " + buildingType.getShortName() + " (" + distance);
         } 
@@ -116,9 +119,19 @@ public class ABuilderManager {
                     return position.translateByTiles(-1, 0);
                 }
                 if (AbstractPositionFinder.canPhysicallyBuildHere
+                            (builder, building, position.translateByTiles(1, 0))) {
+                    System.out.println("Applied [1,0] " + building + " position FIX");
+                    return position.translateByTiles(1, 0);
+                }
+                if (AbstractPositionFinder.canPhysicallyBuildHere
                             (builder, building, position.translateByTiles(-2, -1))) {
                     System.out.println("Applied [-2,-1] " + building + " position FIX");
                     return position.translateByTiles(-2, -1);
+                }
+                if (AbstractPositionFinder.canPhysicallyBuildHere
+                            (builder, building, position.translateByTiles(2, 1))) {
+                    System.out.println("Applied [2,1] " + building + " position FIX");
+                    return position.translateByTiles(2, 1);
                 }
                 
                 System.err.println("Gas building FIX was not applied");

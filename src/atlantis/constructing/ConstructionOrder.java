@@ -120,7 +120,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         APosition positionToBuild = getPositionToBuild();
         if (positionToBuild != null) {
             return positionToBuild.translateByPixels(
-                    getBuildingType().getDimensionLeft() / 2, getBuildingType().getDimensionUp()/ 2
+                    getBuildingType().getDimensionLeft(), getBuildingType().getDimensionUp()
             );
         }
         else {

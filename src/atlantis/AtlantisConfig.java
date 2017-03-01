@@ -84,7 +84,7 @@ public class AtlantisConfig {
     public static AUnitType BARRACKS = null;
     public static AUnitType SUPPLY = null;
     public static AUnitType GAS_BUILDING = null;
-    public static AUnitType DEFENSIVE_BUILDING_ANTI_LAND = null;
+    public static AUnitType DEF_BUILDING_ANTI_LAND = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
     public static ABuildOrder DEFAULT_BUILD_ORDER = null;
 
@@ -103,7 +103,7 @@ public class AtlantisConfig {
         AtlantisConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
         AtlantisConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
         
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
+        AtlantisConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
         AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
     }
 
@@ -120,7 +120,7 @@ public class AtlantisConfig {
         AtlantisConfig.SUPPLY = AUnitType.Protoss_Pylon;
         AtlantisConfig.GAS_BUILDING = AUnitType.Protoss_Assimilator;
         
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Protoss_Photon_Cannon;
+        AtlantisConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Protoss_Photon_Cannon;
         AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Protoss_Photon_Cannon;
     }
     
@@ -137,7 +137,7 @@ public class AtlantisConfig {
         AtlantisConfig.SUPPLY = AUnitType.Zerg_Overlord;
         AtlantisConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
         
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Zerg_Creep_Colony;
+        AtlantisConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Zerg_Creep_Colony;
         AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Zerg_Creep_Colony;
     }
     

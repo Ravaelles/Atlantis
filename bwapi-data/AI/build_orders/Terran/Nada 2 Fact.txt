@@ -39,11 +39,11 @@ http://wiki.teamliquid.net/starcraft/Nada_2_Fac
 21 - Machine Shop
 22 - Vulture
 23 - Supply Depot
-24 - Siege Tank
-26 - Ion Thrusters
+24 - Ion Thrusters
+24 - Vulture
 26 - Tank
-27 - Siege Mode
 28 - Tank
+29 - Siege Mode
 30 - Tank
 33 - Tank
 

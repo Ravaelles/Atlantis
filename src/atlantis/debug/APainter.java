@@ -483,6 +483,7 @@ public class APainter {
         Color color = Color.Grey;
         for (ConstructionOrder order : AConstructionManager.getAllConstructionOrders()) {
             if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+//            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 APosition positionToBuild = order.getPositionToBuild();
                 AUnitType buildingType = order.getBuildingType();
                 if (positionToBuild == null || buildingType == null) {

@@ -17,7 +17,7 @@ public class AStrategyCommander {
         }
         
         // If we don't know enemy strategy, try to define it based on enemy buildings/units we know
-        if (AGame.getTimeSeconds() < 350 && AGame.getTimeFrames() % 12 == 0) {
+        if (AGame.getTimeSeconds() < 500 && AGame.getTimeFrames() % 12 == 0) {
             if (AGame.isEnemyProtoss()) {
                 defineEnemyStrategyWhenEnemyIsProtoss();
             }
@@ -28,6 +28,10 @@ public class AStrategyCommander {
                 defineEnemyStrategyWhenEnemyIsZerg();
             }
         }
+
+        // =========================================================
+        
+        AStrategyResponse.update();
     }
     
     // =========================================================
@@ -71,7 +75,7 @@ public class AStrategyCommander {
             AGame.sendMessage("Enemy strategy: " + strategy);
         }
         AEnemyStrategy.setEnemyStrategy(strategy);
-        AStrategyResponse.updateWhenEnemyStrategyChanged();
+        AStrategyResponse.updateEnemyStrategyChanged();
     }
     
 }
