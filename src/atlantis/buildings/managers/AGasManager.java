@@ -41,7 +41,6 @@ public class AGasManager {
             }
             
             int numberOfWorkersAssigned = AWorkerManager.getHowManyWorkersGatheringAt(gasBuilding);
-            APainter.paintTextCentered(gasBuilding, "" + numberOfWorkersAssigned, Color.Green);
             
             // Assign when LOWER THAN MIN
             if (numberOfWorkersAssigned < minGasWorkersPerBuilding) {

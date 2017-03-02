@@ -84,7 +84,7 @@ public class AAvoidMeleeUnitsManager {
 //            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
             if (closeEnemy != null) {
                 
-                double baseCriticalDistance = (unit.isVulture() ? 1.8 : 1.5);
+                double baseCriticalDistance = (unit.isVulture() ? 1.95 : 1.5);
                 double numberOfNearEnemiesBonus = Math.max(0.4, 
                         ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
                 double archonBonus = (((enemyRealUnitsSelector.ofType(AUnitType.Protoss_Archon)
