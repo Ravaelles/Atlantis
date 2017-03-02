@@ -142,8 +142,8 @@ public abstract class ABuildOrderManager {
         // Produce some generic units (preferably combat units) if queue is empty.
         // This can mean that we run out of build orders from build order file.
         // For proper build order files this feature will activate in late game.
-        if (result.isEmpty() && AGame.canAfford(300, 200)
-                && (AGame.getSupplyUsed() >= 30 || initialProductionQueue.isEmpty())) {
+        if (result.isEmpty() && AGame.canAfford(450, 250)
+                && (AGame.getSupplyUsed() >= 25 || initialProductionQueue.isEmpty())) {
             for (AUnitType unitType : currentBuildOrder.produceWhenNoProductionOrders()) {
                 if (AGame.hasBuildingsToProduce(unitType, false)) {
                     result.add(new ProductionOrder(unitType));

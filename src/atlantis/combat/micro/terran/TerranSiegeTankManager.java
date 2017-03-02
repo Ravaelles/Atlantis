@@ -79,29 +79,30 @@ public class TerranSiegeTankManager {
             return true;
         }
         
-        // === Enemy is BUILDING ========================================
+        // === Check for enemy COMBAT BUILDINGS ====================
+        
+        AUnit nearEnemyCombatBuilding = Select.enemy().combatBuildings().inRadius(10.98, tank).first();
+        if (nearEnemyCombatBuilding != null) {
+            return handleNearEnemyCombatBuilding(tank, nearEnemyCombatBuilding);
+        }
+        
+        // === Enemy is UNIT =======================================
         
         if (nearestAttackableEnemy != null) {
-
-            // === Enemy is COMBAT UNIT ========================================
-            
-            if (Select.ourCombatUnits().inRadius(10, tank).count() >= 4) {
-                return nearestEnemyIsUnit(tank, nearestAttackableEnemy, distanceToEnemy);
-            }
-            
-            // Enemy is BUILDING
-            else if (nearestAttackableEnemy.isBuilding()) {
-                return nearestEnemyIsBuilding(tank, nearestAttackableEnemy, distanceToEnemy);
-            } 
+            return nearestEnemyIsUnit(tank, nearestAttackableEnemy, distanceToEnemy);
         }
+        
+        // =========================================================
         
         return false;
     }
     
     // =========================================================
     
-    private static boolean nearestEnemyIsBuilding(AUnit tank, AUnit nearestAttackableEnemy, double distanceToEnemy) {
-        if (distanceToEnemy <= 10.3) {
+    private static boolean handleNearEnemyCombatBuilding(AUnit tank, AUnit combatBuilding) {
+        double distanceToEnemy = tank.distanceTo(combatBuilding);
+        
+        if (distanceToEnemy <= 10.1) {
             tank.siege();
             tank.setTooltip("Siege - building");
             return true;
@@ -113,7 +114,7 @@ public class TerranSiegeTankManager {
     private static boolean nearestEnemyIsUnit(AUnit tank, AUnit enemy, double distanceToEnemy) {
         
         // Don't siege when enemy is too close
-        if (distanceToEnemy < 5) {
+        if (distanceToEnemy < 10 && !enemy.isRangedUnit()) {
             tank.setTooltip("Dont siege");
             return false;
         }

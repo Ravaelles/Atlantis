@@ -695,7 +695,7 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * Returns true if this is Bunker, Turret, Photon Cannon, Sunken/Spore Colony.
      */
-    public boolean isMilitaryBuilding() {
+    public boolean isCombatBuilding() {
         return isType(
                 AUnitType.Terran_Bunker,
                 AUnitType.Terran_Missile_Turret,

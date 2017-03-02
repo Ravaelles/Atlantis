@@ -29,8 +29,9 @@ public class TerranVultureManager {
         
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
-        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || !unit.isInterruptible())) {
+        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle())) {
             unit.setUnitAction(null);
+            unit.removeTooltip();
         }
         
         // If out of mines or mines ain't researched, don't do anything.
@@ -53,6 +54,11 @@ public class TerranVultureManager {
         
         // If enemies are too close don't do it
         if (Select.enemyRealUnits().inRadius(4, unit).count() > 0) {
+            return false;
+        }
+        
+        // If too many our units around, don't mine
+        if (Select.ourCombatUnits().inRadius(7, unit).count() >= 4) {
             return false;
         }
         

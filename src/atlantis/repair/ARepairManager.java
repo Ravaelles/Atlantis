@@ -26,17 +26,51 @@ public class ARepairManager {
     
     // =========================================================
     
+    public static boolean handleRepairedUnitBehavior(AUnit unit) {
+        if (!unit.isWounded()) {
+            return false;
+        }
+        
+        // =========================================================
+        
+        AUnit repairer = getRepairerForUnit(unit);
+        if (repairer != null) {
+            double distanceToRepairer = repairer.distanceTo(unit);
+            
+            // Ignore repair if quite healthy and repairer is far
+            if (unit.getHPPercent() > 50 && distanceToRepairer > 4) {
+                return false;
+            }
+            
+            // Go to repairer if he's close
+            if (distanceToRepairer > 0.02) {
+                unit.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR);
+                return true;
+            }
+            
+            // We're very close to repairer, wait.
+            else if (unit.isMoving() && !unit.isRunning()) {
+                unit.holdPosition();
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    // =========================================================
+    
     public static boolean updateUnitRepairer(AUnit repairer) {
         AUnit unitToRepair = ARepairManager.getUnitToRepairFor(repairer);
         if (unitToRepair != null && unitToRepair.isAlive()) {
-            if (unitToRepair.getHPPercent() < 100) {
+            if (unitToRepair.getHPPercent() < 80) {
                 repairer.setTooltip("Repair " + unitToRepair.getShortName() + "(alive:" + unitToRepair.isAlive());
                 repairer.repair(unitToRepair);
                 return true;
             }
             else {
                 double distanceToUnit = unitToRepair.distanceTo(repairer);
-                if (distanceToUnit > 1) {
+                if (distanceToUnit > 0.1) {
                     repairer.setTooltip("Go to " + unitToRepair.getShortNamePlusId());
                     repairer.move(unitToRepair.getPosition(), UnitActions.MOVE_TO_REPAIR);
                     return true;
@@ -132,6 +166,16 @@ public class ARepairManager {
     
     public static AUnit getUnitToRepairFor(AUnit repairer) {
         return repairersToUnit.get(repairer);
+    }
+    
+    public static AUnit getRepairerForUnit(AUnit wounded) {
+        if (unitsToRepairers.containsKey(wounded)) {
+            ArrayList<AUnit> repairers = unitsToRepairers.get(wounded);
+            if (!repairers.isEmpty()) {
+                return repairers.get(0);
+            }
+        }
+        return null;
     }
 
     public static void removeConstantBunkerRepairer(AUnit repairer) {

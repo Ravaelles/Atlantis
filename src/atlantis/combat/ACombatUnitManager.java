@@ -10,6 +10,7 @@ import atlantis.combat.micro.terran.TerranSiegeTankManager;
 import atlantis.combat.micro.terran.TerranVultureManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.combat.squad.Squad;
+import atlantis.repair.ARepairManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -37,10 +38,16 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         // =========================================================
+        // Handle repair of mechanical units
+        
+        if (ARepairManager.handleRepairedUnitBehavior(unit)) {
+            return true;
+        }
+
+        // =========================================================
         // Handle some units in special way
         
         if (handledAsSpecialUnit(unit)) {
-            unit.setTooltip(unit.getShortName());
             return true;
         }
         

@@ -3,10 +3,16 @@ package atlantis.buildings.managers;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.debug.APainter;
+import atlantis.production.AProductionCommander;
+import atlantis.production.AProductionManager;
+import atlantis.production.ProductionOrder;
+import atlantis.production.orders.ABuildOrder;
+import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.workers.AWorkerManager;
 import bwapi.Color;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class AGasManager {
@@ -41,9 +47,11 @@ public class AGasManager {
             }
             
             int numberOfWorkersAssigned = AWorkerManager.getHowManyWorkersGatheringAt(gasBuilding);
+            int optimalNumberOfGasWorkers = defineOptimalGasWorkers(gasBuilding);
             
             // Assign when LOWER THAN MIN
-            if (numberOfWorkersAssigned < minGasWorkersPerBuilding) {
+//            if (numberOfWorkersAssigned < minGasWorkersPerBuilding && nu) {
+            if (numberOfWorkersAssigned < optimalNumberOfGasWorkers) {
                 AUnit worker = getWorkerForGasBuilding(gasBuilding);
                 if (worker != null) {
                     worker.gather(gasBuilding);
@@ -52,7 +60,7 @@ public class AGasManager {
             }
             
             // Deassign when MORE THAN MAX
-            else if (numberOfWorkersAssigned > MAX_GAS_WORKERS_PER_BUILDING) {
+            else if (numberOfWorkersAssigned > optimalNumberOfGasWorkers) {
                 AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null) {
                     worker.stop();
@@ -92,6 +100,21 @@ public class AGasManager {
 //        else {
 //            return 3;
 //        }
+    }
+
+    private static int defineOptimalGasWorkers(AUnit gasBuilding) {
+        if (AGame.hasGas(350)) {
+            return 1;
+        }
+        
+        ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(2);
+        for (ProductionOrder order : nextOrders) {
+            if (order.getGasRequired() > 0) {
+                return 3;
+            }
+        }
+        
+        return 1;
     }
 
 }

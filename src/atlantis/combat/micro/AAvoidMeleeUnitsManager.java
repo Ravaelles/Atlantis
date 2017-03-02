@@ -36,7 +36,7 @@ public class AAvoidMeleeUnitsManager {
             
             // === Define safety distance ==============================
 
-            double lowHealthBonus = Math.max(((100 - unit.getHPPercent()) / 25), 1.5);
+            double lowHealthBonus = Math.max(((100 - unit.getHPPercent()) / 25), 1.7);
             double safetyDistance;
             
             if (unit.isVulture()) {
@@ -84,13 +84,15 @@ public class AAvoidMeleeUnitsManager {
 //            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
             if (closeEnemy != null) {
                 
-                double baseCriticalDistance = (unit.isVulture() ? 1.95 : 1.5);
+                double baseCriticalDistance = (unit.isVulture() ? 2 : 1.5);
+                double healthBonus = unit.getHPPercent() < 30 ? 1.8 : 0;
                 double numberOfNearEnemiesBonus = Math.max(0.4, 
                         ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
                 double archonBonus = (((enemyRealUnitsSelector.ofType(AUnitType.Protoss_Archon)
                         .inRadius(5, unit)).count() > 0) ? 2.2 : 0);
                 
-                double dangerousDistance = baseCriticalDistance + numberOfNearEnemiesBonus + archonBonus;
+                double dangerousDistance = baseCriticalDistance + numberOfNearEnemiesBonus 
+                        + healthBonus + archonBonus;
                 double enemyDistance = closeEnemy.distanceTo(unit);
                 boolean isEnemyDangerouslyClose = enemyDistance < dangerousDistance;
 //                APainter.paintCircleFilled(unit.getPosition(), 11, Color.Yellow);
@@ -106,7 +108,7 @@ public class AAvoidMeleeUnitsManager {
 
                     boolean dontInterruptPendingAttack = false;
                     if (unit.isVulture()) {
-                        dontInterruptPendingAttack = unit.isAttackFrame() && unit.getHPPercent() >= 30;
+                        dontInterruptPendingAttack = unit.isAttackFrame() && unit.getHPPercent() >= 40;
                     }
                     else {
                         dontInterruptPendingAttack = (unit.isAttackFrame() || unit.isStartingAttack())

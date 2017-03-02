@@ -176,6 +176,9 @@ public class AScoutManager {
      * If we have no scout unit assigned, make one of our units a scout.
      */
     private static void assignScoutIfNeeded() {
+        if (AGame.getTimeSeconds() > 330) {
+            return;
+        }
         
         // === Remove dead scouts ========================================
         
@@ -194,7 +197,7 @@ public class AScoutManager {
 
             // We know enemy building
             if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-                if (AGame.getTimeSeconds() < 500) {
+                if (AGame.getTimeSeconds() < 350) {
                     if (scouts.isEmpty()) {
                         for (AUnit worker : Select.ourWorkers().list()) {
                             if (!worker.isBuilder()) {

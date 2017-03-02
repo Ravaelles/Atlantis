@@ -648,10 +648,23 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AFoggedUnit uData = dataFrom(unitsIterator.next());
-            boolean isMilitaryBuilding = uData.getType().isMilitaryBuilding();
             AUnit u = uData.getUnit();	//TODO: will work only on visible units...
-            if (!u.isCompleted() || u.isWorker() || (uData.getType().isBuilding() && !isMilitaryBuilding)
+            if (!u.isCompleted() || u.isWorker() || (uData.getType().isBuilding() && !uData.getType().isCombatBuilding())
                     || u.getType().isInvincible() || u.getType().isSpecial() || u.getType().isMine()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Selects military buildings like Photon Cannon, Bunker, Spore Colony, Sunken Colony
+     */
+    public Select<T> combatBuildings() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (!unit.isBuilding() || !unit.getType().isCombatBuilding()) {
                 unitsIterator.remove();
             }
         }

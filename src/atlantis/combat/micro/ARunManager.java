@@ -210,7 +210,7 @@ public class ARunManager {
         // === Get run to position - as far from enemy as possible =====================
 
         if (runTo == null) {
-            double expectedLength = unit.isVulture() ? 6 : (unit.isWorker() ? 3 : 2.5);
+            double expectedLength = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 2.5);
             runTo = findRunPositionAtAnyDirection(unit, runAwayFrom, expectedLength);
         }
         
@@ -223,7 +223,7 @@ public class ARunManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private static APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
-        double minTiles = unit.isVulture() ? 6 : (unit.isWorker() ? 3 : 1.2);
+        double minTiles = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 1.2);
 
         double maxDist = minTiles;
 
