@@ -103,18 +103,17 @@ public class AGasManager {
     }
 
     private static int defineOptimalGasWorkers(AUnit gasBuilding) {
-        if (AGame.hasGas(350)) {
+        if (AGame.hasGas(400)) {
             return 1;
         }
         
-        ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(2);
+        int totalGasNeeded = 0;
+        ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(4);
         for (ProductionOrder order : nextOrders) {
-            if (order.getGasRequired() > 0) {
-                return 3;
-            }
+            totalGasNeeded += order.getGasRequired();
         }
         
-        return 1;
+        return (totalGasNeeded > 0 && !AGame.hasGas(totalGasNeeded) ? 3 : 1);
     }
 
 }

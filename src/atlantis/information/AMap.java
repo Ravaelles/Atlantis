@@ -347,49 +347,6 @@ public class AMap {
     /**
      * Can be used to avoid getting to close to the region edges, which may cause unit to get stuck.
      */
-//    public static boolean isPositionFarFromAnyRegionPolygonPoint(APosition unitPosition) {
-//        Region region = unitPosition.getRegion();
-//        
-//        if (region == null) {
-//            System.err.println("isPositionFarFromAnyRegionPolygonPoint -> Region is null");
-//            return false;
-//        }
-//        if (region.getPolygon() == null) {
-//            System.err.println("isPositionFarFromAnyRegionPolygonPoint -> region.getPolygon() is null");
-//            return false;
-//        }
-//
-//        // === Define polygon points for given region ==============
-//        
-//        Positions polygonPoints = new Positions();
-//        if (regionsToPolygonPoints.containsKey(region.toString())) {
-//            polygonPoints = regionsToPolygonPoints.get(region.toString());
-//        }
-//        else {
-//            polygonPoints = new Positions();
-//            polygonPoints.addPositions(region.getPolygon().getPoints());
-//            regionsToPolygonPoints.put(region.toString(), polygonPoints);
-//        }
-//        
-////        for (Positions positions : regionsToPolygonPoints.values()) {
-////            for (Iterator it = positions.arrayList().iterator(); it.hasNext();) {
-////                Position position = (Position) it.next();
-////                APainter.paintCircle(position, 13, Color.Yellow);
-////                APainter.paintCircle(position, 16, Color.Yellow);
-////            }
-////        }
-//        
-//        APosition nearestPolygon = polygonPoints.nearestTo(unitPosition);
-//        
-//        // =========================================================
-//        
-//        if (nearestPolygon != null && nearestPolygon.distanceTo(unitPosition) < 1.5) {
-//            return false;
-//        }
-//        else {
-//            return true;
-//        }
-//    }
     public static double getDistanceToAnyRegionPolygonPoint(APosition unitPosition) {
         Region region = unitPosition.getRegion();
         

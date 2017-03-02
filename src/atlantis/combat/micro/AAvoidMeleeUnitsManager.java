@@ -40,7 +40,7 @@ public class AAvoidMeleeUnitsManager {
             double safetyDistance;
             
             if (unit.isVulture()) {
-                safetyDistance = 3 + lowHealthBonus;
+                safetyDistance = 4 + lowHealthBonus;
             }
             else if (unit.isWorker()) {
                 if (unit.isGatheringGas() || unit.isGatheringMinerals()) {
@@ -76,7 +76,7 @@ public class AAvoidMeleeUnitsManager {
 //            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), 
 //                    "" + String.format("%.1f", safetyDistance), Color.Green);
             
-//            AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Green);
+//            APainter.paintCircle(unit, (int) safetyDistance * 32, Color.Green);
 //            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), enemiesNearby + "", Color.Red);
 
             Select<?> closeEnemies = enemyRealUnitsSelector.melee().inRadius(safetyDistance, unit);
@@ -85,7 +85,7 @@ public class AAvoidMeleeUnitsManager {
             if (closeEnemy != null) {
                 
                 double baseCriticalDistance = (unit.isVulture() ? 2 : 1.5);
-                double healthBonus = unit.getHPPercent() < 30 ? 1.8 : 0;
+                double healthBonus = unit.getHPPercent() < 30 ? 1 : 0;
                 double numberOfNearEnemiesBonus = Math.max(0.4, 
                         ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
                 double archonBonus = (((enemyRealUnitsSelector.ofType(AUnitType.Protoss_Archon)

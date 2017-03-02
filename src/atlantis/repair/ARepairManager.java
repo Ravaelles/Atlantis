@@ -171,8 +171,13 @@ public class ARepairManager {
     public static AUnit getRepairerForUnit(AUnit wounded) {
         if (unitsToRepairers.containsKey(wounded)) {
             ArrayList<AUnit> repairers = unitsToRepairers.get(wounded);
-            if (!repairers.isEmpty()) {
-                return repairers.get(0);
+            if (repairers.size() >= 1) {
+                if (repairers.get(0).isAlive()) {
+                    return repairers.get(0);
+                }
+                else {
+                    removeUnitRepairer(repairers.get(0));
+                }
             }
         }
         return null;

@@ -38,13 +38,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         // =========================================================
-        // Handle repair of mechanical units
-        
-        if (ARepairManager.handleRepairedUnitBehavior(unit)) {
-            return true;
-        }
-
-        // =========================================================
         // Handle some units in special way
         
         if (handledAsSpecialUnit(unit)) {
@@ -68,6 +61,13 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // Early mode - Attack enemy units when in range (and choose the best target)
         boolean isAllowedToAttackWhenRetreating = isAllowedToAttackWhenRetreating(unit);
         if (isAllowedToAttackWhenRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+            return true;
+        }
+
+        // =========================================================
+        // Handle repair of mechanical units
+        
+        if (ARepairManager.handleRepairedUnitBehavior(unit)) {
             return true;
         }
         

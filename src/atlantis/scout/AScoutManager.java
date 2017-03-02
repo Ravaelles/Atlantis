@@ -265,9 +265,11 @@ public class AScoutManager {
         scoutingAroundBaseLastPolygonPoint = goTo;
         scoutingAroundBaseWasInterrupted = false;
 
-        APainter.paintLine(
-                scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Yellow
-        );
+        if (APainter.paintingMode == APainter.MODE_FULL_PAINTING) {
+            APainter.paintLine(
+                    scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Yellow
+            );
+        }
 
         if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
             AViewport.centerScreenOn(scout);

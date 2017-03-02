@@ -203,9 +203,9 @@ public class ARunManager {
 
         // === Run directly away from the enemy ========================================
         
-        if (closeEnemies != null && !unit.getPosition().isCloseToMapBounds()) {
-            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
-        }
+//        if (closeEnemies != null && !unit.getPosition().isCloseToMapBounds()) {
+//            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
+//        }
         
         // === Get run to position - as far from enemy as possible =====================
 

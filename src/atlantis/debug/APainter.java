@@ -600,7 +600,7 @@ public class APainter {
                 paintCircle(unit, unitRadius - 3, Color.Blue);
                 paintCircle(unit, unitRadius - 2, Color.Blue);
                 if (unit.getTargetPosition()!= null) {
-                    APainter.paintCircleFilled(unit.getTargetPosition(), 8, Color.Blue);
+                    APainter.paintCircleFilled(unit.getTargetPosition(), 4, Color.Blue);
                     APainter.paintLine(unit.getPosition(), unit.getTargetPosition(), Color.Blue);
                 }
             }
