@@ -54,19 +54,19 @@ public class MissionUmt extends Mission {
             if (Select.ourCombatUnits().inRadius(3, unit).count() == 0) {
                 AUnit nearestUnit = Select.ourCombatUnits().exclude(unit).nearestTo(flagshipUnit);
                 if (nearestUnit != null) {
-                    unit.move(nearestUnit.getPosition(), UnitActions.STICK_CLOSER);
+                    unit.move(nearestUnit.getPosition(), UnitActions.MOVE);
                     return true;
                 }
             }
         } else {
             if (distanceToFlagship > 5) {
                 if (distanceToFlagship > 7) {
-                    unit.move(flagshipUnit.getPosition(), UnitActions.STICK_CLOSER);
+                    unit.move(flagshipUnit.getPosition(), UnitActions.MOVE);
                     return true;
                 } else {
                     if (Select.ourCombatUnits().inRadius(1.5, unit).count() == 0) {
                         unit.setTooltip("#Closer");
-                        unit.move(flagshipUnit.getPosition(), UnitActions.STICK_CLOSER);
+                        unit.move(flagshipUnit.getPosition(), UnitActions.MOVE);
                         return true;
                     }
                 }
@@ -83,12 +83,12 @@ public class MissionUmt extends Mission {
         }
 
         // === Return closest enemy ========================================
-        AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
-        if (nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
-            engageEnemy = nearestEnemy;
-            unit.setTooltip("#Engage");
-            return unit.move(engageEnemy.getPosition(), UnitActions.ENGAGE);
-        }
+//        AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
+//        if (nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
+//            engageEnemy = nearestEnemy;
+//            unit.setTooltip("#Engage");
+//            return unit.move(engageEnemy.getPosition(), UnitActions.ENGAGE);
+//        }
 
         // === Return location to go to ====================================
         Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
@@ -160,6 +160,10 @@ public class MissionUmt extends Mission {
     
     public static MissionUmt getInstance() {
         return instance;
+    }
+
+    public static AUnit getFlagshipUnit() {
+        return flagshipUnit;
     }
     
 }

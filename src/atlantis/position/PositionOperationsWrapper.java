@@ -83,6 +83,21 @@ public class PositionOperationsWrapper {
         int finalY = (int) ((100 - percent) * from.getY() + percent * movedToward.getY()) / 100;
         return new APosition(finalX, finalY);
     }
+    
+    public static APosition getPositionMovedTilesTowards(APosition from, AbstractPoint<Position> to, double tiles) {
+        int dirX = to.getX() - from.getX();
+        int dirY = to.getY() - from.getY();
+        
+//        double hyp = Math.sqrt(dirX * dirX + dirY * dirY);
+        double hyp = tiles * 32;
+        dirX /= hyp;
+        dirY /= hyp;
+        
+        int finalX = from.getX() + dirX;
+        int finalY = from.getY() + dirY;
+        
+        return new APosition(finalX, finalY);
+    }
 
     // === Translate position ============================
     

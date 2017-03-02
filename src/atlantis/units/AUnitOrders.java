@@ -25,19 +25,16 @@ public interface AUnitOrders {
     // =========================================================
     
     default boolean attackUnit(AUnit target) {
-        if (!unit().hasRangeToAttack(target, 0.05)) {
-            unit().setTooltip("Come closer!");
-            move(target.getPosition(), UnitActions.ATTACK_UNIT);
-            return false;
-        }
+//        if (!unit().hasRangeToAttack(target, 0)) {
+//            unit().setTooltip("Come closer!");
+//            move(target.getPosition(), UnitActions.MOVE);
+//            return false;
+//        }
 
         unit().setUnitAction(UnitActions.ATTACK_UNIT);
 
         // Do NOT issue double orders
-        if (unit().isUnitAction(UnitActions.ATTACK_UNIT)
-                && u().getTarget() != null && unit().getTarget().equals(target)) {
-            return true;
-        } else {
+        if (!unit().isUnitAction(UnitActions.ATTACK_UNIT) || u().getTarget() == null || !unit().getTarget().equals(target)) {
 //            System.out.println();
 //            System.out.println("unit().isJustShooting() = " + unit().isJustShooting());
 //            System.out.println("unit().isAttacking() = " + unit().isAttacking());
@@ -46,8 +43,8 @@ public interface AUnitOrders {
 //            AGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
             u().attack(target.u());
             unit().setOrderWasIssued();
-            return true;
         }
+        return true;
     }
 
     default boolean attackPosition(APosition target) {
@@ -104,7 +101,6 @@ public interface AUnitOrders {
             return false;
         }
         
-        unit().setUnitAction(unitAction);
         
         // === Handle LOADED/SIEGED units ========================================
         
@@ -119,8 +115,9 @@ public interface AUnitOrders {
             
         // =========================================================
 
-//        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
+        unit().setUnitAction(unitAction);
         
+//        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
 //        if (unit().isMoving() && AGame.getTimeFrames() % 4 != 0) {
 //            return true;
 //        }
@@ -128,7 +125,11 @@ public interface AUnitOrders {
 //        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
 //            System.out.println(u().getID() + " MOVE at " + AGame.getTimeFrames());
 //        if (!unit().isMoving() || AGame.getTimeFrames() % 4 != 0) {
-        if (!unit().isUnitActionMove() || AGame.getTimeFrames() % 5 == 0) {
+//        if (!unit().isUnitActionMove() || AGame.getTimeFrames() % 5 == 0) {
+        
+        APosition currentTarget = unit().getTargetPosition();
+
+        if (!unit().isUnitActionMove() || currentTarget == null || !currentTarget.equals(target)) {
             u().move(target);
             unit().setOrderWasIssued();
             unit().setUnitAction(unitAction);

@@ -63,10 +63,10 @@ public class AKeyboard implements NativeKeyListener {
                 System.out.println("Notice: SPEED FASTER (" + AtlantisConfig.GAME_SPEED + ")");
                 break;
 
-            // Key "ESCAPE"
-            case 1: 
+            // Key "`"
+            case 41: 
                 System.out.println();
-                System.out.println("ESC pressed: exit requested by the user");
+                System.out.println("Exit requested by the user");
                 AGame.exit();
                 break;
 

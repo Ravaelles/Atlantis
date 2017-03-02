@@ -165,6 +165,21 @@ public class Select<T> {
     }
 
     /**
+     * Selects enemy units of given type(s).
+     */
+    public static Select<AUnit> enemyOfType(AUnitType type) {
+        List<AUnit> data = new ArrayList<>();
+
+        for (AUnit unit : enemyUnits()) {
+            if (unit.isType(type)) {
+                data.add(unit);
+            }
+        }
+
+        return new Select<AUnit>(data);
+    }
+
+    /**
      * Selects our units of given type(s).
      */
     public static Select<AUnit> ourOfType(AUnitType type) {
@@ -1064,6 +1079,22 @@ public class Select<T> {
     }
 
     // === High-level of abstraction ===========================
+    
+    public AUnit lowestHealth() {
+        int lowestHealth = 99999;
+        AUnit lowestHealthUnit = null;
+        
+        for (Iterator<T> it = data.iterator(); it.hasNext();) {
+            AUnit unit = (AUnit) it.next();
+            if (unit.getHP() < lowestHealth) {
+                lowestHealth = unit.getHP();
+                lowestHealthUnit = unit;
+            }
+        }
+
+        return lowestHealthUnit;
+    }
+    
     public boolean areAllBusy() {
         for (Iterator<AUnit> it = (Iterator<AUnit>) data.iterator(); it.hasNext();) {
             AUnit unit = (AUnit) it.next();

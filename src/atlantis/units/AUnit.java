@@ -564,8 +564,8 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         }
         
         double dist = this.distanceTo(targetUnit);
-        return (dist - safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
-                && (dist + 0.02) >= (weaponAgainstThisUnit.minRange() / 32);
+        return (dist + safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
+                && dist >= (weaponAgainstThisUnit.minRange() / 32);
     }
 
     /**
@@ -978,7 +978,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_BUILD 
                 || unitAction == UnitActions.MOVE_TO_REPAIR || unitAction == UnitActions.RETREAT
                 || unitAction == UnitActions.EXPLORE
-                || unitAction == UnitActions.STICK_CLOSER || unitAction == UnitActions.RUN;
+                || unitAction == UnitActions.RUN;
     }
     
     public void setUnitAction(UnitAction unitAction) {

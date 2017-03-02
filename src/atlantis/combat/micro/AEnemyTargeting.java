@@ -13,13 +13,33 @@ public class AEnemyTargeting {
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
+        AUnit preSelectedEnemy = selectUnitToAttackByType(unit);
+        AUnit finalEnemyToAttack = null;
+        
+        // =========================================================
+        // If found enemy, try to attack enemy of the same type, with fewest HP
+        
+        if (preSelectedEnemy != null) {
+            AUnitType enemyType = preSelectedEnemy.getType();
+            int weaponRange = unit.getWeaponRangeAgainst(preSelectedEnemy);
+            
+            // Find most wounded enemy unit of the same type within shoot range
+            finalEnemyToAttack = Select.enemyOfType(enemyType).inRadius(weaponRange, unit).lowestHealth();
+        }
+        
+        return finalEnemyToAttack;
+    }
+    
+    // =========================================================
+
+    private static AUnit selectUnitToAttackByType(AUnit unit) {
         Select<AUnit> enemySelector = Select.enemy();
         if (enemySelector.inRadius(14, unit).count() == 0) {
             return null;
         }
         
-        boolean canAttackGround = unit.canAttackGroundUnits(); 
-        boolean canAttackAir = unit.canAttackAirUnits(); 
+//        boolean canAttackGround = unit.canAttackGroundUnits(); 
+//        boolean canAttackAir = unit.canAttackAirUnits(); 
         AUnit nearestEnemy = null;
         
 //        Select<AUnit> enemiesThatCanBeAttackedSelector = Select.enemy(canAttackGround, canAttackAir).visible();
@@ -88,7 +108,7 @@ public class AEnemyTargeting {
         
         // =========================================================
         // Try selecting real units
-        nearestEnemy = Select.enemyRealUnits(canAttackGround, canAttackAir)
+        nearestEnemy = Select.enemyRealUnits()
                 .canBeAttackedBy(unit)
                 .nearestTo(unit);
         if (nearestEnemy != null) {

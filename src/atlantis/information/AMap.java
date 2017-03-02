@@ -345,8 +345,8 @@ public class AMap {
     /**
      * Can be used to avoid getting to close to the region edges, which may cause unit to get stuck.
      */
-    public static boolean isPositionFarFromAnyRegionPolygonPoint(AUnit unit) {
-        Region region = unit.getPosition().getRegion();
+    public static boolean isPositionFarFromAnyRegionPolygonPoint(APosition unitPosition) {
+        Region region = unitPosition.getRegion();
         
         if (region == null) {
             System.err.println("isPositionFarFromAnyRegionPolygonPoint -> Region is null");
@@ -368,11 +368,11 @@ public class AMap {
             polygonPoints.addPositions(region.getPolygon().getPoints());
             regionsToPolygonPoints.put(region.toString(), polygonPoints);
         }
-        APosition nearestPolygon = polygonPoints.nearestTo(unit.getPosition());
+        APosition nearestPolygon = polygonPoints.nearestTo(unitPosition);
         
         // =========================================================
         
-        if (nearestPolygon != null && nearestPolygon.distanceTo(unit) < 3) {
+        if (nearestPolygon != null && nearestPolygon.distanceTo(unitPosition) < 3) {
             return false;
         }
         else {

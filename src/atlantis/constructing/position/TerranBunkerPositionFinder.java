@@ -35,7 +35,7 @@ public class TerranBunkerPositionFinder {
                 nearTo = existingBunker.getPosition();
                 APosition defendPoint = MissionDefend.getInstance().getFocusPoint();
                 if (defendPoint != null) {
-                    nearTo = nearTo.translateTowards(defendPoint, 15);
+                    nearTo = nearTo.translatePercentTowards(defendPoint, 15);
                 }
             }
             else {
@@ -61,7 +61,7 @@ public class TerranBunkerPositionFinder {
             Chokepoint chokepointForNaturalBase = AMap.getChokepointForMainBase();
             if (chokepointForNaturalBase != null) {
                 return APosition.create(chokepointForNaturalBase.getCenter())
-                        .translateTowards(mainBase.getPosition(), 5);
+                        .translatePercentTowards(mainBase.getPosition(), 5);
             }
         }
 
@@ -71,7 +71,7 @@ public class TerranBunkerPositionFinder {
             if (chokepointForNaturalBase != null && mainBase != null) {
                 BaseLocation naturalBase = AMap.getNaturalBaseLocation(Select.mainBase().getPosition());
                 return APosition.create(chokepointForNaturalBase.getCenter())
-                        .translateTowards(naturalBase, 25);
+                        .translatePercentTowards(naturalBase, 25);
 
 //                    System.out.println();
 //                    System.err.println(nearTo);

@@ -6,6 +6,7 @@ import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.missions.MissionAttack;
+import atlantis.combat.squad.missions.MissionUmt;
 import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
@@ -109,9 +110,24 @@ public class APainter {
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
-
+        
+//        AUnit flagshipUnit = MissionUmt.getFlagshipUnit();
+//        if (flagshipUnit != null) {
+//            for (int tx = flagshipUnit.getTileX() - 5; tx < flagshipUnit.getTileX() + 5; tx++) {
+//                for (int ty = flagshipUnit.getTileY() - 5; ty < flagshipUnit.getTileY() + 5; ty++) {
+//                    if (AMap.isWalkable(APosition.create(tx, ty))) {
+//                        APainter.paintCircleFilled(APosition.create(tx, ty), 8, Color.Green);
+//                    }
+//                    else {
+//                        APainter.paintCircleFilled(APosition.create(tx, ty), 8, Color.Red);
+//                    }
+//                }
+//            }
+//        }
+                
         // =========================================================
 //        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
+;
     }
 
     // =========================================================
@@ -547,9 +563,11 @@ public class APainter {
 
             // STARTING ATTACK
             if (unit.isStartingAttack()) {
-                paintCircle(unit, unitRadius - 5, Color.Brown);
-                paintCircle(unit, unitRadius - 4, Color.Brown);
-                paintCircle(unit, unitRadius - 3, Color.Brown);
+                paintCircle(unit, unitRadius - 7, Color.Orange);
+                paintCircle(unit, unitRadius - 6, Color.Orange);
+                paintCircle(unit, unitRadius - 5, Color.Orange);
+                paintCircle(unit, unitRadius - 4, Color.Orange);
+                paintCircle(unit, unitRadius - 3, Color.Orange);
             }
             // ATTACK FRAME
             if (unit.isAttackFrame()) {
@@ -571,11 +589,12 @@ public class APainter {
             }
             // ATTACKING
             if (unit.isAttacking()) {
-                paintCircle(unit, unitRadius - 3, Color.Orange);
-                paintCircle(unit, unitRadius - 2, Color.Orange);
+                paintCircle(unit, unitRadius - 3, Color.Yellow);
+                paintCircle(unit, unitRadius - 2, Color.Yellow);
             }
             // MOVE
             if (unit.isMoving()) {
+                paintCircle(unit, unitRadius - 4, Color.Blue);
                 paintCircle(unit, unitRadius - 3, Color.Blue);
                 paintCircle(unit, unitRadius - 2, Color.Blue);
                 if (unit.getTarget() != null) {
@@ -590,7 +609,12 @@ public class APainter {
 
             // RUN
             if (unit.isRunning()) {
-//                paintLine(unit.getPosition(), unit.getRunManager().getRunToPosition(), Color.Blue);
+                paintLine(unit.getPosition(), unit.getRunManager().getRunToPosition(), Color.Yellow);
+                paintLine(unit.getPosition().translateByPixels(1, 1), unit.getRunManager().getRunToPosition(), Color.Yellow);
+                
+                if (unit.getRunManager().getRunToPosition() != null) {
+                    paintCircleFilled(unit.getRunManager().getRunToPosition(), 10, Color.Yellow);
+                }
 
                 // =========================================================
                 // === Paint white flags over running units
@@ -608,9 +632,11 @@ public class APainter {
                 paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
                         2, flagHeight, Color.Grey); // Flag stick
             }
-//            
-//            // Paint #ID
-//            paintTextCentered(unit, "#" + unit.getID(), Color.Cyan);
+            
+            // Paint #ID
+            paintTextCentered(unit.getPosition().translateByTiles(0, 1), 
+                    "#" + unit.getID() + " " + unit.getUnitAction(), Color.Cyan);
+            
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
 //                paintCircle(unit, 15, Color.Teal);

@@ -149,7 +149,7 @@ public abstract class ARequests {
         }
         
         if (where == null) {
-            where = MissionDefend.getInstance().getFocusPoint().translateTowards(AMap.getNaturalBaseLocation(), 32);
+            where = MissionDefend.getInstance().getFocusPoint().translatePercentTowards(AMap.getNaturalBaseLocation(), 32);
         }
         
         int numberOfDetectors = AConstructionManager.countExistingAndPlannedConstructionsInRadius(

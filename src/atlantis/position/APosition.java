@@ -158,9 +158,18 @@ public class APosition extends Position implements Comparable<Position> {
     /**
      * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
      */
-    public APosition translateTowards(AbstractPoint<Position> towards, int percentTowardsCenter) {
+    public APosition translatePercentTowards(AbstractPoint<Position> towards, int percentTowards) {
         return PositionOperationsWrapper.getPositionMovedPercentTowards(
-                this, towards, percentTowardsCenter
+                this, towards, percentTowards
+        );
+    }
+    
+    /**
+     * Returns new position which is moved e.g. 0.5 tiles towards <b>towards</b>.
+     */
+    public APosition translateTilesTowards(AbstractPoint<Position> towards, double tiles) {
+        return PositionOperationsWrapper.getPositionMovedTilesTowards(
+                this, towards, tiles
         );
     }
     

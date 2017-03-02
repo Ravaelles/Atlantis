@@ -20,7 +20,7 @@ Atlantis wraps everything heavily, so you don't need to write yourself countless
 - advanced and clean code wrappers for selecting units, types etc
 
 And some extras:
-- provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (Esc), painting modes (1,2,3)
+- provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (~), painting modes (1,2,3)
 - modifies bwapi.ini so you don't need to do it yourself! Can change your race, enemy race, map played and game type (for UMT maps which are great for micro tweaking)
 
 # What actually is Atlantis?
@@ -42,6 +42,7 @@ Atlantis is actively developed, but it's quite capable already. The latest stabl
 - If you got any error it probably means you've screwed the BWAPI installation.
 - Use keys 1,2,3 to change painting mode level; more painting, slower it runs, but gives more information.
 - Use keys +/- to change the game speed.
+- Tilde (~) makes the bot to exit gently, killing StarCraft and ChaosLauncher processes.
 
 # Code structure
 
