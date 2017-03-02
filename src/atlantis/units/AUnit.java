@@ -564,7 +564,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         }
         
         double dist = this.distanceTo(targetUnit);
-        return (dist + safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
+        return (dist - safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
                 && dist >= (weaponAgainstThisUnit.minRange() / 32);
     }
 
@@ -686,15 +686,6 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
      * If enemy is not null, it will try running straight from this unit.
      */
      public boolean runFrom(AUnit runFrom) {
-//        if (nearestEnemy == null) {
-//            nearestEnemy = Select.enemyRealUnits().nearestTo(this);
-//        }
-//
-//        if (nearestEnemy == null) {
-//            return false;
-//        } else {
-//            return runManager.runFrom(nearestEnemy);
-//        }
         if (runFrom == null) {
             return runManager.run();
         } else {
@@ -975,8 +966,9 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     }
     
     public boolean isUnitActionMove() {
-        return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_BUILD 
-                || unitAction == UnitActions.MOVE_TO_REPAIR || unitAction == UnitActions.RETREAT
+        return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_ENGAGE
+                || unitAction == UnitActions.MOVE_TO_BUILD || unitAction == UnitActions.MOVE_TO_REPAIR
+                || unitAction == UnitActions.RETREAT
                 || unitAction == UnitActions.EXPLORE
                 || unitAction == UnitActions.RUN;
     }

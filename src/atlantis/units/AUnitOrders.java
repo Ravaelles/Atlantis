@@ -101,7 +101,6 @@ public interface AUnitOrders {
             return false;
         }
         
-        
         // === Handle LOADED/SIEGED units ========================================
         
         if (unit().isLoaded()) {
@@ -129,7 +128,8 @@ public interface AUnitOrders {
         
         APosition currentTarget = unit().getTargetPosition();
 
-        if (!unit().isUnitActionMove() || currentTarget == null || !currentTarget.equals(target)) {
+        if (!unit().isUnitActionMove() || currentTarget == null || !currentTarget.equals(target) 
+                || AGame.getTimeFrames() % 25 == 0) {
             u().move(target);
             unit().setOrderWasIssued();
             unit().setUnitAction(unitAction);

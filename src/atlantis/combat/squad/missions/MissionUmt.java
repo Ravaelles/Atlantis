@@ -51,17 +51,20 @@ public class MissionUmt extends Mission {
         double distanceToFlagship = flagshipUnit.distanceTo(unit.getPosition());
 
         if (isFlagship) {
-            if (Select.ourCombatUnits().inRadius(3, unit).count() == 0) {
-                AUnit nearestUnit = Select.ourCombatUnits().exclude(unit).nearestTo(flagshipUnit);
-                if (nearestUnit != null) {
-                    unit.move(nearestUnit.getPosition(), UnitActions.MOVE);
+            if (Select.ourCombatUnits().inRadius(2.5, unit).count() == 0) {
+//                AUnit nearestUnit = Select.ourCombatUnits().exclude(unit).nearestTo(flagshipUnit);
+                AUnit otherUnit = Select.ourCombatUnits().exclude(unit).first();
+                if (otherUnit != null) {
+                    unit.setTooltip("#WaitForDaKing");
+                    unit.move(otherUnit.getPosition(), UnitActions.MOVE);
                     return true;
                 }
             }
         } else {
             if (distanceToFlagship > 5) {
-                if (distanceToFlagship > 7) {
+                if (distanceToFlagship > 5) {
                     unit.move(flagshipUnit.getPosition(), UnitActions.MOVE);
+                    unit.setTooltip("#ToFlagship");
                     return true;
                 } else {
                     if (Select.ourCombatUnits().inRadius(1.5, unit).count() == 0) {
@@ -82,21 +85,22 @@ public class MissionUmt extends Mission {
             }
         }
 
-        // === Return closest enemy ========================================
-//        AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
-//        if (nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
-//            engageEnemy = nearestEnemy;
-//            unit.setTooltip("#Engage");
-//            return unit.move(engageEnemy.getPosition(), UnitActions.ENGAGE);
-//        }
-
         // === Return location to go to ====================================
         Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
         explorePosition = (nearestUnexploredRegion != null
                 ? APosition.create(nearestUnexploredRegion.getCenter()) : null);
-        if (explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
-            unit.setTooltip("#Explore");
+        if (!unit.isMoving() && explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
+            unit.setTooltip("#Explore" + (isFlagship ? "Flag" : ""));
             return unit.move(explorePosition, UnitActions.EXPLORE);
+        }
+
+        // === Return closest enemy ========================================
+        
+        AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
+        if (nearestUnexploredRegion == null && nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
+            engageEnemy = nearestEnemy;
+            unit.setTooltip("#Engage");
+            return unit.move(engageEnemy.getPosition(), UnitActions.MOVE_TO_ENGAGE);
         }
 
         // === Go to nearest unexplored position ===========================

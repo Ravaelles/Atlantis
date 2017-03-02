@@ -41,7 +41,7 @@ Atlantis is actively developed, but it's quite capable already. The latest stabl
 - Run the application and that's it, it will automatically run StarCraft and Chaoslauncher.
 - If you got any error it probably means you've screwed the BWAPI installation.
 - Use keys 1,2,3 to change painting mode level; more painting, slower it runs, but gives more information.
-- Use keys +/- to change the game speed.
+- Use keys +/- to change the game speed, use PauseBreak to stop the game.
 - Tilde (~) makes the bot to exit gently, killing StarCraft and ChaosLauncher processes.
 
 # Code structure

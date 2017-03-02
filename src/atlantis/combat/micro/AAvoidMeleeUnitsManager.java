@@ -1,10 +1,12 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
+import atlantis.debug.APainter;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import bwapi.Color;
 
 /**
  *
@@ -71,34 +73,38 @@ public class AAvoidMeleeUnitsManager {
                 }
             }
             
-//            AtlantisPainter.paintTextCentered(unit.getPosition().translateByPixels(0, 12), 
+//            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), 
 //                    "" + String.format("%.1f", safetyDistance), Color.Green);
             
 //            AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Green);
-//            AtlantisPainter.paintTextCentered(unit, enemiesNearby + "", Color.White);
+//            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), enemiesNearby + "", Color.Red);
 
             Select<?> closeEnemies = enemyRealUnitsSelector.melee().inRadius(safetyDistance, unit);
             AUnit closeEnemy = closeEnemies.nearestTo(unit);
 //            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
             if (closeEnemy != null) {
                 
-                double baseCriticalDistance = (unit.isVulture() ? 1.5 : 1.5);
+                double baseCriticalDistance = (unit.isVulture() ? 1.8 : 1.5);
                 double numberOfNearEnemiesBonus = Math.max(0.4, 
                         ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
                 double archonBonus = (((enemyRealUnitsSelector.ofType(AUnitType.Protoss_Archon)
                         .inRadius(5, unit)).count() > 0) ? 2.2 : 0);
                 
                 double dangerousDistance = baseCriticalDistance + numberOfNearEnemiesBonus + archonBonus;
-                boolean isEnemyDangerouslyClose = closeEnemy.distanceTo(unit) < dangerousDistance;
+                double enemyDistance = closeEnemy.distanceTo(unit);
+                boolean isEnemyDangerouslyClose = enemyDistance < dangerousDistance;
 //                APainter.paintCircleFilled(unit.getPosition(), 11, Color.Yellow);
                 
                 boolean standardEnemyIsDangerouslyClose = 
-                        isEnemyDangerouslyClose && (unit.type().isMechanical() || unit.isWounded());
+//                        isEnemyDangerouslyClose && (unit.type().isMechanical() || unit.isWounded());
+                        isEnemyDangerouslyClose;
                 if (standardEnemyIsDangerouslyClose) {
                     
 //                    APainter.paintCircleFilled(unit.getPosition(), 11, Color.Blue);
                     
-                    boolean dontInterruptPendingAttack;
+                    // === Don't INTERRUPT shooting ============================
+
+                    boolean dontInterruptPendingAttack = false;
                     if (unit.isVulture()) {
                         dontInterruptPendingAttack = unit.isAttackFrame() && unit.getHPPercent() >= 30;
                     }
@@ -107,11 +113,17 @@ public class AAvoidMeleeUnitsManager {
                                 && unit.getHPPercent() >= 30;
                     }
                     
+                    // =========================================================
+                    
+                    // Don't run, cause unit is SHOOTING
                     if (dontInterruptPendingAttack) {
                         unit.setTooltip("Shooting" + (unit.getTarget() != null 
                                 ? " " + unit.getTarget().getShortName() : ""));
                     }
+                    
+                    // RUN
                     else {
+//                        APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), "RUN", Color.Red);
                         if (unit.runFrom(null)) {
     //                        AtlantisPainter.paintCircle(unit, (int) safetyDistance * 32, Color.Red);
     //                        AtlantisPainter.paintCircle(unit, enemyNearbyCountingRadius * 32, Color.Red);

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -307,14 +308,16 @@ public class AMap {
         int maxRadius = Math.max(getMapWidthInTiles(), getMapHeightInTiles());
         int currentRadius = 6;
         int step = 3;
+
+        APainter.paintCircle(position, 10, Color.Yellow);
         
         while (currentRadius < maxRadius) {
             double doubleCurrentRadius = currentRadius * 2;
             for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {
                 for (int dy = -currentRadius; dy <= currentRadius; dy += doubleCurrentRadius) {
-                    APosition potentialPosition = position.translateByTiles(dx, dy).makeValidFarFromBounds();
+                    APosition potentialPosition = position.translateByTiles(dx, dy).makeValid();
+                    System.out.println(potentialPosition + " (dist: " + position.distanceTo(potentialPosition) + ")");
                     if (!isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
-//                        System.out.println(potentialPosition);
                         return potentialPosition;
                     }
                 }
@@ -345,16 +348,59 @@ public class AMap {
     /**
      * Can be used to avoid getting to close to the region edges, which may cause unit to get stuck.
      */
-    public static boolean isPositionFarFromAnyRegionPolygonPoint(APosition unitPosition) {
+//    public static boolean isPositionFarFromAnyRegionPolygonPoint(APosition unitPosition) {
+//        Region region = unitPosition.getRegion();
+//        
+//        if (region == null) {
+//            System.err.println("isPositionFarFromAnyRegionPolygonPoint -> Region is null");
+//            return false;
+//        }
+//        if (region.getPolygon() == null) {
+//            System.err.println("isPositionFarFromAnyRegionPolygonPoint -> region.getPolygon() is null");
+//            return false;
+//        }
+//
+//        // === Define polygon points for given region ==============
+//        
+//        Positions polygonPoints = new Positions();
+//        if (regionsToPolygonPoints.containsKey(region.toString())) {
+//            polygonPoints = regionsToPolygonPoints.get(region.toString());
+//        }
+//        else {
+//            polygonPoints = new Positions();
+//            polygonPoints.addPositions(region.getPolygon().getPoints());
+//            regionsToPolygonPoints.put(region.toString(), polygonPoints);
+//        }
+//        
+////        for (Positions positions : regionsToPolygonPoints.values()) {
+////            for (Iterator it = positions.arrayList().iterator(); it.hasNext();) {
+////                Position position = (Position) it.next();
+////                APainter.paintCircle(position, 13, Color.Yellow);
+////                APainter.paintCircle(position, 16, Color.Yellow);
+////            }
+////        }
+//        
+//        APosition nearestPolygon = polygonPoints.nearestTo(unitPosition);
+//        
+//        // =========================================================
+//        
+//        if (nearestPolygon != null && nearestPolygon.distanceTo(unitPosition) < 1.5) {
+//            return false;
+//        }
+//        else {
+//            return true;
+//        }
+//    }
+    public static double getDistanceToAnyRegionPolygonPoint(APosition unitPosition) {
         Region region = unitPosition.getRegion();
         
         if (region == null) {
             System.err.println("isPositionFarFromAnyRegionPolygonPoint -> Region is null");
-            return false;
+            return 999;
         }
         if (region.getPolygon() == null) {
             System.err.println("isPositionFarFromAnyRegionPolygonPoint -> region.getPolygon() is null");
-            return false;
+            return 999;
         }
 
         // === Define polygon points for given region ==============
@@ -368,15 +414,25 @@ public class AMap {
             polygonPoints.addPositions(region.getPolygon().getPoints());
             regionsToPolygonPoints.put(region.toString(), polygonPoints);
         }
+        
+//        for (Positions positions : regionsToPolygonPoints.values()) {
+//            for (Iterator it = positions.arrayList().iterator(); it.hasNext();) {
+//                Position position = (Position) it.next();
+//                APainter.paintCircle(position, 13, Color.Yellow);
+//                APainter.paintCircle(position, 16, Color.Yellow);
+//            }
+//        }
+        
         APosition nearestPolygon = polygonPoints.nearestTo(unitPosition);
         
         // =========================================================
         
-        if (nearestPolygon != null && nearestPolygon.distanceTo(unitPosition) < 3) {
-            return false;
+        if (nearestPolygon != null) {
+            double distanceTo = nearestPolygon.distanceTo(unitPosition);
+            return nearestPolygon.distanceTo(unitPosition);
         }
         else {
-            return true;
+            return 99;
         }
     }
     

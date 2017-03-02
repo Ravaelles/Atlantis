@@ -124,6 +124,8 @@ public class APainter {
 //                }
 //            }
 //        }
+
+        setTextSizeMedium();
                 
         // =========================================================
 //        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
@@ -571,12 +573,12 @@ public class APainter {
             }
             // ATTACK FRAME
             if (unit.isAttackFrame()) {
-                paintCircle(unit, 1, Color.Red);
-                paintCircle(unit, 2, Color.Red);
-                paintCircle(unit, 4, Color.Red);
-                paintCircle(unit, 5, Color.Red);
-                paintCircle(unit, 8, Color.Red);
-                paintCircle(unit, 9, Color.Red);
+                paintRectangleFilled(unit.getPosition().translateByPixels(-5, -10), 10, 20, Color.Red);
+//                paintCircle(unit, 2, Color.Red);
+//                paintCircle(unit, 4, Color.Red);
+//                paintCircle(unit, 5, Color.Red);
+//                paintCircle(unit, 8, Color.Red);
+//                paintCircle(unit, 9, Color.Red);
             }
             // STUCK
             if (unit.isStuck()) {
@@ -597,8 +599,9 @@ public class APainter {
                 paintCircle(unit, unitRadius - 4, Color.Blue);
                 paintCircle(unit, unitRadius - 3, Color.Blue);
                 paintCircle(unit, unitRadius - 2, Color.Blue);
-                if (unit.getTarget() != null) {
-                    APainter.paintLine(unit.getPosition(), unit.getTarget().getPosition(), Color.Blue);
+                if (unit.getTargetPosition()!= null) {
+                    APainter.paintCircleFilled(unit.getTargetPosition(), 8, Color.Blue);
+                    APainter.paintLine(unit.getPosition(), unit.getTargetPosition(), Color.Blue);
                 }
             }
 //            // CONSTRUCTING
