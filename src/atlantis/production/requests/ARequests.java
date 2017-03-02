@@ -117,7 +117,8 @@ public abstract class ARequests {
         
         // =========================================================
         
-        int antiAirBuildings = AConstructionManager.countExistingAndPlannedConstructions(building);
+        int detectors = AConstructionManager.countExistingAndPlannedConstructions(building);
+        System.out.println("detectors = " + detectors);
 
         // === Ensure parent exists ========================================
         
@@ -142,7 +143,8 @@ public abstract class ARequests {
         // === Protect choke point =========================================
 
         if (where == null) {
-            AUnit nearestBunker = Select.ourOfType(AUnitType.Terran_Bunker).nearestTo(MissionDefend.getInstance().getFocusPoint());
+            AUnit nearestBunker = Select.ourOfTypeIncludingUnfinished(AUnitType.Terran_Bunker)
+                    .nearestTo(MissionDefend.getInstance().getFocusPoint());
             if (nearestBunker != null) {
                 where = nearestBunker.getPosition();
             }

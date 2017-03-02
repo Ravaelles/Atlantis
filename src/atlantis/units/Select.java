@@ -195,6 +195,21 @@ public class Select<T> {
     }
 
     /**
+     * Selects our units of given type(s).
+     */
+    public static Select<AUnit> ourOfTypeIncludingUnfinished(AUnitType type) {
+        List<AUnit> data = new ArrayList<>();
+
+        for (AUnit unit : ourUnits()) {
+            if (unit.isType(type)) {
+                data.add(unit);
+            }
+        }
+
+        return new Select<AUnit>(data);
+    }
+
+    /**
      * Selects all of our finished combat units (no buildings, workers, spider mines etc).
      */
     public static Select<AUnit> ourCombatUnits() {

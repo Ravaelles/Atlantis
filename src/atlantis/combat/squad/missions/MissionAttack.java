@@ -39,10 +39,7 @@ public class MissionAttack extends Mission {
         AUnit mainBase = Select.mainBase();
         if (mainBase != null) {
             AUnit nearestEnemy = Select.enemy().visible()
-//                    .canBeAttackedBy(unit)
-//                    .inRadius(50, mainBase)
                     .nearestTo(mainBase);
-//            System.out.println(nearestEnemy);
             if (nearestEnemy != null) {
                 focusPoint = nearestEnemy.getPosition();
             }
@@ -103,21 +100,18 @@ public class MissionAttack extends Mission {
 //        Position enemyBase = AtlantisEnemyInformationManager.getEnemyBase();
         APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-//        	System.out.println("focus on enemy base " + enemyBase);	//TODO debug
             return enemyBase;
         }
 
         // Try going near any enemy building
         AFoggedUnit enemyBuilding = AEnemyUnits.getNearestEnemyBuilding();
         if (enemyBuilding != null) {
-//        	System.out.println("focus on enemy bldg " + enemyBuilding.getPosition());	//TODO debug
             return enemyBuilding.getPosition();
         }
 
         // Try going to any known enemy unit
         AUnit anyEnemyUnit = Select.enemy().first();
         if (anyEnemyUnit != null) {
-        	//System.out.println("focus on enemy unit");	//TODO debug
             return anyEnemyUnit.getPosition();
         }
         

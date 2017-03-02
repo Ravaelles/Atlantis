@@ -94,7 +94,6 @@ public class ARepairCommander {
             int numberOfCombatUnitsNearby = Select.ourCombatUnits().inRadius(6, bunker).count();
             if (numberOfCombatUnitsNearby <= 7) {
                 int numberOfRepairersAssigned = ARepairManager.countConstantRepairersForBunker(bunker);
-                System.out.println(defineOptimalConstantBunkerRepairers());
                 assignConstantBunkerRepairers(
                         bunker, defineOptimalConstantBunkerRepairers() - numberOfRepairersAssigned
                 );

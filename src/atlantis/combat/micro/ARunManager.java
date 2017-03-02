@@ -142,10 +142,6 @@ public class ARunManager {
         } else if (unitOrPosition instanceof APosition) {
             runFrom = (APosition) unitOrPosition;
         }
-
-//        if (runFrom != null) {
-//            System.out.println("Run from " + runFrom + ", dist: " + runFrom.distanceTo(unit));
-//        }
         
         // === Define run to position ==============================
         

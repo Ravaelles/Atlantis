@@ -46,8 +46,8 @@ public class AtlantisConfig {
     /**
      * Will modify bwapi.ini to use this map.
      */
-//    public static final String MAP = "maps/sscai/(?)*.sc?";
-    public static final String MAP = "Maps/BroodWar/umt/vultureDrive.scx"; // Vulture being chased by Lings
+    public static final String MAP = "maps/sscai/(?)*.sc?";
+//    public static final String MAP = "Maps/BroodWar/umt/vultureDrive.scx"; // Vulture being chased by Lings
 //    public static final String MAP = "Maps/BroodWar/umt/(1)dragoon.scx"; // 4 Dragoons attacking Zealots
     
     // =========================================================

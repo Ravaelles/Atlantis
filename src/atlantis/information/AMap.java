@@ -316,7 +316,6 @@ public class AMap {
             for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {
                 for (int dy = -currentRadius; dy <= currentRadius; dy += doubleCurrentRadius) {
                     APosition potentialPosition = position.translateByTiles(dx, dy).makeValid();
-                    System.out.println(potentialPosition + " (dist: " + position.distanceTo(potentialPosition) + ")");
                     if (!isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
                         return potentialPosition;
                     }
@@ -326,7 +325,7 @@ public class AMap {
             currentRadius += 3;
         }
         
-        System.err.println("Can't find getNearestUnexploredAccessiblePosition");
+//        System.err.println("Can't find getNearestUnexploredAccessiblePosition");
         return null;
     }
     

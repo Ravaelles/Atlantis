@@ -176,8 +176,8 @@ public abstract class ABuildOrderManager {
         for (ProductionOrder order : initialProductionQueue) {
             boolean isOkayToAdd = false;
 
-            // =========================================================
-            // Unit
+            // === Unit ========================================
+            
             if (order.getUnitOrBuilding() != null) {
                 AUnitType type = order.getUnitOrBuilding();
                 virtualCounter.incrementValueFor(type);
@@ -191,23 +191,21 @@ public abstract class ABuildOrderManager {
                 if (type.isBuilding()) {
                     weHaveThisManyUnits += AConstructionManager.countNotFinishedConstructionsOfType(type);
                 }
-
-//                if (type.isBase()) {
-//                    System.out.println("      " + type + ": " 
-//                            + weHaveThisManyUnits + " / " + shouldHaveThisManyUnits);
-//                }
                 
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
-//                    if (type.isBase()) {
-//                        AGame.sendMessage("Request " + type.getShortName());
-//                    }
                     isOkayToAdd = true;
                 }
-            } // Tech
+            } 
+                
+            // === Tech ========================================
+                
             else if (order.getTech() != null) {
                 isOkayToAdd = !ATech.isResearched(order.getTech(), order);
-            } // Upgrade
+            } 
+            
+            // === Upgrade ========================================
+            
             else if (order.getUpgrade() != null) {
                 isOkayToAdd = !ATech.isResearched(order.getUpgrade(), order);
             }
@@ -255,17 +253,9 @@ public abstract class ABuildOrderManager {
 
         for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
             ProductionOrder productionOrder = currentProductionQueue.get(i);
-//            if (productionOrder.getUnitType() != null 
-//                    && !AGame.hasBuildingsToProduce(productionOrder.getUnitType())) {
-//                continue;
-//            }
             result.add(productionOrder);
         }
 
-//        System.out.println("// =========================================================");
-//        for (ProductionOrder productionOrder : result) {
-//            System.out.println("CURRENT: " + productionOrder.getUnitType());
-//        }
         return result;
     }
 

@@ -5,6 +5,7 @@ import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import atlantis.position.APosition;
 import atlantis.production.requests.ARequests;
+import atlantis.production.requests.TerranRequests;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -37,12 +38,13 @@ public class AStrategyResponse {
         
         if (enemyStrategy.isGoingHiddenUnits()) {
             if (AGame.getTimeFrames() % 19 == 0) {
+                AStrategyInformations.needDefBuildingAntiLandAtLeast(1);
                 ARequests.getInstance().requestDetectorQuick(null);
             }
         }
         
         if (enemyStrategy.isGoingAirUnitsQuickly()) {
-            if (AGame.getTimeFrames() % 28 == 0) {
+            if (AGame.getTimeFrames() % 21 == 0) {
                 ARequests.getInstance().requestAntiAirQuick(null);
             }
         }

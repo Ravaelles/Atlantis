@@ -38,7 +38,6 @@ public abstract class AbstractMicroManager {
         if (!isSituationFavorable && (unit.canAnyCloseEnemyShootThisUnit()
                 || Select.enemy().combatUnits().inRadius(2.5, unit).count() > 0)) {
             unit.setTooltip("Retreat");
-//            System.out.println("RETREAT " + unit);
             return unit.runFrom(null);
         }
 

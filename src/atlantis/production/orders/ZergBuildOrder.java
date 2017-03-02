@@ -64,11 +64,6 @@ public class ZergBuildOrder extends ABuildOrder {
                 return;
             }
         }
-//        AUnit larva = Select.ourLarva().first();
-//        System.out.println(larva);
-//        if (larva != null) {
-//            larva.train(unitType);
-//        }
     }
 
 }
