@@ -16,16 +16,17 @@ public class ADynamicUnitProductionManager {
         ADynamicWorkerProductionManager.handleDynamicWorkerProduction();
         
         if (AGame.playsAsTerran()) {
-            handleFactoryProductionIfNeeded();
+            trainMarinesForBunkersIfNeeded();
+            constructFactoriesIfNeeded();
         }
         else if (AGame.playsAsProtoss()) {
-            handleScarabProductionIfNeeded();
+            makeScarabsIfNeeded();
         }
     }
     
     // === Terran ========================================
     
-    private static void handleFactoryProductionIfNeeded() {
+    private static void constructFactoriesIfNeeded() {
         for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).listUnits()) {
             if (!factory.isTrainingAnyUnit()) {
                 boolean cantAffordTankButCanAffordVulture = AGame.hasMinerals(250)
@@ -38,9 +39,42 @@ public class ADynamicUnitProductionManager {
         }
     }
     
+    private static void trainMarinesForBunkersIfNeeded() {
+        int bunkers = Select.countOurOfType(AUnitType.Terran_Bunker);
+        if (bunkers > 0) {
+            int marines = Select.countOurOfType(AUnitType.Terran_Marine);
+            int shouldHaveMarines = defineOptimalNumberOfMarines(bunkers);
+            
+            // Force at least one marine per bunker
+            if (marines < shouldHaveMarines) {
+                for (int i = 0; i < shouldHaveMarines - marines; i++) {
+                    AUnit idleBarrack = Select.ourOneIdle(AUnitType.Terran_Barracks);
+                    if (idleBarrack != null) {
+                        idleBarrack.train(AUnitType.Terran_Marine);
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    private static int defineOptimalNumberOfMarines(int bunkers) {
+        if (bunkers <= 0) {
+            return 0;
+        }
+        else if (bunkers <= 1) {
+            return 1;
+        }
+        else {
+            return 4 * bunkers;
+        }
+    }
+    
     // === Protoss ========================================
 
-    private static void handleScarabProductionIfNeeded() {
+    private static void makeScarabsIfNeeded() {
         List<AUnit> reavers = Select.ourOfType(AUnitType.Protoss_Reaver).listUnits();
         for (AUnit reaver : reavers) {
             if (reaver.getScarabCount() < 3 && !reaver.isTrainingAnyUnit()) {

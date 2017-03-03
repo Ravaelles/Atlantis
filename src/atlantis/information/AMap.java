@@ -309,8 +309,6 @@ public class AMap {
         int currentRadius = 6;
         int step = 3;
 
-        APainter.paintCircle(position, 10, Color.Yellow);
-        
         while (currentRadius < maxRadius) {
             double doubleCurrentRadius = currentRadius * 2;
             for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {

@@ -99,7 +99,7 @@ public class APainter {
         paintCodeProfiler();
 //        paintTestSupplyDepotLocationsNearMain();
         paintConstructionProgress();
-        paintEnemyRegionDetails();
+//        paintEnemyRegionDetails();
         paintImportantPlaces();
         paintColoredCirclesAroundUnits();
         paintBuildingHealth();
@@ -110,20 +110,6 @@ public class APainter {
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
-        
-//        AUnit flagshipUnit = MissionUmt.getFlagshipUnit();
-//        if (flagshipUnit != null) {
-//            for (int tx = flagshipUnit.getTileX() - 5; tx < flagshipUnit.getTileX() + 5; tx++) {
-//                for (int ty = flagshipUnit.getTileY() - 5; ty < flagshipUnit.getTileY() + 5; ty++) {
-//                    if (AMap.isWalkable(APosition.create(tx, ty))) {
-//                        APainter.paintCircleFilled(APosition.create(tx, ty), 8, Color.Green);
-//                    }
-//                    else {
-//                        APainter.paintCircleFilled(APosition.create(tx, ty), 8, Color.Red);
-//                    }
-//                }
-//            }
-//        }
 
         setTextSizeMedium();
                 

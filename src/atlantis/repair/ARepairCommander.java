@@ -20,23 +20,23 @@ import java.util.Iterator;
 public class ARepairCommander {
 
     public static void update() {
-        if (AGame.getTimeFrames() % 15 == 0) {
-            assignConstantBunkerRepairersIfNeeded();
+        if (AGame.getTimeFrames() % 21 == 0) {
+            assignProtectors();
         }
 
         if (AGame.getTimeFrames() % 15 == 0) {
-            assignUnitRepairersToWoundedUnits();
+            assignRepairersToWoundedUnits();
         }
 
         // =========================================================
 
         for (Iterator<AUnit> iterator = ARepairManager.getProtectors().iterator(); iterator.hasNext();) {
-            AUnit bunkerRepairer = iterator.next();
-            if (!bunkerRepairer.isAlive()) {
-                ARepairManager.removeConstantBunkerRepairer(bunkerRepairer);
+            AUnit bunkerProtector = iterator.next();
+            if (!bunkerProtector.isAlive()) {
+                ARepairManager.removeRepairerOrProtector(bunkerProtector);
                 iterator.remove();
             }
-            ARepairManager.updateProtector(bunkerRepairer);
+            ARepairManager.updateProtector(bunkerProtector);
         }
 
         for (Iterator<AUnit> iterator = ARepairManager.getRepairers().iterator(); iterator.hasNext();) {
@@ -51,7 +51,7 @@ public class ARepairCommander {
 
     // === Asign repairers if needed =============================
     
-    private static void assignUnitRepairersToWoundedUnits() {
+    private static void assignRepairersToWoundedUnits() {
         
         for (AUnit woundedUnit : Select.our().repairable(true).listUnits()) {
 
@@ -79,14 +79,23 @@ public class ARepairCommander {
         }
     }
 
-    private static void assignConstantBunkerRepairersIfNeeded() {
-
-        // If mission is not DEFEND, release all bunker repairers
-        if (Missions.getGlobalMission() == null || !Missions.getGlobalMission().isMissionDefend()) {
-            for (AUnit bunkerRepairer : ARepairManager.getProtectors()) {
-                ARepairManager.removeConstantBunkerRepairer(bunkerRepairer);
+    private static void assignProtectors() {
+        if (Missions.isGlobalMissionAttack()) {
+            
+            // Release all bunker protectors
+            for (AUnit bunkerProtector : ARepairManager.getProtectors()) {
+                ARepairManager.removeRepairerOrProtector(bunkerProtector);
             }
-            return;
+            
+            assignUnitsProtectorsIfNeeded();
+        }
+        else if (Missions.isGlobalMissionDefend()) {
+            assignBunkerProtectorsIfNeeded();
+        }
+    }
+    
+    private static void assignBunkerProtectorsIfNeeded() {
+        if (Missions.isGlobalMissionAttack()) {
         }
 
         // =========================================================
@@ -112,6 +121,10 @@ public class ARepairCommander {
         }
 //        }
 //        }
+    }
+    
+    private static void assignUnitsProtectorsIfNeeded() {
+        
     }
 
     // =========================================================
@@ -195,9 +208,9 @@ public class ARepairCommander {
 
     private static AUnit defineBestRepairerFor(AUnit unitToRepair, boolean criticallyImportant) {
         if (criticallyImportant) {
-            return Select.ourWorkers().notRepairing().notConstructing().nearestTo(unitToRepair);
+            return Select.ourWorkers().notRepairing().notConstructing().notScout().nearestTo(unitToRepair);
         } else {
-            return Select.ourWorkers().notCarrying().notRepairing().notConstructing().nearestTo(unitToRepair);
+            return Select.ourWorkers().notCarrying().notRepairing().notConstructing().notScout().nearestTo(unitToRepair);
         }
     }
 

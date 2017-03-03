@@ -10,6 +10,7 @@ import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
 import atlantis.production.orders.ABuildOrderLoader;
 import atlantis.production.orders.ABuildOrderManager;
+import atlantis.repair.ARepairManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.ProcessHelper;
@@ -277,6 +278,7 @@ public class Atlantis implements BWEventListener {
             if (unit.isOurUnit()) {
                 ABuildOrderManager.rebuildQueue();
                 ASquadManager.battleUnitDestroyed(unit);
+                ARepairManager.removeRepairerOrProtector(unit);
                 LOST++;
                 LOST_RESOURCES += unit.getType().getTotalResources();
             } else {

@@ -195,6 +195,21 @@ public class Select<T> {
     }
 
     /**
+     * Counts our completed units of given type.
+     */
+    public static int countOurOfType(AUnitType type) {
+        int total = 0;
+
+        for (AUnit unit : ourUnits()) {
+            if (unit.isCompleted() && unit.isType(type)) {
+                total++;
+            }
+        }
+
+        return total;
+    }
+
+    /**
      * Selects our units of given type(s).
      */
     public static Select<AUnit> ourOfTypeIncludingUnfinished(AUnitType type) {
@@ -711,6 +726,20 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isConstructing() || unit.isBuilder()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Selects these units which are not scouts.
+     */
+    public Select<T> notScout() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.isScout()) {
                 unitsIterator.remove();
             }
         }

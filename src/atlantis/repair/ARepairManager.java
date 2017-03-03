@@ -43,14 +43,16 @@ public class ARepairManager {
             }
             
             // Go to repairer if he's close
-            if (distanceToRepairer > 0.02) {
+            if (distanceToRepairer > 0.2) {
+                unit.setTooltip("Move to repair");
                 unit.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR);
                 return true;
             }
             
             // We're very close to repairer, wait.
-            else if (unit.isMoving() && !unit.isRunning()) {
+            else if (!unit.isAttacking()) {
                 unit.holdPosition();
+                unit.setTooltip("Wait for repair");
                 return true;
             }
         }
@@ -61,25 +63,28 @@ public class ARepairManager {
     // =========================================================
     
     public static boolean updateRepairer(AUnit repairer) {
-        AUnit unitToRepair = ARepairManager.getUnitToRepairFor(repairer);
-        if (unitToRepair != null && unitToRepair.isAlive()) {
-            if (unitToRepair.getHPPercent() < 80) {
-                repairer.setTooltip("Repair " + unitToRepair.getShortName() + "(alive:" + unitToRepair.isAlive());
-                repairer.repair(unitToRepair);
-                return true;
-            }
-            else {
-                double distanceToUnit = unitToRepair.distanceTo(repairer);
-                if (distanceToUnit > 0.1) {
-                    repairer.setTooltip("Go to " + unitToRepair.getShortNamePlusId());
-                    repairer.move(unitToRepair.getPosition(), UnitActions.MOVE_TO_REPAIR);
+        AUnit target = ARepairManager.getUnitToRepairFor(repairer);
+        if (target != null && target.isAlive()) {
+            
+            // Target is wounded
+            if (target.getHPPercent() < 100) {
+                if (target.distanceTo(repairer) > 0.1) {
+                    repairer.setTooltip("Go to " + target.getShortNamePlusId());
+                    repairer.move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
                     return true;
                 }
                 else {
-                    repairer.setTooltip("Repaired!");
-                    removeRepairerOrProtector(repairer);
+                    repairer.setTooltip("Repair " + target.getShortNamePlusId());
+                    repairer.repair(target);
                     return true;
                 }
+            }
+            
+            // Target is totally healthy
+            else {
+                repairer.setTooltip("Repaired!");
+                removeRepairerOrProtector(repairer);
+                return false;
             }
         }
         else {
@@ -181,6 +186,7 @@ public class ARepairManager {
             repairer.setTooltip("Stop");
         }
         repairersToUnit.remove(repairer);
+        repairersToModes.remove(repairer);
     }
     
     public static void addProtector(AUnit protector, AUnit unit) {
@@ -209,6 +215,17 @@ public class ARepairManager {
         int protectors = 0;
         for (AUnit repairer : unitsToRepairers.get(unit)) {
             if (isProtector(repairer)) {
+                protectors++;
+            }
+        }
+        
+        return protectors;
+    }
+
+    public static int countTotalProtectors() {
+        int protectors = 0;
+        for (int mode : repairersToModes.values()) {
+            if (mode == MODE_PROTECT) {
                 protectors++;
             }
         }

@@ -10,6 +10,7 @@ import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.position.APosition;
 import atlantis.position.APositionedObject;
 import atlantis.repair.ARepairManager;
+import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.ACachedValue;
@@ -999,6 +1000,10 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     
     public int getFramesSinceLastOrderWasIssued() {
         return AGame.getTimeFrames() - _lastTimeOrderWasIssued;
+    }
+
+    public boolean isScout() {
+        return AScoutManager.isScout(this);
     }
     
 }

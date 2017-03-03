@@ -84,12 +84,12 @@ public class AAvoidMeleeUnitsManager {
 //            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
             if (closeEnemy != null) {
                 
-                double baseCriticalDistance = (unit.isVulture() ? 3 : 1.5);
-                double healthBonus = unit.getHPPercent() < 30 ? 0.8 : 0;
+                double baseCriticalDistance = (unit.isVulture() ? 3.3 : 2);
+                double healthBonus = unit.getHPPercent() < 30 ? 0.5 : 0;
                 double numberOfNearEnemiesBonus = Math.max(0.4, 
                         ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
                 double archonBonus = (((enemyRealUnitsSelector.ofType(AUnitType.Protoss_Archon)
-                        .inRadius(5, unit)).count() > 0) ? 2.2 : 0);
+                        .inRadius(5, unit)).count() > 0) ? 1 : 0);
                 
                 double dangerousDistance = baseCriticalDistance + numberOfNearEnemiesBonus 
                         + healthBonus + archonBonus;
@@ -108,10 +108,10 @@ public class AAvoidMeleeUnitsManager {
 
                     boolean dontInterruptPendingAttack = false;
                     if (unit.isVulture()) {
-                        dontInterruptPendingAttack = enemyDistance >= 2.5 && unit.isAttackFrame() && unit.getHPPercent() >= 40;
+                        dontInterruptPendingAttack = enemyDistance >= 3 && unit.isAttackFrame() && unit.getHPPercent() >= 40;
                     }
                     else {
-                        dontInterruptPendingAttack = enemyDistance >= 0.8 
+                        dontInterruptPendingAttack = enemyDistance >= 1.6 
                                 && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
                     }
                     

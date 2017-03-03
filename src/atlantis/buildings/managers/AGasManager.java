@@ -108,7 +108,9 @@ public class AGasManager {
         }
         
         int totalGasNeeded = 0;
-        ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(4);
+        ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(
+                1 + (AGame.getTimeSeconds() > 300 ? 2 : 0)
+        );
         for (ProductionOrder order : nextOrders) {
             totalGasNeeded += order.getGasRequired();
         }
