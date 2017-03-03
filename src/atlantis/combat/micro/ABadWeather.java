@@ -38,13 +38,19 @@ public class ABadWeather {
         
         List<AUnit> mines = Select.allOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(4, unit).listUnits();
         for (AUnit mine : mines) {
-            if (!mine.isCloaked() && mine.distanceTo(unit) < 3) {
-                if (mine.isOurUnit() && mine.isMoving()) {
+            
+            // Our mine
+            if (mine.isOurUnit()) {
+                if (mine.isMoving() && mine.distanceTo(unit) < 3.5) {
                     unit.moveAwayFrom(mine.getPosition(), 1);
                     unit.setTooltip("Avoid mine!");
                     return true;
                 }
-                else if (unit.getGroundWeaponCooldown() > 0) {
+            }
+            
+            // Enemy mine
+            else {
+                if (mine.isVisible() && unit.getGroundWeaponCooldown() > 0) {
                     unit.moveAwayFrom(mine.getPosition(), 1);
                     unit.setTooltip("Avoid mine!");
                     return true;

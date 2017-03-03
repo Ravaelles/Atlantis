@@ -67,17 +67,10 @@ public class ARepairManager {
         if (target != null && target.isAlive()) {
             
             // Target is wounded
-            if (target.getHPPercent() < 100) {
-                if (target.distanceTo(repairer) > 0.1) {
-                    repairer.setTooltip("Go to " + target.getShortNamePlusId());
-                    repairer.move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
-                    return true;
-                }
-                else {
-                    repairer.setTooltip("Repair " + target.getShortNamePlusId());
-                    repairer.repair(target);
-                    return true;
-                }
+            if (target.isWounded()) {
+                repairer.setTooltip("Repair " + target.getShortNamePlusId());
+                repairer.repair(target);
+                return true;
             }
             
             // Target is totally healthy

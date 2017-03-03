@@ -69,7 +69,7 @@ public class ARepairCommander {
             
             if (woundedUnit.type().isBunker()) {
                 int shouldHaveThisManyRepairers = defineOptimalRepairersForBunker(woundedUnit);
-                assignConstantBunkerRepairers(woundedUnit, shouldHaveThisManyRepairers - numberOfRepairers);
+                assignProtectorsFor(woundedUnit, shouldHaveThisManyRepairers - numberOfRepairers);
             } 
 
             // === Repair ordinary unit =================================
@@ -114,8 +114,8 @@ public class ARepairCommander {
             int numberOfCombatUnitsNearby = Select.ourCombatUnits().inRadius(6, bunker).count();
             if (numberOfCombatUnitsNearby <= 7) {
                 int numberOfRepairersAssigned = ARepairManager.countProtectorsFor(bunker);
-                assignConstantBunkerRepairers(
-                        bunker, defineOptimalConstantBunkerRepairers() - numberOfRepairersAssigned
+                assignProtectorsFor(
+                        bunker, defineOptimalNumberOfBunkerProtectors() - numberOfRepairersAssigned
                 );
             }
         }
@@ -124,16 +124,44 @@ public class ARepairCommander {
     }
     
     private static void assignUnitsProtectorsIfNeeded() {
+        if (!Missions.isGlobalMissionAttack()) {
+            return;
+        }
+
+        // === Protect Vulture =================================
         
+        int vultures = Select.countOurOfType(AUnitType.Terran_Vulture);
+        if (vultures >= 2) {
+            AUnit firstVulture = Select.ourOfType(AUnitType.Terran_Vulture).first();
+            int protectors = ARepairManager.countProtectorsFor(firstVulture);
+            int lackingProtectors = 2 - protectors;
+            if (lackingProtectors > 0) {
+                assignProtectorsFor(firstVulture, lackingProtectors);
+                return;
+            }
+        }
+        
+        // === Protect Tank ====================================
+        
+        int tanks = Select.ourTanks().count();
+        if (tanks >= 2) {
+            AUnit firstTank = Select.ourTanks().first();
+            int protectors = ARepairManager.countProtectorsFor(firstTank);
+            int lackingProtectors = 2 - protectors;
+            if (lackingProtectors > 0) {
+                assignProtectorsFor(firstTank, lackingProtectors);
+                return;
+            }
+        }
     }
 
     // =========================================================
     
-    private static void assignConstantBunkerRepairers(AUnit bunker, int numberOfRepairersToAssign) {
-        for (int i = 0; i < numberOfRepairersToAssign; i++) {
-            AUnit worker = defineBestRepairerFor(bunker, false);
+    private static void assignProtectorsFor(AUnit unitToProtect, int numberOfProtectorsToAssign) {
+        for (int i = 0; i < numberOfProtectorsToAssign; i++) {
+            AUnit worker = defineBestRepairerFor(unitToProtect, false);
             if (worker != null) {
-                ARepairManager.addProtector(worker, bunker);
+                ARepairManager.addProtector(worker, unitToProtect);
             }
         }
     }
@@ -149,7 +177,7 @@ public class ARepairCommander {
 
     // =========================================================
     
-    private static int defineOptimalConstantBunkerRepairers() {
+    private static int defineOptimalNumberOfBunkerProtectors() {
 
         // === Mission DEFEND  =================================
         if (Missions.isGlobalMissionDefend()) {
