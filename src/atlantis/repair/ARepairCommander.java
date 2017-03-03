@@ -30,22 +30,22 @@ public class ARepairCommander {
 
         // =========================================================
 
-        for (Iterator<AUnit> iterator = ARepairManager.getConstantBunkerRepairers().iterator(); iterator.hasNext();) {
+        for (Iterator<AUnit> iterator = ARepairManager.getProtectors().iterator(); iterator.hasNext();) {
             AUnit bunkerRepairer = iterator.next();
             if (!bunkerRepairer.isAlive()) {
                 ARepairManager.removeConstantBunkerRepairer(bunkerRepairer);
                 iterator.remove();
             }
-            ARepairManager.updateBunkerRepairer(bunkerRepairer);
+            ARepairManager.updateProtector(bunkerRepairer);
         }
 
-        for (Iterator<AUnit> iterator = ARepairManager.getUnitRepairers().iterator(); iterator.hasNext();) {
+        for (Iterator<AUnit> iterator = ARepairManager.getRepairers().iterator(); iterator.hasNext();) {
             AUnit unitRepairer = iterator.next();
             if (!unitRepairer.isAlive()) {
-                ARepairManager.removeUnitRepairer(unitRepairer);
+                ARepairManager.removeRepairerOrProtector(unitRepairer);
                 iterator.remove();
             }
-            ARepairManager.updateUnitRepairer(unitRepairer);
+            ARepairManager.updateRepairer(unitRepairer);
         }
     }
 
@@ -63,7 +63,7 @@ public class ARepairCommander {
             // =========================================================
             
             int numberOfRepairers = ARepairManager.countRepairersForUnit(woundedUnit)
-                    + ARepairManager.countConstantRepairersForBunker(woundedUnit);
+                    + ARepairManager.countProtectorsFor(woundedUnit);
 
             // === Repair bunker ========================================
             
@@ -83,7 +83,7 @@ public class ARepairCommander {
 
         // If mission is not DEFEND, release all bunker repairers
         if (Missions.getGlobalMission() == null || !Missions.getGlobalMission().isMissionDefend()) {
-            for (AUnit bunkerRepairer : ARepairManager.getConstantBunkerRepairers()) {
+            for (AUnit bunkerRepairer : ARepairManager.getProtectors()) {
                 ARepairManager.removeConstantBunkerRepairer(bunkerRepairer);
             }
             return;
@@ -104,7 +104,7 @@ public class ARepairCommander {
                     
             int numberOfCombatUnitsNearby = Select.ourCombatUnits().inRadius(6, bunker).count();
             if (numberOfCombatUnitsNearby <= 7) {
-                int numberOfRepairersAssigned = ARepairManager.countConstantRepairersForBunker(bunker);
+                int numberOfRepairersAssigned = ARepairManager.countProtectorsFor(bunker);
                 assignConstantBunkerRepairers(
                         bunker, defineOptimalConstantBunkerRepairers() - numberOfRepairersAssigned
                 );
@@ -120,7 +120,7 @@ public class ARepairCommander {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
             AUnit worker = defineBestRepairerFor(bunker, false);
             if (worker != null) {
-                ARepairManager.addConstantBunkerRepairer(worker, bunker);
+                ARepairManager.addProtector(worker, bunker);
             }
         }
     }
@@ -129,7 +129,7 @@ public class ARepairCommander {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
             AUnit worker = defineBestRepairerFor(unitToRepair, true);
             if (worker != null) {
-                ARepairManager.addUnitRepairer(worker, unitToRepair);
+                ARepairManager.addRepairer(worker, unitToRepair);
             }
         }
     }

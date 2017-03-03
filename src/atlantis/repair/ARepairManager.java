@@ -16,13 +16,13 @@ import java.util.Map;
  */
 public class ARepairManager {
     
-    // Bunker repairers
-    protected static Map<AUnit, AUnit> repairersConstantToBunker = new HashMap<>();
-    protected static Map<AUnit, ArrayList<AUnit>> bunkersToRepairers = new HashMap<>();
+    public static final int MODE_REPAIR_ONLY = 1;
+    public static final int MODE_PROTECT = 2;
     
     // Unit repairers
     protected static Map<AUnit, AUnit> repairersToUnit = new HashMap<>();
     protected static Map<AUnit, ArrayList<AUnit>> unitsToRepairers = new HashMap<>();
+    protected static Map<AUnit, Integer> repairersToModes = new HashMap<>();
     
     // =========================================================
     
@@ -60,7 +60,7 @@ public class ARepairManager {
     
     // =========================================================
     
-    public static boolean updateUnitRepairer(AUnit repairer) {
+    public static boolean updateRepairer(AUnit repairer) {
         AUnit unitToRepair = ARepairManager.getUnitToRepairFor(repairer);
         if (unitToRepair != null && unitToRepair.isAlive()) {
             if (unitToRepair.getHPPercent() < 80) {
@@ -77,60 +77,49 @@ public class ARepairManager {
                 }
                 else {
                     repairer.setTooltip("Repaired!");
-                    removeUnitRepairer(repairer);
+                    removeRepairerOrProtector(repairer);
                     return true;
                 }
             }
         }
         else {
             repairer.setTooltip("Null unit2repair");
-            ARepairManager.removeUnitRepairer(repairer);
+            ARepairManager.removeRepairerOrProtector(repairer);
             return true;
         }
-        
-//        // === Check if should stop being repairer =================
-//        
-//        if (!unitToRepair.isWounded() && countRepairersForUnit(unitToRepair) > 1) {
-//            removeUnitRepairer(repairer);
-//            return true;
-//        }
-//        
-//        // =========================================================
-//        
-//        return handleRepairerWhenIdle(repairer);
     }
     
-    public static boolean updateBunkerRepairer(AUnit repairer) {
-        AUnit bunker = ARepairManager.getConstantBunkerToRepairFor(repairer);
-        if (bunker != null && bunker.isAlive()) {
+    public static boolean updateProtector(AUnit protector) {
+        AUnit unit = ARepairManager.getUnitToProtectFor(protector);
+        if (unit != null && unit.isAlive()) {
             
             // Bunker WOUNDED
-            if (bunker.getHPPercent() < 100) {
-                repairer.setTooltip("Repair " + bunker.getShortName());
-                repairer.repair(bunker);
+            if (unit.getHPPercent() < 100) {
+                protector.setTooltip("Repair " + unit.getShortName());
+                protector.repair(unit);
                 return true;
             }
             
             // Bunker fully HEALTHY
             else {
-                double distanceToUnit = bunker.distanceTo(repairer);
-                if (distanceToUnit > 1 && !repairer.isMoving()) {
-                    repairer.setTooltip("Go to " + bunker.getShortName());
-                    repairer.move(bunker.getPosition(), UnitActions.MOVE_TO_REPAIR);
+                double distanceToUnit = unit.distanceTo(protector);
+                if (distanceToUnit > 1 && !protector.isMoving()) {
+                    protector.setTooltip("Go to " + unit.getShortName());
+                    protector.move(unit.getPosition(), UnitActions.MOVE_TO_REPAIR);
                     return true;
                 }
                 else {
-                    repairer.setTooltip("Protect " + bunker.getShortName());
+                    protector.setTooltip("Protect " + unit.getShortName());
                 }
             }
         }
         else {
-            repairer.setTooltip("Null bunker");
-            ARepairManager.removeConstantBunkerRepairer(repairer);
+            protector.setTooltip("Null bunker");
+            ARepairManager.removeRepairerOrProtector(protector);
             return true;
         }
         
-        return handleRepairerWhenIdle(repairer);
+        return handleRepairerWhenIdle(protector);
     }
     
     private static boolean handleRepairerWhenIdle(AUnit repairer) {
@@ -152,16 +141,16 @@ public class ARepairManager {
     
     // =========================================================
     
-    public static boolean isConstantBunkerRepairer(AUnit repairer) {
-        return repairersConstantToBunker.containsKey(repairer);
+    public static boolean isProtector(AUnit repairer) {
+        return repairersToModes.get(repairer) == MODE_PROTECT;
     }
     
-    public static boolean isUnitRepairer(AUnit repairer) {
+    public static boolean isOnlyRepairer(AUnit repairer) {
         return repairersToUnit.containsKey(repairer);
     }
     
-    public static AUnit getConstantBunkerToRepairFor(AUnit repairer) {
-        return repairersConstantToBunker.get(repairer);
+    public static AUnit getUnitToProtectFor(AUnit repairer) {
+        return repairersToUnit.get(repairer);
     }
     
     public static AUnit getUnitToRepairFor(AUnit repairer) {
@@ -176,25 +165,14 @@ public class ARepairManager {
                     return repairers.get(0);
                 }
                 else {
-                    removeUnitRepairer(repairers.get(0));
+                    removeRepairerOrProtector(repairers.get(0));
                 }
             }
         }
         return null;
     }
 
-    public static void removeConstantBunkerRepairer(AUnit repairer) {
-        AUnit bunker = repairersConstantToBunker.get(repairer);
-        if (bunker != null && bunkersToRepairers.containsKey(bunker)) {
-            bunkersToRepairers.get(bunker).remove(repairer);
-
-            repairer.stop();
-            repairer.setTooltip("Stop");
-        }
-        repairersConstantToBunker.remove(repairer);
-    }
-
-    public static void removeUnitRepairer(AUnit repairer) {
+    public static void removeRepairerOrProtector(AUnit repairer) {
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.get(unitToRepair).remove(repairer);
@@ -205,31 +183,37 @@ public class ARepairManager {
         repairersToUnit.remove(repairer);
     }
     
-    public static void addConstantBunkerRepairer(AUnit repairer, AUnit bunker) {
-        if (!bunker.isBunker()) {
-            System.err.println("Repair: this ain't no bunker dude (" + bunker + ")");
-        }
-        
-        repairersConstantToBunker.put(repairer, bunker);
-        if (!bunkersToRepairers.containsKey(bunker)) {
-            bunkersToRepairers.put(bunker, new ArrayList<>());
-        }
-        bunkersToRepairers.get(bunker).add(repairer);
+    public static void addProtector(AUnit protector, AUnit unit) {
+        addRepairer(protector, unit);
+        repairersToModes.put(protector, MODE_PROTECT);
         
         AGame.sendMessage("Repairer for bunker");
     }
     
-    public static void addUnitRepairer(AUnit repairer, AUnit unitToRepair) {
-        repairersConstantToBunker.put(repairer, unitToRepair);
+    public static void addRepairer(AUnit repairer, AUnit unitToRepair) {
+        repairersToUnit.put(repairer, unitToRepair);
+        repairersToModes.put(repairer, MODE_REPAIR_ONLY);
         if (!unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.put(unitToRepair, new ArrayList<>());
         }
         unitsToRepairers.get(unitToRepair).add(repairer);
-        AGame.sendMessage("Repairer for " + unitToRepair.getShortName());
+        
+//        AGame.sendMessage("Repairer for " + unitToRepair.getShortName());
     }
 
-    public static int countConstantRepairersForBunker(AUnit bunker) {
-        return bunkersToRepairers.containsKey(bunker) ? bunkersToRepairers.get(bunker).size() : 0;
+    public static int countProtectorsFor(AUnit unit) {
+        if (!unitsToRepairers.containsKey(unit)) {
+            return 0;
+        }
+        
+        int protectors = 0;
+        for (AUnit repairer : unitsToRepairers.get(unit)) {
+            if (isProtector(repairer)) {
+                protectors++;
+            }
+        }
+        
+        return protectors;
     }
 
     public static int countRepairersForUnit(AUnit unit) {
@@ -237,16 +221,20 @@ public class ARepairManager {
     }
 
     public static boolean isRepairerOfAnyKind(AUnit worker) {
-        return repairersConstantToBunker.containsKey(worker) || repairersToUnit.containsKey(worker);
+        return repairersToUnit.containsKey(worker);
     }
 
-    public static Collection<AUnit> getConstantBunkerRepairers() {
+    public static Collection<AUnit> getProtectors() {
         ArrayList<AUnit> result = new ArrayList<>();
-        result.addAll(repairersConstantToBunker.keySet());
+        for (AUnit repairer : repairersToUnit.keySet()) {
+            if (isProtector(repairer)) {
+                result.add(repairer);
+            }
+        }
         return result;
     }
 
-    public static Collection<AUnit> getUnitRepairers() {
+    public static Collection<AUnit> getRepairers() {
         ArrayList<AUnit> result = new ArrayList<>();
         result.addAll(repairersToUnit.keySet());
         return result;
