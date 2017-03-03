@@ -2,6 +2,7 @@ package atlantis.repair;
 
 import atlantis.AGame;
 import atlantis.buildings.managers.TerranFlyingBuildingManager;
+import atlantis.combat.micro.ARunManager;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.information.AMap;
 import atlantis.scout.AScoutManager;
@@ -10,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwta.Chokepoint;
+import java.util.Iterator;
 
 /**
  *
@@ -27,12 +29,22 @@ public class ARepairCommander {
         }
 
         // =========================================================
-        
-        for (AUnit bunkerRepairer : ARepairManager.getConstantBunkerRepairers()) {
+
+        for (Iterator<AUnit> iterator = ARepairManager.getConstantBunkerRepairers().iterator(); iterator.hasNext();) {
+            AUnit bunkerRepairer = iterator.next();
+            if (!bunkerRepairer.isAlive()) {
+                ARepairManager.removeConstantBunkerRepairer(bunkerRepairer);
+                iterator.remove();
+            }
             ARepairManager.updateBunkerRepairer(bunkerRepairer);
         }
 
-        for (AUnit unitRepairer : ARepairManager.getUnitRepairers()) {
+        for (Iterator<AUnit> iterator = ARepairManager.getUnitRepairers().iterator(); iterator.hasNext();) {
+            AUnit unitRepairer = iterator.next();
+            if (!unitRepairer.isAlive()) {
+                ARepairManager.removeUnitRepairer(unitRepairer);
+                iterator.remove();
+            }
             ARepairManager.updateUnitRepairer(unitRepairer);
         }
     }
@@ -45,7 +57,6 @@ public class ARepairCommander {
 
             // Some units shouldn't be repaired
             if (AScoutManager.isScout(woundedUnit) || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)) {
-//                    || ARepairManager.isConstantBunkerRepairer(woundedUnit)) {
                 continue;
             }
 

@@ -21,6 +21,7 @@ import atlantis.units.AUnitType;
 public class ACombatUnitManager extends AbstractMicroManager {
 
     protected static boolean update(AUnit unit) {
+        unit.removeTooltip();
         
         // =========================================================
         // Don't INTERRUPT shooting units
