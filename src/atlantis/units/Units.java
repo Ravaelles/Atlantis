@@ -6,6 +6,7 @@ import atlantis.position.PositionOperationsWrapper;
 import atlantis.util.AtlantisUtilities;
 import bwapi.Position;
 import bwapi.PositionedObject;
+import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -216,8 +217,54 @@ public class Units {
                 if (p2 == null || !(p2 instanceof PositionedObject)) {
                     return 1;
                 }
-                double distance1 = p1.distanceTo(position);	//TODO: check whether this doesn't mix up position types
+                double distance1 = p1.distanceTo(position);
                 double distance2 = p2.distanceTo(position);
+                if (distance1 == distance2) {
+                    return 0;
+                }
+                else {
+                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
+                }
+            }
+        });
+        
+        // Create new mapping, with new order
+        LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
+        for (AUnit unit : unitsList) {
+            newUnits.put(unit, getValueFor(unit));
+        }
+        this.units = newUnits;
+
+        return this;
+    }
+    
+    /**
+     * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
+     * after sorting first unit will be the one closest to given position.
+     */
+    public Units sortByGroundDistanceTo(final Position position, final boolean nearestFirst) {
+        if (position == null) {
+            return null;
+        }
+        
+        ArrayList<AUnit> unitsList = new ArrayList<>();
+        unitsList.addAll(units.keySet());
+        
+        Collections.sort(unitsList, new Comparator<APositionedObject>() {
+            @Override
+            public int compare(APositionedObject p1, APositionedObject p2) {
+                if (p1 == null || !(p1 instanceof PositionedObject)) {
+                    return -1;
+                }
+                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                    return 1;
+                }
+                double distance1 = BWTA.getGroundDistance(
+                        p1.getPosition().toTilePosition(), position.toTilePosition()
+                );
+                double distance2 = BWTA.getGroundDistance(
+                        p2.getPosition().toTilePosition(), position.toTilePosition()
+                );
                 if (distance1 == distance2) {
                     return 0;
                 }

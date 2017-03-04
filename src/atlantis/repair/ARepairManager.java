@@ -1,6 +1,7 @@
 package atlantis.repair;
 
 import atlantis.AGame;
+import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -50,10 +51,17 @@ public class ARepairManager {
             }
             
             // We're very close to repairer, wait.
-            else if (!unit.isAttacking()) {
-                unit.holdPosition();
-                unit.setTooltip("Wait for repair");
+            else {
+                boolean result = AAttackEnemyUnit.handleAttackEnemyUnits(unit);
+                if (result) {
+                    unit.setTooltip("Attack while repaired");
+                }
+                else {
+                    unit.setTooltip("Wait for repair");
+                }
                 return true;
+//                unit.holdPosition();
+//                return true;
             }
         }
         

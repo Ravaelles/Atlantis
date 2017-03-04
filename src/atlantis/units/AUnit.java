@@ -43,9 +43,9 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 
     private Unit u;
     private AUnitType _lastCachedType;
-
     private UnitAction unitAction;
     private int _lastTimeOrderWasIssued = -1;
+    private AUnit _cachedNearestMeleeEnemy = null;
 
     // =========================================================
 
@@ -1054,6 +1054,14 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 
     public int getSpaceRemaining() {
         return u().getSpaceRemaining();
+    }
+
+    public AUnit getCachedNearestMeleeEnemy() {
+        return _cachedNearestMeleeEnemy;
+    }
+
+    public void setCachedNearestMeleeEnemy(AUnit _cachedNearestMeleeEnemy) {
+        this._cachedNearestMeleeEnemy = _cachedNearestMeleeEnemy;
     }
     
 }

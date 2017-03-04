@@ -68,8 +68,8 @@ public class ACombatUnitManager extends AbstractMicroManager {
         
         // =========================================================
         // Early mode - Attack enemy units when in range (and choose the best target)
-        boolean isAllowedToAttackWhenRetreating = isAllowedToAttackWhenRetreating(unit);
-        if (isAllowedToAttackWhenRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+        boolean isAllowedToEarlyAttack = isAllowedToAttackWhenRetreating(unit);
+        if (isAllowedToEarlyAttack && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
         }
         
@@ -88,7 +88,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         
         // =========================================================
         // Normal mode - Attack enemy units when in range (and choose the best target)
-        if (!isAllowedToAttackWhenRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+        if (!isAllowedToEarlyAttack && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
         }
 
@@ -192,7 +192,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
      * just get destroyed without firing even once.
      */
     private static boolean isAllowedToAttackWhenRetreating(AUnit unit) {
-        return unit.isType(AUnitType.Protoss_Reaver) && unit.getHPPercent() > 30;
+        return unit.isType(AUnitType.Protoss_Reaver) && unit.getHPPercent() > 10;
     }
 
 }

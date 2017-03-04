@@ -40,7 +40,7 @@ public class ADynamicUnitProductionManager {
     }
     
     private static void trainMarinesForBunkersIfNeeded() {
-        int bunkers = Select.countOurOfType(AUnitType.Terran_Bunker);
+        int bunkers = Select.countOurOfTypeIncludingUnfinished(AUnitType.Terran_Bunker);
         if (bunkers > 0) {
             int marines = Select.countOurOfType(AUnitType.Terran_Marine);
             int shouldHaveMarines = defineOptimalNumberOfMarines(bunkers);

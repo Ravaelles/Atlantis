@@ -1092,6 +1092,13 @@ public class APainter {
         bwapi.drawLineMap(start, end, color);
     }
 
+    public static void paintLine(AUnit unit, AUnit end, Color color) {
+        if (unit == null || end == null) {
+            return;
+        }
+        bwapi.drawLineMap(unit.getPosition(), end.getPosition(), color);
+    }
+
     public static void paintLine(AUnit unit, Position end, Color color) {
         if (unit == null || end == null) {
             return;

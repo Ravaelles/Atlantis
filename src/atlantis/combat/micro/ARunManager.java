@@ -26,11 +26,13 @@ public class ARunManager {
     private Units closeEnemies;
 
     // =========================================================
+    
     public ARunManager(AUnit unit) {
         this.unit = unit;
     }
 
     // =========================================================
+    
     private boolean makeUnitRun() {
         if (unit == null) {
             return false;
@@ -97,6 +99,33 @@ public class ARunManager {
     }
 
     // =========================================================
+    
+    /**
+     * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
+     */
+    private APosition findPositionToRun_preferAwayFromEnemy(AUnit unit, APosition runAwayFrom) {
+        APosition runTo = null;
+
+        // === Run directly away from the enemy ========================================
+        
+//        if (closeEnemies != null && !unit.getPosition().isCloseToMapBounds()) {
+//            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
+//        }
+        
+        // === Get run to position - as far from enemy as possible =====================
+
+        if (runTo == null) {
+            double expectedLength = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 2.5);
+            runTo = findRunPositionAtAnyDirection(unit, runAwayFrom, expectedLength);
+        }
+        
+        // =============================================================================
+        
+        return runTo;
+    }
+    
+    // =========================================================
+    
     public boolean run() {
 
         // Define which enemies are considered as close enough to be dangerous
@@ -160,8 +189,9 @@ public class ARunManager {
         
         return makeUnitRun();
     }
-
+    
     // =========================================================
+    
     /**
      *
      */
@@ -170,13 +200,13 @@ public class ARunManager {
             return null;
         }
 
-        AUnit mainBase = Select.mainBase();
-
-        if (AGame.getTimeSeconds() <= 310 && mainBase != null && !unit.isWorker() && mainBase.distanceTo(unit) > 22) {
-            return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
-        } else {
-            return unit.getRunManager().findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
-        }
+//        AUnit mainBase = Select.mainBase();
+//
+//        if (AGame.getTimeSeconds() <= 310 && mainBase != null && !unit.isWorker() && mainBase.distanceTo(unit) > 22) {
+//            return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
+//        } else {
+        return unit.getRunManager().findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
+//        }
     }
 
     // =========================================================
@@ -193,30 +223,6 @@ public class ARunManager {
         }
 
         return findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
-    }
-
-    /**
-     * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
-     */
-    private APosition findPositionToRun_preferAwayFromEnemy(AUnit unit, APosition runAwayFrom) {
-        APosition runTo = null;
-
-        // === Run directly away from the enemy ========================================
-        
-//        if (closeEnemies != null && !unit.getPosition().isCloseToMapBounds()) {
-//            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
-//        }
-        
-        // === Get run to position - as far from enemy as possible =====================
-
-        if (runTo == null) {
-            double expectedLength = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 2.5);
-            runTo = findRunPositionAtAnyDirection(unit, runAwayFrom, expectedLength);
-        }
-        
-        // =============================================================================
-        
-        return runTo;
     }
 
     /**

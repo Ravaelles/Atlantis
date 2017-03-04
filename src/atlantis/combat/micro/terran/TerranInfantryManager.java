@@ -4,6 +4,7 @@ import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import bwapi.Position;
 
 /**
  *
@@ -42,13 +43,18 @@ public class TerranInfantryManager {
     // =========================================================
 
     private static AUnit defineBunkerToLoadTo(AUnit unit) {
-        AUnit bunker = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
-                .havingSpaceFree(unit.getSpaceRequired()).nearestTo(unit);
+        Select<?> bunkers = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
+                .inRadius(15, unit).havingSpaceFree(unit.getSpaceRequired());
+        AUnit bunker = bunkers.nearestTo(unit);
         if (bunker != null) {
+            AUnit mainBase = Select.mainBase();
             
             // Select the most distance (according to main base) bunker
-            if (Missions.isGlobalMissionDefend()) {
-                
+            if (Missions.isGlobalMissionDefend() && mainBase != null) {
+                AUnit mostDistantBunker = bunkers.units().sortByGroundDistanceTo(mainBase.getPosition(), true).first();
+                if (mostDistantBunker != null) {
+                    return mostDistantBunker;
+                }
             }
             else {
                 return bunker;

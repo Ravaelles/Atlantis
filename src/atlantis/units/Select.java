@@ -210,6 +210,21 @@ public class Select<T> {
     }
 
     /**
+     * Counts our units of given type.
+     */
+    public static int countOurOfTypeIncludingUnfinished(AUnitType type) {
+        int total = 0;
+
+        for (AUnit unit : ourUnits()) {
+            if (unit.isType(type)) {
+                total++;
+            }
+        }
+
+        return total;
+    }
+
+    /**
      * Selects our units of given type(s).
      */
     public static Select<AUnit> ourOfTypeIncludingUnfinished(AUnitType type) {
