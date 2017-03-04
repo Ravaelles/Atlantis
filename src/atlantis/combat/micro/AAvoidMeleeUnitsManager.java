@@ -84,7 +84,7 @@ public class AAvoidMeleeUnitsManager {
 //            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
             if (closeEnemy != null) {
                 
-                double baseCriticalDistance = (unit.isVulture() ? 3.3 : 2);
+                double baseCriticalDistance = (unit.isVulture() ? 3.45 : 2.2);
                 double healthBonus = unit.getHPPercent() < 30 ? 0.5 : 0;
                 double numberOfNearEnemiesBonus = Math.max(0.4, 
                         ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
@@ -95,12 +95,11 @@ public class AAvoidMeleeUnitsManager {
                         + healthBonus + archonBonus;
                 double enemyDistance = closeEnemy.distanceTo(unit);
                 boolean isEnemyDangerouslyClose = enemyDistance < dangerousDistance;
-                System.out.println("enemyDistance = " + enemyDistance);
                 
                 if (isEnemyDangerouslyClose) {
                     APainter.paintCircle(unit.getPosition(), (int) (32 * enemyDistance), Color.Red);
                 }
-                APainter.paintCircle(unit.getPosition(), (int) (32 * dangerousDistance), Color.Green);
+//                APainter.paintCircle(unit.getPosition(), (int) (32 * dangerousDistance), Color.Green);
                 
                 boolean standardEnemyIsDangerouslyClose = 
 //                        isEnemyDangerouslyClose && (unit.type().isMechanical() || unit.isWounded());
@@ -113,10 +112,10 @@ public class AAvoidMeleeUnitsManager {
 
                     boolean dontInterruptPendingAttack = false;
                     if (unit.isVulture()) {
-                        dontInterruptPendingAttack = enemyDistance >= 3 && unit.isAttackFrame() && unit.getHPPercent() >= 40;
+                        dontInterruptPendingAttack = enemyDistance >= 3.5 && unit.isAttackFrame() && unit.getHPPercent() >= 40;
                     }
                     else {
-                        dontInterruptPendingAttack = enemyDistance >= 1.6 
+                        dontInterruptPendingAttack = enemyDistance >= 1.8 
                                 && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
                     }
                     
@@ -140,7 +139,7 @@ public class AAvoidMeleeUnitsManager {
                             return true;
                         }
                         else {
-                            unit.setTooltip("Unable to run");
+                            unit.setTooltip("ERROR_RUN");
                             return false;
                         }
                     }

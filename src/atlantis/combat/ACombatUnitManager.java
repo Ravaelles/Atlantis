@@ -3,7 +3,7 @@ package atlantis.combat;
 import atlantis.AGame;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidMeleeUnitsManager;
-import atlantis.combat.micro.AAvoidMilitaryBuildings;
+import atlantis.combat.micro.AAvoidDefensiveBuildings;
 import atlantis.combat.micro.ABadWeather;
 import atlantis.combat.micro.AbstractMicroManager;
 import atlantis.combat.micro.terran.TerranInfantryManager;
@@ -62,7 +62,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
         // =========================================================
         // Avoid buildings like Photon Cannons, bunkers etc
-        if (AAvoidMilitaryBuildings.avoidCloseBuildings(unit)) {
+        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
             return true;
         }
         

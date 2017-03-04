@@ -34,7 +34,6 @@ public class MissionDefend extends Mission {
         // === Load infantry into bunkers ==========================
         
         if (TerranInfantryManager.tryLoadingInfantryIntoBunkerIfPossible(unit)) {
-            unit.setTooltip("GTFInto bunker!");
             return true;
         }
         

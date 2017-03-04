@@ -575,7 +575,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         }
         
         double dist = this.distanceTo(targetUnit);
-        return (dist - safetyMargin) <= (weaponAgainstThisUnit.maxRange() / 32)
+        return dist <= ((weaponAgainstThisUnit.maxRange() + safetyMargin) / 32)
                 && dist >= (weaponAgainstThisUnit.minRange() / 32);
     }
 
@@ -1042,6 +1042,18 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 
     public boolean isScout() {
         return AScoutManager.isScout(this);
+    }
+
+    public int getSpaceProvided() {
+        return type().ut().spaceProvided();
+    }
+
+    public int getSpaceRequired() {
+        return type().ut().spaceRequired();
+    }
+
+    public int getSpaceRemaining() {
+        return u().getSpaceRemaining();
     }
     
 }

@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -11,7 +12,7 @@ import atlantis.units.Select;
 public class TerranInfantryManager {
 
     public static boolean update(AUnit unit) {
-        tryLoadingInfantryIntoBunkerIfPossible(unit);
+        return tryLoadingInfantryIntoBunkerIfPossible(unit);
     }
     
     /**
@@ -26,13 +27,35 @@ public class TerranInfantryManager {
         
         // =========================================================
         
-        AUnit nearestBunker = Select.ourBuildings().ofType(AUnitType.Terran_Bunker).nearestTo(unit);
-        if (nearestBunker != null && nearestBunker.distanceTo(unit) < 15) {
+        AUnit nearestBunker = defineBunkerToLoadTo(unit);
+        int maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 15 : 6;
+        
+        if (nearestBunker != null && nearestBunker.distanceTo(unit) < maxDistanceToLoad) {
             unit.load(nearestBunker);
+            unit.setTooltip("GTFInto bunker!");
             return true;
         }
         
         return false;
+    }
+    
+    // =========================================================
+
+    private static AUnit defineBunkerToLoadTo(AUnit unit) {
+        AUnit bunker = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
+                .havingSpaceFree(unit.getSpaceRequired()).nearestTo(unit);
+        if (bunker != null) {
+            
+            // Select the most distance (according to main base) bunker
+            if (Missions.isGlobalMissionDefend()) {
+                
+            }
+            else {
+                return bunker;
+            }
+        }
+        
+        return null;
     }
     
 }

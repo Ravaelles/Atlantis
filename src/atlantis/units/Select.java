@@ -719,6 +719,20 @@ public class Select<T> {
     }
 
     /**
+     * Selects these transport/bunker units which have still enough room inside.
+     */
+    public Select<T> havingSpaceFree(int spaceRequired) {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.getSpaceRemaining() < spaceRequired) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    /**
      * Selects these units (makes sense only for workers) who aren't assigned to construct anything.
      */
     public Select<T> notConstructing() {

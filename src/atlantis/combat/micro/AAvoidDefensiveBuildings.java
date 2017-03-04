@@ -8,7 +8,7 @@ import atlantis.units.Select;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AAvoidMilitaryBuildings {
+public class AAvoidDefensiveBuildings {
 
     public static boolean avoidCloseBuildings(AUnit unit) {
         AUnit buildingTooClose;
@@ -33,14 +33,20 @@ public class AAvoidMilitaryBuildings {
             double enemyDistance = buildingTooClose.distanceTo(unit);
             double distanceMargin = enemyDistance - enemyWeaponRange;
             
+            System.out.println(unit + ", enemyDistance = " + enemyDistance + ", distanceMargin = " + distanceMargin);
+            
+            if (distanceMargin > 1.5) {
+                return false;
+            }
+            
             if (distanceMargin > 0.9) {
-                unit.setTooltip("Avoid building");
+                unit.setTooltip("Avoid building (" + String.format("%.1f", distanceMargin) + ")");
                 return unit.moveAwayFrom(buildingTooClose.getPosition(), 1);
             }
             else if (distanceMargin > 0.3) {
                 if (!unit.isAttackFrame() || unit.isMoving()) {
                     unit.holdPosition();
-                    unit.setTooltip("Avoid building!!!");
+                    unit.setTooltip("Avoid building (" + String.format("%.1f", distanceMargin) + ") !!!");
                 }
                 return true;
             }
