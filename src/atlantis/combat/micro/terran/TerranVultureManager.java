@@ -31,7 +31,9 @@ public class TerranVultureManager {
         // define that a mine planting has been finished.
         if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle())) {
             unit.setUnitAction(null);
-            unit.removeTooltip();
+            unit.setTooltip("Planted!");
+            unit.holdPosition();
+            return true;
         }
         
         // If out of mines or mines ain't researched, don't do anything.

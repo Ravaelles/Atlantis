@@ -95,7 +95,12 @@ public class AAvoidMeleeUnitsManager {
                         + healthBonus + archonBonus;
                 double enemyDistance = closeEnemy.distanceTo(unit);
                 boolean isEnemyDangerouslyClose = enemyDistance < dangerousDistance;
-//                APainter.paintCircleFilled(unit.getPosition(), 11, Color.Yellow);
+                System.out.println("enemyDistance = " + enemyDistance);
+                
+                if (isEnemyDangerouslyClose) {
+                    APainter.paintCircle(unit.getPosition(), (int) (32 * enemyDistance), Color.Red);
+                }
+                APainter.paintCircle(unit.getPosition(), (int) (32 * dangerousDistance), Color.Green);
                 
                 boolean standardEnemyIsDangerouslyClose = 
 //                        isEnemyDangerouslyClose && (unit.type().isMechanical() || unit.isWounded());

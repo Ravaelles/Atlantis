@@ -182,7 +182,10 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 //        if (AtlantisRunManager.isPossibleAndReasonablePosition(
 //                this, newPosition, -1, 9999, true
 //        ) && move(newPosition, UnitActions.MOVE)) {
-        if (move(newPosition, UnitActions.MOVE)) {
+        if (ARunManager.isPossibleAndReasonablePosition(
+                this.getPosition(), newPosition, moveDistance * 0.2, moveDistance * 1.5, true
+            ) 
+                && move(newPosition, UnitActions.MOVE)) {
             this.setTooltip("Move away");
             return true;
         }
@@ -197,6 +200,13 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
      */
     public boolean canAnyCloseEnemyShootThisUnit() {
         return !Select.enemy().inRadius(12.5, this).canAttack(this).isEmpty();
+    }
+    
+    /**
+     * Returns true if any close enemy can either shoot or hit this unit.
+     */
+    public boolean canAnyCloseEnemyShootThisUnit(double safetyMargin) {
+        return !Select.enemy().inRadius(12.5, this).canAttack(this, safetyMargin).isEmpty();
     }
 
     // =========================================================
@@ -861,6 +871,10 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         return !u.isSieged();
     }
 
+    public boolean isUnderAttack() {
+        return u.isUnderAttack();
+    }
+
     public List<AUnitType> getTrainingQueue() {
         return (List<AUnitType>) AUnitType.convertToAUnitTypesCollection(u.getTrainingQueue());
     }
@@ -938,6 +952,22 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     public boolean isUnderStorm() {
         return u().isUnderStorm();
     }
+    
+    public int getRemainingBuildTime() {
+        return u().getRemainingBuildTime();
+    }
+    
+    public int getRemainingResearchTime() {
+        return u().getRemainingResearchTime();
+    }
+    
+    public int getRemainingTrainTime() {
+        return u().getRemainingTrainTime();
+    }
+    
+    public int getRemainingUpgradeTime() {
+        return u().getRemainingUpgradeTime();
+    }
 
     /**
      * Returns true if given position has land connection to given point.
@@ -962,6 +992,8 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         return unitAction;
     }
     
+    // === Unit actions ========================================
+    
     public boolean isUnitAction(UnitAction constant) {
         return unitAction == constant;
     }
@@ -974,9 +1006,15 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
                 || unitAction == UnitActions.RUN;
     }
     
+    public boolean isUnitActionRepair() {
+        return unitAction == UnitActions.REPAIR || unitAction == UnitActions.MOVE_TO_REPAIR;
+    }
+    
     public void setUnitAction(UnitAction unitAction) {
         this.unitAction = unitAction;
     }
+    
+    // =========================================================
 
     public boolean isReadyToShoot() {
         return getGroundWeaponCooldown() <= 0 && getAirWeaponCooldown() <= 0;

@@ -680,6 +680,14 @@ public class AUnitType implements Comparable<AUnitType> {
      * Returns true if given unit type is one of buildings like Bunker, Photon Cannon etc. For more details,
      * you have to specify at least one <b>true</b> to the params.
      */
+    public boolean isMilitaryBuilding() {
+        return isMilitaryBuildingAntiGround() || isMilitaryBuildingAntiAir();
+    }
+
+    /**
+     * Returns true if given unit type is one of buildings like Bunker, Photon Cannon etc. For more details,
+     * you have to specify at least one <b>true</b> to the params.
+     */
     public boolean isMilitaryBuilding(boolean canShootGround, boolean canShootAir) {
         if (!isBuilding()) {
             return false;

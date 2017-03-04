@@ -1,6 +1,7 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.AGame;
+import atlantis.combat.micro.terran.TerranInfantryManager;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;

@@ -30,6 +30,7 @@ public class AConstructionManager {
         for (ConstructionOrder constructionOrder : constructionOrders) {
             checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
             checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
+            handleConstructionUnderAttack(constructionOrder);
         }
     }
 
@@ -430,6 +431,22 @@ public class AConstructionManager {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private static void handleConstructionUnderAttack(ConstructionOrder order) {
+        AUnit building = order.getConstruction();
+        
+        // If unfinished building is under attack
+        if (building != null && !building.isCompleted() && building.isUnderAttack()) {
+            
+            // If it has less than 71HP or less than 60% and is close to being finished
+            if (building.getHP() <= 70 
+                    || (building.getRemainingBuildTime() <= 2 && building.getHPPercent() < 60)
+                    || (building.getRemainingBuildTime() <= 3 && building.type().isMilitaryBuilding() 
+                        && building.getHPPercent() < 60)) {
+                order.cancel();
             }
         }
     }

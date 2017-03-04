@@ -3,8 +3,10 @@ package atlantis.combat;
 import atlantis.AGame;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidMeleeUnitsManager;
+import atlantis.combat.micro.AAvoidMilitaryBuildings;
 import atlantis.combat.micro.ABadWeather;
 import atlantis.combat.micro.AbstractMicroManager;
+import atlantis.combat.micro.terran.TerranInfantryManager;
 import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.terran.TerranSiegeTankManager;
 import atlantis.combat.micro.terran.TerranVultureManager;
@@ -57,6 +59,12 @@ public class ACombatUnitManager extends AbstractMicroManager {
         if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
             return true;
         }
+
+        // =========================================================
+        // Avoid buildings like Photon Cannons, bunkers etc
+        if (AAvoidMilitaryBuildings.avoidCloseBuildings(unit)) {
+            return true;
+        }
         
         // =========================================================
         // Early mode - Attack enemy units when in range (and choose the best target)
@@ -64,17 +72,17 @@ public class ACombatUnitManager extends AbstractMicroManager {
         if (isAllowedToAttackWhenRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
         }
+        
+        // =========================================================
+        // If we couldn't beat nearby enemies, retreat
+        if (handleUnfavorableOdds(unit)) {
+            return true;
+        }
 
         // =========================================================
         // Handle repair of mechanical units
         
         if (ARepairManager.handleRepairedUnitBehavior(unit)) {
-            return true;
-        }
-        
-        // =========================================================
-        // If we couldn't beat nearby enemies, retreat
-        if (handleUnfavorableOdds(unit)) {
             return true;
         }
         
@@ -130,6 +138,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
     private static boolean handledAsSpecialUnit(AUnit unit) {
         
         // === Terran ========================================
+        
         if (AGame.playsAsTerran()) {
             
             // MEDIC
@@ -168,6 +177,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return TerranVultureManager.update(unit);
         } 
         
+        else if (unit.getType().isTerranInfantry()) {
+            return TerranInfantryManager.update(unit);
+        } 
+        
         // Not semi-special unit
         else {
             return false;
@@ -179,7 +192,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
      * just get destroyed without firing even once.
      */
     private static boolean isAllowedToAttackWhenRetreating(AUnit unit) {
-        return unit.isType(AUnitType.Protoss_Reaver);
+        return unit.isType(AUnitType.Protoss_Reaver) && unit.getHPPercent() > 30;
     }
 
 }

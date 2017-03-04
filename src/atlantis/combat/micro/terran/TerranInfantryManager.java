@@ -1,4 +1,4 @@
-package atlantis.combat.squad.missions;
+package atlantis.combat.micro.terran;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -8,7 +8,11 @@ import atlantis.units.Select;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public abstract class TerranInfantryManager {
+public class TerranInfantryManager {
+
+    public static boolean update(AUnit unit) {
+        tryLoadingInfantryIntoBunkerIfPossible(unit);
+    }
     
     /**
      *

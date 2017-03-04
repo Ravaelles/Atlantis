@@ -140,7 +140,7 @@ public class ARepairManager {
     // =========================================================
     
     public static boolean isProtector(AUnit repairer) {
-        return repairersToModes.get(repairer) == MODE_PROTECT;
+        return repairersToModes.containsKey(repairer) && repairersToModes.get(repairer) == MODE_PROTECT;
     }
     
     public static boolean isOnlyRepairer(AUnit repairer) {
@@ -175,8 +175,8 @@ public class ARepairManager {
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.get(unitToRepair).remove(repairer);
         
-            repairer.stop();
-            repairer.setTooltip("Stop");
+            repairer.holdPosition();
+            repairer.setTooltip("Stahp");
         }
         repairersToUnit.remove(repairer);
         repairersToModes.remove(repairer);
@@ -185,8 +185,6 @@ public class ARepairManager {
     public static void addProtector(AUnit protector, AUnit unit) {
         addRepairer(protector, unit);
         repairersToModes.put(protector, MODE_PROTECT);
-        
-        AGame.sendMessage("Repairer for bunker");
     }
     
     public static void addRepairer(AUnit repairer, AUnit unitToRepair) {
@@ -196,8 +194,6 @@ public class ARepairManager {
             unitsToRepairers.put(unitToRepair, new ArrayList<>());
         }
         unitsToRepairers.get(unitToRepair).add(repairer);
-        
-//        AGame.sendMessage("Repairer for " + unitToRepair.getShortName());
     }
 
     public static int countProtectorsFor(AUnit unit) {

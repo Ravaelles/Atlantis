@@ -62,8 +62,8 @@ public class AGasManager {
             // Deassign when MORE THAN MAX
             else if (numberOfWorkersAssigned > optimalNumberOfGasWorkers) {
                 AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
-                if (worker != null) {
-                    worker.stop();
+                if (worker != null && worker.isGatheringGas()) {
+                    worker.holdPosition();
                 }
                 break; // Only one worker per call
             }

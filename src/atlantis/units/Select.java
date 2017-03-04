@@ -167,7 +167,7 @@ public class Select<T> {
     /**
      * Selects enemy units of given type(s).
      */
-    public static Select<AUnit> enemyOfType(AUnitType type) {
+    public static Select<AUnit> enemyOfType(AUnitType... type) {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {

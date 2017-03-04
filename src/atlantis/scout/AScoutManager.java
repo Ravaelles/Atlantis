@@ -59,32 +59,42 @@ public class AScoutManager {
         // =========================================================
         
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_SCOUTING);
+        
+        // === Act with every scout ================================
+        
         assignScoutIfNeeded();
-
-        // =========================================================
-        // We don't know any enemy building, scout nearest starting location.
-        if (!AEnemyUnits.hasDiscoveredMainEnemyBase()) {
-            for (AUnit scout : scouts) {
-                tryFindingEnemyBase(scout);
-            }
-        } 
-
-        // Scout around enemy base
-        else {
-            for (AUnit scout : scouts) {
-                if (scout.isAlive()) {
-                    handleScoutEnemyBase(scout);
-                }
-            }
-
-//            for (AUnit scout : scouts) {
-//                scoutForTheNextBase(scout);
-//            }
+        for (AUnit scout : scouts) {
+            update(scout);
         }
         
         // =========================================================
         
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_SCOUTING);
+    }
+    
+    private static boolean update(AUnit scout) {
+        if (!scout.isAlive()) {
+            scouts.remove(scout);
+            return true;
+        }
+        
+        // === Avoid military buildings ============================
+        
+        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(scout)) {
+            return true;
+        }
+        
+        // =========================================================
+        
+        // We don't know any enemy building, scout nearest starting location.
+        if (!AEnemyUnits.hasDiscoveredMainEnemyBase()) {
+            return tryFindingEnemyBase(scout);
+        }
+        
+        // Roam around enemy base
+        else {
+            return handleScoutEnemyBase(scout);
+        }
     }
 
     // =========================================================
@@ -92,9 +102,9 @@ public class AScoutManager {
     /**
      * We don't know any enemy building, scout nearest starting location.
      */
-    public static void tryFindingEnemyBase(AUnit scout) {
+    public static boolean tryFindingEnemyBase(AUnit scout) {
         if (scout == null) {
-            return;
+            return true;
         }
         scout.setTooltip("Find enemy");
         //scout.setTooltip("Find enemy");
@@ -106,7 +116,7 @@ public class AScoutManager {
         // Define center point for our searches
         AUnit ourMainBase = Select.mainBase();
         if (ourMainBase == null) {
-            return;
+            return false;
         }
 
         // === Handle UMT ==========================================
@@ -135,7 +145,10 @@ public class AScoutManager {
         if (startingLocation != null) {
             scout.setTooltip("Scout!");
             scout.move(startingLocation.getPosition(), UnitActions.EXPLORE);
-            return;
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

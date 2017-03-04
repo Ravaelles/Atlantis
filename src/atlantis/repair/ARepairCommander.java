@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwta.Chokepoint;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -28,32 +29,35 @@ public class ARepairCommander {
             assignRepairersToWoundedUnits();
         }
 
-        // =========================================================
+        // === Handle protectors ========================================
 
         for (Iterator<AUnit> iterator = ARepairManager.getProtectors().iterator(); iterator.hasNext();) {
-            AUnit bunkerProtector = iterator.next();
-            if (!bunkerProtector.isAlive()) {
-                ARepairManager.removeRepairerOrProtector(bunkerProtector);
+            AUnit protector = iterator.next();
+            if (!protector.isAlive()) {
+                ARepairManager.removeRepairerOrProtector(protector);
                 iterator.remove();
             }
-            ARepairManager.updateProtector(bunkerProtector);
+            ARepairManager.updateProtector(protector);
         }
+        
+        // === Handle normal repairers ==================================
 
         for (Iterator<AUnit> iterator = ARepairManager.getRepairers().iterator(); iterator.hasNext();) {
-            AUnit unitRepairer = iterator.next();
-            if (!unitRepairer.isAlive()) {
-                ARepairManager.removeRepairerOrProtector(unitRepairer);
+            AUnit repairer = iterator.next();
+            if (!repairer.isAlive()) {
+                ARepairManager.removeRepairerOrProtector(repairer);
                 iterator.remove();
             }
-            ARepairManager.updateRepairer(unitRepairer);
+            ARepairManager.updateRepairer(repairer);
         }
     }
 
-    // === Asign repairers if needed =============================
+    // =========================================================
+    // =========================================================
+    // === Asign repairers if needed ===========================
     
     private static void assignRepairersToWoundedUnits() {
-        
-        for (AUnit woundedUnit : Select.our().repairable(true).listUnits()) {
+        for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).listUnits()) {
 
             // Some units shouldn't be repaired
             if (AScoutManager.isScout(woundedUnit) || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)) {
@@ -168,7 +172,8 @@ public class ARepairCommander {
 
     private static void assignUnitRepairers(AUnit unitToRepair, int numberOfRepairersToAssign) {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
-            AUnit worker = defineBestRepairerFor(unitToRepair, true);
+            boolean isCriticallyImportant = unitToRepair.isTank() || unitToRepair.isBunker();
+            AUnit worker = defineBestRepairerFor(unitToRepair, isCriticallyImportant);
             if (worker != null) {
                 ARepairManager.addRepairer(worker, unitToRepair);
             }
@@ -237,7 +242,24 @@ public class ARepairCommander {
     private static AUnit defineBestRepairerFor(AUnit unitToRepair, boolean criticallyImportant) {
         if (criticallyImportant) {
             return Select.ourWorkers().notRepairing().notConstructing().notScout().nearestTo(unitToRepair);
-        } else {
+        } 
+        
+        // === Normal case ========================================
+        // Try to use one of the protectors if he's non occupied
+        Collection<AUnit> protectors = ARepairManager.getProtectors();
+        for (Iterator<AUnit> iterator = protectors.iterator(); iterator.hasNext();) {
+            AUnit protector = iterator.next();
+            if (protector.isUnitActionRepair()) {
+                iterator.remove();
+            }
+        }
+        
+        if (!protectors.isEmpty()) {
+            return Select.from(protectors).nearestTo(unitToRepair);
+        }
+        
+        // If no free protector was found, return normal worker.
+        else {
             return Select.ourWorkers().notCarrying().notRepairing().notConstructing().notScout().nearestTo(unitToRepair);
         }
     }

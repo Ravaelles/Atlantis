@@ -69,7 +69,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         }
         
         if (builder != null) {
-            builder.stop();
+            builder.cancelConstruction();
             builder = null;
         }
         
