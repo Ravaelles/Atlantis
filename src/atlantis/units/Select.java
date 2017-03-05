@@ -297,7 +297,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
+            if (unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit() && !unit.type().isSpecial()) {
                 data.add(unit);
             }
         }

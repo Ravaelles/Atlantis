@@ -19,7 +19,7 @@ public class AEnemyTargeting {
         // =========================================================
         // If found enemy, try to attack enemy of the same type, with fewest HP
         
-        if (preSelectedEnemy != null) {
+        if (preSelectedEnemy != null && (unit.isVulture() && preSelectedEnemy.distanceTo(unit) > 3)) {
             AUnitType enemyType = preSelectedEnemy.getType();
             int weaponRange = unit.getWeaponRangeAgainst(preSelectedEnemy);
             

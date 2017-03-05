@@ -107,7 +107,7 @@ public interface AUnitOrders {
             unit().unload(unit());
             return true;
         }
-        else if (unit().isSieged()) {
+        else if (unit().isSieged() && (AGame.getTimeFrames() + unit().getID()) % 60 == 0) {
             unit().unsiege();
             return true;
         }
@@ -128,8 +128,10 @@ public interface AUnitOrders {
         
         APosition currentTarget = unit().getTargetPosition();
 
-        if (!unit().isUnitActionMove() || currentTarget == null || !currentTarget.equals(target) 
-                || AGame.getTimeFrames() % 25 == 0) {
+        if (!unit().isUnitActionMove() || currentTarget == null || !currentTarget.equals(target)) {
+//                || AGame.getTimeFrames() % 25 == 0) {
+//            System.out.println(AGame.getTimeFrames() + " moved, " + unit().getUnitAction() 
+//+ ", dist = " + unit().distanceTo(target));
             u().move(target);
             unit().setOrderWasIssued();
             unit().setUnitAction(unitAction);

@@ -36,7 +36,7 @@ public class MissionUmt extends Mission {
 
         // =========================================================
 //        APosition focusPoint = getFocusPoint();
-        AUnit engageEnemy = null;
+        AUnit enemyToEngage = null;
         APosition explorePosition = null;
 
         // === Define unit that will be center of our army =================
@@ -98,9 +98,15 @@ public class MissionUmt extends Mission {
         
         AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
         if (nearestUnexploredRegion == null && nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
-            engageEnemy = nearestEnemy;
+            enemyToEngage = nearestEnemy;
             unit.setTooltip("#Engage");
-            return unit.move(engageEnemy.getPosition(), UnitActions.MOVE_TO_ENGAGE);
+            
+            if (unit.hasRangeToAttack(enemyToEngage, 0)) {
+                return unit.attackUnit(enemyToEngage);
+            }
+            else {
+                return unit.move(enemyToEngage.getPosition(), UnitActions.MOVE_TO_ENGAGE);
+            }
         }
 
         // === Go to nearest unexplored position ===========================
