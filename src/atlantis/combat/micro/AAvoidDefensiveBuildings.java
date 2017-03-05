@@ -33,7 +33,7 @@ public class AAvoidDefensiveBuildings {
             double enemyDistance = buildingTooClose.distanceTo(unit);
             double distanceMargin = enemyDistance - enemyWeaponRange;
             
-            System.out.println(unit + ", enemyDistance = " + enemyDistance + ", distanceMargin = " + distanceMargin);
+//            System.out.println(unit + ", enemyDistance = " + enemyDistance + ", distanceMargin = " + distanceMargin);
             
             if (distanceMargin > 1.5) {
                 return false;

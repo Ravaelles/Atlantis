@@ -31,8 +31,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // Don't INTERRUPT shooting units
         
         if (shouldNotDisturbUnit(unit)) {
-            AGame.sendMessage("DONT");
-            APainter.paintTextCentered(unit.getPosition().translateByTiles(0, 1), "DONT", Color.Green);
             unit.setTooltip("#DontDisturb");
             return true;
         }

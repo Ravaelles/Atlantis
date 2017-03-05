@@ -33,8 +33,7 @@ public class AEnemyTargeting {
     // =========================================================
 
     private static AUnit selectUnitToAttackByType(AUnit unit) {
-        Select<AUnit> enemySelector = Select.enemy();
-        if (enemySelector.inRadius(14, unit).count() == 0) {
+        if (Select.enemy().canBeAttackedBy(unit).inRadius(14, unit).count() == 0) {
             return null;
         }
         
@@ -49,7 +48,7 @@ public class AEnemyTargeting {
         
 //        AUnit mainBase = Select.mainBase();
 //        if (mainBase != null) {
-//            nearestEnemy = enemySelector.visible()
+//            nearestEnemy = Select.enemy().canBeAttackedBy(unit).visible()
 //                    .canBeAttackedBy(unit)
 //                    .inRadius(50, mainBase)
 //                    .nearestTo(mainBase);
@@ -58,7 +57,7 @@ public class AEnemyTargeting {
         // =========================================================
         // Attack deadliest shit out there
         
-        nearestEnemy = enemySelector.visible()
+        nearestEnemy = Select.enemy().canBeAttackedBy(unit).visible()
                 .ofType(AUnitType.Terran_Vulture_Spider_Mine)
                 .nearestTo(unit);
         if (nearestEnemy != null) {
