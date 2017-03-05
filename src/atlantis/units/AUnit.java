@@ -998,6 +998,11 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         return unitAction == constant;
     }
     
+    public boolean isUnitActionAttack() {
+        return unitAction == UnitActions.ATTACK_POSITION || unitAction == UnitActions.ATTACK_UNIT
+                 || unitAction == UnitActions.MOVE_TO_ENGAGE;
+    }
+    
     public boolean isUnitActionMove() {
         return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_ENGAGE
                 || unitAction == UnitActions.MOVE_TO_BUILD || unitAction == UnitActions.MOVE_TO_REPAIR

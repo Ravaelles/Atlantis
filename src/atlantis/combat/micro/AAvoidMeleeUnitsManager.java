@@ -40,22 +40,25 @@ public class AAvoidMeleeUnitsManager {
         if (!isEnemyDangerouslyClose) {
             return false;
         }
+//        APainter.paintTextCentered(unit.getPosition().translateByTiles(0, -2), "DANGER", Color.Teal);
         
-        // =========================================================
-        // Don't run, because unit is JUST SHOOTING
+        // === Don't run, because unit is JUST SHOOTING =============
         
-        if ((unit.isStartingAttack() || unit.isAttackFrame()) && shouldInterruptPendingAttack(unit)) {
-            APainter.paintCircle(unit.getPosition(), 10, Color.Orange);
+//        if ((unit.isStartingAttack() || unit.isAttackFrame()) && shouldInterruptPendingAttack(unit)) {
+//        if (true && unit.isUnitActionAttack() && shouldInterruptPendingAttack(unit)) {
+        if (!shouldInterruptPendingAttack(unit)) {
+//            APainter.paintCircle(unit.getPosition(), 10, Color.Orange);
             unit.setTooltip("Shoot " + (unit.getTarget() != null
                     ? " " + unit.getTarget().getShortName() : ""));
             return true;
         } 
 
-        // === Run the fuck outta here =============================
+        // === Run the fuck outta here ==============================
         
         else {
 //            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), "RUN", Color.Red);
             if (unit.runFrom(null)) {
+//                APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -48), "RUUUUUUUN", Color.Orange);
                 unit.setTooltip("Melee-run");
                 return true;
             } else {
@@ -125,9 +128,9 @@ public class AAvoidMeleeUnitsManager {
         int enemiesNearby = Select.enemyRealUnits().combatUnits().inRadius(safetyDistance, unit).count();
         if (enemiesNearby >= 2) {
             if (unit.isVulture()) {
-                safetyDistance += Math.max((double) enemiesNearby / 4, 3.5);
+                safetyDistance += Math.max((double) enemiesNearby / 5, 1.5);
             } else {
-                safetyDistance += Math.max((double) enemiesNearby / 3, 2);
+                safetyDistance += Math.max((double) enemiesNearby / 4, 1.5);
             }
         }
 
@@ -141,34 +144,44 @@ public class AAvoidMeleeUnitsManager {
 
 //            APainter.paintCircleFilled(unit.getPosition(), 11, Color.White);
         if (nearestEnemy != null) {
-            return isEnemyCriticallyClose(unit, nearestEnemy);
+            return isEnemyCriticallyClose(unit);
         }
 
         return false;
     }
 
     private static boolean shouldInterruptPendingAttack(AUnit unit) {
-        if (!unit.isAttackFrame() && !unit.isStartingAttack()) {
-            return false;
-        }
-        
+//        if (!unit.isAttackFrame() && !unit.isStartingAttack()) {
+//            return false;
+//        }
         AUnit nearestEnemy = unit.getCachedNearestMeleeEnemy();
         double enemyDistance = nearestEnemy.distanceTo(unit);
+        
+//        APainter.paintTextCentered(unit, "" + enemyDistance, Color.Orange);
 
         if (unit.isVulture()) {
 //            return enemyDistance < 3.5 && unit.getHPPercent() < 40;
-            return (enemyDistance < 1.3 && Select.enemyRealUnits().combatUnits().inRadius(2.5, unit).count() <= 1)
-                                || (enemyDistance < 1.7 && Select.enemyRealUnits().combatUnits().inRadius(3, unit).count() >= 2)
-                                || (enemyDistance < 2.1 && unit.getHPPercent() <= 30);
+            if (Select.enemyRealUnits().combatUnits().inRadius(2.9, unit).count() <= 1) {
+                if (enemyDistance < 1.8) {
+                    return true;
+                }
+            }
+            else {
+                if (enemyDistance < 2.3) {
+                    return true;
+                }
+            }
+            
+            return false;
         } else {
             return enemyDistance < 1.8 && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
         }
     }
 
-    private static boolean isEnemyCriticallyClose(AUnit unit, AUnit nearestEnemy) {
-        double baseCriticalDistance = (unit.isVulture() ? 1.9 : 2.2);
-        double healthBonus = unit.getHPPercent() < 30 ? 0.5 : 0;
-        double numberOfNearEnemiesBonus = Math.max(0.4,
+    private static boolean isEnemyCriticallyClose(AUnit unit) {
+        double baseCriticalDistance = (unit.isVulture() ? 1.8 : 2.2);
+        double healthBonus = unit.getHPPercent() < 30 ? 0.25 : 0;
+        double numberOfNearEnemiesBonus = Math.max(0.3,
                 ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
         double archonBonus = (((Select.enemyRealUnits().combatUnits().ofType(AUnitType.Protoss_Archon)
                 .inRadius(5, unit)).count() > 0) ? 1 : 0);

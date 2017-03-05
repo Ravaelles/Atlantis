@@ -35,11 +35,13 @@ public class MissionUmt extends Mission {
         }
 
         // =========================================================
+        
 //        APosition focusPoint = getFocusPoint();
         AUnit enemyToEngage = null;
         APosition explorePosition = null;
 
         // === Define unit that will be center of our army =================
+        
         flagshipUnit = Select.ourCombatUnits().first();
         if (flagshipUnit == null) {
             unit.setTooltip("No flagship unit found");
@@ -47,6 +49,7 @@ public class MissionUmt extends Mission {
         }
 
         // === Stick close to flagship unit ================================
+        
         boolean isFlagship = flagshipUnit.equals(unit);
         double distanceToFlagship = flagshipUnit.distanceTo(unit.getPosition());
 
@@ -86,6 +89,7 @@ public class MissionUmt extends Mission {
         }
 
         // === Return location to go to ====================================
+        
         Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
         explorePosition = (nearestUnexploredRegion != null
                 ? APosition.create(nearestUnexploredRegion.getCenter()) : null);

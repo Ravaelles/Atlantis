@@ -121,7 +121,7 @@ public class ARunManager {
 
         // === Run directly away from the enemy ========================================
         
-//        if (closeEnemies != null && !unit.getPosition().isCloseToMapBounds()) {
+//        if (!unit.getPosition().isCloseToMapBounds()) {
 //            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
 //        }
         
@@ -136,7 +136,7 @@ public class ARunManager {
 //        }
 
         if (runTo == null) {
-            double expectedLength = unit.isVulture() ? 4 : (unit.isWorker() ? 3 : 2.5);
+            double expectedLength = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 2.5);
             runTo = findRunPositionAtAnyDirection(unit, runAwayFrom, expectedLength);
 //            System.err.println("==========================================");
 //            System.err.println(AGame.getTimeFrames() + ", dist: " + unit.distanceTo(runTo));

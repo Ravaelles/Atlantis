@@ -12,9 +12,11 @@ import atlantis.combat.micro.terran.TerranSiegeTankManager;
 import atlantis.combat.micro.terran.TerranVultureManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.combat.squad.Squad;
+import atlantis.debug.APainter;
 import atlantis.repair.ARepairManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import bwapi.Color;
 
 /**
  *
@@ -29,6 +31,8 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // Don't INTERRUPT shooting units
         
         if (shouldNotDisturbUnit(unit)) {
+            AGame.sendMessage("DONT");
+            APainter.paintTextCentered(unit.getPosition().translateByTiles(0, 1), "DONT", Color.Green);
             unit.setTooltip("#DontDisturb");
             return true;
         }
@@ -68,16 +72,16 @@ public class ACombatUnitManager extends AbstractMicroManager {
         
         // =========================================================
         // Early mode - Attack enemy units when in range (and choose the best target)
-        boolean isAllowedToEarlyAttack = isAllowedToAttackWhenRetreating(unit);
-        if (isAllowedToEarlyAttack && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+        boolean isAllowedToAttackDespiteRetreating = isAllowedToAttackBeforeRetreating(unit);
+        if (isAllowedToAttackDespiteRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
         }
         
         // =========================================================
         // If we couldn't beat nearby enemies, retreat
-        if (handleUnfavorableOdds(unit)) {
-            return true;
-        }
+//        if (handleUnfavorableOdds(unit)) {
+//            return true;
+//        }
 
         // =========================================================
         // Handle repair of mechanical units
@@ -88,7 +92,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         
         // =========================================================
         // Normal mode - Attack enemy units when in range (and choose the best target)
-        if (!isAllowedToEarlyAttack && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+        if (!isAllowedToAttackDespiteRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
         }
 
@@ -191,8 +195,8 @@ public class ACombatUnitManager extends AbstractMicroManager {
      * Some units like Reavers should open fire to nearby enemies even when retreating, otherwise they'll
      * just get destroyed without firing even once.
      */
-    private static boolean isAllowedToAttackWhenRetreating(AUnit unit) {
-        return unit.isType(AUnitType.Protoss_Reaver) && unit.getHPPercent() > 10;
+    private static boolean isAllowedToAttackBeforeRetreating(AUnit unit) {
+        return unit.isType(AUnitType.Protoss_Reaver, AUnitType.Terran_Vulture) && unit.getHPPercent() > 10;
     }
 
 }
