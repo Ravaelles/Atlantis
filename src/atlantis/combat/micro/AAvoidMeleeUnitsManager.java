@@ -23,7 +23,6 @@ public class AAvoidMeleeUnitsManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     public static boolean avoidCloseMeleeUnits(AUnit unit) {
-        System.out.println(">>>>>> " + AGame.getTimeFrames());
         if (shouldSkip(unit)) {
             return true;
         }
@@ -39,16 +38,14 @@ public class AAvoidMeleeUnitsManager {
         
         boolean isEnemyDangerouslyClose = isEnemyDangerouslyClose(unit);
         if (!isEnemyDangerouslyClose) {
-            System.out.println("                   enemy Far");
             return false;
         }
         
-        boolean shouldInterruptPendingAttack = shouldInterruptPendingAttack(unit);
-
         // =========================================================
         // Don't run, because unit is JUST SHOOTING
         
-        if (!shouldInterruptPendingAttack) {
+        if ((unit.isStartingAttack() || unit.isAttackFrame()) && shouldInterruptPendingAttack(unit)) {
+            APainter.paintCircle(unit.getPosition(), 10, Color.Orange);
             unit.setTooltip("Shoot " + (unit.getTarget() != null
                     ? " " + unit.getTarget().getShortName() : ""));
             return true;
@@ -57,8 +54,8 @@ public class AAvoidMeleeUnitsManager {
         // === Run the fuck outta here =============================
         
         else {
-            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), "RUN", Color.Red);
-            if (unit.runFrom(nearestEnemy)) {
+//            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), "RUN", Color.Red);
+            if (unit.runFrom(null)) {
                 unit.setTooltip("Melee-run");
                 return true;
             } else {
@@ -159,13 +156,12 @@ public class AAvoidMeleeUnitsManager {
         double enemyDistance = nearestEnemy.distanceTo(unit);
 
         if (unit.isVulture()) {
-            return enemyDistance < 3.5 && unit.getHPPercent() < 40;
+//            return enemyDistance < 3.5 && unit.getHPPercent() < 40;
+            return (enemyDistance < 1.3 && Select.enemyRealUnits().combatUnits().inRadius(2.5, unit).count() <= 1)
+                                || (enemyDistance < 1.7 && Select.enemyRealUnits().combatUnits().inRadius(3, unit).count() >= 2)
+                                || (enemyDistance < 2.1 && unit.getHPPercent() <= 30);
         } else {
-//            return enemyDistance < 1.8
-//                    && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
-            return (enemyDistance < 1.2 && Select.enemyRealUnits().combatUnits().inRadius(2.5, unit).count() <= 1)
-                    || (enemyDistance < 1.8 && Select.enemyRealUnits().combatUnits().inRadius(3, unit).count() >= 2)
-                    || (enemyDistance < 2.5 && unit.getHPPercent() <= 30);
+            return enemyDistance < 1.8 && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
         }
     }
 
@@ -183,12 +179,12 @@ public class AAvoidMeleeUnitsManager {
         boolean isEnemyCriticallyClose = enemyDistance < criticalDistance;
 
         if (isEnemyCriticallyClose) {
-            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Red);
-            APainter.paintLine(unit, nearestEnemy, Color.Red);
+//            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Red);
+//            APainter.paintLine(unit, nearestEnemy, Color.Red);
             return true;
         }
         else {
-            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Green);
+//            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Green);
             return false;
         }
     }

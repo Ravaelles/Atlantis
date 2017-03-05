@@ -575,7 +575,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         }
         
         double dist = this.distanceTo(targetUnit);
-        return dist <= ((weaponAgainstThisUnit.maxRange() + safetyMargin) / 32)
+        return dist <= (weaponAgainstThisUnit.maxRange() / 32 + safetyMargin)
                 && dist >= (weaponAgainstThisUnit.minRange() / 32);
     }
 

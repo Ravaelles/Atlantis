@@ -135,8 +135,6 @@ public class ARunManager {
 ////            System.err.println("==========================================");
 //        }
 
-        System.out.println(" ------------------ " + AGame.getTimeFrames());
-
         if (runTo == null) {
             double expectedLength = unit.isVulture() ? 4 : (unit.isWorker() ? 3 : 2.5);
             runTo = findRunPositionAtAnyDirection(unit, runAwayFrom, expectedLength);
@@ -156,6 +154,7 @@ public class ARunManager {
 
         // Define which enemies are considered as close enough to be dangerous
         closeEnemies = defineCloseEnemies(unit);
+//        APainter.paintTextCentered(unit, "" + closeEnemies.size(), Color.White);
         if (closeEnemies.isEmpty()) {
             markAsNotRunning();
 //            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -15), "No enemies!", Color.Red);
@@ -370,27 +369,15 @@ public class ARunManager {
                 double vectorX = dx;
                 double vectorY = dy;
                 double vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-//                System.out.println("// =========================================================");
-//                System.out.println("vectorLength = " + vectorLength);
-//                System.out.println("vectorX = " + vectorX);
-//                System.out.println("vevtorY = " + vectorY);
 
                 // Normalize
                 vectorX /= vectorLength;
                 vectorY /= vectorLength;
-//                System.out.println("normalize");
-//                System.out.println("vectorX = " + vectorX);
-//                System.out.println("vevtorY = " + vectorY);
 
                 // Scale vector
                 vectorX *= expectedLength;
                 vectorY *= expectedLength;
                 vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-//                System.out.println("scale");
-//                System.out.println("vectorX = " + vectorX);
-//                System.out.println("vevtorY = " + vectorY);
-//                System.out.println();
-//                System.out.println("vectorLength = " + vectorLength);
 
                 // Create position
                 APosition potentialPosition = APosition.create(
@@ -422,7 +409,7 @@ public class ARunManager {
             }
         }
 
-        System.out.println("potentialPositionsList = " + potentialPositionsList.size());
+//        System.out.println("potentialPositionsList = " + potentialPositionsList.size());
         
         // =========================================================
         // Find the location that would be most distant to the enemy location
