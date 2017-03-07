@@ -27,7 +27,7 @@ public class AAvoidMeleeUnitsManager {
             return false;
         }
 
-        if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).count() <= 0) {
+        if (Select.enemyRealUnits().combatUnits().inRadius(6, unit).count() <= 0) {
             return false;
         }
         
@@ -179,9 +179,9 @@ public class AAvoidMeleeUnitsManager {
     }
 
     private boolean isEnemyCriticallyClose(AUnit unit) {
-        double baseCriticalDistance = (unit.isVulture() ? 2.3 : 3.3);
+        double baseCriticalDistance = (unit.isVulture() ? 2.3 : 2.0);
         double healthBonus = unit.getHPPercent() < 30 ? 0.25 : 0;
-        double numberOfNearEnemiesBonus = Math.max(0.3,
+        double numberOfNearEnemiesBonus = Math.max(0.4,
                 ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
         double archonBonus = (((Select.enemyRealUnits().combatUnits().ofType(AUnitType.Protoss_Archon)
                 .inRadius(5, unit)).count() > 0) ? 1 : 0);

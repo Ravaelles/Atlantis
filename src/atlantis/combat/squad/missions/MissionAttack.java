@@ -9,6 +9,7 @@ import atlantis.position.APosition;
 import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 import bwta.BaseLocation;
 
@@ -52,8 +53,9 @@ public class MissionAttack extends Mission {
         
         // Focus point is well known
         if (focusPoint != null) {
-            if (unit.distanceTo(focusPoint) > 10 && !unit.isAttacking() && !unit.isMoving()) {
-                unit.attackPosition(focusPoint);
+            if (unit.distanceTo(focusPoint) > 10 && !unit.isMoving()) {
+//                unit.attackPosition(focusPoint);
+                unit.move(focusPoint, UnitActions.MOVE);
                 unit.setTooltip("#MA:Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
                 return true;
             }

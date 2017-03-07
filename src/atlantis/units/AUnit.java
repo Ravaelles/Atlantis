@@ -153,7 +153,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 
     private Squad squad = null;
     private ARunManager runManager = new ARunManager(this);
-    private int lastUnitAction = 0;
+    private int lastUnitOrder = 0;
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
@@ -636,22 +636,22 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     /**
      * Returns the frames counter (time) when the unit had been issued any command.
      */
-    public int getLastUnitActionTime() {
-        return lastUnitAction;
+    public int getLastUnitOrderTime() {
+        return lastUnitOrder;
     }
 
     /**
      * Returns the frames counter (time) since the unit had been issued any command.
      */
-    public int getLastUnitActionWasFramesAgo() {
-        return AGame.getTimeFrames() - lastUnitAction;
+    public int getLastUnitOrderWasFramesAgo() {
+        return AGame.getTimeFrames() - lastUnitOrder;
     }
 
     /**
      * Indicate that in this frame unit received some command (attack, move etc).
      */
-    public void setLastUnitActionNow() {
-        this.lastUnitAction = AGame.getTimeFrames();
+    public void setLastUnitOrderNow() {
+        this.lastUnitOrder = AGame.getTimeFrames();
     }
 
     /**
@@ -985,6 +985,10 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         return u.isBeingConstructed();
     }
 
+    public boolean isInterruptible() {
+        return u.isInterruptible();
+    }
+    
     public UnitCommand getLastCommand() {
         return u.getLastCommand();
     }
@@ -1036,14 +1040,6 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 
     public boolean isRepairerOfAnyKind() {
         return ARepairManager.isRepairerOfAnyKind(this);
-    }
-    
-    public void setOrderWasIssued() {
-        _lastTimeOrderWasIssued = AGame.getTimeFrames();
-    }
-    
-    public int getFramesSinceLastOrderWasIssued() {
-        return AGame.getTimeFrames() - _lastTimeOrderWasIssued;
     }
 
     public boolean isScout() {

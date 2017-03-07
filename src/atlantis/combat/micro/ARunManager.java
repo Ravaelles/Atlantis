@@ -117,7 +117,7 @@ public class ARunManager {
 
         // === Run directly away from the enemy ========================================
         
-        if (!unit.getPosition().isCloseToMapBounds() && closeEnemies.size() <= 1) {
+        if (!unit.getPosition().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
         
@@ -344,8 +344,7 @@ public class ARunManager {
 
         // Build list of possible run positions, basically around the clock
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
-        
-        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple);
+//        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
         int border = RUN_ANY_DIRECTION_GRID_BORDER;
         for (int dx = -border; dx <= border; dx++) {

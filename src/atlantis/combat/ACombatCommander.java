@@ -50,6 +50,7 @@ public class ACombatCommander {
         // Act with every combat unit
         for (AUnit unit : squad.arrayList()) {
             ACombatUnitManager.update(unit);
+            unit.setTooltip(unit.getLastUnitOrderWasFramesAgo() + "");
         }
     }
 

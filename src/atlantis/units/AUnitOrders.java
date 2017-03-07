@@ -42,7 +42,7 @@ public interface AUnitOrders {
 //            System.out.println(unit().getID() + " attacks " + target.getShortName());
 //            AGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
             u().attack(target.u());
-            unit().setOrderWasIssued();
+            unit().setLastUnitOrderNow();
         }
         return true;
     }
@@ -57,7 +57,7 @@ public interface AUnitOrders {
         } else {
             u().attack(target);
             unit().setUnitAction(UnitActions.ATTACK_POSITION);
-            unit().setLastUnitActionNow();
+            unit().setLastUnitOrderNow();
             return true;
         }
     }
@@ -69,6 +69,7 @@ public interface AUnitOrders {
 
     default boolean morph(AUnitType into) {
         unit().setUnitAction(UnitActions.MORPH);
+        unit().setLastUnitOrderNow();
         return u().morph(into.ut());
     }
 
@@ -76,22 +77,25 @@ public interface AUnitOrders {
         unit().setUnitAction(UnitActions.BUILD);
         boolean result = u().build(buildingType.ut(), buildTilePosition);
         unit().setTooltip("Construct " + buildingType.getShortName());
-        unit().setLastUnitActionNow();
+        unit().setLastUnitOrderNow();
         return result;
     }
 
     default boolean buildAddon(AUnitType addon) {
         unit().setUnitAction(UnitActions.BUILD);
+        unit().setLastUnitOrderNow();
         return u().buildAddon(addon.ut());
     }
 
     default boolean upgrade(UpgradeType upgrade) {
         unit().setUnitAction(UnitActions.RESEARCH_OR_UPGRADE);
+        unit().setLastUnitOrderNow();
         return u().upgrade(upgrade);
     }
 
     default boolean research(TechType tech) {
         unit().setUnitAction(UnitActions.RESEARCH_OR_UPGRADE);
+        unit().setLastUnitOrderNow();
         return u().research(tech);
     }
 
@@ -105,10 +109,12 @@ public interface AUnitOrders {
         
         if (unit().isLoaded()) {
             unit().unload(unit());
+            unit().setLastUnitOrderNow();
             return true;
         }
         else if (unit().isSieged() && (AGame.getTimeFrames() + unit().getID()) % 60 == 0) {
             unit().unsiege();
+            unit().setLastUnitOrderNow();
             return true;
         }
             
@@ -133,7 +139,7 @@ public interface AUnitOrders {
 //            System.out.println(AGame.getTimeFrames() + " moved, " + unit().getUnitAction() 
 //+ ", dist = " + unit().distanceTo(target));
             u().move(target);
-            unit().setOrderWasIssued();
+            unit().setLastUnitOrderNow();
             unit().setUnitAction(unitAction);
             return true;
         }
@@ -157,6 +163,7 @@ public interface AUnitOrders {
      */
     default boolean patrol(APosition target, UnitAction unitAction) {
         unit().setUnitAction(UnitActions.PATROL);
+        unit().setLastUnitOrderNow();
         return u().patrol(target);
     }
 
@@ -169,6 +176,7 @@ public interface AUnitOrders {
      */
     default boolean holdPosition() {
         unit().setUnitAction(UnitActions.HOLD_POSITION);
+        unit().setLastUnitOrderNow();
         return u().holdPosition();
     }
 
@@ -181,6 +189,7 @@ public interface AUnitOrders {
      */
     default boolean stop() {
         unit().setUnitAction(UnitActions.STOP);
+        unit().setLastUnitOrderNow();
         return u().stop();
     }
 
@@ -195,6 +204,7 @@ public interface AUnitOrders {
      */
     default boolean follow(AUnit target) {
         unit().setUnitAction(UnitActions.FOLLOW);
+        unit().setLastUnitOrderNow();
         return u().follow(target.u());
     }
 
@@ -212,7 +222,7 @@ public interface AUnitOrders {
         } else {
             unit().setUnitAction(UnitActions.GATHER_GAS);
         }
-        unit().setLastUnitActionNow();
+        unit().setLastUnitOrderNow();
 
         return u().gather(target.u());
     }
@@ -228,6 +238,7 @@ public interface AUnitOrders {
      */
     default boolean returnCargo() {
         unit().setUnitAction(UnitActions.MOVE);
+        unit().setLastUnitOrderNow();
         return u().returnCargo();
     }
 
@@ -242,12 +253,14 @@ public interface AUnitOrders {
      */
     default boolean repair(AUnit target) {
         if (target != null && target.distanceTo(unit()) > 0.5) {
+            unit().setLastUnitOrderNow();
             return unit().move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
         }
         else {
             unit().setUnitAction(UnitActions.REPAIR);
             if (unit().getTarget() == null || !unit().getTarget().equals(target) || !unit().isRepairing()) {
-                unit().setLastUnitActionNow();
+                unit().setLastUnitOrderNow();
+                unit().setLastUnitOrderNow();
                 return u().repair(target.u());
             }
             else {
@@ -265,6 +278,7 @@ public interface AUnitOrders {
      */
     default boolean burrow() {
         unit().setUnitAction(UnitActions.BURROW);
+        unit().setLastUnitOrderNow();
         return u().burrow();
     }
 
@@ -275,6 +289,7 @@ public interface AUnitOrders {
      */
     default boolean unburrow() {
         unit().setUnitAction(UnitActions.UNBURROW);
+        unit().setLastUnitOrderNow();
         return u().unburrow();
     }
 
@@ -295,6 +310,7 @@ public interface AUnitOrders {
      */
     default boolean decloak() {
         unit().setUnitAction(UnitActions.LOAD);
+        unit().setLastUnitOrderNow();
         return u().decloak();
     }
 
@@ -305,7 +321,7 @@ public interface AUnitOrders {
      */
     default boolean siege() {
         unit().setUnitAction(UnitActions.SIEGE);
-        unit().setLastUnitActionNow();
+        unit().setLastUnitOrderNow();
         return u().siege();
     }
 
@@ -316,15 +332,8 @@ public interface AUnitOrders {
      */
     default boolean unsiege() {
         unit().setUnitAction(UnitActions.UNSIEGE);
-        unit().setLastUnitActionNow();
+        unit().setLastUnitOrderNow();
         return u().unsiege();
-    }
-
-    /**
-     * Returns false if unit can't stop what it's doing e.g. sieging or unsieging tank.
-     */
-    default boolean isInterruptible() {
-        return u().isInterruptible();
     }
 
     /**
@@ -334,6 +343,7 @@ public interface AUnitOrders {
      */
     default boolean lift() {
         unit().setUnitAction(UnitActions.LIFT);
+        unit().setLastUnitOrderNow();
         return u().lift();
     }
 
@@ -345,6 +355,7 @@ public interface AUnitOrders {
      */
     default boolean land(TilePosition target) {
         unit().setUnitAction(UnitActions.LAND);
+        unit().setLastUnitOrderNow();
         return u().land(target);
     }
 
@@ -359,7 +370,7 @@ public interface AUnitOrders {
      */
     default boolean load(AUnit target) {
         unit().setUnitAction(UnitActions.LOAD);
-        unit().setLastUnitActionNow();
+        unit().setLastUnitOrderNow();
         return u().load(target.u());
     }
 
@@ -372,7 +383,7 @@ public interface AUnitOrders {
      */
     default boolean unload(AUnit target) {
         unit().setUnitAction(UnitActions.UNLOAD);
-        unit().setLastUnitActionNow();
+        unit().setLastUnitOrderNow();
         return u().unload(target.u());
     }
 
@@ -387,7 +398,7 @@ public interface AUnitOrders {
      */
     default boolean unloadAll() {
         unit().setUnitAction(UnitActions.UNLOAD);
-        unit().setLastUnitActionNow();
+        unit().setLastUnitOrderNow();
         return u().unloadAll();
     }
 
@@ -402,7 +413,7 @@ public interface AUnitOrders {
      */
     default boolean unloadAll(APosition target) {
         unit().setUnitAction(UnitActions.UNLOAD);
-        unit().setLastUnitActionNow();
+        unit().setLastUnitOrderNow();
         return u().unloadAll(target);
     }
 
@@ -514,21 +525,25 @@ public interface AUnitOrders {
      */
     default boolean useTech(TechType tech) {
         unit().setUnitAction(UnitActions.USING_TECH);
+        unit().setLastUnitOrderNow();
         return u().useTech(tech);
     }
 
     default boolean useTech(TechType tech, APosition target) {
         unit().setUnitAction(UnitActions.USING_TECH);
+        unit().setLastUnitOrderNow();
         return u().useTech(tech, target);
     }
 
     default boolean useTech(TechType tech, AUnit target) {
         unit().setUnitAction(UnitActions.USING_TECH);
+        unit().setLastUnitOrderNow();
         return u().useTech(tech, target.u());
     }
 
     default boolean useTech(TechType tech, PositionOrUnit target) {
         unit().setUnitAction(UnitActions.USING_TECH);
+        unit().setLastUnitOrderNow();
         return u().useTech(tech, target);
     }
 
