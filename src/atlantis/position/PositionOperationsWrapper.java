@@ -56,6 +56,36 @@ public class PositionOperationsWrapper {
         );
     }
     
+    public static APosition getPositionAverage(Units units) {
+        int totalX = 0;
+        int totalY = 0;
+        
+        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
+            AUnit unit = iterator.next();
+            totalX += unit.getX();
+            totalY += unit.getY();
+        }
+
+        return new APosition(totalX / units.size(), totalY / units.size());
+    }
+    
+    public static APosition getPositionAverageDistanceWeightedTo(AUnit unit, Units units, double power) {
+        int totalX = 0;
+        int totalY = 0;
+        double totalFactor = 0;
+        
+        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
+            AUnit otherUnit = iterator.next();
+            double distanceToUnit = unit.distanceTo(otherUnit);
+            double factor = Math.pow(distanceToUnit, power);
+            totalFactor += factor;
+            totalX += otherUnit.getX() * factor;
+            totalY += otherUnit.getY() * factor;
+        }
+
+        return new APosition((int) (totalX / totalFactor), (int) (totalY / totalFactor));
+    }
+    
     public static int getPositionMedian(List<Integer> collection) {
         Collections.sort(collection);
         return collection.get(collection.size() / 2);

@@ -36,10 +36,13 @@ public class MissionAttack extends Mission {
         
         // === Attack units nears main =============================
         
-        AUnit mainBase = Select.mainBase();
-        if (mainBase != null) {
-            AUnit nearestEnemy = Select.enemy().visible()
-                    .nearestTo(mainBase);
+        AUnit ourCenterUnit = Select.mainBase();
+        if (ourCenterUnit == null) {
+            ourCenterUnit = unit;
+        }
+        
+        if (ourCenterUnit != null) {
+            AUnit nearestEnemy = Select.enemy().visible().nearestTo(ourCenterUnit);
             if (nearestEnemy != null) {
                 focusPoint = nearestEnemy.getPosition();
             }

@@ -30,13 +30,16 @@ public abstract class AbstractMicroManager {
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
     protected static boolean handleUnfavorableOdds(AUnit unit) {
+        if (!unit.canAnyCloseEnemyShootThisUnit(2)) {
+            return false;
+        }
+        
         boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit, isNewFight);
 
         // If situation is unfavorable, retreat
 //        if (!isSituationFavorable && !unit.isReadyToShoot() && (unit.canAnyCloseEnemyShootThisUnit()
-        if (!isSituationFavorable && (unit.canAnyCloseEnemyShootThisUnit(1.5)
-                || Select.enemy().combatUnits().inRadius(3.5, unit).count() > 0)) {
+        if (!isSituationFavorable) {
             unit.setTooltip("Retreat");
             return unit.runFrom(null);
         }

@@ -1,5 +1,7 @@
 package atlantis.combat.squad.missions;
 
+import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.AEnemyTargeting;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -30,6 +32,13 @@ public class MissionUmt extends Mission {
     
     @Override
     public boolean update(AUnit unit) {
+        
+        System.out.println("UMT");
+        // DISABLED
+        if (1 < 2) {
+            return false;
+        }
+        
         if (unit.isJustShooting() || !unit.isReadyToShoot()) {
             return false;
         }
@@ -64,13 +73,13 @@ public class MissionUmt extends Mission {
                 }
             }
         } else {
-            if (distanceToFlagship > 5) {
-                if (distanceToFlagship > 5) {
+            if (distanceToFlagship > 7) {
+                if (distanceToFlagship > 6) {
                     unit.move(flagshipUnit.getPosition(), UnitActions.MOVE);
                     unit.setTooltip("#ToFlagship");
                     return true;
                 } else {
-                    if (Select.ourCombatUnits().inRadius(1.5, unit).count() == 0) {
+                    if (Select.ourCombatUnits().inRadius(2, unit).count() == 0) {
                         unit.setTooltip("#Closer");
                         unit.move(flagshipUnit.getPosition(), UnitActions.MOVE);
                         return true;
@@ -115,6 +124,9 @@ public class MissionUmt extends Mission {
 
         // === Go to nearest unexplored position ===========================
         
+//        if (_tempFocusPoint != null) {
+//            System.out.println(_tempFocusPoint + ": dist " + _tempFocusPoint.distanceTo(unit));
+//        }
         if (_tempFocusPoint == null || _tempFocusPoint.distanceTo(unit) < 3) {
             _tempFocusPoint = getFocusPoint();
 

@@ -293,20 +293,28 @@ public class Units {
         }
         
         return PositionOperationsWrapper.getPositionMedian(this);
-
-//        ArrayList<Integer> xCoordinates = new ArrayList<>();
-//        ArrayList<Integer> yCoordinates = new ArrayList<>();
-//        for (AUnit unit : units.keySet()) {
-//            xCoordinates.add(unit.getPosition().getX());	//TODO: check whether position is in Pixels
-//            yCoordinates.add(unit.getPosition().getY());
-//        }
-//        Collections.sort(xCoordinates);
-//        Collections.sort(yCoordinates);
-//
-//        return new Position(
-//                xCoordinates.get(xCoordinates.size() / 2),
-//                yCoordinates.get(yCoordinates.size() / 2)
-//        );
+    }
+    
+    /**
+     * Returns average PX and average PY for all units.
+     */
+    public APosition average() {
+        if (isEmpty()) {
+            return null;
+        }
+        
+        return PositionOperationsWrapper.getPositionAverage(this);
+    }
+    
+    /**
+     * Returns average PX and average PY for all units.
+     */
+    public APosition averageDistanceWeightedTo(AUnit unit, double power) {
+        if (isEmpty()) {
+            return null;
+        }
+        
+        return PositionOperationsWrapper.getPositionAverageDistanceWeightedTo(unit, this, power);
     }
     
     // =========================================================

@@ -629,7 +629,8 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
      * Returns true if unit is starting an attack or already in the attack frame animation.
      */
     public boolean isJustShooting() {
-        return isAttacking() && (isAttackFrame() || isStartingAttack());
+//        return isAttacking() && (isAttackFrame() || isStartingAttack());
+        return (isAttackFrame() || isStartingAttack());
     }
 
     /**

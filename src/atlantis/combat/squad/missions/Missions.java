@@ -31,9 +31,9 @@ public class Missions {
         
         // === Handle UMT ==========================================
         
-        if (AGame.isUmtMode()) {
-            return;
-        }
+//        if (AGame.isUmtMode()) {
+//            return;
+//        }
 
         // =========================================================
         if (currentGlobalMission == Missions.DEFEND) {
@@ -102,7 +102,8 @@ public class Missions {
         // === Handle UMT ==========================================
         
         if (AGame.isUmtMode()) {
-            return Missions.UMT;
+//            return Missions.UMT;
+            return Missions.ATTACK;
         }
         
         // =========================================================

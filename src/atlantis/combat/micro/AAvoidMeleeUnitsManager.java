@@ -14,8 +14,8 @@ import bwapi.Color;
  */
 public class AAvoidMeleeUnitsManager {
     
-    private static AUnit nearestEnemy = null;
-//    private static Select<AUnit> enemyRealUnitsSelector = null;
+    private AUnit nearestEnemy = null;
+//    private Select<AUnit> enemyRealUnitsSelector = null;
     
     // =========================================================
 
@@ -24,19 +24,20 @@ public class AAvoidMeleeUnitsManager {
      */
     public static boolean avoidCloseMeleeUnits(AUnit unit) {
         if (shouldSkip(unit)) {
-            return true;
-        }
-
-        // === Define and remember selector for enemy combat units ==
-        
-//        enemyRealUnitsSelector = Select.enemyRealUnits().combatUnits();
-        if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).count() <= 0) {
             return false;
         }
 
+        if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).count() <= 0) {
+            return false;
+        }
+        
+        // =========================================================
+        
+        AAvoidMeleeUnitsManager avoid = new AAvoidMeleeUnitsManager();
+
         // === Define safety distance ===============================
         
-        boolean isEnemyDangerouslyClose = isEnemyDangerouslyClose(unit);
+        boolean isEnemyDangerouslyClose = avoid.isEnemyDangerouslyClose(unit);
         if (!isEnemyDangerouslyClose) {
             return false;
         }
@@ -45,11 +46,10 @@ public class AAvoidMeleeUnitsManager {
         // === Don't run, because unit is JUST SHOOTING =============
         
 //        if ((unit.isStartingAttack() || unit.isAttackFrame()) && shouldInterruptPendingAttack(unit)) {
-//        if (true && unit.isUnitActionAttack() && shouldInterruptPendingAttack(unit)) {
-        if (!shouldInterruptPendingAttack(unit)) {
-//            APainter.paintCircle(unit.getPosition(), 10, Color.Orange);
-            unit.setTooltip("Shoot " + (unit.getTarget() != null
-                    ? " " + unit.getTarget().getShortName() : ""));
+//        if (unit.isUnitActionAttack() && !shouldInterruptPendingAttack(unit)) {
+        if (unit.isUnitActionAttack() && unit.getGroundWeaponCooldown() <= 0 && !avoid.shouldInterruptPendingAttack(unit)) {
+//        if (unit.isUnitActionAttack() && shouldInterruptPendingAttack(unit)) {
+            unit.setTooltip("Fire");
             return true;
         } 
 
@@ -101,7 +101,7 @@ public class AAvoidMeleeUnitsManager {
         return false;
     }
 
-    private static boolean isEnemyDangerouslyClose(AUnit unit) {
+    private boolean isEnemyDangerouslyClose(AUnit unit) {
         double lowHealthBonus = Math.max(((100 - unit.getHPPercent()) / 25), 1.7);
         double safetyDistance;
 
@@ -150,36 +150,36 @@ public class AAvoidMeleeUnitsManager {
         return false;
     }
 
-    private static boolean shouldInterruptPendingAttack(AUnit unit) {
+    private boolean shouldInterruptPendingAttack(AUnit unit) {
 //        if (!unit.isAttackFrame() && !unit.isStartingAttack()) {
 //            return false;
 //        }
         AUnit nearestEnemy = unit.getCachedNearestMeleeEnemy();
-        double enemyDistance = nearestEnemy.distanceTo(unit);
+        double nearestEnemyDistance = nearestEnemy.distanceTo(unit);
         
 //        APainter.paintTextCentered(unit, "" + enemyDistance, Color.Orange);
 
         if (unit.isVulture()) {
 //            return enemyDistance < 3.5 && unit.getHPPercent() < 40;
-            if (Select.enemyRealUnits().combatUnits().inRadius(2.9, unit).count() <= 1) {
-                if (enemyDistance < 1.8) {
+            if (Select.enemyRealUnits().combatUnits().inRadius(2.5, unit).count() <= 1) {
+                if (nearestEnemyDistance < 1.7) {
                     return true;
                 }
             }
             else {
-                if (enemyDistance < 2.3) {
+                if (nearestEnemyDistance < 2.5) {
                     return true;
                 }
             }
             
             return false;
         } else {
-            return enemyDistance < 1.8 && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
+            return nearestEnemyDistance < 1.8 && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
         }
     }
 
-    private static boolean isEnemyCriticallyClose(AUnit unit) {
-        double baseCriticalDistance = (unit.isVulture() ? 1.8 : 2.2);
+    private boolean isEnemyCriticallyClose(AUnit unit) {
+        double baseCriticalDistance = (unit.isVulture() ? 2.3 : 3.3);
         double healthBonus = unit.getHPPercent() < 30 ? 0.25 : 0;
         double numberOfNearEnemiesBonus = Math.max(0.3,
                 ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));

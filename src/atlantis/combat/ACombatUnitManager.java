@@ -58,18 +58,21 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
         // =========================================================
         // Avoid melee units
+        
         if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
             return true;
         }
 
         // =========================================================
         // Avoid buildings like Photon Cannons, bunkers etc
+        
         if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
             return true;
         }
         
         // =========================================================
         // Early mode - Attack enemy units when in range (and choose the best target)
+        
         boolean isAllowedToAttackDespiteRetreating = isAllowedToAttackBeforeRetreating(unit);
         if (isAllowedToAttackDespiteRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
@@ -77,9 +80,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
         
         // =========================================================
         // If we couldn't beat nearby enemies, retreat
-//        if (handleUnfavorableOdds(unit)) {
-//            return true;
-//        }
+        
+        if (handleUnfavorableOdds(unit)) {
+            return true;
+        }
 
         // =========================================================
         // Handle repair of mechanical units
@@ -90,6 +94,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         
         // =========================================================
         // Normal mode - Attack enemy units when in range (and choose the best target)
+        
         if (!isAllowedToAttackDespiteRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
         }

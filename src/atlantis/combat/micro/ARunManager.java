@@ -20,7 +20,12 @@ import java.util.List;
  */
 public class ARunManager {
 
+    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 1;
+    
+    // =========================================================
+    
     private AUnit unit;
+    private APosition runAwayFrom = null;
     private APosition runTo;
     private int _updated_at = -1;
     private Units closeEnemies;
@@ -52,21 +57,12 @@ public class ARunManager {
         
         else if (runTo == null) {
             boolean finallyRunned = false;
-            for (int dist = 9; dist >= 3; dist -= 2) {
+            for (int dist = 7; dist >= 1; dist -= 2) {
                 if (finallyRunned = unit.moveAwayFrom(enemyMedian, dist)) {
                     break;
                 }
             }
             
-//            AGame.sendMessage(unit + " RunTo empty, hold");
-//            if (!unit.type().isTank()) {
-//                System.err.println(unit.getShortNamePlusId() + " RunTo empty");
-//            }
-//            if (!closeEnemies.isEmpty() && unit.moveAwayFrom(closeEnemies.first().getPosition(), 0.5)) {
-//                return true;
-//            }
-//            unit.holdPosition();
-
             if (!finallyRunned) {
                 markAsNotRunning();
 
@@ -121,19 +117,11 @@ public class ARunManager {
 
         // === Run directly away from the enemy ========================================
         
-//        if (!unit.getPosition().isCloseToMapBounds()) {
-//            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
-//        }
+        if (!unit.getPosition().isCloseToMapBounds() && closeEnemies.size() <= 1) {
+            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
+        }
         
         // === Get run to position - as far from enemy as possible =====================
-
-//        if (runTo == null) {
-//            double expectedLength = unit.isVulture() ? 7 : (unit.isWorker() ? 5 : 4);
-//            runTo = findRunPositionAtAnyDirection(unit, runAwayFrom, expectedLength);
-////            System.err.println("==========================================");
-////            System.err.println(AGame.getTimeFrames() + ", dist: " + unit.distanceTo(runTo));
-////            System.err.println("==========================================");
-//        }
 
         if (runTo == null) {
             double expectedLength = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 2.5);
@@ -161,6 +149,14 @@ public class ARunManager {
 //            System.err.println("No enemies to run to for " + unit);
             return false;
         }
+//        else {
+//            for (AUnit enemy : closeEnemies.list()) {
+//                APainter.paintCircle(enemy.getPosition(), 10, Color.Green);
+//                APainter.paintCircle(enemy.getPosition(), 9, Color.Green);
+//                APainter.paintCircle(enemy.getPosition(), 6, Color.Green);
+//                APainter.paintCircle(enemy.getPosition(), 5, Color.Green);
+//            }
+//        }
 
         // ===========================================
         
@@ -169,12 +165,14 @@ public class ARunManager {
         // ===========================================
         // Define "center of gravity" for the set of enemies
         
-        if (closeEnemies.size() <= maxEnemiesToRunFromNearestEnemy) {
-            enemyMedian = Select.from(closeEnemies.list()).nearestTo(unit).getPosition();
-        } else {
-            enemyMedian = closeEnemies.median();
-        }
-        enemyMedian = enemyMedian.makeValid();
+//        if (closeEnemies.size() <= maxEnemiesToRunFromNearestEnemy) {
+//            enemyMedian = Select.from(closeEnemies.list()).nearestTo(unit).getPosition();
+//        } else {
+//            enemyMedian = closeEnemies.median();
+//            enemyMedian = closeEnemies.average();
+            enemyMedian = closeEnemies.averageDistanceWeightedTo(unit, 0.33);
+//        }
+//        enemyMedian = enemyMedian.makeValid();
         
 //        APainter.paintCircleFilled(enemyMedian, 12, Color.Red);
         
@@ -189,16 +187,16 @@ public class ARunManager {
             throw new RuntimeException("Null unit to run from");
         }
 
-        APosition runFrom = null;
+        runAwayFrom = null;
         if (unitOrPosition instanceof AUnit) {
-            runFrom = ((AUnit) unitOrPosition).getPosition();
+            runAwayFrom = ((AUnit) unitOrPosition).getPosition();
         } else if (unitOrPosition instanceof APosition) {
-            runFrom = (APosition) unitOrPosition;
+            runAwayFrom = (APosition) unitOrPosition;
         }
         
         // === Define run to position ==============================
         
-        runTo = getPositionAwayFrom(unit, runFrom);
+        runTo = getPositionAwayFrom(unit, runAwayFrom);
         
         // =========================================================
 
@@ -219,7 +217,7 @@ public class ARunManager {
     /**
      *
      */
-    public static APosition getPositionAwayFrom(AUnit unit, APosition runAwayFrom) {
+    public APosition getPositionAwayFrom(AUnit unit, APosition runAwayFrom) {
         if (unit == null || runAwayFrom == null) {
             return null;
         }
@@ -252,7 +250,7 @@ public class ARunManager {
     /**
      * Simplest case: add enemy-to-you-vector to your own position.
      */
-    private static APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
+    private APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
         double minTiles = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 1.2);
 
         double maxDist = minTiles;
@@ -282,7 +280,7 @@ public class ARunManager {
         return null;
     }
 
-    private static APosition canRunByShowingBackToEnemyTo(AUnit unit, APosition runAwayFrom,
+    private APosition canRunByShowingBackToEnemyTo(AUnit unit, APosition runAwayFrom,
             double dist, double minDist, double maxDist) {
         APosition runTo;
         double vectorLength = unit.getPosition().distanceTo(runAwayFrom);
@@ -299,6 +297,7 @@ public class ARunManager {
         int oldX = runTo.getX();
         int oldY = runTo.getY();
 
+//        runTo = runTo.makeValidFarFromBounds();
         runTo = runTo.makeValidFarFromBounds();
 
         // If vector changed (meaning we almost reached the map boundaries) disallow it
@@ -323,7 +322,7 @@ public class ARunManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
      * to given runAwayFrom position.
      */
-    private static APosition findRunPositionAtAnyDirection(AUnit unit, APosition runAwayFrom, double expectedLength) {
+    private APosition findRunPositionAtAnyDirection(AUnit unit, APosition runAwayFrom, double expectedLength) {
 
         // === Define run from ====================================================
 //        Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
@@ -345,10 +344,13 @@ public class ARunManager {
 
         // Build list of possible run positions, basically around the clock
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
+        
+        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple);
 
-        for (int dx = -2; dx <= 2; dx++) {
-            for (int dy = -2; dy <= 2; dy++) {
-                if (dx != -2 && dx != 2 && dy != -2 && dy != 2) {
+        int border = RUN_ANY_DIRECTION_GRID_BORDER;
+        for (int dx = -border; dx <= border; dx++) {
+            for (int dy = -border; dy <= border; dy++) {
+                if (dx != -border && dx != border && dy != -border && dy != border) {
                     continue;
                 }
                 
@@ -387,6 +389,7 @@ public class ARunManager {
 
                 // Make sure it's inbounds
                 potentialPosition = potentialPosition.makeValidFarFromBounds();
+//                potentialPosition = potentialPosition.makeValid();
 
                 // If has path to given point, add it to the list of potential points
 //                APainter.paintLine(unitPosition, potentialPosition, Color.Red);
@@ -398,12 +401,13 @@ public class ARunManager {
                             (int) (tx + vectorX * (expectedLength + 1.5) / expectedLength),
                             (int) (ty + vectorY * (expectedLength + 1.5) / expectedLength)
                     );
-//                    APainter.paintCircle(furtherPosition, 10, Color.White);
+//                    APainter.paintLine(unitPosition, furtherPosition, Color.Orange);
                     
                     if (isPossibleAndReasonablePosition(unitPosition, furtherPosition,
-                        expectedLength * 0.6, 3 * expectedLength, avoidCornerPoints)) {
+                        expectedLength * 0.6, 3 * expectedLength, false)) {
+//                        expectedLength * 0.6, 3 * expectedLength, avoidCornerPoints)) {
                         potentialPositionsList.add(potentialPosition);
-//                        APainter.paintLine(unitPosition, potentialPosition, Color.Cyan);
+//                        APainter.paintLine(unitPosition, potentialPosition, Color.Teal);
                     }
                 }
             }
@@ -437,15 +441,15 @@ public class ARunManager {
     }
 
     private static Units defineCloseEnemies(AUnit unit) {
-//        double radius;
-//
-//        if (unit.getType().isVulture()) {
-//            radius = 5;
-//        } else {
-//            radius = 5;
-//        }
+//        return Select.enemy().combatUnits().canAttack(unit, 6).units();
 
-        return Select.enemy().combatUnits().canAttack(unit, 6).units();
+        Select<AUnit> veryCloseEnemies = Select.enemy().combatUnits().canAttack(unit, 1.2);
+        if (veryCloseEnemies.size() > 0 && veryCloseEnemies.size() <= 1) {
+            return veryCloseEnemies.units();
+        }
+        else {
+            return Select.enemy().combatUnits().canAttack(unit, 3.5).units();
+        }
     }
 
     /**

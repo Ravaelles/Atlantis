@@ -30,7 +30,7 @@ import java.util.Objects;
 public class APosition extends Position implements Comparable<Position> {
     
 //    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 64;
+    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 12;
     
     private static final Map<Position, APosition> instances = new HashMap<>();
     
@@ -240,6 +240,26 @@ public class APosition extends Position implements Comparable<Position> {
             py = 32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
+        
+//        APainter.paintCircle(new APosition(
+//                32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
+//                32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
+//        ), 32, Color.Yellow);
+//        
+//        APainter.paintCircle(new APosition(
+//                32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
+//                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
+//        ), 32, Color.Yellow);
+//        
+//        APainter.paintCircle(new APosition(
+//                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
+//                32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
+//        ), 32, Color.Yellow);
+//        
+//        APainter.paintCircle(new APosition(
+//                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
+//                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
+//        ), 32, Color.Yellow);
         
         // =========================================================
         

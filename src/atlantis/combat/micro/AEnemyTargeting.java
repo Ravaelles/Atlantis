@@ -26,6 +26,9 @@ public class AEnemyTargeting {
             // Find most wounded enemy unit of the same type within shoot range
             finalEnemyToAttack = Select.enemyOfType(enemyType).inRadius(weaponRange, unit).lowestHealth();
         }
+        else {
+            finalEnemyToAttack = preSelectedEnemy;
+        }
         
         return finalEnemyToAttack;
     }

@@ -1303,7 +1303,7 @@ public class Select<T> {
      * Returns number of units matching all previous conditions.
      */
     public int size() {
-        return count();
+        return data.size();
     }
 
     /**
