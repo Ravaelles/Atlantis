@@ -496,9 +496,9 @@ public class ARunManager {
 //                && unit.hasPathTo(position)
         boolean isOkay = AMap.isWalkable(position)
 //                && AMap.isWalkable(position.translateTilesTowards(unitPosition, -1))
-                && Select.neutral().inRadius(0.3, position).count() == 0
-                && Select.enemy().inRadius(0.3, position).count() == 0
-                && Select.ourBuildings().inRadius(0.3, position).count() == 0
+                && Select.neutral().inRadius(0.5, position).count() == 0
+                && Select.enemy().inRadius(0.5, position).count() == 0
+                && Select.ourBuildings().inRadius(0.5, position).count() == 0
                 //                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
                 //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
                 //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
