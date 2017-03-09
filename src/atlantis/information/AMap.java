@@ -135,6 +135,10 @@ public class AMap {
         }
         
         Region naturalRegion = getRegion(getNaturalBaseLocation(mainBase.getPoint()));
+        if (naturalRegion == null) {
+            System.err.println("Can't find region for natural base");
+            return null;
+        }
         
         for (Chokepoint chokepoint : naturalRegion.getChokepoints()) {
             APosition center = APosition.create(chokepoint.getCenter());
@@ -288,6 +292,10 @@ public class AMap {
      */
     public static Region getNearestUnexploredRegion(APosition position) {
         Region region = AMap.getRegion(position);
+        if (region == null) {
+            return null;
+        }
+        
         Region regionToVisit = null;
         
         for (Region reachableRegion : region.getReachableRegions()) {

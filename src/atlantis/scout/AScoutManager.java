@@ -64,7 +64,9 @@ public class AScoutManager {
         // === Act with every scout ================================
         
         assignScoutIfNeeded();
-        for (AUnit scout : scouts) {
+//        for (AUnit scout : scouts) {
+        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+            AUnit scout = iterator.next();
             update(scout);
         }
         

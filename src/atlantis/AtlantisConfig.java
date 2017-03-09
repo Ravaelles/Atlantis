@@ -49,6 +49,9 @@ public class AtlantisConfig {
     public static final String MAP = "maps/sscai/(?)*.sc?";
 //    public static final String MAP = "Maps/BroodWar/umt/vultureDrive.scx"; // Vulture being chased by Lings
 //    public static final String MAP = "Maps/BroodWar/umt/(1)dragoon.scx"; // 4 Dragoons attacking Zealots
+//    public static final String MAP = "Maps/BroodWar/umt/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs Zerg
+//    public static final String MAP = "Maps/BroodWar/umt/Micro Challenge.scx"; // 
+//    public static final String MAP = "Maps/BroodWar/umt/ConTrol by junijuni02.scx"; // 
     
     // =========================================================
     // === These are default values that can be overriden in ===

@@ -21,7 +21,7 @@ public class ACombatCommander {
             Missions.handleGlobalMission();
         }
         
-        // === Handle all squads ========================================
+        // === Handle all squads ===================================
         
         for (Squad squad : ASquadManager.getSquads()) {
             handleSquad(squad);
@@ -32,7 +32,7 @@ public class ACombatCommander {
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_COMBAT);
     }
 
-    // =========================================================
+    // =============================================================
     
     /**
      * Acts with all units that are part of given battle squad, according to the SquadMission object and using

@@ -146,7 +146,7 @@ public class Units {
 //            throw new IllegalArgumentException("Units unit shouldn't be null");
 //        }
         
-        if (units == null || !units.containsKey(unit)) {
+        if (units == null || unit == null || !units.containsKey(unit)) {
             return 0;
         }
         else {
@@ -277,7 +277,6 @@ public class Units {
         // Create new mapping, with new order
         LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
         for (AUnit unit : unitsList) {
-            
             newUnits.put(unit, getValueFor(unit));
         }
         this.units = newUnits;

@@ -170,6 +170,10 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
      * Unit will move by given distance (in build tiles) from given position.
      */
     public boolean moveAwayFrom(Position position, double moveDistance) {
+        if (position == null || moveDistance < 0.01) {
+            return false;
+        }
+        
         int dx = position.getX() - getX();
         int dy = position.getY() - getY();
         double vectorLength = Math.sqrt(dx * dx + dy * dy);
