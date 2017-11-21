@@ -221,6 +221,8 @@ public class APainter {
 //                    paintCircle(unitPosition, 14, Color.White);
 //                }
 //            }
+            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 5), 
+                    unit.u().getOrder().toString(), Color.Purple);
         }
     }
 

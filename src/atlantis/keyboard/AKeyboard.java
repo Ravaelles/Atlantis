@@ -48,7 +48,7 @@ public class AKeyboard implements NativeKeyListener {
             // Key "PauseBreak"
             case 3653:
                 AGame.pauseModeToggle();
-                System.out.println("Notice: " + (AGame.isPaused() ? "" : "UN") + "PAUSED");
+//                System.out.println("Notice: " + (AGame.isPaused() ? "" : "UN") + "PAUSED");
                 break;
             
             // Keys "-" and NumPad "-"
