@@ -44,7 +44,7 @@ public class AAvoidDefensiveBuildings {
                 return unit.moveAwayFrom(buildingTooClose.getPosition(), 1);
             }
             else if (distanceMargin > 0.3) {
-                if (!unit.isAttackFrame() || unit.isMoving()) {
+                if (! unit.isAttackFrame() || unit.isMoving()) {
                     unit.holdPosition();
                     unit.setTooltip("Avoid building (" + String.format("%.1f", distanceMargin) + ") !!!");
                 }

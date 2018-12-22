@@ -80,7 +80,7 @@ public class AStrategyResponse {
         
         // =========================================================
         
-        if (!enemyStrategy.isGoingRush() && !enemyStrategy.isGoingCheese()) {
+        if (! enemyStrategy.isGoingRush() && ! enemyStrategy.isGoingCheese()) {
             return true;
         }
         

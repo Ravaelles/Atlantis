@@ -62,7 +62,7 @@ public class AConstructionManager {
 //        AGame.sendMessage("Request to build: " + building.getShortName());
         
         // Validate
-        if (!building.isBuilding()) {
+        if (! building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
 
@@ -133,7 +133,7 @@ public class AConstructionManager {
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
         if (AGame.playsAsTerran()) {
-            if (builder == null || !builder.exists()) {
+            if (builder == null || ! builder.exists()) {
                 constructionOrder.assignOptimalBuilder();
             }
         }
@@ -152,11 +152,11 @@ public class AConstructionManager {
         AUnit builder = constructionOrder.getBuilder();
 
         // ...change builder into building (it just happens, yeah, weird stuff)
-        if (building == null || !building.exists()) {
+        if (building == null || ! building.exists()) {
             if (builder != null) {
 
                 // If builder has changed its type and became Zerg Extractor
-                if (!builder.getType().equals(AtlantisConfig.WORKER)) {
+                if (! builder.getType().equals(AtlantisConfig.WORKER)) {
 
                     // Happens for Extractor
                     if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
@@ -209,7 +209,7 @@ public class AConstructionManager {
                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
         } // Building doesn't exist yet, means builder is travelling to the construction place
-        else if (builder != null && !builder.isMoving()) {
+        else if (builder != null && ! builder.isMoving()) {
             if (constructionOrder.getPositionToBuild() == null) {
                 APosition positionToBuild = APositionFinder.getPositionForNew(
                         constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
@@ -241,7 +241,7 @@ public class AConstructionManager {
      */
     public static boolean isBuilder(AUnit worker) {
         if (worker.isConstructing() || 
-                (!AGame.playsAsProtoss() && getConstructionOrderFor(worker) != null)) {
+                (! AGame.playsAsProtoss() && getConstructionOrderFor(worker) != null)) {
             return true;
         }
 
@@ -413,7 +413,7 @@ public class AConstructionManager {
     private static void handleZergConstructionsWhichBecameBuildings() {
         if (AGame.playsAsZerg()) {
             ArrayList<ConstructionOrder> allOrders = AConstructionManager.getAllConstructionOrders();
-            if (!allOrders.isEmpty()) {
+            if (! allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.getBuilder();
 //                    System.out.println("&&& " + constructionOrder.getBuildingType()+ " &&&&&&&");
@@ -439,7 +439,7 @@ public class AConstructionManager {
         AUnit building = order.getConstruction();
         
         // If unfinished building is under attack
-        if (building != null && !building.isCompleted() && building.isUnderAttack()) {
+        if (building != null && ! building.isCompleted() && building.isUnderAttack()) {
             
             // If it has less than 71HP or less than 60% and is close to being finished
             if (building.getHP() <= 70 

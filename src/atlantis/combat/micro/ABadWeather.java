@@ -21,7 +21,7 @@ public class ABadWeather {
         // === Psionic Storm ========================================
         
         if (unit.isUnderStorm()) {
-            for (Bullet bullet : Atlantis.getHandler().getBullets()) {
+            for (Bullet bullet : Atlantis.getInteraction().getBullets()) {
 
                 // PSIONIC STORM
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {

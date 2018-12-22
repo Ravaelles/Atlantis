@@ -76,7 +76,7 @@ public class MissionDefend extends Mission {
             
             // Everything is okay, be here
             else {
-                if (unit.type().isTank() && !unit.isSieged()) {
+                if (unit.type().isTank() && ! unit.isSieged()) {
                     unit.siege();
                     return true;
                 }

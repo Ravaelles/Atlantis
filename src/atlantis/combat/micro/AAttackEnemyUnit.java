@@ -36,7 +36,7 @@ public class AAttackEnemyUnit {
         }
         
         // Check if weapon cooldown allows to attack this enemy
-        if (!unit.canAttackThisKindOfUnit(enemyToAttack, true)) {
+        if (! unit.canAttackThisKindOfUnit(enemyToAttack, true)) {
             unit.setTooltip("Invalid target");
             return false;
         } 
@@ -46,8 +46,8 @@ public class AAttackEnemyUnit {
 //        APainter.paintTextCentered(unit, enemyToAttack + ", " + unit.isJustShooting(), Color.RED);
         
         // If we already are attacking this unit, do not issue double command.
-//        if (enemyToAttack != null && !unit.isJustShooting()) {
-        if (enemyToAttack != null && !unit.isUnitActionAttack()) {
+//        if (enemyToAttack != null && ! unit.isJustShooting()) {
+        if (enemyToAttack != null && ! unit.isUnitActionAttack()) {
 //        if (enemyToAttack != null) {
             unit.setTooltip("Attacking " + enemyToAttack.getShortName());
             return unit.attackUnit(enemyToAttack);

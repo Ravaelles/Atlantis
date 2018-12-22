@@ -43,7 +43,7 @@ public class TerranMedic {
 
     // =========================================================
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
-        if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.getTarget())) {
+        if (medic != null && unitToHeal != null && ! unitToHeal.equals(medic.getTarget())) {
             medic.useTech(TechType.Healing, unitToHeal);
         }
     }
@@ -51,7 +51,7 @@ public class TerranMedic {
     private static AUnit getInfantryAssignedForThisMedic(AUnit medic) {
         AUnit assignment = medicsAssignments.get(medic);
 
-        if (assignment == null || !assignment.exists() || !assignment.isAlive()) {
+        if (assignment == null || ! assignment.exists() || ! assignment.isAlive()) {
             assignment = Select.ourTerranInfantryWithoutMedics().first();
             
             if (assignment != null) {
@@ -77,7 +77,7 @@ public class TerranMedic {
     }
 
     private static boolean handleHealWoundedUnit(AUnit medic) {
-        if (!medic.isIdle() && medic.getLastCommand().getUnitCommandType() == UnitCommandType.Right_Click_Unit) {
+        if (! medic.isIdle() && medic.getLastCommand().getUnitCommandType() == UnitCommandType.Right_Click_Unit) {
             return true;
         }
 

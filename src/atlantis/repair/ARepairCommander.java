@@ -33,7 +33,7 @@ public class ARepairCommander {
 
         for (Iterator<AUnit> iterator = ARepairManager.getProtectors().iterator(); iterator.hasNext();) {
             AUnit protector = iterator.next();
-            if (!protector.isAlive()) {
+            if (! protector.isAlive()) {
                 ARepairManager.removeRepairerOrProtector(protector);
                 iterator.remove();
             }
@@ -44,7 +44,7 @@ public class ARepairCommander {
 
         for (Iterator<AUnit> iterator = ARepairManager.getRepairers().iterator(); iterator.hasNext();) {
             AUnit repairer = iterator.next();
-            if (!repairer.isAlive()) {
+            if (! repairer.isAlive()) {
                 ARepairManager.removeRepairerOrProtector(repairer);
                 iterator.remove();
             }
@@ -128,7 +128,7 @@ public class ARepairCommander {
     }
     
     private static void assignUnitsProtectorsIfNeeded() {
-        if (!Missions.isGlobalMissionAttack()) {
+        if (! Missions.isGlobalMissionAttack()) {
             return;
         }
 
@@ -206,7 +206,7 @@ public class ARepairCommander {
                 
                 // === We don't know enemy strategy ==================================
                 else {
-                    int enemyRaceBonus = !AGame.isEnemyTerran() && AGame.getTimeSeconds() > 175 ? 1 : 0;
+                    int enemyRaceBonus = ! AGame.isEnemyTerran() && AGame.getTimeSeconds() > 175 ? 1 : 0;
                     return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0) + enemyRaceBonus;
                 }
             } 
@@ -254,7 +254,7 @@ public class ARepairCommander {
             }
         }
         
-        if (!protectors.isEmpty()) {
+        if (! protectors.isEmpty()) {
             return Select.from(protectors).nearestTo(unitToRepair);
         }
         

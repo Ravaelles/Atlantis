@@ -28,7 +28,7 @@ public class ARepairManager {
     // =========================================================
     
     public static boolean handleRepairedUnitBehavior(AUnit unit) {
-        if (!unit.isWounded()) {
+        if (! unit.isWounded()) {
             return false;
         }
         
@@ -109,7 +109,7 @@ public class ARepairManager {
             // Bunker fully HEALTHY
             else {
                 double distanceToUnit = unit.distanceTo(protector);
-                if (distanceToUnit > 1 && !protector.isMoving()) {
+                if (distanceToUnit > 1 && ! protector.isMoving()) {
                     protector.setTooltip("Go to " + unit.getShortName());
                     protector.move(unit.getPosition(), UnitActions.MOVE_TO_REPAIR);
                     return true;
@@ -129,7 +129,7 @@ public class ARepairManager {
     }
     
     private static boolean handleRepairerWhenIdle(AUnit repairer) {
-        if (repairer.isMoving() || !repairer.isRepairing() || repairer.isIdle()) {
+        if (repairer.isMoving() || ! repairer.isRepairing() || repairer.isIdle()) {
             int maxAllowedDistToRoam = Missions.getGlobalMission().isMissionDefend() ? 4 : 12;
             
             // Try finding any repairable and wounded unit nearby
@@ -198,14 +198,14 @@ public class ARepairManager {
     public static void addRepairer(AUnit repairer, AUnit unitToRepair) {
         repairersToUnit.put(repairer, unitToRepair);
         repairersToModes.put(repairer, MODE_REPAIR_ONLY);
-        if (!unitsToRepairers.containsKey(unitToRepair)) {
+        if (! unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.put(unitToRepair, new ArrayList<>());
         }
         unitsToRepairers.get(unitToRepair).add(repairer);
     }
 
     public static int countProtectorsFor(AUnit unit) {
-        if (!unitsToRepairers.containsKey(unit)) {
+        if (! unitsToRepairers.containsKey(unit)) {
             return 0;
         }
         

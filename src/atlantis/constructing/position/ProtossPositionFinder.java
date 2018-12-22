@@ -60,13 +60,13 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     private static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
 
         // Check for POWER
-        if (!isPowerConditionFulfilled(building, position)) {
+        if (! isPowerConditionFulfilled(building, position)) {
             return false;
         }
 
         // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, building, position)) {
+        if (! canPhysicallyBuildHere(builder, building, position)) {
             return false;
         }
 
@@ -108,7 +108,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     }
 
     private static boolean isPowerConditionFulfilled(AUnitType building, APosition position) {
-        return Atlantis.getHandler().hasPower(position.toTilePosition())
+        return Atlantis.getInteraction().hasPower(position.toTilePosition())
                 || building.equals(AUnitType.Protoss_Nexus)
                 || building.equals(AUnitType.Protoss_Pylon);
     }

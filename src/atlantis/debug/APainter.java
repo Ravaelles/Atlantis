@@ -67,7 +67,7 @@ public class APainter {
 
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
-        bwapi = Atlantis.getHandler();
+        bwapi = Atlantis.getInteraction();
 
         // =========================================================
         if (paintingMode == MODE_NO_PAINTING) {
@@ -399,7 +399,7 @@ public class APainter {
         counters = unitTypesCounter.map();
         counters = AtlantisUtilities.sortByValue(counters, false);
         for (AUnitType unitType : counters.keySet()) {
-            if (!unitType.isBuilding()) {
+            if (! unitType.isBuilding()) {
                 paintSideMessage(counters.get(unitType) + "x " + unitType.toString(), Color.GREY, 0);
             }
         }
@@ -450,7 +450,7 @@ public class APainter {
             ProductionOrder order = fullQueue.get(index);
             if (order != null && order.getShortName() != null) {
                 if (order.getUnitOrBuilding() != null
-                        && !AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
+                        && ! AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
                     continue;
                 }
                 paintSideMessage(order.getShortName(), Color.RED);
@@ -470,7 +470,7 @@ public class APainter {
     private static void paintSidebarConstructionsPending() {
         int yOffset = 220;
         ArrayList<ConstructionOrder> allOrders = AConstructionManager.getAllConstructionOrders();
-        if (!allOrders.isEmpty()) {
+        if (! allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.WHITE, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
                 Color color = null;
@@ -632,7 +632,7 @@ public class APainter {
 //                paintCircle(unit, 11, Color.TEAL);
 //            }
             // Current COMMAND
-//            if (!unit.isMoving()) {
+//            if (! unit.isMoving()) {
 //                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.PURPLE);
 //            }
             // =========================================================
@@ -661,7 +661,7 @@ public class APainter {
 //            }
             }
 
-//            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+//            if (! unit.isWorker() && ! unit.isGatheringMinerals() && ! unit.isGatheringGas()) {
 //                paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
 //                paintCircle(unit, unit.getType().getDimensionLeft() - 2 + unit.getType().getDimensionRight(), color);
 //            }
@@ -816,7 +816,7 @@ public class APainter {
     private static void paintUnitsBeingTrainedInBuildings() {
         setTextSizeMedium();
         for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-            if (!unit.getType().isBuilding() || !unit.isTrainingAnyUnit()) {
+            if (! unit.getType().isBuilding() || ! unit.isTrainingAnyUnit()) {
                 continue;
             }
 
@@ -889,7 +889,7 @@ public class APainter {
      */
     private static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().listUnits()) {
-            if (unit.hasTooltip() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+            if (unit.hasTooltip() && ! unit.isGatheringMinerals() && ! unit.isGatheringGas()) {
                 String string = "";
 
                 if (unit.hasTooltip()) {

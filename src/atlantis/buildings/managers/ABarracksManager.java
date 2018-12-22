@@ -8,7 +8,7 @@ import atlantis.units.Select;
 public class ABarracksManager {
 
     public static void update(AUnit barracks) {
-//        if (!AGame.playsAsZerg()) {
+//        if (! AGame.playsAsZerg()) {
 //            if (shouldTrainUnit(barracks)) {
 //                if (hasEmptySlot(barracks)) {
 //                    buildUnit(barracks);

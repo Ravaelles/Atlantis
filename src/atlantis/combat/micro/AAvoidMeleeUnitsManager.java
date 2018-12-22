@@ -38,7 +38,7 @@ public class AAvoidMeleeUnitsManager {
         // === Define safety distance ===============================
         
         boolean isEnemyDangerouslyClose = avoid.isEnemyDangerouslyClose(unit);
-        if (!isEnemyDangerouslyClose) {
+        if (! isEnemyDangerouslyClose) {
             return false;
         }
 //        APainter.paintTextCentered(unit.getPosition().translateByTiles(0, -2), "DANGER", Color.TEAL);
@@ -46,8 +46,8 @@ public class AAvoidMeleeUnitsManager {
         // === Don't run, because unit is JUST SHOOTING =============
         
 //        if ((unit.isStartingAttack() || unit.isAttackFrame()) && shouldInterruptPendingAttack(unit)) {
-//        if (unit.isUnitActionAttack() && !shouldInterruptPendingAttack(unit)) {
-        if (unit.isUnitActionAttack() && unit.getGroundWeaponCooldown() <= 0 && !avoid.shouldInterruptPendingAttack(unit)) {
+//        if (unit.isUnitActionAttack() && ! shouldInterruptPendingAttack(unit)) {
+        if (unit.isUnitActionAttack() && unit.getGroundWeaponCooldown() <= 0 && ! avoid.shouldInterruptPendingAttack(unit)) {
 //        if (unit.isUnitActionAttack() && shouldInterruptPendingAttack(unit)) {
             unit.setTooltip("Fire");
             return true;
@@ -75,7 +75,7 @@ public class AAvoidMeleeUnitsManager {
     private static boolean shouldSkip(AUnit unit) {
 
         // === Issue orders every 3 frames or so ========================================
-//        if (unit.getFramesSinceLastOrderWasIssued() <= 2 && !unit.isIdle()) {
+//        if (unit.getFramesSinceLastOrderWasIssued() <= 2 && ! unit.isIdle()) {
 
             // Scout mustn't exit here, otherwise scouting behavior will override this behavior.
             if (unit.isScout()) {
@@ -93,7 +93,7 @@ public class AAvoidMeleeUnitsManager {
         // =========================================================
         boolean isAllowedType = (unit.isGroundUnit() && unit.getType().isRangedUnit()) || unit.isWorker();
 //        boolean isHealthyAndHasManyHP = unit.getHitPoints() >= 60 && unit.getHPPercent() >= 100;
-        if (!isAllowedType) {
+        if (! isAllowedType) {
             return true;
         }
 
@@ -151,7 +151,7 @@ public class AAvoidMeleeUnitsManager {
     }
 
     private boolean shouldInterruptPendingAttack(AUnit unit) {
-//        if (!unit.isAttackFrame() && !unit.isStartingAttack()) {
+//        if (! unit.isAttackFrame() && ! unit.isStartingAttack()) {
 //            return false;
 //        }
         AUnit nearestEnemy = unit.getCachedNearestMeleeEnemy();

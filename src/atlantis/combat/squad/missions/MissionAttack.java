@@ -53,7 +53,7 @@ public class MissionAttack extends Mission {
         
         // Focus point is well known
         if (focusPoint != null) {
-            if (unit.distanceTo(focusPoint) > 10 && !unit.isMoving()) {
+            if (unit.distanceTo(focusPoint) > 10 && ! unit.isMoving()) {
 //                unit.attackPosition(focusPoint);
                 unit.move(focusPoint, UnitActions.MOVE);
                 unit.setTooltip("#MA:Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
@@ -67,7 +67,7 @@ public class MissionAttack extends Mission {
             APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());
             if (position != null) {
                 unit.attackPosition(position);	
-                Atlantis.getHandler().drawLineMap(unit.getPosition(), position, Color.RED); //TODO DEBUG
+                Atlantis.getInteraction().drawLineMap(unit.getPosition(), position, Color.RED); //TODO DEBUG
                 unit.setTooltip("#MA:Forward!");
                 return true;
             }

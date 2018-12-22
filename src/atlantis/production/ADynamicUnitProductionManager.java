@@ -28,9 +28,9 @@ public class ADynamicUnitProductionManager {
     
     private static void constructFactoriesIfNeeded() {
         for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).listUnits()) {
-            if (!factory.isTrainingAnyUnit()) {
+            if (! factory.isTrainingAnyUnit()) {
                 boolean cantAffordTankButCanAffordVulture = AGame.hasMinerals(250)
-                        && !AGame.hasGas(70);
+                        && ! AGame.hasGas(70);
                 
                 if (cantAffordTankButCanAffordVulture) {
                     factory.train(AUnitType.Terran_Vulture);
@@ -77,7 +77,7 @@ public class ADynamicUnitProductionManager {
     private static void makeScarabsIfNeeded() {
         List<AUnit> reavers = Select.ourOfType(AUnitType.Protoss_Reaver).listUnits();
         for (AUnit reaver : reavers) {
-            if (reaver.getScarabCount() < 3 && !reaver.isTrainingAnyUnit()) {
+            if (reaver.getScarabCount() < 3 && ! reaver.isTrainingAnyUnit()) {
                 reaver.train(AUnitType.Protoss_Scarab);
             }
         }

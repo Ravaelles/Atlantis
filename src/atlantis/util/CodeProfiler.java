@@ -56,7 +56,7 @@ public class CodeProfiler {
     // =========================================================
 
     private static void measureAspect(String title) {
-        // if (!aspectsStart.containsKey(title)) {
+        // if (! aspectsStart.containsKey(title)) {
         // aspectsStart.put(title, now());
         // } else {
         aspectsStart.put(title, now());

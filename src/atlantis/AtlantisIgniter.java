@@ -98,7 +98,7 @@ public class AtlantisIgniter {
             if (line.startsWith("enemy_race = ")) {
                 fileContent[i] = "enemy_race = " + AtlantisConfig.ENEMY_RACE;
                 
-                if (!fileContent[i].equals(line)) {
+                if (! fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
                     System.out.println("Updated enemy race in bwapi.ini to: " + AtlantisConfig.ENEMY_RACE);
                 }
@@ -113,7 +113,7 @@ public class AtlantisIgniter {
             if (line.startsWith("map = ")) {
                 fileContent[i] = "map = " + AtlantisConfig.MAP;
                 
-                if (!fileContent[i].equals(line)) {
+                if (! fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
                     System.out.println("Updated map in bwapi.ini to: " + AtlantisConfig.MAP);
                 }
@@ -124,7 +124,7 @@ public class AtlantisIgniter {
                 String gameType = AtlantisConfig.MAP.contains("umt/") ? "USE_MAP_SETTINGS" : "MELEE";
                 fileContent[i] = "game_type = " + gameType;
                 
-                if (!fileContent[i].equals(line)) {
+                if (! fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
                     System.out.println("Updated game type in bwapi.ini to: " + gameType);
                 }

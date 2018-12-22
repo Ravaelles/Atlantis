@@ -175,7 +175,7 @@ public class ACombatEvaluator {
             } // =========================================================
             // BUILDING
             else if (unit.getType().isBuilding() && unit.isCompleted()) {
-                boolean antiGround = (againstUnit != null ? !againstUnit.isAirUnit() : true);
+                boolean antiGround = (againstUnit != null ? ! againstUnit.isAirUnit() : true);
                 boolean antiAir = (againstUnit != null ? againstUnit.isAirUnit() : true);
                 if (unit.getType().isMilitaryBuilding(antiGround, antiAir)) {
                     enemyDefensiveBuildingFound = true;
@@ -198,7 +198,7 @@ public class ACombatEvaluator {
 
         // =========================================================
         // Extra bonus for DEFENSIVE BUILDING PRESENCE
-        if (!isEnemyEval) {
+        if (! isEnemyEval) {
             if (enemyDefensiveBuildingFound) {
                 strength += 100;
             }
@@ -236,7 +236,7 @@ public class ACombatEvaluator {
 
         // =========================================================
         // Diminish role of NON-SHOOTING units
-        if (damage == 0 && !evaluateType.equals(AUnitType.Terran_Medic)) {
+        if (damage == 0 && ! evaluateType.equals(AUnitType.Terran_Medic)) {
             total /= 15;
         }
 
@@ -290,7 +290,7 @@ public class ACombatEvaluator {
      * @param unit
      */
     private static void checkCombatInfo(AUnit unit) {
-        if (!combatInfo.containsKey(unit)) {
+        if (! combatInfo.containsKey(unit)) {
             combatInfo.put(unit, new ACombatInformation(unit));
         }
     }

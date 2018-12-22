@@ -17,11 +17,11 @@ public class ADynamicWorkerProductionManager {
     public static boolean handleDynamicWorkerProduction() {
         
         // Leave minerals for reserved constructions
-//        if (!AGame.canAfford(ABuildOrdersManager.getMineralsNeeded() + 50, 0)) {
+//        if (! AGame.canAfford(ABuildOrdersManager.getMineralsNeeded() + 50, 0)) {
 //            return false;
 //        }
 
-        if (!shouldTrainWorkers(true)) {
+        if (! shouldTrainWorkers(true)) {
             return false;
         }
 
@@ -29,7 +29,7 @@ public class ADynamicWorkerProductionManager {
         
         
         for (AUnit base : Select.ourBases().reverse().list()) {
-            if (!base.isTrainingAnyUnit()) {
+            if (! base.isTrainingAnyUnit()) {
                 base.train(AtlantisConfig.WORKER);
                 return true;
             }
@@ -69,10 +69,10 @@ public class ADynamicWorkerProductionManager {
         // =========================================================
 
         // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
-//        if (!AGame.getBuildOrders().shouldProduceNow(AtlantisConfig.WORKER)) {
+//        if (! AGame.getBuildOrders().shouldProduceNow(AtlantisConfig.WORKER)) {
 //            return false;
 //        }
-//        if (!AGame.getBuildOrders().getThingsToProduceRightNow(true).isEmpty()) {
+//        if (! AGame.getBuildOrders().getThingsToProduceRightNow(true).isEmpty()) {
 //            return false;
 //        }
         // // Check if not TOO MANY WORKERS
@@ -96,7 +96,7 @@ public class ADynamicWorkerProductionManager {
 //            building.train(AtlantisConfig.WORKER);
 //        }
         for (AUnit base : Select.ourBases().reverse().list()) {
-            if (!base.isTrainingAnyUnit()) {
+            if (! base.isTrainingAnyUnit()) {
                 base.train(AtlantisConfig.WORKER);
                 break;
             }

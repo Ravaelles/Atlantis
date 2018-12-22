@@ -304,7 +304,7 @@ public class ABuildOrderLoader {
         boolean isTech = tech != null;
 
         // Check if no error occured like no object found
-        if (!isUnit && !isUpgrade && !isTech) {
+        if (! isUnit && ! isUpgrade && ! isTech) {
             System.out.println("Invalid production order entry: " + nameString);
             System.err.println("Invalid production order entry: " + nameString);
             AGame.exit();

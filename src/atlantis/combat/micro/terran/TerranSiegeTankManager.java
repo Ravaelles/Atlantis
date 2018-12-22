@@ -13,7 +13,7 @@ import bwta.ChokePoint;
 public class TerranSiegeTankManager {
 
     public static boolean update(AUnit tank) {
-        if (!tank.isInterruptible()) {
+        if (! tank.isInterruptible()) {
             tank.setTooltip("Can't interrupt");
             return true;
         }
@@ -55,7 +55,7 @@ public class TerranSiegeTankManager {
         if (enemy == null || distanceToEnemy < 0 || distanceToEnemy >= 14) {
             tank.setTooltip("Considers unsiege");
             
-            if (!tank.getSquad().isMissionDefend() && AtlantisUtilities.rand(1, 100) <= 10) {
+            if (! tank.getSquad().isMissionDefend() && AtlantisUtilities.rand(1, 100) <= 10) {
                 tank.unsiege();
                 tank.setTooltip("Unsiege");
                 return true;
@@ -114,7 +114,7 @@ public class TerranSiegeTankManager {
     private static boolean nearestEnemyIsUnit(AUnit tank, AUnit enemy, double distanceToEnemy) {
         
         // Don't siege when enemy is too close
-        if (distanceToEnemy < 10 && !enemy.isRangedUnit()) {
+        if (distanceToEnemy < 10 && ! enemy.isRangedUnit()) {
             tank.setTooltip("Dont siege");
             return false;
         }

@@ -72,8 +72,8 @@ public class AWorkerManager {
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).
         if (worker.isIdle()
-                || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
-                && !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
+                || (! worker.isGatheringMinerals() && ! worker.isGatheringGas() && ! worker.isMoving()
+                && ! worker.isConstructing() && ! worker.isAttacking() && ! worker.isRepairing())) {
             worker.setTooltip("Move ya ass!");
             AMineralGathering.gatherResources(worker);
         }
@@ -102,11 +102,11 @@ public class AWorkerManager {
 
         // Take those not carrying anything first
         for (AUnit worker : Select.ourWorkers().listUnits()) {
-            if (!isWorkerAssignedToBuilding(worker, target)) {
+            if (! isWorkerAssignedToBuilding(worker, target)) {
                 continue;
             }
 
-            if (!worker.isCarryingGas() && !worker.isCarryingMinerals()) {
+            if (! worker.isCarryingGas() && ! worker.isCarryingMinerals()) {
                 return worker;
             }
         }

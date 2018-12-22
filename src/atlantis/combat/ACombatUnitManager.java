@@ -95,7 +95,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // =========================================================
         // Normal mode - Attack enemy units when in range (and choose the best target)
         
-        if (!isAllowedToAttackDespiteRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+        if (! isAllowedToAttackDespiteRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
             return true;
         }
 
@@ -126,12 +126,12 @@ public class ACombatUnitManager extends AbstractMicroManager {
      */
     private static boolean shouldNotDisturbUnit(AUnit unit) {
         return (unit.isAttackFrame() 
-                || ((!unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack()))
+                || ((! unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack()))
                 && unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
 //        return false;
 //        return (unit.isAttackFrame() || unit.isStartingAttack()) &&
 //                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
-//        return unit.isAttackFrame() || (!unit.type().isTank() && unit.isStartingAttack());
+//        return unit.isAttackFrame() || (! unit.type().isTank() && unit.isStartingAttack());
 //        return (unit.isAttackFrame());
     }
 

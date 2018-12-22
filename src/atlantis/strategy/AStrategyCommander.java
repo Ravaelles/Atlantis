@@ -12,7 +12,7 @@ public class AStrategyCommander {
      * Detect enemy strategy and use our strategy accordingly.
      */
     public static void update() {
-        if (!hasBeenInitialized) {
+        if (! hasBeenInitialized) {
             autoInitialize();
         }
         
@@ -71,7 +71,7 @@ public class AStrategyCommander {
     // =========================================================
 
     private static void changeEnemyStrategyTo(AEnemyStrategy strategy) {
-        if (!AEnemyStrategy.isEnemyStrategyKnown()) {
+        if (! AEnemyStrategy.isEnemyStrategyKnown()) {
             AGame.sendMessage("Enemy strategy: " + strategy);
         }
         AEnemyStrategy.setEnemyStrategy(strategy);

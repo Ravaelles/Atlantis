@@ -75,7 +75,7 @@ public class Select<T> {
             for (Player player : AGame.getPlayers()) {
                 if (player.isEnemy()) {
                     for (AUnit unit : Select.playerUnits(player)) {
-                        if (!unit.getType().isSpecial()) {
+                        if (! unit.getType().isSpecial()) {
                             data.add(unit);
                         }
                     }
@@ -87,7 +87,7 @@ public class Select<T> {
         else {
             for (Unit u : Atlantis.getBW().getUnits(AGame.enemy())) {
                 AUnit unit = AUnit.createFrom(u);
-                if (!unit.getType().isSpecial()) {
+                if (! unit.getType().isSpecial()) {
                     data.add(unit);
                 }
             }
@@ -99,7 +99,7 @@ public class Select<T> {
 //    private static List<AUnit> neutralUnits() {
 //        List<AUnit> data = new ArrayList<>();
 //
-//        for (Unit u : Atlantis.getHandler().neutral().getUnits()) {
+//        for (Unit u : Atlantis.getInteraction().neutral().getUnits()) {
 //            data.add(AUnit.createFrom(u));
 //        }
 //
@@ -119,7 +119,7 @@ public class Select<T> {
     private static List<AUnit> allUnits() {
         List<AUnit> data = new ArrayList<>();
 
-        for (Unit u : Atlantis.getHandler().getAllUnits()) {
+        for (Unit u : Atlantis.getInteraction().getAllUnits()) {
             data.add(AUnit.createFrom(u));
         }
 
@@ -136,7 +136,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.isType(
+            if (unit.isCompleted() && ! unit.isType(
                     AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
@@ -283,8 +283,8 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.isNotActuallyUnit() && !unit.getType().isBuilding()
-                    && !unit.getType().equals(AtlantisConfig.WORKER) && !unit.getType().isSpecial()) {
+            if (unit.isCompleted() && ! unit.isNotActuallyUnit() && ! unit.getType().isBuilding()
+                    && ! unit.getType().equals(AtlantisConfig.WORKER) && ! unit.getType().isSpecial()) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
         }
@@ -301,7 +301,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (!unit.getType().equals(AUnitType.Terran_Vulture_Spider_Mine)) {
+            if (! unit.getType().equals(AUnitType.Terran_Vulture_Spider_Mine)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
         }
@@ -318,7 +318,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (!unit.isCompleted()) {
+            if (! unit.isCompleted()) {
                 data.add(unit);
             }
         }
@@ -333,7 +333,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit() && !unit.type().isSpecial()) {
+            if (unit.isCompleted() && ! unit.getType().isBuilding() && ! unit.isNotActuallyUnit() && ! unit.type().isSpecial()) {
                 data.add(unit);
             }
         }
@@ -349,7 +349,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (!unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
+            if (! unit.isCompleted() && ! unit.getType().isBuilding() && ! unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
         }
@@ -365,7 +365,7 @@ public class Select<T> {
 
         //TODO: check whether enemy().getUnits() has the same behavior as getEnemyUnits()
         for (AUnit unit : enemyUnits()) {
-            if (!unit.getType().isSpecial()) {
+            if (! unit.getType().isSpecial()) {
                 data.add(unit);
             }
         }
@@ -381,8 +381,8 @@ public class Select<T> {
 
         for (AUnit unit : enemyUnits()) {
             if (unit.isVisible() && unit.getHitPoints() >= 1) {
-                if ((!unit.isAirUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)
-                        && !unit.getType().isSpecial()) {
+                if ((! unit.isAirUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)
+                        && ! unit.getType().isSpecial()) {
                     data.add(unit);
                 }
             }
@@ -398,8 +398,8 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (unit.isVisible() && !unit.getType().isBuilding()
-                    && !unit.isNotActuallyUnit()) {
+            if (unit.isVisible() && ! unit.getType().isBuilding()
+                    && ! unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
         }
@@ -414,8 +414,8 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (unit.isVisible() && !unit.getType().isBuilding()
-                    && !unit.isType(AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
+            if (unit.isVisible() && ! unit.getType().isBuilding()
+                    && ! unit.isType(AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 if ((unit.isGroundUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
                     data.add(unit);
                 }
@@ -494,7 +494,7 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             Object unitOrData = unitsIterator.next();
             boolean typeMatches = (unitOrData instanceof AUnit ? typeMatches((AUnit) unitOrData, types) : typeMatches((AFoggedUnit) unitOrData, types));
-            if (!typeMatches) {
+            if (! typeMatches) {
                 unitsIterator.remove();
             }
         }
@@ -570,7 +570,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
-            if (!unit.isVisible()) {
+            if (! unit.isVisible()) {
                 unitsIterator.remove();
             }
         }
@@ -585,7 +585,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
-            if (!unit.isIdle()) {
+            if (! unit.isIdle()) {
                 unitsIterator.remove();
             }
         }
@@ -600,8 +600,8 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
-            if (!unit.isGatheringMinerals()) {
-                if (onlyNotCarryingMinerals && !unit.isCarryingMinerals()) {
+            if (! unit.isGatheringMinerals()) {
+                if (onlyNotCarryingMinerals && ! unit.isCarryingMinerals()) {
                     unitsIterator.remove();
                 } else {
                     unitsIterator.remove();
@@ -619,7 +619,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AFoggedUnit unit = dataFrom(unitsIterator.next());	//(unitOrData instanceof AUnit ? (AUnit) unitOrData : ((UnitData)unitOrData).getUnit()); 
-            if (!unit.getType().isOrganic()) { //replaced  isInfantry()
+            if (! unit.getType().isOrganic()) { //replaced  isInfantry()
                 unitsIterator.remove();
             }
         }
@@ -634,7 +634,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AFoggedUnit unit = dataFrom(unitsIterator.next());
-            if (!unit.getType().isBase()) {
+            if (! unit.getType().isBase()) {
                 unitsIterator.remove();
             }
         }
@@ -649,7 +649,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AFoggedUnit unit = dataFrom(unitsIterator.next());
-            if (!unit.getType().isMeleeUnit()) {
+            if (! unit.getType().isMeleeUnit()) {
                 unitsIterator.remove();
             }
         }
@@ -664,7 +664,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will work properly only on visible units
-            // unit.getHitPoints() >= unit.getType().maxHitPoints() replaces !isWounded()
+            // unit.getHitPoints() >= unit.getType().maxHitPoints() replaces ! isWounded()
             if (unit.getHitPoints() >= unit.getMaxHitPoints()) {
                 unitsIterator.remove();
             }
@@ -680,7 +680,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AFoggedUnit uData = dataFrom(unitsIterator.next());
-            if (!uData.getType().isBuilding()) {
+            if (! uData.getType().isBuilding()) {
                 unitsIterator.remove();
             }
         }
@@ -696,7 +696,7 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             AFoggedUnit uData = dataFrom(unitsIterator.next());
             AUnit u = uData.getUnit();	//TODO: will work only on visible units...
-            if (!u.isCompleted() || u.isWorker() || (uData.getType().isBuilding() && !uData.getType().isCombatBuilding())
+            if (! u.isCompleted() || u.isWorker() || (uData.getType().isBuilding() && ! uData.getType().isCombatBuilding())
                     || u.getType().isInvincible() || u.getType().isSpecial() || u.getType().isMine()) {
                 unitsIterator.remove();
             }
@@ -711,7 +711,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (!unit.isBuilding() || !unit.getType().isCombatBuilding()) {
+            if (! unit.isBuilding() || ! unit.getType().isCombatBuilding()) {
                 unitsIterator.remove();
             }
         }
@@ -727,9 +727,9 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (!unit.getType().isMechanical() || unit.getType().isBuilding()
+            if (! unit.getType().isMechanical() || unit.getType().isBuilding()
                     || (checkIfHealthIsNotMax && unit.getHitPoints() >= unit.getMaxHitPoints())
-                    || !unit.isCompleted()) {
+                    || ! unit.isCompleted()) {
                 unitsIterator.remove();
             }
         }
@@ -816,7 +816,7 @@ public class Select<T> {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
                 boolean isInShotRange = unit.hasRangeToAttack(targetUnit, 0);
-                if (!isInShotRange) {
+                if (! isInShotRange) {
                     unitsIterator.remove();
                 }
 //                else {
@@ -839,7 +839,7 @@ public class Select<T> {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
                 boolean isInShotRange = unit.hasRangeToAttack(targetUnit, distanceSafetyBonus);
-                if (!isInShotRange) {
+                if (! isInShotRange) {
                     unitsIterator.remove();
                 }
 //                else {
@@ -861,7 +861,7 @@ public class Select<T> {
             AUnit prey = unitFrom(unitsIterator.next());
             if (predator.canAttackThisKindOfUnit(prey, false)) {
                 boolean isInShotRange = predator.hasRangeToAttack(prey, 0.05);
-                if (!isInShotRange) {
+                if (! isInShotRange) {
 //                    System.out.println(prey.getType().getShortName() + " OUT OF range ("
 //                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
                     unitsIterator.remove();
@@ -909,8 +909,8 @@ public class Select<T> {
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
 
-//            System.out.println(unit + " --> " +  !unit.isCompleted() + " / " +  !unit.isWorker() + " / " +  !unit.exists());
-            if (!unit.isCompleted() || !unit.isWorker() || !unit.exists()) {
+//            System.out.println(unit + " --> " +  ! unit.isCompleted() + " / " +  ! unit.isWorker() + " / " +  ! unit.exists());
+            if (! unit.isCompleted() || ! unit.isWorker() || ! unit.exists()) {
                 unitIter.remove();
             }
         }
@@ -926,7 +926,7 @@ public class Select<T> {
         //for (AUnit unit : selectedUnits.list()) {
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (!unit.isWorker() || (!unit.isGatheringGas() && !unit.isGatheringMinerals())
+            if (! unit.isWorker() || (! unit.isGatheringGas() && ! unit.isGatheringMinerals())
                     || (onlyNotCarryingAnything && (unit.isCarryingGas() || unit.isCarryingMinerals()))) {
                 unitIter.remove();
             }
@@ -966,7 +966,7 @@ public class Select<T> {
         Select<AUnit> selectedUnits = Select.ourIncludingUnfinished();
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (!unit.getType().isBuilding()) {
+            if (! unit.getType().isBuilding()) {
                 unitIter.remove();
             }
         }
@@ -1014,7 +1014,7 @@ public class Select<T> {
         Select<AUnit> selectedUnits = Select.ourIncludingUnfinished();
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (!unit.getType().equals(AUnitType.Zerg_Larva)) {
+            if (! unit.getType().equals(AUnitType.Zerg_Larva)) {
                 unitIter.remove();
             }
         }
@@ -1027,7 +1027,7 @@ public class Select<T> {
     public static int countOurLarva() {
         int total = 0;
         for (Iterator<AUnit> unitIter = our().list().iterator(); unitIter.hasNext();) {
-            if (!unitIter.next().getType().equals(AUnitType.Zerg_Larva)) {
+            if (! unitIter.next().getType().equals(AUnitType.Zerg_Larva)) {
                 total++;
             }
         }
@@ -1041,7 +1041,7 @@ public class Select<T> {
         Select<AUnit> selectedUnits = Select.ourIncludingUnfinished();
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (!unit.getType().equals(AUnitType.Zerg_Egg)) {
+            if (! unit.getType().equals(AUnitType.Zerg_Egg)) {
                 unitIter.remove();
             }
         }
@@ -1105,7 +1105,7 @@ public class Select<T> {
      * first discovered base.
      */
     public static AUnit mainBase() {
-        if (_cached_mainBase == null || !_cached_mainBase.isAlive()) {
+        if (_cached_mainBase == null || ! _cached_mainBase.isAlive()) {
             List<AUnit> bases = ourBases().list();
             _cached_mainBase = bases.isEmpty() ? Select.ourBuildings().first() : bases.get(0);
         }
@@ -1157,7 +1157,7 @@ public class Select<T> {
      * Returns <b>true</b> if current selection contains at least one unit.
      */
     public boolean anyExists() {
-        return !data.isEmpty();
+        return ! data.isEmpty();
     }
 
     /**
@@ -1201,7 +1201,7 @@ public class Select<T> {
     public boolean areAllBusy() {
         for (Iterator<AUnit> it = (Iterator<AUnit>) data.iterator(); it.hasNext();) {
             AUnit unit = (AUnit) it.next();
-            if (!unit.isBusy()) {
+            if (! unit.isBusy()) {
                 return false;
             }
         }
@@ -1341,7 +1341,7 @@ public class Select<T> {
                 if (p1 == null || (! (p1 instanceof ) )) {
                     return -1;
                 }
-                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                if (p2 == null || ! (p2 instanceof PositionedObject)) {
                     return 1;
                 }
                 AFoggedUnit data1 = dataFrom(p1);

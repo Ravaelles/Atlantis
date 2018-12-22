@@ -46,7 +46,7 @@ public class APosition extends Position implements Comparable<Position> {
         this.p = new Position(walkPosition.getX(), walkPosition.getY());
     }
 
-    private APosition(Position p) {
+    public APosition(Position p) {
         super(p.getX(), p.getY());
         this.p = p;
     }
@@ -281,9 +281,8 @@ public class APosition extends Position implements Comparable<Position> {
     public int compareTo(Position o) {
         int compare = Integer.compare(getX(), o.getX());
         if (compare == 0) {
-            compare = Integer.compare(getY(), o.getY());
+            return Integer.compare(getY(), o.getY());
         }
-        return compare;
     }
     
     @Override
@@ -294,7 +293,7 @@ public class APosition extends Position implements Comparable<Position> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Position)) {
+        if (! (obj instanceof Position)) {
             return false;
         }
         

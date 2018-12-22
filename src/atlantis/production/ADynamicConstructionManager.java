@@ -47,7 +47,7 @@ public class ADynamicConstructionManager {
         int numberOfBases = Select.ourBases().count();
         if (numberOfBases >= 2) {
             int numberOfGasBuildings = Select.ourIncludingUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
-            if (numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350) 
+            if (numberOfBases > numberOfGasBuildings && ! AGame.canAfford(0, 350)
                     && AConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0) {
                 AConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
             }

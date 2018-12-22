@@ -101,7 +101,7 @@ public abstract class ABuildOrderManager {
 
             // ===  Protoss fix: wait for at least one Pylon ============
             if (AGame.playsAsProtoss() && unitOrBuilding != null
-                    && !unitOrBuilding.isType(AUnitType.Protoss_Pylon, AUnitType.Protoss_Assimilator)
+                    && ! unitOrBuilding.isType(AUnitType.Protoss_Pylon, AUnitType.Protoss_Assimilator)
                     && Select.our().countUnitsOfType(AUnitType.Protoss_Pylon) == 0) {
                 continue;
             }
@@ -109,7 +109,7 @@ public abstract class ABuildOrderManager {
             // === Define order type: UNIT/BUILDING or UPGRADE or TECH ==
             // UNIT/BUILDING
             if (unitOrBuilding != null) {
-                if (!AGame.hasBuildingsToProduce(unitOrBuilding, true)) {
+                if (! AGame.hasBuildingsToProduce(unitOrBuilding, true)) {
                     continue;
                 }
 
@@ -201,13 +201,13 @@ public abstract class ABuildOrderManager {
             // === Tech ========================================
                 
             else if (order.getTech() != null) {
-                isOkayToAdd = !ATech.isResearched(order.getTech(), order);
+                isOkayToAdd = ! ATech.isResearched(order.getTech(), order);
             } 
             
             // === Upgrade ========================================
             
             else if (order.getUpgrade() != null) {
-                isOkayToAdd = !ATech.isResearched(order.getUpgrade(), order);
+                isOkayToAdd = ! ATech.isResearched(order.getUpgrade(), order);
             }
 
             // =========================================================
@@ -236,7 +236,7 @@ public abstract class ABuildOrderManager {
                     + AConstructionManager.countNotStartedConstructionsOfType(AUnitType.Zerg_Lair)
                     + AConstructionManager.countNotStartedConstructionsOfType(AUnitType.Zerg_Hive);
         }
-        else if (type.isBase() && !type.isPrimaryBase()) {
+        else if (type.isBase() && ! type.isPrimaryBase()) {
             return Select.ourIncludingUnfinished().ofType(type).count()
                     + AConstructionManager.countNotStartedConstructionsOfType(type);
         }

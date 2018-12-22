@@ -24,7 +24,7 @@ public interface AUnitOrders {
     // =========================================================
 
     default boolean attackUnit(AUnit target) {
-//        if (!unit().hasRangeToAttack(target, 0)) {
+//        if (! unit().hasRangeToAttack(target, 0)) {
 //            unit().setTooltip("Come closer!");
 //            move(target.getPosition(), UnitActions.MOVE);
 //            return false;
@@ -121,19 +121,19 @@ public interface AUnitOrders {
 
         unit().setUnitAction(unitAction);
 
-//        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
+//        if (u().isMoving() && u().getTargetPosition() != null && ! u().getTargetPosition().equals(target)) {
 //        if (unit().isMoving() && AGame.getTimeFrames() % 4 != 0) {
 //            return true;
 //        }
 //
-//        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
+//        if (! unit().isUnitActionMove() || ! target.equals(u().getTargetPosition()) || ! u().isMoving()) {
 //            System.out.println(u().getId() + " MOVE at " + AGame.getTimeFrames());
-//        if (!unit().isMoving() || AGame.getTimeFrames() % 4 != 0) {
-//        if (!unit().isUnitActionMove() || AGame.getTimeFrames() % 5 == 0) {
+//        if (! unit().isMoving() || AGame.getTimeFrames() % 4 != 0) {
+//        if (! unit().isUnitActionMove() || AGame.getTimeFrames() % 5 == 0) {
 
         APosition currentTarget = unit().getTargetPosition();
 
-        if (!unit().isUnitActionMove() || currentTarget == null || !currentTarget.equals(target)) {
+        if (! unit().isUnitActionMove() || currentTarget == null || ! currentTarget.equals(target)) {
 //                || AGame.getTimeFrames() % 25 == 0) {
 //            System.out.println(AGame.getTimeFrames() + " moved, " + unit().getUnitAction()
 //+ ", dist = " + unit().distanceTo(target));
@@ -257,7 +257,7 @@ public interface AUnitOrders {
         }
         else {
             unit().setUnitAction(UnitActions.REPAIR);
-            if (unit().getTarget() == null || !unit().getTarget().equals(target) || !unit().isRepairing()) {
+            if (unit().getTarget() == null || ! unit().getTarget().equals(target) || ! unit().isRepairing()) {
                 unit().setLastUnitOrderNow();
                 unit().setLastUnitOrderNow();
                 return scvUnit().repair((Mechanical) target.u());
@@ -321,7 +321,7 @@ public interface AUnitOrders {
     default boolean siege() {
         unit().setUnitAction(UnitActions.SIEGE);
         unit().setLastUnitOrderNow();
-        return siegeableUnit().siege();
+        return tankUnit().siege();
     }
 
     /**
@@ -332,7 +332,7 @@ public interface AUnitOrders {
     default boolean unsiege() {
         unit().setUnitAction(UnitActions.UNSIEGE);
         unit().setLastUnitOrderNow();
-        return siegeableUnit().unsiege();
+        return tankUnit().unsiege();
     }
 
     /**
@@ -529,59 +529,67 @@ public interface AUnitOrders {
 
     // =========================================================
 
-    private MobileUnitImpl mobileUnit() {
+    default MobileUnitImpl mobileUnit() {
         return (MobileUnitImpl) u();
     }
 
-    private Factory factoryUnit() {
+    default GroundAttacker groundAttackerUnit() {
+        return (GroundAttacker) u();
+    }
+
+    default AirAttacker airAttackerUnit() {
+        return (AirAttacker) u();
+    }
+
+    default Factory factoryUnit() {
         return (Factory) u();
     }
 
-    private Morphable morphableUnit() {
+    default Morphable morphableUnit() {
         return (Morphable) u();
     }
 
-    private Worker workerUnit() {
+    default Worker workerUnit() {
         return (Worker) u();
     }
 
-    private ExtendibleByAddon addonableUnit() {
+    default ExtendibleByAddon addonableUnit() {
         return (ExtendibleByAddon) u();
     }
 
-    private ResearchingFacility researchingUnit() {
+    default ResearchingFacility researchingUnit() {
         return (ResearchingFacility) u();
     }
 
-    private SCV scvUnit() {
+    default SCV scvUnit() {
         return (SCV) u();
     }
 
-    private Burrowable burrowableUnit() {
+    default Burrowable burrowableUnit() {
         return (Burrowable) u();
     }
 
-    private Cloakable cloakableUnit() {
+    default Cloakable cloakableUnit() {
         return (Cloakable) u();
     }
 
-    private SiegeTank siegeableUnit() {
+    default SiegeTank tankUnit() {
         return (SiegeTank) u();
     }
 
-    private FlyingBuilding flyingBuildingUnit() {
+    default FlyingBuilding flyingBuildingUnit() {
         return (FlyingBuilding) u();
     }
 
-    private Loadable loadableUnit() {
+    default Loadable loadableUnit() {
         return (Loadable) u();
     }
 
-    private Building buildingUnit() {
+    default Building buildingUnit() {
         return (Building) u();
     }
 
-    private TrainingFacility trainingUnit() {
+    default TrainingFacility trainingUnit() {
         return (TrainingFacility) u();
     }
 

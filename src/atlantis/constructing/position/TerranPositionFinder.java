@@ -85,7 +85,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         }
 
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, building, position)) {
+        if (! canPhysicallyBuildHere(builder, building, position)) {
             return false;
         }
 
@@ -138,16 +138,16 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             double distance = otherBuilding.getPosition().distanceTo(position);
 
             // Check for this building's addon if needed
-            if (canThisBuildingHaveAddon && !isBase) {
-                if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(2, 0))) {
+            if (canThisBuildingHaveAddon && ! isBase) {
+                if (! canPhysicallyBuildHere(builder, building, position.translateByTiles(2, 0))) {
                     _CONDITION_THAT_FAILED = "MY_ADDON_COULDNT_BE_BUILT_HERE";
                     return true;
                 }
             }
 
             // Check for other buildings' addons
-            if (!isBase && otherBuilding.canHaveAddon()) {
-                if (!canPhysicallyBuildHere(builder, building, position.translateByTiles(-2, 0))) {
+            if (! isBase && otherBuilding.canHaveAddon()) {
+                if (! canPhysicallyBuildHere(builder, building, position.translateByTiles(-2, 0))) {
                     _CONDITION_THAT_FAILED = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
                     return true;
                 }

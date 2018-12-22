@@ -67,7 +67,7 @@ public class AWorkerDefenceManager {
         for (AUnit enemy : enemiesInRange) {
             
             // Enemy is non-worker unit
-            if (!enemy.isWorker()) {
+            if (! enemy.isWorker()) {
                 worker.runFrom(enemy);
                 return true;
             }

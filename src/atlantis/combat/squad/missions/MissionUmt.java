@@ -39,7 +39,7 @@ public class MissionUmt extends Mission {
             return false;
         }
         
-        if (unit.isJustShooting() || !unit.isReadyToShoot()) {
+        if (unit.isJustShooting() || ! unit.isReadyToShoot()) {
             return false;
         }
 
@@ -102,7 +102,7 @@ public class MissionUmt extends Mission {
         Area nearestUnexploredArea = AMap.getNearestUnexploredArea(flagshipUnit.getPosition());
         explorePosition = (nearestUnexploredArea != null
                 ? APosition.create(nearestUnexploredArea.getCenter()) : null);
-        if (!unit.isMoving() && explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
+        if (! unit.isMoving() && explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
             unit.setTooltip("#Explore" + (isFlagship ? "Flag" : ""));
             return unit.move(explorePosition, UnitActions.EXPLORE);
         }

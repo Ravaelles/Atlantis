@@ -85,7 +85,7 @@ public class ProductionOrder {
         if (object == null) {
             return false;
         }
-        if (!(object instanceof ProductionOrder)) {
+        if (! (object instanceof ProductionOrder)) {
             return false;
         }
         return ((ProductionOrder) object).id == id;

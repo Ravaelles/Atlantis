@@ -49,7 +49,7 @@ public class Tooltip {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !(other instanceof Tooltip)) {
+        if (other == null || ! (other instanceof Tooltip)) {
             return false;
         }
 

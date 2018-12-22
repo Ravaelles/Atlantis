@@ -20,6 +20,7 @@ import bwem.map.Map;
 import org.openbw.bwapi4j.BWMap;
 import org.openbw.bwapi4j.Position;
 import org.openbw.bwapi4j.TilePosition;
+import org.openbw.bwapi4j.WalkPosition;
 import org.openbw.bwapi4j.type.Color;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public class AMap {
     private static List<ChokePoint> cached_chokePoints = null;
     private static ChokePoint cached_mainBaseChokePoint = null;
     private static ChokePoint cached_naturalBaseChokePoint = null;
-    private static Map<String, Positions> areasToPolygonPoints = new HashMap<>();
+//    private static Map<String, Positions> areasToPolygonPoints = new HashMap<>();
 
     // =========================================================
 
@@ -92,7 +93,7 @@ public class AMap {
                 if (mainArea != null) {
 
                     // Define localization of the second base to expand
-                    Base naturalBase = getNaturalBase(Atlantis.getHandler().self()
+                    Base naturalBase = getNaturalBase(Atlantis.getInteraction().self()
                             .getStartLocation().toPosition());
                     // System.out.println("secondBase = " + secondBase);
                     if (naturalBase == null) {
@@ -291,7 +292,7 @@ public class AMap {
             int dx = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
             int dy = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
             position = PositionOperationsWrapper.translateByPixels(startPoint, dx, dy).makeValid();
-            if (!isVisible(position)) {
+            if (! isVisible(position)) {
                 return position;
             }
         }
@@ -309,8 +310,8 @@ public class AMap {
         
         Area areaToVisit = null;
         
-        for (Area reachableArea : area.getReachableAreas()) {
-            if (!AMap.isExplored(reachableArea.getCenter())) {
+        for (Area reachableArea : area.getAccessibleNeighbors()) {
+            if (! AMap.isExplored(reachableArea.getWalkPositionWithHighestAltitude().toPosition())) {
                 areaToVisit = reachableArea;
 //                return APosition.createFrom(areaToVisit.getCenter());
                 return areaToVisit;
@@ -333,7 +334,7 @@ public class AMap {
             for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {
                 for (int dy = -currentRadius; dy <= currentRadius; dy += doubleCurrentRadius) {
                     APosition potentialPosition = position.translateByTiles(dx, dy).makeValid();
-                    if (!isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
+                    if (! isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
                         return potentialPosition;
                     }
                 }
@@ -351,7 +352,8 @@ public class AMap {
         ChokePoint bestChoke = null;
         
         for (ChokePoint chokePoint : getChokePoints()) {
-            double dist = position.distanceTo(chokePoint.getCenter()) - chokePoint.getWidth() / 32 / 2;
+//            double dist = position.distanceTo(chokePoint.getCenter().toPosition()) - chokePoint.getWidth() / 32 / 2;
+            double dist = position.distanceTo(chokePoint.getCenter().toPosition());
             if (dist < bestDistance) {
                 bestDistance = dist;
                 bestChoke = chokePoint;
@@ -365,48 +367,51 @@ public class AMap {
      * Can be used to avoid getting to close to the area edges, which may cause unit to get stuck.
      */
     public static double getDistanceToAnyAreaPolygonPoint(APosition unitPosition) {
-        Area area = unitPosition.getArea();
-        
-        if (area == null) {
-            System.err.println("isPositionFarFromAnyAreaPolygonPoint -> Area is null");
-            return 999;
-        }
-        if (area.getPolygon() == null) {
-            System.err.println("isPositionFarFromAnyAreaPolygonPoint -> area.getPolygon() is null");
-            return 999;
-        }
-
-        // === Define polygon points for given area ==============
-        
-        Positions polygonPoints = new Positions();
-        if (areasToPolygonPoints.containsKey(area.toString())) {
-            polygonPoints = areasToPolygonPoints.get(area.toString());
-        }
-        else {
-            polygonPoints = new Positions();
-            polygonPoints.addPositions(area.getPolygon().getPoints());
-            areasToPolygonPoints.put(area.toString(), polygonPoints);
-        }
-        
-//        for (Positions positions : areasToPolygonPoints.values()) {
-//            for (Iterator it = positions.arrayList().iterator(); it.hasNext();) {
-//                Position position = (Position) it.next();
-//                APainter.paintCircle(position, 13, Color.YELLOW);
-//                APainter.paintCircle(position, 16, Color.YELLOW);
-//            }
+        // @TODO
+        return 100;
+//        Area area = unitPosition.getArea();
+//
+//
+//        if (area == null) {
+//            System.err.println("isPositionFarFromAnyAreaPolygonPoint -> Area is null");
+//            return 999;
 //        }
-        
-        APosition nearestPolygon = polygonPoints.nearestTo(unitPosition);
-        
-        // =========================================================
-        
-        if (nearestPolygon != null) {
-            double distanceTo = nearestPolygon.distanceTo(unitPosition);
-            return nearestPolygon.distanceTo(unitPosition);
-        }
-        else {
-            return 99;
-        }
+//        if (area.getPolygon() == null) {
+//            System.err.println("isPositionFarFromAnyAreaPolygonPoint -> area.getPolygon() is null");
+//            return 999;
+//        }
+//
+//        // === Define polygon points for given area ==============
+//
+//        Positions polygonPoints = new Positions();
+//        if (areasToPolygonPoints.containsKey(area.toString())) {
+//            polygonPoints = areasToPolygonPoints.get(area.toString());
+//        }
+//        else {
+//            polygonPoints = new Positions();
+//            polygonPoints.addPositions(area.getPolygon().getPoints());
+//            areasToPolygonPoints.put(area.toString(), polygonPoints);
+//        }
+//
+////        for (Positions positions : areasToPolygonPoints.values()) {
+////            for (Iterator it = positions.arrayList().iterator(); it.hasNext();) {
+////                Position position = (Position) it.next();
+////                APainter.paintCircle(position, 13, Color.YELLOW);
+////                APainter.paintCircle(position, 16, Color.YELLOW);
+////            }
+////        }
+//
+//        APosition nearestPolygon = polygonPoints.nearestTo(unitPosition);
+//
+//        // =========================================================
+//
+//        if (nearestPolygon != null) {
+//            double distanceTo = nearestPolygon.distanceTo(unitPosition);
+//            return nearestPolygon.distanceTo(unitPosition);
+//        }
+//        else {
+//            return 99;
+//        }
     }
     
     // =========================================================
@@ -416,7 +421,7 @@ public class AMap {
      * a base. Starting locations are also included here.
      */
     public static List<Base> getBases() {
-        return BWTA.getBases();
+        return getMap().getBases();
     }
 
     /**
@@ -427,12 +432,12 @@ public class AMap {
     public static List<Base> getStartingLocations(boolean excludeOurStartLocation) {
         ArrayList<Base> startingLocations = new ArrayList<>();
         for (Base base : AMap.getBases()) {
-            if (base.isStartLocation()) {
+            if (base.isStartingLocation()) {
                 
                 // Exclude our base location if needed.
                 if (excludeOurStartLocation) {
                     AUnit mainBase = Select.mainBase();
-                    if (mainBase != null && PositionUtil.distanceTo(mainBase, base.getPosition()) <= 10) {
+                    if (mainBase != null && PositionUtil.distanceTo(mainBase, base.getCenter()) <= 10) {
                         continue;
                     }
                 }
@@ -450,8 +455,8 @@ public class AMap {
     public static List<ChokePoint> getChokePoints() {
         if (cached_chokePoints == null) {
             cached_chokePoints = new ArrayList<>();
-            for (ChokePoint choke : BWTA.getChokePoints()) {
-                if (!disabledChokePoints.contains(choke)) { // choke.isDisabled()
+            for (ChokePoint choke : getMap().getChokePoints()) {
+                if (! disabledChokePoints.contains(choke)) { // choke.isDisabled()
                     cached_chokePoints.add(choke);
                 }
             }
@@ -472,38 +477,38 @@ public class AMap {
             position = (Position) positionOrAreaOrBase;
         }
         else if (positionOrAreaOrBase instanceof Area) {
-            position = ((Area) positionOrAreaOrBase).getCenter();
+            return (Area) positionOrAreaOrBase;
         }
         else if (positionOrAreaOrBase instanceof Base) {
-            position = ((Base) positionOrAreaOrBase).getPosition();
+            position = ((Base) positionOrAreaOrBase).getCenter();
         }
         else {
             System.err.println("getArea failed for " + positionOrAreaOrBase);
             return null;
         }
         
-        return BWTA.getArea(position);
+        return getMap().getArea(position.toTilePosition());
     }
 
     /**
      * Returns true if given position is explored i.e. if it's not black screen (but could be fog of war).
      */
     public static boolean isExplored(Position position) {
-        return Atlantis.getHandler().isExplored(position.toTilePosition());
+        return AMap.getBWMap().isExplored(position.toTilePosition());
     }
 
     /**
      * Returns true if given position visible.
      */
     public static boolean isVisible(Position position) {
-        return Atlantis.getHandler().isVisible(position.toTilePosition());
+        return AMap.getBWMap().isVisible(position.toTilePosition());
     }
 
     /**
      * Returns true if given position can be traversed by land units.
      */
     public static boolean isWalkable(APosition position) {
-        return Atlantis.getHandler().isWalkable(position.getX() / 8, position.getY() / 8);
+        return AMap.getBWMap().isWalkable(position.toWalkPosition());
     }
     
     // =========================================================
@@ -514,28 +519,28 @@ public class AMap {
      * are pointing to a place where the enemy won't come from. This method "disables" those points so they're
      * never returned, but they don't actually get removed. It only sets disabled=true flag for them.
      */
-    public static void disableSomeOfTheChokePoints() {
-        AUnit mainBase = Select.mainBase();
-        if (mainBase == null) {
-            return;
-        }
-
-        Area baseArea = getArea(mainBase.getPosition());
-        if (baseArea == null) {
-            System.err.println("Error #821493b");
-            System.err.println("Main base = " + mainBase);
-            System.err.println("Base area = " + baseArea);
-            return;
-        }
-
-        Collection<ChokePoint> chokes = baseArea.getChokePoints();
-        for (ChokePoint choke : chokes) {
-            if (baseArea.getChokePoints().contains(choke)) {
-                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
-                disabledChokePoints.add(choke);	//choke.setDisabled(true);
-            }
-        }
-    }
+//    public static void disableSomeOfTheChokePoints() {
+//        AUnit mainBase = Select.mainBase();
+//        if (mainBase == null) {
+//            return;
+//        }
+//
+//        Area baseArea = getArea(mainBase.getPosition());
+//        if (baseArea == null) {
+//            System.err.println("Error #821493b");
+//            System.err.println("Main base = " + mainBase);
+//            System.err.println("Base area = " + baseArea);
+//            return;
+//        }
+//
+//        Collection<ChokePoint> chokes = baseArea.getChokePoints();
+//        for (ChokePoint choke : chokes) {
+//            if (baseArea.getChokePoints().contains(choke)) {
+//                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
+//                disabledChokePoints.add(choke);	//choke.setDisabled(true);
+//            }
+//        }
+//    }
 
     /**
      * Returns true if given base location is free from units, meaning it's a good place for expansion.
@@ -548,19 +553,19 @@ public class AMap {
     public static boolean isBaseFreeOfBuildingsAndEnemyUnits(Base base) {
         
         // If we have any base, FALSE.
-        if (Select.ourBases().inRadius(7, base.getPosition()).count() > 0) {
+        if (Select.ourBases().inRadius(7, base.getCenter()).count() > 0) {
             return false;
         }
         
         // If any enemy unit is nearby
-        if (Select.enemy().inRadius(11, base.getPosition()).count() > 0) {
+        if (Select.enemy().inRadius(11, base.getCenter()).count() > 0) {
             return false;
         }
         
         // Check for planned constructions
         for (ConstructionOrder constructionOrder : AConstructionManager.getAllConstructionOrders()) {
             APosition constructionPlace = constructionOrder.getPositionToBuildCenter();
-            if (constructionPlace != null && constructionPlace.distanceTo(base.getPosition()) < 8) {
+            if (constructionPlace != null && constructionPlace.distanceTo(base.getCenter()) < 8) {
                 return false;
             }
         }
@@ -574,9 +579,13 @@ public class AMap {
      * 
      * Returns land distance (in tiles) between unit and given position.
      */
-    public static double getGroundDistance(AUnit unit, APosition runTo) {
-        return BWTA.getGroundDistance(unit.getPosition().toTilePosition(), runTo.toTilePosition()) / 32;
-    }
+//    public static double getGroundDistance(AUnit from, APosition to) {
+////        return AMap.getMap().getPath()getGroundDistance(unit.getPosition().toTilePosition(), runTo.toTilePosition()) / 32;
+////        Atlantis.getBW().
+//        return Atlantis.getInteraction().
+//        return AMap.getMap().getPath(from.getPosition(), to).size();
+//    }
+
 
     /**
      * Warning - takes very long time.
@@ -586,5 +595,13 @@ public class AMap {
 //    public static double getShortestPath(AUnit unit, APosition runTo) {
 //        return BWTA.get(unit.getPosition().toTilePosition(), runTo.toTilePosition()) / 32;
 //    }
+
+    /**
+     * An attempt to estimate choke point width.
+     */
+    public static double getChokePointWidth(ChokePoint chokePoint) {
+        List<WalkPosition> geometry = chokePoint.getGeometry();
+        return PositionUtil.distanceTo(geometry.get(1), geometry.get(2));
+    }
 
 }

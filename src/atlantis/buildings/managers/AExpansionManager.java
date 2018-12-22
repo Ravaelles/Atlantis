@@ -21,20 +21,20 @@ public class AExpansionManager {
 //            return;
 //        }
 
-        if (AGame.playsAsZerg() && !AGame.hasMinerals(1300)) {
+        if (AGame.playsAsZerg() && ! AGame.hasMinerals(1300)) {
             return;
         }
         
         int minMinerals = 100 + (AGame.playsAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AGame.hasMinerals(minMinerals)) {
+        if (! AGame.hasMinerals(minMinerals)) {
             return;
         }
 
         // If there're still things to produce, don't auto-expand.
         ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(5);
-        if (nextOrders.size() >= 3 && !AGame.hasMinerals(minMinerals + 50)) {
+        if (nextOrders.size() >= 3 && ! AGame.hasMinerals(minMinerals + 50)) {
             return;
         }
         
@@ -68,7 +68,7 @@ public class AExpansionManager {
                 && numberOfUnfinishedBases <= 1;
 
         // Check if it makes sense to request new base
-        if (haveEnoughMinerals && !haveEnoughBases && (noBaseToConstruct || allowExtraExpansion)) {
+        if (haveEnoughMinerals && ! haveEnoughBases && (noBaseToConstruct || allowExtraExpansion)) {
             
             // ZERG case
             if (AGame.playsAsZerg() && AGame.hasMinerals(minMinerals)) {

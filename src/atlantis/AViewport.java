@@ -16,7 +16,7 @@ public class AViewport {
     
     public static void centerScreenOn(AUnit unit) {
         APosition position = unit.getPosition();
-        Atlantis.getHandler().setScreenPosition(
+        Atlantis.getInteraction().setScreenPosition(
                 position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7)
         );
     }

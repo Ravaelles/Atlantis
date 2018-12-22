@@ -21,7 +21,7 @@ public class TerranFlyingBuildingManager {
     // =========================================================
     
     public static void update() {
-        if (AGame.playsAsTerran() && !AGame.isUmtMode()) {
+        if (AGame.playsAsTerran() && ! AGame.isUmtMode()) {
             if (shouldLiftABuilding()) {
                 liftABuildingAndFlyAmongTheStars();
             }
@@ -65,7 +65,7 @@ public class TerranFlyingBuildingManager {
     // =========================================================
 
     private static boolean shouldLiftABuilding() {
-        if (!flyingBuildings.isEmpty()) {
+        if (! flyingBuildings.isEmpty()) {
             return false;
         }
         

@@ -42,7 +42,7 @@ public class AGasManager {
         // =========================================================
         
         for (AUnit gasBuilding : gasBuildings) {
-            if (!gasBuilding.isCompleted()) {
+            if (! gasBuilding.isCompleted()) {
                 continue;
             }
             
@@ -115,7 +115,7 @@ public class AGasManager {
             totalGasNeeded += order.getGasRequired();
         }
         
-        return (totalGasNeeded > 0 && !AGame.hasGas(totalGasNeeded) ? 3 : 1);
+        return (totalGasNeeded > 0 && ! AGame.hasGas(totalGasNeeded) ? 3 : 1);
     }
 
 }

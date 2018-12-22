@@ -324,13 +324,13 @@ public class AUnitType implements Comparable<AUnitType> {
         for (Field field : UnitType.class.getFields()) {
             String otherTypeName = field.getName().toLowerCase()
                     .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
-            if (!otherTypeName.startsWith("Hero") && otherTypeName.equals(unitName)) {
+            if (! otherTypeName.startsWith("Hero") && otherTypeName.equals(unitName)) {
                 try {
                     AUnitType unitType = (AUnitType) AUnitType.class.getField(field.getName()).get(null);
 //                    return instances.get(unitType);
                     return unitType;
                 } catch (Exception e) {
-                    if (!disableErrorReporting) {
+                    if (! disableErrorReporting) {
                         System.err.println("error trying to find AUnitType for: '" + unitName + "'\n" + e.getMessage());
                     }
                 }
@@ -364,7 +364,7 @@ public class AUnitType implements Comparable<AUnitType> {
     private boolean _isMelee = false;
 
     public boolean isMeleeUnit() {
-        if (!_checkedIfIsMelee) {
+        if (! _checkedIfIsMelee) {
             _checkedIfIsMelee = true;
             _isMelee = isType(
                     // Terran
@@ -390,7 +390,7 @@ public class AUnitType implements Comparable<AUnitType> {
      * Returns true if given unit is considered to be "ranged" unit (not melee).
      */
     public boolean isRangedUnit() {
-        return !isMeleeUnit();
+        return ! isMeleeUnit();
     }
 
     /**
@@ -602,7 +602,7 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public boolean isGroundUnit() {
-        return !ut.isFlyer();
+        return ! ut.isFlyer();
     }
 
     public WeaponType getGroundWeapon() {
@@ -696,7 +696,7 @@ public class AUnitType implements Comparable<AUnitType> {
      * you have to specify at least one <b>true</b> to the params.
      */
     public boolean isMilitaryBuilding(boolean canShootGround, boolean canShootAir) {
-        if (!isBuilding()) {
+        if (! isBuilding()) {
             return false;
         }
         if (canShootGround && isMilitaryBuildingAntiGround()) {

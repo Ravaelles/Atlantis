@@ -74,7 +74,7 @@ public class AProductionManager {
     private static void produceUnit(AUnitType unitType) {
         
         // Supply: OVERLORD / PYLON / DEPOT
-        if (AGame.getSupplyFree() == 0 && !unitType.isSupplyUnit() && !unitType.isBuilding()) {
+        if (AGame.getSupplyFree() == 0 && ! unitType.isSupplyUnit() && ! unitType.isBuilding()) {
             // Supply production is handled by AtlantisSupplyManager
             return;
         }
@@ -98,7 +98,7 @@ public class AProductionManager {
         if (buildingType != null) {
             AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
 //            System.out.println(upgrade + " level is " + AGame.getPlayerSelf().getUpgradeLevel(upgrade));
-            if (building != null && !building.isBusy()) {
+            if (building != null && ! building.isBusy()) {
 //                System.out.println("   ISSUE");
                 building.upgrade(upgrade);
             }
@@ -109,7 +109,7 @@ public class AProductionManager {
         AUnitType buildingType = AUnitType.createFrom(tech.whatResearches());
         if (buildingType != null) {
             AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
-            if (building != null && !building.isBusy()) {
+            if (building != null && ! building.isBusy()) {
                 building.research(tech);
             }
         }
@@ -119,7 +119,7 @@ public class AProductionManager {
     // Lo-level produce
     
     private static void produceBuilding(AUnitType unitType, ProductionOrder order) {
-        if (!unitType.isBuilding()) {
+        if (! unitType.isBuilding()) {
             System.err.println("produceBuilding has been given wrong argument: " + unitType);
         }
         AConstructionManager.requestConstructionOf(unitType, order, null);

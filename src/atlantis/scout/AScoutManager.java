@@ -76,7 +76,7 @@ public class AScoutManager {
     }
     
     private static boolean update(AUnit scout) {
-        if (!scout.isAlive()) {
+        if (! scout.isAlive()) {
             scouts.remove(scout);
             return true;
         }
@@ -90,7 +90,7 @@ public class AScoutManager {
         // =========================================================
         
         // We don't know any enemy building, scout nearest starting location.
-        if (!AEnemyUnits.hasDiscoveredMainEnemyBase()) {
+        if (! AEnemyUnits.hasDiscoveredMainEnemyBase()) {
             return tryFindingEnemyBase(scout);
         }
         
@@ -200,7 +200,7 @@ public class AScoutManager {
         
         for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
             AUnit scout = iterator.next();
-            if (!scout.isAlive()) {
+            if (! scout.isAlive()) {
                 iterator.remove();
                 anyScoutBeenKilled = true;
             }
@@ -216,7 +216,7 @@ public class AScoutManager {
                 if (AGame.getTimeSeconds() < 350) {
                     if (scouts.isEmpty()) {
                         for (AUnit worker : Select.ourWorkers().list()) {
-                            if (!worker.isBuilder()) {
+                            if (! worker.isBuilder()) {
                                 System.err.println(worker.getId());
                                 scouts.add(worker);
                                 break;
@@ -247,7 +247,7 @@ public class AScoutManager {
         
         // Change roaming direction if we were forced to run from enemy units
         if (scoutingAroundBaseWasInterrupted) {
-            scoutingAroundBaseDirectionClockwise = !scoutingAroundBaseDirectionClockwise;
+            scoutingAroundBaseDirectionClockwise = ! scoutingAroundBaseDirectionClockwise;
         }
         
         // Define direction

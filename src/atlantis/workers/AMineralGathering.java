@@ -68,7 +68,7 @@ public class AMineralGathering {
 
         // Get minerals near to our main base and sort them from closest to most distant one
         List<AUnit> minerals = (List<AUnit>) Select.minerals().inRadius(12, base).listUnits();
-        if (!minerals.isEmpty()) {
+        if (! minerals.isEmpty()) {
 
             // Count how many other workers gather this mineral
             Map<AUnit, Integer> workersPerMineral = new HashMap<>();
@@ -93,7 +93,7 @@ public class AMineralGathering {
                                 workersPerMineral.get(mineralMinedByWorker) : 0) + 1);
                     }
                     else {
-                        if (!workersPerMineral.containsKey(mineral)) {
+                        if (! workersPerMineral.containsKey(mineral)) {
                             workersPerMineral.put(mineral, 0);
                         }
                     }

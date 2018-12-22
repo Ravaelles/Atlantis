@@ -184,7 +184,7 @@ public class Atlantis implements BWEventListener {
         try {
             
             // Initial actions - those should be executed only once (optimally assign mineral gatherers).
-            if (!_initialActionsExecuted) {
+            if (! _initialActionsExecuted) {
                 
                 System.out.println("### Starting Atlantis... ###");
                 AInitialActions.executeInitialActions();
@@ -497,7 +497,7 @@ public class Atlantis implements BWEventListener {
      * Starts the bot.
      */
     public void run() {
-        if (!_isStarted) {
+        if (! _isStarted) {
             _isPaused = false;
             _isStarted = true;
 
@@ -509,7 +509,7 @@ public class Atlantis implements BWEventListener {
      * Forces all calculations to be stopped. CPU usage should be minimal. Or resumes the game after pause.
      */
     public void pauseOrUnpause() {
-        _isPaused = !_isPaused;
+        _isPaused = ! _isPaused;
     }
 
     // =========================================================
@@ -518,7 +518,7 @@ public class Atlantis implements BWEventListener {
      * It provides low-level functionality for functions like pause game, get enemy player, own player etc.
      * For more details, see BW class.
      */
-    public static InteractionHandler getHandler() {
+    public static InteractionHandler getInteraction() {
         return getInstance().handler;
     }
 

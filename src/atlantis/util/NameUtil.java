@@ -30,7 +30,7 @@ public class NameUtil {
                     UpgradeType upgradeType = (UpgradeType) UpgradeType.class.getField(field.getName()).get(null);
                     return upgradeType;
                 } catch (Exception e) {
-                    if (!disableErrorReporting) {
+                    if (! disableErrorReporting) {
                         System.err.println("error trying to find UpgradeType for: '" + string + "'\n" + e.getMessage());
                     }
                 }
@@ -50,7 +50,7 @@ public class NameUtil {
                     TechType techType = (TechType) TechType.class.getField(field.getName()).get(null);
                     return techType;
                 } catch (Exception e) {
-                    if (!disableErrorReporting) {
+                    if (! disableErrorReporting) {
                         System.err.println("error trying to find TechType for: '" + name + "'\n" + e.getMessage());
                     }
                 }

@@ -245,7 +245,7 @@ public class AtlantisUtilities {
      * @return true if the string has at least one character
      */
     public static boolean isStringNotEmpty(String string) {
-        return string != null && !string.isEmpty() && string.charAt(0) != ' ';
+        return string != null && ! string.isEmpty() && string.charAt(0) != ' ';
     }
 
     /**
@@ -547,11 +547,11 @@ public class AtlantisUtilities {
      */
     public static int countNumberOfFiles(File directory) {
         int total = 0;
-        if (!directory.exists()) {
+        if (! directory.exists()) {
             return 0;
         }
         for (File file : directory.listFiles()) {
-            if (!file.isDirectory()) {
+            if (! file.isDirectory()) {
                 total++;
             } else {
                 total += countNumberOfFiles(file);
@@ -567,11 +567,11 @@ public class AtlantisUtilities {
      */
     public static int countNumberOfFiles(File directory, String extension) {
         int total = 0;
-        if (!directory.exists()) {
+        if (! directory.exists()) {
             return 0;
         }
         for (File file : directory.listFiles()) {
-            if (!file.isDirectory()) {
+            if (! file.isDirectory()) {
                 if (getFileExtension(file).equals(extension)) {
                     total++;
                 }
@@ -745,7 +745,7 @@ public class AtlantisUtilities {
                 System.out.println();
             }
         }
-        if (!useNewLines) {
+        if (! useNewLines) {
             System.out.println();
         }
         
@@ -918,7 +918,7 @@ public class AtlantisUtilities {
     public static int chooseOptionRandomlyWithWeights(boolean areValuesNormalizedToOne, double... weights) {
         double[] normalized;
 
-        if (!areValuesNormalizedToOne) {
+        if (! areValuesNormalizedToOne) {
             normalized = new double[weights.length];
 
             double total = 0;
@@ -1028,8 +1028,8 @@ public class AtlantisUtilities {
                     fields = line.split(" - ");
                 }
 
-//                if (!line.isEmpty() && line.charAt(0) != '#' && !line.startsWith("//")) {
-//                    if (numberOfFields > 0 && fields.length < numberOfFields && !line.contains(" - ")) {
+//                if (! line.isEmpty() && line.charAt(0) != '#' && ! line.startsWith("//")) {
+//                    if (numberOfFields > 0 && fields.length < numberOfFields && ! line.contains(" - ")) {
 //                        System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
 //                        System.err.println("fields.length = " + fields.length);
 //                        System.err.println("numberOfFields = " + numberOfFields);
@@ -1037,7 +1037,7 @@ public class AtlantisUtilities {
 //                    }
 //                }
 
-                if (!line.isEmpty() && !line.startsWith("//")) {
+                if (! line.isEmpty() && ! line.startsWith("//")) {
                     listOfArrays.add(fields);
                 }
             }

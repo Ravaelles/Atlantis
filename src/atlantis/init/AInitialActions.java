@@ -13,18 +13,11 @@ public class AInitialActions {
     public static void executeInitialActions() {
         try {
             AMineralGathering.initialAssignWorkersToMinerals();
-        }
-        catch (IndexOutOfBoundsException ex) {
+        } catch (Exception ex) {
             AGame.setUmtMode(true);
         }
-        catch (NullPointerException ex) {
-            AGame.setUmtMode(true);
-        }
-        catch (Exception ex) {
-            AGame.setUmtMode(true);
-        }
-            
-        AMap.disableSomeOfTheChokePoints();
+
+//        AMap.disableSomeOfTheChokePoints();
     }
 
 }

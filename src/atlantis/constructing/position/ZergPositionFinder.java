@@ -78,14 +78,14 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
 
         // Check for CREEP
-        if (!isCreepConditionFulfilled(building, position)) {
+        if (! isCreepConditionFulfilled(building, position)) {
             _CONDITION_THAT_FAILED = "CREEP";
             return false;
         }
 
         // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, building, position)) {
+        if (! canPhysicallyBuildHere(builder, building, position)) {
 //            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);
             _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
             return false;
@@ -127,7 +127,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     }
 
     private static boolean isCreepConditionFulfilled(AUnitType building, Position position) {
-        return Atlantis.getHandler().hasCreep(position.toTilePosition())
+        return Atlantis.getInteraction().hasCreep(position.toTilePosition())
                 || building.equals(AUnitType.Zerg_Hatchery)
                 || building.equals(AUnitType.Zerg_Extractor);
     }

@@ -59,8 +59,8 @@ public abstract class AbstractPositionFinder {
             return false;
         }
         
-        return Atlantis.getHandler().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
-//        return Atlantis.getHandler().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
+        return Atlantis.getInteraction().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
+//        return Atlantis.getInteraction().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
     }
 
     /**
@@ -73,10 +73,10 @@ public abstract class AbstractPositionFinder {
         // Compare against planned construction places
         for (ConstructionOrder constructionOrder : AConstructionManager.getAllConstructionOrders()) {
             if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.getStatus())
-                    && !builder.equals(constructionOrder.getBuilder())) {
+                    && ! builder.equals(constructionOrder.getBuilder())) {
                 if (constructionOrder.getPositionToBuild() != null) {
                     double distance = PositionUtil.distanceTo(constructionOrder.getPositionToBuild(), position);
-                    boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AGame.playsAsZerg()
+                    boolean areBasesTooCloseOneToAnother = (distance <= 8 && ! AGame.playsAsZerg()
                             && building.isBase() && constructionOrder.getBuildingType().isBase());
                     
                     // Look for two bases that would be built too close one to another

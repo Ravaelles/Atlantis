@@ -45,7 +45,7 @@ public class AEnemyUnits {
     public static boolean hasDiscoveredMainEnemyBase() {
         
         // We don't know any enemy building
-        if (!AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
+        if (! AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
             return false;
         }
         

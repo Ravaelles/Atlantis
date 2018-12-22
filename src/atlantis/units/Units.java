@@ -145,7 +145,7 @@ public class Units {
 //            throw new IllegalArgumentException("Units unit shouldn't be null");
 //        }
         
-        if (units == null || unit == null || !units.containsKey(unit)) {
+        if (units == null || unit == null || ! units.containsKey(unit)) {
             return 0;
         }
         else {
@@ -211,10 +211,10 @@ public class Units {
             @Override
             public int compare(APositionedObject p1, APositionedObject p2) {
                 // @FIX
-                if (p1 == null || !(p1 instanceof PositionedObject)) {
+                if (p1 == null || ! (p1 instanceof PositionedObject)) {
                     return -1;
                 }
-                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                if (p2 == null || ! (p2 instanceof PositionedObject)) {
                     return 1;
                 }
                 double distance1 = p1.distanceTo(position);
@@ -253,10 +253,10 @@ public class Units {
         Collections.sort(unitsList, new Comparator<APositionedObject>() {
             @Override
             public int compare(APositionedObject p1, APositionedObject p2) {
-                if (p1 == null || !(p1 instanceof PositionedObject)) {
+                if (p1 == null || ! (p1 instanceof PositionedObject)) {
                     return -1;
                 }
-                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                if (p2 == null || ! (p2 instanceof PositionedObject)) {
                     return 1;
                 }
                 double distance1 = BWTA.getGroundDistance(

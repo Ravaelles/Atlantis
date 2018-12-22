@@ -63,7 +63,7 @@ public class ARunManager {
                 }
             }
             
-            if (!finallyRunned) {
+            if (! finallyRunned) {
                 markAsNotRunning();
 
                 if (unit.isMoving()) {
@@ -117,7 +117,7 @@ public class ARunManager {
 
         // === Run directly away from the enemy ========================================
         
-        if (!unit.getPosition().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
+        if (! unit.getPosition().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
         
@@ -224,7 +224,7 @@ public class ARunManager {
 
 //        AUnit mainBase = Select.mainBase();
 //
-//        if (AGame.getTimeSeconds() <= 310 && mainBase != null && !unit.isWorker() && mainBase.distanceTo(unit) > 22) {
+//        if (AGame.getTimeSeconds() <= 310 && mainBase != null && ! unit.isWorker() && mainBase.distanceTo(unit) > 22) {
 //            return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
 //        } else {
         return unit.getRunManager().findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
@@ -461,7 +461,7 @@ public class ARunManager {
         Select<?> units = Select.ourRealUnits().inRadius(safetyRadiusSize, unit);
         List<AUnit> otherUnits = units.listUnits();
         for (AUnit otherUnit : otherUnits) {
-            if (!otherUnit.isRunning() && !unit.equals(otherUnit)) {
+            if (! otherUnit.isRunning() && ! unit.equals(otherUnit)) {
                 boolean result = otherUnit.runFrom(unit);
                 otherUnit.setTooltip("Make space (" + otherUnit.distanceTo(unit) + ")");
             }
@@ -478,17 +478,17 @@ public class ARunManager {
 //        boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) 
 //                && AMap.isWalkable(position) && unit.hasPathTo(position)
 //                && Select.all().inRadius(0.2, position).count() <= 1
-//                //                && Atlantis.getHandler().getUnitsInRadius(unit, 1).isEmpty()
+//                //                && Atlantis.getInteraction().getUnitsInRadius(unit, 1).isEmpty()
 //                //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
 //                //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
 //                && AMap.getGroundDistance(unit, position) <= maxDist;
 //                ;
 //
-//        if (!AMap.isWalkable(position)) {
+//        if (! AMap.isWalkable(position)) {
 //            APainter.paintCircleFilled(position, 10, Color.RED);
 //        }
 //        
-//        if (!AMap.isWalkable(position.translateTilesTowards(unitPosition, -1))) {
+//        if (! AMap.isWalkable(position.translateTilesTowards(unitPosition, -1))) {
 //            APainter.paintCircleFilled(position, 16, Color.YELLOW);
 //        }
 
@@ -499,7 +499,7 @@ public class ARunManager {
                 && Select.neutral().inRadius(0.5, position).count() == 0
                 && Select.enemy().inRadius(0.5, position).count() == 0
                 && Select.ourBuildings().inRadius(0.5, position).count() == 0
-                //                && Atlantis.getHandler().getUnitsInRadius(unit, 1).isEmpty()
+                //                && Atlantis.getInteraction().getUnitsInRadius(unit, 1).isEmpty()
                 //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
                 //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
 //                && AMap.getGroundDistance(unit, position) <= maxDist;
@@ -507,7 +507,7 @@ public class ARunManager {
         
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
 
-        if (isOkay && !allowCornerPointsEtc && AMap.getDistanceToAnyAreaPolygonPoint(unitPosition) < 1) {
+        if (isOkay && ! allowCornerPointsEtc && AMap.getDistanceToAnyAreaPolygonPoint(unitPosition) < 1) {
 //            isOkay = AMap.getDistanceToAnyAreaPolygonPoint(unitPosition);
             isOkay = false;
         }

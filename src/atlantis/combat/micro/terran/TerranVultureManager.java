@@ -29,7 +29,7 @@ public class TerranVultureManager {
         
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
-        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
+        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || ! unit.isMoving())) {
             unit.setUnitAction(null);
             unit.setTooltip("Planted!");
             unit.holdPosition();
@@ -37,7 +37,7 @@ public class TerranVultureManager {
         }
         
         // If out of mines or mines ain't researched, don't do anything.
-        if (unit.getMinesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) {
+        if (unit.getMinesCount() <= 0 || ! ATech.isResearched(TechType.Spider_Mines)) {
             return false;
         }
         

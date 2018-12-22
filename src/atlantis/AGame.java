@@ -1,6 +1,6 @@
 package atlantis;
 
-import static atlantis.Atlantis.getHandler;
+import static atlantis.Atlantis.getInteraction;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
@@ -10,10 +10,7 @@ import org.openbw.bwapi4j.type.Race;
 import org.openbw.bwapi4j.type.TechType;
 import org.openbw.bwapi4j.type.UpgradeType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply
@@ -41,7 +38,7 @@ public class AGame {
 
         // Needs to have tech
         TechType techType = unitType.getRequiredTech();
-        if (techType != null && techType != TechType.None && !ATech.isResearched(techType)) {
+        if (techType != null && techType != TechType.None && ! ATech.isResearched(techType)) {
             return false;
         }
 
@@ -93,7 +90,7 @@ public class AGame {
      * Enable/disable pause.
      */
     public static void pauseModeToggle() {
-        isPaused = !isPaused;
+        isPaused = ! isPaused;
     }
     
     /**
@@ -114,14 +111,14 @@ public class AGame {
         AtlantisConfig.GAME_SPEED = speed;
         
         try {
-            getHandler().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+            getInteraction().setLocalSpeed(AtlantisConfig.GAME_SPEED);
             Thread.sleep(40);
-            getHandler().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+            getInteraction().setLocalSpeed(AtlantisConfig.GAME_SPEED);
             Thread.sleep(40);
         } catch (InterruptedException ex) { 
             // Ignore
         }
-        getHandler().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+        getInteraction().setLocalSpeed(AtlantisConfig.GAME_SPEED);
 
         String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
         sendMessage("Game speed: " + speedString);
@@ -137,7 +134,7 @@ public class AGame {
             speed = 0;
         }
 
-        if (getHandler() != null) {
+        if (getInteraction() != null) {
             AtlantisConfig.GAME_SPEED = speed;
             changeSpeedTo(AtlantisConfig.GAME_SPEED);
         }
@@ -157,28 +154,28 @@ public class AGame {
      * Returns approximate number of in-game seconds elapsed.
      */
     public static int getTimeSeconds() {
-        return Atlantis.getHandler().getFrameCount() / 30;
+        return Atlantis.getInteraction().getFrameCount() / 30;
     }
 
     /**
      * Returns number of frames elapsed.
      */
     public static int getTimeFrames() {
-        return Atlantis.getHandler().getFrameCount();
+        return Atlantis.getInteraction().getFrameCount();
     }
 
     /**
      * Number of minerals.
      */
     public static int getMinerals() {
-        return Atlantis.getHandler().self().minerals();
+        return Atlantis.getInteraction().self().minerals();
     }
 
     /**
      * Number of gas.
      */
     public static int getGas() {
-        return Atlantis.getHandler().self().gas();
+        return Atlantis.getInteraction().self().gas();
     }
 
     /**
@@ -192,28 +189,28 @@ public class AGame {
      * Number of supply used.
      */
     public static int getSupplyUsed() {
-        return Atlantis.getHandler().self().supplyUsed() / 2;
+        return Atlantis.getInteraction().self().supplyUsed() / 2;
     }
 
     /**
      * Number of supply totally available.
      */
     public static int getSupplyTotal() {
-        return Atlantis.getHandler().self().supplyTotal() / 2;
+        return Atlantis.getInteraction().self().supplyTotal() / 2;
     }
 
     /**
      * Returns our player object.
      */
     public static Player getPlayerSelf() {
-        return Atlantis.getHandler().self();
+        return Atlantis.getInteraction().self();
     }
 ` `
     /**
      * Returns our player object.
      */
     public static Player self() {
-        return Atlantis.getHandler().self();
+        return Atlantis.getInteraction().self();
     }
 
     /**
@@ -228,7 +225,7 @@ public class AGame {
      */
     public static Player enemy() {
         if (_enemy == null) {
-            _enemy = Atlantis.getHandler().enemy();
+            _enemy = Atlantis.getInteraction().enemy();
         }
         return _enemy;
     }
@@ -245,7 +242,7 @@ public class AGame {
      */
     public static Player getNeutralPlayer() {
         return null;
-//        return Atlantis.getHandler().neutral();
+//        return Atlantis.getInteraction().neutral();
     }
 
     /**
@@ -359,8 +356,8 @@ public class AGame {
      * Sends in-game message that will be visible by other players.
      */
     public static void sendMessage(String message) {
-        if (getHandler() != null) {
-            getHandler().sendText(message);
+        if (getInteraction() != null) {
+            getInteraction().sendText(message);
         }
     }
 

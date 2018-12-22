@@ -70,7 +70,7 @@ public class ABuilderManager {
         
         // Move builder to the build position
         if (distance > maxDistanceToIssueBuildOrder) {
-            if (!builder.isMoving() || AGame.getTimeFrames() % 10 == 0) {
+            if (! builder.isMoving() || AGame.getTimeFrames() % 10 == 0) {
                 builder.move(constructionOrder.getPositionToBuildCenter(), UnitActions.MOVE_TO_BUILD);
             }
             builder.setTooltip("Build " + buildingType.getShortName() + " (" + distance);
@@ -89,7 +89,7 @@ public class ABuilderManager {
                         buildPosition.getTileX(), buildPosition.getTileY()
                 );
                 
-                if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
+                if (buildTilePosition != null && (! builder.isConstructing() || builder.isIdle() ||
                         AGame.getTimeFrames() % 30 == 0)) {
 //                    if (buildingType.isGasBuilding()) {
 //                        AGame.sendMessage("Build GAS "
@@ -112,7 +112,7 @@ public class ABuilderManager {
     private static APosition applyGasBuildingFixIfNeeded(AUnit builder, APosition position, AUnitType building) {
         if (position != null) {
             if (building.isGasBuilding()
-                    && !AbstractPositionFinder.canPhysicallyBuildHere(builder, building, position)) {
+                    && ! AbstractPositionFinder.canPhysicallyBuildHere(builder, building, position)) {
                 if (AbstractPositionFinder.canPhysicallyBuildHere
                             (builder, building, position.translateByTiles(-1, 0))) {
                     System.out.println("Applied [-1,0] " + building + " position FIX");

@@ -41,7 +41,7 @@ public class ACombatCommander {
     private static void handleSquad(Squad squad) {
 
         // Make sure this battle squad has up-to-date strategy
-        if (!Missions.getGlobalMission().equals(squad.getMission())) {
+        if (! Missions.getGlobalMission().equals(squad.getMission())) {
             squad.setMission(Missions.getGlobalMission());
         }
 
