@@ -10,6 +10,11 @@ import org.openbw.bwapi4j.type.Race;
 import org.openbw.bwapi4j.type.TechType;
 import org.openbw.bwapi4j.type.UpgradeType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply
  * (from our point of view), game speed, enemy player etc.<br />
@@ -198,18 +203,25 @@ public class AGame {
     }
 
     /**
-     * Returns current player.
+     * Returns our player object.
      */
-    public static Player getPlayerUs() {
+    public static Player getPlayerSelf() {
+        return Atlantis.getHandler().self();
+    }
+` `
+    /**
+     * Returns our player object.
+     */
+    public static Player self() {
         return Atlantis.getHandler().self();
     }
 
     /**
      * Returns all players.
      */
-//    public static List<Player> getPlayers() {
-//        return new ArrayList<>(Arrays.asList(getPlayerUs(), getEnemy()));
-//    }
+    public static Collection<Player> getPlayers() {
+        return Atlantis.getBW().getAllPlayers();
+    }
 
     /**
      * Returns enemy player.

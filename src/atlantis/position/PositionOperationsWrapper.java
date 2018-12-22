@@ -2,8 +2,8 @@ package atlantis.position;
 
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import bwapi.AbstractPoint;
-import bwapi.Position;
+import org.openbw.bwapi4j.Position;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +17,7 @@ import java.util.List;
 public class PositionOperationsWrapper {
     
     // === Median ========================================
+
     /**
      * Returns median PX and median PY for all passed units.
      */
@@ -86,7 +87,7 @@ public class PositionOperationsWrapper {
         return new APosition((int) (totalX / totalFactor), (int) (totalY / totalFactor));
     }
     
-    public static int getPositionMedian(List<Integer> collection) {
+    private static int getPositionMedian(List<Integer> collection) {
         Collections.sort(collection);
         return collection.get(collection.size() / 2);
     }
@@ -108,13 +109,17 @@ public class PositionOperationsWrapper {
     
     // === Position between A and B ======================
     
-    public static APosition getPositionMovedPercentTowards(Position from, AbstractPoint<Position> movedToward, double percent) {
+    public static APosition getPositionMovedPercentTowards(Position from, Position movedToward, double percent) {
         int finalX = (int) ((100 - percent) * from.getX() + percent * movedToward.getX()) / 100;
         int finalY = (int) ((100 - percent) * from.getY() + percent * movedToward.getY()) / 100;
         return new APosition(finalX, finalY);
     }
     
-    public static APosition getPositionMovedTilesTowards(APosition from, AbstractPoint<Position> to, double tiles) {
+    public static APosition getPositionMovedTilesTowards(APosition from, Position to, double tiles) {
+        return getPositionMovedPercentTowards(from.getPoint(), to, tiles);
+    }
+
+    public static APosition getPositionMovedTilesTowards(APosition from, APosition to, double tiles) {
         int dirX = to.getX() - from.getX();
         int dirY = to.getY() - from.getY();
         

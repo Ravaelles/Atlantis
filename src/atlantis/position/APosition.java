@@ -4,7 +4,9 @@ import atlantis.debug.APainter;
 import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
+import bwem.area.Area;
 import org.openbw.bwapi4j.Position;
+import org.openbw.bwapi4j.WalkPosition;
 import org.openbw.bwapi4j.type.Color;
 
 import java.util.HashMap;
@@ -12,14 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Atlantis uses wrapper for BWMirror native classes which can't extended due to private constructors.
- * <br /><br />
- * I've decided to implement a solution which allows to use the .jar of BWMirror library, because from
- * my experience it turns out, that it's extremely tedious to upgrade Atlantis to use newer version of
- * BWMirror if you work with the source code rather than the .jar library release.
- * <br /><br />
- * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
- * you can create them here or reference original Position class via p() method. 
+ * <b>APosition</b> class is a wrapper around Position and contains numerous helpers.
  * <br /><br />
  * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
  *
@@ -46,18 +41,16 @@ public class APosition extends Position implements Comparable<Position> {
         this.p = new Position(pixelX, pixelY);
     }
 
+    public APosition(WalkPosition walkPosition) {
+        super(walkPosition.getX(), walkPosition.getY());
+        this.p = new Position(walkPosition.getX(), walkPosition.getY());
+    }
+
     private APosition(Position p) {
         super(p.getX(), p.getY());
         this.p = p;
     }
-    
-    /**
-     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
-     * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
-     * you can create them here or reference original Position class via p() method. 
-     * <br /><br />
-     * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
-     */
+
     public static APosition create(Position p) {
         if (instances.containsKey(p)) {
             return instances.get(p);
@@ -68,7 +61,7 @@ public class APosition extends Position implements Comparable<Position> {
             return position;
         }
     }
-    
+
     /**
      * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
      * you can create them here or reference original Position class via p() method. 
@@ -158,9 +151,9 @@ public class APosition extends Position implements Comparable<Position> {
     // === High-abstraction ========================================
     
     /**
-     * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
+     * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement). Useful shit.
      */
-    public APosition translatePercentTowards(AbstractPoint<Position> towards, int percentTowards) {
+    public APosition translatePercentTowards(Position towards, int percentTowards) {
         return PositionOperationsWrapper.getPositionMovedPercentTowards(
                 this, towards, percentTowards
         );
@@ -169,7 +162,7 @@ public class APosition extends Position implements Comparable<Position> {
     /**
      * Returns new position which is moved e.g. 0.5 tiles towards <b>towards</b>.
      */
-    public APosition translateTilesTowards(AbstractPoint<Position> towards, double tiles) {
+    public APosition translateTilesTowards(Position towards, double tiles) {
         return PositionOperationsWrapper.getPositionMovedTilesTowards(
                 this, towards, tiles
         );
@@ -180,7 +173,6 @@ public class APosition extends Position implements Comparable<Position> {
     /**
      * Ensures that position's [x,y] are valid map coordinates.
      */
-    @Override
     public APosition makeValid() {
 //        p = p.makeValid();
 
@@ -302,28 +294,20 @@ public class APosition extends Position implements Comparable<Position> {
         if (obj == null) {
             return false;
         }
-//        if (!(obj instanceof APosition) && !(obj instanceof Position)) {
-//            return false;
-//        }
-        if (!(obj instanceof AbstractPoint)) {
+        if (!(obj instanceof Position)) {
             return false;
         }
         
-        int otherX = ((AbstractPoint) obj).getX();
-        int otherY = ((AbstractPoint) obj).getY();
-        final Position other = (Position) obj;
-        if (this.getX() != otherX || this.getY() != otherY) {
-            return false;
-        }
-        
-        return true;
+        int otherX = ((Position) obj).getX();
+        int otherY = ((Position) obj).getY();
+        return this.getX() == otherX && this.getY() == otherY;
     }
     
     /**
      * Returns true if given position has land connection to given point.
      */
     public boolean hasPathTo(APosition point) {
-        return BWTA.isConnected(this.toTilePosition(), point.toTilePosition());
+        return AMap.getMap().isConnected(this.toTilePosition(), point.toTilePosition());
     }
 
     public boolean isCloseToMapBounds() {
@@ -348,10 +332,10 @@ public class APosition extends Position implements Comparable<Position> {
     }    
 
     /**
-     * Return BWTA region for this position.
+     * Return BWTA area for this position.
      */
-    public Region getRegion() {
-        return AMap.getRegion(this);
+    public Area getArea() {
+        return AMap.getArea(this);
     }
 
 }

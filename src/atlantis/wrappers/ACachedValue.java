@@ -1,7 +1,8 @@
 package atlantis.wrappers;
 
 import atlantis.AGame;
-import bwapi.Unit;
+import org.openbw.bwapi4j.unit.Unit;
+
 import java.util.HashMap;
 import java.util.Map;
 

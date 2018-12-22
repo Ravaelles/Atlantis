@@ -7,6 +7,7 @@ import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.ProtossConstructionManager;
 import atlantis.debug.AUnitTypesHelper;
 import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
 import atlantis.production.orders.ABuildOrderManager;
@@ -100,7 +101,7 @@ public class Atlantis implements BWEventListener {
         // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
         // =========================================================
         // Set up base configuration based on race used.
-        Race racePlayed = handler.self().getRace(); //AGame.getPlayerUs().getRace();
+        Race racePlayed = handler.self().getRace(); //AGame.getPlayerSelf().getRace();
         if (racePlayed.equals(Race.Protoss)) {
             AtlantisConfig.useConfigForProtoss();
         } else if (racePlayed.equals(Race.Terran)) {
@@ -110,9 +111,8 @@ public class Atlantis implements BWEventListener {
         }
 
         System.out.print("Analyzing map... ");
-//        BWTA.readMap();
-//        BWTA.analyze();
-        System.out.println("Map data ready.");
+        AMap.initializeMap();
+        System.out.println("Ready!");
         
         // === Set some BWAPI params ===============================
         
@@ -520,6 +520,13 @@ public class Atlantis implements BWEventListener {
      */
     public static InteractionHandler getHandler() {
         return getInstance().handler;
+    }
+
+    /**
+     * Returns BW object of OpenBW.
+     */
+    public static BW getBW() {
+        return getInstance().bw;
     }
 
     // =========================================================

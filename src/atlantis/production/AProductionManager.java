@@ -97,7 +97,7 @@ public class AProductionManager {
 //        System.out.println("Research " + upgrade + " in " + buildingType);
         if (buildingType != null) {
             AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
-//            System.out.println(upgrade + " level is " + AGame.getPlayerUs().getUpgradeLevel(upgrade));
+//            System.out.println(upgrade + " level is " + AGame.getPlayerSelf().getUpgradeLevel(upgrade));
             if (building != null && !building.isBusy()) {
 //                System.out.println("   ISSUE");
                 building.upgrade(upgrade);

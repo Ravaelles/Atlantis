@@ -7,8 +7,8 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.BaseLocation;
-import bwta.Chokepoint;
+import bwta.Base;
+import bwta.ChokePoint;
 
 /**
  *
@@ -58,25 +58,25 @@ public class TerranBunkerPositionFinder {
 
         // Bunker at MAIN CHOKEPOINT
         if (locationModifier.equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
-            Chokepoint chokepointForNaturalBase = AMap.getChokepointForMainBase();
-            if (chokepointForNaturalBase != null) {
-                return APosition.create(chokepointForNaturalBase.getCenter())
+            ChokePoint chokePointForNaturalBase = AMap.getChokePointForMainBase();
+            if (chokePointForNaturalBase != null) {
+                return APosition.create(chokePointForNaturalBase.getCenter())
                         .translatePercentTowards(mainBase.getPosition(), 5);
             }
         }
 
         // Bunker at NATURAL CHOKEPOINT
         else {
-            Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
-            if (chokepointForNaturalBase != null && mainBase != null) {
-                BaseLocation naturalBase = AMap.getNaturalBaseLocation(Select.mainBase().getPosition());
-                return APosition.create(chokepointForNaturalBase.getCenter())
+            ChokePoint chokePointForNaturalBase = AMap.getChokePointForNaturalBase();
+            if (chokePointForNaturalBase != null && mainBase != null) {
+                Base naturalBase = AMap.getNaturalBase(Select.mainBase().getPosition());
+                return APosition.create(chokePointForNaturalBase.getCenter())
                         .translatePercentTowards(naturalBase, 25);
 
 //                    System.out.println();
 //                    System.err.println(nearTo);
-//                    System.err.println("DIST TO CHOKE = " + nearTo.distanceTo(chokepointForNaturalBase.getCenter()));
-//                    System.err.println("DIST TO REGION = " + nearTo.distanceTo(nearTo.getRegion().getCenter()));
+//                    System.err.println("DIST TO CHOKE = " + nearTo.distanceTo(chokePointForNaturalBase.getCenter()));
+//                    System.err.println("DIST TO REGION = " + nearTo.distanceTo(nearTo.getArea().getCenter()));
             }
         }
         

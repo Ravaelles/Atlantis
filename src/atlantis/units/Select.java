@@ -11,10 +11,10 @@ import atlantis.repair.ARepairManager;
 import atlantis.scout.AScoutManager;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
-import bwapi.Player;
-import bwapi.Position;
-import bwapi.PositionedObject;
-import bwapi.Unit;
+import org.openbw.bwapi4j.Player;
+import org.openbw.bwapi4j.Position;
+import org.openbw.bwapi4j.unit.Unit;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,8 +34,8 @@ import java.util.List;
 public class Select<T> {
 
     // =====================================================================
+
     // Collection<AUnit> wrapper with extra methods
-    //private AUnits units;
     private List<T> data;
 
     // CACHED variables
@@ -43,6 +43,7 @@ public class Select<T> {
 
     // =====================================================================
     // Constructor is private, use our(), enemy() or neutral() methods
+
     protected Select(Collection<T> unitsData) {
         data = new ArrayList<>();
         data.addAll(unitsData);
@@ -50,11 +51,12 @@ public class Select<T> {
 
     // =====================================================================
     // Helper for base object
+
     private static List<AUnit> ourUnits() {
         List<AUnit> data = new ArrayList<>();
 
-//        System.out.println("AGame.getPlayerUs().getUnits() = " + AGame.getPlayerUs().getUnits().size());
-        for (Unit u : AGame.getPlayerUs().getUnits()) {
+//        System.out.println("AGame.getPlayerSelf().getUnits() = " + AGame.getPlayerSelf().getUnits().size());
+        for (Unit u : Atlantis.getBW().getUnits(AGame.self())) {
 //            System.out.println(u);
 //            System.out.println("******** " + AUnit.createFrom(u));
             data.add(AUnit.createFrom(u));
@@ -70,11 +72,9 @@ public class Select<T> {
 
         // === Handle UMT ==========================================
         if (AGame.isUmtMode()) {
-            Player playerUs = AGame.getPlayerUs();
             for (Player player : AGame.getPlayers()) {
-                if (player.isEnemy(playerUs)) {
-                    for (Unit u : player.getUnits()) {
-                        AUnit unit = AUnit.createFrom(u);
+                if (player.isEnemy()) {
+                    for (AUnit unit : Select.playerUnits(player)) {
                         if (!unit.getType().isSpecial()) {
                             data.add(unit);
                         }
@@ -85,7 +85,7 @@ public class Select<T> {
 
         // === Non-UMT, standard 1:1 ===============================
         else {
-            for (Unit u : AGame.getEnemy().getUnits()) {
+            for (Unit u : Atlantis.getBW().getUnits(AGame.enemy())) {
                 AUnit unit = AUnit.createFrom(u);
                 if (!unit.getType().isSpecial()) {
                     data.add(unit);
@@ -96,10 +96,20 @@ public class Select<T> {
         return data;
     }
 
-    private static List<AUnit> neutralUnits() {
+//    private static List<AUnit> neutralUnits() {
+//        List<AUnit> data = new ArrayList<>();
+//
+//        for (Unit u : Atlantis.getHandler().neutral().getUnits()) {
+//            data.add(AUnit.createFrom(u));
+//        }
+//
+//        return data;
+//    }
+
+    private static List<AUnit> playerUnits(Player player) {
         List<AUnit> data = new ArrayList<>();
 
-        for (Unit u : Atlantis.getHandler().neutral().getUnits()) {
+        for (Unit u : Atlantis.getBW().getUnits(player)) {
             data.add(AUnit.createFrom(u));
         }
 
@@ -130,6 +140,32 @@ public class Select<T> {
                     AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
+        }
+
+        return new Select<AUnit>(data);
+    }
+
+    /**
+     * Selects all geysers on the map.
+     */
+    public static Select<AUnit> geysers() {
+        List<AUnit> data = new ArrayList<>();
+
+        for (Unit u : Atlantis.getBW().getVespeneGeysers()) {
+            data.add(AUnit.createFrom(u));
+        }
+
+        return new Select<AUnit>(data);
+    }
+
+    /**
+     * Selects all minerals on the map.
+     */
+    public static Select<AUnit> minerals() {
+        List<AUnit> data = new ArrayList<>();
+
+        for (Unit u : Atlantis.getBW().getMineralPatches()) {
+            data.add(AUnit.createFrom(u));
         }
 
         return new Select<AUnit>(data);
@@ -393,32 +429,13 @@ public class Select<T> {
      * Selects all visible neutral units (minerals, geysers, critters). Since they're visible, the
      * parameterized type is AUnit
      */
-    public static Select<AUnit> neutral() {
-//        List<AUnit> data = new ArrayList<>();
+//    public static Select<AUnit> neutral() {
+////        List<AUnit> data = new ArrayList<>();
+////
+////        data.addAll(neutralUnits());
 //
-//        data.addAll(neutralUnits());
-
-        return new Select<AUnit>(neutralUnits());
-    }
-
-    /**
-     * Selects all (accessible) minerals on the map.
-     */
-    public static Select<AUnit> minerals() {
-        return (Select<AUnit>) neutral().ofType(
-                AUnitType.Resource_Mineral_Field,
-                AUnitType.Resource_Mineral_Field_Type_2,
-                AUnitType.Resource_Mineral_Field_Type_3
-        );
-    }
-
-    /**
-     * Selects all geysers on the map.
-     */
-    public static Select<AUnit> geysers() {
-        Select<AUnit> selectUnits = neutral();
-        return (Select<AUnit>) selectUnits.ofType(AUnitType.Resource_Vespene_Geyser);
-    }
+//        return new Select<AUnit>(neutralUnits());
+//    }
 
     /**
      * Create initial search-pool of units from given collection of units.
@@ -1321,7 +1338,7 @@ public class Select<T> {
         Collections.sort(data, new Comparator<T>() {
             @Override
             public int compare(T p1, T p2) {
-                if (p1 == null || !(p1 instanceof PositionedObject)) {
+                if (p1 == null || (! (p1 instanceof ) )) {
                     return -1;
                 }
                 if (p2 == null || !(p2 instanceof PositionedObject)) {

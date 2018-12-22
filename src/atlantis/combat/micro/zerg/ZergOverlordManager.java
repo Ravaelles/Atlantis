@@ -32,7 +32,7 @@ public class ZergOverlordManager {
      * We know at least one enemy building location.
      */
     private static void actWhenWeKnowEnemy(AUnit overlord) {
-//        Position goTo = AtlantisMap.getMainBaseChokepoint();
+//        Position goTo = AtlantisMap.getMainBaseChokePoint();
 //        if (goTo == null) {
 //            goTo = Select.mainBase();
 //        }

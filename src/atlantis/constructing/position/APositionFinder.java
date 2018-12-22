@@ -123,7 +123,7 @@ public class APositionFinder {
             return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }
         else {
-            System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
+            System.err.println("Invalid race: " + AGame.getPlayerSelf().getRace());
             System.exit(-1);
             return null;
         }

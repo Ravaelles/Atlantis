@@ -20,7 +20,7 @@ public class AtlantisIgniter {
         
         // Only allow bwapi.ini modification if file MODIFY_BWAPI is found
         // in project root or level up
-        if (!(new File("MODIFY_BWAPI")).exists() && !(new File("../MODIFY_BWAPI")).exists()) {
+        if (! (new File("MODIFY_BWAPI")).exists() && ! (new File("../MODIFY_BWAPI")).exists()) {
             System.out.println("Tournament mode: don't modify bwapi.ini");
             return;
         }
@@ -83,7 +83,7 @@ public class AtlantisIgniter {
             if (line.startsWith("race = ")) {
                 fileContent[i] = "race = " + AtlantisConfig.OUR_RACE;
                 
-                if (!fileContent[i].equals(line)) {
+                if (! fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
                     System.out.println("Updated our race in bwapi.ini to: " + AtlantisConfig.OUR_RACE);
                 }

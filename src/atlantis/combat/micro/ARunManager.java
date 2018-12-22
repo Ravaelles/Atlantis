@@ -332,9 +332,9 @@ public class ARunManager {
             return null;
         }
         
-        // === Define if we don't want to go towards region polygon points ========
+        // === Define if we don't want to go towards area polygon points ========
 
-        boolean avoidCornerPoints = AMap.getDistanceToAnyRegionPolygonPoint(unit.getPosition()) > 1.5;
+        boolean avoidCornerPoints = AMap.getDistanceToAnyAreaPolygonPoint(unit.getPosition()) > 1.5;
         
         // ========================================================================
         
@@ -507,8 +507,8 @@ public class ARunManager {
         
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
 
-        if (isOkay && !allowCornerPointsEtc && AMap.getDistanceToAnyRegionPolygonPoint(unitPosition) < 1) {
-//            isOkay = AMap.getDistanceToAnyRegionPolygonPoint(unitPosition);
+        if (isOkay && !allowCornerPointsEtc && AMap.getDistanceToAnyAreaPolygonPoint(unitPosition) < 1) {
+//            isOkay = AMap.getDistanceToAnyAreaPolygonPoint(unitPosition);
             isOkay = false;
         }
 

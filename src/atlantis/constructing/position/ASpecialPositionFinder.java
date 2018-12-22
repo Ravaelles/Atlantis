@@ -6,7 +6,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.BaseLocation;
+import bwta.Base;
 
 public class ASpecialPositionFinder {
     
@@ -17,12 +17,12 @@ public class ASpecialPositionFinder {
     public static final String BASE_AT_NEAREST_FREE = "NEAREST_FREE";
     
     /**
-     * Constant used as a hint to indicate that building should be placed in the main base region.
+     * Constant used as a hint to indicate that building should be placed in the main base area.
      */
     public static final String NEAR_MAIN = "MAIN";
     
     /**
-     * Constant used as a hint to indicate that building should be placed in the chokepoints of the main base.
+     * Constant used as a hint to indicate that building should be placed in the chokePoints of the main base.
      */
     public static final String NEAR_MAIN_CHOKEPOINT = "MAIN_CHOKEPOINT";
     
@@ -54,7 +54,7 @@ public class ASpecialPositionFinder {
     }
 
     /**
-     * Returns build position for next base. It will usually be next free BaseLocation that doesn't have base
+     * Returns build position for next base. It will usually be next free Base that doesn't have base
      * built.
      */
     public static APosition findPositionForBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
@@ -79,30 +79,30 @@ public class ASpecialPositionFinder {
     // =========================================================
     
     private static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        BaseLocation baseLocationToExpand;
+        Base baseToExpand;
         int ourBasesCount = Select.ourBases().count();
         if (ourBasesCount <= 2) {
-            baseLocationToExpand = AMap.getExpansionFreeBaseLocationNearestTo(
+            baseToExpand = AMap.getExpansionFreeBaseNearestTo(
                     Select.mainBase().getPosition()
             );
         }
         else {
-            baseLocationToExpand = AMap.getExpansionBaseLocationMostDistantToEnemy();
+            baseToExpand = AMap.getExpansionBaseMostDistantToEnemy();
         }
         
-        if (baseLocationToExpand == null) {
+        if (baseToExpand == null) {
             if (ourBasesCount <= 2) {
-                System.err.println("baseLocationToExpand is null");
+                System.err.println("baseToExpand is null");
             }
             return null;
         }
         
-        APosition near = APosition.create(baseLocationToExpand.getPosition()).translateByPixels(-64, -48);
+        APosition near = APosition.create(baseToExpand.getPosition()).translateByPixels(-64, -48);
         constructionOrder.setMaxDistance(1);
 
 //        System.out.println("Main base = " + Select.mainBase());
-//        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
-//        System.out.println(builder + " / " + building + " / " +  APosition.createFrom(baseLocationToExpand.getPosition()));
+//        System.out.println("baseToExpand = " + baseToExpand);
+//        System.out.println(builder + " / " + building + " / " +  APosition.createFrom(baseToExpand.getPosition()));
 
         return APositionFinder.findStandardPosition(
                 builder, building, near, constructionOrder.getMaxDistance()
@@ -119,7 +119,7 @@ public class ASpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = APosition.create(AMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().getPosition()).getPosition()
+        APosition near = APosition.create(AMap.getExpansionFreeBaseNearestTo(Select.mainBase().getPosition()).getPosition()
         ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);

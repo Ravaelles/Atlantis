@@ -3,8 +3,8 @@ package atlantis.util;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import bwapi.Position;
-import bwapi.Unit;
+import org.openbw.bwapi4j.Position;
+import org.openbw.bwapi4j.unit.Unit;
 
 public class PositionUtil {
 
@@ -13,16 +13,22 @@ public class PositionUtil {
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
      * building dimensions.
      */
+//    public static double distanceTo(Object object1, Object object2) {
+//        if (object1 == null || object2 == null) {
+//            throw new Exception("distanceTo received null, object1:" + object1 + ", object2:" + object2);
+//        }
+//    }
+
     public static double distanceTo(Object object1, Object object2) {
 //        if (object1 == null || object2 == null) {
 //            return -1;
 //        }
-        
+
         // === Convert object1 to position or unit ====================
-        
+
         Position fromPosition = null;
         Unit fromUnit = null;
-        
+
         if (object1 instanceof AUnit) {
             fromUnit = ((AUnit) object1).u();
         }
@@ -35,16 +41,16 @@ public class PositionUtil {
         else if (object1 instanceof Position) {
             fromPosition = (Position) object1;
         }
-        
+
         if (fromPosition == null && fromUnit == null) {
             throw new RuntimeException("Invalid class for argument `from`: " + object1);
         }
-        
+
         // === Convert object2 to position or unit ===================
-        
+
         Position toPosition = null;
         Unit toUnit = null;
-        
+
         if (object2 instanceof AUnit) {
             toUnit = ((AUnit) object2).u();
         }
@@ -57,11 +63,11 @@ public class PositionUtil {
         else if (object2 instanceof Position) {
             toPosition = (Position) object2;
         }
-        
+
         if (toPosition == null && toUnit == null) {
             throw new RuntimeException("Invalid class for argument `to`: " + object2);
         }
-        
+
         // =========================================================
 
         // From is POSITION
@@ -70,20 +76,20 @@ public class PositionUtil {
                 return (double) fromPosition.getDistance(toPosition) / 32;
             }
             else {
-                return (double) fromPosition.getDistance(toUnit) / 32;
+                return (double) fromPosition.getDistance(toUnit.getPosition()) / 32;
             }
         }
-        
+
         // From is UNIT
         else {
             if (toPosition != null) {
                 return (double) fromUnit.getDistance(toPosition) / 32;
             }
-            
-            // UNIT to UNIT distance - can be cached
+
+            // UNIT to UNIT distance
             else {
-//                return (double) fromUnit.getDistance(toUnit) / 32;
-                return AUnit.unitDistancesCached.getDistanceBetweenUnits(fromUnit, toUnit);
+                return (double) fromUnit.getDistance(toUnit) / 32;
+//                return AUnit.unitDistancesCached.getDistanceBetweenUnits(fromUnit, toUnit);
             }
         }
     }

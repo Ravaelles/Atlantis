@@ -10,7 +10,7 @@ import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.Chokepoint;
+import bwta.ChokePoint;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -108,9 +108,9 @@ public class ARepairCommander {
         // Assign two repairers to a bunker if it's not surrounded by many of our combat units
 //        if (bunkersCounter == 1) {
 //        for (AUnit bunker : bunkers.list()) {
-        Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
-        if (chokepointForNaturalBase != null) {
-            AUnit bunker = bunkers.nearestTo(chokepointForNaturalBase.getCenter());
+        ChokePoint chokePointForNaturalBase = AMap.getChokePointForNaturalBase();
+        if (chokePointForNaturalBase != null) {
+            AUnit bunker = bunkers.nearestTo(chokePointForNaturalBase.getCenter());
             if (bunker == null) {
                 return;
             }

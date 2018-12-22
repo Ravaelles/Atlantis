@@ -1,23 +1,13 @@
 package atlantis.position;
 
 import atlantis.util.AtlantisUtilities;
-import bwapi.AbstractPoint;
-import bwapi.Position;
-import bwta.BWTA;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import org.openbw.bwapi4j.Position;
 
-/**
- * This class is wrapper for ArrayList<Position>. It allows some helpful methods to be executed upon squad of
- * positions like sorting etc. TODO: check whether using PositionedObject instead of Positions yields correct
- * behavior
- */
-public class Positions<T extends AbstractPoint<Position>> {
+import java.util.*;
 
-    private ArrayList<T> positions = new ArrayList<>();
+public class Positions<T> {
+
+    private List<T> positions = new ArrayList<>();
 
     /**
      * This mapping can be used to store extra values assigned to positions e.g. if positions reprents mineral

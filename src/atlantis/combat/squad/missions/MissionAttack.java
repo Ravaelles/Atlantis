@@ -11,7 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
-import bwta.BaseLocation;
+import bwta.Base;
 
 /**
  * This is the mission object that is used by battle squads and it indicates that we should attack 
@@ -82,7 +82,7 @@ public class MissionAttack extends Mission {
 
     /**
      * Returns the <b>position</b> (not the unit itself) where we should point our units to in hope 
-     * because as far as we know, the enemy is/can be there and it makes sense to attack in this region.
+     * because as far as we know, the enemy is/can be there and it makes sense to attack in this area.
      */
     @Override
     public APosition getFocusPoint() {
@@ -121,7 +121,7 @@ public class MissionAttack extends Mission {
         }
         
         // Try to go to some starting location, hoping to find enemy there.
-        BaseLocation startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
+        Base startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
         if (startLocation != null) {
         	//System.out.println("focus on start location");	//TODO debug
             return APosition.create(startLocation.getPosition());

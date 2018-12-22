@@ -18,8 +18,8 @@ import atlantis.units.actions.UnitActions;
 import atlantis.util.CodeProfiler;
 import bwapi.Color;
 import bwapi.Position;
-import bwta.BaseLocation;
-import bwta.Region;
+import bwta.Base;
+import bwta.Area;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -129,7 +129,7 @@ public class AScoutManager {
 //        }
         // =========================================================
         // Get nearest unexplored starting location and go there
-        BaseLocation startingLocation;
+        Base startingLocation;
         if (scout.getType().equals(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
             startingLocation = AMap.getStartingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
@@ -141,8 +141,8 @@ public class AScoutManager {
         // =========================================================
 //        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
 //        if (enemyBase != null) {
-//            Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
-//            enemyBaseRegion.getPolygon().getCenter()
+//            Area enemyBaseArea = AtlantisMap.getArea(enemyBase);
+//            enemyBaseArea.getPolygon().getCenter()
 //        }
         // =========================================================
         if (startingLocation != null) {
@@ -169,13 +169,13 @@ public class AScoutManager {
         // === Remain at the enemy base if it's known ==============
         APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-            Region enemyBaseRegion = AMap.getRegion(enemyBase);
+            Area enemyBaseArea = AMap.getArea(enemyBase);
 
             if (scoutingAroundBasePoints.isEmpty()) {
-                initializeEnemyRegionPolygonPoints(scout, enemyBaseRegion);
+                initializeEnemyAreaPolygonPoints(scout, enemyBaseArea);
             }
 
-            defineNextPolygonPointForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
+            defineNextPolygonPointForEnemyBaseRoamingUnit(enemyBaseArea, scout);
             if (scoutingAroundBaseLastPolygonPoint != null) {
                 scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE);
                 return true;
@@ -237,13 +237,13 @@ public class AScoutManager {
     }
 
     private static void scoutForTheNextBase(AUnit scout) {
-        BaseLocation baseLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
-        if (baseLocation != null) {
-            scout.move(baseLocation.getPosition(), UnitActions.MOVE);
+        Base base = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
+        if (base != null) {
+            scout.move(base.getPosition(), UnitActions.MOVE);
         }
     }
 
-    private static void defineNextPolygonPointForEnemyBaseRoamingUnit(Region region, AUnit scout) {
+    private static void defineNextPolygonPointForEnemyBaseRoamingUnit(Area area, AUnit scout) {
         
         // Change roaming direction if we were forced to run from enemy units
         if (scoutingAroundBaseWasInterrupted) {
@@ -259,7 +259,7 @@ public class AScoutManager {
                 ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
 
         if (goTo == null || scoutingAroundBaseWasInterrupted) {
-            goTo = useNearestPolygonPoint(region, scout);
+            goTo = useNearestPolygonPoint(area, scout);
         } else {
             if (scout.distanceTo(goTo) <= 3) {
                 scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + deltaIndex)
@@ -292,10 +292,10 @@ public class AScoutManager {
         }
     }
     
-    private static void initializeEnemyRegionPolygonPoints(AUnit scout, Region enemyBaseRegion) {
-        Position centerOfRegion = enemyBaseRegion.getCenter();
+    private static void initializeEnemyAreaPolygonPoints(AUnit scout, Area enemyBaseArea) {
+        Position centerOfArea = enemyBaseArea.getCenter();
 
-        for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
+        for (Position point : enemyBaseArea.getPolygon().getPoints()) {
             APosition position = APosition.create(point);
 
             // Calculate actual ground distance to this position
@@ -305,10 +305,10 @@ public class AScoutManager {
             if (groundDistance < 2) {
                 continue;
             }
-            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
+            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfArea, 3.5);
 
-            // If positions is walkable, not in different region and has path to it, it should be ok
-            if (AMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
+            // If positions is walkable, not in different area and has path to it, it should be ok
+            if (AMap.isWalkable(position) && enemyBaseArea.getPolygon().isInside(position)
                     && scout.hasPathTo(position) && groundDistance >= 4
                     && groundDistance <= 1.7 * scout.distanceTo(position)) {
                 scoutingAroundBasePoints.addPosition(position);
@@ -322,15 +322,15 @@ public class AScoutManager {
         }
     }
 
-    private static APosition useNearestPolygonPoint(Region region, AUnit scout) {
+    private static APosition useNearestPolygonPoint(Area area, AUnit scout) {
         APosition nearest = scoutingAroundBasePoints.nearestTo(scout.getPosition());
         scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.getLastIndex();
         return nearest;
     }
 
     public static APosition getUmtFocusPoint(APosition startPosition) {
-        Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(startPosition);
-        return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
+        Area nearestUnexploredArea = AMap.getNearestUnexploredArea(startPosition);
+        return nearestUnexploredArea != null ? APosition.create(nearestUnexploredArea.getCenter()) : null;
     }
 
     // =========================================================

@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.AGame;
+import atlantis.Atlantis;
 import atlantis.combat.micro.ARunManager;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AConstructionManager;
@@ -15,7 +16,6 @@ import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.ACachedValue;
 
-import org.openbw.bwapi4j.Player;
 import org.openbw.bwapi4j.Position;
 import org.openbw.bwapi4j.type.UnitCommandType;
 import org.openbw.bwapi4j.type.WeaponType;
@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AUnit extends APositionedObject implements Comparable, AUnitOrders {
+public class AUnit extends APosition implements Comparable, AUnitOrders {
     
     // Mapping of native unit IDs to AUnit objects
     private static final Map<Integer, AUnit> instances = new HashMap<>();
@@ -759,7 +759,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
      * Returns true if this unit belongs to us.
      */
     public boolean isOurUnit() {
-        return getPlayer().equals(AGame.getPlayerUs());
+        return getPlayer().equals(AGame.getPlayerSelf());
     }
 
     /**
@@ -782,8 +782,12 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 
     // === Method intermediates between OpenBW and Atlantis ======================================================
 
-    public Player getPlayer() {
-        return u.getPlayer();
+//    public Player getPlayer() {
+//        return Atlantis.getHandler().self().;
+//    }
+
+    public boolean isMyUnit() {
+//        return AGame.
     }
 
     public int getX() {

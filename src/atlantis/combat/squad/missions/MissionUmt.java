@@ -7,7 +7,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import bwta.Region;
+import bwta.Area;
 
 /**
  * This is the mission that is best used in UMT maps.
@@ -99,9 +99,9 @@ public class MissionUmt extends Mission {
 
         // === Return location to go to ====================================
         
-        Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
-        explorePosition = (nearestUnexploredRegion != null
-                ? APosition.create(nearestUnexploredRegion.getCenter()) : null);
+        Area nearestUnexploredArea = AMap.getNearestUnexploredArea(flagshipUnit.getPosition());
+        explorePosition = (nearestUnexploredArea != null
+                ? APosition.create(nearestUnexploredArea.getCenter()) : null);
         if (!unit.isMoving() && explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
             unit.setTooltip("#Explore" + (isFlagship ? "Flag" : ""));
             return unit.move(explorePosition, UnitActions.EXPLORE);
@@ -110,7 +110,7 @@ public class MissionUmt extends Mission {
         // === Return closest enemy ========================================
         
         AUnit nearestEnemy = Select.enemy().nearestTo(flagshipUnit);
-        if (nearestUnexploredRegion == null && nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
+        if (nearestUnexploredArea == null && nearestEnemy != null && unit.hasPathTo(nearestEnemy.getPosition())) {
             enemyToEngage = nearestEnemy;
             unit.setTooltip("#Engage");
             
@@ -156,7 +156,7 @@ public class MissionUmt extends Mission {
     // =========================================================
     /**
      * Returns the <b>position</b> (not the unit itself) where we should point our units to in hope because as
-     * far as we know, the enemy is/can be there and it makes sense to attack in this region.
+     * far as we know, the enemy is/can be there and it makes sense to attack in this area.
      */
 //    public static APosition getFocusPoint() {
 //
@@ -173,7 +173,7 @@ public class MissionUmt extends Mission {
 //        }
 //
 //        // === Return location to go to ====================================
-//        return AtlantisMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
+//        return AtlantisMap.getNearestUnexploredArea(flagshipUnit.getPosition());
 //    }
     
     @Override

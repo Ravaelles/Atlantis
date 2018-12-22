@@ -7,7 +7,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import bwta.Chokepoint;
+import bwta.ChokePoint;
 
 public class MissionDefend extends Mission {
     
@@ -49,7 +49,7 @@ public class MissionDefend extends Mission {
         }
 
         // =========================================================
-        // Too close to the chokepoint
+        // Too close to the chokePoint
         else if (isCriticallyCloseToFocusPoint(unit, focusPoint)) {
             boolean result = unit.moveAwayFrom(focusPoint, 0.5);
             if (result) {
@@ -215,12 +215,12 @@ public class MissionDefend extends Mission {
         // === Return position near the choke point ================
         
 //        if (Select.ourBases().count() <= 1) {
-//            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());
+//            return APosition.create(AtlantisMap.getChokePointForMainBase().getCenter());
 //        }
 //        else {
-        Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
-        if (chokepointForNaturalBase != null) {
-            return APosition.create(chokepointForNaturalBase.getCenter());
+        ChokePoint chokePointForNaturalBase = AMap.getChokePointForNaturalBase();
+        if (chokePointForNaturalBase != null) {
+            return APosition.create(chokePointForNaturalBase.getCenter());
         }
         else {
             return null;

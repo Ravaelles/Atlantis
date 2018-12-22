@@ -4,7 +4,7 @@ import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
-import bwta.Chokepoint;
+import bwta.ChokePoint;
 
 /**
  *
@@ -141,7 +141,7 @@ public class TerranSiegeTankManager {
     // =========================================================
     
     private static boolean canSiegeHere(AUnit tank) {
-        Chokepoint choke = AMap.getNearestChokepoint(tank.getPosition());
+        ChokePoint choke = AMap.getNearestChokePoint(tank.getPosition());
         if (choke == null) {
             return true;
         }

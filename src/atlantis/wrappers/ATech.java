@@ -48,7 +48,7 @@ public class ATech {
      * Returns level of given upgrade. 0 is initially, it can raise up to 3.
      */
     public static int getUpgradeLevel(UpgradeType upgrade) {
-        return AGame.getPlayerUs().getUpgradeLevel(upgrade);
+        return AGame.getPlayerSelf().getUpgradeLevel(upgrade);
     }
     
     // =========================================================
@@ -64,7 +64,7 @@ public class ATech {
     // =========================================================
     
     private static boolean isResearchedTech(TechType tech) {
-        return AGame.getPlayerUs().hasResearched(tech);
+        return AGame.getPlayerSelf().hasResearched(tech);
     }
     
     private static boolean isResearchedUpgrade(UpgradeType upgrade, int expectedUpgradeLevel) {

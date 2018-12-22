@@ -52,7 +52,7 @@ public class AExpansionManager {
         
         // === Check if we have almost as many bases as base locations; if so, exit ======
         
-        if (numberOfBases >= AMap.getBaseLocations().size() - 2) {
+        if (numberOfBases >= AMap.getBases().size() - 2) {
             return;
         }
 

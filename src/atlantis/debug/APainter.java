@@ -96,7 +96,7 @@ public class APainter {
         paintCodeProfiler();
 //        paintTestSupplyDepotLocationsNearMain();
         paintConstructionProgress();
-//        paintEnemyRegionDetails();
+//        paintEnemyAreaDetails();
         paintImportantPlaces();
         paintColoredCirclesAroundUnits();
         paintBuildingHealth();
@@ -962,12 +962,12 @@ public class APainter {
     /**
      * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
      */
-    private static void paintEnemyRegionDetails() {
+    private static void paintEnemyAreaDetails() {
         APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-            Region enemyBaseRegion = AMap.getRegion(enemyBase);
-//            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
-//            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
+            Area enemyBaseArea = AMap.getArea(enemyBase);
+//            Position polygonCenter = enemyBaseArea.getPolygon().getCenter();
+//            APosition polygonCenter = APosition.create(enemyBaseArea.getPolygon().getCenter());
             for (Position point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.YELLOW);
             }
