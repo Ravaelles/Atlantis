@@ -10,5 +10,6 @@
     <orderEntry type="library" name="BWAPI4J" level="project" />
     <orderEntry type="library" name="BWAPI4J-javadoc" level="project" />
     <orderEntry type="library" name="BWAPI4J-sources" level="project" />
+    <orderEntry type="library" name="jnativehook-2.1.0" level="project" />
   </component>
 </module>
