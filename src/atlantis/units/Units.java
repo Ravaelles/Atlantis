@@ -1,18 +1,12 @@
 package atlantis.units;
 
 import atlantis.position.APosition;
-import atlantis.position.APositionedObject;
 import atlantis.position.PositionOperationsWrapper;
 import atlantis.util.AtlantisUtilities;
+import atlantis.util.PositionUtil;
 import org.openbw.bwapi4j.Position;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class is wrapper for ArrayList<AUnit>. It allows some helpful methods to be executed upon squad of
@@ -206,27 +200,8 @@ public class Units {
         
         ArrayList<AUnit> unitsList = new ArrayList<>();
         unitsList.addAll(units.keySet());
-        
-        Collections.sort(unitsList, new Comparator<APositionedObject>() {
-            @Override
-            public int compare(APositionedObject p1, APositionedObject p2) {
-                // @FIX
-                if (p1 == null || ! (p1 instanceof PositionedObject)) {
-                    return -1;
-                }
-                if (p2 == null || ! (p2 instanceof PositionedObject)) {
-                    return 1;
-                }
-                double distance1 = p1.distanceTo(position);
-                double distance2 = p2.distanceTo(position);
-                if (distance1 == distance2) {
-                    return 0;
-                }
-                else {
-                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
-                }
-            }
-        });
+
+        PositionUtil.sortByDistanceTo(unitsList, position, nearestFirst);
         
         // Create new mapping, with new order
         LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
@@ -242,37 +217,15 @@ public class Units {
      * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first unit will be the one closest to given position.
      */
-    public Units sortByGroundDistanceTo(final Position position, final boolean nearestFirst) {
-        if (position == null) {
+    public Units sortByGroundDistanceTo(final Position toPosition, final boolean nearestFirst) {
+        if (toPosition == null) {
             return null;
         }
         
         ArrayList<AUnit> unitsList = new ArrayList<>();
         unitsList.addAll(units.keySet());
         
-        Collections.sort(unitsList, new Comparator<APositionedObject>() {
-            @Override
-            public int compare(APositionedObject p1, APositionedObject p2) {
-                if (p1 == null || ! (p1 instanceof PositionedObject)) {
-                    return -1;
-                }
-                if (p2 == null || ! (p2 instanceof PositionedObject)) {
-                    return 1;
-                }
-                double distance1 = BWTA.getGroundDistance(
-                        p1.getPosition().toTilePosition(), position.toTilePosition()
-                );
-                double distance2 = BWTA.getGroundDistance(
-                        p2.getPosition().toTilePosition(), position.toTilePosition()
-                );
-                if (distance1 == distance2) {
-                    return 0;
-                }
-                else {
-                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
-                }
-            }
-        });
+        PositionUtil.sortByDistanceTo(unitsList, toPosition, nearestFirst);
         
         // Create new mapping, with new order
         LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();

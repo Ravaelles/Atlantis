@@ -6,6 +6,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.position.APosition;
 import atlantis.repair.ARepairManager;
@@ -32,7 +33,7 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AUnit extends APosition implements Comparable, AUnitOrders {
+public class AUnit extends APosition implements Comparable<Position>, AUnitOrders {
 
     // Mapping of native unit IDs to AUnit objects
     private static final Map<Integer, AUnit> instances = new HashMap<>();
@@ -252,9 +253,7 @@ public class AUnit extends APosition implements Comparable, AUnitOrders {
 
     @Override
     public int hashCode() {
-//        int hash = 7;
-        int hash = this.getId();
-        return hash;
+        return super.hashCode();
     }
 
     @Override
@@ -910,7 +909,7 @@ public class AUnit extends APosition implements Comparable, AUnitOrders {
     }
 
     public List<AUnit> getLarva() {
-        return (List<AUnit>) convertToAUnitCollection(u.getLarva());
+        return (List<AUnit>) convertToAUnitCollection(hatcheryUnit().getLarva());
     }
 
     public AUnit getTarget() {
@@ -922,15 +921,15 @@ public class AUnit extends APosition implements Comparable, AUnitOrders {
     }
 
     public AUnit getOrderTarget() {
-        return mobileUnit().getOrderTarget() != null ? AUnit.createFrom(u.getOrderTarget()) : null;
+        return mobileUnit().getOrderTarget() != null ? AUnit.createFrom(mobileUnit().getOrderTarget()) : null;
     }
 
     public AUnit getBuildUnit() {
-        return workerUnit().getBuildUnit() != null ? AUnit.createFrom(u.getBuildUnit()) : null;
+        return workerUnit().getBuildUnit() != null ? AUnit.createFrom(workerUnit().getBuildUnit()) : null;
     }
 
     public AUnitType getBuildType() {
-        return workerUnit().getBuildType() != null ? AUnitType.createFrom(u.getBuildType()) : null;
+        return workerUnit().getBuildType() != null ? AUnitType.createFrom(workerUnit().getBuildType()) : null;
     }
 
     public boolean isVulture() {
@@ -942,80 +941,80 @@ public class AUnit extends APosition implements Comparable, AUnitOrders {
     }
 
     public boolean isMorphing() {
-        return u.isMorphing();
+        return ! playerUnitImpl().isCompleted();
     }
 
     public boolean isMoving() {
-        return u.isMoving();
+        return mobileUnit().isMoving();
     }
 
     public boolean isAttacking() {
-        return u.isAttacking();
+        return mobileUnit().isAttacking();
     }
 
     /**
      * Returns true for flying Terran building.
      */
     public boolean isLifted() {
-        return u.isLifted();
+        return flyingBuildingUnit().isLifted();
     }
 
     /**
      * Returns true if unit is inside bunker or dropship/shuttle.
      */
     public boolean isLoaded() {
-        return u.isLoaded();
+        return loadableUnit().isLoaded();
     }
 
     public boolean isUnderDisruptionWeb() {
-        return u().isUnderDisruptionWeb();
+        return mobileUnit().isUnderDisruptionWeb();
     }
 
     public boolean isUnderDarkSwarm() {
-        return u().isUnderDarkSwarm();
+        return mobileUnit().isUnderDarkSwarm();
     }
 
     public boolean isUnderStorm() {
-        return u().isUnderStorm();
+        return mobileUnit().isUnderStorm();
     }
 
     public int getRemainingBuildTime() {
-        return u().getRemainingBuildTime();
+        return buildingUnit().getRemainingBuildTime();
     }
 
     public int getRemainingResearchTime() {
-        return u().getRemainingResearchTime();
+        return researchingUnit().getResearchInProgress().getRemainingResearchTime();
     }
 
     public int getRemainingTrainTime() {
-        return u().getRemainingTrainTime();
+        return trainingUnit().getRemainingTrainTime();
     }
 
     public int getRemainingUpgradeTime() {
-        return u().getRemainingUpgradeTime();
+        return researchingUnit().getUpgradeInProgress().getRemainingUpgradeTime();
     }
 
     /**
      * Returns true if given position has land connection to given point.
      */
-    public boolean hasPathTo(APosition point) {
-        return u.hasPath(point);
+    public boolean hasPathTo(APosition position) {
+        return AMap.hasPath(u.getPosition(), position);
     }
 
     public boolean isTrainingAnyUnit() {
-        return u.isTraining();
+        return trainingUnit().isTraining();
     }
 
     public boolean isBeingConstructed() {
-        return u.isBeingConstructed();
+        return buildingUnit().isBeingConstructed();
     }
 
     public boolean isInterruptible() {
-        return u.isInterruptible();
+        return playerUnitImpl().isInterruptible();
     }
 
-    public UnitCommand getLastCommand() {
-        return u.getLastCommand();
+    public UnitCommandType getLastCommand() {
+        return mobileUnit().getLastCommand();
     }
 
     public UnitAction getUnitAction() {
@@ -1056,7 +1055,7 @@ public class AUnit extends APosition implements Comparable, AUnitOrders {
     }
 
     public int getScarabCount() {
-        return u().getScarabCount();
+        return ((Reaver) u).getScarabCount();
     }
 
     public AUnitType type() {
@@ -1080,7 +1079,7 @@ public class AUnit extends APosition implements Comparable, AUnitOrders {
     }
 
     public int getSpaceRemaining() {
-        return u().getSpaceRemaining();
+        return loadableUnit().getSpaceRemaining();
     }
 
     public AUnit getCachedNearestMeleeEnemy() {

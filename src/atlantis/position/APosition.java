@@ -283,6 +283,7 @@ public class APosition extends Position implements Comparable<Position> {
         if (compare == 0) {
             return Integer.compare(getY(), o.getY());
         }
+        return compare;
     }
     
     @Override
@@ -305,8 +306,8 @@ public class APosition extends Position implements Comparable<Position> {
     /**
      * Returns true if given position has land connection to given point.
      */
-    public boolean hasPathTo(APosition point) {
-        return AMap.getMap().isConnected(this.toTilePosition(), point.toTilePosition());
+    public boolean hasPathTo(Position point) {
+        return AMap.hasPath(this, point);
     }
 
     public boolean isCloseToMapBounds() {

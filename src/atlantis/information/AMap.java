@@ -17,6 +17,7 @@ import bwem.Base;
 import bwem.ChokePoint;
 import bwem.area.Area;
 import bwem.map.Map;
+import bwem.typedef.CPPath;
 import org.openbw.bwapi4j.BWMap;
 import org.openbw.bwapi4j.Position;
 import org.openbw.bwapi4j.TilePosition;
@@ -49,14 +50,14 @@ public class AMap {
     }
 
     /**
-     * Returns BWEM map object.
+     * Returns BWEM (BroodWar Easy Map) map object. Advanced terrain processing.
      */
     public static Map getMap() {
         return bwem.getMap();
     }
 
     /**
-     * Returns BWMap map object.
+     * Returns BWMap map object, class returned by OpenBW. It's native StarCraft mostly.
      */
     public static BWMap getBWMap() {
         return Atlantis.getBW().getBWMap();
@@ -77,7 +78,7 @@ public class AMap {
     }
 
     // === Choke points ========================================    
-    
+
     /**
      * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
      * method returns this choke point. It's perfect position to defend (because it's *choke* point).
@@ -111,8 +112,8 @@ public class AMap {
                     for (ChokePoint mainAreaChoke : mainArea.getChokePoints()) {
                         // System.out.println("mainAreaChoke = " + mainAreaChoke + " / "
                         // + (mainAreaChoke.getFirstArea()) + " / " + (mainAreaChoke.getSecondArea()));
-                        if (naturalBaseArea.equals(mainAreaChoke.getAreas().getFirst())	// getFirstArea()
-                                || naturalBaseArea.equals(mainAreaChoke.getAreas().getSecond())) {	// getSecondArea()
+                        if (naturalBaseArea.equals(mainAreaChoke.getAreas().getFirst())    // getFirstArea()
+                                || naturalBaseArea.equals(mainAreaChoke.getAreas().getSecond())) {    // getSecondArea()
                             cached_mainBaseChokePoint = mainAreaChoke;
                             // System.out.println("MAIN CHOKE FOUND! " + cached_mainBaseChokePoint);
                             break;
@@ -128,7 +129,7 @@ public class AMap {
 
         return cached_mainBaseChokePoint;
     }
-    
+
     /**
      * Returns chokePoint to defend for the natural (second) base.
      */
@@ -137,21 +138,21 @@ public class AMap {
             APainter.paintCircle(APosition.create(cached_naturalBaseChokePoint.getCenter().toPosition()), 5, Color.WHITE);
             return cached_naturalBaseChokePoint;
         }
-        
+
         // =========================================================
-        
+
         AUnit mainBase = Select.mainBase();
         if (mainBase == null) {
             System.err.println("Can't find natural base chokePoint");
             return null;
         }
-        
+
         Area naturalArea = getArea(getNaturalBase(mainBase.getPoint()));
         if (naturalArea == null) {
             System.err.println("Can't find area for natural base");
             return null;
         }
-        
+
         for (ChokePoint chokePoint : naturalArea.getChokePoints()) {
             APosition center = APosition.create(chokePoint.getCenter().toPosition());
             if (center.distanceTo(getChokePointForMainBase().getCenter().toPosition()) > 1) {
@@ -159,7 +160,7 @@ public class AMap {
                 return cached_naturalBaseChokePoint;
             }
         }
-        
+
         return null;
     }
 
@@ -181,17 +182,17 @@ public class AMap {
 
         // For every location...
         for (Base base : startingLocations.list()) {
-            if (! isExplored(base.getCenter())) {
+            if (!isExplored(base.getCenter())) {
                 return base;
             }
         }
         return null;
     }
-    
+
     public static Base getStartingLocationBasedOnIndex(int index) {
         ArrayList<Base> bases = new ArrayList<>();
         bases.addAll(getStartingLocations(true));
-        
+
         return bases.get(index % bases.size());
     }
 
@@ -226,7 +227,7 @@ public class AMap {
         if (farthestTo == null) {
             return getExpansionFreeBaseNearestTo(Select.ourBases().first().getPosition());
         }
-        
+
         // =========================================================
 
         // Get list of all base locations
@@ -258,10 +259,10 @@ public class AMap {
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
     public static Base getNaturalBase(Object mainBasePosition) {
-        Position nearestTo = mainBasePosition instanceof Position 
-                ? (Position) mainBasePosition 
+        Position nearestTo = mainBasePosition instanceof Position
+                ? (Position) mainBasePosition
                 : ((APosition) mainBasePosition).getPoint();
-        
+
         // =========================================================
 
         // Get list of all base locations
@@ -292,7 +293,7 @@ public class AMap {
             int dx = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
             int dy = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
             position = PositionOperationsWrapper.translateByPixels(startPoint, dx, dy).makeValid();
-            if (! isVisible(position)) {
+            if (!isVisible(position)) {
                 return position;
             }
         }
@@ -307,20 +308,20 @@ public class AMap {
         if (area == null) {
             return null;
         }
-        
+
         Area areaToVisit = null;
-        
+
         for (Area reachableArea : area.getAccessibleNeighbors()) {
-            if (! AMap.isExplored(reachableArea.getWalkPositionWithHighestAltitude().toPosition())) {
+            if (!AMap.isExplored(reachableArea.getWalkPositionWithHighestAltitude().toPosition())) {
                 areaToVisit = reachableArea;
 //                return APosition.createFrom(areaToVisit.getCenter());
                 return areaToVisit;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Returns nearest land-connected position on map which hasn't been explored.
      */
@@ -334,23 +335,23 @@ public class AMap {
             for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {
                 for (int dy = -currentRadius; dy <= currentRadius; dy += doubleCurrentRadius) {
                     APosition potentialPosition = position.translateByTiles(dx, dy).makeValid();
-                    if (! isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
+                    if (!isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
                         return potentialPosition;
                     }
                 }
             }
-            
+
             currentRadius += 3;
         }
-        
+
 //        System.err.println("Can't find getNearestUnexploredAccessiblePosition");
         return null;
     }
-    
+
     public static ChokePoint getNearestChokePoint(APosition position) {
         double bestDistance = 99999;
         ChokePoint bestChoke = null;
-        
+
         for (ChokePoint chokePoint : getChokePoints()) {
 //            double dist = position.distanceTo(chokePoint.getCenter().toPosition()) - chokePoint.getWidth() / 32 / 2;
             double dist = position.distanceTo(chokePoint.getCenter().toPosition());
@@ -359,10 +360,10 @@ public class AMap {
                 bestChoke = chokePoint;
             }
         }
-        
+
         return bestChoke;
     }
-    
+
     /**
      * Can be used to avoid getting to close to the area edges, which may cause unit to get stuck.
      */
@@ -413,9 +414,9 @@ public class AMap {
 //            return 99;
 //        }
     }
-    
+
     // =========================================================
-    
+
     /**
      * Returns list of places that have geyser and mineral fields so they are the places where you could build
      * a base. Starting locations are also included here.
@@ -433,7 +434,7 @@ public class AMap {
         ArrayList<Base> startingLocations = new ArrayList<>();
         for (Base base : AMap.getBases()) {
             if (base.isStartingLocation()) {
-                
+
                 // Exclude our base location if needed.
                 if (excludeOurStartLocation) {
                     AUnit mainBase = Select.mainBase();
@@ -441,7 +442,7 @@ public class AMap {
                         continue;
                     }
                 }
-                
+
                 startingLocations.add(base);
             }
         }
@@ -456,7 +457,7 @@ public class AMap {
         if (cached_chokePoints == null) {
             cached_chokePoints = new ArrayList<>();
             for (ChokePoint choke : getMap().getChokePoints()) {
-                if (! disabledChokePoints.contains(choke)) { // choke.isDisabled()
+                if (!disabledChokePoints.contains(choke)) { // choke.isDisabled()
                     cached_chokePoints.add(choke);
                 }
             }
@@ -472,21 +473,18 @@ public class AMap {
      */
     public static Area getArea(Object positionOrAreaOrBase) {
         Position position = null;
-        
+
         if (positionOrAreaOrBase instanceof Position) {
             position = (Position) positionOrAreaOrBase;
-        }
-        else if (positionOrAreaOrBase instanceof Area) {
+        } else if (positionOrAreaOrBase instanceof Area) {
             return (Area) positionOrAreaOrBase;
-        }
-        else if (positionOrAreaOrBase instanceof Base) {
+        } else if (positionOrAreaOrBase instanceof Base) {
             position = ((Base) positionOrAreaOrBase).getCenter();
-        }
-        else {
+        } else {
             System.err.println("getArea failed for " + positionOrAreaOrBase);
             return null;
         }
-        
+
         return getMap().getArea(position.toTilePosition());
     }
 
@@ -510,7 +508,7 @@ public class AMap {
     public static boolean isWalkable(APosition position) {
         return AMap.getBWMap().isWalkable(position.toWalkPosition());
     }
-    
+
     // =========================================================
     // Special methods
     /**
@@ -544,24 +542,24 @@ public class AMap {
 
     /**
      * Returns true if given base location is free from units, meaning it's a good place for expansion.
-     * 
+     * <p>
      * Trying to avoid:
      * - existing buildings
      * - any enemy units
      * - planned constructions
      */
     public static boolean isBaseFreeOfBuildingsAndEnemyUnits(Base base) {
-        
+
         // If we have any base, FALSE.
         if (Select.ourBases().inRadius(7, base.getCenter()).count() > 0) {
             return false;
         }
-        
+
         // If any enemy unit is nearby
         if (Select.enemy().inRadius(11, base.getCenter()).count() > 0) {
             return false;
         }
-        
+
         // Check for planned constructions
         for (ConstructionOrder constructionOrder : AConstructionManager.getAllConstructionOrders()) {
             APosition constructionPlace = constructionOrder.getPositionToBuildCenter();
@@ -569,14 +567,14 @@ public class AMap {
                 return false;
             }
         }
-        
+
         // All conditions have been fulfilled.
         return true;
     }
 
     /**
      * Warning - takes very long time.
-     * 
+     *
      * Returns land distance (in tiles) between unit and given position.
      */
 //    public static double getGroundDistance(AUnit from, APosition to) {
@@ -589,7 +587,7 @@ public class AMap {
 
     /**
      * Warning - takes very long time.
-     * 
+     *
      * Returns shortest land distance (in tiles) between unit and given position.
      */
 //    public static double getShortestPath(AUnit unit, APosition runTo) {
@@ -604,4 +602,31 @@ public class AMap {
         return PositionUtil.distanceTo(geometry.get(1), geometry.get(2));
     }
 
+    /**
+     * @param from from
+     * @param to   to
+     * @return true if given two positions are connected and can walk from `from` to `to`.
+     */
+    public static boolean hasPath(Position from, Position to) {
+        return AMap.getBWMap().hasPath(from, to);
+    }
+
+    public static double getGroundDistance(AUnit fromUnit, Position to) {
+        return getGroundDistance(fromUnit.getPosition(), to);
+    }
+
+    public static double getGroundDistance(Position from, Position to) {
+        double totalDistance = 0;
+        CPPath path = AMap.getMap().getPath(from, to);
+        Position lastPosition = from;
+
+        for (Iterator<ChokePoint> it = path.iterator(); it.hasNext(); ) {
+            Position chokePoint = it.next().getCenter().toPosition();
+            totalDistance += PositionUtil.distanceTo(lastPosition, chokePoint);
+            lastPosition = chokePoint;
+        }
+        totalDistance += PositionUtil.distanceTo(lastPosition, to);
+
+        return totalDistance;
+    }
 }

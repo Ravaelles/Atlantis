@@ -6,7 +6,6 @@ import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
-import atlantis.position.APositionedObject;
 import atlantis.repair.ARepairManager;
 import atlantis.scout.AScoutManager;
 import atlantis.util.AtlantisUtilities;
@@ -119,7 +118,7 @@ public class Select<T> {
     private static List<AUnit> allUnits() {
         List<AUnit> data = new ArrayList<>();
 
-        for (Unit u : Atlantis.getInteraction().getAllUnits()) {
+        for (Unit u : Atlantis.getBW().getAllUnits()) {
             data.add(AUnit.createFrom(u));
         }
 
@@ -475,7 +474,7 @@ public class Select<T> {
     public Select<?> inRadius(double maxDist, Position position) {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
-            APositionedObject unit = (APositionedObject) unitsIterator.next();
+            AUnit unit = (AUnit) unitsIterator.next();
             if (unit.distanceTo(position) > maxDist) {
                 unitsIterator.remove();
             }
@@ -505,7 +504,7 @@ public class Select<T> {
     /**
      * Returns whether the type in needle matches one in the haystack
      *
-     * @param AUnit|UnitData needle
+     * @param needle
      * @param haystack
      * @return
      */
@@ -1326,37 +1325,12 @@ public class Select<T> {
     /**
      * Sorts data list by distance to a given position
      *
-     * @param position
-     * @param nearestFirst
+     * @param toPosition
+     * @param ascending
      * @return
      */
-    public List<T> sortDataByDistanceTo(final Position position, final boolean nearestFirst) {
-        if (position == null) {
-            return null;
-        }
-
-        Collections.sort(data, new Comparator<T>() {
-            @Override
-            public int compare(T p1, T p2) {
-                if (p1 == null || (! (p1 instanceof ) )) {
-                    return -1;
-                }
-                if (p2 == null || ! (p2 instanceof PositionedObject)) {
-                    return 1;
-                }
-                AFoggedUnit data1 = dataFrom(p1);
-                AFoggedUnit data2 = dataFrom(p2);
-                double distance1 = PositionUtil.distanceTo(position, data1.getPosition());	//TODO: check whether this doesn't mix up position types
-                double distance2 = PositionUtil.distanceTo(position, data2.getPosition());
-                if (distance1 == distance2) {
-                    return 0;
-                } else {
-                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
-                }
-            }
-        });
-
-        return data;
+    public void sortDataByDistanceTo(final Position toPosition, final boolean ascending) {
+        PositionUtil.sortByDistanceTo(this.data, toPosition, ascending);
     }
 
 }

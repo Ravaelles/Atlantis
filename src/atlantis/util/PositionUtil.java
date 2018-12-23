@@ -1,10 +1,13 @@
 package atlantis.util;
 
+import atlantis.information.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.openbw.bwapi4j.Position;
 import org.openbw.bwapi4j.unit.Unit;
+
+import java.util.*;
 
 public class PositionUtil {
 
@@ -93,7 +96,34 @@ public class PositionUtil {
             }
         }
     }
-    
+
+    public static void sortByDistanceTo(List<?> units, final Position toPosition, final boolean ascending) {
+        Collections.sort(units, (p1, p2) -> {
+            if (!(p1 instanceof Position)) {
+                return -1;
+            }
+            if (!(p2 instanceof Position)) {
+                return 1;
+            }
+            double distance1 = AMap.getGroundDistance(convertToPosition(p1), toPosition);
+            double distance2 = AMap.getGroundDistance(convertToPosition(p2), toPosition);
+            if (distance1 == distance2) {
+                return 0;
+            }
+            else {
+                return distance1 < distance2 ? (ascending ? -1 : 1) : (ascending ? 1 : -1);
+            }
+        });
+    }
+
+    private static Position convertToPosition(Object object) {
+        if (object instanceof Position) {
+            return (Position) object;
+        }
+        throw new RuntimeException("convertToPosition received non-positionable object: " + object);
+    }
+
+
 //    public static double distanceTo(Position one, Position other) {
 //        int dx = one.getX() - other.getX();
 //        int dy = one.getY() - other.getY();

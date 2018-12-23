@@ -5,7 +5,6 @@ import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.ProtossConstructionManager;
-import atlantis.debug.AUnitTypesHelper;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
@@ -36,7 +35,7 @@ public class Atlantis implements BWEventListener {
     /**
      * BW game object, contains lo-level methods.
      */
-    private InteractionHandler handler;
+    private static InteractionHandler handler;
 
     /**
      * Top abstraction-level class that governs all units, buildings etc.
@@ -414,6 +413,8 @@ public class Atlantis implements BWEventListener {
      * // ========================================================= // 109 (-) - decrease game speed if
      * (AtlantisConfig.GAME_SPEED > 2) { AtlantisConfig.GAME_SPEED += 10; } else { } }
      */
+    // Unfortunately no
+
     /**
      * Match has ended. Shortly after that the game will go to the menu.
      */
@@ -513,24 +514,25 @@ public class Atlantis implements BWEventListener {
     }
 
     // =========================================================
+
     /**
-     * This method returns bridge connector between Atlantis and Starcraft.
+     * Returns bridge connector between Atlantis and Starcraft.
      * It provides low-level functionality for functions like pause game, get enemy player, own player etc.
      * For more details, see BW class.
      */
     public static InteractionHandler getInteraction() {
-        return getInstance().handler;
+        return handler;
     }
 
     /**
      * Returns BW object of OpenBW.
      */
     public static BW getBW() {
-        return getInstance().bw;
+        return bw;
     }
 
-    // =========================================================
-    // Utility / Axuliary methods
+    // === Utility / Auxliary methods ==========================
+
     /**
      * This is convenience that takes any number of arguments and displays them in one line.
      */

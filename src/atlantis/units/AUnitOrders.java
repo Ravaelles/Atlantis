@@ -561,6 +561,10 @@ public interface AUnitOrders {
         return (ResearchingFacility) u();
     }
 
+    default Hatchery hatcheryUnit() {
+        return (Hatchery) u();
+    }
+
     default SCV scvUnit() {
         return (SCV) u();
     }

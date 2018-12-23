@@ -205,7 +205,7 @@ public class AGame {
     public static Player getPlayerSelf() {
         return Atlantis.getInteraction().self();
     }
-` `
+
     /**
      * Returns our player object.
      */
@@ -240,10 +240,10 @@ public class AGame {
     /**
      * Returns neutral player (minerals, geysers, critters).
      */
-    public static Player getNeutralPlayer() {
-        return null;
-//        return Atlantis.getInteraction().neutral();
-    }
+//    public static Player getNeutralPlayer() {
+//        return null;
+////        return Atlantis.getInteraction().neutral();
+//    }
 
     /**
      * UMT maps are custom made maps, which may be used to test micro-management.
