@@ -1,8 +1,8 @@
 package atlantis.production;
 
 import atlantis.units.AUnitType;
-import bwapi.TechType;
-import bwapi.UpgradeType;
+import org.openbw.bwapi4j.type.TechType;
+import org.openbw.bwapi4j.type.UpgradeType;
 
 public class ProductionOrder {
     
@@ -144,7 +144,7 @@ public class ProductionOrder {
             return unitOrBuilding.getGasPrice();
         }
         else if (upgrade != null) {
-            return upgrade.gasPrice();
+            return upgrade.gasPrice(0);
         }
         else if (tech != null) {
             return tech.gasPrice();

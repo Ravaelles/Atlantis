@@ -14,7 +14,6 @@ import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.ACachedValue;
-
 import org.openbw.bwapi4j.Position;
 import org.openbw.bwapi4j.type.UnitCommandType;
 import org.openbw.bwapi4j.type.WeaponType;
@@ -29,7 +28,7 @@ import java.util.Map;
  * Wrapper for BWMirror Unit class that makes units much easier to use.<br /><br />
  * Atlantis uses wrappers for BWMirror native classes which can't be extended.<br /><br />
  * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
- * create missing method here and you can reference original Unit class via u() method.
+ * createFromTileXY missing method here and you can reference original Unit class via u() method.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
@@ -52,7 +51,7 @@ public class AUnit extends APosition implements Comparable<Position>, AUnitOrder
     /**
      * Atlantis uses wrapper for OpenBW Unit classes.<br />
      * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
-     * create missing method here and you can reference original Unit class via u() method.
+     * createFromTileXY missing method here and you can reference original Unit class via u() method.
      */
     public static AUnit createFrom(UnitImpl u) {
         if (u == null) {
@@ -125,7 +124,7 @@ public class AUnit extends APosition implements Comparable<Position>, AUnitOrder
     }
 
     public APosition getPosition() {
-        return APosition.create(u.getPosition());
+        return APosition.createFromTileXY(u.getPosition());
     }
 
     /**
@@ -917,7 +916,7 @@ public class AUnit extends APosition implements Comparable<Position>, AUnitOrder
     }
 
     public APosition getTargetPosition() {
-        return APosition.create(mobileUnit().getTargetPosition());
+        return APosition.createFromTileXY(mobileUnit().getTargetPosition());
     }
 
     public AUnit getOrderTarget() {

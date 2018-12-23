@@ -2,6 +2,7 @@ package atlantis.combat.squad;
 
 import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
+
 import java.util.ArrayList;
 
 /**
@@ -61,7 +62,7 @@ public class ASquadManager {
      */
     public static Squad getAlphaSquad() {
 
-        // If no squad exists, create main squad
+        // If no squad exists, createFromTileXY main squad
         if (squads.isEmpty()) {
             Squad squad = Squad.createNewSquad(null, Missions.getInitialMission());
             squads.add(squad);

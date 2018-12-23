@@ -1,12 +1,9 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
-import atlantis.debug.APainter;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.Color;
 
 /**
  *

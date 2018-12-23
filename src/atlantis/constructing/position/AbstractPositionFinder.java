@@ -9,7 +9,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.PositionUtil;
-import bwapi.Position;
+import org.openbw.bwapi4j.Position;
 
 public abstract class AbstractPositionFinder {
     
@@ -59,7 +59,7 @@ public abstract class AbstractPositionFinder {
             return false;
         }
         
-        return Atlantis.getInteraction().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
+        return Atlantis.getBW().canBuildHere(position.toTilePosition(), building.ut(), builder.workerUnit());
 //        return Atlantis.getInteraction().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
     }
 

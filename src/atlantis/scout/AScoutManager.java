@@ -3,23 +3,22 @@ package atlantis.scout;
 import atlantis.AGame;
 import atlantis.AViewport;
 import atlantis.AtlantisConfig;
-import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.combat.micro.AAvoidDefensiveBuildings;
+import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
-import atlantis.position.PositionOperationsWrapper;
 import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.CodeProfiler;
-import bwapi.Color;
-import bwapi.Position;
-import bwta.Base;
-import bwta.Area;
+import bwem.Base;
+import bwem.area.Area;
+import org.openbw.bwapi4j.type.Color;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -147,7 +146,7 @@ public class AScoutManager {
         // =========================================================
         if (startingLocation != null) {
             scout.setTooltip("Scout!");
-            scout.move(startingLocation.getPosition(), UnitActions.EXPLORE);
+            scout.move(startingLocation.getCenter(), UnitActions.EXPLORE);
             return true;
         }
         else {
@@ -239,7 +238,7 @@ public class AScoutManager {
     private static void scoutForTheNextBase(AUnit scout) {
         Base base = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
         if (base != null) {
-            scout.move(base.getPosition(), UnitActions.MOVE);
+            scout.move(base.getCenter(), UnitActions.MOVE);
         }
     }
 
@@ -256,7 +255,7 @@ public class AScoutManager {
         // =========================================================
         
         APosition goTo = scoutingAroundBaseLastPolygonPoint != null
-                ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
+                ? APosition.createFromTileXY(scoutingAroundBaseLastPolygonPoint) : null;
 
         if (goTo == null || scoutingAroundBaseWasInterrupted) {
             goTo = useNearestPolygonPoint(area, scout);
@@ -293,33 +292,35 @@ public class AScoutManager {
     }
     
     private static void initializeEnemyAreaPolygonPoints(AUnit scout, Area enemyBaseArea) {
-        Position centerOfArea = enemyBaseArea.getCenter();
-
-        for (Position point : enemyBaseArea.getPolygon().getPoints()) {
-            APosition position = APosition.create(point);
-
-            // Calculate actual ground distance to this position
-            double groundDistance = AMap.getGroundDistance(scout, position);
-
-            // Fix problem with some points being unwalkable despite isWalkable being true
-            if (groundDistance < 2) {
-                continue;
-            }
-            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfArea, 3.5);
-
-            // If positions is walkable, not in different area and has path to it, it should be ok
-            if (AMap.isWalkable(position) && enemyBaseArea.getPolygon().isInside(position)
-                    && scout.hasPathTo(position) && groundDistance >= 4
-                    && groundDistance <= 1.7 * scout.distanceTo(position)) {
-                scoutingAroundBasePoints.addPosition(position);
-            }
-        }
-
-        if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
-            AGame.changeSpeedTo(1);
-            AGame.changeSpeedTo(1);
-            APainter.paintingMode = APainter.MODE_FULL_PAINTING;
-        }
+        // @HACK
+        return;
+//        Position centerOfArea = enemyBaseArea.getCenter();
+//
+//        for (Position point : enemyBaseArea.getPolygon().getPoints()) {
+//            APosition position = APosition.createFromTileXY(point);
+//
+//            // Calculate actual ground distance to this position
+//            double groundDistance = AMap.getGroundDistance(scout, position);
+//
+//            // Fix problem with some points being unwalkable despite isWalkable being true
+//            if (groundDistance < 2) {
+//                continue;
+//            }
+//            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfArea, 3.5);
+//
+//            // If positions is walkable, not in different area and has path to it, it should be ok
+//            if (AMap.isWalkable(position) && enemyBaseArea.getPolygon().isInside(position)
+//                    && scout.hasPathTo(position) && groundDistance >= 4
+//                    && groundDistance <= 1.7 * scout.distanceTo(position)) {
+//                scoutingAroundBasePoints.addPosition(position);
+//            }
+//        }
+//
+//        if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
+//            AGame.changeSpeedTo(1);
+//            AGame.changeSpeedTo(1);
+//            APainter.paintingMode = APainter.MODE_FULL_PAINTING;
+//        }
     }
 
     private static APosition useNearestPolygonPoint(Area area, AUnit scout) {
@@ -330,7 +331,7 @@ public class AScoutManager {
 
     public static APosition getUmtFocusPoint(APosition startPosition) {
         Area nearestUnexploredArea = AMap.getNearestUnexploredArea(startPosition);
-        return nearestUnexploredArea != null ? APosition.create(nearestUnexploredArea.getCenter()) : null;
+        return nearestUnexploredArea != null ? APosition.createFromTileXY(AMap.getAreaCenter(nearestUnexploredArea)) : null;
     }
 
     // =========================================================

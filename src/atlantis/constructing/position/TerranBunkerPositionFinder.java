@@ -7,8 +7,8 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.Base;
-import bwta.ChokePoint;
+import bwem.Base;
+import bwem.ChokePoint;
 
 /**
  *
@@ -60,7 +60,7 @@ public class TerranBunkerPositionFinder {
         if (locationModifier.equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
             ChokePoint chokePointForNaturalBase = AMap.getChokePointForMainBase();
             if (chokePointForNaturalBase != null) {
-                return APosition.create(chokePointForNaturalBase.getCenter())
+                return APosition.createFrom(chokePointForNaturalBase.getCenter())
                         .translatePercentTowards(mainBase.getPosition(), 5);
             }
         }
@@ -70,8 +70,8 @@ public class TerranBunkerPositionFinder {
             ChokePoint chokePointForNaturalBase = AMap.getChokePointForNaturalBase();
             if (chokePointForNaturalBase != null && mainBase != null) {
                 Base naturalBase = AMap.getNaturalBase(Select.mainBase().getPosition());
-                return APosition.create(chokePointForNaturalBase.getCenter())
-                        .translatePercentTowards(naturalBase, 25);
+                return APosition.createFrom(chokePointForNaturalBase.getCenter())
+                        .translatePercentTowards(naturalBase.getCenter(), 25);
 
 //                    System.out.println();
 //                    System.err.println(nearTo);

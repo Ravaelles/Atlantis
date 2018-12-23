@@ -215,12 +215,12 @@ public class MissionDefend extends Mission {
         // === Return position near the choke point ================
         
 //        if (Select.ourBases().count() <= 1) {
-//            return APosition.create(AtlantisMap.getChokePointForMainBase().getCenter());
+//            return APosition.createFromTileXY(AtlantisMap.getChokePointForMainBase().getCenter());
 //        }
 //        else {
         ChokePoint chokePointForNaturalBase = AMap.getChokePointForNaturalBase();
         if (chokePointForNaturalBase != null) {
-            return APosition.create(chokePointForNaturalBase.getCenter());
+            return APosition.createFromTileXY(chokePointForNaturalBase.getCenter());
         }
         else {
             return null;

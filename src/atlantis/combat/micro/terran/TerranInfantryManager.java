@@ -4,7 +4,6 @@ import atlantis.combat.squad.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.Position;
 
 /**
  *

@@ -1,14 +1,14 @@
 package atlantis.production.orders;
 
 import atlantis.AGame;
-import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.AtlantisUtilities;
 import atlantis.util.NameUtil;
-import bwapi.TechType;
-import bwapi.UpgradeType;
+import org.openbw.bwapi4j.type.TechType;
+import org.openbw.bwapi4j.type.UpgradeType;
+
 import java.util.ArrayList;
 
 /**

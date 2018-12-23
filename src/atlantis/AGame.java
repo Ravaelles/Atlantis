@@ -1,6 +1,5 @@
 package atlantis;
 
-import static atlantis.Atlantis.getInteraction;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
@@ -11,6 +10,8 @@ import org.openbw.bwapi4j.type.TechType;
 import org.openbw.bwapi4j.type.UpgradeType;
 
 import java.util.Collection;
+
+import static atlantis.Atlantis.getInteraction;
 
 /**
  * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply

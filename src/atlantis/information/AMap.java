@@ -135,7 +135,7 @@ public class AMap {
      */
     public static ChokePoint getChokePointForNaturalBase() {
         if (cached_naturalBaseChokePoint != null) {
-            APainter.paintCircle(APosition.create(cached_naturalBaseChokePoint.getCenter().toPosition()), 5, Color.WHITE);
+            APainter.paintCircle(APosition.createFrom(cached_naturalBaseChokePoint.getCenter().toPosition()), 5, Color.WHITE);
             return cached_naturalBaseChokePoint;
         }
 
@@ -154,7 +154,7 @@ public class AMap {
         }
 
         for (ChokePoint chokePoint : naturalArea.getChokePoints()) {
-            APosition center = APosition.create(chokePoint.getCenter().toPosition());
+            APosition center = APosition.createFrom(chokePoint.getCenter().toPosition());
             if (center.distanceTo(getChokePointForMainBase().getCenter().toPosition()) > 1) {
                 cached_naturalBaseChokePoint = chokePoint;
                 return cached_naturalBaseChokePoint;
@@ -534,7 +534,7 @@ public class AMap {
 //        Collection<ChokePoint> chokes = baseArea.getChokePoints();
 //        for (ChokePoint choke : chokes) {
 //            if (baseArea.getChokePoints().contains(choke)) {
-//                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
+//                System.out.println("Disabling choke point: " + APosition.createFromTileXY(choke.getCenter()));
 //                disabledChokePoints.add(choke);	//choke.setDisabled(true);
 //            }
 //        }
@@ -605,14 +605,14 @@ public class AMap {
     /**
      * @param from from
      * @param to   to
-     * @return true if given two positions are connected and can walk from `from` to `to`.
+     * @return true if given two positions are ground-connected and it's possible to walk from `from` to `to`.
      */
     public static boolean hasPath(Position from, Position to) {
         return AMap.getBWMap().hasPath(from, to);
     }
 
-    public static double getGroundDistance(AUnit fromUnit, Position to) {
-        return getGroundDistance(fromUnit.getPosition(), to);
+    public static double getGroundDistance(Object from, Object to) {
+        return getGroundDistance(PositionUtil.convertToPosition(from), PositionUtil.convertToPosition(to));
     }
 
     public static double getGroundDistance(Position from, Position to) {
@@ -628,5 +628,17 @@ public class AMap {
         totalDistance += PositionUtil.distanceTo(lastPosition, to);
 
         return totalDistance;
+    }
+
+    public static Position getAreaCenter(Area area) {
+        int centerX = area.getBottomRight().getX() - area.getTopLeft().getX();
+        int centerY = area.getBottomRight().getY() - area.getTopLeft().getY();
+        APosition centerPosition = new APosition(centerX, centerY);
+        centerPosition = centerPosition.makeWalkable();
+        return centerPosition;
+    }
+
+    public static boolean isWalkable(TilePosition tile) {
+        return getMap().getData().getTile(tile).isWalkable();
     }
 }

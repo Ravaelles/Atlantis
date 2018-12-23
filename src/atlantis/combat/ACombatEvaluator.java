@@ -7,6 +7,7 @@ import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
 import atlantis.util.WeaponUtil;
 import bwapi.Color;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

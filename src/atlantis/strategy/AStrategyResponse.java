@@ -3,12 +3,8 @@ package atlantis.strategy;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
-import atlantis.position.APosition;
 import atlantis.production.requests.ARequests;
-import atlantis.production.requests.TerranRequests;
 import atlantis.scout.AScoutManager;
-import atlantis.units.AUnit;
-import atlantis.units.Select;
 
 /**
  *

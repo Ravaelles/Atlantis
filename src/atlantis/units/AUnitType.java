@@ -5,17 +5,13 @@ import org.openbw.bwapi4j.type.UnitType;
 import org.openbw.bwapi4j.type.WeaponType;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Wrapper for BWMirror UnitType class that makes it much easier to use.<br /><br />
  * Atlantis uses wrappers for BWMirror native classes which aren't extended.<br /><br />
  * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you can
- * create missing method here and you can reference original UnitType class via ut() method.
+ * createFromTileXY missing method here and you can reference original UnitType class via ut() method.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
@@ -37,7 +33,7 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
      * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you
-     * can create missing method here and you can reference original UnitType class via ut() method.
+     * can createFromTileXY missing method here and you can reference original UnitType class via ut() method.
      */
     public static AUnitType createFrom(UnitType ut) {
         if (ut == null) {

@@ -6,6 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import bwem.area.Area;
 import org.openbw.bwapi4j.Position;
+import org.openbw.bwapi4j.TilePosition;
 import org.openbw.bwapi4j.WalkPosition;
 import org.openbw.bwapi4j.type.Color;
 
@@ -51,7 +52,9 @@ public class APosition extends Position implements Comparable<Position> {
         this.p = p;
     }
 
-    public static APosition create(Position p) {
+    public static APosition createFrom(Object anyPositionObject) {
+        Position p = PositionUtil.convertToPosition(anyPositionObject);
+
         if (instances.containsKey(p)) {
             return instances.get(p);
         }
@@ -64,13 +67,13 @@ public class APosition extends Position implements Comparable<Position> {
 
     /**
      * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
-     * you can create them here or reference original Position class via p() method. 
+     * you can createFromTileXY them here or reference original Position class via p() method.
      * <br /><br />
      * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
      * <br /><br />
      * @return APosition object from (build) tile coordinates (32 pixels = 1 tile).
      */
-    public static APosition create(int tileX, int tileY) {
+    public static APosition createFromTileXY(int tileX, int tileY) {
         return new APosition(tileX * 32, tileY * 32);
     }
     
@@ -93,10 +96,19 @@ public class APosition extends Position implements Comparable<Position> {
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
      * building dimensions.
      */
+    public double distanceTo(Object positionOfAnyKind) {
+        return PositionUtil.distanceTo(getPoint(), PositionUtil.convertToPosition(positionOfAnyKind));
+    }
+
+    /**
+     * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
+     * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
+     * building dimensions.
+     */
     public double distanceTo(Position position) {
         return PositionUtil.distanceTo(getPoint(), position);
     }
-    
+
     /**
      * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
@@ -167,9 +179,33 @@ public class APosition extends Position implements Comparable<Position> {
                 this, towards, tiles
         );
     }
+
+    // === Walkability =========================================
+
+    /**
+     * @return true if given position is walkable for ground units.
+     */
+    public boolean isWalkable() {
+        return AMap.isWalkable(this.toTilePosition());
+    }
     
     // =========================================================
-    
+
+    /**
+     * Translates given position to the nearest walkable tile.
+     */
+    public APosition makeWalkable() {
+        if (isWalkable()) {
+            return this;
+        }
+
+        return (new TilePositionSearcher(this) {
+            boolean isAcceptablePosition(APosition potentialPosition) {
+                return potentialPosition.isWalkable();
+            }
+        }).search();
+    }
+
     /**
      * Ensures that position's [x,y] are valid map coordinates.
      */
@@ -264,6 +300,8 @@ public class APosition extends Position implements Comparable<Position> {
             return this;
         }
     }
+
+    // === Override ================================================
 
     @Override
     public String toString() {

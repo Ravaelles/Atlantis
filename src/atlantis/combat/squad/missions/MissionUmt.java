@@ -1,7 +1,5 @@
 package atlantis.combat.squad.missions;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.AEnemyTargeting;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -101,7 +99,7 @@ public class MissionUmt extends Mission {
         
         Area nearestUnexploredArea = AMap.getNearestUnexploredArea(flagshipUnit.getPosition());
         explorePosition = (nearestUnexploredArea != null
-                ? APosition.create(nearestUnexploredArea.getCenter()) : null);
+                ? APosition.createFromTileXY(nearestUnexploredArea.getCenter()) : null);
         if (! unit.isMoving() && explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
             unit.setTooltip("#Explore" + (isFlagship ? "Flag" : ""));
             return unit.move(explorePosition, UnitActions.EXPLORE);

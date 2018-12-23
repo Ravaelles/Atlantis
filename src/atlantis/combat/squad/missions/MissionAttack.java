@@ -6,12 +6,13 @@ import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
-import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 import bwta.Base;
+
+import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 
 /**
  * This is the mission object that is used by battle squads and it indicates that we should attack 
@@ -124,7 +125,7 @@ public class MissionAttack extends Mission {
         Base startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
         if (startLocation != null) {
         	//System.out.println("focus on start location");	//TODO debug
-            return APosition.create(startLocation.getPosition());
+            return APosition.createFromTileXY(startLocation.getPosition());
         }
 
         // Absolutely no enemy unit can be found

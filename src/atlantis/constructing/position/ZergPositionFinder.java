@@ -1,12 +1,13 @@
 package atlantis.constructing.position;
 
-import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
+import atlantis.information.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.Position;
+import org.openbw.bwapi4j.Position;
+
 import java.util.Collection;
 
 public class ZergPositionFinder extends AbstractPositionFinder {
@@ -45,7 +46,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
             for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
                 for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
-                        APosition constructionPosition = APosition.create(tileX, tileY);
+                        APosition constructionPosition = APosition.createFromTileXY(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder,building, constructionPosition)) {
 //                            AtlantisPainter.paintRectangle(constructionPosition, 32, 32, Color.GREEN);
                             return constructionPosition;
@@ -127,7 +128,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     }
 
     private static boolean isCreepConditionFulfilled(AUnitType building, Position position) {
-        return Atlantis.getInteraction().hasCreep(position.toTilePosition())
+        return AMap.getBWMap().hasCreep(position.toTilePosition())
                 || building.equals(AUnitType.Zerg_Hatchery)
                 || building.equals(AUnitType.Zerg_Extractor);
     }

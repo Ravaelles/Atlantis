@@ -3,12 +3,14 @@ package atlantis.buildings.managers;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
-import static atlantis.constructing.AConstructionManager.requestConstructionOf;
 import atlantis.information.AMap;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.Select;
+
 import java.util.ArrayList;
+
+import static atlantis.constructing.AConstructionManager.requestConstructionOf;
 
 /**
  *

@@ -2,7 +2,6 @@ package atlantis.repair;
 
 import atlantis.AGame;
 import atlantis.buildings.managers.TerranFlyingBuildingManager;
-import atlantis.combat.micro.ARunManager;
 import atlantis.combat.squad.missions.Missions;
 import atlantis.information.AMap;
 import atlantis.scout.AScoutManager;
@@ -11,6 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwta.ChokePoint;
+
 import java.util.Collection;
 import java.util.Iterator;
 

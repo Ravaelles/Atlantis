@@ -2,7 +2,6 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.constructing.AConstructionManager;
-import static atlantis.production.ADynamicConstructionManager.canAfford;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

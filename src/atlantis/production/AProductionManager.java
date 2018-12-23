@@ -7,8 +7,9 @@ import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.TechType;
-import bwapi.UpgradeType;
+import org.openbw.bwapi4j.type.TechType;
+import org.openbw.bwapi4j.type.UpgradeType;
+
 import java.util.ArrayList;
 
 public class AProductionManager {
@@ -96,7 +97,7 @@ public class AProductionManager {
         AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades());
 //        System.out.println("Research " + upgrade + " in " + buildingType);
         if (buildingType != null) {
-            AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
+            AUnit building = Select.ourBuildings().ofType(buildingType).first();
 //            System.out.println(upgrade + " level is " + AGame.getPlayerSelf().getUpgradeLevel(upgrade));
             if (building != null && ! building.isBusy()) {
 //                System.out.println("   ISSUE");
@@ -108,7 +109,7 @@ public class AProductionManager {
     private static void researchTech(TechType tech) {
         AUnitType buildingType = AUnitType.createFrom(tech.whatResearches());
         if (buildingType != null) {
-            AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
+            AUnit building = Select.ourBuildings().ofType(buildingType).first();
             if (building != null && ! building.isBusy()) {
                 building.research(tech);
             }

@@ -3,11 +3,13 @@ package atlantis.util;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
+import bwem.Base;
+import bwem.ChokePoint;
 import org.openbw.bwapi4j.Position;
 import org.openbw.bwapi4j.unit.Unit;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 public class PositionUtil {
 
@@ -116,11 +118,20 @@ public class PositionUtil {
         });
     }
 
-    private static Position convertToPosition(Object object) {
-        if (object instanceof Position) {
-            return (Position) object;
+    /**
+     * Converts any applicable object into raw Position object or throws critical exception.
+     */
+    public static Position convertToPosition(Object positionOfAnyKind) {
+        if (positionOfAnyKind instanceof Position) {
+            return (Position) positionOfAnyKind;
         }
-        throw new RuntimeException("convertToPosition received non-positionable object: " + object);
+        else if (positionOfAnyKind instanceof Base) {
+            return ((Base) positionOfAnyKind).getCenter();
+        }
+        else if (positionOfAnyKind instanceof ChokePoint) {
+            return ((ChokePoint) positionOfAnyKind).getCenter().toPosition();
+        }
+        throw new RuntimeException("convertToPosition received non-positionable object: " + positionOfAnyKind);
     }
 
 

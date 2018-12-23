@@ -1,12 +1,13 @@
 package atlantis.position;
 
+import atlantis.information.AMap;
 import atlantis.util.AtlantisUtilities;
+import atlantis.util.PositionUtil;
 import org.openbw.bwapi4j.Position;
 
 import java.util.*;
 
 public class Positions<T> {
-
     private List<T> positions = new ArrayList<>();
 
     /**
@@ -17,6 +18,7 @@ public class Positions<T> {
     private HashMap<T, Double> positionValues;
 
     // =====================================================================
+
     public Positions() {
     }
 
@@ -60,6 +62,7 @@ public class Positions<T> {
 
     // =========================================================
     // Special methods
+
     /**
      * Shuffle positions to have random sequence in the list.
      */
@@ -79,12 +82,15 @@ public class Positions<T> {
      * Sorts all positions according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first position will be the one closest to given position.
      */
-    public Positions sortByDistanceTo(final Position position, final boolean nearestFirst) {
+    public Positions sortByDistanceTo(final Position position, final boolean ascending) {
         Collections.sort(positions, new Comparator<T>() {
             @Override
-            public int compare(T u1, T u2) {
-                return position.getDistance(u1) < position.getDistance(u2)
-                        ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
+            public int compare(T p1, T p2) {
+                int compare = Double.compare(PositionUtil.distanceTo(p1, position), PositionUtil.distanceTo(p2, position));
+                if (compare == 0) {
+                    return 0;
+                }
+                return compare < 0 ? (ascending ? -1 : 1) : (ascending ? 1 : -1);
             }
         });
 
@@ -92,19 +98,24 @@ public class Positions<T> {
     }
 
     /**
-     * Sorts all positions according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
+     * Sorts all positions according to the real ground distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first position will be the one closest to given position.
      */
-    public Positions sortByGroundDistanceTo(final Position position, final boolean nearestFirst) {
+    public Positions sortByGroundDistanceTo(final Position position, final boolean ascending) {
         Collections.sort(positions, new Comparator<T>() {
             @Override
             public int compare(T u1, T u2) {
-                double distToU1 = BWTA.getGroundDistance(position.toTilePosition(), u1.getPoint().toTilePosition());
-                if (distToU1 < 0) {
-                    distToU1 = 99999;
+                double dist1 = AMap.getGroundDistance(u1, position);
+                if (dist1 < 0) {
+                    dist1 = 99999;
                 }
-                double distToU2 = BWTA.getGroundDistance(position.toTilePosition(), u2.getPoint().toTilePosition());
-                return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
+                double dist2 = AMap.getGroundDistance(u2, position);
+
+                int compare = Double.compare(dist1, dist2);
+                if (compare == 0) {
+                    return 0;
+                }
+                return compare < 0 ? (ascending ? -1 : 1) : (ascending ? 1 : -1);
             }
         });
 
@@ -187,6 +198,7 @@ public class Positions<T> {
 
     // =========================================================
     // Getters
+
     /**
      * Returns iterable collection of positions in this object.
      */
@@ -206,21 +218,23 @@ public class Positions<T> {
     }
 
     private static int _lastIndex = 0;
-    
+
     public APosition nearestTo(APosition position) {
         double closestDist = 9999999;
         APosition closestPosition = null;
-        
+
         int index = 0;
         for (T otherPosition : positions) {
-            if (otherPosition.getDistance(position) < closestDist) {
-                closestDist = otherPosition.getDistance(position);
-                closestPosition = APosition.create(otherPosition.getX() / 32, otherPosition.getY() / 32);
+            double dist = position.distanceTo(otherPosition);
+            if (dist < closestDist) {
+                closestDist = dist;
+//                closestPosition = APosition.createFromTileXY(otherPosition.getX() / 32, otherPosition.getY() / 32);
+                closestPosition = APosition.createFrom(otherPosition);
                 _lastIndex = index;
             }
             index++;
         }
-        
+
         return closestPosition;
     }
 

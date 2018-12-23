@@ -3,12 +3,13 @@ package atlantis.keyboard;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.debug.APainter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AKeyboard implements NativeKeyListener {
 

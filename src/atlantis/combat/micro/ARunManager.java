@@ -1,16 +1,14 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
-import atlantis.debug.APainter;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
-import bwapi.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -381,7 +379,7 @@ public class ARunManager {
                 vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
 
                 // Create position
-                APosition potentialPosition = APosition.create(
+                APosition potentialPosition = APosition.createFromTileXY(
                         (int) (tx + vectorX),
                         (int) (ty + vectorY)
                 );
@@ -396,7 +394,7 @@ public class ARunManager {
                         expectedLength * 0.6, 1.6 * expectedLength, avoidCornerPoints)) {
                     
                     // Check if position slightly further is walkable as well
-                    APosition furtherPosition = APosition.create(
+                    APosition furtherPosition = APosition.createFromTileXY(
                             (int) (tx + vectorX * (expectedLength + 1.5) / expectedLength),
                             (int) (ty + vectorY * (expectedLength + 1.5) / expectedLength)
                     );

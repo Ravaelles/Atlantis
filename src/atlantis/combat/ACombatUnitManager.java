@@ -1,22 +1,16 @@
 package atlantis.combat;
 
 import atlantis.AGame;
-import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.AAvoidMeleeUnitsManager;
-import atlantis.combat.micro.AAvoidDefensiveBuildings;
-import atlantis.combat.micro.ABadWeather;
-import atlantis.combat.micro.AbstractMicroManager;
+import atlantis.combat.micro.*;
 import atlantis.combat.micro.terran.TerranInfantryManager;
 import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.terran.TerranSiegeTankManager;
 import atlantis.combat.micro.terran.TerranVultureManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.combat.squad.Squad;
-import atlantis.debug.APainter;
 import atlantis.repair.ARepairManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import bwapi.Color;
 
 /**
  *

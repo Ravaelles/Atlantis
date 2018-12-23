@@ -1,7 +1,5 @@
 package atlantis.position;
 
-import atlantis.util.PositionUtil;
-
 /**
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>

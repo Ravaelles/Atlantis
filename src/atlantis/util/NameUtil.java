@@ -1,7 +1,8 @@
 package atlantis.util;
 
-import bwapi.TechType;
-import bwapi.UpgradeType;
+import org.openbw.bwapi4j.type.TechType;
+import org.openbw.bwapi4j.type.UpgradeType;
+
 import java.lang.reflect.Field;
 
 /**

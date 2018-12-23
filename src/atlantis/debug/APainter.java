@@ -945,7 +945,7 @@ public class APainter {
         int tileY = base.getPosition().getTileY();
         for (int x = tileX - 10; x <= tileX + 10; x++) {
             for (int y = tileY - 10; y <= tileY + 10; y++) {
-                APosition position = APosition.create(x, y);
+                APosition position = APosition.createFromTileXY(x, y);
                 boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
                         worker, AUnitType.Terran_Supply_Depot, position
                 );
@@ -967,7 +967,7 @@ public class APainter {
         if (enemyBase != null) {
             Area enemyBaseArea = AMap.getArea(enemyBase);
 //            Position polygonCenter = enemyBaseArea.getPolygon().getCenter();
-//            APosition polygonCenter = APosition.create(enemyBaseArea.getPolygon().getCenter());
+//            APosition polygonCenter = APosition.createFromTileXY(enemyBaseArea.getPolygon().getCenter());
             for (Position point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.YELLOW);
             }

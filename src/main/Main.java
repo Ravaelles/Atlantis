@@ -1,11 +1,6 @@
 package main;
 
-import atlantis.Atlantis;
-import atlantis.AtlantisIgniter;
 import atlantis.debug.AUnitTypesHelper;
-import atlantis.keyboard.AKeyboard;
-import atlantis.util.ProcessHelper;
-import org.openbw.bwapi4j.type.UnitType;
 
 /**
  * This is the main class of bot. Here everything starts.

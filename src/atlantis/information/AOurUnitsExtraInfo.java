@@ -1,6 +1,7 @@
 package atlantis.information;
 
 import atlantis.units.AUnit;
+
 import java.util.ArrayList;
 
 /**

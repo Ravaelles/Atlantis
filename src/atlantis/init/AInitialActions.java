@@ -1,7 +1,6 @@
 package atlantis.init;
 
 import atlantis.AGame;
-import atlantis.information.AMap;
 import atlantis.workers.AMineralGathering;
 
 public class AInitialActions {

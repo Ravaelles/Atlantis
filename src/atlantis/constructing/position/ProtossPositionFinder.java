@@ -5,6 +5,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+
 import java.util.Collection;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {
@@ -34,7 +35,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
                 for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
-                        APosition constructionPosition = APosition.create(tileX, tileY);
+                        APosition constructionPosition = APosition.createFromTileXY(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
                         }

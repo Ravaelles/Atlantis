@@ -6,7 +6,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.Base;
+import bwem.Base;
 
 public class ASpecialPositionFinder {
     
@@ -39,13 +39,11 @@ public class ASpecialPositionFinder {
      * that doesn't have gas extracting building.
      */
     protected static APosition findPositionForGasBuilding(AUnitType building) {
-        AUnit builder = Select.ourWorkers().first();
         for (AUnit base : Select.ourBases().listUnits()) {
-            AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
+            AUnit geyser = Select.geysers().nearestTo(base);
 
             if (geyser != null && geyser.distanceTo(base) < 12) {
-                APosition position = geyser.getPosition().translateByPixels(-64, -32);
-                return position;
+                return geyser.getPosition().translateByPixels(-64, -32);
             }
         }
 
@@ -97,7 +95,7 @@ public class ASpecialPositionFinder {
             return null;
         }
         
-        APosition near = APosition.create(baseToExpand.getPosition()).translateByPixels(-64, -48);
+        APosition near = APosition.createFromTileXY(baseToExpand.getCenter()).translateByPixels(-64, -48);
         constructionOrder.setMaxDistance(1);
 
 //        System.out.println("Main base = " + Select.mainBase());
@@ -119,7 +117,7 @@ public class ASpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = APosition.create(AMap.getExpansionFreeBaseNearestTo(Select.mainBase().getPosition()).getPosition()
+        APosition near = APosition.createFromTileXY(AMap.getExpansionFreeBaseNearestTo(Select.mainBase().getPosition()).getCenter()
         ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);

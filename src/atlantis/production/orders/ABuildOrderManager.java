@@ -7,8 +7,9 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
-import bwapi.TechType;
-import bwapi.UpgradeType;
+import org.openbw.bwapi4j.type.TechType;
+import org.openbw.bwapi4j.type.UpgradeType;
+
 import java.util.ArrayList;
 
 /**
@@ -20,7 +21,7 @@ public abstract class ABuildOrderManager {
 
     /**
      * Build order currently in use.
-     * @see switchToBuildOrder(ABuildOrder buildOrder)
+     * @see this.switchToBuildOrder()
      */
     private static ABuildOrder currentBuildOrder = null;
     
@@ -75,7 +76,7 @@ public abstract class ABuildOrderManager {
      * returns those build orders that we can build in this very moment (we can afford them and they match our
      * strategy).
      *
-     * @param int mode use this classes constants; if MODE_ONLY_UNITS it will only return "units" as opposed
+     * @param mode use this classes constants; if MODE_ONLY_UNITS it will only return "units" as opposed
      * to buildings (keep in mind AUnit is both "unit" and building)
      */
     public static ArrayList<ProductionOrder> getThingsToProduceRightNow(int mode) {
@@ -117,8 +118,8 @@ public abstract class ABuildOrderManager {
                 gasNeeded += unitOrBuilding.getGasPrice();
             } // UPGRADE
             else if (upgrade != null) {
-                mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
-                gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
+                mineralsNeeded += upgrade.mineralPrice(ATech.getUpgradeLevel(upgrade));
+                gasNeeded += upgrade.gasPrice(ATech.getUpgradeLevel(upgrade));
             } // TECH
             else if (tech != null) {
                 mineralsNeeded += tech.mineralPrice();

@@ -6,7 +6,6 @@ import atlantis.combat.squad.missions.MissionDefend;
 import atlantis.constructing.AConstructionManager;
 import atlantis.information.AMap;
 import atlantis.position.APosition;
-import atlantis.production.ADynamicConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

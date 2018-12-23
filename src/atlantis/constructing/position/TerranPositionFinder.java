@@ -5,6 +5,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+
 import java.util.Collection;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
@@ -34,13 +35,13 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             int maxTileX = Math.min(nearTo.getTileX() + searchRadius, AMap.getMapWidthInTiles() - 1);
             for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
                 
-                // Search veritcally
+                // Search vertically
                 int minTileY = Math.max(0, nearTo.getTileY() - searchRadius);
                 int maxTileY = Math.min(nearTo.getTileY() + searchRadius, AMap.getMapHeightInTiles() - 1);
                 for (int tileY = minTileY; tileY <= maxTileY; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
 //                        System.out.println(tileX + " / " + tileY);
-                        APosition constructionPosition = APosition.create(tileX, tileY);
+                        APosition constructionPosition = APosition.createFromTileXY(tileX, tileY);
                         
                         // Check if position is buildable etc
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {

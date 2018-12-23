@@ -1,8 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.debug.APainter;
 import atlantis.units.AUnit;
-import bwapi.Color;
 
 /**
  *
