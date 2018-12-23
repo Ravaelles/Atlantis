@@ -31,7 +31,7 @@ public class PositionOperationsWrapper {
         Collections.sort(xCoordinates);
         Collections.sort(yCoordinates);
 
-        return new APosition(
+        return APosition.fromPixels(
                 xCoordinates.get(xCoordinates.size() / 2),
                 yCoordinates.get(yCoordinates.size() / 2)
         );
@@ -47,7 +47,7 @@ public class PositionOperationsWrapper {
             yCoordinates.add(unit.getY());
         }
 
-        return new APosition(
+        return APosition.fromPixels(
                 getPositionMedian(xCoordinates),
                 getPositionMedian(yCoordinates)
         );
@@ -63,7 +63,7 @@ public class PositionOperationsWrapper {
             totalY += unit.getY();
         }
 
-        return new APosition(totalX / units.size(), totalY / units.size());
+        return APosition.fromPixels(totalX / units.size(), totalY / units.size());
     }
     
     public static APosition getPositionAverageDistanceWeightedTo(AUnit unit, Units units, double power) {
@@ -80,7 +80,7 @@ public class PositionOperationsWrapper {
             totalY += otherUnit.getY() * factor;
         }
 
-        return new APosition((int) (totalX / totalFactor), (int) (totalY / totalFactor));
+        return APosition.fromPixels((int) (totalX / totalFactor), (int) (totalY / totalFactor));
     }
     
     private static int getPositionMedian(List<Integer> collection) {
@@ -97,7 +97,7 @@ public class PositionOperationsWrapper {
             yCoordinates.add(position.getY());
         }
 
-        return new APosition(
+        return APosition.fromPixels(
                 getPositionMedian(xCoordinates),
                 getPositionMedian(yCoordinates)
         );
@@ -108,11 +108,11 @@ public class PositionOperationsWrapper {
     public static APosition getPositionMovedPercentTowards(Position from, Position movedToward, double percent) {
         int finalX = (int) ((100 - percent) * from.getX() + percent * movedToward.getX()) / 100;
         int finalY = (int) ((100 - percent) * from.getY() + percent * movedToward.getY()) / 100;
-        return new APosition(finalX, finalY);
+        return APosition.fromPixels(finalX, finalY);
     }
     
     public static APosition getPositionMovedTilesTowards(APosition from, Position to, double tiles) {
-        return getPositionMovedPercentTowards(from.getPoint(), to, tiles);
+        return getPositionMovedPercentTowards(from.getPosition(), to, tiles);
     }
 
     public static APosition getPositionMovedTilesTowards(APosition from, APosition to, double tiles) {
@@ -127,7 +127,7 @@ public class PositionOperationsWrapper {
         int finalX = from.getX() + dirX;
         int finalY = from.getY() + dirY;
         
-        return new APosition(finalX, finalY);
+        return APosition.fromPixels(finalX, finalY);
     }
 
     // === Translate position ============================
@@ -137,14 +137,14 @@ public class PositionOperationsWrapper {
      * [deltaTileX, deltaTileY].
      */
     public static APosition translateByTiles(APosition position, int deltaTileX, int deltaTileY) {
-        return new APosition(position.getX() + deltaTileX * 32, position.getY() + deltaTileY * 32);
+        return APosition.fromPixels(position.getX() + deltaTileX * 32, position.getY() + deltaTileY * 32);
     }
     
     /**
      * Returns a <b>new</b> Position that represents the effect of moving this position by [deltaX, deltaY].
      */
     public static APosition translateByPixels(APosition position, int deltaPixelX, int deltaPixelY) {
-        return new APosition(position.getX() + deltaPixelX, position.getY() + deltaPixelY);
+        return APosition.fromPixels(position.getX() + deltaPixelX, position.getY() + deltaPixelY);
     }
     
     // === Other method ==================================
@@ -163,7 +163,7 @@ public class PositionOperationsWrapper {
             totalX += unit.getPosition().getX();
             totalY += unit.getPosition().getY();
         }
-        return new APosition(
+        return APosition.fromPixels(
             totalX / units.size(),
             totalY / units.size()
         );

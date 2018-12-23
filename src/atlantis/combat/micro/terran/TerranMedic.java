@@ -3,8 +3,7 @@ package atlantis.combat.micro.terran;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import bwapi.TechType;
-import bwapi.UnitCommandType;
+import org.openbw.bwapi4j.unit.Medic;
 
 import java.util.HashMap;
 
@@ -22,8 +21,15 @@ public class TerranMedic {
      */
     private static final HashMap<AUnit, AUnit> medicsAssignments = new HashMap<>();
 
+    /**
+     * Convenience object for specific unit class.
+     */
+    private static Medic medicObject = null;
+
     // =========================================================
+
     public static boolean update(AUnit medic) {
+        medicObject = (Medic) medic.u();
 
         // =========================================================
         // Define nearest wounded infantry unit
@@ -45,7 +51,7 @@ public class TerranMedic {
     // =========================================================
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
         if (medic != null && unitToHeal != null && ! unitToHeal.equals(medic.getTarget())) {
-            medic.useTech(TechType.Healing, unitToHeal);
+            medicObject.heal(unitToHeal);
         }
     }
 
@@ -78,7 +84,7 @@ public class TerranMedic {
     }
 
     private static boolean handleHealWoundedUnit(AUnit medic) {
-        if (! medic.isIdle() && medic.getLastCommand().getUnitCommandType() == UnitCommandType.Right_Click_Unit) {
+        if (! medic.isIdle()) {
             return true;
         }
 

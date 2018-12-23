@@ -306,7 +306,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitEvade(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+//        AUnit unit = AUnit.create(u);
     }
 
     /**
@@ -314,7 +314,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitHide(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+//        AUnit unit = AUnit.create(u);
     }
 
     /**
@@ -388,7 +388,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitRenegade(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+//        AUnit unit = AUnit.create(u);
     }
 
     /**

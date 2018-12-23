@@ -6,12 +6,9 @@ import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import bwem.area.Area;
 import org.openbw.bwapi4j.Position;
-import org.openbw.bwapi4j.TilePosition;
 import org.openbw.bwapi4j.WalkPosition;
 import org.openbw.bwapi4j.type.Color;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -26,7 +23,7 @@ public class APosition extends Position implements Comparable<Position> {
 //    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
     public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 12;
     
-    private static final Map<Position, APosition> instances = new HashMap<>();
+//    private static final Map<Position, APosition> instances = new HashMap<>();
     
     private Position p;
     
@@ -37,9 +34,9 @@ public class APosition extends Position implements Comparable<Position> {
         this.p = new Position(position.getX(), position.getY());
     }
 
-    public APosition(int pixelX, int pixelY) {
-        super(pixelX, pixelY);
-        this.p = new Position(pixelX, pixelY);
+    public APosition(Position p) {
+        super(p.getX(), p.getY());
+        this.p = p;
     }
 
     public APosition(WalkPosition walkPosition) {
@@ -47,33 +44,39 @@ public class APosition extends Position implements Comparable<Position> {
         this.p = new Position(walkPosition.getX(), walkPosition.getY());
     }
 
-    public APosition(Position p) {
-        super(p.getX(), p.getY());
-        this.p = p;
+    private APosition(int pixelX, int pixelY) {
+        super(pixelX, pixelY);
+        this.p = new Position(pixelX, pixelY);
     }
 
-    public static APosition createFrom(Object anyPositionObject) {
-        Position p = PositionUtil.convertToPosition(anyPositionObject);
+    // === Factories =============================================
 
-        if (instances.containsKey(p)) {
-            return instances.get(p);
-        }
-        else {
-            APosition position = new APosition(p);
-            instances.put(p, position);
-            return position;
-        }
+    public static APosition fromPixels(int px, int py) {
+        return new APosition(px, py);
+    }
+
+    public static APosition create(Object anyPositionObject) {
+        Position p = PositionUtil.convertToPosition(anyPositionObject);
+        return new APosition(p);
+//        if (instances.containsKey(p)) {
+//            return instances.get(p);
+//        }
+//        else {
+//            APosition position = new APosition(p);
+//            instances.put(p, position);
+//            return position;
+//        }
     }
 
     /**
      * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
-     * you can createFromTileXY them here or reference original Position class via p() method.
+     * you can create them here or reference original Position class via p() method.
      * <br /><br />
      * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
      * <br /><br />
      * @return APosition object from (build) tile coordinates (32 pixels = 1 tile).
      */
-    public static APosition createFromTileXY(int tileX, int tileY) {
+    public static APosition create(int tileX, int tileY) {
         return new APosition(tileX * 32, tileY * 32);
     }
     
@@ -81,11 +84,11 @@ public class APosition extends Position implements Comparable<Position> {
      * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside APosition class.
      * APosition class should be used always in place of Position when possible.
      */
-    public Position p() {
-        return p;
-    }
+//    public Position p() {
+//        return p;
+//    }
 
-    public APosition getPoint() {
+    public APosition getPosition() {
         return new APosition(getX(), getY());
     }
 
@@ -97,7 +100,7 @@ public class APosition extends Position implements Comparable<Position> {
      * building dimensions.
      */
     public double distanceTo(Object positionOfAnyKind) {
-        return PositionUtil.distanceTo(getPoint(), PositionUtil.convertToPosition(positionOfAnyKind));
+        return PositionUtil.distanceTo(getPosition(), PositionUtil.convertToPosition(positionOfAnyKind));
     }
 
     /**
@@ -106,7 +109,7 @@ public class APosition extends Position implements Comparable<Position> {
      * building dimensions.
      */
     public double distanceTo(Position position) {
-        return PositionUtil.distanceTo(getPoint(), position);
+        return PositionUtil.distanceTo(getPosition(), position);
     }
 
     /**
@@ -115,7 +118,7 @@ public class APosition extends Position implements Comparable<Position> {
      * building dimensions.
      */
     public double distanceTo(AUnit unit) {
-        return PositionUtil.distanceTo(getPoint(), unit);
+        return PositionUtil.distanceTo(getPosition(), unit);
     }
     
     /**

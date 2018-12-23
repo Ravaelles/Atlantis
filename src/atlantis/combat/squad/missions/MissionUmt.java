@@ -5,7 +5,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import bwta.Area;
+import bwem.area.Area;
 
 /**
  * This is the mission that is best used in UMT maps.
@@ -99,7 +99,7 @@ public class MissionUmt extends Mission {
         
         Area nearestUnexploredArea = AMap.getNearestUnexploredArea(flagshipUnit.getPosition());
         explorePosition = (nearestUnexploredArea != null
-                ? APosition.createFromTileXY(nearestUnexploredArea.getCenter()) : null);
+                ? APosition.create(AMap.getAreaCenter(nearestUnexploredArea)) : null);
         if (! unit.isMoving() && explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
             unit.setTooltip("#Explore" + (isFlagship ? "Flag" : ""));
             return unit.move(explorePosition, UnitActions.EXPLORE);

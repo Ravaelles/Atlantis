@@ -255,7 +255,7 @@ public class AScoutManager {
         // =========================================================
         
         APosition goTo = scoutingAroundBaseLastPolygonPoint != null
-                ? APosition.createFromTileXY(scoutingAroundBaseLastPolygonPoint) : null;
+                ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
 
         if (goTo == null || scoutingAroundBaseWasInterrupted) {
             goTo = useNearestPolygonPoint(area, scout);
@@ -297,7 +297,7 @@ public class AScoutManager {
 //        Position centerOfArea = enemyBaseArea.getCenter();
 //
 //        for (Position point : enemyBaseArea.getPolygon().getPoints()) {
-//            APosition position = APosition.createFromTileXY(point);
+//            APosition position = APosition.create(point);
 //
 //            // Calculate actual ground distance to this position
 //            double groundDistance = AMap.getGroundDistance(scout, position);
@@ -331,7 +331,7 @@ public class AScoutManager {
 
     public static APosition getUmtFocusPoint(APosition startPosition) {
         Area nearestUnexploredArea = AMap.getNearestUnexploredArea(startPosition);
-        return nearestUnexploredArea != null ? APosition.createFromTileXY(AMap.getAreaCenter(nearestUnexploredArea)) : null;
+        return nearestUnexploredArea != null ? APosition.create(AMap.getAreaCenter(nearestUnexploredArea)) : null;
     }
 
     // =========================================================

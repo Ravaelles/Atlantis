@@ -228,8 +228,8 @@ public class Positions<T> {
             double dist = position.distanceTo(otherPosition);
             if (dist < closestDist) {
                 closestDist = dist;
-//                closestPosition = APosition.createFromTileXY(otherPosition.getX() / 32, otherPosition.getY() / 32);
-                closestPosition = APosition.createFrom(otherPosition);
+//                closestPosition = APosition.create(otherPosition.getX() / 32, otherPosition.getY() / 32);
+                closestPosition = APosition.create(otherPosition);
                 _lastIndex = index;
             }
             index++;

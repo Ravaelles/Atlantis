@@ -1,12 +1,14 @@
 package atlantis.combat.micro;
 
 import atlantis.Atlantis;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.Bullet;
-import bwapi.BulletType;
-import bwapi.Position;
+import org.openbw.bwapi4j.Bullet;
+import org.openbw.bwapi4j.Position;
+import org.openbw.bwapi4j.type.BulletType;
+import org.openbw.bwapi4j.type.Color;
 
 import java.util.List;
 
@@ -17,17 +19,17 @@ import java.util.List;
 public class ABadWeather {
 
     public static boolean avoidPsionicStormAndActiveMines(AUnit unit) {
-        boolean isRangedUnit = unit.isRangedUnit();
-        
+
         // === Psionic Storm ========================================
         
         if (unit.isUnderStorm()) {
-            for (Bullet bullet : Atlantis.getInteraction().getBullets()) {
+            for (Bullet bullet : Atlantis.getBW().getBullets()) {
 
                 // PSIONIC STORM
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {
-                    if (handleMoveAwayIfCloserThan(unit, bullet.getPosition(), 3.2)) {
+                    if (handleMoveAwayIfCloserThan(unit, bullet.getPosition())) {
                         unit.setTooltip("Psionic Storm!");
+                        APainter.paintLine(unit, bullet.getPosition(), Color.WHITE);
                         return true;
                     }
                 }
@@ -66,7 +68,7 @@ public class ABadWeather {
     // =========================================================
 
     
-    private static boolean handleMoveAwayIfCloserThan(AUnit unit, Position avoidCenter, double minDist) {
+    private static boolean handleMoveAwayIfCloserThan(AUnit unit, Position avoidCenter) {
         if (unit.distanceTo(avoidCenter) < 3.2) {
             unit.moveAwayFrom(avoidCenter, 2);
             return true;

@@ -135,7 +135,7 @@ public class AMap {
      */
     public static ChokePoint getChokePointForNaturalBase() {
         if (cached_naturalBaseChokePoint != null) {
-            APainter.paintCircle(APosition.createFrom(cached_naturalBaseChokePoint.getCenter().toPosition()), 5, Color.WHITE);
+            APainter.paintCircle(APosition.create(cached_naturalBaseChokePoint.getCenter().toPosition()), 5, Color.WHITE);
             return cached_naturalBaseChokePoint;
         }
 
@@ -147,14 +147,14 @@ public class AMap {
             return null;
         }
 
-        Area naturalArea = getArea(getNaturalBase(mainBase.getPoint()));
+        Area naturalArea = getArea(getNaturalBase(mainBase.getPosition()));
         if (naturalArea == null) {
             System.err.println("Can't find area for natural base");
             return null;
         }
 
         for (ChokePoint chokePoint : naturalArea.getChokePoints()) {
-            APosition center = APosition.createFrom(chokePoint.getCenter().toPosition());
+            APosition center = APosition.create(chokePoint.getCenter().toPosition());
             if (center.distanceTo(getChokePointForMainBase().getCenter().toPosition()) > 1) {
                 cached_naturalBaseChokePoint = chokePoint;
                 return cached_naturalBaseChokePoint;
@@ -261,7 +261,7 @@ public class AMap {
     public static Base getNaturalBase(Object mainBasePosition) {
         Position nearestTo = mainBasePosition instanceof Position
                 ? (Position) mainBasePosition
-                : ((APosition) mainBasePosition).getPoint();
+                : ((APosition) mainBasePosition).getPosition();
 
         // =========================================================
 
@@ -314,7 +314,7 @@ public class AMap {
         for (Area reachableArea : area.getAccessibleNeighbors()) {
             if (!AMap.isExplored(reachableArea.getWalkPositionWithHighestAltitude().toPosition())) {
                 areaToVisit = reachableArea;
-//                return APosition.createFrom(areaToVisit.getCenter());
+//                return APosition.create(areaToVisit.getCenter());
                 return areaToVisit;
             }
         }
@@ -353,8 +353,7 @@ public class AMap {
         ChokePoint bestChoke = null;
 
         for (ChokePoint chokePoint : getChokePoints()) {
-//            double dist = position.distanceTo(chokePoint.getCenter().toPosition()) - chokePoint.getWidth() / 32 / 2;
-            double dist = position.distanceTo(chokePoint.getCenter().toPosition());
+            double dist = position.distanceTo(chokePoint.getCenter().toPosition()) - AMap.getChokePointWidth(chokePoint);
             if (dist < bestDistance) {
                 bestDistance = dist;
                 bestChoke = chokePoint;
@@ -509,6 +508,14 @@ public class AMap {
         return AMap.getBWMap().isWalkable(position.toWalkPosition());
     }
 
+    /**
+     * Returns true if given position can be traversed by land units and there are no neutral units on it.
+     */
+    public static boolean isFullyWalkable(APosition position) {
+        return AMap.getBWMap().isWalkable(position.toWalkPosition())
+                && AMap.getMap().getData().getTile(position.toTilePosition()).getNeutral() == null;
+    }
+
     // =========================================================
     // Special methods
     /**
@@ -534,7 +541,7 @@ public class AMap {
 //        Collection<ChokePoint> chokes = baseArea.getChokePoints();
 //        for (ChokePoint choke : chokes) {
 //            if (baseArea.getChokePoints().contains(choke)) {
-//                System.out.println("Disabling choke point: " + APosition.createFromTileXY(choke.getCenter()));
+//                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
 //                disabledChokePoints.add(choke);	//choke.setDisabled(true);
 //            }
 //        }
@@ -633,7 +640,7 @@ public class AMap {
     public static Position getAreaCenter(Area area) {
         int centerX = area.getBottomRight().getX() - area.getTopLeft().getX();
         int centerY = area.getBottomRight().getY() - area.getTopLeft().getY();
-        APosition centerPosition = new APosition(centerX, centerY);
+        APosition centerPosition = APosition.fromPixels(centerX, centerY);
         centerPosition = centerPosition.makeWalkable();
         return centerPosition;
     }

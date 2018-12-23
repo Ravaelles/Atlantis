@@ -62,7 +62,7 @@ public class ASquadManager {
      */
     public static Squad getAlphaSquad() {
 
-        // If no squad exists, createFromTileXY main squad
+        // If no squad exists, create main squad
         if (squads.isEmpty()) {
             Squad squad = Squad.createNewSquad(null, Missions.getInitialMission());
             squads.add(squad);

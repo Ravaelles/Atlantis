@@ -10,7 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
-import bwapi.WeaponType;
+import org.openbw.bwapi4j.type.WeaponType;
 
 import java.util.Collection;
 

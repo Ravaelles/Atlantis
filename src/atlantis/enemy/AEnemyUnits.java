@@ -6,7 +6,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.Base;
+import bwem.Base;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +58,7 @@ public class AEnemyUnits {
                 APosition discoveredBase = enemyUnitData.getPosition();
                 
                 for (Base startingLocation : AMap.getStartingLocations(false)) {
-                    if (discoveredBase.distanceTo(startingLocation.getPosition()) <= 7) {
+                    if (discoveredBase.distanceTo(startingLocation.getCenter()) <= 7) {
 //                        System.out.println("Discovered main enemy base");
                         return true;
                     }

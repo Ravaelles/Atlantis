@@ -28,7 +28,7 @@ import java.util.Map;
  * Wrapper for BWMirror Unit class that makes units much easier to use.<br /><br />
  * Atlantis uses wrappers for BWMirror native classes which can't be extended.<br /><br />
  * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
- * createFromTileXY missing method here and you can reference original Unit class via u() method.
+ * create missing method here and you can reference original Unit class via u() method.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
@@ -51,7 +51,7 @@ public class AUnit extends APosition implements Comparable<Position>, AUnitOrder
     /**
      * Atlantis uses wrapper for OpenBW Unit classes.<br />
      * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
-     * createFromTileXY missing method here and you can reference original Unit class via u() method.
+     * create missing method here and you can reference original Unit class via u() method.
      */
     public static AUnit createFrom(UnitImpl u) {
         if (u == null) {
@@ -123,9 +123,9 @@ public class AUnit extends APosition implements Comparable<Position>, AUnitOrder
         _isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
     }
 
-    public APosition getPosition() {
-        return APosition.createFromTileXY(u.getPosition());
-    }
+//    public APosition getPosition() {
+//        return APosition.create(u.getPosition());
+//    }
 
     /**
      * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside AUnit class. AUnit class should be used always in place
@@ -194,7 +194,7 @@ public class AUnit extends APosition implements Comparable<Position>, AUnitOrder
         dx = (int) (dx * modifier);
         dy = (int) (dy * modifier);
 
-        APosition newPosition = new APosition(getX() - dx, getY() - dy).makeValid();
+        APosition newPosition = APosition.fromPixels(getX() - dx, getY() - dy).makeValid();
 
 //        if (AtlantisRunManager.isPossibleAndReasonablePosition(
 //                this, newPosition, -1, 9999, true
@@ -916,7 +916,7 @@ public class AUnit extends APosition implements Comparable<Position>, AUnitOrder
     }
 
     public APosition getTargetPosition() {
-        return APosition.createFromTileXY(mobileUnit().getTargetPosition());
+        return APosition.create(mobileUnit().getTargetPosition());
     }
 
     public AUnit getOrderTarget() {
@@ -1089,4 +1089,7 @@ public class AUnit extends APosition implements Comparable<Position>, AUnitOrder
         this._cachedNearestMeleeEnemy = _cachedNearestMeleeEnemy;
     }
 
+    public UnitCommandType getOrder() {
+        return pu().getLastCommand();
+    }
 }

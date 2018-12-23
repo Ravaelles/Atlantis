@@ -4,7 +4,7 @@ import atlantis.information.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
-import bwta.ChokePoint;
+import bwem.ChokePoint;
 
 /**
  *
@@ -146,7 +146,7 @@ public class TerranSiegeTankManager {
             return true;
         }
         else {
-            return tank.distanceTo(choke.getCenter()) > 1 || choke.getWidth() / 32 > 3.5;
+            return tank.distanceTo(choke.getCenter()) > 1 || AMap.getChokePointWidth(choke) > 3.5;
         }
     }
 

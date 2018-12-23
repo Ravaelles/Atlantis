@@ -18,7 +18,7 @@ public class AProductionCommander {
         // Check if need to increase supply and if so, take care of it.
         ASupplyManager.update();
         
-        // See what units/buildings we need to createFromTileXY and take care of it.
+        // See what units/buildings we need to create and take care of it.
         AProductionManager.update();
         
         // Take care of any unfinished constructions, make sure they have builders assigned etc.

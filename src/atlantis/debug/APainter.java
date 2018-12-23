@@ -28,6 +28,9 @@ import atlantis.util.ColorUtil;
 import atlantis.workers.AWorkerManager;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
+import bwem.area.Area;
+import org.openbw.bwapi4j.InteractionHandler;
+import org.openbw.bwapi4j.MapDrawer;
 import org.openbw.bwapi4j.Position;
 import org.openbw.bwapi4j.type.Color;
 import org.openbw.bwapi4j.type.TechType;
@@ -50,13 +53,15 @@ public class APainter {
 //    public static int paintingMode = MODE_FULL_PAINTING;
 
     // =========================================================
-//    private static Game bwapi;
+
+    private static InteractionHandler interaction;
     private static int sideMessageTopCounter = 0;
     private static int sideMessageMiddleCounter = 0;
     private static int sideMessageBottomCounter = 0;
     private static int prevTotalFindBuildPlace = 0;
 
     // =========================================================
+
     /**
      * Executed once per frame, at the end of all other actions.
      */
@@ -67,7 +72,7 @@ public class APainter {
 
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
-        bwapi = Atlantis.getInteraction();
+        interaction = Atlantis.getInteraction();
 
         // =========================================================
         if (paintingMode == MODE_NO_PAINTING) {
@@ -109,14 +114,15 @@ public class APainter {
         paintTooltipsOverUnits();
 
         setTextSizeMedium();
-                
+
         // =========================================================
 //        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
-;
+        ;
     }
 
     // =========================================================
     // Hi-level
+
     /**
      * Paint focus point for global attack mission etc.
      */
@@ -128,7 +134,7 @@ public class APainter {
         // =========================================================
         // Global mission
         paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
-                ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
+                        ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
                 AEnemyStrategy.isEnemyStrategyKnown() ? Color.YELLOW : Color.RED);
         paintSideMessage("Mission: " + ASquadManager.getAlphaSquad().getMission().getName(), Color.WHITE);
         paintSideMessage("Enemy base: " + AEnemyUnits.getEnemyBase(), Color.WHITE);
@@ -173,17 +179,17 @@ public class APainter {
                 int boxLeft = unitPosition.getX() - boxWidth / 2;
                 int boxTop = unitPosition.getY() + 23;
 
-                Position topLeft = new APosition(boxLeft, boxTop);
+                APosition topLeft = APosition.fromPixels(boxLeft, boxTop);
 
                 // =========================================================
                 // Paint box
                 int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
-                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.RED, true);
-                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), Color.GREEN, true);
+                paintRectangleFilled(topLeft, boxLeft + boxWidth, boxTop + boxHeight, Color.RED);
+                paintRectangleFilled(topLeft, boxLeft + healthBarProgress, boxTop + boxHeight, Color.GREEN);
 
                 // =========================================================
                 // Paint box borders
-                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.BLACK, false);
+                paintRectangle(topLeft, APosition.fromPixels(boxLeft + boxWidth, boxTop + boxHeight), Color.BLACK);
             }
 
             // =========================================================
@@ -207,7 +213,7 @@ public class APainter {
 //                            : AtlantisCombatEvaluator.getEvalString(unit);
             String combatStrength = ColorUtil.getColorString(Color.GREEN)
                     + ACombatEvaluator.getEvalString(unit, eval);
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
+            paintTextCentered(APosition.fromPixels(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
 //                }
 
             // =========================================================
@@ -218,8 +224,8 @@ public class APainter {
 //                    paintCircle(unitPosition, 14, Color.WHITE);
 //                }
 //            }
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 5), 
-                    unit.u().getOrder().toString(), Color.PURPLE);
+            paintTextCentered(APosition.fromPixels(unitPosition.getX(), unitPosition.getY() + 5),
+                    unit.getOrder().toString(), Color.PURPLE);
         }
     }
 
@@ -238,7 +244,7 @@ public class APainter {
 //                        : AtlantisCombatEvaluator.getEvalString(unit);
             String combatStrength = ColorUtil.getColorString(Color.RED)
                     + ACombatEvaluator.getEvalString(unit, eval);
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
+            paintTextCentered(APosition.fromPixels(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
 //            }
         }
     }
@@ -258,17 +264,17 @@ public class APainter {
 //                int boxLeft = unit.getPosition().getX() - boxWidth / 2;
 //                int boxTop = unit.getPosition().getY() + 23;
 //
-//                Position topLeft = new APosition(boxLeft, boxTop);
+//                Position topLeft = APosition.fromPixels(boxLeft, boxTop);
 //
 //                // =========================================================
 //                // Paint box
 //                int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
-//                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.RED, true);
-//                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), Color.GREEN, true);
+//                interaction.drawBoxMap(topLeft, APosition.fromPixels(boxLeft + boxWidth, boxTop + boxHeight), Color.RED, true);
+//                interaction.drawBoxMap(topLeft, APosition.fromPixels(boxLeft + healthBarProgress, boxTop + boxHeight), Color.GREEN, true);
 //
 //                // =========================================================
 //                // Paint box borders
-//                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.BLACK, false);
+//                interaction.drawBoxMap(topLeft, APosition.fromPixels(boxLeft + boxWidth, boxTop + boxHeight), Color.BLACK, false);
 //            }
 
         // =========================================================
@@ -281,36 +287,36 @@ public class APainter {
 //                int cooldownTop = unit.getPY() + 23;
 //                String cooldown = Color.getColorString(Color.YELLOW) + "(" + unit.getGroundWeaponCooldown() + ")";
 //
-//                Position topLeft = new APosition(cooldownLeft, cooldownTop);
+//                Position topLeft = APosition.fromPixels(cooldownLeft, cooldownTop);
 //
 //                // =========================================================
 //                // Paint box
 //                int cooldownProgress = cooldownWidth * unit.getGroundWeaponCooldown()
 //                        / (unit.getType().getGroundWeapon().getDamageCooldown() + 1);
-//                bwapi.drawBox(topLeft, new APosition(cooldownLeft + cooldownProgress, cooldownTop + cooldownHeight),
+//                interaction.drawBox(topLeft, APosition.fromPixels(cooldownLeft + cooldownProgress, cooldownTop + cooldownHeight),
 //                        Color.BROWN, true, false);
 //
 //                // =========================================================
 //                // Paint box borders
-//                bwapi.drawBox(topLeft, new APosition(cooldownLeft + cooldownWidth, cooldownTop + cooldownHeight),
+//                interaction.drawBox(topLeft, APosition.fromPixels(cooldownLeft + cooldownWidth, cooldownTop + cooldownHeight),
 //                        Color.BLACK, false, false);
 //
 //                // =========================================================
 //                // Paint label
-////                paintTextCentered(new APosition(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
+////                paintTextCentered(APosition.fromPixels(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
 //            }
         // =========================================================
         // === Paint battle squad
         // =========================================================
 //            if (unit.getSquad() != null) {
-//                paintTextCentered(new APosition(unit.getPX(), unit.getPY() + 3), Color.getColorString(Color.GREY)
+//                paintTextCentered(APosition.fromPixels(unit.getPX(), unit.getPY() + 3), Color.getColorString(Color.GREY)
 //                        + "#" + unit.getSquad().getId(), false);
 //            }
         // =========================================================
         // === Paint num of other units around this unit
         // =========================================================
 //            int ourAround = Select.ourCombatUnits().inRadius(1.7, unit).count();
-//            paintTextCentered(new APosition(unit.getPX(), unit.getPY() - 15), Color.getColorString(Color.ORANGE)
+//            paintTextCentered(APosition.fromPixels(unit.getPX(), unit.getPY() - 15), Color.getColorString(Color.ORANGE)
 //                    + "(" + ourAround + ")", false);
 //            // =========================================================
 //            // === Combat Evaluation Strength
@@ -320,7 +326,7 @@ public class APainter {
 //                if (eval < 999) {
 //                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.GREEN) + "++")
 //                            : AtlantisCombatEvaluator.getEvalString(unit);
-//                    paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
+//                    paintTextCentered(APosition.fromPixels(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
 //                }
 //            }
 //        }
@@ -330,7 +336,7 @@ public class APainter {
 //            if (eval < 999) {
 //                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.GREEN) + "++")
 //                        : AtlantisCombatEvaluator.getEvalString(unit);
-//                paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
+//                paintTextCentered(APosition.fromPixels(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
 //            }
 //        }
     }
@@ -399,7 +405,7 @@ public class APainter {
         counters = unitTypesCounter.map();
         counters = AtlantisUtilities.sortByValue(counters, false);
         for (AUnitType unitType : counters.keySet()) {
-            if (! unitType.isBuilding()) {
+            if (!unitType.isBuilding()) {
                 paintSideMessage(counters.get(unitType) + "x " + unitType.toString(), Color.GREY, 0);
             }
         }
@@ -414,7 +420,7 @@ public class APainter {
         paintSideMessage("Prod. queue:", Color.WHITE);
 
         // === Display units currently in production ========================================
-        
+
         // Units
         for (AUnit unit : Select.ourNotFinished().listUnits()) {
             AUnitType type = unit.getType();
@@ -423,19 +429,19 @@ public class APainter {
             }
             paintSideMessage(type.getShortName(), Color.GREEN);
         }
-        
+
         // Techs
         for (TechType techType : ATech.getCurrentlyResearching()) {
             paintSideMessage(techType.toString(), Color.GREEN);
         }
-        
+
         // Upgrades
         for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
             paintSideMessage(upgradeType.toString(), Color.GREEN);
         }
 
         // === Display units that should be produced right now or any time ==================
-        
+
         ArrayList<ProductionOrder> produceNow = ABuildOrderManager.getThingsToProduceRightNow(ABuildOrderManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
@@ -443,14 +449,14 @@ public class APainter {
         }
 
         // === Display next units to produce ================================================
-        
+
         ArrayList<ProductionOrder> fullQueue = ABuildOrderManager.getProductionQueueNext(
                 5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);
             if (order != null && order.getShortName() != null) {
                 if (order.getUnitOrBuilding() != null
-                        && ! AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
+                        && !AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
                     continue;
                 }
                 paintSideMessage(order.getShortName(), Color.RED);
@@ -458,7 +464,7 @@ public class APainter {
         }
 
         // === Paint info if queues are empty ===============================================
-        
+
         if (produceNow.isEmpty() && fullQueue.isEmpty()) {
             paintSideMessage("Nothing to produce - it seems to be a bug", Color.RED);
         }
@@ -470,7 +476,7 @@ public class APainter {
     private static void paintSidebarConstructionsPending() {
         int yOffset = 220;
         ArrayList<ConstructionOrder> allOrders = AConstructionManager.getAllConstructionOrders();
-        if (! allOrders.isEmpty()) {
+        if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.WHITE, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
                 Color color = null;
@@ -584,7 +590,7 @@ public class APainter {
                 paintCircle(unit, unitRadius - 4, Color.BLUE);
                 paintCircle(unit, unitRadius - 3, Color.BLUE);
                 paintCircle(unit, unitRadius - 2, Color.BLUE);
-                if (unit.getTargetPosition()!= null) {
+                if (unit.getTargetPosition() != null) {
                     APainter.paintCircleFilled(unit.getTargetPosition(), 4, Color.BLUE);
                     APainter.paintLine(unit.getPosition(), unit.getTargetPosition(), Color.BLUE);
                 }
@@ -599,7 +605,7 @@ public class APainter {
             if (unit.isRunning()) {
                 paintLine(unit.getPosition(), unit.getRunManager().getRunToPosition(), Color.YELLOW);
                 paintLine(unit.getPosition().translateByPixels(1, 1), unit.getRunManager().getRunToPosition(), Color.YELLOW);
-                
+
                 if (unit.getRunManager().getRunToPosition() != null) {
                     paintCircleFilled(unit.getRunManager().getRunToPosition(), 10, Color.YELLOW);
                 }
@@ -620,11 +626,11 @@ public class APainter {
                 paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
                         2, flagHeight, Color.GREY); // Flag stick
             }
-            
+
             // Paint #ID
-            paintTextCentered(unit.getPosition().translateByTiles(0, 1), 
+            paintTextCentered(unit.getPosition().translateByTiles(0, 1),
                     "#" + unit.getId() + " " + unit.getUnitAction(), Color.CYAN);
-            
+
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
 //                paintCircle(unit, 15, Color.TEAL);
@@ -695,54 +701,47 @@ public class APainter {
             int labelProgress = (int) (1 + 99 * progress);
 
             // Paint box
-            bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight),
-                    Color.BLUE,
-                    true
+            paintRectangleFilled(
+                    APosition.fromPixels(labelLeft, labelTop),
+                    APosition.fromPixels(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight),
+                    Color.BLUE
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight), Color.BLUE, true, false);
 
             // Paint box borders
-            bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight),
-                    Color.BLACK,
-                    false
+            paintRectangle(
+                    APosition.fromPixels(labelLeft, labelTop),
+                    APosition.fromPixels(labelLeft + labelMaxWidth, labelTop + labelHeight),
+                    Color.BLACK
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.BLACK, false, false);
 
-            
             // =========================================================
             // Paint progress text
-            
+
             Color progressColor;
             if (labelProgress < 26) {
                 progressColor = Color.RED;
-            }
-            else if (labelProgress < 67) {
+            } else if (labelProgress < 67) {
                 progressColor = Color.YELLOW;
-            }
-            else {
+            } else {
                 progressColor = Color.GREEN;
             }
             stringToDisplay = labelProgress + "%%";
-            
+
             paintTextCentered(
-                    new APosition(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2), 
+                    APosition.fromPixels(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2),
                     stringToDisplay, progressColor
             );
-            
+
             // =========================================================
-            
+
             // Display name of unit
             String name = unit.getBuildType().getShortName();
 
             // Paint building name            
-            paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 7), 
+            paintTextCentered(APosition.fromPixels(unit.getPosition().getX(), unit.getPosition().getY() - 7),
                     name, Color.WHITE);
         }
-        
+
         setTextSizeSmall();
     }
 
@@ -771,22 +770,20 @@ public class APainter {
             }
 
             // Paint box
-            bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight),
-                    color,
-                    true
+            paintRectangleFilled(
+                    APosition.fromPixels(labelLeft, labelTop),
+                    APosition.fromPixels(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight),
+                    color
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight), color, true, false);
+            //interaction.drawBox(APosition.fromPixels(labelLeft, labelTop), APosition.fromPixels(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight), color, true, false);
 
             // Paint box borders
-            bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight),
-                    Color.BLACK,
-                    false
+            paintRectangle(
+                    APosition.fromPixels(labelLeft, labelTop),
+                    APosition.fromPixels(labelLeft + labelMaxWidth, labelTop + labelHeight),
+                    Color.BLACK
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.BLACK, false, false);
+            //interaction.drawBox(APosition.fromPixels(labelLeft, labelTop), APosition.fromPixels(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.BLACK, false, false);
         }
     }
 
@@ -802,7 +799,7 @@ public class APainter {
             if (workers > 0) {
                 String workersAssigned = workers + "";
                 paintTextCentered(
-                        PositionOperationsWrapper.translateByPixels(building.getPosition(), -5, -36), 
+                        PositionOperationsWrapper.translateByPixels(building.getPosition(), -5, -36),
                         workersAssigned, Color.GREY
                 );
             }
@@ -816,7 +813,7 @@ public class APainter {
     private static void paintUnitsBeingTrainedInBuildings() {
         setTextSizeMedium();
         for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-            if (! unit.getType().isBuilding() || ! unit.isTrainingAnyUnit()) {
+            if (!unit.getType().isBuilding() || !unit.isTrainingAnyUnit()) {
                 continue;
             }
 
@@ -834,27 +831,25 @@ public class APainter {
             }
 
             // Paint box
-            bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth * operationProgress / 100, labelTop + labelHeight),
-                    Color.GREY,
-                    true
+            paintRectangleFilled(
+                    APosition.fromPixels(labelLeft, labelTop),
+                    APosition.fromPixels(labelLeft + labelMaxWidth * operationProgress / 100, labelTop + labelHeight),
+                    Color.GREY
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth * operationProgress / 100, labelTop + labelHeight), Color.WHITE, true, false);
+            //interaction.drawBox(APosition.fromPixels(labelLeft, labelTop), APosition.fromPixels(labelLeft + labelMaxWidth * operationProgress / 100, labelTop + labelHeight), Color.WHITE, true, false);
 
             // Paint box borders
-            bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight),
-                    Color.BLACK,
-                    false
+            paintRectangle(
+                    APosition.fromPixels(labelLeft, labelTop),
+                    APosition.fromPixels(labelLeft + labelMaxWidth, labelTop + labelHeight),
+                    Color.BLACK
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.BLACK, false, false);
+            //interaction.drawBox(APosition.fromPixels(labelLeft, labelTop), APosition.fromPixels(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.BLACK, false, false);
 
             // =========================================================
             // Display label
             paintTextCentered(
-                    new APosition(labelLeft + labelMaxWidth / 2, labelTop + 2),
+                    APosition.fromPixels(labelLeft + labelMaxWidth / 2, labelTop + 2),
                     trainedUnitString, Color.WHITE
             );
         }
@@ -889,7 +884,7 @@ public class APainter {
      */
     private static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().listUnits()) {
-            if (unit.hasTooltip() && ! unit.isGatheringMinerals() && ! unit.isGatheringGas()) {
+            if (unit.hasTooltip() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
                 String string = "";
 
                 if (unit.hasTooltip()) {
@@ -945,7 +940,7 @@ public class APainter {
         int tileY = base.getPosition().getTileY();
         for (int x = tileX - 10; x <= tileX + 10; x++) {
             for (int y = tileY - 10; y <= tileY + 10; y++) {
-                APosition position = APosition.createFromTileXY(x, y);
+                APosition position = APosition.create(x, y);
                 boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
                         worker, AUnitType.Terran_Supply_Depot, position
                 );
@@ -967,7 +962,7 @@ public class APainter {
         if (enemyBase != null) {
             Area enemyBaseArea = AMap.getArea(enemyBase);
 //            Position polygonCenter = enemyBaseArea.getPolygon().getCenter();
-//            APosition polygonCenter = APosition.createFromTileXY(enemyBaseArea.getPolygon().getCenter());
+//            APosition polygonCenter = APosition.create(enemyBaseArea.getPolygon().getCenter());
             for (Position point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.YELLOW);
             }
@@ -979,7 +974,7 @@ public class APainter {
     private static final int timeConsumptionBarMaxWidth = 50;
     private static final int timeConsumptionBarHeight = 14;
     private static final int timeConsumptionYInterval = 16;
-    
+
     /**
      * Paints bars showing CPU time usage by game aspect (like "Production", "Combat", "Workers", "Scouting").
      */
@@ -1004,13 +999,13 @@ public class APainter {
                 barWidth = timeConsumptionBarMaxWidth;
             }
 
-            bwapi.drawBoxScreen(x, y, x + barWidth, y + timeConsumptionBarHeight, Color.GREY, true);
-            bwapi.drawBoxScreen(x, y, x + timeConsumptionBarMaxWidth, y + timeConsumptionBarHeight, Color.BLACK);
+            paintRectangleFilled(APosition.fromPixels(x, y), barWidth, timeConsumptionBarHeight, Color.GREY);
+            paintRectangle(APosition.fromPixels(x, y), timeConsumptionBarMaxWidth, timeConsumptionBarHeight, Color.BLACK);
 
             // Draw aspect label
             paintMessage(aspectTitle, Color.WHITE, x + 4, y + 1, true);
         }
-        
+
         // Paint total time
         int x = timeConsumptionLeftOffset;
         int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++ + 3;
@@ -1020,6 +1015,11 @@ public class APainter {
 
     // =========================================================
     // Lo-level
+
+    private static MapDrawer getMapDrawer() {
+        return Atlantis.getBW().getMapDrawer();
+    }
+
     public static void paintSideMessage(String text, Color color) {
         paintSideMessage(text, color, 0);
     }
@@ -1042,24 +1042,55 @@ public class APainter {
 
     public static void paintMessage(String text, Color color, int x, int y, boolean screenCoord) {
         if (screenCoord) {
-            bwapi.drawTextScreen(new APosition(x, y), ColorUtil.getColorString(color) + text);
+            getMapDrawer().drawTextScreen(APosition.fromPixels(x, y), ColorUtil.getColorString(color) + text);
         } else {
-            bwapi.drawTextMap(new APosition(x, y), ColorUtil.getColorString(color) + text);
+            getMapDrawer().drawTextMap(APosition.fromPixels(x, y), ColorUtil.getColorString(color) + text);
         }
+    }
+
+    public static void paintRectangle(APosition from, APosition to, Color color) {
+        if (from == null) {
+            return;
+        }
+        if (to == null) {
+            return;
+        }
+
+        getMapDrawer().drawBoxMap(
+                from,
+                to,
+                color,
+                false
+        );
     }
 
     public static void paintRectangle(APosition position, int width, int height, Color color) {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionOperationsWrapper.translateByPixels(position, width, height), color, false);
+        getMapDrawer().drawBoxMap(
+                position,
+                PositionOperationsWrapper.translateByPixels(position, width, height),
+                color,
+                true
+        );
+    }
+
+    public static void paintRectangleFilled(Position from, Position to, Color color) {
+        if (from == null) {
+            return;
+        }
+        if (to == null) {
+            return;
+        }
+        getMapDrawer().drawBoxMap(from, to, color, true);
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionOperationsWrapper.translateByPixels(position, width, height), color, true);
+        getMapDrawer().drawBoxMap(position, PositionOperationsWrapper.translateByPixels(position, width, height), color, true);
     }
 
     public static void paintCircle(AUnit unit, int radius, Color color) {
@@ -1070,14 +1101,14 @@ public class APainter {
         if (position == null) {
             return;
         }
-        bwapi.drawCircleMap(position, radius, color, false);
+        getMapDrawer().drawCircleMap(position, radius, color, false);
     }
 
     public static void paintCircleFilled(Position position, int radius, Color color) {
         if (position == null) {
             return;
         }
-        bwapi.drawCircleMap(position, radius, color, true);
+        getMapDrawer().drawCircleMap(position, radius, color, true);
     }
 
     public static void paintLine(APosition start, int dx, int dy, Color color) {
@@ -1088,21 +1119,21 @@ public class APainter {
         if (start == null || end == null) {
             return;
         }
-        bwapi.drawLineMap(start, end, color);
+        getMapDrawer().drawLineMap(start, end, color);
     }
 
     public static void paintLine(AUnit unit, AUnit end, Color color) {
         if (unit == null || end == null) {
             return;
         }
-        bwapi.drawLineMap(unit.getPosition(), end.getPosition(), color);
+        getMapDrawer().drawLineMap(unit, end, color);
     }
 
     public static void paintLine(AUnit unit, Position end, Color color) {
         if (unit == null || end == null) {
             return;
         }
-        bwapi.drawLineMap(unit.getPosition(), end, color);
+        getMapDrawer().drawLineMap(unit, end, color);
     }
 
     // Causes Java runtime errors
@@ -1112,7 +1143,7 @@ public class APainter {
 //        }
 //        for (int dx = 0; dx < width; dx++) {
 //            for (int dy = 0; dy < width; dx++) {
-//                bwapi.drawLineMap(new Position(start.getX() + dx, start.getY() + dy).makeValid(), 
+//                interaction.drawLineMap(new Position(start.getX() + dx, start.getY() + dy).makeValid(),
 //                        new Position(end.getX() + dx, end.getY() + dy).makeValid(), 
 //                        color);
 //            }
@@ -1140,11 +1171,11 @@ public class APainter {
         }
 
         if (screenCoords) {
-            bwapi.drawTextScreen(PositionOperationsWrapper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
+            getMapDrawer().drawTextScreen(PositionOperationsWrapper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         } else {
-            bwapi.drawTextMap(PositionOperationsWrapper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
+            getMapDrawer().drawTextMap(PositionOperationsWrapper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         }
@@ -1154,20 +1185,54 @@ public class APainter {
         if (position == null || text == null) {
             return;
         }
-
-        bwapi.drawTextMap(position, ColorUtil.getColorString(color) + text);
+        getMapDrawer().drawTextMap(position, ColorUtil.getColorString(color) + text);
     }
 
     private static void setTextSizeMedium() {
-        bwapi.setTextSize(Enum.Default);
+        getMapDrawer().setTextSize(MapDrawer.TextSize.Default);
     }
 
     private static void setTextSizeSmall() {
-        bwapi.setTextSize(Enum.Small);
+        getMapDrawer().setTextSize(MapDrawer.TextSize.Small);
     }
 
     private static void setTextSizeLarge() {
-        bwapi.setTextSize(Enum.Large);
+        getMapDrawer().setTextSize(MapDrawer.TextSize.Large);
+    }
+
+    private static void setTextSizeHuge() {
+        getMapDrawer().setTextSize(MapDrawer.TextSize.Huge);
+    }
+
+    private static java.awt.Color convertColor(Color color) {
+        switch (color) {
+            case WHITE:
+                return java.awt.Color.WHITE;
+            case RED:
+                return java.awt.Color.RED;
+            case GREY:
+                return java.awt.Color.GRAY;
+            case GREEN:
+                return java.awt.Color.GREEN;
+            case YELLOW:
+                return java.awt.Color.YELLOW;
+            case BLUE:
+                return java.awt.Color.BLUE;
+            case BLACK:
+                return java.awt.Color.BLACK;
+            case TEAL:
+                return java.awt.Color.GREEN;
+            case ORANGE:
+                return java.awt.Color.ORANGE;
+            case PURPLE:
+                return java.awt.Color.MAGENTA;
+            case CYAN:
+                return java.awt.Color.CYAN;
+            case BROWN:
+                return new java.awt.Color(150, 100, 50);
+            default:
+                throw new RuntimeException("Unknown color: " + color);
+        }
     }
 
 }

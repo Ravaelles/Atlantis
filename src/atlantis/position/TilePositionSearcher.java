@@ -39,7 +39,7 @@ public abstract class TilePositionSearcher {
                 int maxTileY = Math.min(initTY + radius, AMap.getMapHeightInTiles() - 1);
                 for (int tileY = minTileY; tileY <= maxTileY; tileY++) {
                     if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
-                        APosition potentialPosition = APosition.createFromTileXY(tileX, tileY);
+                        APosition potentialPosition = APosition.create(tileX, tileY);
                         if (isAcceptablePosition(potentialPosition)) {
                             return potentialPosition;
                         }

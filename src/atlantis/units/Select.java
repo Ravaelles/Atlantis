@@ -52,9 +52,9 @@ public class Select<T> {
 //        System.out.println("AGame.getPlayerSelf().getUnits() = " + AGame.getPlayerSelf().getUnits().size());
         for (Unit u : Atlantis.getBW().getUnits(AGame.self())) {
 //            System.out.println(u);
-//            System.out.println("******** " + AUnit.createFrom(u));
+//            System.out.println("******** " + AUnit.create(u));
             data.add(AUnit.createFrom(u));
-//            System.out.println(AUnit.createFrom(u));
+//            System.out.println(AUnit.create(u));
         }
 
 //        System.out.println("## Our size: " + data.size());
@@ -94,7 +94,7 @@ public class Select<T> {
 //        List<AUnit> data = new ArrayList<>();
 //
 //        for (Unit u : Atlantis.getInteraction().neutral().getUnits()) {
-//            data.add(AUnit.createFrom(u));
+//            data.add(AUnit.create(u));
 //        }
 //
 //        return data;

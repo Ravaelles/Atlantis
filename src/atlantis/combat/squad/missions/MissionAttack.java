@@ -1,7 +1,7 @@
 package atlantis.combat.squad.missions;
 
 import atlantis.AGame;
-import atlantis.Atlantis;
+import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.information.AMap;
@@ -9,8 +9,8 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import bwapi.Color;
-import bwta.Base;
+import bwem.Base;
+import org.openbw.bwapi4j.type.Color;
 
 import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 
@@ -57,7 +57,7 @@ public class MissionAttack extends Mission {
             if (unit.distanceTo(focusPoint) > 10 && ! unit.isMoving()) {
 //                unit.attackPosition(focusPoint);
                 unit.move(focusPoint, UnitActions.MOVE);
-                unit.setTooltip("#MA:Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
+                unit.setTooltip("#MA:Concentrate!"); //unit.setTooltip("Mission focus");
                 return true;
             }
         } 
@@ -68,7 +68,7 @@ public class MissionAttack extends Mission {
             APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());
             if (position != null) {
                 unit.attackPosition(position);	
-                Atlantis.getInteraction().drawLineMap(unit.getPosition(), position, Color.RED); //TODO DEBUG
+                APainter.paintLine(unit.getPosition(), position, Color.RED);
                 unit.setTooltip("#MA:Forward!");
                 return true;
             }
@@ -125,7 +125,7 @@ public class MissionAttack extends Mission {
         Base startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
         if (startLocation != null) {
         	//System.out.println("focus on start location");	//TODO debug
-            return APosition.createFromTileXY(startLocation.getPosition());
+            return APosition.create(startLocation.getCenter());
         }
 
         // Absolutely no enemy unit can be found

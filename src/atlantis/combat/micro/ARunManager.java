@@ -352,14 +352,14 @@ public class ARunManager {
                 }
                 
 //                // Define point
-//                APosition potentialPosition = APosition.createFrom(
+//                APosition potentialPosition = APosition.create(
 //                        tx + dx * expectedVectorLength, ty + dy * expectedVectorLength
 //                );
 //                
 //                // Scale vector if needed
 //                double vectorLength = potentialPosition.distanceTo(unit) + 0.01;
 //                if (Math.abs(vectorLength - expectedVectorLength) > 0.1) {
-//                    potentialPosition = APosition.createFrom(
+//                    potentialPosition = APosition.create(
 //                            (int) (tx + dx * vectorLength * expectedVectorLength / vectorLength), 
 //                            (int) (ty + dy * expectedVectorLength / vectorLength)
 //                    );
@@ -379,7 +379,7 @@ public class ARunManager {
                 vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
 
                 // Create position
-                APosition potentialPosition = APosition.createFromTileXY(
+                APosition potentialPosition = APosition.create(
                         (int) (tx + vectorX),
                         (int) (ty + vectorY)
                 );
@@ -394,7 +394,7 @@ public class ARunManager {
                         expectedLength * 0.6, 1.6 * expectedLength, avoidCornerPoints)) {
                     
                     // Check if position slightly further is walkable as well
-                    APosition furtherPosition = APosition.createFromTileXY(
+                    APosition furtherPosition = APosition.create(
                             (int) (tx + vectorX * (expectedLength + 1.5) / expectedLength),
                             (int) (ty + vectorY * (expectedLength + 1.5) / expectedLength)
                     );
@@ -492,9 +492,9 @@ public class ARunManager {
 
 //        boolean isOkay = AMap.isWalkable(position)
 //                && unit.hasPathTo(position)
-        boolean isOkay = AMap.isWalkable(position)
+        boolean isOkay = AMap.isFullyWalkable(position)
 //                && AMap.isWalkable(position.translateTilesTowards(unitPosition, -1))
-                && Select.neutral().inRadius(0.5, position).count() == 0
+//                && Select.neutral().inRadius(0.5, position).count() == 0 // @TODO unit will bump into fuckin animals
                 && Select.enemy().inRadius(0.5, position).count() == 0
                 && Select.ourBuildings().inRadius(0.5, position).count() == 0
                 //                && Atlantis.getInteraction().getUnitsInRadius(unit, 1).isEmpty()

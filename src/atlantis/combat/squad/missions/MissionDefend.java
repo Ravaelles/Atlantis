@@ -7,7 +7,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import bwta.ChokePoint;
+import bwem.ChokePoint;
 
 public class MissionDefend extends Mission {
     
@@ -215,12 +215,12 @@ public class MissionDefend extends Mission {
         // === Return position near the choke point ================
         
 //        if (Select.ourBases().count() <= 1) {
-//            return APosition.createFromTileXY(AtlantisMap.getChokePointForMainBase().getCenter());
+//            return APosition.create(AtlantisMap.getChokePointForMainBase().getCenter());
 //        }
 //        else {
         ChokePoint chokePointForNaturalBase = AMap.getChokePointForNaturalBase();
         if (chokePointForNaturalBase != null) {
-            return APosition.createFromTileXY(chokePointForNaturalBase.getCenter());
+            return APosition.create(chokePointForNaturalBase.getCenter());
         }
         else {
             return null;
