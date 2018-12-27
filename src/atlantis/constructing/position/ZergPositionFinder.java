@@ -127,8 +127,8 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         return false;
     }
 
-    private static boolean isCreepConditionFulfilled(AUnitType building, Position position) {
-        return AMap.getBWMap().hasCreep(position.toTilePosition())
+    private static boolean isCreepConditionFulfilled(AUnitType building, APosition position) {
+        return position.hasCreep()
                 || building.equals(AUnitType.Zerg_Hatchery)
                 || building.equals(AUnitType.Zerg_Extractor);
     }

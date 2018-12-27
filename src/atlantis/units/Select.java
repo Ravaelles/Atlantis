@@ -1317,6 +1317,8 @@ public class Select<T> {
         return data.size();
     }
 
+    // === Sort inner objects =============================================
+
     /**
      * Sorts data list by distance to a given position
      *
@@ -1324,8 +1326,9 @@ public class Select<T> {
      * @param ascending
      * @return
      */
-    public void sortDataByDistanceTo(final Position toPosition, final boolean ascending) {
+    public Select<T> sortDataByDistanceTo(final Position toPosition, final boolean ascending) {
         PositionUtil.sortByDistanceTo(this.data, toPosition, ascending);
+        return this;
     }
 
 }

@@ -379,4 +379,17 @@ public class APosition extends Position implements Comparable<Position> {
         return AMap.getArea(this);
     }
 
+    /**
+     * @return true if this tile has Protoss power from a nearby pylon.
+     */
+    public boolean hasPower() {
+        return AMap.getBWMap().hasPower(this.toTilePosition());
+    }
+
+    /**
+     * @return true if this tile has Zerg creep.
+     */
+    public boolean hasCreep() {
+        return AMap.getBWMap().hasCreep(this.toTilePosition());
+    }
 }

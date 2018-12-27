@@ -288,7 +288,7 @@ public class ARunManager {
         double ratio = dist / vectorLength;
 
         // Apply opposite 2D vector
-        runTo = new APosition((int) (unit.getX() - ratio * vectorX), (int) (unit.getY() - ratio * vectorY));
+        runTo = APosition.fromPixels((int) (unit.getX() - ratio * vectorX), (int) (unit.getY() - ratio * vectorY));
 
         // === Ensure position is in bounds ========================================
         

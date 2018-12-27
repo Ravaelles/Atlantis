@@ -9,7 +9,7 @@ import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.ChokePoint;
+import bwem.ChokePoint;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -100,6 +100,7 @@ public class ARepairCommander {
     
     private static void assignBunkerProtectorsIfNeeded() {
         if (Missions.isGlobalMissionAttack()) {
+            // UNHANDLED
         }
 
         // =========================================================

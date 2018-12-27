@@ -6,7 +6,7 @@ import atlantis.units.Select;
 import atlantis.util.ColorUtil;
 import atlantis.util.PositionUtil;
 import atlantis.util.WeaponUtil;
-import bwapi.Color;
+import org.openbw.bwapi4j.type.Color;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,7 +48,7 @@ public class ACombatEvaluator {
     /**
      * Returns <b>TRUE</b> if our <b>unit</b> should engage in combat with nearby units or
      * <b>FALSE</b> if enemy is too strong and we should pull back.
-     * @param boolean isPendingFight if true then it will check if unit should continue fighting 
+     * @param isPendingFight if true then it will check if unit should continue fighting
      * (retreat otherwise). If false then it means we would engage in new fight, so make sure you've got
      * some safe margin. This feature avoids fighting and immediately running away and fighting again.
      */

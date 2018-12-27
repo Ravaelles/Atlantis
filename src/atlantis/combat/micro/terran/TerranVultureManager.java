@@ -5,7 +5,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.ATech;
-import bwapi.TechType;
+import org.openbw.bwapi4j.type.TechType;
+import org.openbw.bwapi4j.unit.Vulture;
 
 /**
  *
@@ -13,7 +14,16 @@ import bwapi.TechType;
  */
 public class TerranVultureManager {
 
+    /**
+     * Convenience object for specific unit class.
+     */
+    private static Vulture vultureObject = null;
+
+    // =========================================================
+
     public static boolean update(AUnit unit) {
+        vultureObject = (Vulture) unit.u();
+
         unit.removeTooltip();
         
         if (handlePlantMines(unit)) {
@@ -68,7 +78,7 @@ public class TerranVultureManager {
         Select<?> nearbyMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);
         if ((nearbyMines.count() <= 3 || (unit.getMinesCount() >= 3 && nearbyMines.count() <= 4)) 
                 && nearbyMines.inRadius(1, unit).count() == 0) {
-            unit.useTech(TechType.Spider_Mines, unit.getPosition());
+            vultureObject.spiderMine(unit.getPosition());
             unit.setTooltip("Plant mine");
             return true;
         }

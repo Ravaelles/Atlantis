@@ -77,7 +77,7 @@ public class Squad extends Units {
         Collections.sort(xCoords);
         Collections.sort(yCoords);
         
-        return new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
+        return APosition.fromPixels(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
     }
     
     // =========================================================

@@ -1,6 +1,7 @@
 package atlantis.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.information.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -109,7 +110,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     }
 
     private static boolean isPowerConditionFulfilled(AUnitType building, APosition position) {
-        return Atlantis.getInteraction().hasPower(position.toTilePosition())
+        return position.hasPower()
                 || building.equals(AUnitType.Protoss_Nexus)
                 || building.equals(AUnitType.Protoss_Pylon);
     }

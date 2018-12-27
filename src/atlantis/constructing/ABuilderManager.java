@@ -6,7 +6,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
-import bwapi.TilePosition;
+import org.openbw.bwapi4j.TilePosition;
 
 public class ABuilderManager {
 
@@ -95,7 +95,7 @@ public class ABuilderManager {
 //                        System.err.println("Build GAS "
 //                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
 //                    }
-                    builder.build(buildingType, buildTilePosition, UnitActions.BUILD);
+                    builder.build(buildingType, buildTilePosition);
                     builder.setTooltip("Constructing " + buildingType.getShortName());
                 }
             }
