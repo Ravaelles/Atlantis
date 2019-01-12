@@ -1,6 +1,8 @@
 package main;
 
+import atlantis.Atlantis;
 import atlantis.debug.AUnitTypesHelper;
+import atlantis.keyboard.AKeyboard;
 
 /**
  * This is the main class of bot. Here everything starts.
@@ -15,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
 
         // Uncomment this line to see list of units -> damage.
-        AUnitTypesHelper.displayUnitTypesDamage();
+//        AUnitTypesHelper.displayUnitTypesDamage();
 
         // Kill previous Starcraft.exe process
 //        ProcessHelper.killStarcraftProcess();
@@ -39,13 +41,13 @@ public class Main {
         // =============================================================
         //
         // Create Atlantis object to use for this bot. It wraps BWMirror functionality.
-//        Atlantis atlantis = new Atlantis();
-//
-//        // Listen for keyboard events
-//        AKeyboard.listenForKeyEvents();
-//
-//        // Starts bot.
-//        atlantis.run();
+        Atlantis atlantis = new Atlantis();
+
+        // Listen for keyboard events
+        AKeyboard.listenForKeyEvents();
+
+        // Starts bot.
+        atlantis.run();
     }
 
 }

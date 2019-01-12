@@ -5,6 +5,7 @@ import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.ProtossConstructionManager;
+import atlantis.debug.AUnitTypesHelper;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
@@ -88,12 +89,6 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onStart() {
 
-        // Initialize BW passing as listener this class, it will listen to all in-game events
-        bw = new BW(this);
-        
-        // Interaction handler - allows some general methods like increase game speed etc
-        handler = bw.getInteractionHandler();
-        
         // Initialize Game Commander, a class to rule them all
         gameCommander = new AGameCommander();
 
@@ -501,6 +496,15 @@ public class Atlantis implements BWEventListener {
         if (! _isStarted) {
             _isPaused = false;
             _isStarted = true;
+
+            // Initialize BW passing as listener this class, it will listen to all in-game events
+            bw = new BW(this);
+
+            // Interaction handler - allows some general methods like increase game speed etc
+            handler = bw.getInteractionHandler();
+
+            // Uncomment this line to see list of units -> damage.
+            AUnitTypesHelper.displayUnitTypesDamage();
 
             bw.startGame();
         }
