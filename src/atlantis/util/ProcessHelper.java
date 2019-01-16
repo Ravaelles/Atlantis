@@ -6,12 +6,14 @@ package atlantis.util;
 public class ProcessHelper {
 
     public static void killStarcraftProcess() {
-        executeInCommandLine("taskkill /f /im Starcraft.exe");
-        executeInCommandLine("taskkill /f /im StarCraft.exe");
+        executeInCommandLine("taskkill /IM starcraft.exe /T /F");
+        executeInCommandLine("taskkill /IM Starcraft.exe /T /F");
+        executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
     }
     
     public static void killChaosLauncherProcess() {
-        executeInCommandLine("taskkill /f /im Chaoslauncher.exe");
+        executeInCommandLine("taskkill /IM chaoslauncher.exe /T /F");
+        executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
     }
     
     /**
@@ -22,7 +24,7 @@ public class ProcessHelper {
     public static void startChaosLauncherProcess() {
         try {
             Thread.sleep(250);
-            executeInCommandLine("C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe");
+            executeInCommandLine("cmd /c D:\\GAMES\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe");
         } catch (InterruptedException ex) {
             // Don't do anything
         }

@@ -41,33 +41,32 @@ public class AKeyboard implements NativeKeyListener {
     
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-//        System.out.println(e.getKeyCode());
+//        System.out.println("Key pressed code: " + e.getKeyCode());
         
         switch (e.getKeyCode()) {
             
+            // Key "Escape" and "`"
+            case 1: case 41:
+                System.out.println();
+                System.out.println("Exit requested by the user");
+                AGame.exit();
+                break;
+
             // Key "PauseBreak"
             case 3653:
                 AGame.pauseModeToggle();
 //                System.out.println("Notice: " + (AGame.isPaused() ? "" : "UN") + "PAUSED");
                 break;
-            
+
             // Keys "-" and NumPad "-"
             case 12: case 3658:
                 AGame.changeSpeedBy(+20);
-                System.out.println("Notice: SPEED SLOWER (" + AtlantisConfig.GAME_SPEED + ")");
                 break;
 
             // Keys "+" and NumPad "+"
-            case 13: case 3662: 
+            case 13: case 3662:
                 AGame.changeSpeedBy(-20);
                 System.out.println("Notice: SPEED FASTER (" + AtlantisConfig.GAME_SPEED + ")");
-                break;
-
-            // Key "`"
-            case 41: 
-                System.out.println();
-                System.out.println("Exit requested by the user");
-                AGame.exit();
                 break;
 
             // Key "1"

@@ -27,10 +27,13 @@ public class Main {
         // Dynamically modify bwapi.ini file, change race/enemy race etc
         // To change the race/enemy race, edit AtlantisIgniter constants
         AtlantisIgniter.modifyBwapiFileIfNeeded();
+
+        // Listen for keyboard events
+        AKeyboard.listenForKeyEvents();
         
-        // Autostart Chaoslauncher
-        // Combined with Chaoslauncher -> Settings -> Run Starcraft on Startup 
-        // SC will be autostarted at this moment
+        // Start Chaoslauncher
+        // IMPORTANT: Combined with Chaoslauncher -> Settings -> Run Starcraft on Startup
+        // StarCraft instance will be started as well
         ProcessHelper.startChaosLauncherProcess();
         
         // =============================================================
@@ -38,12 +41,9 @@ public class Main {
         // ==== See AtlantisConfig class to customize execution ========
         // =============================================================
         // =============================================================
-        //
+
         // Create Atlantis object to use for this bot. It wraps BWMirror functionality.
         Atlantis atlantis = new Atlantis();
-        
-        // Listen for keyboard events
-        AKeyboard.listenForKeyEvents();
 
         // Starts bot.
         atlantis.run();

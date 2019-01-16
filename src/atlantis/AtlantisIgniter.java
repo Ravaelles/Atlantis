@@ -61,7 +61,7 @@ public class AtlantisIgniter {
         
         String[] potentialBwapiPaths = new String[] {
             "C:/StarCraft/bwapi-data/bwapi.ini",
-            "D:/GRY/StarCraft/bwapi-data/bwapi.ini",
+            "D:/GAMES/StarCraft/bwapi-data/bwapi.ini",
             "C:/Program files/StarCraft/bwapi-data/bwapi.ini",
             "C:/Program files (x86)/StarCraft/bwapi-data/bwapi.ini"
         };
