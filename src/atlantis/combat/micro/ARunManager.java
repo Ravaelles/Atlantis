@@ -1,16 +1,14 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
-import atlantis.debug.APainter;
-import atlantis.information.AMap;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
-import bwapi.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -334,7 +332,7 @@ public class ARunManager {
         
         // === Define if we don't want to go towards region polygon points ========
 
-        boolean avoidCornerPoints = AMap.getDistanceToAnyRegionPolygonPoint(unit.getPosition()) > 1.5;
+//        boolean avoidCornerPoints = AMap.getDistanceToAnyRegionPolygonPoint(unit.getPosition()) > 1.5;
         
         // ========================================================================
         
@@ -393,7 +391,7 @@ public class ARunManager {
                 // If has path to given point, add it to the list of potential points
 //                APainter.paintLine(unitPosition, potentialPosition, Color.Red);
                 if (isPossibleAndReasonablePosition(unitPosition, potentialPosition,
-                        expectedLength * 0.6, 1.6 * expectedLength, avoidCornerPoints)) {
+                        expectedLength * 0.6, 1.6 * expectedLength, false)) {
                     
                     // Check if position slightly further is walkable as well
                     APosition furtherPosition = APosition.create(
@@ -507,7 +505,8 @@ public class ARunManager {
         
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
 
-        if (isOkay && !allowCornerPointsEtc && AMap.getDistanceToAnyRegionPolygonPoint(unitPosition) < 1) {
+        if (isOkay && !allowCornerPointsEtc) {
+//        if (isOkay && !allowCornerPointsEtc && AMap.getDistanceToAnyRegionPolygonPoint(unitPosition) < 1) {
 //            isOkay = AMap.getDistanceToAnyRegionPolygonPoint(unitPosition);
             isOkay = false;
         }

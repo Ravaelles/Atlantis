@@ -2,7 +2,7 @@ package atlantis.combat.squad.missions;
 
 import atlantis.AGame;
 import atlantis.combat.micro.terran.TerranInfantryManager;
-import atlantis.information.AMap;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -24,7 +24,8 @@ public class MissionDefend extends Mission {
     
     @Override
     public boolean update(AUnit unit) {
-        
+        System.out.println("mission defend");
+
         // === Handle UMT ==========================================
         
         if (AGame.isUmtMode()) {

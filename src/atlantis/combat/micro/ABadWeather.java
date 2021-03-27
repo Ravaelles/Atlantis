@@ -1,6 +1,5 @@
 package atlantis.combat.micro;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -22,7 +21,7 @@ public class ABadWeather {
         // === Psionic Storm ========================================
         
         if (unit.isUnderStorm()) {
-            for (Bullet bullet : Atlantis.getBwapi().getBullets()) {
+            for (Bullet bullet : Atlantis.game().getBullets()) {
 
                 // PSIONIC STORM
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {

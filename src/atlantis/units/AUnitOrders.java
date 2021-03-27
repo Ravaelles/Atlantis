@@ -5,7 +5,6 @@ import atlantis.position.APosition;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import bwapi.Position;
-import bwapi.PositionOrUnit;
 import bwapi.TechType;
 import bwapi.TilePosition;
 import bwapi.Unit;
@@ -539,12 +538,6 @@ public interface AUnitOrders {
         unit().setUnitAction(UnitActions.USING_TECH);
         unit().setLastUnitOrderNow();
         return u().useTech(tech, target.u());
-    }
-
-    default boolean useTech(TechType tech, PositionOrUnit target) {
-        unit().setUnitAction(UnitActions.USING_TECH);
-        unit().setLastUnitOrderNow();
-        return u().useTech(tech, target);
     }
 
 }

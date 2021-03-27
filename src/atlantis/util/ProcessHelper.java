@@ -4,15 +4,13 @@ package atlantis.util;
  * Kills and starts processes, including Starcraft game itself and Chaoslauncher.
  */
 public class ProcessHelper {
+    public static String ChaosLauncherPath = "D:\\JAVA\\StarCraftAI\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe";
 
     public static void killStarcraftProcess() {
-        executeInCommandLine("taskkill /IM starcraft.exe /T /F");
-        executeInCommandLine("taskkill /IM Starcraft.exe /T /F");
         executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
     }
     
     public static void killChaosLauncherProcess() {
-        executeInCommandLine("taskkill /IM chaoslauncher.exe /T /F");
         executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
     }
     
@@ -23,11 +21,11 @@ public class ProcessHelper {
      */
     public static void startChaosLauncherProcess() {
         try {
-            Thread.sleep(250);
-            executeInCommandLine("cmd /c D:\\GAMES\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe");
-        } catch (InterruptedException ex) {
-            // Don't do anything
-        }
+            Thread.sleep(150);
+            String command = "cmd /c " + ProcessHelper.ChaosLauncherPath;
+
+            executeInCommandLine(command);
+        } catch (InterruptedException ignored) { }
     }
     
     // =========================================================

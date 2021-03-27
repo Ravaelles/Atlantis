@@ -2,10 +2,9 @@ package atlantis.units;
 
 import atlantis.position.APosition;
 import atlantis.position.APositionedObject;
-import atlantis.position.PositionOperationsWrapper;
+import atlantis.position.PositionHelper;
 import atlantis.util.AtlantisUtilities;
 import bwapi.Position;
-import bwapi.PositionedObject;
 import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -211,10 +210,12 @@ public class Units {
         Collections.sort(unitsList, new Comparator<APositionedObject>() {
             @Override
             public int compare(APositionedObject p1, APositionedObject p2) {
-                if (p1 == null || !(p1 instanceof PositionedObject)) {
+//                if (p1 == null || !(p1 instanceof PositionedObject)) {
+                if (p1 == null) {
                     return -1;
                 }
-                if (p2 == null || !(p2 instanceof PositionedObject)) {
+//                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                if (p2 == null) {
                     return 1;
                 }
                 double distance1 = p1.distanceTo(position);
@@ -253,10 +254,12 @@ public class Units {
         Collections.sort(unitsList, new Comparator<APositionedObject>() {
             @Override
             public int compare(APositionedObject p1, APositionedObject p2) {
-                if (p1 == null || !(p1 instanceof PositionedObject)) {
+//                if (p1 == null || !(p1 instanceof PositionedObject)) {
+                if (p1 == null) {
                     return -1;
                 }
-                if (p2 == null || !(p2 instanceof PositionedObject)) {
+//                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                if (p2 == null) {
                     return 1;
                 }
                 double distance1 = BWTA.getGroundDistance(
@@ -292,7 +295,7 @@ public class Units {
             return null;
         }
         
-        return PositionOperationsWrapper.getPositionMedian(this);
+        return PositionHelper.getPositionMedian(this);
     }
     
     /**
@@ -303,7 +306,7 @@ public class Units {
             return null;
         }
         
-        return PositionOperationsWrapper.getPositionAverage(this);
+        return PositionHelper.getPositionAverage(this);
     }
     
     /**
@@ -314,7 +317,7 @@ public class Units {
             return null;
         }
         
-        return PositionOperationsWrapper.getPositionAverageDistanceWeightedTo(unit, this, power);
+        return PositionHelper.getPositionAverageDistanceWeightedTo(unit, this, power);
     }
     
     // =========================================================

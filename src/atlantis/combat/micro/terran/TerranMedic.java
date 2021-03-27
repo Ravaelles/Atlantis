@@ -77,7 +77,7 @@ public class TerranMedic {
     }
 
     private static boolean handleHealWoundedUnit(AUnit medic) {
-        if (!medic.isIdle() && medic.getLastCommand().getUnitCommandType() == UnitCommandType.Right_Click_Unit) {
+        if (!medic.isIdle() && medic.getLastCommand().getType() == UnitCommandType.Right_Click_Unit) {
             return true;
         }
 

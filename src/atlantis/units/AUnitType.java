@@ -25,6 +25,7 @@ public class AUnitType implements Comparable<AUnitType> {
     private UnitType ut;
 
     // =========================================================
+
     private AUnitType(UnitType ut) {
         if (ut == null) {
             throw new RuntimeException("AUnitType constructor: type is null");
@@ -721,7 +722,7 @@ public class AUnitType implements Comparable<AUnitType> {
      * Returns building type (or parent type for units like Archon, Lurker) that produces this unit type.
      */
     public AUnitType getWhatBuildsIt() {
-        return createFrom(ut.whatBuilds().first);
+        return createFrom(ut.whatBuilds().getFirst());
     }
 
     public int getDimensionLeft() {

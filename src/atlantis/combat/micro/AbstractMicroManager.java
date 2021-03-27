@@ -5,7 +5,7 @@ import atlantis.AtlantisConfig;
 import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
-import atlantis.position.PositionOperationsWrapper;
+import atlantis.position.PositionHelper;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
@@ -102,7 +102,7 @@ public abstract class AbstractMicroManager {
 
         // =========================================================
         if (ourUnitsNearby < minUnitsNearby && ourUnitsNearby <= 3) {
-            APosition goTo = PositionOperationsWrapper.averagePosition(ourUnits.list());
+            APosition goTo = PositionHelper.averagePosition(ourUnits.list());
             if (goTo != null && goTo.distanceTo(unit) > 1) {
                 unit.move(goTo, UnitActions.MOVE);
                 unit.setTooltip("Closer");

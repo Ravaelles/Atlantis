@@ -26,10 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Wrapper for BWMirror Unit class that makes units much easier to use.<br /><br />
- * Atlantis uses wrappers for BWMirror native classes which can't be extended.<br /><br />
- * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
- * create missing method here and you can reference original Unit class via u() method.
+ * Wrapper for bwapi Unit class that makes units much easier to use.<br /><br />
+ * Atlantis uses wrappers for bwapi native classes which can't be extended.<br /><br />
+ * <b>AUnit</b> class contains number of helper methods, but if you think some methods are missing you can
+ * add them here.
+ *
+ * Also you can always reference original Unit class via u() method, but please avoid it as code will be very
+ * hard to migrate to another bridge. I've already used 3 of them in my career so far.
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
@@ -41,10 +44,10 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     // Cached distances to other units - reduces time on calculating unit1.distanceTo(unit2)
     public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
 
-    private Unit u;
+    private final Unit u;
     private AUnitType _lastCachedType;
     private UnitAction unitAction;
-    private int _lastTimeOrderWasIssued = -1;
+//    private int _lastTimeOrderWasIssued = -1;
     private AUnit _cachedNearestMeleeEnemy = null;
 
     // =========================================================
@@ -94,9 +97,9 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     }
 
     // =========================================================
+
     /**
-     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached
-     * type.
+     * Returns unit type from bridge OR if type is Unknown (behind fog of war) it will return last cached type.
      */
     public AUnitType getType() {
         AUnitType type = AUnitType.createFrom(u.getType());
@@ -181,7 +184,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
         dx = (int) (dx * modifier);
         dy = (int) (dy * modifier);
 
-        APosition newPosition = new APosition(getX() - dx, getY() - dy).makeValid();
+        APosition newPosition = new APosition(getX() - dx, getY() - dy).makeValidFarFromBounds();
 
 //        if (AtlantisRunManager.isPossibleAndReasonablePosition(
 //                this, newPosition, -1, 9999, true
@@ -805,7 +808,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     }
 
     public boolean isIdle() {
-        return u.isIdle() || u.getLastCommand().getUnitCommandType().equals(UnitCommandType.None);
+        return u.isIdle() || u.getLastCommand().getType().equals(UnitCommandType.None);
     }
 
     public boolean isBusy() {
@@ -1029,6 +1032,11 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     }
     
     // =========================================================
+
+    public boolean shouldApplyAntiGlitch() {
+//        return (isAttacking() || isAttackFrame());
+        return getLastUnitOrderWasFramesAgo() >= 40 || isMoving() && getLastUnitOrderWasFramesAgo() >= 10;
+    }
 
     public boolean isReadyToShoot() {
         return getGroundWeaponCooldown() <= 0 && getAirWeaponCooldown() <= 0;

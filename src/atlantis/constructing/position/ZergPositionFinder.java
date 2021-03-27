@@ -127,7 +127,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     }
 
     private static boolean isCreepConditionFulfilled(AUnitType building, Position position) {
-        return Atlantis.getBwapi().hasCreep(position.toTilePosition())
+        return Atlantis.game().hasCreep(position.toTilePosition())
                 || building.equals(AUnitType.Zerg_Hatchery)
                 || building.equals(AUnitType.Zerg_Extractor);
     }

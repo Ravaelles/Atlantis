@@ -1,6 +1,6 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.information.AMap;
+import atlantis.map.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;

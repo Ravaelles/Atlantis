@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
-import atlantis.information.AMap;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 import atlantis.units.AUnit;
@@ -32,6 +32,8 @@ public class MissionAttack extends Mission {
     
     @Override
     public boolean update(AUnit unit) {
+        System.out.println("Mission attack!!!");
+
         APosition focusPoint = getFocusPoint();
         unit.setTooltip("#MA");
         
@@ -67,14 +69,16 @@ public class MissionAttack extends Mission {
             APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());
             if (position != null) {
                 unit.attackPosition(position);	
-                Atlantis.getBwapi().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
+                Atlantis.game().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
                 unit.setTooltip("#MA:Forward!");
                 return true;
+            }
+            else {
+                System.err.println("No invisible position found");
             }
         }
         
         unit.setTooltip("#MA:Nothing");
-        
         return false;
     }
 
@@ -121,10 +125,10 @@ public class MissionAttack extends Mission {
         }
         
         // Try to go to some starting location, hoping to find enemy there.
-        BaseLocation startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
+        APosition startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
         if (startLocation != null) {
         	//System.out.println("focus on start location");	//TODO debug
-            return APosition.create(startLocation.getPosition());
+            return startLocation;
         }
 
         // Absolutely no enemy unit can be found

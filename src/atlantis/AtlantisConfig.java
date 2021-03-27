@@ -40,23 +40,24 @@ public class AtlantisConfig {
      * Single player enemy race.
      */
 //    public static final String ENEMY_RACE = "Terran";
-    public static final String ENEMY_RACE = "Protoss";
-//    public static final String ENEMY_RACE = "Zerg";
+//    public static final String ENEMY_RACE = "Protoss";
+    public static final String ENEMY_RACE = "Zerg";
     
     /**
      * Will modify bwapi.ini to use this map.
      */
-//    public static final String MAP = "maps/sscai/(?)*.sc?";
-//    public static final String MAP = "Maps/BroodWar/umt/vultureDrive.scx"; // Vulture being chased by Lings
-    public static final String MAP = "Maps/BroodWar/umt/(1)dragoon.scx"; // 4 Dragoons attacking Zealots
-//    public static final String MAP = "Maps/BroodWar/umt/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs Zerg
-//    public static final String MAP = "Maps/BroodWar/umt/Micro Challenge.scx"; // 
-//    public static final String MAP = "Maps/BroodWar/umt/ConTrol by junijuni02.scx"; // 
-    
-    // =========================================================
-    // === These are default values that can be overriden in ===
-    // === specific build order file. See `build_orders` dir ===
-    // =========================================================
+    public static final String MAP = "maps/BroodWar/sscai/(?)*.sc?";
+//    public static final String MAP = "maps/BroodWar/umt/marines_vs_zerglings.scm"; // 12 marines vs 24 zerglings
+//    public static final String MAP = "maps/BroodWar/umt/vulture_vs_zerglings.scx"; // Vulture being chased by Lings
+//    public static final String MAP = "maps/BroodWar/umt/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
+//    public static final String MAP = "maps/BroodWar/umt/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs Zerg
+//    public static final String MAP = "maps/BroodWar/umt/Micro Challenge.scx"; //
+//    public static final String MAP = "maps/BroodWar/umt/ConTrol by junijuni02.scx"; //
+
+    // ==========================================================
+    // === These are default values that can be overridden in ===
+    // === specific build order file. See `build_orders` dir  ===
+    // ==========================================================
     
     /**
      * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They

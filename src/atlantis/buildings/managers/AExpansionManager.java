@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import static atlantis.constructing.AConstructionManager.requestConstructionOf;
-import atlantis.information.AMap;
+import atlantis.map.AMap;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.Select;

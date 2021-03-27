@@ -22,3 +22,5 @@ manifest.mf
 nbbuild.xml
 .idea/
 Atlantis.iml
+bwapi-data/
+out/

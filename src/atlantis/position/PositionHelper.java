@@ -2,7 +2,7 @@ package atlantis.position;
 
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import bwapi.AbstractPoint;
+import bwapi.Point;
 import bwapi.Position;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class PositionOperationsWrapper {
+public class PositionHelper {
     
     // === Median ========================================
     /**
@@ -108,13 +108,13 @@ public class PositionOperationsWrapper {
     
     // === Position between A and B ======================
     
-    public static APosition getPositionMovedPercentTowards(Position from, AbstractPoint<Position> movedToward, double percent) {
+    public static APosition getPositionMovedPercentTowards(HasPosition from, HasPosition movedToward, double percent) {
         int finalX = (int) ((100 - percent) * from.getX() + percent * movedToward.getX()) / 100;
         int finalY = (int) ((100 - percent) * from.getY() + percent * movedToward.getY()) / 100;
         return new APosition(finalX, finalY);
     }
     
-    public static APosition getPositionMovedTilesTowards(APosition from, AbstractPoint<Position> to, double tiles) {
+    public static APosition getPositionMovedTilesTowards(APosition from, Point<Position> to, double tiles) {
         int dirX = to.getX() - from.getX();
         int dirY = to.getY() - from.getY();
         

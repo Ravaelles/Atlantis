@@ -26,10 +26,37 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
     protected static boolean update(AUnit unit) {
         unit.removeTooltip();
-        
+
+//        if (unit.shouldApplyAntiGlitch()) {
+        if (unit.shouldApplyAntiGlitch() && AGame.getTimeFrames() % 30 == 0) {
+            if (unit.isHoldingPosition()) {
+                unit.holdPosition(); unit.u().stop(true); unit.u().holdPosition(true); unit.u().stop(true);
+            }
+            else {
+                unit.stop(); unit.u().holdPosition(true); unit.stop(); unit.u().holdPosition(true);
+            }
+//            unit.u().holdPosition();
+//            unit.u().holdPosition(true);
+//            unit.u().holdPosition(true);
+//            unit.u().holdPosition();
+
+            unit.setTooltip("#Glitch");
+//            System.out.println("--> antiglitch " + AGame.getTimeFrames() + " / isA:" + unit.isAttacking() + " / iAF:" + unit.isAttackFrame());
+            for (int i = 0; i < 100; i++) {
+                APainter.paintRectangleFilled(unit.getPosition(), 20, 20, Color.Red);
+            }
+            for (int i = 0; i < 100; i++) {
+                APainter.paintRectangleFilled(unit.getPosition(), 20, 20, Color.Orange);
+            }
+            for (int i = 0; i < 100; i++) {
+                APainter.paintRectangleFilled(unit.getPosition(), 20, 20, Color.Red);
+            }
+            return true;
+        }
+
         // =========================================================
         // Don't INTERRUPT shooting units
-        
+
         if (shouldNotDisturbUnit(unit)) {
             unit.setTooltip("#DontDisturb");
             return true;

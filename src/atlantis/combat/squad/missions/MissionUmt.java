@@ -1,8 +1,6 @@
 package atlantis.combat.squad.missions;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.AEnemyTargeting;
-import atlantis.information.AMap;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -32,12 +30,12 @@ public class MissionUmt extends Mission {
     
     @Override
     public boolean update(AUnit unit) {
-        
-        System.out.println("UMT");
+        System.out.println("UMT mission");
+
         // DISABLED
-        if (1 < 2) {
-            return false;
-        }
+//        if (1 < 2) {
+//            return false;
+//        }
         
         if (unit.isJustShooting() || !unit.isReadyToShoot()) {
             return false;

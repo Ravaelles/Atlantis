@@ -1,6 +1,6 @@
 package atlantis.constructing.position;
 
-import atlantis.information.AMap;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

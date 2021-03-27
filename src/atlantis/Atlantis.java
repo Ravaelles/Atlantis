@@ -6,16 +6,14 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.ProtossConstructionManager;
 import atlantis.enemy.AEnemyUnits;
+import atlantis.map.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
-import atlantis.production.orders.ABuildOrderLoader;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.repair.ARepairManager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
-import bwta.BWTA;
 
 /**
  * Main bridge between the game and your code, ported to BWMirror.
@@ -28,14 +26,14 @@ public class Atlantis implements BWEventListener {
     private static Atlantis instance;
 
     /**
-     * BWMirror core class.
+     * JBWAPI core class.
      */
-    private static Mirror mirror = new Mirror();
+    private static BWClient bwClient;
 
     /**
-     * BWMirror game object, contains lo-level methods.
+     * JBWAPI's game object, contains low-level methods.
      */
-    private Game bwapi;
+    private Game game;
 
     /**
      * Top abstraction-level class that governs all units, buildings etc.
@@ -49,8 +47,7 @@ public class Atlantis implements BWEventListener {
     private boolean _initialActionsExecuted = false; // Have executed one-time actions at match start?
 
     // =========================================================
-    // DYNAMIC SLODOWN game speed adjust - see AtlantisConfig
-    // Should we use speed auto-slowdown when fighting
+    // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
     private boolean _dynamicSlowdown_isSlowdownActive = false;
 
     // Last time unit has died; when unit dies, game slows down
@@ -87,10 +84,11 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onStart() {
-        
-        // Initialize bwapi object - BWMirror wrapper of C++ BWAPI.
-        bwapi = mirror.getGame();
-        
+
+
+        // Initialize game object - JBWAPI's representation of game and its state.
+        game = bwClient.getGame();
+
         // Initialize Game Commander, a class to rule them all
         gameCommander = new AGameCommander();
 
@@ -100,7 +98,7 @@ public class Atlantis implements BWEventListener {
         // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
         // =========================================================
         // Set up base configuration based on race used.
-        Race racePlayed = bwapi.self().getRace(); //AGame.getPlayerUs().getRace();
+        Race racePlayed = game.self().getRace(); //AGame.getPlayerUs().getRace();
         if (racePlayed.equals(Race.Protoss)) {
             AtlantisConfig.useConfigForProtoss();
         } else if (racePlayed.equals(Race.Terran)) {
@@ -110,16 +108,15 @@ public class Atlantis implements BWEventListener {
         }
 
         System.out.print("Analyzing map... ");
-        BWTA.readMap();
-        BWTA.analyze();
+        AMap.init();
         System.out.println("Map data ready.");
         
         // === Set some BWAPI params ===============================
         
-        bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
-//        bwapi.setFrameSkip(2); // Number of GUI frames to skip
-//        bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
-        bwapi.enableFlag(1);	// Enable user input - without it you can't control units with mouse
+        game.setLocalSpeed(AtlantisConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
+//        bwapi.setFrameSkip(2);                          // Number of GUI frames to skip
+//        bwapi.setGUI(false);                            // Turn off GUI - will speed up game considerably
+        game.enableFlag(Flag.UserInput);               // Without this flag you can't control units with mouse
 
         // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
@@ -215,7 +212,7 @@ public class Atlantis implements BWEventListener {
      * This is only valid to our units. We have started training a new unit. It exists in the memory, but its
      * unit.isComplete() is false and issuing orders to it has no effect. It's executed only once per unit.
      *
-     * @see unitCreate()
+     * @see AUnit::unitCreate()
      */
     @Override
     public void onUnitCreate(Unit u) {
@@ -516,8 +513,10 @@ public class Atlantis implements BWEventListener {
             _isPaused = false;
             _isStarted = true;
 
-            mirror.getModule().setEventListener(this);
-            mirror.startGame();
+//            bwClient.getModule().setEventListener(this);
+
+            bwClient = new BWClient(this);
+            bwClient.startGame();
         }
     }
 
@@ -534,8 +533,8 @@ public class Atlantis implements BWEventListener {
      * provides low-level functionality for functions like canBuildHere etc. For more details, see BWMirror
      * project documentation.
      */
-    public static Game getBwapi() {
-        return getInstance().bwapi;
+    public static Game game() {
+        return getInstance().game;
     }
 
     // =========================================================

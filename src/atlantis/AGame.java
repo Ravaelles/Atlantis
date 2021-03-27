@@ -1,6 +1,6 @@
 package atlantis;
 
-import static atlantis.Atlantis.getBwapi;
+import static atlantis.Atlantis.game;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
@@ -109,14 +109,14 @@ public class AGame {
         AtlantisConfig.GAME_SPEED = speed;
         
         try {
-            getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
             Thread.sleep(40);
-            getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
             Thread.sleep(40);
         } catch (InterruptedException ex) { 
             // Ignore
         }
-        getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+        game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
 
         String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
         sendMessage("Game speed: " + speedString);
@@ -132,7 +132,7 @@ public class AGame {
             speed = 0;
         }
 
-        if (getBwapi() != null) {
+        if (game() != null) {
             AtlantisConfig.GAME_SPEED = speed;
             changeSpeedTo(AtlantisConfig.GAME_SPEED);
         }
@@ -152,28 +152,28 @@ public class AGame {
      * Returns approximate number of in-game seconds elapsed.
      */
     public static int getTimeSeconds() {
-        return Atlantis.getBwapi().getFrameCount() / 30;
+        return Atlantis.game().getFrameCount() / 30;
     }
 
     /**
      * Returns number of frames elapsed.
      */
     public static int getTimeFrames() {
-        return Atlantis.getBwapi().getFrameCount();
+        return Atlantis.game().getFrameCount();
     }
 
     /**
      * Number of minerals.
      */
     public static int getMinerals() {
-        return Atlantis.getBwapi().self().minerals();
+        return Atlantis.game().self().minerals();
     }
 
     /**
      * Number of gas.
      */
     public static int getGas() {
-        return Atlantis.getBwapi().self().gas();
+        return Atlantis.game().self().gas();
     }
 
     /**
@@ -187,28 +187,28 @@ public class AGame {
      * Number of supply used.
      */
     public static int getSupplyUsed() {
-        return Atlantis.getBwapi().self().supplyUsed() / 2;
+        return Atlantis.game().self().supplyUsed() / 2;
     }
 
     /**
      * Number of supply totally available.
      */
     public static int getSupplyTotal() {
-        return Atlantis.getBwapi().self().supplyTotal() / 2;
+        return Atlantis.game().self().supplyTotal() / 2;
     }
 
     /**
      * Returns current player.
      */
     public static Player getPlayerUs() {
-        return Atlantis.getBwapi().self();
+        return Atlantis.game().self();
     }
 
     /**
      * Returns all players.
      */
     public static List<Player> getPlayers() {
-        return Atlantis.getBwapi().getPlayers();
+        return Atlantis.game().getPlayers();
     }
 
     /**
@@ -216,7 +216,7 @@ public class AGame {
      */
     public static Player enemy() {
         if (_enemy == null) {
-            _enemy = Atlantis.getBwapi().enemies().iterator().next();
+            _enemy = Atlantis.game().enemies().iterator().next();
         }
         return _enemy;
     }
@@ -226,7 +226,7 @@ public class AGame {
      */
     public static Player getEnemy() {
         if (_enemy == null) {
-            _enemy = Atlantis.getBwapi().enemies().iterator().next();
+            _enemy = Atlantis.game().enemies().iterator().next();
         }
         return _enemy;
     }
@@ -235,7 +235,7 @@ public class AGame {
      * Returns neutral player (minerals, geysers, critters).
      */
     public static Player getNeutralPlayer() {
-        return Atlantis.getBwapi().neutral();
+        return Atlantis.game().neutral();
     }
 
     /**
@@ -249,8 +249,8 @@ public class AGame {
      * UMT maps are custom made maps, which may be used to test micro-management.
      */
     public static void setUmtMode(boolean umtMode) {
-        AGame.umtMode = umtMode;
-        if (umtMode) {
+        if (AGame.umtMode != umtMode) {
+            AGame.umtMode = umtMode;
             System.out.println();
             System.out.println("### UMT mode enabled! ###");
             System.out.println();
@@ -350,8 +350,8 @@ public class AGame {
      * Sends in-game message that will be visible by other players.
      */
     public static void sendMessage(String message) {
-        if (getBwapi() != null) {
-            getBwapi().sendText(message);
+        if (game() != null) {
+            game().sendText(message);
         }
     }
 

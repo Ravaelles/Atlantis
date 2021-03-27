@@ -13,7 +13,6 @@ import atlantis.util.AtlantisUtilities;
 import atlantis.util.PositionUtil;
 import bwapi.Player;
 import bwapi.Position;
-import bwapi.PositionedObject;
 import bwapi.Unit;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,7 +98,7 @@ public class Select<T> {
     private static List<AUnit> neutralUnits() {
         List<AUnit> data = new ArrayList<>();
 
-        for (Unit u : Atlantis.getBwapi().neutral().getUnits()) {
+        for (Unit u : Atlantis.game().neutral().getUnits()) {
             data.add(AUnit.createFrom(u));
         }
 
@@ -109,7 +108,7 @@ public class Select<T> {
     private static List<AUnit> allUnits() {
         List<AUnit> data = new ArrayList<>();
 
-        for (Unit u : Atlantis.getBwapi().getAllUnits()) {
+        for (Unit u : Atlantis.game().getAllUnits()) {
             data.add(AUnit.createFrom(u));
         }
 
@@ -142,9 +141,7 @@ public class Select<T> {
         //Units units = new Units();
         List<AUnit> data = new ArrayList<>();
 
-        for (AUnit unit : ourUnits()) {
-            data.add(unit);
-        }
+        data.addAll(ourUnits());
 
         return new Select<AUnit>(data);
     }
@@ -1321,10 +1318,12 @@ public class Select<T> {
         Collections.sort(data, new Comparator<T>() {
             @Override
             public int compare(T p1, T p2) {
-                if (p1 == null || !(p1 instanceof PositionedObject)) {
+//                if (p1 == null || !(p1 instanceof PositionedObject)) {
+                if (p1 == null) {
                     return -1;
                 }
-                if (p2 == null || !(p2 instanceof PositionedObject)) {
+//                if (p2 == null || !(p2 instanceof PositionedObject)) {
+                if (p2 == null) {
                     return 1;
                 }
                 AFoggedUnit data1 = dataFrom(p1);

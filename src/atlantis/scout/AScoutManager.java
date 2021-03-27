@@ -7,9 +7,9 @@ import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.combat.micro.AAvoidDefensiveBuildings;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AMap;
+import atlantis.map.ABaseLocation;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
-import atlantis.position.PositionOperationsWrapper;
 import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -129,11 +129,11 @@ public class AScoutManager {
 //        }
         // =========================================================
         // Get nearest unexplored starting location and go there
-        BaseLocation startingLocation;
+        APosition startingLocation;
         if (scout.getType().equals(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
             startingLocation = AMap.getStartingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
-            );
+            ).getPosition();
         } else {
             startingLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
         }
@@ -237,7 +237,7 @@ public class AScoutManager {
     }
 
     private static void scoutForTheNextBase(AUnit scout) {
-        BaseLocation baseLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
+        APosition baseLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
         if (baseLocation != null) {
             scout.move(baseLocation.getPosition(), UnitActions.MOVE);
         }
@@ -295,31 +295,35 @@ public class AScoutManager {
     private static void initializeEnemyRegionPolygonPoints(AUnit scout, Region enemyBaseRegion) {
         Position centerOfRegion = enemyBaseRegion.getCenter();
 
-        for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
-            APosition position = APosition.create(point);
+        scoutingAroundBasePoints.addPosition(APosition.create(centerOfRegion));
 
-            // Calculate actual ground distance to this position
-            double groundDistance = AMap.getGroundDistance(scout, position);
+        return;
 
-            // Fix problem with some points being unwalkable despite isWalkable being true
-            if (groundDistance < 2) {
-                continue;
-            }
-            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
-
-            // If positions is walkable, not in different region and has path to it, it should be ok
-            if (AMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
-                    && scout.hasPathTo(position) && groundDistance >= 4
-                    && groundDistance <= 1.7 * scout.distanceTo(position)) {
-                scoutingAroundBasePoints.addPosition(position);
-            }
-        }
-
-        if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
-            AGame.changeSpeedTo(1);
-            AGame.changeSpeedTo(1);
-            APainter.paintingMode = APainter.MODE_FULL_PAINTING;
-        }
+//        for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
+//            APosition position = APosition.create(point);
+//
+//            // Calculate actual ground distance to this position
+//            double groundDistance = AMap.getGroundDistance(scout, position);
+//
+//            // Fix problem with some points being unwalkable despite isWalkable being true
+//            if (groundDistance < 2) {
+//                continue;
+//            }
+//            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
+//
+//            // If positions is walkable, not in different region and has path to it, it should be ok
+//            if (AMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
+//                    && scout.hasPathTo(position) && groundDistance >= 4
+//                    && groundDistance <= 1.7 * scout.distanceTo(position)) {
+//                scoutingAroundBasePoints.addPosition(position);
+//            }
+//        }
+//
+//        if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
+//            AGame.changeSpeedTo(1);
+//            AGame.changeSpeedTo(1);
+//            APainter.paintingMode = APainter.MODE_FULL_PAINTING;
+//        }
     }
 
     private static APosition useNearestPolygonPoint(Region region, AUnit scout) {

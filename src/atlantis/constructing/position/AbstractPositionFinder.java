@@ -59,7 +59,7 @@ public abstract class AbstractPositionFinder {
             return false;
         }
         
-        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
+        return Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
 //        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
     }
 

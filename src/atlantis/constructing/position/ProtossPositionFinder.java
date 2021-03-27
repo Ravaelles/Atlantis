@@ -108,7 +108,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     }
 
     private static boolean isPowerConditionFulfilled(AUnitType building, APosition position) {
-        return Atlantis.getBwapi().hasPower(position.toTilePosition())
+        return Atlantis.game().hasPower(position.toTilePosition())
                 || building.equals(AUnitType.Protoss_Nexus)
                 || building.equals(AUnitType.Protoss_Pylon);
     }

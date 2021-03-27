@@ -6,16 +6,15 @@ import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.missions.MissionAttack;
-import atlantis.combat.squad.missions.MissionUmt;
 import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
-import atlantis.information.AMap;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
-import atlantis.position.PositionOperationsWrapper;
+import atlantis.position.PositionHelper;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.scout.AScoutManager;
@@ -29,12 +28,7 @@ import atlantis.util.ColorUtil;
 import atlantis.workers.AWorkerManager;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
-import bwapi.Color;
-import bwapi.Game;
-import bwapi.Position;
-import bwapi.TechType;
-import bwapi.Text.Size.Enum;
-import bwapi.UpgradeType;
+import bwapi.*;
 import bwta.Region;
 import java.util.ArrayList;
 import java.util.Map;
@@ -48,9 +42,9 @@ public class APainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
-    public static int paintingMode = MODE_NO_PAINTING;
+//    public static int paintingMode = MODE_NO_PAINTING;
 //    public static int paintingMode = MODE_PARTIAL_PAINTING;
-//    public static int paintingMode = MODE_FULL_PAINTING;
+    public static int paintingMode = MODE_FULL_PAINTING;
 
     // =========================================================
     private static Game bwapi;
@@ -70,7 +64,7 @@ public class APainter {
 
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
-        bwapi = Atlantis.getBwapi();
+        bwapi = Atlantis.game();
 
         // =========================================================
         if (paintingMode == MODE_NO_PAINTING) {
@@ -519,8 +513,8 @@ public class APainter {
                         buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, color);
 
                 // Draw X
-                paintLine(PositionOperationsWrapper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
-                        PositionOperationsWrapper.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
+                paintLine(PositionHelper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
+                        PositionHelper.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
                         color
                 );
                 paintLine(positionToBuild,
@@ -729,7 +723,7 @@ public class APainter {
             else {
                 progressColor = Color.Green;
             }
-            stringToDisplay = labelProgress + "%%";
+            stringToDisplay = labelProgress + "%";
             
             paintTextCentered(
                     new APosition(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2), 
@@ -805,7 +799,7 @@ public class APainter {
             if (workers > 0) {
                 String workersAssigned = workers + "";
                 paintTextCentered(
-                        PositionOperationsWrapper.translateByPixels(building.getPosition(), -5, -36), 
+                        PositionHelper.translateByPixels(building.getPosition(), -5, -36),
                         workersAssigned, Color.Grey
                 );
             }
@@ -1055,14 +1049,14 @@ public class APainter {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionOperationsWrapper.translateByPixels(position, width, height), color, false);
+        bwapi.drawBoxMap(position, PositionHelper.translateByPixels(position, width, height), color, false);
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionOperationsWrapper.translateByPixels(position, width, height), color, true);
+        bwapi.drawBoxMap(position, PositionHelper.translateByPixels(position, width, height), color, true);
     }
 
     public static void paintCircle(AUnit unit, int radius, Color color) {
@@ -1084,7 +1078,7 @@ public class APainter {
     }
 
     public static void paintLine(APosition start, int dx, int dy, Color color) {
-        paintLine(start, PositionOperationsWrapper.translateByPixels(start, dx, dy), color);
+        paintLine(start, PositionHelper.translateByPixels(start, dx, dy), color);
     }
 
     public static void paintLine(Position start, Position end, Color color) {
@@ -1143,11 +1137,11 @@ public class APainter {
         }
 
         if (screenCoords) {
-            bwapi.drawTextScreen(PositionOperationsWrapper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
+            bwapi.drawTextScreen(PositionHelper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         } else {
-            bwapi.drawTextMap(PositionOperationsWrapper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
+            bwapi.drawTextMap(PositionHelper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         }
@@ -1162,15 +1156,15 @@ public class APainter {
     }
 
     private static void setTextSizeMedium() {
-        bwapi.setTextSize(Enum.Default);
+        bwapi.setTextSize(Text.Size.Default);
     }
 
     private static void setTextSizeSmall() {
-        bwapi.setTextSize(Enum.Small);
+        bwapi.setTextSize(Text.Size.Small);
     }
 
     private static void setTextSizeLarge() {
-        bwapi.setTextSize(Enum.Large);
+        bwapi.setTextSize(Text.Size.Large);
     }
 
 }

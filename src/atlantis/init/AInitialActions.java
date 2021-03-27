@@ -1,7 +1,8 @@
 package atlantis.init;
 
 import atlantis.AGame;
-import atlantis.information.AMap;
+import atlantis.map.AMap;
+import atlantis.units.Select;
 import atlantis.workers.AMineralGathering;
 
 public class AInitialActions {
@@ -23,8 +24,10 @@ public class AInitialActions {
         catch (Exception ex) {
             AGame.setUmtMode(true);
         }
-            
-        AMap.disableSomeOfTheChokePoints();
+
+        if (!AMap.disableSomeOfTheChokePoints() || Select.ourWorkers().count() != 4) {
+            AGame.setUmtMode(true);
+        }
     }
 
 }

@@ -70,7 +70,7 @@ public class PositionUtil {
                 return (double) fromPosition.getDistance(toPosition) / 32;
             }
             else {
-                return (double) fromPosition.getDistance(toUnit) / 32;
+                return (double) fromPosition.getDistance(toUnit.getPosition()) / 32;
             }
         }
         
