@@ -114,9 +114,10 @@ public class Atlantis implements BWEventListener {
         // === Set some BWAPI params ===============================
         
         game.setLocalSpeed(AtlantisConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
-//        bwapi.setFrameSkip(2);                          // Number of GUI frames to skip
-//        bwapi.setGUI(false);                            // Turn off GUI - will speed up game considerably
+//        game.setFrameSkip(2);                          // Number of GUI frames to skip
+//        game.setGUI(false);                            // Turn off GUI - will speed up game considerably
         game.enableFlag(Flag.UserInput);               // Without this flag you can't control units with mouse
+//        game.enableFlag(Flag.CompleteMapInformation);  // See entire map - must be disabled for real games
 
         // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.

@@ -32,8 +32,6 @@ public class MissionAttack extends Mission {
     
     @Override
     public boolean update(AUnit unit) {
-        System.out.println("Mission attack!!!");
-
         APosition focusPoint = getFocusPoint();
         unit.setTooltip("#MA");
         

@@ -1,7 +1,7 @@
 package atlantis.information;
 
 import atlantis.position.APosition;
-import atlantis.position.APositionedObject;
+import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -11,7 +11,7 @@ import atlantis.units.AUnitType;
  * @author Anderson
  *
  */
-public class AFoggedUnit extends APositionedObject {
+public class AFoggedUnit implements HasPosition {
 
     private APosition position;
     private final AUnit unit;
@@ -43,7 +43,17 @@ public class AFoggedUnit extends APositionedObject {
     public APosition getPosition() {
         return position;
     }
-    
+
+    @Override
+    public int getX() {
+        return getPosition().getX();
+    }
+
+    @Override
+    public int getY() {
+        return getPosition().getY();
+    }
+
     // =========================================================
     
     /**

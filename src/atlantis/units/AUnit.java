@@ -8,11 +8,12 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.position.APosition;
-import atlantis.position.APositionedObject;
+import atlantis.position.HasPosition;
 import atlantis.repair.ARepairManager;
 import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.PositionUtil;
 import atlantis.wrappers.ACachedValue;
 import bwapi.Player;
 import bwapi.Position;
@@ -36,7 +37,7 @@ import java.util.Map;
  *
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class AUnit extends APositionedObject implements Comparable, AUnitOrders {
+public class AUnit implements Comparable, HasPosition, AUnitOrders {
     
     // Mapping of native unit IDs to AUnit objects
     private static final Map<Integer, AUnit> instances = new HashMap<>();
@@ -522,6 +523,11 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
 
     // =========================================================
     // Auxiliary
+
+    public double distanceTo(Object o) {
+        return PositionUtil.distanceTo(getPosition(), o);
+    }
+
     /**
      * Converts collection of <b>Unit</b> variables into collection of <b>AUnit</b> variables.
      */
@@ -581,7 +587,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
             return false;
         }
         
-        double dist = this.distanceTo(targetUnit);
+        double dist = this.getPosition().distanceTo(targetUnit);
         return dist <= (weaponAgainstThisUnit.maxRange() / 32 + safetyMargin)
                 && dist >= (weaponAgainstThisUnit.minRange() / 32);
     }
@@ -808,7 +814,7 @@ public class AUnit extends APositionedObject implements Comparable, AUnitOrders 
     }
 
     public boolean isIdle() {
-        return u.isIdle() || u.getLastCommand().getType().equals(UnitCommandType.None);
+        return u.isIdle() || (u.getLastCommand() == null || u.getLastCommand().getType().equals(UnitCommandType.None));
     }
 
     public boolean isBusy() {

@@ -6,7 +6,7 @@ import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
-import atlantis.position.APositionedObject;
+import atlantis.position.HasPosition;
 import atlantis.repair.ARepairManager;
 import atlantis.scout.AScoutManager;
 import atlantis.util.AtlantisUtilities;
@@ -441,7 +441,7 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
 //            APositionedObject unit = (APositionedObject) unitsIterator.next();
             AUnit unit = (AUnit) unitsIterator.next();
-            if (unit.distanceTo(otherUnit) > maxDist) {
+            if (unit.getPosition().distanceTo(otherUnit) > maxDist) {
                 unitsIterator.remove();
             }
         }
@@ -455,8 +455,8 @@ public class Select<T> {
     public Select<?> inRadius(double maxDist, Position position) {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
-            APositionedObject unit = (APositionedObject) unitsIterator.next();
-            if (unit.distanceTo(position) > maxDist) {
+            AUnit unit = (AUnit) unitsIterator.next();
+            if (unit.getPosition().distanceTo(position) > maxDist) {
                 unitsIterator.remove();
             }
         }
@@ -484,10 +484,6 @@ public class Select<T> {
 
     /**
      * Returns whether the type in needle matches one in the haystack
-     *
-     * @param AUnit|UnitData needle
-     * @param haystack
-     * @return
      */
     private boolean typeMatches(AUnit needle, AUnitType... haystack) {
         AUnit unit = unitFrom(needle);
@@ -1072,7 +1068,7 @@ public class Select<T> {
         sortDataByDistanceTo(position, true);
         AUnit nearestUnit = (AUnit) data.get(0);
         
-        if (nearestUnit != null && nearestUnit.distanceTo(position) < maxLength) {
+        if (nearestUnit != null && nearestUnit.getPosition().distanceTo(position) < maxLength) {
             return nearestUnit;
         }
         else {
@@ -1318,12 +1314,10 @@ public class Select<T> {
         Collections.sort(data, new Comparator<T>() {
             @Override
             public int compare(T p1, T p2) {
-//                if (p1 == null || !(p1 instanceof PositionedObject)) {
-                if (p1 == null) {
+                if (p1 == null || !(p1 instanceof HasPosition)) {
                     return -1;
                 }
-//                if (p2 == null || !(p2 instanceof PositionedObject)) {
-                if (p2 == null) {
+                if (p2 == null || !(p2 instanceof HasPosition)) {
                     return 1;
                 }
                 AFoggedUnit data1 = dataFrom(p1);

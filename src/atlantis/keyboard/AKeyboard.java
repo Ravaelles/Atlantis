@@ -58,13 +58,14 @@ public class AKeyboard implements NativeKeyListener {
 //                System.out.println("Notice: " + (AGame.isPaused() ? "" : "UN") + "PAUSED");
                 break;
 
-            // Keys "-" and NumPad "-"
-            case 12: case 3658:
+            // Keys "-" and NumPad "-" and "["
+            case 12: case 3658: case 26:
                 AGame.changeSpeedBy(+20);
+                System.out.println("Notice: SPEED SLOWER (" + AtlantisConfig.GAME_SPEED + ")");
                 break;
 
-            // Keys "+" and NumPad "+"
-            case 13: case 3662:
+            // Keys "+" and NumPad "+" and "]"
+            case 13: case 3662: case 27:
                 AGame.changeSpeedBy(-20);
                 System.out.println("Notice: SPEED FASTER (" + AtlantisConfig.GAME_SPEED + ")");
                 break;

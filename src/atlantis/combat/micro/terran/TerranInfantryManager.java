@@ -51,7 +51,10 @@ public class TerranInfantryManager {
             
             // Select the most distance (according to main base) bunker
             if (Missions.isGlobalMissionDefend() && mainBase != null) {
-                AUnit mostDistantBunker = bunkers.units().sortByGroundDistanceTo(mainBase.getPosition(), false).first();
+                AUnit mostDistantBunker = bunkers
+                        .units()
+                        .sortByGroundDistanceTo(mainBase.getPosition(), false)
+                        .first();
                 if (mostDistantBunker != null) {
                     return mostDistantBunker;
                 }

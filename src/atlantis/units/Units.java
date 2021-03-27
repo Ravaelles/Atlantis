@@ -1,7 +1,7 @@
 package atlantis.units;
 
 import atlantis.position.APosition;
-import atlantis.position.APositionedObject;
+import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
 import atlantis.util.AtlantisUtilities;
 import bwapi.Position;
@@ -203,27 +203,23 @@ public class Units {
         if (position == null) {
             return null;
         }
+
+        ArrayList<AUnit> unitsList = new ArrayList<>(units.keySet());
         
-        ArrayList<AUnit> unitsList = new ArrayList<>();
-        unitsList.addAll(units.keySet());
-        
-        Collections.sort(unitsList, new Comparator<APositionedObject>() {
+        unitsList.sort(new Comparator<AUnit>() {
             @Override
-            public int compare(APositionedObject p1, APositionedObject p2) {
-//                if (p1 == null || !(p1 instanceof PositionedObject)) {
+            public int compare(AUnit p1, AUnit p2) {
                 if (p1 == null) {
                     return -1;
                 }
-//                if (p2 == null || !(p2 instanceof PositionedObject)) {
                 if (p2 == null) {
                     return 1;
                 }
-                double distance1 = p1.distanceTo(position);
-                double distance2 = p2.distanceTo(position);
+                double distance1 = p1.getPosition().distanceTo(position);
+                double distance2 = p2.getPosition().distanceTo(position);
                 if (distance1 == distance2) {
                     return 0;
-                }
-                else {
+                } else {
                     return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
                 }
             }
@@ -247,19 +243,16 @@ public class Units {
         if (position == null) {
             return null;
         }
+
+        ArrayList<AUnit> unitsList = new ArrayList<>(units.keySet());
         
-        ArrayList<AUnit> unitsList = new ArrayList<>();
-        unitsList.addAll(units.keySet());
-        
-        Collections.sort(unitsList, new Comparator<APositionedObject>() {
+        unitsList.sort(new Comparator<AUnit>() {
             @Override
-            public int compare(APositionedObject p1, APositionedObject p2) {
-//                if (p1 == null || !(p1 instanceof PositionedObject)) {
-                if (p1 == null) {
+            public int compare(AUnit p1, AUnit p2) {
+                if (p1 == null || !(p1 instanceof HasPosition)) {
                     return -1;
                 }
-//                if (p2 == null || !(p2 instanceof PositionedObject)) {
-                if (p2 == null) {
+                if (p2 == null || !(p2 instanceof HasPosition)) {
                     return 1;
                 }
                 double distance1 = BWTA.getGroundDistance(
@@ -270,8 +263,7 @@ public class Units {
                 );
                 if (distance1 == distance2) {
                     return 0;
-                }
-                else {
+                } else {
                     return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
                 }
             }

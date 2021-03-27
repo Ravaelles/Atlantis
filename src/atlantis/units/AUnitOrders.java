@@ -251,7 +251,7 @@ public interface AUnitOrders {
      * canRepair
      */
     default boolean repair(AUnit target) {
-        if (target != null && target.distanceTo(unit()) > 0.5) {
+        if (target != null && target.getPosition().distanceTo(unit()) > 0.5) {
             unit().setLastUnitOrderNow();
             return unit().move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
         }
