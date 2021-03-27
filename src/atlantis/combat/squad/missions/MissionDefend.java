@@ -24,9 +24,8 @@ public class MissionDefend extends Mission {
     
     @Override
     public boolean update(AUnit unit) {
-        System.out.println("mission defend");
 
-        // === Handle UMT ==========================================
+        // === Handle UMT special maps case ========================
         
         if (AGame.isUmtMode()) {
             return false;

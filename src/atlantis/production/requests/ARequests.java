@@ -39,8 +39,8 @@ public abstract class ARequests {
 //        requestDefensiveBuildingAntiLand(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
 //    }
     
-    public void requestDefBuildingAntiLand(APosition where) {
-        AUnitType building = AtlantisConfig.DEF_BUILDING_ANTI_LAND;
+    public void requestDefensiveBuildingAntiLand(APosition where) {
+        AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
         APosition nearTo = where;
         
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
@@ -108,7 +108,7 @@ public abstract class ARequests {
             building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
         }
         else if (AGame.playsAsProtoss()) {
-            building = AtlantisConfig.DEF_BUILDING_ANTI_LAND;
+            building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
         }
         else {
             return;

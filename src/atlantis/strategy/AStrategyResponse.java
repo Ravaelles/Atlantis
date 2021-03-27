@@ -3,12 +3,8 @@ package atlantis.strategy;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
-import atlantis.position.APosition;
 import atlantis.production.requests.ARequests;
-import atlantis.production.requests.TerranRequests;
 import atlantis.scout.AScoutManager;
-import atlantis.units.AUnit;
-import atlantis.units.Select;
 
 /**
  *
@@ -17,9 +13,9 @@ import atlantis.units.Select;
 public class AStrategyResponse {
     
     public static void update() {
-        int defBuildingAntiLand = AConstructionManager.countExistingAndPlannedConstructions(AtlantisConfig.DEF_BUILDING_ANTI_LAND);
+        int defBuildingAntiLand = AConstructionManager.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
         if (defBuildingAntiLand < AStrategyInformations.needDefBuildingAntiLand) {
-            ARequests.getInstance().requestDefBuildingAntiLand(null);
+            ARequests.getInstance().requestDefensiveBuildingAntiLand(null);
         }
     }
     
