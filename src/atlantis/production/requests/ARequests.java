@@ -20,10 +20,10 @@ public abstract class ARequests {
     
     public static ARequests getInstance() {
         if (instance == null) {
-            if (AGame.playsAsTerran()) {
+            if (AGame.isPlayingAsTerran()) {
                 instance = new TerranRequests();
             }
-            else if (AGame.playsAsProtoss()) {
+            else if (AGame.isPlayingAsProtoss()) {
                 instance = new ProtossRequests();
             }
             else {
@@ -55,8 +55,10 @@ public abstract class ARequests {
                 nearTo = null;
             }
         }
-        
-        AConstructionManager.requestConstructionOf(building, nearTo);
+
+        if (nearTo != null) {
+            AConstructionManager.requestConstructionOf(building, nearTo);
+        }
     }
     
     public void requestDefBuildingAntiAir(APosition where) {
@@ -104,10 +106,10 @@ public abstract class ARequests {
      */
     public void requestDetectorQuick(APosition where) {
         AUnitType building = null;
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
         }
-        else if (AGame.playsAsProtoss()) {
+        else if (AGame.isPlayingAsProtoss()) {
             building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
         }
         else {

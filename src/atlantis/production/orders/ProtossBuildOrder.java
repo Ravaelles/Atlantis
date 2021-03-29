@@ -44,7 +44,7 @@ public class ProtossBuildOrder extends ABuildOrder {
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
         
-        if (ADynamicWorkerProductionManager.shouldTrainWorkers(false)) {
+        if (ADynamicWorkerProductionManager.shouldTrainWorkers()) {
             units.add(AUnitType.Protoss_Probe);
             units.add(AUnitType.Protoss_Probe);
         }

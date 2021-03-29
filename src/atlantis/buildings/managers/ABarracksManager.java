@@ -69,7 +69,7 @@ public class ABarracksManager {
     }
 
     private static boolean hasEmptySlot(AUnit barracks) {
-        if (AGame.playsAsZerg()) {
+        if (AGame.isPlayingAsZerg()) {
             return Select.ourLarva().count() > 0;
         } else {
             return barracks.getTrainingQueue().size() == 0;

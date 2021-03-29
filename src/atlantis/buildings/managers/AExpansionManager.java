@@ -21,11 +21,12 @@ public class AExpansionManager {
 //            return;
 //        }
 
-        if (AGame.playsAsZerg() && !AGame.hasMinerals(1300)) {
-            return;
-        }
-        
-        int minMinerals = 100 + (AGame.playsAsZerg() ? 268 : 356);
+//        if (AGame.isPlayingAsZerg() && !AGame.hasMinerals(1300)) {
+//            return;
+//        }
+
+        boolean hasPlentyOfMinerals = AGame.hasMinerals(600);
+        int minMinerals = 100 + (AGame.isPlayingAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
         if (!AGame.hasMinerals(minMinerals)) {
@@ -33,10 +34,10 @@ public class AExpansionManager {
         }
 
         // If there're still things to produce, don't auto-expand.
-        ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(5);
-        if (nextOrders.size() >= 3 && !AGame.hasMinerals(minMinerals + 50)) {
-            return;
-        }
+//        ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(5);
+//        if (nextOrders.size() >= 3 && !AGame.hasMinerals(minMinerals + 50)) {
+//            return;
+//        }
         
         // === Force decent army before 3rd base =========================================
         
@@ -44,7 +45,7 @@ public class AExpansionManager {
                 + AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
         
         // Enforce too have a lot of tanks before expansion
-        if (AGame.playsAsTerran() && numberOfBases >= 2) {
+        if (!hasPlentyOfMinerals && AGame.isPlayingAsTerran() && numberOfBases >= 2) {
             if (Select.ourTanks().count() <= 8) {
                 return;
             }
@@ -62,7 +63,7 @@ public class AExpansionManager {
 
         boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
         boolean haveEnoughBases = numberOfBases >= 7
-                && AGame.playsAsZerg() && Select.ourLarva().count() >= 2;
+                && AGame.isPlayingAsZerg() && Select.ourLarva().count() >= 2;
         boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
         boolean allowExtraExpansion = AGame.hasMinerals(minMinerals + 200)
                 && numberOfUnfinishedBases <= 1;
@@ -71,7 +72,7 @@ public class AExpansionManager {
         if (haveEnoughMinerals && !haveEnoughBases && (noBaseToConstruct || allowExtraExpansion)) {
             
             // ZERG case
-            if (AGame.playsAsZerg() && AGame.hasMinerals(minMinerals)) {
+            if (AGame.isPlayingAsZerg() && AGame.hasMinerals(minMinerals)) {
                 ProductionOrder fakeProductionOrder = new ProductionOrder(AtlantisConfig.BASE);
                 fakeProductionOrder.setModifier(ProductionOrder.BASE_POSITION_MAIN);
                 

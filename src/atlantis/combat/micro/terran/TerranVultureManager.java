@@ -26,36 +26,36 @@ public class TerranVultureManager {
     // =========================================================
 
     private static boolean handlePlantMines(AUnit unit) {
-        
+
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
-        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
+//        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
+        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.getLastUnitOrderWasFramesAgo() > 15) {
             unit.setUnitAction(null);
             unit.setTooltip("Planted!");
-            unit.holdPosition();
-            return true;
-        }
-        
-        // If out of mines or mines ain't researched, don't do anything.
-        if (unit.getMinesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) {
             return false;
         }
-        
+
         // Can't allow to interrupt
         if (unit.isUnitAction(UnitActions.USING_TECH)) {
             unit.setTooltip("Planting mine");
             return true;
         }
-        
+
+        // If out of mines or mines ain't researched, don't do anything.
+        if (unit.getMinesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) {
+            return false;
+        }
+
         // Disallow mines close to buildings
         AUnit nearestBuilding = Select.ourBuildings().nearestTo(unit);
-        if (nearestBuilding != null && nearestBuilding.distanceTo(unit) < 5) {
+        if (nearestBuilding != null && nearestBuilding.distanceTo(unit) <= 7) {
             unit.setTooltip("Don't mine");
             return false;
         }
         
         // If enemies are too close don't do it
-        if (Select.enemyRealUnits().inRadius(4, unit).count() > 0) {
+        if (Select.enemyRealUnits().inRadius(6, unit).count() > 0) {
             return false;
         }
         
@@ -69,6 +69,7 @@ public class TerranVultureManager {
         if ((nearbyMines.count() <= 3 || (unit.getMinesCount() >= 3 && nearbyMines.count() <= 4)) 
                 && nearbyMines.inRadius(1, unit).count() == 0) {
             unit.useTech(TechType.Spider_Mines, unit.getPosition());
+            unit.setUnitAction(UnitActions.USING_TECH);
             unit.setTooltip("Plant mine");
             return true;
         }

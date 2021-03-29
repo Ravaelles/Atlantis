@@ -28,7 +28,19 @@ public class AtlantisConfig {
      * In game you can use buttons -/+ to change the game speed.
      */
     public static int GAME_SPEED = 0;
-    
+
+    /**
+     * By skipping rendering of game frames, we can make the game much quicker, regardless of the game speed.
+     * Value 3 means we render every 3th game frame, skipping 67% of total rendering.
+     */
+    public static int FRAME_SKIP = 3;
+
+    /**
+     * Disabling makes game so fast, you actually be like "Daaaaamn!".
+     * Unfortunately it means nothing is rendered.
+     */
+    public static boolean DISABLE_GUI = false;
+
     /**
      * Race used by the Atlantis.
      */
@@ -40,8 +52,8 @@ public class AtlantisConfig {
      * Single player enemy race.
      */
 //    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Protoss";
-    public static final String ENEMY_RACE = "Zerg";
+    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Zerg";
     
     /**
      * Will modify bwapi.ini to use this map.
@@ -66,10 +78,10 @@ public class AtlantisConfig {
     public static int USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
 
     /**
-     * Force production of a worker whenever you have 50 minerals and more than N workers, but less than
+     * Force production of a worker whenever you have minerals and more than N workers, but less than
      * AUTO_PRODUCE_WORKERS_MAX_WORKERS.
      */
-    public static int AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = 201;
+    public static int AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = 10;
 
     /**
      * Maximum number of workers. This variable ONLY MAKES SENSE WHEN USED TOGETHER WITH 

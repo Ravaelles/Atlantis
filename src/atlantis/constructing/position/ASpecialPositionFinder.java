@@ -50,7 +50,7 @@ public class ASpecialPositionFinder {
             }
         }
 
-        System.err.println("Couldn't find geyser for " + building);
+//        System.err.println("Couldn't find geyser for " + building);
         return null;
     }
 

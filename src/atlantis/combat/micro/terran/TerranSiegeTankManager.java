@@ -1,5 +1,7 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.combat.squad.missions.Mission;
+import atlantis.combat.squad.missions.Missions;
 import atlantis.map.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -11,6 +13,10 @@ import bwta.Chokepoint;
  * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class TerranSiegeTankManager {
+    private static AUnit nearestEnemyUnit;
+    private static double nearestEnemyUnitDist;
+    private static AUnit nearestEnemyBuilding;
+    private static double nearestEnemyBuildingDist;
 
     public static boolean update(AUnit tank) {
         if (!tank.isInterruptible()) {
@@ -20,9 +26,12 @@ public class TerranSiegeTankManager {
         
         // =========================================================
         
-        AUnit nearestAttackableEnemy = Select.enemy().combatUnits().canBeAttackedBy(tank).nearestTo(tank);
-        double distanceToEnemy = nearestAttackableEnemy != null ? tank.distanceTo(nearestAttackableEnemy) : -1;
-        
+        nearestEnemyUnit = Select.enemyRealUnits().combatUnits().groundUnits().nearestTo(tank);
+        nearestEnemyUnitDist = nearestEnemyUnit != null ? tank.distanceTo(nearestEnemyUnit) : 999;
+
+        nearestEnemyBuilding = Select.enemy().buildings().nearestTo(tank);
+        nearestEnemyBuildingDist = nearestEnemyBuilding != null ? tank.distanceTo(nearestEnemyBuilding) : 999;
+
 //        String string = (enemy != null ? enemy.getShortName() : "NULL");
 //        if (enemy != null) {
 //             string += " (" + enemy.distanceTo(tank) + ")";
@@ -34,10 +43,10 @@ public class TerranSiegeTankManager {
         // =========================================================
         
         if (tank.isSieged()) {
-            return updateWhenSieged(tank, nearestAttackableEnemy, distanceToEnemy);
+            return updateWhenSieged(tank);
         }
         else {
-            return updateWhenUnsieged(tank, nearestAttackableEnemy, distanceToEnemy);
+            return updateWhenUnsieged(tank);
         }
         
 //        // =========================================================
@@ -51,11 +60,12 @@ public class TerranSiegeTankManager {
     /**
      * Sieged
      */
-    private static boolean updateWhenSieged(AUnit tank, AUnit enemy, double distanceToEnemy) {
-        if (enemy == null || distanceToEnemy < 0 || distanceToEnemy >= 14) {
+    private static boolean updateWhenSieged(AUnit tank) {
+        if ((nearestEnemyUnit == null && nearestEnemyBuilding == null)
+                || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 11)) {
             tank.setTooltip("Considers unsiege");
             
-            if (!tank.getSquad().isMissionDefend() && AtlantisUtilities.rand(1, 100) <= 10) {
+            if (!tank.getSquad().isMissionDefend() && AtlantisUtilities.rand(1, 100) <= 2) {
                 tank.unsiege();
                 tank.setTooltip("Unsiege");
                 return true;
@@ -68,28 +78,22 @@ public class TerranSiegeTankManager {
     /**
      * Not sieged
      */
-    private static boolean updateWhenUnsieged(AUnit tank, AUnit nearestAttackableEnemy, double distanceToEnemy) {
-        
-        // === Siege on hold =======================================
+    private static boolean updateWhenUnsieged(AUnit tank) {
         
         // If tank is holding position, siege
-        if (tank.isHoldingPosition() && canSiegeHere(tank)) {
-            tank.siege();
-            tank.setTooltip("Hold & siege");
-            return true;
-        }
-        
-        // === Check for enemy COMBAT BUILDINGS ====================
-        
-        AUnit nearEnemyCombatBuilding = Select.enemy().combatBuildings().inRadius(10.98, tank).first();
+//        if (Missions.getGlobalMission().isMissionDefend() && canSiegeHere(tank)) {
+//            tank.siege();
+//            tank.setTooltip("Hold & siege");
+//            return true;
+//        }
+
+        AUnit nearEnemyCombatBuilding = Select.enemy().combatBuildings().inRadius(10.9, tank).first();
         if (nearEnemyCombatBuilding != null) {
             return handleNearEnemyCombatBuilding(tank, nearEnemyCombatBuilding);
         }
         
-        // === Enemy is UNIT =======================================
-        
-        if (nearestAttackableEnemy != null) {
-            return nearestEnemyIsUnit(tank, nearestAttackableEnemy, distanceToEnemy);
+        if (nearestEnemyUnit != null) {
+            return nearestEnemyIsUnit(tank, nearestEnemyUnit, nearestEnemyUnitDist);
         }
         
         // =========================================================
@@ -112,6 +116,11 @@ public class TerranSiegeTankManager {
     }
 
     private static boolean nearestEnemyIsUnit(AUnit tank, AUnit enemy, double distanceToEnemy) {
+        int supportUnitsNearby = Select.ourCombatUnits().inRadius(10, tank).count();
+
+        if (supportUnitsNearby <= 5) {
+            return false;
+        }
         
         // Don't siege when enemy is too close
         if (distanceToEnemy < 10 && !enemy.isRangedUnit()) {
@@ -119,17 +128,13 @@ public class TerranSiegeTankManager {
             return false;
         }
         
-        // =========================================================
-        
-        if (distanceToEnemy < 14) {
-            if ((AtlantisUtilities.rand(1, 100) < 8 || enemy.getType().isDangerousGroundUnit()) && canSiegeHere(tank)) {
-                tank.siege();
-                tank.setTooltip("Better siege");
-                return true;
-            }
+        if (distanceToEnemy < 12 && enemy.getType().isDangerousGroundUnit() && canSiegeHere(tank)) {
+            tank.siege();
+            tank.setTooltip("Better siege");
+            return true;
         }
 
-        if (distanceToEnemy <= 10.8 && canSiegeHere(tank)) {
+        if (distanceToEnemy <= 11 && canSiegeHere(tank)) {
             tank.siege();
             tank.setTooltip("Siege!");
             return true;

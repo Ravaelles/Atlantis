@@ -46,7 +46,7 @@ public class ARunManager {
         
         else if (unit.isStuck()) {
             unit.setTooltip("Stuck!!!");
-            unit.holdPosition();
+//            unit.holdPosition();
             markAsNotRunning();
             return false;
         }
@@ -64,9 +64,9 @@ public class ARunManager {
             if (!finallyRunned) {
                 markAsNotRunning();
 
-                if (unit.isMoving()) {
-                    unit.holdPosition();
-                }
+//                if (unit.isMoving()) {
+//                    unit.holdPosition();
+//                }
 
                 unit.setTooltip("My legs!");
 
@@ -440,7 +440,7 @@ public class ARunManager {
     private static Units defineCloseEnemies(AUnit unit) {
 //        return Select.enemy().combatUnits().canAttack(unit, 6).units();
 
-        Select<AUnit> veryCloseEnemies = Select.enemy().combatUnits().canAttack(unit, 1.2);
+        Select<AUnit> veryCloseEnemies = Select.enemy().combatUnits().canAttack(unit, 1.6);
         if (veryCloseEnemies.size() > 0 && veryCloseEnemies.size() <= 1) {
             return veryCloseEnemies.units();
         }

@@ -251,21 +251,32 @@ public interface AUnitOrders {
      * canRepair
      */
     default boolean repair(AUnit target) {
-        if (target != null && target.getPosition().distanceTo(unit()) > 0.5) {
+        if (target == null) {
+            return false;
+        }
+
+        if (unit().getTarget() == null) {
             unit().setLastUnitOrderNow();
-            return unit().move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
+            u().repair(target.u());
         }
-        else {
-            unit().setUnitAction(UnitActions.REPAIR);
-            if (unit().getTarget() == null || !unit().getTarget().equals(target) || !unit().isRepairing()) {
-                unit().setLastUnitOrderNow();
-                unit().setLastUnitOrderNow();
-                return u().repair(target.u());
-            }
-            else {
-                return true;
-            }
-        }
+
+        return true;
+
+//        if (target.getPosition().distanceTo(unit()) > 1.5) {
+//            unit().setLastUnitOrderNow();
+//            return unit().move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
+//        }
+//        else {
+//            unit().setUnitAction(UnitActions.REPAIR);
+//            if (unit().getTarget() == null || !unit().getTarget().equals(target) || !unit().isRepairing()) {
+//                unit().setLastUnitOrderNow();
+//                unit().setLastUnitOrderNow();
+//                return u().repair(target.u());
+//            }
+//            else {
+//                return true;
+//            }
+//        }
     }
 
     /**

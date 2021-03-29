@@ -215,8 +215,8 @@ public class APainter {
 //                    paintCircle(unitPosition, 14, Color.White);
 //                }
 //            }
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 5), 
-                    unit.u().getOrder().toString(), Color.Purple);
+            String order = unit.u().getOrder().toString() + " " + unit.getLastUnitOrderWasFramesAgo();
+            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 5), order, Color.Purple);
         }
     }
 

@@ -7,7 +7,6 @@ import atlantis.combat.micro.AAvoidMeleeUnitsManager;
 import atlantis.combat.micro.AAvoidDefensiveBuildings;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.position.Positions;
@@ -18,9 +17,9 @@ import atlantis.units.actions.UnitActions;
 import atlantis.util.CodeProfiler;
 import bwapi.Color;
 import bwapi.Position;
-import bwta.BaseLocation;
 import bwta.Region;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 public class AScoutManager {
@@ -65,11 +64,14 @@ public class AScoutManager {
         
         assignScoutIfNeeded();
 //        for (AUnit scout : scouts) {
-        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
-            AUnit scout = iterator.next();
-            update(scout);
+        try {
+            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+                AUnit scout = iterator.next();
+                update(scout);
+            }
         }
-        
+        catch (ConcurrentModificationException ignore) { }
+
         // =========================================================
         
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_SCOUTING);
@@ -209,7 +211,7 @@ public class AScoutManager {
         // =========================================================
 
         // ZERG case
-        if (AGame.playsAsZerg()) {
+        if (AGame.isPlayingAsZerg()) {
 
             // We know enemy building
             if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {

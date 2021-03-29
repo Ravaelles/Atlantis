@@ -391,10 +391,6 @@ public class Select<T> {
      * parameterized type is AUnit
      */
     public static Select<AUnit> neutral() {
-//        List<AUnit> data = new ArrayList<>();
-//
-//        data.addAll(neutralUnits());
-
         return new Select<AUnit>(neutralUnits());
     }
 
@@ -436,7 +432,7 @@ public class Select<T> {
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>otherUnit</b>.
      */
-    public Select<?> inRadius(double maxDist, AUnit otherUnit) {
+    public Select<T> inRadius(double maxDist, AUnit otherUnit) {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
 //            APositionedObject unit = (APositionedObject) unitsIterator.next();
@@ -547,6 +543,18 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
             if (!unit.isVisible()) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
+    public Select<T> groundUnits() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
+            if (!unit.isGroundUnit()) {
                 unitsIterator.remove();
             }
         }
@@ -831,12 +839,12 @@ public class Select<T> {
      * Selects only those units from current selection, which can be both <b>attacked by</b> given unit (e.g.
      * Zerglings can't attack Overlord) and are <b>in shot range</b> to the given <b>unit</b>.
      */
-    public Select<T> canBeAttackedBy(AUnit predator) {
+    public Select<T> canBeAttackedBy(AUnit attacker) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit prey = unitFrom(unitsIterator.next());
-            if (predator.canAttackThisKindOfUnit(prey, false)) {
-                boolean isInShotRange = predator.hasRangeToAttack(prey, 0.05);
+            if (attacker.canAttackThisKindOfUnit(prey, false)) {
+                boolean isInShotRange = attacker.hasRangeToAttack(prey, 0.05);
                 if (!isInShotRange) {
 //                    System.out.println(prey.getType().getShortName() + " OUT OF range ("
 //                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
@@ -867,11 +875,11 @@ public class Select<T> {
 //        else {
 //            return (Select<AUnit>) ourIncludingUnfinished().ofType(AtlantisConfig.BASE);
 //        }
-        if (AGame.playsAsZerg()) {
-            return (Select<AUnit>) our().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
+        if (AGame.isPlayingAsZerg()) {
+            return (Select<AUnit>) ourBuildings().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
                     AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
         } else {
-            return (Select<AUnit>) our().ofType(AtlantisConfig.BASE);
+            return (Select<AUnit>) ourBuildings().ofType(AtlantisConfig.BASE);
         }
     }
 
@@ -1322,7 +1330,7 @@ public class Select<T> {
                 }
                 AFoggedUnit data1 = dataFrom(p1);
                 AFoggedUnit data2 = dataFrom(p2);
-                double distance1 = PositionUtil.distanceTo(position, data1.getPosition());	//TODO: check whether this doesn't mix up position types
+                double distance1 = PositionUtil.distanceTo(position, data1.getPosition());
                 double distance2 = PositionUtil.distanceTo(position, data2.getPosition());
                 if (distance1 == distance2) {
                     return 0;

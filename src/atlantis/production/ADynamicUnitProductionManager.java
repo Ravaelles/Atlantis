@@ -15,11 +15,11 @@ public class ADynamicUnitProductionManager {
     public static void update() {
         ADynamicWorkerProductionManager.handleDynamicWorkerProduction();
         
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             trainMarinesForBunkersIfNeeded();
             constructFactoriesIfNeeded();
         }
-        else if (AGame.playsAsProtoss()) {
+        else if (AGame.isPlayingAsProtoss()) {
             makeScarabsIfNeeded();
         }
     }
@@ -29,10 +29,7 @@ public class ADynamicUnitProductionManager {
     private static void constructFactoriesIfNeeded() {
         for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).listUnits()) {
             if (!factory.isTrainingAnyUnit()) {
-                boolean cantAffordTankButCanAffordVulture = AGame.hasMinerals(250)
-                        && !AGame.hasGas(70);
-                
-                if (cantAffordTankButCanAffordVulture) {
+                if (AGame.hasMinerals(270) && AGame.hasGas(110)) {
                     factory.train(AUnitType.Terran_Vulture);
                 }
             }

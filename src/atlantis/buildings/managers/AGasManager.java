@@ -63,7 +63,7 @@ public class AGasManager {
             else if (numberOfWorkersAssigned > optimalNumberOfGasWorkers) {
                 AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
-                    worker.holdPosition();
+                    worker.stop();
                 }
                 break; // Only one worker per call
             }

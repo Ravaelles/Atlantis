@@ -5,10 +5,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
 import atlantis.wrappers.ATech;
-import bwapi.Player;
-import bwapi.Race;
-import bwapi.TechType;
-import bwapi.UpgradeType;
+import bwapi.*;
+
 import java.util.List;
 
 /**
@@ -142,6 +140,32 @@ public class AGame {
     }
 
     /**
+     * Change game rendering frame skipping - speeds up game considerably.
+     */
+    public static void changeFrameSkipTo(int frameSkip) {
+        if (frameSkip <= 1) {
+            frameSkip = 0;
+        }
+
+        Game game = game();
+        if (game != null) {
+            AtlantisConfig.FRAME_SKIP = frameSkip;
+            game.setFrameSkip(AtlantisConfig.FRAME_SKIP);
+        }
+        else {
+            System.err.println("Can't change game speed, bwapi is null.");
+        }
+    }
+
+    public static void changeDisableUI(boolean disableUI) {
+        AtlantisConfig.DISABLE_GUI = disableUI;
+        Game game = game();
+        if (game != null) {
+            game.setGUI(AtlantisConfig.DISABLE_GUI);
+        }
+    }
+
+    /**
      * Returns game speed.
      */
     public static int getGameSpeed() {
@@ -269,21 +293,21 @@ public class AGame {
     /**
      * Returns true if user plays as Terran.
      */
-    public static boolean playsAsTerran() {
+    public static boolean isPlayingAsTerran() {
         return AtlantisConfig.MY_RACE.equals(Race.Terran);
     }
 
     /**
      * Returns true if user plays as Protoss.
      */
-    public static boolean playsAsProtoss() {
+    public static boolean isPlayingAsProtoss() {
         return AtlantisConfig.MY_RACE.equals(Race.Protoss);
     }
 
     /**
      * Returns true if user plays as Zerg.
      */
-    public static boolean playsAsZerg() {
+    public static boolean isPlayingAsZerg() {
         return AtlantisConfig.MY_RACE.equals(Race.Zerg);
     }
 

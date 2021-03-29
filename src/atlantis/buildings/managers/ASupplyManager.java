@@ -54,7 +54,7 @@ public class ASupplyManager {
     private static void requestAdditionalSupply() {
 
         // Zerg handles supply a bit differently
-        if (AGame.playsAsZerg()) {
+        if (AGame.isPlayingAsZerg()) {
             ((ZergBuildOrder) ABuildOrderManager.getCurrentBuildOrder()).produceZergUnit(AUnitType.Zerg_Overlord);
         } 
 

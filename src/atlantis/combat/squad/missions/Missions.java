@@ -60,11 +60,11 @@ public class Missions {
     private static int defineMinUnitsToForFirstAttack() {
 
         // We're TERRAN
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             return 6;
         } // =========================================================
         // We're PROTOSS
-        else if (AGame.playsAsProtoss()) {
+        else if (AGame.isPlayingAsProtoss()) {
             return 2;
         } // =========================================================
         // We're ZERG
@@ -77,7 +77,7 @@ public class Missions {
         
         // === Terran ========================================
         
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             if (Select.ourOfType(AUnitType.Terran_Vulture).count() > 0) {
                 return true;
             }

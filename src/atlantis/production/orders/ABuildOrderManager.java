@@ -100,7 +100,7 @@ public abstract class ABuildOrderManager {
             }
 
             // ===  Protoss fix: wait for at least one Pylon ============
-            if (AGame.playsAsProtoss() && unitOrBuilding != null
+            if (AGame.isPlayingAsProtoss() && unitOrBuilding != null
                     && !unitOrBuilding.isType(AUnitType.Protoss_Pylon, AUnitType.Protoss_Assimilator)
                     && Select.our().countUnitsOfType(AUnitType.Protoss_Pylon) == 0) {
                 continue;

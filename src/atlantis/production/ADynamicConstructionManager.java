@@ -4,11 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionManager;
-import atlantis.constructing.AConstructionManager;
 import atlantis.production.orders.ABuildOrderManager;
-import atlantis.production.requests.TerranRequests;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 /**
@@ -27,7 +23,7 @@ public class ADynamicConstructionManager {
         
         // === Terran only ========================================
         
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             TerranDynamicConstructionManager.update();
         }
     }

@@ -33,7 +33,7 @@ public class ZergBuildOrder extends ABuildOrder {
     public ArrayList<AUnitType> produceWhenNoProductionOrders() {
         ArrayList<AUnitType> units = new ArrayList<>();
         
-        boolean shouldTrainWorkers = ADynamicWorkerProductionManager.shouldTrainWorkers(false);
+        boolean shouldTrainWorkers = ADynamicWorkerProductionManager.shouldTrainWorkers();
         
         if (shouldTrainWorkers) {
             units.add(AUnitType.Zerg_Drone);

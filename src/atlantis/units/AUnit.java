@@ -566,12 +566,12 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     public boolean canAttackThisKindOfUnit(AUnit otherUnit, boolean includeCooldown) {
         // Enemy is GROUND unit
         if (otherUnit.isGroundUnit()) {
-            return canAttackGroundUnits() && (!includeCooldown || getGroundWeaponCooldown() == 0);
+            return otherUnit.isVisible() && canAttackGroundUnits() && (!includeCooldown || getGroundWeaponCooldown() == 0);
         } 
 
         // Enemy is AIR unit
         else {
-            return canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
+            return otherUnit.isVisible() && canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
         }
     }
 
@@ -1039,10 +1039,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     
     // =========================================================
 
-    public boolean shouldApplyAntiGlitch() {
-//        return (isAttacking() || isAttackFrame());
-        return getLastUnitOrderWasFramesAgo() >= 40 || isMoving() && getLastUnitOrderWasFramesAgo() >= 10;
-    }
+//    public boolean shouldApplyAntiGlitch() {
+////        return (isAttacking() || isAttackFrame());
+//        return getLastUnitOrderWasFramesAgo() >= 40 || isMoving() && getLastUnitOrderWasFramesAgo() >= 10;
+//    }
 
     public boolean isReadyToShoot() {
         return getGroundWeaponCooldown() <= 0 && getAirWeaponCooldown() <= 0;

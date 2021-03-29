@@ -222,9 +222,15 @@ public class MissionDefend extends Mission {
         if (chokepointForNaturalBase != null) {
             return APosition.create(chokepointForNaturalBase.getCenter());
         }
-        else {
-            return null;
+
+        // === Return position near the first building ================
+
+        AUnit building = Select.ourBuildings().first();
+        if (building != null) {
+            return APosition.create(AMap.getNearestChokepoint(building.getPosition()).getCenter());
         }
+
+        return null;
     }
     
     // =========================================================

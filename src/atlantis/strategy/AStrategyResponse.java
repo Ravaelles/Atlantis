@@ -53,7 +53,7 @@ public class AStrategyResponse {
             return;
         }
         
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             int minBunkers = 1;
 
             // Anti-cheese

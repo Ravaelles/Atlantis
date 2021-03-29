@@ -53,12 +53,7 @@ public class MissionAttack extends Mission {
         
         // Focus point is well known
         if (focusPoint != null) {
-            if (unit.distanceTo(focusPoint) > 10 && !unit.isMoving()) {
-//                unit.attackPosition(focusPoint);
-                unit.move(focusPoint, UnitActions.MOVE);
-                unit.setTooltip("#MA:Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
-                return true;
-            }
+            return attackFocusPoint(unit, focusPoint);
         } 
 
         // =========================================================
@@ -77,6 +72,24 @@ public class MissionAttack extends Mission {
         }
         
         unit.setTooltip("#MA:Nothing");
+        return false;
+    }
+
+    private boolean attackFocusPoint(AUnit unit, APosition focusPoint) {
+        Select<AUnit> nearbyAllies = Select.ourCombatUnits().inRadius(10, unit);
+        if (nearbyAllies.count() <= 4) {
+            unit.move(nearbyAllies.first().getPosition(), UnitActions.TOGETHER);
+            unit.setTooltip("#MA:Concentrate!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
+            return true;
+        }
+
+        if (unit.distanceTo(focusPoint) > 6) {
+//                unit.attackPosition(focusPoint);
+            unit.move(focusPoint, UnitActions.MOVE);
+            unit.setTooltip("#MA:Forward!"); //unit.setTooltip("Mission focus");	//TODO: DEBUG
+            return true;
+        }
+
         return false;
     }
 

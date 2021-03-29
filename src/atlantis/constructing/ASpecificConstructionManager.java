@@ -31,7 +31,7 @@ public class ASpecificConstructionManager {
     // === Terran ========================================    
 
     private static boolean handledTerranSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (!AGame.playsAsTerran()) {
+        if (!AGame.isPlayingAsTerran()) {
             return false;
         }
         
@@ -46,7 +46,7 @@ public class ASpecificConstructionManager {
     // === Zerg ========================================
 
     private static boolean handledZergSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (!AGame.playsAsZerg()) {
+        if (!AGame.isPlayingAsZerg()) {
             return false;
         }
         

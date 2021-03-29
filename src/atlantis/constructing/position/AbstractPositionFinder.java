@@ -76,7 +76,7 @@ public abstract class AbstractPositionFinder {
                     && !builder.equals(constructionOrder.getBuilder())) {
                 if (constructionOrder.getPositionToBuild() != null) {
                     double distance = PositionUtil.distanceTo(constructionOrder.getPositionToBuild(), position);
-                    boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AGame.playsAsZerg()
+                    boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AGame.isPlayingAsZerg()
                             && building.isBase() && constructionOrder.getBuildingType().isBase());
                     
                     // Look for two bases that would be built too close one to another

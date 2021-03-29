@@ -27,33 +27,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
     protected static boolean update(AUnit unit) {
         unit.removeTooltip();
 
-//        if (unit.shouldApplyAntiGlitch()) {
-        if (unit.shouldApplyAntiGlitch() && AGame.getTimeFrames() % 30 == 0) {
-            if (unit.isHoldingPosition()) {
-                unit.holdPosition(); unit.u().stop(true); unit.u().holdPosition(true); unit.u().stop(true);
-            }
-            else {
-                unit.stop(); unit.u().holdPosition(true); unit.stop(); unit.u().holdPosition(true);
-            }
-//            unit.u().holdPosition();
-//            unit.u().holdPosition(true);
-//            unit.u().holdPosition(true);
-//            unit.u().holdPosition();
-
-            unit.setTooltip("#Glitch");
-//            System.out.println("--> antiglitch " + AGame.getTimeFrames() + " / isA:" + unit.isAttacking() + " / iAF:" + unit.isAttackFrame());
-            for (int i = 0; i < 100; i++) {
-                APainter.paintRectangleFilled(unit.getPosition(), 20, 20, Color.Red);
-            }
-            for (int i = 0; i < 100; i++) {
-                APainter.paintRectangleFilled(unit.getPosition(), 20, 20, Color.Orange);
-            }
-            for (int i = 0; i < 100; i++) {
-                APainter.paintRectangleFilled(unit.getPosition(), 20, 20, Color.Red);
-            }
-            return true;
-        }
-
         // =========================================================
         // Don't INTERRUPT shooting units
 
@@ -75,28 +48,28 @@ public class ACombatUnitManager extends AbstractMicroManager {
         if (handledAsSpecialUnit(unit)) {
             return true;
         }
-        
-        // =========================================================
-        // Handle some units in semi-special way
-        
-        if (handledAsSemiSpecialUnit(unit)) {
-            return true;
-        }
 
         // =========================================================
         // Avoid melee units
-        
+
         if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
             return true;
         }
 
         // =========================================================
         // Avoid buildings like Photon Cannons, bunkers etc
-        
+
         if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
             return true;
         }
-        
+
+        // =========================================================
+        // Handle some units in semi-special way
+
+        if (handledAsSemiSpecialUnit(unit)) {
+            return true;
+        }
+
         // =========================================================
         // Early mode - Attack enemy units when in range (and choose the best target)
         
@@ -115,7 +88,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // =========================================================
         // Handle repair of mechanical units
         
-        if (ARepairManager.handleRepairedUnitBehavior(unit)) {
+        if (AGame.isPlayingAsTerran() && ARepairManager.handleRepairedUnitBehavior(unit)) {
             return true;
         }
         
@@ -173,7 +146,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         
         // === Terran ========================================
         
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             
             // MEDIC
             if (unit.isType(AUnitType.Terran_Medic)) {
@@ -184,7 +157,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         
         // === Zerg ========================================
         
-        else if (AGame.playsAsZerg()) {
+        else if (AGame.isPlayingAsZerg()) {
             
             // OVERLORD
             if (unit.getType().equals(AUnitType.Zerg_Overlord)) {

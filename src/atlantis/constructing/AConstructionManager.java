@@ -132,7 +132,7 @@ public class AConstructionManager {
 
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             if (builder == null || !builder.exists()) {
                 constructionOrder.assignOptimalBuilder();
             }
@@ -182,7 +182,7 @@ public class AConstructionManager {
         }
 
         // If playing as ZERG...
-        if (AGame.playsAsZerg()) {
+        if (AGame.isPlayingAsZerg()) {
             handleZergConstructionsWhichBecameBuildings();
         }
 
@@ -241,7 +241,7 @@ public class AConstructionManager {
      */
     public static boolean isBuilder(AUnit worker) {
         if (worker.isConstructing() || 
-                (!AGame.playsAsProtoss() && getConstructionOrderFor(worker) != null)) {
+                (!AGame.isPlayingAsProtoss() && getConstructionOrderFor(worker) != null)) {
             return true;
         }
 
@@ -249,7 +249,7 @@ public class AConstructionManager {
             if (worker.equals(constructionOrder.getBuilder())) {
                 
                 // Pending Protoss buildings allow builder to go away
-                if (AGame.playsAsProtoss() && ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                if (AGame.isPlayingAsProtoss() && ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
                         .equals(constructionOrder.getStatus())) {
                     return false;
                 }
@@ -411,7 +411,7 @@ public class AConstructionManager {
      * the drone actually became a building (sweet metamorphosis, yay!).
      */
     private static void handleZergConstructionsWhichBecameBuildings() {
-        if (AGame.playsAsZerg()) {
+        if (AGame.isPlayingAsZerg()) {
             ArrayList<ConstructionOrder> allOrders = AConstructionManager.getAllConstructionOrders();
             if (!allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {

@@ -69,7 +69,7 @@ public class APositionFinder {
 
             // If we didn't specify location where to build, build somewhere near the main base
             if (nearTo == null) {
-                if (AGame.playsAsZerg()) {
+                if (AGame.isPlayingAsZerg()) {
 //                    nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
                     nearTo = Select.mainBase().getPosition();
                 }
@@ -113,13 +113,13 @@ public class APositionFinder {
         // ===========================================================
         
         // Terran
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         } // Protoss
-        else if (AGame.playsAsProtoss()) {
+        else if (AGame.isPlayingAsProtoss()) {
             return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         } // Zerg
-        else if (AGame.playsAsZerg()) {
+        else if (AGame.isPlayingAsZerg()) {
             return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }
         else {

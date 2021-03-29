@@ -19,7 +19,9 @@ public class ARepairManager {
     
     public static final int MODE_REPAIR_ONLY = 1;
     public static final int MODE_PROTECT = 2;
-    
+
+    public static final int MAX_REPAIRERS = 6;
+
     // Unit repairers
     protected static Map<AUnit, AUnit> repairersToUnit = new HashMap<>();
     protected static Map<AUnit, ArrayList<AUnit>> unitsToRepairers = new HashMap<>();
@@ -37,14 +39,14 @@ public class ARepairManager {
         AUnit repairer = getRepairerForUnit(unit);
         if (repairer != null) {
             double distanceToRepairer = repairer.distanceTo(unit);
-            
+
             // Ignore repair if quite healthy and repairer is far
             if (unit.getHPPercent() > 50 && distanceToRepairer > 4) {
                 return false;
             }
             
             // Go to repairer if he's close
-            if (distanceToRepairer > 0.2) {
+            if (distanceToRepairer > 1) {
                 unit.setTooltip("Move to repair");
                 unit.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR);
                 return true;
@@ -58,6 +60,7 @@ public class ARepairManager {
                 }
                 else {
                     unit.setTooltip("Wait for repair");
+                    unit.stop();
                 }
                 return true;
 //                unit.holdPosition();
@@ -76,7 +79,7 @@ public class ARepairManager {
             
             // Target is wounded
             if (target.isWounded()) {
-                repairer.setTooltip("Repair " + target.getShortNamePlusId());
+                repairer.setTooltip("Repair " + target.getShortNamePlusId() + " " + repairer.getLastUnitOrderWasFramesAgo());
                 repairer.repair(target);
                 return true;
             }
@@ -101,7 +104,7 @@ public class ARepairManager {
             
             // Bunker WOUNDED
             if (unit.getHPPercent() < 100) {
-                protector.setTooltip("Repair " + unit.getShortName());
+                protector.setTooltip("Protect " + unit.getShortName());
                 protector.repair(unit);
                 return true;
             }
@@ -164,6 +167,10 @@ public class ARepairManager {
     }
     
     public static AUnit getRepairerForUnit(AUnit wounded) {
+        if (unitsToRepairers.size() > MAX_REPAIRERS || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())) {
+            return null;
+        }
+
         if (unitsToRepairers.containsKey(wounded)) {
             ArrayList<AUnit> repairers = unitsToRepairers.get(wounded);
             if (repairers.size() >= 1) {
@@ -183,7 +190,7 @@ public class ARepairManager {
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.get(unitToRepair).remove(repairer);
         
-            repairer.holdPosition();
+            repairer.stop();
             repairer.setTooltip("Stahp");
         }
         repairersToUnit.remove(repairer);

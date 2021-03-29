@@ -21,13 +21,12 @@ public class ADynamicWorkerProductionManager {
 //            return false;
 //        }
 
-        if (!shouldTrainWorkers(true)) {
+        if (!shouldTrainWorkers()) {
             return false;
         }
 
         // =========================================================
-        
-        
+
         for (AUnit base : Select.ourBases().reverse().list()) {
             if (!base.isTrainingAnyUnit()) {
                 base.train(AtlantisConfig.WORKER);
@@ -40,30 +39,29 @@ public class ADynamicWorkerProductionManager {
 
     // =========================================================
     
-    public static boolean shouldTrainWorkers(boolean checkSupplyAndMinerals) {
+    public static boolean shouldTrainWorkers() {
 
         // Check MINERALS
-        if (checkSupplyAndMinerals && AGame.getMinerals() < 50) {
-            return false;
-        }
+//        if (AGame.getMinerals() <= 200) {
+//            return false;
+//        }
 
         // Check FREE SUPPLY
-        if (checkSupplyAndMinerals && AGame.getSupplyFree() == 0) {
+        if (AGame.getSupplyFree() == 0) {
             return false;
         }
 
-        int workers = Select.ourWorkers().count();
-
         // Check if not TOO MANY WORKERS
-        if (workers >= 27 * Select.ourBases().count()) {
+        int workers = Select.ourWorkers().count();
+        if (workers >= (27 * Select.ourBases().count())) {
             return false;
         }
 
         // =========================================================
         // Check if AUTO-PRODUCTION of WORKERS is active.
-        
-        if (isAutoProduceWorkersActive(workers)) {
-            return true;
+
+        if (!isAutoProduceWorkersActive(workers)) {
+            return false;
         }
                 
         // =========================================================
@@ -80,13 +78,14 @@ public class ADynamicWorkerProductionManager {
         // {
         // return false;
         // }
-        return false;
+
+        return true;
     }
     
     // =========================================================
         
     public static boolean isAutoProduceWorkersActive(int workers) {
-        return workers >= AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS 
+        return workers >= AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS
                 && workers < AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS;
     }
     
@@ -98,7 +97,7 @@ public class ADynamicWorkerProductionManager {
         for (AUnit base : Select.ourBases().reverse().list()) {
             if (!base.isTrainingAnyUnit()) {
                 base.train(AtlantisConfig.WORKER);
-                break;
+                return;
             }
         }
     }

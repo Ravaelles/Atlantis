@@ -17,14 +17,14 @@ public class AAvoidDefensiveBuildings {
                     AUnitType.Terran_Bunker, 
                     AUnitType.Protoss_Photon_Cannon, 
                     AUnitType.Zerg_Sunken_Colony
-            ).canAttack(unit, 1.4).first();
+            ).canAttack(unit, 2.3).first();
         }
         else  {
             buildingTooClose = Select.enemyOfType(
                     AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret, 
                     AUnitType.Protoss_Photon_Cannon, 
                     AUnitType.Zerg_Sunken_Colony
-            ).canAttack(unit, 1.4).first();
+            ).canAttack(unit, 1.2).first();
         }
         
         // If there's enemy defensive building too close

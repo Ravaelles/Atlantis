@@ -1,12 +1,9 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
-import atlantis.debug.APainter;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.Color;
 
 /**
  *
@@ -23,7 +20,7 @@ public class AAvoidMeleeUnitsManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     public static boolean avoidCloseMeleeUnits(AUnit unit) {
-        if (shouldSkip(unit)) {
+        if (shouldNotAvoidMeleeUnits(unit)) {
             return false;
         }
 
@@ -72,7 +69,7 @@ public class AAvoidMeleeUnitsManager {
 
     // =========================================================
     
-    private static boolean shouldSkip(AUnit unit) {
+    private static boolean shouldNotAvoidMeleeUnits(AUnit unit) {
 
         // === Issue orders every 3 frames or so ========================================
 //        if (unit.getFramesSinceLastOrderWasIssued() <= 2 && !unit.isIdle()) {
@@ -84,16 +81,16 @@ public class AAvoidMeleeUnitsManager {
 //        }
 
         // === Reaver should not avoid if has no cooldown ===============================
-        if (AGame.playsAsProtoss()) {
+        if (AGame.isPlayingAsProtoss()) {
             if (unit.isType(AUnitType.Protoss_Reaver) && unit.getGroundWeaponCooldown() <= 0) {
                 return true;
             }
         }
 
         // =========================================================
-        boolean isAllowedType = (unit.isGroundUnit() && unit.getType().isRangedUnit()) || unit.isWorker();
+        boolean shouldSkip = unit.isAirUnit() || unit.isWorker();
 //        boolean isHealthyAndHasManyHP = unit.getHitPoints() >= 60 && unit.getHPPercent() >= 100;
-        if (!isAllowedType) {
+        if (shouldSkip) {
             return true;
         }
 
@@ -128,9 +125,9 @@ public class AAvoidMeleeUnitsManager {
         int enemiesNearby = Select.enemyRealUnits().combatUnits().inRadius(safetyDistance, unit).count();
         if (enemiesNearby >= 2) {
             if (unit.isVulture()) {
-                safetyDistance += Math.max((double) enemiesNearby / 5, 1.5);
+                safetyDistance += Math.max((double) enemiesNearby / 5, 1.8);
             } else {
-                safetyDistance += Math.max((double) enemiesNearby / 4, 1.5);
+                safetyDistance += Math.max((double) enemiesNearby / 4, 1.7);
             }
         }
 
@@ -179,7 +176,7 @@ public class AAvoidMeleeUnitsManager {
     }
 
     private boolean isEnemyCriticallyClose(AUnit unit) {
-        double baseCriticalDistance = (unit.isVulture() ? 2.3 : 2.0);
+        double baseCriticalDistance = (unit.isVulture() ? 2.6 : 2.0);
         double healthBonus = unit.getHPPercent() < 30 ? 0.25 : 0;
         double numberOfNearEnemiesBonus = Math.max(0.4,
                 ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));

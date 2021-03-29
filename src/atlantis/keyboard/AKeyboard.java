@@ -72,17 +72,52 @@ public class AKeyboard implements NativeKeyListener {
 
             // Key "1"
             case 2: 
-                changePaintingMode(APainter.MODE_NO_PAINTING);
+                AGame.changeFrameSkipTo(1);
                 break;
 
             // Key "2"
-            case 3: 
-                changePaintingMode(APainter.MODE_PARTIAL_PAINTING);
+            case 3:
+                AGame.changeFrameSkipTo(2);
                 break;
 
             // Key "3"
-            case 4: 
-                changePaintingMode(APainter.MODE_FULL_PAINTING);
+            case 4:
+                AGame.changeFrameSkipTo(3);
+                break;
+
+            // Key "4"
+            case 5:
+                AGame.changeFrameSkipTo(4);
+                break;
+
+            // Key "5"
+            case 6:
+                AGame.changeFrameSkipTo(5);
+                break;
+
+            // Key "6"
+            case 7:
+                AGame.changeFrameSkipTo(6);
+                break;
+
+            // Key "7"
+            case 8:
+                AGame.changeFrameSkipTo(7);
+                break;
+
+            // Key "8"
+            case 9:
+                AGame.changeFrameSkipTo(8);
+                break;
+
+            // Key "9"
+            case 10:
+                AGame.changeFrameSkipTo(9);
+                break;
+
+            // Key "0"
+            case 11:
+                AGame.changeDisableUI(!AtlantisConfig.DISABLE_GUI);
                 break;
         }
     }

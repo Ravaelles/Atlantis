@@ -5,8 +5,6 @@ import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.ACombatCommander;
 import atlantis.debug.APainter;
 import atlantis.production.AProductionCommander;
-import atlantis.production.orders.ABuildOrderManager;
-import atlantis.production.orders.TerranBuildOrder;
 import atlantis.repair.ARepairCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
@@ -40,7 +38,7 @@ public class AGameCommander {
 
         // === Terran only ==================================================
 
-        if (AGame.playsAsTerran()) {
+        if (AGame.isPlayingAsTerran()) {
             TerranFlyingBuildingManager.update();
             ARepairCommander.update();
         }

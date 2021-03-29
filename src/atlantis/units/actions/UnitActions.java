@@ -31,6 +31,7 @@ public class UnitActions {
     public static final UnitAction SIEGE = new UnitAction().setName("SIEGE");
 //    public static final UnitAction STICK_CLOSER = new UnitAction().setName("");
     public static final UnitAction STOP = new UnitAction().setName("STOP");
+    public static final UnitAction TOGETHER = new UnitAction().setName("TOGETHER");
     public static final UnitAction TRAIN = new UnitAction().setName("TRAIN");
     public static final UnitAction UNLOAD = new UnitAction().setName("UNLOAD");
     public static final UnitAction UNBURROW = new UnitAction().setName("UNBURROW");

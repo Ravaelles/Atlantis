@@ -185,7 +185,7 @@ public class ARepairCommander {
 
         // === Mission DEFEND  =================================
         if (Missions.isGlobalMissionDefend()) {
-            if (AGame.playsAsTerran()) {
+            if (AGame.isPlayingAsTerran()) {
 
                 // === We know enemy strategy ========================================
                 if (AEnemyStrategy.isEnemyStrategyKnown()) {
@@ -240,7 +240,8 @@ public class ARepairCommander {
 
     private static AUnit defineBestRepairerFor(AUnit unitToRepair, boolean criticallyImportant) {
         if (criticallyImportant) {
-            return Select.ourWorkers().notRepairing().notConstructing().notScout().nearestTo(unitToRepair);
+            return Select.ourWorkers().notRepairing().notConstructing().notScout()
+                    .exclude(unitToRepair).nearestTo(unitToRepair);
         } 
         
         // === Normal case ========================================

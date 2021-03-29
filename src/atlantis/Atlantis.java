@@ -85,7 +85,6 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onStart() {
 
-
         // Initialize game object - JBWAPI's representation of game and its state.
         game = bwClient.getGame();
 
@@ -113,11 +112,11 @@ public class Atlantis implements BWEventListener {
         
         // === Set some BWAPI params ===============================
         
-        game.setLocalSpeed(AtlantisConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
-        game.setFrameSkip(2);                          // Number of GUI frames to skip
-//        game.setGUI(false);                            // Turn off GUI - will speed up game considerably
-        game.enableFlag(Flag.UserInput);               // Without this flag you can't control units with mouse
-//        game.enableFlag(Flag.CompleteMapInformation);  // See entire map - must be disabled for real games
+        game.setLocalSpeed(AtlantisConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
+        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
+//        game.setGUI(false);                           // Turn off GUI - will speed up game considerably
+        game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
+//        game.enableFlag(Flag.CompleteMapInformation); // See entire map - must be disabled for real games
 
         // =========================================================
         // Set production strategy (build orders) to use. It can be always changed dynamically.
@@ -226,7 +225,7 @@ public class Atlantis implements BWEventListener {
                 ABuildOrderManager.rebuildQueue();
 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
-                if (AGame.playsAsProtoss() && unit.getType().isBuilding()) {
+                if (AGame.isPlayingAsProtoss() && unit.getType().isBuilding()) {
                     ProtossConstructionManager.handleWarpingNewBuilding(unit);
                 }
             }
@@ -419,10 +418,12 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onEnd(boolean winner) {
-//        instance = new Atlantis();
-
         System.out.println();
-        System.out.println("Exiting...");
+        if (winner) {
+            System.out.println("Nice win! Exiting...");
+        } else {
+            System.out.println("Oh, you lost again. Exiting...");
+        }
 
         System.out.println("Killing StarCraft process...");
         ProcessHelper.killStarcraftProcess();
