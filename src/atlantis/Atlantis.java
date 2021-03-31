@@ -5,6 +5,7 @@ import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.ProtossConstructionManager;
+import atlantis.debug.AUnitTypesHelper;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.map.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
@@ -36,6 +37,11 @@ public class Atlantis implements BWEventListener {
     private Game game;
 
     /**
+     * Class controlling game speed.
+     */
+    private static AtlantisGameSpeed gameSpeed;
+
+    /**
      * Top abstraction-level class that governs all units, buildings etc.
      */
     private AGameCommander gameCommander;
@@ -45,16 +51,6 @@ public class Atlantis implements BWEventListener {
     private boolean _isStarted = false; // Has game been started
     private boolean _isPaused = false; // Is game currently paused
     private boolean _initialActionsExecuted = false; // Have executed one-time actions at match start?
-
-    // =========================================================
-    // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
-    private boolean _dynamicSlowdown_isSlowdownActive = false;
-
-    // Last time unit has died; when unit dies, game slows down
-    private int _dynamicSlowdown_lastTimeUnitDestroyed = 0;
-
-    // Normal game speed, outside autoSlodown mode.
-    private int _dynamicSlowdown_previousSpeed = 0;
 
     // =========================================================
     // Counters
@@ -91,13 +87,42 @@ public class Atlantis implements BWEventListener {
         // Initialize Game Commander, a class to rule them all
         gameCommander = new AGameCommander();
 
-        // Uncomment this line to see list of units -> damage.
-//        AtlantisUnitTypesHelper.displayUnitTypesDamage();
+        // Aux class to control game speed and changing it dynamically
+        gameSpeed = new AtlantisGameSpeed();
 
-        // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
+        // Uncomment this line to see list of units -> damage.
+        AUnitTypesHelper.displayUnitTypesDamage();
+
         // =========================================================
-        // Set up base configuration based on race used.
-        Race racePlayed = game.self().getRace(); //AGame.getPlayerUs().getRace();
+
+        // Atlantis can modify ChaosLauncher's config files treating AtlantisConfig as the source-of-truth
+        modifyRacesInConfigFileIfNeeded();
+
+        // One time map analysis for every map
+        AMap.initMapAnalysis();
+
+        // Set prodction strategy (build orders) to use. It can be always changed dynamically.
+        initializeBuildOrder();
+
+        // Allow user input etc
+        setBwapiFlags();
+
+        // =========================================================
+
+        // Validate AtlantisConfig and exit if it's invalid
+        AtlantisConfig.validate();
+    }
+
+    private void setBwapiFlags() {
+//        game.setLocalSpeed(AtlantisConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
+//        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
+//        game.setGUI(false);                           // Turn off GUI - will speed up game considerably
+        game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
+//        game.enableFlag(Flag.CompleteMapInformation); // See entire map - must be disabled for real games
+    }
+
+    private void modifyRacesInConfigFileIfNeeded() {
+        Race racePlayed = game.self().getRace();
         if (racePlayed.equals(Race.Protoss)) {
             AtlantisConfig.useConfigForProtoss();
         } else if (racePlayed.equals(Race.Terran)) {
@@ -105,25 +130,12 @@ public class Atlantis implements BWEventListener {
         } else if (racePlayed.equals(Race.Zerg)) {
             AtlantisConfig.useConfigForZerg();
         }
+    }
 
-        System.out.print("Analyzing map... ");
-        AMap.init();
-        System.out.println("Map data ready.");
-        
-        // === Set some BWAPI params ===============================
-        
-        game.setLocalSpeed(AtlantisConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
-        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
-//        game.setGUI(false);                           // Turn off GUI - will speed up game considerably
-        game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
-//        game.enableFlag(Flag.CompleteMapInformation); // See entire map - must be disabled for real games
-
-        // =========================================================
-        // Set production strategy (build orders) to use. It can be always changed dynamically.
-        
+    private void initializeBuildOrder() {
         try {
             ABuildOrderManager.switchToBuildOrder(AtlantisConfig.DEFAULT_BUILD_ORDER);
-            
+
             System.out.println();
             if (ABuildOrderManager.getCurrentBuildOrder() != null) {
                 System.out.println("Use build order: " + ABuildOrderManager.getCurrentBuildOrder().getName());
@@ -137,27 +149,6 @@ public class Atlantis implements BWEventListener {
             System.err.println("Exception when loading build orders file");
             e.printStackTrace();
         }
-        
-//        if (AtlantisConfig.buildOrdersManager == null) {
-//            System.err.println("===================================");
-//            System.err.println("It seems there was critical problem");
-//            System.err.println("with build orders file.");
-//            System.err.println("Please check the syntax.");
-//            System.err.println("===================================");
-//            System.exit(-1);
-//        }
-//        else {
-//            System.out.println("Successfully loaded build orders file!");
-//            System.out.println();
-//        }
-
-        // =========================================================
-        // Validate AtlantisConfig and exit if it's invalid
-        AtlantisConfig.validate();
-
-        // Display ok message
-        System.out.println("Atlantis config is valid.");
-        System.out.println();
     }
 
     /**
@@ -420,9 +411,9 @@ public class Atlantis implements BWEventListener {
     public void onEnd(boolean winner) {
         System.out.println();
         if (winner) {
-            System.out.println("Nice win! Exiting...");
+            System.out.println("NICE WIN! Exit...");
         } else {
-            System.out.println("Oh, you lost again. Exiting...");
+            System.out.println("Oh, you lost again. Exit...");
         }
 
         System.out.println("Killing StarCraft process...");
@@ -551,13 +542,4 @@ public class Atlantis implements BWEventListener {
         System.out.println(args[args.length - 1]);
     }
 
-    /**
-     * Decreases game speed to the value specified in AtlantisConfig on death of any unit.
-     */
-    private void activateDynamicSlowdownMode() {
-        _dynamicSlowdown_previousSpeed = AtlantisConfig.GAME_SPEED;
-        _dynamicSlowdown_lastTimeUnitDestroyed = AGame.getTimeSeconds();
-        _dynamicSlowdown_isSlowdownActive = true;
-    }
-    
 }

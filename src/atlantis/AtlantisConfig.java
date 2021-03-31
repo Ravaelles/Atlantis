@@ -187,6 +187,9 @@ public class AtlantisConfig {
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
         validate("You have to define default build order\n-> AtlantisConfig.DEFAULT_BUILD_ORDER", DEFAULT_BUILD_ORDER);
+
+        System.out.println("Atlantis config is valid.");
+        System.out.println();
     }
 
     // =========================================================

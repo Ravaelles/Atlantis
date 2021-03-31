@@ -3,7 +3,7 @@ package atlantis.combat;
 import atlantis.AGame;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.missions.Missions;
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.util.CodeProfiler;
 
@@ -15,9 +15,7 @@ public class ACombatCommander {
     public static void update() {
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
         
-        // =========================================================
-        
-        if (AGame.getTimeFrames() % 20 == 0) {
+        if (AGame.everyNthGameFrame(20)) {
             Missions.handleGlobalMission();
         }
         
@@ -41,8 +39,8 @@ public class ACombatCommander {
     private static void handleSquad(Squad squad) {
 
         // Make sure this battle squad has up-to-date strategy
-        if (!Missions.getGlobalMission().equals(squad.getMission())) {
-            squad.setMission(Missions.getGlobalMission());
+        if (!Missions.globalMission().equals(squad.getMission())) {
+            squad.setMission(Missions.globalMission());
         }
 
         // =========================================================

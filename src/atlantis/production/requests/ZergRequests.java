@@ -10,7 +10,7 @@ public class ZergRequests extends ARequests {
 
     @Override
     public void requestDetectorQuick(APosition where) {
-        
+        super.requestDetectorQuick(where);
     }
 
     @Override

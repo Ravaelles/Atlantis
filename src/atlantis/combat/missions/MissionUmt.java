@@ -1,4 +1,4 @@
-package atlantis.combat.squad.missions;
+package atlantis.combat.missions;
 
 import atlantis.map.AMap;
 import atlantis.position.APosition;
@@ -43,7 +43,7 @@ public class MissionUmt extends Mission {
 
         // =========================================================
         
-//        APosition focusPoint = getFocusPoint();
+//        APosition focusPoint = focusPoint();
         AUnit enemyToEngage = null;
         APosition explorePosition = null;
 
@@ -126,7 +126,7 @@ public class MissionUmt extends Mission {
 //            System.out.println(_tempFocusPoint + ": dist " + _tempFocusPoint.distanceTo(unit));
 //        }
         if (_tempFocusPoint == null || _tempFocusPoint.distanceTo(unit) < 3) {
-            _tempFocusPoint = getFocusPoint();
+            _tempFocusPoint = focusPoint();
 
             if (_tempFocusPoint != null && _tempFocusPoint.distanceTo(unit) > 1.5) {
                 unit.setTooltip(isFlagship ? "Hernan Cortes" : "Companero");
@@ -156,7 +156,7 @@ public class MissionUmt extends Mission {
      * Returns the <b>position</b> (not the unit itself) where we should point our units to in hope because as
      * far as we know, the enemy is/can be there and it makes sense to attack in this region.
      */
-//    public static APosition getFocusPoint() {
+//    public static APosition focusPoint() {
 //
 //        // === Define unit that will be center of our army =================
 //        AUnit flagshipUnit = Select.ourCombatUnits().first();
@@ -175,9 +175,10 @@ public class MissionUmt extends Mission {
 //    }
     
     @Override
-    public APosition getFocusPoint() {
-        _tempFocusPoint = AMap.getNearestUnexploredAccessiblePosition(flagshipUnit.getPosition());
-        return _tempFocusPoint;
+    public APosition focusPoint() {
+        return null;
+//        _tempFocusPoint = AMap.getNearestUnexploredAccessiblePosition(flagshipUnit.getPosition());
+//        return _tempFocusPoint;
     }
     
     // =========================================================

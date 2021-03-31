@@ -1,8 +1,7 @@
 package atlantis.repair;
 
-import atlantis.AGame;
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.squad.missions.Missions;
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
@@ -29,46 +28,44 @@ public class ARepairManager {
     
     // =========================================================
     
-    public static boolean handleRepairedUnitBehavior(AUnit unit) {
+    public static boolean handleUnitUnderRepair(AUnit unit) {
         if (!unit.isWounded()) {
             return false;
         }
         
         // =========================================================
         
-        AUnit repairer = getRepairerForUnit(unit);
-        if (repairer != null) {
-            double distanceToRepairer = repairer.distanceTo(unit);
-
-            // Ignore repair if quite healthy and repairer is far
-            if (unit.getHPPercent() > 50 && distanceToRepairer > 4) {
-                return false;
-            }
-            
-            // Go to repairer if he's close
-            if (distanceToRepairer > 1) {
-                unit.setTooltip("Move to repair");
-                unit.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR);
-                return true;
-            }
-            
-            // We're very close to repairer, wait.
-            else {
-                boolean result = AAttackEnemyUnit.handleAttackEnemyUnits(unit);
-                if (result) {
-                    unit.setTooltip("Attack while repaired");
-                }
-                else {
-                    unit.setTooltip("Wait for repair");
-                    unit.stop();
-                }
-                return true;
-//                unit.holdPosition();
-//                return true;
-            }
+        AUnit repairer = getRepairerAssignedForUnit(unit);
+        if (repairer == null) {
+            return false;
         }
-        
-        return false;
+
+        double distanceToRepairer = repairer.distanceTo(unit);
+
+        // Ignore repair if quite healthy and repairer is far
+        if (unit.getHPPercent() > 50 && distanceToRepairer > 4) {
+            return false;
+        }
+
+        // Go to repairer if he's close
+        if (distanceToRepairer > 1) {
+            unit.setTooltip("Move to repair");
+            unit.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR);
+            return true;
+        }
+
+        // We're very close to repairer, wait.
+        else {
+            boolean result = AAttackEnemyUnit.handleAttackEnemyUnits(unit);
+            if (result) {
+                unit.setTooltip("Attack while repaired");
+            }
+            else {
+                unit.setTooltip("Wait for repair");
+                unit.stop();
+            }
+            return true;
+        }
     }
     
     // =========================================================
@@ -133,7 +130,7 @@ public class ARepairManager {
     
     private static boolean handleRepairerWhenIdle(AUnit repairer) {
         if (repairer.isMoving() || !repairer.isRepairing() || repairer.isIdle()) {
-            int maxAllowedDistToRoam = Missions.getGlobalMission().isMissionDefend() ? 4 : 12;
+            int maxAllowedDistToRoam = Missions.globalMission().isMissionDefend() ? 4 : 12;
             
             // Try finding any repairable and wounded unit nearby
             AUnit nearestWoundedUnit = Select.our().repairable(true)
@@ -166,7 +163,7 @@ public class ARepairManager {
         return repairersToUnit.get(repairer);
     }
     
-    public static AUnit getRepairerForUnit(AUnit wounded) {
+    public static AUnit getRepairerAssignedForUnit(AUnit wounded) {
         if (unitsToRepairers.size() > MAX_REPAIRERS || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())) {
             return null;
         }

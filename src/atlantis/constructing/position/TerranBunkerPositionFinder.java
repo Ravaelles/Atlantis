@@ -1,6 +1,6 @@
 package atlantis.constructing.position;
 
-import atlantis.combat.squad.missions.MissionDefend;
+import atlantis.combat.missions.MissionDefend;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
@@ -8,7 +8,6 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.BaseLocation;
 import bwta.Chokepoint;
 
 /**
@@ -34,7 +33,7 @@ public class TerranBunkerPositionFinder {
             AUnit existingBunker = Select.ourOfType(AUnitType.Terran_Bunker).first();
             if (existingBunker != null) {
                 nearTo = existingBunker.getPosition();
-                APosition defendPoint = MissionDefend.getInstance().getFocusPoint();
+                APosition defendPoint = MissionDefend.getInstance().focusPoint();
                 if (defendPoint != null) {
                     nearTo = nearTo.translatePercentTowards(defendPoint, 15);
                 }

@@ -43,7 +43,9 @@ public class AMap {
     // =========================================================
 
     @SuppressWarnings("deprecation")
-    public static void init() {
+    public static void initMapAnalysis() {
+        System.out.print("Analyzing map... ");
+
         BWTA.readMap(Atlantis.game());
         BWTA.analyze();
 

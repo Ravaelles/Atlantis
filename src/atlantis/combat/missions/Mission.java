@@ -1,4 +1,4 @@
-package atlantis.combat.squad.missions;
+package atlantis.combat.missions;
 
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -10,24 +10,27 @@ import atlantis.units.AUnit;
  */
 public abstract class Mission {
 
+    private static Mission instance;
     private String name;
-    
+
     // =========================================================
 
-    public Mission(String name) {
+    protected Mission(String name) {
         this.name = name;
+        instance = this;
     }
-    
+
     // =========================================================
 
-    /**
-     * If returns true, it's not allowed for micro managers to act.
-     */
     public abstract boolean update(AUnit unit);
 
-    public abstract APosition getFocusPoint();
-    
+    public abstract APosition focusPoint();
+
     // =========================================================
+
+    public static Mission getInstance() {
+        return instance;
+    }
 
     public String getName() {
         return name;

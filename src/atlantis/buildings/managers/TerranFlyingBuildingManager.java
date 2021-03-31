@@ -1,8 +1,7 @@
 package atlantis.buildings.managers;
 
 import atlantis.AGame;
-import atlantis.combat.squad.missions.Mission;
-import atlantis.combat.squad.missions.Missions;
+import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -23,7 +22,7 @@ public class TerranFlyingBuildingManager {
     public static void update() {
         if (AGame.isPlayingAsTerran() && !AGame.isUmtMode()) {
             if (shouldLiftABuilding()) {
-                liftABuildingAndFlyAmongTheStars();
+                liftABuildingAndFlyAmongStars();
             }
             
             for (AUnit flyingBuilding : flyingBuildings) {
@@ -37,8 +36,7 @@ public class TerranFlyingBuildingManager {
     private static boolean updateFlyingBuilding(AUnit flyingBuilding) {
         
         // Define focus point for current mission
-        Mission currentMission = Missions.getGlobalMission();
-        APosition focusPoint = currentMission.getFocusPoint();
+        APosition focusPoint = Missions.globalMission().focusPoint();
         
         // Move towards focus point if needed
         if (focusPoint != null) {
@@ -76,16 +74,11 @@ public class TerranFlyingBuildingManager {
         return true;
     }
 
-    private static void liftABuildingAndFlyAmongTheStars() {
-        AUnit barracks = Select.ourOfType(AUnitType.Terran_Barracks).idle().first();
-        if (barracks != null) {
-            barracks.lift();
-            flyingBuildings.add(barracks);
-        }
-        else {
-            AUnit engBay = Select.ourOfType(AUnitType.Terran_Engineering_Bay).idle().first();
-            engBay.lift();
-            flyingBuildings.add(engBay);
+    private static void liftABuildingAndFlyAmongStars() {
+        AUnit flying = Select.ourOfType(AUnitType.Terran_Barracks, AUnitType.Terran_Engineering_Bay).idle().first();
+        if (flying != null) {
+            flying.lift();
+            flyingBuildings.add(flying);
         }
     }
     

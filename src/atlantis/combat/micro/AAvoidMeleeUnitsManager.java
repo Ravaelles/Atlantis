@@ -28,42 +28,27 @@ public class AAvoidMeleeUnitsManager {
             return false;
         }
         
-        // =========================================================
-        
-        AAvoidMeleeUnitsManager avoid = new AAvoidMeleeUnitsManager();
+        AAvoidMeleeUnitsManager avoidManager = new AAvoidMeleeUnitsManager();
 
-        // === Define safety distance ===============================
-        
-        boolean isEnemyDangerouslyClose = avoid.isEnemyDangerouslyClose(unit);
+        // =========================================================
+
+        boolean isEnemyDangerouslyClose = avoidManager.shouldRunFromAnyEnemyMeleeUnit(unit);
         if (!isEnemyDangerouslyClose) {
             return false;
         }
-//        APainter.paintTextCentered(unit.getPosition().translateByTiles(0, -2), "DANGER", Color.Teal);
-        
-        // === Don't run, because unit is JUST SHOOTING =============
-        
-//        if ((unit.isStartingAttack() || unit.isAttackFrame()) && shouldInterruptPendingAttack(unit)) {
-//        if (unit.isUnitActionAttack() && !shouldInterruptPendingAttack(unit)) {
-        if (unit.isUnitActionAttack() && unit.getGroundWeaponCooldown() <= 0 && !avoid.shouldInterruptPendingAttack(unit)) {
-//        if (unit.isUnitActionAttack() && shouldInterruptPendingAttack(unit)) {
-            unit.setTooltip("Fire");
-            return true;
-        } 
 
         // === Run the fuck outta here ==============================
         
-        else {
 //            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), "RUN", Color.Red);
-            if (unit.runFrom(null)) {
+        if (unit.runFrom(null)) {
 //                APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -48), "RUUUUUUUN", Color.Orange);
-                unit.setTooltip("Melee-run");
-                return true;
-            } else {
-                unit.setTooltip("ERROR_RUN");
-                System.err.println("ERROR_RUN for " + unit.getShortNamePlusId());
+            unit.setTooltip("Ruuuun");
+            return true;
+        } else {
+            unit.setTooltip("ERROR_RUN");
+            System.err.println("ERROR_RUN for " + unit.getShortNamePlusId());
 //                AGame.sendMessage("ERROR_RUN for " + unit.getShortNamePlusId());
-                return false;
-            }
+            return false;
         }
     }
 
@@ -75,12 +60,13 @@ public class AAvoidMeleeUnitsManager {
 //        if (unit.getFramesSinceLastOrderWasIssued() <= 2 && !unit.isIdle()) {
 
             // Scout mustn't exit here, otherwise scouting behavior will override this behavior.
-            if (unit.isScout()) {
-                return true;
-            }
+//            if (unit.isScout()) {
+//                return true;
+//            }
 //        }
 
         // === Reaver should not avoid if has no cooldown ===============================
+
         if (AGame.isPlayingAsProtoss()) {
             if (unit.isType(AUnitType.Protoss_Reaver) && unit.getGroundWeaponCooldown() <= 0) {
                 return true;
@@ -88,7 +74,9 @@ public class AAvoidMeleeUnitsManager {
         }
 
         // =========================================================
-        boolean shouldSkip = unit.isAirUnit() || unit.isWorker();
+
+        boolean shouldSkip = unit.isAirUnit();
+//        boolean shouldSkip = unit.isAirUnit() || unit.isWorker();
 //        boolean isHealthyAndHasManyHP = unit.getHitPoints() >= 60 && unit.getHPPercent() >= 100;
         if (shouldSkip) {
             return true;
@@ -98,25 +86,27 @@ public class AAvoidMeleeUnitsManager {
         return false;
     }
 
-    private boolean isEnemyDangerouslyClose(AUnit unit) {
-        double lowHealthBonus = Math.max(((100 - unit.getHPPercent()) / 25), 1.7);
+    private boolean shouldRunFromAnyEnemyMeleeUnit(AUnit unit) {
+        double lowHealthBonus = lowHealthBonus(unit);
         double safetyDistance;
 
-        if (unit.isVulture()) {
-            safetyDistance = 4 + lowHealthBonus;
-        } else if (unit.isWorker()) {
-            if (unit.isGatheringGas() || unit.isGatheringMinerals()) {
-                safetyDistance = 0.8 + lowHealthBonus;
-            } else {
-                safetyDistance = 1.4 + lowHealthBonus;
-            }
-        } else {
-            safetyDistance = 2.2 + lowHealthBonus;
+        safetyDistance = 4;
 
-            if (unit.getWeaponRangeGround() > 1 && safetyDistance > unit.getWeaponRangeGround()) {
-                safetyDistance = unit.getWeaponRangeGround() - 0.15;
-            }
-        }
+//        if (unit.isVulture()) {
+//            safetyDistance = 3 + lowHealthBonus;
+//        } else if (unit.isWorker()) {
+//            if (unit.isGatheringGas() || unit.isGatheringMinerals()) {
+//                safetyDistance = 0.8 + lowHealthBonus;
+//            } else {
+//                safetyDistance = 1.4 + lowHealthBonus;
+//            }
+//        } else {
+//            safetyDistance = 2.2 + lowHealthBonus;
+//
+//            if (unit.getWeaponRangeGround() > 1 && safetyDistance > unit.getWeaponRangeGround()) {
+//                safetyDistance = unit.getWeaponRangeGround() - 0.15;
+//            }
+//        }
 
         // =========================================================
         // Apply bonus when there are maaany enemies nearby
@@ -145,6 +135,10 @@ public class AAvoidMeleeUnitsManager {
         }
 
         return false;
+    }
+
+    private double lowHealthBonus(AUnit unit) {
+        return Math.max(((100 - unit.getHPPercent()) / 25), 1.7);
     }
 
     private boolean shouldInterruptPendingAttack(AUnit unit) {

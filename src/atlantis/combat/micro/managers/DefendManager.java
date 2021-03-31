@@ -1,56 +1,25 @@
-package atlantis.combat.squad.missions;
+package atlantis.combat.micro.managers;
 
 import atlantis.AGame;
 import atlantis.combat.micro.terran.TerranInfantryManager;
-import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
-import bwta.Chokepoint;
 
-public class MissionDefend extends Mission {
-    
-    private static MissionDefend instance;
-    
-    // =========================================================
+public class DefendManager {
 
-    protected MissionDefend(String name) {
-        super(name);
-        instance = this;
-    }
-    
-    // =============================================================
-    
-    @Override
-    public boolean update(AUnit unit) {
-
-        // === Handle UMT special maps case ========================
-        
-        if (AGame.isUmtMode()) {
-            return false;
-        }
+    public static boolean defendFocusPoint(AUnit unit, APosition focusPoint) {
 
         // === Load infantry into bunkers ==========================
-        
+
         if (TerranInfantryManager.tryLoadingInfantryIntoBunkerIfPossible(unit)) {
             return true;
-        }
-        
-        // =========================================================
-        
-        APosition focusPoint = getFocusPoint();
-//        APainter.paintLine(unit, focusPoint, Color.Purple);
-        
-        if (focusPoint == null) {
-            System.err.println("Couldn't define choke point.");
-            throw new RuntimeException("Couldn't define choke point.");
-//            return false;
         }
 
         // =========================================================
         // Too close to the chokepoint
-        else if (isCriticallyCloseToFocusPoint(unit, focusPoint)) {
+        if (isCriticallyCloseToFocusPoint(unit, focusPoint)) {
             boolean result = unit.moveAwayFrom(focusPoint, 0.5);
             if (result) {
                 unit.setTooltip("Too close (" + unit.distanceTo(focusPoint) + ")");
@@ -60,7 +29,7 @@ public class MissionDefend extends Mission {
                 unit.setTooltip("FAILED Too close");
             }
         }
-        
+
         // =========================================================
         // Unit is quite close to the choke point
         else if (isCloseEnoughToFocusPoint(unit, focusPoint)) {
@@ -68,12 +37,12 @@ public class MissionDefend extends Mission {
             // Too many stacked units
             if (isTooManyUnitsAround(unit, focusPoint)) {
                 if (unit.isMoving()) {
-                    unit.setTooltip("Hold");
+                    unit.setTooltip("#DHold");
                     unit.holdPosition();
                     return true;
                 }
-            } 
-            
+            }
+
             // Everything is okay, be here
             else {
                 if (unit.type().isTank() && !unit.isSieged()) {
@@ -82,55 +51,54 @@ public class MissionDefend extends Mission {
                 }
                 else {
                     unit.holdPosition();
-                    unit.setTooltip("Hold");
+                    unit.setTooltip("#DHold");
                     return true;
                 }
             }
-        } 
-        
+        }
+
         // =========================================================
         // Unit is far from choke point
         else {
-            unit.setTooltip("Positioning");
+            unit.setTooltip("#DPositioning");
             if (unit.distanceTo(focusPoint) > 3) {
                 unit.move(focusPoint, UnitActions.MOVE);
                 return true;
             }
         }
-        
-        unit.setTooltip("Defend");
+
         return false;
     }
 
     // =========================================================
-    
+
+
     /**
      * AUnit will go towards important choke point near main base.
      */
-    private boolean moveUnitIfNeededNearChokePoint(AUnit unit) {
+    private static boolean moveUnitIfNeededNearChokePoint(AUnit unit) {
         return false;
     }
 
-    private boolean isTooManyUnitsAround(AUnit unit, APosition focusPoint) {
+    private static boolean isTooManyUnitsAround(AUnit unit, APosition focusPoint) {
         return Select.ourCombatUnits().inRadius(1.0, unit).count() >= 3;
     }
 
-    private boolean isCloseEnoughToFocusPoint(AUnit unit, APosition focusPoint) {
+    private static boolean isCloseEnoughToFocusPoint(AUnit unit, APosition focusPoint) {
         if (unit == null || focusPoint == null) {
             return false;
         }
-        
 
         // Bigger this value is, farther from choke will units stand
 //        double unitShootRangeExtra = +0.3;
 
         // Distance to the center of choke point.
         double distToChoke = unit.distanceTo(focusPoint);
-        
+
         // Define distance which is considered "Close enough"
-        double acceptableDistance = getCloseEnoughDistanceToFocusPoint(unit) 
-                + Select.ourCombatUnits().inRadius(3, unit).count() / 6;
-        
+        double acceptableDistance = getCloseEnoughDistanceToFocusPoint(unit)
+                + Select.ourCombatUnits().inRadius(3, unit).count() / 6.0;
+
         return distToChoke < acceptableDistance;
 //
 //        // How far can the unit shoot
@@ -141,10 +109,10 @@ public class MissionDefend extends Mission {
 //
 //        return distToChoke <= maxDistanceAllowed;
     }
-    
-    private int getCloseEnoughDistanceToFocusPoint(AUnit unit) {
+
+    private static int getCloseEnoughDistanceToFocusPoint(AUnit unit) {
         int base = 3;
-        
+
         if (unit.isTank()) {
             return base + (AGame.isEnemyTerran() ? 0 : 2);
         }
@@ -153,7 +121,7 @@ public class MissionDefend extends Mission {
         }
     }
 
-    private boolean isCriticallyCloseToFocusPoint(AUnit unit, APosition focusPoint) {
+    private static boolean isCriticallyCloseToFocusPoint(AUnit unit, APosition focusPoint) {
         if (unit == null || focusPoint == null) {
             return false;
         }
@@ -179,64 +147,16 @@ public class MissionDefend extends Mission {
 
         return false;
     }
-    
-    private double getCriticallyCloseDistanceToFocusPoint(AUnit unit) {
+
+    private static double getCriticallyCloseDistanceToFocusPoint(AUnit unit) {
         double base = 1.2;
-        
+
         if (unit.isTank()) {
             return base + (AGame.isEnemyTerran() ? 0 : 2);
         }
         else {
             return base;
         }
-    }
-
-    // =========================================================
-
-    @Override
-    public APosition getFocusPoint() {
-        
-        // === Handle UMT ==========================================
-        
-        if (AGame.isUmtMode()) {
-            return null;
-        }
-        
-        // === Focus enemy attacking the main base =================
-        
-        AUnit mainBase = Select.mainBase();
-        if (mainBase != null) {
-            AUnit nearEnemy = Select.enemy().combatUnits().nearestTo(mainBase);
-            if (nearEnemy != null) {
-                return nearEnemy.getPosition();
-            }
-        }
-
-        // === Return position near the choke point ================
-        
-//        if (Select.ourBases().count() <= 1) {
-//            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());
-//        }
-//        else {
-        Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
-        if (chokepointForNaturalBase != null) {
-            return APosition.create(chokepointForNaturalBase.getCenter());
-        }
-
-        // === Return position near the first building ================
-
-        AUnit building = Select.ourBuildings().first();
-        if (building != null) {
-            return APosition.create(AMap.getNearestChokepoint(building.getPosition()).getCenter());
-        }
-
-        return null;
-    }
-    
-    // =========================================================
-    
-    public static MissionDefend getInstance() {
-        return instance;
     }
 
 }

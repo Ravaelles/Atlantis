@@ -3,7 +3,9 @@ package atlantis.strategy;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
-import atlantis.production.requests.ARequests;
+import atlantis.production.requests.AAntiAirRequest;
+import atlantis.production.requests.AAntiLandRequest;
+import atlantis.production.requests.ADetectorRequest;
 import atlantis.scout.AScoutManager;
 
 /**
@@ -15,7 +17,7 @@ public class AStrategyResponse {
     public static void update() {
         int defBuildingAntiLand = AConstructionManager.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
         if (defBuildingAntiLand < AStrategyInformations.needDefBuildingAntiLand) {
-            ARequests.getInstance().requestDefensiveBuildingAntiLand(null);
+            AAntiLandRequest.requestDefensiveBuildingAntiLand(null);
         }
     }
     
@@ -33,15 +35,15 @@ public class AStrategyResponse {
         // === Tech ========================================
         
         if (enemyStrategy.isGoingHiddenUnits()) {
-            if (AGame.getTimeFrames() % 19 == 0) {
+            if (AGame.everyNthGameFrame(19)) {
                 AStrategyInformations.needDefBuildingAntiLandAtLeast(1);
-                ARequests.getInstance().requestDetectorQuick(null);
+                ADetectorRequest.requestDetectorQuick(null);
             }
         }
         
         if (enemyStrategy.isGoingAirUnitsQuickly()) {
-            if (AGame.getTimeFrames() % 21 == 0) {
-                ARequests.getInstance().requestAntiAirQuick(null);
+            if (AGame.everyNthGameFrame(21)) {
+                AAntiAirRequest.requestAntiAirQuick(null);
             }
         }
     }

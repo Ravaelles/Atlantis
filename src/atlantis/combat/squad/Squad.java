@@ -1,7 +1,7 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.squad.missions.Mission;
-import atlantis.combat.squad.missions.Missions;
+import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;

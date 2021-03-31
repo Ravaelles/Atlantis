@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ABadWeather {
 
-    public static boolean avoidPsionicStormAndActiveMines(AUnit unit) {
+    public static boolean avoidSpellsMines(AUnit unit) {
         boolean isRangedUnit = unit.isRangedUnit();
         
         // === Psionic Storm ========================================

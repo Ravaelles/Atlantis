@@ -29,7 +29,7 @@ public abstract class AbstractMicroManager {
     /**
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
-    protected static boolean handleUnfavorableOdds(AUnit unit) {
+    protected static boolean shouldRetreat(AUnit unit) {
         if (!unit.canAnyCloseEnemyShootThisUnit(2)) {
             return false;
         }

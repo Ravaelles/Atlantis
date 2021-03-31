@@ -2,7 +2,7 @@ package atlantis.repair;
 
 import atlantis.AGame;
 import atlantis.buildings.managers.TerranFlyingBuildingManager;
-import atlantis.combat.squad.missions.Missions;
+import atlantis.combat.missions.Missions;
 import atlantis.map.AMap;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AEnemyStrategy;
@@ -260,7 +260,13 @@ public class ARepairCommander {
         
         // If no free protector was found, return normal worker.
         else {
-            return Select.ourWorkers().notCarrying().notRepairing().notConstructing().notScout().nearestTo(unitToRepair);
+            return Select.ourWorkers()
+                    .notCarrying()
+                    .notRepairing()
+                    .notConstructing()
+                    .notScout()
+                    .exclude(unitToRepair)
+                    .nearestTo(unitToRepair);
         }
     }
 

@@ -30,7 +30,7 @@ import java.util.Objects;
 public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
     
 //    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 12;
+    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 20;
     
     private static final Map<Object, APosition> instances = new HashMap<>();
     

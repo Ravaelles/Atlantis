@@ -5,7 +5,7 @@ import atlantis.Atlantis;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.squad.ASquadManager;
-import atlantis.combat.squad.missions.MissionAttack;
+import atlantis.combat.missions.MissionAttack;
 import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
@@ -124,6 +124,7 @@ public class APainter {
 
         // =========================================================
         // Global mission
+
         paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
                 ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
                 AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
@@ -132,7 +133,8 @@ public class APainter {
 
         // =========================================================
         // Focus point
-        APosition focusPoint = MissionAttack.getInstance().getFocusPoint();
+
+        APosition focusPoint = MissionAttack.getInstance().focusPoint();
         AUnit mainBase = Select.mainBase();
         String desc = "";
         if (focusPoint != null && mainBase != null) {
@@ -346,16 +348,16 @@ public class APainter {
         APosition position;
 
         // Main DEFEND focus point
-//        position = MissionAttack.getInstance().getFocusPoint();
+//        position = MissionAttack.getInstance().focusPoint();
 //        if (position != null) {
-//            position = MissionDefend.getInstance().getFocusPoint();
+//            position = MissionDefend.getInstance().focusPoint();
 //            paintCircle(position, 20, Color.Orange);
 //            paintCircle(position, 19, Color.Orange);
 //            paintTextCentered(position, "DEFEND", Color.Orange);
 //        }
 
         // Mission ATTACK focus point
-        position = MissionAttack.getInstance().getFocusPoint();
+        position = MissionAttack.getInstance().focusPoint();
         if (position != null) {
             paintCircle(position, 20, Color.Red);
             //        paintCircle(position, 19, Color.Black);

@@ -1,7 +1,5 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.combat.squad.missions.Mission;
-import atlantis.combat.squad.missions.Missions;
 import atlantis.map.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;

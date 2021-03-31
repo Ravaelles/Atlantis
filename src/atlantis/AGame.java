@@ -106,18 +106,19 @@ public class AGame {
 
         AtlantisConfig.GAME_SPEED = speed;
         
-        try {
-            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-            Thread.sleep(40);
-            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-            Thread.sleep(40);
-        } catch (InterruptedException ex) { 
-            // Ignore
-        }
+//        try {
+//            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+//            Thread.sleep(40);
+//            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+//            Thread.sleep(40);
+//        } catch (InterruptedException ex) {
+//            // Ignore
+//        }
         game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
+        sendMessage("/speed " + AtlantisConfig.GAME_SPEED);
 
-        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
-        sendMessage("Game speed: " + speedString);
+//        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
+//        sendMessage("Game speed: " + speedString);
     }
 
     /**
@@ -184,6 +185,13 @@ public class AGame {
      */
     public static int getTimeFrames() {
         return Atlantis.game().getFrameCount();
+    }
+
+    /**
+     * Returns true once per n game frames.
+     */
+    public static boolean everyNthGameFrame(int n) {
+        return Atlantis.game().getFrameCount() % n == 0;
     }
 
     /**

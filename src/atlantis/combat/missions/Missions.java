@@ -1,4 +1,4 @@
-package atlantis.combat.squad.missions;
+package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.units.AUnitType;
@@ -46,9 +46,9 @@ public class Missions {
                 currentGlobalMission = Missions.ATTACK;
             }
         } else if (currentGlobalMission == Missions.ATTACK) {
-            if (AGame.getTimeSeconds() > 350 && Select.ourCombatUnits().count() <= 5) {
-                currentGlobalMission = Missions.DEFEND;
-            }
+//            if (AGame.getTimeSeconds() > 350 && Select.ourCombatUnits().count() <= 5) {
+//                currentGlobalMission = Missions.DEFEND;
+//            }
         }
     }
 
@@ -108,24 +108,24 @@ public class Missions {
         
         // =========================================================
         
-        return Missions.DEFEND;
-//        return Missions.ATTACK;
+//        return Missions.DEFEND;
+        return Missions.ATTACK;
     }
 
     /**
      * Global mission is the military stance that all non-special battle squads should follow and it should
      * always correspond to the mission of our main Alpha battle squad.
      */
-    public static Mission getGlobalMission() {
+    public static Mission globalMission() {
         return currentGlobalMission;
     }
 
     public static boolean isGlobalMissionDefend() {
-        return getGlobalMission().isMissionDefend();
+        return globalMission().isMissionDefend();
     }
 
     public static boolean isGlobalMissionAttack() {
-        return getGlobalMission().isMissionAttack();
+        return globalMission().isMissionAttack();
     }
 
 }

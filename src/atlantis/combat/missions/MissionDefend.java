@@ -1,0 +1,41 @@
+package atlantis.combat.missions;
+
+import atlantis.AGame;
+import atlantis.combat.micro.managers.DefendManager;
+import atlantis.position.APosition;
+import atlantis.units.AUnit;
+
+public class MissionDefend extends Mission {
+
+    protected MissionDefend(String name) {
+        super(name);
+    }
+
+    @Override
+    public boolean update(AUnit unit) {
+
+        // === Handle UMT special maps case ========================
+        
+        if (AGame.isUmtMode()) {
+            return false;
+        }
+
+        // =========================================================
+        
+        APosition focusPoint = focusPoint();
+//        APainter.paintLine(unit, focusPoint, Color.Purple);
+        
+        if (focusPoint == null) {
+            System.err.println("Couldn't define choke point.");
+            throw new RuntimeException("Couldn't define choke point.");
+        }
+
+        return DefendManager.defendFocusPoint(unit, focusPoint);
+    }
+
+    @Override
+    public APosition focusPoint() {
+        return MissionDefendFocusPoint.focusPoint();
+    }
+
+}

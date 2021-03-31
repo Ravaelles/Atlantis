@@ -179,7 +179,7 @@ public class Select<T> {
     /**
      * Selects our units of given type(s).
      */
-    public static Select<AUnit> ourOfType(AUnitType type) {
+    public static Select<AUnit> ourOfType(AUnitType... type) {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
@@ -194,7 +194,7 @@ public class Select<T> {
     /**
      * Counts our completed units of given type.
      */
-    public static int countOurOfType(AUnitType type) {
+    public static int countOurOfType(AUnitType... type) {
         int total = 0;
 
         for (AUnit unit : ourUnits()) {
@@ -356,16 +356,7 @@ public class Select<T> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Select<AUnit> enemyRealUnits() {
-        List<AUnit> data = new ArrayList<>();
-
-        for (AUnit unit : enemyUnits()) {
-            if (unit.isVisible() && !unit.getType().isBuilding()
-                    && !unit.isNotActuallyUnit()) {
-                data.add(unit);
-            }
-        }
-
-        return new Select<AUnit>(data);
+        return enemyRealUnits(true, true);
     }
 
     /**
@@ -375,9 +366,8 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (unit.isVisible() && !unit.getType().isBuilding()
-                    && !unit.isType(AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
-                if ((unit.isGroundUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
+            if (unit.isVisible() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
+                if ((includeGroundUnits && unit.isGroundUnit()) || (includeAirUnits && unit.isAirUnit())) {
                     data.add(unit);
                 }
             }
@@ -839,25 +829,17 @@ public class Select<T> {
      * Selects only those units from current selection, which can be both <b>attacked by</b> given unit (e.g.
      * Zerglings can't attack Overlord) and are <b>in shot range</b> to the given <b>unit</b>.
      */
-    public Select<T> canBeAttackedBy(AUnit attacker) {
+    public Select<T> canBeAttackedBy(AUnit attacker, boolean includeShootingRang) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit prey = unitFrom(unitsIterator.next());
-            if (attacker.canAttackThisKindOfUnit(prey, false)) {
-                boolean isInShotRange = attacker.hasRangeToAttack(prey, 0.05);
-                if (!isInShotRange) {
-//                    System.out.println(prey.getType().getShortName() + " OUT OF range ("
-//                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
-                    unitsIterator.remove();
-                }
-//                else {
-//                    System.out.println(prey.getType().getShortName() + " in range ("
-//                            + prey.distanceTo(predator) + ") to attack " + predator.getType().getShortName());
-//                }
+            if (!attacker.canAttackThisKindOfUnit(prey, false)) {
+                unitsIterator.remove();
             }
-//            else {
-//                System.out.println(predator.getShortName() + " cant attack " + prey.getShortName());
-//            }
+
+            if (includeShootingRang && !attacker.hasRangeToAttack(prey, 0.05)) {
+                unitsIterator.remove();
+            }
         }
         return this;
     }
