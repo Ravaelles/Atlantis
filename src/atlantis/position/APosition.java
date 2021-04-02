@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Atlantis uses wrapper for BWMirror native classes which can't extended due to private constructors.
+ * Atlantis uses wrapper for BWAPI  classes which can't extended due to private constructors.
  * <br /><br />
  * I've decided to implement a solution which allows to use the .jar of BWMirror library, because from
  * my experience it turns out, that it's extremely tedious to upgrade Atlantis to use newer version of

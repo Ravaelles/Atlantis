@@ -1,7 +1,6 @@
 package atlantis.production.orders;
 
 import atlantis.AGame;
-import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -248,7 +247,7 @@ public class ABuildOrderLoader {
 
         // =========================================================
         // Ignore comments and blank lines
-        if (isUnimportantLine(row)) {
+        if (isCommentLine(row)) {
             return;
         }
 
@@ -305,7 +304,6 @@ public class ABuildOrderLoader {
 
         // Check if no error occured like no object found
         if (!isUnit && !isUpgrade && !isTech) {
-            System.out.println("Invalid production order entry: " + nameString);
             System.err.println("Invalid production order entry: " + nameString);
             AGame.exit();
         }
@@ -389,7 +387,7 @@ public class ABuildOrderLoader {
     /**
      * // Means comment - should skip it. We can also have blank lines.
      */
-    protected boolean isUnimportantLine(String[] row) {
+    protected boolean isCommentLine(String[] row) {
         if (row.length >= 1 && row[0].length() > 0) {
             
             // Detect multi-line comment end
@@ -424,22 +422,22 @@ public class ABuildOrderLoader {
      * If the first character in column is # it means it's special command. Here we handle all of them.
      */
     protected void handleSpecialCommand(String[] row) {
-        String commandLine = row[0].substring(1).toUpperCase();
+        String commandLine = row[0].toUpperCase();
 
-        if (commandLine.startsWith("//") || commandLine.startsWith("#")) {
+        if (commandLine.startsWith("//")) {
             return;
         }
 
 //        if (command.startsWith("AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS")) {
 //            AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = extractSpecialCommandValue(row);
 //        } else 
-        if (commandLine.startsWith("AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
+        if (commandLine.startsWith("#AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
             AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = extractSpecialCommandValue(row);
-        } else if (commandLine.startsWith("AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
+        } else if (commandLine.startsWith("#AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
             AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS = extractSpecialCommandValue(row);
-        } else if (commandLine.startsWith("SCOUT_IS_NTH_WORKER")) {
+        } else if (commandLine.startsWith("#SCOUT_IS_NTH_WORKER")) {
             AtlantisConfig.SCOUT_IS_NTH_WORKER = extractSpecialCommandValue(row);
-        } else if (commandLine.startsWith("USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
+        } else if (commandLine.startsWith("#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
             AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = extractSpecialCommandValue(row);
         }
     }

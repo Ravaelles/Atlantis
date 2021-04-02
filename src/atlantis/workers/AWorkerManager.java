@@ -14,26 +14,19 @@ public class AWorkerManager {
      * Executed for every worker unit.
      */
     public static boolean update(AUnit worker) {
-        worker.removeTooltip();
-        if (AScoutManager.isScout(worker)) {
+        if (workerManagerForbiddenFor(worker)) {
             return false;
         }
-        if (ARepairManager.isRepairerOfAnyKind(worker)) {
-            return false;
-        }
-        
-        // =========================================================
+
         // === Worker micro ========================================
-        
-        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(worker)) {
+
+        if (handledAsStandardUnit(worker)) {
             return true;
         }
         
         // === END OF Worker micro =================================
-        // =========================================================
 
-        // =========================================================
-        // Act as BUILDER if needed
+        // Act as BUILDER
         if (AConstructionManager.isBuilder(worker)) {
             ABuilderManager.update(worker);
             if (worker.getTooltip() == null) {
@@ -42,12 +35,34 @@ public class AWorkerManager {
             return true;
         } 
 
-        // ORDINARY WORKER
+        // Ordinary WORKER
         else {
-            sendToGatherMineralsOrGasIfNeeded(worker);
+            handleGatherMineralsOrGas(worker);
             worker.setTooltip("Gather");
             return true;
         }
+    }
+
+    // =========================================================
+
+    private static boolean workerManagerForbiddenFor(AUnit worker) {
+        if (AScoutManager.isScout(worker)) {
+            return false;
+        }
+
+        if (ARepairManager.isRepairerOfAnyKind(worker)) {
+            return false;
+        }
+
+        return false;
+    }
+
+    public static boolean handledAsStandardUnit(AUnit worker) {
+        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(worker)) {
+            return true;
+        }
+
+        return false;
     }
 
     // =========================================================
@@ -55,26 +70,26 @@ public class AWorkerManager {
      * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather
      * minerals.
      */
-    private static void sendToGatherMineralsOrGasIfNeeded(AUnit worker) {
-        worker.removeTooltip();
+    private static void handleGatherMineralsOrGas(AUnit worker) {
 
         // Don't react if already gathering
         if (worker.isGatheringGas() || worker.isGatheringMinerals()) {
+            worker.setTooltip("Gathering");
             return;
         }
 
         // If is carrying minerals, return
         if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
             worker.returnCargo();
+            worker.setTooltip("Cargo");
             return;
         }
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).
-        if (worker.isIdle()
-                || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
+        if (worker.isIdle() || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
                 && !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
-            worker.setTooltip("Move ya ass!");
+            worker.setTooltip("Move ass!");
             AMineralGathering.gatherResources(worker);
         }
     }
@@ -84,17 +99,30 @@ public class AWorkerManager {
     /**
      * Returns total number of workers that are currently assigned to this building.
      */
-    public static int getHowManyWorkersGatheringAt(AUnit target) {
-        boolean isGasBuilding = target.getType().isGasBuilding();
-        boolean isBase = target.isBase();
+    public static int getHowManyWorkersWorkingNear(AUnit base, boolean includeMoving) {
+//        boolean isGasBuilding = target.getType().isGasBuilding();
+//        boolean isBase = target.isBase();
+//        int total = 0;
+//
+//        for (AUnit worker : Select.ourWorkers().listUnits()) {
+//            if (isWorkerAssignedToBuilding(worker, target)) {
+//                total++;
+//            }
+//        }
+//        return total;
+
         int total = 0;
 
-        for (AUnit worker : Select.ourWorkers().listUnits()) {
-            if (isWorkerAssignedToBuilding(worker, target)) {
+        for (AUnit worker : Select.ourWorkers().inRadius(25, base).listUnits()) {
+            if (worker.isMiningOrExtractingGas() || worker.isRepairing() || worker.isConstructing()
+                    || (includeMoving && worker.isMoving())) {
                 total++;
             }
         }
+
         return total;
+
+//        return Select.ourWorkers().inRadius(15, base).count();
     }
 
     public static AUnit getRandomWorkerAssignedTo(AUnit target) {

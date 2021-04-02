@@ -44,12 +44,12 @@ public class AAvoidMeleeUnitsManager {
 //                APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -48), "RUUUUUUUN", Color.Orange);
             unit.setTooltip("Ruuuun");
             return true;
-        } else {
-            unit.setTooltip("ERROR_RUN");
-            System.err.println("ERROR_RUN for " + unit.getShortNamePlusId());
-//                AGame.sendMessage("ERROR_RUN for " + unit.getShortNamePlusId());
-            return false;
         }
+
+        unit.setTooltip("ERROR_RUN");
+        System.err.println("ERROR_RUN for " + unit.getShortNamePlusId());
+//                AGame.sendMessage("ERROR_RUN for " + unit.getShortNamePlusId());
+        return false;
     }
 
     // =========================================================

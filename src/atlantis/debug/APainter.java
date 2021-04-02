@@ -30,7 +30,7 @@ import atlantis.workers.AWorkerManager;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
 import bwapi.*;
-import bwta.Region;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -798,7 +798,7 @@ public class APainter {
         for (AUnit building : Select.ourBuildings().listUnits()) {
 
             // Paint text
-            int workers = AWorkerManager.getHowManyWorkersGatheringAt(building);
+            int workers = AWorkerManager.getHowManyWorkersWorkingNear(building, false);
             if (workers > 0) {
                 String workersAssigned = workers + "";
                 paintTextCentered(

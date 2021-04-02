@@ -16,6 +16,7 @@ public class Missions {
     private static Mission currentGlobalMission;
 
     public static final Mission ATTACK = new MissionAttack("Attack");
+    public static final Mission CONTAIN = new MissionContain("Contain");
     public static final Mission DEFEND = new MissionDefend("Defend");
     public static final Mission UMT = new MissionUmt("UMT");
 
@@ -110,6 +111,7 @@ public class Missions {
         
 //        return Missions.DEFEND;
         return Missions.ATTACK;
+//        return Missions.CONTAIN;
     }
 
     /**

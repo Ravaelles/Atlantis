@@ -11,6 +11,10 @@ public class ContainUnitManager extends MissionUnitManager {
     public boolean updateUnit(AUnit unit) {
         unit.setTooltip("#Contain");
 
+        if (mission.focusPoint() == null) {
+            return false;
+        }
+
         if (handleComeCloserToChokepoint(unit)) {
             return true;
         }

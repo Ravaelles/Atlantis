@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * Wrapper for BWMirror UnitType class that makes it much easier to use.<br /><br />
- * Atlantis uses wrappers for BWMirror native classes which aren't extended.<br /><br />
+ * Atlantis uses wrappers for BWAPI  classes which aren't extended.<br /><br />
  * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you can
  * create missing method here and you can reference original UnitType class via ut() method.
  *
@@ -35,7 +35,7 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     /**
-     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
+     * Atlantis uses wrapper for BWAPI  classes which aren't extended.<br />
      * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you
      * can create missing method here and you can reference original UnitType class via ut() method.
      */

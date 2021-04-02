@@ -33,6 +33,7 @@ public class UnitActions {
     public static final UnitAction STOP = new UnitAction().setName("STOP");
     public static final UnitAction TOGETHER = new UnitAction().setName("TOGETHER");
     public static final UnitAction TRAIN = new UnitAction().setName("TRAIN");
+    public static final UnitAction TRANSFER = new UnitAction().setName("TRANSFER");
     public static final UnitAction UNLOAD = new UnitAction().setName("UNLOAD");
     public static final UnitAction UNBURROW = new UnitAction().setName("UNBURROW");
     public static final UnitAction UNSIEGE = new UnitAction().setName("UNSIEGE");

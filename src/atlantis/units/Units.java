@@ -146,15 +146,15 @@ public class Units {
 //        }
         
         if (units == null || unit == null || !units.containsKey(unit)) {
-            System.out.println("-----------");
-            System.out.println(units);
-            System.out.println(unit);
+//            System.out.println("-----------");
+//            System.out.println(units);
+//            System.out.println(unit);
             throw new RuntimeException("Should never be here");
         }
         else {
-            System.out.println("---");
-            System.out.println("unit: " + unit + " // " + unit.getType().getShortName());
-            System.out.println(this.units);
+//            System.out.println("---");
+//            System.out.println("unit: " + unit + " // " + unit.getType().getShortName());
+//            System.out.println(this.units);
             return units.get(unit);
         }
     }

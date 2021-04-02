@@ -10,7 +10,7 @@
 #AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS=1
 
 // Max number of workers for workers auto-production to remain active
-#AUTO_PRODUCE_WORKERS_MAX_WORKERS=50
+//#AUTO_PRODUCE_WORKERS_MAX_WORKERS=50
 
 // === Raw build order used - taken from Liquipedia or so =============
 

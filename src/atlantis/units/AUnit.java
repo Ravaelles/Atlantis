@@ -54,7 +54,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     // =========================================================
 
     /**
-     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
+     * Atlantis uses wrapper for BWAPI classes which aren't extended.<br />
      * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
      * create missing method here and you can reference original Unit class via u() method.
      */
@@ -229,24 +229,20 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     @Override
-    public int compareTo(Object o) {
-        int compare;
-        
-        if (o instanceof AUnit) {
-            compare = ((AUnit) o).getID();
-        }
-        else {
-            compare = o.hashCode();
-        }
-        
-        return Integer.compare(this.hashCode(), compare);
+    public int hashCode() {
+        return super.hashCode();
     }
 
-    @Override
-    public int hashCode() {
-//        int hash = 7;
-        int hash = this.getID();
-        return hash;
+    public int compareTo(Object o) {
+        int compare;
+
+        if (o instanceof AUnit) {
+            compare = ((AUnit) o).getID();
+        } else {
+            compare = o.hashCode();
+        }
+
+        return Integer.compare(this.hashCode(), compare);
     }
 
     @Override
@@ -257,17 +253,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         if (obj == null) {
             return false;
         }
-//        if (getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        final Unit other = (Unit) obj;
-//        if (this.getID() != other.getID()) {
-//            return false;
-//        }
-
         if (obj instanceof AUnit) {
             AUnit other = (AUnit) obj;
-//            return getID() == other.getID();
             return getID() == other.getID();
         }
         else if (obj instanceof Unit) {
@@ -823,6 +810,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     public boolean isVisible() {
         return u.isVisible();
+    }
+
+    public boolean isMiningOrExtractingGas() {
+        return isGatheringMinerals() || isGatheringGas();
     }
 
     public boolean isGatheringMinerals() {

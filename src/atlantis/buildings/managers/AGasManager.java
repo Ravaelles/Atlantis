@@ -24,7 +24,7 @@ public class AGasManager {
     public static void handleGasBuildings() {
         
         // Only once per second
-        if (AGame.getTimeFrames() % 5 != 0) {
+        if (AGame.getTimeFrames() % 6 != 0) {
             return;
         }
         int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
@@ -42,26 +42,27 @@ public class AGasManager {
                 continue;
             }
             
-            int numberOfWorkersAssigned = AWorkerManager.getHowManyWorkersGatheringAt(gasBuilding);
-            int optimalNumberOfGasWorkers = defineOptimalGasWorkers(gasBuilding);
-            
-            // Assign when LOWER THAN MIN
-//            if (numberOfWorkersAssigned < minGasWorkersPerBuilding && nu) {
-            if (numberOfWorkersAssigned < optimalNumberOfGasWorkers) {
+            int numOfWorkersNearby = countWorkersGatheringGasNear(gasBuilding);
+            int optimalNumOfGasWorkers = defineOptimalGasWorkers(gasBuilding);
+//            System.out.println(optimalNumOfGasWorkers + " // " + numOfWorkersNearby);
+
+            // Less workers gathering gas than optimal
+            if (numOfWorkersNearby < optimalNumOfGasWorkers) {
                 AUnit worker = getWorkerForGasBuilding(gasBuilding);
                 if (worker != null) {
                     worker.gather(gasBuilding);
+                    worker.setTooltip("Gas");
                 }
-                break; // Only one worker per call
+                break; // Only one worker per execution
             }
             
-            // Deassign when MORE THAN MAX
-            else if (numberOfWorkersAssigned > optimalNumberOfGasWorkers) {
+            // More workers than optimal
+            else if (numOfWorkersNearby > optimalNumOfGasWorkers) {
                 AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
                     worker.stop();
                 }
-                break; // Only one worker per call
+                break; // Only one worker per execution
             }
         }
         
@@ -77,7 +78,19 @@ public class AGasManager {
     }
     
     // =========================================================
-    
+
+    private static int countWorkersGatheringGasNear(AUnit unit) {
+        int total = 0;
+
+        for (AUnit worker : Select.ourWorkers().inRadius(12, unit).listUnits()) {
+            if (worker.isGatheringGas()) {
+                total++;
+            }
+        }
+
+        return total;
+    }
+
     private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
         return Select.ourWorkers().gatheringMinerals(true).nearestTo(gasBuilding);
     }
