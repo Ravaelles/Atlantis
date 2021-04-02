@@ -3,6 +3,7 @@ package atlantis.constructing.position;
 import atlantis.combat.missions.MissionDefend;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.map.ABaseLocation;
+import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -58,7 +59,7 @@ public class TerranBunkerPositionFinder {
 
         // Bunker at MAIN CHOKEPOINT
         if (locationModifier.equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
-            Chokepoint chokepointForNaturalBase = AMap.getChokepointForMainBase();
+            AChokepoint chokepointForNaturalBase = AMap.getChokepointForMainBase();
             if (chokepointForNaturalBase != null) {
                 return APosition.create(chokepointForNaturalBase.getCenter())
                         .translatePercentTowards(mainBase.getPosition(), 5);
@@ -67,7 +68,7 @@ public class TerranBunkerPositionFinder {
 
         // Bunker at NATURAL CHOKEPOINT
         else {
-            Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
+            AChokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
             if (chokepointForNaturalBase != null && mainBase != null) {
                 ABaseLocation naturalBase = AMap.getNaturalBaseLocation(Select.mainBase().getPosition());
                 return APosition.create(chokepointForNaturalBase.getCenter())

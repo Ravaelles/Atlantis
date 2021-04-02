@@ -7,13 +7,13 @@ import atlantis.util.CodeProfiler;
 /**
  * Manages construction of new buildings.
  */
-public class AProductionCommander {
+public class ABuildingsCommander {
 
     /**
      * Produce units and buildings according to build orders.
      */
     public static void update() {
-        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PRODUCTION);
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_BUILDINGS);
         
         // Check if need to increase supply and if so, take care of it.
         ASupplyManager.update();
@@ -26,8 +26,11 @@ public class AProductionCommander {
         
         // When it can be applied and makes sense, automatically produce units like workers, factories.
         ADynamicProductionCommander.update();
+
+        // Auxiliary class, avoid using it for anything else than debugging.
+        ABuildingManager.update();
         
-        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PRODUCTION);
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_BUILDINGS);
     }
 
 }

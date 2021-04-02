@@ -19,7 +19,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
     protected static boolean update(AUnit unit) {
         preActions(unit);
-        unit.removeTooltip();
 
         // =========================================================
         // === TOP priority ========================================

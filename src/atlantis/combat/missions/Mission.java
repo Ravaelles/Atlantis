@@ -1,5 +1,6 @@
 package atlantis.combat.missions;
 
+import atlantis.map.AChokepoint;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
@@ -12,11 +13,15 @@ public abstract class Mission {
 
     private static Mission instance;
     private String name;
+    private MissionFocusPointManager focusPointManager;
+    private MissionUnitManager unitManager;
 
     // =========================================================
 
-    protected Mission(String name) {
+    public Mission(String name, MissionFocusPointManager focusPointManager, MissionUnitManager unitManager) {
         this.name = name;
+        this.focusPointManager = focusPointManager;
+        this.unitManager = unitManager;
         instance = this;
     }
 
@@ -24,7 +29,15 @@ public abstract class Mission {
 
     public abstract boolean update(AUnit unit);
 
-    public abstract APosition focusPoint();
+    // =========================================================
+
+    public APosition focusPoint() {
+        return focusPointManager.focusPoint();
+    }
+
+    public AChokepoint focusChokepoint() {
+        return focusPointManager.getChokepoint();
+    }
 
     // =========================================================
 
@@ -38,6 +51,14 @@ public abstract class Mission {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public MissionFocusPointManager getFocusPointManager() {
+        return focusPointManager;
+    }
+
+    public MissionUnitManager getUnitManager() {
+        return unitManager;
     }
 
     public boolean isMissionDefend() {

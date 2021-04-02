@@ -4,7 +4,7 @@ package atlantis;
 import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.ACombatCommander;
 import atlantis.debug.APainter;
-import atlantis.production.AProductionCommander;
+import atlantis.production.ABuildingsCommander;
 import atlantis.repair.ARepairCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
@@ -31,7 +31,7 @@ public class AGameCommander {
         // === Execute code of every Commander and Manager ==================
         
         AStrategyCommander.update();
-        AProductionCommander.update();
+        ABuildingsCommander.update();
         AWorkerCommander.update();
         ACombatCommander.update();
         AScoutManager.update();

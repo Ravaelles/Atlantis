@@ -2,6 +2,7 @@ package atlantis.position;
 
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
+import atlantis.map.ARegion;
 import atlantis.units.AUnit;
 import atlantis.util.PositionUtil;
 import bwapi.Point;
@@ -359,7 +360,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     /**
      * Return BWTA region for this position.
      */
-    public Region getRegion() {
+    public ARegion getRegion() {
         return AMap.getRegion(this);
     }
 

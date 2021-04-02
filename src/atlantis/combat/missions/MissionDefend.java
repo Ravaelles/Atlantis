@@ -8,7 +8,7 @@ import atlantis.units.AUnit;
 public class MissionDefend extends Mission {
 
     protected MissionDefend(String name) {
-        super(name);
+        super(name, null, null);
     }
 
     @Override

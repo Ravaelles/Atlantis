@@ -34,10 +34,10 @@ public class AMap {
     //    private static BWTA bw ta = new BWTA(); // all methods in BWTA are static, but I keep a class instance to return it in getMap()
     private static BWTA bwta = null;
     //    private static BWTA bwta = null;
-    private static Set<Chokepoint> disabledChokepoints = new HashSet<>();
-    private static List<Chokepoint> cached_chokePoints = null;
-    private static Chokepoint cached_mainBaseChokepoint = null;
-    private static Chokepoint cached_naturalBaseChokepoint = null;
+    private static Set<AChokepoint> disabledChokepoints = new HashSet<>();
+    private static List<AChokepoint> cached_chokePoints = null;
+    private static AChokepoint cached_mainBaseChokepoint = null;
+    private static AChokepoint cached_naturalBaseChokepoint = null;
     private static Map<String, Positions> regionsToPolygonPoints = new HashMap<>();
 
     // =========================================================
@@ -81,13 +81,13 @@ public class AMap {
      * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
      * method returns this choke point. It's perfect position to defend (because it's *choke* point).
      */
-    public static Chokepoint getChokepointForMainBase() {
+    public static AChokepoint getChokepointForMainBase() {
         if (cached_mainBaseChokepoint == null) {
             AUnit mainBase = Select.mainBase();
             if (mainBase != null) {
 
                 // Define region where our main base is
-                Region mainRegion = getRegion(mainBase.getPosition());
+                ARegion mainRegion = getRegion(mainBase.getPosition());
                 // System.out.println("mainRegion = " + mainRegion);
                 if (mainRegion != null) {
 
@@ -100,18 +100,18 @@ public class AMap {
                     }
 
                     // Define region of the second base
-                    Region naturalBaseRegion = naturalBase.getRegion();
+                    ARegion naturalBaseRegion = naturalBase.getRegion();
                     // System.out.println("secondRegion = " + secondRegion);
                     if (naturalBaseRegion == null) {
                         return null;
                     }
 
                     // Try to match choke points between the two regions
-                    for (Chokepoint mainRegionChoke : mainRegion.getChokepoints()) {
+                    for (AChokepoint mainRegionChoke : mainRegion.getChokepoints()) {
                         // System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
                         // + (mainRegionChoke.getFirstRegion()) + " / " + (mainRegionChoke.getSecondRegion()));
-                        if (naturalBaseRegion.equals(mainRegionChoke.getRegions().getFirst())    // getFirstRegion()
-                                || naturalBaseRegion.equals(mainRegionChoke.getRegions().getSecond())) {    // getSecondRegion()
+                        if (naturalBaseRegion.equals(mainRegionChoke.getFirstRegion())
+                                || naturalBaseRegion.equals(mainRegionChoke.getSecondRegion())) {
                             cached_mainBaseChokepoint = mainRegionChoke;
                             // System.out.println("MAIN CHOKE FOUND! " + cached_mainBaseChokepoint);
                             break;
@@ -131,7 +131,7 @@ public class AMap {
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
-    public static Chokepoint getChokepointForNaturalBase() {
+    public static AChokepoint getChokepointForNaturalBase() {
         if (cached_naturalBaseChokepoint != null) {
             APainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
             return cached_naturalBaseChokepoint;
@@ -146,14 +146,14 @@ public class AMap {
             return null;
         }
 
-        Region naturalRegion = getRegion(getNaturalBaseLocation(mainBase.getPosition()));
+        ARegion naturalRegion = getRegion(getNaturalBaseLocation(mainBase.getPosition()));
         if (naturalRegion == null) {
             System.err.println("Can't find region for natural base");
             AGame.setUmtMode(true);
             return null;
         }
 
-        for (Chokepoint chokepoint : naturalRegion.getChokepoints()) {
+        for (AChokepoint chokepoint : naturalRegion.getChokepoints()) {
             APosition center = APosition.create(chokepoint.getCenter());
             if (center.distanceTo(getChokepointForMainBase().getCenter()) > 1) {
                 cached_naturalBaseChokepoint = chokepoint;
@@ -303,15 +303,15 @@ public class AMap {
     /**
      * Returns nearest (preferably directly connected) region which has center of it still unexplored.
      */
-    public static Region getNearestUnexploredRegion(APosition position) {
-        Region region = AMap.getRegion(position);
+    public static ARegion getNearestUnexploredRegion(APosition position) {
+        ARegion region = AMap.getRegion(position);
         if (region == null) {
             return null;
         }
 
-        Region regionToVisit = null;
+        ARegion regionToVisit = null;
 
-        for (Region reachableRegion : region.getReachableRegions()) {
+        for (ARegion reachableRegion : region.getReachableRegions()) {
             if (!AMap.isExplored(reachableRegion.getCenter())) {
                 regionToVisit = reachableRegion;
 //                return APosition.createFrom(regionToVisit.getCenter());
@@ -348,19 +348,19 @@ public class AMap {
         return null;
     }
 
-    public static Chokepoint getNearestChokepoint(APosition position) {
-        double bestDistance = 99999;
-        Chokepoint bestChoke = null;
+    public static AChokepoint getNearestChokepoint(APosition position) {
+        double nearestDist = 99999;
+        AChokepoint nearest = null;
 
-        for (Chokepoint chokePoint : getChokePoints()) {
+        for (AChokepoint chokePoint : getChokePoints()) {
             double dist = position.distanceTo(chokePoint.getCenter()) - chokePoint.getWidth() / 32 / 2;
-            if (dist < bestDistance) {
-                bestDistance = dist;
-                bestChoke = chokePoint;
+            if (dist < nearestDist) {
+                nearestDist = dist;
+                nearest = chokePoint;
             }
         }
 
-        return bestChoke;
+        return nearest;
     }
 
     /**
@@ -455,12 +455,12 @@ public class AMap {
      * Returns list of all choke points i.e. places where suddenly it gets extra tight and fighting there
      * usually prefers ranged units. They are perfect places for terran bunkers.
      */
-    public static List<Chokepoint> getChokePoints() {
+    public static List<AChokepoint> getChokePoints() {
         if (cached_chokePoints == null) {
             cached_chokePoints = new ArrayList<>();
             for (Chokepoint choke : BWTA.getChokepoints()) {
                 if (!disabledChokepoints.contains(choke)) { // choke.isDisabled()
-                    cached_chokePoints.add(choke);
+                    cached_chokePoints.add(AChokepoint.create(choke));
                 }
             }
         }
@@ -471,17 +471,15 @@ public class AMap {
      * Returns region object for given <b>position</b>. This object provides some very helpful informations
      * like you can access list of choke points that belong to it etc.
      *
-     * @see Region
+     * @see ARegion
      */
-    public static Region getRegion(Object param) {
+    public static ARegion getRegion(Object param) {
         Position position = null;
 
         if (param instanceof Position) {
             position = (Position) param;
         } else if (param instanceof Region) {
             position = ((Region) param).getCenter();
-//        } else if (param instanceof ABaseLocation) {
-//            position = ((ABaseLocation) param).getPosition();
         } else if (param instanceof HasPosition) {
             position = ((HasPosition) param).getPosition();
         } else {
@@ -489,20 +487,20 @@ public class AMap {
             return null;
         }
 
-        return getMap().getRegion(position);
+        return ARegion.create(getMap().getRegion(position));
     }
 
     /**
      * Returns true if given position is explored i.e. if it's not black screen (but could be fog of war).
      */
-    public static boolean isExplored(Position position) {
+    public static boolean isExplored(APosition position) {
         return Atlantis.game().isExplored(position.toTilePosition());
     }
 
     /**
      * Returns true if given position visible.
      */
-    public static boolean isVisible(Position position) {
+    public static boolean isVisible(APosition position) {
         return Atlantis.game().isVisible(position.toTilePosition());
     }
 
@@ -530,7 +528,7 @@ public class AMap {
             return false;
         }
 
-        Region baseRegion = getRegion(mainBase.getPosition());
+        ARegion baseRegion = getRegion(mainBase.getPosition());
         if (baseRegion == null) {
             System.err.println("Error #821493b");
             System.err.println("Main base = " + mainBase);
@@ -538,8 +536,8 @@ public class AMap {
             return false;
         }
 
-        Collection<Chokepoint> chokes = baseRegion.getChokepoints();
-        for (Chokepoint choke : chokes) {
+        Collection<AChokepoint> chokes = baseRegion.getChokepoints();
+        for (AChokepoint choke : chokes) {
             if (baseRegion.getChokepoints().contains(choke)) {
                 System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
                 disabledChokepoints.add(choke);    //choke.setDisabled(true);

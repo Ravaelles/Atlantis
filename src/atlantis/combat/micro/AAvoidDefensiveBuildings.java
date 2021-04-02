@@ -17,16 +17,16 @@ public class AAvoidDefensiveBuildings {
         if (buildingTooClose != null) {
             double enemyWeaponRange = buildingTooClose.getWeaponRangeAgainst(unit);
             double enemyDistance = buildingTooClose.distanceTo(unit);
-            System.out.println("weapon " + buildingTooClose.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
+//            System.out.println("weapon " + buildingTooClose.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
             double distanceMargin = enemyDistance - enemyWeaponRange;
 
-            if (distanceMargin < 2.5) {
+            if (distanceMargin < 2.8 && (!unit.isMoving() && !unit.isHoldingPosition())) {
                 boolean result = unit.holdPosition();
                 unit.setTooltip("AvoidHold (" + String.format("%.1f", distanceMargin) + ")");
                 return result;
             }
 
-            if (distanceMargin < 1) {
+            if (distanceMargin < 1.5 && !unit.isMoving()) {
                 boolean result = unit.moveAwayFrom(buildingTooClose.getPosition(), 1);
                 unit.setTooltip("AvoidMove (" + String.format("%.1f", distanceMargin) + ")");
                 return result;

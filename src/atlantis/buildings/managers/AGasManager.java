@@ -2,16 +2,12 @@ package atlantis.buildings.managers;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.debug.APainter;
-import atlantis.production.AProductionCommander;
-import atlantis.production.AProductionManager;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.ABuildOrder;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.workers.AWorkerManager;
-import bwapi.Color;
+
 import java.util.ArrayList;
 import java.util.Collection;
 

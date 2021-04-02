@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.AGame;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
+import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -36,7 +37,7 @@ public class MissionDefendFocusPoint {
 //            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());
 //        }
 //        else {
-        Chokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
+        AChokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
         if (chokepointForNaturalBase != null) {
             return APosition.create(chokepointForNaturalBase.getCenter());
         }

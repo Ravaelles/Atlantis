@@ -13,6 +13,7 @@ import atlantis.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.AMap;
+import atlantis.map.ARegion;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
 import atlantis.production.ProductionOrder;
@@ -964,10 +965,10 @@ public class APainter {
     private static void paintEnemyRegionDetails() {
         APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-            Region enemyBaseRegion = AMap.getRegion(enemyBase);
+            ARegion enemyBaseRegion = AMap.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
-            for (Position point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
+            for (APosition point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.Yellow);
             }
         }

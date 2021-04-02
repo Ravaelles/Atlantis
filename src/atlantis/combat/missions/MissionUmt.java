@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.map.AMap;
+import atlantis.map.ARegion;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -16,14 +17,9 @@ public class MissionUmt extends Mission {
     private static AUnit flagshipUnit = null;
 
     // =========================================================
-    
-    private static MissionUmt instance;
-    
-    // =========================================================
 
     protected MissionUmt(String name) {
-        super(name);
-        instance = this;
+        super(name, null, null);
     }
     
     // =========================================================
@@ -97,7 +93,7 @@ public class MissionUmt extends Mission {
 
         // === Return location to go to ====================================
         
-        Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
+        ARegion nearestUnexploredRegion = AMap.getNearestUnexploredRegion(flagshipUnit.getPosition());
         explorePosition = (nearestUnexploredRegion != null
                 ? APosition.create(nearestUnexploredRegion.getCenter()) : null);
         if (!unit.isMoving() && explorePosition != null && explorePosition.distanceTo(unit) > 2.5) {
@@ -183,9 +179,9 @@ public class MissionUmt extends Mission {
     
     // =========================================================
     
-    public static MissionUmt getInstance() {
-        return instance;
-    }
+//    public static MissionUmt getInstance() {
+//        return instance;
+//    }
 
     public static AUnit getFlagshipUnit() {
         return flagshipUnit;

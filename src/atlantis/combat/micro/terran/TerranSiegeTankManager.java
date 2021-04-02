@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -144,12 +145,12 @@ public class TerranSiegeTankManager {
     // =========================================================
     
     private static boolean canSiegeHere(AUnit tank) {
-        Chokepoint choke = AMap.getNearestChokepoint(tank.getPosition());
+        AChokepoint choke = AMap.getNearestChokepoint(tank.getPosition());
         if (choke == null) {
             return true;
         }
         else {
-            return tank.distanceTo(choke.getCenter()) > 1 || choke.getWidth() / 32 > 3.5;
+            return tank.distanceTo(choke.getCenter()) > 4 || (choke.getWidth() / 32 > 3);
         }
     }
 

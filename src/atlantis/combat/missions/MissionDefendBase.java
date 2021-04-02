@@ -7,7 +7,7 @@ import atlantis.units.Select;
 public class MissionDefendBase extends Mission {
 
     protected MissionDefendBase(String name) {
-        super(name);
+        super(name, null, null);
     }
 
     @Override

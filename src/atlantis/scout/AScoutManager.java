@@ -8,6 +8,7 @@ import atlantis.combat.micro.AAvoidDefensiveBuildings;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.map.AMap;
+import atlantis.map.ARegion;
 import atlantis.position.APosition;
 import atlantis.position.Positions;
 import atlantis.units.AUnit;
@@ -171,7 +172,7 @@ public class AScoutManager {
         // === Remain at the enemy base if it's known ==============
         APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-            Region enemyBaseRegion = AMap.getRegion(enemyBase);
+            ARegion enemyBaseRegion = AMap.getRegion(enemyBase);
 
             if (scoutingAroundBasePoints.isEmpty()) {
                 initializeEnemyRegionPolygonPoints(scout, enemyBaseRegion);
@@ -245,7 +246,7 @@ public class AScoutManager {
         }
     }
 
-    private static void defineNextPolygonPointForEnemyBaseRoamingUnit(Region region, AUnit scout) {
+    private static void defineNextPolygonPointForEnemyBaseRoamingUnit(ARegion region, AUnit scout) {
         
         // Change roaming direction if we were forced to run from enemy units
         if (scoutingAroundBaseWasInterrupted) {
@@ -294,7 +295,7 @@ public class AScoutManager {
         }
     }
     
-    private static void initializeEnemyRegionPolygonPoints(AUnit scout, Region enemyBaseRegion) {
+    private static void initializeEnemyRegionPolygonPoints(AUnit scout, ARegion enemyBaseRegion) {
         Position centerOfRegion = enemyBaseRegion.getCenter();
 
         scoutingAroundBasePoints.addPosition(APosition.create(centerOfRegion));
@@ -328,14 +329,14 @@ public class AScoutManager {
 //        }
     }
 
-    private static APosition useNearestPolygonPoint(Region region, AUnit scout) {
+    private static APosition useNearestPolygonPoint(ARegion region, AUnit scout) {
         APosition nearest = scoutingAroundBasePoints.nearestTo(scout.getPosition());
         scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.getLastIndex();
         return nearest;
     }
 
     public static APosition getUmtFocusPoint(APosition startPosition) {
-        Region nearestUnexploredRegion = AMap.getNearestUnexploredRegion(startPosition);
+        ARegion nearestUnexploredRegion = AMap.getNearestUnexploredRegion(startPosition);
         return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
     }
 
