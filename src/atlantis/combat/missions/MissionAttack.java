@@ -2,7 +2,6 @@ package atlantis.combat.missions;
 
 import atlantis.Atlantis;
 import atlantis.combat.micro.managers.AttackManager;
-import atlantis.combat.micro.managers.ContainUnitManager;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -15,7 +14,7 @@ import bwapi.Color;
 public class MissionAttack extends Mission {
 
     public MissionAttack(String name) {
-        super(name, new MissionContainFocusPointManager(), new ContainUnitManager());
+        super(name, new MissionAttackFocusPointManager(), new AttackManager());
     }
 
     @Override

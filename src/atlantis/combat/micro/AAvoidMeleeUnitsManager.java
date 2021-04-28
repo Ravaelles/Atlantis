@@ -90,7 +90,7 @@ public class AAvoidMeleeUnitsManager {
         double lowHealthBonus = lowHealthBonus(unit);
         double safetyDistance;
 
-        safetyDistance = 4;
+        safetyDistance = 5;
 
 //        if (unit.isVulture()) {
 //            safetyDistance = 3 + lowHealthBonus;

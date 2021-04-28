@@ -12,7 +12,7 @@ public class MissionContainFocusPointManager extends MissionFocusPointManager {
     }
 
     public AChokepoint getChokepoint() {
-        APosition attackFocusPoint = MissionAttackFocusPoint.focusPoint();
+        APosition attackFocusPoint = focusPoint();
         if (attackFocusPoint == null) {
             return null;
         }
@@ -20,8 +20,8 @@ public class MissionContainFocusPointManager extends MissionFocusPointManager {
         return AMap.getNearestChokepoint(attackFocusPoint);
     }
 
-    private static APosition couldNotDefineFocusPoint() {
-        return MissionAttackFocusPoint.focusPoint();
+    private APosition couldNotDefineFocusPoint() {
+        return focusPoint();
     }
 
 }

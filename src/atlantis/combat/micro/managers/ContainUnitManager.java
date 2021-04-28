@@ -6,6 +6,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
 public class ContainUnitManager extends MissionUnitManager {
+
     private Mission mission;
 
     public boolean updateUnit(AUnit unit) {
