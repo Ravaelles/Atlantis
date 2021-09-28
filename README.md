@@ -2,7 +2,7 @@
 ...is an extensive Java framework based on BWMirror 2.5 and BWAPI 4.1.2 with one goal in mind:
 *Make it much, much easier to create new bot starting from zero*.
 
-![alt tag](http://s15.postimg.org/mnsu7qnt7/Atlantis_Tide.png)
+![image](https://i.ibb.co/db9BXDT/Atlantis.png)
 
 Atlantis wraps everything heavily, so you don't need to write yourself countless lines of tedious code that every bot unfortunately needs to have to do the simplest stuff. It has quite clean and re-usable code (at least it has high priority on my list). 
 
