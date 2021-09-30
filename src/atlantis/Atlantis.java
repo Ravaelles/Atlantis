@@ -136,9 +136,8 @@ public class Atlantis implements BWEventListener {
         try {
             ABuildOrderManager.switchToBuildOrder(AtlantisConfig.DEFAULT_BUILD_ORDER);
 
-            System.out.println();
             if (ABuildOrderManager.getCurrentBuildOrder() != null) {
-                System.out.println("Use build order: " + ABuildOrderManager.getCurrentBuildOrder().getName());
+                System.out.println("Use build order: `" + ABuildOrderManager.getCurrentBuildOrder().getName() + "`");
             }
             else {
                 System.err.println("Invalid (empty) build order in AtlantisConfig!");

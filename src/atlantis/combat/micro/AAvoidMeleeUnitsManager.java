@@ -40,9 +40,10 @@ public class AAvoidMeleeUnitsManager {
         // === Run the fuck outta here ==============================
         
 //            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), "RUN", Color.Red);
+
         if (unit.runFrom(null)) {
 //                APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -48), "RUUUUUUUN", Color.Orange);
-            unit.setTooltip("Ruuuun");
+            unit.setTooltip("Ruuuuuuun");
             return true;
         }
 
@@ -87,26 +88,7 @@ public class AAvoidMeleeUnitsManager {
     }
 
     private boolean shouldRunFromAnyEnemyMeleeUnit(AUnit unit) {
-        double lowHealthBonus = lowHealthBonus(unit);
-        double safetyDistance;
-
-        safetyDistance = 5;
-
-//        if (unit.isVulture()) {
-//            safetyDistance = 3 + lowHealthBonus;
-//        } else if (unit.isWorker()) {
-//            if (unit.isGatheringGas() || unit.isGatheringMinerals()) {
-//                safetyDistance = 0.8 + lowHealthBonus;
-//            } else {
-//                safetyDistance = 1.4 + lowHealthBonus;
-//            }
-//        } else {
-//            safetyDistance = 2.2 + lowHealthBonus;
-//
-//            if (unit.getWeaponRangeGround() > 1 && safetyDistance > unit.getWeaponRangeGround()) {
-//                safetyDistance = unit.getWeaponRangeGround() - 0.15;
-//            }
-//        }
+        double safetyDistance = 5;
 
         // =========================================================
         // Apply bonus when there are maaany enemies nearby
@@ -137,8 +119,28 @@ public class AAvoidMeleeUnitsManager {
         return false;
     }
 
-    private double lowHealthBonus(AUnit unit) {
-        return Math.max(((100 - unit.getHPPercent()) / 25), 1.7);
+    private boolean isEnemyCriticallyClose(AUnit unit) {
+        double baseCriticalDistance = (unit.isVulture() ? 2.6 : 2.6);
+        double healthBonus = unit.getHPPercent() < 70 ? ((100 - unit.getHPPercent()) / 50) : 0;
+        double numberOfNearEnemiesBonus = Math.max(0.4,
+                ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
+        double archonBonus = (((Select.enemyRealUnits().combatUnits().ofType(AUnitType.Protoss_Archon)
+                .inRadius(5, unit)).count() > 0) ? 1 : 0);
+
+        double criticalDistance = baseCriticalDistance + numberOfNearEnemiesBonus
+                + healthBonus + archonBonus;
+        double enemyDistance = nearestEnemy.distanceTo(unit);
+
+        // isEnemyCriticallyClose
+        if (enemyDistance < criticalDistance) {
+//            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Red);
+//            APainter.paintLine(unit, nearestEnemy, Color.Red);
+            return true;
+        }
+        else {
+//            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Green);
+            return false;
+        }
     }
 
     private boolean shouldInterruptPendingAttack(AUnit unit) {
@@ -166,30 +168,6 @@ public class AAvoidMeleeUnitsManager {
             return false;
         } else {
             return nearestEnemyDistance < 1.8 && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
-        }
-    }
-
-    private boolean isEnemyCriticallyClose(AUnit unit) {
-        double baseCriticalDistance = (unit.isVulture() ? 2.6 : 2.0);
-        double healthBonus = unit.getHPPercent() < 30 ? 0.25 : 0;
-        double numberOfNearEnemiesBonus = Math.max(0.4,
-                ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
-        double archonBonus = (((Select.enemyRealUnits().combatUnits().ofType(AUnitType.Protoss_Archon)
-                .inRadius(5, unit)).count() > 0) ? 1 : 0);
-
-        double criticalDistance = baseCriticalDistance + numberOfNearEnemiesBonus
-                + healthBonus + archonBonus;
-        double enemyDistance = nearestEnemy.distanceTo(unit);
-        boolean isEnemyCriticallyClose = enemyDistance < criticalDistance;
-
-        if (isEnemyCriticallyClose) {
-//            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Red);
-//            APainter.paintLine(unit, nearestEnemy, Color.Red);
-            return true;
-        }
-        else {
-//            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Green);
-            return false;
         }
     }
 

@@ -33,9 +33,10 @@ public class MissionUmt extends Mission {
 //            return false;
 //        }
         
-        if (unit.isJustShooting() || !unit.isReadyToShoot()) {
-            return false;
-        }
+//        if (unit.isJustShooting() || !unit.isReadyToShoot()) {
+//        if (unit.isJustShooting()) {
+//            return true;
+//        }
 
         // =========================================================
         

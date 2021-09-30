@@ -52,8 +52,11 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // === LOW priority - STRATEGY level =======================
         // =========================================================
 
-        // Strategy
-        return handleLowPriority(unit);
+        if (canHandleLowPriority(unit)) {
+            return handleLowPriority(unit);
+        }
+
+        return false;
     }
 
     private static void preActions(AUnit unit) {
@@ -121,12 +124,21 @@ public class ACombatUnitManager extends AbstractMicroManager {
         return false;
     }
 
+    private static boolean canHandleLowPriority(AUnit unit) {
+        if (unit.isRunning() && unit.getLastUnitOrderWasFramesAgo() <= 6) {
+            unit.setTooltip("Run");
+            return true;
+        }
+
+        return unit.isStopped() || unit.isIdle();
+    }
+
     /**
      * If we're here, mission manager is allowed to take control over this unit.
      * Meaning no action was needed on *tactical* level - stick to *strategic* level.
      */
     private static boolean handleLowPriority(AUnit unit) {
-        unit.setTooltip("Mission:" + unit.getSquad().getMission().getName());
+        unit.setTooltip(unit.getSquad().getMission().getName());
 
         return unit.getSquad().getMission().update(unit);
     }

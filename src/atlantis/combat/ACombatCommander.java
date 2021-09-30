@@ -15,7 +15,7 @@ public class ACombatCommander {
     public static void update() {
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
         
-        if (AGame.everyNthGameFrame(20)) {
+        if (AGame.everyNthGameFrame(40)) {
             Missions.handleGlobalMission();
         }
         
@@ -37,11 +37,7 @@ public class ACombatCommander {
      * proper micro managers.
      */
     private static void handleSquad(Squad squad) {
-
-        // Make sure this battle squad has up-to-date strategy
-        if (!Missions.globalMission().equals(squad.getMission())) {
-            squad.setMission(Missions.globalMission());
-        }
+        squad.setMission(Missions.globalMission());
 
         // =========================================================
         

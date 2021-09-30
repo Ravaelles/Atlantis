@@ -14,8 +14,8 @@ public class AttackManager extends MissionUnitManager {
         unit.setTooltip("#MAttack");
 
         if (unit.distanceTo(mission.focusPoint()) > 6) {
-//                unit.attackPosition(focusPoint);
-            unit.move(mission.focusPoint(), UnitActions.MOVE);
+//            unit.move(mission.focusPoint(), UnitActions.MOVE);
+            unit.attackPosition(mission.focusPoint());
             unit.setTooltip("#MA:Forward!");
             return true;
         }

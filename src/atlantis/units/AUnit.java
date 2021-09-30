@@ -860,6 +860,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return u.isStartingAttack();
     }
 
+    public boolean isStopped() {
+        return u.getLastCommand() == null;
+    }
+
     public boolean isStuck() {
         return u.isStuck();
     }
