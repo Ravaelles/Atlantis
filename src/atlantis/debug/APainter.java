@@ -59,13 +59,16 @@ public class APainter {
      * Executed once per frame, at the end of all other actions.
      */
     public static void paint() {
-//        if (1 < 2) {
-//            return;
-//        }
-
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
         bwapi = Atlantis.game();
+
+        // =========================================================
+
+//        AUnit unit = Select.our().first();
+//        if (unit.u().getLastCommand() != null) {
+//            paintText(unit.getPosition(), unit.u().getLastCommand().toString(), Color.Cyan);
+//        }
 
         // =========================================================
         if (paintingMode == MODE_NO_PAINTING) {
@@ -107,7 +110,7 @@ public class APainter {
         paintTooltipsOverUnits();
 
         setTextSizeMedium();
-                
+
         // =========================================================
 //        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
 ;
@@ -211,7 +214,7 @@ public class APainter {
 //                }
 
             // =========================================================
-            // === Paint circle around units with zero ground weapon 
+            // === Paint circle around units with zero ground weapon
             // === cooldown equal to 0 - meaning they can shoot now
             // =========================================================
 //                if (unit.getGroundWeaponCooldown() == 0) {
@@ -414,7 +417,7 @@ public class APainter {
         paintSideMessage("Prod. queue:", Color.White);
 
         // === Display units currently in production ========================================
-        
+
         // Units
         for (AUnit unit : Select.ourNotFinished().listUnits()) {
             AUnitType type = unit.getType();
@@ -423,19 +426,19 @@ public class APainter {
             }
             paintSideMessage(type.getShortName(), Color.Green);
         }
-        
+
         // Techs
         for (TechType techType : ATech.getCurrentlyResearching()) {
             paintSideMessage(techType.toString(), Color.Green);
         }
-        
+
         // Upgrades
         for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
             paintSideMessage(upgradeType.toString(), Color.Green);
         }
 
         // === Display units that should be produced right now or any time ==================
-        
+
         ArrayList<ProductionOrder> produceNow = ABuildOrderManager.getThingsToProduceRightNow(ABuildOrderManager.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
@@ -443,7 +446,7 @@ public class APainter {
         }
 
         // === Display next units to produce ================================================
-        
+
         ArrayList<ProductionOrder> fullQueue = ABuildOrderManager.getProductionQueueNext(
                 5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
@@ -458,7 +461,7 @@ public class APainter {
         }
 
         // === Paint info if queues are empty ===============================================
-        
+
         if (produceNow.isEmpty() && fullQueue.isEmpty()) {
             paintSideMessage("Nothing to produce - it seems to be a bug", Color.Red);
         }
@@ -599,7 +602,7 @@ public class APainter {
             if (unit.isRunning()) {
                 paintLine(unit.getPosition(), unit.getRunManager().getRunToPosition(), Color.Yellow);
                 paintLine(unit.getPosition().translateByPixels(1, 1), unit.getRunManager().getRunToPosition(), Color.Yellow);
-                
+
                 if (unit.getRunManager().getRunToPosition() != null) {
                     paintCircleFilled(unit.getRunManager().getRunToPosition(), 10, Color.Yellow);
                 }
@@ -620,11 +623,11 @@ public class APainter {
                 paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
                         2, flagHeight, Color.Grey); // Flag stick
             }
-            
+
             // Paint #ID
-            paintTextCentered(unit.getPosition().translateByTiles(0, 1), 
+            paintTextCentered(unit.getPosition().translateByTiles(0, 1),
                     "#" + unit.getID() + " " + unit.getUnitAction(), Color.Cyan);
-            
+
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
 //                paintCircle(unit, 15, Color.Teal);
@@ -712,10 +715,10 @@ public class APainter {
             );
             //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.Black, false, false);
 
-            
+
             // =========================================================
             // Paint progress text
-            
+
             Color progressColor;
             if (labelProgress < 26) {
                 progressColor = Color.Red;
@@ -727,22 +730,22 @@ public class APainter {
                 progressColor = Color.Green;
             }
             stringToDisplay = labelProgress + "%";
-            
+
             paintTextCentered(
-                    new APosition(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2), 
+                    new APosition(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2),
                     stringToDisplay, progressColor
             );
-            
+
             // =========================================================
-            
+
             // Display name of unit
             String name = unit.getBuildType().getShortName();
 
-            // Paint building name            
-            paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 7), 
+            // Paint building name
+            paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 7),
                     name, Color.White);
         }
-        
+
         setTextSizeSmall();
     }
 
@@ -899,7 +902,7 @@ public class APainter {
                 }
 
 //            string += "/";
-//            
+//
 //            if (unit.getUnitAction() != null) {
 //                string += unit.getUnitAction();
 //            }
@@ -929,7 +932,7 @@ public class APainter {
 //            else {
 //                paintCircle(enemyUnitData.getPosition(), 10, Color.Red);
 //            }
-//            paintTextCentered(enemyUnitData.getPosition().translate(0, 10), 
+//            paintTextCentered(enemyUnitData.getPosition().translate(0, 10),
 //                    enemyUnitData.getPosition().toString(), Color.White);
         }
     }
@@ -979,7 +982,7 @@ public class APainter {
     private static final int timeConsumptionBarMaxWidth = 50;
     private static final int timeConsumptionBarHeight = 14;
     private static final int timeConsumptionYInterval = 16;
-    
+
     /**
      * Paints bars showing CPU time usage by game aspect (like "Production", "Combat", "Workers", "Scouting").
      */
@@ -1010,7 +1013,7 @@ public class APainter {
             // Draw aspect label
             paintMessage(aspectTitle, Color.White, x + 4, y + 1, true);
         }
-        
+
         // Paint total time
         int x = timeConsumptionLeftOffset;
         int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++ + 3;
@@ -1112,8 +1115,8 @@ public class APainter {
 //        }
 //        for (int dx = 0; dx < width; dx++) {
 //            for (int dy = 0; dy < width; dx++) {
-//                bwapi.drawLineMap(new Position(start.getX() + dx, start.getY() + dy).makeValid(), 
-//                        new Position(end.getX() + dx, end.getY() + dy).makeValid(), 
+//                bwapi.drawLineMap(new Position(start.getX() + dx, start.getY() + dy).makeValid(),
+//                        new Position(end.getX() + dx, end.getY() + dy).makeValid(),
 //                        color);
 //            }
 //        }

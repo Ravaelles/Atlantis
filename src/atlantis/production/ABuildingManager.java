@@ -10,12 +10,6 @@ public class ABuildingManager {
 
     public static void update() {
         for (AUnit building : Select.ourBuildings().listUnits()) {
-            if (AGame.isPlayingAsTerran()) {
-                if (building.isUnderAttack() && building.getHPPercent() < 24) {
-                    building.lift();
-                }
-            }
-
             // Paint center of building and its borders
 //            APainter.paintCircleFilled(building.getPosition(), 3, Color.Red);
 //            APainter.paintLine(building.getPosition(), building.getType().getDimensionRight(), 0, Color.Red);

@@ -36,13 +36,6 @@ public class AGameCommander {
         ACombatCommander.update();
         AScoutManager.update();
 
-        // === Terran only ==================================================
-
-        if (AGame.isPlayingAsTerran()) {
-            TerranFlyingBuildingManager.update();
-            ARepairCommander.update();
-        }
-
         // === Handle UMT ===================================================
         
         if (AGame.isUmtMode()) {

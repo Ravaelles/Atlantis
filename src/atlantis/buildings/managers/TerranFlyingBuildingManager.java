@@ -21,18 +21,28 @@ public class TerranFlyingBuildingManager {
     
     public static void update() {
         if (AGame.isPlayingAsTerran() && !AGame.isUmtMode()) {
-            if (shouldLiftABuilding()) {
+            if (shouldHaveAFlyingBuilding()) {
                 liftABuildingAndFlyAmongStars();
             }
+
+            updateIfBuildingNeedsToBeLifted();
             
             for (AUnit flyingBuilding : flyingBuildings) {
                 updateFlyingBuilding(flyingBuilding);
             }
         }
     }
-    
+
     // =========================================================
-    
+
+    private static void updateIfBuildingNeedsToBeLifted() {
+        for (AUnit building : Select.ourBuildings().listUnits()) {
+            if (building.isUnderAttack() && !building.isLifted() && building.getHPPercent() < 24) {
+                building.lift();
+            }
+        }
+    }
+
     private static boolean updateFlyingBuilding(AUnit flyingBuilding) {
         
         // Define focus point for current mission
@@ -62,7 +72,7 @@ public class TerranFlyingBuildingManager {
     
     // =========================================================
 
-    private static boolean shouldLiftABuilding() {
+    private static boolean shouldHaveAFlyingBuilding() {
         if (!flyingBuildings.isEmpty()) {
             return false;
         }

@@ -1,7 +1,10 @@
 package atlantis.production;
 
+import atlantis.AGame;
 import atlantis.buildings.managers.ASupplyManager;
+import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.constructing.AConstructionManager;
+import atlantis.repair.ARepairCommander;
 import atlantis.util.CodeProfiler;
 
 /**
@@ -29,6 +32,15 @@ public class ABuildingsCommander {
 
         // Auxiliary class, avoid using it for anything else than debugging.
         ABuildingManager.update();
+
+        // === Terran only =========================================
+
+        if (AGame.isPlayingAsTerran()) {
+            TerranFlyingBuildingManager.update();
+            ARepairCommander.update();
+        }
+
+        // =========================================================
         
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_BUILDINGS);
     }
