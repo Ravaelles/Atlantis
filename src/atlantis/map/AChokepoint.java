@@ -3,8 +3,6 @@ package atlantis.map;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import bwapi.Pair;
-import bwapi.Position;
-import bwta.BaseLocation;
 import bwta.Chokepoint;
 import bwta.Region;
 

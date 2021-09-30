@@ -18,7 +18,6 @@ import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.BWTA;
-import bwta.BaseLocation;
 import bwta.Chokepoint;
 import bwta.Region;
 
@@ -45,11 +44,9 @@ public class AMap {
     @SuppressWarnings("deprecation")
     public static void initMapAnalysis() {
         System.out.print("Analyzing map... ");
-
+        
         BWTA.readMap(Atlantis.game());
         BWTA.analyze();
-
-//        bwta = new BWTA(Atlantis.game());
     }
 
     // =========================================================
