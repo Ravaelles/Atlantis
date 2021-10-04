@@ -1,7 +1,7 @@
 package atlantis.combat;
 
 import atlantis.AGame;
-import atlantis.AtlantisGameSpeed;
+import atlantis.AGameSpeed;
 import atlantis.combat.micro.*;
 import atlantis.combat.micro.terran.TerranInfantryManager;
 import atlantis.combat.micro.terran.TerranMedic;
@@ -61,8 +61,8 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
     private static void preActions(AUnit unit) {
         unit.removeTooltip();
-        if (AtlantisGameSpeed.isDynamicSlowdownActive() && (unit.isAttacking() || unit.isUnderAttack())) {
-            AtlantisGameSpeed.disableDynamicSlowdown();
+        if (AGameSpeed.isDynamicSlowdownActive() && (unit.isAttacking() || unit.isUnderAttack())) {
+            AGameSpeed.disableDynamicSlowdown();
         }
     }
 

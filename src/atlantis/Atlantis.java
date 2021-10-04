@@ -39,7 +39,7 @@ public class Atlantis implements BWEventListener {
     /**
      * Class controlling game speed.
      */
-    private static AtlantisGameSpeed gameSpeed;
+    private static AGameSpeed gameSpeed;
 
     /**
      * Top abstraction-level class that governs all units, buildings etc.
@@ -87,8 +87,9 @@ public class Atlantis implements BWEventListener {
         // Initialize Game Commander, a class to rule them all
         gameCommander = new AGameCommander();
 
-        // Aux class to control game speed and changing it dynamically
-        gameSpeed = new AtlantisGameSpeed();
+        // Game speed mode that starts fast, slows down when units are attacking
+        AGameSpeed.activateDynamicSlowdownMode();
+//        AGameSpeed.disableDynamicSlowdown();
 
         // Uncomment this line to see list of units -> damage.
         AUnitTypesHelper.displayUnitTypesDamage();

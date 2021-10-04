@@ -249,9 +249,9 @@ public class ARunManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
-        double minTiles = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 1.2);
-
-        double maxDist = minTiles;
+//        double minTiles = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 1.2);
+        double minTiles = 4.5;
+        double maxDist = 7;
 
         double currentDist = maxDist;
         while (currentDist >= minTiles) {
@@ -306,7 +306,7 @@ public class ARunManager {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (isPossibleAndReasonablePosition(unit.getPosition(), runTo, dist * 0.6, 1.6 * dist, true)) {
+        if (isPossibleAndReasonablePosition(unit.getPosition(), runTo)) {
 //            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
@@ -345,9 +345,9 @@ public class ARunManager {
 //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
         int border = RUN_ANY_DIRECTION_GRID_BORDER;
-        for (int dx = -border; dx <= border; dx++) {
-            for (int dy = -border; dy <= border; dy++) {
-                if (dx != -border && dx != border && dy != -border && dy != border) {
+        for (int dtx = -border; dtx <= border; dtx++) {
+            for (int dty = -border; dty <= border; dty++) {
+                if (dtx != -border && dtx != border && dty != -border && dty != border) {
                     continue;
                 }
                 
@@ -365,49 +365,41 @@ public class ARunManager {
 //                    );
 //                }
                 // Define vevtor
-                double vectorX = dx;
-                double vectorY = dy;
-                double vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+//                double vectorX = dtx;
+//                double vectorY = dty;
+//                double vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+//
+//                // Normalize
+//                vectorX /= vectorLength;
+//                vectorY /= vectorLength;
+//
+//                // Scale vector
+//                vectorX *= expectedLength;
+//                vectorY *= expectedLength;
+//                vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
 
-                // Normalize
-                vectorX /= vectorLength;
-                vectorY /= vectorLength;
-
-                // Scale vector
-                vectorX *= expectedLength;
-                vectorY *= expectedLength;
-                vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-
-                // Create position
-                APosition potentialPosition = APosition.create(
-                        (int) (tx + vectorX),
-                        (int) (ty + vectorY)
-                );
-
-                // Make sure it's inbounds
-                potentialPosition = potentialPosition.makeValidFarFromBounds();
-//                potentialPosition = potentialPosition.makeValid();
+                // Create position, Make sure it's inbounds
+                APosition potentialPosition = unitPosition.translateByTiles(dtx, dty).makeValidFarFromBounds();
 
                 // If has path to given point, add it to the list of potential points
 //                APainter.paintLine(unitPosition, potentialPosition, Color.Red);
-                if (isPossibleAndReasonablePosition(
-                        unitPosition, potentialPosition, expectedLength * 0.7, 1.4 * expectedLength,false
-                )) {
+                if (isPossibleAndReasonablePosition(unitPosition, potentialPosition)) {
+                    potentialPositionsList.add(potentialPosition);
                     
                     // Check if position slightly further is walkable as well
-                    APosition furtherPosition = APosition.create(
-                            (int) (tx + vectorX * (expectedLength + 1.5) / expectedLength),
-                            (int) (ty + vectorY * (expectedLength + 1.5) / expectedLength)
-                    );
+//                    APosition furtherPosition = APosition.create(
+//                            (int) (tx + vectorX * (expectedLength + 1.5) / expectedLength),
+//                            (int) (ty + vectorY * (expectedLength + 1.5) / expectedLength)
+//                    );
 //                    APainter.paintLine(unitPosition, furtherPosition, Color.Orange);
                     
-                    if (isPossibleAndReasonablePosition(
-                            unitPosition, furtherPosition,expectedLength * 0.6, 3 * expectedLength, false
-                    )) {
-//                        expectedLength * 0.6, 3 * expectedLength, avoidCornerPoints)) {
-                        potentialPositionsList.add(potentialPosition);
-//                        APainter.paintLine(unitPosition, potentialPosition, Color.Teal);
-                    }
+//                    if (isPossibleAndReasonablePosition(
+//                            unitPosition, furtherPosition,expectedLength * 0.6, 3 * expectedLength, false
+//                    )) {
+////                        expectedLength * 0.6, 3 * expectedLength, avoidCornerPoints)) {
+//                        potentialPositionsList.add(potentialPosition);
+////                        APainter.paintLine(unitPosition, potentialPosition, Color.Teal);
+//                    }
                 }
             }
         }
@@ -472,8 +464,9 @@ public class ARunManager {
     /**
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
-    public static boolean isPossibleAndReasonablePosition(APosition unitPosition, APosition position,
-            double minDist, double maxDist, boolean allowCornerPointsEtc) {
+    public static boolean isPossibleAndReasonablePosition(
+            APosition unitPosition, APosition position
+    ) {
         
 //        boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) 
 //                && AMap.isWalkable(position) && unit.hasPathTo(position)
@@ -493,16 +486,16 @@ public class ARunManager {
 //        }
 
 //        boolean isOkay = AMap.isWalkable(position)
-//                && unit.hasPathTo(position)
         boolean isOkay = AMap.isWalkable(position)
-//                && AMap.isWalkable(position.translateTilesTowards(unitPosition, -1))
-                && Select.neutral().inRadius(1.2, position).count() == 0
-                && Select.enemy().inRadius(1.2, position).count() == 0
-                && Select.ourBuildings().inRadius(1.2, position).count() == 0
-                //                && Atlantis.getBwapi().getUnitsInRadius(unit, 1).isEmpty()
-                //                && AtlantisMap.isWalkable(position.translateByTiles(-1, -1))
-                //                && AtlantisMap.isWalkable(position.translateByTiles(1, 1))
-//                && AMap.getGroundDistance(unit, position) <= maxDist;
+                && (
+                    AMap.isWalkable(position.translateByPixels(-32, 0))
+                    && AMap.isWalkable(position.translateByPixels(0, 32))
+                )
+                && Select.all().inRadius(1.2, position).count() == 0
+                && unitPosition.hasPathTo(position)
+//                && Select.neutral().inRadius(1.2, position).count() == 0
+//                && Select.enemy().inRadius(1.2, position).count() == 0
+//                && Select.ourBuildings().inRadius(1.2, position).count() == 0
                 ;
         
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));

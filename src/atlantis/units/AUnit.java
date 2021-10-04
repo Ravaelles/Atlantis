@@ -190,9 +190,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //        if (AtlantisRunManager.isPossibleAndReasonablePosition(
 //                this, newPosition, -1, 9999, true
 //        ) && move(newPosition, UnitActions.MOVE)) {
-        if (ARunManager.isPossibleAndReasonablePosition(
-                this.getPosition(), newPosition, moveDistance * 0.2, moveDistance * 1.5, true
-            ) 
+        if (ARunManager.isPossibleAndReasonablePosition(this.getPosition(), newPosition)
                 && move(newPosition, UnitActions.MOVE)) {
             this.setTooltip("Move away");
             return true;

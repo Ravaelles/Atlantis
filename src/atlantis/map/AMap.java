@@ -44,7 +44,7 @@ public class AMap {
     @SuppressWarnings("deprecation")
     public static void initMapAnalysis() {
         System.out.print("Analyzing map... ");
-        
+
         BWTA.readMap(Atlantis.game());
         BWTA.analyze();
     }
@@ -506,6 +506,13 @@ public class AMap {
      */
     public static boolean isWalkable(APosition position) {
         return Atlantis.game().isWalkable(position.getX() / 8, position.getY() / 8);
+    }
+
+    /**
+     * Returns true if it's possible to build on the given position.
+     */
+    public static boolean isBuildable(APosition position) {
+        return Atlantis.game().isBuildable(position.getX() / 8, position.getY() / 8);
     }
 
     // =========================================================

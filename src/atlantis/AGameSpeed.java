@@ -1,6 +1,6 @@
 package atlantis;
 
-public class AtlantisGameSpeed {
+public class AGameSpeed {
 
     private static int DYNAMIC_SLOWDOWN_FRAME_SKIP = 9;
 
@@ -15,9 +15,9 @@ public class AtlantisGameSpeed {
 
     // =========================================================
 
-    public AtlantisGameSpeed() {
-        activateDynamicSlowdownMode();
-    }
+//    public AGameSpeed() {
+//        Atlantis.game().setLocalSpeed(0);
+//    }
 
     // =========================================================
 
