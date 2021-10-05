@@ -10,10 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ARepairManager {
     
     public static final int MODE_REPAIR_ONLY = 1;

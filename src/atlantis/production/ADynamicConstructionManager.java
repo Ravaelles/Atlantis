@@ -7,10 +7,7 @@ import atlantis.constructing.AConstructionManager;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.Select;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ADynamicConstructionManager {
 
     public static void update() {

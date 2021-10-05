@@ -19,15 +19,15 @@ public class MissionAttackFocusPointManager extends MissionFocusPointManager {
 
         // === Handle UMT ==========================================
         
-        if (AGame.isUmtMode()) {
-            AUnit firstUnit = Select.ourRealUnits().first();
-            if (firstUnit != null) {
-                return getUmtFocusPoint(firstUnit.getPosition());
-            }
-            else {
-                return null;
-            }
-        }
+//        if (AGame.isUmtMode()) {
+//            AUnit firstUnit = Select.ourRealUnits().first();
+//            if (firstUnit != null) {
+//                return getUmtFocusPoint(firstUnit.getPosition());
+//            }
+//            else {
+//                return null;
+//            }
+//        }
         
         // =========================================================
 

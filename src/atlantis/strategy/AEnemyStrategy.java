@@ -3,10 +3,7 @@ package atlantis.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AEnemyStrategy {
     
     private static final List<AEnemyStrategy> allStrategies = new ArrayList<>();

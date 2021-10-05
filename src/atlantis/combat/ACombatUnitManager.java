@@ -12,9 +12,6 @@ import atlantis.repair.ARepairManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
-/**
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
 public class ACombatUnitManager extends AbstractMicroManager {
 
     protected static boolean update(AUnit unit) {
@@ -85,6 +82,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
         // Dark Templars are deadly!
         if (AAvoidInvisibleEnemyManager.avoidInvisibleUnits(unit)) {
+            return true;
+        }
+
+        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
             return true;
         }
 

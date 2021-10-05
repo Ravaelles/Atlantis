@@ -4,35 +4,38 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
 public class AAvoidDefensiveBuildings {
 
     public static boolean avoidCloseBuildings(AUnit unit) {
-        AUnit buildingTooClose = defineNearestBuilding(unit);
+        AUnit enemyBuildingThatCanAttackThisUnit = defineNearestBuilding(unit);
         
-        // If there's enemy defensive building too close
-        if (buildingTooClose != null) {
-            double enemyWeaponRange = buildingTooClose.getWeaponRangeAgainst(unit);
-            double enemyDistance = buildingTooClose.distanceTo(unit);
-//            System.out.println("weapon " + buildingTooClose.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
-            double distanceMargin = enemyDistance - enemyWeaponRange;
-
-            if (distanceMargin < 2.8 && (!unit.isMoving() && !unit.isHoldingPosition())) {
-                boolean result = unit.holdPosition();
-                unit.setTooltip("AvoidHold (" + String.format("%.1f", distanceMargin) + ")");
-                return result;
-            }
-
-            if (distanceMargin < 1.5 && !unit.isMoving()) {
-                boolean result = unit.moveAwayFrom(buildingTooClose.getPosition(), 1);
-                unit.setTooltip("AvoidMove (" + String.format("%.1f", distanceMargin) + ")");
-                return result;
-            }
+        if (enemyBuildingThatCanAttackThisUnit == null) {
+            return false;
         }
-        
+
+        int ourUnits = Select.ourCombatUnits().inRadius(10, unit).count();
+        if (ourUnits >= 12) {
+            System.out.println("Forget caannons, ourUnits = " + ourUnits);
+            return false;
+        }
+
+        double enemyWeaponRange = enemyBuildingThatCanAttackThisUnit.getWeaponRangeAgainst(unit);
+        double enemyDistance = enemyBuildingThatCanAttackThisUnit.distanceTo(unit);
+//            System.out.println("weapon " + buildingTooClose.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
+        double distanceMargin = enemyDistance - enemyWeaponRange;
+
+        if (distanceMargin < 2.8 && (!unit.isMoving() && !unit.isHoldingPosition())) {
+            unit.holdPosition();
+            unit.setTooltip("AvoidHold (" + String.format("%.1f", distanceMargin) + ")");
+            return true;
+        }
+
+        if (distanceMargin < 1.5 && !unit.isMoving()) {
+            boolean result = unit.moveAwayFrom(enemyBuildingThatCanAttackThisUnit.getPosition(), 1);
+            unit.setTooltip("AvoidMove (" + String.format("%.1f", distanceMargin) + ")");
+            return result;
+        }
+
         return false;
     }
 

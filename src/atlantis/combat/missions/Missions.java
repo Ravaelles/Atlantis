@@ -37,8 +37,8 @@ public class Missions {
 //        }
 
         // =========================================================
-        if (currentGlobalMission == Missions.DEFEND) {
-            if (canChangeMissionToAttack()) {
+        if (currentGlobalMission != Missions.ATTACK) {
+            if (shouldChangeMissionToAttack()) {
 //                if (AGame.playsAsTerran()) {
 //                    if (Select.our().countUnitsOfType(AUnitType.UnitTypes.Terran_Medic) < 4) {
 //                        return;
@@ -46,10 +46,8 @@ public class Missions {
 //                }
                 currentGlobalMission = Missions.ATTACK;
             }
-        } else if (currentGlobalMission == Missions.ATTACK) {
-//            if (AGame.getTimeSeconds() > 350 && Select.ourCombatUnits().count() <= 5) {
-//                currentGlobalMission = Missions.DEFEND;
-//            }
+        } else if (shouldChangeMissionToContain()) {
+            currentGlobalMission = Missions.CONTAIN;
         }
     }
 
@@ -58,15 +56,15 @@ public class Missions {
     /**
      * Defines how many military units we should have before pushing forward towards the enemy.
      */
-    private static int defineMinUnitsToForFirstAttack() {
+    private static int defineMinUnitsToStrategicallyAttack() {
 
         // We're TERRAN
         if (AGame.isPlayingAsTerran()) {
-            return 6;
+            return 50;
         } // =========================================================
         // We're PROTOSS
         else if (AGame.isPlayingAsProtoss()) {
-            return 2;
+            return 30;
         } // =========================================================
         // We're ZERG
         else {
@@ -74,7 +72,7 @@ public class Missions {
         }
     }
 
-    private static boolean canChangeMissionToAttack() {
+    private static boolean shouldChangeMissionToAttack() {
         
         // === Terran ========================================
         
@@ -89,7 +87,15 @@ public class Missions {
         
         // =========================================================
 
-        if (Select.ourCombatUnits().count() < defineMinUnitsToForFirstAttack()) {
+        if (Select.ourCombatUnits().count() < defineMinUnitsToStrategicallyAttack()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static boolean shouldChangeMissionToContain() {
+        if (Select.ourCombatUnits().count() < 15) {
             return false;
         }
 
@@ -105,13 +111,14 @@ public class Missions {
         if (AGame.isUmtMode()) {
 //            return Missions.UMT;
             return Missions.ATTACK;
+//            return Missions.DEFEND;
         }
         
         // =========================================================
         
 //        return Missions.DEFEND;
-        return Missions.ATTACK;
-//        return Missions.CONTAIN;
+//        return Missions.ATTACK;
+        return Missions.CONTAIN;
     }
 
     /**

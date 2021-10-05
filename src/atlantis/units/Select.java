@@ -833,6 +833,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit prey = unitFrom(unitsIterator.next());
+
             if (!attacker.canAttackThisKindOfUnit(prey, false)) {
                 unitsIterator.remove();
             }

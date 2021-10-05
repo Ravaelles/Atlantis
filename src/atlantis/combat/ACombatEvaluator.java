@@ -11,10 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ACombatEvaluator {
     
     /**
@@ -65,7 +62,8 @@ public class ACombatEvaluator {
 //            return false;
 //        }
 
-        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight);
+//        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight);
+        return evaluateSituation(unit) * 0.7 >= evaluateSituation(nearestEnemy);
     }
 
     /**

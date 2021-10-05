@@ -10,10 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AStrategyInformations {
     
     protected static int needDefBuildingAntiLand = 0;

@@ -10,10 +10,7 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ABuildOrderLoader {
     
     /**

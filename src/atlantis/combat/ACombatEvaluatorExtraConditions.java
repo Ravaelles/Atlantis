@@ -6,10 +6,7 @@ import atlantis.units.Select;
 import atlantis.util.PositionUtil;
 
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ACombatEvaluatorExtraConditions {
 
     private static AUnit unit = null;

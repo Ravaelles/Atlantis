@@ -7,10 +7,7 @@ import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class TerranVultureManager {
 
     public static boolean update(AUnit unit) {

@@ -12,8 +12,6 @@ import bwapi.UpgradeType;
 
 /**
  * Class using default methods which are extracted from AUnit class to separate this functionality.
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public interface AUnitOrders {
 

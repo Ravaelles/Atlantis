@@ -4,10 +4,7 @@ import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import bwapi.Color;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AAttackEnemyUnit {
 
     /**

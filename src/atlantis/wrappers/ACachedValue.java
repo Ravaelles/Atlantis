@@ -5,10 +5,7 @@ import bwapi.Unit;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ACachedValue<T> {
 
     private int cacheLifespanInFrames;

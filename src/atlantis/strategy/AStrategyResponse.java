@@ -8,10 +8,7 @@ import atlantis.production.requests.AAntiLandRequest;
 import atlantis.production.requests.ADetectorRequest;
 import atlantis.scout.AScoutManager;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AStrategyResponse {
     
     public static void update() {

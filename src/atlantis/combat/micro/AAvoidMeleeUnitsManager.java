@@ -5,10 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AAvoidMeleeUnitsManager {
     
     private AUnit nearestEnemy = null;
@@ -76,9 +73,7 @@ public class AAvoidMeleeUnitsManager {
 
         // =========================================================
 
-        boolean shouldSkip = unit.isAirUnit();
-//        boolean shouldSkip = unit.isAirUnit() || unit.isWorker();
-//        boolean isHealthyAndHasManyHP = unit.getHitPoints() >= 60 && unit.getHPPercent() >= 100;
+        boolean shouldSkip = unit.isAirUnit() || unit.isMeleeUnit();
         if (shouldSkip) {
             return true;
         }

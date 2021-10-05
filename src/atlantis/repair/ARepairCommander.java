@@ -14,10 +14,7 @@ import bwta.Chokepoint;
 import java.util.Collection;
 import java.util.Iterator;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ARepairCommander {
 
     public static void update() {

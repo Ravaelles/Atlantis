@@ -3,10 +3,6 @@ package atlantis;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
 public class AViewport {
     
     protected static int SCREEN_WIDTH = 640;

@@ -5,10 +5,7 @@ import atlantis.units.Units;
 import java.util.ArrayList;
 
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ProtossConstructionManager {
 
     /**

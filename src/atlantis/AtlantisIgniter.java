@@ -4,10 +4,6 @@ import atlantis.util.AtlantisUtilities;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
 public class AtlantisIgniter {
     
     private static boolean shouldUpdateFileContent = false;

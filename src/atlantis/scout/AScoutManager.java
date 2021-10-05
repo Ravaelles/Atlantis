@@ -64,7 +64,6 @@ public class AScoutManager {
         // === Act with every scout ================================
         
         assignScoutIfNeeded();
-//        for (AUnit scout : scouts) {
         try {
             for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
                 AUnit scout = iterator.next();
@@ -79,7 +78,7 @@ public class AScoutManager {
     }
     
     private static boolean update(AUnit scout) {
-        if (!scout.isAlive()) {
+        if (!scout.isAlive() || AEnemyUnits.getEnemyBase() != null) {
             scouts.remove(scout);
             return true;
         }
@@ -233,7 +232,7 @@ public class AScoutManager {
                 scouts.addAll(Select.ourCombatUnits().listUnits());
             }
         } // =========================================================
-        // TERRAN + PRTOSSS
+        // TERRAN + PROTOSS
         else if (scouts.isEmpty() && Select.ourWorkers().count() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
             scouts.add(Select.ourWorkers().first());
         }

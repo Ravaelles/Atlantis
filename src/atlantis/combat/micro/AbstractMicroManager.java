@@ -13,10 +13,7 @@ import atlantis.util.PositionUtil;
 import bwapi.WeaponType;
 import java.util.Collection;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public abstract class AbstractMicroManager {
 
     private static AUnit _nearestEnemyThatCanShootAtThisUnit = null;
@@ -30,9 +27,9 @@ public abstract class AbstractMicroManager {
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
     protected static boolean shouldRetreat(AUnit unit) {
-        if (!unit.canAnyCloseEnemyShootThisUnit(2)) {
-            return false;
-        }
+//        if (!unit.canAnyCloseEnemyShootThisUnit(2)) {
+//            return false;
+//        }
         
         boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit, isNewFight);

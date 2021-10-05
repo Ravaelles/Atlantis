@@ -3,10 +3,7 @@ package atlantis.production.orders;
 import atlantis.units.AUnitType;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public abstract class ABuildOrder {
 
     /**

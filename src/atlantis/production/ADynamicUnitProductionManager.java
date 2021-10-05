@@ -6,10 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import java.util.List;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ADynamicUnitProductionManager {
 
     public static void update() {

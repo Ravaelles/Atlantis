@@ -4,10 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import java.util.Collection;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AWorkerDefenceManager {
 
     /**

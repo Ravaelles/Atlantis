@@ -34,8 +34,6 @@ import java.util.Map;
  *
  * Also you can always reference original Unit class via u() method, but please avoid it as code will be very
  * hard to migrate to another bridge. I've already used 3 of them in my career so far.
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class AUnit implements Comparable, HasPosition, AUnitOrders {
     
@@ -807,7 +805,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isVisible() {
-        return u.isVisible();
+        return u.isVisible() && !u.isCloaked();
     }
 
     public boolean isMiningOrExtractingGas() {

@@ -42,14 +42,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author Rafaelles <rafaelles.org>
- */
 public class AtlantisUtilities {
 
     /**

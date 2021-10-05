@@ -47,11 +47,11 @@ public class AWorkerManager {
 
     private static boolean workerManagerForbiddenFor(AUnit worker) {
         if (AScoutManager.isScout(worker)) {
-            return false;
+            return true;
         }
 
         if (ARepairManager.isRepairerOfAnyKind(worker)) {
-            return false;
+            return true;
         }
 
         return false;

@@ -15,8 +15,6 @@ import java.util.Map;
  * Atlantis uses wrappers for BWAPI  classes which aren't extended.<br /><br />
  * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you can
  * create missing method here and you can reference original UnitType class via ut() method.
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class AUnitType implements Comparable<AUnitType> {
 

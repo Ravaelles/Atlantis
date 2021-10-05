@@ -11,10 +11,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwta.Chokepoint;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class TerranBunkerPositionFinder {
 
     public static APosition findPosition(AUnitType building, AUnit builder, ConstructionOrder order) {

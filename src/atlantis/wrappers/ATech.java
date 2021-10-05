@@ -6,10 +6,7 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ATech {
     
     private static ArrayList<TechType> currentlyResearching = new ArrayList<>();

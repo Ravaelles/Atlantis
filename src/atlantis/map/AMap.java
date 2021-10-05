@@ -256,27 +256,18 @@ public class AMap {
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
     public static ABaseLocation getNaturalBaseLocation(Position nearestTo) {
-//        Position nearestTo = mainBasePosition instanceof Position
-//                ? (Position) mainBasePosition
-//                : ((APosition) mainBasePosition).getPoint();
-
-        // =========================================================
-
-        // Get list of all base locations
+        // Get all base locations, sort by being closest to given nearestTo position
         Positions<ABaseLocation> baseLocations = new Positions<>();
         baseLocations.addPositions(getBaseLocations());
-
-        // Sort them all by closest to given nearestTo position
         baseLocations.sortByGroundDistanceTo(nearestTo, true);
 
-        // Return second nearest location.
-        int counter = 0;
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (counter > 0) {
-                return baseLocation;
+            if (baseLocation.isStartLocation()) {
+                continue;
             }
-            counter++;
+            return baseLocation;
         }
+
         return null;
     }
 

@@ -7,10 +7,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ZergOverlordManager {
 
     public static void update(AUnit unit) {

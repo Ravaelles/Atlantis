@@ -6,10 +6,7 @@ import atlantis.util.WeaponUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AUnitTypesHelper {
 
     /**

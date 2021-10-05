@@ -3,10 +3,7 @@ package atlantis.information;
 import atlantis.units.AUnit;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AOurUnitsExtraInfo {
     
     public static ArrayList<Integer> idsOfOurDestroyedUnits = new ArrayList<>();

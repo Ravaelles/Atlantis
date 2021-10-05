@@ -25,8 +25,6 @@ import java.util.Objects;
  * you can create them here or reference original Position class via p() method. 
  * <br /><br />
  * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
 public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
     

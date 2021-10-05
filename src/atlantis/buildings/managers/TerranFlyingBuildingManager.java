@@ -9,10 +9,7 @@ import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class TerranFlyingBuildingManager {
 
     private static ArrayList<AUnit> flyingBuildings = new ArrayList<>();

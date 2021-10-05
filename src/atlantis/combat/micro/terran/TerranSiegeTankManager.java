@@ -7,10 +7,7 @@ import atlantis.units.Select;
 import atlantis.util.AtlantisUtilities;
 import bwta.Chokepoint;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class TerranSiegeTankManager {
     private static AUnit nearestEnemyUnit;
     private static double nearestEnemyUnitDist;

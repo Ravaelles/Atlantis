@@ -9,10 +9,7 @@ import bwapi.BulletType;
 import bwapi.Position;
 import java.util.List;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ABadWeather {
 
     public static boolean avoidSpellsMines(AUnit unit) {

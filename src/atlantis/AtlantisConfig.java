@@ -81,7 +81,7 @@ public class AtlantisConfig {
      * Force production of a worker whenever you have minerals and more than N workers, but less than
      * AUTO_PRODUCE_WORKERS_MAX_WORKERS.
      */
-    public static int AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = 20;
+    public static int AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = 1;
 
     /**
      * Maximum number of workers. This variable ONLY MAKES SENSE WHEN USED TOGETHER WITH 

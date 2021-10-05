@@ -4,10 +4,7 @@ import atlantis.AGame;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AEnemyProtossStrategy extends AEnemyStrategy {
     
     // Rush

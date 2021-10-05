@@ -5,10 +5,7 @@ import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ADynamicWorkerProductionManager {
 
     /**

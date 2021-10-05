@@ -7,10 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ZergCreepColony {
 
     public static APosition findPosition(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {

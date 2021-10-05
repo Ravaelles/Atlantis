@@ -1,6 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
+import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -8,17 +9,15 @@ import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
+import bwapi.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ARunManager {
 
-    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 1;
+    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 3;
     
     // =========================================================
     
@@ -250,7 +249,7 @@ public class ARunManager {
      */
     private APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
 //        double minTiles = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 1.2);
-        double minTiles = 4.5;
+        double minTiles = 3.5;
         double maxDist = 7;
 
         double currentDist = maxDist;
@@ -306,7 +305,7 @@ public class ARunManager {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (isPossibleAndReasonablePosition(unit.getPosition(), runTo)) {
+        if (isPossibleAndReasonablePosition(unit.getPosition(), runTo, "O", "X")) {
 //            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
@@ -383,7 +382,7 @@ public class ARunManager {
 
                 // If has path to given point, add it to the list of potential points
 //                APainter.paintLine(unitPosition, potentialPosition, Color.Red);
-                if (isPossibleAndReasonablePosition(unitPosition, potentialPosition)) {
+                if (isPossibleAndReasonablePosition(unitPosition, potentialPosition, "v", "x")) {
                     potentialPositionsList.add(potentialPosition);
                     
                     // Check if position slightly further is walkable as well
@@ -467,7 +466,13 @@ public class ARunManager {
     public static boolean isPossibleAndReasonablePosition(
             APosition unitPosition, APosition position
     ) {
-        
+        return isPossibleAndReasonablePosition(unitPosition, position, null, null);
+    }
+
+    public static boolean isPossibleAndReasonablePosition(
+            APosition unitPosition, APosition position, String charForIsOk, String charForNotOk
+    ) {
+
 //        boolean isOkay = position.distanceTo(unit) > (minDist - 0.2) 
 //                && AMap.isWalkable(position) && unit.hasPathTo(position)
 //                && Select.all().inRadius(0.2, position).count() <= 1
@@ -491,13 +496,17 @@ public class ARunManager {
                     AMap.isWalkable(position.translateByPixels(-32, 0))
                     && AMap.isWalkable(position.translateByPixels(0, 32))
                 )
-                && Select.all().inRadius(1.2, position).count() == 0
+                && Select.all().inRadius(1.5, position).count() == 0
                 && unitPosition.hasPathTo(position)
 //                && Select.neutral().inRadius(1.2, position).count() == 0
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0
                 ;
-        
+
+        if (charForIsOk != null) {
+            APainter.paintTextCentered(position, isOkay ? charForIsOk : charForNotOk, isOkay ? Color.Green : Color.Red);
+        }
+
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
 
 //        if (isOkay && !allowCornerPointsEtc) {

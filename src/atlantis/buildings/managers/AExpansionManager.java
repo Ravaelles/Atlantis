@@ -10,10 +10,7 @@ import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.Select;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class AExpansionManager {
 
     public static void requestNewBaseIfNeeded() {
