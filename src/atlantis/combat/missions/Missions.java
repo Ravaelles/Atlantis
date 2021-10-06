@@ -60,11 +60,11 @@ public class Missions {
 
         // We're TERRAN
         if (AGame.isPlayingAsTerran()) {
-            return 50;
+            return 15;
         } // =========================================================
         // We're PROTOSS
         else if (AGame.isPlayingAsProtoss()) {
-            return 30;
+            return 18;
         } // =========================================================
         // We're ZERG
         else {
@@ -76,14 +76,14 @@ public class Missions {
         
         // === Terran ========================================
         
-        if (AGame.isPlayingAsTerran()) {
-            if (Select.ourOfType(AUnitType.Terran_Vulture).count() > 0) {
-                return true;
-            }
-            if (Select.ourTanks().count() < 4) {
-                return false;
-            }
-        }
+//        if (AGame.isPlayingAsTerran()) {
+//            if (Select.ourOfType(AUnitType.Terran_Vulture).count() > 0) {
+//                return true;
+//            }
+//            if (Select.ourTanks().count() < 4) {
+//                return false;
+//            }
+//        }
         
         // =========================================================
 
@@ -95,8 +95,15 @@ public class Missions {
     }
 
     private static boolean shouldChangeMissionToContain() {
-        if (Select.ourCombatUnits().count() < 15) {
-            return false;
+        int ourCombatUnits = Select.ourCombatUnits().count();
+
+        if (AGame.isPlayingAsTerran()) {
+            return ourCombatUnits <= 8;
+        }
+        else if (AGame.isPlayingAsProtoss()) {
+            return ourCombatUnits <= 8;
+        } if (AGame.isPlayingAsZerg()) {
+            return ourCombatUnits <= 8;
         }
 
         return true;
@@ -126,6 +133,10 @@ public class Missions {
      * always correspond to the mission of our main Alpha battle squad.
      */
     public static Mission globalMission() {
+        if (currentGlobalMission == null) {
+            currentGlobalMission = getInitialMission();
+        }
+
         return currentGlobalMission;
     }
 
@@ -134,6 +145,10 @@ public class Missions {
     }
 
     public static boolean isGlobalMissionAttack() {
+        if (AGame.isUmtMode()) {
+            return true;
+        }
+
         return globalMission().isMissionAttack();
     }
 

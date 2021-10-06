@@ -48,6 +48,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     private UnitAction unitAction;
 //    private int _lastTimeOrderWasIssued = -1;
     private AUnit _cachedNearestMeleeEnemy = null;
+    public int lastX;
+    public int lastY;
 
     // =========================================================
 
@@ -1074,5 +1076,12 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     public void setCachedNearestMeleeEnemy(AUnit _cachedNearestMeleeEnemy) {
         this._cachedNearestMeleeEnemy = _cachedNearestMeleeEnemy;
     }
-    
+
+    public void unbug() {
+        this.stop();
+//        if (isHoldingPosition()) {
+//        } else {
+//            this.holdPosition();
+//        }
+    }
 }

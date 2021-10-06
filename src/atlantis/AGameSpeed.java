@@ -39,7 +39,7 @@ public class AGameSpeed {
         dynamicSlowdown_isSlowdownActive = false;
 
         Atlantis.game().setLocalSpeed(dynamicSlowdown_previousSpeed);
-        Atlantis.game().setFrameSkip(0);
+        Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
 
         System.out.println("Disabled SLOWDOWN");
     }

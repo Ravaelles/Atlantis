@@ -15,7 +15,6 @@ public class AAvoidDefensiveBuildings {
 
         int ourUnits = Select.ourCombatUnits().inRadius(10, unit).count();
         if (ourUnits >= 12) {
-            System.out.println("Forget caannons, ourUnits = " + ourUnits);
             return false;
         }
 

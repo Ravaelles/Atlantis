@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ARunManager {
 
-    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 3;
+    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 4;
     
     // =========================================================
     
@@ -503,9 +503,9 @@ public class ARunManager {
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0
                 ;
 
-        if (charForIsOk != null) {
-            APainter.paintTextCentered(position, isOkay ? charForIsOk : charForNotOk, isOkay ? Color.Green : Color.Red);
-        }
+//        if (charForIsOk != null) {
+//            APainter.paintTextCentered(position, isOkay ? charForIsOk : charForNotOk, isOkay ? Color.Green : Color.Red);
+//        }
 
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
 

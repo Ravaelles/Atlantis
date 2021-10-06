@@ -66,6 +66,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
+        // Handle units getting bugged by Starcraft
+        if (handleBuggedUnit(unit)) {
+            return true;
+        }
 
         // Don't INTERRUPT shooting units
         if (shouldNotDisturbUnit(unit)) {
@@ -229,5 +233,25 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //    private static boolean isAllowedToAttackBeforeRetreating(AUnit unit) {
 //        return unit.isType(AUnitType.Protoss_Reaver, AUnitType.Terran_Vulture) && unit.getHPPercent() > 10;
 //    }
+
+    private static boolean handleBuggedUnit(AUnit unit) {
+        if (unit.isMoving() && unit.getLastUnitOrderWasFramesAgo() > 10) {
+            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
+                System.out.println("ANTI BUG #1!");
+                unit.setTooltip("UNFREEZE!");
+                unit.unbug();
+                return true;
+            }
+        }
+
+        if (unit.isUnderAttack() && unit.getLastUnitOrderWasFramesAgo() > 20) {
+            System.out.println("ANTI BUG #2!");
+            unit.setTooltip("UNFREEZE!");
+            unit.unbug();
+            return true;
+        }
+
+        return false;
+    }
 
 }

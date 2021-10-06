@@ -38,7 +38,8 @@ public class MissionContain extends MissionAttack {
 
         // Focus point is well known
         if (focusPoint != null && unit.distanceTo(focusPoint) > 8) {
-            return AttackManager.attackFocusPoint(unit, focusPoint);
+            AttackManager.attackFocusPoint(unit, focusPoint);
+            return true;
         }
 
         // Invalid focus point, no enemy can be found, roam around map

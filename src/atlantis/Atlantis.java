@@ -89,7 +89,6 @@ public class Atlantis implements BWEventListener {
 
         // Game speed mode that starts fast, slows down when units are attacking
         AGameSpeed.activateDynamicSlowdownMode();
-//        AGameSpeed.disableDynamicSlowdown();
 
         // Uncomment this line to see list of units -> damage.
         AUnitTypesHelper.displayUnitTypesDamage();

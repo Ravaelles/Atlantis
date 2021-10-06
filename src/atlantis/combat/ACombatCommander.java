@@ -45,6 +45,11 @@ public class ACombatCommander {
         for (AUnit unit : squad.arrayList()) {
             ACombatUnitManager.update(unit);
             unit.setTooltip(unit.getLastUnitOrderWasFramesAgo() + "");
+
+            if (AGame.everyNthGameFrame(10)) {
+                unit.lastX = unit.getX();
+                unit.lastY = unit.getY();
+            }
         }
     }
 
