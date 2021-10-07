@@ -1,7 +1,9 @@
 package atlantis.combat.missions;
 
+import atlantis.AGame;
+import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidDefensiveBuildings;
-import atlantis.combat.micro.managers.AttackManager;
+import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
@@ -32,13 +34,22 @@ public class MissionContain extends MissionAttack {
 
         // =========================================================
 
+//        if (AGame.isPlayingAsTerran() && handleTerran(unit)) {
+//            return true;
+//        }
+
         if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
             return true;
         }
 
+        // Allow to attack nearby enemy units
+        if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit, 8)) {
+            return true;
+        }
+
         // Focus point is well known
-        if (focusPoint != null && unit.distanceTo(focusPoint) > 8) {
-            AttackManager.attackFocusPoint(unit, focusPoint);
+        if (focusPoint != null) {
+            AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint);
             return true;
         }
 
@@ -48,6 +59,17 @@ public class MissionContain extends MissionAttack {
 //        }
 
         // =========================================================
+
+        return false;
+    }
+
+    // =========================================================
+
+    private boolean handleTerran(AUnit unit) {
+        if (unit.isTank() && !unit.isSieged()) {
+            unit.siege();
+            return true;
+        }
 
         return false;
     }

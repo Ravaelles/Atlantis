@@ -11,7 +11,8 @@ import atlantis.map.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
 import atlantis.production.orders.ABuildOrderManager;
-import atlantis.repair.ARepairManager;
+import atlantis.repair.ARepairAssignments;
+import atlantis.repair.ARepairerManager;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
@@ -88,7 +89,7 @@ public class Atlantis implements BWEventListener {
         gameCommander = new AGameCommander();
 
         // Game speed mode that starts fast, slows down when units are attacking
-        AGameSpeed.activateDynamicSlowdownMode();
+        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
 
         // Uncomment this line to see list of units -> damage.
         AUnitTypesHelper.displayUnitTypesDamage();
@@ -265,7 +266,7 @@ public class Atlantis implements BWEventListener {
             if (unit.isOurUnit()) {
                 ABuildOrderManager.rebuildQueue();
                 ASquadManager.battleUnitDestroyed(unit);
-                ARepairManager.removeRepairerOrProtector(unit);
+                ARepairAssignments.removeRepairerOrProtector(unit);
                 LOST++;
                 LOST_RESOURCES += unit.getType().getTotalResources();
             } else {

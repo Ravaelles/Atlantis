@@ -8,13 +8,12 @@ public class AAvoidDefensiveBuildings {
 
     public static boolean avoidCloseBuildings(AUnit unit) {
         AUnit enemyBuildingThatCanAttackThisUnit = defineNearestBuilding(unit);
-        
         if (enemyBuildingThatCanAttackThisUnit == null) {
             return false;
         }
 
         int ourUnits = Select.ourCombatUnits().inRadius(10, unit).count();
-        if (ourUnits >= 12) {
+        if (ourUnits >= 20) {
             return false;
         }
 
@@ -23,17 +22,28 @@ public class AAvoidDefensiveBuildings {
 //            System.out.println("weapon " + buildingTooClose.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
         double distanceMargin = enemyDistance - enemyWeaponRange;
 
-        if (distanceMargin < 2.8 && (!unit.isMoving() && !unit.isHoldingPosition())) {
-            unit.holdPosition();
-            unit.setTooltip("AvoidHold (" + String.format("%.1f", distanceMargin) + ")");
-            return true;
-        }
-
-        if (distanceMargin < 1.5 && !unit.isMoving()) {
-            boolean result = unit.moveAwayFrom(enemyBuildingThatCanAttackThisUnit.getPosition(), 1);
-            unit.setTooltip("AvoidMove (" + String.format("%.1f", distanceMargin) + ")");
+        if (distanceMargin <= 2.0) {
+            boolean result = unit.moveAwayFrom(enemyBuildingThatCanAttackThisUnit.getPosition(), 2);
+            unit.setTooltip("AvoidBack (" + String.format("%.1f", distanceMargin) + ")");
             return result;
         }
+
+        double safeDist = unit.isVulture() ? 6 : 4;
+
+        if (distanceMargin <= safeDist) {
+            if (!unit.isJustShooting()) {
+                unit.setTooltip("AvoidHold (" + String.format("%.1f", distanceMargin) + ")");
+                unit.holdPosition();
+                return true;
+            }
+            unit.setTooltip("Avoid (" + String.format("%.1f", distanceMargin) + ")");
+        }
+
+//        if (distanceMargin <= 4.5) {
+//            boolean result = unit.moveAwayFrom(enemyBuildingThatCanAttackThisUnit.getPosition(), 1.5);
+//            unit.setTooltip("AvoidMove (" + String.format("%.1f", distanceMargin) + ")");
+//            return result;
+//        }
 
         return false;
     }
@@ -46,14 +56,14 @@ public class AAvoidDefensiveBuildings {
                     AUnitType.Terran_Bunker,
                     AUnitType.Protoss_Photon_Cannon,
                     AUnitType.Zerg_Sunken_Colony
-            ).canAttack(unit, 1).first();
+            ).canAttack(unit, 5).nearestTo(unit);
         }
         else  {
             return Select.enemyOfType(
                     AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
                     AUnitType.Protoss_Photon_Cannon,
                     AUnitType.Zerg_Sunken_Colony
-            ).canAttack(unit, 1).first();
+            ).canAttack(unit, 5).nearestTo(unit);
         }
     }
 

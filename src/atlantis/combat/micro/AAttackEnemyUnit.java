@@ -7,14 +7,18 @@ import bwapi.Color;
 
 public class AAttackEnemyUnit {
 
+    public static boolean handleAttackNearbyEnemyUnits(AUnit unit) {
+        return handleAttackNearbyEnemyUnits(unit, 999999);
+    }
+
     /**
      * Selects the best enemy unit and issues attack order.
-     * @return <b>true</b> if unit has found valid target and is currently busy with either starting 
+     * @return <b>true</b> if unit has found valid target and is currently busy with either starting
      * an attack or just attacking the enemy<br />
      * <b>false</b> if no valid enemy to attack could be found
      */
-    public static boolean handleAttackEnemyUnits(AUnit unit) {
-        
+    public static boolean handleAttackNearbyEnemyUnits(AUnit unit, double maxDistFromEnemy) {
+
         // Don't interrupt when shooting or starting to shoot
         if (unit.isJustShooting()) {
             unit.setTooltip("Shooting");
@@ -23,7 +27,7 @@ public class AAttackEnemyUnit {
         
         // =========================================================
         
-        AUnit enemyToAttack = AEnemyTargeting.defineBestEnemyToAttackFor(unit);
+        AUnit enemyToAttack = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
         
         // =========================================================
         

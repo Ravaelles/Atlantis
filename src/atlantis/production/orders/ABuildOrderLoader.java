@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.util.AtlantisUtilities;
+import atlantis.util.AUtil;
 import atlantis.util.NameUtil;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -42,7 +42,7 @@ public class ABuildOrderLoader {
                 + "` build orders file.");
         
         // Parse CSV
-        String[][] loadedFile = AtlantisUtilities.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
+        String[][] loadedFile = AUtil.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
 
         // We can display file here, if we want to
         //displayLoadedFile(loadedFile);

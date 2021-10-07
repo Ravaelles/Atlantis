@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ARunManager {
 
-    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 4;
+    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 6;
     
     // =========================================================
     
@@ -88,7 +88,7 @@ public class ARunManager {
             unit.move(runTo, UnitActions.RUN);
 
             // Make all other units very close to it run as well
-            notifyNearbyUnitsToMakeSpace(unit);
+//            notifyNearbyUnitsToMakeSpace(unit);
 
 //            if (hasMoved) {
             return true;
@@ -121,11 +121,7 @@ public class ARunManager {
         // === Get run to position - as far from enemy as possible =====================
 
         if (runTo == null) {
-            double expectedLength = 4;
-            runTo = findRunPositionAtAnyDirection(unit, runAwayFrom, expectedLength);
-//            System.err.println("==========================================");
-//            System.err.println(AGame.getTimeFrames() + ", dist: " + unit.distanceTo(runTo));
-//            System.err.println("==========================================");
+            runTo = findRunPositionAtAnyDirection(unit, runAwayFrom);
         }
         
         // =============================================================================
@@ -219,50 +215,49 @@ public class ARunManager {
             return null;
         }
 
-//        AUnit mainBase = Select.mainBase();
-//
-//        if (AGame.getTimeSeconds() <= 310 && mainBase != null && !unit.isWorker() && mainBase.distanceTo(unit) > 22) {
-//            return unit.getRunManager().findPositionToRun_preferMainBase(unit, runAwayFrom);
-//        } else {
-        return unit.getRunManager().findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
+//        if (AGame.getTimeSeconds() <= 250 && shouldRunTowardsMainBase(unit, runAwayFrom)) {
+//            return Select.mainBase().getPosition();
 //        }
+
+        return unit.getRunManager().findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
     }
 
     // =========================================================
     /**
      * Running behavior which will make unit run toward main base.
      */
-    private APosition findPositionToRun_preferMainBase(AUnit unit, APosition runAwayFrom) {
-        AUnit mainBase = Select.mainBase();
-        if (mainBase != null) {
-            if (PositionUtil.distanceTo(mainBase, unit) > 10) {
-                return mainBase.getPosition();
-//                return mainBase.translated(0, 3 * 64);
-            }
-        }
-
-        return findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
-    }
+//    private boolean shouldRunTowardsMainBase(AUnit unit, APosition runAwayFrom) {
+//        AUnit mainBase = Select.mainBase();
+//        if (mainBase != null) {
+//            if (PositionUtil.distanceTo(mainBase, unit) > 30) {
+//                return true;
+////                return mainBase.translated(0, 3 * 64);
+//            }
+//        }
+//
+//        return false;
+////        return findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
+//    }
 
     /**
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
 //        double minTiles = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 1.2);
-        double minTiles = 3.5;
-        double maxDist = 7;
+        double minTiles = 1.0;
+        double maxDist = 5.0;
 
         double currentDist = maxDist;
         while (currentDist >= minTiles) {
 
             // Check if this is good position
-            APosition runTo = canRunByShowingBackToEnemyTo(unit, runAwayFrom, currentDist, minTiles, maxDist);
+            APosition runTo = canRunByShowingBackToEnemyTo(unit, runAwayFrom, currentDist);
 
             // Also check if can run further (avoid corner shitholes)
             if (runTo != null) {
-                double distBonus = unit.isVulture() ? 0.6 : 1;
+//                double distBonus = unit.isVulture() ? 2 : 1;
                 APosition doubleRunTo = canRunByShowingBackToEnemyTo(
-                        unit, runAwayFrom, currentDist + distBonus, minTiles, maxDist
+                        unit, runAwayFrom, currentDist
                 );
 
                 // If is okay as well, return it
@@ -271,14 +266,13 @@ public class ARunManager {
                 }
             }
 
-            currentDist -= 2;
+            currentDist -= 1.7;
         }
 
         return null;
     }
 
-    private APosition canRunByShowingBackToEnemyTo(AUnit unit, APosition runAwayFrom,
-            double dist, double minDist, double maxDist) {
+    private APosition canRunByShowingBackToEnemyTo(AUnit unit, APosition runAwayFrom, double dist) {
         APosition runTo;
         double vectorLength = unit.getPosition().distanceTo(runAwayFrom);
 
@@ -319,7 +313,7 @@ public class ARunManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
      * to given runAwayFrom position.
      */
-    private APosition findRunPositionAtAnyDirection(AUnit unit, APosition runAwayFrom, double expectedLength) {
+    private APosition findRunPositionAtAnyDirection(AUnit unit, APosition runAwayFrom) {
 
         // === Define run from ====================================================
 //        Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
@@ -336,8 +330,8 @@ public class ARunManager {
         // ========================================================================
         
         APosition unitPosition = unit.getPosition();
-        int tx = unitPosition.getTileX();
-        int ty = unitPosition.getTileY();
+//        int tx = unitPosition.getTileX();
+//        int ty = unitPosition.getTileY();
 
         // Build list of possible run positions, basically around the clock
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
@@ -492,20 +486,21 @@ public class ARunManager {
 
 //        boolean isOkay = AMap.isWalkable(position)
         boolean isOkay = AMap.isWalkable(position)
-                && (
-                    AMap.isWalkable(position.translateByPixels(-32, 0))
-                    && AMap.isWalkable(position.translateByPixels(0, 32))
-                )
-                && Select.all().inRadius(1.5, position).count() == 0
+//                && (
+//                    AMap.isWalkable(position.translateByPixels(-32, 0))
+//                    && AMap.isWalkable(position.translateByPixels(0, 32))
+//                )
+                && Select.all().inRadius(1.5, position).isEmpty()
+                && Select.neutral().inRadius(4.5, position).isEmpty()
                 && unitPosition.hasPathTo(position)
 //                && Select.neutral().inRadius(1.2, position).count() == 0
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0
                 ;
 
-//        if (charForIsOk != null) {
-//            APainter.paintTextCentered(position, isOkay ? charForIsOk : charForNotOk, isOkay ? Color.Green : Color.Red);
-//        }
+        if (charForIsOk != null) {
+            APainter.paintTextCentered(position, isOkay ? charForIsOk : charForNotOk, isOkay ? Color.Green : Color.Red);
+        }
 
 //        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
 

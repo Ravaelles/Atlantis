@@ -37,11 +37,14 @@ public class AExpansionManager {
 //        }
         
         // === Force decent army before 3rd base =========================================
-        
-        int numberOfBases = Select.ourBases().count() 
-                + AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
-        
+
+        int inConstruction = AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
+        if (inConstruction >= 1) {
+            return;
+        }
+
         // Enforce too have a lot of tanks before expansion
+        int numberOfBases = Select.ourBases().count() + inConstruction;
         if (!hasPlentyOfMinerals && AGame.isPlayingAsTerran() && numberOfBases >= 2) {
             if (Select.ourTanks().count() <= 8) {
                 return;

@@ -25,7 +25,7 @@ public class Missions {
     /**
      * Takes care of current strategy.
      */
-    public static void handleGlobalMission() {
+    public static void evaluateGlobalMission() {
         if (currentGlobalMission == null) {
             currentGlobalMission = getInitialMission();
         }
@@ -60,7 +60,7 @@ public class Missions {
 
         // We're TERRAN
         if (AGame.isPlayingAsTerran()) {
-            return 15;
+            return 18;
         } // =========================================================
         // We're PROTOSS
         else if (AGame.isPlayingAsProtoss()) {
@@ -76,14 +76,11 @@ public class Missions {
         
         // === Terran ========================================
         
-//        if (AGame.isPlayingAsTerran()) {
-//            if (Select.ourOfType(AUnitType.Terran_Vulture).count() > 0) {
-//                return true;
-//            }
-//            if (Select.ourTanks().count() < 4) {
-//                return false;
-//            }
-//        }
+        if (AGame.isPlayingAsTerran()) {
+            if (Select.ourTanks().count() <= 4) {
+                return false;
+            }
+        }
         
         // =========================================================
 
@@ -98,9 +95,8 @@ public class Missions {
         int ourCombatUnits = Select.ourCombatUnits().count();
 
         if (AGame.isPlayingAsTerran()) {
-            return ourCombatUnits <= 8;
-        }
-        else if (AGame.isPlayingAsProtoss()) {
+            return ourCombatUnits <= 13;
+        } else if (AGame.isPlayingAsProtoss()) {
             return ourCombatUnits <= 8;
         } if (AGame.isPlayingAsZerg()) {
             return ourCombatUnits <= 8;
@@ -118,7 +114,6 @@ public class Missions {
         if (AGame.isUmtMode()) {
 //            return Missions.UMT;
             return Missions.ATTACK;
-//            return Missions.DEFEND;
         }
         
         // =========================================================
@@ -142,6 +137,10 @@ public class Missions {
 
     public static boolean isGlobalMissionDefend() {
         return globalMission().isMissionDefend();
+    }
+
+    public static boolean isGlobalMissionContain() {
+        return globalMission().isMissionContain();
     }
 
     public static boolean isGlobalMissionAttack() {

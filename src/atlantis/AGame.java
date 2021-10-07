@@ -3,7 +3,7 @@ package atlantis;
 import static atlantis.Atlantis.game;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.AtlantisUtilities;
+import atlantis.util.AUtil;
 import atlantis.wrappers.ATech;
 import bwapi.*;
 
@@ -295,7 +295,7 @@ public class AGame {
      * Returns random int number from range [min, max], both inclusive.
      */
     public static int rand(int min, int max) {
-        return AtlantisUtilities.rand(min, max);
+        return AUtil.rand(min, max);
     }
 
     /**

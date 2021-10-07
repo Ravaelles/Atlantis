@@ -5,6 +5,8 @@ import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.UnitAction;
+import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
 
@@ -37,15 +39,11 @@ public abstract class Mission {
         return focusPointManager.focusPoint();
     }
 
-    public AChokepoint focusChokepoint() {
-        return focusPointManager.getChokepoint();
-    }
-
     protected boolean handleNoEnemyBuilding(AUnit unit) {
         APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());
         if (position != null) {
-            unit.attackPosition(position);
-            Atlantis.game().drawLineMap(unit.getPosition(), position, Color.Red); //TODO DEBUG
+            unit.move(position, UnitActions.MOVE_TO_ENGAGE);
+            Atlantis.game().drawLineMap(unit.getPosition(), position, Color.Red);
             unit.setTooltip("#MA:Forward!");
             return true;
         }
@@ -75,6 +73,10 @@ public abstract class Mission {
 
     public MissionUnitManager getUnitManager() {
         return unitManager;
+    }
+
+    public boolean isMissionContain() {
+        return this.equals(Missions.CONTAIN);
     }
 
     public boolean isMissionDefend() {

@@ -23,7 +23,7 @@ import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.AtlantisUtilities;
+import atlantis.util.AUtil;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.workers.AWorkerManager;
@@ -381,7 +381,7 @@ public class APainter {
         }
 
         Map<AUnitType, Integer> counters = unitTypesCounter.map();
-        counters = AtlantisUtilities.sortByValue(counters, false);
+        counters = AUtil.sortByValue(counters, false);
         boolean paintedMessage = false;
         for (AUnitType unitType : counters.keySet()) {
             paintSideMessage("+" + counters.get(unitType) + " " + unitType.toString(), Color.Blue, 0);
@@ -400,7 +400,7 @@ public class APainter {
         }
 
         counters = unitTypesCounter.map();
-        counters = AtlantisUtilities.sortByValue(counters, false);
+        counters = AUtil.sortByValue(counters, false);
         for (AUnitType unitType : counters.keySet()) {
             if (!unitType.isBuilding()) {
                 paintSideMessage(counters.get(unitType) + "x " + unitType.toString(), Color.Grey, 0);
@@ -988,7 +988,7 @@ public class APainter {
      */
     private static void paintCodeProfiler() {
         int counter = 0;
-        double maxValue = AtlantisUtilities.getMaxElement(
+        double maxValue = AUtil.getMaxElement(
                 CodeProfiler.getAspectsTimeConsumption().values()
         );
 

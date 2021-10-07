@@ -15,15 +15,17 @@ import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 public class MissionDefendFocusPoint {
 
     public static APosition focusPoint() {
-        // === Handle UMT ==========================================
-
         if (AGame.isUmtMode()) {
+            return null;
+        }
+
+        AUnit mainBase = Select.mainBase();
+        if (mainBase == null) {
             return null;
         }
 
         // === Focus enemy attacking the main base =================
 
-        AUnit mainBase = Select.mainBase();
         if (mainBase != null) {
             AUnit nearEnemy = Select.enemy().combatUnits().nearestTo(mainBase);
             if (nearEnemy != null) {
@@ -37,7 +39,7 @@ public class MissionDefendFocusPoint {
 //            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());
 //        }
 //        else {
-        AChokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
+        AChokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase(mainBase.getPosition());
         if (chokepointForNaturalBase != null) {
             return APosition.create(chokepointForNaturalBase.getCenter());
         }

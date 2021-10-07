@@ -7,9 +7,10 @@ import atlantis.constructing.AConstructionManager;
 import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import atlantis.repair.ARepairManager;
+import atlantis.repair.ARepairAssignments;
+import atlantis.repair.ARepairerManager;
 import atlantis.scout.AScoutManager;
-import atlantis.util.AtlantisUtilities;
+import atlantis.util.AUtil;
 import atlantis.util.PositionUtil;
 import bwapi.Player;
 import bwapi.Position;
@@ -68,6 +69,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         // === Handle UMT ==========================================
+
         if (AGame.isUmtMode()) {
             Player playerUs = AGame.getPlayerUs();
             for (Player player : AGame.getPlayers()) {
@@ -82,7 +84,8 @@ public class Select<T> {
             }
         }
 
-        // === Non-UMT, standard 1:1 ===============================
+        // =========================================================
+
         else {
             for (Unit u : AGame.getEnemy().getUnits()) {
                 AUnit unit = AUnit.createFrom(u);
@@ -697,13 +700,11 @@ public class Select<T> {
      * - mechanical<br />
      * - not 100% healthy<br />
      */
-    public Select<T> repairable(boolean checkIfHealthIsNotMax) {
+    public Select<T> repairable(boolean checkIfWounded) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (!unit.getType().isMechanical() || unit.getType().isBuilding()
-                    || (checkIfHealthIsNotMax && unit.getHitPoints() >= unit.getMaxHitPoints())
-                    || !unit.isCompleted()) {
+            if (!unit.isCompleted() || !unit.getType().isMechanical() || (checkIfWounded && !unit.isWounded())) {
                 unitsIterator.remove();
             }
         }
@@ -717,7 +718,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (unit.isRepairing() || ARepairManager.isRepairerOfAnyKind(unit)) {
+            if (unit.isRepairing() || ARepairAssignments.isRepairerOfAnyKind(unit)) {
                 unitsIterator.remove();
             }
         }
@@ -816,10 +817,6 @@ public class Select<T> {
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 }
-//                else {
-//                    System.out.println(unit.getType().getShortName() + " in range ("
-//                            + unit.distanceTo(targetUnit) + ") to attack " + targetUnit.getType().getShortName());
-//                }
             }
         }
         return this;
@@ -1145,7 +1142,7 @@ public class Select<T> {
      * Returns random unit that matches previous conditions or null if no units matched all conditions.
      */
     public T random() {
-        return (T) AtlantisUtilities.getRandomElement(data); //units.random();
+        return (T) AUtil.getRandomElement(data); //units.random();
     }
 
     // === High-level of abstraction ===========================

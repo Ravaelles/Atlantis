@@ -42,7 +42,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-public class AtlantisUtilities {
+public class AUtil {
 
     /**
      * <b>Random</b> object that can be used in any part of code.
@@ -132,7 +132,7 @@ public class AtlantisUtilities {
      * probability
      * @return true if given random event occured
      */
-    public static boolean chanceOfPercent(double percentChance) {
+    public static boolean chance(double percentChance) {
         return random.nextDouble() <= (percentChance / 100);
     }
 
@@ -271,8 +271,8 @@ public class AtlantisUtilities {
      * Displays given exception in user friendly way (with exception name and stack).
      */
     public static void displayException(Exception e, String title, String preText) {
-        AtlantisUtilities.displayError(title,
-                preText + "\n\n" + e.getMessage() + "\n\n" + AtlantisUtilities.convertStackToString(10, e.getStackTrace()));
+        AUtil.displayError(title,
+                preText + "\n\n" + e.getMessage() + "\n\n" + AUtil.convertStackToString(10, e.getStackTrace()));
     }
 
     /**
@@ -309,7 +309,7 @@ public class AtlantisUtilities {
         panel.setVisible(true);
         frame.add(panel);
         frame.setSize(panel.getSize());
-        AtlantisUtilities.centerFrameOnScreen(frame);
+        AUtil.centerFrameOnScreen(frame);
         frame.setVisible(visible);
         return frame;
     }
@@ -359,7 +359,7 @@ public class AtlantisUtilities {
 
         String text = date.get(Calendar.YEAR) + "-" + month + "-" + day;
         String result = "";
-        for (String part : AtlantisUtilities.implodeList(text, '-')) {
+        for (String part : AUtil.implodeList(text, '-')) {
             if (result.length() > 0) {
                 result += ".";
             }
@@ -423,7 +423,7 @@ public class AtlantisUtilities {
      * Returns string like 2011-06-09 21:20:59
      */
     public static String getDateAndTime() {
-        return AtlantisUtilities.getTodayAsString() + " " + AtlantisUtilities.getCurrentTimeAsString();
+        return AUtil.getTodayAsString() + " " + AUtil.getCurrentTimeAsString();
     }
 
     /**
@@ -527,7 +527,7 @@ public class AtlantisUtilities {
                 return out;
             }
         } catch (Exception e) {
-            AtlantisUtilities.displayException(e, "Błąd", "Błąd przy zapisywaniu do pliku\n" + "saveToFile(\"" + filePath
+            AUtil.displayException(e, "Błąd", "Błąd przy zapisywaniu do pliku\n" + "saveToFile(\"" + filePath
                     + "\", \"" + stringToWrite + "\")");
         }
         return null;
@@ -612,7 +612,7 @@ public class AtlantisUtilities {
      */
     public static void displayETA(long timeStart, int alreadyProcessed, int totalToProcess) {
         double seconds = ((double) (System.currentTimeMillis() - timeStart) / (1000 * alreadyProcessed));
-        String eta = AtlantisUtilities
+        String eta = AUtil
                 .convertSecondsToDisplayableFormat((int) ((totalToProcess - alreadyProcessed) * seconds));
         System.out.println("It took " + String.format("%.1f", seconds) + "s. " + alreadyProcessed * 100
                 / totalToProcess + "% objects (" + alreadyProcessed + "/" + totalToProcess + ") ready. ETA: " + eta);
@@ -667,7 +667,7 @@ public class AtlantisUtilities {
 
             scanner.close();
         } catch (Exception e) {
-            AtlantisUtilities.displayException(e);
+            AUtil.displayException(e);
         }
         return resultList;
     }
@@ -803,7 +803,7 @@ public class AtlantisUtilities {
                 try {
                     callable.call();
                 } catch (Exception ex) {
-                    AtlantisUtilities.displayException(ex);
+                    AUtil.displayException(ex);
                 }
             }
         });
@@ -881,7 +881,7 @@ public class AtlantisUtilities {
      */
     public static double median(Collection<Double> list, boolean mathematicMedian) {
         if (list.isEmpty()) {
-            AtlantisUtilities.displayMessage("List for computing a median is empty!");
+            AUtil.displayMessage("List for computing a median is empty!");
             return -1;
         }
         if (list.size() == 1) {

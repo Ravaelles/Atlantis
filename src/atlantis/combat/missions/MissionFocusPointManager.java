@@ -7,11 +7,4 @@ public abstract class MissionFocusPointManager {
 
     public abstract APosition focusPoint();
 
-    /**
-     * Makes sense only for certain missions e.g. CONTAIN.
-     */
-    public AChokepoint getChokepoint() {
-        return null;
-    }
-
 }

@@ -3,7 +3,7 @@ package atlantis.scout;
 import atlantis.AGame;
 import atlantis.AViewport;
 import atlantis.AtlantisConfig;
-import atlantis.combat.micro.AAvoidMeleeUnitsManager;
+import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
 import atlantis.combat.micro.AAvoidDefensiveBuildings;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
@@ -18,7 +18,7 @@ import atlantis.units.actions.UnitActions;
 import atlantis.util.CodeProfiler;
 import bwapi.Color;
 import bwapi.Position;
-import bwta.Region;
+
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -163,7 +163,7 @@ public class AScoutManager {
     private static boolean handleScoutEnemyBase(AUnit scout) {
 
         // === Avoid melee units ===================================
-        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(scout)) {
+        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(scout)) {
             scoutingAroundBaseWasInterrupted = true;
             return true;
         }
@@ -290,7 +290,7 @@ public class AScoutManager {
         }
 
         if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
-            AViewport.centerScreenOn(scout);
+            AViewport.centerScreenOn(scout.getPosition());
         }
     }
     

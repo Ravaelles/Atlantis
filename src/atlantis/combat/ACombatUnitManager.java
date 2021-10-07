@@ -8,7 +8,8 @@ import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.terran.TerranSiegeTankManager;
 import atlantis.combat.micro.terran.TerranVultureManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
-import atlantis.repair.ARepairManager;
+import atlantis.combat.missions.Missions;
+import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -84,28 +85,25 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        // Dark Templars are deadly!
-        if (AAvoidInvisibleEnemyManager.avoidInvisibleUnits(unit)) {
+        // Dark Templars!
+        if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(unit)) {
             return true;
         }
 
-        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
+        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
             return true;
+        }
+
+        if (!Missions.isGlobalMissionAttack()) {
+            if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
+                return true;
+            }
         }
 
         return false;
     }
 
     private static boolean handledMediumPriority(AUnit unit) {
-        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
-            return true;
-        }
-
-        // Early mode - Attack enemy units when in range (and choose the best target)
-//        boolean isAllowedToAttackDespiteRetreating = isAllowedToAttackBeforeRetreating(unit);
-//        if (isAllowedToAttackDespiteRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
-//            return true;
-//        }
 
         // If nearby enemies would likely defeat us, retreat
         if (shouldRetreat(unit)) {
@@ -113,18 +111,13 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         // Handle repair of mechanical units
-        if (AGame.isPlayingAsTerran() && ARepairManager.handleUnitUnderRepair(unit)) {
+        if (AGame.isPlayingAsTerran() && AUnitBeingReparedManager.handleUnitBeingRepaired(unit)) {
             return true;
         }
 
-        if (AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+        if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit)) {
             return true;
         }
-
-        // Normal mode - Attack enemy units when in range (and choose the best target)
-//        if (!isAllowedToAttackDespiteRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
-//            return true;
-//        }
 
         return false;
     }
@@ -235,9 +228,9 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //    }
 
     private static boolean handleBuggedUnit(AUnit unit) {
-        if (unit.isMoving() && unit.getLastUnitOrderWasFramesAgo() > 10) {
+        if (unit.isMoving() && unit.getLastUnitOrderWasFramesAgo() > 50) {
             if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-                System.out.println("ANTI BUG #1!");
+                System.err.println("UNFREEZE #1!");
                 unit.setTooltip("UNFREEZE!");
                 unit.unbug();
                 return true;
@@ -245,10 +238,12 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         if (unit.isUnderAttack() && unit.getLastUnitOrderWasFramesAgo() > 20) {
-            System.out.println("ANTI BUG #2!");
-            unit.setTooltip("UNFREEZE!");
-            unit.unbug();
-            return true;
+            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
+                System.err.println("UNFREEZE #2!");
+                unit.setTooltip("UNFREEZE!");
+                unit.unbug();
+                return true;
+            }
         }
 
         return false;

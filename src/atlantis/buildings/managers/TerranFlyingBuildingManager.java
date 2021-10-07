@@ -1,6 +1,7 @@
 package atlantis.buildings.managers;
 
 import atlantis.AGame;
+import atlantis.combat.missions.MissionAttackFocusPointManager;
 import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -41,9 +42,7 @@ public class TerranFlyingBuildingManager {
     }
 
     private static boolean updateFlyingBuilding(AUnit flyingBuilding) {
-        
-        // Define focus point for current mission
-        APosition focusPoint = Missions.globalMission().focusPoint();
+        APosition focusPoint = flyingBuildingFocusPoint();
         
         // Move towards focus point if needed
         if (focusPoint != null) {
@@ -51,22 +50,24 @@ public class TerranFlyingBuildingManager {
             
             if (distToFocusPoint > 2) {
                 flyingBuilding.move(focusPoint, UnitActions.MOVE);
-            }
-            
-            if (distToFocusPoint > 5) {
-                return true;
+                flyingBuilding.setTooltip("Fly");
             }
         }
-        
-        // Fly away from nearest tank if it's too close
-        AUnit tankTooNear = Select.ourTanks().nearestToOrNull(flyingBuilding, 4.2);
-        if (tankTooNear != null) {
-            return flyingBuilding.moveAwayFrom(tankTooNear.getPosition(), 0.6);
-        }
-        
+
         return false;
     }
-    
+
+    private static APosition flyingBuildingFocusPoint() {
+        APosition containFocusPoint = Missions.globalMission().focusPoint();
+        APosition attackFocusPoint = Missions.ATTACK.focusPoint();
+
+        if (containFocusPoint != null && attackFocusPoint != null) {
+            return containFocusPoint.translateTilesTowards(attackFocusPoint, 4);
+        }
+
+        return Select.ourTanks().first().getPosition();
+    }
+
     // =========================================================
 
     private static boolean shouldHaveAFlyingBuilding() {
@@ -74,11 +75,11 @@ public class TerranFlyingBuildingManager {
             return false;
         }
         
-        if (Select.ourTanks().count() < 1) {
-            return false;
+        if (Select.ourTanks().count() >= 1 || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5) {
+            return true;
         }
         
-        return true;
+        return false;
     }
 
     private static void liftABuildingAndFlyAmongStars() {

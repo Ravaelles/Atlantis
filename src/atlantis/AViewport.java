@@ -10,8 +10,7 @@ public class AViewport {
     
     // =========================================================
     
-    public static void centerScreenOn(AUnit unit) {
-        APosition position = unit.getPosition();
+    public static void centerScreenOn(APosition position) {
         Atlantis.game().setScreenPosition(
                 position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7)
         );

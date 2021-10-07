@@ -6,7 +6,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 
-public class AttackManager extends MissionUnitManager {
+public class AdvanceUnitsManager extends MissionUnitManager {
 
     private Mission mission;
 
@@ -14,8 +14,8 @@ public class AttackManager extends MissionUnitManager {
         unit.setTooltip("#MAttack");
 
         if (unit.distanceTo(mission.focusPoint()) > 6) {
-//            unit.move(mission.focusPoint(), UnitActions.MOVE);
-            unit.attackPosition(mission.focusPoint());
+            unit.move(mission.focusPoint(), UnitActions.MOVE_TO_ENGAGE);
+//            unit.attackPosition(mission.focusPoint());
             unit.setTooltip("#MA:Forward!");
             return true;
         }
@@ -23,7 +23,7 @@ public class AttackManager extends MissionUnitManager {
         return false;
     }
 
-    public static boolean attackFocusPoint(AUnit unit, APosition focusPoint) {
+    public static boolean moveToFocusPoint(AUnit unit, APosition focusPoint) {
 //        Select<AUnit> nearbyAllies = Select.ourCombatUnits().inRadius(10, unit);
 //        if (nearbyAllies.count() <= 4) {
 //            unit.move(nearbyAllies.first().getPosition(), UnitActions.TOGETHER);
@@ -31,10 +31,20 @@ public class AttackManager extends MissionUnitManager {
 //            return true;
 //        }
 
-        if (unit.distanceTo(focusPoint) > 6) {
-//                unit.attackPosition(focusPoint);
-            unit.move(focusPoint, UnitActions.MOVE);
+        double distToFocusPoint = unit.distanceTo(focusPoint);
+
+        if (distToFocusPoint >= 7) {
+            unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE);
             unit.setTooltip("#MA:Forward!");
+            return true;
+        }
+        else if (distToFocusPoint <= 3) {
+            unit.moveAwayFrom(focusPoint, 3.8);
+            unit.setTooltip("#MA:Forward!");
+            return true;
+        }
+        else if (distToFocusPoint <= 5) {
+            unit.holdPosition();
             return true;
         }
 

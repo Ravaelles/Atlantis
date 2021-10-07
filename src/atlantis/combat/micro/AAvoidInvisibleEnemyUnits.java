@@ -4,7 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-public class AAvoidInvisibleEnemyManager {
+public class AAvoidInvisibleEnemyUnits {
 
     /**
      * Avoid Dark Templars, Lurkers, but ignore Protoss Observers.
@@ -22,10 +22,9 @@ public class AAvoidInvisibleEnemyManager {
     }
 
     public static boolean handledAvoid(AUnit unit, AUnitType type) {
-        double safetyMargin = 1.5;
-        double safeDist = (type.isMeleeUnit() ? 1 : type.getGroundWeapon().maxRange()) + safetyMargin;
+        double safetyMargin = 2.7 + (type.isMeleeUnit() ? 0 : type.getGroundWeapon().maxRange());
 
-        AUnit hiddenEnemy = Select.enemyOfType(AUnitType.Protoss_Dark_Templar).inRadius(2.6, unit).first();
+        AUnit hiddenEnemy = Select.enemyOfType(type).inRadius(safetyMargin, unit).first();
         if (hiddenEnemy != null) {
             unit.runFrom(hiddenEnemy);
             return true;

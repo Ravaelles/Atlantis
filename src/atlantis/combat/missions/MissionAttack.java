@@ -1,6 +1,6 @@
 package atlantis.combat.missions;
 
-import atlantis.combat.micro.managers.AttackManager;
+import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
@@ -11,7 +11,7 @@ import atlantis.units.AUnit;
 public class MissionAttack extends Mission {
 
     public MissionAttack(String name) {
-        super(name, new MissionAttackFocusPointManager(), new AttackManager());
+        super(name, new MissionAttackFocusPointManager(), new AdvanceUnitsManager());
     }
 
     @Override
@@ -23,7 +23,7 @@ public class MissionAttack extends Mission {
 
         // Focus point is well known
         if (focusPoint != null) {
-            return AttackManager.attackFocusPoint(unit, focusPoint);
+            return AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint);
         }
 
         // Invalid focus point, no enemy can be found, roam around map

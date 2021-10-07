@@ -1,9 +1,10 @@
 package atlantis.workers;
 
-import atlantis.combat.micro.AAvoidMeleeUnitsManager;
+import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.AAvoidInvisibleEnemyUnits;
 import atlantis.constructing.ABuilderManager;
 import atlantis.constructing.AConstructionManager;
-import atlantis.repair.ARepairManager;
+import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -14,17 +15,16 @@ public class AWorkerManager {
      * Executed for every worker unit.
      */
     public static boolean update(AUnit worker) {
+        if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(worker)) {
+            return true;
+        }
+        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(worker)) {
+            return true;
+        }
+
         if (workerManagerForbiddenFor(worker)) {
             return false;
         }
-
-        // === Worker micro ========================================
-
-        if (handledAsStandardUnit(worker)) {
-            return true;
-        }
-        
-        // === END OF Worker micro =================================
 
         // Act as BUILDER
         if (AConstructionManager.isBuilder(worker)) {
@@ -50,15 +50,7 @@ public class AWorkerManager {
             return true;
         }
 
-        if (ARepairManager.isRepairerOfAnyKind(worker)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean handledAsStandardUnit(AUnit worker) {
-        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(worker)) {
+        if (ARepairAssignments.isRepairerOfAnyKind(worker)) {
             return true;
         }
 

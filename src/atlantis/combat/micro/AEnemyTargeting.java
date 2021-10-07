@@ -12,34 +12,20 @@ public class AEnemyTargeting {
      * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
-    public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
-        return selectUnitToAttackByType(unit);
-//        AUnit preSelectedEnemy = selectUnitToAttackByType(unit);
-//        AUnit finalEnemyToAttack = null;
-//
-//        // =========================================================
-//        // If found enemy, try to attack enemy of the same type, with fewest HP
-//
-//        if (preSelectedEnemy != null && (unit.isVulture() && preSelectedEnemy.distanceTo(unit) > 3)) {
-//            AUnitType enemyType = preSelectedEnemy.getType();
-//            int weaponRange = unit.getWeaponRangeAgainst(preSelectedEnemy);
-//
-//            // Find most wounded enemy unit of the same type within shoot range
-//            finalEnemyToAttack = Select.enemyOfType(enemyType).inRadius(weaponRange, unit).lowestHealth();
-//        }
-//        else {
-//            finalEnemyToAttack = preSelectedEnemy;
-//        }
-//
-//        return finalEnemyToAttack;
+    public static AUnit defineBestEnemyToAttackFor(AUnit unit, double maxDistFromEnemy) {
+        return selectUnitToAttackByType(unit, maxDistFromEnemy);
     }
     
     // =========================================================
 
-    private static AUnit selectUnitToAttackByType(AUnit unit) {
+    private static AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
+        if (maxDistFromEnemy > 1000) {
+            maxDistFromEnemy = 13;
+        }
+
         if (Select.enemyRealUnits()
                 .canBeAttackedBy(unit, false)
-                .inRadius(14, unit)
+                .inRadius(maxDistFromEnemy, unit)
                 .count() == 0) {
             return null;
         }

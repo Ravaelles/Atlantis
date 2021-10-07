@@ -1,7 +1,6 @@
 package atlantis.position;
 
-import atlantis.util.AtlantisUtilities;
-import bwapi.Point;
+import atlantis.util.AUtil;
 import bwapi.Position;
 import bwta.BWTA;
 import java.util.ArrayList;
@@ -83,7 +82,7 @@ public class Positions<T extends HasPosition> {
      * Returns random positions.
      */
     public Position getRandom() {
-        return (Position) AtlantisUtilities.getRandomListElement(positions);
+        return (Position) AUtil.getRandomListElement(positions);
     }
 
     /**

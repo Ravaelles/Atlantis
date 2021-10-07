@@ -2,7 +2,7 @@ package atlantis;
 
 public class AGameSpeed {
 
-    private static int DYNAMIC_SLOWDOWN_FRAME_SKIP = 9;
+    private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 80;
 
     // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
     private static boolean dynamicSlowdown_isSlowdownActive = false;
@@ -24,7 +24,7 @@ public class AGameSpeed {
     /**
      * Decreases game speed to the value specified in AtlantisConfig when action happens.
      */
-    public static void activateDynamicSlowdownMode() {
+    public static void allowToDynamicallySlowdownGameOnFirstFighting() {
         dynamicSlowdown_previousSpeed = AtlantisConfig.GAME_SPEED;
         dynamicSlowdown_lastTimeUnitDestroyed = AGame.getTimeSeconds();
         dynamicSlowdown_isSlowdownActive = true;
@@ -39,7 +39,8 @@ public class AGameSpeed {
         dynamicSlowdown_isSlowdownActive = false;
 
         Atlantis.game().setLocalSpeed(dynamicSlowdown_previousSpeed);
-        Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
+//        Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
+        Atlantis.game().setFrameSkip(0);
 
         System.out.println("Disabled SLOWDOWN");
     }

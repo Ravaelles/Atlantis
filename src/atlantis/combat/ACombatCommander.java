@@ -16,7 +16,7 @@ public class ACombatCommander {
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
         
         if (AGame.everyNthGameFrame(40)) {
-            Missions.handleGlobalMission();
+            Missions.evaluateGlobalMission();
         }
         
         // === Handle all squads ===================================
@@ -44,9 +44,8 @@ public class ACombatCommander {
         // Act with every combat unit
         for (AUnit unit : squad.arrayList()) {
             ACombatUnitManager.update(unit);
-            unit.setTooltip(unit.getLastUnitOrderWasFramesAgo() + "");
 
-            if (AGame.everyNthGameFrame(10)) {
+            if (AGame.everyNthGameFrame(5)) {
                 unit.lastX = unit.getX();
                 unit.lastY = unit.getY();
             }

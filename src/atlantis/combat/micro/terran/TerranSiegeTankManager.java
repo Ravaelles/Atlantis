@@ -1,11 +1,13 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.combat.missions.MissionContainFocusPointManager;
+import atlantis.combat.missions.Missions;
 import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.util.AtlantisUtilities;
-import bwta.Chokepoint;
+import atlantis.util.AUtil;
 
 
 public class TerranSiegeTankManager {
@@ -57,14 +59,31 @@ public class TerranSiegeTankManager {
      * Sieged
      */
     private static boolean updateWhenSieged(AUnit tank) {
+
+        // Mission is CONTAIN
+        if (Missions.isGlobalMissionContain()) {
+            return false;
+        }
+
+        // =========================================================
+
         if ((nearestEnemyUnit == null && nearestEnemyBuilding == null)
-                || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 11)) {
+                || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 11.2)) {
             tank.setTooltip("Considers unsiege");
-            
-            if (!tank.getSquad().isMissionDefend() && AtlantisUtilities.rand(1, 100) <= 2) {
+
+            if (tank.getSquad().isMissionAttack() && AUtil.chance(2)) {
                 tank.unsiege();
                 tank.setTooltip("Unsiege");
                 return true;
+            }
+
+            if (tank.getSquad().isMissionContain()) {
+                APosition focusPoint = Missions.globalMission().focusPoint();
+                if (focusPoint != null && tank.distanceTo(focusPoint) >= 13 && AUtil.chance(2)) {
+                    tank.unsiege();
+                    tank.setTooltip("Unsiege");
+                    return true;
+                }
             }
         }
         
@@ -75,7 +94,21 @@ public class TerranSiegeTankManager {
      * Not sieged
      */
     private static boolean updateWhenUnsieged(AUnit tank) {
-        
+
+        // Mission is CONTAIN
+        if (Missions.isGlobalMissionContain()) {
+            APosition focusPoint = Missions.globalMission().focusPoint();
+            if (focusPoint != null && tank.distanceTo(focusPoint) <= 11.2) {
+                tank.siege();
+                tank.setTooltip("Contain!");
+                return true;
+            }
+
+            return false;
+        }
+
+        // =========================================================
+
         // If tank is holding position, siege
 //        if (Missions.getGlobalMission().isMissionDefend() && canSiegeHere(tank)) {
 //            tank.siege();

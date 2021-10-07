@@ -138,8 +138,16 @@ public class Squad extends Units {
     
     // =========================================================
 
+    public boolean isMissionContain() {
+        return Missions.CONTAIN.equals(getMission());
+    }
+
     public boolean isMissionDefend() {
         return Missions.DEFEND.equals(getMission());
+    }
+
+    public boolean isMissionAttack() {
+        return Missions.ATTACK.equals(getMission());
     }
 
 }

@@ -3,12 +3,11 @@ package atlantis.units;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
-import atlantis.util.AtlantisUtilities;
+import atlantis.util.AUtil;
 import bwapi.Position;
 import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -76,7 +75,7 @@ public class Units {
      * Returns random unit from the set.
      */
     public AUnit random() {
-        return (AUnit) AtlantisUtilities.getRandomElement(units.keySet());
+        return (AUnit) AUtil.getRandomElement(units.keySet());
     }
     
     /**
@@ -119,7 +118,7 @@ public class Units {
      * Returns random units.
      */
     public AUnit getRandom() {
-        return (AUnit) AtlantisUtilities.getRandomElement(units.keySet());
+        return (AUnit) AUtil.getRandomElement(units.keySet());
     }
 
     // === Value mapping methods ===============================

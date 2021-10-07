@@ -12,12 +12,13 @@ import atlantis.position.PositionHelper;
 import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.util.AtlantisUtilities;
+import atlantis.util.AUtil;
 import atlantis.util.PositionUtil;
 import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.BWTA;
+import bwta.BaseLocation;
 import bwta.Chokepoint;
 import bwta.Region;
 
@@ -128,7 +129,7 @@ public class AMap {
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
-    public static AChokepoint getChokepointForNaturalBase() {
+    public static AChokepoint getChokepointForNaturalBase(APosition relativeToBase) {
         if (cached_naturalBaseChokepoint != null) {
             APainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
             return cached_naturalBaseChokepoint;
@@ -136,14 +137,7 @@ public class AMap {
 
         // =========================================================
 
-        AUnit mainBase = Select.mainBase();
-        if (mainBase == null) {
-            System.err.println("Can't find natural base chokepoint");
-            AGame.setUmtMode(true);
-            return null;
-        }
-
-        ARegion naturalRegion = getRegion(getNaturalBaseLocation(mainBase.getPosition()));
+        ARegion naturalRegion = getRegion(getNaturalBaseLocation(relativeToBase.getPosition()));
         if (naturalRegion == null) {
             System.err.println("Can't find region for natural base");
             AGame.setUmtMode(true);
@@ -255,7 +249,7 @@ public class AMap {
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
-    public static ABaseLocation getNaturalBaseLocation(Position nearestTo) {
+    public static ABaseLocation getNaturalBaseLocation(APosition nearestTo) {
         // Get all base locations, sort by being closest to given nearestTo position
         Positions<ABaseLocation> baseLocations = new Positions<>();
         baseLocations.addPositions(getBaseLocations());
@@ -278,8 +272,8 @@ public class AMap {
         APosition position = null;
         for (int attempts = 0; attempts < 10; attempts++) {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
-            int dx = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
-            int dy = -maxRadius + AtlantisUtilities.rand(0, 2 * maxRadius);
+            int dx = -maxRadius + AUtil.rand(0, 2 * maxRadius);
+            int dy = -maxRadius + AUtil.rand(0, 2 * maxRadius);
             position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValid();
             if (!isVisible(position)) {
                 return position;
@@ -313,28 +307,28 @@ public class AMap {
     /**
      * Returns nearest land-connected position on map which hasn't been explored.
      */
-    public static APosition getNearestUnexploredAccessiblePosition(APosition position) {
-        int maxRadius = Math.max(getMapWidthInTiles(), getMapHeightInTiles());
-        int currentRadius = 6;
-        int step = 3;
-
-        while (currentRadius < maxRadius) {
-            double doubleCurrentRadius = currentRadius * 2;
-            for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {
-                for (int dy = -currentRadius; dy <= currentRadius; dy += doubleCurrentRadius) {
-                    APosition potentialPosition = position.translateByTiles(dx, dy).makeValid();
-                    if (!isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
-                        return potentialPosition;
-                    }
-                }
-            }
-
-            currentRadius += 3;
-        }
-
-//        System.err.println("Can't find getNearestUnexploredAccessiblePosition");
-        return null;
-    }
+//    public static APosition getNearestUnexploredAccessiblePosition(APosition position) {
+//        int maxRadius = Math.max(getMapWidthInTiles(), getMapHeightInTiles());
+//        int currentRadius = 6;
+//        int step = 3;
+//
+//        while (currentRadius < maxRadius) {
+//            double doubleCurrentRadius = currentRadius * 2;
+//            for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {
+//                for (int dy = -currentRadius; dy <= currentRadius; dy += doubleCurrentRadius) {
+//                    APosition potentialPosition = position.translateByTiles(dx, dy).makeValid();
+//                    if (!isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
+//                        return potentialPosition;
+//                    }
+//                }
+//            }
+//
+//            currentRadius += 3;
+//        }
+//
+////        System.err.println("Can't find getNearestUnexploredAccessiblePosition");
+//        return null;
+//    }
 
     public static AChokepoint getNearestChokepoint(APosition position) {
         double nearestDist = 99999;

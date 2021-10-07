@@ -53,6 +53,9 @@ public class TerranBunkerPositionFinder {
 
     private static APosition defineBunkerPosition(String locationModifier) {
         AUnit mainBase = Select.mainBase();
+        if (mainBase == null) {
+            return null;
+        }
 
         // Bunker at MAIN CHOKEPOINT
         if (locationModifier.equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
@@ -65,7 +68,7 @@ public class TerranBunkerPositionFinder {
 
         // Bunker at NATURAL CHOKEPOINT
         else {
-            AChokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase();
+            AChokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase(mainBase.getPosition());
             if (chokepointForNaturalBase != null && mainBase != null) {
                 ABaseLocation naturalBase = AMap.getNaturalBaseLocation(Select.mainBase().getPosition());
                 return APosition.create(chokepointForNaturalBase.getCenter())

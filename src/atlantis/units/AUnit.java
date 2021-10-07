@@ -9,7 +9,8 @@ import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import atlantis.repair.ARepairManager;
+import atlantis.repair.ARepairAssignments;
+import atlantis.repair.ARepairerManager;
 import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
@@ -1050,7 +1051,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isRepairerOfAnyKind() {
-        return ARepairManager.isRepairerOfAnyKind(this);
+        return ARepairAssignments.isRepairerOfAnyKind(this);
     }
 
     public boolean isScout() {
@@ -1078,10 +1079,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public void unbug() {
-        this.stop();
-//        if (isHoldingPosition()) {
-//        } else {
-//            this.holdPosition();
-//        }
+        if (isHoldingPosition()) {
+            this.stop();
+        } else {
+            this.stop();
+        }
     }
 }
