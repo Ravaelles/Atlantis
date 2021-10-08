@@ -5,6 +5,7 @@ import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionManager;
 import atlantis.production.orders.ABuildOrderManager;
+import atlantis.units.AUnit;
 import atlantis.units.Select;
 
 
@@ -28,30 +29,44 @@ public class ADynamicConstructionManager {
     // =========================================================
 
     /**
-     * Build Refineries/ Assimilators/ Extractors when it makes sense.
+     * Build Refineries/Assimilators/Extractors when it makes sense.
      */
     private static void buildGasBuildingsIfNeeded() {
-        if (AGame.getTimeSeconds() % 10 != 0) {
+        if (AGame.everyNthGameFrame(50)) {
             return;
         }
         
         // =========================================================
         
         int numberOfBases = Select.ourBases().count();
-        if (numberOfBases >= 2) {
-            int numberOfGasBuildings = Select.ourIncludingUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
-            if (numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350) 
-                    && AConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0) {
-                AConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
-            }
+        int numberOfGasBuildings = Select.ourIncludingUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
+        if (
+            numberOfBases >= 2
+            && numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350)
+            && AConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0
+            && hasABaseWithFreeGeyser()
+        ) {
+            AConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
         }
     }
-    
+
     // =========================================================
-    
+
     protected static boolean canAfford(int minerals, int gas) {
         return AGame.canAfford(minerals + ABuildOrderManager.getMineralsReserved(), gas + ABuildOrderManager.getGasReserved()
         );
     }
-    
+
+    // =========================================================
+
+    private static boolean hasABaseWithFreeGeyser() {
+        for (AUnit base : Select.ourBases().listUnits()) {
+            if (Select.geysers().inRadius(10, base).isNotEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

@@ -36,15 +36,14 @@ public abstract class Mission {
     // =========================================================
 
     public APosition focusPoint() {
-        return focusPointManager.focusPoint();
+        return focusPointManager != null ? focusPointManager.focusPoint() : null;
     }
 
     protected boolean handleNoEnemyBuilding(AUnit unit) {
         APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());
         if (position != null) {
-            unit.move(position, UnitActions.MOVE_TO_ENGAGE);
+            unit.move(position, UnitActions.MOVE_TO_ENGAGE, "#MA:FindEnemy");
             Atlantis.game().drawLineMap(unit.getPosition(), position, Color.Red);
-            unit.setTooltip("#MA:Forward!");
             return true;
         }
         else {

@@ -71,10 +71,13 @@ public class ABuilderManager {
         // Move builder to the build position
         if (distance > maxDistanceToIssueBuildOrder) {
             if (!builder.isMoving() || AGame.getTimeFrames() % 10 == 0) {
-                builder.move(constructionOrder.getPositionToBuildCenter(), UnitActions.MOVE_TO_BUILD);
+                builder.move(
+                    constructionOrder.getPositionToBuildCenter(),
+                    UnitActions.MOVE_TO_BUILD,
+                    "Build " + buildingType.getShortName() + " (" + distance
+                );
             }
-            builder.setTooltip("Build " + buildingType.getShortName() + " (" + distance);
-        } 
+        }
 
         // =========================================================
         // AUnit is already at the build position, issue build order
@@ -97,8 +100,7 @@ public class ABuilderManager {
 //                        System.err.println("Build GAS "
 //                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
 //                    }
-                    builder.build(buildingType, buildTilePosition, UnitActions.BUILD);
-                    builder.setTooltip("Constructing " + buildingType.getShortName());
+                    builder.build(buildingType, buildTilePosition);
                 }
             }
         }

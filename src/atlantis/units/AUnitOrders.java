@@ -67,7 +67,7 @@ public interface AUnitOrders {
         return u().morph(into.ut());
     }
 
-    default boolean build(AUnitType buildingType, TilePosition buildTilePosition, UnitAction unitAction) {
+    default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {
         unit().setUnitAction(UnitActions.BUILD);
         boolean result = u().build(buildingType.ut(), buildTilePosition);
         unit().setTooltip("Construct " + buildingType.getShortName());
@@ -93,7 +93,7 @@ public interface AUnitOrders {
         return u().research(tech);
     }
 
-    default boolean move(Position target, UnitAction unitAction) {
+    default boolean move(Position target, UnitAction unitAction, String tooltip) {
         if (DEBUG) {
             System.out.println("MOVE " + AGame.getTimeFrames() + " / unit#" + unit().getID());
         }
@@ -101,6 +101,8 @@ public interface AUnitOrders {
             System.err.println("Null move position for " + this);
             return false;
         }
+
+        unit().setTooltip(tooltip);
 
         if (unit().isCommand(UnitCommandType.Move) && target.equals(u().getTargetPosition())) {
             return true;
@@ -162,9 +164,10 @@ public interface AUnitOrders {
      * determined that the command would fail. Note There is a small chance for a command to fail after it has
      * been passed to Broodwar. See also isPatrolling, canPatrol
      */
-    default boolean patrol(APosition target, UnitAction unitAction) {
-        unit().setUnitAction(UnitActions.PATROL);
-        unit().setLastUnitOrderNow();
+    default boolean patrol(APosition target, UnitAction unitAction, String tooltip) {
+        unit().setTooltip(tooltip)
+                .setUnitAction(UnitActions.HOLD_POSITION)
+                .setLastUnitOrderNow();
         return u().patrol(target);
     }
 
@@ -175,13 +178,14 @@ public interface AUnitOrders {
      * if BWAPI determined that the command would fail. Note There is a small chance for a command to fail
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
-    default boolean holdPosition() {
+    default boolean holdPosition(String tooltip) {
         if (DEBUG) {
             System.out.println("HOLD " + AGame.getTimeFrames() + " / unit#" + unit().getID());
         }
 
-        unit().setUnitAction(UnitActions.HOLD_POSITION);
-        unit().setLastUnitOrderNow();
+        unit().setTooltip(tooltip)
+                .setUnitAction(UnitActions.HOLD_POSITION)
+                .setLastUnitOrderNow();
         return u().holdPosition();
     }
 
@@ -192,13 +196,14 @@ public interface AUnitOrders {
      * determined that the command would fail. Note There is a small chance for a command to fail after it has
      * been passed to Broodwar. See also canStop, isIdle
      */
-    default boolean stop() {
+    default boolean stop(String tooltip) {
         if (DEBUG) {
             System.out.println("STOP " + AGame.getTimeFrames() + " / unit#" + unit().getID());
         }
 
-        unit().setUnitAction(UnitActions.STOP);
-        unit().setLastUnitOrderNow();
+        unit().setTooltip(tooltip)
+                .setUnitAction(UnitActions.HOLD_POSITION)
+                .setLastUnitOrderNow();
         return u().stop();
     }
 
@@ -211,9 +216,10 @@ public interface AUnitOrders {
      * would fail. Note There is a small chance for a command to fail after it has been passed to Broodwar.
      * See also isFollowing, canFollow, getOrderTarget
      */
-    default boolean follow(AUnit target) {
-        unit().setUnitAction(UnitActions.FOLLOW);
-        unit().setLastUnitOrderNow();
+    default boolean follow(AUnit target, String tooltip) {
+        unit().setTooltip(tooltip)
+                .setUnitAction(UnitActions.HOLD_POSITION)
+                .setLastUnitOrderNow();
         return u().follow(target.u());
     }
 
@@ -260,10 +266,12 @@ public interface AUnitOrders {
      * is a small chance for a command to fail after it has been passed to Broodwar. See also isRepairing,
      * canRepair
      */
-    default boolean repair(AUnit target) {
+    default boolean repair(AUnit target, String tooltip) {
         if (target == null) {
             return false;
         }
+
+        unit().setTooltip(tooltip);
 
         if (!unit().isCommand(UnitCommandType.Repair) && !target.u().equals(u().getTarget())) {
 //        if (unit().getTarget() == null) {
@@ -441,7 +449,7 @@ public interface AUnitOrders {
     }
 
     /**
-     * AVOID USAGE cause it's very tough to debug, don't really know what's it is doing!
+     * AVOID - it's very tough to debug, don't really know what it is doing!
      */
 //    default boolean rightClick(AUnit target) {
 //        if (target != null) {

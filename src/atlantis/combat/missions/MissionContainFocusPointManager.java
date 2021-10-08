@@ -35,7 +35,8 @@ public class MissionContainFocusPointManager extends MissionFocusPointManager {
     private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
         AChokepoint chokepoint = AMap.getChokepointForNaturalBase(enemyBase.getPosition());
         if (chokepoint != null) {
-            return chokepoint.getCenter();
+            AViewport.centerScreenOn(chokepoint.getCenter());
+            return containEnemyAtPoint = chokepoint.getCenter();
         }
 
         APosition natural = AMap.getNaturalBaseLocation(enemyBase.getPosition()).getPosition();
@@ -43,7 +44,7 @@ public class MissionContainFocusPointManager extends MissionFocusPointManager {
             AViewport.centerScreenOn(natural);
         }
 
-        return natural;
+        return containEnemyAtPoint = natural;
     }
 
     private APosition containPointIfEnemyBaseNotKnown() {

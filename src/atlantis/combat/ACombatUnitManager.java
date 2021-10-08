@@ -89,14 +89,14 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
-            return true;
-        }
-
         if (!Missions.isGlobalMissionAttack()) {
-            if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
+            if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit, false)) {
                 return true;
             }
+        }
+
+        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
+            return true;
         }
 
         // Don't INTERRUPT shooting units

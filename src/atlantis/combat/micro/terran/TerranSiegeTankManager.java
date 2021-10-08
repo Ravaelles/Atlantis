@@ -98,9 +98,9 @@ public class TerranSiegeTankManager {
         // Mission is CONTAIN
         if (Missions.isGlobalMissionContain()) {
             APosition focusPoint = Missions.globalMission().focusPoint();
-            if (focusPoint != null && tank.distanceTo(focusPoint) <= 11.2) {
+            if (focusPoint != null && tank.distanceTo(focusPoint) <= 7.2) {
                 tank.siege();
-                tank.setTooltip("Contain!");
+                tank.setTooltip("Contain siege!");
                 return true;
             }
 
@@ -135,7 +135,7 @@ public class TerranSiegeTankManager {
     private static boolean handleNearEnemyCombatBuilding(AUnit tank, AUnit combatBuilding) {
         double distanceToEnemy = tank.distanceTo(combatBuilding);
         
-        if (distanceToEnemy <= 10.1) {
+        if (distanceToEnemy <= 9.5) {
             tank.siege();
             tank.setTooltip("Siege - building");
             return true;

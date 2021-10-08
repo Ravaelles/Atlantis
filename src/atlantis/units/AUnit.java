@@ -10,7 +10,6 @@ import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
-import atlantis.repair.ARepairerManager;
 import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
@@ -174,7 +173,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
-    public boolean moveAwayFrom(Position position, double moveDistance) {
+    public boolean moveAwayFrom(Position position, double moveDistance, String tooltip) {
         if (position == null || moveDistance < 0.01) {
             return false;
         }
@@ -191,9 +190,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //        if (AtlantisRunManager.isPossibleAndReasonablePosition(
 //                this, newPosition, -1, 9999, true
 //        ) && move(newPosition, UnitActions.MOVE)) {
-        if (ARunManager.isPossibleAndReasonablePosition(this.getPosition(), newPosition)
-                && move(newPosition, UnitActions.MOVE)) {
-            this.setTooltip("Move away");
+        if (
+                ARunManager.isPossibleAndReasonablePosition(this.getPosition(), newPosition)
+                && move(newPosition, UnitActions.MOVE, "Move away")
+        ) {
+            this.setTooltip(tooltip);
             return true;
         }
         else {
@@ -428,9 +429,9 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     private String tooltip;
 //    private int tooltipStartInFrames;
 
-    public void setTooltip(String tooltip) {
+    public AUnit setTooltip(String tooltip) {
         this.tooltip = tooltip;
-//        this.tooltipStartInFrames = AGame.getTimeFrames();
+        return this;
     }
 
     public String getTooltip() {
@@ -648,9 +649,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     /**
      * Indicate that in this frame unit received some command (attack, move etc).
+     * @return
      */
-    public void setLastUnitOrderNow() {
+    public AUnit setLastUnitOrderNow() {
         this.lastUnitOrder = AGame.getTimeFrames();
+        return this;
     }
 
     /**
@@ -942,7 +945,9 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isAttacking() {
-        return u.isAttacking() || (getUnitAction() != null && getUnitAction().isAttacking());
+        return u.isAttacking() || (
+            getUnitAction() != null && getUnitAction().isAttacking() && getTarget() != null && getTarget().isAlive()
+        );
     }
 
     /**
@@ -1041,8 +1046,9 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return unitAction == UnitActions.REPAIR || unitAction == UnitActions.MOVE_TO_REPAIR;
     }
     
-    public void setUnitAction(UnitAction unitAction) {
+    public AUnit setUnitAction(UnitAction unitAction) {
         this.unitAction = unitAction;
+        return this;
     }
     
     // =========================================================
@@ -1094,9 +1100,9 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     public void unbug() {
         if (isHoldingPosition()) {
-            this.stop();
+            this.move(getPosition().translateByPixels(16, 0), UnitActions.MOVE, "Unfreeze");
         } else {
-            this.holdPosition();
+            this.holdPosition("Unfreeze");
         }
     }
 }

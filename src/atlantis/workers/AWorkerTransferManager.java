@@ -71,11 +71,9 @@ public class AWorkerTransferManager {
 
     private static void transferWorkerTo(AUnit worker, AUnit baseWithFewestWorkers) {
         if (worker.distanceTo(baseWithFewestWorkers.getPosition()) > 6) {
-            worker.move(baseWithFewestWorkers.getPosition(), UnitActions.TRANSFER);
-            worker.setTooltip("Transfer");
+            worker.move(baseWithFewestWorkers.getPosition(), UnitActions.TRANSFER, "Transfer");
         } else if (worker.isMoving()) {
-            worker.holdPosition();
-            worker.setTooltip("Arrived");
+            worker.holdPosition("Transferred!");
         }
     }
 

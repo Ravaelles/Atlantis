@@ -85,7 +85,7 @@ public class AScoutManager {
         
         // === Avoid military buildings ============================
         
-        if (AAvoidDefensiveBuildings.avoidCloseBuildings(scout)) {
+        if (AAvoidDefensiveBuildings.avoidCloseBuildings(scout, false)) {
             return true;
         }
         
@@ -148,8 +148,7 @@ public class AScoutManager {
 //        }
         // =========================================================
         if (startingLocation != null) {
-            scout.setTooltip("Scout!");
-            scout.move(startingLocation.getPosition(), UnitActions.EXPLORE);
+            scout.move(startingLocation.getPosition(), UnitActions.EXPLORE, "Scout!");
             return true;
         }
         else {
@@ -179,7 +178,7 @@ public class AScoutManager {
 
             defineNextPolygonPointForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
             if (scoutingAroundBaseLastPolygonPoint != null) {
-                scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE);
+                scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE, "Roam around");
                 return true;
             } else {
                 scout.setTooltip("Can't find polygon point");
@@ -241,7 +240,7 @@ public class AScoutManager {
     private static void scoutForTheNextBase(AUnit scout) {
         APosition baseLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
         if (baseLocation != null) {
-            scout.move(baseLocation.getPosition(), UnitActions.MOVE);
+            scout.move(baseLocation.getPosition(), UnitActions.MOVE, "Scout next base");
         }
     }
 

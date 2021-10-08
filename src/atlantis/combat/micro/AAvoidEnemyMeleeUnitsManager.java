@@ -76,7 +76,7 @@ public class AAvoidEnemyMeleeUnitsManager {
 
         // =========================================================
 
-        boolean shouldSkip = unit.isAirUnit() || unit.isMeleeUnit();
+        boolean shouldSkip = !unit.isWorker() && (unit.isAirUnit() || unit.isMeleeUnit());
         if (shouldSkip) {
             return true;
         }

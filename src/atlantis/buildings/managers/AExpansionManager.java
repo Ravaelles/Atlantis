@@ -30,6 +30,11 @@ public class AExpansionManager {
             return;
         }
 
+        // If we have lenty of minerals, then every new base is a hazard
+        if (AGame.hasMinerals(1200)) {
+            return;
+        }
+
         // If there're still things to produce, don't auto-expand.
 //        ArrayList<ProductionOrder> nextOrders = ABuildOrderManager.getProductionQueueNext(5);
 //        if (nextOrders.size() >= 3 && !AGame.hasMinerals(minMinerals + 50)) {

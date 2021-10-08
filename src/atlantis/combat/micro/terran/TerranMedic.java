@@ -67,7 +67,7 @@ public class TerranMedic {
         if (unitAssignedForMedic != null) {
             if (unitAssignedForMedic.distanceTo(medic) > 1.9) {
                 if (Select.ourTerranInfantryWithoutMedics().inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).count() <= 2) {
-                    medic.move(unitAssignedForMedic.getPosition(), UnitActions.MOVE);
+                    medic.move(unitAssignedForMedic.getPosition(), UnitActions.MOVE, "Stay close");
                     return true;
                 }
             }

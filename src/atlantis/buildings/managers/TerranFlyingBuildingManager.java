@@ -49,8 +49,7 @@ public class TerranFlyingBuildingManager {
             double distToFocusPoint = focusPoint.distanceTo(flyingBuilding);
             
             if (distToFocusPoint > 2) {
-                flyingBuilding.move(focusPoint, UnitActions.MOVE);
-                flyingBuilding.setTooltip("Fly");
+                flyingBuilding.move(focusPoint, UnitActions.MOVE, "Fly baby!");
             }
         }
 

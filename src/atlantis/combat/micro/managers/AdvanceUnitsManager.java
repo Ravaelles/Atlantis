@@ -14,9 +14,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         unit.setTooltip("#MAttack");
 
         if (unit.distanceTo(mission.focusPoint()) > 6) {
-            unit.move(mission.focusPoint(), UnitActions.MOVE_TO_ENGAGE);
-//            unit.attackPosition(mission.focusPoint());
-            unit.setTooltip("#MA:Forward!");
+            unit.move(mission.focusPoint(), UnitActions.MOVE_TO_ENGAGE, "#MA:Forward!");
             return true;
         }
 
@@ -34,18 +32,16 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         double distToFocusPoint = unit.distanceTo(focusPoint);
 
         if (distToFocusPoint >= 7) {
-            unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE);
-            unit.setTooltip("#MA:Forward!");
+            unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#MA:Advance");
             return true;
         }
-        else if (distToFocusPoint <= 3) {
-            unit.moveAwayFrom(focusPoint, 3.8);
-            unit.setTooltip("#MA:Forward!");
+        else if (distToFocusPoint <= 4 && unit.moveAwayFrom(focusPoint, 2.5, "Together")) {
+            unit.setTooltip("#MA:Too close!");
             return true;
         }
         else if (distToFocusPoint <= 5) {
             if (unit.getOrderTarget() != null) {
-                unit.holdPosition();
+                unit.holdPosition("Good");
             }
             return true;
         }

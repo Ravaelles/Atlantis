@@ -1,9 +1,9 @@
 package atlantis.combat.missions;
 
-import atlantis.AGame;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidDefensiveBuildings;
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
+import atlantis.combat.squad.AStickCloserOrSpreadOutManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
@@ -38,12 +38,16 @@ public class MissionContain extends MissionAttack {
 //            return true;
 //        }
 
-        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
+        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit, false)) {
             return true;
         }
 
         // Allow to attack nearby enemy units
-        if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit, 8)) {
+        if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit, 20)) {
+            return true;
+        }
+
+        if (AStickCloserOrSpreadOutManager.handle(unit)) {
             return true;
         }
 

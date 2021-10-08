@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.AGame;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
@@ -64,7 +65,12 @@ public class Squad extends Units {
      * Returns median <b>position</b> of all units. It's better than the average, because the outliners
      * don't affect the end result so badly.
      */
+    private APosition _getMedianUnitPosition = null;
     public APosition getMedianUnitPosition() {
+        if (_getMedianUnitPosition != null && !AGame.everyNthGameFrame(10)) {
+            return _getMedianUnitPosition;
+        }
+
         ArrayList<Integer> xCoords = new ArrayList<>();
         ArrayList<Integer> yCoords = new ArrayList<>();
         
@@ -76,7 +82,7 @@ public class Squad extends Units {
         Collections.sort(xCoords);
         Collections.sort(yCoords);
         
-        return new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
+        return _getMedianUnitPosition = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
     }
     
     // =========================================================

@@ -1280,6 +1280,10 @@ public class Select<T> {
         return data.size() == 0;
     }
 
+    public boolean isNotEmpty() {
+        return data.size() > 0;
+    }
+
     /**
      * Returns number of units matching all previous conditions.
      */

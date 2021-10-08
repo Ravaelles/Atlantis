@@ -24,15 +24,15 @@ public class ARepairerManager {
     // =========================================================
 
     private static boolean handleRepairerSafety(AUnit repairer) {
-        if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(repairer)) {
-            return true;
-        }
-
         if (repairer.getHPPercent() <= 50 && AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(repairer)) {
             return true;
         }
 
-        if (AAvoidDefensiveBuildings.avoidCloseBuildings(repairer)) {
+        if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(repairer)) {
+            return true;
+        }
+
+        if (AAvoidDefensiveBuildings.avoidCloseBuildings(repairer, false)) {
             return true;
         }
 
@@ -55,9 +55,11 @@ public class ARepairerManager {
         }
 
         // Target is wounded
-        repairer.setTooltip("Repair " + target.getShortNamePlusId() + " " + repairer.getLastUnitOrderWasFramesAgo());
         if (!repairer.isRepairing()) {
-            repairer.repair(target);
+            repairer.repair(
+                target,
+                "Repair " + target.getShortNamePlusId() + "(" + repairer.getLastUnitOrderWasFramesAgo() + ")"
+            );
         }
         return true;
     }
@@ -73,7 +75,7 @@ public class ARepairerManager {
 
         if (closestUnitNeedingRepair != null) {
             ARepairAssignments.addRepairer(closestUnitNeedingRepair, closestUnitNeedingRepair);
-            repairer.repair(closestUnitNeedingRepair);
+            repairer.repair(closestUnitNeedingRepair, "Extra repair");
             return true;
         }
 
@@ -88,8 +90,8 @@ public class ARepairerManager {
             AUnit nearestWoundedUnit = Select.our().repairable(true)
                     .inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null) {
-                repairer.repair(nearestWoundedUnit);
-                repairer.setTooltip("Help near " + nearestWoundedUnit.getShortName());
+                repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.getShortName());
+//                repairer.setTooltip();
                 return true;
             }
         }

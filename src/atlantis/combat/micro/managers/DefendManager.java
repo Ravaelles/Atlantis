@@ -20,9 +20,10 @@ public class DefendManager {
         // =========================================================
         // Too close to the chokepoint
         if (isCriticallyCloseToFocusPoint(unit, focusPoint)) {
-            boolean result = unit.moveAwayFrom(focusPoint, 0.5);
+            boolean result = unit.moveAwayFrom(
+                    focusPoint, 0.5, "Too close (" + unit.distanceTo(focusPoint) + ")"
+            );
             if (result) {
-                unit.setTooltip("Too close (" + unit.distanceTo(focusPoint) + ")");
                 return true;
             }
             else {
@@ -37,8 +38,7 @@ public class DefendManager {
             // Too many stacked units
             if (isTooManyUnitsAround(unit, focusPoint)) {
                 if (unit.isMoving()) {
-                    unit.setTooltip("#DHold");
-                    unit.holdPosition();
+                    unit.holdPosition("#DHold");
                     return true;
                 }
             }
@@ -50,8 +50,7 @@ public class DefendManager {
                     return true;
                 }
                 else {
-                    unit.holdPosition();
-                    unit.setTooltip("#DHold");
+                    unit.holdPosition("#DHold");
                     return true;
                 }
             }
@@ -60,9 +59,8 @@ public class DefendManager {
         // =========================================================
         // Unit is far from choke point
         else {
-            unit.setTooltip("#DPositioning");
             if (unit.distanceTo(focusPoint) > 3) {
-                unit.move(focusPoint, UnitActions.MOVE);
+                unit.move(focusPoint, UnitActions.MOVE, "#DPositioning");
                 return true;
             }
         }

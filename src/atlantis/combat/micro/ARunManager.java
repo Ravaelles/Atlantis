@@ -55,7 +55,7 @@ public class ARunManager {
         else if (runTo == null) {
             boolean finallyRunned = false;
             for (int dist = 7; dist >= 2.2; dist -= 2) {
-                if (finallyRunned = unit.moveAwayFrom(enemyMedian, dist)) {
+                if (finallyRunned = unit.moveAwayFrom(enemyMedian, dist, "Run")) {
                     break;
                 }
             }
@@ -85,7 +85,7 @@ public class ARunManager {
             _updated_at = AGame.getTimeFrames();
 //            APainter.paintLine(unit.getPosition(), runTo, Color.Orange);
 //            boolean hasMoved = unit.move(runTo, UnitActions.RUN);
-            unit.move(runTo, UnitActions.RUN);
+            unit.move(runTo, UnitActions.RUN, "Run");
 
             // Make all other units very close to it run as well
 //            notifyNearbyUnitsToMakeSpace(unit);

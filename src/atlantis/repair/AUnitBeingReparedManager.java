@@ -30,13 +30,11 @@ public class AUnitBeingReparedManager {
 
         // Go to repairer if he's close
         if (distanceToRepairer > 2) {
-            unitBeingRepared.setTooltip("Move to repair");
-            unitBeingRepared.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR);
+            unitBeingRepared.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR, "To repairer");
             return true;
         }
 
-        unitBeingRepared.setTooltip("Be repaired");
-        unitBeingRepared.holdPosition();
+        unitBeingRepared.holdPosition("Being repaired");
         return true;
     }
 

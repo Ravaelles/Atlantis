@@ -460,8 +460,9 @@ public class AConstructionManager {
             return;
         }
 
-        if (AGame.getTimeFrames() - order.getFrameOrdered() > 30 * 20) {
-            System.err.println("Cancel construction of " + order.getBuildingType());
+        int timeout = 30 * (order.getBuildingType().isBase() ? 45 : 20);
+        if (AGame.getTimeFrames() - order.getFrameOrdered() > timeout) {
+            System.out.println("Cancel construction of " + order.getBuildingType());
             order.cancel();
         }
     }

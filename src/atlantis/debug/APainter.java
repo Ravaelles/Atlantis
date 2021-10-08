@@ -99,7 +99,7 @@ public class APainter {
         paintConstructionProgress();
 //        paintEnemyRegionDetails();
         paintImportantPlaces();
-        paintColoredCirclesAroundUnits();
+//        paintColoredCirclesAroundUnits();
         paintBuildingHealth();
         paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
@@ -224,7 +224,7 @@ public class APainter {
             String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
                     + "(" + unit.getLastUnitOrderWasFramesAgo() + ")";
 //            String order = unit.getLastUnitOrderWasFramesAgo() + "/" + unit.getCooldown();
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 5), order, Color.White);
+            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 8), order, Color.White);
         }
     }
 

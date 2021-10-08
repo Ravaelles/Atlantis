@@ -57,9 +57,7 @@ public class ARepairAssignments {
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.get(unitToRepair).remove(repairer);
-
-            repairer.stop();
-            repairer.setTooltip("Stahp");
+            repairer.stop("No longer repairer");
         }
         repairersToUnit.remove(repairer);
         repairersToModes.remove(repairer);

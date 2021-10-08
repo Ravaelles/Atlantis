@@ -11,8 +11,7 @@ public class ABunkerProtectorManager {
 
             // Bunker WOUNDED
             if (unit.getHPPercent() < 100) {
-                protector.setTooltip("Protect " + unit.getShortName());
-                protector.repair(unit);
+                protector.repair(unit, "Protect " + unit.getShortName());
                 return true;
             }
 
@@ -20,8 +19,7 @@ public class ABunkerProtectorManager {
             else {
                 double distanceToUnit = unit.distanceTo(protector);
                 if (distanceToUnit > 1 && !protector.isMoving()) {
-                    protector.setTooltip("Go to " + unit.getShortName());
-                    protector.move(unit.getPosition(), UnitActions.MOVE_TO_REPAIR);
+                    protector.move(unit.getPosition(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.getShortName());
                     return true;
                 }
                 else {

@@ -39,8 +39,7 @@ public class ABadWeather {
             // Our mine
             if (mine.isOurUnit()) {
                 if (mine.isMoving() && mine.distanceTo(unit) < 3.5) {
-                    unit.moveAwayFrom(mine.getPosition(), 1);
-                    unit.setTooltip("Avoid mine!");
+                    unit.moveAwayFrom(mine.getPosition(), 1, "Avoid mine!");
                     return true;
                 }
             }
@@ -75,8 +74,7 @@ public class ABadWeather {
     // =========================================================
 
     private static boolean handleEnemyMineAsMeleeUnit(AUnit unit, AUnit mine) {
-        unit.moveAwayFrom(mine.getPosition(), 1);
-        unit.setTooltip("Avoid mine!");
+        unit.moveAwayFrom(mine.getPosition(), 1, "Avoid mine!");
         return true;
     }
 
@@ -88,7 +86,7 @@ public class ABadWeather {
 
     private static boolean handleMoveAwayIfCloserThan(AUnit unit, Position avoidCenter, double minDist) {
         if (unit.distanceTo(avoidCenter) < 3.2) {
-            unit.moveAwayFrom(avoidCenter, 2);
+            unit.moveAwayFrom(avoidCenter, 2, "Avoid effect");
             return true;
         }
         else {
