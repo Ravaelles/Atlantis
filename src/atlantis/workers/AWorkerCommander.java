@@ -32,6 +32,4 @@ public class AWorkerCommander {
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_WORKERS);
     }
 
-    // =========================================================
-
 }

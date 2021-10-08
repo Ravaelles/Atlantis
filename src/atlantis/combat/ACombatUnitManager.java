@@ -75,12 +75,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        // Don't INTERRUPT shooting units
-        if (shouldNotDisturbUnit(unit)) {
-//            unit.setTooltip("#DontDisturb");
-            return true;
-        }
-
         // Can be used for tests
 //        if (testUnitBehavior(unit)) { return true; };
 
@@ -103,6 +97,12 @@ public class ACombatUnitManager extends AbstractMicroManager {
             if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit)) {
                 return true;
             }
+        }
+
+        // Don't INTERRUPT shooting units
+        if (shouldNotDisturbUnit(unit)) {
+//            unit.setTooltip("#DontDisturb");
+            return true;
         }
 
         return false;
