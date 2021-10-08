@@ -1,5 +1,6 @@
 package atlantis.constructing;
 
+import atlantis.AGame;
 import atlantis.constructing.position.APositionFinder;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
@@ -14,6 +15,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     private static int _firstFreeId = 1;
     private int ID = _firstFreeId++;
+    private final int frameOrdered;
     private AUnitType buildingType;
     private AUnit construction;
     private AUnit builder;
@@ -23,14 +25,13 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     private ProductionOrder productionOrder;
     private ConstructionOrderStatus status;
 
-    // private int issueFrameTime;
     // =========================================================
     
     public ConstructionOrder(AUnitType buildingType) {
         this.buildingType = buildingType;
 
         status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
-        // issueFrameTime = AGame.getTimeFrames();
+        frameOrdered = AGame.getTimeFrames();
     }
 
     // =========================================================
@@ -195,5 +196,8 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     public void setMaxDistance(double maxDistance) {
         this.maxDistance = maxDistance;
     }
-    
+
+    public int getFrameOrdered() {
+        return frameOrdered;
+    }
 }

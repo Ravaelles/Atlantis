@@ -1,11 +1,8 @@
 package atlantis;
 
-//import atlantis.buildings.AtlantisBuildingsCommander;
-import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.ACombatCommander;
 import atlantis.debug.APainter;
 import atlantis.production.ABuildingsCommander;
-import atlantis.repair.ARepairCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
 import atlantis.units.AUnit;

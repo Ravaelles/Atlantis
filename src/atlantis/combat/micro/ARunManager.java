@@ -300,7 +300,7 @@ public class ARunManager {
 
         // If run distance is acceptably long and it's connected, it's ok.
         if (isPossibleAndReasonablePosition(unit.getPosition(), runTo, "O", "X")) {
-//            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
+            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
             return runTo;

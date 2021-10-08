@@ -1,5 +1,8 @@
 package atlantis.repair;
 
+import atlantis.combat.micro.AAvoidDefensiveBuildings;
+import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.AAvoidInvisibleEnemyUnits;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -11,6 +14,32 @@ import java.util.*;
 public class ARepairerManager {
 
     public static boolean updateRepairer(AUnit repairer) {
+        if (handleRepairerSafety(repairer)) {
+            return true;
+        }
+
+        return handleRepairs(repairer);
+    }
+
+    // =========================================================
+
+    private static boolean handleRepairerSafety(AUnit repairer) {
+        if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(repairer)) {
+            return true;
+        }
+
+        if (repairer.getHPPercent() <= 50 && AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(repairer)) {
+            return true;
+        }
+
+        if (AAvoidDefensiveBuildings.avoidCloseBuildings(repairer)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean handleRepairs(AUnit repairer) {
         AUnit target = ARepairAssignments.getUnitToRepairFor(repairer);
         if (target == null || !target.isAlive()) {
             repairer.setTooltip("Null unit2repair");
@@ -44,7 +73,7 @@ public class ARepairerManager {
 
         if (closestUnitNeedingRepair != null) {
             ARepairAssignments.addRepairer(closestUnitNeedingRepair, closestUnitNeedingRepair);
-            repairer.move(closestUnitNeedingRepair.getPosition(), UnitActions.MOVE_TO_REPAIR);
+            repairer.repair(closestUnitNeedingRepair);
             return true;
         }
 

@@ -165,7 +165,7 @@ public class APainter {
     private static void paintCombatUnits() {
         for (AUnit unit : Select.ourCombatUnits().listUnits()) {
             APosition unitPosition = unit.getPosition();
-            double combatEval = ACombatEvaluator.evaluateSituation(unit);
+//            double combatEval = ACombatEvaluator.evaluateSituation(unit);
 
             // =========================================================
             // === Paint life bars bars over wounded units
@@ -192,7 +192,7 @@ public class APainter {
             // =========================================================
             // === Paint targets for combat units
             // =========================================================
-            APosition targetPosition = unit.getTargetPosition();
+//            APosition targetPosition = unit.getTargetPosition();
 //            if (targetPosition == null) {
 //                targetPosition = unit.getTarget().getPosition();
 //            }
@@ -221,8 +221,10 @@ public class APainter {
 //                    paintCircle(unitPosition, 14, Color.White);
 //                }
 //            }
-            String order = unit.u().getOrder().toString() + " " + unit.getLastUnitOrderWasFramesAgo();
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 5), order, Color.Purple);
+            String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
+                    + "(" + unit.getLastUnitOrderWasFramesAgo() + ")";
+//            String order = unit.getLastUnitOrderWasFramesAgo() + "/" + unit.getCooldown();
+            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 5), order, Color.White);
         }
     }
 

@@ -28,6 +28,10 @@ public class AInitialActions {
         if (!AMap.disableSomeOfTheChokePoints() || Select.ourWorkers().count() != 4) {
             AGame.setUmtMode(true);
         }
+
+        if (Select.mainBase() == null) {
+            AGame.setUmtMode(true);
+        }
     }
 
 }

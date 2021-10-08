@@ -19,16 +19,16 @@ public class MissionAttackFocusPointManager extends MissionFocusPointManager {
 
         // === Handle UMT ==========================================
         
-        if (AGame.isUmtMode()) {
-            AUnit firstUnit = Select.ourRealUnits().first();
-            if (firstUnit != null) {
-                return getUmtFocusPoint(firstUnit.getPosition());
-            }
-            else {
-                return null;
-            }
-        }
-        
+//        if (AGame.isUmtMode()) {
+//            AUnit firstUnit = Select.ourRealUnits().first();
+//            if (firstUnit != null) {
+//                return getUmtFocusPoint(firstUnit.getPosition());
+//            }
+//            else {
+//                return null;
+//            }
+//        }
+
         // =========================================================
 
         // Try going near enemy base
@@ -49,7 +49,11 @@ public class MissionAttackFocusPointManager extends MissionFocusPointManager {
         if (anyEnemyUnit != null) {
             return anyEnemyUnit.getPosition();
         }
-        
+
+        if (Select.mainBase() == null) {
+            return null;
+        }
+
         // Try to go to some starting location, hoping to find enemy there.
         APosition startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
         if (startLocation != null) {

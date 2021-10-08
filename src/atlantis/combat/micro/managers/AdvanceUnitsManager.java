@@ -44,7 +44,9 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             return true;
         }
         else if (distToFocusPoint <= 5) {
-            unit.holdPosition();
+            if (unit.getOrderTarget() != null) {
+                unit.holdPosition();
+            }
             return true;
         }
 

@@ -1,43 +1,42 @@
 package atlantis.repair;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 
 public class AUnitBeingReparedManager {
 
-    public static boolean handleUnitBeingRepaired(AUnit unit) {
-        if (!unit.isWounded()) {
+    public static boolean handleUnitBeingRepaired(AUnit unitBeingRepared) {
+        if (!unitBeingRepared.isWounded()) {
             return false;
         }
 
-        AUnit repairer = ARepairAssignments.getRepairerAssignedForUnit(unit);
+        AUnit repairer = ARepairAssignments.getClosestRepairerAssignedTo(unitBeingRepared);
         if (repairer == null) {
             return false;
         }
 
-        if (unit.isRunning()) {
+        if (unitBeingRepared.isRunning()) {
             return false;
         }
 
         // Ignore going closer to repairer if unit is still relatively healthy
-        if (unit.getHPPercent() > 50) {
+        if (unitBeingRepared.getHPPercent() > 50) {
             return false;
         }
 
         // =========================================================
 
-        double distanceToRepairer = repairer.distanceTo(unit);
+        double distanceToRepairer = repairer.distanceTo(unitBeingRepared);
 
         // Go to repairer if he's close
         if (distanceToRepairer > 2) {
-            unit.setTooltip("Move to repair");
-            unit.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR);
+            unitBeingRepared.setTooltip("Move to repair");
+            unitBeingRepared.move(repairer.getPosition(), UnitActions.MOVE_TO_REPAIR);
             return true;
         }
 
-        unit.setTooltip("Be repaired");
-        unit.holdPosition();
+        unitBeingRepared.setTooltip("Be repaired");
+        unitBeingRepared.holdPosition();
         return true;
     }
 

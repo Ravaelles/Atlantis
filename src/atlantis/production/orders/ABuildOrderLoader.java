@@ -2,12 +2,14 @@ package atlantis.production.orders;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
+import atlantis.combat.missions.MissionsFromBuildOrder;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.AUtil;
 import atlantis.util.NameUtil;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+
 import java.util.ArrayList;
 
 
@@ -92,23 +94,6 @@ public class ABuildOrderLoader {
 //        Atlantis.end();
     }
 
-    /**
-     * Returns default production strategy according to the race played.
-     */
-//    public static ABuildOrderManager loadBuildOrders() {
-//        if (AGame.playsAsTerran()) {
-//            return new TerranBuildOrder();
-//        } else if (AGame.playsAsProtoss()) {
-//            return new ProtossBuildOrder();
-//        } else if (AGame.playsAsZerg()) {
-//            return new ZergBuildOrder();
-//        }
-//
-//        System.err.println("getAccordingToRace: Unknown race");
-//        System.exit(-1);
-//        return null;
-//    }
-    
     /**
      * Converts (and repeats if needed) shortcut build order notations like: 
             6 - Barracks
@@ -287,20 +272,18 @@ public class ABuildOrderLoader {
         
         // UNIT
         AUnitType unitType = AUnitType.getByName(nameString);
-
-        // UPGRADE
         UpgradeType upgrade = NameUtil.getUpgradeTypeByName(nameString); //TODO: put this in UpgradeUtil
-
-        // TECH
         TechType tech = NameUtil.getTechTypeByName(nameString); //TODO: put this in TechUtil
+        String mission = null;
 
         // Define convienience boolean variables
         boolean isUnit = unitType != null;
         boolean isUpgrade = upgrade != null;
         boolean isTech = tech != null;
+        boolean isMission = mission != null;
 
         // Check if no error occured like no object found
-        if (!isUnit && !isUpgrade && !isTech) {
+        if (!isUnit && !isUpgrade && !isTech && !isMission) {
             System.err.println("Invalid production order entry: " + nameString);
             AGame.exit();
         }
@@ -359,8 +342,6 @@ public class ABuildOrderLoader {
         else if ("dragoon range".equals(nameString)) {
             return "Singularity Charge";
         }
-        
-//        UpgradeType.U_238_Shells
         
         return nameString;
     }
@@ -436,7 +417,24 @@ public class ABuildOrderLoader {
             AtlantisConfig.SCOUT_IS_NTH_WORKER = extractSpecialCommandValue(row);
         } else if (commandLine.startsWith("#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
             AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = extractSpecialCommandValue(row);
+        } else if (commandLine.contains("MISSION - ")) {
+            handleMissionCommand(commandLine);
         }
+    }
+
+    private void handleMissionCommand(String line) {
+        if (AUtil.countSubstrings(line, " - ") != 3) {
+            System.err.println("Mission modyfing command must use notation: AT_SUPPLY - MISSION=[RUSH|RESET]");
+            AGame.exit();
+        }
+
+        int supply = Integer.parseInt(line.substring(0, line.indexOf(" - MISSION=")));
+        String mission = line.substring(line.lastIndexOf("=") + 1);
+
+        System.out.println("supply = " + supply);
+        System.out.println("mission = " + mission);
+
+        MissionsFromBuildOrder.addDynamicMission(mission, supply);
     }
 
     /**

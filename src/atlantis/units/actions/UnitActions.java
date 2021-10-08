@@ -8,11 +8,11 @@ public class UnitActions {
     public static final UnitAction BURROW = new UnitAction().setName("BURROW");
     public static final UnitAction CLOAK = new UnitAction().setName("CLOAK");
     public static final UnitAction DECLOAK = new UnitAction().setName("DECLOAK");
-//    public static final UnitAction ENGAGE = new UnitAction().setName("ENGAGE");
     public static final UnitAction EXPLORE = new UnitAction().setName("EXPLORE");
     public static final UnitAction FOLLOW = new UnitAction().setName("FOLLOW");
     public static final UnitAction GATHER_MINERALS = new UnitAction().setName("GATHER_MINERALS");
     public static final UnitAction GATHER_GAS = new UnitAction().setName("GATHER_GAS");
+    public static final UnitAction INIT = new UnitAction().setName("INIT");
     public static final UnitAction HEAL = new UnitAction().setName("HEAL");
     public static final UnitAction HOLD_POSITION = new UnitAction().setName("HOLD_POSITION");
     public static final UnitAction LAND = new UnitAction().setName("LAND");
@@ -31,7 +31,6 @@ public class UnitActions {
     public static final UnitAction SIEGE = new UnitAction().setName("SIEGE");
 //    public static final UnitAction STICK_CLOSER = new UnitAction().setName("");
     public static final UnitAction STOP = new UnitAction().setName("STOP");
-    public static final UnitAction TOGETHER = new UnitAction().setName("TOGETHER");
     public static final UnitAction TRAIN = new UnitAction().setName("TRAIN");
     public static final UnitAction TRANSFER = new UnitAction().setName("TRANSFER");
     public static final UnitAction UNLOAD = new UnitAction().setName("UNLOAD");

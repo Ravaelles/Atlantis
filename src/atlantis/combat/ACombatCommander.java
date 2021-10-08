@@ -45,7 +45,7 @@ public class ACombatCommander {
         for (AUnit unit : squad.arrayList()) {
             ACombatUnitManager.update(unit);
 
-            if (AGame.everyNthGameFrame(5)) {
+            if (AGame.everyNthGameFrame(30)) {
                 unit.lastX = unit.getX();
                 unit.lastY = unit.getY();
             }

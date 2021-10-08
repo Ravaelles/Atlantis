@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AConstructionManager {
@@ -27,10 +28,13 @@ public class AConstructionManager {
      * finished objects etc.
      */
     public static void update() {
-        for (ConstructionOrder constructionOrder : constructionOrders) {
+//        for (ConstructionOrder constructionOrder : constructionOrders) {
+        for (Iterator<ConstructionOrder> iterator = constructionOrders.iterator(); iterator.hasNext(); ) {
+            ConstructionOrder constructionOrder =  iterator.next();
             checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
             checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
             handleConstructionUnderAttack(constructionOrder);
+            handleConstructionThatLooksBugged(constructionOrder);
         }
     }
 
@@ -448,6 +452,17 @@ public class AConstructionManager {
                         && building.getHPPercent() < 60)) {
                 order.cancel();
             }
+        }
+    }
+
+    private static void handleConstructionThatLooksBugged(ConstructionOrder order) {
+        if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+            return;
+        }
+
+        if (AGame.getTimeFrames() - order.getFrameOrdered() > 30 * 20) {
+            System.err.println("Cancel construction of " + order.getBuildingType());
+            order.cancel();
         }
     }
 

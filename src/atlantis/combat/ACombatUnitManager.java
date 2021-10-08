@@ -12,11 +12,15 @@ import atlantis.combat.missions.Missions;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Select;
 
 public class ACombatUnitManager extends AbstractMicroManager {
 
     protected static boolean update(AUnit unit) {
         preActions(unit);
+        if (Select.our().count() == 1) {
+            AGame.exit("FINISHED AT @" + AGame.getTimeFrames());
+        }
 
         // =========================================================
         // === TOP priority ========================================
@@ -58,7 +62,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     private static void preActions(AUnit unit) {
-        unit.removeTooltip();
         if (AGameSpeed.isDynamicSlowdownActive() && (unit.isAttacking() || unit.isUnderAttack())) {
             AGameSpeed.disableDynamicSlowdown();
         }
@@ -74,9 +77,12 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
         // Don't INTERRUPT shooting units
         if (shouldNotDisturbUnit(unit)) {
-            unit.setTooltip("#DontDisturb");
+//            unit.setTooltip("#DontDisturb");
             return true;
         }
+
+        // Can be used for tests
+//        if (testUnitBehavior(unit)) { return true; };
 
         // Avoid bad weather like:
         // - raining Psionic Storm,
@@ -85,7 +91,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        // Dark Templars!
         if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(unit)) {
             return true;
         }
@@ -159,11 +164,15 @@ public class ACombatUnitManager extends AbstractMicroManager {
      * Some actions are too important/costly. No matter what happens, don't interrupt unit at this point.
      */
     private static boolean shouldNotDisturbUnit(AUnit unit) {
+//        if (unit.isAttackFrame()) {
+//            System.out.println(AGame.getTimeFrames() +" // #" + unit.getID());
+//        }
         return
-                // is in middle of shooting
                 unit.isAttackFrame()
-                // OR is starting attack
-                || (unit.isStartingAttack() && unit.getGroundWeaponCooldown() <= 0)
+                || unit.isStartingAttack()
+                || !unit.isInterruptible()
+                || (unit.isAttacking() && unit.getLastUnitOrderWasFramesAgo() <= unit.getCooldown() - 3)
+                || (!unit.isAttacking() && unit.getLastUnitOrderWasFramesAgo() <= 3)
 //                ((!unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack())
 //                && unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
                 ;
@@ -228,7 +237,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //    }
 
     private static boolean handleBuggedUnit(AUnit unit) {
-        if (unit.isMoving() && unit.getLastUnitOrderWasFramesAgo() > 50) {
+        if (unit.isRunning() && unit.getLastUnitOrderWasFramesAgo() >= 30) {
             if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
                 System.err.println("UNFREEZE #1!");
                 unit.setTooltip("UNFREEZE!");
@@ -237,16 +246,26 @@ public class ACombatUnitManager extends AbstractMicroManager {
             }
         }
 
-        if (unit.isUnderAttack() && unit.getLastUnitOrderWasFramesAgo() > 20) {
-            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-                System.err.println("UNFREEZE #2!");
-                unit.setTooltip("UNFREEZE!");
-                unit.unbug();
-                return true;
-            }
-        }
+//        if (unit.isUnderAttack() && unit.getLastUnitOrderWasFramesAgo() >= 60) {
+//            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
+//                System.err.println("UNFREEZE #2!");
+//                unit.setTooltip("UNFREEZE!");
+//                unit.unbug();
+//                return true;
+//            }
+//        }
 
         return false;
+    }
+
+    /**
+     * Can be used for testing.
+     */
+    private static boolean testUnitBehavior(AUnit unit) {
+        if (Select.our().first().getID() != unit.getID()) {
+            unit.attackUnit(Select.our().first());
+        }
+        return true;
     }
 
 }

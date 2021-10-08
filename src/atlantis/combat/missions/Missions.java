@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
+import atlantis.Atlantis;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
@@ -32,9 +33,9 @@ public class Missions {
         
         // === Handle UMT ==========================================
         
-//        if (AGame.isUmtMode()) {
-//            return;
-//        }
+        if (AGame.isUmtMode() || Select.mainBase() == null) {
+            return;
+        }
 
         // =========================================================
         if (currentGlobalMission != Missions.ATTACK) {
@@ -77,7 +78,7 @@ public class Missions {
         // === Terran ========================================
         
         if (AGame.isPlayingAsTerran()) {
-            if (Select.ourTanks().count() <= 4) {
+            if (Select.ourTanks().count() <= 4 && Select.ourCombatUnits().count() <= 30) {
                 return false;
             }
         }
@@ -111,7 +112,7 @@ public class Missions {
         
         // === Handle UMT ==========================================
         
-        if (AGame.isUmtMode()) {
+        if (AGame.isUmtMode() || Select.mainBase() == null) {
 //            return Missions.UMT;
             return Missions.ATTACK;
         }
@@ -128,6 +129,8 @@ public class Missions {
      * always correspond to the mission of our main Alpha battle squad.
      */
     public static Mission globalMission() {
+//        return Missions.ATTACK;
+
         if (currentGlobalMission == null) {
             currentGlobalMission = getInitialMission();
         }
@@ -151,4 +154,16 @@ public class Missions {
         return globalMission().isMissionAttack();
     }
 
+    public static void forceMissionAttack() {
+        currentGlobalMission = Missions.ATTACK;
+    }
+
+    public static Mission fromString(String mission) {
+        switch (mission.toUpperCase()) {
+            case "ATTACK" : return ATTACK;
+            case "CONTAIN" : return CONTAIN;
+            case "DEFEND" : return DEFEND;
+            default : AGame.exit("Invalid mission: " + mission); return null;
+        }
+    }
 }

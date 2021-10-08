@@ -1,6 +1,8 @@
 package atlantis;
 
 import static atlantis.Atlantis.game;
+
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AUtil;
@@ -81,7 +83,15 @@ public class AGame {
     public static void exit() {
         Atlantis.getInstance().onEnd(false);
     }
-    
+
+    /**
+     * Quits the game gently, killing all processes and cleaning up.
+     */
+    public static void exit(String message) {
+        System.err.println(message);
+        Atlantis.getInstance().onEnd(false);
+    }
+
     /**
      * Enable/disable pause.
      */
@@ -94,68 +104,6 @@ public class AGame {
      */
     public static boolean isPaused() {
         return isPaused;
-    }
-    
-    /**
-     * Changes game speed. 0 - fastest 1 - very quick 20 - around default
-     */
-    public static void changeSpeedTo(int speed) {
-        if (speed < 0) {
-            speed = 0;
-        }
-
-        AtlantisConfig.GAME_SPEED = speed;
-        
-//        try {
-//            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-//            Thread.sleep(40);
-//            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-//            Thread.sleep(40);
-//        } catch (InterruptedException ex) {
-//            // Ignore
-//        }
-        game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-        sendMessage("/speed " + AtlantisConfig.GAME_SPEED);
-
-//        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
-//        sendMessage("Game speed: " + speedString);
-    }
-
-    /**
-     * Changes game speed by given ammount of units. Total game speed: 0 - fastest 1 - very quick 20 - around
-     * default
-     */
-    public static void changeSpeedBy(int deltaSpeed) {
-        int speed = AtlantisConfig.GAME_SPEED + deltaSpeed;
-        if (speed < 0) {
-            speed = 0;
-        }
-
-        if (game() != null) {
-            AtlantisConfig.GAME_SPEED = speed;
-            changeSpeedTo(AtlantisConfig.GAME_SPEED);
-        }
-        else {
-            System.err.println("Can't change game speed, bwapi is null.");
-        }
-    }
-
-    /**
-     * Change game rendering frame skipping - speeds up game considerably.
-     */
-    public static void changeFrameSkipTo(int frameSkip) {
-        if (frameSkip <= 1) {
-            frameSkip = 0;
-        }
-
-        Game game = game();
-        if (game != null) {
-            AtlantisConfig.FRAME_SKIP = frameSkip;
-            game.setFrameSkip(AtlantisConfig.FRAME_SKIP);
-        }
-        else {
-            System.err.println("Can't change game speed, bwapi is null.");
-        }
     }
 
     public static void changeDisableUI(boolean disableUI) {
@@ -170,7 +118,7 @@ public class AGame {
      * Returns game speed.
      */
     public static int getGameSpeed() {
-        return AtlantisConfig.GAME_SPEED;
+        return AGameSpeed.gameSpeed;
     }
 
     /**
@@ -286,6 +234,8 @@ public class AGame {
             System.out.println();
             System.out.println("### UMT mode enabled! ###");
             System.out.println();
+
+            Missions.forceMissionAttack();
         }
     }
     

@@ -33,6 +33,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -1052,6 +1053,10 @@ public class AUtil {
         }
 
         return result;
+    }
+
+    public static int countSubstrings(String str, String subStr) {
+        return (str.length() - str.replaceAll(Pattern.quote(subStr), "").length()) / subStr.length();
     }
     
 }

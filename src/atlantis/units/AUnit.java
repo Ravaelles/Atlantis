@@ -46,7 +46,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     private final Unit u;
     private AUnitType _lastCachedType;
-    private UnitAction unitAction;
+    private UnitAction unitAction = UnitActions.INIT;
 //    private int _lastTimeOrderWasIssued = -1;
     private AUnit _cachedNearestMeleeEnemy = null;
     public int lastX;
@@ -691,6 +691,16 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return getType().getGroundWeapon();
     }
 
+    public int getCooldown() {
+        if (canAttackGroundUnits()) {
+            return getGroundWeapon().damageCooldown();
+        }
+        if (canAttackAirUnits()) {
+            return getAirWeapon().damageCooldown();
+        }
+        return 0;
+    }
+
     /**
      * Indicates that this unit should be running from given enemy unit.
      * If enemy parameter is null, it will try to determine the best run behavior.
@@ -932,7 +942,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isAttacking() {
-        return u.isAttacking();
+        return u.isAttacking() || (getUnitAction() != null && getUnitAction().isAttacking());
     }
 
     /**
@@ -998,6 +1008,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     
     public UnitCommand getLastCommand() {
         return u.getLastCommand();
+    }
+
+    public boolean isCommand(UnitCommandType command) {
+        return u.getLastCommand() != null && u.getLastCommand().getType().equals(command);
     }
 
     public UnitAction getUnitAction() {
@@ -1082,7 +1096,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         if (isHoldingPosition()) {
             this.stop();
         } else {
-            this.stop();
+            this.holdPosition();
         }
     }
 }

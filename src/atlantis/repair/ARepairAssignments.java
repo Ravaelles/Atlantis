@@ -33,21 +33,22 @@ public class ARepairAssignments {
         return repairersToUnit.get(repairer);
     }
 
-    public static AUnit getRepairerAssignedForUnit(AUnit wounded) {
+    public static AUnit getClosestRepairerAssignedTo(AUnit wounded) {
         if (unitsToRepairers.size() > MAX_REPAIRERS || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())) {
             return null;
         }
 
         if (unitsToRepairers.containsKey(wounded)) {
             ArrayList<AUnit> repairers = unitsToRepairers.get(wounded);
-            if (repairers.size() >= 1) {
-                if (repairers.get(0).isAlive()) {
-                    return repairers.get(0);
-                }
-                else {
-                    removeRepairerOrProtector(repairers.get(0));
-                }
-            }
+            return Select.from(repairers).nearestTo(wounded);
+//            if (repairers.size() >= 1) {
+//                if (repairers.get(0).isAlive()) {
+//                    return repairers.get(0);
+//                }
+//                else {
+//                    removeRepairerOrProtector(repairers.get(0));
+//                }
+//            }
         }
         return null;
     }

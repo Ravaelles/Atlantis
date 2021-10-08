@@ -97,7 +97,7 @@ public class AAvoidEnemyMeleeUnitsManager {
     }
 
     private static boolean isEnemyCriticallyClose(AUnit unit) {
-        double baseCriticalDistance = (unit.isVulture() ? 3.4 : 2.8);
+        double baseCriticalDistance = (unit.isVulture() ? 3.5 : 2.8);
 //        double baseCriticalDistance = 3.0;
         double healthBonus = (100 - unit.getHPPercent()) / 40;
 

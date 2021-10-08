@@ -11,8 +11,6 @@ import bwapi.TechType;
 public class TerranVultureManager {
 
     public static boolean update(AUnit unit) {
-        unit.removeTooltip();
-        
         if (handlePlantMines(unit)) {
             return true;
         }

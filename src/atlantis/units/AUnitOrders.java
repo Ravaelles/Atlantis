@@ -4,11 +4,7 @@ import atlantis.AGame;
 import atlantis.position.APosition;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
-import bwapi.Position;
-import bwapi.TechType;
-import bwapi.TilePosition;
-import bwapi.Unit;
-import bwapi.UpgradeType;
+import bwapi.*;
 
 /**
  * Class using default methods which are extracted from AUnit class to separate this functionality.
@@ -18,49 +14,50 @@ public interface AUnitOrders {
     Unit u();
 
     AUnit unit();
+
+    public boolean DEBUG = false;
     
     // =========================================================
     
     default boolean attackUnit(AUnit target) {
+        if (DEBUG) {
+            System.out.println("ATTACK " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // cooldown " + unit().getCooldown());
+        }
 //        if (!unit().hasRangeToAttack(target, 0)) {
 //            unit().setTooltip("Come closer!");
 //            move(target.getPosition(), UnitActions.MOVE);
 //            return false;
 //        }
+        if (target == null) {
+            System.err.println("Null attack unit target for unit " + this.toString());
+            return false;
+        }
 
         unit().setUnitAction(UnitActions.ATTACK_UNIT);
 
         // Do NOT issue double orders
-        if (!unit().isUnitAction(UnitActions.ATTACK_UNIT) || u().getTarget() == null || !unit().getTarget().equals(target)) {
+        if (unit().isCommand(UnitCommandType.Attack_Unit) && u().getTarget() != null && target.equals(unit().getTarget())) {
+            return true;
 //            System.out.println();
 //            System.out.println("unit().isJustShooting() = " + unit().isJustShooting());
 //            System.out.println("unit().isAttacking() = " + unit().isAttacking());
 //            System.out.println("getTarget = " + unit().getTarget());
 //            System.out.println(unit().getID() + " attacks " + target.getShortName());
 //            AGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
-            u().attack(target.u());
-            unit().setLastUnitOrderNow();
         }
-        return true;
+
+        unit().setLastUnitOrderNow();
+        return u().attack(target.u());
     }
 
-    default boolean attackPosition(APosition target) {
-
-        // Do NOT issue double orders
-        if (unit().isUnitAction(UnitActions.ATTACK_POSITION)
-                && u().getTargetPosition() != null && unit().getTargetPosition().equals(target)) {
-            unit().setUnitAction(UnitActions.ATTACK_POSITION);
-            return true;
-        } else {
-            u().attack(target);
-            unit().setUnitAction(UnitActions.ATTACK_POSITION);
-            unit().setLastUnitOrderNow();
-            return true;
-        }
-    }
+    // To avoid confusion: NEVER UE IT.
+    // When moving units always use "Move" mission.
+    // Use "Attack" only for targeting actual units.
+//    default boolean attackPosition(APosition target) {
 
     default boolean train(AUnitType unitToTrain) {
         unit().setUnitAction(UnitActions.TRAIN);
+        unit().setLastUnitOrderNow();
         return u().train(unitToTrain.ut());
     }
 
@@ -97,9 +94,16 @@ public interface AUnitOrders {
     }
 
     default boolean move(Position target, UnitAction unitAction) {
+        if (DEBUG) {
+            System.out.println("MOVE " + AGame.getTimeFrames() + " / unit#" + unit().getID());
+        }
         if (target == null) {
             System.err.println("Null move position for " + this);
             return false;
+        }
+
+        if (unit().isCommand(UnitCommandType.Move) && target.equals(u().getTargetPosition())) {
+            return true;
         }
         
         // === Handle LOADED/SIEGED units ========================================
@@ -172,6 +176,10 @@ public interface AUnitOrders {
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
     default boolean holdPosition() {
+        if (DEBUG) {
+            System.out.println("HOLD " + AGame.getTimeFrames() + " / unit#" + unit().getID());
+        }
+
         unit().setUnitAction(UnitActions.HOLD_POSITION);
         unit().setLastUnitOrderNow();
         return u().holdPosition();
@@ -185,6 +193,10 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also canStop, isIdle
      */
     default boolean stop() {
+        if (DEBUG) {
+            System.out.println("STOP " + AGame.getTimeFrames() + " / unit#" + unit().getID());
+        }
+
         unit().setUnitAction(UnitActions.STOP);
         unit().setLastUnitOrderNow();
         return u().stop();
@@ -253,7 +265,9 @@ public interface AUnitOrders {
             return false;
         }
 
-        if (unit().getTarget() == null) {
+        if (!unit().isCommand(UnitCommandType.Repair) && !target.u().equals(u().getTarget())) {
+//        if (unit().getTarget() == null) {
+            unit().setUnitAction(UnitActions.REPAIR);
             unit().setLastUnitOrderNow();
             u().repair(target.u());
         }
@@ -308,6 +322,7 @@ public interface AUnitOrders {
      */
     default boolean cloak() {
         unit().setUnitAction(UnitActions.CLOAK);
+        unit().setLastUnitOrderNow();
         return u().cloak();
     }
 

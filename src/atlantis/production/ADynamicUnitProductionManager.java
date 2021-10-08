@@ -10,6 +10,10 @@ import java.util.List;
 public class ADynamicUnitProductionManager {
 
     public static void update() {
+        if (AGame.isUmtMode()) {
+            return;
+        }
+
         ADynamicWorkerProductionManager.handleDynamicWorkerProduction();
         
         if (AGame.isPlayingAsTerran()) {

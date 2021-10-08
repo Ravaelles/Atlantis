@@ -33,7 +33,9 @@ public class AAvoidDefensiveBuildings {
         if (distanceMargin <= safeDist) {
             if (!unit.isJustShooting()) {
                 unit.setTooltip("AvoidHold (" + String.format("%.1f", distanceMargin) + ")");
-                unit.holdPosition();
+                if (unit.getOrderTarget() != null) {
+                    unit.holdPosition();
+                }
                 return true;
             }
             unit.setTooltip("Avoid (" + String.format("%.1f", distanceMargin) + ")");

@@ -24,18 +24,6 @@ public class AtlantisConfig {
     // Customizable variables
 
     /**
-     * Game speed. Lower is faster. 0 is fastest, 20 is about normal game speed.
-     * In game you can use buttons -/+ to change the game speed.
-     */
-    public static int GAME_SPEED = 0;
-
-    /**
-     * By skipping rendering of game frames, we can make the game much quicker, regardless of the game speed.
-     * Value 3 means we render every 3th game frame, skipping 67% of total rendering.
-     */
-    public static int FRAME_SKIP = 3;
-
-    /**
      * Disabling makes game so fast, you actually be like "Daaaaamn!".
      * Unfortunately it means nothing is rendered.
      */
@@ -59,12 +47,12 @@ public class AtlantisConfig {
      * Will modify bwapi.ini to use this map.
      */
     public static final String MAP = "maps/BroodWar/sscai/(?)*.sc?";
+//    public static final String MAP = "maps/BroodWar/umt/MacroAlone.scx";
+//    public static final String MAP = "maps/BroodWar/umt/dragoon_sweeping_mines.scm";
 //    public static final String MAP = "maps/BroodWar/umt/marines_vs_zerglings.scm"; // 12 marines vs 24 zerglings
 //    public static final String MAP = "maps/BroodWar/umt/vulture_vs_zerglings.scx"; // Vulture being chased by Lings
 //    public static final String MAP = "maps/BroodWar/umt/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
 //    public static final String MAP = "maps/BroodWar/umt/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs Zerg
-//    public static final String MAP = "maps/BroodWar/umt/Micro Challenge.scx"; //
-//    public static final String MAP = "maps/BroodWar/umt/ConTrol by junijuni02.scx"; //
 
     // ==========================================================
     // === These are default values that can be overridden in ===
@@ -118,7 +106,8 @@ public class AtlantisConfig {
      */
     public static void useConfigForTerran() {
         AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_Base_Vultures;
-        
+//        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_BBS;
+
         AtlantisConfig.MY_RACE = Race.Terran;
         AtlantisConfig.BASE = AUnitType.Terran_Command_Center;
         AtlantisConfig.WORKER = AUnitType.Terran_SCV;
