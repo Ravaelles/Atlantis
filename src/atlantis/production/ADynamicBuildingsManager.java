@@ -9,7 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 
 
-public class ADynamicConstructionManager {
+public class ADynamicBuildingsManager {
 
     public static void update() {
         
@@ -17,13 +17,7 @@ public class ADynamicConstructionManager {
         AExpansionManager.requestNewBaseIfNeeded();
         
         // If number of bases is bigger than gas buildings, it usually makes sense to build new gas extractor
-        buildGasBuildingsIfNeeded();
-        
-        // === Terran only ========================================
-        
-        if (AGame.isPlayingAsTerran()) {
-            TerranDynamicConstructionManager.update();
-        }
+        gasBuildingIfNeeded();
     }
     
     // =========================================================
@@ -31,7 +25,7 @@ public class ADynamicConstructionManager {
     /**
      * Build Refineries/Assimilators/Extractors when it makes sense.
      */
-    private static void buildGasBuildingsIfNeeded() {
+    private static void gasBuildingIfNeeded() {
         if (AGame.everyNthGameFrame(50)) {
             return;
         }

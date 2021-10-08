@@ -1,14 +1,5 @@
 package atlantis.production.requests;
 
-import atlantis.production.ADynamicConstructionManager;
-import atlantis.AGame;
-import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionManager;
-import atlantis.position.APosition;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.Select;
-
 
 public class TerranRequests extends ARequests {
 

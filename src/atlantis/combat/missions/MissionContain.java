@@ -2,6 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidDefensiveBuildings;
+import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.squad.AStickCloserOrSpreadOutManager;
 import atlantis.position.APosition;
@@ -39,6 +40,10 @@ public class MissionContain extends MissionAttack {
 //        }
 
         if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit, false)) {
+            return true;
+        }
+
+        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
             return true;
         }
 

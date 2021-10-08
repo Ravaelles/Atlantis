@@ -2,17 +2,16 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.constructing.AConstructionManager;
-import static atlantis.production.ADynamicConstructionManager.canAfford;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 
-public class TerranDynamicConstructionManager extends ADynamicConstructionManager {
+public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
-        requestFactoryIfNeeded();
-        requestAddonIfNeeded();
+        factoryIfNeeded();
+        addonIfNeeded();
     }
     
     // =========================================================
@@ -20,7 +19,7 @@ public class TerranDynamicConstructionManager extends ADynamicConstructionManage
     /**
      * If all factories are busy (training units) request new ones.
      */
-    private static void requestFactoryIfNeeded() {
+    private static void factoryIfNeeded() {
         if (canAfford(250, 100)) {
             Select<?> factories = Select.ourOfType(AUnitType.Terran_Factory);
             
@@ -46,7 +45,7 @@ public class TerranDynamicConstructionManager extends ADynamicConstructionManage
     /**
      * If there are buildings without addons, build them.
      */
-    private static void requestAddonIfNeeded() {
+    private static void addonIfNeeded() {
         if (canAfford(100, 50)) {
             for (AUnit building : Select.ourBuildings().list()) {
                 if (building.getType().isFactory() && !building.isBusy() && !building.hasAddon()) {

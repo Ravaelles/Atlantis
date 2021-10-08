@@ -32,8 +32,8 @@ public class AtlantisConfig {
     /**
      * Race used by the Atlantis.
      */
-    public static final String OUR_RACE = "Terran";
-//    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Protoss";
 //    public static final String OUR_RACE = "Zerg";
 
     /**
@@ -123,8 +123,9 @@ public class AtlantisConfig {
      * Helper method for using Protoss race.
      */
     public static void useConfigForProtoss() {
-        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATEWAY_ZEALOT;
-        
+//        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATEWAY_ZEALOT;
+        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATE_RANGE_EXPAND;
+
         AtlantisConfig.MY_RACE = Race.Protoss;
         AtlantisConfig.BASE = AUnitType.Protoss_Nexus;
         AtlantisConfig.WORKER = AUnitType.Protoss_Probe;

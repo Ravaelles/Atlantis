@@ -42,10 +42,21 @@ http://wiki.teamliquid.net/starcraft/2_Gate_Range_Expand
 24 - Pylon
 25 - Dragoons - x2
 26 - Robotics Facility
-27 - Robotics Support Bay
-27 - Observatory
-28 - Reaver
-28 - Observer
-31 - Reaver
-33 - Reaver
-35 - Reaver
+
+Dragoon - x3
+Observatory
+Observer
+Dragoon - x3
+
+50 - Robotics Support Bay
+Reaver
+
+Dragoon - x10
+
+//27 - Robotics Support Bay
+//27 - Observatory
+//28 - Reaver
+//28 - Observer
+//31 - Reaver
+//33 - Reaver
+//35 - Reaver

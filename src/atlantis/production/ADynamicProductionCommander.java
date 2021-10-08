@@ -11,7 +11,7 @@ public class ADynamicProductionCommander {
         }
 
         ADynamicUnitProductionManager.update();
-        ADynamicConstructionManager.update();
+        ADynamicBuildingsManager.update();
     }
     
 }

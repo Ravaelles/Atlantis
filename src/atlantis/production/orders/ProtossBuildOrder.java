@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class ProtossBuildOrder extends ABuildOrder {
     
     public static final ProtossBuildOrder PROTOSS_2_GATE_RANGE_EXPAND = new ProtossBuildOrder("2 Gate Range Expand");
-    public static final ProtossBuildOrder PROTOSS_2_GATEWAY_ZEALOT = new ProtossBuildOrder("Two Gateway Zealot");
+    public static final ProtossBuildOrder PROTOSS_2_GATEWAY_ZEALOT = new ProtossBuildOrder("2 Gateway Zealot");
     
     // =========================================================
     

@@ -35,11 +35,11 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     }
 
     // =========================================================
-    
+
     /**
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
-    public APosition findNewBuildPosition() {
+    public APosition findPositionForNewBuilding() {
         return APositionFinder.getPositionForNew(builder, buildingType, this);
     }
 

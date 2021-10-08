@@ -4,8 +4,6 @@ import atlantis.units.AUnit;
 import atlantis.units.Units;
 import java.util.ArrayList;
 
-
-
 public class ProtossConstructionManager {
 
     /**

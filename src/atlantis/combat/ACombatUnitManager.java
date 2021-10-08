@@ -246,14 +246,14 @@ public class ACombatUnitManager extends AbstractMicroManager {
             }
         }
 
-//        if (unit.isUnderAttack() && unit.getLastUnitOrderWasFramesAgo() >= 60) {
-//            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-//                System.err.println("UNFREEZE #2!");
-//                unit.setTooltip("UNFREEZE!");
-//                unit.unbug();
-//                return true;
-//            }
-//        }
+        if (unit.isUnderAttack() && unit.getLastUnitOrderWasFramesAgo() >= 40) {
+            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
+                System.err.println("UNFREEZE #2!");
+                unit.setTooltip("UNFREEZE!");
+                unit.unbug();
+                return true;
+            }
+        }
 
         return false;
     }

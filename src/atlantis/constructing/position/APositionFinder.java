@@ -17,7 +17,7 @@ public class APositionFinder {
 //    protected static double maxDistance;
 
     // =========================================================
-    
+
     /**
      * Returns build position for next building of given type.
      */
@@ -39,12 +39,14 @@ public class APositionFinder {
 
         // =========================================================
         // Buildings extracting GAS
+
         if (building.isGasBuilding()) {
             return ASpecialPositionFinder.findPositionForGasBuilding(building);
         } 
 
         // =========================================================
         // BASE
+
         else if (building.isBase()) {
             APosition position = ASpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
             return position;
@@ -52,6 +54,7 @@ public class APositionFinder {
 
         // =========================================================
         // BUNKER
+
         else if (building.isBunker()) {
             APosition position = TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
             return position;
@@ -59,6 +62,7 @@ public class APositionFinder {
 
         // =========================================================
         // Creep colony
+
         else if (building.equals(AUnitType.Zerg_Creep_Colony)) {
             return ZergCreepColony.findPosition(building, builder, constructionOrder);
         } 
@@ -115,10 +119,12 @@ public class APositionFinder {
         // Terran
         if (AGame.isPlayingAsTerran()) {
             return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-        } // Protoss
+        }
+        // Protoss
         else if (AGame.isPlayingAsProtoss()) {
             return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-        } // Zerg
+        }
+        // Zerg
         else if (AGame.isPlayingAsZerg()) {
             return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }

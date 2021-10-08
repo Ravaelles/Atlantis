@@ -54,7 +54,7 @@ public class ARunManager {
         
         else if (runTo == null) {
             boolean finallyRunned = false;
-            for (int dist = 7; dist >= 2.2; dist -= 2) {
+            for (int dist = 5; dist >= 2.2; dist -= 2) {
                 if (finallyRunned = unit.moveAwayFrom(enemyMedian, dist, "Run")) {
                     break;
                 }

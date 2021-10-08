@@ -28,7 +28,6 @@ public class AConstructionManager {
      * finished objects etc.
      */
     public static void update() {
-//        for (ConstructionOrder constructionOrder : constructionOrders) {
         for (Iterator<ConstructionOrder> iterator = constructionOrders.iterator(); iterator.hasNext(); ) {
             ConstructionOrder constructionOrder =  iterator.next();
             checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
@@ -63,8 +62,7 @@ public class AConstructionManager {
      * it.
      */
     public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
-//        AGame.sendMessage("Request to build: " + building.getShortName());
-        
+
         // Validate
         if (!building.isBuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
@@ -76,6 +74,7 @@ public class AConstructionManager {
 
         // =========================================================
         // Create ConstructionOrder object, assign random worker for the time being
+
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
         newConstructionOrder.setProductionOrder(order);
         newConstructionOrder.setNearTo(near);
@@ -90,18 +89,13 @@ public class AConstructionManager {
 
         // =========================================================
         // Find place for new building
-//        APosition positionToBuild = AtlantisPositionFinder.getPositionForNew(
-//                newConstructionOrder.getBuilder(), building, newConstructionOrder, near, 25
-//        );
-//        newConstructionOrder.setMaxDistance(32);
+
         newConstructionOrder.setMaxDistance(-1);
-        APosition positionToBuild = newConstructionOrder.findNewBuildPosition();
-//        AGame.sendMessage("@@ " + building + " at " + positionToBuild + " near " + near);
-//        System.err.println("@@ " + building + " at " + positionToBuild + " near " + near);
+        APosition positionToBuild = newConstructionOrder.findPositionForNewBuilding();
 
         // =========================================================
         // Successfully found position for new building
-        AUnit optimalBuilder = null;
+
         if (positionToBuild != null) {
 
             // Update construction order with found position for building
@@ -119,7 +113,7 @@ public class AConstructionManager {
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
-            System.err.println("requestConstruction `" + building);
+            System.err.println("requestConstruction `" + building + "`");
             if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                 System.err.println("    (reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             }
@@ -420,13 +414,6 @@ public class AConstructionManager {
             if (!allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.getBuilder();
-//                    System.out.println("&&& " + constructionOrder.getBuildingType()+ " &&&&&&&");
-//                    System.out.println("BUILDER = " + builder);
-//                    System.out.println(builder.getBuildUnit());
-//                    System.out.println(builder.getBuildType());
-//                    System.out.println(builder.getTarget());
-//                    System.out.println(builder.getTargetPosition());
-//                    System.out.println(builder.getOrderTarget());
                     if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         if (builder != null) {
                             if (builder.getType().equals(constructionOrder.getBuildingType())) {

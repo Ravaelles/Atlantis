@@ -536,6 +536,10 @@ public class AUnitType implements Comparable<AUnitType> {
         return isType(Terran_Bunker);
     }
 
+    public boolean isPylon() {
+        return isType(Protoss_Pylon);
+    }
+
     public boolean isCannon() {
         return isType(Protoss_Photon_Cannon);
     }

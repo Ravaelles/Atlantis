@@ -31,13 +31,13 @@ public abstract class AbstractPositionFinder {
         // =========================================================
         
         // Leave entire vertical (same tileX) corridor free for units
-        if (position.getTileX() % 7 == 1 || position.getTileX() % 8 == 1) {
+        if (position.getTileX() % 8 == 0 || position.getTileX() % 9 == 0) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }
         
         // Leave entire horizontal (same tileY) corridor free for units
-        if (position.getTileY() % 5 == 0 || position.getTileY() % 6 == 0) {
+        if (position.getTileY() % 6 == 0 || position.getTileY() % 7 == 0) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;
         }
@@ -60,7 +60,6 @@ public abstract class AbstractPositionFinder {
         }
         
         return Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
-//        return Atlantis.getBwapi().canBuildHere(position.toTilePosition(), building.ut(), builder.u(), false);
     }
 
     /**

@@ -63,7 +63,7 @@ public class ACombatEvaluator {
 //        }
 
 //        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight);
-        return evaluateSituation(unit) * 0.7 >= evaluateSituation(nearestEnemy);
+        return evaluateSituation(unit) * 0.8 >= evaluateSituation(nearestEnemy);
     }
 
     /**
@@ -86,7 +86,7 @@ public class ACombatEvaluator {
      * <b>NEGATIVE</b> when enemy is too strong and we should pull back.
      */
     public static double evaluateSituation(AUnit unit) {
-        return evaluateSituation(unit, false, false);
+        return evaluateSituation(unit, false, unit.isEnemy());
     }
 
     /**
