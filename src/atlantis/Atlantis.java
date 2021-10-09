@@ -1,10 +1,7 @@
 package atlantis;
 
 import atlantis.combat.squad.ASquadManager;
-import atlantis.constructing.AConstructionManager;
-import atlantis.constructing.ConstructionOrder;
-import atlantis.constructing.ConstructionOrderStatus;
-import atlantis.constructing.ProtossConstructionManager;
+import atlantis.constructing.*;
 import atlantis.debug.AUnitTypesHelper;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.map.AMap;
@@ -12,7 +9,6 @@ import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.repair.ARepairAssignments;
-import atlantis.repair.ARepairerManager;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
@@ -340,7 +336,7 @@ public class Atlantis implements BWEventListener {
                 // === Fix for Zerg Extractor ========================================
                 // Detect morphed gas building meaning construction has just started
                 if (unit.getType().isGasBuilding()) {
-                    for (ConstructionOrder order : AConstructionManager.getAllConstructionOrders()) {
+                    for (ConstructionOrder order : AConstructionRequests.getAllConstructionOrders()) {
                         if (order.getBuildingType().equals(AtlantisConfig.GAS_BUILDING)
                                 && order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                             order.setConstruction(unit);

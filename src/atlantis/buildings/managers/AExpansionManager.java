@@ -2,13 +2,13 @@ package atlantis.buildings.managers;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionManager;
-import static atlantis.constructing.AConstructionManager.requestConstructionOf;
+
+import static atlantis.constructing.AConstructionRequests.requestConstructionOf;
+
+import atlantis.constructing.AConstructionRequests;
 import atlantis.map.AMap;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.Select;
-import java.util.ArrayList;
 
 
 public class AExpansionManager {
@@ -43,7 +43,7 @@ public class AExpansionManager {
         
         // === Force decent army before 3rd base =========================================
 
-        int inConstruction = AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
+        int inConstruction = AConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
         if (inConstruction >= 1) {
             return;
         }
@@ -64,7 +64,7 @@ public class AExpansionManager {
 
         // ===============================================================================
         int numberOfUnfinishedBases
-                = AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
+                = AConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
 
         boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
         boolean haveEnoughBases = numberOfBases >= 7

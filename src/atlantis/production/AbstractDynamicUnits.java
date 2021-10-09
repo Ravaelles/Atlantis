@@ -1,7 +1,7 @@
 package atlantis.production;
 
 import atlantis.AGame;
-import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -13,7 +13,7 @@ public class AbstractDynamicUnits {
             return;
         }
 
-        if (onlyOneAtTime && AConstructionManager.hasRequestedConstructionOf(unitType)) {
+        if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(unitType)) {
             return;
         }
 

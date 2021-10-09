@@ -2,7 +2,7 @@ package atlantis.map;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
@@ -18,7 +18,6 @@ import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.BWTA;
-import bwta.BaseLocation;
 import bwta.Chokepoint;
 import bwta.Region;
 
@@ -557,7 +556,7 @@ public class AMap {
         }
 
         // Check for planned constructions
-        for (ConstructionOrder constructionOrder : AConstructionManager.getAllConstructionOrders()) {
+        for (ConstructionOrder constructionOrder : AConstructionRequests.getAllConstructionOrders()) {
             APosition constructionPlace = constructionOrder.getPositionToBuildCenter();
             if (constructionPlace != null && constructionPlace.distanceTo(baseLocation.getPosition()) < 8) {
                 return false;

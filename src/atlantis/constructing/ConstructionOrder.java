@@ -74,7 +74,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
             builder = null;
         }
         
-        AConstructionManager.removeOrder(this);
+        AConstructionRequests.removeOrder(this);
 //        status = ConstructionOrderStatus.CONSTRUCTION_FINISHED;
     }
     
@@ -199,5 +199,9 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     public int getFrameOrdered() {
         return frameOrdered;
+    }
+
+    public boolean hasStarted() {
+        return !getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED);
     }
 }

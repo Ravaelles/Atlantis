@@ -7,7 +7,7 @@ import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.missions.MissionAttack;
-import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.position.TerranPositionFinder;
@@ -477,7 +477,7 @@ public class APainter {
      */
     private static void paintSidebarConstructionsPending() {
         int yOffset = 220;
-        ArrayList<ConstructionOrder> allOrders = AConstructionManager.getAllConstructionOrders();
+        ArrayList<ConstructionOrder> allOrders = AConstructionRequests.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
@@ -510,7 +510,7 @@ public class APainter {
      */
     private static void paintConstructionPlaces() {
         Color color = Color.Grey;
-        for (ConstructionOrder order : AConstructionManager.getAllConstructionOrders()) {
+        for (ConstructionOrder order : AConstructionRequests.getAllConstructionOrders()) {
             if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 APosition positionToBuild = order.getPositionToBuild();

@@ -2,7 +2,7 @@ package atlantis.buildings.managers;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
@@ -60,16 +60,16 @@ public class ASupplyManager {
 
         // Terran + Protoss
         else {
-            AConstructionManager.requestConstructionOf(AtlantisConfig.SUPPLY);
+            AConstructionRequests.requestConstructionOf(AtlantisConfig.SUPPLY);
         }
     }
 
     private static boolean requestedConstructionOfSupply() {
-        return AConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY) > 0;
+        return AConstructionRequests.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY) > 0;
     }
 
     private static int requestedConstructionOfSupplyNumber() {
-        return AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
+        return AConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
         
         // Zerg
 //        if (AGame.playsAsZerg()) {

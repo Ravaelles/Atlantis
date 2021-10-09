@@ -1,8 +1,7 @@
 package atlantis.production;
 
 import atlantis.AGame;
-import atlantis.constructing.AConstructionManager;
-import atlantis.units.AUnit;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
@@ -31,10 +30,10 @@ public class ProtossDynamicBuildingsManager {
             return;
         }
 
-        if (onlyOneAtTime && AConstructionManager.hasRequestedConstructionOf(unitType)) {
+        if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(unitType)) {
             return;
         }
 
-        AConstructionManager.requestConstructionOf(AUnitType.Protoss_Gateway);
+        AConstructionRequests.requestConstructionOf(AUnitType.Protoss_Gateway);
     }
 }

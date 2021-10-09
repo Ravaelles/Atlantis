@@ -2,7 +2,7 @@ package atlantis.strategy;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.production.requests.AAntiAirRequest;
 import atlantis.production.requests.AAntiLandRequest;
 import atlantis.production.requests.ADetectorRequest;
@@ -12,7 +12,7 @@ import atlantis.scout.AScoutManager;
 public class AStrategyResponse {
     
     public static void update() {
-        int defBuildingAntiLand = AConstructionManager.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
+        int defBuildingAntiLand = AConstructionRequests.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
         if (defBuildingAntiLand < AStrategyInformations.needDefBuildingAntiLand) {
             AAntiLandRequest.requestDefensiveBuildingAntiLand(null);
         }
@@ -34,7 +34,7 @@ public class AStrategyResponse {
         if (enemyStrategy.isGoingHiddenUnits()) {
             if (AGame.everyNthGameFrame(19)) {
                 AStrategyInformations.needDefBuildingAntiLandAtLeast(1);
-                ADetectorRequest.requestDetectorQuick(null);
+                ADetectorRequest.requestDetectorImmediately(null);
             }
         }
         

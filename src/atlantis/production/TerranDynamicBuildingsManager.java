@@ -1,7 +1,7 @@
 package atlantis.production;
 
 import atlantis.AGame;
-import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -24,19 +24,19 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             Select<?> factories = Select.ourOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
-                    AConstructionManager.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);
+                    AConstructionRequests.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);
             int numberOfFactories = factories.size() + unfinishedFactories;
             
             // Proceed only if all factories are busy
             if (numberOfFactories >= 1 && factories.areAllBusy()) {
                 
                 if (unfinishedFactories == 0) {
-                    AConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
+                    AConstructionRequests.requestConstructionOf(AUnitType.Terran_Factory);
                 }
                 else if (unfinishedFactories >= 1 && AGame.canAfford(
                         100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
                 )) {
-                    AConstructionManager.requestConstructionOf(AUnitType.Terran_Factory);
+                    AConstructionRequests.requestConstructionOf(AUnitType.Terran_Factory);
                 }
             }
         }

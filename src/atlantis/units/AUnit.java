@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.combat.micro.ARunManager;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
@@ -740,7 +741,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * construction.
      */
     public ConstructionOrder getConstructionOrder() {
-        return AConstructionManager.getConstructionOrderFor(this);
+        return AConstructionRequests.getConstructionOrderFor(this);
     }
 
     /**

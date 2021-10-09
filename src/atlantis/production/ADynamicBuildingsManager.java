@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AExpansionManager;
-import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -37,10 +37,10 @@ public class ADynamicBuildingsManager {
         if (
             numberOfBases >= 2
             && numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350)
-            && AConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0
+            && AConstructionRequests.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0
             && hasABaseWithFreeGeyser()
         ) {
-            AConstructionManager.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
+            AConstructionRequests.requestConstructionOf(AtlantisConfig.GAS_BUILDING);
         }
     }
 

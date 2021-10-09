@@ -1,10 +1,7 @@
 package atlantis.production.requests;
 
-import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.combat.missions.MissionDefend;
-import atlantis.constructing.AConstructionManager;
-import atlantis.map.AMap;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -20,7 +17,7 @@ public class AAntiAirRequest {
 //
 //        }
 
-        AConstructionManager.requestConstructionOf(building, nearTo);
+        AConstructionRequests.requestConstructionOf(building, nearTo);
     }
 
     /**
@@ -28,25 +25,25 @@ public class AAntiAirRequest {
      */
     public static void requestAntiAirQuick(APosition where) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
-        int antiAirBuildings = AConstructionManager.countExistingAndPlannedConstructions(building);
+        int antiAirBuildings = AConstructionRequests.countExistingAndPlannedConstructions(building);
 
         // === Ensure we have required units ========================================
 
-        int requiredParents = AConstructionManager.countExistingAndPlannedConstructions(building.getWhatIsRequired());
+        int requiredParents = AConstructionRequests.countExistingAndPlannedConstructions(building.getWhatIsRequired());
         if (requiredParents == 0) {
-            AConstructionManager.requestConstructionOf(building.getWhatIsRequired());
+            AConstructionRequests.requestConstructionOf(building.getWhatIsRequired());
             return;
         }
 
         // === Protect every base ==========================================
 
         for (AUnit base : Select.ourBases().listUnits()) {
-            int numberOfAntiAirBuildingsNearBase = AConstructionManager.countExistingAndPlannedConstructionsInRadius(
+            int numberOfAntiAirBuildingsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
                     building, 8, base.getPosition()
             );
 
             for (int i = 0; i < 2 - numberOfAntiAirBuildingsNearBase; i++) {
-                AConstructionManager.requestConstructionOf(building, base.getPosition());
+                AConstructionRequests.requestConstructionOf(building, base.getPosition());
             }
         }
     }

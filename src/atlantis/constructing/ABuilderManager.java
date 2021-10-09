@@ -2,12 +2,10 @@ package atlantis.constructing;
 
 import atlantis.AGame;
 import atlantis.constructing.position.AbstractPositionFinder;
-import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
-import bwapi.Color;
 import bwapi.TilePosition;
 
 public class ABuilderManager {
@@ -29,7 +27,7 @@ public class ABuilderManager {
     // =========================================================
     
     private static void handleConstruction(AUnit builder) {
-        ConstructionOrder constructionOrder = AConstructionManager.getConstructionOrderFor(builder);
+        ConstructionOrder constructionOrder = AConstructionRequests.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place

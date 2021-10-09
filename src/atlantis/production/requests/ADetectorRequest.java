@@ -2,9 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.combat.missions.MissionDefend;
-import atlantis.constructing.AConstructionManager;
-import atlantis.map.AMap;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -14,8 +12,9 @@ public class ADetectorRequest {
 
     /**
      * Request quickest possible detector to be built (e.g. Comsat Station for Terran, not Science Vessel).
+     * Cancel all other not started build orders, to make sure you have resources.
      */
-    public static void requestDetectorQuick(APosition where) {
+    public static void requestDetectorImmediately(APosition where) {
         AUnitType detectorBuilding = null;
         if (AGame.isPlayingAsTerran()) {
             detectorBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
@@ -30,29 +29,8 @@ public class ADetectorRequest {
 
         // =========================================================
 
-        int detectors = AConstructionManager.countExistingAndPlannedConstructions(detectorBuilding);
-        System.out.println("detectors = " + detectors);
-
-        // === Ensure parent exists ========================================
-
-        int requiredParents = AConstructionManager.countExistingAndPlannedConstructions(detectorBuilding.getWhatIsRequired());
-        if (requiredParents == 0) {
-            System.out.println("Request: " + detectorBuilding.getWhatIsRequired().getShortName());
-            AConstructionManager.requestConstructionOf(detectorBuilding.getWhatIsRequired());
-            return;
-        }
-
-        // === Protect every base ==========================================
-//
-        for (AUnit base : Select.ourBases().listUnits()) {
-            int numberOfDetectorsNearBase = AConstructionManager.countExistingAndPlannedConstructionsInRadius(
-                    detectorBuilding, 15, base.getPosition()
-            );
-
-            for (int i = 0; i < 2 - numberOfDetectorsNearBase; i++) {
-                AConstructionManager.requestConstructionOf(detectorBuilding, base.getPosition());
-            }
-        }
+        AConstructionRequests.removeAllNotStarted();
+        requestDetectorConstruction(detectorBuilding);
 
         // === Protect choke point =========================================
 
@@ -75,6 +53,33 @@ public class ADetectorRequest {
 //        for (int i = 0; i < 2 - numberOfDetectors; i++) {
 //            AConstructionManager.requestConstructionOf(detectorBuilding, where);
 //        }
+    }
+
+    private static void requestDetectorConstruction(AUnitType detectorBuilding) {
+        int detectors = AConstructionRequests.countExistingAndPlannedConstructions(detectorBuilding);
+        System.out.println("detectors = " + detectors);
+
+        // === Ensure parent exists ========================================
+
+        int requiredParents = AConstructionRequests.countExistingAndPlannedConstructions(detectorBuilding.getWhatIsRequired());
+        if (requiredParents == 0) {
+            System.out.println("Detector dependency requested: " + detectorBuilding.getWhatIsRequired().getShortName());
+            AConstructionRequests.requestConstructionOf(detectorBuilding.getWhatIsRequired());
+            return;
+        }
+
+        // === Protect every base ==========================================
+//
+        for (AUnit base : Select.ourBases().listUnits()) {
+            int numberOfDetectorsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
+                    detectorBuilding, 15, base.getPosition()
+            );
+
+            for (int i = 0; i <= 2 - numberOfDetectorsNearBase; i++) {
+                System.out.println("Detector construction (" + detectorBuilding.getShortName() + ") requested!");
+                AConstructionRequests.requestConstructionOf(detectorBuilding, base.getPosition());
+            }
+        }
     }
 
 }

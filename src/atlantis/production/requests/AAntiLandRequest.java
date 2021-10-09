@@ -1,7 +1,7 @@
 package atlantis.production.requests;
 
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionManager;
+import atlantis.constructing.AConstructionRequests;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -28,7 +28,7 @@ public class AAntiLandRequest {
         }
 
         if (nearTo != null) {
-            AConstructionManager.requestConstructionOf(building, nearTo);
+            AConstructionRequests.requestConstructionOf(building, nearTo);
         }
     }
 }

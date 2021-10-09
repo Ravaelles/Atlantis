@@ -1,14 +1,7 @@
 package atlantis.production.requests;
 
 import atlantis.AGame;
-import atlantis.AtlantisConfig;
-import atlantis.combat.missions.MissionDefend;
-import atlantis.constructing.AConstructionManager;
-import atlantis.map.AMap;
 import atlantis.position.APosition;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.Select;
 
 
 public abstract class ARequests {
@@ -33,7 +26,7 @@ public abstract class ARequests {
     // =========================================================
 
     public void requestDetectorQuick(APosition where) {
-        ADetectorRequest.requestDetectorQuick(where);
+        ADetectorRequest.requestDetectorImmediately(where);
     }
 
     public void requestAntiAirQuick(APosition where) {
