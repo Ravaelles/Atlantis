@@ -33,7 +33,6 @@ public interface AUnitOrders {
             return false;
         }
 
-        unit().setUnitAction(UnitActions.ATTACK_UNIT);
 
         // Do NOT issue double orders
         if (unit().isCommand(UnitCommandType.Attack_Unit) && u().getTarget() != null && target.equals(unit().getTarget())) {
@@ -46,6 +45,7 @@ public interface AUnitOrders {
 //            AGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
         }
 
+        unit().setUnitAction(UnitActions.ATTACK_UNIT);
         unit().setLastUnitOrderNow();
         return u().attack(target.u());
     }
@@ -123,8 +123,6 @@ public interface AUnitOrders {
             
         // =========================================================
 
-        unit().setUnitAction(unitAction);
-        
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
 //        if (unit().isMoving() && AGame.getTimeFrames() % 4 != 0) {
 //            return true;
@@ -142,8 +140,9 @@ public interface AUnitOrders {
 //            System.out.println(AGame.getTimeFrames() + " moved, " + unit().getUnitAction() 
 //+ ", dist = " + unit().distanceTo(target));
             u().move(target);
-            unit().setLastUnitOrderNow();
-            unit().setUnitAction(unitAction);
+
+            unit().setLastUnitOrderNow()
+                .setUnitAction(unitAction);
             return true;
         }
         

@@ -22,7 +22,8 @@ public class AAvoidInvisibleEnemyUnits {
     }
 
     public static boolean handledAvoid(AUnit unit, AUnitType type) {
-        double safetyMargin = 2.7 + (type.isMeleeUnit() ? 0 : type.getGroundWeapon().maxRange());
+        double safetyMargin =
+                (unit.isAttacking() ? 3.6 : 3.0) + (type.isMeleeUnit() ? 0 : type.getGroundWeapon().maxRange());
 
         AUnit hiddenEnemy = Select.enemyOfType(type).inRadius(safetyMargin, unit).first();
         if (hiddenEnemy != null) {

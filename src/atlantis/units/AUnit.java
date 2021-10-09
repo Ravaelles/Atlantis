@@ -345,6 +345,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return 100 * getHitPoints() / getMaxHitPoints();
     }
 
+    public int getWoundPercent() {
+        return 100 - 100 * getHitPoints() / getMaxHitPoints();
+    }
+
     public boolean isWounded() {
         return getHitPoints() < getMaxHP();
     }
@@ -597,7 +601,12 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return runManager.isRunning();
+//        return runManager.isRunning();
+        return getUnitAction().equals(UnitActions.RUN) && isLastOrderFramesAgo(4);
+    }
+
+    public boolean isLastOrderFramesAgo(int minFramesAgo) {
+        return AGame.getTimeFrames() - lastUnitOrder >= minFramesAgo;
     }
 
     /**

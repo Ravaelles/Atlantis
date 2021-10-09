@@ -543,6 +543,18 @@ public class Select<T> {
         return this;
     }
 
+    public Select<T> invisible() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
+            if (unit.isVisible()) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
     public Select<T> groundUnits() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
@@ -1325,6 +1337,10 @@ public class Select<T> {
         });
 
         return data;
+    }
+
+    public Select<T> clone() {
+        return new Select<>(this.data);
     }
 
 }

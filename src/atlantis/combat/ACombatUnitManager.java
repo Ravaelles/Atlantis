@@ -75,9 +75,9 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         // Handle units getting bugged by Starcraft
-//        if (handleBuggedUnit(unit)) {
-//            return true;
-//        }
+        if (handleBuggedUnit(unit)) {
+            return true;
+        }
 
         // Don't INTERRUPT shooting units
         if (shouldNotDisturbUnit(unit)) {
@@ -154,8 +154,16 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //            System.out.println(AGame.getTimeFrames() +" // #" + unit.getID());
 //        }
 
+        if (unit.isAttacking() && unit.getLastOrderFramesAgo() <= unit.getCooldown() - 3) {
+            double minDistToContinueAttack = 1.8 + unit.getWoundPercent() / 40.0;
+            if (Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isEmpty()) {
+                unit.setTooltip("@ATTACK");
+                return true;
+            }
+        }
+
         if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 4) {
-            unit.setTooltip("Run...");
+            unit.setTooltip("Run...(" + unit.getLastOrderFramesAgo() + ")");
             return true;
         }
 
@@ -169,19 +177,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        if (!unit.isAttacking() && unit.getLastOrderFramesAgo() <= 2) {
-            unit.setTooltip("Dont disturb (" + unit.getLastOrderFramesAgo() + ")");
-            return true;
-        }
-
-        if (
-                unit.isAttacking()
-                        && Select.enemyRealUnits().melee().inRadius(1.2, unit).isEmpty()
-                        && unit.getLastOrderFramesAgo() <= unit.getCooldown() - 3
-        ) {
-            unit.setTooltip("@ATTACK");
-            return true;
-        }
+//        if (!unit.isAttacking() && unit.getLastOrderFramesAgo() <= 2) {
+//            unit.setTooltip("Dont disturb (" + unit.getLastOrderFramesAgo() + ")");
+//            return true;
+//        }
 
 //                ((!unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack())
 //                && unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
@@ -199,7 +198,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //    }
 
     private static boolean handleBuggedUnit(AUnit unit) {
-        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 30) {
+        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 40) {
             if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
                 System.err.println("UNFREEZE #1!");
                 unit.setTooltip("UNFREEZE!");

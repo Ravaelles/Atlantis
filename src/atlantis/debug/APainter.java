@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
+import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.missions.MissionAttack;
 import atlantis.constructing.AConstructionManager;
@@ -191,6 +192,7 @@ public class APainter {
      * Paint focus point for global attack mission etc.
      */
     private static void paintInfo() {
+        Mission mission = ASquadManager.getAlphaSquad().getMission();
 
         // Time
         paintSideMessage("Time: " + AGame.getTimeSeconds() + "s", Color.Grey);
@@ -201,7 +203,8 @@ public class APainter {
         paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
                 ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
                 AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
-        paintSideMessage("Mission: " + ASquadManager.getAlphaSquad().getMission().getName(), Color.White);
+        paintSideMessage("Mission: " + mission.getName(), Color.White);
+        paintSideMessage("Focus: " + mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE", Color.White);
         paintSideMessage("Enemy base: " + AEnemyUnits.getEnemyBase(), Color.White);
 
         // =========================================================

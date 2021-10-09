@@ -18,7 +18,7 @@ public class ProtossDynamicBuildingsManager {
     // =========================================================
 
     private static void gatewaysIfNeeded() {
-        if (AGame.canAfford(300, 0)) {
+        if (AGame.canAfford(358, 0)) {
             if (Select.ourOfType(AUnitType.Protoss_Gateway).areAllBusy()) {
                 AConstructionManager.requestConstructionOf(AUnitType.Protoss_Gateway);
             }

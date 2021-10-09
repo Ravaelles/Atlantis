@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ARunManager {
 
-    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 3;
+    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 5;
     
     // =========================================================
     
@@ -527,19 +527,19 @@ public class ARunManager {
         return runTo;
     }
 
-    public boolean isRunning() {
-        if (runTo != null) {
-            int framesAgo = AGame.getTimeFrames() - _updated_at;
-            if (framesAgo <= 1) {
-                return true;
-            } else {
-                markAsNotRunning();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
+//    public boolean isRunning() {
+//        if (runTo != null) {
+//            int framesAgo = AGame.getTimeFrames() - _updated_at;
+//            if (framesAgo <= 1) {
+//                return true;
+//            } else {
+//                markAsNotRunning();
+//                return false;
+//            }
+//        } else {
+//            return false;
+//        }
+//    }
 
     public void markAsNotRunning() {
         runTo = null;

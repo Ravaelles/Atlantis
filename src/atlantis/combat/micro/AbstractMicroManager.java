@@ -12,6 +12,7 @@ import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
 import bwapi.WeaponType;
 import java.util.Collection;
+import java.util.Objects;
 
 
 public abstract class AbstractMicroManager {
@@ -35,12 +36,14 @@ public abstract class AbstractMicroManager {
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit, isNewFight);
 
         // If situation is unfavorable, retreat
-//        if (!isSituationFavorable && !unit.isReadyToShoot() && (unit.canAnyCloseEnemyShootThisUnit()
         if (!isSituationFavorable) {
             unit.setTooltip("Retreat");
             return unit.runFrom(null);
         }
 
+        if (Objects.equals(unit.getTooltip(), "Retreat")) {
+            unit.setTooltip("Engage");
+        }
         return false;
     }
 
