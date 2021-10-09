@@ -8,7 +8,6 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
-import atlantis.util.PositionUtil;
 import bwapi.Color;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public class ARunManager {
 
-    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 6;
+    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 3;
     
     // =========================================================
     
@@ -43,38 +42,35 @@ public class ARunManager {
         
         // === Unit STUCK ======================================
         
-        else if (unit.isStuck()) {
-            unit.setTooltip("Stuck!!!");
-//            unit.holdPosition();
-            markAsNotRunning();
-            return false;
-        }
+//        else if (unit.isStuck()) {
+//            unit.setTooltip("Stuck!!!");
+////            unit.holdPosition();
+//            markAsNotRunning();
+//            return false;
+//        }
         
         // === Run to is EMPTY =================================
         
         else if (runTo == null) {
-            boolean finallyRunned = false;
-            for (int dist = 5; dist >= 2.2; dist -= 2) {
-                if (finallyRunned = unit.moveAwayFrom(enemyMedian, dist, "Run")) {
-                    break;
-                }
-            }
-            
-            if (!finallyRunned) {
-                markAsNotRunning();
-
-//                if (unit.isMoving()) {
-//                    unit.holdPosition();
+//            boolean finallyRunned = false;
+//            for (int dist = 5; dist >= 2.2; dist -= 2) {
+//                if (finallyRunned = unit.moveAwayFrom(enemyMedian, dist, "Run")) {
+//                    break;
 //                }
-
-                unit.setTooltip("My legs!");
-
-                return false;
-            }
-            else {
-                return true;
-            }
-        } 
+//            }
+//
+//            if (!finallyRunned) {
+//                markAsNotRunning();
+//                unit.setTooltip("Fuck!");
+//                return true;
+//            }
+//            else {
+//                return true;
+//            }
+            markAsNotRunning();
+            unit.setTooltip("Fuck!");
+            return true;
+        }
         
         // === Valid run position ==============================
         
@@ -109,7 +105,7 @@ public class ARunManager {
     /**
      * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
      */
-    private APosition findPositionToRun_preferAwayFromEnemy(AUnit unit, APosition runAwayFrom) {
+    private APosition findBestPositionToRun(AUnit unit, APosition runAwayFrom) {
         APosition runTo = null;
 
         // === Run directly away from the enemy ========================================
@@ -125,7 +121,20 @@ public class ARunManager {
         }
         
         // =============================================================================
-        
+
+        if (runTo != null && runTo.distanceTo(unit) < 1) {
+            System.err.println("Invalid run position, dist = " + runTo.distanceTo(unit));
+            APainter.paintLine(unit, runTo, Color.Red);
+            APainter.paintLine(
+                    unit.getPosition().translateByPixels(0, 1),
+                    runTo.translateByPixels(0, 1),
+                    Color.Red
+            );
+            APainter.paintCircleFilled(runTo, 8, Color.Red);
+        }
+
+        // =============================================================================
+
         return runTo;
     }
     
@@ -195,9 +204,9 @@ public class ARunManager {
 
         if (runTo != null) {
             double dist = runTo.distanceTo(unit);
-            unit.setTooltip("" + String.format("%.1f", dist));
+            unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")");
         } else {
-            unit.setTooltip("NULL");
+            unit.setTooltip("Cant run");
         }
 
         // === Actual run order ====================================
@@ -219,7 +228,7 @@ public class ARunManager {
 //            return Select.mainBase().getPosition();
 //        }
 
-        return unit.getRunManager().findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
+        return unit.getRunManager().findBestPositionToRun(unit, runAwayFrom);
     }
 
     // =========================================================
@@ -300,7 +309,7 @@ public class ARunManager {
 
         // If run distance is acceptably long and it's connected, it's ok.
         if (isPossibleAndReasonablePosition(unit.getPosition(), runTo, "O", "X")) {
-            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
+//            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
             return runTo;

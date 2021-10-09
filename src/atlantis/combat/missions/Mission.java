@@ -1,42 +1,45 @@
 package atlantis.combat.missions;
 
 import atlantis.Atlantis;
-import atlantis.map.AChokepoint;
+import atlantis.combat.micro.AAvoidDefensiveBuildings;
+import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
 
 /**
- * Represents behavior for squad of units e.g. DEFEND, ATTACK etc.
+ * Represents behavior for squad of units e.g. DEFEND, CONTAIN (enemy at his base), ATTACK etc.
  */
 public abstract class Mission {
 
     private static Mission instance;
+    protected MissionFocusPointManager focusPointManager;
     private String name;
-    private MissionFocusPointManager focusPointManager;
-    private MissionUnitManager unitManager;
 
     // =========================================================
 
-    public Mission(String name, MissionFocusPointManager focusPointManager, MissionUnitManager unitManager) {
+    protected Mission(String name) {
         this.name = name;
-        this.focusPointManager = focusPointManager;
-        this.unitManager = unitManager;
         instance = this;
     }
-
-    // =========================================================
 
     public abstract boolean update(AUnit unit);
 
     // =========================================================
 
-    public APosition focusPoint() {
-        return focusPointManager != null ? focusPointManager.focusPoint() : null;
+    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
+        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit, false)) {
+            return true;
+        }
+
+        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
+            return true;
+        }
+
+        return false;
     }
 
     protected boolean handleNoEnemyBuilding(AUnit unit) {
@@ -66,12 +69,8 @@ public abstract class Mission {
         this.name = name;
     }
 
-    public MissionFocusPointManager getFocusPointManager() {
-        return focusPointManager;
-    }
-
-    public MissionUnitManager getUnitManager() {
-        return unitManager;
+    public APosition focusPoint() {
+        return focusPointManager.focusPoint();
     }
 
     public boolean isMissionContain() {
@@ -87,7 +86,8 @@ public abstract class Mission {
     }
 
     public boolean isMissionUmt() {
-        return this.equals(Missions.UMT);
+        return false;
+//        return this.equals(Missions.UMT);
     }
     
 }

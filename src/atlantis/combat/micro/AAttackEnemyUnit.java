@@ -37,7 +37,7 @@ public class AAttackEnemyUnit {
         }
         
         // Check if weapon cooldown allows to attack this enemy
-        if (!unit.canAttackThisKindOfUnit(enemyToAttack, true)) {
+        if (!unit.canAttackThisKindOfUnit(enemyToAttack, false)) {
             unit.setTooltip("Invalid target");
             return false;
         } 

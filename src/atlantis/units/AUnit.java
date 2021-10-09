@@ -643,7 +643,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Returns the frames counter (time) since the unit had been issued any command.
      */
-    public int getLastUnitOrderWasFramesAgo() {
+    public int getLastOrderFramesAgo() {
         return AGame.getTimeFrames() - lastUnitOrder;
     }
 

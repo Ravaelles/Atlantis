@@ -118,46 +118,6 @@ public class APainter {
 
     // =========================================================
     // Hi-level
-    /**
-     * Paint focus point for global attack mission etc.
-     */
-    private static void paintInfo() {
-
-        // Time
-        paintSideMessage("Time: " + AGame.getTimeSeconds() + "s", Color.Grey);
-
-        // =========================================================
-        // Global mission
-
-        paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
-                ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
-                AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
-        paintSideMessage("Mission: " + ASquadManager.getAlphaSquad().getMission().getName(), Color.White);
-        paintSideMessage("Enemy base: " + AEnemyUnits.getEnemyBase(), Color.White);
-
-        // =========================================================
-        // Focus point
-
-        APosition focusPoint = MissionAttack.getInstance().focusPoint();
-        AUnit mainBase = Select.mainBase();
-        String desc = "";
-        if (focusPoint != null && mainBase != null) {
-            desc = "(" + ((int) mainBase.distanceTo(focusPoint)) + " tiles)";
-        }
-        paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
-
-        // =========================================================
-        paintSideMessage("Combat squad size: " + ASquadManager.getAlphaSquad().size(), Color.Yellow, 0);
-
-        // =========================================================
-        // Gas workers
-//        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
-//                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
-//        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
-        paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + ABuildOrderManager.getMineralsReserved(), Color.Grey);
-        paintSideMessage("Reserved gas: " + ABuildOrderManager.getGasReserved(), Color.Grey);
-    }
 
     /**
      * Painting for combat units can be a little different. Put here all the related code.
@@ -222,10 +182,50 @@ public class APainter {
 //                }
 //            }
             String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
-                    + "(" + unit.getLastUnitOrderWasFramesAgo() + ")";
-//            String order = unit.getLastUnitOrderWasFramesAgo() + "/" + unit.getCooldown();
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 8), order, Color.White);
+                    + "(" + unit.getLastOrderFramesAgo() + ")";
+            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 8), order, Color.Grey);
         }
+    }
+
+    /**
+     * Paint focus point for global attack mission etc.
+     */
+    private static void paintInfo() {
+
+        // Time
+        paintSideMessage("Time: " + AGame.getTimeSeconds() + "s", Color.Grey);
+
+        // =========================================================
+        // Global mission
+
+        paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
+                ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
+                AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
+        paintSideMessage("Mission: " + ASquadManager.getAlphaSquad().getMission().getName(), Color.White);
+        paintSideMessage("Enemy base: " + AEnemyUnits.getEnemyBase(), Color.White);
+
+        // =========================================================
+        // Focus point
+
+        APosition focusPoint = MissionAttack.getInstance().focusPoint();
+        AUnit mainBase = Select.mainBase();
+        String desc = "";
+        if (focusPoint != null && mainBase != null) {
+            desc = "(" + ((int) mainBase.distanceTo(focusPoint)) + " tiles)";
+        }
+        paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
+
+        // =========================================================
+        paintSideMessage("Combat squad size: " + ASquadManager.getAlphaSquad().size(), Color.Yellow, 0);
+
+        // =========================================================
+        // Gas workers
+//        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
+//                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
+//        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
+        paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + ABuildOrderManager.getMineralsReserved(), Color.Grey);
+        paintSideMessage("Reserved gas: " + ABuildOrderManager.getGasReserved(), Color.Grey);
     }
 
     /**

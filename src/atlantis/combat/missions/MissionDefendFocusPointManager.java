@@ -12,9 +12,10 @@ import bwta.Chokepoint;
 
 import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 
-public class MissionDefendFocusPoint {
+public class MissionDefendFocusPointManager extends MissionFocusPointManager {
 
-    public static APosition focusPoint() {
+    @Override
+    public APosition focusPoint() {
         if (AGame.isUmtMode()) {
             return null;
         }
@@ -26,11 +27,9 @@ public class MissionDefendFocusPoint {
 
         // === Focus enemy attacking the main base =================
 
-        if (mainBase != null) {
-            AUnit nearEnemy = Select.enemy().combatUnits().nearestTo(mainBase);
-            if (nearEnemy != null) {
-                return nearEnemy.getPosition();
-            }
+        AUnit nearEnemy = Select.enemy().combatUnits().nearestTo(mainBase);
+        if (nearEnemy != null) {
+            return nearEnemy.getPosition();
         }
 
         // === Return position near the choke point ================

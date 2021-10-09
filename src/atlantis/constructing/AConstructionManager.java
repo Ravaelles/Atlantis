@@ -275,6 +275,10 @@ public class AConstructionManager {
         return null;
     }
 
+    public static boolean hasRequestedConstructionOf(AUnitType type) {
+        return countNotFinishedConstructionsOfType(type) > 0;
+    }
+
     /**
      * If we requested to build building A and even assigned worker who's travelling to the building site,
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only

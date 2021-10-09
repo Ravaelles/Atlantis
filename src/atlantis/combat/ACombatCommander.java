@@ -1,6 +1,7 @@
 package atlantis.combat;
 
 import atlantis.AGame;
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.missions.Missions;
@@ -16,7 +17,7 @@ public class ACombatCommander {
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
         
         if (AGame.everyNthGameFrame(40)) {
-            Missions.evaluateGlobalMission();
+            MissionChanger.evaluateGlobalMission();
         }
         
         // === Handle all squads ===================================

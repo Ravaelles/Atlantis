@@ -22,16 +22,19 @@ public class TerranMedic {
     private static final HashMap<AUnit, AUnit> medicsAssignments = new HashMap<>();
 
     // =========================================================
+
     public static boolean update(AUnit medic) {
 
         // =========================================================
         // Define nearest wounded infantry unit
+
         if (handleHealWoundedUnit(medic)) {
             return true;
         }
 
         // =========================================================
         // If there's no "real" infantry around, go to the nearest Marine, Firebat or Ghost.
+
         if (handleTooFarFromRealInfantry(medic)) {
             return true;
         }

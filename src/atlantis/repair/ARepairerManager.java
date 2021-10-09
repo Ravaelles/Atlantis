@@ -6,9 +6,6 @@ import atlantis.combat.micro.AAvoidInvisibleEnemyUnits;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.units.actions.UnitActions;
-
-import java.util.*;
 
 
 public class ARepairerManager {
@@ -58,7 +55,7 @@ public class ARepairerManager {
         if (!repairer.isRepairing()) {
             repairer.repair(
                 target,
-                "Repair " + target.getShortNamePlusId() + "(" + repairer.getLastUnitOrderWasFramesAgo() + ")"
+                "Repair " + target.getShortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
             );
         }
         return true;

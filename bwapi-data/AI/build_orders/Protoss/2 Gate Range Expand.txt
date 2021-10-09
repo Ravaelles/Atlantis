@@ -6,6 +6,12 @@
 // When supply is bigger than N, then start auto-producing supply units
 #USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=25
 
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=60
+
 // === Raw build order used - taken from Liquipedia or so =============
 
 /**
@@ -40,7 +46,7 @@ http://wiki.teamliquid.net/starcraft/2_Gate_Range_Expand
 20 - Dragoon
 22 - Dragoon
 24 - Pylon
-25 - Dragoons - x2
+Dragoons - x3
 26 - Robotics Facility
 
 Dragoon - x3

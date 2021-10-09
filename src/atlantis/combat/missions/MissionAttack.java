@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
+import atlantis.combat.squad.AStickCloserOrSpreadOutManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
@@ -10,8 +11,9 @@ import atlantis.units.AUnit;
  */
 public class MissionAttack extends Mission {
 
-    public MissionAttack(String name) {
-        super(name, new MissionAttackFocusPointManager(), new AdvanceUnitsManager());
+    protected MissionAttack() {
+        super("Attack");
+        focusPointManager = new MissionAttackFocusPointManager();
     }
 
     @Override
@@ -34,6 +36,11 @@ public class MissionAttack extends Mission {
         // =========================================================
 
         return false;
+    }
+
+    @Override
+    public APosition focusPoint() {
+        return focusPointManager.focusPoint();
     }
 
 }

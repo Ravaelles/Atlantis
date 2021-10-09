@@ -2,17 +2,14 @@ package atlantis.combat;
 
 import atlantis.AGame;
 import atlantis.AGameSpeed;
+import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
-import atlantis.combat.micro.terran.TerranInfantryManager;
-import atlantis.combat.micro.terran.TerranMedic;
-import atlantis.combat.micro.terran.TerranSiegeTankManager;
-import atlantis.combat.micro.terran.TerranVultureManager;
-import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.combat.missions.Missions;
+import atlantis.debug.APainter;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import bwapi.Color;
 
 public class ACombatUnitManager extends AbstractMicroManager {
 
@@ -38,7 +35,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         //    These are stopping lower level actions.
         // 2) Terran infantry has own managers, but these allow lower
         //    level managers to take control.
-        if (handledSpecially(unit)) {
+        if (ASpecialUnitManager.handledUsingDedicatedUnitManager(unit)) {
             return true;
         }
 
@@ -70,8 +67,20 @@ public class ACombatUnitManager extends AbstractMicroManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
+        if (unit.isRunning()) {
+            APainter.paintCircle(unit.getTargetPosition(), 2, Color.Grey);
+            APainter.paintCircle(unit.getTargetPosition(), 3, Color.Grey);
+            APainter.paintCircle(unit.getTargetPosition(), 1, Color.Grey);
+            APainter.paintLine(unit, unit.getTargetPosition(), Color.Black);
+        }
+
         // Handle units getting bugged by Starcraft
-        if (handleBuggedUnit(unit)) {
+//        if (handleBuggedUnit(unit)) {
+//            return true;
+//        }
+
+        // Don't INTERRUPT shooting units
+        if (shouldNotDisturbUnit(unit)) {
             return true;
         }
 
@@ -99,12 +108,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        // Don't INTERRUPT shooting units
-        if (shouldNotDisturbUnit(unit)) {
-//            unit.setTooltip("#DontDisturb");
-            return true;
-        }
-
         return false;
     }
 
@@ -128,11 +131,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     private static boolean canHandleLowPriority(AUnit unit) {
-        if (unit.isRunning() && unit.getLastUnitOrderWasFramesAgo() <= 6) {
-            unit.setTooltip("Run");
-            return true;
-        }
-
         return unit.isStopped() || unit.isIdle();
     }
 
@@ -148,18 +146,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
     // =========================================================
 
-    private static boolean handledSpecially(AUnit unit) {
-        if (handledUsingDedicatedUnitManager(unit)) {
-            return true;
-        }
-
-        if (handledSpecialUnit(unit)) {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Some actions are too important/costly. No matter what happens, don't interrupt unit at this point.
      */
@@ -167,65 +153,41 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //        if (unit.isAttackFrame()) {
 //            System.out.println(AGame.getTimeFrames() +" // #" + unit.getID());
 //        }
-        return
-                unit.isAttackFrame()
-                || unit.isStartingAttack()
-                || !unit.isInterruptible()
-                || (unit.isAttacking() && unit.getLastUnitOrderWasFramesAgo() <= unit.getCooldown() - 3)
-                || (!unit.isAttacking() && unit.getLastUnitOrderWasFramesAgo() <= 3)
+
+        if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 4) {
+            unit.setTooltip("Run...");
+            return true;
+        }
+
+        if (unit.isAttackFrame()) {
+            unit.setTooltip("Attack frame");
+            return true;
+        }
+
+        if (unit.isStartingAttack()) {
+            unit.setTooltip("Starts attack");
+            return true;
+        }
+
+        if (!unit.isAttacking() && unit.getLastOrderFramesAgo() <= 2) {
+            unit.setTooltip("Dont disturb (" + unit.getLastOrderFramesAgo() + ")");
+            return true;
+        }
+
+        if (
+                unit.isAttacking()
+                        && Select.enemyRealUnits().melee().inRadius(1.2, unit).isEmpty()
+                        && unit.getLastOrderFramesAgo() <= unit.getCooldown() - 3
+        ) {
+            unit.setTooltip("@ATTACK");
+            return true;
+        }
+
 //                ((!unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack())
 //                && unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
                 ;
-    }
-
-    /**
-     * There are some units that should have individual micro managers like Zerg Overlord. If unit is "dedicated unit"
-     * it will use its own manager and return true, meaning no other managers should be used.
-     *
-     * Returning false allows standard micro managers to be used.
-     */
-    private static boolean handledUsingDedicatedUnitManager(AUnit unit) {
-        // === Terran ========================================
-
-        if (AGame.isPlayingAsTerran()) {
-            if (unit.isType(AUnitType.Terran_Medic)) {
-                unit.setTooltip("Medic");
-                return TerranMedic.update(unit);
-            }
-        }
-
-        // === Zerg ========================================
-
-        else if (AGame.isPlayingAsZerg()) {
-            if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
-                ZergOverlordManager.update(unit);
-                return true;
-            }
-        }
-
-        // =========================================================
 
         return false;
-    }
-
-    /**
-     * There are some units that should have additional micro manager actions like Siege Tank. If unit is
-     * considered "special" it will use its micro managers first. If it then returns false, standard micro managers
-     * can then be executed.
-     */
-    private static boolean handledSpecialUnit(AUnit unit) {
-        if (unit.getType().isSiegeTank()) {
-            return TerranSiegeTankManager.update(unit);
-        } else if (unit.getType().isVulture()) {
-            return TerranVultureManager.update(unit);
-        } else if (unit.getType().isTerranInfantry()) {
-            return TerranInfantryManager.update(unit);
-        }
-
-        // No special action happened - fallback to standard micro managers.
-        else {
-            return false;
-        }
     }
 
     /**
@@ -237,7 +199,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //    }
 
     private static boolean handleBuggedUnit(AUnit unit) {
-        if (unit.isRunning() && unit.getLastUnitOrderWasFramesAgo() >= 30) {
+        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 30) {
             if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
                 System.err.println("UNFREEZE #1!");
                 unit.setTooltip("UNFREEZE!");
@@ -246,7 +208,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
             }
         }
 
-        if (unit.isUnderAttack() && unit.getLastUnitOrderWasFramesAgo() >= 40) {
+        if (unit.isUnderAttack() && unit.getLastOrderFramesAgo() >= 40) {
             if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
                 System.err.println("UNFREEZE #2!");
                 unit.setTooltip("UNFREEZE!");

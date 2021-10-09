@@ -2,7 +2,7 @@ package atlantis;
 
 import static atlantis.Atlantis.game;
 
-import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.MissionChanger;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.AUtil;
@@ -235,7 +235,7 @@ public class AGame {
             System.out.println("### UMT mode enabled! ###");
             System.out.println();
 
-            Missions.forceMissionAttack();
+            MissionChanger.forceMissionAttack();
         }
     }
     

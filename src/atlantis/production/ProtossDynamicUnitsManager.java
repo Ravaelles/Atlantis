@@ -9,7 +9,7 @@ import atlantis.units.Select;
 import java.util.List;
 
 
-public class ProtossDynamicUnitsManager {
+public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
     public static void update() {
         scarabsIfNeeded();
@@ -19,11 +19,11 @@ public class ProtossDynamicUnitsManager {
     // =========================================================
 
     private static void dragoonsIfNeeded() {
-        if (AGame.getSupplyTotal() < 20) {
+        if (AGame.getSupplyTotal() <= 17) {
             return;
         }
 
-        trainIfPossible(AUnitType.Protoss_Dragoon, 200, 100);
+        trainIfPossible(AUnitType.Protoss_Dragoon, false, 200, 100);
     }
 
     private static void scarabsIfNeeded() {
@@ -31,19 +31,6 @@ public class ProtossDynamicUnitsManager {
         for (AUnit reaver : reavers) {
             if (reaver.getScarabCount() <= 2 && !reaver.isTrainingAnyUnit()) {
                 reaver.train(AUnitType.Protoss_Scarab);
-            }
-        }
-    }
-
-    private static void trainIfPossible(AUnitType unitType, int hasMinerals, int hasGas) {
-        if (!AGame.canAfford(hasMinerals, hasGas)) {
-            return;
-        }
-
-        for (AUnit buildingProducing : Select.ourOfType(unitType).listUnits()) {
-            if (!buildingProducing.isTrainingAnyUnit()) {
-                buildingProducing.train(unitType);
-                return;
             }
         }
     }

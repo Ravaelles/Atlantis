@@ -19,7 +19,7 @@ public class MissionUmt extends Mission {
     // =========================================================
 
     protected MissionUmt(String name) {
-        super(name, null, null);
+        super("UMT");
     }
 
     // =========================================================

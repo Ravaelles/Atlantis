@@ -115,7 +115,7 @@ public interface AUnitOrders {
             unit().setLastUnitOrderNow();
             return true;
         }
-        else if (unit().isSieged() && unit().getLastUnitOrderWasFramesAgo() > 30 * 10) {
+        else if (unit().isSieged() && unit().getLastOrderFramesAgo() > 30 * 10) {
             unit().unsiege();
             unit().setLastUnitOrderNow();
             return true;
