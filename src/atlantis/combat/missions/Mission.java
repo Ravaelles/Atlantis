@@ -30,17 +30,17 @@ public abstract class Mission {
 
     // =========================================================
 
-    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
-        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit, false)) {
-            return true;
-        }
-
-        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
-            return true;
-        }
-
-        return false;
-    }
+//    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
+//        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit, false)) {
+//            return true;
+//        }
+//
+//        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     protected boolean handleNoEnemyBuilding(AUnit unit) {
         APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());

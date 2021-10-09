@@ -2,6 +2,7 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.constructing.AConstructionManager;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
@@ -20,8 +21,20 @@ public class ProtossDynamicBuildingsManager {
     private static void gatewaysIfNeeded() {
         if (AGame.canAfford(358, 0)) {
             if (Select.ourOfType(AUnitType.Protoss_Gateway).areAllBusy()) {
-                AConstructionManager.requestConstructionOf(AUnitType.Protoss_Gateway);
+                buildIfPossible(AUnitType.Protoss_Gateway, true, 150, 0);
             }
         }
+    }
+
+    protected static void buildIfPossible(AUnitType unitType, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
+        if (!AGame.canAfford(hasMinerals, hasGas)) {
+            return;
+        }
+
+        if (onlyOneAtTime && AConstructionManager.hasRequestedConstructionOf(unitType)) {
+            return;
+        }
+
+        AConstructionManager.requestConstructionOf(AUnitType.Protoss_Gateway);
     }
 }

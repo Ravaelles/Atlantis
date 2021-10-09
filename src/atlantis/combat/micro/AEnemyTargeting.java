@@ -20,7 +20,7 @@ public class AEnemyTargeting {
 
     private static AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
         if (maxDistFromEnemy > 1000) {
-            maxDistFromEnemy = 18;
+            maxDistFromEnemy = 30;
         }
 
         if (Select.enemyRealUnits()
@@ -43,19 +43,25 @@ public class AEnemyTargeting {
         // Attack deadliest shit out there
         
         nearestEnemy = enemyRealUnitsThatCanBeAttacked.clone()
-                .ofType(AUnitType.Terran_Vulture_Spider_Mine)
+                .ofType(
+                        AUnitType.Zerg_Scourge,
+                        AUnitType.Zerg_Defiler,
+                        AUnitType.Terran_Vulture_Spider_Mine,
+                        AUnitType.Protoss_Dark_Templar
+                )
                 .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
-        
+
         // =========================================================
         // Attack top priority units
-        
+
         nearestEnemy = enemyRealUnitsThatCanBeAttacked.clone()
                 .ofType(
                         AUnitType.Terran_Siege_Tank_Siege_Mode,
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
+                        AUnitType.Protoss_Carrier,
                         AUnitType.Protoss_Reaver,
                         AUnitType.Zerg_Lurker
                 ).nearestTo(unit);

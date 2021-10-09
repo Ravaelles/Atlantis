@@ -53,6 +53,7 @@ Dragoon - x3
 Observatory
 Observer
 Dragoon - x3
+Observer
 
 50 - Robotics Support Bay
 Reaver

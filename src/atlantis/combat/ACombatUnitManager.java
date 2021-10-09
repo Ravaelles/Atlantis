@@ -155,14 +155,14 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //        }
 
         if (unit.isAttacking() && unit.getLastOrderFramesAgo() <= unit.getCooldown() - 3) {
-            double minDistToContinueAttack = 1.8 + unit.getWoundPercent() / 40.0;
+            double minDistToContinueAttack = 2.6 + unit.getWoundPercent() / 40.0;
             if (Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isEmpty()) {
                 unit.setTooltip("@ATTACK");
                 return true;
             }
         }
 
-        if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 4) {
+        if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 5) {
             unit.setTooltip("Run...(" + unit.getLastOrderFramesAgo() + ")");
             return true;
         }

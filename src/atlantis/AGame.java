@@ -326,6 +326,10 @@ public class AGame {
         return hasMinerals(minerals) && hasGas(gas);
     }
 
+    public static int killsLossesResourceBalance() {
+        return Atlantis.KILLED_RESOURCES - Atlantis.LOST_RESOURCES;
+    }
+
     // =========================================================
     // Utility
     /**
@@ -336,5 +340,4 @@ public class AGame {
             game().sendText(message);
         }
     }
-
 }

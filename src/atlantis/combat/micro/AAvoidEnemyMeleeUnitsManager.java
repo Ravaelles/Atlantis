@@ -1,6 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -69,6 +70,13 @@ public class AAvoidEnemyMeleeUnitsManager {
         // === Reaver should not avoid if has no cooldown ===============================
 
         if (AGame.isPlayingAsProtoss()) {
+            if (
+                Select.ourCombatUnits().inRadius(7, unit).count() >= 7
+                && Select.ourCombatUnits().inRadius(4, unit).count() >= 3
+            ) {
+                return false;
+            }
+
             if (unit.isType(AUnitType.Protoss_Reaver) && unit.getGroundWeaponCooldown() <= 4) {
                 return true;
             }
@@ -97,14 +105,14 @@ public class AAvoidEnemyMeleeUnitsManager {
     }
 
     private static boolean isEnemyCriticallyClose(AUnit unit) {
-        double baseCriticalDistance = (unit.isVulture() ? 3.5 : 2.8);
+        double baseCriticalDistance = (unit.isVulture() ? 3.5 : 3.0);
 //        double baseCriticalDistance = 3.0;
-        double healthBonus = (100 - unit.getHPPercent()) / 40;
+        double healthBonus = unit.getWoundPercent() / 40;
 
 //        double numberOfNearEnemiesBonus = Math.max(0.4,
 //                ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
         double archonBonus = (((Select.enemy().ofType(AUnitType.Protoss_Archon)
-                .inRadius(5, unit)).count() > 0) ? 1.2 : 0);
+                .inRadius(5, unit)).count() > 0) ? 0.5 : 0);
 
         double criticalDistance = baseCriticalDistance + healthBonus + archonBonus;
         double enemyDistance = nearestEnemy.distanceTo(unit);

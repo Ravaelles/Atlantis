@@ -204,7 +204,7 @@ public class APainter {
                 ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
                 AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
         paintSideMessage("Mission: " + mission.getName(), Color.White);
-        paintSideMessage("Focus: " + mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE", Color.White);
+        paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
         paintSideMessage("Enemy base: " + AEnemyUnits.getEnemyBase(), Color.White);
 
         // =========================================================
@@ -886,7 +886,7 @@ public class APainter {
         paintMessage(Atlantis.KILLED + "", Color.Green, x + dx, y, true);
         paintMessage(Atlantis.LOST + "", Color.Red, x + dx, y + dy, true);
 
-        int balance = Atlantis.KILLED_RESOURCES - Atlantis.LOST_RESOURCES;
+        int balance = AGame.killsLossesResourceBalance();
         Color color = balance >= 0 ? Color.Green : Color.Red;
         paintMessage((balance >= 0 ? "+" : "") + balance, color, x + dx, y + 3 * dy, true);
     }

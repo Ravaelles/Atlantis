@@ -1,5 +1,6 @@
 package atlantis.combat.missions;
 
+import atlantis.AGame;
 import atlantis.units.Count;
 import atlantis.units.Select;
 
@@ -18,7 +19,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     private static boolean shouldChangeMissionToAttack() {
         int ourCombatUnits = Count.countOurCombatUnits();
 
-        if (ourCombatUnits >= 18) {
+        if (ourCombatUnits >= 20) {
+            return true;
+        }
+
+        if (AGame.getTimeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 700) {
             return true;
         }
 

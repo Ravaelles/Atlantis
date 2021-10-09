@@ -495,10 +495,10 @@ public class ARunManager {
 
 //        boolean isOkay = AMap.isWalkable(position)
         boolean isOkay = AMap.isWalkable(position)
-//                && (
-//                    AMap.isWalkable(position.translateByPixels(-32, 0))
-//                    && AMap.isWalkable(position.translateByPixels(0, 32))
-//                )
+                && (
+                    AMap.isWalkable(position.translateByPixels(-32, 0))
+                    && AMap.isWalkable(position.translateByPixels(0, 32))
+                )
                 && Select.all().inRadius(1.5, position).isEmpty()
                 && Select.neutral().inRadius(4.5, position).isEmpty()
                 && unitPosition.hasPathTo(position)

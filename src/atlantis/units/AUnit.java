@@ -345,8 +345,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return 100 * getHitPoints() / getMaxHitPoints();
     }
 
-    public int getWoundPercent() {
-        return 100 - 100 * getHitPoints() / getMaxHitPoints();
+    public double getWoundPercent() {
+        return 100.0 - 100 * getHitPoints() / getMaxHitPoints();
     }
 
     public boolean isWounded() {
@@ -602,7 +602,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      */
     public boolean isRunning() {
 //        return runManager.isRunning();
-        return getUnitAction().equals(UnitActions.RUN) && isLastOrderFramesAgo(4);
+        return getUnitAction().equals(UnitActions.RUN);
     }
 
     public boolean isLastOrderFramesAgo(int minFramesAgo) {
