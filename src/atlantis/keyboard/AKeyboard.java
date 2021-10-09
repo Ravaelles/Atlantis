@@ -73,47 +73,47 @@ public class AKeyboard implements NativeKeyListener {
 
             // Key "1"
             case 2: 
-                AGameSpeed.changeFrameSkipTo(1);
+                AGameSpeed.changeFrameSkipTo(0);
                 break;
 
             // Key "2"
             case 3:
-                AGameSpeed.changeFrameSkipTo(2);
+                AGameSpeed.changeFrameSkipTo(10);
                 break;
 
             // Key "3"
             case 4:
-                AGameSpeed.changeFrameSkipTo(3);
+                AGameSpeed.changeFrameSkipTo(20);
                 break;
 
             // Key "4"
             case 5:
-                AGameSpeed.changeFrameSkipTo(4);
+                AGameSpeed.changeFrameSkipTo(30);
                 break;
 
             // Key "5"
             case 6:
-                AGameSpeed.changeFrameSkipTo(5);
+                AGameSpeed.changeFrameSkipTo(40);
                 break;
 
             // Key "6"
             case 7:
-                AGameSpeed.changeFrameSkipTo(6);
+                AGameSpeed.changeFrameSkipTo(50);
                 break;
 
             // Key "7"
             case 8:
-                AGameSpeed.changeFrameSkipTo(7);
+                AGameSpeed.changeFrameSkipTo(60);
                 break;
 
             // Key "8"
             case 9:
-                AGameSpeed.changeFrameSkipTo(8);
+                AGameSpeed.changeFrameSkipTo(70);
                 break;
 
             // Key "9"
             case 10:
-                AGameSpeed.changeFrameSkipTo(9);
+                AGameSpeed.changeFrameSkipTo(150);
                 break;
 
             // Key "0"

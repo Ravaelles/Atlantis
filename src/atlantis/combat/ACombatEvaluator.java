@@ -108,13 +108,11 @@ public class ACombatEvaluator {
 
         // =========================================================
         // Define nearby enemy and our units
-        //TODO: check safety of these casts
-        Collection<AUnit> enemyUnits = (Collection<AUnit>) Select.enemy().combatUnits().inRadius(12, unit).listUnits();
+        Collection<AUnit> enemyUnits = Select.enemy().combatUnits().inRadius(12, unit).listUnits();
         if (enemyUnits.isEmpty()) {
-//            return updateCombatEval(unit, +999);
             return MAX_VALUE;
         }
-        Collection<AUnit> ourUnits = (Collection<AUnit>) Select.our().combatUnits().inRadius(8.5, unit).listUnits();
+        Collection<AUnit> ourUnits = Select.our().combatUnits().inRadius(8.5, unit).listUnits();
 
         // =========================================================
         // Evaluate our and enemy strength
@@ -168,9 +166,12 @@ public class ACombatEvaluator {
 
             // =========================================================
             // WORKER
+
             if (unit.isWorker()) {
-                strength += 0.2 * unitStrengthEval;
-            } // =========================================================
+                strength += 0.15 * unitStrengthEval;
+            }
+
+            // =========================================================
             // BUILDING
             else if (unit.getType().isBuilding() && unit.isCompleted()) {
                 boolean antiGround = (againstUnit != null ? !againstUnit.isAirUnit() : true);
@@ -196,14 +197,15 @@ public class ACombatEvaluator {
 
         // =========================================================
         // Extra bonus for DEFENSIVE BUILDING PRESENCE
-        if (!isEnemyEval) {
-            if (enemyDefensiveBuildingFound) {
-                strength += 100;
-            }
-            if (enemyDefensiveBuildingInRange) {
-                strength += 100;
-            }
-        }
+
+//        if (!isEnemyEval) {
+//            if (enemyDefensiveBuildingFound) {
+//                strength += 10;
+//            }
+//            if (enemyDefensiveBuildingInRange) {
+//                strength += 10;
+//            }
+//        }
 
         return strength;
     }

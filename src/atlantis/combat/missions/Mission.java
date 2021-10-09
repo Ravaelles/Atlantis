@@ -45,7 +45,7 @@ public abstract class Mission {
     protected boolean handleNoEnemyBuilding(AUnit unit) {
         APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());
         if (position != null) {
-            unit.move(position, UnitActions.MOVE_TO_ENGAGE, "#MA:FindEnemy");
+            unit.move(position, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy");
             Atlantis.game().drawLineMap(unit.getPosition(), position, Color.Red);
             return true;
         }
