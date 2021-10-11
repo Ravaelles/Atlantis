@@ -1,7 +1,7 @@
 package atlantis;
 
 import atlantis.combat.ACombatCommander;
-import atlantis.debug.APainter;
+import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
@@ -23,7 +23,7 @@ public class AGameCommander {
 
         // === Execute paint methods ========================================
         
-        APainter.paint();
+        AAdvancedPainter.paint();
 
         // === Execute code of every Commander and Manager ==================
         

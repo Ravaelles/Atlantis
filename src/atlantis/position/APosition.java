@@ -159,16 +159,16 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     /**
      * Paint it on screen for testing.
      */
-    public void paintIt(int widthTiles, int heightTiles) {
-        paintIt(widthTiles, heightTiles, Color.Red);
-    }
+//    public void paintIt(int widthTiles, int heightTiles) {
+//        paintIt(widthTiles, heightTiles, Color.Red);
+//    }
     
     /**
      * Paint it on screen for testing.
      */
-    public void paintIt(int widthTiles, int heightTiles, Color color) {
-        APainter.paintRectangle(this, widthTiles * 32, heightTiles * 32, color);
-    }
+//    public void paintIt(int widthTiles, int heightTiles, Color color) {
+//        APainter.paintRectangle(this, widthTiles, heightTiles, color);
+//    }
     
     // === High-abstraction ========================================
     

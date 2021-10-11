@@ -20,7 +20,6 @@ public class ARegion implements HasPosition {
         return aRegion;
     }
 
-
     // =========================================================
 
     @Override

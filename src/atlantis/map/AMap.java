@@ -30,20 +30,23 @@ import java.util.stream.Collectors;
  */
 public class AMap {
 
-    //    private static BWTA bw ta = new BWTA(); // all methods in BWTA are static, but I keep a class instance to return it in getMap()
     private static BWTA bwta = null;
-    //    private static BWTA bwta = null;
     private static Set<AChokepoint> disabledChokepoints = new HashSet<>();
+    private static List<ARegion> cached_regions;
     private static List<AChokepoint> cached_chokePoints = null;
     private static AChokepoint cached_mainBaseChokepoint = null;
-    private static AChokepoint cached_naturalBaseChokepoint = null;
-    private static Map<String, Positions> regionsToPolygonPoints = new HashMap<>();
+    private static HashMap<APosition, AChokepoint> cached_basesToChokepoints;
+//    private static AChokepoint cached_basesToChokepoints = null;
+//    private static Map<String, Positions> regionsToPolygonPoints = new HashMap<>();
 
     // =========================================================
 
     @SuppressWarnings("deprecation")
     public static void initMapAnalysis() {
         System.out.print("Analyzing map... ");
+
+        cached_basesToChokepoints = new HashMap<>();
+        cached_regions = new ArrayList<>();
 
         BWTA.readMap(Atlantis.game());
         BWTA.analyze();
@@ -128,36 +131,36 @@ public class AMap {
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
-    public static AChokepoint getChokepointForNaturalBase(APosition relativeToBase) {
-        if (cached_naturalBaseChokepoint != null) {
-            APainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
-            APainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 7, Color.White);
-            return cached_naturalBaseChokepoint;
+    public static AChokepoint getChokepointForNaturalBase(APosition relativeTo) {
+        if (cached_basesToChokepoints.containsKey(relativeTo)) {
+            AChokepoint choke = cached_basesToChokepoints.get(relativeTo);
+//            APainter.paintCircle(APosition.create(choke.getCenter()), 5, Color.White);
+//            APainter.paintCircle(APosition.create(choke.getCenter()), 7, Color.White);
+//            APainter.paintTextCentered(
+//                    choke.getCenter().translateByTiles(0, 3),
+//                    choke.getWidth() + " wide",
+//                    Color.White
+//            );
+            return choke;
         }
 
         // =========================================================
 
-        ARegion naturalRegion = getRegion(getNaturalBaseLocation(relativeToBase.getPosition()));
+        ARegion naturalRegion = getRegion(getNaturalBaseLocation(relativeTo.getPosition()));
         if (naturalRegion == null) {
             System.err.println("Can't find region for natural base");
             AGame.setUmtMode(true);
             return null;
         }
 
-        System.out.println("Center");
-        System.out.println(naturalRegion.getCenter());
-        System.out.println("Chokes ("+naturalRegion.getChokepoints().size());
-        for (AChokepoint choke : naturalRegion.getChokepoints()) {
-            System.out.println(choke.getCenter() + " // " + (choke.getWidth() / 32));
-        }
         for (AChokepoint chokepoint : naturalRegion.getChokepoints()) {
 //            naturalRegion.
 //            APosition center = APosition.create(chokepoint.getCenter());
-//            if (center.distanceTo(getChokepointForMainBase().getCenter()) > 1) {
 //            if (chokepoint.getCenter() > 1) {
-                cached_naturalBaseChokepoint = chokepoint;
-                return cached_naturalBaseChokepoint;
-//            }
+            if (chokepoint.getCenter().distanceTo(getChokepointForMainBase().getCenter()) > 1) {
+                cached_basesToChokepoints.put(relativeTo, chokepoint);
+                return chokepoint;
+            }
         }
 
         return null;
@@ -457,6 +460,16 @@ public class AMap {
         return cached_chokePoints;
     }
 
+    public static List<ARegion> getRegions() {
+        if (cached_regions == null) {
+            cached_regions = new ArrayList<>();
+            for (Region region : BWTA.getRegions()) {
+                cached_regions.add(ARegion.create(region));
+            }
+        }
+        return cached_regions;
+    }
+
     /**
      * Returns region object for given <b>position</b>. This object provides some very helpful informations
      * like you can access list of choke points that belong to it etc.
@@ -574,6 +587,29 @@ public class AMap {
 
         // All conditions have been fulfilled.
         return true;
+    }
+
+    public static APosition getEnemyNatural() {
+        APosition enemyBase = AEnemyUnits.getEnemyBase();
+        if (enemyBase == null) {
+            return null;
+        }
+
+        ABaseLocation baseLocation = AMap.getNaturalBaseLocation(enemyBase);
+        if (baseLocation != null) {
+            return baseLocation.getPosition();
+        }
+
+        return null;
+    }
+
+    public static AChokepoint getEnemyNaturalChokepoint() {
+        APosition enemyNatural = getEnemyNatural();
+        if (enemyNatural == null) {
+            return null;
+        }
+
+        return getChokepointForNaturalBase(enemyNatural);
     }
 
     /**

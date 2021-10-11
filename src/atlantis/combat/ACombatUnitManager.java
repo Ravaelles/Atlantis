@@ -157,9 +157,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
         if (unit.isAttacking() && unit.getLastOrderFramesAgo() <= unit.getCooldown() - 4) {
             double minDistToContinueAttack = 2.6 + unit.getWoundPercent() / 40.0;
             if (Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isEmpty()) {
-                unit.setTooltip("@ATTACK");
+                unit.setTooltip("@BusyAttack");
                 return true;
             }
+            unit.setTooltip("@ATTACKING");
         }
 
         if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 5) {

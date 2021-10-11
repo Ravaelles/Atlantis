@@ -24,8 +24,8 @@ public abstract class AProductionQueueManager {
      * <b>currentProductionQueue</b> are populated.
      */
     public static void switchToBuildOrder(ABuildOrder buildOrder) {
-        initialProductionQueue.clear();
-        currentProductionQueue.clear();
+        AProductionQueue.initialProductionQueue.clear();
+        AProductionQueue.currentProductionQueue.clear();
 
         AProductionQueue.currentBuildOrder = buildOrder;
         ABuildOrderLoader.loadBuildOrderFromFile(AProductionQueue.currentBuildOrder);
@@ -41,8 +41,8 @@ public abstract class AProductionQueueManager {
     public static ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
 
-        for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
-            ProductionOrder productionOrder = currentProductionQueue.get(i);
+        for (int i = 0; i < howMany && i < AProductionQueue.currentProductionQueue.size(); i++) {
+            ProductionOrder productionOrder = AProductionQueue.currentProductionQueue.get(i);
             result.add(productionOrder);
         }
 
@@ -89,6 +89,7 @@ public abstract class AProductionQueueManager {
             }
 
             // === Define order type: UNIT/BUILDING or UPGRADE or TECH ==
+
             // UNIT/BUILDING
             if (unitOrBuilding != null) {
                 if (!AGame.hasBuildingsToProduce(unitOrBuilding, true)) {
@@ -97,11 +98,15 @@ public abstract class AProductionQueueManager {
 
                 AProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
                 AProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
-            } // UPGRADE
+            }
+
+            // UPGRADE
             else if (upgrade != null) {
                 AProductionQueue.mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
                 AProductionQueue.gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
-            } // TECH
+            }
+
+            // TECH
             else if (tech != null) {
                 AProductionQueue.mineralsNeeded += tech.mineralPrice();
                 AProductionQueue.gasNeeded += tech.gasPrice();
@@ -111,7 +116,9 @@ public abstract class AProductionQueueManager {
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
             if (AGame.canAfford(AProductionQueue.mineralsNeeded, AProductionQueue.gasNeeded)) {
                 result.add(order);
-            } // We can't afford to produce this order (possibly other, previous orders are blocking it).
+            }
+
+            // We can't afford to produce this order (possibly other, previous orders are blocking it).
             // Return current list of production orders (can be empty).
             else {
                 break;
@@ -147,7 +154,7 @@ public abstract class AProductionQueueManager {
     public static void rebuildQueue() {
 
         // Clear old production queue.
-        currentProductionQueue.clear();
+        AProductionQueue.currentProductionQueue.clear();
 
         // It will store [UnitType->(int)howMany] mapping as we gonna process initial production queue and check if we
         // currently have units needed
@@ -155,7 +162,7 @@ public abstract class AProductionQueueManager {
 
         // =========================================================
 
-        for (ProductionOrder order : initialProductionQueue) {
+        for (ProductionOrder order : AProductionQueue.initialProductionQueue) {
             boolean isOkayToAdd = false;
 
             // === Unit ========================================
@@ -194,8 +201,8 @@ public abstract class AProductionQueueManager {
 
             // =========================================================
             if (isOkayToAdd) {
-                currentProductionQueue.add(order);
-                if (currentProductionQueue.size() >= 15) {
+                AProductionQueue.currentProductionQueue.add(order);
+                if (AProductionQueue.currentProductionQueue.size() >= 15) {
                     break;
                 }
             }

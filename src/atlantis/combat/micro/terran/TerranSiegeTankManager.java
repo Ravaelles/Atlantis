@@ -180,7 +180,7 @@ public class TerranSiegeTankManager {
             return true;
         }
         else {
-            return tank.distanceTo(choke.getCenter()) > 4 || (choke.getWidth() / 32 > 3);
+            return tank.distanceTo(choke.getCenter()) > 4 || (choke.getWidth() > 3);
         }
     }
 

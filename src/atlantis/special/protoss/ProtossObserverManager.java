@@ -1,4 +1,4 @@
-package atlantis.special;
+package atlantis.special.protoss;
 
 import atlantis.combat.squad.ASquadManager;
 import atlantis.position.APosition;
@@ -38,7 +38,7 @@ public class ProtossObserverManager {
             return false;
         }
 
-        AUnit dangerousInvisibleEnemy = enemyCloakableUnit();
+        AUnit dangerousInvisibleEnemy = enemyDangerousHiddenUnit();
         if (dangerousInvisibleEnemy != null) {
             observer.move(dangerousInvisibleEnemy.getPosition(), UnitActions.MOVE, "Reveal");
             return true;
@@ -47,15 +47,19 @@ public class ProtossObserverManager {
         return false;
     }
 
-    private static AUnit enemyCloakableUnit() {
+    private static AUnit enemyDangerousHiddenUnit() {
         AUnit invisibleUnit = Select.enemy().invisible().combatUnits().nearestTo(Select.mainBase());
         if (invisibleUnit != null) {
             return invisibleUnit;
         }
 
+        AUnit burrowedZergUnit = Select.enemy().ofType(AUnitType.Zerg_Lurker).burrowed().nearestTo(Select.mainBase());
+        if (burrowedZergUnit != null) {
+            return burrowedZergUnit;
+        }
+
         return Select.enemy().ofType(
-                AUnitType.Zerg_Lurker,
-                AUnitType.Protoss_Dark_Templar
+            AUnitType.Protoss_Dark_Templar
         ).nearestTo(Select.mainBase());
     }
 

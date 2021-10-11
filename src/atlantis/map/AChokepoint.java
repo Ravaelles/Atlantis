@@ -56,8 +56,8 @@ public class AChokepoint implements HasPosition {
         return APosition.create(chokepoint.getCenter());
     }
 
-    public double getWidth() {
-        return chokepoint.getWidth();
+    public int getWidth() {
+        return (int) chokepoint.getWidth() / 32;
     }
 
     public ARegion[] getRegions() {

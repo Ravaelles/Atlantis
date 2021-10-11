@@ -723,6 +723,17 @@ public class Select<T> {
         return this;
     }
 
+    public Select<T> burrowed() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (!unit.isBurrowed()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
     /**
      * Selects these units (makes sense only for workers) who aren't assigned to repair any other unit.
      */
