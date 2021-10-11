@@ -136,8 +136,7 @@ public class ProductionOrder {
         return clone;
     }
     
-    // =========================================================
-    // Getters
+    // === Getters =============================================
     
     public int getGasRequired() {
         if (unitOrBuilding != null) {

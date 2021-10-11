@@ -8,6 +8,14 @@ import atlantis.units.Select;
 
 public class AbstractDynamicUnits {
 
+    protected static void trainIfPossible(int minSupply, AUnitType unitType, boolean onlyOneAtTime) {
+        if (AGame.getSupplyUsed() < minSupply) {
+            return;
+        }
+
+        trainIfPossible(unitType, onlyOneAtTime, unitType.getMineralPrice(), unitType.getGasPrice());
+    }
+
     protected static void trainIfPossible(AUnitType unitType, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
         if (!AGame.canAfford(hasMinerals, hasGas)) {
             return;

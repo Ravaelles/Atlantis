@@ -341,8 +341,7 @@ public class Units {
         System.out.println();
     }
 
-    // =========================================================
-    // Getters
+    // === Getters =============================================
     /**
      * Returns iterable collection of units in this object.
      */

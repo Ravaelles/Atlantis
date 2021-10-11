@@ -28,9 +28,6 @@ public abstract class AbstractMicroManager {
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
     protected static boolean shouldRetreat(AUnit unit) {
-//        if (!unit.canAnyCloseEnemyShootThisUnit(2)) {
-//            return false;
-//        }
         if (!shouldNotConsiderRetreatingNow(unit)) {
             return false;
         }
@@ -52,7 +49,7 @@ public abstract class AbstractMicroManager {
 
     private static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
         if (unit.type().isReaver()) {
-            return Select.enemyRealUnits().inRadius(12, unit).isEmpty();
+            return Select.enemyRealUnits().inRadius(12, unit).isEmpty() && unit.getCooldown() >= 7;
         }
 
         return false;

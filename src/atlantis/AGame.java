@@ -26,7 +26,7 @@ public class AGame {
     /**
      * Returns object that is responsible for the production queue.
      */
-//    public static ABuildOrderManager getBuildOrders() {
+//    public static AProductionQueue getBuildOrders() {
 //        return AtlantisConfig.getBuildOrders();
 //    }
 
@@ -47,7 +47,7 @@ public class AGame {
     /**
      * Returns true if we have all buildings needed for given unit.
      *
-     * @param boolean countUnfinished if true, then if it will require required units to be finished to return
+     * @param countUnfinished if true, then if it will require required units to be finished to return
      * true e.g. to produce Zealot you need at least one finished Gateway
      */
     public static boolean hasBuildingsToProduce(AUnitType unitType, boolean countUnfinished) {

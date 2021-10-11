@@ -197,8 +197,7 @@ public class Positions<T extends HasPosition> {
         System.out.println();
     }
 
-    // =========================================================
-    // Getters
+    // === Getters =============================================
 
     /**
      * Returns iterable collection of positions in this object.

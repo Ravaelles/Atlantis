@@ -12,27 +12,28 @@ import java.util.List;
 public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
     public static void update() {
-        scarabsIfNeeded();
-        dragoonsIfNeeded();
+        scarabs();
+        dragoons();
+        arbiters();
     }
 
     // =========================================================
 
-    private static void dragoonsIfNeeded() {
-        if (AGame.getSupplyTotal() <= 17) {
-            return;
-        }
-
-        trainIfPossible(AUnitType.Protoss_Dragoon, false, 200, 100);
+    private static void dragoons() {
+        trainIfPossible(17, AUnitType.Protoss_Dragoon, false);
     }
 
-    private static void scarabsIfNeeded() {
+    private static void scarabs() {
         List<AUnit> reavers = Select.ourOfType(AUnitType.Protoss_Reaver).listUnits();
         for (AUnit reaver : reavers) {
             if (reaver.getScarabCount() <= 2 && !reaver.isTrainingAnyUnit()) {
                 reaver.train(AUnitType.Protoss_Scarab);
             }
         }
+    }
+
+    private static void arbiters() {
+        trainIfPossible(95, AUnitType.Protoss_Arbiter, true);
     }
 
 }

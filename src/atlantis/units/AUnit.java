@@ -592,8 +592,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         }
     }
 
-    // =========================================================
-    // Getters & setters
+    // === Getters ============================================= & setters
     /**
      * Returns true if given unit is currently (this frame) running from an enemy.
      */

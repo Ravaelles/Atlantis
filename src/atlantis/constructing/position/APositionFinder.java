@@ -120,14 +120,17 @@ public class APositionFinder {
         if (AGame.isPlayingAsTerran()) {
             return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }
+
         // Protoss
         else if (AGame.isPlayingAsProtoss()) {
             return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }
+
         // Zerg
         else if (AGame.isPlayingAsZerg()) {
             return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
         }
+
         else {
             System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
             System.exit(-1);

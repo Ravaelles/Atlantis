@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionRequests;
-import atlantis.production.orders.ABuildOrderManager;
+import atlantis.production.orders.AProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Count;
@@ -48,6 +48,12 @@ public abstract class ADynamicBuildingsManager {
 
     // =========================================================
 
+    protected static void buildToHaveOne(int minSupply, AUnitType type) {
+        if (AGame.getSupplyUsed() >= minSupply) {
+            buildToHaveOne(type);
+        }
+    }
+
     protected static void buildToHaveOne(AUnitType type) {
         if (Count.ofType(type) > 0) {
             return;
@@ -79,7 +85,7 @@ public abstract class ADynamicBuildingsManager {
     }
 
     protected static boolean canAfford(int minerals, int gas) {
-        return AGame.canAfford(minerals + ABuildOrderManager.getMineralsReserved(), gas + ABuildOrderManager.getGasReserved()
+        return AGame.canAfford(minerals + AProductionQueue.getMineralsReserved(), gas + AProductionQueue.getGasReserved()
         );
     }
 
@@ -87,7 +93,7 @@ public abstract class ADynamicBuildingsManager {
 
     private static boolean hasABaseWithFreeGeyser() {
         for (AUnit base : Select.ourBases().listUnits()) {
-            if (Select.geysers().inRadius(10, base).isNotEmpty()) {
+            if (Select.geysers().inRadius(8, base).isNotEmpty()) {
                 return true;
             }
         }

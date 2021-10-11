@@ -136,11 +136,11 @@ public class ABuildOrderLoader {
         for (int currentSupply = 4; currentSupply <= 200; currentSupply++) {
             
             // If no more orders left, exit the loop
-            if (ABuildOrderManager.initialProductionQueue.isEmpty()) {
+            if (AProductionQueue.initialProductionQueue.isEmpty()) {
                 break;
             }
             
-            ProductionOrder order = ABuildOrderManager.initialProductionQueue.get(0);
+            ProductionOrder order = AProductionQueue.initialProductionQueue.get(0);
             
             // === Check if should worker build order ========================================
             
@@ -178,15 +178,15 @@ public class ABuildOrderLoader {
                 }
 
                 ProductionOrder newOrder = order.copy();
-                ABuildOrderManager.initialProductionQueue.remove(0);
+                AProductionQueue.initialProductionQueue.remove(0);
                 newInitialQueue.add(newOrder);
             }
         }
 
         // Replace old initial queue with new
-        ABuildOrderManager.initialProductionQueue.clear();
-        ABuildOrderManager.initialProductionQueue.addAll(newInitialQueue);
-        ABuildOrderManager.currentProductionQueue.addAll(newInitialQueue);
+        AProductionQueue.initialProductionQueue.clear();
+        AProductionQueue.initialProductionQueue.addAll(newInitialQueue);
+        AProductionQueue.currentProductionQueue.addAll(newInitialQueue);
     }
 
     /**
@@ -319,7 +319,7 @@ public class ABuildOrderLoader {
         }
 
         // Enqueue created order
-        ABuildOrderManager.initialProductionQueue.add(order);
+        AProductionQueue.initialProductionQueue.add(order);
     }
 
     /**
@@ -338,7 +338,7 @@ public class ABuildOrderLoader {
             return "Spider_Mines";
         }
         
-        // PROTOSS
+        // Protoss
         else if ("dragoon range".equals(nameString)) {
             return "Singularity Charge";
         }

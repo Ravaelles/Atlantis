@@ -4,23 +4,23 @@ import atlantis.AGame;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.units.Count;
 import atlantis.units.Select;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+
 import java.util.ArrayList;
 
 /**
- * Represents abstract build orders read from the file. Build Orders in Atlantis are called "Production
- * Orders", because you can produce both units and buildings and one couldn't say you build marines, rather
- * produce.
+ * Current production queue
  */
-public abstract class ABuildOrderManager {
+public abstract class AProductionQueueManager {
 
     /**
      * Build order currently in use.
-     * @see switchToBuildOrder(ABuildOrder buildOrder)
+     * See method switchToBuildOrder(ABuildOrder buildOrder)
      */
     private static ABuildOrder currentBuildOrder = null;
     
@@ -63,39 +63,75 @@ public abstract class ABuildOrderManager {
         
         rebuildQueue();
     }
+
+    // =========================================================
+
+    /**
+     * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
+     */
+    public static ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
+        ArrayList<ProductionOrder> result = new ArrayList<>();
+
+        for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
+            ProductionOrder productionOrder = currentProductionQueue.get(i);
+            result.add(productionOrder);
+        }
+
+        return result;
+    }
+
+    // === Getters =============================================
     
-    // === Build Order manager functionality ===================
+    /**
+     * Returns currently active build order.
+     */
+    public static ABuildOrder getCurrentBuildOrder() {
+        return currentBuildOrder;
+    }
     
-    public static final int MODE_ALL_ORDERS = 1;
-    public static final int MODE_ONLY_UNITS = 2;
-    
+    /**
+     * Number of minerals reserved to produce some units/buildings in the build order that according to it
+     * should be produced right now (judging by the supply used).
+     */
+    public static int getMineralsReserved() {
+        return mineralsNeeded;
+    }
+
+    /**
+     * Number of gas reserved to produce some units/buildings in the build order that according to it
+     * should be produced right now (judging by the supply used).
+     */
+    public static int getGasReserved() {
+        return gasNeeded;
+    }
+
     /**
      * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only
      * want to get units, use <b>onlyUnits</b> set to true. This merhod iterates over latest build orders and
      * returns those build orders that we can build in this very moment (we can afford them and they match our
      * strategy).
      *
-     * @param int mode use this classes constants; if MODE_ONLY_UNITS it will only return "units" as opposed
+     * @param mode use this classes constants; if MODE_ONLY_UNITS it will only return "units" as opposed
      * to buildings (keep in mind AUnit is both "unit" and building)
      */
     public static ArrayList<ProductionOrder> getThingsToProduceRightNow(int mode) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
         int[] resourcesNeededForNotStartedBuildings
                 = AConstructionRequests.countResourcesNeededForNotStartedConstructions();
-        mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
-        gasNeeded = resourcesNeededForNotStartedBuildings[1];
+        AProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
+        AProductionQueue.gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
         // =========================================================
-        // The idea as follows: as long as we can afford next enqueued production order, 
+        // The idea as follows: as long as we can afford next enqueued production order,
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
-        for (ProductionOrder order : currentProductionQueue) {
+        for (ProductionOrder order : AProductionQueue.currentProductionQueue) {
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
             UpgradeType upgrade = order.getUpgrade();
             TechType tech = order.getTech();
 
             // Check if include only units
-            if (mode == MODE_ONLY_UNITS && unitOrBuilding == null) {
+            if (mode == AProductionQueue.MODE_ONLY_UNITS && unitOrBuilding == null) {
                 continue;
             }
 
@@ -113,23 +149,23 @@ public abstract class ABuildOrderManager {
                     continue;
                 }
 
-                mineralsNeeded += unitOrBuilding.getMineralPrice();
-                gasNeeded += unitOrBuilding.getGasPrice();
+                AProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
+                AProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
             } // UPGRADE
             else if (upgrade != null) {
-                mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
-                gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
+                AProductionQueue.mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
+                AProductionQueue.gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
             } // TECH
             else if (tech != null) {
-                mineralsNeeded += tech.mineralPrice();
-                gasNeeded += tech.gasPrice();
+                AProductionQueue.mineralsNeeded += tech.mineralPrice();
+                AProductionQueue.gasNeeded += tech.gasPrice();
             }
 
             // =========================================================
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
-            if (AGame.canAfford(mineralsNeeded, gasNeeded)) {
+            if (AGame.canAfford(AProductionQueue.mineralsNeeded, AProductionQueue.gasNeeded)) {
                 result.add(order);
-            } // We can't afford to produce this order (possibly other, previous orders are blocking it). 
+            } // We can't afford to produce this order (possibly other, previous orders are blocking it).
             // Return current list of production orders (can be empty).
             else {
                 break;
@@ -143,8 +179,8 @@ public abstract class ABuildOrderManager {
         // This can mean that we run out of build orders from build order file.
         // For proper build order files this feature will activate in late game.
         if (result.isEmpty() && AGame.canAfford(450, 250)
-                && (AGame.getSupplyUsed() >= 25 || initialProductionQueue.isEmpty())) {
-            for (AUnitType unitType : currentBuildOrder.produceWhenNoProductionOrders()) {
+                && (AGame.getSupplyUsed() >= 25 || AProductionQueue.initialProductionQueue.isEmpty())) {
+            for (AUnitType unitType : AProductionQueue.currentBuildOrder.produceWhenNoProductionOrders()) {
                 if (AGame.hasBuildingsToProduce(unitType, false)) {
                     result.add(new ProductionOrder(unitType));
                 }
@@ -153,7 +189,7 @@ public abstract class ABuildOrderManager {
 
         return result;
     }
-    
+
     /**
      * If new unit is created (it doesn't need to exist, it's enough that it's just started training) or your
      * unit is destroyed, we need to rebuild the production orders queue from the beginning (based on initial
@@ -177,35 +213,35 @@ public abstract class ABuildOrderManager {
             boolean isOkayToAdd = false;
 
             // === Unit ========================================
-            
+
             if (order.getUnitOrBuilding() != null) {
                 AUnitType type = order.getUnitOrBuilding();
                 virtualCounter.incrementValueFor(type);
 
-                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0) 
+                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0)
                         + (type.isBase() ? (type.isPrimaryBase() ? 1 : 0) : 0)
                         + (type.isOverlord() ? 1 : 0) + virtualCounter.getValueFor(type);
-                
-                int weHaveThisManyUnits = countUnitsOfGivenTypeOrSimilar(type);
+
+                int weHaveThisManyUnits = Count.unitsOfGivenTypeOrSimilar(type);
 
                 if (type.isBuilding()) {
                     weHaveThisManyUnits += AConstructionRequests.countNotFinishedConstructionsOfType(type);
                 }
-                
+
                 // If we don't have this unit, add it to the current production queue.
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
                     isOkayToAdd = true;
                 }
-            } 
-                
+            }
+
             // === Tech ========================================
-                
+
             else if (order.getTech() != null) {
                 isOkayToAdd = !ATech.isResearched(order.getTech(), order);
-            } 
-            
+            }
+
             // === Upgrade ========================================
-            
+
             else if (order.getUpgrade() != null) {
                 isOkayToAdd = !ATech.isResearched(order.getUpgrade(), order);
             }
@@ -219,70 +255,4 @@ public abstract class ABuildOrderManager {
             }
         }
     }
-
-    /**
-     * Some buildings like Sunken Colony are morphed into from Creep Colony. When counting Creep Colonies, we
-     * need to count sunkens as well.
-     */
-    private static int countUnitsOfGivenTypeOrSimilar(AUnitType type) {
-        if (type.equals(AUnitType.Zerg_Creep_Colony)) {
-            return Select.ourIncludingUnfinished().ofType(type).count()
-                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
-        } 
-        else if (type.isPrimaryBase()) {
-            return Select.ourIncludingUnfinished().bases().count() 
-                    + AConstructionRequests.countNotStartedConstructionsOfType(type)
-                    + AConstructionRequests.countNotStartedConstructionsOfType(AUnitType.Zerg_Lair)
-                    + AConstructionRequests.countNotStartedConstructionsOfType(AUnitType.Zerg_Hive);
-        }
-        else if (type.isBase() && !type.isPrimaryBase()) {
-            return Select.ourIncludingUnfinished().ofType(type).count()
-                    + AConstructionRequests.countNotStartedConstructionsOfType(type);
-        }
-        else {
-            return Select.ourIncludingUnfinished().ofType(type).count();
-        }
-    }
-
-    /**
-     * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
-     */
-    public static ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
-        ArrayList<ProductionOrder> result = new ArrayList<>();
-
-        for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
-            ProductionOrder productionOrder = currentProductionQueue.get(i);
-            result.add(productionOrder);
-        }
-
-        return result;
-    }
-
-    // =========================================================
-    // Getters
-    
-    /**
-     * Returns currently active build order.
-     */
-    public static ABuildOrder getCurrentBuildOrder() {
-        return currentBuildOrder;
-    }
-    
-    /**
-     * Number of minerals reserved to produce some units/buildings in the build order that according to it
-     * should be produced right now (judging by the supply used).
-     */
-    public static int getMineralsReserved() {
-        return mineralsNeeded;
-    }
-
-    /**
-     * Number of gas reserved to produce some units/buildings in the build order that according to it
-     * should be produced right now (judging by the supply used).
-     */
-    public static int getGasReserved() {
-        return gasNeeded;
-    }    
-
 }

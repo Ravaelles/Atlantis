@@ -207,9 +207,8 @@ public class AScoutManager {
             }
         }
         
-        // =========================================================
+        // === Zerg =================================================
 
-        // ZERG case
         if (AGame.isPlayingAsZerg()) {
 
             // We know enemy building
@@ -230,8 +229,11 @@ public class AScoutManager {
                 scouts.clear();
                 scouts.addAll(Select.ourCombatUnits().listUnits());
             }
-        } // =========================================================
+        }
+
+        // =========================================================
         // TERRAN + PROTOSS
+
         else if (scouts.isEmpty() && Select.ourWorkers().count() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
             scouts.add(Select.ourWorkers().first());
         }

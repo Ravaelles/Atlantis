@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.ABuildOrderManager;
+import atlantis.production.orders.AProductionQueueManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -89,7 +89,7 @@ public class AConstructionRequests {
             constructionOrders.add(newConstructionOrder);
 
             // Rebuild production queue as new building is about to be built
-            ABuildOrderManager.rebuildQueue();
+            AProductionQueueManager.rebuildQueue();
         }
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
@@ -207,7 +207,7 @@ public class AConstructionRequests {
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
      * then, we can e.g. "get unstarted barracks constructions".
      *
-     * @param AUnitType type if null, then all not started constructions will be returned
+     * @param type if null, then all not started constructions will be returned
      * @return
      */
     public static ArrayList<ConstructionOrder> getNotStartedConstructionsOfType(AUnitType type) {

@@ -70,8 +70,7 @@ public class ASquadManager {
         return squads.get(0);
     }
 
-    // =========================================================
-    // Getters & Setters
+    // === Getters ============================================= & Setters
     public static ArrayList<Squad> getSquads() {
         return squads;
     }

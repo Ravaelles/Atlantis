@@ -7,7 +7,8 @@ import atlantis.enemy.AEnemyUnits;
 import atlantis.map.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
-import atlantis.production.orders.ABuildOrderManager;
+import atlantis.production.orders.AProductionQueue;
+import atlantis.production.orders.AProductionQueueManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
@@ -131,10 +132,10 @@ public class Atlantis implements BWEventListener {
 
     private void initializeBuildOrder() {
         try {
-            ABuildOrderManager.switchToBuildOrder(AtlantisConfig.DEFAULT_BUILD_ORDER);
+            AProductionQueueManager.switchToBuildOrder(AtlantisConfig.DEFAULT_BUILD_ORDER);
 
-            if (ABuildOrderManager.getCurrentBuildOrder() != null) {
-                System.out.println("Use build order: `" + ABuildOrderManager.getCurrentBuildOrder().getName() + "`");
+            if (AProductionQueue.getCurrentBuildOrder() != null) {
+                System.out.println("Use build order: `" + AProductionQueue.getCurrentBuildOrder().getName() + "`");
             }
             else {
                 System.err.println("Invalid (empty) build order in AtlantisConfig!");
@@ -209,7 +210,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOurUnit()) {
-                ABuildOrderManager.rebuildQueue();
+                AProductionQueueManager.rebuildQueue();
 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
                 if (AGame.isPlayingAsProtoss() && unit.getType().isBuilding()) {
@@ -229,7 +230,7 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
             unit.refreshType();
             
-            ABuildOrderManager.rebuildQueue();
+            AProductionQueueManager.rebuildQueue();
 
             // Our unit
             if (unit.isOurUnit()) {
@@ -260,7 +261,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOurUnit()) {
-                ABuildOrderManager.rebuildQueue();
+                AProductionQueueManager.rebuildQueue();
                 ASquadManager.battleUnitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
                 LOST++;
@@ -346,7 +347,7 @@ public class Atlantis implements BWEventListener {
                 }
 
                 // =========================================================
-                ABuildOrderManager.rebuildQueue();
+                AProductionQueueManager.rebuildQueue();
 
                 // Add to combat squad if it's military unit
                 if (unit.isActualUnit()) {
