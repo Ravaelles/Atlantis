@@ -19,37 +19,6 @@ import java.util.ArrayList;
 public abstract class AProductionQueueManager {
 
     /**
-     * Build order currently in use.
-     * See method switchToBuildOrder(ABuildOrder buildOrder)
-     */
-    private static ABuildOrder currentBuildOrder = null;
-    
-    // =========================================================
-    
-    /**
-     * Ordered list of production orders as initially read from the file. It never changes
-     */
-    protected static ArrayList<ProductionOrder> initialProductionQueue = new ArrayList<>();
-
-    /**
-     * Ordered list of next units we should build. It is re-generated when events like "started
-     * training/building new unit"
-     */
-    protected static ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
-
-    /**
-     * Number of minerals reserved to produce some units/buildings.
-     */
-    private static int mineralsNeeded = 0;
-
-    /**
-     * Number of gas reserved to produce some units/buildings.
-     */
-    private static int gasNeeded = 0;
-    
-    // =========================================================
-    
-    /**
      * Indicates that we should now be using given build order.<br /><br />
      * When that happens its file is read and parsed and <b>initialProductionQueue</b> and 
      * <b>currentProductionQueue</b> are populated.
@@ -57,9 +26,9 @@ public abstract class AProductionQueueManager {
     public static void switchToBuildOrder(ABuildOrder buildOrder) {
         initialProductionQueue.clear();
         currentProductionQueue.clear();
-        
-        currentBuildOrder = buildOrder;
-        ABuildOrderLoader.loadBuildOrderFromFile(currentBuildOrder);
+
+        AProductionQueue.currentBuildOrder = buildOrder;
+        ABuildOrderLoader.loadBuildOrderFromFile(AProductionQueue.currentBuildOrder);
         
         rebuildQueue();
     }
@@ -81,29 +50,6 @@ public abstract class AProductionQueueManager {
     }
 
     // === Getters =============================================
-    
-    /**
-     * Returns currently active build order.
-     */
-    public static ABuildOrder getCurrentBuildOrder() {
-        return currentBuildOrder;
-    }
-    
-    /**
-     * Number of minerals reserved to produce some units/buildings in the build order that according to it
-     * should be produced right now (judging by the supply used).
-     */
-    public static int getMineralsReserved() {
-        return mineralsNeeded;
-    }
-
-    /**
-     * Number of gas reserved to produce some units/buildings in the build order that according to it
-     * should be produced right now (judging by the supply used).
-     */
-    public static int getGasReserved() {
-        return gasNeeded;
-    }
 
     /**
      * Returns list of things (units and upgrades) that we should produce (train or build) now. Or if you only

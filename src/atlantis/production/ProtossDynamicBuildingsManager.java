@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
-        if (AGame.getSupplyUsed() < 25) {
+        if (noSupply(25)) {
             return;
         }
 

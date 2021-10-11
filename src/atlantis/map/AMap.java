@@ -129,10 +129,11 @@ public class AMap {
      * Returns chokepoint to defend for the natural (second) base.
      */
     public static AChokepoint getChokepointForNaturalBase(APosition relativeToBase) {
-//        if (cached_naturalBaseChokepoint != null) {
-//            APainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
-//            return cached_naturalBaseChokepoint;
-//        }
+        if (cached_naturalBaseChokepoint != null) {
+            APainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 5, Color.White);
+            APainter.paintCircle(APosition.create(cached_naturalBaseChokepoint.getCenter()), 7, Color.White);
+            return cached_naturalBaseChokepoint;
+        }
 
         // =========================================================
 
@@ -145,7 +146,7 @@ public class AMap {
 
         System.out.println("Center");
         System.out.println(naturalRegion.getCenter());
-        System.out.println("Chokes");
+        System.out.println("Chokes ("+naturalRegion.getChokepoints().size());
         for (AChokepoint choke : naturalRegion.getChokepoints()) {
             System.out.println(choke.getCenter() + " // " + (choke.getWidth() / 32));
         }

@@ -15,6 +15,10 @@ public class Count {
         return Select.ourOfType(type).count();
     }
 
+    public static int ofTypeFree(AUnitType type) {
+        return Select.ourOfType(type).free().count();
+    }
+
     /**
      * Some buildings like Sunken Colony are morphed into from Creep Colony. When counting Creep Colonies, we
      * need to count sunkens as well.

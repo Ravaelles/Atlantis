@@ -5,11 +5,12 @@ import atlantis.constructing.AConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.util.Helpers;
 
-public class AbstractDynamicUnits {
+public class AbstractDynamicUnits extends Helpers {
 
     protected static void trainIfPossible(int minSupply, AUnitType unitType, boolean onlyOneAtTime) {
-        if (AGame.getSupplyUsed() < minSupply) {
+        if (noSupply(minSupply)) {
             return;
         }
 

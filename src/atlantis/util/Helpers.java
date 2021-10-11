@@ -1,0 +1,42 @@
+package atlantis.util;
+
+import atlantis.AGame;
+import atlantis.units.AUnitType;
+import atlantis.units.Count;
+import bwapi.UnitType;
+
+public class Helpers {
+
+    public static boolean has(AUnitType type) {
+        return Count.ofType(type) > 0;
+    }
+
+    public static boolean has(UnitType type) {
+        return Count.ofType(AUnitType.createFrom(type)) > 0;
+    }
+
+    public static boolean hasFree(AUnitType type) {
+        return Count.ofTypeFree(type) > 0;
+    }
+
+    public static boolean canAfford(Integer[] mineralsAndGas) {
+        return AGame.canAfford(mineralsAndGas[0], mineralsAndGas[1]);
+    }
+
+    public static boolean canAfford(int mineralPrice, int gasPrice) {
+        return AGame.canAfford(mineralPrice, gasPrice);
+    }
+
+    public static boolean supply(int minSupply) {
+        return AGame.getSupplyUsed() >= minSupply;
+    }
+
+    public static boolean noSupply(int minSupply) {
+        return AGame.getSupplyUsed() < minSupply;
+    }
+
+    public static boolean hasRequiredUnitFor(AUnitType type) {
+        return type.getWhatIsRequired() == null || Count.ofType(type.getWhatIsRequired()) > 0;
+    }
+
+}

@@ -2,6 +2,7 @@ package atlantis.wrappers;
 
 import atlantis.AGame;
 import atlantis.production.ProductionOrder;
+import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
@@ -14,8 +15,16 @@ public class ATech {
     
     // =========================================================
 
-    public static boolean isResearched(TechType tech) {
-        return isResearchedTech(tech);
+    public static boolean isResearched(Object techOrUpgrade) {
+        if (techOrUpgrade instanceof TechType) {
+            TechType tech = (TechType) techOrUpgrade;
+            return isResearchedTech(tech);
+        } else if (techOrUpgrade instanceof UpgradeType) {
+            return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
+        } else {
+            AGame.exit("Neither a tech, nor an upgrade.");
+            return false;
+        }
     }
 
     public static boolean isResearched(Object techOrUpgrade, ProductionOrder order) {
@@ -46,7 +55,19 @@ public class ATech {
     public static int getUpgradeLevel(UpgradeType upgrade) {
         return AGame.getPlayerUs().getUpgradeLevel(upgrade);
     }
-    
+
+    public static Integer[] costOf(Object techOrUpgrade) {
+        if (techOrUpgrade instanceof TechType) {
+            return new Integer[] {
+                    ((TechType) techOrUpgrade).mineralPrice(), ((TechType) techOrUpgrade).gasPrice()
+            };
+        } else {
+            return new Integer[] {
+                    ((UpgradeType) techOrUpgrade).mineralPrice(), ((UpgradeType) techOrUpgrade).gasPrice()
+            };
+        }
+    }
+
     // =========================================================
 
     public static void markAsBeingResearched(TechType tech) {

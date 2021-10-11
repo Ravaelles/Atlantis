@@ -21,7 +21,7 @@ public abstract class AProductionQueue {
 
     /**
      * Build order currently in use.
-     * @see switchToBuildOrder(ABuildOrder buildOrder)
+     * switchToBuildOrder(ABuildOrder buildOrder)
      */
     protected static ABuildOrder currentBuildOrder = null;
 

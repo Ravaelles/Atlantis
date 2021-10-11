@@ -765,6 +765,17 @@ public class Select<T> {
         return this;
     }
 
+    public Select<T> free() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.isBusy()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
     /**
      * Selects these units which are not scouts.
      */

@@ -9,9 +9,10 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Count;
 import atlantis.units.Select;
+import atlantis.util.Helpers;
 
 
-public abstract class ADynamicBuildingsManager {
+public abstract class ADynamicBuildingsManager extends Helpers {
 
     public static void update() {
         
@@ -81,11 +82,18 @@ public abstract class ADynamicBuildingsManager {
             return;
         }
 
+        if (!hasRequiredUnitFor(type)) {
+            buildToHaveOne(type.getWhatIsRequired());
+            return;
+        }
+
         AConstructionRequests.requestConstructionOf(type);
     }
 
-    protected static boolean canAfford(int minerals, int gas) {
-        return AGame.canAfford(minerals + AProductionQueue.getMineralsReserved(), gas + AProductionQueue.getGasReserved()
+    public static boolean canAfford(int minerals, int gas) {
+        return AGame.canAfford(
+                minerals + AProductionQueue.getMineralsReserved(),
+                gas + AProductionQueue.getGasReserved()
         );
     }
 
