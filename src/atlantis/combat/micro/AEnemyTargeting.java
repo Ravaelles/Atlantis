@@ -32,10 +32,10 @@ public class AEnemyTargeting {
 
         Select<AUnit> allEnemyUnitsThatCanBeAttacked = Select.enemy()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, false);
+                .canBeAttackedBy(unit, true);
         Select<AUnit> enemyRealUnitsThatCanBeAttacked = Select.enemyRealUnits()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, false);
+                .canBeAttackedBy(unit, true);
 
         AUnit nearestEnemy = null;
 
@@ -89,6 +89,7 @@ public class AEnemyTargeting {
 
         nearestEnemy = enemyRealUnitsThatCanBeAttacked.clone()
                 .combatUnits()
+                .canBeAttackedBy(unit, true)
                 .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;

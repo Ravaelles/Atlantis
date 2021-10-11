@@ -407,9 +407,9 @@ public class Atlantis implements BWEventListener {
     public void onEnd(boolean winner) {
         System.out.println();
         if (winner) {
-            System.out.println("NICE WIN! Exit...");
+            System.out.println("Nice WIN! It took " + AGame.getTimeSeconds() + " seconds. Exit...");
         } else {
-            System.out.println("Oh, you lost again. Exit...");
+            System.out.println("Oh, you lost again. It took " + AGame.getTimeSeconds() + " seconds. Exit...");
         }
 
         System.out.println("Killing StarCraft process...");

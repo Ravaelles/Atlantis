@@ -57,6 +57,7 @@ Observer
 
 50 - Robotics Support Bay
 Reaver
+90 - Observer
 
 Dragoon - x10
 

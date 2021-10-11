@@ -540,6 +540,10 @@ public class AUnitType implements Comparable<AUnitType> {
         return isType(Protoss_Pylon);
     }
 
+    public boolean isReaver() {
+        return isType(Protoss_Reaver);
+    }
+
     public boolean isCannon() {
         return isType(Protoss_Photon_Cannon);
     }
@@ -844,4 +848,11 @@ public class AUnitType implements Comparable<AUnitType> {
         }
     }
 
+    public int getWeaponRangeAgainst(AUnit anotherUnit) {
+        if (anotherUnit.isAirUnit()) {
+            return getAirWeapon().maxRange() / 32;
+        } else {
+            return getGroundWeapon().maxRange() / 32;
+        }
+    }
 }

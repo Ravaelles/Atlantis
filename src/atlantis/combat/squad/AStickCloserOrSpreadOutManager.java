@@ -8,43 +8,42 @@ import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
 public class AStickCloserOrSpreadOutManager {
-    
+
     public static boolean handle(AUnit unit) {
         APosition medianUnit = unit.getSquad().getMedianUnitPosition();
 
-        if (handleShoudSpreadOut(unit, medianUnit)) {
+        if (handleShouldSpreadOut(unit, medianUnit)) {
             return true;
         }
 
-        double maxDistFromAnotherUnit = 2;
-        if (handleShouldStickCloser(unit, medianUnit, maxDistFromAnotherUnit)) {
-            return true;
-        }
+//        if (handleShouldStickCloser(unit, medianUnit)) {
+//            return true;
+//        }
 
         return false;
     }
 
     // =========================================================
 
-    private static boolean handleShoudSpreadOut(AUnit unit, APosition medianPoint) {
-        if (Select.ourCombatUnits().inRadius(3, unit).count() >= 6) {
-            return unit.moveAwayFrom(medianPoint, 4, "Spread");
+    private static boolean handleShouldSpreadOut(AUnit unit, APosition medianPoint) {
+        if (
+                Select.ourCombatUnits().inRadius(4.5, unit).count() >= 6
+                || Select.ourCombatUnits().inRadius(2.5, unit).count() >= 3
+        ) {
+            return unit.moveAwayFrom(medianPoint, 2, "Spread out");
         }
 
         return false;
     }
 
-    private static boolean handleShouldStickCloser(AUnit unit, APosition medianPoint, double maxDistFromAnotherUnit) {
-        APainter.paintLine(unit, medianPoint, Color.Grey);
-
-        if (unit.distanceTo(medianPoint) > 10) {
-            return unit.move(medianPoint, UnitActions.MOVE, "Together");
-        }
-        else if (unit.distanceTo(medianPoint) <= 3 && unit.isMoving() && unit.getTargetPosition().equals(medianPoint)) {
-            return false;
-        }
-
-        return false;
-    }
+//    private static boolean handleShouldStickCloser(AUnit unit, APosition medianPoint) {
+//        if (
+//                Select.ourCombatUnits().inRadius(2, unit).count() >= 0
+//        ) {
+//            return unit.moveAwayFrom(medianPoint, 2, "Spread out");
+//        }
+//
+//        return false;
+//    }
 
 }

@@ -19,6 +19,11 @@ public class MissionContainFocusPointManager extends MissionFocusPointManager {
     @Override
     public APosition focusPoint() {
         if (containEnemyAtPoint != null) {
+            APainter.paintCircle(containEnemyAtPoint, 12, Color.Teal);
+            APainter.paintCircle(containEnemyAtPoint, 10, Color.Teal);
+            APainter.paintCircle(containEnemyAtPoint, 8, Color.Teal);
+            APainter.paintCircle(containEnemyAtPoint, 6, Color.Teal);
+            APainter.paintCircle(containEnemyAtPoint, 4, Color.Teal);
             return containEnemyAtPoint;
         }
 
@@ -36,6 +41,8 @@ public class MissionContainFocusPointManager extends MissionFocusPointManager {
         AChokepoint chokepoint = AMap.getChokepointForNaturalBase(enemyBase.getPosition());
         if (chokepoint != null) {
             AViewport.centerScreenOn(chokepoint.getCenter());
+            System.out.println("Our base " + Select.mainBase());
+            System.out.println("Located chokepoint " + chokepoint.getCenter());
             return containEnemyAtPoint = chokepoint.getCenter();
         }
 
@@ -44,6 +51,8 @@ public class MissionContainFocusPointManager extends MissionFocusPointManager {
             AViewport.centerScreenOn(natural);
         }
 
+        System.out.println("Our base " + Select.mainBase());
+        System.out.println("Located natural " + natural);
         return containEnemyAtPoint = natural;
     }
 

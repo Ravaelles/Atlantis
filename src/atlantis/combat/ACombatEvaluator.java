@@ -198,14 +198,14 @@ public class ACombatEvaluator {
         // =========================================================
         // Extra bonus for DEFENSIVE BUILDING PRESENCE
 
-//        if (!isEnemyEval) {
-//            if (enemyDefensiveBuildingFound) {
-//                strength += 10;
-//            }
-//            if (enemyDefensiveBuildingInRange) {
-//                strength += 10;
-//            }
-//        }
+        if (!isEnemyEval) {
+            if (enemyDefensiveBuildingFound) {
+                strength += 10;
+            }
+            if (enemyDefensiveBuildingInRange) {
+                strength += 10;
+            }
+        }
 
         return strength;
     }
@@ -236,6 +236,7 @@ public class ACombatEvaluator {
 
         // =========================================================
         // Diminish role of NON-SHOOTING units
+
         if (damage == 0 && !evaluateType.equals(AUnitType.Terran_Medic)) {
             total /= 15;
         }

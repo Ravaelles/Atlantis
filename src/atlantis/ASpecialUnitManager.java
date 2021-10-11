@@ -27,7 +27,7 @@ public class ASpecialUnitManager {
                 return TerranVultureManager.update(unit);
             } else if (unit.getType().isTerranInfantry()) {
                 return TerranInfantryManager.update(unit);
-            } if (unit.isType(AUnitType.Terran_Medic)) {
+            } else if (unit.isType(AUnitType.Terran_Medic)) {
                 return TerranMedic.update(unit);
             }
         }
@@ -36,6 +36,8 @@ public class ASpecialUnitManager {
 
         else if (AGame.isPlayingAsProtoss()) {
             if (unit.getType().equals(AUnitType.Protoss_Observer) && ProtossObserverManager.update(unit)) {
+                return true;
+            } else if (unit.getType().equals(AUnitType.Protoss_Reaver) && ProtossObserverManager.update(unit)) {
                 return true;
             }
         }

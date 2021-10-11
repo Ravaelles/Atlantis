@@ -2,7 +2,6 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.units.Count;
-import atlantis.units.Select;
 
 public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain {
 
@@ -17,9 +16,9 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === ATTACK ==============================================
 
     private static boolean shouldChangeMissionToAttack() {
-        int ourCombatUnits = Count.countOurCombatUnits();
+        int ourCombatUnits = Count.ourCombatUnits();
 
-        if (ourCombatUnits >= 20) {
+        if (ourCombatUnits >= 35) {
             return true;
         }
 
@@ -33,7 +32,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     private static boolean shouldChangeMissionToDefend() {
-        int ourCombatUnits = Count.countOurCombatUnits();
+        if (isFirstMission()) {
+            return false;
+        }
+
+        int ourCombatUnits = Count.ourCombatUnits();
 
         return ourCombatUnits <= 6;
     }

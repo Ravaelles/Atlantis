@@ -1,39 +1,37 @@
 package atlantis.production;
 
 import atlantis.AGame;
-import atlantis.constructing.AConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-public class ProtossDynamicBuildingsManager {
+public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
         if (AGame.getSupplyTotal() < 25) {
             return;
         }
 
-        gatewaysIfNeeded();
+        gateways();
+        forge();
+        stargate();
+        arbiter();
     }
 
     // =========================================================
 
-    private static void gatewaysIfNeeded() {
-        if (AGame.canAfford(358, 0)) {
-            if (Select.ourOfType(AUnitType.Protoss_Gateway).areAllBusy()) {
-                buildIfPossible(AUnitType.Protoss_Gateway, true, 150, 0);
-            }
-        }
+    private static void gateways() {
+        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway);
     }
 
-    protected static void buildIfPossible(AUnitType unitType, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!AGame.canAfford(hasMinerals, hasGas)) {
-            return;
-        }
+    private static void forge() {
+        buildIfCanAfford(AUnitType.Protoss_Forge);
+    }
 
-        if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(unitType)) {
-            return;
-        }
+    private static void stargate() {
+        buildToHaveOne(AUnitType.Protoss_Stargate);
+    }
 
-        AConstructionRequests.requestConstructionOf(AUnitType.Protoss_Gateway);
+    private static void arbiter() {
+        buildToHaveOne(AUnitType.Protoss_Arbiter);
     }
 }

@@ -6,10 +6,12 @@ import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.production.orders.ABuildOrderManager;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.Count;
 import atlantis.units.Select;
 
 
-public class ADynamicBuildingsManager {
+public abstract class ADynamicBuildingsManager {
 
     public static void update() {
         
@@ -45,6 +47,36 @@ public class ADynamicBuildingsManager {
     }
 
     // =========================================================
+
+    protected static void buildToHaveOne(AUnitType type) {
+        if (Count.ofType(type) > 0) {
+            return;
+        }
+
+        buildIfCanAfford(type, true, type.getMineralPrice(), type.getGasPrice());
+    }
+
+    protected static void buildIfCanAfford(AUnitType type) {
+        buildIfCanAfford(type, true, type.getMineralPrice(), type.getGasPrice());
+    }
+
+    protected static void buildIfAllBusyButCanAfford(AUnitType type) {
+        if (Select.ourOfType(type).areAllBusy()) {
+            buildIfCanAfford(type, true, type.getMineralPrice(), type.getGasPrice());
+        }
+    }
+
+    protected static void buildIfCanAfford(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
+        if (!canAfford(hasMinerals, hasGas)) {
+            return;
+        }
+
+        if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(type)) {
+            return;
+        }
+
+        AConstructionRequests.requestConstructionOf(type);
+    }
 
     protected static boolean canAfford(int minerals, int gas) {
         return AGame.canAfford(minerals + ABuildOrderManager.getMineralsReserved(), gas + ABuildOrderManager.getGasReserved()

@@ -87,6 +87,7 @@ public class AGameSpeed {
 //        }
         game().setLocalSpeed(gameSpeed);
         AGame.sendMessage("/speed " + gameSpeed);
+        game().setLocalSpeed(gameSpeed);
 
 //        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
 //        sendMessage("Game speed: " + speedString);
@@ -129,6 +130,7 @@ public class AGameSpeed {
         Game game = game();
         if (game != null) {
             frameSkip = newFrameSkip;
+            game.setFrameSkip(frameSkip);
             game.setFrameSkip(frameSkip);
         }
         else {
