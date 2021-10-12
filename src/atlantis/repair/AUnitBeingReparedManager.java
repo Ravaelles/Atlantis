@@ -15,18 +15,23 @@ public class AUnitBeingReparedManager {
             return false;
         }
 
+        double distanceToRepairer = repairer.distanceTo(unitBeingRepared);
         if (unitBeingRepared.isRunning()) {
             return false;
         }
 
+        if (!unitBeingRepared.isWounded()) {
+            ARepairAssignments.removeRepairerOrProtector(repairer);
+            return false;
+        }
+
         // Ignore going closer to repairer if unit is still relatively healthy
-        if (unitBeingRepared.getHPPercent() > 50) {
+        if (unitBeingRepared.getHPPercent() > 50 && distanceToRepairer >= 3) {
             return false;
         }
 
         // =========================================================
 
-        double distanceToRepairer = repairer.distanceTo(unitBeingRepared);
 
         // Go to repairer if he's close
         if (distanceToRepairer > 2) {
@@ -34,8 +39,12 @@ public class AUnitBeingReparedManager {
             return true;
         }
 
-        unitBeingRepared.holdPosition("Being repaired");
-        return true;
+        if (distanceToRepairer <= 1) {
+            unitBeingRepared.holdPosition("Being repaired");
+            return true;
+        }
+
+        return false;
     }
 
 }

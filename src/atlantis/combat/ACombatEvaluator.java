@@ -203,7 +203,7 @@ public class ACombatEvaluator {
                 strength += 10;
             }
             if (enemyDefensiveBuildingInRange) {
-                strength += 10;
+                strength += 30;
             }
         }
 

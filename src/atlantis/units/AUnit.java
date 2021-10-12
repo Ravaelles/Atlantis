@@ -601,7 +601,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      */
     public boolean isRunning() {
 //        return runManager.isRunning();
-        return getUnitAction().equals(UnitActions.RUN);
+        return UnitActions.RUN.equals(getUnitAction());
     }
 
     public boolean isLastOrderFramesAgo(int minFramesAgo) {

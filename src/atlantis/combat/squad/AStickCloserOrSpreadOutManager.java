@@ -43,9 +43,13 @@ public class AStickCloserOrSpreadOutManager {
     }
 
     private static boolean handleShouldStickCloser(AUnit unit, APosition medianPoint) {
+        int squadSize = unit.getSquad().size();
+        if (squadSize <= 1) {
+            return false;
+        }
+
         Select<AUnit> closeFriends = Select.ourCombatUnits();
         AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
-        int squadSize = unit.getSquad().size();
         double maxDistToMedian = maxDistToMedian(squadSize);
 
 //        if (
@@ -69,7 +73,7 @@ public class AStickCloserOrSpreadOutManager {
             return true;
         }
 
-        if (squadSize >= 2 && closeFriends.clone().inRadius(2, unit).count() == 0) {
+        if (closeFriends.clone().inRadius(2, unit).count() == 0) {
             if (nearestFriend != null) {
                 unit.move(
                         nearestFriend.getPosition(),

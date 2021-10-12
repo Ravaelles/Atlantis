@@ -519,7 +519,7 @@ public class AAdvancedPainter extends APainter {
 
                 // Paint box
                 paintRectangle(positionToBuild,
-                        buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, color);
+                        buildingType.getTileWidth(), buildingType.getTileHeight(), color);
 
                 // Draw X
                 paintLine(PositionHelper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),

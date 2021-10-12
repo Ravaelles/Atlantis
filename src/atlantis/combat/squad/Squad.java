@@ -94,35 +94,39 @@ public class Squad extends Units {
         ASquadManager.squads = squads;
     }
 
+//    public APosition getMedianUnitPosition() {
+//        if (size() == 0) {
+//            return null;
+//        }
+//
+//        int totalX = 0;
+//        int totalY = 0;
+//        for (AUnit unit : list()) {
+//            totalX += unit.getPosition().getX();
+//            totalY += unit.getPosition().getY();
+//        }
+//
+//        return _getMedianUnitPosition = new APosition(totalX / size(), totalY / size());
+//    }
+
     public APosition getMedianUnitPosition() {
-        if (size() == 0) {
+        if (size() <= 0) {
             return null;
         }
 
-        int totalX = 0;
-        int totalY = 0;
+        ArrayList<Integer> xCoords = new ArrayList<>();
+        ArrayList<Integer> yCoords = new ArrayList<>();
+
         for (AUnit unit : list()) {
-            totalX += unit.getPosition().getX();
-            totalY += unit.getPosition().getY();
+            xCoords.add(unit.getPosition().getX());
+            yCoords.add(unit.getPosition().getY());
         }
 
-        return _getMedianUnitPosition = new APosition(totalX / size(), totalY / size());
+        Collections.sort(xCoords);
+        Collections.sort(yCoords);
+
+        return _getMedianUnitPosition = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
     }
-//
-//    public APosition getMedianUnitPosition() {
-//        ArrayList<Integer> xCoords = new ArrayList<>();
-//        ArrayList<Integer> yCoords = new ArrayList<>();
-//
-//        for (AUnit unit : list()) {
-//            xCoords.add(unit.getPosition().getX());
-//            yCoords.add(unit.getPosition().getY());
-//        }
-//
-//        Collections.sort(xCoords);
-//        Collections.sort(yCoords);
-//
-//        return _getMedianUnitPosition = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
-//    }
 
     // =========================================================
     
