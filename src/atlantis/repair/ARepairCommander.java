@@ -65,7 +65,11 @@ public class ARepairCommander {
         for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).listUnits()) {
 
             // Some units shouldn't be repaired
-            if (AScoutManager.isScout(woundedUnit) || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)) {
+            if (
+                    AScoutManager.isScout(woundedUnit)
+                    || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
+                    || woundedUnit.isRunning()
+            ) {
                 continue;
             }
 

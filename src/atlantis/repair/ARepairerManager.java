@@ -68,7 +68,7 @@ public class ARepairerManager {
      * try finding new repairable unit.
      */
     private static boolean handleRepairCompletedTryFindingNewTarget(AUnit repairer) {
-        AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(25, repairer).first();
+        AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(50, repairer).first();
 
         if (closestUnitNeedingRepair != null) {
             ARepairAssignments.addRepairer(closestUnitNeedingRepair, closestUnitNeedingRepair);

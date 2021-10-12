@@ -119,7 +119,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             Collection<AUnit> mineralsInRange
                     = (Collection<AUnit>) Select.minerals().inRadius(3, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
-                if (mineral.distanceTo(position) <= 2) {
+                if (mineral.distanceTo(position) <= (1 + building.getDimensionRight() / 32)) {
                     _CONDITION_THAT_FAILED = "MINERAL TOO CLOSE";
                     return true;
                 }

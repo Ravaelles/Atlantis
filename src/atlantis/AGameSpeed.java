@@ -16,9 +16,9 @@ public class AGameSpeed {
      * By skipping rendering of game frames, we can make the game much quicker, regardless of the game speed.
      * Value 3 means we render every 3th game frame, skipping 67% of total rendering.
      */
-    public static int frameSkip = 10;
+    public static int frameSkip = 70;
 
-    private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 10;
+    private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 40;
 
     // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
     private static boolean dynamicSlowdown_isSlowdownActive = false;

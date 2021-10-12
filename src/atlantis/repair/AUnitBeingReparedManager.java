@@ -40,7 +40,7 @@ public class AUnitBeingReparedManager {
         }
 
         if (distanceToRepairer <= 1) {
-            unitBeingRepared.holdPosition("Being repaired");
+            unitBeingRepared.holdPosition("Be repaired");
             return true;
         }
 

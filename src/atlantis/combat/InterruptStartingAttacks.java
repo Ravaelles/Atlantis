@@ -21,8 +21,11 @@ public class InterruptStartingAttacks {
 
         // === Nearby melee ========================================
 
-        double minDistToContinueAttack = 2.6 + unit.getWoundPercent() / 40.0;
-        if (unit.getHPPercent() < 95 && Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isNotEmpty()) {
+        double minDistToContinueAttack = 2.7 + unit.getWoundPercent() / 37.0 ;
+        if (
+                (unit.getHPPercent() < 95 && !AGame.isPlayingAsTerran())
+                && Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isNotEmpty()
+        ) {
             return false;
         }
 //        unit.setTooltip("Fighting(" + lastAttackFrame+ ")");
