@@ -4,7 +4,6 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
-import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
@@ -12,9 +11,8 @@ import atlantis.position.PositionHelper;
 import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.util.AUtil;
+import atlantis.util.A;
 import atlantis.util.PositionUtil;
-import bwapi.Color;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.BWTA;
@@ -296,8 +294,8 @@ public class AMap {
         APosition position = null;
         for (int attempts = 0; attempts < 50; attempts++) {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
-            int dx = -maxRadius + AUtil.rand(0, 2 * maxRadius);
-            int dy = -maxRadius + AUtil.rand(0, 2 * maxRadius);
+            int dx = -maxRadius + A.rand(0, 2 * maxRadius);
+            int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValid();
             if (AMap.isWalkable(position) &&!isVisible(position)) {
                 return position;
@@ -311,8 +309,8 @@ public class AMap {
         for (int attempts = 0; attempts < 50; attempts++) {
             int mapDimension = Math.max(Atlantis.game().mapWidth(), Atlantis.game().mapHeight());
             int maxRadius = mapDimension * TilePosition.SIZE_IN_PIXELS;
-            int dx = -maxRadius + AUtil.rand(0, 2 * maxRadius);
-            int dy = -maxRadius + AUtil.rand(0, 2 * maxRadius);
+            int dx = -maxRadius + A.rand(0, 2 * maxRadius);
+            int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValid();
             if (AMap.isWalkable(position) && !isExplored(position) && startPoint.hasPathTo(position)) {
                 return position;

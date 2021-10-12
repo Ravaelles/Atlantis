@@ -2,9 +2,11 @@ package atlantis.combat.micro;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import bwapi.Color;
 
 
 public class AAvoidEnemyMeleeUnitsManager {
@@ -104,56 +106,37 @@ public class AAvoidEnemyMeleeUnitsManager {
     }
 
     private static boolean isEnemyCriticallyClose(AUnit unit) {
-        double baseCriticalDistance = (unit.isVulture() ? 3.6 : 3.0);
-//        double baseCriticalDistance = 3.0;
-        double healthBonus = unit.getWoundPercent() / 40;
-
-//        double numberOfNearEnemiesBonus = Math.max(0.4,
-//                ((Select.enemyRealUnits().inRadius(4, unit).count() - 1) / 12));
-        double archonBonus = (((Select.enemy().ofType(AUnitType.Protoss_Archon)
-                .inRadius(5, unit)).count() > 0) ? 0.5 : 0);
-
-        double criticalDistance = baseCriticalDistance + healthBonus + archonBonus;
+        double criticalDistance = getCriticalDistance(unit);
         double enemyDistance = nearestEnemy.distanceTo(unit);
 
         // isEnemyCriticallyClose
-        if (enemyDistance < criticalDistance) {
+        if (enemyDistance <= criticalDistance) {
 //            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Red);
+            APainter.paintCircle(unit.getPosition(), 22, Color.Red);
+            APainter.paintCircle(unit.getPosition(), 20, Color.Red);
+            APainter.paintCircle(unit.getPosition(), 18, Color.Red);
 //            APainter.paintLine(unit, nearestEnemy, Color.Red);
             return true;
         }
         else {
+            APainter.paintCircle(unit.getPosition(), 20, Color.Green);
+            APainter.paintCircle(unit.getPosition(), 17, Color.Green);
 //            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Green);
             return false;
         }
     }
 
-//    private static boolean shouldInterruptPendingAttack(AUnit unit) {
-////        if (!unit.isAttackFrame() && !unit.isStartingAttack()) {
-////            return false;
-////        }
-//        AUnit nearestEnemy = unit.getCachedNearestMeleeEnemy();
-//        double nearestEnemyDistance = nearestEnemy.distanceTo(unit);
-//
-////        APainter.paintTextCentered(unit, "" + enemyDistance, Color.Orange);
-//
-//        if (unit.isVulture()) {
-////            return enemyDistance < 3.5 && unit.getHPPercent() < 40;
-//            if (Select.enemyRealUnits().combatUnits().inRadius(2.5, unit).count() <= 1) {
-//                if (nearestEnemyDistance < 1.7) {
-//                    return true;
-//                }
-//            }
-//            else {
-//                if (nearestEnemyDistance < 2.5) {
-//                    return true;
-//                }
-//            }
-//
-//            return false;
-//        } else {
-//            return nearestEnemyDistance < 1.8 && (unit.isAttackFrame() || unit.isStartingAttack()) && unit.getHPPercent() >= 30;
-//        }
-//    }
+    public static double getCriticalDistance(AUnit unit) {
+        double baseCriticalDistance = (unit.isQuick() ? 4.8 : 3.0);
+        double healthBonus = unit.getWoundPercent() / 38;
+        double archonBonus = (((Select.enemy().ofType(AUnitType.Protoss_Archon).inRadius(5, unit)).count() > 0) ? 0.9 : 0);
+//        double movementBonus = unit.isMoving() ? (unit.lastRunAgo(12) ? -1.3 : 1.2) : 0;
+        double movementBonus = unit.isMoving() ? (unit.lastRunAgo(12) ? -1.3 : 1.2) : 0;
+        double directionBonus = nearestEnemy != null && unit.facingDifferentDirectionThan(nearestEnemy) ? -2 : 1.2;
+
+        double criticalDistance = baseCriticalDistance + healthBonus + archonBonus + movementBonus + directionBonus;
+
+        return criticalDistance;
+    }
 
 }

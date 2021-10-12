@@ -5,7 +5,7 @@ import static atlantis.Atlantis.game;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.AUtil;
+import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import bwapi.*;
 
@@ -136,6 +136,13 @@ public class AGame {
     }
 
     /**
+     * Current timestamp in frames.
+     */
+    public static int now() {
+        return getTimeFrames();
+    }
+
+    /**
      * Return how many frames ago this moment was.
      */
     public static int framesAgo(int frame) {
@@ -263,7 +270,7 @@ public class AGame {
      * Returns random int number from range [min, max], both inclusive.
      */
     public static int rand(int min, int max) {
-        return AUtil.rand(min, max);
+        return A.rand(min, max);
     }
 
     /**
@@ -358,4 +365,5 @@ public class AGame {
             game().sendText(message);
         }
     }
+
 }

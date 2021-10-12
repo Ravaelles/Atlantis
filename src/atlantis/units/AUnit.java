@@ -15,9 +15,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
-import atlantis.wrappers.ACachedValue;
 import bwapi.Player;
-import bwapi.Position;
 import bwapi.Unit;
 import bwapi.UnitCommand;
 import bwapi.UnitCommandType;
@@ -50,6 +48,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     private AUnit _cachedNearestMeleeEnemy = null;
     public int _lastAttackOrder;
     public int _lastAttackFrame;
+    public int _lastRetreat;
+    public int _lastRunning;
     public int _lastStartingAttack;
     public int _lastUnderAttack;
     public int lastX;
@@ -515,6 +515,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     // =========================================================
     // Auxiliary
 
+    public double distanceTo(AUnit otherUnit) {
+        return PositionUtil.distanceTo(this, otherUnit);
+    }
+
     public double distanceTo(Object o) {
         return PositionUtil.distanceTo(getPosition(), o);
     }
@@ -962,6 +966,14 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return getType().isVulture();
     }
 
+    /**
+     * Terran_SCV     - 4.92
+     * Terran_Vulture - 6.4
+     */
+    public double getSpeed() {
+        return getType().ut().topSpeed();
+    }
+
     public boolean isTank() {
         return getType().isTank();
     }
@@ -1150,5 +1162,49 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //            this.stop("Unfreeze");
 //            this.holdPosition("Unfreeze");
 //        }
+    }
+
+    public boolean lastAttackAgo(int framesAgo) {
+        return AGame.framesAgo(_lastStartingAttack) <= framesAgo;
+    }
+
+    public int lastAttackAgo() {
+        return AGame.framesAgo(_lastStartingAttack);
+    }
+
+    public int lastRetreatedAgo() {
+        return AGame.framesAgo(_lastRetreat);
+    }
+
+    public int lastRunAgo() {
+        return AGame.framesAgo(_lastRunning);
+    }
+
+    public boolean lastRunAgo(int framesAgo) {
+        return AGame.framesAgo(_lastRunning) <= framesAgo;
+    }
+
+    public boolean hasNotMovedInAWhile() {
+        return getX() == lastX && getY() == lastY;
+    }
+
+    public boolean isQuick() {
+        return getSpeed() >= 5.8;
+    }
+
+    public boolean isAccelerating() {
+        return u().isAccelerating();
+    }
+
+    public boolean isBraking() {
+        return u().isBraking();
+    }
+
+    public double getAngle() {
+        return u().getAngle();
+    }
+
+    public boolean facingDifferentDirectionThan(AUnit otherUnit) {
+        return Math.abs(getAngle() - otherUnit.getAngle()) >= 0.3;
     }
 }

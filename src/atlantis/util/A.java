@@ -43,7 +43,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-public class AUtil {
+/**
+ * Utility helper class A(tlantis)
+ */
+public class A {
 
     /**
      * <b>Random</b> object that can be used in any part of code.
@@ -272,8 +275,8 @@ public class AUtil {
      * Displays given exception in user friendly way (with exception name and stack).
      */
     public static void displayException(Exception e, String title, String preText) {
-        AUtil.displayError(title,
-                preText + "\n\n" + e.getMessage() + "\n\n" + AUtil.convertStackToString(10, e.getStackTrace()));
+        A.displayError(title,
+                preText + "\n\n" + e.getMessage() + "\n\n" + A.convertStackToString(10, e.getStackTrace()));
     }
 
     /**
@@ -310,7 +313,7 @@ public class AUtil {
         panel.setVisible(true);
         frame.add(panel);
         frame.setSize(panel.getSize());
-        AUtil.centerFrameOnScreen(frame);
+        A.centerFrameOnScreen(frame);
         frame.setVisible(visible);
         return frame;
     }
@@ -360,7 +363,7 @@ public class AUtil {
 
         String text = date.get(Calendar.YEAR) + "-" + month + "-" + day;
         String result = "";
-        for (String part : AUtil.implodeList(text, '-')) {
+        for (String part : A.implodeList(text, '-')) {
             if (result.length() > 0) {
                 result += ".";
             }
@@ -424,7 +427,7 @@ public class AUtil {
      * Returns string like 2011-06-09 21:20:59
      */
     public static String getDateAndTime() {
-        return AUtil.getTodayAsString() + " " + AUtil.getCurrentTimeAsString();
+        return A.getTodayAsString() + " " + A.getCurrentTimeAsString();
     }
 
     /**
@@ -528,7 +531,7 @@ public class AUtil {
                 return out;
             }
         } catch (Exception e) {
-            AUtil.displayException(e, "Błąd", "Błąd przy zapisywaniu do pliku\n" + "saveToFile(\"" + filePath
+            A.displayException(e, "Błąd", "Błąd przy zapisywaniu do pliku\n" + "saveToFile(\"" + filePath
                     + "\", \"" + stringToWrite + "\")");
         }
         return null;
@@ -613,7 +616,7 @@ public class AUtil {
      */
     public static void displayETA(long timeStart, int alreadyProcessed, int totalToProcess) {
         double seconds = ((double) (System.currentTimeMillis() - timeStart) / (1000 * alreadyProcessed));
-        String eta = AUtil
+        String eta = A
                 .convertSecondsToDisplayableFormat((int) ((totalToProcess - alreadyProcessed) * seconds));
         System.out.println("It took " + String.format("%.1f", seconds) + "s. " + alreadyProcessed * 100
                 / totalToProcess + "% objects (" + alreadyProcessed + "/" + totalToProcess + ") ready. ETA: " + eta);
@@ -668,7 +671,7 @@ public class AUtil {
 
             scanner.close();
         } catch (Exception e) {
-            AUtil.displayException(e);
+            A.displayException(e);
         }
         return resultList;
     }
@@ -804,7 +807,7 @@ public class AUtil {
                 try {
                     callable.call();
                 } catch (Exception ex) {
-                    AUtil.displayException(ex);
+                    A.displayException(ex);
                 }
             }
         });
@@ -882,7 +885,7 @@ public class AUtil {
      */
     public static double median(Collection<Double> list, boolean mathematicMedian) {
         if (list.isEmpty()) {
-            AUtil.displayMessage("List for computing a median is empty!");
+            A.displayMessage("List for computing a median is empty!");
             return -1;
         }
         if (list.size() == 1) {
@@ -1058,5 +1061,15 @@ public class AUtil {
     public static int countSubstrings(String str, String subStr) {
         return (str.length() - str.replaceAll(Pattern.quote(subStr), "").length()) / subStr.length();
     }
-    
+
+    /**
+     * 12.665 => "12.6"
+     */
+    public static String digit(double number) {
+        return String.format("%.1f", number).replace(",", ".");
+    }
+
+    public static String trueFalse(boolean bool) {
+        return bool ? "Yes" : "No";
+    }
 }

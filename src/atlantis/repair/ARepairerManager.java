@@ -1,14 +1,22 @@
 package atlantis.repair;
 
+import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.micro.AAvoidEnemyDefensiveBuildings;
 import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
 import atlantis.combat.micro.AAvoidInvisibleEnemyUnits;
 import atlantis.combat.missions.Missions;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
+import atlantis.units.Count;
 import atlantis.units.Select;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 
 public class ARepairerManager {
+
+    private static final int MAX_REPAIRERS = 7;
 
     public static boolean updateRepairer(AUnit repairer) {
         if (handleRepairerSafety(repairer)) {
@@ -63,6 +71,16 @@ public class ARepairerManager {
 
     // =========================================================
 
+    protected static void assignRepairersToWoundedUnits(AUnit unitToRepair, int numberOfRepairersToAssign) {
+        for (int i = 0; i < numberOfRepairersToAssign; i++) {
+            boolean isCriticallyImportant = unitToRepair.isTank() || unitToRepair.isBunker();
+            AUnit worker = defineBestRepairerFor(unitToRepair, isCriticallyImportant);
+            if (worker != null) {
+                ARepairAssignments.addRepairer(worker, unitToRepair);
+            }
+        }
+    }
+
     /**
      * The repair of unit assigned has finished, but instead of unproductively going back to base,
      * try finding new repairable unit.
@@ -94,5 +112,73 @@ public class ARepairerManager {
         }
         
         return false;
+    }
+
+    protected static AUnit defineBestRepairerFor(AUnit unitToRepair, boolean criticallyImportant) {
+        if (criticallyImportant) {
+            return Select.ourWorkers().notRepairing().notConstructing().notScout()
+                    .exclude(unitToRepair).nearestTo(unitToRepair);
+        }
+
+        // Try to use one of the protectors if he's non occupied
+        Collection<AUnit> protectors = ARepairAssignments.getProtectors();
+        for (Iterator<AUnit> iterator = protectors.iterator(); iterator.hasNext();) {
+            AUnit protector = iterator.next();
+            if (protector.isUnitActionRepair()) {
+                iterator.remove();
+            }
+        }
+
+        if (!protectors.isEmpty()) {
+            return Select.from(protectors).nearestTo(unitToRepair);
+        }
+
+        // If no free protector was found, return normal worker.
+        else {
+            return Select.ourWorkers()
+                    .notCarrying()
+                    .notRepairing()
+                    .notConstructing()
+                    .notScout()
+                    .exclude(unitToRepair)
+                    .nearestTo(unitToRepair);
+        }
+    }
+
+    protected static void assignRepairersToWoundedUnits() {
+//        if (ARepairAssignments.repairersToUnit.keySet().size() >= Count.workers() * MAX_REPAIRERS)
+        if (ARepairAssignments.repairersToUnit.keySet().size() >= MAX_REPAIRERS) {
+            return;
+        }
+
+        for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).listUnits()) {
+
+            // Some units shouldn't be repaired
+            if (
+                    AScoutManager.isScout(woundedUnit)
+                    || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
+                    || (woundedUnit.isRunning() && woundedUnit.lastRunAgo() > 60)
+            ) {
+                continue;
+            }
+
+            // =========================================================
+
+            int numberOfRepairers = ARepairAssignments.countRepairersForUnit(woundedUnit)
+                    + ARepairAssignments.countProtectorsFor(woundedUnit);
+
+            // === Repair bunker ========================================
+
+            if (woundedUnit.type().isBunker()) {
+                int shouldHaveThisManyRepairers = ARepairCommander.defineOptimalRepairersForBunker(woundedUnit);
+                ARepairCommander.assignProtectorsFor(woundedUnit, shouldHaveThisManyRepairers - numberOfRepairers);
+            }
+
+            // === Repair ordinary unit =================================
+
+            else {
+                assignRepairersToWoundedUnits(woundedUnit, 2 - numberOfRepairers);
+            }
+        }
     }
 }

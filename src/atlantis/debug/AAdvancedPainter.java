@@ -27,7 +27,7 @@ import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.AUtil;
+import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.workers.AWorkerManager;
@@ -120,10 +120,7 @@ public class AAdvancedPainter extends APainter {
             APosition unitPosition = unit.getPosition();
 
             if (unit.isRunning()) {
-                APainter.paintCircle(unit.getTargetPosition(), 2, Color.Grey);
-                APainter.paintCircle(unit.getTargetPosition(), 3, Color.Grey);
-                APainter.paintCircle(unit.getTargetPosition(), 1, Color.Grey);
-                APainter.paintLine(unit, unit.getTargetPosition(), Color.Black);
+                paintRunningUnitWhiteFlag(unit);
             }
 
             // =========================================================
@@ -384,7 +381,7 @@ public class AAdvancedPainter extends APainter {
         }
 
         Map<AUnitType, Integer> counters = unitTypesCounter.map();
-        counters = AUtil.sortByValue(counters, false);
+        counters = A.sortByValue(counters, false);
         boolean paintedMessage = false;
         for (AUnitType unitType : counters.keySet()) {
             paintSideMessage("+" + counters.get(unitType) + " " + unitType.toString(), Color.Blue, 0);
@@ -403,7 +400,7 @@ public class AAdvancedPainter extends APainter {
         }
 
         counters = unitTypesCounter.map();
-        counters = AUtil.sortByValue(counters, false);
+        counters = A.sortByValue(counters, false);
         for (AUnitType unitType : counters.keySet()) {
             if (!unitType.isBuilding()) {
                 paintSideMessage(counters.get(unitType) + "x " + unitType.toString(), Color.Grey, 0);
@@ -610,21 +607,7 @@ public class AAdvancedPainter extends APainter {
                     paintCircleFilled(unit.getRunManager().getRunToPosition(), 10, Color.Yellow);
                 }
 
-                // =========================================================
-                // === Paint white flags over running units
-                // =========================================================
-                int flagWidth = 15;
-                int flagHeight = 8;
-                int dy = 12;
-
-                paintLine(unitPosition, targetPosition, Color.Blue); // Where unit is running to
-
-                paintRectangleFilled(unitPosition.translateByPixels(0, -flagHeight - dy),
-                        flagWidth, flagHeight, Color.White); // White flag
-                paintRectangle(unitPosition.translateByPixels(0, -flagHeight - dy),
-                        flagWidth, flagHeight, Color.Grey); // Flag border
-                paintRectangleFilled(unitPosition.translateByPixels(-1, --flagHeight - dy),
-                        2, flagHeight, Color.Grey); // Flag stick
+                paintRunningUnitWhiteFlag(unit);
             }
 
             // Paint #ID
@@ -678,6 +661,21 @@ public class AAdvancedPainter extends APainter {
                 paintCircle(unit, 4, Color.Black);
             }
         }
+    }
+
+    private static void paintRunningUnitWhiteFlag(AUnit unit) {
+        int flagWidth = 15;
+        int flagHeight = 8;
+        int dy = 12;
+
+        paintLine(unit, unit.getTargetPosition(), Color.Blue); // Where unit is running to
+
+        paintRectangleFilled(unit.getPosition().translateByPixels(0, -flagHeight - dy),
+                flagWidth, flagHeight, Color.White); // White flag
+        paintRectangle(unit.getPosition().translateByPixels(0, -flagHeight - dy),
+                flagWidth, flagHeight, Color.Grey); // Flag border
+        paintRectangleFilled(unit.getPosition().translateByPixels(-1, flagHeight - dy),
+                2, flagHeight, Color.Grey); // Flag stick
     }
 
     /**
@@ -982,7 +980,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintCodeProfiler() {
         int counter = 0;
-        double maxValue = AUtil.getMaxElement(
+        double maxValue = A.getMaxElement(
                 CodeProfiler.getAspectsTimeConsumption().values()
         );
 

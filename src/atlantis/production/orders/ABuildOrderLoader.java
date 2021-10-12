@@ -5,7 +5,7 @@ import atlantis.AtlantisConfig;
 import atlantis.combat.missions.MissionsFromBuildOrder;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.util.AUtil;
+import atlantis.util.A;
 import atlantis.util.NameUtil;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -44,7 +44,7 @@ public class ABuildOrderLoader {
                 + "` build orders file.");
         
         // Parse CSV
-        String[][] loadedFile = AUtil.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
+        String[][] loadedFile = A.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
 
         // We can display file here, if we want to
         //displayLoadedFile(loadedFile);
@@ -423,7 +423,7 @@ public class ABuildOrderLoader {
     }
 
     private void handleMissionCommand(String line) {
-        if (AUtil.countSubstrings(line, " - ") != 3) {
+        if (A.countSubstrings(line, " - ") != 3) {
             System.err.println("Mission modyfing command must use notation: AT_SUPPLY - MISSION=[RUSH|RESET]");
             AGame.exit();
         }

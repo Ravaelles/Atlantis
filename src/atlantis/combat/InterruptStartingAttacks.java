@@ -1,7 +1,9 @@
 package atlantis.combat;
 
 import atlantis.AGame;
+import atlantis.AGameSpeed;
 import atlantis.units.AUnit;
+import atlantis.units.Count;
 import atlantis.units.Select;
 
 public class InterruptStartingAttacks {
@@ -10,37 +12,40 @@ public class InterruptStartingAttacks {
     private static boolean DEBUG = false;
 
     public static boolean shouldNotBeInterruptedStartingAttack(AUnit unit) {
+
         int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
         int lastStartingAttack = AGame.framesAgo(unit._lastStartingAttack);
         int cooldown = unit.getCooldownCurrent();
-        int cooldownAbsolute = unit.getCooldownCurrent();
-
-//        if (unit.isStartingAttack()) {
-//            System.out.println(AGame.getTimeFrames() + "   #" + unit.getID());
-//        }
+        int friends = Select.ourCombatUnits().inRadius(2.5, unit).count();
 
         // === Nearby melee ========================================
 
-        double minDistToContinueAttack = 2.7 + unit.getWoundPercent() / 37.0 ;
+        double minDistToContinueAttack = 2.7 + unit.getWoundPercent() / 50.0 ;
         if (
-                (unit.getHPPercent() < 95 && !AGame.isPlayingAsTerran())
+                (
+                        (unit.getHPPercent() < (95 - friends) && !AGame.isPlayingAsTerran())
+                        || (unit.getCooldownCurrent() <= 0 && unit.hasNotMovedInAWhile() && unit.lastAttackAgo() > 40)
+                )
                 && Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isNotEmpty()
         ) {
             return false;
         }
-//        unit.setTooltip("Fighting(" + lastAttackFrame+ ")");
 
         // =========================================================
 
 //        if (unit.isAttacking() && (cooldown <= 3 || cooldown >= cooldownAbsolute - 10)) {
         if (unit.isAttacking() && (cooldown <= 3)) {
             unit.setTooltip("Shooting(" + lastAttackFrame + "/" + unit.getCooldownCurrent() + ")");
-            if (DEBUG && AGame.getTimeFrames() > 50) {
+//            if (DEBUG && AGame.getTimeFrames() > 50) {
+            if (DEBUG) {
+                AGameSpeed.changeSpeedTo(30);
                 System.out.println(
-                        "unit#"+ unit.getID() + " " +
-                        "DONT INTERRUPT(" + lastAttackFrame + "/" + lastStartingAttack +") " +
-                        " COOLDOWN = " + unit.getCooldownCurrent() +
-                        " TARGET = " + unit.getTarget()
+                        AGame.now() + " - " +
+                        "#"+ unit.getID() + "  " +
+                        " DONT_INT(" + lastAttackFrame + "/" + lastStartingAttack +") " +
+                        ", COOL = " + unit.getCooldownCurrent() +
+                        ", DIST = " + unit.distanceTo(unit.getTarget()) +
+                        ", TAR = " + unit.getTarget().getShortName()
                 );
             }
             return true;

@@ -8,9 +8,8 @@ import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
-import atlantis.repair.ARepairerManager;
 import atlantis.scout.AScoutManager;
-import atlantis.util.AUtil;
+import atlantis.util.A;
 import atlantis.util.PositionUtil;
 import bwapi.Player;
 import bwapi.Position;
@@ -1205,7 +1204,7 @@ public class Select<T> {
      * Returns random unit that matches previous conditions or null if no units matched all conditions.
      */
     public T random() {
-        return (T) AUtil.getRandomElement(data); //units.random();
+        return (T) A.getRandomElement(data); //units.random();
     }
 
     // === High-level of abstraction ===========================

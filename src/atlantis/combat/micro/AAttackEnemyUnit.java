@@ -28,14 +28,18 @@ public class AAttackEnemyUnit {
         if (!unit.canAttackThisKindOfUnit(enemyToAttack, false)) {
             unit.setTooltip("Invalid target");
             return false;
-        } 
+        }
 
         if (enemyToAttack != null) {
             unit.setTooltip("Attacking " + enemyToAttack.getShortName() + " (" + unit.getCooldownCurrent() + ")");
 //            APainter.paintTextCentered(unit, enemyToAttack + ", " + unit.isJustShooting(), Color.Red);
             APainter.paintLine(unit, enemyToAttack, Color.Red);
             if (!enemyToAttack.equals(unit.getTarget())) {
-                unit.attackUnit(enemyToAttack);
+                if (unit.isMoving()) {
+                    unit.stop("Stop&Attack");
+                } else {
+                    unit.attackUnit(enemyToAttack);
+                }
             }
             return true;
         } 

@@ -100,6 +100,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
+        if (ARunManager.shouldStopRunning(unit)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -146,7 +150,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //            System.out.println(AGame.getTimeFrames() +" // #" + unit.getID());
 //        }
 
-        if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 5) {
+        if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 2) {
             unit.setTooltip("Run...(" + unit.getLastOrderFramesAgo() + ")");
             return true;
         }

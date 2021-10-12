@@ -1,6 +1,6 @@
 package atlantis;
 
-import atlantis.util.AUtil;
+import atlantis.util.A;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ public class AtlantisIgniter {
         }
         
         // Read every single line
-        ArrayList<String> linesList = AUtil.readTextFileToList(bwapiIniPath);
+        ArrayList<String> linesList = A.readTextFileToList(bwapiIniPath);
         fileContent = new String[linesList.size()];
         fileContent = linesList.toArray(fileContent);
         
@@ -135,7 +135,7 @@ public class AtlantisIgniter {
             finalContent += line + "\n";
         }
         
-        AUtil.saveToFile(bwapiIniPath, finalContent, true);
+        A.saveToFile(bwapiIniPath, finalContent, true);
     }
     
 }

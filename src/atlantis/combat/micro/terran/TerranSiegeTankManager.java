@@ -1,13 +1,12 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.combat.missions.MissionContainFocusPointManager;
 import atlantis.combat.missions.Missions;
 import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.util.AUtil;
+import atlantis.util.A;
 
 
 public class TerranSiegeTankManager {
@@ -71,7 +70,7 @@ public class TerranSiegeTankManager {
                 || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 11.2)) {
             tank.setTooltip("Considers unsiege");
 
-            if (tank.getSquad().isMissionAttack() && AUtil.chance(2)) {
+            if (tank.getSquad().isMissionAttack() && A.chance(2)) {
                 tank.unsiege();
                 tank.setTooltip("Unsiege");
                 return true;
@@ -79,7 +78,7 @@ public class TerranSiegeTankManager {
 
             if (tank.getSquad().isMissionContain()) {
                 APosition focusPoint = Missions.globalMission().focusPoint();
-                if (focusPoint != null && tank.distanceTo(focusPoint) >= 13 && AUtil.chance(2)) {
+                if (focusPoint != null && tank.distanceTo(focusPoint) >= 13 && A.chance(2)) {
                     tank.unsiege();
                     tank.setTooltip("Unsiege");
                     return true;

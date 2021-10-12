@@ -37,6 +37,7 @@ public abstract class AbstractMicroManager {
 
         // If situation is unfavorable, retreat
         if (!isSituationFavorable) {
+            unit._lastRetreat = AGame.now();
             unit.setTooltip("Retreat");
             return unit.runFrom(null);
         }

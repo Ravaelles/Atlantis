@@ -1,10 +1,13 @@
 package atlantis.combat;
 
 import atlantis.AGame;
+import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
+import atlantis.units.Select;
+import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 
 public class ACombatCommander {
@@ -45,10 +48,30 @@ public class ACombatCommander {
         for (AUnit unit : squad.arrayList()) {
             ACombatUnitManager.update(unit);
 
+            addInfoAboutNearestEnemyToTooltip(unit);
+
             if (AGame.everyNthGameFrame(40)) {
                 unit.lastX = unit.getX();
                 unit.lastY = unit.getY();
             }
+        }
+    }
+
+    // =========================================================
+
+    private static void addInfoAboutNearestEnemyToTooltip(AUnit unit) {
+        AUnit nearestEnemy = Select.enemyRealUnits().nearestTo(unit);
+        if (nearestEnemy != null) {
+            if (unit.getTooltip().contains(" < ")) {
+                unit.setTooltip("");
+            }
+            unit.setTooltip(
+                    A.digit(nearestEnemy.distanceTo(unit)) + " < "
+                            + A.digit(AAvoidEnemyMeleeUnitsManager.getCriticalDistance(unit)) + " / "
+                            + unit.getTooltip()
+                            + " \\ " + A.digit(unit.getAngle())
+                            + " \\ " + A.trueFalse(unit.facingDifferentDirectionThan(nearestEnemy))
+            );
         }
     }
 

@@ -47,4 +47,8 @@ public class Count {
     public static int ourOfTypeIncludingUnfinished(AUnitType type) {
         return Select.countOurOfTypeIncludingUnfinished(type);
     }
+
+    public static int workers() {
+        return Select.ourWorkers().count();
+    }
 }

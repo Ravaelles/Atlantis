@@ -10,7 +10,7 @@ public class AGameSpeed {
      * Game speed. Lower is faster. 0 is fastest, 20 is about normal game speed.
      * In game you can use buttons -/+ to change the game speed.
      */
-    public static int gameSpeed = 0;
+    public static int gameSpeed = 10;
 
     /**
      * By skipping rendering of game frames, we can make the game much quicker, regardless of the game speed.
@@ -18,7 +18,7 @@ public class AGameSpeed {
      */
     public static int frameSkip = 70;
 
-    private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 40;
+    private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
 
     // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
     private static boolean dynamicSlowdown_isSlowdownActive = false;

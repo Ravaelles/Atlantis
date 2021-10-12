@@ -11,7 +11,6 @@ import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class ARunManager {
@@ -67,7 +66,7 @@ public class ARunManager {
 //            else {
 //                return true;
 //            }
-            markAsNotRunning();
+            stopRunning();
             unit.setTooltip("Fuck!");
             return true;
         }
@@ -100,6 +99,18 @@ public class ARunManager {
         }
     }
 
+    public static boolean shouldStopRunning(AUnit unit) {
+        if (unit.isRunning()) {
+            AUnit nearEnemy = Select.enemyRealUnits().combatUnits().canAttack(unit, 3).nearestTo(unit);
+            if (nearEnemy == null || nearEnemy.facingDifferentDirectionThan(unit)) {
+                unit.getRunManager().stopRunning();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // =========================================================
     
     /**
@@ -111,6 +122,9 @@ public class ARunManager {
         // === Run directly away from the enemy ========================================
         
         if (!unit.getPosition().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
+            if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() == 1) {
+                runAwayFrom = closeEnemies.first().getPosition();
+            }
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom);
         }
         
@@ -146,7 +160,7 @@ public class ARunManager {
         closeEnemies = defineCloseEnemies(unit);
 //        APainter.paintTextCentered(unit, "" + closeEnemies.size(), Color.White);
         if (closeEnemies.isEmpty()) {
-            markAsNotRunning();
+            stopRunning();
 //            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -15), "No enemies!", Color.Red);
 //            System.err.println("No enemies to run to for " + unit);
             return false;
@@ -161,10 +175,6 @@ public class ARunManager {
 //        }
 
         // ===========================================
-        
-        int maxEnemiesToRunFromNearestEnemy = 1;
-
-        // ===========================================
         // Define "center of gravity" for the set of enemies
         
 //        if (closeEnemies.size() <= maxEnemiesToRunFromNearestEnemy) {
@@ -172,7 +182,8 @@ public class ARunManager {
 //        } else {
 //            enemyMedian = closeEnemies.median();
 //            enemyMedian = closeEnemies.average();
-            enemyMedian = closeEnemies.averageDistanceWeightedTo(unit, 0.33);
+        enemyMedian = closeEnemies.averageDistanceWeightedTo(unit, 0.33);
+        APainter.paintLine(unit, enemyMedian, Color.Yellow);
 //        }
 //        enemyMedian = enemyMedian.makeValid();
         
@@ -185,7 +196,7 @@ public class ARunManager {
     public boolean runFrom(Object unitOrPosition) {
         if (unitOrPosition == null) {
             System.err.println("Null unit to run from");
-            markAsNotRunning();
+            stopRunning();
             throw new RuntimeException("Null unit to run from");
         }
 
@@ -253,8 +264,8 @@ public class ARunManager {
      */
     private APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom) {
 //        double minTiles = unit.isVulture() ? 5.5 : (unit.isWorker() ? 3 : 1.2);
-        double minTiles = 1.0;
-        double maxDist = 5.0;
+        double minTiles = 1.1;
+        double maxDist = 3.0;
 
         double currentDist = maxDist;
         while (currentDist >= minTiles) {
@@ -275,7 +286,7 @@ public class ARunManager {
                 }
             }
 
-            currentDist -= 1.7;
+            currentDist -= 0.9;
         }
 
         return null;
@@ -309,8 +320,8 @@ public class ARunManager {
 
         // If run distance is acceptably long and it's connected, it's ok.
         if (isPossibleAndReasonablePosition(unit.getPosition(), runTo, "O", "X")) {
-//            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
-//            APainter.paintLine(unit.getPosition().translateByPixels(-1, -1), runTo, Color.Purple);
+            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
+            APainter.paintLine(unit.getPosition().translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
             return runTo;
         } else {
@@ -346,7 +357,7 @@ public class ARunManager {
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
 //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
-        int border = RUN_ANY_DIRECTION_GRID_BORDER;
+        int border = unit.isVulture() ? 3 : RUN_ANY_DIRECTION_GRID_BORDER;
         for (int dtx = -border; dtx <= border; dtx++) {
             for (int dty = -border; dty <= border; dty++) {
                 if (dtx != -border && dtx != border && dty != -border && dty != border) {
@@ -436,31 +447,31 @@ public class ARunManager {
     private static Units defineCloseEnemies(AUnit unit) {
 //        return Select.enemy().combatUnits().canAttack(unit, 6).units();
 
-        Select<AUnit> veryCloseEnemies = Select.enemy().combatUnits().canAttack(unit, 1.6);
+        Select<AUnit> veryCloseEnemies = Select.enemy().combatUnits().canAttack(unit, 4);
         if (veryCloseEnemies.size() > 0 && veryCloseEnemies.size() <= 1) {
             return veryCloseEnemies.units();
         }
         else {
-            return Select.enemy().combatUnits().canAttack(unit, 3.5).units();
+            return Select.enemy().combatUnits().canAttack(unit, 4).units();
         }
     }
 
     /**
      * Tell other units that might be blocking our escape route to move.
      */
-    private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
-        double safetyRadiusSize = (unit.getType().getDimensionLeft() + unit.getType().getDimensionUp())
-                / 64 * 1.35;
-
-        Select<?> units = Select.ourRealUnits().inRadius(safetyRadiusSize, unit);
-        List<AUnit> otherUnits = units.listUnits();
-        for (AUnit otherUnit : otherUnits) {
-            if (!otherUnit.isRunning() && !unit.equals(otherUnit)) {
-                boolean result = otherUnit.runFrom(unit);
-                otherUnit.setTooltip("Make space (" + otherUnit.distanceTo(unit) + ")");
-            }
-        }
-    }
+//    private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
+//        double safetyRadiusSize = (unit.getType().getDimensionLeft() + unit.getType().getDimensionUp())
+//                / 64 * 1.35;
+//
+//        Select<?> units = Select.ourRealUnits().inRadius(safetyRadiusSize, unit);
+//        List<AUnit> otherUnits = units.listUnits();
+//        for (AUnit otherUnit : otherUnits) {
+//            if (!otherUnit.isRunning() && !unit.equals(otherUnit)) {
+//                boolean result = otherUnit.runFrom(unit);
+//                otherUnit.setTooltip("Make space (" + otherUnit.distanceTo(unit) + ")");
+//            }
+//        }
+//    }
 
     // =========================================================
     /**
@@ -469,7 +480,7 @@ public class ARunManager {
     public static boolean isPossibleAndReasonablePosition(
             APosition unitPosition, APosition position
     ) {
-        return isPossibleAndReasonablePosition(unitPosition, position, null, null);
+        return isPossibleAndReasonablePosition(unitPosition, position, "#", "*");
     }
 
     public static boolean isPossibleAndReasonablePosition(
@@ -496,13 +507,13 @@ public class ARunManager {
 //        boolean isOkay = AMap.isWalkable(position)
         boolean isOkay = AMap.isWalkable(position)
                 && (
-                    AMap.isWalkable(position.translateByTiles(1, 1))
-                    && AMap.isWalkable(position.translateByTiles(-1, -1))
-                    && AMap.isWalkable(position.translateByTiles(1, 0))
+                    AMap.isWalkable(position.translateByTiles(1, 0))
+                    && AMap.isWalkable(position.translateByTiles(-1, 0))
                     && AMap.isWalkable(position.translateByTiles(0, 1))
+                    && AMap.isWalkable(position.translateByTiles(0, -1))
                 )
-                && Select.all().inRadius(1.5, position).isEmpty()
-                && Select.neutral().inRadius(4.5, position).isEmpty()
+                && Select.all().inRadius(2.0, position).isEmpty()
+                && Select.neutral().inRadius(3.5, position).isEmpty()
                 && unitPosition.hasPathTo(position)
 //                && Select.neutral().inRadius(1.2, position).count() == 0
 //                && Select.enemy().inRadius(1.2, position).count() == 0
@@ -543,7 +554,7 @@ public class ARunManager {
 //        }
 //    }
 
-    public void markAsNotRunning() {
+    public void stopRunning() {
         runTo = null;
         _updated_at = -1;
     }

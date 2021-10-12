@@ -1,11 +1,9 @@
 package atlantis.repair;
 
 import atlantis.AGame;
-import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.missions.Missions;
 import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
-import atlantis.scout.AScoutManager;
 import atlantis.strategy.AEnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -21,7 +19,7 @@ public class ARepairCommander {
             assignProtectors();
         }
         if (AGame.everyNthGameFrame(15)) {
-            assignRepairersToWoundedUnits();
+            ARepairerManager.assignRepairersToWoundedUnits();
         }
 
         // === Handle bunker protectors =================================
@@ -61,38 +59,7 @@ public class ARepairCommander {
     // === Asign repairers if needed ===========================
     // =========================================================
 
-    private static void assignRepairersToWoundedUnits() {
-        for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).listUnits()) {
-
-            // Some units shouldn't be repaired
-            if (
-                    AScoutManager.isScout(woundedUnit)
-                    || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
-                    || woundedUnit.isRunning()
-            ) {
-                continue;
-            }
-
-            // =========================================================
-            
-            int numberOfRepairers = ARepairAssignments.countRepairersForUnit(woundedUnit)
-                    + ARepairAssignments.countProtectorsFor(woundedUnit);
-
-            // === Repair bunker ========================================
-            
-            if (woundedUnit.type().isBunker()) {
-                int shouldHaveThisManyRepairers = defineOptimalRepairersForBunker(woundedUnit);
-                assignProtectorsFor(woundedUnit, shouldHaveThisManyRepairers - numberOfRepairers);
-            } 
-
-            // === Repair ordinary unit =================================
-            else {
-                assignUnitRepairers(woundedUnit, 2 - numberOfRepairers);
-            }
-        }
-    }
-
-    private static void assignProtectors() {
+    protected static void assignProtectors() {
         if (Missions.isGlobalMissionDefend()) {
             assignBunkerProtectorsIfNeeded();
         }
@@ -109,7 +76,7 @@ public class ARepairCommander {
 
     }
     
-    private static void assignBunkerProtectorsIfNeeded() {
+    protected static void assignBunkerProtectorsIfNeeded() {
 //        if (Missions.isGlobalMissionAttack()) {
 //        }
         AUnit mainBase = Select.mainBase();
@@ -143,7 +110,7 @@ public class ARepairCommander {
 //        }
     }
     
-    private static void assignUnitsProtectorsIfNeeded() {
+    protected static void assignUnitsProtectorsIfNeeded() {
         if (!Missions.isGlobalMissionAttack()) {
             return;
         }
@@ -177,28 +144,18 @@ public class ARepairCommander {
 
     // =========================================================
     
-    private static void assignProtectorsFor(AUnit unitToProtect, int numberOfProtectorsToAssign) {
+    protected static void assignProtectorsFor(AUnit unitToProtect, int numberOfProtectorsToAssign) {
         for (int i = 0; i < numberOfProtectorsToAssign; i++) {
-            AUnit worker = defineBestRepairerFor(unitToProtect, false);
+            AUnit worker = ARepairerManager.defineBestRepairerFor(unitToProtect, false);
             if (worker != null) {
                 ARepairAssignments.addProtector(worker, unitToProtect);
             }
         }
     }
 
-    private static void assignUnitRepairers(AUnit unitToRepair, int numberOfRepairersToAssign) {
-        for (int i = 0; i < numberOfRepairersToAssign; i++) {
-            boolean isCriticallyImportant = unitToRepair.isTank() || unitToRepair.isBunker();
-            AUnit worker = defineBestRepairerFor(unitToRepair, isCriticallyImportant);
-            if (worker != null) {
-                ARepairAssignments.addRepairer(worker, unitToRepair);
-            }
-        }
-    }
-
     // =========================================================
     
-    private static int defineOptimalNumberOfBunkerProtectors() {
+    protected static int defineOptimalNumberOfBunkerProtectors() {
 
         // === Mission DEFEND  =================================
         if (Missions.isGlobalMissionDefend()) {
@@ -236,7 +193,7 @@ public class ARepairCommander {
         return 0;
     }
 
-    private static int defineOptimalRepairersForBunker(AUnit bunker) {
+    protected static int defineOptimalRepairersForBunker(AUnit bunker) {
         int enemiesNearby = Select.enemy().combatUnits().inRadius(10, bunker).count();
         double optimalNumber;
 
@@ -253,37 +210,6 @@ public class ARepairCommander {
         }
 
         return Math.min(7, (int) Math.ceil(optimalNumber));
-    }
-
-    private static AUnit defineBestRepairerFor(AUnit unitToRepair, boolean criticallyImportant) {
-        if (criticallyImportant) {
-            return Select.ourWorkers().notRepairing().notConstructing().notScout()
-                    .exclude(unitToRepair).nearestTo(unitToRepair);
-        } 
-        
-        // Try to use one of the protectors if he's non occupied
-        Collection<AUnit> protectors = ARepairAssignments.getProtectors();
-        for (Iterator<AUnit> iterator = protectors.iterator(); iterator.hasNext();) {
-            AUnit protector = iterator.next();
-            if (protector.isUnitActionRepair()) {
-                iterator.remove();
-            }
-        }
-        
-        if (!protectors.isEmpty()) {
-            return Select.from(protectors).nearestTo(unitToRepair);
-        }
-        
-        // If no free protector was found, return normal worker.
-        else {
-            return Select.ourWorkers()
-                    .notCarrying()
-                    .notRepairing()
-                    .notConstructing()
-                    .notScout()
-                    .exclude(unitToRepair)
-                    .nearestTo(unitToRepair);
-        }
     }
 
 }

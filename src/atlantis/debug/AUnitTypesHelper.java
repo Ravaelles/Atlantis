@@ -1,7 +1,7 @@
 package atlantis.debug;
 
 import atlantis.units.AUnitType;
-import atlantis.util.AUtil;
+import atlantis.util.A;
 import atlantis.util.WeaponUtil;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,10 +40,10 @@ public class AUnitTypesHelper {
             }
         }
         
-        Map<AUnitType, Double> bestGroundDamage = AUtil.sortByValue(unitsPerGroundDamage, false);
-        Map<AUnitType, Double> bestAirDamage = AUtil.sortByValue(unitsPerAirDamage, false);
-        Map<AUnitType, Double> topRatioGroundDamage = AUtil.sortByValue(unitsTopRatioAirDamage, false);
-        Map<AUnitType, Double> topRatioAirDamage = AUtil.sortByValue(unitsTopRatioGroundDamage, false);
+        Map<AUnitType, Double> bestGroundDamage = A.sortByValue(unitsPerGroundDamage, false);
+        Map<AUnitType, Double> bestAirDamage = A.sortByValue(unitsPerAirDamage, false);
+        Map<AUnitType, Double> topRatioGroundDamage = A.sortByValue(unitsTopRatioAirDamage, false);
+        Map<AUnitType, Double> topRatioAirDamage = A.sortByValue(unitsTopRatioGroundDamage, false);
         
         // =========================================================
         // Display all results

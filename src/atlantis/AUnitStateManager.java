@@ -22,6 +22,9 @@ public class AUnitStateManager {
         if (unit.isAttackFrame()) {
             unit._lastAttackFrame = now;
         }
+        if (unit.isRunning()) {
+            unit._lastRunning = now;
+        }
         if (unit.isStartingAttack()) {
             unit._lastStartingAttack = now;
         }

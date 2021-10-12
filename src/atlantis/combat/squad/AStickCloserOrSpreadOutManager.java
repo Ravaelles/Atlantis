@@ -61,9 +61,10 @@ public class AStickCloserOrSpreadOutManager {
 //        }
 
         if (
-                unit.distanceTo(nearestFriend) > 1.5
-                || unit.distanceTo(medianPoint) > maxDistToMedian
-                || (squadSize >= 3 && closeFriends.clone().inRadius(4, unit).count() <= 3)
+                unit.distanceTo(nearestFriend) > 1.9
+//        squadSize >= 4 &&
+                || (unit.distanceTo(medianPoint) > maxDistToMedian)
+                || (squadSize >= 3 && closeFriends.clone().inRadius(4, unit).count() < 3)
         ) {
             unit.move(
                     medianPoint,
