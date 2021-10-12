@@ -60,7 +60,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
             return;
         }
 
-        buildIfCanAfford(type, true, type.getMineralPrice(), type.getGasPrice());
+        buildNow(type, true);
     }
 
     protected static void buildIfCanAfford(AUnitType type) {
@@ -78,6 +78,10 @@ public abstract class ADynamicBuildingsManager extends Helpers {
             return;
         }
 
+        buildNow(type, onlyOneAtTime);
+    }
+
+    protected static void buildNow(AUnitType type, boolean onlyOneAtTime) {
         if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(type)) {
             return;
         }
@@ -90,6 +94,8 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         AConstructionRequests.requestConstructionOf(type);
     }
 
+    // =========================================================
+
     public static boolean canAfford(int minerals, int gas) {
         return AGame.canAfford(
                 minerals + AProductionQueue.getMineralsReserved(),
@@ -97,9 +103,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         );
     }
 
-    // =========================================================
-
-    private static boolean hasABaseWithFreeGeyser() {
+    public static boolean hasABaseWithFreeGeyser() {
         for (AUnit base : Select.ourBases().listUnits()) {
             if (Select.geysers().inRadius(8, base).isNotEmpty()) {
                 return true;

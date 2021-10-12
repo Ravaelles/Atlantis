@@ -16,12 +16,19 @@ public interface AUnitOrders {
     AUnit unit();
 
     public boolean DEBUG = false;
+//    public boolean DEBUG = true;
     
     // =========================================================
     
     default boolean attackUnit(AUnit target) {
-        if (DEBUG) {
-            System.out.println("ATTACK " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // cooldown " + unit().getCooldown());
+        if (DEBUG && AGame.getTimeFrames() > 50) {
+            System.out.println(
+                    "@ " + AGame.getTimeFrames() + " ATTACK  / " +
+                            "unit#" + unit().getID() + " // " +
+                            "cooldown " + unit().getCooldownCurrent()+ " // " +
+                            "attackFrame " + unit()._lastAttackFrame + " // " +
+                            "StartingAttack " + unit()._lastStartingAttack
+            );
         }
 //        if (!unit().hasRangeToAttack(target, 0)) {
 //            unit().setTooltip("Come closer!");
@@ -36,15 +43,13 @@ public interface AUnitOrders {
 
         // Do NOT issue double orders
         if (unit().isCommand(UnitCommandType.Attack_Unit) && u().getTarget() != null && target.equals(unit().getTarget())) {
+//            System.out.println("         ** DOUBLE ORDER");
             return true;
-//            System.out.println();
-//            System.out.println("unit().isJustShooting() = " + unit().isJustShooting());
-//            System.out.println("unit().isAttacking() = " + unit().isAttacking());
-//            System.out.println("getTarget = " + unit().getTarget());
-//            System.out.println(unit().getID() + " attacks " + target.getShortName());
-//            AGame.sendMessage("#" + unit().getID() + " attacks #" + target.getID());
         }
 
+        if (DEBUG && AGame.getTimeFrames() > 50) {
+            System.out.println("                  ------> ATTACK #" + target.getID());
+        }
         unit().setUnitAction(UnitActions.ATTACK_UNIT);
         unit().setLastUnitOrderNow();
         return u().attack(target.u());
@@ -93,8 +98,12 @@ public interface AUnitOrders {
         return u().research(tech);
     }
 
+    default boolean move(AUnit target, UnitAction unitAction, String tooltip) {
+        return move(target.getPosition(), unitAction, tooltip);
+    }
+
     default boolean move(Position target, UnitAction unitAction, String tooltip) {
-        if (DEBUG) {
+        if (DEBUG && AGame.getTimeFrames() > 50) {
             System.out.println("MOVE " + AGame.getTimeFrames() + " / unit#" + unit().getID());
         }
         if (target == null) {
@@ -104,9 +113,9 @@ public interface AUnitOrders {
 
         unit().setTooltip(tooltip);
 
-        if (unit().isCommand(UnitCommandType.Move) && target.equals(u().getTargetPosition())) {
-            return true;
-        }
+//        if (unit().isCommand(UnitCommandType.Move) && target.equals(u().getTargetPosition())) {
+//            return true;
+//        }
         
         // === Handle LOADED/SIEGED units ========================================
         
@@ -178,7 +187,7 @@ public interface AUnitOrders {
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
     default boolean holdPosition(String tooltip) {
-        if (DEBUG) {
+        if (DEBUG && AGame.getTimeFrames() > 50) {
             System.out.println("HOLD " + AGame.getTimeFrames() + " / unit#" + unit().getID());
         }
 
@@ -196,7 +205,7 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also canStop, isIdle
      */
     default boolean stop(String tooltip) {
-        if (DEBUG) {
+        if (DEBUG && AGame.getTimeFrames() > 50) {
             System.out.println("STOP " + AGame.getTimeFrames() + " / unit#" + unit().getID());
         }
 

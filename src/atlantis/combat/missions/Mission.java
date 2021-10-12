@@ -1,8 +1,7 @@
 package atlantis.combat.missions;
 
+import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.combat.micro.AAvoidDefensiveBuildings;
-import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -18,6 +17,7 @@ public abstract class Mission {
     private static Mission instance;
     protected MissionFocusPointManager focusPointManager;
     private String name;
+    protected APosition temporaryTarget = null;
 
     // =========================================================
 
@@ -31,7 +31,7 @@ public abstract class Mission {
     // =========================================================
 
 //    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
-//        if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit, false)) {
+//        if (AAvoidEnemyDefensiveBuildings.avoidCloseBuildings(unit, false)) {
 //            return true;
 //        }
 //
@@ -42,11 +42,19 @@ public abstract class Mission {
 //        return false;
 //    }
 
-    protected boolean handleNoEnemyBuilding(AUnit unit) {
-        APosition position = AMap.getRandomInvisiblePosition(unit.getPosition());
-        if (position != null) {
-            unit.move(position, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy");
-            Atlantis.game().drawLineMap(unit.getPosition(), position, Color.Red);
+    protected boolean handleWeDontKnowWhereTheEnemyIs(AUnit unit) {
+        if (temporaryTarget == null || AMap.isExplored(temporaryTarget)) {
+            temporaryTarget = AMap.getRandomUnexploredPosition(unit.getPosition());
+            System.out.println("Go to unexplored " + temporaryTarget);
+        }
+        if (temporaryTarget == null || AMap.isVisible(temporaryTarget)) {
+            temporaryTarget = AMap.getRandomInvisiblePosition(unit.getPosition());
+            System.out.println("Go to invisible " + temporaryTarget);
+        }
+
+        if (temporaryTarget != null) {
+            unit.move(temporaryTarget, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy");
+            Atlantis.game().drawLineMap(unit.getPosition(), temporaryTarget, Color.Red);
             return true;
         }
         else {

@@ -4,7 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-public class AAvoidDefensiveBuildings {
+public class AAvoidEnemyDefensiveBuildings {
 
     public static boolean avoidCloseBuildings(AUnit unit, boolean allowToHold) {
         AUnit enemyBuildingThatCanAttackThisUnit = defineNearestBuilding(unit);
@@ -22,41 +22,37 @@ public class AAvoidDefensiveBuildings {
 //            System.out.println("weapon " + buildingTooClose.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
         double distanceMargin = enemyDistance - enemyWeaponRange;
 
-        if (distanceMargin <= 2.0) {
-            boolean result = unit.moveAwayFrom(
+        // =========================================================
+
+        // Way too close, in shooting range of building, have to back out
+        if (distanceMargin <= 0.8) {
+            return unit.moveAwayFrom(
                     enemyBuildingThatCanAttackThisUnit.getPosition(),
                     2,
-                    "AvoidBack (" + String.format("%.1f", distanceMargin) + ")"
+                    "AvoidCritical(" + String.format("%.1f", distanceMargin) + ")"
             );
-            return result;
         }
 
-        double safeDist = unit.isVulture() ? 6 : 4;
-
-        if (distanceMargin <= safeDist) {
-            if (allowToHold && !unit.isJustShooting()) {
-                if (unit.getOrderTarget() != null) {
-                    unit.holdPosition("AvoidHold (" + String.format("%.1f", distanceMargin) + ")");
-                }
-                return true;
-            }
-
-            if (!allowToHold) {
-                unit.moveAwayFrom(
-                        enemyBuildingThatCanAttackThisUnit.getPosition(),
-                        3,
-                        "AvoidMove (" + String.format("%.1f", distanceMargin) + ")"
-                );
-                return true;
-            }
-
-            unit.setTooltip("Avoid (" + String.format("%.1f", distanceMargin) + ")");
-        }
-
-//        if (distanceMargin <= 4.5) {
-//            boolean result = unit.moveAwayFrom(enemyBuildingThatCanAttackThisUnit.getPosition(), 1.5);
-//            unit.setTooltip("AvoidMove (" + String.format("%.1f", distanceMargin) + ")");
+        // Very close, but it should be okay to hold
+        else if (2 <= distanceMargin && distanceMargin <= 3.5) {
+//            boolean result = unit.moveAwayFrom(
+//                    enemyBuildingThatCanAttackThisUnit.getPosition(),
+//                    2,
+//                    "AvoidBack (" + String.format("%.1f", distanceMargin) + ")"
+//            );
 //            return result;
+            unit.stop("AvoidStop(" + String.format("%.1f", distanceMargin) + ")");
+            return true;
+        }
+
+//        double safetyMargin = unit.isVulture() ? 6 : 4;
+//
+//        if (safetyMargin < distanceMargin) {
+//            return unit.moveAwayFrom(
+//                    enemyBuildingThatCanAttackThisUnit.getPosition(),
+//                    3,
+//                    "AvoidBack(" + String.format("%.1f", distanceMargin) + ")"
+//            );
 //        }
 
         return false;
@@ -70,14 +66,14 @@ public class AAvoidDefensiveBuildings {
                     AUnitType.Terran_Bunker,
                     AUnitType.Protoss_Photon_Cannon,
                     AUnitType.Zerg_Sunken_Colony
-            ).canAttack(unit, 5).nearestTo(unit);
+            ).notConstructing().canAttack(unit, 5).nearestTo(unit);
         }
         else  {
             return Select.enemyOfType(
                     AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
                     AUnitType.Protoss_Photon_Cannon,
                     AUnitType.Zerg_Sunken_Colony
-            ).canAttack(unit, 5).nearestTo(unit);
+            ).notConstructing().canAttack(unit, 5).nearestTo(unit);
         }
     }
 

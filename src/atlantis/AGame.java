@@ -136,10 +136,24 @@ public class AGame {
     }
 
     /**
+     * Return how many frames ago this moment was.
+     */
+    public static int framesAgo(int frame) {
+        return getTimeFrames() - frame;
+    }
+
+    /**
      * Returns true once per n game frames.
      */
     public static boolean everyNthGameFrame(int n) {
         return Atlantis.game().getFrameCount() % n == 0;
+    }
+
+    /**
+     * Returns true once per n game frames.
+     */
+    public static boolean notNthGameFrame(int n) {
+        return Atlantis.game().getFrameCount() % n != 0;
     }
 
     /**

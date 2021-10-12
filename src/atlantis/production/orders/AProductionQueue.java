@@ -62,6 +62,20 @@ public abstract class AProductionQueue {
         return result;
     }
 
+    public static void addWithTopPriority(AUnitType type) {
+        ProductionOrder productionOrder = new ProductionOrder(type);
+        currentProductionQueue.add(0, productionOrder);
+    }
+
+    public static boolean isAtTopOfProductionQueue(AUnitType type, int amongNTop) {
+        for (int i = 0; i < amongNTop && i < currentProductionQueue.size(); i++) {
+            if (type.equals(currentProductionQueue.get(i).getUnitOrBuilding())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // === Getters =============================================
 
     /**
@@ -85,6 +99,6 @@ public abstract class AProductionQueue {
      */
     public static int getGasReserved() {
         return gasNeeded;
-    }    
+    }
 
 }

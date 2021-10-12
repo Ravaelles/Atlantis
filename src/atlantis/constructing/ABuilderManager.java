@@ -44,7 +44,6 @@ public class ABuilderManager {
     }
 
     private static void travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
-        //TODO: check possible confusion with Position and TilePosition here
         APosition buildPosition = constructionOrder.getPositionToBuild();
         APosition buildPositionCenter = constructionOrder.getPositionToBuildCenter();
         AUnitType buildingType = constructionOrder.getBuildingType();
@@ -58,21 +57,23 @@ public class ABuilderManager {
             return;
         }
 
-//        buildPosition = PositionUtil.translate(buildPosition, buildingType.getTileWidth() * 16, buildingType.getTileHeight() * 16);
-//        buildPosition = PositionUtil.translate(
-//                buildPosition, buildingType.getTileWidth() * 32 / 2, buildingType.getTileHeight() * 32 / 2
-//        );
         // =========================================================
+
         double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.6 : 1;
         double distance = builder.distanceTo(buildPositionCenter);
+
+        if (shouldNotTravelYet(buildingType, distance)) {
+            builder.setTooltip("Wait build " + buildingType.getShortName());
+            return;
+        }
         
         // Move builder to the build position
         if (distance > maxDistanceToIssueBuildOrder) {
-            if (!builder.isMoving() || AGame.getTimeFrames() % 10 == 0) {
+            if (!builder.isMoving() || AGame.everyNthGameFrame(10)) {
                 builder.move(
                     constructionOrder.getPositionToBuildCenter(),
                     UnitActions.MOVE_TO_BUILD,
-                    "Build " + buildingType.getShortName() + " (" + distance
+                    "Build " + buildingType.getShortName() + " (" + (int) distance
                 );
             }
         }
@@ -81,6 +82,7 @@ public class ABuilderManager {
         // AUnit is already at the build position, issue build order
         // If we can afford to construct this building exactly right now, issue build order which should
         // be immediate as unit is standing just right there
+
         else if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
@@ -92,12 +94,6 @@ public class ABuilderManager {
                 
                 if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
                         AGame.getTimeFrames() % 30 == 0)) {
-//                    if (buildingType.isGasBuilding()) {
-//                        AGame.sendMessage("Build GAS "
-//                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
-//                        System.err.println("Build GAS "
-//                        + AbstractPositionFinder.canPhysicallyBuildHere(builder, buildingType, buildPosition));
-//                    }
                     builder.build(buildingType, buildTilePosition);
                 }
             }
@@ -141,6 +137,18 @@ public class ABuilderManager {
         } else {
             return null;
         }
+    }
+
+    // =========================================================
+
+    private static boolean shouldNotTravelYet(AUnitType building, double distance) {
+        if (AGame.getTimeSeconds() < 200 && !building.isBase()) {
+            if (!AGame.canAfford(building.getMineralPrice() - 24, building.getGasPrice() - 24)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

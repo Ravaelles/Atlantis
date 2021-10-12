@@ -1,6 +1,5 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import java.util.ArrayList;
 
@@ -21,7 +20,7 @@ public class ASquadManager {
             return;
         }
 
-        Squad squad = getAlphaSquad();
+        Squad squad = Squad.getAlphaSquad();
         squad.addUnit(unit);
         unit.setSquad(squad);
         
@@ -56,27 +55,5 @@ public class ASquadManager {
 
     // =========================================================
     // Manage squads
-    /**
-     * Get first, main squad of units.
-     */
-    public static Squad getAlphaSquad() {
-
-        // If no squad exists, create main squad
-        if (squads.isEmpty()) {
-            Squad squad = Squad.createNewSquad(null, Missions.getInitialMission());
-            squads.add(squad);
-        }
-
-        return squads.get(0);
-    }
-
-    // === Getters ============================================= & Setters
-    public static ArrayList<Squad> getSquads() {
-        return squads;
-    }
-
-    public static void setSquads(ArrayList<Squad> squads) {
-        ASquadManager.squads = squads;
-    }
 
 }

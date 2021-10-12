@@ -132,6 +132,10 @@ public class AMap {
      * Returns chokepoint to defend for the natural (second) base.
      */
     public static AChokepoint getChokepointForNaturalBase(APosition relativeTo) {
+        if (relativeTo == null) {
+            return null;
+        }
+
         if (cached_basesToChokepoints.containsKey(relativeTo)) {
             AChokepoint choke = cached_basesToChokepoints.get(relativeTo);
 //            APainter.paintCircle(APosition.create(choke.getCenter()), 5, Color.White);
@@ -254,7 +258,16 @@ public class AMap {
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
     public static APosition getNaturalBaseLocation() {
-        return getNaturalBaseLocation(Select.mainBase().getPosition()).getPosition();
+        if (Select.mainBase() == null) {
+            return null;
+        }
+
+        ABaseLocation naturalBaseLocation = getNaturalBaseLocation(Select.mainBase().getPosition());
+        if (naturalBaseLocation != null) {
+            return naturalBaseLocation.getPosition();
+        }
+
+        return null;
     }
 
     /**
@@ -281,12 +294,27 @@ public class AMap {
      */
     public static APosition getRandomInvisiblePosition(APosition startPoint) {
         APosition position = null;
-        for (int attempts = 0; attempts < 10; attempts++) {
+        for (int attempts = 0; attempts < 50; attempts++) {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + AUtil.rand(0, 2 * maxRadius);
             int dy = -maxRadius + AUtil.rand(0, 2 * maxRadius);
             position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValid();
-            if (!isVisible(position)) {
+            if (AMap.isWalkable(position) &&!isVisible(position)) {
+                return position;
+            }
+        }
+        return position;
+    }
+
+    public static APosition getRandomUnexploredPosition(APosition startPoint) {
+        APosition position = null;
+        for (int attempts = 0; attempts < 50; attempts++) {
+            int mapDimension = Math.max(Atlantis.game().mapWidth(), Atlantis.game().mapHeight());
+            int maxRadius = mapDimension * TilePosition.SIZE_IN_PIXELS;
+            int dx = -maxRadius + AUtil.rand(0, 2 * maxRadius);
+            int dy = -maxRadius + AUtil.rand(0, 2 * maxRadius);
+            position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValid();
+            if (AMap.isWalkable(position) && !isExplored(position) && startPoint.hasPathTo(position)) {
                 return position;
             }
         }

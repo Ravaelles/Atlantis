@@ -5,19 +5,17 @@ import atlantis.AGameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
 import atlantis.combat.missions.Missions;
-import atlantis.debug.APainter;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import bwapi.Color;
 
 public class ACombatUnitManager extends AbstractMicroManager {
 
     protected static boolean update(AUnit unit) {
         preActions(unit);
-        if (Select.our().count() == 1) {
-            AGame.exit("FINISHED AT @" + AGame.getTimeFrames());
-        }
+//        if (Select.our().count() == 1) {
+//            AGame.exit("FINISHED AT @" + AGame.getTimeFrames());
+//        }
 
         // =========================================================
         // === TOP priority ========================================
@@ -67,12 +65,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
-        if (unit.isRunning()) {
-            APainter.paintCircle(unit.getTargetPosition(), 2, Color.Grey);
-            APainter.paintCircle(unit.getTargetPosition(), 3, Color.Grey);
-            APainter.paintCircle(unit.getTargetPosition(), 1, Color.Grey);
-            APainter.paintLine(unit, unit.getTargetPosition(), Color.Black);
-        }
 
         // Handle units getting bugged by Starcraft
         if (handleBuggedUnit(unit)) {
@@ -84,13 +76,13 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        // Can be used for tests
-//        if (testUnitBehavior(unit)) { return true; };
+        // Useful for testing and debugging of shooting/running
+//        if (testUnitBehaviorShootAtOwnUnit(unit)) { return true; };
 
         // Avoid bad weather like:
         // - raining Psionic Storm,
         // - spider mines hail
-        if (ABadWeather.avoidSpellsMines(unit)) {
+        if (ABadWeather.avoidSpellsAndMines(unit)) {
             return true;
         }
 
@@ -99,7 +91,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         if (!Missions.isGlobalMissionAttack()) {
-            if (AAvoidDefensiveBuildings.avoidCloseBuildings(unit, false)) {
+            if (AAvoidEnemyDefensiveBuildings.avoidCloseBuildings(unit, false)) {
                 return true;
             }
         }
@@ -154,38 +146,14 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //            System.out.println(AGame.getTimeFrames() +" // #" + unit.getID());
 //        }
 
-        if (unit.isAttacking() && unit.getLastOrderFramesAgo() <= unit.getCooldown() - 4) {
-            double minDistToContinueAttack = 2.6 + unit.getWoundPercent() / 40.0;
-            if (Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isEmpty()) {
-                unit.setTooltip("@BusyAttack");
-                return true;
-            }
-            unit.setTooltip("@ATTACKING");
-        }
-
         if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 5) {
             unit.setTooltip("Run...(" + unit.getLastOrderFramesAgo() + ")");
             return true;
         }
 
-        if (unit.isAttackFrame()) {
-            unit.setTooltip("Attack frame");
+        if (InterruptStartingAttacks.shouldNotBeInterruptedStartingAttack(unit)) {
             return true;
         }
-
-        if (unit.isStartingAttack()) {
-            unit.setTooltip("Starts attack");
-            return true;
-        }
-
-//        if (!unit.isAttacking() && unit.getLastOrderFramesAgo() <= 2) {
-//            unit.setTooltip("Dont disturb (" + unit.getLastOrderFramesAgo() + ")");
-//            return true;
-//        }
-
-//                ((!unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack())
-//                && unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
-                ;
 
         return false;
     }
@@ -223,7 +191,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
     /**
      * Can be used for testing.
      */
-    private static boolean testUnitBehavior(AUnit unit) {
+    private static boolean testUnitBehaviorShootAtOwnUnit(AUnit unit) {
         if (Select.our().first().getID() != unit.getID()) {
             unit.attackUnit(Select.our().first());
         }

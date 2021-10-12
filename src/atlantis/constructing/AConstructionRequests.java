@@ -37,10 +37,9 @@ public class AConstructionRequests {
     }
 
     /**
-     * NOTICE/WARNING: passed order parameter can later override nearTo parameter.
+     * Find a place for new building and assign a worker.
      *
-     * Issues request of constructing new building. It will automatically find position and builder unit for
-     * it.
+     * WARNING: passed order parameter can later override nearTo parameter.
      */
     public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
 
@@ -87,6 +86,7 @@ public class AConstructionRequests {
 
             // Add to list of pending orders
             constructionOrders.add(newConstructionOrder);
+//            constructionOrders.(newConstructionOrder);
 
             // Rebuild production queue as new building is about to be built
             AProductionQueueManager.rebuildQueue();

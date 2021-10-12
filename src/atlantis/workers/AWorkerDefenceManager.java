@@ -57,13 +57,11 @@ public class AWorkerDefenceManager {
     private static boolean handleRunFromEnemyIfNeeded(AUnit worker) {
         
         // Define list of all units that are in range of shot.
-        Collection<AUnit> enemiesInRange = Select.enemy().inRadius(12, worker)
-                .canAttack(worker).listUnits();
+        Collection<AUnit> enemiesInRange = Select.enemyRealUnits().inRadius(12, worker)
+                .canAttack(worker, 1 + worker.getWoundPercent() / 40).listUnits();
         
         // Run from every combat unit...
         for (AUnit enemy : enemiesInRange) {
-            
-            // Enemy is non-worker unit
             if (!enemy.isWorker()) {
                 worker.runFrom(enemy);
                 return true;

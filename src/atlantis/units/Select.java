@@ -15,12 +15,8 @@ import atlantis.util.PositionUtil;
 import bwapi.Player;
 import bwapi.Position;
 import bwapi.Unit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+
+import java.util.*;
 
 /**
  * This class allows to easily select units e.g. to select one of your Marines, nearest to given location, you
@@ -195,6 +191,21 @@ public class Select<T> {
     }
 
     /**
+     * Selects our units of given type(s).
+     */
+    public static Select<AUnit> ourUnfinishedOfType(AUnitType... type) {
+        List<AUnit> data = new ArrayList<>();
+
+        for (AUnit unit : ourUnits()) {
+            if (!unit.isCompleted() && unit.isType(type)) {
+                data.add(unit);
+            }
+        }
+
+        return new Select<AUnit>(data);
+    }
+
+    /**
      * Counts our completed units of given type.
      */
     public static int countOurOfType(AUnitType... type) {
@@ -359,17 +370,26 @@ public class Select<T> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Select<AUnit> enemyRealUnits() {
-        return enemyRealUnits(true, true);
+        return enemyRealUnits(true, true, false);
     }
 
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
-    public static Select<AUnit> enemyRealUnits(boolean includeGroundUnits, boolean includeAirUnits) {
+    public static Select<AUnit> enemyRealUnits(boolean includeBuildings) {
+        return enemyRealUnits(true, true, includeBuildings);
+    }
+
+    /**
+     * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
+     */
+    public static Select<AUnit> enemyRealUnits(
+            boolean includeGroundUnits, boolean includeAirUnits, boolean includeBuildings
+    ) {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (unit.isVisible() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
+            if (unit.isVisible() && (includeBuildings || !unit.getType().isBuilding()) && !unit.isNotActuallyUnit()) {
                 if ((includeGroundUnits && unit.isGroundUnit()) || (includeAirUnits && unit.isAirUnit())) {
                     data.add(unit);
                 }
@@ -769,7 +789,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (unit.isConstructing() || unit.isBuilder()) {
+            if (unit.isConstructing() || unit.isMorphing() || unit.isBuilder()) {
                 unitsIterator.remove();
             }
         }
@@ -1058,7 +1078,11 @@ public class Select<T> {
         }
 
         Position position;
-        if (positionOrUnit instanceof APosition) {
+        if (positionOrUnit instanceof AUnit) {
+            AUnit unit = (AUnit) positionOrUnit;
+            position = unit.getPosition();
+            exclude(unit);
+        } else if (positionOrUnit instanceof APosition) {
             position = (APosition) positionOrUnit;
         } else if (positionOrUnit instanceof Position) {
             position = (Position) positionOrUnit;
@@ -1067,7 +1091,7 @@ public class Select<T> {
         }
 
         sortDataByDistanceTo(position, true);
-        return (AUnit) data.get(0);
+        return data.isEmpty() ? null : (AUnit) data.get(0);
     }
     
     /**
@@ -1163,6 +1187,11 @@ public class Select<T> {
      */
     public AUnit first() {
         return data.isEmpty() ? null : (AUnit) data.get(0);
+    }
+
+    public AUnit randomWithSeed(int seed) {
+        Random rand = new Random(seed);
+        return data.isEmpty() ? null : (AUnit) data.get(rand.nextInt(data.size()));
     }
 
     /**

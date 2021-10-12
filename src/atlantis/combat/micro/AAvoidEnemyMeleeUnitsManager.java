@@ -43,7 +43,6 @@ public class AAvoidEnemyMeleeUnitsManager {
             return true;
         }
 
-
         return handleErrorRun(unit);
     }
 
@@ -77,7 +76,7 @@ public class AAvoidEnemyMeleeUnitsManager {
                 return false;
             }
 
-            if (unit.isType(AUnitType.Protoss_Reaver) && unit.getGroundWeaponCooldown() <= 4) {
+            if (unit.isType(AUnitType.Protoss_Reaver) && unit.getCooldownCurrent() <= 4) {
                 return true;
             }
         }

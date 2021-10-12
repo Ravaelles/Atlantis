@@ -1,6 +1,6 @@
 package atlantis.repair;
 
-import atlantis.combat.micro.AAvoidDefensiveBuildings;
+import atlantis.combat.micro.AAvoidEnemyDefensiveBuildings;
 import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
 import atlantis.combat.micro.AAvoidInvisibleEnemyUnits;
 import atlantis.combat.missions.Missions;
@@ -29,7 +29,7 @@ public class ARepairerManager {
             return true;
         }
 
-        if (AAvoidDefensiveBuildings.avoidCloseBuildings(repairer, false)) {
+        if (AAvoidEnemyDefensiveBuildings.avoidCloseBuildings(repairer, false)) {
             return true;
         }
 

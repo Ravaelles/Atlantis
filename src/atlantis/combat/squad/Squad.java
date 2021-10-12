@@ -3,9 +3,12 @@ package atlantis.combat.squad;
 import atlantis.AGame;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
+import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import bwapi.Color;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -66,25 +69,61 @@ public class Squad extends Units {
      * don't affect the end result so badly.
      */
     private APosition _getMedianUnitPosition = null;
-    public APosition getMedianUnitPosition() {
-        if (_getMedianUnitPosition != null && !AGame.everyNthGameFrame(10)) {
-            return _getMedianUnitPosition;
+
+    /**
+     * Get first, main squad of units.
+     */
+    public static Squad getAlphaSquad() {
+
+        // If no squad exists, create main squad
+        if (ASquadManager.squads.isEmpty()) {
+            Squad squad = createNewSquad(null, Missions.getInitialMission());
+            ASquadManager.squads.add(squad);
         }
 
-        ArrayList<Integer> xCoords = new ArrayList<>();
-        ArrayList<Integer> yCoords = new ArrayList<>();
-        
-        for (AUnit unit : list()) {
-            xCoords.add(unit.getPosition().getX());
-            yCoords.add(unit.getPosition().getY());
-        }
-        
-        Collections.sort(xCoords);
-        Collections.sort(yCoords);
-        
-        return _getMedianUnitPosition = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
+        return ASquadManager.squads.get(0);
     }
-    
+
+    // === Getters =============================================
+
+    public static ArrayList<Squad> getSquads() {
+        return ASquadManager.squads;
+    }
+
+    public static void setSquads(ArrayList<Squad> squads) {
+        ASquadManager.squads = squads;
+    }
+
+    public APosition getMedianUnitPosition() {
+        if (size() == 0) {
+            return null;
+        }
+
+        int totalX = 0;
+        int totalY = 0;
+        for (AUnit unit : list()) {
+            totalX += unit.getPosition().getX();
+            totalY += unit.getPosition().getY();
+        }
+
+        return _getMedianUnitPosition = new APosition(totalX / size(), totalY / size());
+    }
+//
+//    public APosition getMedianUnitPosition() {
+//        ArrayList<Integer> xCoords = new ArrayList<>();
+//        ArrayList<Integer> yCoords = new ArrayList<>();
+//
+//        for (AUnit unit : list()) {
+//            xCoords.add(unit.getPosition().getX());
+//            yCoords.add(unit.getPosition().getY());
+//        }
+//
+//        Collections.sort(xCoords);
+//        Collections.sort(yCoords);
+//
+//        return _getMedianUnitPosition = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
+//    }
+
     // =========================================================
     
     /**

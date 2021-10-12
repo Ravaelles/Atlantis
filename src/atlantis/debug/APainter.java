@@ -1,6 +1,7 @@
 package atlantis.debug;
 
 import atlantis.Atlantis;
+import atlantis.map.AChokepoint;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
 import atlantis.units.AUnit;
@@ -118,6 +119,13 @@ public class APainter {
         paintTextCentered(position, text, color, false);
     }
 
+    public static void paintTextCentered(APosition position, String text, Color color, double tileDX, double tileDY) {
+        paintTextCentered(position.translateByPixels(
+                (int) tileDX * 32, (int) tileDY * 32),
+                text, color, false
+        );
+    }
+
     public static void paintTextCentered(AUnit unit, String text, boolean screenCords) {
         paintTextCentered(unit.getPosition(), text, null, screenCords);
     }
@@ -162,4 +170,32 @@ public class APainter {
         bwapi.setTextSize(Text.Size.Large);
     }
 
+    protected static void paintChoke(AChokepoint choke, Color color, String extraText) {
+        if (choke == null) {
+            return;
+        }
+
+        if ("".equals(extraText)) {
+            extraText = choke.getWidth() + " wide choke";
+        }
+
+        APainter.paintCircle(choke.getCenter(), choke.getWidth() * 32, color);
+        APainter.paintTextCentered(
+                choke.getCenter().translateByTiles(0, choke.getWidth()),
+                extraText,
+                color
+        );
+    }
+
+    protected static void paintBase(APosition position, String text, Color color) {
+        if (position == null) {
+            return;
+        }
+
+        paintRectangle(
+                position.translateByPixels(-2 * 32, (int) -1.5 * 32),
+                4 * 32, 3 * 32, color
+        );
+        APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
+    }
 }

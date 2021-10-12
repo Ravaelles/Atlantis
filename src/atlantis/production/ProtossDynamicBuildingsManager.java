@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
-        if (noSupply(25)) {
+        if (AGame.notNthGameFrame(7) || noSupply(25)) {
             return;
         }
 
@@ -23,7 +23,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void forge() {
-        buildIfCanAfford(AUnitType.Protoss_Forge);
+        buildToHaveOne(30, AUnitType.Protoss_Forge);
     }
 
     private static void stargate() {

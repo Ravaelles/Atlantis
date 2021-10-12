@@ -12,6 +12,10 @@ import java.util.List;
 public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
     public static void update() {
+        if (AGame.notNthGameFrame(3)) {
+            return ;
+        }
+
         scarabs();
         dragoons();
         arbiters();
@@ -33,7 +37,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void arbiters() {
-        trainIfPossible(95, AUnitType.Protoss_Arbiter, true);
+        trainNowIfHaveWhatsRequired(AUnitType.Protoss_Arbiter, true);
     }
 
 }

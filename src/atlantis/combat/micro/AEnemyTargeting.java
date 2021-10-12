@@ -23,25 +23,38 @@ public class AEnemyTargeting {
             maxDistFromEnemy = 30;
         }
 
-        if (Select.enemyRealUnits()
+        if (Select.enemyRealUnits(true)
                 .canBeAttackedBy(unit, false)
                 .inRadius(maxDistFromEnemy, unit)
                 .count() == 0) {
             return null;
         }
 
-        Select<AUnit> allEnemyUnitsThatCanBeAttacked = Select.enemy()
+        Select<AUnit> enemyBuildings = Select.enemy()
+                .buildings()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, true);
-        Select<AUnit> enemyRealUnitsThatCanBeAttacked = Select.enemyRealUnits()
+                .canBeAttackedBy(unit, false);
+        Select<AUnit> enemyRealUnitsThatCanBeAttacked = Select.enemyRealUnits(false)
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, true);
 
         AUnit nearestEnemy = null;
 
         // =========================================================
-        // Attack deadliest shit out there
+        // Attack mines
         
+        nearestEnemy = enemyRealUnitsThatCanBeAttacked.clone()
+                .ofType(AUnitType.Terran_Vulture_Spider_Mine)
+                .inRadius(12, unit)
+                .canBeAttackedBy(unit, true)
+                .randomWithSeed(unit.getID());
+        if (nearestEnemy != null) {
+            return nearestEnemy;
+        }
+
+        // =========================================================
+        // Attack deadliest shit out there
+
         nearestEnemy = enemyRealUnitsThatCanBeAttacked.clone()
                 .ofType(
                         AUnitType.Zerg_Scourge,
@@ -98,7 +111,7 @@ public class AEnemyTargeting {
         // =========================================================
         // Defensive buildings
 
-        nearestEnemy = allEnemyUnitsThatCanBeAttacked.clone()
+        nearestEnemy = enemyBuildings.clone()
                 .ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony,
                         AUnitType.Terran_Bunker)
                 .canBeAttackedBy(unit, false)
@@ -118,7 +131,8 @@ public class AEnemyTargeting {
 
         // =========================================================
         // If no real units found, try selecting important buildings
-        nearestEnemy = allEnemyUnitsThatCanBeAttacked.clone()
+
+        nearestEnemy = enemyBuildings.clone()
                 .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool,
                         AUnitType.Terran_Command_Center)
                 .canBeAttackedBy(unit, false)
@@ -130,7 +144,8 @@ public class AEnemyTargeting {
         // =========================================================
         // Okay, try targeting any-fuckin-thing
 
-        nearestEnemy = allEnemyUnitsThatCanBeAttacked.clone()
+        nearestEnemy = Select.enemyRealUnits(true)
+                .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, false)
                 .nearestTo(unit);
 

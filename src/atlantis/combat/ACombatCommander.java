@@ -2,7 +2,6 @@ package atlantis.combat;
 
 import atlantis.AGame;
 import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
@@ -22,7 +21,7 @@ public class ACombatCommander {
         
         // === Handle all squads ===================================
         
-        for (Squad squad : ASquadManager.getSquads()) {
+        for (Squad squad : Squad.getSquads()) {
             handleSquad(squad);
         }
         

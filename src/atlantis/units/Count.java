@@ -43,4 +43,8 @@ public class Count {
             return Select.ourIncludingUnfinished().ofType(type).count();
         }
     }
+
+    public static int ourOfTypeIncludingUnfinished(AUnitType type) {
+        return Select.countOurOfTypeIncludingUnfinished(type);
+    }
 }

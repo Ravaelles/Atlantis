@@ -42,13 +42,16 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     private static final Map<Integer, AUnit> instances = new HashMap<>();
     
     // Cached distances to other units - reduces time on calculating unit1.distanceTo(unit2)
-    public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
+//    public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
 
     private final Unit u;
     private AUnitType _lastCachedType;
     private UnitAction unitAction = UnitActions.INIT;
-//    private int _lastTimeOrderWasIssued = -1;
     private AUnit _cachedNearestMeleeEnemy = null;
+    public int _lastAttackOrder;
+    public int _lastAttackFrame;
+    public int _lastStartingAttack;
+    public int _lastUnderAttack;
     public int lastX;
     public int lastY;
 
@@ -174,7 +177,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
-    public boolean moveAwayFrom(Position position, double moveDistance, String tooltip) {
+    public boolean moveAwayFrom(APosition position, double moveDistance, String tooltip) {
         if (position == null || moveDistance < 0.01) {
             return false;
         }
@@ -699,12 +702,30 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return getType().getGroundWeapon();
     }
 
-    public int getCooldown() {
+    /**
+     * Returns number of frames unit has to wait between the shots.
+     * E.g. for Dragoon this value will be always 30.
+     */
+    public int getCooldownAbsolute() {
         if (canAttackGroundUnits()) {
             return getGroundWeapon().damageCooldown();
         }
         if (canAttackAirUnits()) {
             return getAirWeapon().damageCooldown();
+        }
+        return 0;
+    }
+
+    /**
+     * Returns number of frames unit STILL has to wait before it can shoot again.
+     * E.g. for Dragoon this value will vary between 0 and 30 inclusive.
+     */
+    public int getCooldownCurrent() {
+        if (canAttackGroundUnits()) {
+            return getGroundWeaponCooldown();
+        }
+        if (canAttackAirUnits()) {
+            return getAirWeaponCooldown();
         }
         return 0;
     }
@@ -914,7 +935,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public AUnit getTarget() {
-        return u.getTarget() != null ? AUnit.createFrom(u.getTarget()) : null;
+        if (u.getTarget() != null) {
+            return AUnit.createFrom(u.getTarget());
+        }
+
+        return getOrderTarget();
     }
 
     public APosition getTargetPosition() {
@@ -1064,7 +1089,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //    }
 
     public boolean isReadyToShoot() {
-        return getGroundWeaponCooldown() <= 0 && getAirWeaponCooldown() <= 0;
+        return getGroundWeaponCooldown() <= 0 || getAirWeaponCooldown() <= 0;
     }
     
     public int getScarabCount() {
@@ -1104,10 +1129,26 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public void unbug() {
-        if (isHoldingPosition()) {
-            this.move(getPosition().translateByPixels(16, 0), UnitActions.MOVE, "Unfreeze");
-        } else {
-            this.holdPosition("Unfreeze");
+//        if (isHoldingPosition()) {
+        if (this.move(getPosition().translateByPixels(16, 0), UnitActions.MOVE, "Unfreeze")) {
+            return;
         }
+        if (this.move(getPosition().translateByPixels(-16, 0), UnitActions.MOVE, "Unfreeze")) {
+            return;
+        }
+        if (this.move(getPosition().translateByPixels(0, 16), UnitActions.MOVE, "Unfreeze")) {
+            return;
+        }
+        if (this.move(getPosition().translateByPixels(0, -16), UnitActions.MOVE, "Unfreeze")) {
+            return;
+        }
+//        } else {
+//            this.holdPosition("Unfreeze");
+//            this.stop("Unfreeze");
+//            this.holdPosition("Unfreeze");
+//            this.stop("Unfreeze");
+//            this.stop("Unfreeze");
+//            this.holdPosition("Unfreeze");
+//        }
     }
 }

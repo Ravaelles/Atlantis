@@ -1,6 +1,6 @@
 package atlantis.combat.micro.zerg;
 
-import atlantis.combat.squad.ASquadManager;
+import atlantis.combat.squad.Squad;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
 import atlantis.scout.AScoutManager;
@@ -40,7 +40,7 @@ public class ZergOverlordManager {
 //            unit.move(goTo, false);
 //        }
 
-        APosition medianUnitPosition = ASquadManager.getAlphaSquad().getMedianUnitPosition();
+        APosition medianUnitPosition = Squad.getAlphaSquad().getMedianUnitPosition();
         if (medianUnitPosition != null) {
             if (overlord.distanceTo(medianUnitPosition) > 2.5) {
                 overlord.move(medianUnitPosition, UnitActions.MOVE, "Follow army");

@@ -8,41 +8,42 @@ import atlantis.units.actions.UnitActions;
 
 public class AdvanceUnitsManager extends MissionUnitManager {
 
-    private Mission mission;
-
-    public boolean updateUnit(AUnit unit) {
-        unit.setTooltip("#Adv");
-
-        if (unit.distanceTo(mission.focusPoint()) > 6) {
-            unit.move(mission.focusPoint(), UnitActions.MOVE_TO_ENGAGE, "#MA:Forward!");
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean moveToFocusPoint(AUnit unit, APosition focusPoint) {
-//        Select<AUnit> nearbyAllies = Select.ourCombatUnits().inRadius(10, unit);
-//        if (nearbyAllies.count() <= 4) {
-//            unit.move(nearbyAllies.first().getPosition(), UnitActions.TOGETHER);
-//            unit.setTooltip("#MA:Concentrate!");
+//    private Mission mission;
+//
+//    public boolean updateUnit(AUnit unit) {
+//        unit.setTooltip("#Adv");
+//
+//        if (unit.distanceTo(mission.focusPoint()) > 6) {
+//            unit.move(mission.focusPoint(), UnitActions.MOVE_TO_ENGAGE, "#MA:Forward!");
 //            return true;
 //        }
+//
+//        return false;
+//    }
 
+    public static boolean moveToFocusPoint(AUnit unit, APosition focusPoint) {
+        double optimalDist = 6.5;
         double distToFocusPoint = unit.distanceTo(focusPoint);
 
-        if (distToFocusPoint >= 10) {
-            unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv");
+        // Too close
+        if (
+                distToFocusPoint <= optimalDist - 2
+                && unit.moveAwayFrom(focusPoint, 2.5, "#Adv:Too close(" + (int) distToFocusPoint + ")")
+        ) {
             return true;
         }
-        else if (distToFocusPoint <= 3 && unit.moveAwayFrom(focusPoint, 2.5, "#Adv:Too close!")) {
-            unit.setTooltip("#Adv:Too close!");
-            return true;
-        }
-        else if (distToFocusPoint <= 6) {
-            if (unit.getOrderTarget() != null) {
-                unit.holdPosition("#Adv:Good");
+
+        // Close enough
+        else if (distToFocusPoint <= optimalDist + 2) {
+            if (unit.isMoving()) {
+                unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")");
             }
+            return true;
+        }
+
+        // Too far
+        else if (distToFocusPoint > optimalDist + 2) {
+            unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")");
             return true;
         }
 

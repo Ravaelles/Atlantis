@@ -82,8 +82,8 @@ public class PositionUtil {
             
             // UNIT to UNIT distance - can be cached
             else {
-//                return (double) fromUnit.getDistance(toUnit) / 32;
-                return AUnit.unitDistancesCached.getDistanceBetweenUnits(fromUnit, toUnit);
+                return (double) fromUnit.getDistance(toUnit) / 32;
+//                return AUnit.unitDistancesCached.getDistanceBetweenUnits(fromUnit, toUnit);
             }
         }
     }

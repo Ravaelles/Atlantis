@@ -38,7 +38,7 @@ public class DefendManager {
             // Too many stacked units
             if (isTooManyUnitsAround(unit, focusPoint)) {
                 if (unit.isMoving()) {
-                    unit.holdPosition("#DHold");
+                    unit.stop("#DHold");
                     return true;
                 }
             }
@@ -50,7 +50,9 @@ public class DefendManager {
                     return true;
                 }
                 else {
-                    unit.holdPosition("#DHold");
+                    if (unit.isMoving()) {
+                        unit.stop("#DHold");
+                    }
                     return true;
                 }
             }

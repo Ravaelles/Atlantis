@@ -26,7 +26,8 @@ public class AGameCommander {
         AAdvancedPainter.paint();
 
         // === Execute code of every Commander and Manager ==================
-        
+
+        AUnitStateManager.update();
         AStrategyCommander.update();
         ABuildingsCommander.update();
         AWorkerCommander.update();

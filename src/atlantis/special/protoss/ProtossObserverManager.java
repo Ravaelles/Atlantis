@@ -1,6 +1,6 @@
 package atlantis.special.protoss;
 
-import atlantis.combat.squad.ASquadManager;
+import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -24,7 +24,7 @@ public class ProtossObserverManager {
     // =========================================================
 
     private static boolean followSquads(AUnit observer) {
-        APosition goTo = ASquadManager.getAlphaSquad().getMedianUnitPosition();
+        APosition goTo = Squad.getAlphaSquad().getMedianUnitPosition();
         if (goTo != null) {
             observer.move(goTo, UnitActions.MOVE, "Follow");
             return true;

@@ -19,9 +19,24 @@ public class MissionAttack extends Mission {
     @Override
     public boolean update(AUnit unit) {
         unit.setTooltip("#Attack");
-        APosition focusPoint = focusPoint();
 
         // =========================================================
+
+        if (AStickCloserOrSpreadOutManager.handle(unit)) {
+            return true;
+        }
+
+        if (handleAdvance(unit)) {
+            return true;
+        }
+
+        // =========================================================
+
+        return false;
+    }
+
+    private boolean handleAdvance(AUnit unit) {
+        APosition focusPoint = focusPoint();
 
         // Focus point is well known
         if (focusPoint != null) {
@@ -29,11 +44,9 @@ public class MissionAttack extends Mission {
         }
 
         // Invalid focus point, no enemy can be found, roam around map
-        else if (!unit.isAttacking()) {
-            return handleNoEnemyBuilding(unit);
+        else if (!unit.isMoving() && !unit.isAttacking()) {
+            return handleWeDontKnowWhereTheEnemyIs(unit);
         }
-
-        // =========================================================
 
         return false;
     }

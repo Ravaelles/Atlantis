@@ -2,37 +2,68 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.constructing.AConstructionRequests;
+import atlantis.production.orders.AProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Count;
 import atlantis.units.Select;
 import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {
 
-    protected static void trainIfPossible(int minSupply, AUnitType unitType, boolean onlyOneAtTime) {
+    protected static void trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
         if (noSupply(minSupply)) {
             return;
         }
 
-        trainIfPossible(unitType, onlyOneAtTime, unitType.getMineralPrice(), unitType.getGasPrice());
+        trainIfPossible(type, onlyOneAtTime, type.getMineralPrice(), type.getGasPrice());
     }
 
-    protected static void trainIfPossible(AUnitType unitType, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
+    protected static void trainIfPossible(AUnitType type, boolean onlyOneAtTime) {
+        trainIfPossible(type, onlyOneAtTime, 0, 0);
+    }
+
+    protected static void trainIfPossible(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
         if (!AGame.canAfford(hasMinerals, hasGas)) {
             return;
         }
 
-        if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(unitType)) {
+        if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(type)) {
             return;
         }
 
-        AUnitType building = unitType.getWhatBuildsIt();
+        AUnitType building = type.getWhatBuildsIt();
         for (AUnit buildingProducing : Select.ourOfType(building).listUnits()) {
             if (!buildingProducing.isTrainingAnyUnit()) {
-                buildingProducing.train(unitType);
+                buildingProducing.train(type);
                 return;
             }
         }
+    }
+    
+    protected static void trainNowIfHaveWhatsRequired(AUnitType type, boolean onlyOneAtTime) {
+        if (!onlyOneAtTime) {
+            AGame.exit("Unhandled yet");
+        }
+
+        AUnitType building = type.getWhatBuildsIt();
+        if (Count.ofType(building) == 0) {
+            return;
+        }
+
+        if (onlyOneAtTime && Count.ourOfTypeIncludingUnfinished(type) > 0) {
+            return;
+        }
+
+        if (AProductionQueue.isAtTopOfProductionQueue(type, 3)) {
+            return;
+        }
+        
+        trainNow(AUnitType.Protoss_Arbiter, onlyOneAtTime);
+    }
+    
+    protected static void trainNow(AUnitType type, boolean onlyOneAtTime) {
+        AProductionQueue.addWithTopPriority(type);
     }
 
 }

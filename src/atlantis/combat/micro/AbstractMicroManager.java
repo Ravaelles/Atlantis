@@ -31,7 +31,7 @@ public abstract class AbstractMicroManager {
         if (!shouldNotConsiderRetreatingNow(unit)) {
             return false;
         }
-        
+
         boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit, isNewFight);
 
@@ -44,12 +44,13 @@ public abstract class AbstractMicroManager {
         if (Objects.equals(unit.getTooltip(), "Retreat")) {
             unit.setTooltip("Engage");
         }
+
         return false;
     }
 
     private static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
         if (unit.type().isReaver()) {
-            return Select.enemyRealUnits().inRadius(12, unit).isEmpty() && unit.getCooldown() >= 7;
+            return Select.enemyRealUnits().inRadius(12, unit).isEmpty() && unit.getCooldownCurrent() >= 7;
         }
 
         return false;

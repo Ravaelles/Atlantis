@@ -6,7 +6,8 @@ import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionAttack;
-import atlantis.combat.squad.ASquadManager;
+import atlantis.combat.squad.AStickCloserOrSpreadOutManager;
+import atlantis.combat.squad.Squad;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
@@ -85,7 +86,7 @@ public class AAdvancedPainter extends APainter {
 
         // =========================================================
 
-        setTextSizeSmall();
+//        setTextSizeSmall();
 
         paintCodeProfiler();
         paintRegions();
@@ -94,6 +95,7 @@ public class AAdvancedPainter extends APainter {
         paintConstructionProgress();
 //        paintEnemyRegionDetails();
         paintStrategicLocations();
+        paintSquads();
 //        paintColoredCirclesAroundUnits();
         paintBuildingHealth();
         paintWorkersAssignedToBuildings();
@@ -116,6 +118,13 @@ public class AAdvancedPainter extends APainter {
     protected static void paintCombatUnits() {
         for (AUnit unit : Select.ourCombatUnits().listUnits()) {
             APosition unitPosition = unit.getPosition();
+
+            if (unit.isRunning()) {
+                APainter.paintCircle(unit.getTargetPosition(), 2, Color.Grey);
+                APainter.paintCircle(unit.getTargetPosition(), 3, Color.Grey);
+                APainter.paintCircle(unit.getTargetPosition(), 1, Color.Grey);
+                APainter.paintLine(unit, unit.getTargetPosition(), Color.Black);
+            }
 
             // =========================================================
             // === Paint life bars bars over wounded units
@@ -142,13 +151,13 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
             // === Paint targets for combat units
             // =========================================================
-//            APosition targetPosition = unit.getTargetPosition();
-//            if (targetPosition == null) {
-//                targetPosition = unit.getTarget().getPosition();
-//            }
-//            if (targetPosition != null && unit.distanceTo(targetPosition) <= 15) {
-//                paintLine(unitPosition, targetPosition, (unit.isAttacking() ? Color.Green : Color.Red));
-//            }
+            APosition targetPosition = unit.getTargetPosition();
+            if (targetPosition == null) {
+                targetPosition = unit.getTarget().getPosition();
+            }
+            if (targetPosition != null && unit.distanceTo(targetPosition) <= 15) {
+                paintLine(unitPosition, targetPosition, (unit.isAttacking() ? Color.Green : Color.Red));
+            }
 
             // =========================================================
             // === Combat Evaluation Strength
@@ -181,7 +190,7 @@ public class AAdvancedPainter extends APainter {
      * Paint focus point for global attack mission etc.
      */
     static void paintInfo() {
-        Mission mission = ASquadManager.getAlphaSquad().getMission();
+        Mission mission = Squad.getAlphaSquad().getMission();
 
         // Time
         paintSideMessage("Time: " + AGame.getTimeSeconds() + "s", Color.Grey);
@@ -208,7 +217,7 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
         // =========================================================
-        paintSideMessage("Combat squad size: " + ASquadManager.getAlphaSquad().size(), Color.Yellow, 0);
+        paintSideMessage("Combat squad size: " + Squad.getAlphaSquad().size(), Color.Yellow, 0);
 
         // =========================================================
         // Gas workers
@@ -1051,30 +1060,23 @@ public class AAdvancedPainter extends APainter {
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
     }
 
-    private static void paintChoke(AChokepoint choke, Color color, String extraText) {
-        if (choke == null) {
+
+    private static void paintSquads() {
+        Squad alphaSquad = Squad.getAlphaSquad();
+        if (alphaSquad == null) {
             return;
         }
 
-        if ("".equals(extraText)) {
-            extraText = choke.getWidth() + "";
+        APosition median = alphaSquad.getMedianUnitPosition();
+        if (median != null) {
+            int maxDist = (int) (AStickCloserOrSpreadOutManager.maxDistToMedian(alphaSquad.size()) * 32);
+
+            APainter.paintCircle(median, maxDist + 1, Color.Cyan);
+            APainter.paintCircle(median, maxDist, Color.Cyan);
+
+//            APainter.setTextSizeMedium();
+//            APainter.paintTextCentered(median, "Median (" + maxDist + ")", Color.Cyan, 0, 0.5);
         }
-
-        APainter.paintCircle(choke.getCenter(), choke.getWidth(), color);
-        APainter.paintTextCentered(
-                choke.getCenter().translateByTiles(0, choke.getWidth()),
-                extraText,
-                color
-        );
-    }
-
-    private static void paintBase(APosition position, String text, Color color) {
-        if (position == null) {
-            return;
-        }
-
-        paintRectangle(position, 4 , 3, color);
-        APainter.paintTextCentered(position.translateByTiles(1, -2), text, color);
     }
 
 }
