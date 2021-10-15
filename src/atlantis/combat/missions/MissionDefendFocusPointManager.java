@@ -1,22 +1,17 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AFoggedUnit;
 import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import bwta.Chokepoint;
-
-import static atlantis.scout.AScoutManager.getUmtFocusPoint;
 
 public class MissionDefendFocusPointManager extends MissionFocusPointManager {
 
     @Override
     public APosition focusPoint() {
-        if (AGame.isUmtMode()) {
+        if (AGame.isUmsMode()) {
             return null;
         }
 

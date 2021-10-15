@@ -51,9 +51,9 @@ public class AScoutManager {
      */
     public static void update() {
 
-        // === Handle UMT ==========================================
+        // === Handle UMS ==========================================
         
-        if (AGame.isUmtMode()) {
+        if (AGame.isUmsMode()) {
             return;
         }
 
@@ -124,9 +124,9 @@ public class AScoutManager {
             return false;
         }
 
-        // === Handle UMT ==========================================
-//        if (AGame.isUmtMode()) {
-//            handleUmtExplore(scout);
+        // === Handle UMS ==========================================
+//        if (AGame.isUmsMode()) {
+//            handleUmsExplore(scout);
 //            return;
 //        }
         // =========================================================
@@ -335,7 +335,7 @@ public class AScoutManager {
         return nearest;
     }
 
-    public static APosition getUmtFocusPoint(APosition startPosition) {
+    public static APosition getUmsFocusPoint(APosition startPosition) {
         ARegion nearestUnexploredRegion = AMap.getNearestUnexploredRegion(startPosition);
         return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
     }

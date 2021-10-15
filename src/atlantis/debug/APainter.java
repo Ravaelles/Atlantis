@@ -58,7 +58,7 @@ public class APainter {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionHelper.translateByTiles(position, width, height), color, false);
+        bwapi.drawBoxMap(position, PositionHelper.translateByPixels(position, width, height), color, false);
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {

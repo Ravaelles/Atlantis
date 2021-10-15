@@ -1,6 +1,5 @@
 package atlantis.combat.micro;
 
-import atlantis.AGame;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
@@ -8,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 import bwapi.Color;
 
 import java.util.ArrayList;
@@ -77,7 +77,8 @@ public class ARunManager {
 //            System.err.println("Run manager, run dist: " + runTo.distanceTo(unit));
 
             // Update last time run order was issued
-            _updated_at = AGame.getTimeFrames();
+            _updated_at = A.now();
+            unit._lastStartedRunning = A.now();
 //            APainter.paintLine(unit.getPosition(), runTo, Color.Orange);
 //            boolean hasMoved = unit.move(runTo, UnitActions.RUN);
             unit.move(runTo, UnitActions.RUN, "Run");
@@ -102,7 +103,7 @@ public class ARunManager {
     public static boolean shouldStopRunning(AUnit unit) {
         if (unit.isRunning()) {
             AUnit nearEnemy = Select.enemyRealUnits().combatUnits().canAttack(unit, 3).nearestTo(unit);
-            if (nearEnemy == null || nearEnemy.facingDifferentDirectionThan(unit)) {
+            if (nearEnemy == null || nearEnemy.isOtherUnitFacingThisUnit(unit)) {
                 unit.getRunManager().stopRunning();
                 return true;
             }

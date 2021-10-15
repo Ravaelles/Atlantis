@@ -23,7 +23,7 @@ public class AMineralGathering {
         AUnit mainBase = Select.mainBase();
         if (mainBase == null) {
 //            System.err.println("No main base found - skip initial workers assignment");
-            AGame.setUmtMode(true);
+            AGame.setUmsMode(true);
             return;
         }
         

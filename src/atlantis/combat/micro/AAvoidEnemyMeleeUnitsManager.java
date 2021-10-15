@@ -1,7 +1,6 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
-import atlantis.combat.missions.Missions;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -131,8 +130,8 @@ public class AAvoidEnemyMeleeUnitsManager {
         double healthBonus = unit.getWoundPercent() / 38;
         double archonBonus = (((Select.enemy().ofType(AUnitType.Protoss_Archon).inRadius(5, unit)).count() > 0) ? 0.9 : 0);
 //        double movementBonus = unit.isMoving() ? (unit.lastRunAgo(12) ? -1.3 : 1.2) : 0;
-        double movementBonus = unit.isMoving() ? (unit.lastRunAgo(12) ? -1.3 : 1.2) : 0;
-        double directionBonus = nearestEnemy != null && unit.facingDifferentDirectionThan(nearestEnemy) ? -2 : 1.2;
+        double movementBonus = unit.isMoving() ? (unit.lastStartedRunningAgo(12) ? -1.3 : 1.2) : 0;
+        double directionBonus = nearestEnemy != null && unit.isOtherUnitFacingThisUnit(nearestEnemy) ? -2 : 1.2;
 
         double criticalDistance = baseCriticalDistance + healthBonus + archonBonus + movementBonus + directionBonus;
 

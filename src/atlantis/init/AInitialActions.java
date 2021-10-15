@@ -16,21 +16,21 @@ public class AInitialActions {
             AMineralGathering.initialAssignWorkersToMinerals();
         }
         catch (IndexOutOfBoundsException ex) {
-            AGame.setUmtMode(true);
+            AGame.setUmsMode(true);
         }
         catch (NullPointerException ex) {
-            AGame.setUmtMode(true);
+            AGame.setUmsMode(true);
         }
         catch (Exception ex) {
-            AGame.setUmtMode(true);
+            AGame.setUmsMode(true);
         }
 
         if (!AMap.disableSomeOfTheChokePoints() || Select.ourWorkers().count() != 4) {
-            AGame.setUmtMode(true);
+            AGame.setUmsMode(true);
         }
 
         if (Select.mainBase() == null) {
-            AGame.setUmtMode(true);
+            AGame.setUmsMode(true);
         }
     }
 

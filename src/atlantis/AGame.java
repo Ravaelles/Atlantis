@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class AGame {
 
-    private static boolean umtMode = false; // Should be set to `true` on UMT (custom) maps
+    private static boolean umsMode = false; // Should be set to `true` on UMS (custom) maps
     private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
     private static Player _enemy = null; // Cached enemy player
 
@@ -244,20 +244,20 @@ public class AGame {
     }
 
     /**
-     * UMT maps are custom made maps, which may be used to test micro-management.
+     * UMS maps are custom made maps, which may be used to test micro-management.
      */
-    public static boolean isUmtMode() {
-        return umtMode;
+    public static boolean isUmsMode() {
+        return umsMode;
     }
 
     /**
-     * UMT maps are custom made maps, which may be used to test micro-management.
+     * UMS maps are custom made maps, which may be used to test micro-management.
      */
-    public static void setUmtMode(boolean umtMode) {
-        if (AGame.umtMode != umtMode) {
-            AGame.umtMode = umtMode;
+    public static void setUmsMode(boolean umsMode) {
+        if (AGame.umsMode != umsMode) {
+            AGame.umsMode = umsMode;
             System.out.println();
-            System.out.println("### UMT mode enabled! ###");
+            System.out.println("### UMS mode enabled! ###");
             System.out.println();
 
             MissionChanger.forceMissionAttack();
@@ -353,6 +353,10 @@ public class AGame {
 
     public static int killsLossesResourceBalance() {
         return Atlantis.KILLED_RESOURCES - Atlantis.LOST_RESOURCES;
+    }
+
+    public static String getMapName() {
+        return Atlantis.game().mapName();
     }
 
     // =========================================================

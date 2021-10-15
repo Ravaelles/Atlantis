@@ -2,12 +2,9 @@ package atlantis;
 
 import atlantis.combat.squad.ASquadManager;
 import atlantis.constructing.*;
-import atlantis.debug.AUnitTypesHelper;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.map.AMap;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.init.AInitialActions;
-import atlantis.production.orders.AProductionQueue;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.units.AUnit;
@@ -85,30 +82,12 @@ public class Atlantis implements BWEventListener {
         // Initialize Game Commander, a class to rule them all
         gameCommander = new AGameCommander();
 
-        // Game speed mode that starts fast, slows down when units are attacking
-        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
-
-        // Uncomment this line to see list of units -> damage.
-        AUnitTypesHelper.displayUnitTypesDamage();
-
-        // =========================================================
-
-        // Atlantis can modify ChaosLauncher's config files treating AtlantisConfig as the source-of-truth
-        modifyRacesInConfigFileIfNeeded();
-
-        // One time map analysis for every map
-        AMap.initMapAnalysis();
-
-        // Set prodction strategy (build orders) to use. It can be always changed dynamically.
-        initializeBuildOrder();
-
         // Allow user input etc
         setBwapiFlags();
 
         // =========================================================
 
-        // Validate AtlantisConfig and exit if it's invalid
-        AtlantisConfig.validate();
+        OnStart.execute();
     }
 
     private void setBwapiFlags() {
@@ -117,35 +96,6 @@ public class Atlantis implements BWEventListener {
 //        game.setGUI(false);                           // Turn off GUI - will speed up game considerably
         game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
 //        game.enableFlag(Flag.CompleteMapInformation); // See entire map - must be disabled for real games
-    }
-
-    private void modifyRacesInConfigFileIfNeeded() {
-        Race racePlayed = game.self().getRace();
-        if (racePlayed.equals(Race.Protoss)) {
-            AtlantisConfig.useConfigForProtoss();
-        } else if (racePlayed.equals(Race.Terran)) {
-            AtlantisConfig.useConfigForTerran();
-        } else if (racePlayed.equals(Race.Zerg)) {
-            AtlantisConfig.useConfigForZerg();
-        }
-    }
-
-    private void initializeBuildOrder() {
-        try {
-            AProductionQueueManager.switchToBuildOrder(AtlantisConfig.DEFAULT_BUILD_ORDER);
-
-            if (AProductionQueue.getCurrentBuildOrder() != null) {
-                System.out.println("Use build order: `" + AProductionQueue.getCurrentBuildOrder().getName() + "`");
-            }
-            else {
-                System.err.println("Invalid (empty) build order in AtlantisConfig!");
-                AGame.exit();
-            }
-        }
-        catch (Exception e) {
-            System.err.println("Exception when loading build orders file");
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -408,9 +358,11 @@ public class Atlantis implements BWEventListener {
     public void onEnd(boolean winner) {
         System.out.println();
         if (winner) {
-            System.out.println("Nice WIN! It took " + AGame.getTimeSeconds() + " seconds. Exit...");
+            System.out.println("You were VICTORIOUS!");
+            System.out.println(gameSummary());
         } else {
-            System.out.println("Oh, you lost again. It took " + AGame.getTimeSeconds() + " seconds. Exit...");
+            System.out.println("DEFEAT");
+            System.out.println(gameSummary());
         }
 
         System.out.println("Killing StarCraft process...");
@@ -419,7 +371,14 @@ public class Atlantis implements BWEventListener {
         System.out.println("Killing Chaoslauncher process...");
         ProcessHelper.killChaosLauncherProcess();
 
+        System.out.println("Exit...");
         System.exit(0);
+    }
+
+    private String gameSummary() {
+        System.out.println("It took " + AGame.getTimeSeconds() + " seconds.");
+        System.out.println("Killed: " + AGame.getPlayerUs().getKillScore() + ", Lost: " + AGame.getEnemy().getKillScore());
+        System.out.println("Resource +/- balance: " + AGame.killsLossesResourceBalance());
     }
 
     /**

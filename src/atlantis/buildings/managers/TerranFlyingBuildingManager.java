@@ -1,7 +1,6 @@
 package atlantis.buildings.managers;
 
 import atlantis.AGame;
-import atlantis.combat.missions.MissionAttackFocusPointManager;
 import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -18,7 +17,7 @@ public class TerranFlyingBuildingManager {
     // =========================================================
     
     public static void update() {
-        if (AGame.isPlayingAsTerran() && !AGame.isUmtMode()) {
+        if (AGame.isPlayingAsTerran() && !AGame.isUmsMode()) {
             if (shouldHaveAFlyingBuilding()) {
                 liftABuildingAndFlyAmongStars();
             }

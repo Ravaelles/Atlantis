@@ -49,7 +49,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     public int _lastAttackOrder;
     public int _lastAttackFrame;
     public int _lastRetreat;
-    public int _lastRunning;
+    public int _lastStartedRunning;
     public int _lastStartingAttack;
     public int _lastUnderAttack;
     public int lastX;
@@ -1164,11 +1164,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //        }
     }
 
-    public boolean lastAttackAgo(int framesAgo) {
+    public boolean lastStartedAttackAgo(int framesAgo) {
         return AGame.framesAgo(_lastStartingAttack) <= framesAgo;
     }
 
-    public int lastAttackAgo() {
+    public int lastStartedAttackAgo() {
         return AGame.framesAgo(_lastStartingAttack);
     }
 
@@ -1176,12 +1176,12 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return AGame.framesAgo(_lastRetreat);
     }
 
-    public int lastRunAgo() {
-        return AGame.framesAgo(_lastRunning);
+    public int lastStartedRunningAgo() {
+        return AGame.framesAgo(_lastStartedRunning);
     }
 
-    public boolean lastRunAgo(int framesAgo) {
-        return AGame.framesAgo(_lastRunning) <= framesAgo;
+    public boolean lastStartedRunningAgo(int framesAgo) {
+        return AGame.framesAgo(_lastStartedRunning) <= framesAgo;
     }
 
     public boolean hasNotMovedInAWhile() {
@@ -1204,7 +1204,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return u().getAngle();
     }
 
-    public boolean facingDifferentDirectionThan(AUnit otherUnit) {
+    public boolean isOtherUnitFacingThisUnit(AUnit otherUnit) {
+//        aa
         return Math.abs(getAngle() - otherUnit.getAngle()) >= 0.3;
     }
 }

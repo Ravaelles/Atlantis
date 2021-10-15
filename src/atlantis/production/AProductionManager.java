@@ -18,9 +18,9 @@ public class AProductionManager {
      */
     protected static void update() {
         
-        // === Handle UMT ==========================================
+        // === Handle UMS ==========================================
         
-        if (AGame.isUmtMode()) {
+        if (AGame.isUmsMode()) {
             return;
         }
         

@@ -11,18 +11,18 @@ import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
-import static atlantis.scout.AScoutManager.getUmtFocusPoint;
+import static atlantis.scout.AScoutManager.getUmsFocusPoint;
 
 public class MissionAttackFocusPointManager extends MissionFocusPointManager {
 
     public APosition focusPoint() {
 
-        // === Handle UMT ==========================================
+        // === Handle UMS ==========================================
         
-//        if (AGame.isUmtMode()) {
+//        if (AGame.isUmsMode()) {
 //            AUnit firstUnit = Select.ourRealUnits().first();
 //            if (firstUnit != null) {
-//                return getUmtFocusPoint(firstUnit.getPosition());
+//                return getUmsFocusPoint(firstUnit.getPosition());
 //            }
 //            else {
 //                return null;

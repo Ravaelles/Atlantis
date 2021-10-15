@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
+import atlantis.units.AUnit;
 import atlantis.units.Select;
 
 import java.util.ArrayList;
@@ -19,9 +20,9 @@ public class MissionChanger {
             Missions.currentGlobalMission = Missions.getInitialMission();
         }
 
-        // === Handle UMT ==========================================
+        // === Handle UMS ==========================================
 
-        if (AGame.isUmtMode() || Select.mainBase() == null) {
+        if (AGame.isUmsMode() || Select.mainBase() == null) {
             return;
         }
 
@@ -41,8 +42,11 @@ public class MissionChanger {
 //        }
     }
 
-    public static void forceMissionAttack() {
-        Missions.currentGlobalMission = Missions.ATTACK;
+
+    public static void notifyThatUnitRetreated(AUnit unit) {
+        if (isFirstMission() && Missions.isGlobalMissionAttack()) {
+            forceMissionContain();
+        }
     }
 
     // =========================================================
@@ -58,6 +62,14 @@ public class MissionChanger {
         } else {
             return null;
         }
+    }
+
+    public static void forceMissionAttack() {
+        Missions.currentGlobalMission = Missions.ATTACK;
+    }
+
+    public static void forceMissionContain() {
+        Missions.currentGlobalMission = Missions.CONTAIN;
     }
 
     public static boolean isFirstMission() {

@@ -34,9 +34,9 @@ public class AGameCommander {
         ACombatCommander.update();
         AScoutManager.update();
 
-        // === Handle UMT ===================================================
+        // === Handle UMS ===================================================
         
-        if (AGame.isUmtMode()) {
+        if (AGame.isUmsMode()) {
             AUnit unit = Select.ourCombatUnits().first();
             if (unit != null) {
                 AViewport.centerScreenOn(unit.getPosition());

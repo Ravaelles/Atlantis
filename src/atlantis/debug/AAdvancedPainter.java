@@ -343,8 +343,8 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintImportantPlaces() {
 
-        // === Handle UMT ==========================================
-        if (AGame.isUmtMode()) {
+        // === Handle UMS ==========================================
+        if (AGame.isUmsMode()) {
             return;
         }
 

@@ -9,17 +9,17 @@ import atlantis.units.actions.UnitActions;
 import bwta.Region;
 
 /**
- * This is the mission that is best used in UMT maps.
+ * This is the mission that is best used in UMS maps.
  */
-public class MissionUmt extends Mission {
+public class MissionUms extends Mission {
 
 //    private static APosition _tempFocusPoint = null;
 //    private static AUnit flagshipUnit = null;
 
     // =========================================================
 
-    protected MissionUmt(String name) {
-        super("UMT");
+    protected MissionUms(String name) {
+        super("UMS");
     }
 
     // =========================================================
@@ -30,7 +30,7 @@ public class MissionUmt extends Mission {
         return false;
     }
 
-//        System.out.println("UMT mission");
+//        System.out.println("UMS mission");
 //
 //        // DISABLED
 ////        if (1 < 2) {
@@ -136,17 +136,17 @@ public class MissionUmt extends Mission {
 //
 //        // === Either attack a unit or go forward ==========================
 ////        if (enemyToAttack != null) {
-////            unit.setTooltip("#UMT:Attack!");
+////            unit.setTooltip("#UMS:Attack!");
 ////            return unit.attack(enemyToAttack, UnitActions.ATTACK_UNIT);
 ////        }
 ////        else if (positionToAttack != null) {
-////            unit.setTooltip("#UMT:Explore");
+////            unit.setTooltip("#UMS:Explore");
 ////            return unit.attack(positionToAttack, UnitActions.EXPLORE);
 ////        }
 ////        else {
 ////        }
 ////
-////        System.err.println("UMT action: no mission action");
+////        System.err.println("UMS action: no mission action");
 //        unit.setTooltip("#SeenAllInMyLife");
 //        return false;
 //    }
@@ -183,7 +183,7 @@ public class MissionUmt extends Mission {
 //
 //    // =========================================================
 //
-////    public static MissionUmt getInstance() {
+////    public static MissionUms getInstance() {
 ////        return instance;
 ////    }
 //

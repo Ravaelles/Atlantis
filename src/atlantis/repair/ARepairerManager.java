@@ -7,7 +7,6 @@ import atlantis.combat.micro.AAvoidInvisibleEnemyUnits;
 import atlantis.combat.missions.Missions;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.Count;
 import atlantis.units.Select;
 
 import java.util.Collection;
@@ -157,7 +156,7 @@ public class ARepairerManager {
             if (
                     AScoutManager.isScout(woundedUnit)
                     || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
-                    || (woundedUnit.isRunning() && woundedUnit.lastRunAgo() > 60)
+                    || (woundedUnit.isRunning() && woundedUnit.lastStartedRunningAgo() > 60)
             ) {
                 continue;
             }

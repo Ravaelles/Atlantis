@@ -3,6 +3,7 @@ package atlantis.combat.micro;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.combat.ACombatEvaluator;
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
@@ -39,11 +40,12 @@ public abstract class AbstractMicroManager {
         if (!isSituationFavorable) {
             unit._lastRetreat = AGame.now();
             unit.setTooltip("Retreat");
+            MissionChanger.notifyThatUnitRetreated(unit);
             return unit.runFrom(null);
         }
 
         if (Objects.equals(unit.getTooltip(), "Retreat")) {
-            unit.setTooltip("Engage");
+            unit.removeTooltip();
         }
 
         return false;

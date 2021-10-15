@@ -32,8 +32,8 @@ public class AtlantisConfig {
     /**`
      * Race used by the Atlantis.
      */
-    public static final String OUR_RACE = "Terran";
-//    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Protoss";
 //    public static final String OUR_RACE = "Zerg";
 
     /**
@@ -46,13 +46,13 @@ public class AtlantisConfig {
     /**
      * Will modify bwapi.ini to use this map.
      */
-//    public static final String MAP = "maps/BroodWar/sscai/(?)*.sc?";
-//    public static final String MAP = "maps/BroodWar/umt/MacroAlone.scx";
-//    public static final String MAP = "maps/BroodWar/umt/dragoon_sweeping_mines.scm";
-//    public static final String MAP = "maps/BroodWar/umt/marines_vs_zerglings.scm"; // 12 marines vs 24 zerglings
-//    public static final String MAP = "maps/BroodWar/umt/vulture_vs_zerglings.scx"; // Vulture being chased by Lings
-    public static final String MAP = "maps/BroodWar/umt/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
-//    public static final String MAP = "maps/BroodWar/umt/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs Zerg
+    public static final String MAP = "maps/BroodWar/sscai/(?)*.sc?";
+//    public static final String MAP = "maps/BroodWar/ums/MacroAlone.scx";
+//    public static final String MAP = "maps/BroodWar/ums/dragoon_sweeping_mines.scm";
+//    public static final String MAP = "maps/BroodWar/ums/marines_vs_zerglings.scm"; // 12 marines vs 24 zerglings
+//    public static final String MAP = "maps/BroodWar/ums/vulture_vs_zerglings.scx"; // Vulture being chased by Lings
+//    public static final String MAP = "maps/BroodWar/ums/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
+//    public static final String MAP = "maps/BroodWar/ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs Zerg
 
     // ==========================================================
     // === These are default values that can be overridden in ===
@@ -100,72 +100,7 @@ public class AtlantisConfig {
     public static ABuildOrder DEFAULT_BUILD_ORDER = null;
 
     // =========================================================
-    
-    /**
-     * Helper method for using Terran race.
-     */
-    public static void useConfigForTerran() {
-        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_Base_Vultures;
-//        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_BBS;
 
-        AtlantisConfig.MY_RACE = Race.Terran;
-        AtlantisConfig.BASE = AUnitType.Terran_Command_Center;
-        AtlantisConfig.WORKER = AUnitType.Terran_SCV;
-        AtlantisConfig.BARRACKS = AUnitType.Terran_Barracks;
-        AtlantisConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
-        AtlantisConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
-        
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
-    }
-
-    /**
-     * Helper method for using Protoss race.
-     */
-    public static void useConfigForProtoss() {
-//        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATEWAY_ZEALOT;
-        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATE_RANGE_EXPAND;
-
-        AtlantisConfig.MY_RACE = Race.Protoss;
-        AtlantisConfig.BASE = AUnitType.Protoss_Nexus;
-        AtlantisConfig.WORKER = AUnitType.Protoss_Probe;
-        AtlantisConfig.BARRACKS = AUnitType.Protoss_Gateway;
-        AtlantisConfig.SUPPLY = AUnitType.Protoss_Pylon;
-        AtlantisConfig.GAS_BUILDING = AUnitType.Protoss_Assimilator;
-        
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Protoss_Photon_Cannon;
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Protoss_Photon_Cannon;
-    }
-    
-    /**
-     * Helper method for using Zerg race.
-     */
-    public static void useConfigForZerg() {
-        AtlantisConfig.DEFAULT_BUILD_ORDER = ZergBuildOrder.ZERG_13_POOL_MUTA;
-        
-        AtlantisConfig.MY_RACE = Race.Zerg;
-        AtlantisConfig.BASE = AUnitType.Zerg_Hatchery;
-        AtlantisConfig.WORKER = AUnitType.Zerg_Drone;
-        AtlantisConfig.BARRACKS = AUnitType.Zerg_Spawning_Pool;
-        AtlantisConfig.SUPPLY = AUnitType.Zerg_Overlord;
-        AtlantisConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
-        
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Zerg_Creep_Colony;
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Zerg_Creep_Colony;
-    }
-    
-    // =========================================================
-    
-    /**
-     * This method could be used to overwrite user's race in bwapi.ini file.
-     * <b>CURRENTLY NOT IMPLEMENTED</b>.
-     */
-    private static void overrideBwapiIniRace(String raceString) {
-        System.out.println("@NotImplemented overrideBwapiIniRace");
-        System.exit(-1);
-//        overrideBwapiIniRace(raceString);
-    }
-    
     /**
      * Makes sure all necessary AtlantisConfig variables are set (non-null).
      */

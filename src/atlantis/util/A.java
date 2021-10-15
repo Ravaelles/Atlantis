@@ -1,5 +1,7 @@
 package atlantis.util;
 
+import atlantis.AGame;
+
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
@@ -1071,5 +1073,9 @@ public class A {
 
     public static String trueFalse(boolean bool) {
         return bool ? "Yes" : "No";
+    }
+
+    public static int now() {
+        return AGame.getTimeFrames();
     }
 }

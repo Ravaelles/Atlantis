@@ -3,7 +3,6 @@ package atlantis.combat;
 import atlantis.AGame;
 import atlantis.AGameSpeed;
 import atlantis.units.AUnit;
-import atlantis.units.Count;
 import atlantis.units.Select;
 
 public class InterruptStartingAttacks {
@@ -24,7 +23,7 @@ public class InterruptStartingAttacks {
         if (
                 (
                         (unit.getHPPercent() < (95 - friends) && !AGame.isPlayingAsTerran())
-                        || (unit.getCooldownCurrent() <= 0 && unit.hasNotMovedInAWhile() && unit.lastAttackAgo() > 40)
+                        || (unit.getCooldownCurrent() <= 0 && unit.hasNotMovedInAWhile() && unit.lastStartedAttackAgo() > 40)
                 )
                 && Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isNotEmpty()
         ) {

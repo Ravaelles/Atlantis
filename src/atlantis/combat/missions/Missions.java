@@ -1,8 +1,6 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.Atlantis;
-import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 /**
@@ -19,7 +17,7 @@ public class Missions {
     public static final Mission ATTACK = new MissionAttack();
     public static final Mission CONTAIN = new MissionContain();
     public static final Mission DEFEND = new MissionDefend();
-//    public static final Mission UMT = new MissionUmt();
+//    public static final Mission UMS = new MissionUms();
 
     // =========================================================
 
@@ -44,7 +42,7 @@ public class Missions {
     }
 
     public static boolean isGlobalMissionAttack() {
-        if (AGame.isUmtMode()) {
+        if (AGame.isUmsMode()) {
             return true;
         }
 
@@ -53,10 +51,10 @@ public class Missions {
 
     public static Mission getInitialMission() {
 
-        // === Handle UMT ==========================================
+        // === Handle UMS ==========================================
 
-        if (AGame.isUmtMode() || Select.mainBase() == null) {
-//            return Missions.UMT;
+        if (AGame.isUmsMode() || Select.mainBase() == null) {
+//            return Missions.UMS;
             return Missions.ATTACK;
         }
 

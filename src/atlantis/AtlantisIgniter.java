@@ -116,7 +116,7 @@ public class AtlantisIgniter {
             
             // game_type = USE_MAP_SETTINGS
             else if (line.startsWith("game_type = ")) {
-                String gameType = (AtlantisConfig.MAP.contains("umt/") || AtlantisConfig.MAP.contains("Atlantis/"))
+                String gameType = (AtlantisConfig.MAP.contains("ums/") || AtlantisConfig.MAP.contains("Atlantis/"))
                         ? "USE_MAP_SETTINGS" : "MELEE";
                 fileContent[i] = "game_type = " + gameType;
                 

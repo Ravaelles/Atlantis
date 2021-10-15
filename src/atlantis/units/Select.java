@@ -63,9 +63,9 @@ public class Select<T> {
     private static List<AUnit> enemyUnits() {
         List<AUnit> data = new ArrayList<>();
 
-        // === Handle UMT ==========================================
+        // === Handle UMS ==========================================
 
-        if (AGame.isUmtMode()) {
+        if (AGame.isUmsMode()) {
             Player playerUs = AGame.getPlayerUs();
             for (Player player : AGame.getPlayers()) {
                 if (player.isEnemy(playerUs)) {

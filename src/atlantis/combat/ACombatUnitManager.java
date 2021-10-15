@@ -58,7 +58,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
     private static void preActions(AUnit unit) {
         if (AGameSpeed.isDynamicSlowdownActive() && (unit.isAttacking() || unit.isUnderAttack())) {
-            AGameSpeed.disableDynamicSlowdown();
+            AGameSpeed.activateDynamicSlowdown();
         }
     }
 
@@ -150,7 +150,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //            System.out.println(AGame.getTimeFrames() +" // #" + unit.getID());
 //        }
 
-        if (unit.isRunning() && unit.getLastOrderFramesAgo() <= 2) {
+        if (unit.isRunning() && unit.lastStartedRunningAgo(2)) {
             unit.setTooltip("Run...(" + unit.getLastOrderFramesAgo() + ")");
             return true;
         }

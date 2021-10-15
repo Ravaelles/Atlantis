@@ -15,9 +15,9 @@ public class MissionDefend extends Mission {
     @Override
     public boolean update(AUnit unit) {
 
-        // === Handle UMT special maps case ========================
+        // === Handle UMS special maps case ========================
 
-        if (AGame.isUmtMode()) {
+        if (AGame.isUmsMode()) {
             return false;
         }
 

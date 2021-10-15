@@ -151,7 +151,7 @@ public class AMap {
         ARegion naturalRegion = getRegion(getNaturalBaseLocation(relativeTo.getPosition()));
         if (naturalRegion == null) {
             System.err.println("Can't find region for natural base");
-            AGame.setUmtMode(true);
+            AGame.setUmsMode(true);
             return null;
         }
 
@@ -278,7 +278,7 @@ public class AMap {
         baseLocations.sortByGroundDistanceTo(nearestTo, true);
 
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (baseLocation.isStartLocation()) {
+            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.getPosition())) {
                 continue;
             }
             return baseLocation;
@@ -517,6 +517,10 @@ public class AMap {
         }
 
         return ARegion.create(getMap().getRegion(position));
+    }
+
+    public static String getMapName() {
+        return Atlantis.game().mapName();
     }
 
     /**

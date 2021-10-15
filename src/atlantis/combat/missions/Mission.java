@@ -93,9 +93,9 @@ public abstract class Mission {
         return this.equals(Missions.ATTACK);
     }
 
-    public boolean isMissionUmt() {
+    public boolean isMissionUms() {
         return false;
-//        return this.equals(Missions.UMT);
+//        return this.equals(Missions.UMS);
     }
     
 }

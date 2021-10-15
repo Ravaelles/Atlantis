@@ -18,9 +18,13 @@ public class AGameSpeed {
      */
     public static int frameSkip = 70;
 
+    private static final int NORMAL_GAME_SPEED = 0;
+    private static final int NORMAL_FRAME_SKIP = 20;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
+    private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 20;
 
     // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
+    private static boolean dynamicSlowdown_allowDynamicallySlowdown = false;
     private static boolean dynamicSlowdown_isSlowdownActive = false;
 
     // Last time unit has died; when unit dies, game slows down
@@ -43,20 +47,30 @@ public class AGameSpeed {
     public static void allowToDynamicallySlowdownGameOnFirstFighting() {
         dynamicSlowdown_previousSpeed = gameSpeed;
         dynamicSlowdown_lastTimeUnitDestroyed = AGame.getTimeSeconds();
+        dynamicSlowdown_allowDynamicallySlowdown = true;
         dynamicSlowdown_isSlowdownActive = true;
 
-        Atlantis.game().setLocalSpeed(0);
-        Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
+        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
+        Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
         System.out.println("SLOWDOWN is active. Frame skip = " + DYNAMIC_SLOWDOWN_FRAME_SKIP);
     }
 
-    public static void disableDynamicSlowdown() {
+    public static void activateDynamicSlowdown() {
+        dynamicSlowdown_isSlowdownActive = false;
+
+        Atlantis.game().setLocalSpeed(DYNAMIC_SLOWDOWN_GAME_SPEED);
+        Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
+//        Atlantis.game().setFrameSkip(0);
+
+        System.out.println("Disabled SLOWDOWN");
+    }
+
+    public static void deactivateDynamicSlowdown() {
         dynamicSlowdown_isSlowdownActive = false;
 
         Atlantis.game().setLocalSpeed(dynamicSlowdown_previousSpeed);
-        Atlantis.game().setFrameSkip(5);
-//        Atlantis.game().setFrameSkip(0);
+        Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
         System.out.println("Disabled SLOWDOWN");
     }

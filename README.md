@@ -21,7 +21,7 @@ Atlantis wraps everything heavily, so you don't need to write yourself countless
 
 And some extras:
 - provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (~), painting modes (1,2,3)
-- modifies bwapi.ini so you don't need to do it yourself! Can change your race, enemy race, map played and game type (for UMT maps which are great for micro tweaking)
+- modifies bwapi.ini so you don't need to do it yourself! Can change your race, enemy race, map played and game type (for UMS maps which are great for micro tweaking)
 
 # What actually is Atlantis?
 It's powerful set of tools that are based on [BWMirror](https://github.com/vjurenka/BWMirror) in version 2.5. The library (BWMirror) is heavily wrapped in numerous helper methods/modules as BWMIrror pretty much doesn't do anything by itself and most people are interested in combat, not searching for nearest free mineral field for harvesting or debugging Extractor construction. Trust me, it can take tens of hours to solve these problems. Prior to Atlantis I've written three bots, so I know how it is ;__:
