@@ -11,7 +11,7 @@ public class MissionDefendFocusPointManager extends MissionFocusPointManager {
 
     @Override
     public APosition focusPoint() {
-        if (AGame.isUmsMode()) {
+        if (AGame.isUms()) {
             return null;
         }
 

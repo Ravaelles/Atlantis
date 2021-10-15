@@ -14,9 +14,13 @@ public class PositionUtil {
      * building dimensions.
      */
     public static double distanceTo(Object object1, Object object2) {
-//        if (object1 == null || object2 == null) {
-//            return -1;
-//        }
+        if (object1 == null || object2 == null) {
+            System.err.println("object1");
+            System.err.println(object1);
+            System.err.println("object2");
+            System.err.println(object2);
+            throw new RuntimeException("distanceTo got null");
+        }
         
         // === Convert object1 to position or unit ====================
         

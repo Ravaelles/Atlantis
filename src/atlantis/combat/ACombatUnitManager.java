@@ -13,9 +13,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
     protected static boolean update(AUnit unit) {
         preActions(unit);
-//        if (Select.our().count() == 1) {
-//            AGame.exit("FINISHED AT @" + AGame.getTimeFrames());
-//        }
 
         // =========================================================
         // === TOP priority ========================================
@@ -60,6 +57,8 @@ public class ACombatUnitManager extends AbstractMicroManager {
         if (AGameSpeed.isDynamicSlowdownActive() && (unit.isAttacking() || unit.isUnderAttack())) {
             AGameSpeed.activateDynamicSlowdown();
         }
+
+        unit.setTooltip(unit.getTooltip() + ".");
     }
 
     // =========================================================
@@ -68,6 +67,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
 
         // Handle units getting bugged by Starcraft
         if (handleBuggedUnit(unit)) {
+            return true;
+        }
+
+        if (ARunManager.shouldStopRunning(unit)) {
             return true;
         }
 
@@ -97,10 +100,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
-            return true;
-        }
-
-        if (ARunManager.shouldStopRunning(unit)) {
             return true;
         }
 
@@ -150,11 +149,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //            System.out.println(AGame.getTimeFrames() +" // #" + unit.getID());
 //        }
 
-        if (unit.isRunning() && unit.lastStartedRunningAgo(2)) {
-            unit.setTooltip("Run...(" + unit.getLastOrderFramesAgo() + ")");
-            return true;
-        }
-
         if (InterruptStartingAttacks.shouldNotBeInterruptedStartingAttack(unit)) {
             return true;
         }
@@ -171,23 +165,23 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //    }
 
     private static boolean handleBuggedUnit(AUnit unit) {
-        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 40) {
-            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-                System.err.println("UNFREEZE #1!");
-                unit.setTooltip("UNFREEZE!");
-                unit.unbug();
-                return true;
-            }
-        }
-
-        if (unit.isUnderAttack() && unit.getLastOrderFramesAgo() >= 40) {
-            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-                System.err.println("UNFREEZE #2!");
-                unit.setTooltip("UNFREEZE!");
-                unit.unbug();
-                return true;
-            }
-        }
+//        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 40) {
+//            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
+//                System.err.println("UNFREEZE #1!");
+//                unit.setTooltip("UNFREEZE!");
+//                unit.unbug();
+//                return true;
+//            }
+//        }
+//
+//        if (unit.isUnderAttack() && unit.getLastOrderFramesAgo() >= 40) {
+//            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
+//                System.err.println("UNFREEZE #2!");
+//                unit.setTooltip("UNFREEZE!");
+//                unit.unbug();
+//                return true;
+//            }
+//        }
 
         return false;
     }

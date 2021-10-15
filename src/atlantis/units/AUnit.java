@@ -15,11 +15,15 @@ import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.PositionUtil;
+import atlantis.util.Vector;
+import atlantis.util.Vectors;
 import bwapi.Player;
 import bwapi.Unit;
 import bwapi.UnitCommand;
 import bwapi.UnitCommandType;
 import bwapi.WeaponType;
+
+import javax.vecmath.Vector2d;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -604,8 +608,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-//        return runManager.isRunning();
-        return UnitActions.RUN.equals(getUnitAction());
+        return UnitActions.RUN.equals(getUnitAction()) && runManager.isRunning();
     }
 
     public boolean isLastOrderFramesAgo(int minFramesAgo) {
@@ -1205,7 +1208,23 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isOtherUnitFacingThisUnit(AUnit otherUnit) {
-//        aa
-        return Math.abs(getAngle() - otherUnit.getAngle()) >= 0.3;
+        Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
+        Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
+
+//        if (isFirstCombatUnit()) {
+//            System.out.println("### ARE PARALLEL = " + (positionDifference.isParallelTo(otherUnitLookingVector)));
+//            System.out.println(positionDifference + " // " + positionDifference.toAngle());
+//            System.out.println(otherUnitLookingVector + " // " + otherUnitLookingVector.toAngle());
+//        }
+
+        return positionDifference.isParallelTo(otherUnitLookingVector);
     }
+
+    private boolean isFirstCombatUnit() {
+        return getID() == Select.ourCombatUnits().first().getID();
+    }
+
+//    public boolean isFacingTheSameDirection(AUnit otherUnit) {
+//        return Math.abs(getAngle() - otherUnit.getAngle()) <= 0.3;
+//    }
 }

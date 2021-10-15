@@ -20,7 +20,7 @@ public class AProductionManager {
         
         // === Handle UMS ==========================================
         
-        if (AGame.isUmsMode()) {
+        if (AGame.isUms()) {
             return;
         }
         

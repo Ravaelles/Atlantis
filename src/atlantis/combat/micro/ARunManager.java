@@ -44,7 +44,7 @@ public class ARunManager {
 //        else if (unit.isStuck()) {
 //            unit.setTooltip("Stuck!!!");
 ////            unit.holdPosition();
-//            markAsNotRunning();
+//            stopRunning();
 //            return false;
 //        }
         
@@ -59,7 +59,7 @@ public class ARunManager {
 //            }
 //
 //            if (!finallyRunned) {
-//                markAsNotRunning();
+//                stopRunning();
 //                unit.setTooltip("Fuck!");
 //                return true;
 //            }
@@ -94,7 +94,7 @@ public class ARunManager {
 ////                APainter.paintLine(position.translateByPixels(-25, -25), position.translateByPixels(26, 26), Color.Red);
 ////                APainter.paintLine(position.translateByPixels(-26, 26), position.translateByPixels(25, -25), Color.Red);
 ////                APainter.paintLine(position.translateByPixels(-25, 25), position.translateByPixels(26, -26), Color.Red);
-//                markAsNotRunning();
+//                stopRunning();
 //                return false;
 //            }
         }
@@ -103,7 +103,7 @@ public class ARunManager {
     public static boolean shouldStopRunning(AUnit unit) {
         if (unit.isRunning()) {
             AUnit nearEnemy = Select.enemyRealUnits().combatUnits().canAttack(unit, 3).nearestTo(unit);
-            if (nearEnemy == null || nearEnemy.isOtherUnitFacingThisUnit(unit)) {
+            if (nearEnemy == null || !nearEnemy.isOtherUnitFacingThisUnit(unit)) {
                 unit.getRunManager().stopRunning();
                 return true;
             }
@@ -537,23 +537,23 @@ public class ARunManager {
     }
 
     // === Getters ========================================
+
     public APosition getRunToPosition() {
         return runTo;
     }
 
-//    public boolean isRunning() {
-//        if (runTo != null) {
-//            int framesAgo = AGame.getTimeFrames() - _updated_at;
-//            if (framesAgo <= 1) {
-//                return true;
-//            } else {
-//                markAsNotRunning();
-//                return false;
-//            }
-//        } else {
-//            return false;
-//        }
-//    }
+    public boolean isRunning() {
+        if (runTo != null) {
+            if (unit.lastStartedRunningAgo(3)) {
+                return true;
+            } else {
+                stopRunning();
+                return false;
+            }
+        }
+
+        return false;
+    }
 
     public void stopRunning() {
         runTo = null;

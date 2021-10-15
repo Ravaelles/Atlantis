@@ -17,7 +17,7 @@ public class MissionDefend extends Mission {
 
         // === Handle UMS special maps case ========================
 
-        if (AGame.isUmsMode()) {
+        if (AGame.isUms()) {
             return false;
         }
 

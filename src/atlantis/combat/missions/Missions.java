@@ -42,7 +42,7 @@ public class Missions {
     }
 
     public static boolean isGlobalMissionAttack() {
-        if (AGame.isUmsMode()) {
+        if (AGame.isUms()) {
             return true;
         }
 
@@ -53,7 +53,7 @@ public class Missions {
 
         // === Handle UMS ==========================================
 
-        if (AGame.isUmsMode() || Select.mainBase() == null) {
+        if (AGame.isUms() || Select.mainBase() == null) {
 //            return Missions.UMS;
             return Missions.ATTACK;
         }

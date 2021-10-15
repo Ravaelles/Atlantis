@@ -36,10 +36,10 @@ public class AGameCommander {
 
         // === Handle UMS ===================================================
         
-        if (AGame.isUmsMode()) {
+        if (AGame.isUms()) {
             AUnit unit = Select.ourCombatUnits().first();
             if (unit != null) {
-                AViewport.centerScreenOn(unit.getPosition());
+                AViewport.centerCameraOn(unit.getPosition());
             }
         }
     }

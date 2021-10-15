@@ -17,7 +17,7 @@ public class TerranFlyingBuildingManager {
     // =========================================================
     
     public static void update() {
-        if (AGame.isPlayingAsTerran() && !AGame.isUmsMode()) {
+        if (AGame.isPlayingAsTerran() && !AGame.isUms()) {
             if (shouldHaveAFlyingBuilding()) {
                 liftABuildingAndFlyAmongStars();
             }

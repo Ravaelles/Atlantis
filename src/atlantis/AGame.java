@@ -244,9 +244,9 @@ public class AGame {
     }
 
     /**
-     * UMS maps are custom made maps, which may be used to test micro-management.
+     * UMS maps are custom made maps, which may be used to test micro-management. They can cause a lot of exceptions.
      */
-    public static boolean isUmsMode() {
+    public static boolean isUms() {
         return umsMode;
     }
 

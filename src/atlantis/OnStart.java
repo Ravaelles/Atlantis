@@ -8,6 +8,10 @@ import atlantis.production.orders.AProductionQueueManager;
 public class OnStart {
 
     public static void execute() {
+        System.out.println(11.1 < Double.POSITIVE_INFINITY);
+        System.out.println(11.1 < Double.NEGATIVE_INFINITY);
+
+        handleCheckIfUmsMap();
 
         // Uncomment this line to see list of units -> damage.
 //        AUnitTypesHelper.displayUnitTypesDamage();
@@ -26,6 +30,12 @@ public class OnStart {
 
         // Set prodction strategy (build orders) to use. It can be always changed dynamically.
         initializeBuildOrder();
+    }
+
+    private static void handleCheckIfUmsMap() {
+        if (Atlantis.game().mapPathName().contains("/ums/")) {
+            AGame.setUmsMode(true);
+        }
     }
 
     private static void initializeBuildOrder() {

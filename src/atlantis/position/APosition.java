@@ -1,6 +1,7 @@
 package atlantis.position;
 
 import atlantis.debug.APainter;
+import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.map.ARegion;
 import atlantis.units.AUnit;
@@ -118,7 +119,11 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     public double distanceTo(Position position) {
         return PositionUtil.distanceTo(p, position);
     }
-    
+
+    public double distanceTo(AChokepoint choke) {
+        return PositionUtil.distanceTo(p, choke);
+    }
+
     /**
      * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows

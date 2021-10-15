@@ -155,11 +155,16 @@ public class AMap {
             return null;
         }
 
+        AChokepoint chokepointForMainBase = getChokepointForMainBase();
+        if (chokepointForMainBase == null) {
+            return null;
+        }
+
         for (AChokepoint chokepoint : naturalRegion.getChokepoints()) {
 //            naturalRegion.
 //            APosition center = APosition.create(chokepoint.getCenter());
 //            if (chokepoint.getCenter() > 1) {
-            if (chokepoint.getCenter().distanceTo(getChokepointForMainBase().getCenter()) > 1) {
+            if (chokepoint.getCenter().distanceTo(chokepointForMainBase) > 1) {
                 cached_basesToChokepoints.put(relativeTo, chokepoint);
                 return chokepoint;
             }

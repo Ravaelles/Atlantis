@@ -53,7 +53,7 @@ public class AScoutManager {
 
         // === Handle UMS ==========================================
         
-        if (AGame.isUmsMode()) {
+        if (AGame.isUms()) {
             return;
         }
 
@@ -125,7 +125,7 @@ public class AScoutManager {
         }
 
         // === Handle UMS ==========================================
-//        if (AGame.isUmsMode()) {
+//        if (AGame.isUms()) {
 //            handleUmsExplore(scout);
 //            return;
 //        }
@@ -291,7 +291,7 @@ public class AScoutManager {
         }
 
         if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
-            AViewport.centerScreenOn(scout.getPosition());
+            AViewport.centerCameraOn(scout.getPosition());
         }
     }
     

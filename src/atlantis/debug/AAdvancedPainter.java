@@ -60,13 +60,13 @@ public class AAdvancedPainter extends APainter {
      * Executed once per frame, at the end of all other actions.
      */
     public static void paint() {
+        bwapi = Atlantis.game();
         if (paintingMode == MODE_NO_PAINTING) {
             return;
         }
 
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
-        bwapi = Atlantis.game();
 
         // === PARTIAL PAINTING ====================================
 //        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
@@ -344,7 +344,7 @@ public class AAdvancedPainter extends APainter {
     static void paintImportantPlaces() {
 
         // === Handle UMS ==========================================
-        if (AGame.isUmsMode()) {
+        if (AGame.isUms()) {
             return;
         }
 
@@ -1040,6 +1040,9 @@ public class AAdvancedPainter extends APainter {
     }
 
     protected static void paintStrategicLocations() {
+        if (AGame.isUms()) {
+            return;
+        }
 
         // Natural base
         APosition natural = AMap.getNaturalBaseLocation();

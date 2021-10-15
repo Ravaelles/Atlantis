@@ -65,7 +65,7 @@ public class Select<T> {
 
         // === Handle UMS ==========================================
 
-        if (AGame.isUmsMode()) {
+        if (AGame.isUms()) {
             Player playerUs = AGame.getPlayerUs();
             for (Player player : AGame.getPlayers()) {
                 if (player.isEnemy(playerUs)) {

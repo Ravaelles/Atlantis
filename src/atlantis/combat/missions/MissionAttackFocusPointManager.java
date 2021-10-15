@@ -19,7 +19,7 @@ public class MissionAttackFocusPointManager extends MissionFocusPointManager {
 
         // === Handle UMS ==========================================
         
-//        if (AGame.isUmsMode()) {
+//        if (AGame.isUms()) {
 //            AUnit firstUnit = Select.ourRealUnits().first();
 //            if (firstUnit != null) {
 //                return getUmsFocusPoint(firstUnit.getPosition());

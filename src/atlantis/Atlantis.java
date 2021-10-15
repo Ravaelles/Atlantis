@@ -359,11 +359,10 @@ public class Atlantis implements BWEventListener {
         System.out.println();
         if (winner) {
             System.out.println("You were VICTORIOUS!");
-            System.out.println(gameSummary());
         } else {
-            System.out.println("DEFEAT");
-            System.out.println(gameSummary());
+            System.out.println("DEFEAT...");
         }
+        gameSummary();
 
         System.out.println("Killing StarCraft process...");
         ProcessHelper.killStarcraftProcess();
@@ -375,7 +374,10 @@ public class Atlantis implements BWEventListener {
         System.exit(0);
     }
 
-    private String gameSummary() {
+    private void gameSummary() {
+        if (Atlantis.game() == null) {
+            return;
+        }
         System.out.println("It took " + AGame.getTimeSeconds() + " seconds.");
         System.out.println("Killed: " + AGame.getPlayerUs().getKillScore() + ", Lost: " + AGame.getEnemy().getKillScore());
         System.out.println("Resource +/- balance: " + AGame.killsLossesResourceBalance());

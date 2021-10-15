@@ -62,7 +62,8 @@ public class ACombatCommander {
     private static void addInfoAboutNearestEnemyToTooltip(AUnit unit) {
         AUnit nearestEnemy = Select.enemyRealUnits().nearestTo(unit);
         if (nearestEnemy != null) {
-            if (unit.getTooltip().contains(" < ")) {
+            String tooltip = unit.getTooltip() + "";
+            if (tooltip.contains(" < ")) {
                 unit.setTooltip("");
             }
             unit.setTooltip(

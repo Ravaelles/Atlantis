@@ -2,8 +2,10 @@ package atlantis.combat;
 
 import atlantis.AGame;
 import atlantis.AGameSpeed;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import bwapi.Color;
 
 public class InterruptStartingAttacks {
 
@@ -19,16 +21,19 @@ public class InterruptStartingAttacks {
 
         // === Nearby melee ========================================
 
-        double minDistToContinueAttack = 2.7 + unit.getWoundPercent() / 50.0 ;
-        if (
-                (
-                        (unit.getHPPercent() < (95 - friends) && !AGame.isPlayingAsTerran())
-                        || (unit.getCooldownCurrent() <= 0 && unit.hasNotMovedInAWhile() && unit.lastStartedAttackAgo() > 40)
-                )
-                && Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isNotEmpty()
-        ) {
-            return false;
-        }
+//        double minDistToContinueAttack = 2.7 + unit.getWoundPercent() / 50.0 ;
+//        if (
+//                (
+//                        (unit.getHPPercent() < (95 - friends) && !AGame.isPlayingAsTerran())
+//                        || (unit.getCooldownCurrent() <= 0 && unit.hasNotMovedInAWhile() && unit.lastStartedAttackAgo() > 40)
+//                )
+//                && Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isNotEmpty()
+//        ) {
+//            APainter.paintCircle(unit.getPosition(), 21, Color.Orange);
+//            APainter.paintCircle(unit.getPosition(), 19, Color.Orange);
+//            APainter.paintCircle(unit.getPosition(), 17, Color.Orange);
+//            return false;
+//        }
 
         // =========================================================
 
