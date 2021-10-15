@@ -156,10 +156,6 @@ public interface AUnitOrders {
         }
         
         return true;
-//        }
-//        else {
-//            return true;
-//        }
     }
 
     /**
@@ -578,6 +574,12 @@ public interface AUnitOrders {
         unit().setUnitAction(UnitActions.USING_TECH);
         unit().setLastUnitOrderNow();
         return u().useTech(tech, target.u());
+    }
+
+    default boolean doRightClickAndYesIKnowIShouldAvoidUsingIt(AUnit target) {
+        unit().setUnitAction(UnitActions.RIGHT_CLICK);
+        unit().setLastUnitOrderNow();
+        return u().rightClick(target.u());
     }
 
 }

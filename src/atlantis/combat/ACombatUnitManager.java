@@ -5,6 +5,7 @@ import atlantis.AGameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -46,11 +47,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // === LOW priority - STRATEGY level =======================
         // =========================================================
 
-        if (canHandleLowPriority(unit)) {
-            return handleLowPriority(unit);
-        }
-
-        return false;
+        return handleLowPriority(unit);
+//        if (canHandleLowPriority(unit)) {
+//        }
+//        return false;
     }
 
     private static void preActions(AUnit unit) {
@@ -89,6 +89,11 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
+        return false;
+    }
+
+    private static boolean handledMediumPriority(AUnit unit) {
+
         if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(unit)) {
             return true;
         }
@@ -102,11 +107,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
         if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
             return true;
         }
-
-        return false;
-    }
-
-    private static boolean handledMediumPriority(AUnit unit) {
 
         // If nearby enemies would likely defeat us, retreat
         if (shouldRetreat(unit)) {
@@ -125,17 +125,24 @@ public class ACombatUnitManager extends AbstractMicroManager {
         return false;
     }
 
-    private static boolean canHandleLowPriority(AUnit unit) {
-        return unit.isStopped() || unit.isIdle();
-    }
+//    private static boolean canHandleLowPriority(AUnit unit) {
+//        return unit.isStopped() || unit.isIdle();
+//    }
 
     /**
      * If we're here, mission manager is allowed to take control over this unit.
      * Meaning no action was needed on *tactical* level - stick to *strategic* level.
      */
     private static boolean handleLowPriority(AUnit unit) {
-        unit.setTooltip(unit.getSquad().getMission().getName());
+        if (ASquadCohesionManager.handleExtremeUnitPositioningInSquad(unit)) {
+            return true;
+        }
 
+        if (AvoidEdgesWhenMoving.handle(unit)) {
+            return true;
+        }
+
+        unit.setTooltip(unit.getSquad().getMission().getName());
         return unit.getSquad().getMission().update(unit);
     }
 
@@ -165,23 +172,23 @@ public class ACombatUnitManager extends AbstractMicroManager {
 //    }
 
     private static boolean handleBuggedUnit(AUnit unit) {
-//        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 40) {
-//            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-//                System.err.println("UNFREEZE #1!");
-//                unit.setTooltip("UNFREEZE!");
-//                unit.unbug();
-//                return true;
-//            }
-//        }
-//
-//        if (unit.isUnderAttack() && unit.getLastOrderFramesAgo() >= 40) {
-//            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-//                System.err.println("UNFREEZE #2!");
-//                unit.setTooltip("UNFREEZE!");
-//                unit.unbug();
-//                return true;
-//            }
-//        }
+        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 40) {
+            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
+                System.err.println("UNFREEZE #1!");
+                unit.setTooltip("UNFREEZE!");
+                unit.unbug();
+                return true;
+            }
+        }
+
+        else if (unit.isUnderAttack() && unit.getLastOrderFramesAgo() >= 40) {
+            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
+                System.err.println("UNFREEZE #2!");
+                unit.setTooltip("UNFREEZE!");
+                unit.unbug();
+                return true;
+            }
+        }
 
         return false;
     }

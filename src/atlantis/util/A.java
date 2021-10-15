@@ -1078,4 +1078,14 @@ public class A {
     public static int now() {
         return AGame.getTimeFrames();
     }
+
+    public static double inRange(double min, double value, double max) {
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
+        return value;
+    }
 }

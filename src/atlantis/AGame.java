@@ -19,16 +19,9 @@ import java.util.List;
 public class AGame {
 
     private static boolean umsMode = false; // Should be set to `true` on UMS (custom) maps
-    private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
     private static Player _enemy = null; // Cached enemy player
 
     // =========================================================
-    /**
-     * Returns object that is responsible for the production queue.
-     */
-//    public static AProductionQueue getBuildOrders() {
-//        return AtlantisConfig.getBuildOrders();
-//    }
 
     /**
      * Returns true if we have all techs needed for given unit (but we may NOT have some of the buildings!).
@@ -90,20 +83,6 @@ public class AGame {
     public static void exit(String message) {
         System.err.println(message);
         Atlantis.getInstance().onEnd(false);
-    }
-
-    /**
-     * Enable/disable pause.
-     */
-    public static void pauseModeToggle() {
-        isPaused = !isPaused;
-    }
-    
-    /**
-     * Returns true if game is paused.
-     */
-    public static boolean isPaused() {
-        return isPaused;
     }
 
     public static void changeDisableUI(boolean disableUI) {

@@ -17,28 +17,29 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit, double maxDistFromEnemy) {
-        AUnit enemyToAttack = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
+        AUnit enemy = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
 
         // We were unable to define enemy unit to attack, just quit
-        if (enemyToAttack == null) {
+        if (enemy == null) {
             return false;
         }
 
         // Check if weapon cooldown allows to attack this enemy
-        if (!unit.canAttackThisKindOfUnit(enemyToAttack, false)) {
+        if (!unit.canAttackThisKindOfUnit(enemy, false)) {
             unit.setTooltip("Invalid target");
+            System.err.println("Invalid target for " + unit + ": " + enemy + " (" + unit.distanceTo(enemy) + ")");
             return false;
         }
 
-        if (enemyToAttack != null) {
-            unit.setTooltip("Attacking " + enemyToAttack.getShortName() + " (" + unit.getCooldownCurrent() + ")");
+        if (enemy != null) {
+            unit.setTooltip("Attacking " + enemy.getShortName() + " (" + unit.getCooldownCurrent() + ")");
 //            APainter.paintTextCentered(unit, enemyToAttack + ", " + unit.isJustShooting(), Color.Red);
-            APainter.paintLine(unit, enemyToAttack, Color.Red);
-            if (!enemyToAttack.equals(unit.getTarget())) {
-                if (unit.isMoving()) {
+            APainter.paintLine(unit, enemy, Color.Red);
+            if (!enemy.equals(unit.getTarget())) {
+                if (unit.isMoving() && unit.inRealWeaponRange(enemy)) {
                     unit.stop("Stop&Attack");
                 } else {
-                    unit.attackUnit(enemyToAttack);
+                    unit.attackUnit(enemy);
                 }
             }
             return true;

@@ -85,7 +85,7 @@ public class ABadWeather {
 
     private static boolean handleEnemyMineAsRangedUnit(AUnit unit, AUnit mine) {
         if (mine.distanceTo(unit) <= 2.0) {
-            unit.runFrom(mine);
+            unit.runFrom(mine, 3);
             unit.setTooltip("AVOID MINE(" + mine.distanceTo(unit) + ")");
             return true;
         }

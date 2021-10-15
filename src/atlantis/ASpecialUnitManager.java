@@ -5,6 +5,7 @@ import atlantis.combat.micro.terran.TerranMedic;
 import atlantis.combat.micro.terran.TerranSiegeTankManager;
 import atlantis.combat.micro.terran.TerranVultureManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
+import atlantis.protoss.ProtossShieldBattery;
 import atlantis.special.protoss.ProtossObserverManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -35,7 +36,9 @@ public class ASpecialUnitManager {
         // === Protoss ========================================
 
         else if (AGame.isPlayingAsProtoss()) {
-            if (unit.getType().equals(AUnitType.Protoss_Observer) && ProtossObserverManager.update(unit)) {
+            if (ProtossShieldBattery.handle(unit)) {
+                return true;
+            } else if (unit.getType().equals(AUnitType.Protoss_Observer) && ProtossObserverManager.update(unit)) {
                 return true;
             } else if (unit.getType().equals(AUnitType.Protoss_Reaver) && ProtossObserverManager.update(unit)) {
                 return true;

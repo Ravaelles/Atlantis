@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.debug.AUnitTypesHelper;
+import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
 import atlantis.production.orders.AProductionQueue;
 import atlantis.production.orders.AProductionQueueManager;
@@ -8,8 +9,7 @@ import atlantis.production.orders.AProductionQueueManager;
 public class OnStart {
 
     public static void execute() {
-        System.out.println(11.1 < Double.POSITIVE_INFINITY);
-        System.out.println(11.1 < Double.NEGATIVE_INFINITY);
+        System.out.println("### Starting Atlantis... ###");
 
         handleCheckIfUmsMap();
 
@@ -23,13 +23,18 @@ public class OnStart {
         AtlantisConfig.validate();
 
         // Game speed mode that starts fast, slows down when units are attacking
-        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
+        AGameSpeed.init();
+//        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
 
         // One time map analysis for every map
         AMap.initMapAnalysis();
 
         // Set prodction strategy (build orders) to use. It can be always changed dynamically.
         initializeBuildOrder();
+
+        AInitialActions.executeInitialActions();
+
+        System.out.println("### Atlantis is working! ###");
     }
 
     private static void handleCheckIfUmsMap() {

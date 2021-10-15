@@ -4,10 +4,11 @@ import atlantis.combat.squad.ASquadManager;
 import atlantis.constructing.*;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
-import atlantis.init.AInitialActions;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.repair.ARepairAssignments;
+import atlantis.ums.UmsSpecialActions;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 
@@ -106,7 +107,7 @@ public class Atlantis implements BWEventListener {
 
         // === Handle PAUSE ================================================
         // If game is paused wait 100ms - pause is handled by PauseBreak button
-        while (AGame.isPaused()) {
+        while (AGameSpeed.isPaused()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -117,17 +118,7 @@ public class Atlantis implements BWEventListener {
         // === All game actions that take place every frame ==================================================
         
         try {
-            
-            // Initial actions - those should be executed only once (optimally assign mineral gatherers).
-            if (!_initialActionsExecuted) {
-                
-                System.out.println("### Starting Atlantis... ###");
-                AInitialActions.executeInitialActions();
-                System.out.println("### Atlantis is working! ###");
-                _initialActionsExecuted = true;
-            }
 
-            // =========================================================
             // If game is running (not paused), proceed with all actions.
             if (gameCommander != null) {
                 gameCommander.update();
@@ -135,9 +126,7 @@ public class Atlantis implements BWEventListener {
             else {
                 System.err.println("Game Commander is null, totally screwed.");
             }
-            
-            return;
-        } 
+        }
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
         catch (Exception e) {
@@ -180,12 +169,7 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
             unit.refreshType();
             
-            AProductionQueueManager.rebuildQueue();
-
-            // Our unit
-            if (unit.isOurUnit()) {
-                ASquadManager.possibleCombatUnitCreated(unit);
-            }
+            ourNewUnit(unit);
         }
         else {
             System.err.println("onUnitComplete null for " + u);
@@ -204,9 +188,10 @@ public class Atlantis implements BWEventListener {
             if (unit.isEnemyUnit()) {
                 AEnemyUnits.unitDestroyed(unit);
             }
-            else {
+            else if (unit.isOurUnit()) {
                 AOurUnitsExtraInfo.idsOfOurDestroyedUnits.add(unit.getID());
 //                System.err.println(unit.getID() + " destroyed [*]");
+                AGameSpeed.changeSpeedTo(1);
             }
 
             // Our unit
@@ -234,7 +219,19 @@ public class Atlantis implements BWEventListener {
 
             // Enemy unit
             if (unit.isEnemyUnit()) {
-                AEnemyUnits.discoveredEnemyUnit(unit);
+                enemyNewUnit(unit);
+            }
+
+            // Can happen in UMS maps
+            else if (unit.isOurUnit()) {
+                ASquadManager.possibleCombatUnitCreated(unit);
+            }
+
+            else {
+                System.out.println("Neutral unit discovered! " + unit.getShortName());
+                if (!unit.isBuilding()) {
+                    UmsSpecialActions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+                }
             }
         }
     }
@@ -326,7 +323,35 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitRenegade(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+        onUnitDestroy(u);
+        AUnit.forgetUnitEntirely(u);
+        AUnit newUnit = AUnit.createFrom(u);
+
+        // New unit taken from us
+        if (u.getPlayer().equals(AGame.getPlayerUs())) {
+            ourNewUnit(newUnit);
+            System.out.println("NEW RENEGADE FOR US " + newUnit.getShortName());
+            UmsSpecialActions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = newUnit;
+        }
+
+        // New unit for us e.g. some UMS maps give units
+        else {
+            enemyNewUnit(newUnit);
+            System.out.println("NEW RENEGADE FOR ENEMY " + newUnit.getShortName());
+        }
+    }
+
+    private void enemyNewUnit(AUnit unit) {
+        AEnemyUnits.discoveredEnemyUnit(unit);
+    }
+
+    private void ourNewUnit(AUnit unit) {
+        AProductionQueueManager.rebuildQueue();
+
+        // Our unit
+        if (unit.isOurUnit()) {
+            ASquadManager.possibleCombatUnitCreated(unit);
+        }
     }
 
     /**
@@ -378,8 +403,8 @@ public class Atlantis implements BWEventListener {
         if (Atlantis.game() == null) {
             return;
         }
-        System.out.println("It took " + AGame.getTimeSeconds() + " seconds.");
-        System.out.println("Killed: " + AGame.getPlayerUs().getKillScore() + ", Lost: " + AGame.getEnemy().getKillScore());
+        System.out.println("It took " + AGame.getTimeSeconds() + " seconds. Killed: "
+                + AGame.getPlayerUs().getKillScore() + ", Lost: " + AGame.getEnemy().getKillScore());
         System.out.println("Resource +/- balance: " + AGame.killsLossesResourceBalance());
     }
 
@@ -416,7 +441,6 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onPlayerLeft(Player player) {
-
     }
 
     /**
@@ -463,8 +487,6 @@ public class Atlantis implements BWEventListener {
         if (!_isStarted) {
             _isPaused = false;
             _isStarted = true;
-
-//            bwClient.getModule().setEventListener(this);
 
             bwClient = new BWClient(this);
             bwClient.startGame();

@@ -27,7 +27,7 @@ public class AAvoidInvisibleEnemyUnits {
 
         AUnit hiddenEnemy = Select.enemyOfType(type).inRadius(safetyMargin, unit).first();
         if (hiddenEnemy != null) {
-            unit.runFrom(hiddenEnemy);
+            unit.runFrom(hiddenEnemy, 2);
             return true;
         }
 

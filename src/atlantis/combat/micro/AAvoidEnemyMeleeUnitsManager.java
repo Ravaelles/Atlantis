@@ -5,14 +5,14 @@ import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.util.A;
 import bwapi.Color;
 
 
 public class AAvoidEnemyMeleeUnitsManager {
     
     private static AUnit nearestEnemy = null;
-//    private Select<AUnit> enemyRealUnitsSelector = null;
-    
+
     // =========================================================
 
     /**
@@ -23,23 +23,18 @@ public class AAvoidEnemyMeleeUnitsManager {
             return false;
         }
 
-        if (Select.enemyRealUnits().combatUnits().inRadius(6, unit).count() <= 0) {
-            return false;
-        }
-        
         // =========================================================
 
-        boolean isEnemyDangerouslyClose = AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(unit);
+        boolean isEnemyDangerouslyClose = shouldRunFromAnyEnemyMeleeUnit(unit);
         if (!isEnemyDangerouslyClose) {
             return false;
         }
 
         // === Run the fuck outta here ==============================
-        
+
 //            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), "RUN", Color.Red);
 
-        if (unit.runFrom(null)) {
-//                APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -48), "RUUUUUUUN", Color.Orange);
+        if (unit.runFrom(nearestEnemy, 1.5)) {
             unit.setTooltip("MeleeRun");
             return true;
         }
@@ -47,25 +42,49 @@ public class AAvoidEnemyMeleeUnitsManager {
         return handleErrorRun(unit);
     }
 
+    public static double getCriticalDistance(AUnit unit) {
+        nearestEnemy = nearestEnemy(unit);
+        if (nearestEnemy == null) {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        // If unit is much slower than enemy, don't run at all. It's better to shoot instead.
+        double quicknessDifference = unit.getSpeed() - nearestEnemy.getSpeed();
+        int beastNearby = Select.enemy().ofType(AUnitType.Protoss_Archon, AUnitType.Zerg_Ultralisk).inRadius(5, unit).count();
+
+        double baseCriticalDistance = 0;
+        double quicknessBonus = Math.min(0.5, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
+        double healthBonus = unit.getWoundPercent() / 38.0;
+        double beastBonus = (beastNearby > 0 ? 1.2 : 0);
+        double ourMovementBonus = unit.isMoving() ? (unit.lastStartedRunningAgo(12) ? 0.8 : 0) : 1.2;
+        double enemyMovementBonus = (nearestEnemy != null && unit.isOtherUnitFacingThisUnit(nearestEnemy))
+                ? (nearestEnemy.isMoving() ? 2.0 : 0.7) : 0;
+//        APainter.paintTextCentered(unit.getPosition(), ourMovementBonus + " // " + + enemyMovementBonus, Color.White, 0, 3);
+
+        double criticalDist = baseCriticalDistance + quicknessBonus + healthBonus + beastBonus + ourMovementBonus + enemyMovementBonus;
+        return A.inRange(0.1, criticalDist, 4.8);
+    }
+
     // =========================================================
 
     private static boolean handleErrorRun(AUnit unit) {
-        unit.setTooltip("ERROR_RUN");
         System.err.println("ERROR_RUN for " + unit.getShortNamePlusId());
 
-        return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        unit.setTooltip("Cant run, fight");
+
+        return true;
     }
 
     private static boolean shouldNotAvoidMeleeUnits(AUnit unit) {
+        boolean shouldSkip = !unit.isWorker() && (unit.isAirUnit() || unit.isMeleeUnit());
+        if (shouldSkip) {
+            return true;
+        }
 
-        // === Issue orders every 3 frames or so ========================================
-//        if (unit.getFramesSinceLastOrderWasIssued() <= 2 && !unit.isIdle()) {
-
-            // Scout mustn't exit here, otherwise scouting behavior will override this behavior.
-//            if (unit.isScout()) {
-//                return true;
-//            }
-//        }
+        if (Select.enemyCombatUnits().inRadius(6, unit).count() <= 0) {
+            return false;
+        }
 
         // === Reaver should not avoid if has no cooldown ===============================
 
@@ -84,72 +103,37 @@ public class AAvoidEnemyMeleeUnitsManager {
 
         // =========================================================
 
-        boolean shouldSkip = !unit.isWorker() && (unit.isAirUnit() || unit.isMeleeUnit());
-        if (shouldSkip) {
-            return true;
-        }
-
         return false;
     }
 
-    private static boolean shouldRunFromAnyEnemyMeleeUnit(AUnit unit) {
-        Select<?> closeEnemies = Select.enemyRealUnits().combatUnits().melee().inRadius(6, unit);
-        nearestEnemy = closeEnemies.nearestTo(unit);
-        unit.setCachedNearestMeleeEnemy(nearestEnemy);
-
-        if (nearestEnemy != null) {
-            return isEnemyCriticallyClose(unit);
-        }
-
-        return false;
+    public static boolean shouldRunFromAnyEnemyMeleeUnit(AUnit unit) {
+        return isEnemyCriticallyClose(unit);
     }
 
-    private static boolean isEnemyCriticallyClose(AUnit unit) {
+    private static AUnit nearestEnemy(AUnit unit) {
+        if (nearestEnemy != null && nearestEnemy.isAlive()) {
+            return nearestEnemy;
+        }
+
+        return nearestEnemy = Select.enemyCombatUnits().melee().inRadius(6, unit).nearestTo(unit);
+    }
+
+    public static boolean isEnemyCriticallyClose(AUnit unit) {
+        nearestEnemy = nearestEnemy(unit);
+
+        if (nearestEnemy == null) {
+            return false;
+        }
+
         double criticalDistance = getCriticalDistance(unit);
         double enemyDistance = nearestEnemy.distanceTo(unit);
 
-        // isEnemyCriticallyClose
         if (enemyDistance <= criticalDistance) {
-//            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Red);
-            APainter.paintCircle(unit.getPosition(), 22, Color.Red);
-            APainter.paintCircle(unit.getPosition(), 20, Color.Red);
-            APainter.paintCircle(unit.getPosition(), 18, Color.Red);
-//            APainter.paintLine(unit, nearestEnemy, Color.Red);
             return true;
         }
         else {
-            APainter.paintCircle(unit.getPosition(), 20, Color.Green);
-            APainter.paintCircle(unit.getPosition(), 17, Color.Green);
-//            APainter.paintCircle(unit.getPosition(), (int) (32 * criticalDistance), Color.Green);
             return false;
         }
-    }
-
-    public static double getCriticalDistance(AUnit unit) {
-        if (nearestEnemy == null) {
-            return -Double.POSITIVE_INFINITY;
-        }
-
-        double quicknessDifference = unit.getSpeed() - nearestEnemy.getSpeed();
-//        System.out.println("quicknessDifference = " + quicknessDifference + " ### " + unit.getSpeed() + " // " + nearestEnemy.getSpeed());
-
-        // If unit is very slow, don't run at all
-        if (quicknessDifference <= -0.3) {
-            return -Double.POSITIVE_INFINITY;
-        }
-
-//        double baseCriticalDistance = (unit.isQuick() ? 4.8 : 3.0);
-        double baseCriticalDistance = 3.0;
-        double quicknessBonus = Math.min(quicknessDifference * 2, 1.7);
-        double healthBonus = unit.getWoundPercent() / 38;
-        double archonBonus = (((Select.enemy().ofType(AUnitType.Protoss_Archon).inRadius(5, unit)).count() > 0) ? 1.2 : 0);
-//        double movementBonus = unit.isMoving() ? (unit.lastRunAgo(12) ? -1.3 : 1.2) : 0;
-        double movementBonus = unit.isMoving() ? (unit.lastStartedRunningAgo(12) ? -1.3 : 1.2) : 0;
-        double directionBonus = nearestEnemy != null && unit.isOtherUnitFacingThisUnit(nearestEnemy) ? -2.5 : 2;
-
-        double criticalDistance = baseCriticalDistance + quicknessBonus + healthBonus + archonBonus + movementBonus + directionBonus;
-
-        return criticalDistance;
     }
 
 }

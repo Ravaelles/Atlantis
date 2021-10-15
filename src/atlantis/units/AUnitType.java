@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.util.A;
 import bwapi.TechType;
 import bwapi.UnitType;
 import bwapi.WeaponType;
@@ -360,22 +361,7 @@ public class AUnitType implements Comparable<AUnitType> {
     public boolean isMeleeUnit() {
         if (!_checkedIfIsMelee) {
             _checkedIfIsMelee = true;
-            _isMelee = isType(
-                    // Terran
-                    AUnitType.Terran_SCV,
-                    AUnitType.Terran_Firebat,
-                    // Protoss
-                    AUnitType.Protoss_Probe,
-                    AUnitType.Protoss_Zealot,
-                    AUnitType.Protoss_Dark_Templar,
-                    AUnitType.Protoss_Archon,
-                    // Zerg
-                    AUnitType.Zerg_Drone,
-                    AUnitType.Zerg_Zergling,
-                    AUnitType.Zerg_Broodling,
-                    AUnitType.Zerg_Ultralisk,
-                    AUnitType.Zerg_Infested_Terran
-            );
+            _isMelee = getGroundWeapon().maxRange() <= 40;
         }
         return _isMelee;
     }

@@ -318,7 +318,7 @@ public class AMap {
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValid();
             if (AMap.isWalkable(position) && !isExplored(position) && startPoint.hasPathTo(position)) {
-                return position;
+                return getMostWalkablePositionNear(position, 4);
             }
         }
         return position;
@@ -344,6 +344,46 @@ public class AMap {
         }
 
         return null;
+    }
+
+
+    /**
+     * If unit moves near the edges, its running options are limited and could be stuck.
+     * Instead of going there, prefer a nearby position which has more space around.
+     */
+    public static APosition getMostWalkablePositionNear(APosition position, int tileSearchRadius) {
+        int bestScore = -1;
+        APosition bestTile = null;
+
+        for (int dtx = -tileSearchRadius; dtx <= 2 * tileSearchRadius; dtx += 2) {
+            for (int dty = -tileSearchRadius; dty <= 2 * tileSearchRadius; dty += 2) {
+                if (dtx != 0 && dty != 0) {
+                    APosition tile = position.translateByTiles(dtx, dty).makeValidFarFromBounds();
+                    int score = tileWalkabilityScore(tile);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestTile = tile;
+                    }
+                }
+            }
+        }
+
+        return bestTile;
+    }
+
+    private static int tileWalkabilityScore(APosition position) {
+        int score = 0;
+        int tileSearchRadius = 8;
+
+        for (int dtx = -tileSearchRadius; dtx <= 2 * tileSearchRadius; dtx += 3) {
+            for (int dty = -tileSearchRadius; dty <= 2 * tileSearchRadius; dty += 3) {
+                if (tileSearchRadius <= dtx + dty && dtx + dty <= tileSearchRadius + 1) {
+                    score += isWalkable(position.translateByTiles(dtx, dty).makeValid()) ? 1 : 0;
+                }
+            }
+        }
+
+        return score;
     }
 
     /**
@@ -654,6 +694,16 @@ public class AMap {
      */
     public static double getGroundDistance(AUnit unit, APosition runTo) {
         return BWTA.getGroundDistance(unit.getPosition().toTilePosition(), runTo.toTilePosition()) / 32;
+    }
+
+    public static boolean distanceToNearestChokeLessThan(AUnit unit, double dist) {
+        for (AChokepoint choke : getChokePoints()) {
+            if ((choke.getCenter().distanceTo(unit) - choke.getWidth()) <= dist) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

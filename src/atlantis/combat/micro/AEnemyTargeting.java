@@ -13,9 +13,14 @@ public class AEnemyTargeting {
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
     public static AUnit defineBestEnemyToAttackFor(AUnit unit, double maxDistFromEnemy) {
-        return selectUnitToAttackByType(unit, maxDistFromEnemy);
+        AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
+        if (enemy == null) {
+            return null;
+        }
+
+        return selectWeakestEnemyInRangeOfType(enemy.getType(), unit);
     }
-    
+
     // =========================================================
 
     private static AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
@@ -150,6 +155,17 @@ public class AEnemyTargeting {
                 .nearestTo(unit);
 
         return nearestEnemy;
+    }
+
+    private static AUnit selectWeakestEnemyInRangeOfType(AUnitType enemyType, AUnit ourUnit) {
+        Select<AUnit> targets = Select.enemyOfType(enemyType).visible().canBeAttackedBy(ourUnit, true);
+
+        AUnit mostWounded = targets.clone().mostWounded();
+        if (mostWounded != null && mostWounded.isWounded()) {
+            return mostWounded;
+        }
+
+        return targets.nearestTo(ourUnit);
     }
     
 }

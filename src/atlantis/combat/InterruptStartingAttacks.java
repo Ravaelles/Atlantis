@@ -17,23 +17,7 @@ public class InterruptStartingAttacks {
         int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
         int lastStartingAttack = AGame.framesAgo(unit._lastStartingAttack);
         int cooldown = unit.getCooldownCurrent();
-        int friends = Select.ourCombatUnits().inRadius(2.5, unit).count();
-
-        // === Nearby melee ========================================
-
-//        double minDistToContinueAttack = 2.7 + unit.getWoundPercent() / 50.0 ;
-//        if (
-//                (
-//                        (unit.getHPPercent() < (95 - friends) && !AGame.isPlayingAsTerran())
-//                        || (unit.getCooldownCurrent() <= 0 && unit.hasNotMovedInAWhile() && unit.lastStartedAttackAgo() > 40)
-//                )
-//                && Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isNotEmpty()
-//        ) {
-//            APainter.paintCircle(unit.getPosition(), 21, Color.Orange);
-//            APainter.paintCircle(unit.getPosition(), 19, Color.Orange);
-//            APainter.paintCircle(unit.getPosition(), 17, Color.Orange);
-//            return false;
-//        }
+//        int friends = Select.ourCombatUnits().inRadius(2.5, unit).count();
 
         // =========================================================
 

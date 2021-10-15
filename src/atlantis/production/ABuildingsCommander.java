@@ -33,13 +33,6 @@ public class ABuildingsCommander {
         // Auxiliary class, avoid using it for anything else than debugging.
         ABuildingManager.update();
 
-        // === Terran only =========================================
-
-        if (AGame.isPlayingAsTerran()) {
-            TerranFlyingBuildingManager.update();
-            ARepairCommander.update();
-        }
-
         // =========================================================
         
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_BUILDINGS);

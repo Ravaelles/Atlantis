@@ -71,9 +71,7 @@ public class Select<T> {
                 if (player.isEnemy(playerUs)) {
                     for (Unit u : player.getUnits()) {
                         AUnit unit = AUnit.createFrom(u);
-                        if (!unit.getType().isSpecial()) {
-                            data.add(unit);
-                        }
+                        data.add(unit);
                     }
                 }
             }
@@ -84,9 +82,7 @@ public class Select<T> {
         else {
             for (Unit u : AGame.getEnemy().getUnits()) {
                 AUnit unit = AUnit.createFrom(u);
-                if (!unit.getType().isSpecial()) {
-                    data.add(unit);
-                }
+                data.add(unit);
             }
         }
 
@@ -258,7 +254,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
             if (unit.isCompleted() && !unit.isNotActuallyUnit() && !unit.getType().isBuilding()
-                    && !unit.getType().equals(AtlantisConfig.WORKER) && !unit.getType().isSpecial()) {
+                    && !unit.getType().equals(AtlantisConfig.WORKER)) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
         }
@@ -307,7 +303,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit() && !unit.type().isSpecial()) {
+            if (unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
                 data.add(unit);
             }
         }
@@ -339,9 +335,7 @@ public class Select<T> {
 
         //TODO: check whether enemy().getUnits() has the same behavior as getEnemyUnits()
         for (AUnit unit : enemyUnits()) {
-            if (!unit.getType().isSpecial()) {
-                data.add(unit);
-            }
+            data.add(unit);
         }
 
         return new Select<AUnit>(data);
@@ -355,10 +349,24 @@ public class Select<T> {
 
         for (AUnit unit : enemyUnits()) {
             if (unit.isVisible() && unit.getHitPoints() >= 1) {
-                if ((!unit.isAirUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)
-                        && !unit.getType().isSpecial()) {
+                if ((!unit.isAirUnit() && includeGroundUnits) || (unit.isAirUnit() && includeAirUnits)) {
                     data.add(unit);
                 }
+            }
+        }
+
+        return new Select<AUnit>(data);
+    }
+
+    /**
+     * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
+     */
+    public static Select<AUnit> enemyCombatUnits() {
+        List<AUnit> data = new ArrayList<>();
+
+        for (AUnit unit : enemyUnits()) {
+            if (!unit.isBuilding() && !unit.isWorker() && !unit.isNotActuallyUnit()) {
+                data.add(unit);
             }
         }
 
@@ -705,7 +713,7 @@ public class Select<T> {
             AFoggedUnit uData = dataFrom(unitsIterator.next());
             AUnit u = uData.getUnit();	//TODO: will work only on visible units...
             if (!u.isCompleted() || u.isWorker() || (uData.getType().isBuilding() && !uData.getType().isCombatBuilding())
-                    || u.getType().isInvincible() || u.getType().isSpecial() || u.getType().isMine()) {
+                    || u.getType().isInvincible() || u.getType().isMine()) {
                 unitsIterator.remove();
             }
         }
@@ -834,39 +842,26 @@ public class Select<T> {
         return this;
     }
 
-    /**
-     * Selects only those units from current selection, which are both <b>capable of attacking</b> given unit
-     * (e.g. Zerglings can't attack Overlord) and are <b>within shot range</b> to the given <b>unit</b>.
-     */
     public Select<T> canAttack(AUnit targetUnit) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
-                boolean isInShotRange = unit.hasRangeToAttack(targetUnit, 0);
+                boolean isInShotRange = unit.inWeaponRange(targetUnit, 0);
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 }
-//                else {
-//                    System.out.println(unit.getType().getShortName() + " in range ("
-//                            + unit.distanceTo(targetUnit) + ") to attack " + targetUnit.getType().getShortName());
-//                }
             }
         }
         return this;
     }
 
-    /**
-     * Selects only those units from current selection, which are both <b>capable of attacking</b> given unit
-     * (e.g. Zerglings can't attack Overlord) and are <b>within shot range</b> with allowed
-     * <b>distanceSafetyBonus</b> distance extra error to the given <b>unit</b>.
-     */
-    public Select<T> canAttack(AUnit targetUnit, double distanceSafetyBonus) {
+    public Select<T> canAttack(AUnit targetUnit, double attackRangeBonus) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
-                boolean isInShotRange = unit.hasRangeToAttack(targetUnit, distanceSafetyBonus);
+                boolean isInShotRange = unit.inWeaponRange(targetUnit, attackRangeBonus);
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 }
@@ -884,11 +879,11 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             AUnit prey = unitFrom(unitsIterator.next());
 
-            if (!attacker.canAttackThisKindOfUnit(prey, false)) {
-                unitsIterator.remove();
-            }
+//            if (!attacker.canAttackThisKindOfUnit(prey, false)) {
+//                unitsIterator.remove();
+//            }
 
-            if (includeShootingRang && !attacker.hasRangeToAttack(prey, 0.05)) {
+            if (includeShootingRang && !attacker.inWeaponRange(prey, 0)) {
                 unitsIterator.remove();
             }
         }
@@ -1119,6 +1114,16 @@ public class Select<T> {
         else {
             return null;
         }
+    }
+
+    public AUnit mostWounded() {
+        if (data.isEmpty()) {
+            return null;
+        }
+
+        sortByHealth();
+
+        return (AUnit) data.get(0);
     }
 
     /**
@@ -1385,6 +1390,24 @@ public class Select<T> {
                 }
             }
         });
+
+        return data;
+    }
+
+    public List<T> sortByHealth() {
+        if (data.isEmpty()) {
+            return null;
+        }
+
+        Collections.sort(data, Comparator.comparingDouble(u -> ((AUnit) u).getHPPercent()));
+
+//        if (data.size() > 1) {
+//            System.out.println("data = ");
+//            for (T unit :
+//                    data) {
+//                System.out.println(((AUnit) unit).getShortName() + " - " + ((AUnit) unit).getHPPercent());
+//            }
+//        }
 
         return data;
     }

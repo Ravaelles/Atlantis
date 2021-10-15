@@ -1,7 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
-import atlantis.combat.squad.AStickCloserOrSpreadOutManager;
+import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 
@@ -23,7 +23,7 @@ public class MissionContain extends Mission {
 //            return true;
 //        }
 
-        if (AStickCloserOrSpreadOutManager.handle(unit)) {
+        if (ASquadCohesionManager.handle(unit)) {
             return true;
         }
 

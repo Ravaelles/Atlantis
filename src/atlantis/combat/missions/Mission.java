@@ -54,7 +54,7 @@ public abstract class Mission {
 
         if (temporaryTarget != null) {
             unit.move(temporaryTarget, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy");
-            Atlantis.game().drawLineMap(unit.getPosition(), temporaryTarget, Color.Red);
+            Atlantis.game().drawLineMap(unit.getPosition(), temporaryTarget, Color.Yellow);
             return true;
         }
         else {

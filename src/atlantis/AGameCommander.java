@@ -3,8 +3,11 @@ package atlantis;
 import atlantis.combat.ACombatCommander;
 import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
+import atlantis.protoss.ProtossSpecificBuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
+import atlantis.terran.TerranSpecificBuildingsCommander;
+import atlantis.ums.UmsSpecialActions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.workers.AWorkerCommander;
@@ -27,12 +30,26 @@ public class AGameCommander {
 
         // === Execute code of every Commander and Manager ==================
 
+        if (AGame.isUms()) {
+            if (UmsSpecialActions.update()) {
+                return;
+            }
+        }
+
+
         AUnitStateManager.update();
         AStrategyCommander.update();
         ABuildingsCommander.update();
         AWorkerCommander.update();
         ACombatCommander.update();
         AScoutManager.update();
+
+        if (AGame.isPlayingAsProtoss()) {
+            ProtossSpecificBuildingsCommander.update();
+        }
+        else if (AGame.isPlayingAsTerran()) {
+            TerranSpecificBuildingsCommander.update();
+        }
 
         // === Handle UMS ===================================================
         

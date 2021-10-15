@@ -63,7 +63,7 @@ public class AWorkerDefenceManager {
         // Run from every combat unit...
         for (AUnit enemy : enemiesInRange) {
             if (!enemy.isWorker()) {
-                worker.runFrom(enemy);
+                worker.runFrom(enemy, 2);
                 return true;
             }
         }
@@ -71,7 +71,7 @@ public class AWorkerDefenceManager {
         // ...but run from enemy workers only if seriously wounded.
         for (AUnit enemy : enemiesInRange) {
             if (enemy.isWorker() && worker.getHP() < 11) {
-                worker.runFrom(enemy);
+                worker.runFrom(enemy, 2);
                 return true;
             }
         }

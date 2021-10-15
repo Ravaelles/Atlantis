@@ -1,17 +1,15 @@
 package atlantis.combat.squad;
 
-import atlantis.AGame;
-import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
-import bwapi.Color;
 
-public class AStickCloserOrSpreadOutManager {
+public class ASquadCohesionManager {
 
     public static boolean handle(AUnit unit) {
-        APosition medianPosition = unit.getSquad().getMedianUnitPosition();
+        APosition medianPosition = unit.getSquad().getSquadCenter();
 
         if (handleShouldSpreadOut(unit, medianPosition)) {
             return true;
@@ -24,17 +22,36 @@ public class AStickCloserOrSpreadOutManager {
         return false;
     }
 
+    public static boolean handleExtremeUnitPositioningInSquad(AUnit unit) {
+        if (!unit.isRunning() && unit.distanceTo(squadCenter(unit)) >= 11) {
+            unit.move(squadCenter(unit), UnitActions.MOVE, "Very lonely!");
+            return true;
+        }
+
+        return false;
+    }
+
+    public static double preferredDistToSquadCenter(int squadSize) {
+        return Math.max(4.0, Math.sqrt(squadSize));
+    }
+
     // =========================================================
 
     private static boolean handleShouldSpreadOut(AUnit unit, APosition medianPoint) {
+        if (unit.getSquad().size() <= 1) {
+            return false;
+        }
+
         Select<AUnit> ourCombatUnits = Select.ourCombatUnits();
         if (
                 ourCombatUnits.clone().inRadius(4.5, unit).count() >= 12
                 || ourCombatUnits.clone().inRadius(2.5, unit).count() >= 4
+                || ourCombatUnits.clone().inRadius(0.5, unit).count() >= 3
         ) {
             return unit.moveAwayFrom(
-                    ourCombatUnits.exclude(unit).nearestTo(unit).getPosition(),
-                    2,
+//                    ourCombatUnits.exclude(unit).nearestTo(unit).getPosition(),
+                    medianPoint,
+                    1,
                     "Spread out"
             );
         }
@@ -50,7 +67,7 @@ public class AStickCloserOrSpreadOutManager {
 
         Select<AUnit> closeFriends = Select.ourCombatUnits();
         AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
-        double maxDistToMedian = maxDistToMedian(squadSize);
+        double maxDistToMedian = preferredDistToSquadCenter(squadSize);
 
 //        if (
 //                nearestFriend != null
@@ -64,10 +81,10 @@ public class AStickCloserOrSpreadOutManager {
                 unit.distanceTo(nearestFriend) > 1.9
 //        squadSize >= 4 &&
                 || (unit.distanceTo(medianPoint) > maxDistToMedian)
-                || (squadSize >= 3 && closeFriends.clone().inRadius(4, unit).count() < 3)
+                || (squadSize >= 3 && closeFriends.clone().inRadius(4, unit).count() <= 2)
         ) {
             unit.move(
-                    medianPoint,
+                    medianPoint.translatePercentTowards(unit, 20),
                     UnitActions.MOVE,
                     "Closer(" + (int) medianPoint.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
             );
@@ -77,7 +94,7 @@ public class AStickCloserOrSpreadOutManager {
         if (closeFriends.clone().inRadius(2, unit).count() == 0) {
             if (nearestFriend != null) {
                 unit.move(
-                        nearestFriend.getPosition(),
+                        nearestFriend.getPosition().translatePercentTowards(unit, 20),
                         UnitActions.MOVE,
                         "Love(" + (int) nearestFriend.distanceTo(unit) + ")"
                 );
@@ -88,8 +105,8 @@ public class AStickCloserOrSpreadOutManager {
         return false;
     }
 
-    public static double maxDistToMedian(int squadSize) {
-        return Math.max(2.6, Math.ceil(squadSize / 5.0));
+    private static APosition squadCenter(AUnit unit) {
+        return unit.getSquad().getSquadCenter();
     }
 
 }

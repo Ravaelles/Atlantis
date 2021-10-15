@@ -26,6 +26,10 @@ public class UnitActions {
     public static final UnitAction PATROL = new UnitAction().setName("PATROL");
     public static final UnitAction REPAIR = new UnitAction().setName("REPAIR");
     public static final UnitAction RETREAT = new UnitAction(false, true).setName("RETREAT");
+
+    // For the love of Aiur - dont use it unless there's no direct tech for it e.g. Protoss Recharge Shields
+    public static final UnitAction RIGHT_CLICK = new UnitAction().setName("RIGHT_CLICK");
+
     public static final UnitAction RUN = new UnitAction(false, true).setName("RUN");
     public static final UnitAction RESEARCH_OR_UPGRADE = new UnitAction().setName("RESEARCH_OR_UPGRADE");
     public static final UnitAction SIEGE = new UnitAction().setName("SIEGE");

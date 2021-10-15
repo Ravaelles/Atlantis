@@ -41,7 +41,7 @@ public abstract class AbstractMicroManager {
             unit._lastRetreat = AGame.now();
             unit.setTooltip("Retreat");
             MissionChanger.notifyThatUnitRetreated(unit);
-            return unit.runFrom(null);
+            return unit.runFrom();
         }
 
         if (Objects.equals(unit.getTooltip(), "Retreat")) {

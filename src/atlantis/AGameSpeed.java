@@ -2,29 +2,33 @@ package atlantis;
 
 import bwapi.Game;
 
+import java.util.concurrent.TimeUnit;
+
 import static atlantis.Atlantis.game;
 
 public class AGameSpeed {
+
+    private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
 
     /**
      * Game speed. Lower is faster. 0 is fastest, 20 is about normal game speed.
      * In game you can use buttons -/+ to change the game speed.
      */
-    public static int gameSpeed = 10;
+    public static int gameSpeed = 0;
 
     /**
      * By skipping rendering of game frames, we can make the game much quicker, regardless of the game speed.
      * Value 3 means we render every 3th game frame, skipping 67% of total rendering.
      */
-    public static int frameSkip = 70;
+    public static int frameSkip = 0;
 
     private static final int NORMAL_GAME_SPEED = 0;
-    private static final int NORMAL_FRAME_SKIP = 20;
+    private static final int NORMAL_FRAME_SKIP = 5;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
-    private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 20;
+    private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 0;
 
     // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
-    private static boolean dynamicSlowdown_allowDynamicallySlowdown = false;
+    private static boolean dynamicSlowdown_allowDynamicallySlowdown;
     private static boolean dynamicSlowdown_isSlowdownActive = false;
 
     // Last time unit has died; when unit dies, game slows down
@@ -40,6 +44,11 @@ public class AGameSpeed {
 //    }
 
     // =========================================================
+
+    public static void init() {
+        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
+        Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
+    }
 
     /**
      * Decreases game speed to the value specified in AtlantisConfig when action happens.
@@ -89,6 +98,13 @@ public class AGameSpeed {
             speed = 0;
         }
 
+        AGameSpeed.pauseGame();
+
+        try {
+            TimeUnit.MILLISECONDS.sleep(30);
+        } catch (InterruptedException e) {
+        }
+
         gameSpeed = speed;
 
 //        try {
@@ -103,6 +119,12 @@ public class AGameSpeed {
         AGame.sendMessage("/speed " + gameSpeed);
         game().setLocalSpeed(gameSpeed);
 
+        try {
+            TimeUnit.MILLISECONDS.sleep(30);
+        } catch (InterruptedException e) {
+        }
+
+        AGameSpeed.unpauseGame();
 //        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
 //        sendMessage("Game speed: " + speedString);
     }
@@ -151,4 +173,27 @@ public class AGameSpeed {
             System.err.println("Can't change game speed, bwapi is null.");
         }
     }
+
+    public static void pauseGame() {
+        isPaused = true;
+    }
+
+    public static void unpauseGame() {
+        isPaused = false;
+    }
+
+    /**
+     * Enable/disable pause.
+     */
+    public static void pauseModeToggle() {
+        isPaused = !isPaused;
+    }
+
+    /**
+     * Returns true if game is paused.
+     */
+    public static boolean isPaused() {
+        return isPaused;
+    }
+
 }

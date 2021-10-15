@@ -4,9 +4,10 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
+import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionAttack;
-import atlantis.combat.squad.AStickCloserOrSpreadOutManager;
+import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
@@ -117,33 +118,47 @@ public class AAdvancedPainter extends APainter {
      */
     protected static void paintCombatUnits() {
         for (AUnit unit : Select.ourCombatUnits().listUnits()) {
-            APosition unitPosition = unit.getPosition();
+            APosition position = unit.getPosition();
 
             if (unit.isRunning()) {
                 paintRunningUnitWhiteFlag(unit);
             }
 
             // =========================================================
+            // === Paint if enemy units is dangerously close
+            // =========================================================
+
+            double criticalDistance = AAvoidEnemyMeleeUnitsManager.getCriticalDistance(unit);
+            if (AAvoidEnemyMeleeUnitsManager.isEnemyCriticallyClose(unit)) {
+//                APainter.paintCircle(
+//                        unit.getPosition(),
+//                        (int) criticalDistance * 32,
+//                        Color.Red
+//                );
+                APainter.paintCircle(unit.getPosition(), 22, Color.Red);
+                APainter.paintCircle(unit.getPosition(), 20, Color.Red);
+                APainter.paintCircle(unit.getPosition(), 18, Color.Red);
+                APainter.paintCircle(unit.getPosition(), 16, Color.Red);
+            } else {
+                APainter.paintCircle(unit.getPosition(), 20, Color.Green);
+                APainter.paintCircle(unit.getPosition(), 17, Color.Green);
+                APainter.paintCircle(unit.getPosition(), 14, Color.Green);
+//                if (criticalDistance >= 0.1) {
+//                    APainter.paintCircle(
+//                            unit.getPosition(),
+//                            (int) criticalDistance * 32,
+//                            Color.Green
+//                    );
+//                } else if (criticalDistance >= 0) {
+//                    APainter.paintCircleFilled(position, 6, Color.Red);
+//                }
+            }
+
+            // =========================================================
             // === Paint life bars bars over wounded units
             // =========================================================
-            if (unit.isWounded()) {
-                int boxWidth = 20;
-                int boxHeight = 4;
-                int boxLeft = unitPosition.getX() - boxWidth / 2;
-                int boxTop = unitPosition.getY() + 23;
 
-                Position topLeft = new APosition(boxLeft, boxTop);
-
-                // =========================================================
-                // Paint box
-                int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
-                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
-                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
-
-                // =========================================================
-                // Paint box borders
-                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
-            }
+            paintLifeBar(unit);
 
             // =========================================================
             // === Paint targets for combat units
@@ -153,21 +168,24 @@ public class AAdvancedPainter extends APainter {
                 targetPosition = unit.getTarget().getPosition();
             }
             if (targetPosition != null && unit.distanceTo(targetPosition) <= 15) {
-                paintLine(unitPosition, targetPosition, (unit.isAttacking() ? Color.Green : Color.Red));
+                paintLine(position, targetPosition, (unit.isAttacking() ? Color.Orange : Color.Yellow));
             }
 
             // =========================================================
             // === Combat Evaluation Strength
             // =========================================================
-//            if (combatEval < 10) {
-            double eval = ACombatEvaluator.evaluateSituation(unit, true, false);
-//                if (eval < 999) {
-//                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
-//                            : AtlantisCombatEvaluator.getEvalString(unit);
-            String combatStrength = ColorUtil.getColorString(Color.Green)
-                    + ACombatEvaluator.getEvalString(unit, eval);
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
-//                }
+
+            paintCombatEval(unit, false);
+
+////            if (combatEval < 10) {
+//            double eval = ACombatEvaluator.evaluateSituation(unit, true, false);
+////                if (eval < 999) {
+////                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
+////                            : AtlantisCombatEvaluator.getEvalString(unit);
+//            String combatStrength = ColorUtil.getColorString(Color.Green)
+//                    + ACombatEvaluator.getEvalString(unit, eval);
+//            paintTextCentered(new APosition(position.getX(), position.getY() - 15), combatStrength, null);
+////                }
 
             // =========================================================
             // === Paint circle around units with zero ground weapon
@@ -179,7 +197,7 @@ public class AAdvancedPainter extends APainter {
 //            }
             String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
                     + "(" + unit.getLastOrderFramesAgo() + ")";
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() + 8), order, Color.Grey);
+            paintTextCentered(new APosition(position.getX(), position.getY() + 8), order, Color.Grey);
         }
     }
 
@@ -230,20 +248,18 @@ public class AAdvancedPainter extends APainter {
      * Paint extra information about visible enemy combat units.
      */
     static void paintEnemyCombatUnits() {
-        for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
-            paintCircle(unit, unit.getType().getDimensionLeft() * 2, Color.Red);
-            paintCircle(unit, unit.getType().getDimensionLeft() * 2 - 1, Color.Red);
-
-            APosition unitPosition = unit.getPosition();
-            double eval = (int) ACombatEvaluator.evaluateSituation(unit, true, true);
-//            if (eval < 999) {
-//                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
-//                        : AtlantisCombatEvaluator.getEvalString(unit);
-            String combatStrength = ColorUtil.getColorString(Color.Red)
-                    + ACombatEvaluator.getEvalString(unit, eval);
-            paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
-//            }
+        for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
+            paintCombatEval(enemy, true);
+            paintLifeBar(enemy);
         }
+    }
+
+    private static void paintCombatEval(AUnit unit, boolean isEnemy) {
+        APosition unitPosition = unit.getPosition();
+        double eval = (int) ACombatEvaluator.evaluateSituation(unit, true, isEnemy);
+        String combatStrength = ColorUtil.getColorString(Color.Red)
+                + ACombatEvaluator.getEvalString(unit, eval);
+        paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
     }
 
     /**
@@ -1013,6 +1029,27 @@ public class AAdvancedPainter extends APainter {
         paintMessage("Length: " + frameLength, Color.White, x + 4, y + 1, true);
     }
 
+    private static void paintLifeBar(AUnit unit) {
+        if (unit.isWounded()) {
+            int boxWidth = 20;
+            int boxHeight = 4;
+            int boxLeft = unit.getX() - boxWidth / 2;
+            int boxTop = unit.getY() + 23;
+
+            Position topLeft = new APosition(boxLeft, boxTop);
+
+            // =========================================================
+            // Paint box
+            int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
+            bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
+            bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
+
+            // =========================================================
+            // Paint box borders
+            bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
+        }
+    }
+
     protected static void paintRegions() {
         List<ARegion> regions = AMap.getRegions();
         for (ARegion region : regions) {
@@ -1068,9 +1105,9 @@ public class AAdvancedPainter extends APainter {
             return;
         }
 
-        APosition median = alphaSquad.getMedianUnitPosition();
+        APosition median = alphaSquad.getSquadCenter();
         if (median != null) {
-            int maxDist = (int) (AStickCloserOrSpreadOutManager.maxDistToMedian(alphaSquad.size()) * 32);
+            int maxDist = (int) (ASquadCohesionManager.preferredDistToSquadCenter(alphaSquad.size()) * 32);
 
             APainter.paintCircle(median, maxDist + 1, Color.Cyan);
             APainter.paintCircle(median, maxDist, Color.Cyan);

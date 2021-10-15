@@ -24,7 +24,7 @@ public class ProtossObserverManager {
     // =========================================================
 
     private static boolean followSquads(AUnit observer) {
-        APosition goTo = Squad.getAlphaSquad().getMedianUnitPosition();
+        APosition goTo = Squad.getAlphaSquad().getSquadCenter();
         if (goTo != null) {
             observer.move(goTo, UnitActions.MOVE, "Follow");
             return true;
