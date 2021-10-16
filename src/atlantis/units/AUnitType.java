@@ -361,7 +361,7 @@ public class AUnitType implements Comparable<AUnitType> {
     public boolean isMeleeUnit() {
         if (!_checkedIfIsMelee) {
             _checkedIfIsMelee = true;
-            _isMelee = getGroundWeapon().maxRange() <= 40;
+            _isMelee = getGroundWeapon().maxRange() <= 64;
         }
         return _isMelee;
     }

@@ -165,7 +165,12 @@ public class AEnemyTargeting {
             return mostWounded;
         }
 
-        return targets.nearestTo(ourUnit);
+        AUnit nearest = targets.nearestTo(ourUnit);
+        if (nearest != null) {
+            return nearest;
+        }
+
+        return Select.enemyOfType(enemyType).visible().canBeAttackedBy(ourUnit, false).nearestTo(ourUnit);
     }
     
 }

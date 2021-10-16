@@ -455,9 +455,8 @@ public class Select<T> {
     public Select<T> inRadius(double maxDist, AUnit otherUnit) {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
-//            APositionedObject unit = (APositionedObject) unitsIterator.next();
             AUnit unit = (AUnit) unitsIterator.next();
-            if (unit.getPosition().distanceTo(otherUnit) > maxDist) {
+            if (unit.distanceTo(otherUnit) > maxDist) {
                 unitsIterator.remove();
             }
         }
@@ -472,7 +471,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = (AUnit) unitsIterator.next();
-            if (unit.getPosition().distanceTo(position) > maxDist) {
+            if (unit.distanceTo(position) > maxDist) {
                 unitsIterator.remove();
             }
         }
@@ -1108,7 +1107,7 @@ public class Select<T> {
         sortDataByDistanceTo(position, true);
         AUnit nearestUnit = (AUnit) data.get(0);
         
-        if (nearestUnit != null && nearestUnit.getPosition().distanceTo(position) < maxLength) {
+        if (nearestUnit != null && nearestUnit.distanceTo(position) < maxLength) {
             return nearestUnit;
         }
         else {

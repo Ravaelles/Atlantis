@@ -27,7 +27,8 @@ public interface AUnitOrders {
                             "unit#" + unit().getID() + " // " +
                             "cooldown " + unit().getCooldownCurrent()+ " // " +
                             "attackFrame " + unit()._lastAttackFrame + " // " +
-                            "StartingAttack " + unit()._lastStartingAttack
+                            "StartingAttack " + unit()._lastStartingAttack + " // " +
+                            unit().getTooltip()
             );
         }
 //        if (!unit().hasRangeToAttack(target, 0)) {
@@ -104,7 +105,7 @@ public interface AUnitOrders {
 
     default boolean move(Position target, UnitAction unitAction, String tooltip) {
         if (DEBUG && AGame.getTimeFrames() > 50) {
-            System.out.println("MOVE " + AGame.getTimeFrames() + " / unit#" + unit().getID());
+            System.out.println("MOVE " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // " + tooltip);
         }
         if (target == null) {
             System.err.println("Null move position for " + this);
@@ -184,7 +185,7 @@ public interface AUnitOrders {
      */
     default boolean holdPosition(String tooltip) {
         if (DEBUG && AGame.getTimeFrames() > 50) {
-            System.out.println("HOLD " + AGame.getTimeFrames() + " / unit#" + unit().getID());
+            System.out.println("HOLD " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // " + tooltip);
         }
 
         unit().setTooltip(tooltip)
@@ -202,7 +203,7 @@ public interface AUnitOrders {
      */
     default boolean stop(String tooltip) {
         if (DEBUG && AGame.getTimeFrames() > 50) {
-            System.out.println("STOP " + AGame.getTimeFrames() + " / unit#" + unit().getID());
+            System.out.println("STOP " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // " + tooltip);
         }
 
         unit().setTooltip(tooltip)
@@ -577,6 +578,10 @@ public interface AUnitOrders {
     }
 
     default boolean doRightClickAndYesIKnowIShouldAvoidUsingIt(AUnit target) {
+        if (DEBUG && AGame.getTimeFrames() > 50) {
+            System.out.println("RIGHT_CLICK " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // " + target);
+        }
+
         unit().setUnitAction(UnitActions.RIGHT_CLICK);
         unit().setLastUnitOrderNow();
         return u().rightClick(target.u());

@@ -129,7 +129,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             double criticalDistance = AAvoidEnemyMeleeUnitsManager.getCriticalDistance(unit);
-            if (AAvoidEnemyMeleeUnitsManager.isEnemyCriticallyClose(unit)) {
+            if (AAvoidEnemyMeleeUnitsManager.isEnemyCriticallyClose(unit) && criticalDistance > Double.NEGATIVE_INFINITY) {
 //                APainter.paintCircle(
 //                        unit.getPosition(),
 //                        (int) criticalDistance * 32,
@@ -139,7 +139,7 @@ public class AAdvancedPainter extends APainter {
                 APainter.paintCircle(unit.getPosition(), 20, Color.Red);
                 APainter.paintCircle(unit.getPosition(), 18, Color.Red);
                 APainter.paintCircle(unit.getPosition(), 16, Color.Red);
-            } else {
+            } else if (criticalDistance > Double.NEGATIVE_INFINITY) {
                 APainter.paintCircle(unit.getPosition(), 20, Color.Green);
                 APainter.paintCircle(unit.getPosition(), 17, Color.Green);
                 APainter.paintCircle(unit.getPosition(), 14, Color.Green);

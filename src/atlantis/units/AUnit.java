@@ -208,14 +208,16 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
             this.setTooltip(tooltip);
             return true;
         }
-        else {
-            System.out.println("CANT = " + position.distanceTo(newPosition));
+
+//        else {
+//            System.out.println("CANT = " + position.distanceTo(newPosition));
+        // @TODO FIX THIS!!!!!!!
             APainter.paintLine(position, newPosition, Color.Teal);
             this.setTooltip("Cant move away");
             move(newPosition, UnitActions.MOVE, "Force move");
             return true;
 //            return false;
-        }
+//        }
     }
     
     /**

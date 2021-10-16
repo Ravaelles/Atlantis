@@ -32,7 +32,7 @@ public class ASquadCohesionManager {
     }
 
     public static double preferredDistToSquadCenter(int squadSize) {
-        return Math.max(4.0, Math.sqrt(squadSize));
+        return Math.max(5.0, Math.sqrt(squadSize));
     }
 
     // =========================================================
@@ -44,14 +44,14 @@ public class ASquadCohesionManager {
 
         Select<AUnit> ourCombatUnits = Select.ourCombatUnits();
         if (
-                ourCombatUnits.clone().inRadius(4.5, unit).count() >= 12
-                || ourCombatUnits.clone().inRadius(2.5, unit).count() >= 4
-                || ourCombatUnits.clone().inRadius(0.5, unit).count() >= 3
+                ourCombatUnits.clone().inRadius(4.5, unit).count() >= 15
+                || ourCombatUnits.clone().inRadius(2.7, unit).count() >= 9
+                || ourCombatUnits.clone().inRadius(0.6, unit).count() >= 4
         ) {
             return unit.moveAwayFrom(
 //                    ourCombatUnits.exclude(unit).nearestTo(unit).getPosition(),
                     medianPoint,
-                    1,
+                    1.5,
                     "Spread out"
             );
         }
@@ -84,7 +84,7 @@ public class ASquadCohesionManager {
                 || (squadSize >= 3 && closeFriends.clone().inRadius(4, unit).count() <= 2)
         ) {
             unit.move(
-                    medianPoint.translatePercentTowards(unit, 20),
+                    medianPoint.translatePercentTowards(unit, 50),
                     UnitActions.MOVE,
                     "Closer(" + (int) medianPoint.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
             );
@@ -94,7 +94,7 @@ public class ASquadCohesionManager {
         if (closeFriends.clone().inRadius(2, unit).count() == 0) {
             if (nearestFriend != null) {
                 unit.move(
-                        nearestFriend.getPosition().translatePercentTowards(unit, 20),
+                        nearestFriend.getPosition().translatePercentTowards(unit, 50),
                         UnitActions.MOVE,
                         "Love(" + (int) nearestFriend.distanceTo(unit) + ")"
                 );

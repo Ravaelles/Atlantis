@@ -19,6 +19,8 @@ public class AAvoidEnemyMeleeUnitsManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     public static boolean avoidCloseMeleeUnits(AUnit unit) {
+        nearestEnemy = null;
+
         if (shouldNotAvoidMeleeUnits(unit)) {
             return false;
         }
@@ -48,20 +50,24 @@ public class AAvoidEnemyMeleeUnitsManager {
             return Double.NEGATIVE_INFINITY;
         }
 
+        APainter.paintCircleFilled(nearestEnemy.getPosition(), 10, Color.Teal);
+
         // If unit is much slower than enemy, don't run at all. It's better to shoot instead.
         double quicknessDifference = unit.getSpeed() - nearestEnemy.getSpeed();
         int beastNearby = Select.enemy().ofType(AUnitType.Protoss_Archon, AUnitType.Zerg_Ultralisk).inRadius(5, unit).count();
 
         double baseCriticalDistance = 0;
         double quicknessBonus = Math.min(0.5, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
-        double healthBonus = unit.getWoundPercent() / 38.0;
+        double healthBonus = unit.getWoundPercent() / 45.0;
         double beastBonus = (beastNearby > 0 ? 1.2 : 0);
-        double ourMovementBonus = unit.isMoving() ? (unit.lastStartedRunningAgo(12) ? 0.8 : 0) : 1.2;
+        double ourUnitNearby = Select.ourRealUnits().inRadius(0.6, unit).count() / 2.0;
+        double ourMovementBonus = unit.isMoving() ? (unit.lastStartedRunningAgo(12) ? 0.8 : 0) : 1.3;
         double enemyMovementBonus = (nearestEnemy != null && unit.isOtherUnitFacingThisUnit(nearestEnemy))
-                ? (nearestEnemy.isMoving() ? 2.0 : 0.7) : 0;
+                ? (nearestEnemy.isMoving() ? 1.8 : 0.9) : 0;
 //        APainter.paintTextCentered(unit.getPosition(), ourMovementBonus + " // " + + enemyMovementBonus, Color.White, 0, 3);
 
-        double criticalDist = baseCriticalDistance + quicknessBonus + healthBonus + beastBonus + ourMovementBonus + enemyMovementBonus;
+        double criticalDist = baseCriticalDistance + quicknessBonus + healthBonus + beastBonus
+                + ourUnitNearby + ourMovementBonus + enemyMovementBonus;
         return A.inRange(0.1, criticalDist, 4.8);
     }
 
@@ -115,7 +121,7 @@ public class AAvoidEnemyMeleeUnitsManager {
             return nearestEnemy;
         }
 
-        return nearestEnemy = Select.enemyCombatUnits().melee().inRadius(6, unit).nearestTo(unit);
+        return nearestEnemy = Select.enemyCombatUnits().melee().visible().inRadius(6, unit).nearestTo(unit);
     }
 
     public static boolean isEnemyCriticallyClose(AUnit unit) {
@@ -124,6 +130,8 @@ public class AAvoidEnemyMeleeUnitsManager {
         if (nearestEnemy == null) {
             return false;
         }
+
+        APainter.paintCircleFilled(nearestEnemy.getPosition(), 10, Color.Teal);
 
         double criticalDistance = getCriticalDistance(unit);
         double enemyDistance = nearestEnemy.distanceTo(unit);

@@ -34,7 +34,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         // Close enough
-        else if (distToFocusPoint <= optimalDist + 2) {
+        else if (distToFocusPoint <= optimalDist + 1) {
             if (unit.isMoving()) {
                 unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")");
             }
@@ -42,7 +42,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         // Too far
-        else if (distToFocusPoint > optimalDist + 2) {
+        else if (distToFocusPoint > optimalDist + 1) {
             unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")");
             return true;
         }
