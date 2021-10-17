@@ -71,7 +71,7 @@ public class ARunManager {
         // === Define run to position ==============================
 
         AUnit base = Select.mainBase();
-        if (AGame.getTimeSeconds() <= 400 && Count.ourCombatUnits() <= 3 && base != null && base.distanceTo(unit) > 40) {
+        if (AGame.getTimeSeconds() <= 300 && Count.ourCombatUnits() <= 3 && base != null && base.distanceTo(unit) > 35) {
             runTo = base.getPosition();
         } else {
             runTo = getPositionAwayFrom(unit, runAwayFrom, dist);

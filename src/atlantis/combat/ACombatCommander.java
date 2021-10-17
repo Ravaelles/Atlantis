@@ -70,8 +70,6 @@ public class ACombatCommander {
                     A.digit(nearestEnemy.distanceTo(unit)) + " < "
                             + A.digit((new AAvoidEnemyMeleeUnitsManager(unit)).getCriticalDistance()) + " / "
                             + unit.getTooltip()
-                            + " \\ " + A.digit(unit.getAngle())
-                            + " \\ " + A.trueFalse(unit.isOtherUnitFacingThisUnit(nearestEnemy))
             );
         }
     }
