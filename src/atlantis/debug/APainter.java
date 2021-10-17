@@ -87,7 +87,7 @@ public class APainter {
     }
 
     public static void paintLine(APosition start, int dx, int dy, Color color) {
-        paintLine(start, PositionHelper.translateByPixels(start, dx, dy), color);
+        bwapi.drawLineMap(start, PositionHelper.translateByPixels(start, dx, dy), color);
     }
 
     public static void paintLine(Position start, Position end, Color color) {
@@ -197,5 +197,9 @@ public class APainter {
                 4 * 32, 3 * 32, color
         );
         APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
+    }
+
+    public static void assignBwapiInstance() {
+        bwapi = Atlantis.game();
     }
 }

@@ -81,6 +81,8 @@ public class AEnemyTargeting {
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
                         AUnitType.Protoss_Carrier,
                         AUnitType.Protoss_Reaver,
+                        AUnitType.Protoss_Archon,
+                        AUnitType.Protoss_Observer,
                         AUnitType.Zerg_Lurker
                 ).nearestTo(unit);
         if (nearestEnemy != null) {
@@ -135,16 +137,44 @@ public class AEnemyTargeting {
         }
 
         // =========================================================
-        // If no real units found, try selecting important buildings
+        // Bases
 
         nearestEnemy = enemyBuildings.clone()
-                .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool,
-                        AUnitType.Terran_Command_Center)
+                .bases()
                 .canBeAttackedBy(unit, false)
                 .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
         }
+
+        // =========================================================
+        // Important buildings
+
+        nearestEnemy = enemyBuildings.clone()
+                .ofType(
+                        AUnitType.Zerg_Spawning_Pool,
+                        AUnitType.Zerg_Spire,
+                        AUnitType.Terran_Armory,
+                        AUnitType.Protoss_Fleet_Beacon,
+                        AUnitType.Protoss_Templar_Archives
+                )
+                .canBeAttackedBy(unit, false)
+                .nearestTo(unit);
+        if (nearestEnemy != null) {
+            return nearestEnemy;
+        }
+
+        // =========================================================
+        // If no real units found, try selecting important buildings
+
+//        nearestEnemy = enemyBuildings.clone()
+//                .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool,
+//                        AUnitType.Terran_Command_Center)
+//                .canBeAttackedBy(unit, false)
+//                .nearestTo(unit);
+//        if (nearestEnemy != null) {
+//            return nearestEnemy;
+//        }
 
         // =========================================================
         // Okay, try targeting any-fuckin-thing

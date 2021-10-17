@@ -21,6 +21,21 @@ public class InterruptStartingAttacks {
 
         // =========================================================
 
+        if (unit.isAttackFrame()) {
+            unit.setTooltip("Attack frame(" + lastAttackFrame + "/" + lastStartingAttack + ")");
+            return true;
+        }
+
+        if (cooldown <= 3 && unit.lastAttackOrderAgo(9)) {
+            unit.setTooltip("Attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
+            return true;
+        }
+
+        if (unit.isStartingAttack() || unit.lastStartedAttackAgo(9)) {
+            unit.setTooltip("Starts attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
+            return true;
+        }
+
 //        if (unit.isAttacking() && (cooldown <= 3 || cooldown >= cooldownAbsolute - 10)) {
         if (unit.isAttacking() && (cooldown <= 3)) {
             unit.setTooltip("Shooting(" + lastAttackFrame + "/" + unit.getCooldownCurrent() + ")");
@@ -42,16 +57,6 @@ public class InterruptStartingAttacks {
 //        if (lastAttackFrame <= 8 || lastStartingAttack <= 16) {
 //            return true;
 //        }
-
-        if (unit.isAttackFrame()) {
-            unit.setTooltip("Attack frame(" + lastAttackFrame + "/" + lastStartingAttack + ")");
-            return true;
-        }
-
-        if (unit.isStartingAttack()) {
-            unit.setTooltip("Starts attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
-            return true;
-        }
 
 //        if (!unit.isAttacking()) {
 //            unit.setTooltip("AAA(" + unit.getCooldownCurrent() + ")");

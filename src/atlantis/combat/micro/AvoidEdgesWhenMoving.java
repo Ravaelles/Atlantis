@@ -11,7 +11,7 @@ public class AvoidEdgesWhenMoving {
         if (unit.isMoving() && !unit.isRunning()) {
             APosition pos = unit.getPosition();
 
-            if (AMap.distanceToNearestChokeLessThan(unit, 3)) {
+            if (AMap.distanceToNearestChokeLessThan(unit, 5)) {
                 return false;
             }
 

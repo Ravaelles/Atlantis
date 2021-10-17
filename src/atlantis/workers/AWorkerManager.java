@@ -77,6 +77,10 @@ public class AWorkerManager {
             return;
         }
 
+        if (worker.isMoving() || worker.getTarget() != null) {
+            return;
+        }
+
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).
         if (worker.isIdle() || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
@@ -163,4 +167,13 @@ public class AWorkerManager {
         return false;
     }
 
+    public static int countWorkersAssignedTo(AUnit unit) {
+        int count = 0;
+        for (AUnit worker : Select.ourWorkers().list()) {
+            if (unit.equals(worker.getTarget())) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

@@ -2,6 +2,7 @@ package atlantis;
 
 import atlantis.combat.squad.ASquadManager;
 import atlantis.constructing.*;
+import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.production.orders.AProductionQueueManager;
@@ -9,8 +10,12 @@ import atlantis.repair.ARepairAssignments;
 import atlantis.ums.UmsSpecialActions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Select;
+import atlantis.util.A;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
+
+import java.util.Collection;
 
 /**
  * Main bridge between the game and your code, ported to BWMirror.
@@ -104,16 +109,22 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
+        if (A.now() == 7) {
+            AGameSpeed.pauseGame();
+        }
+
+//            Collection<AUnit> workers = Select.ourWorkers().listUnits();
+//            for (AUnit unit : workers) {
+//                APainter.paintLine(unit, unit.getTarget(), Color.Orange);
+//            }
 
         // === Handle PAUSE ================================================
         // If game is paused wait 100ms - pause is handled by PauseBreak button
         while (AGameSpeed.isPaused()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // No need to handle
-            }
-        } 
+            } catch (InterruptedException e) { }
+        }
 
         // === All game actions that take place every frame ==================================================
         
@@ -168,7 +179,7 @@ public class Atlantis implements BWEventListener {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
             unit.refreshType();
-            
+
             ourNewUnit(unit);
         }
         else {
@@ -222,14 +233,12 @@ public class Atlantis implements BWEventListener {
                 enemyNewUnit(unit);
             }
 
-            // Can happen in UMS maps
             else if (unit.isOurUnit()) {
-                ASquadManager.possibleCombatUnitCreated(unit);
             }
 
             else {
-                System.out.println("Neutral unit discovered! " + unit.getShortName());
-                if (!unit.isBuilding()) {
+                if (!unit.isNotActuallyUnit()) {
+                    System.out.println("Neutral unit discovered! " + unit.getShortName());
                     UmsSpecialActions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
                 }
             }
@@ -326,6 +335,9 @@ public class Atlantis implements BWEventListener {
         onUnitDestroy(u);
         AUnit.forgetUnitEntirely(u);
         AUnit newUnit = AUnit.createFrom(u);
+        if (newUnit.getType().isGasBuilding()) {
+            return;
+        }
 
         // New unit taken from us
         if (u.getPlayer().equals(AGame.getPlayerUs())) {
@@ -389,10 +401,10 @@ public class Atlantis implements BWEventListener {
         }
         gameSummary();
 
-        System.out.println("Killing StarCraft process...");
+        System.out.print("Killing StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 
-        System.out.println("Killing Chaoslauncher process...");
+        System.out.print("Killing Chaoslauncher process... ");
         ProcessHelper.killChaosLauncherProcess();
 
         System.out.println("Exit...");
@@ -403,9 +415,9 @@ public class Atlantis implements BWEventListener {
         if (Atlantis.game() == null) {
             return;
         }
-        System.out.println("It took " + AGame.getTimeSeconds() + " seconds. Killed: "
-                + AGame.getPlayerUs().getKillScore() + ", Lost: " + AGame.getEnemy().getKillScore());
-        System.out.println("Resource +/- balance: " + AGame.killsLossesResourceBalance());
+        System.out.print("Total time: " + AGame.getTimeSeconds() + " seconds. Killed: "
+                + AGame.getPlayerUs().getKillScore() + ", Lost: " + AGame.getEnemy().getKillScore() + ". ");
+        System.out.println("Resource killed/lost balance: " + AGame.killsLossesResourceBalance());
     }
 
     /**

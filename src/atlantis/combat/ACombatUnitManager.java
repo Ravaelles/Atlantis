@@ -54,7 +54,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     private static void preActions(AUnit unit) {
-        if (AGameSpeed.isDynamicSlowdownActive() && (unit.isAttacking() || unit.isUnderAttack())) {
+        if (AGameSpeed.isDynamicSlowdownAllowed() && (unit.isAttacking() || unit.isUnderAttack())) {
             AGameSpeed.activateDynamicSlowdown();
         }
 

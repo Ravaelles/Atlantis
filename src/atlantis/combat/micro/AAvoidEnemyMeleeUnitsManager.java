@@ -19,7 +19,7 @@ public class AAvoidEnemyMeleeUnitsManager {
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
     public static boolean avoidCloseMeleeUnits(AUnit unit) {
-        nearestEnemy = null;
+        nearestEnemy = nearestEnemy(unit);
 
         if (shouldNotAvoidMeleeUnits(unit)) {
             return false;
@@ -83,6 +83,10 @@ public class AAvoidEnemyMeleeUnitsManager {
     }
 
     private static boolean shouldNotAvoidMeleeUnits(AUnit unit) {
+        if (nearestEnemy == null) {
+            return true;
+        }
+
         boolean shouldSkip = !unit.isWorker() && (unit.isAirUnit() || unit.isMeleeUnit());
         if (shouldSkip) {
             return true;
@@ -90,6 +94,14 @@ public class AAvoidEnemyMeleeUnitsManager {
 
         if (Select.enemyCombatUnits().inRadius(6, unit).count() <= 0) {
             return false;
+        }
+
+        if (isEnoughOfOurUnitsNearbyToNotAvoid(unit)) {
+            return false;
+        }
+
+        if (unit.isFullyHealthy() && !nearestEnemy.isType(AUnitType.Protoss_Dark_Templar)) {
+            return true;
         }
 
         // === Reaver should not avoid if has no cooldown ===============================
@@ -112,6 +124,19 @@ public class AAvoidEnemyMeleeUnitsManager {
         return false;
     }
 
+    private static boolean isEnoughOfOurUnitsNearbyToNotAvoid(AUnit unit) {
+        Select<AUnit> selector = Select.ourCombatUnits();
+        if (selector.clone().inRadius(1, unit).count() >= 3) {
+            return true;
+        }
+
+        if (unit.getHPPercent() >  50 && selector.clone().inRadius(4, unit).count() >= 12) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean shouldRunFromAnyEnemyMeleeUnit(AUnit unit) {
         return isEnemyCriticallyClose(unit);
     }
@@ -125,7 +150,9 @@ public class AAvoidEnemyMeleeUnitsManager {
     }
 
     public static boolean isEnemyCriticallyClose(AUnit unit) {
-        nearestEnemy = nearestEnemy(unit);
+        if (nearestEnemy == null) {
+            nearestEnemy = nearestEnemy(unit);
+        }
 
         if (nearestEnemy == null) {
             return false;

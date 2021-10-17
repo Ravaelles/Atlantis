@@ -876,13 +876,13 @@ public class Select<T> {
     public Select<T> canBeAttackedBy(AUnit attacker, boolean includeShootingRang) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
-            AUnit prey = unitFrom(unitsIterator.next());
+            AUnit target = unitFrom(unitsIterator.next());
 
-//            if (!attacker.canAttackThisKindOfUnit(prey, false)) {
-//                unitsIterator.remove();
-//            }
+            if (!attacker.canAttackThisKindOfUnit(target, false)) {
+                unitsIterator.remove();
+            }
 
-            if (includeShootingRang && !attacker.inWeaponRange(prey, 0)) {
+            if (includeShootingRang && !attacker.inWeaponRange(target, 0)) {
                 unitsIterator.remove();
             }
         }
@@ -1365,23 +1365,52 @@ public class Select<T> {
      * @return
      */
     public List<T> sortDataByDistanceTo(final Position position, final boolean nearestFirst) {
-        if (position == null) {
-            return null;
-        }
+//        if (position == null) {
+//            return null;
+//        }
 
         Collections.sort(data, new Comparator<T>() {
             @Override
             public int compare(T p1, T p2) {
-                if (p1 == null || !(p1 instanceof HasPosition)) {
-                    return -1;
+                if (!(p1 instanceof HasPosition)) {
+                    throw new RuntimeException("Invalid comparison: " + p1);
                 }
-                if (p2 == null || !(p2 instanceof HasPosition)) {
-                    return 1;
+                if (!(p2 instanceof HasPosition)) {
+                    throw new RuntimeException("Invalid comparison: " + p2);
                 }
-                AFoggedUnit data1 = dataFrom(p1);
-                AFoggedUnit data2 = dataFrom(p2);
-                double distance1 = PositionUtil.distanceTo(position, data1.getPosition());
-                double distance2 = PositionUtil.distanceTo(position, data2.getPosition());
+//                AFoggedUnit data1 = dataFrom(p1);
+//                AFoggedUnit data2 = dataFrom(p2);
+//                double distance1 = PositionUtil.distanceTo(position, data1.getPosition());
+//                double distance2 = PositionUtil.distanceTo(position, data2.getPosition());
+                double distance1 = PositionUtil.distanceTo(position, p1);
+                double distance2 = PositionUtil.distanceTo(position, p2);
+                if (distance1 == distance2) {
+                    return 0;
+                } else {
+                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
+                }
+            }
+        });
+
+        return data;
+    }
+
+    public List<T> sortDataByDistanceTo(final AUnit unit, final boolean nearestFirst) {
+        Collections.sort(data, new Comparator<T>() {
+            @Override
+            public int compare(T p1, T p2) {
+                if (!(p1 instanceof HasPosition)) {
+                    throw new RuntimeException("Invalid comparison: " + p1);
+                }
+                if (!(p2 instanceof HasPosition)) {
+                    throw new RuntimeException("Invalid comparison: " + p2);
+                }
+//                AFoggedUnit data1 = dataFrom(p1);
+//                AFoggedUnit data2 = dataFrom(p2);
+//                double distance1 = PositionUtil.distanceTo(position, data1.getPosition());
+//                double distance2 = PositionUtil.distanceTo(position, data2.getPosition());
+                double distance1 = PositionUtil.distanceTo(unit, p1);
+                double distance2 = PositionUtil.distanceTo(unit, p2);
                 if (distance1 == distance2) {
                     return 0;
                 } else {

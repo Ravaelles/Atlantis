@@ -20,9 +20,9 @@ public class AProductionManager {
         
         // === Handle UMS ==========================================
         
-        if (AGame.isUms()) {
-            return;
-        }
+//        if (AGame.isUms()) {
+//            return;
+//        }
         
         // =========================================================
         
@@ -91,9 +91,9 @@ public class AProductionManager {
         } 
 
         // =========================================================
-        // Non-worker so combat units and special units like Scarabs etc.
+        // Non-worker
 
-        else { 
+        else if (AGame.canAfford(50 + unitType.getMineralPrice(), unitType.getGasPrice())) {
             AProductionQueue.getCurrentBuildOrder().produceUnit(unitType);
         } 
     }

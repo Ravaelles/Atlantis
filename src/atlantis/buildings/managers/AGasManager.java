@@ -22,12 +22,10 @@ public class AGasManager {
      * no more needed).
      */
     public static void handleGasBuildings() {
-        
-        // Only once per second
-        if (AGame.getTimeFrames() % 6 != 0) {
+        if (AGame.notNthGameFrame(7)) {
             return;
         }
-        int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
+//        int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
         
         // =========================================================
         
@@ -48,11 +46,7 @@ public class AGasManager {
 
             // Less workers gathering gas than optimal
             if (numOfWorkersNearby < optimalNumOfGasWorkers) {
-                AUnit worker = getWorkerForGasBuilding(gasBuilding);
-                if (worker != null) {
-                    worker.gather(gasBuilding);
-                    worker.setTooltip("Gas");
-                }
+                assignBestWorkerToGasBuilding(gasBuilding);
                 break; // Only one worker per execution
             }
             
@@ -76,13 +70,30 @@ public class AGasManager {
 //            }
 //        }
     }
-    
+
     // =========================================================
 
-    private static int countWorkersGatheringGasNear(AUnit unit) {
+    private static void assignBestWorkerToGasBuilding(AUnit gasBuilding) {
+        AUnit worker = getWorkerForGasBuilding(gasBuilding);
+        if (worker == null) {
+            return;
+        }
+
+        // If is carrying stuff, return first
+        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
+            worker.returnCargo();
+            worker.setTooltip("Cargo");
+            return;
+        }
+
+        worker.gather(gasBuilding);
+        worker.setTooltip("Gas");
+    }
+
+    private static int countWorkersGatheringGasNear(AUnit gasBuilding) {
         int total = 0;
 
-        for (AUnit worker : Select.ourWorkers().inRadius(12, unit).listUnits()) {
+        for (AUnit worker : Select.ourWorkers().inRadius(12, gasBuilding).listUnits()) {
             if (worker.isGatheringGas()) {
                 total++;
             }
@@ -112,9 +123,9 @@ public class AGasManager {
     }
 
     private static int defineOptimalGasWorkers(AUnit gasBuilding) {
-        if (AGame.hasGas(400)) {
-            return 1;
-        }
+//        if (AGame.hasGas(800)) {
+//            return 1;
+//        }
         
         int totalGasNeeded = 0;
         ArrayList<ProductionOrder> nextOrders = AProductionQueue.getProductionQueueNext(
@@ -123,7 +134,11 @@ public class AGasManager {
         for (ProductionOrder order : nextOrders) {
             totalGasNeeded += order.getGasRequired();
         }
-        
+
+        if (Select.ourWorkers().count() >= 30) {
+            return 3;
+        }
+
         return (totalGasNeeded > 0 && !AGame.hasGas(totalGasNeeded) ? 3 : 1);
     }
 

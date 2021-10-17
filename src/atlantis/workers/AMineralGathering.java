@@ -1,8 +1,12 @@
 package atlantis.workers;
 
 import atlantis.AGame;
+import atlantis.AGameSpeed;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import bwapi.Color;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -22,25 +26,20 @@ public class AMineralGathering {
     public static void initialAssignWorkersToMinerals() {
         AUnit mainBase = Select.mainBase();
         if (mainBase == null) {
-//            System.err.println("No main base found - skip initial workers assignment");
-            AGame.setUmsMode(true);
             return;
         }
-        
+
         // =========================================================
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals = (List<AUnit>) Select.minerals().inRadius(12, mainBase)
-                .sortDataByDistanceTo(mainBase.getPosition(), true);
-
-        // Get our workers
-        Collection<AUnit> workers = Select.ourWorkers().listUnits();
+        List<AUnit> minerals = Select.minerals().inRadius(12, mainBase).sortDataByDistanceTo(mainBase, true);
 
         // Assign every worker to the next free mineral
+        Collection<AUnit> workers = Select.ourWorkers().listUnits();
         int counter = 0;
-        for (AUnit unit : workers) {
+        for (AUnit worker : workers) {
             AUnit mineral = minerals.get(counter);
-            unit.gather(mineral);
+            worker.gather(mineral);
 
             counter++;
         }
@@ -67,24 +66,13 @@ public class AMineralGathering {
         }
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals = (List<AUnit>) Select.minerals().inRadius(12, base).listUnits();
+        List<AUnit> minerals = Select.minerals().inRadius(12, base).listUnits();
         if (!minerals.isEmpty()) {
 
             // Count how many other workers gather this mineral
             Map<AUnit, Integer> workersPerMineral = new HashMap<>();
 
-            Collection<AUnit> ourWorkersInRange = (Collection<AUnit>) Select.ourWorkers().inRadius(12, base).list();
-//            for (AUnit otherWorker : ourWorkersInRange) {
-//                if (otherWorker.isGatheringMinerals()) {
-//                    AUnit mineralMined = otherWorker.getTarget();
-//                    if (mineralMined != null) {
-//                        //increments the number of workers in this mineral
-//                        int previousNumber = (workersPerMineral.get(mineralMined) == null ? 0 : workersPerMineral.get(mineralMined));
-//                        workersPerMineral.put(mineralMined, previousNumber + 1);
-//                        //minerals.changeValueBy(mineralMined, 1);
-//                    }
-//                }
-//            }
+            Collection<AUnit> ourWorkersInRange = Select.ourWorkers().inRadius(12, base).list();
             for (AUnit mineral : minerals) {
                 for (AUnit ourWorker : ourWorkersInRange) {
                     AUnit mineralMinedByWorker = ourWorker.getTarget();
@@ -102,12 +90,11 @@ public class AMineralGathering {
 
             // Get least gathered mineral
             AUnit leastGatheredMineral = null;
-            int minimumWorkersPerMineral = 1000;
+            int leastWorkersAtMineral = 999;
             for (Entry<AUnit, Integer> workersAtMineral : workersPerMineral.entrySet()) {
-                if (workersAtMineral.getValue() < minimumWorkersPerMineral) {
-                    minimumWorkersPerMineral = workersAtMineral.getValue();
+                if (workersAtMineral.getValue() < leastWorkersAtMineral) {
+//                    minimumWorkersPerMineral = workersAtMineral.getValue();
                     leastGatheredMineral = workersAtMineral.getKey();
-                    break;
                 }
             }
 

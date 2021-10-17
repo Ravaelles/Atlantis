@@ -12,16 +12,7 @@ public class AInitialActions {
      * one-time only actions like initial assignment of workers to minerals etc.
      */
     public static void executeInitialActions() {
-        try {
-            AMineralGathering.initialAssignWorkersToMinerals();
-        }
-        catch (IndexOutOfBoundsException ex) {
-            AGame.setUmsMode(true);
-        }
-        catch (NullPointerException ex) {
-            AGame.setUmsMode(true);
-        }
-        catch (Exception ex) {
+        if (Select.mainBase() == null) {
             AGame.setUmsMode(true);
         }
 
@@ -29,9 +20,11 @@ public class AInitialActions {
             AGame.setUmsMode(true);
         }
 
-        if (Select.mainBase() == null) {
-            AGame.setUmsMode(true);
-        }
+//        try {
+            AMineralGathering.initialAssignWorkersToMinerals();
+//        } catch (Exception ex) {
+//            AGame.setUmsMode(true);
+//        }
     }
 
 }

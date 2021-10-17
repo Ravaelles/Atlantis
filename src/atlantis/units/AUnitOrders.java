@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.position.APosition;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 import bwapi.*;
 
 /**
@@ -12,18 +13,18 @@ import bwapi.*;
 public interface AUnitOrders {
 
     Unit u();
-
     AUnit unit();
 
     public boolean DEBUG = false;
 //    public boolean DEBUG = true;
-    
+    public int DEBUG_MIN_FRAMES = 0;
+
     // =========================================================
     
     default boolean attackUnit(AUnit target) {
-        if (DEBUG && AGame.getTimeFrames() > 50) {
+        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println(
-                    "@ " + AGame.getTimeFrames() + " ATTACK  / " +
+                    "@ @" + A.now() + " ATTACK  / " +
                             "unit#" + unit().getID() + " // " +
                             "cooldown " + unit().getCooldownCurrent()+ " // " +
                             "attackFrame " + unit()._lastAttackFrame + " // " +
@@ -31,16 +32,11 @@ public interface AUnitOrders {
                             unit().getTooltip()
             );
         }
-//        if (!unit().hasRangeToAttack(target, 0)) {
-//            unit().setTooltip("Come closer!");
-//            move(target.getPosition(), UnitActions.MOVE);
-//            return false;
-//        }
+
         if (target == null) {
             System.err.println("Null attack unit target for unit " + this.toString());
             return false;
         }
-
 
         // Do NOT issue double orders
         if (unit().isCommand(UnitCommandType.Attack_Unit) && u().getTarget() != null && target.equals(unit().getTarget())) {
@@ -48,7 +44,7 @@ public interface AUnitOrders {
             return true;
         }
 
-        if (DEBUG && AGame.getTimeFrames() > 50) {
+        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println("                  ------> ATTACK #" + target.getID());
         }
         unit().setUnitAction(UnitActions.ATTACK_UNIT);
@@ -104,8 +100,8 @@ public interface AUnitOrders {
     }
 
     default boolean move(Position target, UnitAction unitAction, String tooltip) {
-        if (DEBUG && AGame.getTimeFrames() > 50) {
-            System.out.println("MOVE " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // " + tooltip);
+        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println("MOVE @" + A.now() + " / unit#" + unit().getID() + " // " + tooltip);
         }
         if (target == null) {
             System.err.println("Null move position for " + this);
@@ -134,20 +130,20 @@ public interface AUnitOrders {
         // =========================================================
 
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
-//        if (unit().isMoving() && AGame.getTimeFrames() % 4 != 0) {
+//        if (unit().isMoving() && A.now() % 4 != 0) {
 //            return true;
 //        }
 //        
 //        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
-//            System.out.println(u().getID() + " MOVE at " + AGame.getTimeFrames());
-//        if (!unit().isMoving() || AGame.getTimeFrames() % 4 != 0) {
-//        if (!unit().isUnitActionMove() || AGame.getTimeFrames() % 5 == 0) {
+//            System.out.println(u().getID() + " MOVE at @" + A.now());
+//        if (!unit().isMoving() || A.now() % 4 != 0) {
+//        if (!unit().isUnitActionMove() || A.now() % 5 == 0) {
         
         APosition currentTarget = unit().getTargetPosition();
 
         if (!unit().isUnitActionMove() || currentTarget == null || !currentTarget.equals(target)) {
-//                || AGame.getTimeFrames() % 25 == 0) {
-//            System.out.println(AGame.getTimeFrames() + " moved, " + unit().getUnitAction() 
+//                || A.now() % 25 == 0) {
+//            System.out.println(A.now() + " moved, " + unit().getUnitAction() 
 //+ ", dist = " + unit().distanceTo(target));
             u().move(target);
 
@@ -184,8 +180,8 @@ public interface AUnitOrders {
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
     default boolean holdPosition(String tooltip) {
-        if (DEBUG && AGame.getTimeFrames() > 50) {
-            System.out.println("HOLD " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // " + tooltip);
+        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println("HOLD @" + A.now() + " / unit#" + unit().getID() + " // " + tooltip);
         }
 
         unit().setTooltip(tooltip)
@@ -202,8 +198,8 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also canStop, isIdle
      */
     default boolean stop(String tooltip) {
-        if (DEBUG && AGame.getTimeFrames() > 50) {
-            System.out.println("STOP " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // " + tooltip);
+        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println("STOP @" + A.now() + " / unit#" + unit().getID() + " // " + tooltip);
         }
 
         unit().setTooltip(tooltip)
@@ -237,6 +233,10 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also isGatheringGas, isGatheringMinerals, canGather
      */
     default boolean gather(AUnit target) {
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("GATHER @" + A.now() + " / unit#" + unit().getID());
+        }
+        
         if (target.getType().isMineralField()) {
             unit().setUnitAction(UnitActions.GATHER_MINERALS);
         } else {
@@ -257,6 +257,10 @@ public interface AUnitOrders {
      * See also isCarryingGas, isCarryingMinerals, canReturnCargo
      */
     default boolean returnCargo() {
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("RETURN_CARGO @" + A.now() + " / unit#" + unit().getID());
+        }
+
         unit().setUnitAction(UnitActions.MOVE);
         unit().setLastUnitOrderNow();
         return u().returnCargo();
@@ -272,6 +276,10 @@ public interface AUnitOrders {
      * canRepair
      */
     default boolean repair(AUnit target, String tooltip) {
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("REPAIR @" + A.now() + " / unit#" + unit().getID() + " // " + tooltip);
+        }
+
         if (target == null) {
             return false;
         }
@@ -560,26 +568,38 @@ public interface AUnitOrders {
      * canUseTech, canUseTechWithoutTarget, canUseTechUnit, canUseTechPosition, TechTypes
      */
     default boolean useTech(TechType tech) {
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().getID());
+        }
+
         unit().setUnitAction(UnitActions.USING_TECH);
         unit().setLastUnitOrderNow();
         return u().useTech(tech);
     }
 
     default boolean useTech(TechType tech, APosition target) {
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("TECH_2 @" + A.now() + " / unit#" + unit().getID());
+        }
+
         unit().setUnitAction(UnitActions.USING_TECH);
         unit().setLastUnitOrderNow();
         return u().useTech(tech, target);
     }
 
     default boolean useTech(TechType tech, AUnit target) {
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("TECH_3 @" + A.now() + " / unit#" + unit().getID());
+        }
+
         unit().setUnitAction(UnitActions.USING_TECH);
         unit().setLastUnitOrderNow();
         return u().useTech(tech, target.u());
     }
 
     default boolean doRightClickAndYesIKnowIShouldAvoidUsingIt(AUnit target) {
-        if (DEBUG && AGame.getTimeFrames() > 50) {
-            System.out.println("RIGHT_CLICK " + AGame.getTimeFrames() + " / unit#" + unit().getID() + " // " + target);
+        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println("RIGHT_CLICK @" + A.now() + " / unit#" + unit().getID() + " // " + target);
         }
 
         unit().setUnitAction(UnitActions.RIGHT_CLICK);

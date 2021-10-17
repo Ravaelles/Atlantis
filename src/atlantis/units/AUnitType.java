@@ -841,4 +841,12 @@ public class AUnitType implements Comparable<AUnitType> {
             return getGroundWeapon().maxRange() / 32;
         }
     }
+
+    public boolean isGeyser() {
+        return isType(Resource_Vespene_Geyser);
+    }
+
+    public int getTotalTrainTime() {
+        return ut.buildTime();
+    }
 }

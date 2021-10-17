@@ -515,7 +515,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Not that we're racists, but spider mines and larvas aren't really units...
      */
     public boolean isNotActuallyUnit() {
-        return isSpiderMine() || isLarvaOrEgg();
+        return getType().ut().isNeutral() || isSpiderMine() || isLarvaOrEgg() || isBuilding()
+                || getType().isMineralField() || getType().isGeyser() || getType().isGasBuilding();
     }
 
     /**
@@ -1043,7 +1044,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     public int getRemainingTrainTime() {
         return u().getRemainingTrainTime();
     }
-    
+
+    public int getTotalTrainTime() {
+        return getType().getTotalTrainTime();
+    }
+
     public int getRemainingUpgradeTime() {
         return u().getRemainingUpgradeTime();
     }
@@ -1180,6 +1185,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     public boolean lastStartedAttackAgo(int framesAgo) {
         return AGame.framesAgo(_lastStartingAttack) <= framesAgo;
+    }
+
+    public boolean lastAttackOrderAgo(int framesAgo) {
+        return AGame.framesAgo(_lastAttackOrder) <= framesAgo;
     }
 
     public int lastStartedAttackAgo() {

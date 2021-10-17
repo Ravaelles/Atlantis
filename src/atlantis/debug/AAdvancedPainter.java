@@ -61,7 +61,6 @@ public class AAdvancedPainter extends APainter {
      * Executed once per frame, at the end of all other actions.
      */
     public static void paint() {
-        bwapi = Atlantis.game();
         if (paintingMode == MODE_NO_PAINTING) {
             return;
         }
@@ -90,6 +89,7 @@ public class AAdvancedPainter extends APainter {
 //        setTextSizeSmall();
 
         paintCodeProfiler();
+        paintMineralDistance();
         paintRegions();
         paintChokepoints();
 //        paintTestSupplyDepotLocationsNearMain();
@@ -109,6 +109,28 @@ public class AAdvancedPainter extends APainter {
 
         setTextSizeMedium();
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
+    }
+
+    private static void paintMineralDistance() {
+        AUnit mainBase = Select.mainBase();
+        if (mainBase == null) {
+            return;
+        }
+
+        for (AUnit mineral : Select.minerals().inRadius(8, mainBase).list()) {
+            String dist = A.digit(mineral.distanceTo(mainBase));
+            int assigned = AWorkerManager.countWorkersAssignedTo(mineral);
+            paintTextCentered(mineral, dist + " (" + assigned + ")", Color.White);
+
+        }
+
+        if (A.now() <= 100) {
+            for (AUnit worker : Select.ourWorkers().list()) {
+                if (worker.getTarget() != null) {
+                    paintLine(worker, worker.getTarget(), Color.Grey);
+                }
+            }
+        }
     }
 
     // =========================================================
@@ -816,6 +838,9 @@ public class AAdvancedPainter extends APainter {
     static void paintWorkersAssignedToBuildings() {
         setTextSizeLarge();
         for (AUnit building : Select.ourBuildings().listUnits()) {
+            if (!building.isBase() && !building.type().isGasBuilding()) {
+                continue;
+            }
 
             // Paint text
             int workers = AWorkerManager.getHowManyWorkersWorkingNear(building, false);
@@ -835,22 +860,22 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintUnitsBeingTrainedInBuildings() {
         setTextSizeMedium();
-        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-            if (!unit.getType().isBuilding() || !unit.isTrainingAnyUnit()) {
+        for (AUnit building : Select.ourBuildingsIncludingUnfinished().listUnits()) {
+            if (!building.isBuilding() || !building.isTrainingAnyUnit()) {
                 continue;
             }
 
             int labelMaxWidth = 90;
             int labelHeight = 14;
-            int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
-            int labelTop = unit.getPosition().getY();
+            int labelLeft = building.getPosition().getX() - labelMaxWidth / 2;
+            int labelTop = building.getPosition().getY();
 
             int operationProgress = 1;
-            AUnit trained = unit.getBuildUnit();
+            AUnitType unit = building.getTrainingQueue().get(0);
             String trainedUnitString = "";
-            if (trained != null) {
-                operationProgress = trained.getHPPercent(); // trained.getHP() * 100 / trained.getMaxHP();
-                trainedUnitString = trained.getShortName();
+            if (unit != null) {
+                operationProgress = 100 * (unit.getTotalTrainTime() - building.getRemainingTrainTime()) / unit.getTotalTrainTime();
+                trainedUnitString = unit.getShortName();
             }
 
             // Paint box
@@ -860,7 +885,6 @@ public class AAdvancedPainter extends APainter {
                     Color.Grey,
                     true
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth * operationProgress / 100, labelTop + labelHeight), Color.White, true, false);
 
             // Paint box borders
             bwapi.drawBoxMap(
@@ -869,7 +893,6 @@ public class AAdvancedPainter extends APainter {
                     Color.Black,
                     false
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.Black, false, false);
 
             // =========================================================
             // Display label
@@ -1040,9 +1063,11 @@ public class AAdvancedPainter extends APainter {
 
             // =========================================================
             // Paint box
+
+            Color color = unit.isOurUnit() ? Color.Green : Color.Orange;
             int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
             bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
-            bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
+            bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), color, true);
 
             // =========================================================
             // Paint box borders

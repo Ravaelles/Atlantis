@@ -19,29 +19,30 @@ public class AAvoidEnemyDefensiveBuildings {
 
         double enemyWeaponRange = enemyBuildingThatCanAttackThisUnit.getWeaponRangeAgainst(unit);
         double enemyDistance = enemyBuildingThatCanAttackThisUnit.distanceTo(unit);
-//            System.out.println("weapon " + buildingTooClose.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
+//            System.out.println("weapon " + enemyBuildingThatCanAttackThisUnit.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
         double distanceMargin = enemyDistance - enemyWeaponRange;
 
         // =========================================================
 
         // Way too close, in shooting range of building, have to back out
-        if (distanceMargin <= 0.8) {
+        if (distanceMargin <= 1.2) {
             return unit.moveAwayFrom(
                     enemyBuildingThatCanAttackThisUnit.getPosition(),
-                    2,
+                    1.5,
                     "AvoidCritical(" + String.format("%.1f", distanceMargin) + ")"
             );
         }
 
         // Very close, but it should be okay to hold
-        else if (2 <= distanceMargin && distanceMargin <= 3.5) {
+        else if (1.2 < distanceMargin && distanceMargin <= 2.5) {
 //            boolean result = unit.moveAwayFrom(
 //                    enemyBuildingThatCanAttackThisUnit.getPosition(),
 //                    2,
 //                    "AvoidBack (" + String.format("%.1f", distanceMargin) + ")"
 //            );
 //            return result;
-            unit.stop("AvoidStop(" + String.format("%.1f", distanceMargin) + ")");
+//            unit.stop("AvoidStop(" + String.format("%.1f", distanceMargin) + ")");
+            unit.holdPosition("AvoidHold(" + String.format("%.1f", distanceMargin) + ")");
             return true;
         }
 

@@ -3,6 +3,7 @@ package atlantis.production;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;
+import atlantis.units.Count;
 import atlantis.units.Select;
 
 
@@ -50,7 +51,7 @@ public class ADynamicWorkerProductionManager {
 
         // Check if not TOO MANY WORKERS
         int workers = Select.ourWorkers().count();
-        if (workers >= (24 * Select.ourBases().count())) {
+        if (workers >= (25 * Select.ourBases().count())) {
             return false;
         }
 
@@ -60,8 +61,12 @@ public class ADynamicWorkerProductionManager {
         if (!isAutoProduceWorkersActive(workers)) {
             return false;
         }
-                
+
         // =========================================================
+
+        if (Count.workers() >= 60) {
+            return false;
+        }
 
         // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
 //        if (!AGame.getBuildOrders().shouldProduceNow(AtlantisConfig.WORKER)) {

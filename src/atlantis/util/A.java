@@ -1,6 +1,8 @@
 package atlantis.util;
 
 import atlantis.AGame;
+import atlantis.Atlantis;
+import bwapi.Game;
 
 import java.awt.Button;
 import java.awt.Color;
@@ -54,6 +56,10 @@ public class A {
      * <b>Random</b> object that can be used in any part of code.
      */
     public static final Random random = new Random();
+
+    public static Game game() {
+        return Atlantis.game();
+    }
 
     /**
      * Displays small window with <b>text</b> information. Very useful for testing, error reporting.
@@ -1088,4 +1094,5 @@ public class A {
         }
         return value;
     }
+
 }

@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.debug.APainter;
 import atlantis.debug.AUnitTypesHelper;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
@@ -10,6 +11,8 @@ public class OnStart {
 
     public static void execute() {
         System.out.println("### Starting Atlantis... ###");
+
+        APainter.assignBwapiInstance();
 
         handleCheckIfUmsMap();
 

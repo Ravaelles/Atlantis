@@ -7,6 +7,7 @@ import atlantis.combat.micro.terran.TerranVultureManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.protoss.ProtossShieldBattery;
 import atlantis.special.protoss.ProtossObserverManager;
+import atlantis.special.protoss.ProtossReaverManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -40,7 +41,7 @@ public class ASpecialUnitManager {
                 return true;
             } else if (unit.getType().equals(AUnitType.Protoss_Observer) && ProtossObserverManager.update(unit)) {
                 return true;
-            } else if (unit.getType().equals(AUnitType.Protoss_Reaver) && ProtossObserverManager.update(unit)) {
+            } else if (unit.getType().equals(AUnitType.Protoss_Reaver) && ProtossReaverManager.update(unit)) {
                 return true;
             }
         }

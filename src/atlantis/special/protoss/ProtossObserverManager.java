@@ -14,6 +14,10 @@ public class ProtossObserverManager {
             return true;
         }
 
+        if (handleSpreadOut(observer)) {
+            return true;
+        }
+
         if (followSquads(observer)) {
             return true;
         }
@@ -22,6 +26,17 @@ public class ProtossObserverManager {
     }
 
     // =========================================================
+
+    private static boolean handleSpreadOut(AUnit observer) {
+        Select<AUnit> observers = Select.ourOfType(AUnitType.Protoss_Observer).inRadius(14, observer).exclude(observer);
+        if (observers.count() > 0) {
+            AUnit otherObserver = observers.nearestTo(observer);
+            observer.moveAwayFrom(otherObserver.getPosition(), 5, "Spread observers");
+            return true;
+        }
+
+        return false;
+    }
 
     private static boolean followSquads(AUnit observer) {
         APosition goTo = Squad.getAlphaSquad().getSquadCenter();
@@ -35,6 +50,10 @@ public class ProtossObserverManager {
 
     private static boolean detectInvisibleUnitsClosestToBase(AUnit observer) {
         if (Select.mainBase() == null) {
+            return false;
+        }
+
+        if (!observer.equals(Select.ourOfType(AUnitType.Protoss_Observer).first())) {
             return false;
         }
 

@@ -22,12 +22,11 @@ public class AAvoidInvisibleEnemyUnits {
     }
 
     public static boolean handledAvoid(AUnit unit, AUnitType type) {
-        double safetyMargin =
-                3.2 + (type.isMeleeUnit() ? 0 : type.getWeaponRangeAgainst(unit));
+        double safetyMargin = 2.6 + (type.isMeleeUnit() ? 0 : type.getWeaponRangeAgainst(unit));
 
-        AUnit hiddenEnemy = Select.enemyOfType(type).inRadius(safetyMargin, unit).first();
+        AUnit hiddenEnemy = Select.enemyOfType(type).invisible().inRadius(safetyMargin, unit).first();
         if (hiddenEnemy != null) {
-            unit.runFrom(hiddenEnemy, 2);
+            unit.runFrom(hiddenEnemy, 3);
             return true;
         }
 
