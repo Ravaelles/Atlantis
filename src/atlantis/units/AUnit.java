@@ -1172,6 +1172,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //    }
 
     public void unbug() {
+        unit().getRunManager().stopRunning();
+
         if (Select.mainBase() != null) {
             this.move(Select.mainBase(), UnitActions.MOVE, "Unfreeze");
             return;

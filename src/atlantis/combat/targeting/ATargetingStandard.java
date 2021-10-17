@@ -40,6 +40,30 @@ public class ATargetingStandard extends AEnemyTargeting {
         }
 
         // =========================================================
+        // Workers
+
+        target = units.
+                workers()
+                .inRadius(8, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Defensive buildings
+
+        target = Select
+                .enemy()
+                .ofType(
+                        AUnitType.Terran_Bunker
+                )
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
         // Buildings worth destroying first
 
         target = buildings.clone()
@@ -53,17 +77,6 @@ public class ATargetingStandard extends AEnemyTargeting {
                         AUnitType.Zerg_Spire,
                         AUnitType.Zerg_Greater_Spire
                 )
-                .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
-
-        // =========================================================
-        // Workers
-
-        target = units.
-                workers()
-                .inRadius(8, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

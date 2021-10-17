@@ -21,7 +21,7 @@ public class AAvoidEnemyDefensiveBuildings {
         double enemyDistance = enemyBuildingThatCanAttackThisUnit.distanceTo(unit);
 
         // @TODO FIX for Cannon which for some fucking reason always returns 4 range instead of 7
-        double distanceMargin = -3.2 + enemyDistance - enemyWeaponRange;
+        double distanceMargin = -3.5 + enemyDistance - enemyWeaponRange;
 //        System.out.println(enemyBuildingThatCanAttackThisUnit.type().getShortName() + " // " +  enemyBuildingThatCanAttackThisUnit.getWeaponAgainst(unit)+ " // " + enemyWeaponRange + " // " + enemyDistance + " // " +distanceMargin);
 
         // =========================================================

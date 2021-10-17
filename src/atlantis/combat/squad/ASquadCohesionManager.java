@@ -36,6 +36,10 @@ public class ASquadCohesionManager {
             return false;
         }
 
+        if (unit.equals(unit.squad().getSquadScout())) {
+            return false;
+        }
+
         if (!unit.isRunning() && unit.distanceTo(squadCenter(unit)) >= 11) {
             unit.move(squadCenter(unit), UnitActions.MOVE, "Very lonely!");
             return true;
@@ -62,8 +66,8 @@ public class ASquadCohesionManager {
         }
 
         if (
-                ourCombatUnits.clone().inRadius(4.5, unit).count() >= 18
-                || ourCombatUnits.clone().inRadius(2.7, unit).count() >= 9
+                ourCombatUnits.clone().inRadius(4.5, unit).count() >= 24
+                || ourCombatUnits.clone().inRadius(2.7, unit).count() >= 12
                 || ourCombatUnits.clone().inRadius(0.6, unit).count() >= 4
         ) {
             return unit.moveAwayFrom(

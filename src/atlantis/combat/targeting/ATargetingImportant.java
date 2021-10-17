@@ -35,8 +35,7 @@ public class ATargetingImportant extends AEnemyTargeting {
         target = buildings.clone()
                 .ofType(
                         AUnitType.Protoss_Photon_Cannon,
-                        AUnitType.Zerg_Sunken_Colony,
-                        AUnitType.Terran_Bunker
+                        AUnitType.Zerg_Sunken_Colony
                 )
                 .inRadius(12, unit)
                 .nearestTo(unit);
@@ -54,7 +53,6 @@ public class ATargetingImportant extends AEnemyTargeting {
                         AUnitType.Zerg_Sunken_Colony,
                         AUnitType.Zerg_Creep_Colony,
                         AUnitType.Zerg_Spore_Colony,
-                        AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret
                 )
                 .inRadius(12, unit)
