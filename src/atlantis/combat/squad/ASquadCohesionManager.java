@@ -4,17 +4,16 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Count;
 import atlantis.units.Select;
-import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 
 public class ASquadCohesionManager {
 
     public static boolean handle(AUnit unit) {
-        if (unit.getSquad().getMission().isMissionAttack()) {
+        if (unit.squad().getMission().isMissionAttack()) {
             return false;
         }
 
-        APosition medianPosition = unit.getSquad().getSquadCenter();
+        APosition medianPosition = unit.squad().getSquadCenter();
 
         if (handleShouldSpreadOut(unit, medianPosition)) {
             return true;
@@ -32,7 +31,7 @@ public class ASquadCohesionManager {
             return false;
         }
 
-        if (unit.getSquad().getMission().isMissionAttack()) {
+        if (unit.squad().getMission().isMissionAttack()) {
             return false;
         }
 
@@ -51,7 +50,7 @@ public class ASquadCohesionManager {
     // =========================================================
 
     private static boolean handleShouldSpreadOut(AUnit unit, APosition medianPoint) {
-        if (unit.getSquad().size() <= 3) {
+        if (unit.squad().size() <= 3) {
             return false;
         }
 
@@ -73,7 +72,7 @@ public class ASquadCohesionManager {
     }
 
     private static boolean handleShouldStickCloser(AUnit unit, APosition medianPoint) {
-        int squadSize = unit.getSquad().size();
+        int squadSize = unit.squad().size();
         if (squadSize <= 3) {
             return false;
         }
@@ -110,7 +109,7 @@ public class ASquadCohesionManager {
                 && unit.distanceTo(nearestFriend) > 3
         ) {
             unit.move(
-                    medianPoint.translatePercentTowards(unit, 50),
+                    unit.getPosition().translatePercentTowards(medianPoint, 20),
                     UnitActions.MOVE,
                     "ComeBack(" + (int) medianPoint.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
             );
@@ -119,11 +118,13 @@ public class ASquadCohesionManager {
 
         if (
 //                closeFriends.clone().inRadius(2, unit).count() == 0
-                nearestFriend != null
-                && (squadSize >= 5 && closeFriends.clone().inRadius(4, unit).count() <= 1)
+                nearestFriend != null && (
+                    (squadSize >= 5 && closeFriends.clone().inRadius(3, unit).count() <= 1)
+                    && (squadSize >= 12 && closeFriends.clone().inRadius(7, unit).count() <= 1)
+                )
         ) {
             unit.move(
-                    nearestFriend.getPosition().translatePercentTowards(unit, 50),
+                    unit.getPosition().translatePercentTowards(nearestFriend, 20),
                     UnitActions.MOVE,
                     "Love(" + (int) nearestFriend.distanceTo(unit) + ")"
             );
@@ -134,7 +135,7 @@ public class ASquadCohesionManager {
     }
 
     private static APosition squadCenter(AUnit unit) {
-        return unit.getSquad().getSquadCenter();
+        return unit.squad().getSquadCenter();
     }
 
 }

@@ -71,6 +71,9 @@ public class AGameSpeed {
         Atlantis.game().setLocalSpeed(DYNAMIC_SLOWDOWN_GAME_SPEED);
         Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
 
+        Atlantis.game().setLocalSpeed(DYNAMIC_SLOWDOWN_GAME_SPEED);
+        Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
+
         System.out.println("Activated SLOWDOWN");
     }
 
@@ -121,8 +124,8 @@ public class AGameSpeed {
 //            // Ignore
 //        }
         game().setLocalSpeed(gameSpeed);
-        AGame.sendMessage("/speed " + gameSpeed);
         game().setLocalSpeed(gameSpeed);
+        AGame.sendMessage("/speed " + gameSpeed);
 
         try {
             TimeUnit.MILLISECONDS.sleep(30);
@@ -158,12 +161,12 @@ public class AGameSpeed {
             }
         }
 
-        if (deltaSpeed > 0) {
-            frameSkip += 10;
-        } else {
-            frameSkip /= 2;
-        }
-        game().setFrameSkip(frameSkip);
+//        if (deltaSpeed > 0) {
+//            frameSkip += 10;
+//        } else {
+//            frameSkip /= 2;
+//        }
+//        game().setFrameSkip(frameSkip);
 
         if (game() != null) {
             changeSpeedTo(speed);

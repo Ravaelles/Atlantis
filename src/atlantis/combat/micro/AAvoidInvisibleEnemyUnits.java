@@ -31,7 +31,13 @@ public class AAvoidInvisibleEnemyUnits {
 //        }
         double safetyMargin = 3.0 + (unit.isWorker() ? 0.6 : 0) + (type.isMeleeUnit() ? 0 : type.getWeaponRangeAgainst(unit));
 
-        AUnit hiddenEnemy = Select.enemyOfType(type).invisible().inRadius(safetyMargin, unit).first();
+        AUnit hiddenEnemy;
+        if (unit.isWorker()) {
+            hiddenEnemy = Select.enemyOfType(type).inRadius(safetyMargin, unit).first();
+        } else {
+            hiddenEnemy = Select.enemyOfType(type).invisible().inRadius(safetyMargin, unit).first();
+        }
+
         if (hiddenEnemy != null) {
             unit.runFrom(hiddenEnemy, 3.0 + Math.max(1.8, unit.lastStartedRunningAgo() / 150.0));
             return true;

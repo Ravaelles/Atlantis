@@ -1,4 +1,4 @@
-package atlantis.util;
+package atlantis.position;
 
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChokepoint;
@@ -6,7 +6,9 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Position;
+import bwapi.TilePosition;
 import bwapi.Unit;
+import bwta.BWTA;
 
 public class PositionUtil {
 
@@ -98,5 +100,13 @@ public class PositionUtil {
         }
 
     }
-    
+
+    // =========================================================
+
+    /**
+     * Returns real ground distance to given point (not the air shortcut over impassable terrain).
+     */
+    public static double getGroundDistance(APosition from, APosition to) {
+        return BWTA.getGroundDistance(new TilePosition(from.p()), new TilePosition(to.p()));
+    }
 }

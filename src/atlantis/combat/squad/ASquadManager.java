@@ -36,7 +36,7 @@ public class ASquadManager {
             return;
         }
 
-        Squad squad = unit.getSquad();
+        Squad squad = unit.squad();
         if (squad != null) {
             squad.removeUnit(unit);
             unit.setSquad(null);

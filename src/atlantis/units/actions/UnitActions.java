@@ -32,6 +32,7 @@ public class UnitActions {
 
     public static final UnitAction RUN = new UnitAction(false, true).setName("RUN");
     public static final UnitAction RESEARCH_OR_UPGRADE = new UnitAction().setName("RESEARCH_OR_UPGRADE");
+    public static final UnitAction SCOUT = new UnitAction().setName("SCOUT");
     public static final UnitAction SIEGE = new UnitAction().setName("SIEGE");
 //    public static final UnitAction STICK_CLOSER = new UnitAction().setName("");
     public static final UnitAction STOP = new UnitAction().setName("STOP");

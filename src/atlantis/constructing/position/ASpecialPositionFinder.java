@@ -64,6 +64,7 @@ public class ASpecialPositionFinder {
         
 //        System.err.println("");
 //        System.err.println(constructionOrder.getProductionOrder());
+//        System.err.println(constructionOrder.getMaxDistance());
 //        System.err.println("=== modifier /" + modifier + "/ ===");
         if (modifier != null) {
             if (modifier.equals(NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
@@ -99,7 +100,7 @@ public class ASpecialPositionFinder {
         }
         
         APosition near = APosition.create(baseLocationToExpand.getPosition()).translateByPixels(-64, -48);
-        constructionOrder.setMaxDistance(1);
+        constructionOrder.setMaxDistance(3);
 
 //        System.out.println("Main base = " + Select.mainBase());
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
@@ -114,7 +115,7 @@ public class ASpecialPositionFinder {
         APosition near = Select.mainBase().getPosition().translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);
-        constructionOrder.setMaxDistance(30);
+        constructionOrder.setMaxDistance(40);
         
         return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
     }
@@ -124,7 +125,7 @@ public class ASpecialPositionFinder {
         ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);
-        constructionOrder.setMaxDistance(1);
+        constructionOrder.setMaxDistance(10);
         
         return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
     }

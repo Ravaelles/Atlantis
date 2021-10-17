@@ -41,7 +41,7 @@ public class AConstructionRequests {
      *
      * WARNING: passed order parameter can later override nearTo parameter.
      */
-    public static void requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
+    public static boolean requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
 
         // Validate
         if (!building.isBuilding()) {
@@ -49,7 +49,7 @@ public class AConstructionRequests {
         }
 
         if (ASpecificConstructionManager.handledAsSpecialBuilding(building, order)) {
-            return;
+            return true;
         }
 
         // =========================================================
@@ -64,7 +64,7 @@ public class AConstructionRequests {
             if (AGame.getSupplyUsed() >= 7) {
                 System.err.println("Builder is null, got damn it!");
             }
-            return;
+            return false;
         }
 
         // =========================================================
@@ -86,19 +86,25 @@ public class AConstructionRequests {
 
             // Add to list of pending orders
             constructionOrders.add(newConstructionOrder);
-//            constructionOrders.(newConstructionOrder);
 
             // Rebuild production queue as new building is about to be built
             AProductionQueueManager.rebuildQueue();
+
+            return true;
         }
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
-            System.err.println("requestConstruction `" + building + "`");
+            System.err.print("Construction place failed for `" + building + "`  ");
             if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
-                System.err.println("    (reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
+                System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
+            } else {
+                System.err.print("(reason was not properly defined)");
             }
             System.err.println("");
+
+            newConstructionOrder.cancel();
+            return false;
         }
     }
 

@@ -1,5 +1,6 @@
 package atlantis.constructing.position;
 
+import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.debug.APainter;
 import atlantis.position.APosition;
@@ -7,8 +8,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwapi.Color;
-
-import java.util.Collection;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {
 
@@ -22,22 +21,20 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo, 
             double maxDistance) {
         _CONDITION_THAT_FAILED = null;
-//        building = building;
-//        AtlantisPositionFinder.nearTo = nearTo;
-//        AtlantisPositionFinder.maxDistance = maxDistance;
+        int initSearchRadius = building.isPylon() ? 6 : 0;
 
-        // =========================================================
-
-        int searchRadius = building.equals(AUnitType.Protoss_Pylon) ? 6 : 0;
-
+        int searchRadius = initSearchRadius;
         while (searchRadius < maxDistance) {
             int xCounter = 0;
             int yCounter = 0;
-            int doubleRadius = searchRadius * 2;
-            
-            for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
-                for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
-                    if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
+
+            int xMin = nearTo.getTileX() - searchRadius;
+            int yMin = nearTo.getTileY() - searchRadius;
+            int xMax = nearTo.getTileX() + searchRadius;
+            int yMax = nearTo.getTileY() + searchRadius;
+            for (int tileX = xMin - searchRadius; tileX <= xMax; tileX++) {
+                for (int tileY =yMin - searchRadius; tileY <= yMax; tileY++) {
+                    if (xCounter == xMin || yCounter == yMin || xCounter == xMax || yCounter == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
@@ -79,7 +76,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass
         // So disallow building in e.g. 1, 5, 9, 13, 16 horizontally and 3, 7, 11, 15, 19 vertically
-        if (isForbiddenByStreetBlock(builder, building, position)) {
+        if (isForbiddenByStreetGrid(builder, building, position)) {
             return false;
         }
 
@@ -106,7 +103,16 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     // Lo-level
 
     private static boolean isTooCloseToOtherPylons(APosition position) {
-        int pylons = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(7, position).count();
+        int pylons;
+
+        if (AGame.getSupplyUsed() < 35) {
+            pylons = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(7, position).count();
+        }
+        else if (AGame.getSupplyUsed() < 100) {
+            pylons = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(4, position).count();
+        } else {
+            pylons = -1;
+        }
 
         _CONDITION_THAT_FAILED = "Too close to other pylons (" + pylons + ")";
         return pylons > 0;
@@ -118,14 +124,14 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         AUnit nearestBase = Select.ourBases().nearestTo(position);
         if (nearestBase != null && nearestBase.distanceTo(position) <= 14) {
             for (AUnit mineral : Select.minerals().inRadius(8, position).listUnits()) {
-                if (mineral.distanceTo(position) <= (building.isPylon() ? 6 : 4)) {
+                if (mineral.distanceTo(position) <= (building.isPylon() ? 7 : 4)) {
                     _CONDITION_THAT_FAILED = "Too close to mineral";
                     return true;
                 }
             }
 
             for (AUnit geyser : Select.geysers().inRadius(8, position).listUnits()) {
-                if (geyser.distanceTo(position) <= 4) {
+                if (geyser.distanceTo(position) <= (building.isPylon() ? 5 : 4)) {
                     _CONDITION_THAT_FAILED = "Too close to geyser";
                     return true;
                 }

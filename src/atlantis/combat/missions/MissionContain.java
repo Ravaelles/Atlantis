@@ -2,6 +2,8 @@ package atlantis.combat.missions;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.combat.squad.SquadScout;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -24,6 +26,10 @@ public class MissionContain extends Mission {
 //            return true;
 //        }
 
+        if (SquadScout.handle(unit)) {
+            return true;
+        }
+
         if (ASquadCohesionManager.handle(unit)) {
             return true;
         }
@@ -42,7 +48,7 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         APosition focusPoint = focusPoint();
 
-        if (enemy.distanceTo(unit) <= 6.1) {
+        if (enemy.distanceTo(unit) <= 6.1 || unit.inWeaponRange(enemy, 0.8)) {
             return true;
         }
 
@@ -52,8 +58,8 @@ public class MissionContain extends Mission {
         }
 
         // Allow to defend base
-        AUnit base = Select.mainBase();
-        if (base != null && enemy.distanceTo(base) <= 30) {
+        APosition natural = AMap.getNaturalBaseLocation();
+        if (natural != null && enemy.distanceTo(natural) <= 35) {
             return true;
         }
 

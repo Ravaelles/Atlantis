@@ -16,7 +16,7 @@ import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
-import atlantis.util.PositionUtil;
+import atlantis.position.PositionUtil;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
 import bwapi.*;
@@ -121,8 +121,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
             }
             else {
 //                System.err.println("Enemy unit (" + u.getType() + ") returned Unknown type");
+                return _lastCachedType;
             }
-//            return _lastCachedType;
         }
 //        else {
 //            _lastCachedType = type;
@@ -228,14 +228,14 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Returns true if any close enemy can either shoot or hit this unit.
      */
-    public boolean canAnyCloseEnemyShootThisUnit() {
+    public boolean canAnyCloseEnemyAttackThisUnit() {
         return !Select.enemy().inRadius(12.5, this).canAttack(this).isEmpty();
     }
     
     /**
      * Returns true if any close enemy can either shoot or hit this unit.
      */
-    public boolean canAnyCloseEnemyShootThisUnit(double safetyMargin) {
+    public boolean canAnyCloseEnemyAttackThisUnit(double safetyMargin) {
         return !Select.enemy().inRadius(12.5, this).canAttack(this, safetyMargin).isEmpty();
     }
 
@@ -520,7 +520,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Not that we're racists, but spider mines and larvas aren't really units...
      */
     public boolean isNotActuallyUnit() {
-        return getType().ut().isNeutral() || isSpiderMine() || isLarvaOrEgg() || isBuilding()
+        return getType().ut().isNeutral() || isLarvaOrEgg() || isBuilding()
                 || getType().isMineralField() || getType().isGeyser() || getType().isGasBuilding();
     }
 
@@ -536,6 +536,13 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     public double distanceTo(AUnit otherUnit) {
         return PositionUtil.distanceTo(this, otherUnit);
+    }
+
+    /**
+     * Returns real ground distance to given point (not the air shortcut over impassable terrain).
+     */
+    public double groundDistance(AUnit otherUnit) {
+        return PositionUtil.getGroundDistance(this.getPosition(), otherUnit.getPosition());
     }
 
     public double distanceTo(Object o) {
@@ -635,7 +642,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
-    public Squad getSquad() {
+    public Squad squad() {
 //        if (squad == null) {
 //            System.err.println("still squad in unit was fuckin null");
 //            squad = AtlantisSquadManager.getAlphaSquad();
@@ -1255,15 +1262,23 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public Mission micro() {
-        return getSquad().getMission();
+        return squad().getMission();
     }
 
     public int squadSize() {
-        return getSquad().size();
+        return squad().size();
     }
 
     public int getEnergy() {
         return u.getEnergy();
+    }
+
+    /**
+     * If anotherUnit is null it returns FALSE.
+     * Returns TRUE if anotherUnit is the same unit as this unit (and it's alive and not null).
+     */
+    public boolean is(AUnit isTheSameAliveNotNullUnit) {
+        return isTheSameAliveNotNullUnit != null && isTheSameAliveNotNullUnit.isAlive() && !this.equals(isTheSameAliveNotNullUnit);
     }
 
 //    public boolean isFacingTheSameDirection(AUnit otherUnit) {

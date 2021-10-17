@@ -199,4 +199,15 @@ public class Squad extends Units {
         return Missions.ATTACK.equals(getMission());
     }
 
+    public boolean isFirstUnitInSquad(AUnit unit) {
+        return unit.equals(first());
+    }
+
+    public AUnit getSquadScout() {
+        if (size() <= 2) {
+            return null;
+        }
+
+        return first();
+    }
 }

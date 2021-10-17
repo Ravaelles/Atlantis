@@ -5,7 +5,6 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
-import atlantis.util.PositionUtil;
 
 import java.util.Collection;
 

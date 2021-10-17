@@ -70,13 +70,13 @@ public class TerranSiegeTankManager {
                 || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 11.2)) {
             tank.setTooltip("Considers unsiege");
 
-            if (tank.getSquad().isMissionAttack() && A.chance(2)) {
+            if (tank.squad().isMissionAttack() && A.chance(2)) {
                 tank.unsiege();
                 tank.setTooltip("Unsiege");
                 return true;
             }
 
-            if (tank.getSquad().isMissionContain()) {
+            if (tank.squad().isMissionContain()) {
                 APosition focusPoint = Missions.globalMission().focusPoint();
                 if (focusPoint != null && tank.distanceTo(focusPoint) >= 13 && A.chance(2)) {
                     tank.unsiege();

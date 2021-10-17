@@ -12,7 +12,7 @@ import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.A;
-import atlantis.util.PositionUtil;
+import atlantis.position.PositionUtil;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwta.BWTA;

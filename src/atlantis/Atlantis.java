@@ -200,11 +200,15 @@ public class Atlantis implements BWEventListener {
                 AProductionQueueManager.rebuildQueue();
                 ASquadManager.battleUnitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
-                LOST++;
-                LOST_RESOURCES += unit.getType().getTotalResources();
+                if (!unit.type().isGeyser()) {
+                    LOST++;
+                    LOST_RESOURCES += unit.getType().getTotalResources();
+                }
             } else {
-                KILLED++;
-                KILLED_RESOURCES += unit.getType().getTotalResources();
+                if (!unit.type().isGeyser()) {
+                    KILLED++;
+                    KILLED_RESOURCES += unit.getType().getTotalResources();
+                }
             }
         }
     }
@@ -299,7 +303,9 @@ public class Atlantis implements BWEventListener {
                 if (unit.isActualUnit()) {
                     ASquadManager.possibleCombatUnitCreated(unit);
                 }
-            } // Enemy unit
+            }
+
+            // Enemy unit
             else {
                 AEnemyUnits.refreshEnemyUnit(unit);
             }

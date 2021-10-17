@@ -80,7 +80,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
         // Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass
         // So disallow building in e.g. 1, 5, 9, 13, 16 horizontally and 3, 7, 11, 15, 19 vertically
-        if (isForbiddenByStreetBlock(builder, building, position)) {
+        if (isForbiddenByStreetGrid(builder, building, position)) {
             return false;
         }
 

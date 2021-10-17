@@ -37,7 +37,7 @@ public class AAvoidEnemyMeleeUnitsManager {
 
         // === Run the fuck outta here ==============================
 
-        if (unit.runFrom(nearestEnemy, 2.5)) {
+        if (unit.runFrom(nearestEnemy, 3.5)) {
             unit.setTooltip("MeleeRun");
             return true;
         }
@@ -62,7 +62,7 @@ public class AAvoidEnemyMeleeUnitsManager {
 
         double baseCriticalDistance = 0;
         double quicknessBonus = Math.min(0.5, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
-        double healthBonus = unit.getWoundPercent() / 37.0;
+        double woundedBonus = unit.getWoundPercent() / 34.0;
         double beastBonus = (beastNearby > 0 ? 1.2 : 0);
         double ourUnitNearby = Select.ourRealUnits().inRadius(0.6, unit).count() / 2.0;
         double ourMovementBonus = unit.isMoving() ? (unit.isRunning() ? 0.8 : 0) : 1.3;
@@ -70,7 +70,7 @@ public class AAvoidEnemyMeleeUnitsManager {
                 ? (nearestEnemy.isMoving() ? 1.8 : 0.9) : 0;
 //        APainter.paintTextCentered(unit.getPosition(), ourMovementBonus + " // " + + enemyMovementBonus, Color.White, 0, 3);
 
-        double criticalDist = baseCriticalDistance + quicknessBonus + healthBonus + beastBonus
+        double criticalDist = baseCriticalDistance + quicknessBonus + woundedBonus + beastBonus
                 + ourUnitNearby + ourMovementBonus + enemyMovementBonus;
         return A.inRange(0.1, criticalDist, 4.8);
     }
@@ -108,7 +108,7 @@ public class AAvoidEnemyMeleeUnitsManager {
             return false;
         }
 
-        if (unit.isFullyHealthy() && !nearestEnemy.isType(AUnitType.Protoss_Dark_Templar)) {
+        if (unit.isFullyHealthy() && !unit.isWorker() && !nearestEnemy.isType(AUnitType.Protoss_Dark_Templar)) {
             return true;
         }
 

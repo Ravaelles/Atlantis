@@ -1,9 +1,8 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.missions.Mission;
+import atlantis.combat.targeting.AEnemyTargeting;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
 import bwapi.Color;
 
 public class AAttackEnemyUnit {
@@ -23,11 +22,13 @@ public class AAttackEnemyUnit {
         if (enemy == null) {
             return false;
         }
+
         if (!unit.canAttackThisKindOfUnit(enemy, false)) {
             unit.setTooltip("Invalid target");
             System.err.println("Invalid target for " + unit + ": " + enemy + " (" + unit.distanceTo(enemy) + ")");
             return false;
         }
+
         if (!missionAllowsToAttack(unit, enemy)) {
             return false;
         }
@@ -50,7 +51,7 @@ public class AAttackEnemyUnit {
     }
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
-        return unit.getSquad().getMission().allowsToAttackEnemyUnit(unit, enemy);
+        return unit.squad().getMission().allowsToAttackEnemyUnit(unit, enemy);
     }
 
 }

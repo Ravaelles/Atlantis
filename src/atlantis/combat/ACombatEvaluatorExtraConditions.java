@@ -3,7 +3,7 @@ package atlantis.combat;
 import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.util.PositionUtil;
+import atlantis.position.PositionUtil;
 
 
 

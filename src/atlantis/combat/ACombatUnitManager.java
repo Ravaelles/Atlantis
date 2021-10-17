@@ -149,8 +149,8 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        unit.setTooltip(unit.getSquad().getMission().getName());
-        return unit.getSquad().getMission().update(unit);
+        unit.setTooltip(unit.squad().getMission().getName());
+        return unit.squad().getMission().update(unit);
     }
 
     // =========================================================

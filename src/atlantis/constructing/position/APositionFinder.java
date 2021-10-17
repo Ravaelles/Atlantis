@@ -48,16 +48,14 @@ public class APositionFinder {
         // BASE
 
         else if (building.isBase()) {
-            APosition position = ASpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
-            return position;
-        } 
+            return ASpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
+        }
 
         // =========================================================
         // BUNKER
 
         else if (building.isBunker()) {
-            APosition position = TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
-            return position;
+            return TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
         } 
 
         // =========================================================

@@ -10,7 +10,7 @@ import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.util.A;
-import atlantis.util.PositionUtil;
+import atlantis.position.PositionUtil;
 import bwapi.Player;
 import bwapi.Position;
 import bwapi.Unit;
@@ -396,7 +396,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (unit.isVisible() && (includeBuildings || !unit.getType().isBuilding()) && !unit.isNotActuallyUnit()) {
+            if (unit.isVisible() && (includeBuildings || !unit.getType().isBuilding()) || !unit.isNotActuallyUnit()) {
                 if ((includeGroundUnits && unit.isGroundUnit()) || (includeAirUnits && unit.isAirUnit())) {
                     data.add(unit);
                 }
@@ -657,6 +657,18 @@ public class Select<T> {
         return this;
     }
 
+    public Select<T> workers() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AFoggedUnit unit = dataFrom(unitsIterator.next());
+            if (!unit.getUnit().isWorker()) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
     /**
      * Selects melee units that is units which have attack range at most 1 tile.
      */
@@ -855,12 +867,12 @@ public class Select<T> {
         return this;
     }
 
-    public Select<T> canAttack(AUnit targetUnit, double attackRangeBonus) {
+    public Select<T> canAttack(AUnit targetUnit, double shootingRangeBonus) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
-                boolean isInShotRange = unit.inWeaponRange(targetUnit, attackRangeBonus);
+                boolean isInShotRange = unit.inWeaponRange(targetUnit, shootingRangeBonus);
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 }
@@ -873,7 +885,7 @@ public class Select<T> {
      * Selects only those units from current selection, which can be both <b>attacked by</b> given unit (e.g.
      * Zerglings can't attack Overlord) and are <b>in shot range</b> to the given <b>unit</b>.
      */
-    public Select<T> canBeAttackedBy(AUnit attacker, boolean includeShootingRang) {
+    public Select<T> canBeAttackedBy(AUnit attacker, boolean checkShootingRange) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit target = unitFrom(unitsIterator.next());
@@ -881,12 +893,23 @@ public class Select<T> {
             if (!attacker.canAttackThisKindOfUnit(target, false)) {
                 unitsIterator.remove();
             }
-            else if (includeShootingRang && !attacker.inWeaponRange(target, 0)) {
+            else if (checkShootingRange && !attacker.inWeaponRange(target, 0)) {
                 unitsIterator.remove();
             }
         }
         return this;
     }
+
+    public Select<T> inShootRange(AUnit attacker) {
+        return canBeAttackedBy(attacker, true);
+    }
+
+    public Select<T> inShootRange(double shootingRangeBonus, AUnit attacker) {
+        return canAttack(attacker, shootingRangeBonus);
+    }
+
+//    public Select<T> inShootRangeOrAtMostTilesAway(double shootingRangeBonus, AUnit attacker) {
+//    }
 
     // =========================================================
     // Hi-level auxiliary methods

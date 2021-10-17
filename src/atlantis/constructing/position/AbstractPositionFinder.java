@@ -8,7 +8,7 @@ import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.PositionUtil;
+import atlantis.position.PositionUtil;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
@@ -21,7 +21,7 @@ public abstract class AbstractPositionFinder {
     /**
      * Returns true if game says it's possible to build given building at this position.
      */
-    public static boolean isForbiddenByStreetBlock(AUnit builder, AUnitType building, APosition position) {
+    public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         
         // Special buildings can be build anywhere
         if (building.isBase() || building.isGasBuilding() || building.isBunker()) {
@@ -29,15 +29,35 @@ public abstract class AbstractPositionFinder {
         }
         
         // =========================================================
-        
+
+
+//        System.out.println(building.getShortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
+//                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
+//                (position.getTileX() + building.getDimensionRight() / 32) % 7 + ")");
         // Leave entire vertical (same tileX) corridor free for units
-        if (position.getTileX() % 5 == 0 || position.getTileX() % 6 == 0) {
+        if (
+                position.getTileX() % 7 == 0
+                || (position.getTileX() + building.getDimensionRight() / 32) % 7 <= 1
+//                || (position.getTileX() + building.getDimensionRight() / 32) % 5 == 0
+//                || position.getTileX() % 7 == 0
+//                || (position.getTileX() - building.getDimensionLeft() / 32) % 7 == 0
+//                || (position.getTileX() + building.getDimensionRight() / 32) % 6 == 0
+        ) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }
-        
+
         // Leave entire horizontal (same tileY) corridor free for units
-        if (position.getTileY() % 6 == 0 || position.getTileY() % 7 == 0) {
+        if (
+                position.getTileY() % 7 <= 1
+                || (position.getTileY() + building.getDimensionDown() / 32) % 7 <= 1
+//                position.getTileY() % 7 == 0
+//                || (position.getTileY() - building.getDimensionUp() / 32) % 7 == 0
+//                || (position.getTileY() + building.getDimensionDown() / 32) % 6 == 0
+//                || position.getTileY() % 8 == 0
+//                || (position.getTileY() - building.getDimensionUp() / 32) % 8 == 0
+//                || (position.getTileY() + building.getDimensionDown() / 32) % 7 == 0
+        ) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;
         }
@@ -58,7 +78,7 @@ public abstract class AbstractPositionFinder {
             _CONDITION_THAT_FAILED = "BUILDER IS NULL";
             return false;
         }
-        
+
         return Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
     }
 

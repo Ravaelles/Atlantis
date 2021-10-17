@@ -148,7 +148,7 @@ public class AScoutManager {
 //        }
         // =========================================================
         if (startingLocation != null) {
-            scout.move(startingLocation.getPosition(), UnitActions.EXPLORE, "Scout!");
+            scout.move(startingLocation.getPosition(), UnitActions.EXPLORE, "Explore");
             return true;
         }
         else {
@@ -242,7 +242,7 @@ public class AScoutManager {
     private static void scoutForTheNextBase(AUnit scout) {
         APosition baseLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
         if (baseLocation != null) {
-            scout.move(baseLocation.getPosition(), UnitActions.MOVE, "Scout next base");
+            scout.move(baseLocation.getPosition(), UnitActions.EXPLORE, "Explore next base");
         }
     }
 

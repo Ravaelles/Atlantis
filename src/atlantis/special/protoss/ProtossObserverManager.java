@@ -9,6 +9,10 @@ import atlantis.units.actions.UnitActions;
 
 public class ProtossObserverManager {
 
+    private static AUnit observerForArmy = null;
+    private static AUnit observerForSquadScout = null;
+    private static AUnit observerForBase = null;
+
     public static boolean update(AUnit observer) {
         if (detectInvisibleUnitsClosestToBase(observer)) {
             return true;
@@ -18,7 +22,11 @@ public class ProtossObserverManager {
             return true;
         }
 
-        if (followSquads(observer)) {
+        if (followSquadScout(observer)) {
+            return true;
+        }
+
+        if (followArmy(observer)) {
             return true;
         }
 
@@ -28,7 +36,7 @@ public class ProtossObserverManager {
     // =========================================================
 
     private static boolean handleSpreadOut(AUnit observer) {
-        Select<AUnit> observers = Select.ourOfType(AUnitType.Protoss_Observer).inRadius(14, observer).exclude(observer);
+        Select<AUnit> observers = Select.ourOfType(AUnitType.Protoss_Observer).inRadius(17, observer).exclude(observer);
         if (observers.count() > 0) {
             AUnit otherObserver = observers.nearestTo(observer);
             observer.moveAwayFrom(otherObserver.getPosition(), 5, "Spread observers");
@@ -38,10 +46,34 @@ public class ProtossObserverManager {
         return false;
     }
 
-    private static boolean followSquads(AUnit observer) {
+    private static boolean followSquadScout(AUnit observer) {
+        if (!observer.is(observerForSquadScout)) {
+            return false;
+        }
+
+        AUnit scout = Squad.getAlphaSquad().getSquadScout();
+        if (scout != null) {
+            observerForSquadScout = observer;
+            if (scout.distanceTo(observer) > 1) {
+                observerForSquadScout.move(scout, UnitActions.MOVE, "Follow scout");
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean followArmy(AUnit observer) {
+        if (!observer.is(observerForArmy)) {
+            return false;
+        }
+
         APosition goTo = Squad.getAlphaSquad().getSquadCenter();
         if (goTo != null) {
-            observer.move(goTo, UnitActions.MOVE, "Follow");
+            observerForArmy = observer;
+            if (goTo.distanceTo(observer) > 1) {
+                observerForArmy.move(goTo, UnitActions.MOVE, "Follow army");
+            }
             return true;
         }
 
@@ -57,9 +89,16 @@ public class ProtossObserverManager {
             return false;
         }
 
+        if (!observer.is(observerForBase)) {
+            return false;
+        }
+
         AUnit dangerousInvisibleEnemy = enemyDangerousHiddenUnit();
         if (dangerousInvisibleEnemy != null) {
-            observer.move(dangerousInvisibleEnemy.getPosition(), UnitActions.MOVE, "Reveal");
+            observerForBase = observer;
+            if (observerForBase.distanceTo(dangerousInvisibleEnemy) > 0.2) {
+                observerForBase.move(dangerousInvisibleEnemy.getPosition(), UnitActions.MOVE, "Reveal enemy in base");
+            }
             return true;
         }
 
@@ -72,12 +111,17 @@ public class ProtossObserverManager {
             return invisibleUnit;
         }
 
-        AUnit burrowedZergUnit = Select.enemy().ofType(AUnitType.Zerg_Lurker).burrowed().nearestTo(Select.mainBase());
-        if (burrowedZergUnit != null) {
-            return burrowedZergUnit;
+        AUnit lurker = Select.enemy().ofType(AUnitType.Zerg_Lurker).nearestTo(Select.mainBase());
+        if (lurker != null) {
+            return lurker;
         }
 
-        return Select.enemy().ofType(
+        AUnit terranCloaked = Select.enemy().invisible().ofType(AUnitType.Terran_Wraith, AUnitType.Terran_Ghost).nearestTo(Select.mainBase());
+        if (terranCloaked != null) {
+            return terranCloaked;
+        }
+
+        return Select.enemy().invisible().ofType(
             AUnitType.Protoss_Dark_Templar
         ).nearestTo(Select.mainBase());
     }
