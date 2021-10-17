@@ -54,13 +54,15 @@ public class AUnitTypesHelper {
         
         System.out.println("===== Best ground damage =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
-            System.out.println(unitType.getShortName() + " damage: " + bestGroundDamage.get(unitType));
+            System.out.println(unitType.getShortName() + " (" + unitType.getGroundWeapon() + ", range "
+                    + (unitType.getGroundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
         }
         System.out.println();
         
         System.out.println("===== Best air damage =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
-            System.out.println(unitType.getShortName() + " damage: " + bestAirDamage.get(unitType));
+            System.out.println(unitType.getShortName() + "(" + unitType.getGroundWeapon() + ", range "
+                    + (unitType.getAirWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
         }
         System.out.println();
         

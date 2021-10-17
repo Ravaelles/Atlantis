@@ -35,14 +35,14 @@ public class ARunManager {
     // =========================================================
 
     public static boolean shouldStopRunning(AUnit unit) {
-        if (unit.isRunning() && !unit.lastStartedRunningAgo(4)) {
-//            AUnit nearEnemy = Select.enemyRealUnits().combatUnits().canAttack(unit, 2).nearestTo(unit);
-//            if (nearEnemy == null || !nearEnemy.isOtherUnitFacingThisUnit(unit)) {
-            if (!AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(unit)) {
-                unit.getRunManager().stopRunning();
-                unit.setTooltip("StopRun");
-                return true;
-            }
+        if (
+                unit.isRunning()
+                && !unit.lastStartedRunningAgo(5)
+                && !AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(unit)
+        ) {
+            unit.getRunManager().stopRunning();
+            unit.setTooltip("StopRun");
+            return true;
         }
 
         return false;
@@ -441,7 +441,7 @@ public class ARunManager {
             unit._lastStartedRunning = A.now();
 //            APainter.paintLine(unit.getPosition(), runTo, Color.Orange);
 //            boolean hasMoved = unit.move(runTo, UnitActions.RUN);
-            unit.move(runTo, UnitActions.RUN, "Run");
+            unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distanceTo(runTo)) + ")");
 
             // Make all other units very close to it run as well
 //            notifyNearbyUnitsToMakeSpace(unit);
@@ -467,7 +467,7 @@ public class ARunManager {
     }
 
     public boolean isRunning() {
-        if (runTo != null) {
+        if (runTo != null && unit.distanceTo(runTo) >= 0.3) {
             return true;
 //            if (unit.lastStartedRunningAgo(3)) {
 //                return true;
@@ -485,5 +485,4 @@ public class ARunManager {
         runTo = null;
         _updated_at = -1;
     }
-
 }

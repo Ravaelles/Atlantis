@@ -126,6 +126,10 @@ public class AGasManager {
 //        if (AGame.hasGas(800)) {
 //            return 1;
 //        }
+
+        if (Select.ourBases().inRadius(10, gasBuilding).isEmpty()) {
+            return 0;
+        }
         
         int totalGasNeeded = 0;
         ArrayList<ProductionOrder> nextOrders = AProductionQueue.getProductionQueueNext(

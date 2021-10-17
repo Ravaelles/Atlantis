@@ -19,42 +19,35 @@ public class AAvoidEnemyDefensiveBuildings {
 
         double enemyWeaponRange = enemyBuildingThatCanAttackThisUnit.getWeaponRangeAgainst(unit);
         double enemyDistance = enemyBuildingThatCanAttackThisUnit.distanceTo(unit);
-//            System.out.println("weapon " + enemyBuildingThatCanAttackThisUnit.type().getShortName() + " // " + enemyWeaponRange + " // " + enemyDistance);
         double distanceMargin = enemyDistance - enemyWeaponRange;
+//        System.out.println(enemyBuildingThatCanAttackThisUnit.type().getShortName() + " // " +  enemyBuildingThatCanAttackThisUnit.getWeaponAgainst(unit)+ " // " + enemyWeaponRange + " // " + enemyDistance + " // " +distanceMargin);
 
         // =========================================================
 
         // Way too close, in shooting range of building, have to back out
         if (distanceMargin <= 1.2) {
+            if (unit.isMoving()) {
+                unit.holdPosition("AvoidCriticalHold(" + String.format("%.1f", distanceMargin) + ")");
+            }
+
+            unit.setTooltip("AvoidHoldOk(" + String.format("%.1f", distanceMargin) + ")");
+            return true;
+        }
+
+        // Very close, but it should be okay to hold
+        else if (1.2 < distanceMargin && distanceMargin <= 1.8) {
             return unit.moveAwayFrom(
                     enemyBuildingThatCanAttackThisUnit.getPosition(),
-                    1.5,
-                    "AvoidCritical(" + String.format("%.1f", distanceMargin) + ")"
+                    1.0,
+                    "AvoidMove(" + String.format("%.1f", distanceMargin) + ")"
             );
         }
 
         // Very close, but it should be okay to hold
-        else if (1.2 < distanceMargin && distanceMargin <= 2.5) {
-//            boolean result = unit.moveAwayFrom(
-//                    enemyBuildingThatCanAttackThisUnit.getPosition(),
-//                    2,
-//                    "AvoidBack (" + String.format("%.1f", distanceMargin) + ")"
-//            );
-//            return result;
-//            unit.stop("AvoidStop(" + String.format("%.1f", distanceMargin) + ")");
-            unit.holdPosition("AvoidHold(" + String.format("%.1f", distanceMargin) + ")");
+        else if (1.8 < distanceMargin && distanceMargin <= 2.6) {
+            unit.holdPosition("AvoidHoldOk(" + String.format("%.1f", distanceMargin) + ")");
             return true;
         }
-
-//        double safetyMargin = unit.isVulture() ? 6 : 4;
-//
-//        if (safetyMargin < distanceMargin) {
-//            return unit.moveAwayFrom(
-//                    enemyBuildingThatCanAttackThisUnit.getPosition(),
-//                    3,
-//                    "AvoidBack(" + String.format("%.1f", distanceMargin) + ")"
-//            );
-//        }
 
         return false;
     }

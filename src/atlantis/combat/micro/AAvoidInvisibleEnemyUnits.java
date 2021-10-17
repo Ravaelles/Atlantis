@@ -21,12 +21,19 @@ public class AAvoidInvisibleEnemyUnits {
         return false;
     }
 
-    public static boolean handledAvoid(AUnit unit, AUnitType type) {
-        double safetyMargin = 2.6 + (type.isMeleeUnit() ? 0 : type.getWeaponRangeAgainst(unit));
+//    private static boolean handledAvoid(AUnit unit, AUnitType type) {
+//        return handledAvoid(unit, type, -1);
+//    }
+
+    private static boolean handledAvoid(AUnit unit, AUnitType type) {
+//        if (runFromDist < 0) {
+//            runFromDist = 2;
+//        }
+        double safetyMargin = 3.0 + (unit.isWorker() ? 0.6 : 0) + (type.isMeleeUnit() ? 0 : type.getWeaponRangeAgainst(unit));
 
         AUnit hiddenEnemy = Select.enemyOfType(type).invisible().inRadius(safetyMargin, unit).first();
         if (hiddenEnemy != null) {
-            unit.runFrom(hiddenEnemy, 3);
+            unit.runFrom(hiddenEnemy, 3.0 + Math.max(1.8, unit.lastStartedRunningAgo() / 150.0));
             return true;
         }
 

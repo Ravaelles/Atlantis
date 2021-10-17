@@ -28,7 +28,7 @@ public class ARepairerManager {
     // =========================================================
 
     private static boolean handleRepairerSafety(AUnit repairer) {
-        if (repairer.getHPPercent() <= 50 && AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(repairer)) {
+        if (repairer.getHPPercent() <= 50 && (new AAvoidEnemyMeleeUnitsManager(repairer)).avoidCloseMeleeUnits()) {
             return true;
         }
 

@@ -109,14 +109,6 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
-        if (A.now() == 7) {
-            AGameSpeed.pauseGame();
-        }
-
-//            Collection<AUnit> workers = Select.ourWorkers().listUnits();
-//            for (AUnit unit : workers) {
-//                APainter.paintLine(unit, unit.getTarget(), Color.Orange);
-//            }
 
         // === Handle PAUSE ================================================
         // If game is paused wait 100ms - pause is handled by PauseBreak button
@@ -201,8 +193,6 @@ public class Atlantis implements BWEventListener {
             }
             else if (unit.isOurUnit()) {
                 AOurUnitsExtraInfo.idsOfOurDestroyedUnits.add(unit.getID());
-//                System.err.println(unit.getID() + " destroyed [*]");
-                AGameSpeed.changeSpeedTo(1);
             }
 
             // Our unit

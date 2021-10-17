@@ -10,6 +10,10 @@ import atlantis.units.actions.UnitActions;
 public class ASquadCohesionManager {
 
     public static boolean handle(AUnit unit) {
+        if (unit.getSquad().getMission().isMissionAttack()) {
+            return false;
+        }
+
         APosition medianPosition = unit.getSquad().getSquadCenter();
 
         if (handleShouldSpreadOut(unit, medianPosition)) {
@@ -28,6 +32,10 @@ public class ASquadCohesionManager {
             return false;
         }
 
+        if (unit.getSquad().getMission().isMissionAttack()) {
+            return false;
+        }
+
         if (!unit.isRunning() && unit.distanceTo(squadCenter(unit)) >= 11) {
             unit.move(squadCenter(unit), UnitActions.MOVE, "Very lonely!");
             return true;
@@ -43,7 +51,7 @@ public class ASquadCohesionManager {
     // =========================================================
 
     private static boolean handleShouldSpreadOut(AUnit unit, APosition medianPoint) {
-        if (unit.getSquad().size() <= 1) {
+        if (unit.getSquad().size() <= 3) {
             return false;
         }
 
@@ -87,7 +95,7 @@ public class ASquadCohesionManager {
 //        }
 
         if (
-                unit.distanceTo(nearestFriend) > 2.8
+                unit.distanceTo(nearestFriend) > 2.3
         ) {
             unit.move(
                     medianPoint.translatePercentTowards(unit, 50),
@@ -97,7 +105,10 @@ public class ASquadCohesionManager {
             return true;
         }
 
-        if (unit.distanceTo(medianPoint) > maxDistToMedian) {
+        if (
+                unit.distanceTo(medianPoint) > maxDistToMedian
+                && unit.distanceTo(nearestFriend) > 3
+        ) {
             unit.move(
                     medianPoint.translatePercentTowards(unit, 50),
                     UnitActions.MOVE,
@@ -108,16 +119,15 @@ public class ASquadCohesionManager {
 
         if (
 //                closeFriends.clone().inRadius(2, unit).count() == 0
-                (squadSize >= 5 && closeFriends.clone().inRadius(5, unit).count() <= 2)
+                nearestFriend != null
+                && (squadSize >= 5 && closeFriends.clone().inRadius(4, unit).count() <= 1)
         ) {
-            if (nearestFriend != null) {
-                unit.move(
-                        nearestFriend.getPosition().translatePercentTowards(unit, 50),
-                        UnitActions.MOVE,
-                        "Love(" + (int) nearestFriend.distanceTo(unit) + ")"
-                );
-                return true;
-            }
+            unit.move(
+                    nearestFriend.getPosition().translatePercentTowards(unit, 50),
+                    UnitActions.MOVE,
+                    "Love(" + (int) nearestFriend.distanceTo(unit) + ")"
+            );
+            return true;
         }
 
         return false;

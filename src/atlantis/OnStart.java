@@ -12,12 +12,12 @@ public class OnStart {
     public static void execute() {
         System.out.println("### Starting Atlantis... ###");
 
+        // Uncomment this line to see list of units -> damage.
+//        AUnitTypesHelper.displayUnitTypesDamage();
+
         APainter.assignBwapiInstance();
 
         handleCheckIfUmsMap();
-
-        // Uncomment this line to see list of units -> damage.
-//        AUnitTypesHelper.displayUnitTypesDamage();
 
         // Atlantis can modify ChaosLauncher's config files treating AtlantisConfig as the source-of-truth
         AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();
@@ -27,7 +27,7 @@ public class OnStart {
 
         // Game speed mode that starts fast, slows down when units are attacking
         AGameSpeed.init();
-//        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
+        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
 
         // One time map analysis for every map
         AMap.initMapAnalysis();

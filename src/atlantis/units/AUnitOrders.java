@@ -167,7 +167,7 @@ public interface AUnitOrders {
      */
     default boolean patrol(APosition target, UnitAction unitAction, String tooltip) {
         unit().setTooltip(tooltip)
-                .setUnitAction(UnitActions.HOLD_POSITION)
+                .setUnitAction(UnitActions.PATROL)
                 .setLastUnitOrderNow();
         return u().patrol(target);
     }
@@ -203,7 +203,7 @@ public interface AUnitOrders {
         }
 
         unit().setTooltip(tooltip)
-                .setUnitAction(UnitActions.HOLD_POSITION)
+                .setUnitAction(UnitActions.STOP)
                 .setLastUnitOrderNow();
         return u().stop();
     }
@@ -219,7 +219,7 @@ public interface AUnitOrders {
      */
     default boolean follow(AUnit target, String tooltip) {
         unit().setTooltip(tooltip)
-                .setUnitAction(UnitActions.HOLD_POSITION)
+                .setUnitAction(UnitActions.FOLLOW)
                 .setLastUnitOrderNow();
         return u().follow(target.u());
     }

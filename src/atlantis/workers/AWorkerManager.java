@@ -18,7 +18,7 @@ public class AWorkerManager {
         if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(worker)) {
             return true;
         }
-        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(worker)) {
+        if (AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(worker)) {
             return true;
         }
 

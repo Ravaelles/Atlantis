@@ -9,6 +9,7 @@ import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.util.A;
 
 public class ACombatUnitManager extends AbstractMicroManager {
 
@@ -54,8 +55,10 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     private static void preActions(AUnit unit) {
-        if (AGameSpeed.isDynamicSlowdownAllowed() && (unit.isAttacking() || unit.isUnderAttack())) {
+        if (AGameSpeed.isDynamicSlowdownAllowed() && !AGameSpeed.isDynamicSlowdownActive()
+                && (unit.lastAttackOrderAgo(1) || unit.isUnderAttack())) {
             AGameSpeed.activateDynamicSlowdown();
+            AGameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
         }
 
         unit.setTooltip(unit.getTooltip() + ".");
@@ -74,8 +77,13 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
+        if (unit.isRunning()) {
+            unit.setTooltip("Running(" + A.digit(unit.distanceTo(unit.getTargetPosition())) + ")");
+            return true;
+        }
+
         // Don't INTERRUPT shooting units
-        if (shouldNotDisturbUnit(unit)) {
+        if (DontInterruptStartedAttacks.shouldNotBeInterruptedStartedAttack(unit)) {
             return true;
         }
 
@@ -93,7 +101,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     private static boolean handledMediumPriority(AUnit unit) {
-
         if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(unit)) {
             return true;
         }
@@ -104,7 +111,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
             }
         }
 
-        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
+        if ((new AAvoidEnemyMeleeUnitsManager(unit)).avoidCloseMeleeUnits()) {
             return true;
         }
 
@@ -147,21 +154,6 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     // =========================================================
-
-    /**
-     * Some actions are too important/costly. No matter what happens, don't interrupt unit at this point.
-     */
-    private static boolean shouldNotDisturbUnit(AUnit unit) {
-//        if (unit.isAttackFrame()) {
-//            System.out.println(AGame.getTimeFrames() +" // #" + unit.getID());
-//        }
-
-        if (InterruptStartingAttacks.shouldNotBeInterruptedStartingAttack(unit)) {
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      * Some units like Reavers should open fire to nearby enemies even when retreating, otherwise they'll

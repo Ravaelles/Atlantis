@@ -22,20 +22,17 @@ public class AGameSpeed {
      */
     public static int frameSkip;
 
-    private static final int NORMAL_GAME_SPEED = 1;
-    private static final int NORMAL_FRAME_SKIP = 0;
+    private static final int NORMAL_GAME_SPEED = 0;
+    private static final int NORMAL_FRAME_SKIP = 30;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
-    private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 0;
+    private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
 
     // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
-    private static boolean dynamicSlowdownIsAllowed = false;
-    private static boolean dynamicSlowdownIsActive = false;
+    private static boolean dynamicSlowdownIsAllowed;
+    private static boolean dynamicSlowdownIsActive;
 
     // Last time unit has died; when unit dies, game slows down
     private static int dynamicSlowdown_lastTimeUnitDestroyed = 0;
-
-    // Normal game speed, outside autoSlodown mode.
-    private static int dynamicSlowdown_previousSpeed = 0;
 
     // =========================================================
 
@@ -54,7 +51,6 @@ public class AGameSpeed {
      * Decreases game speed to the value specified in AtlantisConfig when action happens.
      */
     public static void allowToDynamicallySlowdownGameOnFirstFighting() {
-        dynamicSlowdown_previousSpeed = gameSpeed;
         dynamicSlowdown_lastTimeUnitDestroyed = AGame.getTimeSeconds();
         dynamicSlowdownIsAllowed = true;
         dynamicSlowdownIsActive = true;
@@ -62,7 +58,11 @@ public class AGameSpeed {
         Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
-        System.out.println("SLOWDOWN is active. Frame skip = " + DYNAMIC_SLOWDOWN_FRAME_SKIP);
+        System.out.println("SLOWDOWN is allowed. Frame skip = " + DYNAMIC_SLOWDOWN_FRAME_SKIP);
+    }
+
+    public static void disallowToDynamicallySlowdownGameOnFirstFighting() {
+        dynamicSlowdownIsAllowed = false;
     }
 
     public static void activateDynamicSlowdown() {
@@ -77,7 +77,7 @@ public class AGameSpeed {
     public static void deactivateDynamicSlowdown() {
         dynamicSlowdownIsActive = false;
 
-        Atlantis.game().setLocalSpeed(dynamicSlowdown_previousSpeed);
+        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
         System.out.println("Disabled SLOWDOWN");
@@ -89,10 +89,16 @@ public class AGameSpeed {
         return dynamicSlowdownIsAllowed;
     }
 
+    public static boolean isDynamicSlowdownActive() {
+        return dynamicSlowdownIsActive;
+    }
+
     /**
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */
     public static void changeSpeedTo(int speed) {
+        dynamicSlowdownIsActive = false;
+
         if (speed < 0) {
             speed = 0;
         }
@@ -171,6 +177,7 @@ public class AGameSpeed {
      * Change game rendering frame skipping - speeds up game considerably.
      */
     public static void changeFrameSkipTo(int newFrameSkip) {
+        dynamicSlowdownIsActive = false;
         if (frameSkip <= 1) {
             frameSkip = 0;
         }

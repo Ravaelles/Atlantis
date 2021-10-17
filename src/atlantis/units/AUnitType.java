@@ -306,6 +306,12 @@ public class AUnitType implements Comparable<AUnitType> {
 
     // =========================================================
     public static Collection<AUnitType> getAllUnitTypes() {
+        if (instances.size() < 30) {
+            for (UnitType type : UnitType.values()) {
+                createFrom(type);
+            }
+        }
+
         return instances.values();
     }
 
@@ -835,6 +841,10 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public int getWeaponRangeAgainst(AUnit anotherUnit) {
+        if (isCannon()) {
+            return 7;
+        }
+
         if (anotherUnit.isAirUnit()) {
             return getAirWeapon().maxRange() / 32;
         } else {

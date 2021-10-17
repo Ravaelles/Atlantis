@@ -150,8 +150,8 @@ public class AAdvancedPainter extends APainter {
             // === Paint if enemy units is dangerously close
             // =========================================================
 
-            double criticalDistance = AAvoidEnemyMeleeUnitsManager.getCriticalDistance(unit);
-            if (AAvoidEnemyMeleeUnitsManager.isEnemyCriticallyClose(unit) && criticalDistance > Double.NEGATIVE_INFINITY) {
+            double criticalDistance = (new AAvoidEnemyMeleeUnitsManager(unit)).getCriticalDistance();
+            if (AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(unit) && criticalDistance > Double.NEGATIVE_INFINITY) {
 //                APainter.paintCircle(
 //                        unit.getPosition(),
 //                        (int) criticalDistance * 32,

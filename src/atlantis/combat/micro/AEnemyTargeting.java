@@ -109,7 +109,7 @@ public class AEnemyTargeting {
 
         nearestEnemy = enemyRealUnitsThatCanBeAttacked.clone()
                 .combatUnits()
-                .canBeAttackedBy(unit, true)
+                .canBeAttackedBy(unit, false)
                 .nearestTo(unit);
         if (nearestEnemy != null) {
             return nearestEnemy;
@@ -179,7 +179,7 @@ public class AEnemyTargeting {
         // =========================================================
         // Okay, try targeting any-fuckin-thing
 
-        nearestEnemy = Select.enemyRealUnits(true)
+        nearestEnemy = Select.enemy()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, false)
                 .nearestTo(unit);

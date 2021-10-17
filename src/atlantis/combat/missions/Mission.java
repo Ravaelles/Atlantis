@@ -28,6 +28,10 @@ public abstract class Mission {
 
     public abstract boolean update(AUnit unit);
 
+    public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        return true;
+    }
+
     // =========================================================
 
 //    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
@@ -97,5 +101,4 @@ public abstract class Mission {
         return false;
 //        return this.equals(Missions.UMS);
     }
-    
 }

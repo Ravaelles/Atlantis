@@ -1,7 +1,9 @@
 package atlantis.combat.micro;
 
+import atlantis.combat.missions.Mission;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
+import atlantis.units.Select;
 import bwapi.Color;
 
 public class AAttackEnemyUnit {
@@ -18,16 +20,15 @@ public class AAttackEnemyUnit {
      */
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit, double maxDistFromEnemy) {
         AUnit enemy = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
-
-        // We were unable to define enemy unit to attack, just quit
         if (enemy == null) {
             return false;
         }
-
-        // Check if weapon cooldown allows to attack this enemy
         if (!unit.canAttackThisKindOfUnit(enemy, false)) {
             unit.setTooltip("Invalid target");
             System.err.println("Invalid target for " + unit + ": " + enemy + " (" + unit.distanceTo(enemy) + ")");
+            return false;
+        }
+        if (!missionAllowsToAttack(unit, enemy)) {
             return false;
         }
 
@@ -36,16 +37,20 @@ public class AAttackEnemyUnit {
 //            APainter.paintTextCentered(unit, enemyToAttack + ", " + unit.isJustShooting(), Color.Red);
             APainter.paintLine(unit, enemy, Color.Red);
             if (!enemy.equals(unit.getTarget())) {
-                if (unit.isMoving() && unit.inRealWeaponRange(enemy)) {
-                    unit.stop("Stop&Attack");
-                } else {
+//                if (unit.isMoving() && unit.inRealWeaponRange(enemy)) {
+//                    unit.stop("Stop&Attack");
+//                } else {
                     unit.attackUnit(enemy);
-                }
+//                }
             }
             return true;
         } 
         
         return false;
+    }
+
+    private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
+        return unit.getSquad().getMission().allowsToAttackEnemyUnit(unit, enemy);
     }
 
 }

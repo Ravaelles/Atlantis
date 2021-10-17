@@ -7,12 +7,12 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import bwapi.Color;
 
-public class InterruptStartingAttacks {
+public class DontInterruptStartedAttacks {
 
 //    private static boolean DEBUG = true;
     private static boolean DEBUG = false;
 
-    public static boolean shouldNotBeInterruptedStartingAttack(AUnit unit) {
+    public static boolean shouldNotBeInterruptedStartedAttack(AUnit unit) {
 
         int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
         int lastStartingAttack = AGame.framesAgo(unit._lastStartingAttack);
@@ -26,33 +26,32 @@ public class InterruptStartingAttacks {
             return true;
         }
 
-        if (cooldown <= 3 && unit.lastAttackOrderAgo(9)) {
-            unit.setTooltip("Attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
-            return true;
-        }
-
-        if (unit.isStartingAttack() || unit.lastStartedAttackAgo(9)) {
+        if (unit.isStartingAttack() || unit.lastStartedAttackAgo(5)) {
             unit.setTooltip("Starts attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
             return true;
         }
 
-//        if (unit.isAttacking() && (cooldown <= 3 || cooldown >= cooldownAbsolute - 10)) {
-        if (unit.isAttacking() && (cooldown <= 3)) {
-            unit.setTooltip("Shooting(" + lastAttackFrame + "/" + unit.getCooldownCurrent() + ")");
-//            if (DEBUG && AGame.getTimeFrames() > 50) {
-            if (DEBUG) {
-                AGameSpeed.changeSpeedTo(30);
-                System.out.println(
-                        AGame.now() + " - " +
-                        "#"+ unit.getID() + "  " +
-                        " DONT_INT(" + lastAttackFrame + "/" + lastStartingAttack +") " +
-                        ", COOL = " + unit.getCooldownCurrent() +
-                        ", DIST = " + unit.distanceTo(unit.getTarget()) +
-                        ", TAR = " + unit.getTarget().getShortName()
-                );
-            }
+        if (cooldown <= 3 && unit.lastAttackOrderAgo(9)) {
+            unit.setTooltip("Attack(" + lastAttackFrame + "/" + lastStartingAttack + " // " + cooldown + ")");
             return true;
         }
+
+//        if (unit.isAttacking() && (cooldown <= 3 || cooldown >= cooldownAbsolute - 10)) {
+//        if (unit.isAttacking()) {
+//            unit.setTooltip("Shooting(" + lastAttackFrame + "/" + unit.getCooldownCurrent() + ")");
+////            if (DEBUG && AGame.getTimeFrames() > 50) {
+//            if (DEBUG) {
+//                System.out.println(
+//                        AGame.now() + " - " +
+//                        "#"+ unit.getID() + "  " +
+//                        " DONT_INT(" + lastAttackFrame + "/" + lastStartingAttack +") " +
+//                        ", COOL = " + unit.getCooldownCurrent() +
+//                        ", DIST = " + unit.distanceTo(unit.getTarget()) +
+//                        ", TAR = " + unit.getTarget().getShortName()
+//                );
+//            }
+//            return true;
+//        }
 
 //        if (lastAttackFrame <= 8 || lastStartingAttack <= 16) {
 //            return true;

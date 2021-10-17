@@ -11,41 +11,45 @@ import bwapi.Color;
 
 public class AAvoidEnemyMeleeUnitsManager {
     
-    private static AUnit nearestEnemy = null;
+    private AUnit nearestEnemy = null;
+    private AUnit unit;
+
+    // =========================================================
+
+    public AAvoidEnemyMeleeUnitsManager(AUnit unit) {
+        this.unit = unit;
+        this.nearestEnemy = nearestEnemy();
+    }
 
     // =========================================================
 
     /**
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
-    public static boolean avoidCloseMeleeUnits(AUnit unit) {
-        nearestEnemy = nearestEnemy(unit);
-
-        if (shouldNotAvoidMeleeUnits(unit)) {
+    public boolean avoidCloseMeleeUnits() {
+        if (shouldNotAvoidMeleeUnits()) {
             return false;
         }
 
-        // =========================================================
-
-        boolean isEnemyDangerouslyClose = shouldRunFromAnyEnemyMeleeUnit(unit);
-        if (!isEnemyDangerouslyClose) {
+        if (!isEnemyCriticallyClose()) {
             return false;
         }
 
         // === Run the fuck outta here ==============================
 
-//            APainter.paintTextCentered(unit.getPosition().translateByPixels(0, -12), "RUN", Color.Red);
-
-        if (unit.runFrom(nearestEnemy, 1.5)) {
+        if (unit.runFrom(nearestEnemy, 2.5)) {
             unit.setTooltip("MeleeRun");
             return true;
         }
 
-        return handleErrorRun(unit);
+        return handleErrorRun();
     }
 
-    public static double getCriticalDistance(AUnit unit) {
-        nearestEnemy = nearestEnemy(unit);
+    public static boolean shouldRunFromAnyEnemyMeleeUnit(AUnit unit) {
+        return (new AAvoidEnemyMeleeUnitsManager(unit)).isEnemyCriticallyClose();
+    }
+
+    public double getCriticalDistance() {
         if (nearestEnemy == null) {
             return Double.NEGATIVE_INFINITY;
         }
@@ -58,10 +62,10 @@ public class AAvoidEnemyMeleeUnitsManager {
 
         double baseCriticalDistance = 0;
         double quicknessBonus = Math.min(0.5, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
-        double healthBonus = unit.getWoundPercent() / 45.0;
+        double healthBonus = unit.getWoundPercent() / 37.0;
         double beastBonus = (beastNearby > 0 ? 1.2 : 0);
         double ourUnitNearby = Select.ourRealUnits().inRadius(0.6, unit).count() / 2.0;
-        double ourMovementBonus = unit.isMoving() ? (unit.lastStartedRunningAgo(12) ? 0.8 : 0) : 1.3;
+        double ourMovementBonus = unit.isMoving() ? (unit.isRunning() ? 0.8 : 0) : 1.3;
         double enemyMovementBonus = (nearestEnemy != null && unit.isOtherUnitFacingThisUnit(nearestEnemy))
                 ? (nearestEnemy.isMoving() ? 1.8 : 0.9) : 0;
 //        APainter.paintTextCentered(unit.getPosition(), ourMovementBonus + " // " + + enemyMovementBonus, Color.White, 0, 3);
@@ -73,7 +77,7 @@ public class AAvoidEnemyMeleeUnitsManager {
 
     // =========================================================
 
-    private static boolean handleErrorRun(AUnit unit) {
+    private boolean handleErrorRun() {
         System.err.println("ERROR_RUN for " + unit.getShortNamePlusId());
 
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
@@ -82,21 +86,25 @@ public class AAvoidEnemyMeleeUnitsManager {
         return true;
     }
 
-    private static boolean shouldNotAvoidMeleeUnits(AUnit unit) {
+    private boolean shouldNotAvoidMeleeUnits() {
         if (nearestEnemy == null) {
             return true;
         }
 
-        boolean shouldSkip = !unit.isWorker() && (unit.isAirUnit() || unit.isMeleeUnit());
+        boolean shouldSkip = (unit.isAirUnit() || unit.isMeleeUnit());
         if (shouldSkip) {
             return true;
+        }
+
+        if (unit.isWorker() && unit.isFullyHealthy()) {
+            return Select.enemyCombatUnits().inRadius(3.5, unit).count() <= 1;
         }
 
         if (Select.enemyCombatUnits().inRadius(6, unit).count() <= 0) {
             return false;
         }
 
-        if (isEnoughOfOurUnitsNearbyToNotAvoid(unit)) {
+        if (isEnoughOfOurUnitsNearbyToNotAvoid()) {
             return false;
         }
 
@@ -124,7 +132,7 @@ public class AAvoidEnemyMeleeUnitsManager {
         return false;
     }
 
-    private static boolean isEnoughOfOurUnitsNearbyToNotAvoid(AUnit unit) {
+    private boolean isEnoughOfOurUnitsNearbyToNotAvoid() {
         Select<AUnit> selector = Select.ourCombatUnits();
         if (selector.clone().inRadius(1, unit).count() >= 3) {
             return true;
@@ -137,11 +145,7 @@ public class AAvoidEnemyMeleeUnitsManager {
         return false;
     }
 
-    public static boolean shouldRunFromAnyEnemyMeleeUnit(AUnit unit) {
-        return isEnemyCriticallyClose(unit);
-    }
-
-    private static AUnit nearestEnemy(AUnit unit) {
+    private AUnit nearestEnemy() {
         if (nearestEnemy != null && nearestEnemy.isAlive()) {
             return nearestEnemy;
         }
@@ -149,18 +153,14 @@ public class AAvoidEnemyMeleeUnitsManager {
         return nearestEnemy = Select.enemyCombatUnits().melee().visible().inRadius(6, unit).nearestTo(unit);
     }
 
-    public static boolean isEnemyCriticallyClose(AUnit unit) {
-        if (nearestEnemy == null) {
-            nearestEnemy = nearestEnemy(unit);
-        }
-
+    private boolean isEnemyCriticallyClose() {
         if (nearestEnemy == null) {
             return false;
         }
 
         APainter.paintCircleFilled(nearestEnemy.getPosition(), 10, Color.Teal);
 
-        double criticalDistance = getCriticalDistance(unit);
+        double criticalDistance = getCriticalDistance();
         double enemyDistance = nearestEnemy.distanceTo(unit);
 
         if (enemyDistance <= criticalDistance) {

@@ -117,13 +117,18 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         AUnitType type = AUnitType.createFrom(u.getType());
         if (AUnitType.Unknown.equals(type)) {
             if (this.isOurUnit()) {
-                System.err.println("Our unit (" + this + ") returned Unknown type");
+                System.err.println("Our unit (" + u.getType() + ") returned Unknown type");
             }
-            return _lastCachedType;
-        } else {
-            _lastCachedType = type;
-            return type;
+            else {
+//                System.err.println("Enemy unit (" + u.getType() + ") returned Unknown type");
+            }
+//            return _lastCachedType;
         }
+//        else {
+//            _lastCachedType = type;
+//            return type;
+//        }
+        return type;
     }
     
     public void refreshType() {
@@ -424,7 +429,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns max shoot range (in build tiles) of this unit against given <b>opponentUnit</b>.
      */
     public int getWeaponRangeAgainst(AUnit opponentUnit) {
-        return opponentUnit.getType().getWeaponRangeAgainst(this);
+        return opponentUnit.type().getWeaponRangeAgainst(this);
     }
 
     /**
@@ -1160,19 +1165,24 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //    }
 
     public void unbug() {
+        if (Select.mainBase() != null) {
+            this.move(Select.mainBase(), UnitActions.MOVE, "Unfreeze");
+            return;
+        }
+
 //        if (isHoldingPosition()) {
-        if (this.move(getPosition().translateByPixels(16, 0), UnitActions.MOVE, "Unfreeze")) {
-            return;
-        }
-        if (this.move(getPosition().translateByPixels(-16, 0), UnitActions.MOVE, "Unfreeze")) {
-            return;
-        }
-        if (this.move(getPosition().translateByPixels(0, 16), UnitActions.MOVE, "Unfreeze")) {
-            return;
-        }
-        if (this.move(getPosition().translateByPixels(0, -16), UnitActions.MOVE, "Unfreeze")) {
-            return;
-        }
+//        if (this.move(getPosition().translateByPixels(16, 0), UnitActions.MOVE, "Unfreeze")) {
+//            return;
+//        }
+//        if (this.move(getPosition().translateByPixels(-16, 0), UnitActions.MOVE, "Unfreeze")) {
+//            return;
+//        }
+//        if (this.move(getPosition().translateByPixels(0, 16), UnitActions.MOVE, "Unfreeze")) {
+//            return;
+//        }
+//        if (this.move(getPosition().translateByPixels(0, -16), UnitActions.MOVE, "Unfreeze")) {
+//            return;
+//        }
 //        } else {
 //            this.holdPosition("Unfreeze");
 //            this.stop("Unfreeze");

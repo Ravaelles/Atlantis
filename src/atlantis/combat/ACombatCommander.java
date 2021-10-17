@@ -68,7 +68,7 @@ public class ACombatCommander {
             }
             unit.setTooltip(
                     A.digit(nearestEnemy.distanceTo(unit)) + " < "
-                            + A.digit(AAvoidEnemyMeleeUnitsManager.getCriticalDistance(unit)) + " / "
+                            + A.digit((new AAvoidEnemyMeleeUnitsManager(unit)).getCriticalDistance()) + " / "
                             + unit.getTooltip()
                             + " \\ " + A.digit(unit.getAngle())
                             + " \\ " + A.trueFalse(unit.isOtherUnitFacingThisUnit(nearestEnemy))

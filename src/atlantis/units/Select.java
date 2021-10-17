@@ -712,7 +712,7 @@ public class Select<T> {
             AFoggedUnit uData = dataFrom(unitsIterator.next());
             AUnit u = uData.getUnit();	//TODO: will work only on visible units...
             if (!u.isCompleted() || u.isWorker() || (uData.getType().isBuilding() && !uData.getType().isCombatBuilding())
-                    || u.getType().isInvincible() || u.getType().isMine()) {
+                    || u.getType().isInvincible() || u.getType().isMine() || u.isType(AUnitType.Protoss_Observer)) {
                 unitsIterator.remove();
             }
         }
@@ -881,8 +881,7 @@ public class Select<T> {
             if (!attacker.canAttackThisKindOfUnit(target, false)) {
                 unitsIterator.remove();
             }
-
-            if (includeShootingRang && !attacker.inWeaponRange(target, 0)) {
+            else if (includeShootingRang && !attacker.inWeaponRange(target, 0)) {
                 unitsIterator.remove();
             }
         }
