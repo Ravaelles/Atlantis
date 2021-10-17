@@ -21,7 +21,7 @@ public class AAvoidEnemyDefensiveBuildings {
         double enemyDistance = enemyBuildingThatCanAttackThisUnit.distanceTo(unit);
 
         // @TODO FIX for Cannon which for some fucking reason always returns 4 range instead of 7
-        double distanceMargin = -2 + enemyDistance - enemyWeaponRange;
+        double distanceMargin = -3.2 + enemyDistance - enemyWeaponRange;
 //        System.out.println(enemyBuildingThatCanAttackThisUnit.type().getShortName() + " // " +  enemyBuildingThatCanAttackThisUnit.getWeaponAgainst(unit)+ " // " + enemyWeaponRange + " // " + enemyDistance + " // " +distanceMargin);
 
         // =========================================================
@@ -38,17 +38,20 @@ public class AAvoidEnemyDefensiveBuildings {
 
         // Very close, but it should be okay to hold
         else if (1.2 < distanceMargin && distanceMargin <= 1.8) {
+
+            if (unit.isMoving()) {
+                unit.holdPosition("AvoidHoldOk(" + String.format("%.1f", distanceMargin) + ")");
+            }
+            return true;
+        }
+
+        // Very close, but it should be okay to hold
+        else if (1.8 < distanceMargin && distanceMargin <= 2.9) {
             return unit.moveAwayFrom(
                     enemyBuildingThatCanAttackThisUnit.getPosition(),
                     1.0,
                     "AvoidMove(" + String.format("%.1f", distanceMargin) + ")"
             );
-        }
-
-        // Very close, but it should be okay to hold
-        else if (1.8 < distanceMargin && distanceMargin <= 2.6) {
-            unit.holdPosition("AvoidHoldOk(" + String.format("%.1f", distanceMargin) + ")");
-            return true;
         }
 
         return false;

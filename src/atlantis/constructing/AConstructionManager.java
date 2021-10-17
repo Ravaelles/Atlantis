@@ -208,8 +208,11 @@ public class AConstructionManager {
             return;
         }
 
-        int timeout = 30 * (order.getBuildingType().isBase() ? 15 : 7)
-                + (int) order.getPositionToBuild().distanceTo(order.getBuilder());
+        int timeout = 30 * (
+                (order.getBuildingType().isBase() ? 25 : 9)
+                + (int) order.getPositionToBuild().distanceTo(order.getBuilder()
+        ));
+
         if (AGame.getTimeFrames() - order.getFrameOrdered() > timeout) {
             System.out.println("Cancel construction of " + order.getBuildingType());
             order.cancel();

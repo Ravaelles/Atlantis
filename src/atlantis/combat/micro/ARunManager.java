@@ -1,9 +1,11 @@
 package atlantis.combat.micro;
 
+import atlantis.AGame;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.Count;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
@@ -68,7 +70,12 @@ public class ARunManager {
 
         // === Define run to position ==============================
 
-        runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
+        AUnit base = Select.mainBase();
+        if (AGame.getTimeSeconds() <= 400 && Count.ourCombatUnits() <= 3 && base != null && base.distanceTo(unit) > 40) {
+            runTo = base.getPosition();
+        } else {
+            runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
+        }
 
         // =========================================================
 

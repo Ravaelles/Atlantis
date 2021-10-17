@@ -3,6 +3,8 @@ package atlantis.constructing.position;
 import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.debug.APainter;
+import atlantis.map.ABaseLocation;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -34,7 +36,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             int yMax = nearTo.getTileY() + searchRadius;
             for (int tileX = xMin - searchRadius; tileX <= xMax; tileX++) {
                 for (int tileY =yMin - searchRadius; tileY <= yMax; tileY++) {
-                    if (xCounter == xMin || yCounter == yMin || xCounter == xMax || yCounter == yMax) {
+                    if (xCounter == xMin || yCounter == yMin || xCounter == 0 || yCounter == 0 || xCounter == xMax || yCounter == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
@@ -90,6 +92,10 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
+        if (isOverlappingBaseLocation(building, position)) {
+            return false;
+        }
+
         if (building.isPylon() && isTooCloseToOtherPylons(position)) {
             return false;
         }
@@ -103,19 +109,25 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     // Lo-level
 
     private static boolean isTooCloseToOtherPylons(APosition position) {
-        int pylons;
+        int pylonsNearby;
 
-        if (AGame.getSupplyUsed() < 35) {
-            pylons = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(7, position).count();
+        if (AGame.getSupplyUsed() < 25) {
+            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(7, position).count();
+        }
+        else if (AGame.getSupplyUsed() < 35) {
+            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(5.5, position).count();
+        }
+        else if (AGame.getSupplyUsed() < 70) {
+            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(4, position).count();
         }
         else if (AGame.getSupplyUsed() < 100) {
-            pylons = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(4, position).count();
+            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(2, position).count();
         } else {
-            pylons = -1;
+            pylonsNearby = -1;
         }
 
-        _CONDITION_THAT_FAILED = "Too close to other pylons (" + pylons + ")";
-        return pylons > 0;
+        _CONDITION_THAT_FAILED = "Too close to other pylons (" + pylonsNearby + ")";
+        return pylonsNearby > 0;
     }
 
     private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
@@ -124,7 +136,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         AUnit nearestBase = Select.ourBases().nearestTo(position);
         if (nearestBase != null && nearestBase.distanceTo(position) <= 14) {
             for (AUnit mineral : Select.minerals().inRadius(8, position).listUnits()) {
-                if (mineral.distanceTo(position) <= (building.isPylon() ? 7 : 4)) {
+                if (mineral.distanceTo(position) <= (building.isPylon() ? 5 : 4)) {
                     _CONDITION_THAT_FAILED = "Too close to mineral";
                     return true;
                 }

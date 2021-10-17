@@ -3,10 +3,15 @@ package atlantis.strategy;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionRequests;
+import atlantis.map.AMap;
 import atlantis.production.requests.AAntiAirRequest;
 import atlantis.production.requests.AAntiLandRequest;
 import atlantis.production.requests.ADetectorRequest;
+import atlantis.production.requests.ARequests;
 import atlantis.scout.AScoutManager;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.Select;
 
 
 public class AStrategyResponse {
@@ -42,6 +47,21 @@ public class AStrategyResponse {
             if (AGame.everyNthGameFrame(21)) {
                 AAntiAirRequest.requestAntiAirQuick(null);
             }
+        }
+    }
+
+    public static void hiddenUnitDetected(AUnit enemyUnit) {
+        if (enemyUnit.isVisible()) {
+            return;
+        }
+
+        if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar)) {
+            ARequests.getInstance().requestDetectorQuick(
+                    AMap.getChokepointForMainBase().getCenter()
+            );
+            ARequests.getInstance().requestDetectorQuick(
+                    AMap.getChokepointForNaturalBase(Select.mainBase().getPosition()).getCenter()
+            );
         }
     }
     

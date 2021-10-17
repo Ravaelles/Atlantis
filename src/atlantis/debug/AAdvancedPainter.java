@@ -1064,7 +1064,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
             // Paint box
 
-            Color color = unit.isOurUnit() ? Color.Green : Color.Orange;
+            Color color = unit.isOurUnit() ? Color.Green : Color.Yellow;
             int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
             bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
             bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), color, true);

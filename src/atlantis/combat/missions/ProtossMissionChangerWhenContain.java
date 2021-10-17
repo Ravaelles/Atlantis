@@ -46,7 +46,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 
         int ourCombatUnits = Count.ourCombatUnits();
 
-        return ourCombatUnits <= 6;
+        return ourCombatUnits <= 3;
     }
 
 }

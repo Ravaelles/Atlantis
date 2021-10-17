@@ -5,6 +5,8 @@ import atlantis.Atlantis;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.constructing.ConstructionOrderStatus;
+import atlantis.map.ABaseLocation;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -31,18 +33,14 @@ public abstract class AbstractPositionFinder {
         // =========================================================
 
 
+        // Leave entire vertical (same tileX) corridor free for units
+        if (
+                position.getTileX() % 8 == 0
+                || (position.getTileX() + building.getDimensionRight() / 32) % 8 <= 1
+        ) {
 //        System.out.println(building.getShortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
 //                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
 //                (position.getTileX() + building.getDimensionRight() / 32) % 7 + ")");
-        // Leave entire vertical (same tileX) corridor free for units
-        if (
-                position.getTileX() % 7 == 0
-                || (position.getTileX() + building.getDimensionRight() / 32) % 7 <= 1
-//                || (position.getTileX() + building.getDimensionRight() / 32) % 5 == 0
-//                || position.getTileX() % 7 == 0
-//                || (position.getTileX() - building.getDimensionLeft() / 32) % 7 == 0
-//                || (position.getTileX() + building.getDimensionRight() / 32) % 6 == 0
-        ) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }
@@ -51,12 +49,6 @@ public abstract class AbstractPositionFinder {
         if (
                 position.getTileY() % 7 <= 1
                 || (position.getTileY() + building.getDimensionDown() / 32) % 7 <= 1
-//                position.getTileY() % 7 == 0
-//                || (position.getTileY() - building.getDimensionUp() / 32) % 7 == 0
-//                || (position.getTileY() + building.getDimensionDown() / 32) % 6 == 0
-//                || position.getTileY() % 8 == 0
-//                || (position.getTileY() - building.getDimensionUp() / 32) % 8 == 0
-//                || (position.getTileY() + building.getDimensionDown() / 32) % 7 == 0
         ) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;
@@ -109,6 +101,21 @@ public abstract class AbstractPositionFinder {
         }
 
         // No collisions detected
+        return false;
+    }
+
+    protected static boolean isOverlappingBaseLocation(AUnitType building, APosition position) {
+        if (building.isBase()) {
+            return false;
+        }
+
+        for (ABaseLocation base : AMap.getBaseLocations()) {
+            if (!base.isStartLocation() && base.getPosition().distanceTo(position) <= 5) {
+                _CONDITION_THAT_FAILED = "Overlaps base location";
+                return true;
+            }
+        }
+
         return false;
     }
 

@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.AGame;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Count;
@@ -50,11 +51,16 @@ public class ASquadCohesionManager {
     // =========================================================
 
     private static boolean handleShouldSpreadOut(AUnit unit, APosition medianPoint) {
-        if (unit.squad().size() <= 3) {
+        if (unit.squad().size() <= 1) {
             return false;
         }
 
         Select<AUnit> ourCombatUnits = Select.ourCombatUnits();
+
+        if (AGame.getTimeSeconds() < 350 && ourCombatUnits.clone().inRadius(1.3, unit).count() >= 2) {
+            return true;
+        }
+
         if (
                 ourCombatUnits.clone().inRadius(4.5, unit).count() >= 18
                 || ourCombatUnits.clone().inRadius(2.7, unit).count() >= 9

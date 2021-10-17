@@ -105,14 +105,14 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
+        if ((new AAvoidEnemyMeleeUnitsManager(unit)).avoidCloseMeleeUnits()) {
+            return true;
+        }
+
         if (!Missions.isGlobalMissionAttack()) {
             if (AAvoidEnemyDefensiveBuildings.avoidCloseBuildings(unit, false)) {
                 return true;
             }
-        }
-
-        if ((new AAvoidEnemyMeleeUnitsManager(unit)).avoidCloseMeleeUnits()) {
-            return true;
         }
 
         // If nearby enemies would likely defeat us, retreat

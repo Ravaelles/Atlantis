@@ -4,6 +4,8 @@ import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
+import atlantis.production.requests.ARequests;
+import atlantis.strategy.AStrategyResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -113,6 +115,10 @@ public class AEnemyUnits {
      */
     public static void discoveredEnemyUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.put(enemyUnit, new AFoggedUnit(enemyUnit));
+
+        if (!enemyUnit.isVisible()) {
+            AStrategyResponse.hiddenUnitDetected(enemyUnit);
+        }
     }
 
     /**
