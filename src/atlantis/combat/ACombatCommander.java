@@ -1,7 +1,7 @@
 package atlantis.combat;
 
 import atlantis.AGame;
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.missions.Missions;
@@ -68,7 +68,7 @@ public class ACombatCommander {
             }
             unit.setTooltip(
                     A.digit(nearestEnemy.distanceTo(unit)) + " < "
-                            + A.digit((new AAvoidEnemyMeleeUnitsManager(unit)).getCriticalDistance()) + " / "
+                            + A.digit((new AAvoidEnemyMeleeUnits(unit)).getCriticalDistance()) + " / "
                             + unit.getTooltip()
             );
         }

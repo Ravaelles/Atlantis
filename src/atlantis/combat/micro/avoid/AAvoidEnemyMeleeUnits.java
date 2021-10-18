@@ -10,14 +10,14 @@ import atlantis.util.A;
 import bwapi.Color;
 
 
-public class AAvoidEnemyMeleeUnitsManager {
+public class AAvoidEnemyMeleeUnits {
     
     private AUnit nearestEnemy = null;
     private final AUnit unit;
 
     // =========================================================
 
-    public AAvoidEnemyMeleeUnitsManager(AUnit unit) {
+    public AAvoidEnemyMeleeUnits(AUnit unit) {
         this.unit = unit;
         this.nearestEnemy = nearestEnemy();
     }
@@ -47,7 +47,7 @@ public class AAvoidEnemyMeleeUnitsManager {
     }
 
     public static boolean shouldRunFromAnyEnemyMeleeUnit(AUnit unit) {
-        return (new AAvoidEnemyMeleeUnitsManager(unit)).isEnemyCriticallyClose();
+        return (new AAvoidEnemyMeleeUnits(unit)).isEnemyCriticallyClose();
     }
 
     public double getCriticalDistance() {

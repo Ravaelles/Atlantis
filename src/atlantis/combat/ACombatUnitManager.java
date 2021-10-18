@@ -4,10 +4,7 @@ import atlantis.AGame;
 import atlantis.AGameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
-import atlantis.combat.micro.avoid.AAvoidEnemyDefensiveBuildings;
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
-import atlantis.combat.micro.avoid.AAvoidInvisibleEnemyUnits;
-import atlantis.combat.missions.Missions;
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
@@ -76,7 +73,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        if (ARunManager.shouldStopRunning(unit)) {
+        if (ARunningManager.shouldStopRunning(unit)) {
             return true;
         }
 
@@ -100,18 +97,8 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     private static boolean handledMediumPriority(AUnit unit) {
-        if (AAvoidInvisibleEnemyUnits.avoid(unit)) {
+        if (AAvoidUnits.avoid(unit)) {
             return true;
-        }
-
-        if ((new AAvoidEnemyMeleeUnitsManager(unit)).avoid()) {
-            return true;
-        }
-
-        if (!Missions.isGlobalMissionAttack()) {
-            if (AAvoidEnemyDefensiveBuildings.avoid(unit, false)) {
-                return true;
-            }
         }
 
         // If nearby enemies would likely defeat us, retreat

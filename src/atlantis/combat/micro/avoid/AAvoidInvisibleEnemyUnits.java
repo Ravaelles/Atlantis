@@ -10,14 +10,16 @@ public class AAvoidInvisibleEnemyUnits extends AAvoidUnits {
      * Avoid Dark Templars, Lurkers.
      */
     public static boolean avoid(AUnit unit) {
-        if (handledAvoid(unit, AUnitType.Protoss_Dark_Templar)) {
+        if (avoidInvisible(unit, AUnitType.Protoss_Dark_Templar)) {
             return true;
         }
 
-        return handledAvoid(unit, AUnitType.Zerg_Lurker);
+        return avoidInvisible(unit, AUnitType.Zerg_Lurker);
     }
 
-    private static boolean handledAvoid(AUnit unit, AUnitType type) {
+    // =========================================================
+
+    private static boolean avoidInvisible(AUnit unit, AUnitType type) {
         double safetyMargin = 3.0 + (unit.isWorker() ? 0.6 : 0) + (type.isMeleeUnit() ? 0 : type.getWeaponRangeAgainst(unit));
 
         AUnit hiddenEnemy;

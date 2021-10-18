@@ -13,7 +13,7 @@ import bwapi.Color;
 
 import static atlantis.scout.AScoutManager.getUmsFocusPoint;
 
-public class MissionAttackFocusPointManager extends MissionFocusPointManager {
+public class MissionAttackFocusPoint extends MissionFocusPointManager {
 
     public APosition focusPoint() {
 

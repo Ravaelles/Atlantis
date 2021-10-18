@@ -13,7 +13,7 @@ public class MissionAttack extends Mission {
 
     protected MissionAttack() {
         super("Attack");
-        focusPointManager = new MissionAttackFocusPointManager();
+        focusPointManager = new MissionAttackFocusPoint();
     }
 
     @Override

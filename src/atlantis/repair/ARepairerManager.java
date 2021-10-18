@@ -2,7 +2,7 @@ package atlantis.repair;
 
 import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.micro.avoid.AAvoidEnemyDefensiveBuildings;
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
 import atlantis.combat.micro.avoid.AAvoidInvisibleEnemyUnits;
 import atlantis.combat.missions.Missions;
 import atlantis.scout.AScoutManager;
@@ -28,7 +28,7 @@ public class ARepairerManager {
     // =========================================================
 
     private static boolean handleRepairerSafety(AUnit repairer) {
-        if (repairer.getHPPercent() <= 50 && (new AAvoidEnemyMeleeUnitsManager(repairer)).avoid()) {
+        if (repairer.getHPPercent() <= 50 && (new AAvoidEnemyMeleeUnits(repairer)).avoid()) {
             return true;
         }
 

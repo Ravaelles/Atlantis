@@ -10,7 +10,7 @@ public class MissionDefend extends Mission {
 
     protected MissionDefend() {
         super("Defend");
-        focusPointManager = new MissionDefendFocusPointManager();
+        focusPointManager = new MissionDefendFocusPoint();
     }
 
     @Override

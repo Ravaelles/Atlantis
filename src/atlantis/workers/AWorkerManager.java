@@ -1,6 +1,6 @@
 package atlantis.workers;
 
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
 import atlantis.combat.micro.avoid.AAvoidInvisibleEnemyUnits;
 import atlantis.constructing.ABuilderManager;
 import atlantis.constructing.AConstructionManager;
@@ -21,7 +21,7 @@ public class AWorkerManager {
             return true;
         }
 
-        if (AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(worker)) {
+        if (AAvoidEnemyMeleeUnits.shouldRunFromAnyEnemyMeleeUnit(worker)) {
             return true;
         }
 

@@ -1,7 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
@@ -16,7 +16,7 @@ import bwapi.Color;
 import java.util.ArrayList;
 
 
-public class ARunManager {
+public class ARunningManager {
 
     private static final int RUN_ANY_DIRECTION_GRID_BORDER = 5;
     
@@ -31,7 +31,7 @@ public class ARunManager {
 
     // =========================================================
     
-    public ARunManager(AUnit unit) {
+    public ARunningManager(AUnit unit) {
         this.unit = unit;
     }
 
@@ -41,7 +41,7 @@ public class ARunManager {
         if (
                 unit.isRunning()
                 && !unit.lastStartedRunningAgo(5)
-                && !AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(unit)
+                && !AAvoidEnemyMeleeUnits.shouldRunFromAnyEnemyMeleeUnit(unit)
         ) {
             unit.getRunManager().stopRunning();
             unit.setTooltip("StopRun");

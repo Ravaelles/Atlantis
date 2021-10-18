@@ -39,7 +39,7 @@ public abstract class Mission {
 //            return true;
 //        }
 //
-//        if (AAvoidEnemyMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
+//        if (AAvoidEnemyMeleeUnits.avoidCloseMeleeUnits(unit)) {
 //            return true;
 //        }
 //

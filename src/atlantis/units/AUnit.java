@@ -1,7 +1,7 @@
 package atlantis.units;
 
 import atlantis.AGame;
-import atlantis.combat.micro.ARunManager;
+import atlantis.combat.micro.ARunningManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AConstructionManager;
@@ -170,7 +170,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     // =========================================================
 
     private Squad squad = null;
-    private final ARunManager runManager = new ARunManager(this);
+    private final ARunningManager runManager = new ARunningManager(this);
     private int lastUnitOrder = 0;
 
     private boolean _repairableMechanically = false;
@@ -655,7 +655,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Returns AtlantisRunning object for this unit.
      */
-    public ARunManager getRunManager() {
+    public ARunningManager getRunManager() {
         return runManager;
     }
 

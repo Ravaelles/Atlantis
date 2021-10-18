@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.AViewport;
 import atlantis.AtlantisConfig;
 import atlantis.combat.micro.avoid.AAvoidEnemyDefensiveBuildings;
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.map.AMap;
@@ -162,7 +162,7 @@ public class AScoutManager {
     private static boolean handleScoutEnemyBase(AUnit scout) {
 
         // === Avoid melee units ===================================
-        if (AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(scout)) {
+        if (AAvoidEnemyMeleeUnits.shouldRunFromAnyEnemyMeleeUnit(scout)) {
             scoutingAroundBaseWasInterrupted = true;
             return true;
         }

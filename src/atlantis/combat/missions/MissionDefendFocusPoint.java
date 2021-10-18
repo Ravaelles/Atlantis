@@ -9,7 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 
-public class MissionDefendFocusPointManager extends MissionFocusPointManager {
+public class MissionDefendFocusPoint extends MissionFocusPointManager {
 
     @Override
     public APosition focusPoint() {

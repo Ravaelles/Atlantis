@@ -10,7 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import bwapi.Color;
 
-public class MissionContainFocusPointManager extends MissionFocusPointManager {
+public class MissionContainFocusPoint extends MissionFocusPointManager {
 
     private APosition containEnemyAtPoint = null;
 

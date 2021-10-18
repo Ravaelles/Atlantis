@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionAttack;
 import atlantis.combat.squad.ASquadCohesionManager;
@@ -1006,7 +1006,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCooldownAndRunBar(AUnit unit) {
-        boolean shouldRun = AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(unit);
+        boolean shouldRun = AAvoidEnemyMeleeUnits.shouldRunFromAnyEnemyMeleeUnit(unit);
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
         paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldRun ? Color.Red : Color.Teal);
