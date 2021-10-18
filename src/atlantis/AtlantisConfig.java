@@ -32,8 +32,8 @@ public class AtlantisConfig {
     /**`
      * Race used by the Atlantis.
      */
-//    public static final String OUR_RACE = "Terran";
-    public static final String OUR_RACE = "Protoss";
+    public static final String OUR_RACE = "Terran";
+//    public static final String OUR_RACE = "Protoss";
 //    public static final String OUR_RACE = "Zerg";
 
     /**

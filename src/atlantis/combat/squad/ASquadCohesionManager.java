@@ -6,37 +6,32 @@ import atlantis.units.AUnit;
 import atlantis.units.Count;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.Us;
 
 public class ASquadCohesionManager {
 
     public static boolean handle(AUnit unit) {
-        if (unit.squad().getMission().isMissionAttack()) {
+        if (shouldSkip(unit)) {
             return false;
         }
 
-        APosition medianPosition = unit.squad().getSquadCenter();
-
-        if (handleShouldSpreadOut(unit, medianPosition)) {
+        if (handleShouldSpreadOut(unit)) {
             return true;
         }
 
-        if (handleShouldStickCloser(unit, medianPosition)) {
+        if (handleShouldStickCloser(unit)) {
             return true;
         }
 
         return false;
     }
 
+    private static boolean shouldSkip(AUnit unit) {
+        return unit.squad().getMission().isMissionAttack();
+    }
+
     public static boolean handleExtremeUnitPositioningInSquad(AUnit unit) {
-        if (Count.ourCombatUnits() <= 4) {
-            return false;
-        }
-
-        if (unit.squad().getMission().isMissionAttack()) {
-            return false;
-        }
-
-        if (unit.equals(unit.squad().getSquadScout())) {
+        if (shouldSkipExtremeUnitPositioning(unit)) {
             return false;
         }
 
@@ -48,13 +43,29 @@ public class ASquadCohesionManager {
         return false;
     }
 
+    private static boolean shouldSkipExtremeUnitPositioning(AUnit unit) {
+        if (Us.isProtoss() && Count.ourCombatUnits() <= 4) {
+            return true;
+        }
+
+        if (unit.squad().getMission().isMissionAttack()) {
+            return false;
+        }
+
+        if (unit.equals(unit.squad().getSquadScout())) {
+            return false;
+        }
+
+        return false;
+    }
+
     public static double preferredDistToSquadCenter(int squadSize) {
         return Math.max(5.0, 1.3 * Math.sqrt(squadSize));
     }
 
     // =========================================================
 
-    private static boolean handleShouldSpreadOut(AUnit unit, APosition medianPoint) {
+    private static boolean handleShouldSpreadOut(AUnit unit) {
         if (unit.squad().size() <= 1) {
             return false;
         }
@@ -72,7 +83,7 @@ public class ASquadCohesionManager {
         ) {
             return unit.moveAwayFrom(
 //                    ourCombatUnits.exclude(unit).nearestTo(unit).getPosition(),
-                    medianPoint,
+                    squadCenter(unit),
                     1.5,
                     "Spread out"
             );
@@ -81,12 +92,12 @@ public class ASquadCohesionManager {
         return false;
     }
 
-    private static boolean handleShouldStickCloser(AUnit unit, APosition medianPoint) {
-        int squadSize = unit.squad().size();
-        if (squadSize <= 3) {
+    private static boolean handleShouldStickCloser(AUnit unit) {
+        if (shouldSkipStickCloser(unit)) {
             return false;
         }
 
+        int squadSize = unit.squad().size();
         Select<AUnit> closeFriends = Select.ourCombatUnits().exclude(unit);
         AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
         double maxDistToMedian = preferredDistToSquadCenter(squadSize);
@@ -98,30 +109,31 @@ public class ASquadCohesionManager {
 //        if (
 //                nearestFriend != null
 //                && unit.distanceTo(nearestFriend) <= 1.2
-//                && unit.distanceTo(medianPoint) < optimalDistToMedian
+//                && unit.distanceTo(center) < optimalDistToMedian
 //        ) {
 //            return false;
 //        }
 
+        APosition center = squadCenter(unit);
         if (
                 unit.distanceTo(nearestFriend) > 2.3
         ) {
             unit.move(
-                    medianPoint.translatePercentTowards(unit, 50),
+                    center.translatePercentTowards(unit, 50),
                     UnitActions.MOVE,
-                    "Closer(" + (int) medianPoint.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
+                    "Closer(" + (int) center.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
             );
             return true;
         }
 
         if (
-                unit.distanceTo(medianPoint) > maxDistToMedian
+                unit.distanceTo(center) > maxDistToMedian
                 && unit.distanceTo(nearestFriend) > 3
         ) {
             unit.move(
-                    unit.getPosition().translatePercentTowards(medianPoint, 20),
+                    unit.getPosition().translatePercentTowards(center, 20),
                     UnitActions.MOVE,
-                    "ComeBack(" + (int) medianPoint.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
+                    "ComeBack(" + (int) center.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
             );
             return true;
         }
@@ -142,6 +154,14 @@ public class ASquadCohesionManager {
         }
 
         return false;
+    }
+
+    private static boolean shouldSkipStickCloser(AUnit unit) {
+        if (Us.isTerran()) {
+            return false;
+        }
+
+        return unit.squadSize() <= 3;
     }
 
     private static APosition squadCenter(AUnit unit) {

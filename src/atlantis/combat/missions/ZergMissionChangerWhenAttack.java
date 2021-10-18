@@ -2,7 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.units.Select;
 
-public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
+public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToContain()) {
@@ -13,7 +13,9 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        if (Select.ourCombatUnits().count() >= 10) {
+        int ourCount = Select.ourCombatUnits().count();
+
+        if (ourCount <= 20 || Select.enemyRealUnits().count() >= ourCount + 2) {
             return true;
         }
 

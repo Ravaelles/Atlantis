@@ -6,16 +6,13 @@ public class MissionChangerWhenAttack {
 
     public static void changeMissionIfNeeded() {
         if (AGame.isPlayingAsTerran()) {
-//            TerranMissionChangerWhenAttack.changeMissionIfNeeded();
-            return;
+            TerranMissionChangerWhenAttack.changeMissionIfNeeded();
         }
         else if (AGame.isPlayingAsProtoss()) {
             ProtossMissionChangerWhenAttack.changeMissionIfNeeded();
-            return;
         }
         else {
-//            ZergMissionChangerWhenAttack.changeMissionIfNeeded();
-            return;
+            ZergMissionChangerWhenAttack.changeMissionIfNeeded();
         }
     }
 

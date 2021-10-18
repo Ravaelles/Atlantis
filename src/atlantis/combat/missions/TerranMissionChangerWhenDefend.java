@@ -2,7 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.units.Select;
 
-public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
+public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToContain()) {
@@ -19,5 +19,6 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
         return false;
     }
+
 
 }

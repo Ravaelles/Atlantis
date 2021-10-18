@@ -15,9 +15,12 @@ public class AWorkerManager {
      * Executed for every worker unit.
      */
     public static boolean update(AUnit worker) {
+        worker.removeTooltip();
+
         if (AAvoidInvisibleEnemyUnits.avoid(worker)) {
             return true;
         }
+
         if (AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(worker)) {
             return true;
         }

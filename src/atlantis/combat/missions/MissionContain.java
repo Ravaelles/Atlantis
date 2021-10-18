@@ -26,9 +26,9 @@ public class MissionContain extends Mission {
 //            return true;
 //        }
 
-        if (SquadScout.handle(unit)) {
-            return true;
-        }
+//        if (SquadScout.handle(unit)) {
+//            return true;
+//        }
 
         if (ASquadCohesionManager.handle(unit)) {
             return true;
