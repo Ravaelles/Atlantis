@@ -18,11 +18,7 @@ public class TerranMissionChangerWhenContain {
             return true;
         }
 
-        if (Select.ourTanks().count() <= 4 && Select.ourCombatUnits().count() <= 30) {
-            return false;
-        }
-
-        return true;
+        return Select.ourTanks().count() > 4 || Select.ourCombatUnits().count() > 30;
     }
 
     private static boolean killsBalanceSaysSo() {
@@ -30,11 +26,7 @@ public class TerranMissionChangerWhenContain {
             return true;
         }
 
-        if (AGame.getTimeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600) {
-            return true;
-        }
-
-        return false;
+        return AGame.getTimeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
     }
 
     /**

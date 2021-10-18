@@ -19,11 +19,7 @@ public class ASquadCohesionManager {
             return true;
         }
 
-        if (handleShouldStickCloser(unit)) {
-            return true;
-        }
-
-        return false;
+        return handleShouldStickCloser(unit);
     }
 
     private static boolean shouldSkip(AUnit unit) {

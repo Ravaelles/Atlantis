@@ -35,13 +35,9 @@ public class MissionContain extends Mission {
         }
 
         // Focus point is well known
-        if (focusPoint != null && AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint)) {
-            return true;
-        }
+        return focusPoint != null && AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint);
 
         // =========================================================
-
-        return false;
     }
 
     @Override
@@ -59,10 +55,6 @@ public class MissionContain extends Mission {
 
         // Allow to defend base
         APosition natural = AMap.getNaturalBaseLocation();
-        if (natural != null && enemy.distanceTo(natural) <= 35) {
-            return true;
-        }
-
-        return false;
+        return natural != null && enemy.distanceTo(natural) <= 35;
     }
 }

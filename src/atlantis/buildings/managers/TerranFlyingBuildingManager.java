@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class TerranFlyingBuildingManager {
 
-    private static ArrayList<AUnit> flyingBuildings = new ArrayList<>();
+    private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
     
     // =========================================================
     
@@ -72,12 +72,8 @@ public class TerranFlyingBuildingManager {
         if (!flyingBuildings.isEmpty()) {
             return false;
         }
-        
-        if (Select.ourTanks().count() >= 1 || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5) {
-            return true;
-        }
-        
-        return false;
+
+        return Select.ourTanks().count() >= 1 || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5;
     }
 
     private static void liftABuildingAndFlyAmongStars() {

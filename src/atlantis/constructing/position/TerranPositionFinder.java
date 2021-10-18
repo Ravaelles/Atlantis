@@ -100,12 +100,9 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isNotEnoughPlaceLeftForAddons(builder, building, position)) {
-            return false;
-        }
+        return !isNotEnoughPlaceLeftForAddons(builder, building, position);
 
         // All conditions are fullfilled, return this position
-        return true;
     }
 
     // =========================================================
@@ -117,7 +114,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         AUnit nearestBase = Select.ourBases().nearestTo(position);
         if (nearestBase != null && nearestBase.distanceTo(position) <= 3) {
             Collection<AUnit> mineralsInRange
-                    = (Collection<AUnit>) Select.minerals().inRadius(3, position).listUnits();
+                    = Select.minerals().inRadius(3, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
                 if (mineral.distanceTo(position) <= (1 + building.getDimensionRight() / 32)) {
                     _CONDITION_THAT_FAILED = "MINERAL TOO CLOSE";

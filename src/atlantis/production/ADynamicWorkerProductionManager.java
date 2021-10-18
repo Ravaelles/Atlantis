@@ -64,9 +64,7 @@ public class ADynamicWorkerProductionManager {
 
         // =========================================================
 
-        if (Count.workers() >= 60) {
-            return false;
-        }
+        return Count.workers() < 60;
 
         // Check if ALLOWED TO PRODUCE IN PRODUCTION QUEUE
 //        if (!AGame.getBuildOrders().shouldProduceNow(AtlantisConfig.WORKER)) {
@@ -80,8 +78,6 @@ public class ADynamicWorkerProductionManager {
         // {
         // return false;
         // }
-
-        return true;
     }
     
     // =========================================================

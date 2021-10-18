@@ -5,7 +5,7 @@ package atlantis.position;
  * have public constructor. Instead ABaseLocation can use this interface.
  */
 public interface HasPosition {
-    public APosition getPosition();
-    public int getX();
-    public int getY();
+    APosition getPosition();
+    int getX();
+    int getY();
 }

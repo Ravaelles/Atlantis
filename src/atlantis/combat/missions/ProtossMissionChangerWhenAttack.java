@@ -16,11 +16,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
     private static boolean shouldChangeMissionToContain() {
         int ourCount = Select.ourCombatUnits().count();
 
-        if (ourCount <= 10 || Select.enemyRealUnits().count() >= ourCount + 2) {
-            return true;
-        }
-
-        return false;
+        return ourCount <= 10 || Select.enemyRealUnits().count() >= ourCount + 2;
     }
 
 }

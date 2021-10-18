@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class ATech {
     
-    private static ArrayList<TechType> currentlyResearching = new ArrayList<>();
-    private static ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
+    private static final ArrayList<TechType> currentlyResearching = new ArrayList<>();
+    private static final ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
     
     // =========================================================
 

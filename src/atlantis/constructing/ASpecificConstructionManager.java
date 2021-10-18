@@ -18,11 +18,7 @@ public class ASpecificConstructionManager {
         if (handledTerranSpecialBuilding(building, order)) {
             return true;
         }
-        if (handledZergSpecialBuilding(building, order)) {
-            return true;
-        }
-        
-        return false;
+        return handledZergSpecialBuilding(building, order);
     }
 
     // === Terran ========================================    
@@ -71,7 +67,7 @@ public class ASpecificConstructionManager {
     }
     
     private static void morphFromZergBuildingInto(AUnitType from, AUnitType into) {
-        AUnit building = (AUnit) Select.ourBuildings().ofType(from).first();
+        AUnit building = Select.ourBuildings().ofType(from).first();
         if (building == null) {
             System.err.println("No " + from + " found to morph into " + into);
         }

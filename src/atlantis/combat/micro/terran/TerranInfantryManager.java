@@ -51,9 +51,7 @@ public class TerranInfantryManager {
                         .units()
                         .sortByGroundDistanceTo(mainBase.getPosition(), false)
                         .first();
-                if (mostDistantBunker != null) {
-                    return mostDistantBunker;
-                }
+                return mostDistantBunker;
             }
             else {
                 return bunker;

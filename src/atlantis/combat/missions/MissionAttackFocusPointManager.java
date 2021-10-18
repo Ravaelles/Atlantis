@@ -56,13 +56,10 @@ public class MissionAttackFocusPointManager extends MissionFocusPointManager {
 
         // Try to go to some starting location, hoping to find enemy there.
         APosition startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
-        if (startLocation != null) {
-        	//System.out.println("focus on start location");	//TODO debug
-            return startLocation;
-        }
+        //System.out.println("focus on start location");	//TODO debug
+        return startLocation;
 
         // Absolutely no enemy unit can be found
-        return null;
     }
 
 }

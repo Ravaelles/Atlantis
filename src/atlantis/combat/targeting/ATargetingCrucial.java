@@ -100,13 +100,9 @@ public class ATargetingCrucial extends AEnemyTargeting {
                         AUnitType.Zerg_Lurker,
                         AUnitType.Zerg_Ultralisk
                 ).nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
+        return target;
 
         // =========================================================
-
-        return null;
     }
 
 }

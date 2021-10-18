@@ -257,12 +257,8 @@ public class A {
      */
     public static boolean isImage(String extension) {
         extension = extension.toLowerCase();
-        if (extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg") || extension.equals("bmp")
-                || extension.equals("gif")) {
-            return true;
-        } else {
-            return false;
-        }
+        return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg") || extension.equals("bmp")
+                || extension.equals("gif");
     }
 
     /**
@@ -294,11 +290,7 @@ public class A {
      * @return false if user clicked no
      */
     public static boolean displayYesNoPopup(String title, String text) {
-        if (JOptionPane.showConfirmDialog(new JOptionPane(), text, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            return true;
-        } else {
-            return false;
-        }
+        return JOptionPane.showConfirmDialog(new JOptionPane(), text, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
 
     /**
@@ -567,7 +559,6 @@ public class A {
     /**
      * @return number of all files (directory is not a file) in all these directory and all its
      * subdirectories, having given extension.
-     * @see Rafaelles.getFileExtension
      */
     public static int countNumberOfFiles(File directory, String extension) {
         int total = 0;

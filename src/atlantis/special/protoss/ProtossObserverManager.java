@@ -26,11 +26,7 @@ public class ProtossObserverManager {
             return true;
         }
 
-        if (followArmy(observer)) {
-            return true;
-        }
-
-        return false;
+        return followArmy(observer);
     }
 
     // =========================================================

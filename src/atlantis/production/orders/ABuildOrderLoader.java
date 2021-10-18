@@ -195,7 +195,7 @@ public class ABuildOrderLoader {
     @SuppressWarnings("unused")
     protected void displayLoadedFile(String[][] loadedFile) {
         int rowCounter = 0;
-        System.out.println("");
+        System.out.println();
         System.out.println("===== LOADED FILE =====");
         for (String[] rows : loadedFile) {
 //            if (rowCounter == 0) {

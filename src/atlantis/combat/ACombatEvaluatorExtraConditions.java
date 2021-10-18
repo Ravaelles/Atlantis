@@ -17,12 +17,8 @@ public class ACombatEvaluatorExtraConditions {
     protected static boolean shouldAlwaysFight(AUnit unit, AUnit nearestEnemy) {
         ACombatEvaluatorExtraConditions.unit = unit;
         ACombatEvaluatorExtraConditions.nearestEnemy = nearestEnemy;
-        
-        if (shouldFightToProtectMainBaseAtAllCosts()) {
-            return true;
-        }
-        
-        return false;
+
+        return shouldFightToProtectMainBaseAtAllCosts();
     }
     
     protected static boolean shouldAlwaysRetreat(AUnit unit, AUnit nearestEnemy) {
@@ -48,13 +44,10 @@ public class ACombatEvaluatorExtraConditions {
         // If you're near the main base, force the fight
         AUnit mainBase = Select.mainBase();
         if (mainBase != null) {
-            if (PositionUtil.distanceTo(mainBase, unit) < 15) {
-
-                // Force to fight units that aren't close to being dead                
-//                if (unit.getHitPoints() >= 11) {
-                    return true;
-//                }
-            }
+            // Force to fight units that aren't close to being dead
+            //                if (unit.getHitPoints() >= 11) {
+            //                }
+            return PositionUtil.distanceTo(mainBase, unit) < 15;
         }
         
         return false;

@@ -36,11 +36,7 @@ public class ARepairerManager {
             return true;
         }
 
-        if (AAvoidEnemyDefensiveBuildings.avoid(repairer, false)) {
-            return true;
-        }
-
-        return false;
+        return AAvoidEnemyDefensiveBuildings.avoid(repairer, false);
     }
 
     private static boolean handleRepairs(AUnit repairer) {

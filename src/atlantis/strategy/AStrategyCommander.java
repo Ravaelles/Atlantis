@@ -4,7 +4,7 @@ import atlantis.AGame;
 
 public class AStrategyCommander {
     
-    private static boolean hasBeenInitialized = false;
+    private static final boolean hasBeenInitialized = false;
     
     // =========================================================
 

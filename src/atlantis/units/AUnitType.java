@@ -21,7 +21,7 @@ public class AUnitType implements Comparable<AUnitType> {
 
     private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
 
-    private UnitType ut;
+    private final UnitType ut;
 
     // =========================================================
 
@@ -299,7 +299,7 @@ public class AUnitType implements Comparable<AUnitType> {
     // =========================================================
     private static int firstFreeID = 1;
 
-    private int ID;
+    private final int ID;
     private String _name = null;
     private String _shortName = null;
     public static boolean disableErrorReporting = false;
@@ -435,7 +435,7 @@ public class AUnitType implements Comparable<AUnitType> {
         }
         
         if (_shortName == "Unknown") {
-            System.err.println("Unknown? What? " + this.toString());
+            System.err.println("Unknown? What? " + this);
         }
 
         return _shortName;
@@ -693,10 +693,7 @@ public class AUnitType implements Comparable<AUnitType> {
         }
         if (canShootGround && isMilitaryBuildingAntiGround()) {
             return true;
-        } else if (canShootAir && isMilitaryBuildingAntiAir()) {
-            return true;
-        }
-        return false;
+        } else return canShootAir && isMilitaryBuildingAntiAir();
     }
 
     /**

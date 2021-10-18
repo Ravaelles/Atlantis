@@ -22,7 +22,7 @@ public class ARunManager {
     
     // =========================================================
     
-    private AUnit unit;
+    private final AUnit unit;
     private APosition runAwayFrom = null;
     private APosition runTo;
     private int _updated_at = -1;

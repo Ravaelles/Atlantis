@@ -94,12 +94,8 @@ public class AStrategyResponse {
         }
         
         // =========================================================
-        
-        if (!enemyStrategy.isGoingRush() && !enemyStrategy.isGoingCheese()) {
-            return true;
-        }
-        
-        return false;
+
+        return !enemyStrategy.isGoingRush() && !enemyStrategy.isGoingCheese();
     }
     
 }

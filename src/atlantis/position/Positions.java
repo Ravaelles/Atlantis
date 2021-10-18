@@ -17,7 +17,7 @@ import java.util.HashMap;
 //public class Positions<T extends Point<Position>> {
 public class Positions<T extends HasPosition> {
 
-    private ArrayList<T> positions = new ArrayList<>();
+    private final ArrayList<T> positions = new ArrayList<>();
 
     /**
      * This mapping can be used to store extra values assigned to positions e.g. if positions reprents mineral

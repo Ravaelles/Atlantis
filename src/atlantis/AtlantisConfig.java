@@ -32,8 +32,8 @@ public class AtlantisConfig {
     /**`
      * Race used by the Atlantis.
      */
-    public static final String OUR_RACE = "Terran";
-//    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Protoss";
 //    public static final String OUR_RACE = "Zerg";
 
     /**
@@ -134,16 +134,16 @@ public class AtlantisConfig {
      * Display error and exit Java.
      */
     private static void error(String title) {
-        System.err.println("");
+        System.err.println();
         System.err.println("#######################################");
         System.err.println("### ERROR IN ATLANTIS CONFIG ##########");
         System.err.println("#######################################");
         System.err.println("Please set variables for AtlantisConfig");
         System.err.println("before running your bot, read class doc");
-        System.err.println("");
+        System.err.println();
         System.err.println("### What went wrong ###################");
         System.err.println(title);
-        System.err.println("");
+        System.err.println();
         System.err.println("Program has stopped");
         System.exit(-1);
     }

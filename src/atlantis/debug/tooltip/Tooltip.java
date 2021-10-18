@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 
 public class Tooltip {
 
-    private AUnit unit;
+    private final AUnit unit;
     private String tooltip;
     private int tooltipStartInFrames;
 

@@ -14,7 +14,7 @@ import atlantis.units.Select;
 public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     private static int _firstFreeId = 1;
-    private int ID = _firstFreeId++;
+    private final int ID = _firstFreeId++;
     private final int frameOrdered;
     private AUnitType buildingType;
     private AUnit construction;
@@ -99,10 +99,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
             return false;
         }
         final ConstructionOrder other = (ConstructionOrder) obj;
-        if (this.ID != other.ID) {
-            return false;
-        }
-        return true;
+        return this.ID == other.ID;
     }
     
     @Override

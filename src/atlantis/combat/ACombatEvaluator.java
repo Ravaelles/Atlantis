@@ -17,28 +17,28 @@ public class ACombatEvaluator {
     /**
      * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
      */
-    private static double SAFETY_MARGIN_ATTACK = 0.4;
-    private static double SAFETY_MARGIN_RETREAT = -0.4;
+    private static final double SAFETY_MARGIN_ATTACK = 0.4;
+    private static final double SAFETY_MARGIN_RETREAT = -0.4;
 
     /**
      * Multiplier for hit points factor when evaluating unit's combat value.
      */
-    private static double EVAL_HIT_POINTS_FACTOR = 0.3;
+    private static final double EVAL_HIT_POINTS_FACTOR = 0.3;
 
     /**
      * Multiplier for damage factor when evaluating unit's combat value.
      */
-    private static double EVAL_DAMAGE_FACTOR = 1.0;
+    private static final double EVAL_DAMAGE_FACTOR = 1.0;
 
     /**
      * Maximum allowed value as a result of evaluation.
      */
-    private static int MAX_VALUE = 999999999;
+    private static final int MAX_VALUE = 999999999;
 
     /**
      * Stores the instances of AtlantisCombatInformation for each unit
      */
-    private static Map<AUnit, ACombatInformation> combatInfo = new HashMap<>();
+    private static final Map<AUnit, ACombatInformation> combatInfo = new HashMap<>();
 
     // =========================================================
     /**
@@ -174,8 +174,8 @@ public class ACombatEvaluator {
             // =========================================================
             // BUILDING
             else if (unit.getType().isBuilding() && unit.isCompleted()) {
-                boolean antiGround = (againstUnit != null ? !againstUnit.isAirUnit() : true);
-                boolean antiAir = (againstUnit != null ? againstUnit.isAirUnit() : true);
+                boolean antiGround = (againstUnit == null || !againstUnit.isAirUnit());
+                boolean antiAir = (againstUnit == null || againstUnit.isAirUnit());
                 if (unit.getType().isMilitaryBuilding(antiGround, antiAir)) {
                     enemyDefensiveBuildingFound = true;
                     if (unit.getType().equals(AUnitType.Terran_Bunker)) {

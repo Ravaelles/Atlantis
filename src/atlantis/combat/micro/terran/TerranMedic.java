@@ -35,13 +35,10 @@ public class TerranMedic {
         // =========================================================
         // If there's no "real" infantry around, go to the nearest Marine, Firebat or Ghost.
 
-        if (handleTooFarFromRealInfantry(medic)) {
-            return true;
-        }
+        return handleTooFarFromRealInfantry(medic);
 
         // =========================================================
         // False: Did not use micro-manager, allow mission behavior
-        return false;
     }
 
     // =========================================================
@@ -84,7 +81,7 @@ public class TerranMedic {
             return true;
         }
 
-        AUnit nearestWoundedInfantry = (AUnit) Select.ourCombatUnits().infantry().wounded()
+        AUnit nearestWoundedInfantry = Select.ourCombatUnits().infantry().wounded()
                 .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).nearestTo(medic);
 
         // =========================================================

@@ -13,7 +13,7 @@ import bwapi.Color;
 public class AAvoidEnemyMeleeUnitsManager {
     
     private AUnit nearestEnemy = null;
-    private AUnit unit;
+    private final AUnit unit;
 
     // =========================================================
 
@@ -123,9 +123,7 @@ public class AAvoidEnemyMeleeUnitsManager {
                 return false;
             }
 
-            if (unit.isType(AUnitType.Protoss_Reaver) && unit.getCooldownCurrent() <= 4) {
-                return true;
-            }
+            return unit.isType(AUnitType.Protoss_Reaver) && unit.getCooldownCurrent() <= 4;
         }
 
         // =========================================================
@@ -139,11 +137,7 @@ public class AAvoidEnemyMeleeUnitsManager {
             return true;
         }
 
-        if (unit.getHPPercent() >  50 && selector.clone().inRadius(4, unit).count() >= 12) {
-            return true;
-        }
-
-        return false;
+        return unit.getHPPercent() > 50 && selector.clone().inRadius(4, unit).count() >= 12;
     }
 
     private AUnit nearestEnemy() {
@@ -164,12 +158,7 @@ public class AAvoidEnemyMeleeUnitsManager {
         double criticalDistance = getCriticalDistance();
         double enemyDistance = nearestEnemy.distanceTo(unit);
 
-        if (enemyDistance <= criticalDistance) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return enemyDistance <= criticalDistance;
     }
 
 }

@@ -18,7 +18,7 @@ import java.util.Collections;
 public class Squad extends Units {
 
     private static int firstFreeID = 1;
-    private int ID = firstFreeID++;
+    private final int ID = firstFreeID++;
 
     /**
      * Auxilary name for the squad e.g. "Alpha", "Bravo", "Delta".

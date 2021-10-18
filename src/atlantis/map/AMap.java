@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  */
 public class AMap {
 
-    private static BWTA bwta = null;
-    private static Set<AChokepoint> disabledChokepoints = new HashSet<>();
+    private static final BWTA bwta = null;
+    private static final Set<AChokepoint> disabledChokepoints = new HashSet<>();
     private static List<ARegion> cached_regions;
     private static List<AChokepoint> cached_chokePoints = null;
     private static AChokepoint cached_mainBaseChokepoint = null;
@@ -561,7 +561,7 @@ public class AMap {
             return null;
         }
 
-        return ARegion.create(getMap().getRegion(position));
+        return ARegion.create(BWTA.getRegion(position));
     }
 
     public static String getMapName() {

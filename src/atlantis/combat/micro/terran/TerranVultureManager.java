@@ -11,11 +11,7 @@ import bwapi.TechType;
 public class TerranVultureManager {
 
     public static boolean update(AUnit unit) {
-        if (handlePlantMines(unit)) {
-            return true;
-        }
-        
-        return false;
+        return handlePlantMines(unit);
     }
     
     // =========================================================

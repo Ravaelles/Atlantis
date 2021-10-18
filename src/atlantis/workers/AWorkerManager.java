@@ -53,11 +53,7 @@ public class AWorkerManager {
             return true;
         }
 
-        if (ARepairAssignments.isRepairerOfAnyKind(worker)) {
-            return true;
-        }
-
-        return false;
+        return ARepairAssignments.isRepairerOfAnyKind(worker);
     }
 
     // =========================================================
@@ -155,16 +151,12 @@ public class AWorkerManager {
             return true;
         } 
         else if (building.getType().isGasBuilding()) {
-            if (worker.isGatheringGas() && worker.distanceTo(building) <= 10) {
-                return true;
-            }
+            return worker.isGatheringGas() && worker.distanceTo(building) <= 10;
         }
         else if (building.isBase()) {
             if (worker.isGatheringMinerals() || worker.isCarryingMinerals()) {
                 return true;
-            } else if (worker.getTarget() != null && worker.getTarget().getType().isMineralField()) {
-                return true;
-            }
+            } else return worker.getTarget() != null && worker.getTarget().getType().isMineralField();
         }
         
         return false;

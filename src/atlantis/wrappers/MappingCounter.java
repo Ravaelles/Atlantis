@@ -9,7 +9,7 @@ import java.util.HashMap;
  */
 public class MappingCounter<K> {
 
-    private HashMap<K, Integer> mapping = new HashMap<>();
+    private final HashMap<K, Integer> mapping = new HashMap<>();
 
     // =====================================================================
     public MappingCounter() {

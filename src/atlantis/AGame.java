@@ -30,11 +30,7 @@ public class AGame {
 
         // Needs to have tech
         TechType techType = unitType.getRequiredTech();
-        if (techType != null && techType != TechType.None && !ATech.isResearched(techType)) {
-            return false;
-        }
-
-        return true;
+        return techType == null || techType == TechType.None || ATech.isResearched(techType);
     }
 
     /**

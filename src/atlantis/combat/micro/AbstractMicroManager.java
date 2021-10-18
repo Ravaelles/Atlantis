@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public abstract class AbstractMicroManager {
 
-    private static AUnit _nearestEnemyThatCanShootAtThisUnit = null;
+    private static final AUnit _nearestEnemyThatCanShootAtThisUnit = null;
 
     // =========================================================
     

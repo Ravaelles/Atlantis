@@ -51,7 +51,7 @@ public class Atlantis implements BWEventListener {
     // Other variables
     private boolean _isStarted = false; // Has game been started
     private boolean _isPaused = false; // Is game currently paused
-    private boolean _initialActionsExecuted = false; // Have executed one-time actions at match start?
+    private final boolean _initialActionsExecuted = false; // Have executed one-time actions at match start?
 
     // =========================================================
     // Counters

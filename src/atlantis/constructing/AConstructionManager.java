@@ -147,15 +147,9 @@ public class AConstructionManager {
             if (worker.equals(constructionOrder.getBuilder())) {
                 
                 // Pending Protoss buildings allow builder to go away
-                if (AGame.isPlayingAsProtoss() && ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                        .equals(constructionOrder.getStatus())) {
-                    return false;
-                }
-                
                 // Terran and Zerg need to use the worker until construction is finished
-                else {
-                    return true;
-                }
+                return !AGame.isPlayingAsProtoss() || !ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                        .equals(constructionOrder.getStatus());
             }
         }
 

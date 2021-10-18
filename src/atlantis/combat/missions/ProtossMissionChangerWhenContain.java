@@ -30,11 +30,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
             return true;
         }
 
-        if (AGame.getTimeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600) {
-            return true;
-        }
-
-        return false;
+        return AGame.getTimeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
     }
 
     // === DEFEND ==============================================

@@ -23,7 +23,7 @@ public class ZergCreepColony {
     // =========================================================
 
     public static void creepOneIntoSunkenColony() {
-        AUnit creepColony = (AUnit) Select.ourBuildings().ofType(AUnitType.Zerg_Creep_Colony).first();
+        AUnit creepColony = Select.ourBuildings().ofType(AUnitType.Zerg_Creep_Colony).first();
         if (creepColony != null) {
             creepColony.morph(AUnitType.Zerg_Sunken_Colony);
         }

@@ -12,8 +12,8 @@ public class CodeProfiler {
     
     // =========================================================
 
-    private static HashMap<String, Long> aspectsStart = new HashMap<>();
-    private static HashMap<String, Double> aspectsLength = new HashMap<>();
+    private static final HashMap<String, Long> aspectsStart = new HashMap<>();
+    private static final HashMap<String, Double> aspectsLength = new HashMap<>();
     
     // =========================================================
 

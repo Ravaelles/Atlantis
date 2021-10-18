@@ -3,7 +3,7 @@ package atlantis.units.actions;
 public class UnitAction {
 
     private String name;
-    private boolean attack;
+    private final boolean attack;
     private boolean run;
 
     // =========================================================

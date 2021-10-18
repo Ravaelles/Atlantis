@@ -96,11 +96,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         // Avoid bad weather like:
         // - raining Psionic Storm,
         // - spider mines hail
-        if (ABadWeather.avoidSpellsAndMines(unit)) {
-            return true;
-        }
-
-        return false;
+        return ABadWeather.avoidSpellsAndMines(unit);
     }
 
     private static boolean handledMediumPriority(AUnit unit) {
@@ -128,11 +124,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit)) {
-            return true;
-        }
-
-        return false;
+        return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
     }
 
 //    private static boolean canHandleLowPriority(AUnit unit) {

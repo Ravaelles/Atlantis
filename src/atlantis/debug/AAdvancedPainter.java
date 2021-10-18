@@ -394,7 +394,7 @@ public class AAdvancedPainter extends APainter {
         counters = A.sortByValue(counters, false);
         for (AUnitType unitType : counters.keySet()) {
             if (!unitType.isBuilding()) {
-                paintSideMessage(counters.get(unitType) + "x " + unitType.toString(), Color.Grey, 0);
+                paintSideMessage(counters.get(unitType) + "x " + unitType, Color.Grey, 0);
             }
         }
         paintSideMessage("", Color.White, 0);

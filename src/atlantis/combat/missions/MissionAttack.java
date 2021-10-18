@@ -26,13 +26,9 @@ public class MissionAttack extends Mission {
             return true;
         }
 
-        if (handleAdvance(unit)) {
-            return true;
-        }
+        return handleAdvance(unit);
 
         // =========================================================
-
-        return false;
     }
 
     private boolean handleAdvance(AUnit unit) {

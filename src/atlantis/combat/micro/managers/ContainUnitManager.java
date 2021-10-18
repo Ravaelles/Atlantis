@@ -16,21 +16,13 @@ public class ContainUnitManager extends MissionUnitManager {
             return false;
         }
 
-        if (handleComeCloserToChokepoint(unit)) {
-            return true;
-        }
-
-        return false;
+        return handleComeCloserToChokepoint(unit);
     }
 
     // =========================================================
 
     private boolean handleComeCloserToChokepoint(AUnit unit) {
-        if (unit.distanceTo(mission.focusPoint()) > optimalDistance()) {
-            return true;
-        }
-
-        return false;
+        return unit.distanceTo(mission.focusPoint()) > optimalDistance();
     }
 
     private double optimalDistance() {

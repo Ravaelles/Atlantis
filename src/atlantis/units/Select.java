@@ -31,7 +31,7 @@ public class Select<T> {
     // =====================================================================
     // Collection<AUnit> wrapper with extra methods
     //private AUnits units;
-    private List<T> data;
+    private final List<T> data;
 
     // CACHED variables
     private static AUnit _cached_mainBase = null;
@@ -1252,7 +1252,7 @@ public class Select<T> {
     
     public boolean areAllBusy() {
         for (Iterator<AUnit> it = (Iterator<AUnit>) data.iterator(); it.hasNext();) {
-            AUnit unit = (AUnit) it.next();
+            AUnit unit = it.next();
             if (!unit.isBusy()) {
                 return false;
             }

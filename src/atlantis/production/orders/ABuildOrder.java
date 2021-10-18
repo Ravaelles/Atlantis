@@ -11,7 +11,7 @@ public abstract class ABuildOrder {
     /**
      * Relative path to build order file as seen from project root.
      */
-    private String buildOrderRelativePath;
+    private final String buildOrderRelativePath;
     
     // === Constructor =========================================
 

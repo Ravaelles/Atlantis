@@ -14,12 +14,8 @@ public class AWorkerDefenceManager {
         if (handleFightEnemyIfNeeded(worker)) {
             return true;
         }
-        
-        if (handleRunFromEnemyIfNeeded(worker)) {
-            return true;
-        }
-        
-        return false;
+
+        return handleRunFromEnemyIfNeeded(worker);
     }
     
     // =========================================================

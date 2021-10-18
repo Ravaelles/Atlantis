@@ -46,7 +46,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     private final Unit u;
     private AUnitType _lastCachedType;
     private UnitAction unitAction = UnitActions.INIT;
-    private AUnit _cachedNearestMeleeEnemy = null;
+    private final AUnit _cachedNearestMeleeEnemy = null;
     public int _lastAttackOrder;
     public int _lastAttackFrame;
     public int _lastRetreat;
@@ -78,9 +78,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public static void forgetUnitEntirely(Unit u) {
-        if (instances.containsKey(u.getID())) {
-            instances.remove(u.getID());
-        }
+        instances.remove(u.getID());
     }
 
     private AUnit(Unit u) {
@@ -172,7 +170,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     // =========================================================
 
     private Squad squad = null;
-    private ARunManager runManager = new ARunManager(this);
+    private final ARunManager runManager = new ARunManager(this);
     private int lastUnitOrder = 0;
 
     private boolean _repairableMechanically = false;
@@ -486,10 +484,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         }
         if (canShootGround && _isMilitaryBuildingAntiGround) {
             return true;
-        } else if (canShootAir && _isMilitaryBuildingAntiAir) {
-            return true;
-        }
-        return false;
+        } else return canShootAir && _isMilitaryBuildingAntiAir;
     }
 
     public boolean isGroundUnit() {
@@ -721,7 +716,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
             return _lastCombatEval;
         } else {
-            return (int) -123456;
+            return -123456;
         }
     }
 

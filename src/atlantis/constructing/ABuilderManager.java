@@ -143,9 +143,7 @@ public class ABuilderManager {
 
     private static boolean shouldNotTravelYet(AUnitType building, double distance) {
         if (AGame.getTimeSeconds() < 200 && !building.isBase()) {
-            if (!AGame.canAfford(building.getMineralPrice() - 24, building.getGasPrice() - 24)) {
-                return true;
-            }
+            return !AGame.canAfford(building.getMineralPrice() - 24, building.getGasPrice() - 24);
         }
 
         return false;

@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class ACachedValue<T> {
 
-    private int cacheLifespanInFrames;
+    private final int cacheLifespanInFrames;
 
-    private Map<String, T> cachedValues = new HashMap<>();
-    private Map<String, Integer> cachedAtFrame = new HashMap<>();
+    private final Map<String, T> cachedValues = new HashMap<>();
+    private final Map<String, Integer> cachedAtFrame = new HashMap<>();
 
     // =========================================================
     

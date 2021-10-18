@@ -8,7 +8,7 @@ import atlantis.units.Select;
 public class ZergBase {
     
     public static void creepOneHatcheryIntoLair() {
-        AUnit hatchery = (AUnit) Select.ourBuildings().ofType(AUnitType.Zerg_Hatchery).first();
+        AUnit hatchery = Select.ourBuildings().ofType(AUnitType.Zerg_Hatchery).first();
         if (hatchery == null) {
             System.err.println("No Hatchery found to morph into Lair");
         }
@@ -18,7 +18,7 @@ public class ZergBase {
     }
 
     public static void creepOneLairIntoHive() {
-        AUnit hatchery = (AUnit) Select.ourBuildings().ofType(AUnitType.Zerg_Lair).first();
+        AUnit hatchery = Select.ourBuildings().ofType(AUnitType.Zerg_Lair).first();
         if (hatchery == null) {
             System.err.println("No Lair found to morph into Hive");
         }

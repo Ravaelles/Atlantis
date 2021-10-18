@@ -41,9 +41,7 @@ public class ASpecialUnitManager {
                 return true;
             } else if (unit.getType().equals(AUnitType.Protoss_Observer) && ProtossObserverManager.update(unit)) {
                 return true;
-            } else if (unit.getType().equals(AUnitType.Protoss_Reaver) && ProtossReaverManager.update(unit)) {
-                return true;
-            }
+            } else return unit.getType().equals(AUnitType.Protoss_Reaver) && ProtossReaverManager.update(unit);
         }
 
         // === Zerg ========================================

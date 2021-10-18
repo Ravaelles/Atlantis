@@ -198,7 +198,7 @@ public class ARepairCommander {
         double optimalNumber;
 
         if (AGame.isEnemyProtoss()) {
-            optimalNumber = enemiesNearby * 1;
+            optimalNumber = enemiesNearby;
         } else if (AGame.isEnemyTerran()) {
             optimalNumber = enemiesNearby * 0.5;
         } else {

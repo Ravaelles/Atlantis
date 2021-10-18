@@ -33,7 +33,7 @@ public class AScoutManager {
     /**
      * Current scout unit.
      */
-    private static ArrayList<AUnit> scouts = new ArrayList<>();
+    private static final ArrayList<AUnit> scouts = new ArrayList<>();
 
     private static boolean anyScoutBeenKilled = false;
     

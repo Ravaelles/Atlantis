@@ -10,7 +10,7 @@ import bwapi.Color;
 public class DontInterruptStartedAttacks {
 
 //    private static boolean DEBUG = true;
-    private static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     public static boolean shouldNotBeInterruptedStartedAttack(AUnit unit) {
 

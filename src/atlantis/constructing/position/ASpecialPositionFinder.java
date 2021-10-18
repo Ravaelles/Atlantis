@@ -42,7 +42,7 @@ public class ASpecialPositionFinder {
     protected static APosition findPositionForGasBuilding(AUnitType building) {
         AUnit builder = Select.ourWorkers().first();
         for (AUnit base : Select.ourBases().listUnits()) {
-            AUnit geyser = (AUnit) Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
+            AUnit geyser = Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
             if (geyser != null && geyser.distanceTo(base) < 12) {
                 APosition position = geyser.getPosition().translateByPixels(-64, -32);

@@ -11,7 +11,7 @@ import atlantis.units.AUnit;
  */
 public class ACombatInformation {
 
-    private AUnit unit;
+    private final AUnit unit;
     private int _lastTimeCombatEval;
     private double _lastCombatEval;
 
@@ -31,7 +31,7 @@ public class ACombatInformation {
         if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
             return _lastCombatEval;
         } else {
-            return (int) -123456;
+            return -123456;
         }
     }
 }

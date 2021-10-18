@@ -15,9 +15,9 @@ public interface AUnitOrders {
     Unit u();
     AUnit unit();
 
-    public boolean DEBUG = false;
-//    public boolean DEBUG = true;
-    public int DEBUG_MIN_FRAMES = 0;
+    boolean DEBUG = false;
+//    boolean DEBUG = true;
+    int DEBUG_MIN_FRAMES = 0;
 
     // =========================================================
     
@@ -34,7 +34,7 @@ public interface AUnitOrders {
         }
 
         if (target == null) {
-            System.err.println("Null attack unit target for unit " + this.toString());
+            System.err.println("Null attack unit target for unit " + this);
             return false;
         }
 

@@ -101,7 +101,7 @@ public class AConstructionRequests {
             } else {
                 System.err.print("(reason was not properly defined)");
             }
-            System.err.println("");
+            System.err.println();
 
             newConstructionOrder.cancel();
             return false;

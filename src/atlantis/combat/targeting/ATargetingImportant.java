@@ -57,13 +57,9 @@ public class ATargetingImportant extends AEnemyTargeting {
                 )
                 .inRadius(12, unit)
                 .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
+        return target;
 
         // =========================================================
-
-        return null;
     }
 
 }

@@ -4,31 +4,20 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-public class AAvoidInvisibleEnemyUnits {
+public class AAvoidInvisibleEnemyUnits extends AAvoidUnits {
 
     /**
-     * Avoid Dark Templars, Lurkers, but ignore Protoss Observers.
+     * Avoid Dark Templars, Lurkers.
      */
     public static boolean avoid(AUnit unit) {
         if (handledAvoid(unit, AUnitType.Protoss_Dark_Templar)) {
             return true;
         }
 
-        if (handledAvoid(unit, AUnitType.Zerg_Lurker)) {
-            return true;
-        }
-
-        return false;
+        return handledAvoid(unit, AUnitType.Zerg_Lurker);
     }
 
-//    private static boolean handledAvoid(AUnit unit, AUnitType type) {
-//        return handledAvoid(unit, type, -1);
-//    }
-
     private static boolean handledAvoid(AUnit unit, AUnitType type) {
-//        if (runFromDist < 0) {
-//            runFromDist = 2;
-//        }
         double safetyMargin = 3.0 + (unit.isWorker() ? 0.6 : 0) + (type.isMeleeUnit() ? 0 : type.getWeaponRangeAgainst(unit));
 
         AUnit hiddenEnemy;
