@@ -1,4 +1,4 @@
-package atlantis.combat.micro;
+package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -9,7 +9,7 @@ public class AAvoidInvisibleEnemyUnits {
     /**
      * Avoid Dark Templars, Lurkers, but ignore Protoss Observers.
      */
-    public static boolean avoidInvisibleUnits(AUnit unit) {
+    public static boolean avoid(AUnit unit) {
         if (handledAvoid(unit, AUnitType.Protoss_Dark_Templar)) {
             return true;
         }

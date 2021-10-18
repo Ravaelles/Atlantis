@@ -1110,6 +1110,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     public boolean isUnitActionMove() {
         return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_ENGAGE
                 || unitAction == UnitActions.MOVE_TO_BUILD || unitAction == UnitActions.MOVE_TO_REPAIR
+                || unitAction == UnitActions.MOVE_TO_FOCUS
                 || unitAction == UnitActions.RETREAT
                 || unitAction == UnitActions.EXPLORE
                 || unitAction == UnitActions.RUN;
@@ -1281,6 +1282,14 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      */
     public boolean is(AUnit isTheSameAliveNotNullUnit) {
         return isTheSameAliveNotNullUnit != null && isTheSameAliveNotNullUnit.isAlive() && !this.equals(isTheSameAliveNotNullUnit);
+    }
+
+    public int cooldownPercent() {
+        if (getCooldownCurrent() <= 0) {
+            return 100;
+        }
+
+        return 100 * getCooldownCurrent() / getCooldownAbsolute();
     }
 
 //    public boolean isFacingTheSameDirection(AUnit otherUnit) {

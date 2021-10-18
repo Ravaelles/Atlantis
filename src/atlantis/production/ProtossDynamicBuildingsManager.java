@@ -1,7 +1,9 @@
 package atlantis.production;
 
 import atlantis.AGame;
+import atlantis.tech.ATechRequests;
 import atlantis.units.AUnitType;
+import bwapi.TechType;
 
 public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
 
@@ -32,5 +34,12 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     private static void arbiterTribunal() {
         buildToHaveOne(90, AUnitType.Protoss_Arbiter_Tribunal);
+
+        if (
+                hasFree(AUnitType.Protoss_Arbiter_Tribunal)
+                && has(AUnitType.Protoss_Arbiter)
+        ) {
+            ATechRequests.researchTech(TechType.Stasis_Field);
+        }
     }
 }

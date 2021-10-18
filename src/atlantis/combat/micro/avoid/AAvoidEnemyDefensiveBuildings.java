@@ -1,4 +1,4 @@
-package atlantis.combat.micro;
+package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -6,7 +6,7 @@ import atlantis.units.Select;
 
 public class AAvoidEnemyDefensiveBuildings {
 
-    public static boolean avoidCloseBuildings(AUnit unit, boolean allowToHold) {
+    public static boolean avoid(AUnit unit, boolean allowToHold) {
         AUnit enemyBuildingThatCanAttackThisUnit = defineNearestBuilding(unit);
         if (enemyBuildingThatCanAttackThisUnit == null) {
             return false;

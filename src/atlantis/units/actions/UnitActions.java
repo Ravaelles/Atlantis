@@ -22,6 +22,7 @@ public class UnitActions {
     public static final UnitAction MOVE = new UnitAction().setName("MOVE");
     public static final UnitAction MOVE_TO_BUILD = new UnitAction().setName("MOVE_TO_BUILD");
     public static final UnitAction MOVE_TO_ENGAGE = new UnitAction().setName("MOVE_TO_ENGAGE");
+    public static final UnitAction MOVE_TO_FOCUS = new UnitAction().setName("MOVE_TO_FOCUS");
     public static final UnitAction MOVE_TO_REPAIR = new UnitAction().setName("MOVE_TO_REPAIR");
     public static final UnitAction PATROL = new UnitAction().setName("PATROL");
     public static final UnitAction REPAIR = new UnitAction().setName("REPAIR");

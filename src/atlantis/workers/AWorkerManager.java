@@ -1,7 +1,7 @@
 package atlantis.workers;
 
-import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
-import atlantis.combat.micro.AAvoidInvisibleEnemyUnits;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidInvisibleEnemyUnits;
 import atlantis.constructing.ABuilderManager;
 import atlantis.constructing.AConstructionManager;
 import atlantis.repair.ARepairAssignments;
@@ -15,7 +15,7 @@ public class AWorkerManager {
      * Executed for every worker unit.
      */
     public static boolean update(AUnit worker) {
-        if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(worker)) {
+        if (AAvoidInvisibleEnemyUnits.avoid(worker)) {
             return true;
         }
         if (AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(worker)) {

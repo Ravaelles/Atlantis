@@ -3,8 +3,8 @@ package atlantis.scout;
 import atlantis.AGame;
 import atlantis.AViewport;
 import atlantis.AtlantisConfig;
-import atlantis.combat.micro.AAvoidEnemyDefensiveBuildings;
-import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyDefensiveBuildings;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.map.AMap;
@@ -85,7 +85,7 @@ public class AScoutManager {
         
         // === Avoid military buildings ============================
         
-        if (AAvoidEnemyDefensiveBuildings.avoidCloseBuildings(scout, false)) {
+        if (AAvoidEnemyDefensiveBuildings.avoid(scout, false)) {
             return true;
         }
         

@@ -1,7 +1,7 @@
 package atlantis.combat;
 
 import atlantis.AGame;
-import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.missions.Missions;

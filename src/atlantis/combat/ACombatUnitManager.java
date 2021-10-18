@@ -4,6 +4,9 @@ import atlantis.AGame;
 import atlantis.AGameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
+import atlantis.combat.micro.avoid.AAvoidEnemyDefensiveBuildings;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidInvisibleEnemyUnits;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.repair.AUnitBeingReparedManager;
@@ -101,16 +104,16 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     private static boolean handledMediumPriority(AUnit unit) {
-        if (AAvoidInvisibleEnemyUnits.avoidInvisibleUnits(unit)) {
+        if (AAvoidInvisibleEnemyUnits.avoid(unit)) {
             return true;
         }
 
-        if ((new AAvoidEnemyMeleeUnitsManager(unit)).avoidCloseMeleeUnits()) {
+        if ((new AAvoidEnemyMeleeUnitsManager(unit)).avoid()) {
             return true;
         }
 
         if (!Missions.isGlobalMissionAttack()) {
-            if (AAvoidEnemyDefensiveBuildings.avoidCloseBuildings(unit, false)) {
+            if (AAvoidEnemyDefensiveBuildings.avoid(unit, false)) {
                 return true;
             }
         }

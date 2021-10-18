@@ -35,12 +35,12 @@ public abstract class AbstractPositionFinder {
 
         // Leave entire vertical (same tileX) corridor free for units
         if (
-                position.getTileX() % 8 == 0
+                position.getTileX() % 8 <= 1
                 || (position.getTileX() + building.getDimensionRight() / 32) % 8 <= 1
         ) {
-//        System.out.println(building.getShortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
-//                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
-//                (position.getTileX() + building.getDimensionRight() / 32) % 7 + ")");
+        System.out.println(building.getShortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
+                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
+                (position.getTileX() + building.getDimensionRight() / 32) % 7 + ")");
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }

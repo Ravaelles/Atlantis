@@ -34,8 +34,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             int yMin = nearTo.getTileY() - searchRadius;
             int xMax = nearTo.getTileX() + searchRadius;
             int yMax = nearTo.getTileY() + searchRadius;
-            for (int tileX = xMin - searchRadius; tileX <= xMax; tileX++) {
-                for (int tileY =yMin - searchRadius; tileY <= yMax; tileY++) {
+            for (int tileX = xMin; tileX <= xMax; tileX++) {
+                for (int tileY = yMin; tileY <= yMax; tileY++) {
                     if (xCounter == xMin || yCounter == yMin || xCounter == 0 || yCounter == 0 || xCounter == xMax || yCounter == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {

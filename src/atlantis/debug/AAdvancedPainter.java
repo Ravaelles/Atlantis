@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
-import atlantis.combat.micro.AAvoidEnemyMeleeUnitsManager;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionAttack;
 import atlantis.combat.squad.ASquadCohesionManager;
@@ -35,7 +35,6 @@ import atlantis.workers.AWorkerManager;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
 import bwapi.Color;
-import bwapi.Position;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -89,7 +88,7 @@ public class AAdvancedPainter extends APainter {
 //        setTextSizeSmall();
 
         paintCodeProfiler();
-        paintMineralDistance();
+//        paintMineralDistance();
         paintRegions();
         paintChokepoints();
 //        paintTestSupplyDepotLocationsNearMain();
@@ -111,28 +110,6 @@ public class AAdvancedPainter extends APainter {
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
     }
 
-    private static void paintMineralDistance() {
-        AUnit mainBase = Select.mainBase();
-        if (mainBase == null) {
-            return;
-        }
-
-        for (AUnit mineral : Select.minerals().inRadius(8, mainBase).list()) {
-            String dist = A.digit(mineral.distanceTo(mainBase));
-            int assigned = AWorkerManager.countWorkersAssignedTo(mineral);
-            paintTextCentered(mineral, dist + " (" + assigned + ")", Color.White);
-
-        }
-
-        if (A.now() <= 100) {
-            for (AUnit worker : Select.ourWorkers().list()) {
-                if (worker.getTarget() != null) {
-                    paintLine(worker, worker.getTarget(), Color.Grey);
-                }
-            }
-        }
-    }
-
     // =========================================================
 
     /**
@@ -147,40 +124,16 @@ public class AAdvancedPainter extends APainter {
             }
 
             // =========================================================
-            // === Paint if enemy units is dangerously close
-            // =========================================================
-
-            double criticalDistance = (new AAvoidEnemyMeleeUnitsManager(unit)).getCriticalDistance();
-            if (AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(unit) && criticalDistance > Double.NEGATIVE_INFINITY) {
-//                APainter.paintCircle(
-//                        unit.getPosition(),
-//                        (int) criticalDistance * 32,
-//                        Color.Red
-//                );
-                APainter.paintCircle(unit.getPosition(), 22, Color.Red);
-                APainter.paintCircle(unit.getPosition(), 20, Color.Red);
-                APainter.paintCircle(unit.getPosition(), 18, Color.Red);
-                APainter.paintCircle(unit.getPosition(), 16, Color.Red);
-            } else if (criticalDistance > Double.NEGATIVE_INFINITY) {
-                APainter.paintCircle(unit.getPosition(), 20, Color.Green);
-                APainter.paintCircle(unit.getPosition(), 17, Color.Green);
-                APainter.paintCircle(unit.getPosition(), 14, Color.Green);
-//                if (criticalDistance >= 0.1) {
-//                    APainter.paintCircle(
-//                            unit.getPosition(),
-//                            (int) criticalDistance * 32,
-//                            Color.Green
-//                    );
-//                } else if (criticalDistance >= 0) {
-//                    APainter.paintCircleFilled(position, 6, Color.Red);
-//                }
-            }
-
-            // =========================================================
             // === Paint life bars bars over wounded units
             // =========================================================
 
             paintLifeBar(unit);
+
+            // =========================================================
+            // === Paint if enemy units is dangerously close
+            // =========================================================
+
+            paintCooldownAndRunBar(unit);
 
             // =========================================================
             // === Paint targets for combat units
@@ -1052,27 +1005,39 @@ public class AAdvancedPainter extends APainter {
         paintMessage("Length: " + frameLength, Color.White, x + 4, y + 1, true);
     }
 
+    private static void paintCooldownAndRunBar(AUnit unit) {
+        boolean shouldRun = AAvoidEnemyMeleeUnitsManager.shouldRunFromAnyEnemyMeleeUnit(unit);
+
+//        paintUnitProgressBar(unit, 27, 100, Color.Grey);
+        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldRun ? Color.Red : Color.Teal);
+    }
+
     private static void paintLifeBar(AUnit unit) {
-        if (unit.isWounded()) {
-            int boxWidth = 20;
-            int boxHeight = 4;
-            int boxLeft = unit.getX() - boxWidth / 2;
-            int boxTop = unit.getY() + 23;
+//        if (unit.isWounded()) {
+        paintUnitProgressBar(unit, 17, 100, Color.Red);
+        paintUnitProgressBar(unit, 17, unit.getHPPercent(), unit.isOurUnit() ? Color.Green : Color.Yellow);
+//        }
+    }
 
-            Position topLeft = new APosition(boxLeft, boxTop);
+    private static void paintUnitProgressBar(AUnit unit, int dpy, int progressPercent, Color barColor) {
+        int barWidth = 20;
+        int barHeight = 4;
+        APosition topLeft = new APosition(unit.getX() - barWidth / 2, unit.getY() + dpy);
 
-            // =========================================================
-            // Paint box
+        // Progress bar
+        paintRectangleFilled(topLeft, (int) A.inRange(1, barWidth * progressPercent / 100, 100), barHeight, barColor);
 
-            Color color = unit.isOurUnit() ? Color.Green : Color.Yellow;
-            int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
-            bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
-            bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), color, true);
+        // Bar borders
+        paintRectangle(topLeft, barWidth, barHeight, Color.Black);
+    }
 
-            // =========================================================
-            // Paint box borders
-            bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
-        }
+    private static void paintBar(APosition topLeft, int width, int height, Color barColor) {
+
+        // Progress bar
+        paintRectangleFilled(topLeft, width, height, barColor);
+
+        // Bar borders
+        paintRectangle(topLeft, width, height, Color.Black);
     }
 
     protected static void paintRegions() {
@@ -1106,6 +1071,8 @@ public class AAdvancedPainter extends APainter {
             return;
         }
 
+        APainter.setTextSizeMedium();
+
         // Natural base
         APosition natural = AMap.getNaturalBaseLocation();
         paintBase(natural, "Our natural", Color.Grey);
@@ -1123,6 +1090,27 @@ public class AAdvancedPainter extends APainter {
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
     }
 
+    private static void paintMineralDistance() {
+        AUnit mainBase = Select.mainBase();
+        if (mainBase == null) {
+            return;
+        }
+
+        for (AUnit mineral : Select.minerals().inRadius(8, mainBase).list()) {
+            String dist = A.digit(mineral.distanceTo(mainBase));
+            int assigned = AWorkerManager.countWorkersAssignedTo(mineral);
+            paintTextCentered(mineral, dist + " (" + assigned + ")", Color.White);
+
+        }
+
+        if (A.now() <= 100) {
+            for (AUnit worker : Select.ourWorkers().list()) {
+                if (worker.getTarget() != null) {
+                    paintLine(worker, worker.getTarget(), Color.Grey);
+                }
+            }
+        }
+    }
 
     private static void paintSquads() {
         Squad alphaSquad = Squad.getAlphaSquad();

@@ -1,6 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
+import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnitsManager;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;

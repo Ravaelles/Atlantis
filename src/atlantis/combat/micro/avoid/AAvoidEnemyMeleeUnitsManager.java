@@ -1,6 +1,7 @@
-package atlantis.combat.micro;
+package atlantis.combat.micro.avoid;
 
 import atlantis.AGame;
+import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -26,7 +27,7 @@ public class AAvoidEnemyMeleeUnitsManager {
     /**
      * If unit is ranged unit like e.g. Marine, get away from very close melee units like e.g. Zealots.
      */
-    public boolean avoidCloseMeleeUnits() {
+    public boolean avoid() {
         if (shouldNotAvoidMeleeUnits()) {
             return false;
         }
