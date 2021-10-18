@@ -41,7 +41,7 @@ public class ARunningManager {
         if (
                 unit.isRunning()
                 && !unit.lastStartedRunningAgo(5)
-                && !AAvoidEnemyMeleeUnits.shouldRunFromAnyEnemyMeleeUnit(unit)
+                && !AAvoidEnemyMeleeUnits.isEnemyCriticallyClose(unit)
         ) {
             unit.getRunManager().stopRunning();
             unit.setTooltip("StopRun");

@@ -21,7 +21,7 @@ public class AWorkerManager {
             return true;
         }
 
-        if (AAvoidEnemyMeleeUnits.shouldRunFromAnyEnemyMeleeUnit(worker)) {
+        if (AAvoidEnemyMeleeUnits.isEnemyCriticallyClose(worker)) {
             return true;
         }
 

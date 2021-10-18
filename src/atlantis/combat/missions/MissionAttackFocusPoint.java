@@ -1,19 +1,13 @@
 package atlantis.combat.missions;
 
-import atlantis.AGame;
-import atlantis.Atlantis;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.units.actions.UnitActions;
-import bwapi.Color;
 
-import static atlantis.scout.AScoutManager.getUmsFocusPoint;
-
-public class MissionAttackFocusPoint extends MissionFocusPointManager {
+public class MissionAttackFocusPoint extends MissionFocusPoint {
 
     public APosition focusPoint() {
 

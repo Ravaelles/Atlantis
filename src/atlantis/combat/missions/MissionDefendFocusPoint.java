@@ -1,15 +1,13 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.combat.micro.terran.TerranInfantryManager;
 import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.units.actions.UnitActions;
 
-public class MissionDefendFocusPoint extends MissionFocusPointManager {
+public class MissionDefendFocusPoint extends MissionFocusPoint {
 
     @Override
     public APosition focusPoint() {

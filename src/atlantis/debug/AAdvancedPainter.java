@@ -1006,7 +1006,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCooldownAndRunBar(AUnit unit) {
-        boolean shouldRun = AAvoidEnemyMeleeUnits.shouldRunFromAnyEnemyMeleeUnit(unit);
+        boolean shouldRun = AAvoidEnemyMeleeUnits.isEnemyCriticallyClose(unit);
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
         paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldRun ? Color.Red : Color.Teal);

@@ -1,6 +1,5 @@
 package atlantis.combat.missions;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
@@ -15,7 +14,7 @@ import bwapi.Color;
 public abstract class Mission {
 
     private static Mission instance;
-    protected MissionFocusPointManager focusPointManager;
+    protected MissionFocusPoint focusPointManager;
     private String name;
     protected APosition temporaryTarget = null;
 
