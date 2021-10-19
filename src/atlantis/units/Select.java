@@ -853,12 +853,12 @@ public class Select<T> {
         return this;
     }
 
-    public Select<T> canAttack(AUnit targetUnit) {
+    public Select<T> canShootAt(AUnit targetUnit) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
-                boolean isInShotRange = unit.inWeaponRange(targetUnit, 0);
+                boolean isInShotRange = unit.hasWeaponRange(targetUnit, 0);
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 }
@@ -867,12 +867,12 @@ public class Select<T> {
         return this;
     }
 
-    public Select<T> canAttack(AUnit targetUnit, double shootingRangeBonus) {
+    public Select<T> canShootAt(AUnit targetUnit, double shootingRangeBonus) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
-                boolean isInShotRange = unit.inWeaponRange(targetUnit, shootingRangeBonus);
+                boolean isInShotRange = unit.hasWeaponRange(targetUnit, shootingRangeBonus);
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 }
@@ -893,19 +893,34 @@ public class Select<T> {
             if (!attacker.canAttackThisKindOfUnit(target, false)) {
                 unitsIterator.remove();
             }
-            else if (checkShootingRange && !attacker.inWeaponRange(target, 0)) {
+            else if (checkShootingRange && !attacker.hasWeaponRange(target, 0)) {
                 unitsIterator.remove();
             }
         }
         return this;
     }
 
-    public Select<T> inShootRange(AUnit attacker) {
+    public Select<T> canAttack(AUnit defender, boolean checkShootingRange) {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit attacker = unitFrom(unitsIterator.next());
+
+            if (!attacker.canAttackThisKindOfUnit(defender, false)) {
+                unitsIterator.remove();
+            }
+            else if (checkShootingRange && !attacker.hasWeaponRange(defender, 0)) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    public Select<T> inShootRangeOf(AUnit attacker) {
         return canBeAttackedBy(attacker, true);
     }
 
-    public Select<T> inShootRange(double shootingRangeBonus, AUnit attacker) {
-        return canAttack(attacker, shootingRangeBonus);
+    public Select<T> inShootRangeOf(double shootingRangeBonus, AUnit attacker) {
+        return canShootAt(attacker, shootingRangeBonus);
     }
 
 //    public Select<T> inShootRangeOrAtMostTilesAway(double shootingRangeBonus, AUnit attacker) {

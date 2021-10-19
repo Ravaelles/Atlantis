@@ -7,6 +7,7 @@ import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.util.Us;
 import bwapi.Color;
 
 import java.util.ArrayList;
@@ -204,7 +205,7 @@ public class Squad extends Units {
     }
 
     public AUnit getSquadScout() {
-        if (size() <= 2) {
+        if (Us.isTerran() && size() <= 2) {
             return null;
         }
 

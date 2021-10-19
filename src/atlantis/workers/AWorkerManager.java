@@ -1,7 +1,6 @@
 package atlantis.workers;
 
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
-import atlantis.combat.micro.avoid.AAvoidInvisibleEnemyUnits;
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.constructing.ABuilderManager;
 import atlantis.constructing.AConstructionManager;
 import atlantis.repair.ARepairAssignments;
@@ -17,16 +16,12 @@ public class AWorkerManager {
     public static boolean update(AUnit worker) {
         worker.removeTooltip();
 
-        if (AAvoidInvisibleEnemyUnits.avoid(worker)) {
-            return true;
-        }
-
-        if (AAvoidEnemyMeleeUnits.isEnemyCriticallyClose(worker)) {
-            return true;
-        }
-
         if (workerManagerForbiddenFor(worker)) {
             return false;
+        }
+
+        if (AAvoidUnits.avoid(worker)) {
+            return true;
         }
 
         // Act as BUILDER

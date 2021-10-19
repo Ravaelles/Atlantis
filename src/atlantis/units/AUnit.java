@@ -223,20 +223,6 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //        }
     }
     
-    /**
-     * Returns true if any close enemy can either shoot or hit this unit.
-     */
-    public boolean canAnyCloseEnemyAttackThisUnit() {
-        return !Select.enemy().inRadius(12.5, this).canAttack(this).isEmpty();
-    }
-    
-    /**
-     * Returns true if any close enemy can either shoot or hit this unit.
-     */
-    public boolean canAnyCloseEnemyAttackThisUnit(double safetyMargin) {
-        return !Select.enemy().inRadius(12.5, this).canAttack(this, safetyMargin).isEmpty();
-    }
-
     // =========================================================
     @Override
     public String toString() {
@@ -595,11 +581,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns <b>true</b> if this unit can attack <b>targetUnit</b> in terms of both min and max range
      * conditions fulfilled.
      */
-    public boolean inRealWeaponRange(AUnit targetUnit) {
+    public boolean hasWeaponRangeByGame(AUnit targetUnit) {
         return this.u.isInWeaponRange(targetUnit.u);
     }
 
-    public boolean inWeaponRange(AUnit targetUnit, double safetyMargin) {
+    public boolean hasWeaponRange(AUnit targetUnit, double safetyMargin) {
         WeaponType weaponAgainstThisUnit = getWeaponAgainst(targetUnit);
         if (weaponAgainstThisUnit == WeaponType.None) {
             return false;
@@ -874,6 +860,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     public boolean isVisible() {
         return u.isVisible() && !u.isCloaked();
+    }
+
+    public boolean invisible() {
+        return !u.isVisible() || u.isCloaked() || u.isBurrowed();
     }
 
     public boolean isMiningOrExtractingGas() {

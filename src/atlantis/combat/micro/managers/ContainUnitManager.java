@@ -4,15 +4,16 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 
 public class ContainUnitManager extends MissionUnitManager {
 
     private Mission mission;
 
     public boolean updateUnit(AUnit unit) {
-        unit.setTooltip("#Contain");
-
         if (mission.focusPoint() == null) {
+            unit.setTooltip("#NoContainPoint");
             return false;
         }
 
@@ -22,11 +23,19 @@ public class ContainUnitManager extends MissionUnitManager {
     // =========================================================
 
     private boolean handleComeCloserToChokepoint(AUnit unit) {
-        return unit.distanceTo(mission.focusPoint()) > optimalDistance();
+        if (unit.distanceTo(mission.focusPoint()) > optimalDistance()) {
+            return unit.move(
+                    mission.focusPoint(),
+                    UnitActions.MOVE_TO_FOCUS,
+                    "#Contain(" + A.digit(mission.focusPoint().distanceTo(unit)) + ")"
+            );
+        }
+
+        return false;
     }
 
     private double optimalDistance() {
-        return 6.9;
+        return 6.1;
     }
 
 }

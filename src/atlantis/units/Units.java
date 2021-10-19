@@ -37,6 +37,11 @@ public class Units {
         return this;
     }
 
+    public void addUnitWithValue(AUnit unitToAdd, double value) {
+        addUnit(unitToAdd);
+        setValueFor(unitToAdd, value);
+    }
+
     public Units addUnits(Collection<AUnit> unitsToAdd) {
         for (AUnit unit : unitsToAdd) {
             units.put(unit, null);

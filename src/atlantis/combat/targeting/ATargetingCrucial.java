@@ -22,7 +22,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
 
         target = units.clone()
                 .ofType(AUnitType.Terran_Vulture_Spider_Mine)
-                .inShootRange(groundRange + 4, unit)
+                .inShootRangeOf(groundRange + 4, unit)
                 .randomWithSeed(unit.getID());
         if (target != null) {
             return target;
@@ -84,7 +84,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
                         AUnitType.Zerg_Defiler,
                         AUnitType.Zerg_Mutalisk
                 )
-                .inShootRange(unit)
+                .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

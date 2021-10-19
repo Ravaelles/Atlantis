@@ -5,6 +5,7 @@ import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.util.A;
 
 public class MissionContain extends Mission {
 
@@ -15,8 +16,8 @@ public class MissionContain extends Mission {
 
     @Override
     public boolean update(AUnit unit) {
-        unit.setTooltip("#Contain");
         APosition focusPoint = focusPoint();
+        unit.setTooltip("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distanceTo(unit)) : null) + ")");
 
         // =========================================================
 
@@ -42,7 +43,7 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         APosition focusPoint = focusPoint();
 
-        if (enemy.distanceTo(unit) <= 6.1 || unit.inWeaponRange(enemy, 0.8)) {
+        if (enemy.distanceTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
             return true;
         }
 

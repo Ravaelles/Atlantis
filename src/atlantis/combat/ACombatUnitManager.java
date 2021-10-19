@@ -97,6 +97,12 @@ public class ACombatUnitManager extends AbstractMicroManager {
     }
 
     private static boolean handledMediumPriority(AUnit unit) {
+
+        // Avoid:
+        // - invisible units (Dark Templars)
+        // - close melee units (Zealots)
+        // - ranged units that can shoot at us (Dragoons)
+        // - defensive buildings (Cannons)
         if (AAvoidUnits.avoid(unit)) {
             return true;
         }

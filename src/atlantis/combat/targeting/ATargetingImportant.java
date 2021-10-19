@@ -23,7 +23,7 @@ public class ATargetingImportant extends AEnemyTargeting {
 
         target = units.clone()
                 .combatUnits()
-                .inShootRange(unit)
+                .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

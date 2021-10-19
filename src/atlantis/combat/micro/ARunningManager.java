@@ -1,7 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.AGame;
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
@@ -41,7 +41,7 @@ public class ARunningManager {
         if (
                 unit.isRunning()
                 && !unit.lastStartedRunningAgo(5)
-                && !AAvoidEnemyMeleeUnits.isEnemyCriticallyClose(unit)
+                && !AAvoidUnits.shouldAvoidAnyUnit(unit)
         ) {
             unit.getRunManager().stopRunning();
             unit.setTooltip("StopRun");
@@ -356,14 +356,14 @@ public class ARunningManager {
     }
 
     private static Units defineCloseEnemies(AUnit unit) {
-        Select<AUnit> veryCloseEnemies = Select.enemyCombatUnits().canAttack(unit, 4);
+        Select<AUnit> veryCloseEnemies = Select.enemyCombatUnits().canShootAt(unit, 4);
 
         System.out.println("veryCloseEnemies " + veryCloseEnemies.size());
         if (veryCloseEnemies.size() > 0 && veryCloseEnemies.size() <= 1) {
             return veryCloseEnemies.units();
         }
         else {
-            return Select.enemyCombatUnits().canAttack(unit, 4).units();
+            return Select.enemyCombatUnits().canShootAt(unit, 4).units();
         }
     }
 

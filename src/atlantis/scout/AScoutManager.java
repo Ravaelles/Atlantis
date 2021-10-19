@@ -3,8 +3,7 @@ package atlantis.scout;
 import atlantis.AGame;
 import atlantis.AViewport;
 import atlantis.AtlantisConfig;
-import atlantis.combat.micro.avoid.AAvoidEnemyDefensiveBuildings;
-import atlantis.combat.micro.avoid.AAvoidEnemyMeleeUnits;
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.map.AMap;
@@ -84,8 +83,8 @@ public class AScoutManager {
         }
         
         // === Avoid military buildings ============================
-        
-        if (AAvoidEnemyDefensiveBuildings.avoid(scout, false)) {
+
+        if (AAvoidUnits.avoid(scout)) {
             return true;
         }
         
@@ -161,13 +160,8 @@ public class AScoutManager {
      */
     private static boolean handleScoutEnemyBase(AUnit scout) {
 
-        // === Avoid melee units ===================================
-        if (AAvoidEnemyMeleeUnits.isEnemyCriticallyClose(scout)) {
-            scoutingAroundBaseWasInterrupted = true;
-            return true;
-        }
-
         // === Remain at the enemy base if it's known ==============
+
         APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
             ARegion enemyBaseRegion = AMap.getRegion(enemyBase);

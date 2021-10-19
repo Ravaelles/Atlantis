@@ -54,7 +54,7 @@ public class AWorkerDefenceManager {
         
         // Define list of all units that are in range of shot.
         Collection<AUnit> enemiesInRange = Select.enemyRealUnits().inRadius(12, worker)
-                .canAttack(worker, 1 + worker.getWoundPercent() / 40).listUnits();
+                .canShootAt(worker, 1 + worker.getWoundPercent() / 40).listUnits();
         
         // Run from every combat unit...
         for (AUnit enemy : enemiesInRange) {

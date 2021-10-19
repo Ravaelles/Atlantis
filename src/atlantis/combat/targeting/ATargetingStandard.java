@@ -33,7 +33,7 @@ public class ATargetingStandard extends AEnemyTargeting {
 
         target = units.
                 workers()
-                .inShootRange(unit)
+                .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
