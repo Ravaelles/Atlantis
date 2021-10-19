@@ -34,9 +34,13 @@ public abstract class AAvoidUnits {
             enemies.addUnitWithValue(enemy, SafetyMargin.calculate(enemy, unit));
         }
 
+        if (enemies.isEmpty()) {
+            return new Units();
+        }
+
         return new Units(
                 enemies.stream()
-                .filter(u -> enemies.valueFor(unit) < 0)
+                .filter(e -> enemies.valueFor(e) < 0)
                 .collect(Collectors.toList())
         );
 //        AUnit enemyDangerouslyClose = enemies.getUnitWithLowestValue();

@@ -5,19 +5,20 @@ import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.Units;
 
 import java.util.Objects;
 
 public class RetreatManager {
 
-    public static boolean shouldNotRetreat(AUnit unit) {
-        return shouldRetreat(unit);
+    public static boolean shouldNotRetreat(AUnit unit, Units enemies) {
+        return shouldRetreat(unit, enemies);
     }
 
     /**
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
-    public static boolean shouldRetreat(AUnit unit) {
+    public static boolean shouldRetreat(AUnit unit, Units enemies) {
         if (shouldNotConsiderRetreatingNow(unit)) {
             return false;
         }
@@ -30,7 +31,7 @@ public class RetreatManager {
             unit._lastRetreat = AGame.now();
             unit.setTooltip("Retreat");
             MissionChanger.notifyThatUnitRetreated(unit);
-            return unit.runningManager().runFromHere();
+            return unit.runningManager().runFrom(enemies.average(), 3.5);
         }
 
         if (Objects.equals(unit.getTooltip(), "Retreat")) {

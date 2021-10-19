@@ -23,29 +23,23 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo, 
             double maxDistance) {
         _CONDITION_THAT_FAILED = null;
-        int initSearchRadius = building.isPylon() ? 6 : 0;
+        int initSearchRadius = building.isPylon() ? 5 : 0;
 
         int searchRadius = initSearchRadius;
         while (searchRadius < maxDistance) {
-            int xCounter = 0;
-            int yCounter = 0;
-
             int xMin = nearTo.getTileX() - searchRadius;
-            int yMin = nearTo.getTileY() - searchRadius;
             int xMax = nearTo.getTileX() + searchRadius;
+            int yMin = nearTo.getTileY() - searchRadius;
             int yMax = nearTo.getTileY() + searchRadius;
             for (int tileX = xMin; tileX <= xMax; tileX++) {
                 for (int tileY = yMin; tileY <= yMax; tileY++) {
-                    if (xCounter == xMin || yCounter == yMin || xCounter == 0 || yCounter == 0 || xCounter == xMax || yCounter == yMax) {
+                    if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
                         }
                     }
-
-                    yCounter++;
                 }
-                xCounter++;
             }
 
             searchRadius++;
@@ -112,15 +106,18 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         int pylonsNearby;
 
         if (AGame.getSupplyUsed() < 25) {
-            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(7, position).count();
+            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(8, position).count();
         }
         else if (AGame.getSupplyUsed() < 35) {
-            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(5.5, position).count();
+            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(6.5, position).count();
         }
         else if (AGame.getSupplyUsed() < 70) {
-            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(4, position).count();
+            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(4.5, position).count();
         }
         else if (AGame.getSupplyUsed() < 100) {
+            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(3.2, position).count();
+        }
+        else if (AGame.getSupplyUsed() < 140) {
             pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(2, position).count();
         } else {
             pylonsNearby = -1;

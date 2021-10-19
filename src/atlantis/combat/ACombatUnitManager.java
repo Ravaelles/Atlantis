@@ -110,9 +110,9 @@ public class ACombatUnitManager {
         }
 
         // If nearby enemies would likely defeat us, retreat
-        if (RetreatManager.shouldRetreat(unit)) {
-            return true;
-        }
+//        if (RetreatManager.shouldRetreat(unit)) {
+//            return true;
+//        }
 
         // Handle repair of mechanical units
         if (AGame.isPlayingAsTerran() && AUnitBeingReparedManager.handleUnitBeingRepaired(unit)) {

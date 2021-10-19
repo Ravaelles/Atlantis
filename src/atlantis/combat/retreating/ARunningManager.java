@@ -49,9 +49,9 @@ public class ARunningManager {
         return false;
     }
 
-    public boolean runFromHere() {
-        return runFrom(null, -1);
-    }
+//    public boolean runFromHere() {
+//        return runFrom(null, -1);
+//    }
 
     public boolean runFrom(Object unitOrPosition, double dist) {
         if (unitOrPosition == null) {

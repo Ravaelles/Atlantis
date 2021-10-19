@@ -38,9 +38,9 @@ public abstract class AbstractPositionFinder {
                 position.getTileX() % 8 <= 1
                 || (position.getTileX() + building.getDimensionRight() / 32) % 8 <= 1
         ) {
-        System.out.println(building.getShortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
-                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
-                (position.getTileX() + building.getDimensionRight() / 32) % 7 + ")");
+//        System.out.println(building.getShortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
+//                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
+//                (position.getTileX() + building.getDimensionRight() / 32) % 7 + ")");
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }
@@ -110,7 +110,7 @@ public abstract class AbstractPositionFinder {
         }
 
         for (ABaseLocation base : AMap.getBaseLocations()) {
-            if (!base.isStartLocation() && base.getPosition().distanceTo(position) <= 5) {
+            if (!base.isStartLocation() && base.getPosition().distanceTo(position) <= 5.6) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";
                 return true;
             }

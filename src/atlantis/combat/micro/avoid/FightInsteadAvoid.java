@@ -109,7 +109,7 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        return RetreatManager.shouldNotRetreat(unit);
+        return RetreatManager.shouldNotRetreat(unit, enemies);
     }
 
     // =========================================================
