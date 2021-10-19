@@ -142,7 +142,7 @@ public class AConstructionRequests {
         // =========================================================
         // Special case for Overlord
         if (type.equals(AUnitType.Zerg_Overlord)) {
-            total += Select.ourNotFinished().ofType(type).count();
+            total += Select.ourUnfinished().ofType(type).count();
         }
 
         return total;
@@ -161,19 +161,19 @@ public class AConstructionRequests {
         // =========================================================
         // Special case for Overlord
         if (type.equals(AUnitType.Zerg_Overlord)) {
-            total += Select.ourNotFinished().ofType(type).count();
+            total += Select.ourUnfinished().ofType(type).count();
         }
 
         return total;
     }
 
     public static int countNotFinishedConstructionsOfType(AUnitType type) {
-        return Select.ourNotFinished().ofType(type).count()
+        return Select.ourUnfinished().ofType(type).count()
                 + countNotStartedConstructionsOfType(type);
     }
 
     public static int countNotFinishedConstructionsOfTypeInRadius(AUnitType type, double radius, APosition position) {
-        return Select.ourNotFinished().ofType(type).inRadius(radius, position).count()
+        return Select.ourUnfinished().ofType(type).inRadius(radius, position).count()
                 + countNotStartedConstructionsOfTypeInRadius(type, radius, position);
     }
 
@@ -193,7 +193,7 @@ public class AConstructionRequests {
         // =========================================================
         // Special case for Overlord
         if (type.equals(AUnitType.Zerg_Overlord)) {
-            total += Select.ourNotFinished().ofType(AUnitType.Zerg_Overlord).count();
+            total += Select.ourUnfinished().ofType(AUnitType.Zerg_Overlord).count();
         }
 
         return total;

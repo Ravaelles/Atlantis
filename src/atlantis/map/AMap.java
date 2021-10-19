@@ -417,7 +417,7 @@ public class AMap {
         AChokepoint nearest = null;
 
         for (AChokepoint chokePoint : getChokePoints()) {
-            double dist = position.distanceTo(chokePoint.getCenter()) - chokePoint.getWidth() / 32 / 2;
+            double dist = position.groundDistanceTo(chokePoint.getCenter()) - chokePoint.getWidth() / 32.0 / 2;
             if (dist < nearestDist) {
                 nearestDist = dist;
                 nearest = chokePoint;
@@ -676,6 +676,15 @@ public class AMap {
         }
 
         return null;
+    }
+
+    public static AChokepoint getEnemyMainChokepoint() {
+        APosition enemyMain = AEnemyUnits.getEnemyBase();
+        if (enemyMain == null) {
+            return null;
+        }
+
+        return getNearestChokepoint(enemyMain);
     }
 
     public static AChokepoint getEnemyNaturalChokepoint() {

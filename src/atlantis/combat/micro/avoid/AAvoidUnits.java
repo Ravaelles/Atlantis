@@ -1,69 +1,66 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.debug.APainter;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.Units;
-import bwapi.Color;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AAvoidUnits {
 
     protected static AUnit unit;
-    private static double _lastSafetyMargin;
+//    private static double _lastSafetyMargin;
 
     // =========================================================
 
     public static boolean avoid(AUnit unit) {
-//        if (!Missions.isGlobalMissionAttack()) {
-//            if (AAvoidEnemyDefensiveBuildings.avoid(unit, false)) {
-//                return true;
-//            }
-//        }
+        Units enemiesDangerouslyClose = getUnitsToAvoid(unit);
 
-        AUnit enemyDangerouslyClose = getUnitToAvoid(unit);
-        if (enemyDangerouslyClose != null) {
-            return AvoidUnit.avoidUnit(unit, enemyDangerouslyClose);
+        if (enemiesDangerouslyClose.isEmpty()) {
+            return false;
         }
+        System.out.println("--------------- " + unit);
+        System.out.println(enemiesDangerouslyClose);
 
-        return false;
+        return WantsToAvoid.units(unit, enemiesDangerouslyClose);
     }
 
     // =========================================================
 
-    public static AUnit getUnitToAvoid(AUnit unit) {
+    public static Units getUnitsToAvoid(AUnit unit) {
         Units enemies = new Units();
-        for (AUnit enemy : enemyUnitsToTakeIntoAccount(unit)) {
+        for (AUnit enemy : searchAmongEnemyUnits(unit)) {
             enemies.addUnitWithValue(enemy, SafetyMargin.calculate(enemy, unit));
         }
 
-        if (enemies.isEmpty()) {
-            return null;
-        }
-
-        AUnit enemyDangerouslyClose = enemies.getUnitWithLowestValue();
-        double safetyMargin = _lastSafetyMargin = enemies.getValueFor(enemyDangerouslyClose);
-        return safetyMargin > 0 ? enemyDangerouslyClose : null;
+        return new Units(
+                enemies.stream()
+                .filter(u -> enemies.valueFor(unit) < 0)
+                .collect(Collectors.toList())
+        );
+//        AUnit enemyDangerouslyClose = enemies.getUnitWithLowestValue();
+//        double safetyMargin = _lastSafetyMargin = enemies.getValueFor(enemyDangerouslyClose);
+//        return safetyMargin > 0 ? enemyDangerouslyClose : null;
     }
 
     public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {
-        if (getUnitToAvoid(unit) != null) {
-            return _lastSafetyMargin;
+        Units enemies = getUnitsToAvoid(unit);
+        if (enemies.isNotEmpty()) {
+            return enemies.lowestValue();
+//            return _lastSafetyMargin = enemies.lowestValue();
         }
 
         return 999;
     }
 
     public static boolean shouldAvoidAnyUnit(AUnit unit) {
-        return getUnitToAvoid(unit) != null;
+        return getUnitsToAvoid(unit) != null;
     }
 
     // =========================================================
 
-    protected static List<AUnit> enemyUnitsToTakeIntoAccount(AUnit unit) {
+    protected static List<AUnit> searchAmongEnemyUnits(AUnit unit) {
         return Select.enemyRealUnits(true, true, true)
                 .canAttack(unit, false)
                 .inRadius(13, unit)

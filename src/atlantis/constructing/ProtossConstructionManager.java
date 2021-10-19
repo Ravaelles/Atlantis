@@ -28,7 +28,7 @@ public class ProtossConstructionManager {
         // =========================================================
         
         if (!closestBuilders.isEmpty()) {
-            AUnit closestBuilder = closestBuilders.getUnitWithLowestValue();
+            AUnit closestBuilder = closestBuilders.unitWithLowestValue();
             
             // Assume that closest builder is the one that has just constructed a building.
             if (closestBuilder != null) {

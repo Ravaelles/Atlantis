@@ -27,8 +27,14 @@ public abstract class Mission {
 
     public abstract boolean update(AUnit unit);
 
+    // Template method
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         return true;
+    }
+
+    // Template method
+    public boolean allowsToAttackDefensiveBuildings() {
+        return false;
     }
 
     // =========================================================
@@ -100,4 +106,5 @@ public abstract class Mission {
         return false;
 //        return this.equals(Missions.UMS);
     }
+
 }

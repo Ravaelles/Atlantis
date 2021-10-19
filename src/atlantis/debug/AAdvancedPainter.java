@@ -88,7 +88,7 @@ public class AAdvancedPainter extends APainter {
 //        setTextSizeSmall();
 
         paintCodeProfiler();
-//        paintMineralDistance();
+        paintMineralDistance();
         paintRegions();
         paintChokepoints();
 //        paintTestSupplyDepotLocationsNearMain();
@@ -180,7 +180,7 @@ public class AAdvancedPainter extends APainter {
      * Paint focus point for global attack mission etc.
      */
     static void paintInfo() {
-        Mission mission = Squad.getAlphaSquad().getMission();
+        Mission mission = Squad.getAlphaSquad().mission();
 
         // Time
         paintSideMessage("Time: " + AGame.getTimeSeconds() + "s", Color.Grey);
@@ -410,7 +410,7 @@ public class AAdvancedPainter extends APainter {
         // === Display units currently in production ========================================
 
         // Units
-        for (AUnit unit : Select.ourNotFinished().listUnits()) {
+        for (AUnit unit : Select.ourUnfinished().listUnits()) {
             AUnitType type = unit.getType();
             if (type.equals(AUnitType.Zerg_Egg)) {
                 type = unit.getBuildType();
@@ -591,11 +591,11 @@ public class AAdvancedPainter extends APainter {
 
             // RUN
             if (unit.isRunning()) {
-                paintLine(unit.getPosition(), unit.getRunManager().getRunToPosition(), Color.Yellow);
-                paintLine(unit.getPosition().translateByPixels(1, 1), unit.getRunManager().getRunToPosition(), Color.Yellow);
+                paintLine(unit.getPosition(), unit.runningManager().getRunToPosition(), Color.Yellow);
+                paintLine(unit.getPosition().translateByPixels(1, 1), unit.runningManager().getRunToPosition(), Color.Yellow);
 
-                if (unit.getRunManager().getRunToPosition() != null) {
-                    paintCircleFilled(unit.getRunManager().getRunToPosition(), 10, Color.Yellow);
+                if (unit.runningManager().getRunToPosition() != null) {
+                    paintCircleFilled(unit.runningManager().getRunToPosition(), 10, Color.Yellow);
                 }
 
                 paintRunningUnitWhiteFlag(unit);
@@ -1015,7 +1015,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintLifeBar(AUnit unit) {
 //        if (unit.isWounded()) {
         paintUnitProgressBar(unit, 17, 100, Color.Red);
-        paintUnitProgressBar(unit, 17, unit.getHPPercent(), unit.isOurUnit() ? Color.Green : Color.Yellow);
+        paintUnitProgressBar(unit, 17, unit.HPPercent(), unit.isOurUnit() ? Color.Green : Color.Yellow);
 //        }
     }
 

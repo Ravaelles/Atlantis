@@ -34,7 +34,7 @@ public class TerranFlyingBuildingManager {
 
     private static void updateIfBuildingNeedsToBeLifted() {
         for (AUnit building : Select.ourBuildings().listUnits()) {
-            if (building.isUnderAttack() && !building.isLifted() && building.getHPPercent() < 24) {
+            if (building.isUnderAttack() && !building.isLifted() && building.HPPercent() < 24) {
                 building.lift();
             }
         }

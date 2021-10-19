@@ -106,7 +106,7 @@ public class PositionUtil {
     /**
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
-    public static double getGroundDistance(APosition from, APosition to) {
+    public static double groundDistanceTo(APosition from, APosition to) {
         return BWTA.getGroundDistance(new TilePosition(from.p()), new TilePosition(to.p()));
     }
 }

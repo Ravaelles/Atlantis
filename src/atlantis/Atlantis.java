@@ -2,20 +2,14 @@ package atlantis;
 
 import atlantis.combat.squad.ASquadManager;
 import atlantis.constructing.*;
-import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.ums.UmsSpecialActions;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import atlantis.util.A;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
-
-import java.util.Collection;
 
 /**
  * Main bridge between the game and your code, ported to BWMirror.
@@ -231,7 +225,7 @@ public class Atlantis implements BWEventListener {
             }
 
             else {
-                if (!unit.isNotActuallyUnit()) {
+                if (!unit.isNotActualUnit()) {
                     System.out.println("Neutral unit discovered! " + unit.getShortName());
                     UmsSpecialActions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
                 }

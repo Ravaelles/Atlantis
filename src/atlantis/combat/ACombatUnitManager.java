@@ -5,13 +5,15 @@ import atlantis.AGameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.retreating.ARunningManager;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.util.A;
 
-public class ACombatUnitManager extends AbstractMicroManager {
+public class ACombatUnitManager {
 
     protected static boolean update(AUnit unit) {
         preActions(unit);
@@ -108,7 +110,7 @@ public class ACombatUnitManager extends AbstractMicroManager {
         }
 
         // If nearby enemies would likely defeat us, retreat
-        if (shouldRetreat(unit)) {
+        if (RetreatManager.shouldRetreat(unit)) {
             return true;
         }
 
@@ -137,8 +139,8 @@ public class ACombatUnitManager extends AbstractMicroManager {
             return true;
         }
 
-        unit.setTooltip(unit.squad().getMission().getName());
-        return unit.squad().getMission().update(unit);
+        unit.setTooltip(unit.squad().mission().getName());
+        return unit.squad().mission().update(unit);
     }
 
     // =========================================================

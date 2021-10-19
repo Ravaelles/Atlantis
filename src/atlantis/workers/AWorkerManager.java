@@ -35,9 +35,7 @@ public class AWorkerManager {
 
         // Ordinary WORKER
         else {
-            handleGatherMineralsOrGas(worker);
-            worker.setTooltip("Gather");
-            return true;
+            return handleGatherMineralsOrGas(worker);
         }
     }
 
@@ -52,27 +50,28 @@ public class AWorkerManager {
     }
 
     // =========================================================
+
     /**
-     * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather
-     * minerals.
+     * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather minerals.
      */
-    private static void handleGatherMineralsOrGas(AUnit worker) {
+    private static boolean handleGatherMineralsOrGas(AUnit worker) {
+        worker.setTooltip("Gather");
 
         // Don't react if already gathering
         if (worker.isGatheringGas() || worker.isGatheringMinerals()) {
             worker.setTooltip("Gathering");
-            return;
+            return true;
         }
 
         // If is carrying minerals, return
         if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
             worker.returnCargo();
             worker.setTooltip("Cargo");
-            return;
+            return true;
         }
 
         if (worker.isMoving() || worker.getTarget() != null) {
-            return;
+            return true;
         }
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
@@ -81,7 +80,10 @@ public class AWorkerManager {
                 && !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
             worker.setTooltip("Move ass!");
             AMineralGathering.gatherResources(worker);
+            return true;
         }
+
+        return true;
     }
 
     // =========================================================

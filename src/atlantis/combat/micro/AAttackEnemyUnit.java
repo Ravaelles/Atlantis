@@ -51,7 +51,7 @@ public class AAttackEnemyUnit {
     }
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
-        return unit.squad().getMission().allowsToAttackEnemyUnit(unit, enemy);
+        return unit.squad().mission().allowsToAttackEnemyUnit(unit, enemy);
     }
 
 }

@@ -1,7 +1,7 @@
 package atlantis.units;
 
 import atlantis.AGame;
-import atlantis.combat.micro.ARunningManager;
+import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AConstructionManager;
@@ -51,6 +51,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     public int _lastAttackFrame;
     public int _lastRetreat;
     public int _lastStartedRunning;
+    public int _lastStoppedRunning;
     public int _lastStartingAttack;
     public int _lastUnderAttack;
     public int lastX;
@@ -170,7 +171,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     // =========================================================
 
     private Squad squad = null;
-    private final ARunningManager runManager = new ARunningManager(this);
+    private final ARunningManager runningManager = new ARunningManager(this);
     private int lastUnitOrder = 0;
 
     private boolean _repairableMechanically = false;
@@ -205,7 +206,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //                this, newPosition, -1, 9999, true
 //        ) && move(newPosition, UnitActions.MOVE)) {
         if (
-                getRunManager().isPossibleAndReasonablePosition(this.getPosition(), newPosition, false)
+                runningManager().isPossibleAndReasonablePosition(this.getPosition(), newPosition, false)
                 && move(newPosition, UnitActions.MOVE, "Move away")
         ) {
             this.setTooltip(tooltip);
@@ -347,7 +348,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return getHitPoints() >= getMaxHitPoints();
     }
 
-    public int getHPPercent() {
+    public int HPPercent() {
         return 100 * getHitPoints() / getMaxHitPoints();
     }
 
@@ -500,7 +501,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Not that we're racists, but spider mines and larvas aren't really units...
      */
-    public boolean isNotActuallyUnit() {
+    public boolean isNotActualUnit() {
         return getType().ut().isNeutral() || isLarvaOrEgg() || isBuilding()
                 || getType().isMineralField() || getType().isGeyser() || getType().isGasBuilding();
     }
@@ -508,8 +509,15 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Not that we're racists, but spider mines and larvas aren't really units...
      */
+    public boolean isUncontrollable() {
+        return isType(AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Egg, AUnitType.Zerg_Larva);
+    }
+
+    /**
+     * Not that we're racists, but spider mines and larvas aren't really units...
+     */
     public boolean isActualUnit() {
-        return !isNotActuallyUnit();
+        return !isNotActualUnit();
     }
 
     // =========================================================
@@ -523,7 +531,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
     public double groundDistance(AUnit otherUnit) {
-        return PositionUtil.getGroundDistance(this.getPosition(), otherUnit.getPosition());
+        return PositionUtil.groundDistanceTo(this.getPosition(), otherUnit.getPosition());
     }
 
     public double distanceTo(Object o) {
@@ -613,7 +621,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return UnitActions.RUN.equals(getUnitAction()) && runManager.isRunning();
+        return UnitActions.RUN.equals(getUnitAction()) && runningManager.isRunning();
     }
 
     public boolean isLastOrderFramesAgo(int minFramesAgo) {
@@ -641,8 +649,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Returns AtlantisRunning object for this unit.
      */
-    public ARunningManager getRunManager() {
-        return runManager;
+    public ARunningManager runningManager() {
+        return runningManager;
     }
 
     /**
@@ -747,13 +755,13 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * If enemy parameter is null, it will try to determine the best run behavior.
      * If enemy is not null, it will try running straight from this unit.
      */
-     public boolean runFrom(AUnit runFrom, double dist) {
-        return runManager.runFrom(runFrom, dist);
-    }
-
-    public boolean runFrom() {
-        return runManager.runFromCloseEnemies();
-    }
+//    public boolean runFrom(HasPosition runFrom, double dist) {
+//        return runningManager.runFrom(runFrom, dist);
+//    }
+//
+//    public boolean runFrom() {
+//        return runningManager.runFromCloseEnemies();
+//    }
 
     /**
      * Returns <b>true</b> if this unit is supposed to "build" something. It will return true even if the unit
@@ -1158,7 +1166,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //    }
 
     public void unbug() {
-        unit().getRunManager().stopRunning();
+        unit().runningManager().stopRunning();
 
         if (Select.mainBase() != null) {
             this.move(Select.mainBase(), UnitActions.MOVE, "Unfreeze");
@@ -1212,6 +1220,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return AGame.framesAgo(_lastStartedRunning) <= framesAgo;
     }
 
+    public boolean lastStoppedRunningAgo(int framesAgo) {
+        return AGame.framesAgo(_lastStoppedRunning) <= framesAgo;
+    }
+
     public boolean hasNotMovedInAWhile() {
         return getX() == lastX && getY() == lastY;
     }
@@ -1250,7 +1262,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public Mission micro() {
-        return squad().getMission();
+        return squad().mission();
     }
 
     public int squadSize() {
@@ -1275,6 +1287,25 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         }
 
         return 100 * getCooldownCurrent() / getCooldownAbsolute();
+    }
+
+    /**
+     * Current mission object for this unit's squad.
+     */
+    public Mission mission() {
+        return squad.mission();
+    }
+
+    public boolean isQuickerThan(Units enemies) {
+        return enemies.stream().noneMatch(u -> u.getSpeed() > this.getSpeed());
+    }
+
+    public boolean isQuickerThan(AUnit enemy) {
+        return enemy.getSpeed() < this.getSpeed();
+    }
+
+    public boolean isSlowerThan(Units enemies) {
+        return enemies.stream().anyMatch(u -> u.getSpeed() > this.getSpeed());
     }
 
 //    public boolean isFacingTheSameDirection(AUnit otherUnit) {

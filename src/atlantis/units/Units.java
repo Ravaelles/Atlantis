@@ -6,12 +6,9 @@ import atlantis.position.PositionHelper;
 import atlantis.util.A;
 import bwapi.Position;
 import bwta.BWTA;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * This class is wrapper for ArrayList<AUnit>. It allows some helpful methods to be executed upon squad of
@@ -23,9 +20,14 @@ public class Units {
      * This mapping can be used to store extra values assigned to units e.g. if units represents mineral fields,
      * we can easily store info how many workers are gathering each mineral field thanks to this mapping.
      */
-    private LinkedHashMap<AUnit, Double> units = new LinkedHashMap<>();
-    
+    private final ArrayList<AUnit> units = new ArrayList<>();
+    private final Map<AUnit, Double> extraValues = new HashMap<>();
+
     // =====================================================================
+
+    public Units(Collection<AUnit> units) {
+        addUnits(units);
+    }
 
     public Units() {
     }
@@ -33,7 +35,8 @@ public class Units {
     // === Base functionality ==============================================
 
     public Units addUnit(AUnit unitToAdd) {
-        units.put(unitToAdd, null);
+        units.add(unitToAdd);
+        extraValues.put(unitToAdd, null);
         return this;
     }
 
@@ -44,7 +47,7 @@ public class Units {
 
     public Units addUnits(Collection<AUnit> unitsToAdd) {
         for (AUnit unit : unitsToAdd) {
-            units.put(unit, null);
+            addUnit(unit);
         }
         return this;
     }
@@ -52,12 +55,14 @@ public class Units {
     public Units removeUnits(Collection<AUnit> unitsToRemove) {
         for (AUnit unit : unitsToRemove) {
             units.remove(unit);
+            extraValues.remove(unit);
         }
         return this;
     }
 
     public Units removeUnit(AUnit unitToRemove) {
         units.remove(unitToRemove);
+        extraValues.remove(unitToRemove);
         return this;
     }
 
@@ -69,70 +74,73 @@ public class Units {
         return units.isEmpty();
     }
 
+    public boolean isNotEmpty() {
+        return !units.isEmpty();
+    }
+
     /**
      * Returns first unit from the set.
      */
     public AUnit first() {
-        return isEmpty() ? null : units.keySet().iterator().next();
+        return isEmpty() ? null : units.get(0);
     }
 
     /**
      * Returns random unit from the set.
      */
     public AUnit random() {
-        return (AUnit) A.getRandomElement(units.keySet());
+        return (AUnit) A.getRandomElement(units);
     }
     
     /**
      * Returns unit with <b>N</b>-th index.
      */
     public AUnit get(int index) {
-        Set<AUnit> keySet = units.keySet();
+        return units.get(index);
+//        Set<AUnit> keySet = units.keySet();
+//
+//        int currentIndex = 0;
+//        for (AUnit unit : keySet) {
+//            if (currentIndex == index) {
+//                return unit;
+//            }
+//            else {
+//                currentIndex++;
+//            }
+//        }
+//        throw new RuntimeException("Units.get(index) is invalid, shouldn't reach here");
+    }
 
-        int currentIndex = 0;
-        for (AUnit unit : keySet) {
-            if (currentIndex == index) {
-                return unit;
-            }
-            else {
-                currentIndex++;
-            }
-        }
-        throw new RuntimeException("Units.get(index) is invalid, shouldn't reach here");
+    public boolean has(AUnit unit) {
+        return units.contains(unit);
+    }
+
+    public boolean contains(AUnit unit) {
+        return units.contains(unit);
     }
 
     // === Special methods =====================================
-    
+
+    public Stream<AUnit> stream() {
+        return units.stream();
+    }
+
     /**
      * Shuffle units to have random sequence in the list.
      */
     public Units shuffle() {
-        Set<AUnit> keySet = units.keySet();
-
-        // Create new mapping, with new order
-        LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
-        for (AUnit unit : keySet) {
-            newUnits.put(unit, getValueFor(unit));
-        }
-        this.units = newUnits;
+        Collections.shuffle(units);
         
         return this;
-    }
-
-    /**
-     * Returns random units.
-     */
-    public AUnit getRandom() {
-        return (AUnit) A.getRandomElement(units.keySet());
     }
 
     // === Value mapping methods ===============================
     
     public void changeValueBy(AUnit unit, double deltaValue) {
-        if (units.containsKey(unit)) {
-            units.put(unit, units.get(unit) + deltaValue);
+        if (has(unit)) {
+            extraValues.put(unit, extraValues.get(unit) + deltaValue);
         } else {
-            units.put(unit, deltaValue);
+            extraValues.put(unit, deltaValue);
         }
     }
 
@@ -140,38 +148,32 @@ public class Units {
         if (unit == null) {
             throw new IllegalArgumentException("Units unit shouldn't be null");
         }
-        
-        units.put(unit, newValue);
+
+        extraValues.put(unit, newValue);
     }
 
-    public double getValueFor(AUnit unit) {
-//        if (unit == null) {
-//            throw new IllegalArgumentException("Units unit shouldn't be null");
-//        }
-        
-        if (units == null || unit == null || !units.containsKey(unit)) {
-//            System.out.println("-----------");
-//            System.out.println(units);
-//            System.out.println(unit);
+    public double valueFor(AUnit unit) {
+        if (units == null || unit == null || !has(unit)) {
             throw new RuntimeException("Should never be here");
         }
         else {
-//            System.out.println("---");
-//            System.out.println("unit: " + unit + " // " + unit.getType().getShortName());
-//            System.out.println(this.units);
-            return units.get(unit);
+            return extraValues.get(unit);
         }
     }
 
-    public AUnit getUnitWithLowestValue() {
-        return getUnitWithExtremeValue(true);
+    public AUnit unitWithLowestValue() {
+        return unitWithExtremeValue(true);
     }
 
-    public AUnit getUnitWithHighestValue() {
-        return getUnitWithExtremeValue(false);
+    public double lowestValue() {
+        return extraValues.get(unitWithLowestValue());
     }
 
-    private AUnit getUnitWithExtremeValue(boolean returnLowest) {
+    public AUnit unitWithHighestValue() {
+        return unitWithExtremeValue(false);
+    }
+
+    private AUnit unitWithExtremeValue(boolean returnLowest) {
         if (units.isEmpty()) {
             return null;
         }
@@ -181,9 +183,9 @@ public class Units {
         // We're interested in MIN
         if (returnLowest) {
             double bestValue = Integer.MAX_VALUE;
-            for (AUnit unit : units.keySet()) {
-                if (bestUnit == null || getValueFor(unit) < bestValue) {
-                    bestValue = getValueFor(unit);
+            for (AUnit unit : units) {
+                if (bestUnit == null || valueFor(unit) < bestValue) {
+                    bestValue = valueFor(unit);
                     bestUnit = unit;
                 }
             }
@@ -192,9 +194,9 @@ public class Units {
         // We're interested in MAX
         else {
             double bestValue = Integer.MIN_VALUE;
-            for (AUnit unit : units.keySet()) {
-                if (bestUnit == null || getValueFor(unit) > bestValue) {
-                    bestValue = getValueFor(unit);
+            for (AUnit unit : units) {
+                if (bestUnit == null || valueFor(unit) > bestValue) {
+                    bestValue = valueFor(unit);
                     bestUnit = unit;
                 }
             }
@@ -214,9 +216,7 @@ public class Units {
             return null;
         }
 
-        ArrayList<AUnit> unitsList = new ArrayList<>(units.keySet());
-        
-        unitsList.sort(new Comparator<AUnit>() {
+        units.sort(new Comparator<AUnit>() {
             @Override
             public int compare(AUnit p1, AUnit p2) {
                 if (p1 == null) {
@@ -234,13 +234,6 @@ public class Units {
                 }
             }
         });
-        
-        // Create new mapping, with new order
-        LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
-        for (AUnit unit : unitsList) {
-            newUnits.put(unit, getValueFor(unit));
-        }
-        this.units = newUnits;
 
         return this;
     }
@@ -254,15 +247,13 @@ public class Units {
             return null;
         }
 
-        ArrayList<AUnit> unitsList = new ArrayList<>(units.keySet());
-        
-        unitsList.sort(new Comparator<AUnit>() {
+        units.sort(new Comparator<AUnit>() {
             @Override
             public int compare(AUnit p1, AUnit p2) {
-                if (p1 == null || !(p1 instanceof HasPosition)) {
+                if (!(p1 instanceof HasPosition)) {
                     return -1;
                 }
-                if (p2 == null || !(p2 instanceof HasPosition)) {
+                if (!(p2 instanceof HasPosition)) {
                     return 1;
                 }
                 double distance1 = BWTA.getGroundDistance(
@@ -278,13 +269,6 @@ public class Units {
                 }
             }
         });
-        
-        // Create new mapping, with new order
-        LinkedHashMap<AUnit, Double> newUnits = new LinkedHashMap<>();
-        for (AUnit unit : unitsList) {
-            newUnits.put(unit, getValueFor(unit));
-        }
-        this.units = newUnits;
 
         return this;
     }
@@ -324,11 +308,12 @@ public class Units {
     
     // =========================================================
     // Override methods
+
     @Override
     public String toString() {
         String string = "Units (" + units.size() + "):\n";
 
-        for (AUnit unit : units.keySet()) {
+        for (AUnit unit : units) {
             string += "   - " + unit.getType() + " (ID:" + unit.getID() + ")\n";
         }
 
@@ -337,32 +322,23 @@ public class Units {
 
     // =========================================================
     // Auxiliary
+
     public void print() {
         System.out.println("Units in list:");
         for (AUnit unit : list()) {
 //            System.out.println(unit + " // Dist to main base: " + (PositionUtil.distanceTo(unit, Select.mainBase())));
-            System.out.println(unit + ", extra value: " + getValueFor(unit));
+            System.out.println(unit + ", extra value: " + valueFor(unit));
         }
         System.out.println();
     }
 
     // === Getters =============================================
+
     /**
      * Returns iterable collection of units in this object.
      */
     public Collection<AUnit> list() {
-        ArrayList<AUnit> copy = new ArrayList<AUnit>();
-        copy.addAll(units.keySet());
-        return copy;
-    }
-
-    /**
-     * Returns iterable ArrayList of units in this object.
-     */
-    public ArrayList<AUnit> arrayList() {
-        ArrayList<AUnit> copy = new ArrayList<AUnit>();
-        copy.addAll(units.keySet());
-        return copy;
+        return (Collection<AUnit>) units.clone();
     }
 
     /**
@@ -370,7 +346,7 @@ public class Units {
      *
      */
     public Iterator<AUnit> iterator() {
-        return units.keySet().iterator();
+        return units.iterator();
     }
 
 }

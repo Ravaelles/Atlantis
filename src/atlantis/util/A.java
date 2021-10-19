@@ -473,6 +473,10 @@ public class A {
      * Returns random element of given list.
      */
     public static Object getRandomElement(Collection<?> collection) {
+        if (collection.isEmpty()) {
+            return null;
+        }
+
         int indexToPick = random.nextInt(collection.size());
         int counter = 0;
         for (Object object : collection) {
@@ -1074,6 +1078,10 @@ public class A {
 
     public static int now() {
         return AGame.getTimeFrames();
+    }
+
+    public static int seconds() {
+        return AGame.getTimeSeconds();
     }
 
     public static double inRange(double min, double value, double max) {

@@ -1,6 +1,5 @@
-package atlantis.combat.micro;
+package atlantis.combat.retreating;
 
-import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
@@ -23,9 +22,8 @@ public class ARunningManager {
     // =========================================================
     
     private final AUnit unit;
-    private APosition runAwayFrom = null;
+//    private APosition runAwayFrom = null;
     private APosition runTo;
-    private int _updated_at = -1;
     private Units closeEnemies;
     private APosition enemyMedian = null;
 
@@ -43,7 +41,7 @@ public class ARunningManager {
                 && !unit.lastStartedRunningAgo(5)
                 && !AAvoidUnits.shouldAvoidAnyUnit(unit)
         ) {
-            unit.getRunManager().stopRunning();
+            unit.runningManager().stopRunning();
             unit.setTooltip("StopRun");
             return true;
         }
@@ -51,7 +49,7 @@ public class ARunningManager {
         return false;
     }
 
-    public boolean runFrom() {
+    public boolean runFromHere() {
         return runFrom(null, -1);
     }
 
@@ -62,7 +60,7 @@ public class ARunningManager {
             throw new RuntimeException("Null unit to run from");
         }
 
-        runAwayFrom = null;
+        APosition runAwayFrom = null;
         if (unitOrPosition instanceof AUnit) {
             runAwayFrom = ((AUnit) unitOrPosition).getPosition();
         } else if (unitOrPosition instanceof APosition) {
@@ -72,7 +70,7 @@ public class ARunningManager {
         // === Define run to position ==============================
 
         AUnit base = Select.mainBase();
-        if (AGame.getTimeSeconds() <= 350 && Count.ourCombatUnits() <= 5 && base != null && base.distanceTo(unit) > 30) {
+        if (A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && base != null && base.distanceTo(unit) > 30) {
             runTo = base.getPosition();
         } else {
             runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
@@ -92,24 +90,24 @@ public class ARunningManager {
         return makeUnitRun();
     }
 
-    public boolean runFromCloseEnemies() {
-
-        // Define which enemies are considered as close enough to be dangerous
-        closeEnemies = defineCloseEnemies(unit);
-        if (closeEnemies.isEmpty()) {
-            stopRunning();
-            return false;
-        }
-
-        // ===========================================
-        // Define "center of gravity" for the set of enemies
-
-        enemyMedian = closeEnemies.averageDistanceWeightedTo(unit, 0.33);
-        APainter.paintCircleFilled(enemyMedian, 10, Color.Orange);
-
-        // Run from given position
-        return runFrom(enemyMedian, -1);
-    }
+//    public boolean runFromCloseEnemies() {
+//
+//        // Define which enemies are considered as close enough to be dangerous
+//        closeEnemies = defineCloseEnemies(unit);
+//        if (closeEnemies.isEmpty()) {
+//            stopRunning();
+//            return false;
+//        }
+//
+//        // ===========================================
+//        // Define "center of gravity" for the set of enemies
+//
+//        enemyMedian = closeEnemies.averageDistanceWeightedTo(unit, 0.33);
+//        APainter.paintCircleFilled(enemyMedian, 10, Color.Orange);
+//
+//        // Run from given position
+//        return runFrom(enemyMedian, -1);
+//    }
 
     // =========================================================
     
@@ -166,7 +164,7 @@ public class ARunningManager {
 //            return Select.mainBase().getPosition();
 //        }
 
-        return unit.getRunManager().findBestPositionToRun(unit, runAwayFrom, dist);
+        return unit.runningManager().findBestPositionToRun(unit, runAwayFrom, dist);
     }
 
     // =========================================================
@@ -445,10 +443,7 @@ public class ARunningManager {
 //            System.err.println("Run manager, run dist: " + runTo.distanceTo(unit));
 
             // Update last time run order was issued
-            _updated_at = A.now();
             unit._lastStartedRunning = A.now();
-//            APainter.paintLine(unit.getPosition(), runTo, Color.Orange);
-//            boolean hasMoved = unit.move(runTo, UnitActions.RUN);
             unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distanceTo(runTo)) + ")");
 
             // Make all other units very close to it run as well
@@ -491,6 +486,6 @@ public class ARunningManager {
 
     public void stopRunning() {
         runTo = null;
-        _updated_at = -1;
+        unit._lastStoppedRunning = A.now();
     }
 }

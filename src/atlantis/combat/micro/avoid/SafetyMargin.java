@@ -7,7 +7,7 @@ import atlantis.units.Select;
 public class SafetyMargin {
 
     /**
-     * Margin of defender safety against attack of attacker.
+     * Margin of defender safety against the attacker weapon range.
      * Negative value means attacker can shoot at the defender.
      * Positive value means some extra safety margin for the defender.
      *

@@ -26,7 +26,7 @@ public class ARepairerManager {
     // =========================================================
 
     private static boolean handleRepairerSafety(AUnit repairer) {
-        if (repairer.getHPPercent() <= 50 && AAvoidUnits.avoid(repairer)) {
+        if (repairer.HPPercent() <= 50 && AAvoidUnits.avoid(repairer)) {
             return true;
         }
 

@@ -26,7 +26,7 @@ public class AUnitBeingReparedManager {
         }
 
         // Ignore going closer to repairer if unit is still relatively healthy
-        if (unitBeingRepared.getHPPercent() > 50 && distanceToRepairer >= 3) {
+        if (unitBeingRepared.HPPercent() > 50 && distanceToRepairer >= 3) {
             return false;
         }
 

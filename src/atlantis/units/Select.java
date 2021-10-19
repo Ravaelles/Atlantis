@@ -38,6 +38,7 @@ public class Select<T> {
 
     // =====================================================================
     // Constructor is private, use our(), enemy() or neutral() methods
+
     protected Select(Collection<T> unitsData) {
         data = new ArrayList<>();
         data.addAll(unitsData);
@@ -45,18 +46,18 @@ public class Select<T> {
 
     // =====================================================================
     // Helper for base object
+
     private static List<AUnit> ourUnits() {
         List<AUnit> data = new ArrayList<>();
 
-//        System.out.println("AGame.getPlayerUs().getUnits() = " + AGame.getPlayerUs().getUnits().size());
         for (Unit u : AGame.getPlayerUs().getUnits()) {
-//            System.out.println(u);
-//            System.out.println("******** " + AUnit.createFrom(u));
+//            AUnit unit = AUnit.createFrom(u);
+//            if (unit.isCompleted()) {
+//                data.add(unit);
+//            }
             data.add(AUnit.createFrom(u));
-//            System.out.println(AUnit.createFrom(u));
         }
 
-//        System.out.println("## Our size: " + data.size());
         return data;
     }
 
@@ -119,8 +120,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.isType(
-                    AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Larva, AUnitType.Zerg_Egg)) {
+            if (unit.isCompleted() && !unit.isUncontrollable()) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
         }
@@ -253,8 +253,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.isNotActuallyUnit() && !unit.getType().isBuilding()
-                    && !unit.getType().equals(AtlantisConfig.WORKER)) {
+            if (unit.isCompleted() && unit.isActualUnit() && !unit.isWorker()) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
         }
@@ -270,8 +269,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-
-            if (!unit.getType().equals(AUnitType.Terran_Vulture_Spider_Mine)) {
+            if (!unit.isUncontrollable()) {
                 data.add(unit);	//TODO: make it more efficient by just querying the cache of known units
             }
         }
@@ -282,12 +280,10 @@ public class Select<T> {
     /**
      * Selects our unfinished units.
      */
-    public static Select<AUnit> ourNotFinished() {
-        //Units units = new AUnits();
+    public static Select<AUnit> ourUnfinished() {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-
             if (!unit.isCompleted()) {
                 data.add(unit);
             }
@@ -303,7 +299,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
+            if (unit.isCompleted() && unit.isActualUnit()) {
                 data.add(unit);
             }
         }
@@ -319,7 +315,7 @@ public class Select<T> {
 
         for (AUnit unit : ourUnits()) {
 
-            if (!unit.isCompleted() && !unit.getType().isBuilding() && !unit.isNotActuallyUnit()) {
+            if (!unit.isCompleted() && unit.isActualUnit()) {
                 data.add(unit);
             }
         }
@@ -365,7 +361,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (!unit.isBuilding() && !unit.isWorker() && !unit.isNotActuallyUnit()) {
+            if (!unit.isWorker() && unit.isActualUnit()) {
                 data.add(unit);
             }
         }
@@ -396,7 +392,7 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
-            if (unit.isVisible() && (includeBuildings || !unit.getType().isBuilding()) || !unit.isNotActuallyUnit()) {
+            if (unit.isVisible() && (includeBuildings || !unit.isBuilding()) || unit.isActualUnit()) {
                 if ((includeGroundUnits && unit.isGroundUnit()) || (includeAirUnits && unit.isAirUnit())) {
                     data.add(unit);
                 }
@@ -429,24 +425,28 @@ public class Select<T> {
      * Selects all geysers on the map.
      */
     public static Select<AUnit> geysers() {
-        Select<AUnit> selectUnits = neutral();
-        return (Select<AUnit>) selectUnits.ofType(AUnitType.Resource_Vespene_Geyser);
+        return (Select<AUnit>) neutral().ofType(AUnitType.Resource_Vespene_Geyser);
     }
 
     /**
      * Create initial search-pool of units from given collection of units.
      */
     public static Select<AUnit> from(Collection<AUnit> units) {
-        Select<AUnit> selectUnits = new Select<AUnit>(units);
-        return selectUnits;
+        return new Select<AUnit>(units);
+    }
+
+    /**
+     * Create initial search-pool of units from Units object.
+     */
+    public static Select<AUnit> from(Units units) {
+        return new Select<AUnit>(units.list());
     }
 
     /**
      * Create initial search-pool of units from given collection of units.
      */
     public static Select<AFoggedUnit> fromData(Collection<AFoggedUnit> units) {
-        Select<AFoggedUnit> selectUnits = new Select<AFoggedUnit>(units);
-        return selectUnits;
+        return new Select<AFoggedUnit>(units);
     }
 
     /**
@@ -675,7 +675,7 @@ public class Select<T> {
     public Select<T> melee() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
-            AFoggedUnit unit = dataFrom(unitsIterator.next());
+            AUnit unit = unitFrom(unitsIterator.next());
             if (!unit.getType().isMeleeUnit()) {
                 unitsIterator.remove();
             }
@@ -691,8 +691,22 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will work properly only on visible units
-            // unit.getHitPoints() >= unit.getType().maxHitPoints() replaces !isWounded()
             if (unit.getHitPoints() >= unit.getMaxHitPoints()) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Selects only units that do not currently have max hit points.
+     */
+    public Select<T> ranged() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (!unit.isMeleeUnit()) {
                 unitsIterator.remove();
             }
         }
@@ -1237,15 +1251,15 @@ public class Select<T> {
     /**
      * Returns first unit that matches previous conditions or null if no units match conditions.
      */
-    public T last() {
-        return data.isEmpty() ? null : data.get(data.size() - 1);
+    public AUnit last() {
+        return data.isEmpty() ? null : (AUnit) data.get(data.size() - 1);
     }
 
     /**
      * Returns random unit that matches previous conditions or null if no units matched all conditions.
      */
-    public T random() {
-        return (T) A.getRandomElement(data); //units.random();
+    public AUnit random() {
+        return (AUnit) A.getRandomElement(data);
     }
 
     // === High-level of abstraction ===========================
@@ -1464,7 +1478,7 @@ public class Select<T> {
             return null;
         }
 
-        Collections.sort(data, Comparator.comparingDouble(u -> ((AUnit) u).getHPPercent()));
+        Collections.sort(data, Comparator.comparingDouble(u -> ((AUnit) u).HPPercent()));
 
 //        if (data.size() > 1) {
 //            System.out.println("data = ");

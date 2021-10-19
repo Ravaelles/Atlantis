@@ -117,6 +117,10 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return PositionUtil.distanceTo(p, position);
     }
 
+    public double groundDistanceTo(APosition position) {
+        return PositionUtil.groundDistanceTo(this, position);
+    }
+
     public double distanceTo(AChokepoint choke) {
         return PositionUtil.distanceTo(p, choke);
     }

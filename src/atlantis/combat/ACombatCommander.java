@@ -45,7 +45,7 @@ public class ACombatCommander {
         // =========================================================
         
         // Act with every combat unit
-        for (AUnit unit : squad.arrayList()) {
+        for (AUnit unit : squad.list()) {
             ACombatUnitManager.update(unit);
 
             addInfoAboutNearestEnemyToTooltip(unit);

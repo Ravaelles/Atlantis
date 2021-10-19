@@ -1,14 +1,11 @@
 package atlantis.combat.squad;
 
-import atlantis.AGame;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.util.Us;
-import bwapi.Color;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -148,7 +145,7 @@ public class Squad extends Units {
     /**
      * Current mission object for this squad.
      */
-    public Mission getMission() {
+    public Mission mission() {
         return mission;
     }
 
@@ -189,15 +186,15 @@ public class Squad extends Units {
     // =========================================================
 
     public boolean isMissionContain() {
-        return Missions.CONTAIN.equals(getMission());
+        return Missions.CONTAIN.equals(mission());
     }
 
     public boolean isMissionDefend() {
-        return Missions.DEFEND.equals(getMission());
+        return Missions.DEFEND.equals(mission());
     }
 
     public boolean isMissionAttack() {
-        return Missions.ATTACK.equals(getMission());
+        return Missions.ATTACK.equals(mission());
     }
 
     public boolean isFirstUnitInSquad(AUnit unit) {

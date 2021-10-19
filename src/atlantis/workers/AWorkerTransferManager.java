@@ -37,8 +37,8 @@ public class AWorkerTransferManager {
         }
 
         // Take the base with lowest and highest worker ratio
-        AUnit baseWithFewestWorkers = baseWorkersRatios.getUnitWithLowestValue();
-        AUnit baseWithMostWorkers = baseWorkersRatios.getUnitWithHighestValue();
+        AUnit baseWithFewestWorkers = baseWorkersRatios.unitWithLowestValue();
+        AUnit baseWithMostWorkers = baseWorkersRatios.unitWithHighestValue();
 
         if (baseWithFewestWorkers == null || baseWithMostWorkers == null) {
 //            System.err.println("baseWithFewestWorkers = " + baseWithFewestWorkers);
@@ -46,8 +46,8 @@ public class AWorkerTransferManager {
             return;
         }
 
-        double fewestWorkersRatio = baseWorkersRatios.getValueFor(baseWithFewestWorkers);
-        double mostWorkersRatio = baseWorkersRatios.getValueFor(baseWithMostWorkers);
+        double fewestWorkersRatio = baseWorkersRatios.valueFor(baseWithFewestWorkers);
+        double mostWorkersRatio = baseWorkersRatios.valueFor(baseWithMostWorkers);
         double workerRatioDiff = mostWorkersRatio - fewestWorkersRatio;
 
 //        System.out.println("Fewest: " + baseWithFewestWorkers + " / " + fewestWorkersRatio);
