@@ -540,6 +540,10 @@ public class AUnitType implements Comparable<AUnitType> {
         return isType(Protoss_Photon_Cannon);
     }
 
+    public boolean isCarrier() {
+        return isType(Protoss_Carrier);
+    }
+
     public boolean isVehicle() {
         return ut.isMechanical();
     }
@@ -855,5 +859,13 @@ public class AUnitType implements Comparable<AUnitType> {
 
     public int getTotalTrainTime() {
         return ut.buildTime();
+    }
+
+    public boolean isCloakable() {
+        return ut.isCloakable();
+    }
+
+    public boolean isSpell() {
+        return ut.isSpell();
     }
 }

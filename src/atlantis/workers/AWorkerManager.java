@@ -105,7 +105,7 @@ public class AWorkerManager {
     }
 
     public static AUnit getRandomWorkerAssignedTo(AUnit target) {
-        boolean isGasBuilding = target.getType().isGasBuilding();
+        boolean isGasBuilding = target.type().isGasBuilding();
 
         // Take those not carrying anything first
         for (AUnit worker : Select.ourWorkers().listUnits()) {
@@ -134,13 +134,13 @@ public class AWorkerManager {
         } else if (building.equals(worker.getBuildUnit())) {
             return true;
         } 
-        else if (building.getType().isGasBuilding()) {
+        else if (building.type().isGasBuilding()) {
             return worker.isGatheringGas() && worker.distanceTo(building) <= 10;
         }
         else if (building.isBase()) {
             if (worker.isGatheringMinerals() || worker.isCarryingMinerals()) {
                 return true;
-            } else return worker.getTarget() != null && worker.getTarget().getType().isMineralField();
+            } else return worker.getTarget() != null && worker.getTarget().type().isMineralField();
         }
         
         return false;

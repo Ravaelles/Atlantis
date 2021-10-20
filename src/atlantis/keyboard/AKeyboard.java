@@ -46,17 +46,21 @@ public class AKeyboard implements NativeKeyListener {
         
         switch (e.getKeyCode()) {
             
-            // Key "Escape" and "`"
-            case 1: case 41:
+            // Key "Escape"
+            case 1:
                 System.out.println();
                 System.out.println("Exit requested by the user");
                 AGame.exit();
                 break;
 
+            // Key "p" / "P"
+            case 25 : case 41:
+                APainter.togglePainting();
+                break;
+
             // Key "PauseBreak"
             case 3653:
                 AGameSpeed.pauseModeToggle();
-//                System.out.println("Notice: " + (AGame.isPaused() ? "" : "UN") + "PAUSED");
                 break;
 
             // Keys "-" and NumPad "-" and "["

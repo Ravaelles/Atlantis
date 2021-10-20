@@ -49,8 +49,7 @@ public class ASquadManager {
      * @return
      */
     private static boolean shouldSkipUnit(AUnit unit) {
-        return unit.getType().isBuilding() || unit.isWorker() || unit.getType().isLarva()
-                || unit.getType().isEgg() || unit.getType().isMine();
+        return unit.isNotActualUnit() || unit.isWorker() || unit.type().isMine();
     }
 
     // =========================================================

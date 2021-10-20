@@ -48,8 +48,8 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     private static void addonIfNeeded() {
         if (canAfford(100, 50)) {
             for (AUnit building : Select.ourBuildings().list()) {
-                if (building.getType().isFactory() && !building.isBusy() && !building.hasAddon()) {
-                    AUnitType addonType = building.getType().getRelatedAddon();
+                if (building.type().isFactory() && !building.isBusy() && !building.hasAddon()) {
+                    AUnitType addonType = building.type().getRelatedAddon();
                     if (addonType != null) {
                         building.buildAddon(addonType);
                         return;

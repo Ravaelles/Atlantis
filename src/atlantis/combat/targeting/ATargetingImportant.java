@@ -47,7 +47,7 @@ public class ATargetingImportant extends AEnemyTargeting {
         // Including unfinished defensive buildings
 
         target = Select.enemy()
-                .canBeAttackedBy(unit, false)
+                .canBeAttackedBy(unit, false, true)
                 .ofType(
                         AUnitType.Protoss_Photon_Cannon,
                         AUnitType.Zerg_Sunken_Colony,

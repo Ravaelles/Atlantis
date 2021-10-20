@@ -29,8 +29,8 @@ public class FightInsteadAvoid {
         this.enemies = enemies;
 
         Select<AUnit> selector = Select.from(enemies);
-        invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).invisible().first();
-        invisibleCombatUnit = selector.clone().invisible().combatUnits().first();
+        invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effCloaked().first();
+        invisibleCombatUnit = selector.clone().effCloaked().combatUnits().first();
         lurkerOrReaver = selector.clone().ofType(AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver).first();
         tankSieged = selector.clone().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
         defensiveBuilding = selector.clone().buildings().first();

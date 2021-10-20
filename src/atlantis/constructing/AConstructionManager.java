@@ -61,7 +61,7 @@ public class AConstructionManager {
             if (builder != null) {
 
                 // If builder has changed its type and became Zerg Extractor
-                if (!builder.getType().equals(AtlantisConfig.WORKER)) {
+                if (!builder.is(AtlantisConfig.WORKER)) {
 
                     // Happens for Extractor
                     if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
@@ -95,7 +95,7 @@ public class AConstructionManager {
 //        if (building != null) {
 //            System.out.println("==============");
 //            System.out.println(constructionOrder.getPositionToBuild());
-//            System.out.println(building.getType());
+//            System.out.println(building.type());
 //            System.out.println(building);
 //            System.out.println(building.isExists());
 //            System.out.println(constructionOrder.getStatus());
@@ -171,7 +171,7 @@ public class AConstructionManager {
                     AUnit builder = constructionOrder.getBuilder();
                     if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         if (builder != null) {
-                            if (builder.getType().equals(constructionOrder.getBuildingType())) {
+                            if (builder.is(constructionOrder.getBuildingType())) {
                                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
                             }
                         }

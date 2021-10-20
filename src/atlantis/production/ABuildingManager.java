@@ -1,19 +1,22 @@
 package atlantis.production;
 
-import atlantis.AGame;
-import atlantis.debug.APainter;
+import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwapi.Color;
 
 public class ABuildingManager {
 
-    public static void update() {
+    public static boolean update() {
         for (AUnit building : Select.ourBuildings().listUnits()) {
-            // Paint center of building and its borders
-//            APainter.paintCircleFilled(building.getPosition(), 3, Color.Red);
-//            APainter.paintLine(building.getPosition(), building.getType().getDimensionRight(), 0, Color.Red);
+
+            if (building.isType(AUnitType.Terran_Comsat_Station)) {
+                return TerranComsatStation.update(building);
+            }
+
         }
+
+        return false;
     }
 
 }

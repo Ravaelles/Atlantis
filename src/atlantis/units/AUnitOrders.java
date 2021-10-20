@@ -55,7 +55,17 @@ public interface AUnitOrders {
     // To avoid confusion: NEVER UE IT.
     // When moving units always use "Move" mission.
     // Use "Attack" only for targeting actual units.
-//    default boolean attackPosition(APosition target) {
+    /**
+     * ONLY TANKS ARE ALLOWED TO USE IT!!!
+     */
+    default boolean attackPosition(APosition target) {
+        if (u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
+            u().attack(target);
+            return true;
+        }
+
+        return false;
+    }
 
     default boolean train(AUnitType unitToTrain) {
         unit().setUnitAction(UnitActions.TRAIN);
@@ -237,7 +247,7 @@ public interface AUnitOrders {
             System.out.println("GATHER @" + A.now() + " / unit#" + unit().getID());
         }
         
-        if (target.getType().isMineralField()) {
+        if (target.type().isMineralField()) {
             unit().setUnitAction(UnitActions.GATHER_MINERALS);
         } else {
             unit().setUnitAction(UnitActions.GATHER_GAS);

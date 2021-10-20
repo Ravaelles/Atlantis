@@ -59,6 +59,12 @@ public class TerranSiegeTankManager {
      */
     private static boolean updateWhenSieged(AUnit tank) {
 
+        if (handleShootingAtInvisibleUnits(tank)) {
+            return true;
+        }
+
+        // =========================================================
+
         // Mission is CONTAIN
         if (Missions.isGlobalMissionContain()) {
             return false;
@@ -86,6 +92,20 @@ public class TerranSiegeTankManager {
             }
         }
         
+        return false;
+    }
+
+    private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
+        if (tank.getCooldownCurrent() <= 3) {
+            for (AUnit enemy : Select.enemyRealUnits().effCloaked().inRadius(11, tank).list()) {
+                if (enemy.distanceTo(tank) >= tank.getGroundWeaponMinRange()) {
+                    tank.attackPosition(enemy.getPosition());
+                    tank.setTooltip("Smash invisible!");
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -156,7 +176,7 @@ public class TerranSiegeTankManager {
             return false;
         }
         
-        if (distanceToEnemy < 12 && enemy.getType().isDangerousGroundUnit() && canSiegeHere(tank)) {
+        if (distanceToEnemy < 12 && enemy.type().isDangerousGroundUnit() && canSiegeHere(tank)) {
             tank.siege();
             tank.setTooltip("Better siege");
             return true;

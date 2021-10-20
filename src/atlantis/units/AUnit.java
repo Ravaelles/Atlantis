@@ -114,10 +114,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Returns unit type from bridge OR if type is Unknown (behind fog of war) it will return last cached type.
      */
-    public AUnitType getType() {
+    public AUnitType type() {
         AUnitType type = AUnitType.createFrom(u.getType());
         if (AUnitType.Unknown.equals(type)) {
-            if (this.isOurUnit()) {
+            if (this.isOur()) {
                 System.err.println("Our unit (" + u.getType() + ") returned Unknown type");
             }
             else {
@@ -230,11 +230,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     @Override
     public String toString() {
 //        Position position = this.getPosition();
-//        String toString = getType().getShortName();
+//        String toString = type().getShortName();
 //        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
 //        return toString;
 //        return "AUnit(" + u.getType().toString() + ")";
-        return "AUnit(" + getType().getShortName()+ " #" + getID() + ") at " + getPosition().toString();
+        return "AUnit(" + type().getShortName()+ " #" + getID() + ") at " + getPosition().toString();
     }
 
     @Override
@@ -298,7 +298,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns true if given unit is OF TYPE BUILDING.
      */
     public boolean isBuilding() {
-        return getType().isBuilding();
+        return type().isBuilding() || type().isAddon();
     }
 
     public boolean isWorker() {
@@ -306,7 +306,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isBunker() {
-        return getType().equals(AUnitType.Terran_Bunker);
+        return type().equals(AUnitType.Terran_Bunker);
     }
 
     public boolean isBase() {
@@ -315,35 +315,35 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isInfantry() {
-        return getType().isOrganic();
+        return type().isOrganic();
     }
 
     public boolean isVehicle() {
-        return getType().isMechanical();
+        return type().isMechanical();
     }
 
     /**
      * Returns true if given unit is considered to be "ranged" unit (not melee).
      */
     public boolean isRangedUnit() {
-        return getType().isRangedUnit();
+        return type().isRangedUnit();
     }
 
     /**
      * Returns true if given unit is considered to be "melee" unit (not ranged).
      */
     public boolean isMeleeUnit() {
-        return getType().isMeleeUnit();
+        return type().isMeleeUnit();
     }
 
     // =========================================================
     // Auxiliary methods
     public boolean ofType(AUnitType type) {
-        return getType().equals(type);
+        return type().equals(type);
     }
 
     public boolean isType(AUnitType... types) {
-        return getType().isType(types);
+        return type().isType(types);
     }
 
     public boolean isFullyHealthy() {
@@ -375,7 +375,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public int getMaxShields() {
-        return getType().ut().maxShields();
+        return type().ut().maxShields();
     }
 
     public int getMaxHP() {
@@ -390,26 +390,33 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return u().getSpiderMineCount();
     }
 
-    public String getShortName() {
-        return getType().getShortName();
+    public String shortName() {
+        return type().getShortName();
     }
 
     public String getShortNamePlusId() {
-        return getType().getShortName() + " #" + getID();
+        return type().getShortName() + " #" + getID();
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
     public double getWeaponRangeGround() {
-        return getType().getGroundWeapon().maxRange() / 32;
+        return type().getGroundWeapon().maxRange() / 32;
+    }
+
+    /**
+     * Returns max shoot range (in build tiles) of this unit against land targets.
+     */
+    public double getGroundWeaponMinRange() {
+        return type().getGroundWeapon().minRange() / 32;
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
     public double getWeaponRangeAir() {
-        return getType().getAirWeapon().maxRange() / 32;
+        return type().getAirWeapon().maxRange() / 32;
     }
 
     /**
@@ -425,7 +432,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      */
     public int getUnitIndexInBwapi() {
         int index = 0;
-        for (AUnit otherUnit : Select.our().ofType(getType()).listUnits()) {
+        for (AUnit otherUnit : Select.our().ofType(type()).listUnits()) {
             if (otherUnit.getID() < this.getID()) {
                 index++;
             }
@@ -477,35 +484,36 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isGroundUnit() {
-        return !getType().isAirUnit();
+        return !type().isAirUnit();
     }
 
     public boolean isAirUnit() {
-        return getType().isAirUnit();
+        return type().isAirUnit();
     }
 
     public boolean isSpiderMine() {
-        return getType().equals(AUnitType.Terran_Vulture_Spider_Mine);
+        return type().equals(AUnitType.Terran_Vulture_Spider_Mine);
     }
 
     public boolean isLarvaOrEgg() {
-        return getType().equals(AUnitType.Zerg_Larva) || getType().equals(AUnitType.Zerg_Egg);
+        return type().equals(AUnitType.Zerg_Larva) || type().equals(AUnitType.Zerg_Egg);
     }
 
     public boolean isLarva() {
-        return getType().equals(AUnitType.Zerg_Larva);
+        return type().equals(AUnitType.Zerg_Larva);
     }
 
     public boolean isEgg() {
-        return getType().equals(AUnitType.Zerg_Egg);
+        return type().equals(AUnitType.Zerg_Egg);
     }
 
     /**
      * Not that we're racists, but spider mines and larvas aren't really units...
      */
     public boolean isNotActualUnit() {
-        return getType().ut().isNeutral() || isLarvaOrEgg() || isBuilding()
-                || getType().isMineralField() || getType().isGeyser() || getType().isGasBuilding();
+        return type().ut().isNeutral() || isLarvaOrEgg() || isBuilding()
+                || type().isMineralField() || type().isGeyser() || type().isGasBuilding()
+                || type().isSpell();
     }
 
     /**
@@ -575,15 +583,31 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * @param includeCooldown if true, then unit will be considered able to attack only if the cooldown after
      * the last shot allows it
      */
-    public boolean canAttackThisKindOfUnit(AUnit otherUnit, boolean includeCooldown) {
+    public boolean canAttackThisUnit(AUnit otherUnit, boolean includeCooldown, boolean checkVisibility) {
+        if (checkVisibility && otherUnit.isEffectivelyCloaked()) {
+            return false;
+        }
+
         // Enemy is GROUND unit
         if (otherUnit.isGroundUnit()) {
-            return otherUnit.isVisible() && canAttackGroundUnits() && (!includeCooldown || getGroundWeaponCooldown() == 0);
-        } 
+            return canAttackGroundUnits() && (!includeCooldown || getGroundWeaponCooldown() == 0);
+        }
 
         // Enemy is AIR unit
         else {
-            return otherUnit.isVisible() && canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
+            return canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
+        }
+    }
+
+    public boolean hasWeaponToAttackThisUnit(AUnit otherUnit) {
+        // Enemy is GROUND unit
+        if (otherUnit.isGroundUnit()) {
+            return canAttackGroundUnits();
+        }
+
+        // Enemy is AIR unit
+        else {
+            return canAttackAirUnits();
         }
     }
 
@@ -690,14 +714,14 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns true if unit has anti-ground weapon.
      */
     public boolean canAttackGroundUnits() {
-        return getType().getGroundWeapon() != WeaponType.None;
+        return type().getGroundWeapon() != WeaponType.None;
     }
 
     /**
      * Returns true if unit has anti-air weapon.
      */
     public boolean canAttackAirUnits() {
-        return getType().getAirWeapon() != WeaponType.None;
+        return type().getAirWeapon() != WeaponType.None;
     }
 
     /**
@@ -717,11 +741,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public WeaponType getAirWeapon() {
-        return getType().getAirWeapon();
+        return type().getAirWeapon();
     }
 
     public WeaponType getGroundWeapon() {
-        return getType().getGroundWeapon();
+        return type().getGroundWeapon();
     }
 
     /**
@@ -800,7 +824,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Returns true if this unit belongs to us.
      */
-    public boolean isOurUnit() {
+    public boolean isOur() {
         return getPlayer().equals(AGame.getPlayerUs());
     }
 
@@ -815,7 +839,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns true if given building is able to build add-on like Terran Machine Shop.
      */
     public boolean canHaveAddon() {
-        return getType().canHaveAddon();
+        return type().canHaveAddon();
     }
     
     public int getID() {
@@ -857,7 +881,13 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public int getMaxHitPoints() {
-        return u.getType().maxHitPoints() + getMaxShields();
+        int hp = u.getType().maxHitPoints() + getMaxShields();
+        if (hp == 0) {
+            System.err.println("Max HP = 0 for");
+            System.err.println(this);
+        }
+
+        return hp;
     }
 
     public boolean isIdle() {
@@ -868,8 +898,37 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return !isIdle();
     }
 
-    public boolean isVisible() {
-        return u.isVisible() && !u.isCloaked();
+    private boolean ensnared() {
+        return u.isEnsnared();
+    }
+
+    private boolean plagued() {
+        return u.isPlagued();
+    }
+
+    public boolean isEffectivelyVisible() {
+        return !isEffectivelyCloaked();
+    }
+
+    public boolean isEffectivelyCloaked() {
+        if (!isCloaked() || ensnared() || plagued()) {
+            return false;
+        }
+
+        return getHP() == 0;
+//        if (isOur()) {
+//            return ;
+//        }
+//        effectivelyCloaked: Boolean = (
+//                cloakedOrBurrowed
+//                        && ! ensnared
+//                        && ! plagued
+//                        && (
+//        if (isOurs) (
+//                ! tile.enemyDetected
+//                        && ! matchups.enemies.exists(_.orderTarget.contains(this))
+//                        && ! With.bullets.all.exists(_.targetUnit.contains(this)))
+//        else ! detected))
     }
 
     public boolean invisible() {
@@ -897,7 +956,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isCloaked() {
-        return u.isCloaked();
+        return u.isCloaked() || u.isBurrowed();
     }
 
     public boolean isBurrowed() {
@@ -985,7 +1044,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean isVulture() {
-        return getType().isVulture();
+        return type().isVulture();
     }
 
     /**
@@ -993,11 +1052,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Terran_Vulture - 6.4
      */
     public double getSpeed() {
-        return getType().ut().topSpeed();
+        return type().ut().topSpeed();
     }
 
     public boolean isTank() {
-        return getType().isTank();
+        return type().isTank();
     }
 
     public boolean isMorphing() {
@@ -1053,7 +1112,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public int getTotalTrainTime() {
-        return getType().getTotalTrainTime();
+        return type().getTotalTrainTime();
     }
 
     public int getRemainingUpgradeTime() {
@@ -1137,10 +1196,6 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     
     public int getScarabCount() {
         return u().getScarabCount();
-    }
-
-    public AUnitType type() {
-        return getType();
     }
 
     public boolean isRepairerOfAnyKind() {
@@ -1285,6 +1340,14 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     public boolean hasNothingInQueue() {
         return getTrainingQueue().size() <= 1;
+    }
+
+    public boolean canCloak() {
+        return getEnergy() > 10 && type().isCloakable() && !isCloaked();
+    }
+
+    public boolean is(AUnitType ...types) {
+        return isType(types);
     }
 
 //    public boolean isFacingTheSameDirection(AUnit otherUnit) {

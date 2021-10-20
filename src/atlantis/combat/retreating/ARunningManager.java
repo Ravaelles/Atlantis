@@ -371,7 +371,7 @@ public class ARunningManager {
      * Tell other units that might be blocking our escape route to move.
      */
 //    private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
-//        double safetyRadiusSize = (unit.getType().getDimensionLeft() + unit.getType().getDimensionUp())
+//        double safetyRadiusSize = (unit.type().getDimensionLeft() + unit.type().getDimensionUp())
 //                / 64 * 1.35;
 //
 //        Select<?> units = Select.ourRealUnits().inRadius(safetyRadiusSize, unit);

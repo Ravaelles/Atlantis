@@ -95,7 +95,7 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // Okay, try targeting any-fuckin-thing
 
-        return Select.enemy().visible().nearestTo(unit);
+        return Select.enemy().effVisible().nearestTo(unit);
     }
 
 }

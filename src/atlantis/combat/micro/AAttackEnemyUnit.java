@@ -23,7 +23,7 @@ public class AAttackEnemyUnit {
             return false;
         }
 
-        if (!unit.canAttackThisKindOfUnit(enemy, false)) {
+        if (!unit.canAttackThisUnit(enemy, false, true)) {
             unit.setTooltip("Invalid target");
             System.err.println("Invalid target for " + unit + ": " + enemy + " (" + unit.distanceTo(enemy) + ")");
             return false;
@@ -34,7 +34,7 @@ public class AAttackEnemyUnit {
         }
 
         if (enemy != null) {
-            unit.setTooltip("Attacking " + enemy.getShortName() + " (" + unit.getCooldownCurrent() + ")");
+            unit.setTooltip("Attacking " + enemy.shortName() + " (" + unit.getCooldownCurrent() + ")");
 //            APainter.paintTextCentered(unit, enemyToAttack + ", " + unit.isJustShooting(), Color.Red);
             APainter.paintLine(unit, enemy, Color.Red);
             if (!enemy.equals(unit.getTarget())) {

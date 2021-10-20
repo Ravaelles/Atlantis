@@ -102,7 +102,7 @@ public class ProtossObserverManager {
     }
 
     private static AUnit enemyDangerousHiddenUnit() {
-        AUnit invisibleUnit = Select.enemy().invisible().combatUnits().nearestTo(Select.mainBase());
+        AUnit invisibleUnit = Select.enemy().effCloaked().combatUnits().nearestTo(Select.mainBase());
         if (invisibleUnit != null) {
             return invisibleUnit;
         }
@@ -112,12 +112,12 @@ public class ProtossObserverManager {
             return lurker;
         }
 
-        AUnit terranCloaked = Select.enemy().invisible().ofType(AUnitType.Terran_Wraith, AUnitType.Terran_Ghost).nearestTo(Select.mainBase());
+        AUnit terranCloaked = Select.enemy().effCloaked().ofType(AUnitType.Terran_Wraith, AUnitType.Terran_Ghost).nearestTo(Select.mainBase());
         if (terranCloaked != null) {
             return terranCloaked;
         }
 
-        return Select.enemy().invisible().ofType(
+        return Select.enemy().effCloaked().ofType(
             AUnitType.Protoss_Dark_Templar
         ).nearestTo(Select.mainBase());
     }

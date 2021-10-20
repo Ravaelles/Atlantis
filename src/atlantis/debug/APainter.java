@@ -30,6 +30,14 @@ public class APainter {
         return paintingMode == MODE_NO_PAINTING;
     }
 
+    public static void togglePainting() {
+        if (paintingMode == MODE_NO_PAINTING) {
+            paintingMode = MODE_FULL_PAINTING;
+        } else {
+            paintingMode = MODE_NO_PAINTING;
+        }
+    }
+
     public static void paintSideMessage(String text, Color color) {
         paintSideMessage(text, color, 0);
     }
@@ -96,6 +104,10 @@ public class APainter {
             return;
         }
         bwapi.drawCircleMap(position, radius, color, true);
+    }
+
+    public static void paintCircleFilled(AUnit unit, int radius, Color color) {
+        paintCircleFilled(unit.getPosition(), radius, color);
     }
 
     public static void paintLine(APosition start, int dx, int dy, Color color) {

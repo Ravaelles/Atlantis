@@ -1,9 +1,7 @@
 package atlantis.protoss;
 
-import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import bwapi.TechType;
 
 public class ProtossShieldBattery {
 
@@ -21,7 +19,7 @@ public class ProtossShieldBattery {
                         System.out.println("Recharge!");
                         unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
 //                    }
-                    shieldBattery.setTooltip("RECHARGE " + unit.getShortName());
+                    shieldBattery.setTooltip("RECHARGE " + unit.shortName());
 //                    return true;
                 }
             }

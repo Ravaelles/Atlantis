@@ -7,7 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwapi.Bullet;
 import bwapi.BulletType;
-import bwapi.Position;
+
 import java.util.List;
 
 
@@ -47,7 +47,7 @@ public class ABadWeather {
         for (AUnit mine : mines) {
 
             // Our mine
-            if (mine.isOurUnit()) {
+            if (mine.isOur()) {
                 if (mine.isMoving() && mine.distanceTo(unit) <= 3.5) {
                     unit.moveAwayFrom(mine.getPosition(), 2, "Avoid mine!");
                     return true;

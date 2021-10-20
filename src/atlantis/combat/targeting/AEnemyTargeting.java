@@ -19,7 +19,7 @@ public class AEnemyTargeting {
             return null;
         }
 
-        return selectWeakestEnemyInRangeOfType(enemy.getType(), unit);
+        return selectWeakestEnemyInRangeOfType(enemy.type(), unit);
     }
 
     // =========================================================
@@ -31,7 +31,7 @@ public class AEnemyTargeting {
 
         // Quit early if no target at all
         if (Select.enemyRealUnits(true)
-                .canBeAttackedBy(unit, false)
+                .canBeAttackedBy(unit, false, true)
                 .inRadius(maxDistFromEnemy, unit)
                 .count() == 0) {
             return null;
@@ -43,14 +43,17 @@ public class AEnemyTargeting {
         buildings = Select.enemy()
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, false);
+                .canBeAttackedBy(unit, false, true);
         units = Select.enemyRealUnits(false)
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, false);
+                .canBeAttackedBy(unit, false, true);
 
         // === Crucial units =======================================
 
         if ((target = ATargetingCrucial.target(unit)) != null) {
+//            if (!target.type().isCarrier()) {
+//                System.out.println(target + " // " + target.getHP());
+//            }
             return target;
         }
 
@@ -74,7 +77,8 @@ public class AEnemyTargeting {
     // =========================================================
 
     private static AUnit selectWeakestEnemyInRangeOfType(AUnitType enemyType, AUnit ourUnit) {
-        Select<AUnit> targets = Select.enemyOfType(enemyType).visible().canBeAttackedBy(ourUnit, true);
+        Select<AUnit> targets = Select.enemyOfType(enemyType)
+                .effVisible().canBeAttackedBy(ourUnit, true, true);
 
         AUnit mostWounded = targets.clone().mostWounded();
         if (mostWounded != null && mostWounded.isWounded()) {
@@ -86,7 +90,7 @@ public class AEnemyTargeting {
             return nearest;
         }
 
-        return Select.enemyOfType(enemyType).visible().nearestTo(ourUnit);
+        return Select.enemyOfType(enemyType).effVisible().nearestTo(ourUnit);
     }
     
 }

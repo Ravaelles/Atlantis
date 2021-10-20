@@ -145,11 +145,11 @@ public class Atlantis implements BWEventListener {
             unit.removeTooltip();
 
             // Our unit
-            if (unit.isOurUnit()) {
+            if (unit.isOur()) {
                 AProductionQueueManager.rebuildQueue();
 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
-                if (AGame.isPlayingAsProtoss() && unit.getType().isBuilding()) {
+                if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
                     ProtossConstructionManager.handleWarpingNewBuilding(unit);
                 }
             }
@@ -185,23 +185,23 @@ public class Atlantis implements BWEventListener {
             if (unit.isEnemyUnit()) {
                 AEnemyUnits.unitDestroyed(unit);
             }
-            else if (unit.isOurUnit()) {
+            else if (unit.isOur()) {
                 AOurUnitsExtraInfo.idsOfOurDestroyedUnits.add(unit.getID());
             }
 
             // Our unit
-            if (unit.isOurUnit()) {
+            if (unit.isOur()) {
                 AProductionQueueManager.rebuildQueue();
                 ASquadManager.battleUnitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
                 if (!unit.type().isGasBuilding()) {
                     LOST++;
-                    LOST_RESOURCES += unit.getType().getTotalResources();
+                    LOST_RESOURCES += unit.type().getTotalResources();
                 }
             } else {
                 if (!unit.type().isGeyser()) {
                     KILLED++;
-                    KILLED_RESOURCES += unit.getType().getTotalResources();
+                    KILLED_RESOURCES += unit.type().getTotalResources();
                 }
             }
         }
@@ -221,12 +221,12 @@ public class Atlantis implements BWEventListener {
                 enemyNewUnit(unit);
             }
 
-            else if (unit.isOurUnit()) {
+            else if (unit.isOur()) {
             }
 
             else {
                 if (!unit.isNotActualUnit()) {
-                    System.out.println("Neutral unit discovered! " + unit.getShortName());
+                    System.out.println("Neutral unit discovered! " + unit.shortName());
                     UmsSpecialActions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
                 }
             }
@@ -263,7 +263,7 @@ public class Atlantis implements BWEventListener {
         // =========================================================
         // Forget unit
         if (unit != null) {
-            if (unit.isOurUnit()) {
+            if (unit.isOur()) {
                 ASquadManager.battleUnitDestroyed(unit);
             } else {
                 AEnemyUnits.unitDestroyed(unit);
@@ -276,11 +276,11 @@ public class Atlantis implements BWEventListener {
             unit.refreshType();
 
             // Our unit
-            if (unit.isOurUnit()) {
+            if (unit.isOur()) {
 
                 // === Fix for Zerg Extractor ========================================
                 // Detect morphed gas building meaning construction has just started
-                if (unit.getType().isGasBuilding()) {
+                if (unit.type().isGasBuilding()) {
                     for (ConstructionOrder order : AConstructionRequests.getAllConstructionOrders()) {
                         if (order.getBuildingType().equals(AtlantisConfig.GAS_BUILDING)
                                 && order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
@@ -325,21 +325,21 @@ public class Atlantis implements BWEventListener {
         onUnitDestroy(u);
         AUnit.forgetUnitEntirely(u);
         AUnit newUnit = AUnit.createFrom(u);
-        if (newUnit.getType().isGasBuilding()) {
+        if (newUnit.type().isGasBuilding()) {
             return;
         }
 
         // New unit taken from us
         if (u.getPlayer().equals(AGame.getPlayerUs())) {
             ourNewUnit(newUnit);
-            System.out.println("NEW RENEGADE FOR US " + newUnit.getShortName());
+            System.out.println("NEW RENEGADE FOR US " + newUnit.shortName());
             UmsSpecialActions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = newUnit;
         }
 
         // New unit for us e.g. some UMS maps give units
         else {
             enemyNewUnit(newUnit);
-            System.out.println("NEW RENEGADE FOR ENEMY " + newUnit.getShortName());
+            System.out.println("NEW RENEGADE FOR ENEMY " + newUnit.shortName());
         }
     }
 
@@ -351,7 +351,7 @@ public class Atlantis implements BWEventListener {
         AProductionQueueManager.rebuildQueue();
 
         // Our unit
-        if (unit.isOurUnit()) {
+        if (unit.isOur()) {
             ASquadManager.possibleCombatUnitCreated(unit);
         }
     }

@@ -16,6 +16,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
 
         AUnit target = null;
         double groundRange = unit.getWeaponRangeGround();
+        double airRange = unit.getWeaponRangeAir();
 
         // =========================================================
         // Attack MINES
@@ -29,23 +30,34 @@ public class ATargetingCrucial extends AEnemyTargeting {
         }
 
         // =========================================================
-        // Attack nearest enemy
+        // Targetable observers
 
-//        if (AGame.getTimeSeconds() < 180) {
-//            target = allEnemyUnitsThatCanBeAttacked.clone()
-//                    .nearestTo(unit);
-//            if (target != null && target.getType().isWorker()
-//                    && PositionUtil.distanceTo(target, Select.mainBase()) < 30) {
-////                return null;
-//            }
-//            else {
-//                return target;
-//            }
-//        }
+        target = units.clone()
+                .ofType(AUnitType.Protoss_Observer)
+                .effVisible()
+                .inRadius(unit.isAirUnit() ? 12 : 9, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
 
         // =========================================================
         // DEADLIEST shit out there,
         // Move to attack it WAY NOT IN RANGE
+
+        target = units.clone()
+                .ofType(
+                        AUnitType.Zerg_Defiler,
+                        AUnitType.Protoss_Carrier,
+                        AUnitType.Terran_Siege_Tank_Tank_Mode,
+                        AUnitType.Terran_Siege_Tank_Siege_Mode
+                )
+                .inShootRangeOf(unit)
+//                .inRadius(10, unit)
+                .mostWounded();
+        if (target != null) {
+            return target;
+        }
 
         target = units.clone()
                 .ofType(

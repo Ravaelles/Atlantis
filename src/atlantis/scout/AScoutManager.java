@@ -131,7 +131,7 @@ public class AScoutManager {
         // =========================================================
         // Get nearest unexplored starting location and go there
         APosition startingLocation;
-        if (scout.getType().equals(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
+        if (scout.isType(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
             startingLocation = AMap.getStartingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             ).getPosition();

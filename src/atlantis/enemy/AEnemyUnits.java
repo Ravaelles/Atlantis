@@ -4,12 +4,11 @@ import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
-import atlantis.production.requests.ARequests;
 import atlantis.strategy.AStrategyResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.BaseLocation;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class AEnemyUnits {
 //        System.out.println("-------");
         for (AFoggedUnit enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
 //            System.out.println(enemyUnitData.getType());
-            if (enemyUnitData.getType().isBase()) {
+            if (enemyUnitData.type().isBase()) {
                 boolean isBaseAtStartingLocation = false;
                 APosition discoveredBase = enemyUnitData.getPosition();
                 
@@ -90,7 +89,7 @@ public class AEnemyUnits {
             double minDist = 999999;
             
             for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
-                if (enemy.getType().isBuilding()) {
+                if (enemy.type().isBuilding()) {
                     double dist = enemy.getPosition().distanceTo(ourMainBase);
                     if (minDist > dist) {
                         minDist = dist;
@@ -116,7 +115,7 @@ public class AEnemyUnits {
     public static void discoveredEnemyUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.put(enemyUnit, new AFoggedUnit(enemyUnit));
 
-        if (!enemyUnit.isVisible()) {
+        if (enemyUnit.isEffectivelyCloaked()) {
             AStrategyResponse.hiddenUnitDetected(enemyUnit);
         }
     }

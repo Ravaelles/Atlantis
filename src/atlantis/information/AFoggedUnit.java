@@ -24,7 +24,7 @@ public class AFoggedUnit implements HasPosition {
     public AFoggedUnit(AUnit unit) {
         this.unit = unit;
         position = new APosition(unit.getPosition());
-//        type = unit.getType();
+//        type = unit.type();
         type = AUnitType.createFrom(unit.u().getType());
         _lastCachedType = type;
         buildType = unit.getBuildType();
@@ -60,7 +60,7 @@ public class AFoggedUnit implements HasPosition {
      * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached 
      * type.
      */
-    public AUnitType getType() {
+    public AUnitType type() {
         if (type.equals(AUnitType.Unknown)) {
             return _lastCachedType;
         }
@@ -85,7 +85,7 @@ public class AFoggedUnit implements HasPosition {
             );
         }
         position = updated.getPosition();
-        type = unit.getType();
+        type = unit.type();
 
         return this;
     }

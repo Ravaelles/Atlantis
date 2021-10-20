@@ -101,7 +101,7 @@ public class ARepairerManager {
             AUnit nearestWoundedUnit = Select.our().repairable(true)
                     .inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null) {
-                repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.getShortName());
+                repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.shortName());
 //                repairer.setTooltip();
                 return true;
             }

@@ -228,6 +228,12 @@ public class AAdvancedPainter extends APainter {
             paintCombatEval(enemy, true);
             paintLifeBar(enemy);
         }
+
+        setTextSizeMedium();
+        for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
+            paintCircleFilled(enemy, 18, Color.Orange);
+            paintTextCentered(enemy, "Cloaked", Color.Orange);
+        }
     }
 
     private static void paintCombatEval(AUnit unit, boolean isEnemy) {
@@ -281,7 +287,7 @@ public class AAdvancedPainter extends APainter {
 //                // =========================================================
 //                // Paint box
 //                int cooldownProgress = cooldownWidth * unit.getGroundWeaponCooldown()
-//                        / (unit.getType().getGroundWeapon().getDamageCooldown() + 1);
+//                        / (unit.type().getGroundWeapon().getDamageCooldown() + 1);
 //                bwapi.drawBox(topLeft, new APosition(cooldownLeft + cooldownProgress, cooldownTop + cooldownHeight),
 //                        Color.Brown, true, false);
 //
@@ -374,7 +380,7 @@ public class AAdvancedPainter extends APainter {
         MappingCounter<AUnitType> unitTypesCounter = new MappingCounter<>();
         for (AUnit unit : Select.ourUnfinishedRealUnits().listUnits()) {
 //        for (AUnit unit : Select.our().listUnits()) {
-            unitTypesCounter.incrementValueFor(unit.getType());
+            unitTypesCounter.incrementValueFor(unit.type());
         }
 
         Map<AUnitType, Integer> counters = unitTypesCounter.map();
@@ -393,7 +399,7 @@ public class AAdvancedPainter extends APainter {
         // Finished
         unitTypesCounter = new MappingCounter<>();
         for (AUnit unit : Select.our().listUnits()) {
-            unitTypesCounter.incrementValueFor(unit.getType());
+            unitTypesCounter.incrementValueFor(unit.type());
         }
 
         counters = unitTypesCounter.map();
@@ -417,7 +423,7 @@ public class AAdvancedPainter extends APainter {
 
         // Units
         for (AUnit unit : Select.ourUnfinished().listUnits()) {
-            AUnitType type = unit.getType();
+            AUnitType type = unit.type();
             if (type.equals(AUnitType.Zerg_Egg)) {
                 type = unit.getBuildType();
             }
@@ -546,7 +552,7 @@ public class AAdvancedPainter extends APainter {
 
             APosition unitPosition = unit.getPosition();
             APosition targetPosition = unit.getTargetPosition();
-            int unitRadius = unit.getType().getDimensionLeft();
+            int unitRadius = unit.type().getDimensionLeft();
 
             // STARTING ATTACK
             if (unit.isStartingAttack()) {
@@ -648,8 +654,8 @@ public class AAdvancedPainter extends APainter {
             }
 
 //            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
-//                paintCircle(unit, unit.getType().getDimensionLeft() + unit.getType().getDimensionRight(), color);
-//                paintCircle(unit, unit.getType().getDimensionLeft() - 2 + unit.getType().getDimensionRight(), color);
+//                paintCircle(unit, unit.type().getDimensionLeft() + unit.type().getDimensionRight(), color);
+//                paintCircle(unit, unit.type().getDimensionLeft() - 2 + unit.type().getDimensionRight(), color);
 //            }
             if (unit.isWorker() && unit.isIdle()) {
                 paintCircle(unit, 10, Color.Black);
@@ -920,16 +926,16 @@ public class AAdvancedPainter extends APainter {
         for (AFoggedUnit enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
             APosition topLeft;
             topLeft = enemyUnitData.getPosition().translateByPixels(
-                    -enemyUnitData.getType().getDimensionLeft(),
-                    -enemyUnitData.getType().getDimensionUp()
+                    -enemyUnitData.type().getDimensionLeft(),
+                    -enemyUnitData.type().getDimensionUp()
             );
             paintRectangle(
                     topLeft,
-                    enemyUnitData.getType().getDimensionRight() / 32,
-                    enemyUnitData.getType().getDimensionDown() / 32,
+                    enemyUnitData.type().getDimensionRight() / 32,
+                    enemyUnitData.type().getDimensionDown() / 32,
                     Color.Grey
             );
-            paintText(topLeft, enemyUnitData.getType().getShortName(), Color.White);
+            paintText(topLeft, enemyUnitData.type().getShortName(), Color.White);
         }
     }
 
@@ -1021,7 +1027,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintLifeBar(AUnit unit) {
 //        if (unit.isWounded()) {
         paintUnitProgressBar(unit, 17, 100, Color.Red);
-        paintUnitProgressBar(unit, 17, unit.HPPercent(), unit.isOurUnit() ? Color.Green : Color.Yellow);
+        paintUnitProgressBar(unit, 17, unit.HPPercent(), unit.isOur() ? Color.Green : Color.Yellow);
 //        }
     }
 

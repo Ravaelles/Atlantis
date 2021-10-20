@@ -87,7 +87,7 @@ public class TerranFlyingBuildingManager {
     // =========================================================
 
     public static boolean isFlyingBuilding(AUnit unit) {
-        return unit.getType().isBuilding() && flyingBuildings.contains(unit);
+        return unit.type().isBuilding() && flyingBuildings.contains(unit);
     }
     
 }

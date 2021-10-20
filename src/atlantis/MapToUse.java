@@ -7,7 +7,8 @@ public class MapToUse {
 
         // === UMS maps - great for bot development ============
 
-        return "ums/(1)micro3_007.scx";
+        return "ums/wraiths_vs_carriers_obs.scx";
+//        return "ums/(1)micro3_007.scx";
 //        return "ums/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
 //        return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons vs mines
 //        return "ums/marines_vs_zerglings.scm"; // 12 marines vs 24 zerglings

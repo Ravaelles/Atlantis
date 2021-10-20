@@ -22,7 +22,7 @@ public class MissionDefendBase extends Mission {
         }
 
         if (ourCenterUnit != null) {
-            AUnit nearestEnemy = Select.enemy().visible().nearestTo(ourCenterUnit);
+            AUnit nearestEnemy = Select.enemy().effVisible().nearestTo(ourCenterUnit);
             if (nearestEnemy != null) {
                 enemy = nearestEnemy;
             }

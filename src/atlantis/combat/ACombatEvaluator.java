@@ -173,12 +173,12 @@ public class ACombatEvaluator {
 
             // =========================================================
             // BUILDING
-            else if (unit.getType().isBuilding() && unit.isCompleted()) {
+            else if (unit.type().isBuilding() && unit.isCompleted()) {
                 boolean antiGround = (againstUnit == null || !againstUnit.isAirUnit());
                 boolean antiAir = (againstUnit == null || againstUnit.isAirUnit());
-                if (unit.getType().isMilitaryBuilding(antiGround, antiAir)) {
+                if (unit.type().isMilitaryBuilding(antiGround, antiAir)) {
                     enemyDefensiveBuildingFound = true;
-                    if (unit.getType().equals(AUnitType.Terran_Bunker)) {
+                    if (unit.type().equals(AUnitType.Terran_Bunker)) {
                         strength += 7 * evaluateUnitHPandDamage(AUnitType.Terran_Marine, againstUnit);
                     } else {
                         strength += 1.3 * unitStrengthEval;
@@ -213,7 +213,7 @@ public class ACombatEvaluator {
     // =========================================================
     
     private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
-        return evaluateUnitHPandDamage(evaluate.getType(), evaluate.getHitPoints(), againstUnit);
+        return evaluateUnitHPandDamage(evaluate.type(), evaluate.getHitPoints(), againstUnit);
     }
 
     private static double evaluateUnitHPandDamage(AUnitType evaluate, AUnit againstUnit) {
