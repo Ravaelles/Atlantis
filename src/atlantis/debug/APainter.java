@@ -18,13 +18,17 @@ public class APainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
-//    public static int paintingMode = MODE_NO_PAINTING;
+    public static int paintingMode = MODE_NO_PAINTING;
 //    public static int paintingMode = MODE_PARTIAL_PAINTING;
-    public static int paintingMode = MODE_FULL_PAINTING;
+//    public static int paintingMode = MODE_FULL_PAINTING;
 
     protected static Game bwapi;
 
     // =========================================================
+
+    public static boolean isDisabled() {
+        return paintingMode == MODE_NO_PAINTING;
+    }
 
     public static void paintSideMessage(String text, Color color) {
         paintSideMessage(text, color, 0);
@@ -55,6 +59,8 @@ public class APainter {
     }
 
     public static void paintRectangle(APosition position, int width, int height, Color color) {
+        if (isDisabled()) { return; }
+
         if (position == null) {
             return;
         }
@@ -62,6 +68,8 @@ public class APainter {
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
+        if (isDisabled()) { return; }
+
         if (position == null) {
             return;
         }
@@ -73,6 +81,8 @@ public class APainter {
     }
 
     public static void paintCircle(Position position, int radius, Color color) {
+        if (isDisabled()) { return; }
+
         if (position == null) {
             return;
         }
@@ -80,6 +90,8 @@ public class APainter {
     }
 
     public static void paintCircleFilled(Position position, int radius, Color color) {
+        if (isDisabled()) { return; }
+
         if (position == null) {
             return;
         }
@@ -87,25 +99,27 @@ public class APainter {
     }
 
     public static void paintLine(APosition start, int dx, int dy, Color color) {
+        if (isDisabled()) { return; }
+
         bwapi.drawLineMap(start, PositionHelper.translateByPixels(start, dx, dy), color);
     }
 
     public static void paintLine(Position start, Position end, Color color) {
-        if (start == null || end == null) {
+        if (start == null || end == null || isDisabled()) {
             return;
         }
         bwapi.drawLineMap(start, end, color);
     }
 
     public static void paintLine(AUnit unit, AUnit end, Color color) {
-        if (unit == null || end == null) {
+        if (unit == null || end == null || isDisabled()) {
             return;
         }
         bwapi.drawLineMap(unit.getPosition(), end.getPosition(), color);
     }
 
     public static void paintLine(AUnit unit, Position end, Color color) {
-        if (unit == null || end == null) {
+        if (unit == null || end == null || isDisabled()) {
             return;
         }
         bwapi.drawLineMap(unit.getPosition(), end, color);
@@ -135,7 +149,7 @@ public class APainter {
     }
 
     public static void paintTextCentered(APosition position, String text, Color color, boolean screenCoords) {
-        if (position == null || text == null) {
+        if (position == null || text == null || isDisabled()) {
             return;
         }
 
@@ -151,7 +165,7 @@ public class APainter {
     }
 
     public static void paintText(APosition position, String text, Color color) {
-        if (position == null || text == null) {
+        if (position == null || text == null || isDisabled()) {
             return;
         }
 
@@ -171,7 +185,7 @@ public class APainter {
     }
 
     protected static void paintChoke(AChokepoint choke, Color color, String extraText) {
-        if (choke == null) {
+        if (choke == null || isDisabled()) {
             return;
         }
 
@@ -188,7 +202,7 @@ public class APainter {
     }
 
     protected static void paintBase(APosition position, String text, Color color) {
-        if (position == null) {
+        if (position == null || isDisabled()) {
             return;
         }
 

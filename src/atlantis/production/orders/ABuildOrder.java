@@ -1,6 +1,12 @@
 package atlantis.production.orders;
 
+import atlantis.AGame;
+import atlantis.AtlantisConfig;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Select;
+import atlantis.util.A;
+
 import java.util.ArrayList;
 
 /**
@@ -28,7 +34,29 @@ public abstract class ABuildOrder {
      * See ADynamicWorkerProductionManager which is also used to produce workers.
      * @return
      */
-    public abstract boolean produceWorker();
+    public boolean produceWorker() {
+        if (!AGame.canAfford(50, 0) || AGame.getSupplyFree() < 1) {
+            return false;
+        }
+
+        AUnit building = Select.ourOneIdle(AtlantisConfig.BASE);
+        if (building != null) {
+            return building.train(AtlantisConfig.WORKER);
+        }
+
+        // If we're here it means all bases are busy. Try queue request
+        for (AUnit base : Select.ourBases().reverse().list()) {
+            if (
+                    base.getRemainingTrainTime() <= 4
+                            && base.hasNothingInQueue()
+                            && AGame.getSupplyFree() >= 2
+            ) {
+                return base.train(AtlantisConfig.WORKER);
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Request to produce non-building and non-worker unit. Should be handled according to the race played.

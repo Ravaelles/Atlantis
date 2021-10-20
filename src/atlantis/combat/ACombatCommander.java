@@ -50,7 +50,7 @@ public class ACombatCommander {
 
             addInfoAboutNearestEnemyToTooltip(unit);
 
-            if (AGame.everyNthGameFrame(40)) {
+            if (AGame.everyNthGameFrame(AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES)) {
                 unit.lastX = unit.getX();
                 unit.lastY = unit.getY();
             }

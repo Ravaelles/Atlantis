@@ -11,16 +11,20 @@ public class Unfreezer {
      * This is my ugly way of fixing this.
      */
     public static boolean handleUnfreeze(AUnit unit) {
-        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 40) {
+        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES) {
             if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-                System.err.println("UNFREEZE #1!");
+//                System.err.println("UNFREEZE #1!");
                 unit.setTooltip("UNFREEZE!");
                 unfreeze(unit);
                 return true;
             }
-        } else if (unit.isUnderAttack() && unit.getLastOrderFramesAgo() >= 40) {
+        } else if (
+                unit.isUnderAttack()
+                && unit.getLastOrderFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES
+                && unit.getCooldownCurrent() == 0
+        ) {
             if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-                System.err.println("UNFREEZE #2!");
+//                System.err.println("UNFREEZE #2!");
                 unit.setTooltip("UNFREEZE!");
                 unfreeze(unit);
                 return true;

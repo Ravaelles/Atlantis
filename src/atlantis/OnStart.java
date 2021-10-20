@@ -35,7 +35,11 @@ public class OnStart {
         // Set prodction strategy (build orders) to use. It can be always changed dynamically.
         initializeBuildOrder();
 
-        AInitialActions.executeInitialActions();
+        try {
+            AInitialActions.executeInitialActions();
+        } catch (Exception e) {
+            AGame.setUmsMode(true);
+        }
 
         System.out.println("### Atlantis is working! ###");
     }

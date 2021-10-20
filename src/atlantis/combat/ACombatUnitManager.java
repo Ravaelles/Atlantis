@@ -5,6 +5,7 @@ import atlantis.AGameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.repair.AUnitBeingReparedManager;
@@ -138,8 +139,13 @@ public class ACombatUnitManager {
             return true;
         }
 
-        unit.setTooltip(unit.squad().mission().getName());
-        return unit.squad().mission().update(unit);
+        Mission mission = unit.mission();
+        if (mission != null) {
+            unit.setTooltip(mission.getName());
+            return mission.update(unit);
+        }
+
+        return false;
     }
 
     // =========================================================

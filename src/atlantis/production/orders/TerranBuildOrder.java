@@ -20,13 +20,8 @@ public class TerranBuildOrder extends ABuildOrder {
     private TerranBuildOrder(String relativePath) {
         super("Terran/" + relativePath);
     }
-    
+
     // =========================================================
-    
-    @Override
-    public boolean produceWorker() {
-        return AProductionManager.produceWorker();
-    }
 
     @Override
     public boolean produceUnit(AUnitType unitType) {
@@ -34,12 +29,17 @@ public class TerranBuildOrder extends ABuildOrder {
         AUnit unitThatWillProduce = Select.ourOneIdle(whatBuildsIt);
         if (unitThatWillProduce != null) {
             return unitThatWillProduce.train(unitType);
-        } 
+        }
 //        else {
 //            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
 //        }
 
         return false;
+    }
+
+    @Override
+    public boolean produceWorker() {
+        return super.produceWorker();
     }
 
     @Override

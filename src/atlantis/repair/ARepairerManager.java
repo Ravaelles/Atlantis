@@ -1,5 +1,6 @@
 package atlantis.repair;
 
+import atlantis.AGame;
 import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Missions;
@@ -60,14 +61,20 @@ public class ARepairerManager {
 
     // =========================================================
 
-    protected static void assignRepairersToWoundedUnits(AUnit unitToRepair, int numberOfRepairersToAssign) {
+    protected static boolean assignRepairersToWoundedUnits(AUnit unitToRepair, int numberOfRepairersToAssign) {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
             boolean isCriticallyImportant = unitToRepair.isTank() || unitToRepair.isBunker();
             AUnit worker = defineBestRepairerFor(unitToRepair, isCriticallyImportant);
             if (worker != null) {
+                if (AGame.isUms() && worker.distanceTo(unitToRepair) > 10 && !worker.hasPathTo(unitToRepair)) {
+                    return false;
+                }
+
                 ARepairAssignments.addRepairer(worker, unitToRepair);
+                return true;
             }
         }
+        return false;
     }
 
     /**

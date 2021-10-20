@@ -5,7 +5,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.Units;
-import atlantis.util.A;
 
 public class FightInsteadAvoid {
 
@@ -46,6 +45,7 @@ public class FightInsteadAvoid {
             return false;
         }
 
+        // Always avoid invisible combat units
         if (invisibleDT != null || invisibleCombatUnit != null) {
             return false;
         }
@@ -57,6 +57,10 @@ public class FightInsteadAvoid {
 
         // Combat units
         else {
+            if (wayTooManyUnitsNearby(unit)) {
+                return true;
+            }
+
             if (tankSieged != null) {
                 return unit.mission().allowsToAttackEnemyUnit(unit, tankSieged);
             }
@@ -83,7 +87,7 @@ public class FightInsteadAvoid {
         if (ranged != null) {
 
             // Dragoon faster than Marines, can outrun them
-            if (unit.isQuickerThan(enemies)) {
+            if (unit.isQuickerOrSameAs(enemies)) {
 
                 // If needs to wait before next attack
                 if (unit.getCooldownCurrent() >= 5) {
@@ -94,8 +98,8 @@ public class FightInsteadAvoid {
             }
 
             // Dragoon slower than Vultures, cannot outrun them
-            if (unit.isSlowerThan(enemies)) {
-                if (unit.getCooldownCurrent() <= 2 && unit.hasWeaponRange(ranged, 0)) {
+            else {
+                if (unit.HPPercent() > 50 && unit.getCooldownCurrent() <= 2 && unit.hasWeaponRange(ranged, 0)) {
                     return true;
                 }
             }
@@ -113,6 +117,17 @@ public class FightInsteadAvoid {
     }
 
     // =========================================================
+
+    private boolean wayTooManyUnitsNearby(AUnit unit) {
+        int unitsNearby = Select.all().inRadius(0.5, unit).count();
+        int ourNearby = Select.our().inRadius(0.5, unit).count();
+
+        if (unit.mission().isMissionAttack()) {
+            return ourNearby >= 3 || unitsNearby >= 5;
+        }
+
+        return ourNearby >= 5 || unitsNearby >= 6;
+    }
 
     private boolean fightAsWorker(AUnit unit, Units enemies) {
         if (defensiveBuilding != null || lurkerOrReaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {

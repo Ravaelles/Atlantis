@@ -24,37 +24,6 @@ public class ProtossBuildOrder extends ABuildOrder {
 
     // =========================================================
 
-    static int last = 0;
-
-    /**
-     * See ADynamicWorkerProductionManager which is also used to produce workers.
-     */
-    @Override
-    public boolean produceWorker() {
-        if (!AGame.canAfford(50, 0) || AGame.getSupplyFree() < 1) {
-            return false;
-        }
-
-        AUnit building = Select.ourOneIdle(AtlantisConfig.BASE);
-        if (building != null) {
-            return building.train(AtlantisConfig.WORKER);
-        }
-
-        // If we're here it means all bases are busy. Try queue request
-        for (AUnit base : Select.ourBases().reverse().list()) {
-            if (
-                    base.getRemainingTrainTime() <= 4
-                    && base.hasNothingInQueue()
-                    && AGame.getSupplyFree() >= 2
-            ) {
-                last = A.now();
-                return base.train(AtlantisConfig.WORKER);
-            }
-        }
-
-        return false;
-    }
-
     @Override
     public boolean produceUnit(AUnitType unitType) {
         AUnitType whatBuildsIt = unitType.getWhatBuildsIt();

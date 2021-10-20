@@ -44,6 +44,10 @@ public class ASquadCohesionManager {
             return true;
         }
 
+        if (unit.squad() == null) {
+            return true;
+        }
+
         if (unit.squad().mission().isMissionAttack()) {
             return false;
         }

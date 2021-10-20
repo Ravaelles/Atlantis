@@ -16,6 +16,10 @@ public class ABuildingsCommander {
      * Produce units and buildings according to build orders.
      */
     public static void update() {
+        if (AGame.isUms()) {
+            return;
+        }
+
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_BUILDINGS);
         
         // Check if need to increase supply and if so, take care of it.

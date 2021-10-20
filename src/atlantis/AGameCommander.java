@@ -56,7 +56,7 @@ public class AGameCommander {
         if (AGame.isUms()) {
             AUnit unit = Select.ourCombatUnits().first();
             if (unit != null) {
-                AViewport.centerCameraOn(unit.getPosition());
+//                AViewport.centerCameraOn(unit.getPosition());
             }
         }
     }

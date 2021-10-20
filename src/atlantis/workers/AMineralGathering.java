@@ -25,7 +25,11 @@ public class AMineralGathering {
         // =========================================================
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals = Select.minerals().inRadius(12, mainBase).sortDataByDistanceTo(mainBase, true);
+        List<AUnit> minerals = Select.minerals().inRadius(10, mainBase).sortDataByDistanceTo(mainBase, true);
+
+        if (minerals.isEmpty()) {
+            return;
+        }
 
         // Assign every worker to the next free mineral
         Collection<AUnit> workers = Select.ourWorkers().listUnits();

@@ -17,9 +17,6 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     @Override
     public APosition focusPoint() {
         if (containEnemyAtPoint != null) {
-                APainter.paintCircle(containEnemyAtPoint, 20, Color.Teal);
-                APainter.paintCircle(containEnemyAtPoint, 18, Color.Teal);
-            APainter.paintCircle(containEnemyAtPoint, 16, Color.Teal);
             return containEnemyAtPoint;
         }
 

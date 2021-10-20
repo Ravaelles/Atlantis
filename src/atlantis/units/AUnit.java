@@ -36,7 +36,9 @@ import java.util.Map;
  * hard to migrate to another bridge. I've already used 3 of them in my career so far.
  */
 public class AUnit implements Comparable, HasPosition, AUnitOrders {
-    
+
+    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 12;
+
     // Mapping of native unit IDs to AUnit objects
     private static final Map<Integer, AUnit> instances = new HashMap<>();
     
@@ -1065,6 +1067,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return u.hasPath(point);
     }
 
+    public boolean hasPathTo(AUnit unit) {
+        return u.hasPath(unit.getPosition());
+    }
+
     public boolean isTrainingAnyUnit() {
         return u.isTraining();
     }
@@ -1262,14 +1268,14 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Current mission object for this unit's squad.
      */
     public Mission mission() {
-        return squad.mission();
+        return squad != null ? squad.mission() : null;
     }
 
-    public boolean isQuickerThan(Units enemies) {
+    public boolean isQuickerOrSameAs(Units enemies) {
         return enemies.stream().noneMatch(u -> u.getSpeed() > this.getSpeed());
     }
 
-    public boolean isQuickerThan(AUnit enemy) {
+    public boolean isQuickerOrSameAs(AUnit enemy) {
         return enemy.getSpeed() < this.getSpeed();
     }
 

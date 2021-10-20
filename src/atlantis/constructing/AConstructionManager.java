@@ -204,7 +204,7 @@ public class AConstructionManager {
 
         int timeout = 30 * (
                 (order.getBuildingType().isBase() ? 25 : 9)
-                + (int) (1.4 * order.getPositionToBuild().distanceTo(order.getBuilder())
+                + (int) (1.6 * order.getPositionToBuild().distanceTo(order.getBuilder())
         ));
 
         if (AGame.getTimeFrames() - order.getFrameOrdered() > timeout) {

@@ -7,6 +7,7 @@ import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionAttack;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.Squad;
 import atlantis.constructing.AConstructionRequests;
@@ -88,7 +89,7 @@ public class AAdvancedPainter extends APainter {
 //        setTextSizeSmall();
 
         paintCodeProfiler();
-        paintMineralDistance();
+//        paintMineralDistance();
         paintRegions();
         paintChokepoints();
 //        paintTestSupplyDepotLocationsNearMain();
@@ -340,7 +341,13 @@ public class AAdvancedPainter extends APainter {
         }
 
         // =========================================================
-        APosition position;
+
+        APosition missionFocusPoint = Missions.globalMission().focusPoint();
+
+        paintCircle(missionFocusPoint, 22, Color.Teal);
+        paintCircle(missionFocusPoint, 20, Color.Teal);
+        paintCircle(missionFocusPoint, 18, Color.Teal);
+        paintTextCentered(missionFocusPoint, "Focus", Color.Teal);
 
         // Main DEFEND focus point
 //        position = MissionAttack.getInstance().focusPoint();
@@ -351,13 +358,12 @@ public class AAdvancedPainter extends APainter {
 //            paintTextCentered(position, "DEFEND", Color.Orange);
 //        }
 
-        // Mission ATTACK focus point
-        position = MissionAttack.getInstance().focusPoint();
-        if (position != null) {
-            paintCircle(position, 20, Color.Red);
-            //        paintCircle(position, 19, Color.Black);
-            paintTextCentered(position, "ATTACK", Color.Red);
-        }
+//        missionFocusPoint = MissionAttack.getInstance().focusPoint();
+//        if (missionFocusPoint != null) {
+//            paintCircle(missionFocusPoint, 20, Color.Red);
+//            //        paintCircle(position, 19, Color.Black);
+//            paintTextCentered(missionFocusPoint, "ATTACK", Color.Red);
+//        }
     }
 
     /**
@@ -1099,8 +1105,8 @@ public class AAdvancedPainter extends APainter {
         for (AUnit mineral : Select.minerals().inRadius(8, mainBase).list()) {
             String dist = A.digit(mineral.distanceTo(mainBase));
             int assigned = AWorkerManager.countWorkersAssignedTo(mineral);
+            setTextSizeLarge();
             paintTextCentered(mineral, dist + " (" + assigned + ")", Color.White);
-
         }
 
         if (A.now() <= 100) {

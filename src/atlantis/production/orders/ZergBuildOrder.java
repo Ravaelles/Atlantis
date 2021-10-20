@@ -21,8 +21,7 @@ public class ZergBuildOrder extends ABuildOrder {
 
     @Override
     public boolean produceWorker() {
-        produceZergUnit(AtlantisConfig.WORKER);
-        return false;
+        return produceZergUnit(AtlantisConfig.WORKER);
     }
 
     @Override
