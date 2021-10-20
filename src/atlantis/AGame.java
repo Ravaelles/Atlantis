@@ -78,7 +78,7 @@ public class AGame {
      */
     public static void exit(String message) {
         System.err.println(message);
-        Atlantis.getInstance().onEnd(false);
+        Atlantis.getInstance().exitGame();
     }
 
     public static void changeDisableUI(boolean disableUI) {

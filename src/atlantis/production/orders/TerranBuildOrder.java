@@ -2,6 +2,7 @@ package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.production.ADynamicWorkerProductionManager;
+import atlantis.production.AProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -23,20 +24,22 @@ public class TerranBuildOrder extends ABuildOrder {
     // =========================================================
     
     @Override
-    public void produceWorker() {
-        ADynamicWorkerProductionManager.produceWorker();
+    public boolean produceWorker() {
+        return AProductionManager.produceWorker();
     }
 
     @Override
-    public void produceUnit(AUnitType unitType) {
+    public boolean produceUnit(AUnitType unitType) {
         AUnitType whatBuildsIt = unitType.getWhatBuildsIt();
         AUnit unitThatWillProduce = Select.ourOneIdle(whatBuildsIt);
         if (unitThatWillProduce != null) {
-            unitThatWillProduce.train(unitType);
+            return unitThatWillProduce.train(unitType);
         } 
 //        else {
 //            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
 //        }
+
+        return false;
     }
 
     @Override

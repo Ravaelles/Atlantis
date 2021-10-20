@@ -44,7 +44,7 @@ public class ATargetingImportant extends AEnemyTargeting {
         }
 
         // =========================================================
-        // Unfinished defensive buildings
+        // Including unfinished defensive buildings
 
         target = Select.enemy()
                 .canBeAttackedBy(unit, false)
@@ -53,6 +53,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                         AUnitType.Zerg_Sunken_Colony,
                         AUnitType.Zerg_Creep_Colony,
                         AUnitType.Zerg_Spore_Colony,
+                        AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret
                 )
                 .inRadius(12, unit)

@@ -1165,42 +1165,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //        this._cachedNearestMeleeEnemy = _cachedNearestMeleeEnemy;
 //    }
 
-    public void unbug() {
-        unit().runningManager().stopRunning();
-
-        if (Select.mainBase() != null) {
-            this.move(Select.mainBase(), UnitActions.MOVE, "Unfreeze");
-            return;
-        }
-
-//        if (isHoldingPosition()) {
-//        if (this.move(getPosition().translateByPixels(16, 0), UnitActions.MOVE, "Unfreeze")) {
-//            return;
-//        }
-//        if (this.move(getPosition().translateByPixels(-16, 0), UnitActions.MOVE, "Unfreeze")) {
-//            return;
-//        }
-//        if (this.move(getPosition().translateByPixels(0, 16), UnitActions.MOVE, "Unfreeze")) {
-//            return;
-//        }
-//        if (this.move(getPosition().translateByPixels(0, -16), UnitActions.MOVE, "Unfreeze")) {
-//            return;
-//        }
-//        } else {
-//            this.holdPosition("Unfreeze");
-//            this.stop("Unfreeze");
-//            this.holdPosition("Unfreeze");
-//            this.stop("Unfreeze");
-//            this.stop("Unfreeze");
-//            this.holdPosition("Unfreeze");
-//        }
-    }
-
-    public boolean lastStartedAttackAgo(int framesAgo) {
+    public boolean lastStartedAttackLessThanAgo(int framesAgo) {
         return AGame.framesAgo(_lastStartingAttack) <= framesAgo;
     }
 
-    public boolean lastAttackOrderAgo(int framesAgo) {
+    public boolean lastAttackOrderLessThanAgo(int framesAgo) {
         return AGame.framesAgo(_lastAttackOrder) <= framesAgo;
     }
 
@@ -1216,11 +1185,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return AGame.framesAgo(_lastStartedRunning);
     }
 
-    public boolean lastStartedRunningAgo(int framesAgo) {
-        return AGame.framesAgo(_lastStartedRunning) <= framesAgo;
+    public boolean lastStartedRunningMoreThanAgo(int framesAgo) {
+        return AGame.framesAgo(_lastStartedRunning) >= framesAgo;
     }
 
-    public boolean lastStoppedRunningAgo(int framesAgo) {
+    public boolean lastStoppedRunningLessThanAgo(int framesAgo) {
         return AGame.framesAgo(_lastStoppedRunning) <= framesAgo;
     }
 
@@ -1257,7 +1226,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return positionDifference.isParallelTo(otherUnitLookingVector);
     }
 
-    private boolean isFirstCombatUnit() {
+    public boolean isFirstCombatUnit() {
         return getID() == Select.ourCombatUnits().first().getID();
     }
 
@@ -1306,6 +1275,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     public boolean isSlowerThan(Units enemies) {
         return enemies.stream().anyMatch(u -> u.getSpeed() > this.getSpeed());
+    }
+
+    public boolean hasNothingInQueue() {
+        return getTrainingQueue().size() <= 1;
     }
 
 //    public boolean isFacingTheSameDirection(AUnit otherUnit) {

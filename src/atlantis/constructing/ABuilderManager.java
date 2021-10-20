@@ -1,12 +1,19 @@
 package atlantis.constructing;
 
 import atlantis.AGame;
+import atlantis.AGameSpeed;
+import atlantis.AViewport;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
+import atlantis.util.Us;
+import bwapi.CommandType;
 import bwapi.TilePosition;
+import bwapi.UnitCommandType;
 
 public class ABuilderManager {
 
@@ -59,42 +66,63 @@ public class ABuilderManager {
 
         // =========================================================
 
-        double maxDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.6 : 1;
+        double minDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.6 : 1.1;
         double distance = builder.distanceTo(buildPositionCenter);
+        String distString = "(" + A.digit(distance) + ")";
 
-        if (shouldNotTravelYet(buildingType, distance)) {
-            builder.setTooltip("Wait build " + buildingType.getShortName());
-            return;
-        }
-        
+//        AViewport.centerCameraOn(builder.getPosition());
+
         // Move builder to the build position
-        if (distance > maxDistanceToIssueBuildOrder) {
-            if (!builder.isMoving() || AGame.everyNthGameFrame(10)) {
-                builder.move(
-                    constructionOrder.getPositionToBuildCenter(),
-                    UnitActions.MOVE_TO_BUILD,
-                    "Build " + buildingType.getShortName() + " (" + (int) distance
-                );
+        if (distance > minDistanceToIssueBuildOrder) {
+            if (shouldNotTravelYet(buildingType, distance)) {
+                builder.setTooltip("Wait to build " + buildingType.getShortName() + distString);
+                return;
+            }
+
+            if (AGame.everyNthGameFrame(3)) {
+                if (!builder.isMoving()) {
+//                    AGameSpeed.changeSpeedTo(60);
+                    builder.move(
+                        constructionOrder.getPositionToBuildCenter(),
+                        UnitActions.MOVE_TO_BUILD,
+                        "Build " + buildingType.getShortName() + distString
+                    );
+                }
             }
         }
 
         // =========================================================
-        // AUnit is already at the build position, issue build order
+        // AUnit is already at the build position
+
         // If we can afford to construct this building exactly right now, issue build order which should
         // be immediate as unit is standing just right there
 
-        else if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
+        else {
+            if (Us.isProtoss()) {
+                AUnit newBuilding = Select.ourUnfinished()
+                        .ofType(constructionOrder.getBuildingType())
+                        .inRadius(1.1, builder).first();
+                if (newBuilding != null) {
+                    constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+                    constructionOrder.setBuilder(null);
+                    builder.stop("Finished!");
+                    return;
+                }
+            }
 
-            // If place is ok, builder isn't constructing and we can afford it, issue the build command.
-            if (AGame.canAfford(buildingType)) {
-                buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
-                TilePosition buildTilePosition = new TilePosition(
-                        buildPosition.getTileX(), buildPosition.getTileY()
-                );
-                
-                if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
-                        AGame.getTimeFrames() % 30 == 0)) {
-                    builder.build(buildingType, buildTilePosition);
+            if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
+
+                // If place is ok, builder isn't constructing and we can afford it, issue the build command.
+                if (AGame.canAfford(buildingType)) {
+                    buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
+                    TilePosition buildTilePosition = new TilePosition(
+                            buildPosition.getTileX(), buildPosition.getTileY()
+                    );
+
+                    if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
+                            AGame.getTimeFrames() % 30 == 0)) {
+                        builder.build(buildingType, buildTilePosition);
+                    }
                 }
             }
         }
@@ -143,7 +171,10 @@ public class ABuilderManager {
 
     private static boolean shouldNotTravelYet(AUnitType building, double distance) {
         if (AGame.getTimeSeconds() < 200 && !building.isBase()) {
-            return !AGame.canAfford(building.getMineralPrice() - 24, building.getGasPrice() - 24);
+            return !AGame.canAfford(
+                     building.getMineralPrice() - 2 - (int) distance,
+                    building.getGasPrice() - 2- (int) distance
+            );
         }
 
         return false;

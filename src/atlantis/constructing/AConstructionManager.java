@@ -38,7 +38,7 @@ public class AConstructionManager {
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
         if (AGame.isPlayingAsTerran()) {
-            if (builder == null || !builder.exists()) {
+            if (builder == null || !builder.exists() || !builder.isAlive()) {
                 constructionOrder.assignOptimalBuilder();
             }
         }
@@ -204,7 +204,7 @@ public class AConstructionManager {
 
         int timeout = 30 * (
                 (order.getBuildingType().isBase() ? 25 : 9)
-                + (int) order.getPositionToBuild().distanceTo(order.getBuilder()
+                + (int) (1.4 * order.getPositionToBuild().distanceTo(order.getBuilder())
         ));
 
         if (AGame.getTimeFrames() - order.getFrameOrdered() > timeout) {

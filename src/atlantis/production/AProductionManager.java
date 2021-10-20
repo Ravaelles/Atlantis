@@ -7,6 +7,7 @@ import atlantis.production.orders.AProductionQueue;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.tech.ATechRequests;
 import atlantis.units.AUnitType;
+import atlantis.util.A;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class AProductionManager {
 //        if (AGame.isUms()) {
 //            return;
 //        }
-        
+
         // =========================================================
         
         // Get build orders (aka production orders) from the manager
@@ -75,27 +76,33 @@ public class AProductionManager {
     // =========================================================
     // Hi-level produce
     
-    private static void produceUnit(AUnitType unitType) {
-        
+    public static boolean produceWorker() {
+        return AProductionQueue.getCurrentBuildOrder().produceWorker();
+    }
+
+    private static boolean produceUnit(AUnitType unitType) {
+
         // Supply: OVERLORD / PYLON / DEPOT
         if (AGame.getSupplyFree() == 0 && !unitType.isSupplyUnit() && !unitType.isBuilding()) {
             // Supply production is handled by AtlantisSupplyManager
-            return;
+            return false;
         }
 
         // =========================================================
         // Worker
 
         if (unitType.equals(AtlantisConfig.WORKER)) {
-            AProductionQueue.getCurrentBuildOrder().produceWorker();
+            return produceWorker();
         } 
 
         // =========================================================
         // Non-worker
 
         else if (AGame.canAfford(50 + unitType.getMineralPrice(), unitType.getGasPrice())) {
-            AProductionQueue.getCurrentBuildOrder().produceUnit(unitType);
-        } 
+            return AProductionQueue.getCurrentBuildOrder().produceUnit(unitType);
+        }
+
+        return false;
     }
 
     // =========================================================

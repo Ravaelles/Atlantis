@@ -27,7 +27,9 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldNotAvoid(AUnit unit, Units enemies) {
-        if (Select.ourCombatUnits().inRadius(0.5, unit).count() >= 5) {
+
+        // Running is not viable - so many other units nearby, would get stuck
+        if (Select.all().inRadius(0.5, unit).count() >= 6) {
             return true;
         }
 

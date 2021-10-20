@@ -24,17 +24,18 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     public static boolean moveToFocusPoint(AUnit unit, APosition focusPoint) {
         double optimalDist = 6.5;
         double distToFocusPoint = unit.distanceTo(focusPoint);
+        double margin = Math.max(0, (unit.squadSize() - 6) / 10);
 
         // Too close
         if (
-                distToFocusPoint <= optimalDist - 2
+                distToFocusPoint <= optimalDist - margin
                 && unit.moveAwayFrom(focusPoint, 2.5, "#Adv:Too close(" + (int) distToFocusPoint + ")")
         ) {
             return true;
         }
 
         // Close enough
-        else if (distToFocusPoint <= optimalDist + 1) {
+        else if (distToFocusPoint <= optimalDist + margin) {
             if (unit.isMoving()) {
                 unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")");
             }
@@ -42,7 +43,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         // Too far
-        else if (distToFocusPoint > optimalDist + 1) {
+        else if (distToFocusPoint > optimalDist + margin) {
             unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")");
             return true;
         }

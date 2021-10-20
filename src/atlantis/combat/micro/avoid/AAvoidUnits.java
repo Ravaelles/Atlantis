@@ -20,8 +20,10 @@ public abstract class AAvoidUnits {
         if (enemiesDangerouslyClose.isEmpty()) {
             return false;
         }
-        System.out.println("--------------- " + unit);
-        System.out.println(enemiesDangerouslyClose);
+//        if (unit.isFirstCombatUnit()) {
+//            System.out.println("--------------- " + unit);
+//            System.out.println(enemiesDangerouslyClose);
+//        }
 
         return WantsToAvoid.units(unit, enemiesDangerouslyClose);
     }
@@ -29,6 +31,10 @@ public abstract class AAvoidUnits {
     // =========================================================
 
     public static Units getUnitsToAvoid(AUnit unit) {
+        return getUnitsToAvoid(unit, true);
+    }
+
+    public static Units getUnitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
         Units enemies = new Units();
         for (AUnit enemy : searchAmongEnemyUnits(unit)) {
             enemies.addUnitWithValue(enemy, SafetyMargin.calculate(enemy, unit));
@@ -38,28 +44,40 @@ public abstract class AAvoidUnits {
             return new Units();
         }
 
-        return new Units(
-                enemies.stream()
-                .filter(e -> enemies.valueFor(e) < 0)
-                .collect(Collectors.toList())
-        );
+//        if (unit.isFirstCombatUnit()) {
+//            enemies.print();
+//        }
+
+        if (onlyDangerouslyClose) {
+            return enemies.replaceUnitsWith(
+                    enemies.stream()
+                            .filter(e -> enemies.valueFor(e) < 0)
+                            .collect(Collectors.toList())
+            );
+        }
+        else {
+            return enemies;
+        }
 //        AUnit enemyDangerouslyClose = enemies.getUnitWithLowestValue();
 //        double safetyMargin = _lastSafetyMargin = enemies.getValueFor(enemyDangerouslyClose);
 //        return safetyMargin > 0 ? enemyDangerouslyClose : null;
     }
 
     public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {
-        Units enemies = getUnitsToAvoid(unit);
+        Units enemies = getUnitsToAvoid(unit, false);
         if (enemies.isNotEmpty()) {
             return enemies.lowestValue();
-//            return _lastSafetyMargin = enemies.lowestValue();
         }
 
-        return 999;
+        return 9876;
     }
 
     public static boolean shouldAvoidAnyUnit(AUnit unit) {
-        return getUnitsToAvoid(unit) != null;
+        return getUnitsToAvoid(unit).isNotEmpty();
+    }
+
+    public static boolean shouldNotAvoidAnyUnit(AUnit unit) {
+        return !shouldAvoidAnyUnit(unit);
     }
 
     // =========================================================

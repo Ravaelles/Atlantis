@@ -21,7 +21,7 @@ public class SafetyMargin {
      */
     public static double calculate(AUnit attacker, AUnit defender) {
         if (attacker == null) {
-            return Double.POSITIVE_INFINITY;
+            throw new RuntimeException("Attacker is null");
         }
 
         if (attacker.isMeleeUnit()) {
@@ -35,7 +35,7 @@ public class SafetyMargin {
     // =========================================================
 
     protected static double enemyWeaponRangeBonus(AUnit defender, AUnit attacker) {
-        return attacker.getWeaponRangeAgainst(defender);
+        return attacker.getWeaponRangeAgainst(defender) - (attacker.isMeleeUnit() ? 1 : 0);
     }
 
     protected static double enemyMovementBonus(AUnit attacker, AUnit defender) {
@@ -43,7 +43,7 @@ public class SafetyMargin {
     }
 
     protected static double ourMovementBonus(AUnit defender) {
-        return defender.isMoving() ? (defender.isRunning() ? 0.8 : 0) : 1.3;
+        return defender.isMoving() ? (defender.isRunning() ? -1.1 : 0) : 1.3;
     }
 
     protected static double ourUnitsNearbyBonus(AUnit defender) {

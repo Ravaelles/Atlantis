@@ -6,7 +6,6 @@ import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.retreating.ARunningManager;
-import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
@@ -58,7 +57,7 @@ public class ACombatUnitManager {
 
     private static void preActions(AUnit unit) {
         if (AGameSpeed.isDynamicSlowdownAllowed() && !AGameSpeed.isDynamicSlowdownActive()
-                && (unit.lastAttackOrderAgo(1) || unit.isUnderAttack())) {
+                && (unit.lastAttackOrderLessThanAgo(1) || unit.isUnderAttack())) {
             AGameSpeed.activateDynamicSlowdown();
             AGameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
         }
@@ -71,7 +70,7 @@ public class ACombatUnitManager {
     private static boolean handledTopPriority(AUnit unit) {
 
         // Handle units getting bugged by Starcraft
-        if (handleBuggedUnit(unit)) {
+        if (Unfreezer.handleUnfreeze(unit)) {
             return true;
         }
 
@@ -152,28 +151,6 @@ public class ACombatUnitManager {
 //    private static boolean isAllowedToAttackBeforeRetreating(AUnit unit) {
 //        return unit.isType(AUnitType.Protoss_Reaver, AUnitType.Terran_Vulture) && unit.getHPPercent() > 10;
 //    }
-
-    private static boolean handleBuggedUnit(AUnit unit) {
-        if (unit.isRunning() && unit.getLastOrderFramesAgo() >= 40) {
-            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-                System.err.println("UNFREEZE #1!");
-                unit.setTooltip("UNFREEZE!");
-                unit.unbug();
-                return true;
-            }
-        }
-
-        else if (unit.isUnderAttack() && unit.getLastOrderFramesAgo() >= 40) {
-            if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
-                System.err.println("UNFREEZE #2!");
-                unit.setTooltip("UNFREEZE!");
-                unit.unbug();
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Can be used for testing.

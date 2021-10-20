@@ -39,22 +39,14 @@ public class AtlantisConfig {
     /**
      * Single player enemy race.
      */
-    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Terran";
+    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Zerg";
     
     /**
      * Will modify bwapi.ini to use this map.
      */
-    public static final String MAP = "maps/BroodWar/sscai/(?)*.sc?";
-//    public static final String MAP = "maps/BroodWar/ums/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
-//    public static final String MAP = "maps/BroodWar/ums/dragoon_sweeping_mines.scm"; // 5 dragoons vs mines
-//    public static final String MAP = "maps/BroodWar/ums/marines_vs_zerglings.scm"; // 12 marines vs 24 zerglings
-//    public static final String MAP = "maps/BroodWar/ums/vulture_control.scx"; // Vulture vs Broodlings
-//    public static final String MAP = "maps/BroodWar/ums/1a2a3a Micro 2.scx";
-//    public static final String MAP = "maps/BroodWar/ums/MultiTask PvT.scx";
-//    public static final String MAP = "maps/BroodWar/ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs Zerg
-//    public static final String MAP = "maps/BroodWar/ums/protoss_micro.scx";
+    public static final String MAP = MapToUse.activeMapPath();
 
     // ==========================================================
     // === These are default values that can be overridden in ===

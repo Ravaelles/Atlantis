@@ -209,9 +209,8 @@ public class AScoutManager {
             if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
                 if (AGame.getTimeSeconds() < 350) {
                     if (scouts.isEmpty()) {
-                        for (AUnit worker : Select.ourWorkers().list()) {
+                        for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
                             if (!worker.isBuilder()) {
-                                System.err.println(worker.getID());
                                 scouts.add(worker);
                                 break;
                             }
@@ -229,7 +228,12 @@ public class AScoutManager {
         // TERRAN + PROTOSS
 
         else if (scouts.isEmpty() && Select.ourWorkers().count() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
-            scouts.add(Select.ourWorkers().first());
+            for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
+                if (!worker.isBuilder()) {
+                    scouts.add(worker);
+                    break;
+                }
+            }
         }
     }
 
@@ -346,4 +350,7 @@ public class AScoutManager {
         return anyScoutBeenKilled;
     }
 
+    public static ArrayList<AUnit> getScouts() {
+        return (ArrayList<AUnit>) scouts.clone();
+    }
 }

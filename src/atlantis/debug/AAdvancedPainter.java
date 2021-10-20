@@ -1006,10 +1006,10 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCooldownAndRunBar(AUnit unit) {
-        boolean shouldRun = AAvoidUnits.shouldAvoidAnyUnit(unit);
+        boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
-        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldRun ? Color.Red : Color.Teal);
+        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldAvoidAnyUnit ? Color.Red : Color.Teal);
     }
 
     private static void paintLifeBar(AUnit unit) {

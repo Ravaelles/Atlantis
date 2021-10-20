@@ -4,7 +4,6 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import java.util.Collection;
 
-
 public class AWorkerDefenceManager {
 
     /**

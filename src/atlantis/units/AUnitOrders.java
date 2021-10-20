@@ -141,7 +141,7 @@ public interface AUnitOrders {
         
         APosition currentTarget = unit().getTargetPosition();
 
-        if (!unit().isUnitActionMove() || currentTarget == null || !currentTarget.equals(target)) {
+        if (!unit().isUnitActionMove() || currentTarget == null || (!currentTarget.equals(target) || unit().isLastOrderFramesAgo(10))) {
 //                || A.now() % 25 == 0) {
 //            System.out.println(A.now() + " moved, " + unit().getUnitAction() 
 //+ ", dist = " + unit().distanceTo(target));

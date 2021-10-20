@@ -16,14 +16,20 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                         + ourMovementBonus(defender)
                         + enemyMovementBonus(defender, attacker);
 
-        return A.inRange(0.0, criticalDist, 3.9);
+        criticalDist = Math.min(criticalDist, 3.9);
+
+        return attacker.distanceTo(defender) - criticalDist;
     }
 
     // =========================================================
 
     protected static double beastBonus(AUnit defender) {
         int beastNearby = Select.enemy()
-                .ofType(AUnitType.Protoss_Archon, AUnitType.Zerg_Ultralisk)
+                .ofType(
+                        AUnitType.Protoss_Archon,
+                        AUnitType.Protoss_Dark_Templar,
+                        AUnitType.Zerg_Ultralisk
+                )
                 .inRadius(5, defender)
                 .count();
 

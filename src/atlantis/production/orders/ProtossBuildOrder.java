@@ -1,10 +1,14 @@
 package atlantis.production.orders;
 
+import atlantis.AGame;
+import atlantis.AGameSpeed;
 import atlantis.AtlantisConfig;
 import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.util.A;
+
 import java.util.ArrayList;
 
 public class ProtossBuildOrder extends ABuildOrder {
@@ -19,25 +23,50 @@ public class ProtossBuildOrder extends ABuildOrder {
     }
 
     // =========================================================
-    
+
+    static int last = 0;
+
+    /**
+     * See ADynamicWorkerProductionManager which is also used to produce workers.
+     */
     @Override
-    public void produceWorker() {
+    public boolean produceWorker() {
+        if (!AGame.canAfford(50, 0) || AGame.getSupplyFree() < 1) {
+            return false;
+        }
+
         AUnit building = Select.ourOneIdle(AtlantisConfig.BASE);
         if (building != null) {
-            building.train(AtlantisConfig.WORKER);
+            return building.train(AtlantisConfig.WORKER);
         }
+
+        // If we're here it means all bases are busy. Try queue request
+        for (AUnit base : Select.ourBases().reverse().list()) {
+            if (
+                    base.getRemainingTrainTime() <= 4
+                    && base.hasNothingInQueue()
+                    && AGame.getSupplyFree() >= 2
+            ) {
+                last = A.now();
+                return base.train(AtlantisConfig.WORKER);
+            }
+        }
+
+        return false;
     }
 
     @Override
-    public void produceUnit(AUnitType unitType) {
+    public boolean produceUnit(AUnitType unitType) {
         AUnitType whatBuildsIt = unitType.getWhatBuildsIt();
         AUnit unitThatWillProduce = Select.ourOneIdle(whatBuildsIt);
         if (unitThatWillProduce != null) {
-            unitThatWillProduce.train(unitType);
+            return unitThatWillProduce.train(unitType);
         }
 //        else {
 //            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
 //        }
+
+        return false;
     }
 
     @Override

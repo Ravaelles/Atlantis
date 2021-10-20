@@ -428,6 +428,14 @@ public class Select<T> {
         return (Select<AUnit>) neutral().ofType(AUnitType.Resource_Vespene_Geyser);
     }
 
+    public static Select<AUnit> geyserBuildings() {
+        return (Select<AUnit>) neutral().ofType(
+                AUnitType.Protoss_Assimilator,
+                AUnitType.Terran_Refinery,
+                AUnitType.Zerg_Extractor
+        );
+    }
+
     /**
      * Create initial search-pool of units from given collection of units.
      */
@@ -1135,6 +1143,7 @@ public class Select<T> {
         }
 
         sortDataByDistanceTo(position, true);
+
         return data.isEmpty() ? null : (AUnit) data.get(0);
     }
     
@@ -1296,6 +1305,11 @@ public class Select<T> {
      */
     public Select<T> exclude(AUnit unitToExclude) {
         data.remove(unitToExclude);
+        return this;
+    }
+
+    public Select<T> exclude(Collection<AUnit> unitsToExclude) {
+        data.removeAll(unitsToExclude);
         return this;
     }
 

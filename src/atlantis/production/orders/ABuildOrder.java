@@ -24,13 +24,16 @@ public abstract class ABuildOrder {
     /**
      * Request to produce worker (Zerg Drone, Terran SCV or Protoss Probe) that should be handled according to
      * the race played.
+     *
+     * See ADynamicWorkerProductionManager which is also used to produce workers.
+     * @return
      */
-    public abstract void produceWorker();
+    public abstract boolean produceWorker();
 
     /**
      * Request to produce non-building and non-worker unit. Should be handled according to the race played.
      */
-    public abstract void produceUnit(AUnitType unitType);
+    public abstract boolean produceUnit(AUnitType unitType);
 
     /**
      * When production orders run out, we should always produce some units.

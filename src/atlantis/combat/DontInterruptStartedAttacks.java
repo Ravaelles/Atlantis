@@ -1,11 +1,7 @@
 package atlantis.combat;
 
 import atlantis.AGame;
-import atlantis.AGameSpeed;
-import atlantis.debug.APainter;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
-import bwapi.Color;
 
 public class DontInterruptStartedAttacks {
 
@@ -26,12 +22,12 @@ public class DontInterruptStartedAttacks {
             return true;
         }
 
-        if (unit.isStartingAttack() || unit.lastStartedAttackAgo(5)) {
+        if (unit.isStartingAttack() || unit.lastStartedAttackLessThanAgo(5)) {
             unit.setTooltip("Starts attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
             return true;
         }
 
-        if (cooldown <= 3 && unit.lastAttackOrderAgo(9)) {
+        if (cooldown <= 3 && unit.lastAttackOrderLessThanAgo(9)) {
             unit.setTooltip("Attack(" + lastAttackFrame + "/" + lastStartingAttack + " // " + cooldown + ")");
             return true;
         }

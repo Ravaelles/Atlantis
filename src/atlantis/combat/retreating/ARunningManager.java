@@ -36,10 +36,12 @@ public class ARunningManager {
     // =========================================================
 
     public static boolean shouldStopRunning(AUnit unit) {
+//        System.out.println(unit.getID() + " // " + unit.isRunning()
+//                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
         if (
                 unit.isRunning()
-                && !unit.lastStartedRunningAgo(5)
-                && !AAvoidUnits.shouldAvoidAnyUnit(unit)
+//                && unit.lastStartedRunningMoreThanAgo(5)
+                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.runningManager().stopRunning();
             unit.setTooltip("StopRun");
@@ -330,7 +332,7 @@ public class ARunningManager {
         
         // =========================================================
         // Find the location that would be most distant to the enemy location
-        double mostDistant = -99999;
+        double mostDistant = -99;
         APosition bestPosition = null;
         for (APosition position : potentialPositionsList) {
             double dist = runAwayFrom.distanceTo(position);

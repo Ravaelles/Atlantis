@@ -194,7 +194,7 @@ public class Atlantis implements BWEventListener {
                 AProductionQueueManager.rebuildQueue();
                 ASquadManager.battleUnitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
-                if (!unit.type().isGeyser()) {
+                if (!unit.type().isGasBuilding()) {
                     LOST++;
                     LOST_RESOURCES += unit.getType().getTotalResources();
                 }
@@ -389,8 +389,16 @@ public class Atlantis implements BWEventListener {
         } else {
             System.out.println("DEFEAT...");
         }
-        gameSummary();
 
+        exitGame();
+    }
+
+    public void exitGame() {
+        gameSummary();
+        killProcesses();
+    }
+
+    private void killProcesses() {
         System.out.print("Killing StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 

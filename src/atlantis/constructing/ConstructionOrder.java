@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.constructing.position.APositionFinder;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -58,6 +59,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
      */
     protected AUnit assignOptimalBuilder() {
         builder = Select.ourWorkersFreeToBuildOrRepair().nearestTo(positionToBuild);
+
         return builder;
     }
 

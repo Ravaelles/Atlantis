@@ -92,17 +92,6 @@ public class AWorkerManager {
      * Returns total number of workers that are currently assigned to this building.
      */
     public static int getHowManyWorkersWorkingNear(AUnit base, boolean includeMoving) {
-//        boolean isGasBuilding = target.getType().isGasBuilding();
-//        boolean isBase = target.isBase();
-//        int total = 0;
-//
-//        for (AUnit worker : Select.ourWorkers().listUnits()) {
-//            if (isWorkerAssignedToBuilding(worker, target)) {
-//                total++;
-//            }
-//        }
-//        return total;
-
         int total = 0;
 
         for (AUnit worker : Select.ourWorkers().inRadius(25, base).listUnits()) {
@@ -113,8 +102,6 @@ public class AWorkerManager {
         }
 
         return total;
-
-//        return Select.ourWorkers().inRadius(15, base).count();
     }
 
     public static AUnit getRandomWorkerAssignedTo(AUnit target) {

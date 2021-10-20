@@ -13,7 +13,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 + ourMovementBonus(defender)
                 + enemyMovementBonus(defender, attacker);
 
-        return A.inRange(0.0, criticalDist, 12.5);
+        return attacker.distanceTo(defender) - criticalDist;
     }
 
 }

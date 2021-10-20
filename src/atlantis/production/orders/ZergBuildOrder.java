@@ -20,13 +20,14 @@ public class ZergBuildOrder extends ABuildOrder {
     // =========================================================
 
     @Override
-    public void produceWorker() {
+    public boolean produceWorker() {
         produceZergUnit(AtlantisConfig.WORKER);
+        return false;
     }
 
     @Override
-    public void produceUnit(AUnitType unitType) {
-        produceZergUnit(unitType);
+    public boolean produceUnit(AUnitType unitType) {
+        return produceZergUnit(unitType);
     }
 
     @Override
@@ -57,13 +58,14 @@ public class ZergBuildOrder extends ABuildOrder {
     /**
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
-    public void produceZergUnit(AUnitType unitType) {
+    public boolean produceZergUnit(AUnitType unitType) {
         for (AUnit base : Select.ourBases().listUnits()) {
             for (AUnit larva : base.getLarva()) {
-                boolean result = base.train(unitType);
-                return;
+                return base.train(unitType);
             }
         }
+
+        return false;
     }
 
 }

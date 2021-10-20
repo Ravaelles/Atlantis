@@ -1,19 +1,12 @@
 package atlantis.workers;
 
-import atlantis.AGame;
-import atlantis.AGameSpeed;
-import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import bwapi.Color;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-
 
 /**
  * Auxiliary class that's supposed to assign workers to minerals at the beginning of game.
@@ -90,7 +83,7 @@ public class AMineralGathering {
 
             // Get least gathered mineral
             AUnit leastGatheredMineral = null;
-            int leastWorkersAtMineral = 999;
+            int leastWorkersAtMineral = 99;
             for (Entry<AUnit, Integer> workersAtMineral : workersPerMineral.entrySet()) {
                 if (workersAtMineral.getValue() < leastWorkersAtMineral) {
 //                    minimumWorkersPerMineral = workersAtMineral.getValue();

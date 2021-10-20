@@ -20,7 +20,7 @@ public class Units {
      * This mapping can be used to store extra values assigned to units e.g. if units represents mineral fields,
      * we can easily store info how many workers are gathering each mineral field thanks to this mapping.
      */
-    private final ArrayList<AUnit> units = new ArrayList<>();
+    private ArrayList<AUnit> units = new ArrayList<>();
     private final Map<AUnit, Double> extraValues = new HashMap<>();
 
     // =====================================================================
@@ -144,21 +144,32 @@ public class Units {
         }
     }
 
-    public void setValueFor(AUnit unit, double newValue) {
+    public void setValueFor(AUnit unit, Double value) {
         if (unit == null) {
             throw new IllegalArgumentException("Units unit shouldn't be null");
         }
+        if (value == null) {
+            throw new IllegalArgumentException("Units value shouldn't be null");
+        }
 
-        extraValues.put(unit, newValue);
+        extraValues.put(unit, value);
     }
 
     public double valueFor(AUnit unit) {
-        if (units == null || unit == null || !has(unit)) {
-            throw new RuntimeException("Should never be here");
-        }
-        else {
-            return extraValues.get(unit);
-        }
+        assert !units.isEmpty();
+        assert unit != null;
+        assert has(unit);
+
+        return extraValues.get(unit);
+    }
+
+    public Object valueForOrNull(AUnit unit) {
+        assert !units.isEmpty();
+        assert unit != null;
+        assert has(unit);
+
+        Double value = extraValues.get(unit);
+        return value;
     }
 
     public AUnit unitWithLowestValue() {
@@ -166,6 +177,8 @@ public class Units {
     }
 
     public double lowestValue() {
+        assert !units.isEmpty();
+
         return extraValues.get(unitWithLowestValue());
     }
 
@@ -174,16 +187,19 @@ public class Units {
     }
 
     private AUnit unitWithExtremeValue(boolean returnLowest) {
-        if (units.isEmpty()) {
-            return null;
-        }
-
+        assert !units.isEmpty();
         AUnit bestUnit = null;
         
         // We're interested in MIN
         if (returnLowest) {
             double bestValue = Integer.MAX_VALUE;
             for (AUnit unit : units) {
+//                System.out.println("######################");
+//                System.out.println(extraValues);
+//                for (AUnit u : extraValues.keySet()) {
+//                    System.out.println(u + " // " + (extraValues.containsKey(u) ? extraValues.get(u) : "NO"));
+//                }
+//                System.out.println("######################");
                 if (bestUnit == null || valueFor(unit) < bestValue) {
                     bestValue = valueFor(unit);
                     bestUnit = unit;
@@ -203,6 +219,14 @@ public class Units {
         }
 
         return bestUnit;
+    }
+
+    /**
+     * Use carefully as it leaves the old extraValues object.
+     */
+    public Units replaceUnitsWith(List<AUnit> newUnits) {
+        this.units = (ArrayList<AUnit>) newUnits;
+        return this;
     }
 
     // === Location-related ====================================
@@ -311,13 +335,15 @@ public class Units {
 
     @Override
     public String toString() {
-        String string = "Units (" + units.size() + "):\n";
+        StringBuilder string = new StringBuilder("Units (" + units.size() + "):\n");
 
         for (AUnit unit : units) {
-            string += "   - " + unit.getType() + " (ID:" + unit.getID() + ")\n";
+            string.append("   - ").append(unit.getType()).append(" (ID:").append(unit.getID()).append(") ")
+                    .append(valueForOrNull(unit))
+                    .append("\n");
         }
 
-        return string;
+        return string.toString();
     }
 
     // =========================================================
@@ -326,7 +352,6 @@ public class Units {
     public void print() {
         System.out.println("Units in list:");
         for (AUnit unit : list()) {
-//            System.out.println(unit + " // Dist to main base: " + (PositionUtil.distanceTo(unit, Select.mainBase())));
             System.out.println(unit + ", extra value: " + valueFor(unit));
         }
         System.out.println();

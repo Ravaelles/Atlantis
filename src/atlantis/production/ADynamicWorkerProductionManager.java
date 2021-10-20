@@ -5,6 +5,7 @@ import atlantis.AtlantisConfig;
 import atlantis.units.AUnit;
 import atlantis.units.Count;
 import atlantis.units.Select;
+import atlantis.util.A;
 
 
 public class ADynamicWorkerProductionManager {
@@ -23,16 +24,7 @@ public class ADynamicWorkerProductionManager {
             return false;
         }
 
-        // =========================================================
-
-        for (AUnit base : Select.ourBases().reverse().list()) {
-            if (!base.isTrainingAnyUnit()) {
-                base.train(AtlantisConfig.WORKER);
-                return true;
-            }
-        }
-        
-        return false;
+        return AProductionManager.produceWorker();
     }
 
     // =========================================================
@@ -85,19 +77,6 @@ public class ADynamicWorkerProductionManager {
     public static boolean isAutoProduceWorkersActive(int workers) {
         return workers >= AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS
                 && workers < AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS;
-    }
-    
-    public static void produceWorker() {
-//        AUnit building = Select.ourOneIdle(AtlantisConfig.BASE);
-//        if (building != null) {
-//            building.train(AtlantisConfig.WORKER);
-//        }
-        for (AUnit base : Select.ourBases().reverse().list()) {
-            if (!base.isTrainingAnyUnit()) {
-                base.train(AtlantisConfig.WORKER);
-                return;
-            }
-        }
     }
 
 }
