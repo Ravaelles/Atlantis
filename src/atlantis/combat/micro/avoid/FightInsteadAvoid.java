@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -43,6 +44,12 @@ public class FightInsteadAvoid {
     public boolean shouldFight() {
         if (enemies.isEmpty()) {
             return false;
+        }
+
+        // Attacking critically important unit
+        if (unit.isAttacking() && unit.getTarget() != null && ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
+            unit.setTooltip("CrucialTarget!");
+            return true;
         }
 
         // Always avoid invisible combat units

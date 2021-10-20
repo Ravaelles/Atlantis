@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;

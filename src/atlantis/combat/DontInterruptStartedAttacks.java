@@ -13,6 +13,7 @@ public class DontInterruptStartedAttacks {
         int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
         int lastStartingAttack = AGame.framesAgo(unit._lastStartingAttack);
         int cooldown = unit.getCooldownCurrent();
+        int cooldownAbs = unit.getCooldownAbsolute();
 //        int friends = Select.ourCombatUnits().inRadius(2.5, unit).count();
 
         // =========================================================
@@ -22,12 +23,12 @@ public class DontInterruptStartedAttacks {
             return true;
         }
 
-        if (unit.isStartingAttack() || unit.lastStartedAttackLessThanAgo(5)) {
+        if (unit.isStartingAttack() || unit.lastStartedAttackLessThanAgo(Math.min(8, cooldownAbs / 5))) {
             unit.setTooltip("Starts attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
             return true;
         }
 
-        if (cooldown <= 3 && unit.lastAttackOrderLessThanAgo(9)) {
+        if (cooldown <= 3 && unit.lastAttackOrderLessThanAgo(Math.min(8, cooldownAbs / 3))) {
             unit.setTooltip("Attack(" + lastAttackFrame + "/" + lastStartingAttack + " // " + cooldown + ")");
             return true;
         }

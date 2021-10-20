@@ -1230,6 +1230,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return AGame.framesAgo(_lastStartingAttack) <= framesAgo;
     }
 
+    public boolean lastUnderAttackLessThanAgo(int framesAgo) {
+        return AGame.framesAgo(_lastUnderAttack) <= framesAgo;
+    }
+
     public boolean lastAttackOrderLessThanAgo(int framesAgo) {
         return AGame.framesAgo(_lastAttackOrder) <= framesAgo;
     }
@@ -1299,7 +1303,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return squad().size();
     }
 
-    public int getEnergy() {
+    public int energy() {
         return u.getEnergy();
     }
 
@@ -1343,7 +1347,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public boolean canCloak() {
-        return getEnergy() > 10 && type().isCloakable() && !isCloaked();
+        return type().isCloakable() && !isCloaked();
     }
 
     public boolean is(AUnitType ...types) {

@@ -77,9 +77,9 @@ public class ASquadCohesionManager {
         }
 
         if (
-                ourCombatUnits.clone().inRadius(4.5, unit).count() >= 24
-                || ourCombatUnits.clone().inRadius(2.7, unit).count() >= 12
-                || ourCombatUnits.clone().inRadius(0.6, unit).count() >= 4
+                ourCombatUnits.clone().inRadius(4.5, unit).atLeast(25)
+                || ourCombatUnits.clone().inRadius(2.7, unit).atLeast(12)
+                || ourCombatUnits.clone().inRadius(0.6, unit).atLeast(4)
         ) {
             return unit.moveAwayFrom(
                     squadCenter(unit),

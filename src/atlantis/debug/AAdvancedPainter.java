@@ -234,6 +234,10 @@ public class AAdvancedPainter extends APainter {
             paintCircleFilled(enemy, 18, Color.Orange);
             paintTextCentered(enemy, "Cloaked", Color.Orange);
         }
+        for (AUnit enemy : Select.enemy().cloakedButEffVisible().listUnits()) {
+            paintCircleFilled(enemy, 18, Color.Green);
+            paintTextCentered(enemy, "CloakedVisible", Color.Green);
+        }
     }
 
     private static void paintCombatEval(AUnit unit, boolean isEnemy) {

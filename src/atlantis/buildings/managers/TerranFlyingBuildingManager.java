@@ -73,7 +73,7 @@ public class TerranFlyingBuildingManager {
             return false;
         }
 
-        return Select.ourTanks().count() >= 1 || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5;
+        return Select.ourTanks().atLeast(1) || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5;
     }
 
     private static void liftABuildingAndFlyAmongStars() {

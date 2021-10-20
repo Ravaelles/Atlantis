@@ -7,7 +7,7 @@ import atlantis.units.Select;
 public class TerranCloakableManager {
 
     public static boolean update(AUnit unit) {
-        if (AGame.notNthGameFrame(4)) {
+        if (AGame.notNthGameFrame(7)) {
             return false;
         }
 
@@ -16,31 +16,16 @@ public class TerranCloakableManager {
                     .inRadius(11, unit)
                     .canAttack(unit, false, true)
                     .isNotEmpty();
-//            boolean detectorsNearby = true;
             boolean detectorsNearby = Select.enemy()
                     .detectors()
-                    .inRadius(11.1, unit)
+                    .inRadius(9.1, unit)
                     .isNotEmpty();
-
-//            if (Select.enemy()
-//                    .detectors().size() > 0) {
-//                System.out.print (Select.enemy()
-//                        .detectors().size() + " ");
-//            }
-
-
-//            System.out.println("DETECTORS = " + detectorsNearby);
-//            for (AUnit enemy : Select.enemy().detectors().listUnits()) {
-//                System.out.print(" " + enemy.shortName());
-//            }
-//            System.out.println("");
-//            System.out.println("");
 
             // Not cloaked
             if (!unit.isCloaked()) {
-                if (enemiesNearby && !detectorsNearby) {
+                if (unit.energy() > 10 && enemiesNearby && !detectorsNearby) {
+                    System.err.println(unit.shortName() + " CLOAKED");
                     unit.cloak();
-                    System.out.println(unit + " cloaked");
                     unit.setTooltip("CLOAK!");
                     return true;
                 }
@@ -48,9 +33,10 @@ public class TerranCloakableManager {
 
             // Cloaked
             else {
-                if (!enemiesNearby || detectorsNearby || unit.isUnderAttack()) {
+                System.out.println("CLOAKED");
+                if (!enemiesNearby || detectorsNearby || unit.lastUnderAttackLessThanAgo(25)) {
+                    System.err.println("------------- DECLOAK");
                     unit.decloak();
-                    System.out.println(unit + " decloaked...");
                     unit.setTooltip("DECLOAK");
                     return true;
                 }
@@ -59,9 +45,5 @@ public class TerranCloakableManager {
 
         return false;
     }
-
-//    private static boolean makesSenseToCloak(AUnit unit) {
-//        return ;
-//    }
 
 }

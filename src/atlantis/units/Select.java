@@ -158,7 +158,7 @@ public class Select<T> {
     /**
      * Selects enemy units of given type(s).
      */
-    public static Select<AUnit> enemyOfType(AUnitType... type) {
+    public static Select<AUnit> enemies(AUnitType... type) {
         List<AUnit> data = new ArrayList<>();
 
         for (AUnit unit : enemyUnits()) {
@@ -510,8 +510,8 @@ public class Select<T> {
         AUnit unit = unitFrom(needle);
 
         for (AUnitType type : haystack) {
-            if (unit.type().equals(type)
-                    || (unit.type().equals(AUnitType.Zerg_Egg) && unit.getBuildType().equals(type))) {
+            if (unit.is(type)
+                    || (unit.is(AUnitType.Zerg_Egg) && unit.getBuildType().equals(type))) {
                 return true;
             }
         }
@@ -546,8 +546,8 @@ public class Select<T> {
             AUnit unit = unitFrom(unitsIterator.next());
             boolean typeMatches = false;
             for (AUnitType type : types) {
-                if (unit.type().equals(type)
-                        || (unit.type().equals(AUnitType.Zerg_Egg) && unit.getBuildType().equals(type))) {
+                if (unit.is(type)
+                        || (unit.is(AUnitType.Zerg_Egg) && unit.getBuildType().equals(type))) {
                     typeMatches = true;
                     break;
                 }
@@ -582,7 +582,20 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
-            if (unit.isEffectivelyVisible()) {
+            if (!unit.isEffectivelyCloaked()) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
+    public Select<T> cloakedButEffVisible() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
+            if (!unit.isCloaked() || (unit.isCloaked() && !unit.isEffectivelyCloaked())) {
+//                System.out.println(unit.shortName() + " // " + unit.getHitPoints());
                 unitsIterator.remove();
             }
         }
@@ -1104,7 +1117,7 @@ public class Select<T> {
         Select<AUnit> selectedUnits = Select.ourIncludingUnfinished();
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (!unit.type().equals(AUnitType.Zerg_Larva)) {
+            if (!unit.is(AUnitType.Zerg_Larva)) {
                 unitIter.remove();
             }
         }
@@ -1131,7 +1144,7 @@ public class Select<T> {
         Select<AUnit> selectedUnits = Select.ourIncludingUnfinished();
         for (Iterator<AUnit> unitIter = selectedUnits.list().iterator(); unitIter.hasNext();) {
             AUnit unit = unitIter.next();
-            if (!unit.type().equals(AUnitType.Zerg_Egg)) {
+            if (!unit.is(AUnitType.Zerg_Egg)) {
                 unitIter.remove();
             }
         }
@@ -1242,7 +1255,7 @@ public class Select<T> {
      */
     public static AUnit ourOneIdle(AUnitType type) {
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && unit.isIdle() && unit.type().equals(type)) {
+            if (unit.isCompleted() && unit.isIdle() && unit.is(type)) {
                 return unit;
             }
         }
@@ -1422,6 +1435,14 @@ public class Select<T> {
      */
     public int count() {
         return data.size();
+    }
+
+    public boolean atLeast(int min) {
+        return data.size() >= min;
+    }
+
+    public boolean atMost(int max) {
+        return data.size() <= max;
     }
 
     /**

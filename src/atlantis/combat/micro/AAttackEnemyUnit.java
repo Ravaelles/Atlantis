@@ -34,8 +34,8 @@ public class AAttackEnemyUnit {
         }
 
         if (enemy != null) {
+//            System.err.println(unit.shortName() + " --> " + enemy.shortName());
             unit.setTooltip("Attacking " + enemy.shortName() + " (" + unit.getCooldownCurrent() + ")");
-//            APainter.paintTextCentered(unit, enemyToAttack + ", " + unit.isJustShooting(), Color.Red);
             APainter.paintLine(unit, enemy, Color.Red);
             if (!enemy.equals(unit.getTarget())) {
 //                if (unit.isMoving() && unit.inRealWeaponRange(enemy)) {
@@ -51,7 +51,7 @@ public class AAttackEnemyUnit {
     }
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
-        return unit.squad().mission().allowsToAttackEnemyUnit(unit, enemy);
+        return unit.mission() == null || unit.mission().allowsToAttackEnemyUnit(unit, enemy);
     }
 
 }

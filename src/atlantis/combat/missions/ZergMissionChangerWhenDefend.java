@@ -13,7 +13,7 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        return Select.ourCombatUnits().count() >= 10;
+        return Select.ourCombatUnits().atLeast(10);
     }
 
 

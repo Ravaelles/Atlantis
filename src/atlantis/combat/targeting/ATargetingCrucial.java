@@ -2,6 +2,7 @@ package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Select;
 
 public class ATargetingCrucial extends AEnemyTargeting {
 
@@ -16,7 +17,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
 
         AUnit target = null;
         double groundRange = unit.getWeaponRangeGround();
-        double airRange = unit.getWeaponRangeAir();
+//        double airRange = unit.getWeaponRangeAir();
 
         // =========================================================
         // Attack MINES
@@ -35,9 +36,9 @@ public class ATargetingCrucial extends AEnemyTargeting {
         target = units.clone()
                 .ofType(AUnitType.Protoss_Observer)
                 .effVisible()
-                .inRadius(unit.isAirUnit() ? 12 : 9, unit)
-                .nearestTo(unit);
-        if (target != null) {
+                .inRadius(unit.isAirUnit() ? 40 : 11, unit)
+                .mostWounded();
+        if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(14, target).atLeast(1)) {
             return target;
         }
 
@@ -52,8 +53,8 @@ public class ATargetingCrucial extends AEnemyTargeting {
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
                         AUnitType.Terran_Siege_Tank_Siege_Mode
                 )
-                .inShootRangeOf(unit)
-//                .inRadius(10, unit)
+//                .inShootRangeOf(unit)
+                .inRadius(11, unit)
                 .mostWounded();
         if (target != null) {
             return target;
@@ -117,4 +118,12 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // =========================================================
     }
 
+    public static boolean isCrucialUnit(AUnit target) {
+        return target.is(
+                AUnitType.Protoss_Observer,
+                AUnitType.Protoss_Dark_Templar,
+//                AUnitType.Protoss_Carrier,
+                AUnitType.Zerg_Defiler
+        );
+    }
 }

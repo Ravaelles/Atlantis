@@ -30,14 +30,25 @@ public class ATargetingImportant extends AEnemyTargeting {
         }
 
         // =========================================================
-        // Defensive buildings
+        // Defensive buildings IN RANGE
 
         target = buildings.clone()
                 .ofType(
                         AUnitType.Protoss_Photon_Cannon,
                         AUnitType.Zerg_Sunken_Colony
                 )
-                .inRadius(12, unit)
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Target COMBAT UNITS IN RANGE
+
+        target = units.clone()
+                .combatUnits()
+                .inRadius(11, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -56,7 +67,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret
                 )
-                .inRadius(12, unit)
+                .inRadius(10, unit)
                 .nearestTo(unit);
         return target;
 

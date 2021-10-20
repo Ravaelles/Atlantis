@@ -40,15 +40,15 @@ public class ASpecialUnitManager {
         else if (AGame.isPlayingAsProtoss()) {
             if (ProtossShieldBattery.handle(unit)) {
                 return true;
-            } else if (unit.type().equals(AUnitType.Protoss_Observer) && ProtossObserverManager.update(unit)) {
+            } else if (unit.is(AUnitType.Protoss_Observer) && ProtossObserverManager.update(unit)) {
                 return true;
-            } else return unit.type().equals(AUnitType.Protoss_Reaver) && ProtossReaverManager.update(unit);
+            } else return unit.is(AUnitType.Protoss_Reaver) && ProtossReaverManager.update(unit);
         }
 
         // === Zerg ========================================
 
         else if (AGame.isPlayingAsZerg()) {
-            if (unit.type().equals(AUnitType.Zerg_Overlord)) {
+            if (unit.is(AUnitType.Zerg_Overlord)) {
                 ZergOverlordManager.update(unit);
                 return true;
             }

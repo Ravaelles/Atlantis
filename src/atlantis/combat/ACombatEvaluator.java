@@ -178,7 +178,7 @@ public class ACombatEvaluator {
                 boolean antiAir = (againstUnit == null || againstUnit.isAirUnit());
                 if (unit.type().isMilitaryBuilding(antiGround, antiAir)) {
                     enemyDefensiveBuildingFound = true;
-                    if (unit.type().equals(AUnitType.Terran_Bunker)) {
+                    if (unit.is(AUnitType.Terran_Bunker)) {
                         strength += 7 * evaluateUnitHPandDamage(AUnitType.Terran_Marine, againstUnit);
                     } else {
                         strength += 1.3 * unitStrengthEval;
@@ -237,9 +237,9 @@ public class ACombatEvaluator {
         // =========================================================
         // Diminish role of NON-SHOOTING units
 
-        if (damage == 0 && !evaluateType.equals(AUnitType.Terran_Medic)) {
-            total /= 15;
-        }
+//        if (damage == 0 && !evaluateType.equals(AUnitType.Terran_Medic)) {
+//            total /= 15;
+//        }
 
         return total;
     }

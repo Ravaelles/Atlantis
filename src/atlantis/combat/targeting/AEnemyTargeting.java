@@ -77,7 +77,7 @@ public class AEnemyTargeting {
     // =========================================================
 
     private static AUnit selectWeakestEnemyInRangeOfType(AUnitType enemyType, AUnit ourUnit) {
-        Select<AUnit> targets = Select.enemyOfType(enemyType)
+        Select<AUnit> targets = Select.enemies(enemyType)
                 .effVisible().canBeAttackedBy(ourUnit, true, true);
 
         AUnit mostWounded = targets.clone().mostWounded();
@@ -90,7 +90,7 @@ public class AEnemyTargeting {
             return nearest;
         }
 
-        return Select.enemyOfType(enemyType).effVisible().nearestTo(ourUnit);
+        return Select.enemies(enemyType).effVisible().nearestTo(ourUnit);
     }
     
 }
