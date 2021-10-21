@@ -60,11 +60,14 @@ public class AAttackEnemyUnit {
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
                 enemy.isTank()
-//                        && (!unit.ranged() || unit.lastStartedAttackLessThanAgo(12) || unit.cooldownRemaining() > 0)
-                        && (enemy.distToMoreThan(unit, unit.melee() ? 1 : 1.3))
+                        && (enemy.distToMoreThan(unit, unit.melee() ? 0.8 : 1.15))
                         && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
                         && (unit.melee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
         ) {
+            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(11.2, unit).isEmpty()) {
+                return false;
+            }
+
             if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz(" + A.dist(enemy, unit) + "/" + count + ")")) {
                 return true;
             }

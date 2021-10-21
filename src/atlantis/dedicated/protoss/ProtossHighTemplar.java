@@ -14,12 +14,16 @@ import bwapi.TechType;
 public class ProtossHighTemplar {
 
     public static boolean update(AUnit highTemplar) {
-        if (AGame.everyNthGameFrame(5) && handlePsionic(highTemplar)) {
-            System.err.println("STORM (" + highTemplar.energy() + ")");
-            return true;
+        if (AGame.everyNthGameFrame(5)) {
+            if (handlePsionic(highTemplar)) {
+                System.err.println("STORM (" + highTemplar.energy() + ")");
+                return true;
+            }
+
+            return followArmy(highTemplar);
         }
 
-        return followArmy(highTemplar);
+        return true;
     }
 
     // =========================================================

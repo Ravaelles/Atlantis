@@ -745,7 +745,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean canAttackGroundUnits() {
         return (boolean) cache.get(
                 "canAttackGroundUnits",
-                () -> type().getGroundWeapon() != WeaponType.None && type().getGroundWeapon().damageAmount() > 0
+                () -> {
+                    return type().getGroundWeapon() != WeaponType.None && type().getGroundWeapon().damageAmount() > 0 || type().isReaver();
+                }
         );
     }
 

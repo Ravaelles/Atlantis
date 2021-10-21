@@ -624,6 +624,18 @@ public class Select<T> {
         return this;
     }
 
+    public Select<T> tanksSieged() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
+            if (!unit.isType(AUnitType.Terran_Siege_Tank_Siege_Mode)) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
     public Select<T> tanks() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
