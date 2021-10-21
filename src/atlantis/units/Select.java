@@ -747,7 +747,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (!unit.isMeleeUnit()) {
+            if (!unit.isMelee()) {
                 unitsIterator.remove();
             }
         }

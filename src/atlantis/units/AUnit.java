@@ -17,8 +17,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.position.PositionUtil;
-import atlantis.util.Vector;
-import atlantis.util.Vectors;
+import atlantis.util.*;
 import bwapi.*;
 
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ import java.util.Map;
  * Also you can always reference original Unit class via u() method, but please avoid it as code will be very
  * hard to migrate to another bridge. I've already used 3 of them in my career so far.
  */
-public class AUnit implements Comparable, HasPosition, AUnitOrders {
+public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 12;
 
@@ -46,9 +45,10 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //    public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
 
     private final Unit u;
+    private Cache<AUnit, Object> cache;
     private AUnitType _lastCachedType;
     private UnitAction unitAction = UnitActions.INIT;
-    private final AUnit _cachedNearestMeleeEnemy = null;
+//    private final AUnit _cachedNearestMeleeEnemy = null;
     public int _lastAttackOrder;
     public int _lastAttackFrame;
     public int _lastRetreat;
@@ -90,6 +90,7 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         }
 
         this.u = u;
+        this.cache = new Cache<>();
 //        this.innerID = firstFreeID++;
         
         // Cached type helpers
@@ -239,20 +240,25 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+//        return super.hashCode();
+        return getID();
     }
 
-    public int compareTo(Object o) {
-        int compare;
-
-        if (o instanceof AUnit) {
-            compare = ((AUnit) o).getID();
-        } else {
-            compare = o.hashCode();
-        }
-
-        return Integer.compare(this.hashCode(), compare);
+    @Override
+    public int compareTo(AUnit otherUnit) {
+        return Integer.compare(this.hashCode(), otherUnit.hashCode());
     }
+//    public int compareTo(Object o) {
+//        int compare;
+//
+//        if (o instanceof AUnit) {
+//            compare = ((AUnit) o).getID();
+//        } else {
+//            compare = o.hashCode();
+//        }
+//
+//        return Integer.compare(this.hashCode(), compare);
+//    }
 
     @Override
     public boolean equals(Object obj) {
@@ -325,15 +331,21 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is considered to be "ranged" unit (not melee).
      */
-    public boolean isRangedUnit() {
-        return type().isRangedUnit();
+    public boolean isRanged() {
+        return (boolean) cache.get(
+                "isRanged",
+                () -> type().isRangedUnit()
+        );
     }
 
     /**
      * Returns true if given unit is considered to be "melee" unit (not ranged).
      */
-    public boolean isMeleeUnit() {
-        return type().isMeleeUnit();
+    public boolean isMelee() {
+        return (boolean) cache.get(
+                "isMelee",
+                () -> type().isMeleeUnit()
+        );
     }
 
     // =========================================================
@@ -714,31 +726,37 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
      * Returns true if unit has anti-ground weapon.
      */
     public boolean canAttackGroundUnits() {
-        return type().getGroundWeapon() != WeaponType.None;
+        return (boolean) cache.get(
+                "canAttackGroundUnits",
+                () -> type().getGroundWeapon() != WeaponType.None && type().getGroundWeapon().damageAmount() > 0
+        );
     }
 
     /**
      * Returns true if unit has anti-air weapon.
      */
     public boolean canAttackAirUnits() {
-        return type().getAirWeapon() != WeaponType.None;
+        return (boolean) cache.get(
+                "canAttackAirUnits",
+                () -> type().getAirWeapon() != WeaponType.None
+        );
     }
 
     /**
      * Caches combat eval of this unit for the time of one frame.
      */
-    public void updateCombatEval(double eval) {
-        _lastTimeCombatEval = AGame.getTimeFrames();
-        _lastCombatEval = eval;
-    }
+//    public void updateCombatEval(double eval) {
+//        _lastTimeCombatEval = AGame.getTimeFrames();
+//        _lastCombatEval = eval;
+//    }
 
-    public double getCombatEvalCachedValueIfNotExpired() {
-        if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
-            return _lastCombatEval;
-        } else {
-            return -123456;
-        }
-    }
+//    public double getCombatEvalCachedValueIfNotExpired() {
+//        if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
+//            return _lastCombatEval;
+//        } else {
+//            return -123456;
+//        }
+//    }
 
     public WeaponType getAirWeapon() {
         return type().getAirWeapon();
@@ -881,13 +899,18 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
     }
 
     public int getMaxHitPoints() {
-        int hp = u.getType().maxHitPoints() + getMaxShields();
-        if (hp == 0) {
-            System.err.println("Max HP = 0 for");
-            System.err.println(this);
-        }
+        return (int) cache.get(
+                "getMaxHitPoints",
+                () -> {
+                    int hp = u.getType().maxHitPoints() + getMaxShields();
+                    if (hp == 0) {
+                        System.err.println("Max HP = 0 for");
+                        System.err.println(this);
+                    }
 
-        return hp;
+                    return hp;
+                }
+        );
     }
 
     public boolean isIdle() {
@@ -931,8 +954,8 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
 //        else ! detected))
     }
 
-    public boolean invisible() {
-        return !u.isVisible() || u.isCloaked() || u.isBurrowed();
+    public boolean notVisible() {
+        return !u.isVisible();
     }
 
     public boolean isMiningOrExtractingGas() {
@@ -1330,11 +1353,11 @@ public class AUnit implements Comparable, HasPosition, AUnitOrders {
         return squad != null ? squad.mission() : null;
     }
 
-    public boolean isQuickerOrSameAs(Units enemies) {
+    public boolean isQuickerOrSameSpeedAs(Units enemies) {
         return enemies.stream().noneMatch(u -> u.getSpeed() > this.getSpeed());
     }
 
-    public boolean isQuickerOrSameAs(AUnit enemy) {
+    public boolean isQuickerOrSameSpeedAs(AUnit enemy) {
         return enemy.getSpeed() < this.getSpeed();
     }
 

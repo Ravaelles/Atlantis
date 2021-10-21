@@ -38,7 +38,7 @@ public class ABadWeather {
     // =========================================================
 
     private static boolean handleMines(AUnit unit) {
-        boolean canShootAtMines = unit.isRangedUnit() && unit.canAttackGroundUnits();
+        boolean canShootAtMines = unit.isRanged() && unit.canAttackGroundUnits();
 
         int radius = Math.max(7, canShootAtMines ? unit.getGroundWeapon().maxRange() + 3 : 0);
         List<AUnit> mines = Select.allOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(radius, unit).listUnits();

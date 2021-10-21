@@ -171,7 +171,7 @@ public class TerranSiegeTankManager {
         }
         
         // Don't siege when enemy is too close
-        if (distanceToEnemy < 10 && !enemy.isRangedUnit()) {
+        if (distanceToEnemy < 10 && !enemy.isRanged()) {
             tank.setTooltip("Dont siege");
             return false;
         }

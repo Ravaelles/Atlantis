@@ -15,7 +15,7 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // =========================================================
 
-        AUnit target = null;
+        AUnit target;
         double groundRange = unit.getWeaponRangeGround();
 
         // =========================================================

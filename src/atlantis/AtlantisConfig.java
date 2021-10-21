@@ -1,9 +1,6 @@
 package atlantis;
 
 import atlantis.production.orders.ABuildOrder;
-import atlantis.production.orders.ProtossBuildOrder;
-import atlantis.production.orders.TerranBuildOrder;
-import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 
@@ -46,7 +43,7 @@ public class AtlantisConfig {
     /**
      * Will modify bwapi.ini to use this map.
      */
-    public static final String MAP = MapToUse.activeMapPath();
+    public static final String MAP = UseMap.activeMapPath();
 
     // ==========================================================
     // === These are default values that can be overridden in ===

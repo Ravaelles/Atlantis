@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.util.A;
+import atlantis.util.Cache;
 import bwapi.TechType;
 import bwapi.UnitType;
 import bwapi.WeaponType;
@@ -19,9 +20,28 @@ import java.util.Map;
  */
 public class AUnitType implements Comparable<AUnitType> {
 
+    public static boolean disableErrorReporting = false;
     private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
+    private static int firstFreeID = 1;
+
+    private final int ID;
+//    private String _name = null;
+//    private String _shortName = null;
+
+    // =========================================================
+
+    public static Collection<AUnitType> getAllUnitTypes() {
+        if (instances.size() < 30) {
+            for (UnitType type : UnitType.values()) {
+                createFrom(type);
+            }
+        }
+
+        return instances.values();
+    }
 
     private final UnitType ut;
+    private Cache<UnitType, Object> cache;
 
     // =========================================================
 
@@ -31,6 +51,7 @@ public class AUnitType implements Comparable<AUnitType> {
         }
         this.ut = ut;
         this.ID = firstFreeID++;
+        this.cache = new Cache<>();
     }
 
     /**
@@ -70,14 +91,14 @@ public class AUnitType implements Comparable<AUnitType> {
         return ut;
     }
 
-    private static AUnitType getBWMirrorUnitType(UnitType ut) {
-        for (AUnitType unitType : instances.values()) {
-            if (unitType.ut.equals(ut)) {
-                return unitType;
-            }
-        }
-        return null;
-    }
+//    private static AUnitType getBWMirrorUnitType(UnitType ut) {
+//        for (AUnitType unitType : instances.values()) {
+//            if (unitType.ut.equals(ut)) {
+//                return unitType;
+//            }
+//        }
+//        return null;
+//    }
 
     // =========================================================
     // =========================================================
@@ -297,23 +318,6 @@ public class AUnitType implements Comparable<AUnitType> {
     // =========================================================
     // =========================================================
     // =========================================================
-    private static int firstFreeID = 1;
-
-    private final int ID;
-    private String _name = null;
-    private String _shortName = null;
-    public static boolean disableErrorReporting = false;
-
-    // =========================================================
-    public static Collection<AUnitType> getAllUnitTypes() {
-        if (instances.size() < 30) {
-            for (UnitType type : UnitType.values()) {
-                createFrom(type);
-            }
-        }
-
-        return instances.values();
-    }
 
     /**
      * You can "Terran_Marine" or "Terran Marine" or even "Marine".
@@ -395,26 +399,10 @@ public class AUnitType implements Comparable<AUnitType> {
      * Returns name for of unit type like e.g. "Zerg Zergling", "Terran Marine", "Protoss Gateway".
      */
     public String getName() {
-        if (_name == null) {
-            _name = ut.toString();
-        }
-        return _name;
-//        if (_name == null) {
-//            try {
-//                for (AUnitType type : instances) {
-//                    if (type.equals(this)) {
-//                        System.out.println(type + " / " + this);
-//                        _name = type.getName().replace("_", " ");
-//                        break;
-//                    }
-//                }
-//            } catch (Exception ex) {
-//                System.err.println(ex.getMessage());
-//                System.err.println("Can't define name for unit type: " + this);
-//                return "error";
-//            }
-//        }
-//        return _name;
+        return (String) cache.get(
+                "getName",
+                () -> ut.toString()
+        );
     }
 
     // =========================================================
@@ -423,22 +411,28 @@ public class AUnitType implements Comparable<AUnitType> {
      * Returns short name for of unit type like e.g. "Zergling", "Marine", "Mutalisk", "Barracks".
      */
     public String getShortName() {
-        String name = getName();
-        if (_shortName == null) {
-            _shortName = name.replace("Terran_", "").replace("Protoss_", "").replace("Zerg_", "")
-                    .replace("Hero_", "").replace("Special_", "").replace("Powerup_", "").replace("_", " ")
-                    .replace("Terran ", "").replace("Protoss ", "").replace("Zerg ", "")
-                    .replace("Hero ", "").replace("Special ", "").replace("Powerup ", "")
-                    .replace("Resource ", "").replace("Resource_", "")
-                    .replace("Siege Mode", "").replace("_Siege_Mode", "")
-                    .replace("Tank Mode", "").replace("_Tank_Mode", "").trim();
-        }
-        
-        if (_shortName == "Unknown") {
-            System.err.println("Unknown? What? " + this);
-        }
+        return (String) cache.get(
+                "getShortName",
+                () -> {
+                    String name = getName();
+                    name.replace("Terran_", "").replace("Protoss_", "")
+                            .replace("Zerg_", "").replace("Hero_", "")
+                            .replace("Special_", "").replace("Powerup_", "")
+                            .replace("_", " ").replace("Terran ", "")
+                            .replace("Protoss ", "").replace("Zerg ", "")
+                            .replace("Hero ", "").replace("Special ", "")
+                            .replace("Powerup ", "").replace("Resource ", "")
+                            .replace("Resource_", "").replace("Siege Mode", "")
+                            .replace("_Siege_Mode", "").replace("Tank Mode", "")
+                            .replace("_Tank_Mode", "").trim();
 
-        return _shortName;
+                    if (name.equals("Unknown")) {
+                        System.err.println("Unknown? What? " + this);
+                    }
+
+                    return name;
+                }
+        );
     }
 
     // =========================================================

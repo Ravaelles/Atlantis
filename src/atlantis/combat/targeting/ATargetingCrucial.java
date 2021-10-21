@@ -15,7 +15,24 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // =========================================================
         // =========================================================
 
-        AUnit target = null;
+        AUnit target;
+
+        if ((target = targetInShootingRange(unit)) != null) {
+            return target;
+        }
+
+        if ((target = targetOutsideShootingRange(unit)) != null) {
+            return target;
+        }
+
+        return null;
+    }
+
+    // =========================================================
+
+    private static AUnit targetInShootingRange(AUnit unit) {
+        AUnit target;
+
         double groundRange = unit.getWeaponRangeGround();
 //        double airRange = unit.getWeaponRangeAir();
 
@@ -31,7 +48,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         }
 
         // =========================================================
-        // Targetable observers
+        // Targetable observers near carriers
 
         target = units.clone()
                 .ofType(AUnitType.Protoss_Observer)
@@ -42,6 +59,13 @@ public class ATargetingCrucial extends AEnemyTargeting {
             return target;
         }
 
+        return null;
+    }
+
+    private static AUnit targetOutsideShootingRange(AUnit unit) {
+        AUnit target;
+        double groundRange = unit.getWeaponRangeGround();
+
         // =========================================================
         // DEADLIEST shit out there,
         // Move to attack it WAY NOT IN RANGE
@@ -49,7 +73,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         target = units.clone()
                 .ofType(
                         AUnitType.Zerg_Defiler,
-                        AUnitType.Protoss_Carrier,
+                        AUnitType.Protoss_Observer,
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
                         AUnitType.Terran_Siege_Tank_Siege_Mode
                 )
@@ -114,15 +138,16 @@ public class ATargetingCrucial extends AEnemyTargeting {
                         AUnitType.Zerg_Ultralisk
                 ).nearestTo(unit);
         return target;
-
-        // =========================================================
     }
 
     public static boolean isCrucialUnit(AUnit target) {
+        if (target.is(AUnitType.Protoss_Carrier)) {
+            return Select.enemies(AUnitType.Protoss_Observer).inRadius(12, target).isEmpty();
+        }
+
         return target.is(
                 AUnitType.Protoss_Observer,
                 AUnitType.Protoss_Dark_Templar,
-//                AUnitType.Protoss_Carrier,
                 AUnitType.Zerg_Defiler
         );
     }

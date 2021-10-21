@@ -39,7 +39,7 @@ public class AEnemyTargeting {
 
         // =========================================================
 
-        AUnit target = null;
+        AUnit target;
         buildings = Select.enemy()
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)

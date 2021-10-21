@@ -15,8 +15,23 @@ public class ATargetingImportant extends AEnemyTargeting {
         // =========================================================
         // =========================================================
 
-        AUnit target = null;
-        double groundRange = unit.getWeaponRangeGround();
+        AUnit target;
+
+        if ((target = targetInShootingRange(unit)) != null) {
+            return target;
+        }
+
+        if ((target = targetOutsideShootingRange(unit)) != null) {
+            return target;
+        }
+
+        return null;
+    }
+
+    // =========================================================
+
+    private static AUnit targetInShootingRange(AUnit unit) {
+        AUnit target;
 
         // =========================================================
         // Target COMBAT UNITS IN RANGE
@@ -43,12 +58,18 @@ public class ATargetingImportant extends AEnemyTargeting {
             return target;
         }
 
+        return null;
+    }
+
+    private static AUnit targetOutsideShootingRange(AUnit unit) {
+        AUnit target;
+
         // =========================================================
         // Target COMBAT UNITS IN RANGE
 
         target = units.clone()
                 .combatUnits()
-                .inRadius(11, unit)
+                .inRadius(12, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -67,11 +88,10 @@ public class ATargetingImportant extends AEnemyTargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret
                 )
-                .inRadius(10, unit)
+                .inRadius(12, unit)
                 .nearestTo(unit);
-        return target;
 
-        // =========================================================
+        return null;
     }
 
 }

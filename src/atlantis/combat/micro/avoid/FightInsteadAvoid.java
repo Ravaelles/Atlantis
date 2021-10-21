@@ -9,19 +9,19 @@ import atlantis.units.Units;
 
 public class FightInsteadAvoid {
 
-    private AUnit unit;
-    private Units enemies;
+    private final AUnit unit;
+    private final Units enemies;
 
     /**
-     * Enemy units dangerously close, extracted as variables for easier access
+     * Enemy units of different types that are dangerously close, extracted as variables for easier access
      */
-    private AUnit defensiveBuilding;
-    private AUnit invisibleDT;
-    private AUnit invisibleCombatUnit;
-    private AUnit lurkerOrReaver;
-    private AUnit tankSieged;
-    private AUnit ranged;
-    private AUnit melee;
+    private final AUnit defensiveBuilding;
+    private final AUnit invisibleDT;
+    private final AUnit invisibleCombatUnit;
+    private final AUnit lurkerOrReaver;
+    private final AUnit tankSieged;
+    private final AUnit ranged;
+    private final AUnit melee;
 
     // =========================================================
 
@@ -64,29 +64,33 @@ public class FightInsteadAvoid {
 
         // Combat units
         else {
-            if (wayTooManyUnitsNearby(unit)) {
-                return true;
-            }
-
-            if (tankSieged != null) {
-                return unit.mission().allowsToAttackEnemyUnit(unit, tankSieged);
-            }
-
-            if (defensiveBuilding != null) {
-                return unit.mission().allowsToAttackDefensiveBuildings();
-            }
-
-            if (unit.isMeleeUnit()) {
-                return fightAsMeleeUnit(unit, enemies);
-            } else {
-                return fightAsRangedUnit(unit, enemies);
-            }
+            return fightAsCombatUnit();
         }
     }
 
     // =========================================================
 
-    private boolean fightAsRangedUnit(AUnit unit, Units enemies) {
+    private boolean fightAsCombatUnit() {
+        if (wayTooManyUnitsNearby(unit)) {
+            return true;
+        }
+
+        if (tankSieged != null) {
+            return unit.mission().allowsToAttackEnemyUnit(unit, tankSieged);
+        }
+
+        if (defensiveBuilding != null) {
+            return unit.mission().allowsToAttackDefensiveBuildings();
+        }
+
+        if (unit.isMelee()) {
+            return fightAsMeleeUnit();
+        } else {
+            return fightAsRangedUnit();
+        }
+    }
+
+    private boolean fightAsRangedUnit() {
         if (melee != null) {
             return false;
         }
@@ -94,29 +98,23 @@ public class FightInsteadAvoid {
         if (ranged != null) {
 
             // Dragoon faster than Marines, can outrun them
-            if (unit.isQuickerOrSameAs(enemies)) {
+            if (unit.isQuickerOrSameSpeedAs(enemies)) {
 
                 // If needs to wait before next attack
-                if (unit.getCooldownCurrent() >= 5) {
-                    return false;
-                }
-
-                return true;
+                return unit.getCooldownCurrent() < 5;
             }
 
             // Dragoon slower than Vultures, cannot outrun them
             else {
-                if (unit.HPPercent() > 50 && unit.getCooldownCurrent() <= 2 && unit.hasWeaponRange(ranged, 0)) {
-                    return true;
-                }
+                return unit.HPPercent() > 50 && unit.getCooldownCurrent() <= 2 && unit.hasWeaponRange(ranged, 0);
             }
         }
 
         return false;
     }
 
-    private boolean fightAsMeleeUnit(AUnit unit, Units enemies) {
-        if (invisibleDT != null) {
+    private boolean fightAsMeleeUnit() {
+        if (invisibleDT != null || invisibleCombatUnit != null) {
             return false;
         }
 

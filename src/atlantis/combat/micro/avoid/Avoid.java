@@ -49,10 +49,10 @@ public class Avoid {
     protected static String getTooltip(AUnit unit, AUnit enemy) {
         String dist = "(" + A.digit(unit.distanceTo(enemy)) + ")";
 
-        if (enemy.invisible()) {
+        if (enemy.isMelee()) {
             return "MeleeRun" + dist;
         }
-        else if (enemy.isRangedUnit()) {
+        else if (enemy.isRanged()) {
             return "RangedRun" + dist;
         }
         else {

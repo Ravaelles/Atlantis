@@ -115,14 +115,7 @@ public class Atlantis implements BWEventListener {
         // === All game actions that take place every frame ==================================================
         
         try {
-
-            // If game is running (not paused), proceed with all actions.
-            if (gameCommander != null) {
-                gameCommander.update();
-            }
-            else {
-                System.err.println("Game Commander is null, totally screwed.");
-            }
+            OnEveryFrame.update();
         }
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
@@ -518,6 +511,10 @@ public class Atlantis implements BWEventListener {
      */
     public static Game game() {
         return getInstance().game;
+    }
+
+    public AGameCommander getGameCommander() {
+        return gameCommander;
     }
 
     // =========================================================
