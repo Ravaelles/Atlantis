@@ -52,7 +52,7 @@ public class AAttackEnemyUnit {
         }
 
         unit.attackUnit(enemy);
-        unit.setTooltip("ShootTank(" + unit.cooldownRemaining() + ")");
+//        unit.setTooltip("ShootTank(" + unit.cooldownRemaining() + ")");
         return true;
     }
 

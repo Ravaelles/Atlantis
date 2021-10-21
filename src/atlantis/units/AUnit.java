@@ -1383,11 +1383,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int cooldownPercent() {
-        if (cooldownRemaining() <= 0) {
+        if (cooldownRemaining() <= 0 || getCooldownAbsolute() == 0) {
             return 100;
         }
 
-        return 100 * cooldownRemaining() / getCooldownAbsolute();
+        return 100 * cooldownRemaining() / (getCooldownAbsolute() + 1);
     }
 
     /**
