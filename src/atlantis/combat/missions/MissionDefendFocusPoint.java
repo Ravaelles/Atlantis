@@ -52,7 +52,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //
 //        // === Load infantry into bunkers ==========================
 //
-//        if (TerranInfantryManager.tryLoadingInfantryIntoBunkerIfPossible(unit)) {
+//        if (TerranInfantry.tryLoadingInfantryIntoBunkerIfPossible(unit)) {
 //            return true;
 //        }
 //

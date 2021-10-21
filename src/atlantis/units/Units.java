@@ -249,8 +249,8 @@ public class Units {
                 if (p2 == null) {
                     return 1;
                 }
-                double distance1 = p1.getPosition().distanceTo(position);
-                double distance2 = p2.getPosition().distanceTo(position);
+                double distance1 = p1.getPosition().distTo(position);
+                double distance2 = p2.getPosition().distTo(position);
                 if (distance1 == distance2) {
                     return 0;
                 } else {
@@ -266,7 +266,7 @@ public class Units {
      * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first unit will be the one closest to given position.
      */
-    public Units sortByGroundDistanceTo(final Position position, final boolean nearestFirst) {
+    public Units sortByGroundDistTo(final Position position, final boolean nearestFirst) {
         if (position == null) {
             return null;
         }

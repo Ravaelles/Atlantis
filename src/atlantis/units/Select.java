@@ -462,7 +462,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = (AUnit) unitsIterator.next();
-            if (unit.distanceTo(otherUnit) > maxDist) {
+            if (unit.distTo(otherUnit) > maxDist) {
                 unitsIterator.remove();
             }
         }
@@ -477,7 +477,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = (AUnit) unitsIterator.next();
-            if (unit.distanceTo(position) > maxDist) {
+            if (unit.distTo(position) > maxDist) {
                 unitsIterator.remove();
             }
         }
@@ -622,6 +622,21 @@ public class Select<T> {
         return this;
     }
 
+    public Select<T> tanks() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
+            if (!unit.isType(
+                    AUnitType.Terran_Siege_Tank_Siege_Mode,
+                    AUnitType.Terran_Siege_Tank_Tank_Mode
+            )) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
     public Select<T> groundUnits() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
@@ -747,7 +762,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (!unit.isMelee()) {
+            if (!unit.melee()) {
                 unitsIterator.remove();
             }
         }
@@ -1200,7 +1215,7 @@ public class Select<T> {
         sortDataByDistanceTo(position, true);
         AUnit nearestUnit = (AUnit) data.get(0);
         
-        if (nearestUnit != null && nearestUnit.distanceTo(position) < maxLength) {
+        if (nearestUnit != null && nearestUnit.distTo(position) < maxLength) {
             return nearestUnit;
         }
         else {

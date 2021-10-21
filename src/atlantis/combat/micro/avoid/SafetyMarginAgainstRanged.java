@@ -1,7 +1,6 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
-import atlantis.util.A;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
 
@@ -13,7 +12,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 + ourMovementBonus(defender)
                 + enemyMovementBonus(defender, attacker);
 
-        return attacker.distanceTo(defender) - criticalDist;
+        return attacker.distTo(defender) - criticalDist;
     }
 
 }

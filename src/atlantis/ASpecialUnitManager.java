@@ -3,8 +3,8 @@ package atlantis;
 import atlantis.combat.micro.terran.*;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.protoss.ProtossShieldBattery;
-import atlantis.special.protoss.ProtossObserverManager;
-import atlantis.special.protoss.ProtossReaverManager;
+import atlantis.special.protoss.ProtossObserver;
+import atlantis.special.protoss.ProtossReaver;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -25,11 +25,11 @@ public class ASpecialUnitManager {
             }
 
             if (unit.type().isSiegeTank()) {
-                return TerranSiegeTankManager.update(unit);
+                return TerranTank.update(unit);
             } else if (unit.type().isVulture()) {
-                return TerranVultureManager.update(unit);
+                return TerranVulture.update(unit);
             } else if (unit.type().isTerranInfantry()) {
-                return TerranInfantryManager.update(unit);
+                return TerranInfantry.update(unit);
             } else if (unit.isType(AUnitType.Terran_Medic)) {
                 return TerranMedic.update(unit);
             }
@@ -40,9 +40,11 @@ public class ASpecialUnitManager {
         else if (AGame.isPlayingAsProtoss()) {
             if (ProtossShieldBattery.handle(unit)) {
                 return true;
-            } else if (unit.is(AUnitType.Protoss_Observer) && ProtossObserverManager.update(unit)) {
+            } else if (unit.is(AUnitType.Protoss_Observer) && ProtossObserver.update(unit)) {
                 return true;
-            } else return unit.is(AUnitType.Protoss_Reaver) && ProtossReaverManager.update(unit);
+            } else if (unit.is(AUnitType.Protoss_High_Templar) && ProtossObserver.update(unit)) {
+                return true;
+            } else return unit.is(AUnitType.Protoss_Reaver) && ProtossReaver.update(unit);
         }
 
         // === Zerg ========================================

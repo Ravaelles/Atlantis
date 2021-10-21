@@ -16,7 +16,7 @@ public interface HasPosition {
             return false;
         }
 
-        return getPosition().distanceTo(otherPosition.getPosition()) <= maxDist;
+        return getPosition().distTo(otherPosition.getPosition()) <= maxDist;
     }
 
     default boolean distToMoreThan(HasPosition otherPosition, double minDist) {
@@ -24,6 +24,6 @@ public interface HasPosition {
             return false;
         }
 
-        return getPosition().distanceTo(otherPosition.getPosition()) >= minDist;
+        return getPosition().distTo(otherPosition.getPosition()) >= minDist;
     }
 }

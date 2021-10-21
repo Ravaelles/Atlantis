@@ -262,7 +262,7 @@ public class AScoutManager {
         if (goTo == null || scoutingAroundBaseWasInterrupted) {
             goTo = useNearestPolygonPoint(region, scout);
         } else {
-            if (scout.distanceTo(goTo) <= 3) {
+            if (scout.distTo(goTo) <= 3) {
                 scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + deltaIndex)
                         % scoutingAroundBasePoints.size();
                 if (scoutingAroundBaseNextPolygonIndex < 0) {

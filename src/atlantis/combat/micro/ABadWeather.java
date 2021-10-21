@@ -38,7 +38,7 @@ public class ABadWeather {
     // =========================================================
 
     private static boolean handleMines(AUnit unit) {
-        boolean canShootAtMines = unit.isRanged() && unit.canAttackGroundUnits();
+        boolean canShootAtMines = unit.ranged() && unit.canAttackGroundUnits();
 
         int radius = Math.max(7, canShootAtMines ? unit.getGroundWeapon().maxRange() + 3 : 0);
         List<AUnit> mines = Select.allOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(radius, unit).listUnits();
@@ -46,7 +46,7 @@ public class ABadWeather {
 
             // Our mine
             if (mine.isOur()) {
-                if (mine.isMoving() && mine.distanceTo(unit) <= 3.5) {
+                if (mine.isMoving() && mine.distTo(unit) <= 3.5) {
                     unit.moveAwayFrom(mine.getPosition(), 2, "Avoid mine!");
                     return true;
                 }
@@ -78,9 +78,9 @@ public class ABadWeather {
     }
 
     private static boolean handleEnemyMineAsRangedUnit(AUnit unit, AUnit mine) {
-        if (mine.distanceTo(unit) <= 2.0) {
+        if (mine.distTo(unit) <= 2.0) {
             unit.runningManager().runFrom(mine, 3);
-            unit.setTooltip("AVOID MINE(" + mine.distanceTo(unit) + ")");
+            unit.setTooltip("AVOID MINE(" + mine.distTo(unit) + ")");
             return true;
         }
 
@@ -90,7 +90,7 @@ public class ABadWeather {
     }
 
     private static boolean handleMoveAwayIfCloserThan(AUnit unit, APosition avoidCenter, double minDist) {
-        if (unit.distanceTo(avoidCenter) < minDist) {
+        if (unit.distTo(avoidCenter) < minDist) {
             unit.moveAwayFrom(avoidCenter, 3, "Avoid effect");
             return true;
         }

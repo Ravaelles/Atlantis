@@ -23,7 +23,11 @@ public class DontInterruptStartedAttacks {
 
         // =========================================================
 
-        if ((shouldAvoidAnyUnit || unit.isUnderAttack(40)) && unit.woundPercent() > 65) {
+        if (unit.melee()) {
+            return true;
+        }
+
+        if ((shouldAvoidAnyUnit || unit.isUnderAttack(40)) && !unit.melee() && unit.woundPercent() > 65) {
             return false;
         }
 

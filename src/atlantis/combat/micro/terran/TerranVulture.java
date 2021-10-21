@@ -8,7 +8,7 @@ import atlantis.wrappers.ATech;
 import bwapi.TechType;
 
 
-public class TerranVultureManager {
+public class TerranVulture {
 
     public static boolean update(AUnit unit) {
         return handlePlantMines(unit);
@@ -40,7 +40,7 @@ public class TerranVultureManager {
 
         // Disallow mines close to buildings
         AUnit nearestBuilding = Select.ourBuildings().nearestTo(unit);
-        if (nearestBuilding != null && nearestBuilding.distanceTo(unit) <= 7) {
+        if (nearestBuilding != null && nearestBuilding.distTo(unit) <= 7) {
             unit.setTooltip("Don't mine");
             return false;
         }

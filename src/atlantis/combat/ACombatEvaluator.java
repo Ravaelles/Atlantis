@@ -50,7 +50,7 @@ public class ACombatEvaluator {
      */
     public static boolean isSituationFavorable(AUnit unit, boolean isPendingFight) {
         AUnit nearestEnemy = Select.enemy().nearestTo(unit);
-        if (nearestEnemy == null || unit.distanceTo(nearestEnemy) >= 15) {
+        if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
             return true;
         }
 

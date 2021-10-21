@@ -58,7 +58,7 @@ public class ACombatCommander {
         AUnit nearestEnemy = Select.enemyRealUnits().nearestTo(unit);
         if (nearestEnemy != null) {
             String tooltip = unit.getTooltip() + "";
-            if (tooltip.contains(" \\ ")) {
+            if (tooltip.contains(" / ")) {
                 unit.setTooltip("");
             }
 

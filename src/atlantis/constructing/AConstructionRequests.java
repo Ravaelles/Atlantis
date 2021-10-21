@@ -153,7 +153,7 @@ public class AConstructionRequests {
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
                     && constructionOrder.getBuildingType().equals(type)
-                    && position.distanceTo(constructionOrder.getPositionToBuildCenter()) <= radius) {
+                    && position.distTo(constructionOrder.getPositionToBuildCenter()) <= radius) {
                 total++;
             }
         }

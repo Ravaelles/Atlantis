@@ -80,8 +80,8 @@ public class ARunningManager {
 
         // === Actual run order ====================================
 
-        if (runTo != null && runTo.distanceTo(unit) >= 0.2) {
-            dist = runTo.distanceTo(unit);
+        if (runTo != null && runTo.distTo(unit) >= 0.2) {
+            dist = runTo.distTo(unit);
             unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")");
             return makeUnitRun();
         }
@@ -135,10 +135,10 @@ public class ARunningManager {
         // =============================================================================
 
         if (
-                runTo != null && runTo.distanceTo(unit) <= 0.3
+                runTo != null && runTo.distTo(unit) <= 0.3
                 && isPossibleAndReasonablePosition(unit.getPosition(), runTo.getPosition(), true)
         ) {
-            System.err.println("Invalid run position, dist = " + runTo.distanceTo(unit));
+            System.err.println("Invalid run position, dist = " + runTo.distTo(unit));
             APainter.paintLine(unit, runTo, Color.Purple);
             APainter.paintLine(
                     unit.getPosition().translateByPixels(0, 1),
@@ -221,7 +221,7 @@ public class ARunningManager {
 
     private APosition canRunByShowingBackToEnemyTo(AUnit unit, APosition runAwayFrom, double dist) {
         APosition runTo;
-        double vectorLength = unit.getPosition().distanceTo(runAwayFrom);
+        double vectorLength = unit.getPosition().distTo(runAwayFrom);
 
         double vectorX = runAwayFrom.getX() - unit.getPosition().getX();
         double vectorY = runAwayFrom.getY() - unit.getPosition().getY();
@@ -336,7 +336,7 @@ public class ARunningManager {
         double mostDistant = -99;
         APosition bestPosition = null;
         for (APosition position : potentialPositionsList) {
-            double dist = runAwayFrom.distanceTo(position);
+            double dist = runAwayFrom.distTo(position);
             if (bestPosition == null || dist >= mostDistant) {
                 bestPosition = position;
                 mostDistant = dist;
@@ -380,7 +380,7 @@ public class ARunningManager {
             if (!otherUnit.isMoving() && !otherUnit.isRunning()) {
                 boolean result = otherUnit.runningManager().runFrom(unit, 0.6);
                 APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
-                otherUnit.setTooltip("Make space (" + otherUnit.distanceTo(unit) + ")");
+                otherUnit.setTooltip("Make space (" + otherUnit.distTo(unit) + ")");
 //                AGameSpeed.pauseGame();
             }
         }
@@ -448,7 +448,7 @@ public class ARunningManager {
 
             // Update last time run order was issued
             unit._lastStartedRunning = A.now();
-            unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distanceTo(runTo)) + ")");
+            unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distTo(runTo)) + ")");
 
             // Make all other units very close to it run as well
             notifyNearbyUnitsToMakeSpace(unit);
@@ -474,7 +474,7 @@ public class ARunningManager {
     }
 
     public boolean isRunning() {
-        if (runTo != null && unit.distanceTo(runTo) >= 0.3) {
+        if (runTo != null && unit.distTo(runTo) >= 0.3) {
             return true;
 //            if (unit.lastStartedRunningAgo(3)) {
 //                return true;

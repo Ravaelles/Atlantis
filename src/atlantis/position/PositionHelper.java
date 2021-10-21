@@ -73,7 +73,7 @@ public class PositionHelper {
         
         for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
             AUnit otherUnit = iterator.next();
-            double distanceToUnit = unit.distanceTo(otherUnit);
+            double distanceToUnit = unit.distTo(otherUnit);
             double factor = Math.pow(distanceToUnit, power);
             totalFactor += factor;
             totalX += otherUnit.getX() * factor;

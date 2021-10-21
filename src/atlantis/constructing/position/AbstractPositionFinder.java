@@ -110,7 +110,7 @@ public abstract class AbstractPositionFinder {
         }
 
         for (ABaseLocation base : AMap.getBaseLocations()) {
-            if (!base.isStartLocation() && base.getPosition().distanceTo(position) <= 5.6) {
+            if (!base.isStartLocation() && base.getPosition().distTo(position) <= 5.6) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";
                 return true;
             }

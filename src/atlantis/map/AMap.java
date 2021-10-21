@@ -164,7 +164,7 @@ public class AMap {
 //            naturalRegion.
 //            APosition center = APosition.create(chokepoint.getCenter());
 //            if (chokepoint.getCenter() > 1) {
-            if (chokepoint.getCenter().distanceTo(chokepointForMainBase) > 1) {
+            if (chokepoint.getCenter().distTo(chokepointForMainBase) > 1) {
                 cached_basesToChokepoints.put(relativeTo, chokepoint);
                 return chokepoint;
             }
@@ -655,7 +655,7 @@ public class AMap {
         // Check for planned constructions
         for (ConstructionOrder constructionOrder : AConstructionRequests.getAllConstructionOrders()) {
             APosition constructionPlace = constructionOrder.getPositionToBuildCenter();
-            if (constructionPlace != null && constructionPlace.distanceTo(baseLocation.getPosition()) < 8) {
+            if (constructionPlace != null && constructionPlace.distTo(baseLocation.getPosition()) < 8) {
                 return false;
             }
         }
@@ -701,13 +701,13 @@ public class AMap {
      * <p>
      * Returns land distance (in tiles) between unit and given position.
      */
-    public static double getGroundDistance(AUnit unit, APosition runTo) {
+    public static double groundDist(AUnit unit, APosition runTo) {
         return BWTA.getGroundDistance(unit.getPosition().toTilePosition(), runTo.toTilePosition()) / 32;
     }
 
     public static boolean distanceToNearestChokeLessThan(AUnit unit, double dist) {
         for (AChokepoint choke : getChokePoints()) {
-            if ((choke.getCenter().distanceTo(unit) - choke.getWidth()) <= dist) {
+            if ((choke.getCenter().distTo(unit) - choke.getWidth()) <= dist) {
                 return true;
             }
         }

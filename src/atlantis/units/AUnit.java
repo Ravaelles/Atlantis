@@ -333,7 +333,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is considered to be "ranged" unit (not melee).
      */
-    public boolean isRanged() {
+    public boolean ranged() {
         return (boolean) cache.get(
                 "isRanged",
                 () -> type().isRangedUnit()
@@ -343,7 +343,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is considered to be "melee" unit (not ranged).
      */
-    public boolean isMelee() {
+    public boolean melee() {
         return (boolean) cache.get(
                 "isMelee",
                 () -> type().isMeleeUnit()
@@ -415,7 +415,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double getWeaponRangeGround() {
+    public double groundWeaponRange() {
         return type().getGroundWeapon().maxRange() / 32;
     }
 
@@ -429,7 +429,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double getWeaponRangeAir() {
+    public double airWeaponRange() {
         return type().getAirWeapon().maxRange() / 32;
     }
 
@@ -547,7 +547,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
     // Auxiliary
 
-    public double distanceTo(AUnit otherUnit) {
+    public double distTo(AUnit otherUnit) {
         return PositionUtil.distanceTo(this, otherUnit);
     }
 
@@ -558,7 +558,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return PositionUtil.groundDistanceTo(this.getPosition(), otherUnit.getPosition());
     }
 
-    public double distanceTo(Object o) {
+    public double distTo(Object o) {
         return PositionUtil.distanceTo(getPosition(), o);
     }
 
@@ -639,7 +639,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        double dist = this.getPosition().distanceTo(targetUnit);
+        double dist = this.getPosition().distTo(targetUnit);
         return (weaponAgainstThisUnit.minRange() / 32) <= dist && dist <= (weaponAgainstThisUnit.maxRange() / 32 + safetyMargin);
 
     }
@@ -654,6 +654,22 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         } else {
             return getAirWeapon();
         }
+    }
+
+    public boolean distToLessThan(AUnit target, double maxDist) {
+        if (target == null) {
+            return false;
+        }
+
+        return distTo(target) <= maxDist;
+    }
+
+    public boolean distToMoreThan(AUnit target, double minDist) {
+        if (target == null) {
+            return false;
+        }
+
+        return distTo(target) >= minDist;
     }
 
     // === Getters ============================================= & setters
@@ -1093,7 +1109,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Terran_SCV     - 4.92
      * Terran_Vulture - 6.4
      */
-    public double getSpeed() {
+    public double maxSpeed() {
         return type().ut().topSpeed();
     }
 
@@ -1313,7 +1329,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isQuick() {
-        return getSpeed() >= 5.8;
+        return maxSpeed() >= 5.8;
     }
 
     public boolean isAccelerating() {
@@ -1381,15 +1397,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isQuickerOrSameSpeedAs(Units enemies) {
-        return enemies.stream().noneMatch(u -> u.getSpeed() > this.getSpeed());
+        return enemies.stream().noneMatch(u -> u.maxSpeed() > this.maxSpeed());
     }
 
     public boolean isQuickerOrSameSpeedAs(AUnit enemy) {
-        return enemy.getSpeed() < this.getSpeed();
+        return enemy.maxSpeed() < this.maxSpeed();
     }
 
     public boolean isSlowerThan(Units enemies) {
-        return enemies.stream().anyMatch(u -> u.getSpeed() > this.getSpeed());
+        return enemies.stream().anyMatch(u -> u.maxSpeed() > this.maxSpeed());
+    }
+
+    public boolean hasBiggerRangeThan(Units enemies) {
+        if (isGroundUnit()) {
+            return enemies.stream().noneMatch(u -> u.groundWeaponRange() > this.groundWeaponRange());
+        }
+        else {
+            return enemies.stream().noneMatch(u -> u.groundWeaponRange() > this.airWeaponRange());
+        }
     }
 
     public boolean hasNothingInQueue() {
@@ -1406,6 +1431,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isTargettedBy(AUnit attacker) {
         return this.equals(attacker.getTarget());
+    }
+
+    public boolean inActOfShooting() {
+        return lastStartedAttackLessThanAgo(8);
     }
 
 

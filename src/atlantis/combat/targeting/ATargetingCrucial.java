@@ -33,7 +33,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
     private static AUnit targetInShootingRange(AUnit unit) {
         AUnit target;
 
-        double groundRange = unit.getWeaponRangeGround();
+        double groundRange = unit.groundWeaponRange();
 //        double airRange = unit.getWeaponRangeAir();
 
         // =========================================================
@@ -64,7 +64,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
 
     private static AUnit targetOutsideShootingRange(AUnit unit) {
         AUnit target;
-        double groundRange = unit.getWeaponRangeGround();
+        double groundRange = unit.groundWeaponRange();
 
         // =========================================================
         // DEADLIEST shit out there,
@@ -72,14 +72,23 @@ public class ATargetingCrucial extends AEnemyTargeting {
 
         target = units.clone()
                 .ofType(
-                        AUnitType.Zerg_Defiler,
                         AUnitType.Protoss_Observer,
-                        AUnitType.Terran_Siege_Tank_Tank_Mode,
-                        AUnitType.Terran_Siege_Tank_Siege_Mode
+                        AUnitType.Zerg_Defiler
                 )
 //                .inShootRangeOf(unit)
                 .inRadius(11, unit)
-                .mostWounded();
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        target = units.clone()
+                .ofType(
+                        AUnitType.Terran_Siege_Tank_Tank_Mode,
+                        AUnitType.Terran_Siege_Tank_Siege_Mode
+                )
+                .inRadius(7, unit)
+                .randomWithSeed(unit.getID());
         if (target != null) {
             return target;
         }
@@ -91,6 +100,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
                         AUnitType.Terran_Siege_Tank_Siege_Mode
                 )
+                .inRadius(8, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

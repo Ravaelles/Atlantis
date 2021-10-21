@@ -7,7 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 
-public class ProtossObserverManager {
+public class ProtossObserver {
 
     private static AUnit observerForArmy = null;
     private static AUnit observerForSquadScout = null;
@@ -50,7 +50,7 @@ public class ProtossObserverManager {
         AUnit scout = Squad.getAlphaSquad().getSquadScout();
         if (scout != null) {
             observerForSquadScout = observer;
-            if (scout.distanceTo(observer) > 1) {
+            if (scout.distTo(observer) > 1) {
                 observerForSquadScout.move(scout, UnitActions.MOVE, "Follow scout");
             }
             return true;
@@ -67,7 +67,7 @@ public class ProtossObserverManager {
         APosition goTo = Squad.getAlphaSquad().getSquadCenter();
         if (goTo != null) {
             observerForArmy = observer;
-            if (goTo.distanceTo(observer) > 1) {
+            if (goTo.distTo(observer) > 1) {
                 observerForArmy.move(goTo, UnitActions.MOVE, "Follow army");
             }
             return true;
@@ -92,7 +92,7 @@ public class ProtossObserverManager {
         AUnit dangerousInvisibleEnemy = enemyDangerousHiddenUnit();
         if (dangerousInvisibleEnemy != null) {
             observerForBase = observer;
-            if (observerForBase.distanceTo(dangerousInvisibleEnemy) > 0.2) {
+            if (observerForBase.distTo(dangerousInvisibleEnemy) > 0.2) {
                 observerForBase.move(dangerousInvisibleEnemy.getPosition(), UnitActions.MOVE, "Reveal enemy in base");
             }
             return true;

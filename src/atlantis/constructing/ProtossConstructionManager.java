@@ -21,7 +21,7 @@ public class ProtossConstructionManager {
             if (order.getBuilder() == null || order.getPositionToBuild() == null) {
                 continue;
             }
-            int distBuilderToConstruction = (int) (order.getBuilder().distanceTo(order.getPositionToBuild())) * 10;
+            int distBuilderToConstruction = (int) (order.getBuilder().distTo(order.getPositionToBuild())) * 10;
             closestBuilders.changeValueBy(order.getBuilder(), distBuilderToConstruction);
         }
         

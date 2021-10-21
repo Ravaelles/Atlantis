@@ -115,10 +115,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
-        if (nearestBase != null && nearestBase.distanceTo(position) <= 7) {
+        if (nearestBase != null && nearestBase.distTo(position) <= 7) {
             Collection<AUnit> mineralsInRange = Select.minerals().inRadius(8, position).listUnits();
             for (AUnit mineral : mineralsInRange) {
-                if (mineral.distanceTo(position) <= 4) {
+                if (mineral.distTo(position) <= 4) {
                     return true;
                 }
             }

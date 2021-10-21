@@ -3,7 +3,6 @@ package atlantis.combat.squad;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 
 public class SquadScout {
@@ -25,7 +24,7 @@ public class SquadScout {
             return false;
         }
 
-        if (enemyBase.distanceTo(unit) > 4) {
+        if (enemyBase.distTo(unit) > 4) {
             unit.move(enemyBase.getPosition(), UnitActions.SCOUT, "Scout!");
             return true;
         }

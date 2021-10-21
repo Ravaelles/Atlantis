@@ -7,7 +7,6 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import bwta.BaseLocation;
 
 public class ASpecialPositionFinder {
     
@@ -44,7 +43,7 @@ public class ASpecialPositionFinder {
         for (AUnit base : Select.ourBases().listUnits()) {
             AUnit geyser = Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
-            if (geyser != null && geyser.distanceTo(base) < 12) {
+            if (geyser != null && geyser.distTo(base) < 12) {
                 APosition position = geyser.getPosition().translateByPixels(-64, -32);
                 return position;
             }

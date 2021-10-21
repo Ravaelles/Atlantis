@@ -45,7 +45,7 @@ public class TerranFlyingBuildingManager {
         
         // Move towards focus point if needed
         if (focusPoint != null) {
-            double distToFocusPoint = focusPoint.distanceTo(flyingBuilding);
+            double distToFocusPoint = focusPoint.distTo(flyingBuilding);
             
             if (distToFocusPoint > 2) {
                 flyingBuilding.move(focusPoint, UnitActions.MOVE, "Fly baby!");

@@ -3,8 +3,6 @@ package atlantis.constructing.position;
 import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.debug.APainter;
-import atlantis.map.ABaseLocation;
-import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -131,24 +129,24 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
-        double distToBase = nearestBase.distanceTo(position);
+        double distToBase = nearestBase.distTo(position);
         if (nearestBase != null && distToBase <= 8) {
             for (AUnit mineral : Select.minerals().inRadius(8, position).listUnits()) {
-                if (mineral.distanceTo(position) <= (building.isPylon() ? 5 : 4)) {
+                if (mineral.distTo(position) <= (building.isPylon() ? 5 : 4)) {
                     _CONDITION_THAT_FAILED = "Too close to mineral";
                     return true;
                 }
             }
 
             for (AUnit geyser : Select.geysers().inRadius(8, position).listUnits()) {
-                if (geyser.distanceTo(position) <= (building.isPylon() ? 5 : 4)) {
+                if (geyser.distTo(position) <= (building.isPylon() ? 5 : 4)) {
                     _CONDITION_THAT_FAILED = "Too close to geyser";
                     return true;
                 }
             }
 
             for (AUnit gasBuilding : Select.geyserBuildings().inRadius(8, position).listUnits()) {
-                if (gasBuilding.distanceTo(position) <= 2 && distToBase <= 4) {
+                if (gasBuilding.distTo(position) <= 2 && distToBase <= 4) {
                     _CONDITION_THAT_FAILED = "Too close to gas building";
                     return true;
                 }

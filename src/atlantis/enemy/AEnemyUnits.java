@@ -59,7 +59,7 @@ public class AEnemyUnits {
                 APosition discoveredBase = enemyUnitData.getPosition();
                 
                 for (ABaseLocation startingLocation : AMap.getStartingLocations(false)) {
-                    if (discoveredBase.distanceTo(startingLocation.getPosition()) <= 7) {
+                    if (discoveredBase.distTo(startingLocation.getPosition()) <= 7) {
 //                        System.out.println("Discovered main enemy base");
                         return true;
                     }
@@ -90,7 +90,7 @@ public class AEnemyUnits {
             
             for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
                 if (enemy.type().isBuilding()) {
-                    double dist = enemy.getPosition().distanceTo(ourMainBase);
+                    double dist = enemy.getPosition().distTo(ourMainBase);
                     if (minDist > dist) {
                         minDist = dist;
                         best = null;

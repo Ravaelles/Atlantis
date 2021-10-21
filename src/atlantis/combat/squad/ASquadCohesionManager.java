@@ -31,7 +31,7 @@ public class ASquadCohesionManager {
             return false;
         }
 
-        if (!unit.isRunning() && unit.distanceTo(squadCenter(unit)) >= 11) {
+        if (!unit.isRunning() && unit.distTo(squadCenter(unit)) >= 11) {
             unit.move(squadCenter(unit), UnitActions.MOVE, "Ran too far!");
             return true;
         }
@@ -130,7 +130,7 @@ public class ASquadCohesionManager {
             unit.move(
                     unit.getPosition().translatePercentTowards(nearestFriend, 20),
                     UnitActions.MOVE,
-                    "Together(" + (int) nearestFriend.distanceTo(unit) + ")"
+                    "Together(" + (int) nearestFriend.distTo(unit) + ")"
             );
             return true;
         }
@@ -142,13 +142,13 @@ public class ASquadCohesionManager {
         double maxDistToSquadCenter = preferredDistToSquadCenter(unit.squadSize());
 
         if (
-                unit.distanceTo(center) > maxDistToSquadCenter
-                        && unit.distanceTo(nearestFriend) > 3
+                unit.distTo(center) > maxDistToSquadCenter
+                        && unit.distTo(nearestFriend) > 3
         ) {
             unit.move(
                     unit.getPosition().translatePercentTowards(center, 20),
                     UnitActions.MOVE,
-                    "StickTogether(" + (int) center.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
+                    "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
             );
             return true;
         }
@@ -158,12 +158,12 @@ public class ASquadCohesionManager {
 
     private static boolean isNearestFriendTooFar(AUnit unit, AUnit nearestFriend, APosition center) {
         if (
-                unit.distanceTo(nearestFriend) > 2.3
+                unit.distTo(nearestFriend) > 2.3
         ) {
             unit.move(
                     center.translatePercentTowards(unit, 50),
                     UnitActions.MOVE,
-                    "Closer(" + (int) center.distanceTo(unit) + "/" + (int) unit.distanceTo(nearestFriend) + ")"
+                    "Closer(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
             );
             return true;
         }

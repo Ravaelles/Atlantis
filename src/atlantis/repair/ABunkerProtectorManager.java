@@ -17,7 +17,7 @@ public class ABunkerProtectorManager {
 
             // Bunker fully HEALTHY
             else {
-                double distanceToUnit = unit.distanceTo(protector);
+                double distanceToUnit = unit.distTo(protector);
                 if (distanceToUnit > 1 && !protector.isMoving()) {
                     protector.move(unit.getPosition(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.shortName());
                     return true;

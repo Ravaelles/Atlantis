@@ -3,7 +3,6 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.A;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
@@ -19,7 +18,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         criticalDist = Math.min(criticalDist, 3.9);
 
-        return attacker.distanceTo(defender) - criticalDist;
+        return attacker.distTo(defender) - criticalDist;
     }
 
     // =========================================================

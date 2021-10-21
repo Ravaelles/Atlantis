@@ -33,7 +33,7 @@ public class Avoid {
         APainter.paintCircle(enemiesCenter, 2, Color.Orange);
 
         if (unit.runningManager().runFrom(enemiesCenter, getRunDistance(unit, enemiesCenter))) {
-            unit.setTooltip("GroupAvoid(" + A.digit(unit.distanceTo(enemiesCenter)) + ")");
+            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(enemiesCenter)) + ")");
             return true;
         }
 
@@ -47,12 +47,12 @@ public class Avoid {
     }
 
     protected static String getTooltip(AUnit unit, AUnit enemy) {
-        String dist = "(" + A.digit(unit.distanceTo(enemy)) + ")";
+        String dist = "(" + A.digit(unit.distTo(enemy)) + ")";
 
-        if (enemy.isMelee()) {
+        if (enemy.melee()) {
             return "MeleeRun" + dist;
         }
-        else if (enemy.isRanged()) {
+        else if (enemy.ranged()) {
             return "RangedRun" + dist;
         }
         else {

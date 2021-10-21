@@ -2,7 +2,6 @@ package atlantis.combat.micro.managers;
 
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionUnitManager;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
@@ -23,11 +22,11 @@ public class ContainUnitManager extends MissionUnitManager {
     // =========================================================
 
     private boolean handleComeCloserToChokepoint(AUnit unit) {
-        if (unit.distanceTo(mission.focusPoint()) > optimalDistance()) {
+        if (unit.distTo(mission.focusPoint()) > optimalDistance()) {
             return unit.move(
                     mission.focusPoint(),
                     UnitActions.MOVE_TO_FOCUS,
-                    "#Contain(" + A.digit(mission.focusPoint().distanceTo(unit)) + ")"
+                    "#Contain(" + A.digit(mission.focusPoint().distTo(unit)) + ")"
             );
         }
 

@@ -66,7 +66,7 @@ public class ARepairerManager {
             boolean isCriticallyImportant = unitToRepair.isTank() || unitToRepair.isBunker();
             AUnit worker = defineBestRepairerFor(unitToRepair, isCriticallyImportant);
             if (worker != null) {
-                if (AGame.isUms() && worker.distanceTo(unitToRepair) > 10 && !worker.hasPathTo(unitToRepair)) {
+                if (AGame.isUms() && worker.distTo(unitToRepair) > 10 && !worker.hasPathTo(unitToRepair)) {
                     return false;
                 }
 

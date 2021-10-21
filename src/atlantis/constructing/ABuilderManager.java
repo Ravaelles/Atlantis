@@ -63,7 +63,7 @@ public class ABuilderManager {
         // =========================================================
 
         double minDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.6 : 1.1;
-        double distance = builder.distanceTo(buildPositionCenter);
+        double distance = builder.distTo(buildPositionCenter);
         String distString = "(" + A.digit(distance) + ")";
 
 //        ACamera.centerCameraOn(builder.getPosition());

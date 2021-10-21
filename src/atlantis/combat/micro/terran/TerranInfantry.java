@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 
-public class TerranInfantryManager {
+public class TerranInfantry {
 
     public static boolean update(AUnit unit) {
         return tryLoadingInfantryIntoBunkerIfPossible(unit);
@@ -27,7 +27,7 @@ public class TerranInfantryManager {
         AUnit nearestBunker = defineBunkerToLoadTo(unit);
         int maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 15 : 6;
         
-        if (nearestBunker != null && nearestBunker.distanceTo(unit) < maxDistanceToLoad) {
+        if (nearestBunker != null && nearestBunker.distTo(unit) < maxDistanceToLoad) {
             unit.load(nearestBunker);
             unit.setTooltip("GTFInto bunker!");
             return true;
@@ -49,7 +49,7 @@ public class TerranInfantryManager {
             if (Missions.isGlobalMissionDefend() && mainBase != null) {
                 AUnit mostDistantBunker = bunkers
                         .units()
-                        .sortByGroundDistanceTo(mainBase.getPosition(), false)
+                        .sortByGroundDistTo(mainBase.getPosition(), false)
                         .first();
                 return mostDistantBunker;
             }

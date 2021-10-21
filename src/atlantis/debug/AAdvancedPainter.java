@@ -233,7 +233,7 @@ public class AAdvancedPainter extends APainter {
         AUnit mainBase = Select.mainBase();
         String desc = "";
         if (focusPoint != null && mainBase != null) {
-            desc = "(" + ((int) mainBase.distanceTo(focusPoint)) + " tiles)";
+            desc = "(" + ((int) mainBase.distTo(focusPoint)) + " tiles)";
         }
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
@@ -1123,7 +1123,7 @@ public class AAdvancedPainter extends APainter {
         }
 
         for (AUnit mineral : Select.minerals().inRadius(8, mainBase).list()) {
-            String dist = A.digit(mineral.distanceTo(mainBase));
+            String dist = A.digit(mineral.distTo(mainBase));
             int assigned = AWorkerManager.countWorkersAssignedTo(mineral);
             setTextSizeLarge();
             paintTextCentered(mineral, dist + " (" + assigned + ")", Color.White);

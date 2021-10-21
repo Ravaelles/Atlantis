@@ -135,7 +135,7 @@ public class AWorkerManager {
             return true;
         } 
         else if (building.type().isGasBuilding()) {
-            return worker.isGatheringGas() && worker.distanceTo(building) <= 10;
+            return worker.isGatheringGas() && worker.distTo(building) <= 10;
         }
         else if (building.isBase()) {
             if (worker.isGatheringMinerals() || worker.isCarryingMinerals()) {

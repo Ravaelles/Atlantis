@@ -17,7 +17,7 @@ public class MissionContain extends Mission {
     @Override
     public boolean update(AUnit unit) {
         APosition focusPoint = focusPoint();
-        unit.setTooltip("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distanceTo(unit)) : null) + ")");
+        unit.setTooltip("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
 
         // =========================================================
 
@@ -43,17 +43,17 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         APosition focusPoint = focusPoint();
 
-        if (enemy.distanceTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
+        if (enemy.distTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
             return true;
         }
 
         // Only attack enemies near squad center
-        if (enemy.distanceTo(focusPoint) <= 13) {
+        if (enemy.distTo(focusPoint) <= 13) {
             return true;
         }
 
         // Allow to defend base
         APosition natural = AMap.getNaturalBaseLocation();
-        return natural != null && enemy.distanceTo(natural) <= 35;
+        return natural != null && enemy.distTo(natural) <= 35;
     }
 }

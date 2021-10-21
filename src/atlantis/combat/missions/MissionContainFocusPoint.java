@@ -44,13 +44,20 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     }
 
     private APosition containPointIfEnemyBaseNotKnown() {
-        AUnit mainBase = Select.mainBase();
-        if (mainBase == null) {
-            return null;
+        AUnit nearestEnemy = Select.enemy().nearestTo(Select.our().first());
+        if (nearestEnemy != null) {
+            return nearestEnemy.getPosition();
         }
 
-        AChokepoint choke = AMap.getChokepointForNaturalBase(mainBase.getPosition());
-        return choke == null ? null : choke.getCenter();
+        return null;
+
+//        AUnit mainBase = Select.mainBase();
+//        if (mainBase == null) {
+//            return null;
+//        }
+//
+//        AChokepoint choke = AMap.getChokepointForNaturalBase(mainBase.getPosition());
+//        return choke == null ? null : choke.getCenter();
     }
 
 }

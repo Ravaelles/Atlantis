@@ -15,7 +15,7 @@ public class AUnitBeingReparedManager {
             return false;
         }
 
-        double distanceToRepairer = repairer.distanceTo(unitBeingRepared);
+        double distanceToRepairer = repairer.distTo(unitBeingRepared);
         if (unitBeingRepared.isRunning()) {
             return false;
         }

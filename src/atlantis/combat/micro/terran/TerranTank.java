@@ -10,7 +10,7 @@ import atlantis.units.Select;
 import atlantis.util.A;
 
 
-public class TerranSiegeTankManager {
+public class TerranTank {
     private static AUnit nearestEnemyUnit;
     private static double nearestEnemyUnitDist;
     private static AUnit nearestEnemyBuilding;
@@ -25,10 +25,10 @@ public class TerranSiegeTankManager {
         // =========================================================
         
         nearestEnemyUnit = Select.enemyRealUnits().combatUnits().groundUnits().nearestTo(tank);
-        nearestEnemyUnitDist = nearestEnemyUnit != null ? tank.distanceTo(nearestEnemyUnit) : 999;
+        nearestEnemyUnitDist = nearestEnemyUnit != null ? tank.distTo(nearestEnemyUnit) : 999;
 
         nearestEnemyBuilding = Select.enemy().buildings().nearestTo(tank);
-        nearestEnemyBuildingDist = nearestEnemyBuilding != null ? tank.distanceTo(nearestEnemyBuilding) : 999;
+        nearestEnemyBuildingDist = nearestEnemyBuilding != null ? tank.distTo(nearestEnemyBuilding) : 999;
 
 //        String string = (enemy != null ? enemy.getShortName() : "NULL");
 //        if (enemy != null) {
@@ -90,7 +90,7 @@ public class TerranSiegeTankManager {
 
             if (tank.squad().isMissionContain()) {
                 APosition focusPoint = Missions.globalMission().focusPoint();
-                if (focusPoint != null && tank.distanceTo(focusPoint) >= 13 && A.chance(2)) {
+                if (focusPoint != null && tank.distTo(focusPoint) >= 13 && A.chance(2)) {
                     tank.unsiege();
                     tank.setTooltip("Unsiege");
                     return true;
@@ -104,7 +104,7 @@ public class TerranSiegeTankManager {
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
         if (tank.getCooldownCurrent() <= 3) {
             for (AUnit enemy : Select.enemyRealUnits().effCloaked().inRadius(11, tank).list()) {
-                if (enemy.distanceTo(tank) >= tank.getGroundWeaponMinRange()) {
+                if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
                     tank.attackPosition(enemy.getPosition());
                     tank.setTooltip("Smash invisible!");
                     return true;
@@ -123,7 +123,7 @@ public class TerranSiegeTankManager {
         // Mission is CONTAIN
         if (Missions.isGlobalMissionContain()) {
             APosition focusPoint = Missions.globalMission().focusPoint();
-            if (focusPoint != null && tank.distanceTo(focusPoint) <= 7.2) {
+            if (focusPoint != null && tank.distTo(focusPoint) <= 7.2) {
                 tank.siege();
                 tank.setTooltip("Contain siege!");
                 return true;
@@ -158,7 +158,7 @@ public class TerranSiegeTankManager {
     // =========================================================
     
     private static boolean handleNearEnemyCombatBuilding(AUnit tank, AUnit combatBuilding) {
-        double distanceToEnemy = tank.distanceTo(combatBuilding);
+        double distanceToEnemy = tank.distTo(combatBuilding);
         
         if (distanceToEnemy <= 9.5) {
             tank.siege();
@@ -177,7 +177,7 @@ public class TerranSiegeTankManager {
         }
         
         // Don't siege when enemy is too close
-        if (distanceToEnemy < 10 && !enemy.isRanged()) {
+        if (distanceToEnemy < 10 && !enemy.ranged()) {
             tank.setTooltip("Dont siege");
             return false;
         }
@@ -205,7 +205,7 @@ public class TerranSiegeTankManager {
             return true;
         }
         else {
-            return tank.distanceTo(choke.getCenter()) > 4 || (choke.getWidth() > 3);
+            return tank.distTo(choke.getCenter()) > 4 || (choke.getWidth() > 3);
         }
     }
 

@@ -65,7 +65,7 @@ public class TerranMedic {
     private static boolean handleTooFarFromRealInfantry(AUnit medic) {
         AUnit unitAssignedForMedic = getInfantryAssignedForThisMedic(medic);
         if (unitAssignedForMedic != null) {
-            if (unitAssignedForMedic.distanceTo(medic) > 1.9) {
+            if (unitAssignedForMedic.distTo(medic) > 1.9) {
                 if (Select.ourTerranInfantryWithoutMedics().inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic).count() <= 2) {
                     medic.move(unitAssignedForMedic.getPosition(), UnitActions.MOVE, "Stay close");
                     return true;

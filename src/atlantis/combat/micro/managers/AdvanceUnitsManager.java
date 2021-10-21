@@ -1,6 +1,5 @@
 package atlantis.combat.micro.managers;
 
-import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -23,7 +22,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
     public static boolean moveToFocusPoint(AUnit unit, APosition focusPoint) {
         double optimalDist = 6.5;
-        double distToFocusPoint = unit.distanceTo(focusPoint);
+        double distToFocusPoint = unit.distTo(focusPoint);
         double margin = Math.max(0, (unit.squadSize() - 6) / 10);
 
         // Too close

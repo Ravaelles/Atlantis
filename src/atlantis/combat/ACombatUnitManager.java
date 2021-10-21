@@ -80,7 +80,7 @@ public class ACombatUnitManager {
         }
 
         if (unit.isRunning()) {
-            unit.setTooltip("Running(" + A.digit(unit.distanceTo(unit.getTargetPosition())) + ")");
+            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
             return true;
         }
 

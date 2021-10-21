@@ -3,6 +3,8 @@ package atlantis.combat.micro;
 import atlantis.combat.targeting.AEnemyTargeting;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
+import atlantis.units.Select;
+import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
 public class AAttackEnemyUnit {
@@ -25,7 +27,7 @@ public class AAttackEnemyUnit {
 
         if (!unit.canAttackThisUnit(enemy, false, true)) {
             unit.setTooltip("Invalid target");
-            System.err.println("Invalid target for " + unit + ": " + enemy + " (" + unit.distanceTo(enemy) + ")");
+            System.err.println("Invalid target for " + unit + ": " + enemy + " (" + unit.distTo(enemy) + ")");
             return false;
         }
 
@@ -35,20 +37,32 @@ public class AAttackEnemyUnit {
 
         if (enemy != null) {
 //            System.err.println(unit.shortName() + " --> " + enemy.shortName());
-            unit.setTooltip("Attacking " + enemy.shortName() + " (" + unit.getCooldownCurrent() + ")");
+            unit.setTooltip("->" + enemy.shortName() + "(" + unit.getCooldownCurrent() + ")");
             APainter.paintLine(unit, enemy, Color.Red);
-            if (!enemy.equals(unit.getTarget())) {
-//                if (unit.isMoving() && unit.hasWeaponRange(enemy, -0.2)) {
-//                    unit.stop("Stop&Attack");
-//                    System.out.println("STOP " + unit.getID());
-//                } else {
-                    unit.attackUnit(enemy);
-//                    System.out.println("ATTK " + unit.getID());
-//                }
-            }
+            processAttackUnit(unit, enemy);
             return true;
         } 
         
+        return false;
+    }
+
+    private static boolean processAttackUnit(AUnit unit, AUnit enemy) {
+        if (enemy.isTank() && enemy.distToMoreThan(unit, 0.4) && Select.all().inRadius(0.3, unit).atMost(3)) {
+            unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz!");
+            return true;
+        }
+
+        if (!enemy.equals(unit.getTarget())) {
+            unit.attackUnit(enemy);
+            return true;
+        }
+        //                if (unit.isMoving() && unit.hasWeaponRange(enemy, -0.2)) {
+//                    unit.stop("Stop&Attack");
+//                    System.out.println("STOP " + unit.getID());
+//                } else {
+//                    System.out.println("ATTK " + unit.getID());
+//                }
+
         return false;
     }
 

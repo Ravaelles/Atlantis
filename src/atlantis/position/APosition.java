@@ -113,7 +113,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
      * building dimensions.
      */
-    public double distanceTo(Position position) {
+    public double distTo(Position position) {
         return PositionUtil.distanceTo(p, position);
     }
 
@@ -121,7 +121,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return PositionUtil.groundDistanceTo(this, position);
     }
 
-    public double distanceTo(AChokepoint choke) {
+    public double distTo(AChokepoint choke) {
         return PositionUtil.distanceTo(p, choke);
     }
 
@@ -130,7 +130,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
      * building dimensions.
      */
-    public double distanceTo(AUnit unit) {
+    public double distTo(AUnit unit) {
         return PositionUtil.distanceTo(p, unit);
     }
     
