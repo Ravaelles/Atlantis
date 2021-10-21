@@ -222,7 +222,7 @@ public class ACombatEvaluator {
     }
 
     private static double evaluateUnitHPandDamage(AUnitType evaluateType, int hp, AUnit againstUnit) {
-        if (evaluateType.isSpiderMine() || evaluateType.isNeutralType() || evaluateType.isInvincible()) {
+        if (evaluateType.isMine() || evaluateType.isNeutralType() || evaluateType.isInvincible()) {
             return 0;
         }
         

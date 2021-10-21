@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.Atlantis;
+import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -63,7 +64,7 @@ public abstract class Mission {
 
         if (temporaryTarget != null) {
             unit.move(temporaryTarget, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy");
-            Atlantis.game().drawLineMap(unit.getPosition(), temporaryTarget, Color.Yellow);
+            APainter.paintLine(unit.getPosition(), temporaryTarget, Color.Black);
             return true;
         }
         else {
