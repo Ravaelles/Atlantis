@@ -188,10 +188,10 @@ public class AConstructionManager {
         if (building != null && !building.isCompleted() && building.isUnderAttack()) {
             
             // If it has less than 71HP or less than 60% and is close to being finished
-            if (building.getHP() <= 70 
-                    || (building.getRemainingBuildTime() <= 2 && building.HPPercent() < 60)
+            if (building.hp() <= 70
+                    || (building.getRemainingBuildTime() <= 2 && building.hpPercent() < 60)
                     || (building.getRemainingBuildTime() <= 3 && building.type().isMilitaryBuilding() 
-                        && building.HPPercent() < 60)) {
+                        && building.hpPercent() < 60)) {
                 order.cancel();
             }
         }

@@ -46,15 +46,15 @@ public class FightInsteadAvoid {
             return false;
         }
 
+        // Always avoid invisible combat units
+        if (invisibleDT != null || invisibleCombatUnit != null) {
+            return false;
+        }
+
         // Attacking critically important unit
         if (unit.isAttacking() && unit.getTarget() != null && ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
             unit.setTooltip("CrucialTarget!");
             return true;
-        }
-
-        // Always avoid invisible combat units
-        if (invisibleDT != null || invisibleCombatUnit != null) {
-            return false;
         }
 
         // Workers
@@ -106,7 +106,7 @@ public class FightInsteadAvoid {
 
             // Dragoon slower than Vultures, cannot outrun them
             else {
-                return unit.HPPercent() > 50 && unit.getCooldownCurrent() <= 2 && unit.hasWeaponRange(ranged, 0);
+                return unit.hpPercent() > 50 && unit.getCooldownCurrent() <= 2 && unit.hasWeaponRange(ranged, 0);
             }
         }
 
@@ -124,8 +124,8 @@ public class FightInsteadAvoid {
     // =========================================================
 
     private boolean wayTooManyUnitsNearby(AUnit unit) {
-        int unitsNearby = Select.all().inRadius(0.5, unit).count();
-        int ourNearby = Select.our().inRadius(0.5, unit).count();
+        int unitsNearby = Select.all().exclude(unit).inRadius(0.3, unit).count();
+        int ourNearby = Select.our().exclude(unit).inRadius(0.3, unit).count();
 
         if (unit.mission().isMissionAttack()) {
             return ourNearby >= 3 || unitsNearby >= 5;
@@ -139,7 +139,7 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        return unit.HPPercent() > 64;
+        return unit.hpPercent() > 75 && unit.distToLessThan(Select.mainBase(), 12);
     }
 
 }

@@ -115,7 +115,7 @@ public class AEnemyUnits {
     public static void discoveredEnemyUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.put(enemyUnit, new AFoggedUnit(enemyUnit));
 
-        if (enemyUnit.isEffectivelyCloaked()) {
+        if (enemyUnit.effCloaked()) {
             AStrategyResponse.hiddenUnitDetected(enemyUnit);
         }
     }

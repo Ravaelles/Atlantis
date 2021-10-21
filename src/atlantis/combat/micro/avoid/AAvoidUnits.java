@@ -15,15 +15,14 @@ public abstract class AAvoidUnits {
     // =========================================================
 
     public static boolean avoid(AUnit unit) {
-        Units enemiesDangerouslyClose = getUnitsToAvoid(unit);
+//        if (unit.lastStoppedRunningLessThanAgo(6)) {
+//            return false;
+//        }
 
+        Units enemiesDangerouslyClose = getUnitsToAvoid(unit);
         if (enemiesDangerouslyClose.isEmpty()) {
             return false;
         }
-//        if (unit.isFirstCombatUnit()) {
-//            System.out.println("--------------- " + unit);
-//            System.out.println(enemiesDangerouslyClose);
-//        }
 
         return WantsToAvoid.units(unit, enemiesDangerouslyClose);
     }

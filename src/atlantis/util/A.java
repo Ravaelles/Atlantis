@@ -1094,4 +1094,11 @@ public class A {
         return value;
     }
 
+    public static boolean isUms() {
+        return AGame.isUms();
+    }
+
+    public static boolean notUms() {
+        return !AGame.isUms();
+    }
 }

@@ -14,6 +14,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                         + beastBonus(defender)
                         + ourUnitsNearbyBonus(defender)
                         + ourMovementBonus(defender)
+                        + workerBonus(defender, attacker)
                         + enemyMovementBonus(defender, attacker);
 
         criticalDist = Math.min(criticalDist, 3.9);
@@ -33,7 +34,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 .inRadius(5, defender)
                 .count();
 
-        return beastNearby > 0 ? 1.2 : 0;
+        return beastNearby > 0 ? 1.6 : 0;
     }
 
 }

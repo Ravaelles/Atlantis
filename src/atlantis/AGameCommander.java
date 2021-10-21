@@ -36,8 +36,6 @@ public class AGameCommander {
             }
         }
 
-
-        AUnitStateManager.update();
         AStrategyCommander.update();
         ABuildingsCommander.update();
         AWorkerCommander.update();
@@ -51,12 +49,14 @@ public class AGameCommander {
             TerranSpecificBuildingsCommander.update();
         }
 
+        AUnitStateManager.update();
+
         // === Handle UMS ===================================================
         
         if (AGame.isUms()) {
-            AUnit unit = Select.ourCombatUnits().first();
-            if (unit != null) {
-//                AViewport.centerCameraOn(unit.getPosition());
+            AUnit umsUnit = Select.ourCombatUnits().first();
+            if (umsUnit != null) {
+                ACamera.centerCameraOn(umsUnit.getPosition());
             }
         }
     }

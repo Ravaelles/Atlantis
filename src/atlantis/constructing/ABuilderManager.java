@@ -1,8 +1,6 @@
 package atlantis.constructing;
 
 import atlantis.AGame;
-import atlantis.AGameSpeed;
-import atlantis.AViewport;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -11,9 +9,7 @@ import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
 import atlantis.util.Us;
-import bwapi.CommandType;
 import bwapi.TilePosition;
-import bwapi.UnitCommandType;
 
 public class ABuilderManager {
 
@@ -70,7 +66,7 @@ public class ABuilderManager {
         double distance = builder.distanceTo(buildPositionCenter);
         String distString = "(" + A.digit(distance) + ")";
 
-//        AViewport.centerCameraOn(builder.getPosition());
+//        ACamera.centerCameraOn(builder.getPosition());
 
         // Move builder to the build position
         if (distance > minDistanceToIssueBuildOrder) {

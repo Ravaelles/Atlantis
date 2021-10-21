@@ -131,7 +131,7 @@ public interface AUnitOrders {
             unit().setLastUnitOrderNow();
             return true;
         }
-        else if (unit().isSieged() && unit().getLastOrderFramesAgo() > 30 * 10) {
+        else if (unit().isSieged() && unit().getLastOrderFramesAgo() > 30 * 7) {
             unit().unsiege();
             unit().setLastUnitOrderNow();
             return true;
@@ -151,10 +151,10 @@ public interface AUnitOrders {
         
         APosition currentTarget = unit().getTargetPosition();
 
-        if (!unit().isUnitActionMove() || currentTarget == null || (!currentTarget.equals(target) || unit().isLastOrderFramesAgo(10))) {
-//                || A.now() % 25 == 0) {
-//            System.out.println(A.now() + " moved, " + unit().getUnitAction() 
-//+ ", dist = " + unit().distanceTo(target));
+        if (currentTarget == null || (!currentTarget.equals(target) || unit().isLastOrderFramesAgo(6))) {
+//            if (unit().isFirstCombatUnit()) {
+//                System.out.println(A.now() + " move");
+//            }
             u().move(target);
 
             unit().setLastUnitOrderNow()
@@ -277,7 +277,7 @@ public interface AUnitOrders {
     }
 
     /**
-     * Orders the unit to repair the specified unit. Only Terran SCVs can be ordered to repair, and the target
+     * Orders the unit to repair the specified unit. Only Terran SCvs. can be ordered to repair, and the target
      * must be a mechanical Terran unit or building. Parameters target The unit to repair. shiftQueueCommand
      * (optional) If this value is true, then the order will be queued instead of immediately executed. If
      * this value is omitted, then the order will be executed immediately by default. Returns true if the

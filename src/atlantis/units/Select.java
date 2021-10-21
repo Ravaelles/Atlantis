@@ -567,7 +567,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
-            if (unit.isEffectivelyCloaked()) {
+            if (unit.effCloaked()) {
                 unitsIterator.remove();
             }
         }
@@ -582,7 +582,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
-            if (!unit.isEffectivelyCloaked()) {
+            if (!unit.effCloaked()) {
                 unitsIterator.remove();
             }
         }
@@ -594,7 +594,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will probably not work with enemy units
-            if (!unit.isCloaked() || (unit.isCloaked() && !unit.isEffectivelyCloaked())) {
+            if (!unit.isCloaked() || (unit.isCloaked() && !unit.effCloaked())) {
 //                System.out.println(unit.shortName() + " // " + unit.getHitPoints());
                 unitsIterator.remove();
             }
@@ -732,7 +732,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());	//TODO: will work properly only on visible units
-            if (unit.getHitPoints() >= unit.getMaxHitPoints()) {
+            if (unit.hp() >= unit.maxHp()) {
                 unitsIterator.remove();
             }
         }
@@ -945,7 +945,7 @@ public class Select<T> {
         while (unitsIterator.hasNext()) {
             AUnit target = unitFrom(unitsIterator.next());
 
-            if (!attacker.hasWeaponToAttackThisUnit(target)) {
+            if (!attacker.hasWeaponToAttackThisUnit(target) || (checkVisibility && target.effCloaked())) {
                 unitsIterator.remove();
             }
             else if (checkShootingRange && !attacker.hasWeaponRange(target, 0)) {
@@ -1312,8 +1312,8 @@ public class Select<T> {
         
         for (Iterator<T> it = data.iterator(); it.hasNext();) {
             AUnit unit = (AUnit) it.next();
-            if (unit.getHP() < lowestHealth) {
-                lowestHealth = unit.getHP();
+            if (unit.hp() < lowestHealth) {
+                lowestHealth = unit.hp();
                 lowestHealthUnit = unit;
             }
         }
@@ -1533,7 +1533,7 @@ public class Select<T> {
             return null;
         }
 
-        Collections.sort(data, Comparator.comparingDouble(u -> ((AUnit) u).HPPercent()));
+        Collections.sort(data, Comparator.comparingDouble(u -> ((AUnit) u).hpPercent()));
 
 //        if (data.size() > 1) {
 //            System.out.println("data = ");

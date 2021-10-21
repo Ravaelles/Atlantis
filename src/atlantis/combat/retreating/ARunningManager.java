@@ -40,7 +40,8 @@ public class ARunningManager {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
         if (
                 unit.isRunning()
-//                && unit.lastStartedRunningMoreThanAgo(5)
+                && unit.lastStartedRunningMoreThanAgo(3)
+                && !unit.isUnderAttack(20)
                 && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.runningManager().stopRunning();
@@ -71,25 +72,22 @@ public class ARunningManager {
 
         // === Define run to position ==============================
 
-        AUnit base = Select.mainBase();
-        if (A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && base != null && base.distanceTo(unit) > 30) {
-            runTo = base.getPosition();
+        if (A.notUms() && A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30)) {
+            runTo = Select.mainBase().getPosition();
         } else {
             runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
         }
 
-        // =========================================================
-
-        if (runTo != null) {
-            dist = runTo.distanceTo(unit);
-            unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")");
-        } else {
-            unit.setTooltip("Cant run");
-        }
-
         // === Actual run order ====================================
 
-        return makeUnitRun();
+        if (runTo != null && runTo.distanceTo(unit) >= 0.2) {
+            dist = runTo.distanceTo(unit);
+            unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")");
+            return makeUnitRun();
+        }
+
+        unit.setTooltip("Cant run");
+        return false;
     }
 
 //    public boolean runFromCloseEnemies() {
@@ -136,7 +134,10 @@ public class ARunningManager {
         
         // =============================================================================
 
-        if (runTo != null && runTo.distanceTo(unit) <= 0.6) {
+        if (
+                runTo != null && runTo.distanceTo(unit) <= 0.3
+                && isPossibleAndReasonablePosition(unit.getPosition(), runTo.getPosition(), true)
+        ) {
             System.err.println("Invalid run position, dist = " + runTo.distanceTo(unit));
             APainter.paintLine(unit, runTo, Color.Purple);
             APainter.paintLine(
@@ -370,19 +371,20 @@ public class ARunningManager {
     /**
      * Tell other units that might be blocking our escape route to move.
      */
-//    private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
-//        double safetyRadiusSize = (unit.type().getDimensionLeft() + unit.type().getDimensionUp())
-//                / 64 * 1.35;
-//
-//        Select<?> units = Select.ourRealUnits().inRadius(safetyRadiusSize, unit);
-//        List<AUnit> otherUnits = units.listUnits();
-//        for (AUnit otherUnit : otherUnits) {
-//            if (!otherUnit.isRunning() && !unit.equals(otherUnit)) {
-//                boolean result = otherUnit.runFrom(unit);
-//                otherUnit.setTooltip("Make space (" + otherUnit.distanceTo(unit) + ")");
-//            }
-//        }
-//    }
+    private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
+        Select<AUnit> friendsTooClose = Select.ourRealUnits().exclude(unit)
+                .inRadius(0.17 + unit.woundPercent() / 300.0, unit);
+        APainter.paintCircleFilled(unit, 10, Color.Yellow);
+
+        for (AUnit otherUnit : friendsTooClose.list()) {
+            if (!otherUnit.isMoving() && !otherUnit.isRunning()) {
+                boolean result = otherUnit.runningManager().runFrom(unit, 0.6);
+                APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
+                otherUnit.setTooltip("Make space (" + otherUnit.distanceTo(unit) + ")");
+//                AGameSpeed.pauseGame();
+            }
+        }
+    }
 
     // =========================================================
     /**
@@ -449,7 +451,7 @@ public class ARunningManager {
             unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distanceTo(runTo)) + ")");
 
             // Make all other units very close to it run as well
-//            notifyNearbyUnitsToMakeSpace(unit);
+            notifyNearbyUnitsToMakeSpace(unit);
 
 //            if (hasMoved) {
             return true;

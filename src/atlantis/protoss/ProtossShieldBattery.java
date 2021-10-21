@@ -2,25 +2,24 @@ package atlantis.protoss;
 
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.util.A;
 
 public class ProtossShieldBattery {
 
     public static boolean handle(AUnit shieldBattery) {
-        if (shieldBattery.energy() >= 20) {
-            System.out.println(shieldBattery);
+        if (shieldBattery.energy() >= 30) {
             shieldBattery.removeTooltip();
-            for (AUnit unit : Select.ourRealUnits().inRadius(10, shieldBattery).listUnits()) {
-                if (unit.getShields() + 13 < unit.getMaxShields() ) {
-                    if (Select.enemyRealUnits().combatUnits().inRadius(5, unit).count() > 0) {
+            for (AUnit unit : Select.ourRealUnits().inRadius(11, shieldBattery).listUnits()) {
+                if (unit.getShields() + 30 < unit.getMaxShields() ) {
+                    if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).isNotEmpty()) {
                         return false;
                     }
 
-//                    if (!shieldBattery.equals(unit.getTarget())) {
-                        System.out.println("Recharge!");
+                    if (!shieldBattery.equals(unit.getTarget()) || A.chance(2)) {
                         unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
-//                    }
+                    }
                     shieldBattery.setTooltip("RECHARGE " + unit.shortName());
-//                    return true;
+                    return true;
                 }
             }
         }

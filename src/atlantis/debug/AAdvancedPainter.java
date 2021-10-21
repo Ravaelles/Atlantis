@@ -139,13 +139,8 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
             // === Paint targets for combat units
             // =========================================================
-            APosition targetPosition = unit.getTargetPosition();
-            if (targetPosition == null) {
-                targetPosition = unit.getTarget().getPosition();
-            }
-            if (targetPosition != null && unit.distanceTo(targetPosition) <= 15) {
-                paintLine(position, targetPosition, (unit.isAttacking() ? Color.Orange : Color.Yellow));
-            }
+
+            paintOurCombatUnitTargets(unit);
 
             // =========================================================
             // === Combat Evaluation Strength
@@ -174,6 +169,41 @@ public class AAdvancedPainter extends APainter {
             String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
                     + "(" + unit.getLastOrderFramesAgo() + ")";
             paintTextCentered(new APosition(position.getX(), position.getY() + 8), order, Color.Grey);
+        }
+    }
+
+    private static void paintOurCombatUnitTargets(AUnit unit) {
+        if (unit.isAttacking()) {
+            paintLine(unit, unit.getTarget(), (unit.isAttacking() ? Color.Green : Color.Yellow));
+        }
+//        if (!paintLine(unit, unit.getTarget(), (unit.isAttacking() ? Color.Green : Color.Yellow))) {
+//            paintLine(unit, unit.getTargetPosition(), (unit.isAttacking() ? Color.Orange : Color.Yellow));
+//        }
+    }
+
+    private static void paintEnemyTargets(AUnit enemy) {
+        paintLine(enemy, enemy.getTarget(), Color.Red);
+//        paintLine(enemy, enemy.getTargetPosition(), Color.Orange);
+    }
+
+    /**
+     * Paint extra information about visible enemy combat units.
+     */
+    static void paintEnemyCombatUnits() {
+        for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
+            paintCombatEval(enemy, true);
+            paintLifeBar(enemy);
+            paintEnemyTargets(enemy);
+        }
+
+        setTextSizeMedium();
+        for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
+            paintCircleFilled(enemy, 18, Color.Orange);
+            paintTextCentered(enemy, "Cloaked", Color.Orange);
+        }
+        for (AUnit enemy : Select.enemy().cloakedButEffVisible().listUnits()) {
+            paintCircleFilled(enemy, 18, Color.Green);
+            paintTextCentered(enemy, "CloakedVisible", Color.Green);
         }
     }
 
@@ -218,26 +248,6 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + AProductionQueue.getMineralsReserved(), Color.Grey);
         paintSideMessage("Reserved gas: " + AProductionQueue.getGasReserved(), Color.Grey);
-    }
-
-    /**
-     * Paint extra information about visible enemy combat units.
-     */
-    static void paintEnemyCombatUnits() {
-        for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
-            paintCombatEval(enemy, true);
-            paintLifeBar(enemy);
-        }
-
-        setTextSizeMedium();
-        for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
-            paintCircleFilled(enemy, 18, Color.Orange);
-            paintTextCentered(enemy, "Cloaked", Color.Orange);
-        }
-        for (AUnit enemy : Select.enemy().cloakedButEffVisible().listUnits()) {
-            paintCircleFilled(enemy, 18, Color.Green);
-            paintTextCentered(enemy, "CloakedVisible", Color.Green);
-        }
     }
 
     private static void paintCombatEval(AUnit unit, boolean isEnemy) {
@@ -702,7 +712,7 @@ public class AAdvancedPainter extends APainter {
             int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
             int labelTop = unit.getPosition().getY() + 8;
 
-            double progress = (double) unit.getHitPoints() / unit.getMaxHitPoints();
+            double progress = (double) unit.hp() / unit.maxHp();
             int labelProgress = (int) (1 + 99 * progress);
 
             // Paint box
@@ -762,7 +772,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintBuildingHealth() {
         for (AUnit unit : Select.ourBuildings().listUnits()) {
-            if (unit.isBunker() || unit.getHitPoints() >= unit.getMaxHitPoints()) { //isWounded()
+            if (unit.isBunker() || unit.hp() >= unit.maxHp()) { //isWounded()
                 continue;
             }
             int labelMaxWidth = 56;
@@ -770,7 +780,7 @@ public class AAdvancedPainter extends APainter {
             int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
             int labelTop = unit.getPosition().getY() + 13;
 
-            double hpRatio = (double) unit.getHitPoints() / unit.getMaxHitPoints();
+            double hpRatio = (double) unit.hp() / unit.maxHp();
             int hpProgress = (int) (1 + 99 * hpRatio);
 
             Color color = Color.Green;
@@ -1031,7 +1041,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintLifeBar(AUnit unit) {
 //        if (unit.isWounded()) {
         paintUnitProgressBar(unit, 17, 100, Color.Red);
-        paintUnitProgressBar(unit, 17, unit.HPPercent(), unit.isOur() ? Color.Green : Color.Yellow);
+        paintUnitProgressBar(unit, 17, unit.hpPercent(), unit.isOur() ? Color.Green : Color.Yellow);
 //        }
     }
 

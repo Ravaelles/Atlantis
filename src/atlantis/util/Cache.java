@@ -16,15 +16,18 @@ public class Cache<T, R> {
     // =========================================================
 
 
-    public R get(String cacheName, Callback callback) {
-        if (data.containsKey(cacheName)) {
-            return data.get(cacheName);
+    public R get(String cacheKey, Callback callback) {
+        if (data.containsKey(cacheKey)) {
+            return data.get(cacheKey);
         }
         else {
-            data.put(cacheName, (R) callback.run());
+            data.put(cacheKey, (R) callback.run());
         }
 
-        return data.get(cacheName);
+        return data.get(cacheKey);
     }
 
+    public void forget(R cacheKey) {
+        data.remove(cacheKey);
+    }
 }

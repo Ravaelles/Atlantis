@@ -16,12 +16,12 @@ public class AWorkerManager {
     public static boolean update(AUnit worker) {
         worker.removeTooltip();
 
-        if (workerManagerForbiddenFor(worker)) {
-            return false;
-        }
-
         if (AAvoidUnits.avoid(worker)) {
             return true;
+        }
+
+        if (workerManagerForbiddenFor(worker)) {
+            return false;
         }
 
         // Act as BUILDER

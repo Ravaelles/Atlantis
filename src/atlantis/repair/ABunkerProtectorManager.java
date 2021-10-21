@@ -10,7 +10,7 @@ public class ABunkerProtectorManager {
         if (unit != null && unit.isAlive()) {
 
             // Bunker WOUNDED
-            if (unit.HPPercent() < 100) {
+            if (unit.hpPercent() < 100) {
                 protector.repair(unit, "Protect " + unit.shortName());
                 return true;
             }

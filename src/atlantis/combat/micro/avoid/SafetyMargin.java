@@ -34,23 +34,25 @@ public class SafetyMargin {
     // =========================================================
 
     protected static double enemyWeaponRangeBonus(AUnit defender, AUnit attacker) {
-        return attacker.getWeaponRangeAgainst(defender) - (attacker.isMelee() ? 1 : 0);
+        return attacker.getWeaponRangeAgainst(defender) - (attacker.isMelee() && attacker.getWeaponRangeGround() < 1.5 ? 1 : 0);
     }
 
     protected static double enemyMovementBonus(AUnit attacker, AUnit defender) {
-        return defender.isOtherUnitFacingThisUnit(attacker) ? (attacker.isMoving() ? 1.8 : 0.9) : 0;
+//         || defender.isOtherUnitFacingThisUnit(attacker)
+        return (defender.isTargettedBy(attacker))
+                ? (attacker.isMoving() ? 1.5 : 0.6) : -1.0;
     }
 
     protected static double ourMovementBonus(AUnit defender) {
-        return defender.isMoving() ? (defender.isRunning() ? -1.1 : 0) : 1.3;
+        return defender.isMoving() ? (defender.isRunning() ? -1.8 : 0) : 0.8;
     }
 
     protected static double ourUnitsNearbyBonus(AUnit defender) {
-        return Select.ourRealUnits().inRadius(0.6, defender).count() / 2.0;
+        return Select.ourRealUnits().inRadius(0.5, defender).count() / 1.5;
     }
 
     protected static double woundedBonus(AUnit defender) {
-        return defender.getWoundPercent() / 34.0;
+        return defender.woundPercent() / 32.0;
     }
 
     protected static double quicknessBonus(AUnit attacker, AUnit defender) {
@@ -58,7 +60,16 @@ public class SafetyMargin {
         // If unit is much slower than enemy, don't run at all. It's better to shoot instead.
         double quicknessDifference = defender.getSpeed() - attacker.getSpeed();
 
-        return Math.min(0, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
+        return -quicknessDifference / (quicknessDifference > 0 ? 2.5 : (attacker.isMelee() ? 0.6 : 1.5));
+//        return Math.min(0, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
+    }
+
+    protected static double workerBonus(AUnit defender, AUnit attacker) {
+        if (defender.isWorker()) {
+            return 1.5;
+        }
+
+        return 0;
     }
 
 }

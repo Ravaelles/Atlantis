@@ -37,7 +37,7 @@ public class AWorkerDefenceManager {
         
         // FIGHT AGAINST ENEMY WORKERS
         for (AUnit enemy : Select.enemy().inRadius(2, worker).listUnits()) {
-            if (enemy.isWorker() && worker.getHP() >= 11) {
+            if (enemy.isWorker() && worker.hp() >= 11) {
                 worker.attackUnit(enemy);
                 return true;
             }
@@ -53,7 +53,7 @@ public class AWorkerDefenceManager {
         
         // Define list of all units that are in range of shot.
         Collection<AUnit> enemiesInRange = Select.enemyRealUnits().inRadius(12, worker)
-                .canShootAt(worker, 1 + worker.getWoundPercent() / 40).listUnits();
+                .canShootAt(worker, 1 + worker.woundPercent() / 40).listUnits();
         
         // Run from every combat unit...
         for (AUnit enemy : enemiesInRange) {
@@ -65,7 +65,7 @@ public class AWorkerDefenceManager {
         
         // ...but run from enemy workers only if seriously wounded.
         for (AUnit enemy : enemiesInRange) {
-            if (enemy.isWorker() && worker.getHP() < 11) {
+            if (enemy.isWorker() && worker.hp() < 11) {
                 worker.runningManager().runFrom(enemy, 2);
                 return true;
             }

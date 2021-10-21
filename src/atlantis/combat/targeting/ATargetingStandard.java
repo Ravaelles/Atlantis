@@ -40,17 +40,6 @@ public class ATargetingStandard extends AEnemyTargeting {
         }
 
         // =========================================================
-        // Workers
-
-        target = units.
-                workers()
-                .inRadius(8, unit)
-                .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
-
-        // =========================================================
         // Defensive buildings
 
         target = Select
@@ -58,6 +47,24 @@ public class ATargetingStandard extends AEnemyTargeting {
                 .ofType(
                         AUnitType.Terran_Bunker
                 )
+                .nearestTo(unit);
+        if (target != null) {
+
+            // Target repairers
+            AUnit repairer = Select.enemy().workers().inRadius(2, target).nearestTo(unit);
+            if (repairer != null) {
+                return repairer;
+            }
+
+            return target;
+        }
+
+        // =========================================================
+        // Workers
+
+        target = units.
+                workers()
+                .inRadius(8, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -73,6 +80,7 @@ public class ATargetingStandard extends AEnemyTargeting {
                         AUnitType.Protoss_Templar_Archives,
                         AUnitType.Terran_Armory,
                         AUnitType.Terran_Engineering_Bay,
+                        AUnitType.Terran_Academy,
                         AUnitType.Zerg_Spawning_Pool,
                         AUnitType.Zerg_Spire,
                         AUnitType.Zerg_Greater_Spire

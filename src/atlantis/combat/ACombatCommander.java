@@ -49,11 +49,6 @@ public class ACombatCommander {
             ACombatUnitManager.update(unit);
 
             addInfoAboutNearestEnemyToTooltip(unit);
-
-            if (AGame.everyNthGameFrame(AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES)) {
-                unit.lastX = unit.getX();
-                unit.lastY = unit.getY();
-            }
         }
     }
 

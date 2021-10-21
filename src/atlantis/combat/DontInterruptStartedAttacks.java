@@ -1,29 +1,46 @@
 package atlantis.combat;
 
 import atlantis.AGame;
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.units.AUnit;
 
 public class DontInterruptStartedAttacks {
 
-//    private static boolean DEBUG = true;
+    //    private static boolean DEBUG = true;
     private static final boolean DEBUG = false;
 
     public static boolean shouldNotBeInterruptedStartedAttack(AUnit unit) {
+        if (!unit.isAttacking()) {
+            return false;
+        }
 
         int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
         int lastStartingAttack = AGame.framesAgo(unit._lastStartingAttack);
         int cooldown = unit.getCooldownCurrent();
         int cooldownAbs = unit.getCooldownAbsolute();
 //        int friends = Select.ourCombatUnits().inRadius(2.5, unit).count();
+        boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);
 
         // =========================================================
 
-        if (unit.isAttackFrame()) {
+        if ((shouldAvoidAnyUnit || unit.isUnderAttack(40)) && unit.woundPercent() > 65) {
+            return false;
+        }
+
+        if (unit.isAttackFrame() && unit.lastAttackOrderLessThanAgo(14)) {
             unit.setTooltip("Attack frame(" + lastAttackFrame + "/" + lastStartingAttack + ")");
             return true;
         }
 
-        if (unit.isStartingAttack() || unit.lastStartedAttackLessThanAgo(Math.min(8, cooldownAbs / 5))) {
+//        if (unit.lastAttackOrderMoreThanAgo(20) && shouldAvoidAnyUnit) {
+//            return false;
+//        }
+
+        if (cooldown <= 3 && unit.lastAttackOrderLessThanAgo(9)) {
+            return true;
+        }
+
+        if (unit.isStartingAttack() || unit.lastStartedAttackLessThanAgo(Math.min(9, cooldownAbs / 4))) {
             unit.setTooltip("Starts attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
             return true;
         }
@@ -33,66 +50,7 @@ public class DontInterruptStartedAttacks {
             return true;
         }
 
-//        if (unit.isAttacking() && (cooldown <= 3 || cooldown >= cooldownAbsolute - 10)) {
-//        if (unit.isAttacking()) {
-//            unit.setTooltip("Shooting(" + lastAttackFrame + "/" + unit.getCooldownCurrent() + ")");
-////            if (DEBUG && AGame.getTimeFrames() > 50) {
-//            if (DEBUG) {
-//                System.out.println(
-//                        AGame.now() + " - " +
-//                        "#"+ unit.getID() + "  " +
-//                        " DONT_INT(" + lastAttackFrame + "/" + lastStartingAttack +") " +
-//                        ", COOL = " + unit.getCooldownCurrent() +
-//                        ", DIST = " + unit.distanceTo(unit.getTarget()) +
-//                        ", TAR = " + unit.getTarget().getShortName()
-//                );
-//            }
-//            return true;
-//        }
-
-//        if (lastAttackFrame <= 8 || lastStartingAttack <= 16) {
-//            return true;
-//        }
-
-//        if (!unit.isAttacking()) {
-//            unit.setTooltip("AAA(" + unit.getCooldownCurrent() + ")");
-//            return false;
-//        }
-
-//        if (unit.getCooldownCurrent() >= 4) {
-//            unit.setTooltip("BBB(" + unit.getCooldownCurrent() + ")");
-//            return false;
-//        }
-
-//        if (unit.getLastOrderFramesAgo() <= unit.getCooldownAbsolute() - 4) {
-//            unit.setTooltip("CCC(" + unit.getCooldownCurrent() + ")");
-//            return false;
-//        }
-
-//        if (unit.getLastOrderFramesAgo() <= unit.getCooldownAbsolute() - 4) {
-////            unit.setTooltip("CCC(" + unit.getCooldownCurrent() + ")");
-//            unit.setTooltip("CCC(" + lastAttackFrame + "/" + lastStartingAttack + ")");
-//            return false;
-//        }
-
         return false;
-
-//        if (unit.getCooldownCurrent() == 0 || unit.getLastOrderFramesAgo() <= unit.getCooldownCurrent() - 4) {
-//            double minDistToContinueAttack = 2.6 + unit.getWoundPercent() / 40.0;
-//            if (unit.getHPPercent() >= 95 || Select.enemyRealUnits().melee().inRadius(minDistToContinueAttack, unit).isEmpty()) {
-//                unit.setTooltip("Shoot");
-//            }
-//            unit.setTooltip("Attacking");
-//            return true;
-//        }
-
-//        if (!unit.isAttacking() && unit.getLastOrderFramesAgo() <= 2) {
-//            unit.setTooltip("Dont disturb (" + unit.getLastOrderFramesAgo() + ")");
-//            return true;
-//        }
-
-//                ((!unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack())
-//                && unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
     }
 
 }

@@ -205,7 +205,7 @@ public class ARepairCommander {
             optimalNumber = enemiesNearby * 0.5;
         }
 
-        if (bunker.getHP() < 100) {
+        if (bunker.hp() < 100) {
             optimalNumber += 2;
         }
 

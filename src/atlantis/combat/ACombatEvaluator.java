@@ -131,7 +131,7 @@ public class ACombatEvaluator {
         
         // Return relative value compared to local enemy strength
         else {
-            double lowHealthPenalty = (100 - unit.HPPercent()) / 80;
+            double lowHealthPenalty = (100 - unit.hpPercent()) / 80;
             double combatEval = ourEvaluation / enemyEvaluation - 1 - lowHealthPenalty;
 
             return updateCombatEval(unit, combatEval);
@@ -213,7 +213,7 @@ public class ACombatEvaluator {
     // =========================================================
     
     private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
-        return evaluateUnitHPandDamage(evaluate.type(), evaluate.getHitPoints(), againstUnit);
+        return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);
     }
 
     private static double evaluateUnitHPandDamage(AUnitType evaluate, AUnit againstUnit) {

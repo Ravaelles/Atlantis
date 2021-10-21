@@ -38,10 +38,12 @@ public class AAttackEnemyUnit {
             unit.setTooltip("Attacking " + enemy.shortName() + " (" + unit.getCooldownCurrent() + ")");
             APainter.paintLine(unit, enemy, Color.Red);
             if (!enemy.equals(unit.getTarget())) {
-//                if (unit.isMoving() && unit.inRealWeaponRange(enemy)) {
+//                if (unit.isMoving() && unit.hasWeaponRange(enemy, -0.2)) {
 //                    unit.stop("Stop&Attack");
+//                    System.out.println("STOP " + unit.getID());
 //                } else {
                     unit.attackUnit(enemy);
+//                    System.out.println("ATTK " + unit.getID());
 //                }
             }
             return true;

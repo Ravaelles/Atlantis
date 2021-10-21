@@ -18,9 +18,9 @@ public class APainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
-    public static int paintingMode = MODE_NO_PAINTING;
+//    public static int paintingMode = MODE_NO_PAINTING;
 //    public static int paintingMode = MODE_PARTIAL_PAINTING;
-//    public static int paintingMode = MODE_FULL_PAINTING;
+    public static int paintingMode = MODE_FULL_PAINTING;
 
     protected static Game bwapi;
 
@@ -36,6 +36,14 @@ public class APainter {
         } else {
             paintingMode = MODE_NO_PAINTING;
         }
+    }
+
+    public static void enablePainting() {
+        paintingMode = MODE_FULL_PAINTING;
+    }
+
+    public static void disablePainting() {
+        paintingMode = MODE_NO_PAINTING;
     }
 
     public static void paintSideMessage(String text, Color color) {
@@ -123,11 +131,12 @@ public class APainter {
         bwapi.drawLineMap(start, end, color);
     }
 
-    public static void paintLine(AUnit unit, AUnit end, Color color) {
+    public static boolean paintLine(AUnit unit, AUnit end, Color color) {
         if (unit == null || end == null || isDisabled()) {
-            return;
+            return false;
         }
         bwapi.drawLineMap(unit.getPosition(), end.getPosition(), color);
+        return true;
     }
 
     public static void paintLine(AUnit unit, Position end, Color color) {

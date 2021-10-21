@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.AGame;
 import atlantis.combat.missions.Missions;
 import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
@@ -75,6 +76,11 @@ public class TerranSiegeTankManager {
         if ((nearestEnemyUnit == null && nearestEnemyBuilding == null)
                 || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 11.2)) {
             tank.setTooltip("Considers unsiege");
+
+            if (AGame.isUms()) {
+                tank.setTooltip("Unsiege");
+                return true;
+            }
 
             if (tank.squad().isMissionAttack() && A.chance(2)) {
                 tank.unsiege();
