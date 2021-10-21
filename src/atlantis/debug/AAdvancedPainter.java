@@ -1144,7 +1144,7 @@ public class AAdvancedPainter extends APainter {
             return;
         }
 
-        APosition median = alphaSquad.getSquadCenter();
+        APosition median = alphaSquad.center();
         if (median != null) {
             int maxDist = (int) (ASquadCohesionManager.preferredDistToSquadCenter(alphaSquad.size()) * 32);
 

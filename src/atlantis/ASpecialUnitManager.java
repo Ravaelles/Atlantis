@@ -2,9 +2,10 @@ package atlantis;
 
 import atlantis.combat.micro.terran.*;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
+import atlantis.dedicated.protoss.ProtossHighTemplar;
 import atlantis.protoss.ProtossShieldBattery;
-import atlantis.special.protoss.ProtossObserver;
-import atlantis.special.protoss.ProtossReaver;
+import atlantis.dedicated.protoss.ProtossObserver;
+import atlantis.dedicated.protoss.ProtossReaver;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -19,7 +20,7 @@ public class ASpecialUnitManager {
     public static boolean handledUsingDedicatedUnitManager(AUnit unit) {
         // === Terran ========================================
 
-        if (AGame.isPlayingAsTerran()) {
+//        if (AGame.isPlayingAsTerran()) {
             if (TerranCloakableManager.update(unit)) {
                 return true;
             }
@@ -33,28 +34,28 @@ public class ASpecialUnitManager {
             } else if (unit.isType(AUnitType.Terran_Medic)) {
                 return TerranMedic.update(unit);
             }
-        }
+//        }
 
         // === Protoss ========================================
 
-        else if (AGame.isPlayingAsProtoss()) {
-            if (ProtossShieldBattery.handle(unit)) {
+//        else if (AGame.isPlayingAsProtoss()) {
+            if (unit.is(AUnitType.Protoss_Observer) && ProtossObserver.update(unit)) {
                 return true;
-            } else if (unit.is(AUnitType.Protoss_Observer) && ProtossObserver.update(unit)) {
+            } else if (unit.is(AUnitType.Protoss_High_Templar) && ProtossHighTemplar.update(unit)) {
                 return true;
-            } else if (unit.is(AUnitType.Protoss_High_Templar) && ProtossObserver.update(unit)) {
+            } else if (unit.is(AUnitType.Protoss_Reaver) && ProtossReaver.update(unit)) {
                 return true;
-            } else return unit.is(AUnitType.Protoss_Reaver) && ProtossReaver.update(unit);
-        }
+            }
+//        }
 
         // === Zerg ========================================
 
-        else if (AGame.isPlayingAsZerg()) {
+//        else if (AGame.isPlayingAsZerg()) {
             if (unit.is(AUnitType.Zerg_Overlord)) {
                 ZergOverlordManager.update(unit);
                 return true;
             }
-        }
+//        }
 
         // =========================================================
 

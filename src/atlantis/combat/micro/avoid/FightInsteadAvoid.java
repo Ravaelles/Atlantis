@@ -21,6 +21,7 @@ public class FightInsteadAvoid {
     private final AUnit lurkerOrReaver;
     private final AUnit tankSieged;
     private final AUnit tanks;
+    private final AUnit vulture;
     private final AUnit ranged;
     private final AUnit melee;
 
@@ -36,6 +37,7 @@ public class FightInsteadAvoid {
         lurkerOrReaver = selector.clone().ofType(AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver).first();
         tankSieged = selector.clone().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
         tanks = selector.clone().tanks().first();
+        vulture = selector.clone().ofType(AUnitType.Terran_Vulture).first();
         defensiveBuilding = selector.clone().buildings().first();
         ranged = selector.clone().ranged().first();
         melee = selector.clone().melee().first();
@@ -72,29 +74,14 @@ public class FightInsteadAvoid {
 
     // =========================================================
 
-    private boolean fightAsCombatUnit() {
-        if (wayTooManyUnitsNearby(unit)) {
-            return true;
-        }
-
-        if (tankSieged != null || tanks != null) {
-            return true;
-        }
-
-        if (defensiveBuilding != null) {
-            return unit.mission().allowsToAttackDefensiveBuildings();
-        }
-
-        if (unit.melee()) {
-            return fightAsMeleeUnit();
-        } else {
-            return fightAsRangedUnit();
-        }
-    }
-
+    // RANGED
     private boolean fightAsRangedUnit() {
         if (melee != null) {
             return false;
+        }
+
+        if (vulture != null) {
+            return true;
         }
 
         if (ranged != null) {
@@ -116,12 +103,33 @@ public class FightInsteadAvoid {
         return false;
     }
 
+    // MELEE
     private boolean fightAsMeleeUnit() {
         if (invisibleDT != null || invisibleCombatUnit != null) {
             return false;
         }
 
         return RetreatManager.shouldNotRetreat(unit, enemies);
+    }
+
+    private boolean fightAsCombatUnit() {
+        if (wayTooManyUnitsNearby(unit)) {
+            return true;
+        }
+
+        if (tankSieged != null || tanks != null) {
+            return true;
+        }
+
+        if (defensiveBuilding != null) {
+            return unit.mission().allowsToAttackDefensiveBuildings();
+        }
+
+        if (unit.melee()) {
+            return fightAsMeleeUnit();
+        } else {
+            return fightAsRangedUnit();
+        }
     }
 
     // =========================================================

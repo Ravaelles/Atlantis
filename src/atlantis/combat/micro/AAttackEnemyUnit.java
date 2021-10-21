@@ -36,7 +36,6 @@ public class AAttackEnemyUnit {
         }
 
         if (enemy != null) {
-//            System.err.println(unit.shortName() + " --> " + enemy.shortName());
             unit.setTooltip("->" + enemy.shortName() + "(" + unit.getCooldownCurrent() + ")");
             APainter.paintLine(unit, enemy, Color.Red);
             processAttackUnit(unit, enemy);
@@ -47,21 +46,17 @@ public class AAttackEnemyUnit {
     }
 
     private static boolean processAttackUnit(AUnit unit, AUnit enemy) {
-        if (enemy.isTank() && enemy.distToMoreThan(unit, 0.4) && Select.all().inRadius(0.3, unit).atMost(3)) {
-            unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz!");
-            return true;
+        if (enemy.isTank() && enemy.distToMoreThan(unit, 0.5) && Select.all().inRadius(0.3, unit).atMost(3)) {
+            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz!")) {
+                return true;
+            }
         }
 
-        if (!enemy.equals(unit.getTarget())) {
+        if (!unit.isAttacking() || !enemy.equals(unit.getTarget())) {
             unit.attackUnit(enemy);
+            unit.setTooltip("ShootTank");
             return true;
         }
-        //                if (unit.isMoving() && unit.hasWeaponRange(enemy, -0.2)) {
-//                    unit.stop("Stop&Attack");
-//                    System.out.println("STOP " + unit.getID());
-//                } else {
-//                    System.out.println("ATTK " + unit.getID());
-//                }
 
         return false;
     }

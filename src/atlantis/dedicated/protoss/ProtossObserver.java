@@ -1,4 +1,4 @@
-package atlantis.special.protoss;
+package atlantis.dedicated.protoss;
 
 import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
@@ -64,7 +64,7 @@ public class ProtossObserver {
             return false;
         }
 
-        APosition goTo = Squad.getAlphaSquad().getSquadCenter();
+        APosition goTo = Squad.getAlphaSquad().center();
         if (goTo != null) {
             observerForArmy = observer;
             if (goTo.distTo(observer) > 1) {

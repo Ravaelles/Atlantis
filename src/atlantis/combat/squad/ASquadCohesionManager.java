@@ -180,7 +180,7 @@ public class ASquadCohesionManager {
     }
 
     private static APosition squadCenter(AUnit unit) {
-        return unit.squad().getSquadCenter();
+        return unit.squad().center();
     }
 
 }

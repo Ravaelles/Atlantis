@@ -1,4 +1,4 @@
-package atlantis.special.protoss;
+package atlantis.dedicated.protoss;
 
 import atlantis.units.AUnit;
 import atlantis.units.Select;

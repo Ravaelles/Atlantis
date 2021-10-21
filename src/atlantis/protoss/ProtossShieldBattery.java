@@ -6,7 +6,7 @@ import atlantis.util.A;
 
 public class ProtossShieldBattery {
 
-    public static boolean handle(AUnit shieldBattery) {
+    public static boolean update(AUnit shieldBattery) {
         if (shieldBattery.energy() >= 30) {
             shieldBattery.removeTooltip();
             for (AUnit unit : Select.ourRealUnits().inRadius(11, shieldBattery).listUnits()) {

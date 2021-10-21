@@ -107,7 +107,7 @@ public class Squad extends Units {
 //        return _getMedianUnitPosition = new APosition(totalX / size(), totalY / size());
 //    }
 
-    public APosition getSquadCenter() {
+    public APosition center() {
         if (size() <= 0) {
             return null;
         }
