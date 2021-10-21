@@ -47,20 +47,30 @@ public class AAttackEnemyUnit {
     }
 
     private static boolean processAttackUnit(AUnit unit, AUnit enemy) {
+        if (handleMoveNextToTanksWhenAttackingThem(unit, enemy)) {
+            return true;
+        }
+
+        unit.attackUnit(enemy);
+        unit.setTooltip("ShootTank(" + unit.cooldownRemaining() + ")");
+        return true;
+    }
+
+    private static boolean handleMoveNextToTanksWhenAttackingThem(AUnit unit, AUnit enemy) {
+        int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
                 enemy.isTank()
-                        && enemy.distToMoreThan(unit, unit.melee() ? unit.groundWeaponRange() : 0.8)
-                        && Select.all().inRadius(0.4, unit).atMost(4)
+//                        && (!unit.ranged() || unit.lastStartedAttackLessThanAgo(12) || unit.cooldownRemaining() > 0)
+                        && (enemy.distToMoreThan(unit, unit.melee() ? 1 : 1.3))
+                        && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
+                        && (unit.melee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
         ) {
-            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz!" + A.dist(enemy, unit))) {
+            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz(" + A.dist(enemy, unit) + "/" + count + ")")) {
                 return true;
             }
         }
 
-        boolean res = unit.attackUnit(enemy);
-        System.out.println(res);
-        unit.setTooltip("ShootTank(" + unit.cooldownRemaining() + ")");
-        return true;
+        return false;
     }
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {

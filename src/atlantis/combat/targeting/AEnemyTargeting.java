@@ -48,6 +48,12 @@ public class AEnemyTargeting {
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, false, true);
 
+        // =========================================================
+
+        if ((target = ATargetingForSpecificUnits.target(unit)) != null) {
+            return target;
+        }
+
         // === Crucial units =======================================
 
         if ((target = ATargetingCrucial.target(unit)) != null) {

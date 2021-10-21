@@ -136,6 +136,8 @@ public class Select<T> {
         List<AUnit> data = new ArrayList<>();
 
         data.addAll(ourUnits());
+        data.addAll(enemyUnits());
+        data.addAll(neutralUnits());
 
         return new Select<AUnit>(data);
     }
@@ -1172,45 +1174,42 @@ public class Select<T> {
     /**
      * From all units currently in selection, returns closest unit to given <b>position</b>.
      */
-    public AUnit nearestTo(Object positionOrUnit) {
-        if (data.isEmpty() || positionOrUnit == null) {
+    public AUnit nearestTo(HasPosition position) {
+        if (data.isEmpty() || position == null) {
             return null;
-        }
-
-        Position position;
-        if (positionOrUnit instanceof AUnit) {
-            AUnit unit = (AUnit) positionOrUnit;
-            position = unit.getPosition();
-            exclude(unit);
-        } else if (positionOrUnit instanceof APosition) {
-            position = (APosition) positionOrUnit;
-        } else if (positionOrUnit instanceof Position) {
-            position = (Position) positionOrUnit;
-        } else {
-            position = ((AUnit) positionOrUnit).getPosition();
         }
 
         sortDataByDistanceTo(position, true);
 
         return data.isEmpty() ? null : (AUnit) data.get(0);
     }
-    
-    /**
-     * From all units currently in selection, returns closest unit to given <b>position</b>.
-     */
-    public AUnit nearestToOrNull(Object positionOrUnit, double maxLength) {
-        if (data.isEmpty() || positionOrUnit == null) {
+
+    public AUnit mostDistantTo(HasPosition position) {
+        if (data.isEmpty() || position == null) {
             return null;
         }
 
-        Position position;
-        if (positionOrUnit instanceof APosition) {
-            position = (APosition) positionOrUnit;
-        } else if (positionOrUnit instanceof Position) {
-            position = (Position) positionOrUnit;
-        } else {
-            position = ((AUnit) positionOrUnit).getPosition();
+        sortDataByDistanceTo(position, false);
+
+        return data.isEmpty() ? null : (AUnit) data.get(0);
+    }
+
+    /**
+     * From all units currently in selection, returns closest unit to given <b>position</b>.
+     */
+    public AUnit nearestToOrNull(HasPosition position, double maxLength) {
+        if (data.isEmpty() || position == null) {
+            return null;
         }
+
+//        Position position;
+//        if (positionOrUnit instanceof APosition) {
+//            position = (APosition) positionOrUnit;
+//        } else if (positionOrUnit instanceof Position) {
+//            position = (Position) positionOrUnit;
+//        } else {
+//            position = ((AUnit) positionOrUnit).getPosition();
+//        }
 
         sortDataByDistanceTo(position, true);
         AUnit nearestUnit = (AUnit) data.get(0);
@@ -1275,13 +1274,6 @@ public class Select<T> {
             }
         }
         return null;
-    }
-
-    /**
-     * Returns nearest enemy to the given position (or unit).
-     */
-    public static AUnit nearestEnemy(Position position) {
-        return Select.enemy().nearestTo(position);
     }
 
     // =========================================================
@@ -1485,7 +1477,7 @@ public class Select<T> {
      * @param nearestFirst
      * @return
      */
-    public List<T> sortDataByDistanceTo(final Position position, final boolean nearestFirst) {
+    public List<T> sortDataByDistanceTo(final HasPosition position, final boolean nearestFirst) {
 //        if (position == null) {
 //            return null;
 //        }

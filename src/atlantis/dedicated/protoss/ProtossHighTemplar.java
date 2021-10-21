@@ -15,6 +15,7 @@ public class ProtossHighTemplar {
 
     public static boolean update(AUnit highTemplar) {
         if (AGame.everyNthGameFrame(5) && handlePsionic(highTemplar)) {
+            System.err.println("STORM (" + highTemplar.energy() + ")");
             return true;
         }
 
@@ -47,7 +48,7 @@ public class ProtossHighTemplar {
 
     private static AUnit veryCondensedEnemy(AUnit highTemplar, boolean forceUsage) {
         Units condensedEnemies = new Units();
-        for (AUnit enemy : Select.enemyRealUnits().inRadius(14, highTemplar).list()) {
+        for (AUnit enemy : Select.enemyRealUnits().inRadius(forceUsage ? 14 : 8.8, highTemplar).list()) {
             condensedEnemies.addUnitWithValue(enemy, Select.enemyRealUnits().inRadius(3.3, enemy).count());
         }
         AUnit mostCondensedEnemy = condensedEnemies.unitWithHighestValue();
@@ -86,6 +87,14 @@ public class ProtossHighTemplar {
     private static boolean followArmy(AUnit highTemplar) {
         APosition center = Squad.getAlphaSquad().center();
         if (center != null) {
+            if (Select.our().inRadius(0.5, highTemplar).atLeast(3)) {
+                return highTemplar.moveAwayFrom(
+                        Select.our().exclude(highTemplar).nearestTo(highTemplar),
+                        1,
+                        "Stacked"
+                );
+            }
+
             if (center.distTo(highTemplar) > 1) {
                 highTemplar.move(center, UnitActions.MOVE, "Follow army");
                 return true;

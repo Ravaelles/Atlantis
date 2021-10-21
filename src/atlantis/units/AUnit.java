@@ -193,7 +193,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
-    public boolean moveAwayFrom(APosition position, double moveDistance, String tooltip) {
+    public boolean moveAwayFrom(HasPosition position, double moveDistance, String tooltip) {
         if (position == null || moveDistance < 0.01) {
             return false;
         }
@@ -220,8 +220,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
 //        else {
 //            System.out.println("CANT = " + position.distanceTo(newPosition));
-        // @TODO FIX THIS!!!!!!!
-            APainter.paintLine(position, newPosition, Color.Teal);
+            APainter.paintLine(position.getPosition(), newPosition.getPosition(), Color.Teal);
             this.setTooltip("Cant move away");
             move(newPosition, UnitActions.MOVE, "Force move");
             return true;
@@ -1435,6 +1434,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean inActOfShooting() {
         return lastStartedAttackLessThanAgo(8);
+    }
+
+    public boolean isArchon() {
+        return is(AUnitType.Protoss_Archon);
+    }
+
+    public boolean isUltralisk() {
+        return is(AUnitType.Zerg_Ultralisk);
     }
 
 

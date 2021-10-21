@@ -73,10 +73,11 @@ public class ATargetingCrucial extends AEnemyTargeting {
         target = units.clone()
                 .ofType(
                         AUnitType.Protoss_Observer,
-                        AUnitType.Zerg_Defiler
+                        AUnitType.Zerg_Defiler,
+                        AUnitType.Terran_Siege_Tank_Siege_Mode
                 )
 //                .inShootRangeOf(unit)
-                .inRadius(11, unit)
+                .inRadius(5, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -87,7 +88,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
                         AUnitType.Terran_Siege_Tank_Siege_Mode
                 )
-                .inRadius(7, unit)
+                .inRadius(9, unit)
                 .randomWithSeed(unit.getID());
         if (target != null) {
             return target;

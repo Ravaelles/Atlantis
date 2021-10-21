@@ -23,7 +23,11 @@ public class DontInterruptStartedAttacks {
 
         // =========================================================
 
-        if (unit.melee()) {
+        if (unit.melee() || unit.type().isReaver()) {
+            return true;
+        }
+
+        if (attackingCrucialUnit(unit)) {
             return true;
         }
 
@@ -55,6 +59,14 @@ public class DontInterruptStartedAttacks {
         }
 
         return false;
+    }
+
+    private static boolean attackingCrucialUnit(AUnit unit) {
+        if (unit.getTarget() == null) {
+            return false;
+        }
+
+        return unit.getTarget().isTank() && !unit.ranged() && unit.lastStartedAttackLessThanAgo(9);
     }
 
 }

@@ -111,7 +111,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     // =========================================================
     // Lo-level
     
-    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, Position position) {
+    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
