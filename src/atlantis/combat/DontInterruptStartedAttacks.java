@@ -66,7 +66,7 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
-        return unit.getTarget().isTank() && !unit.ranged() && unit.lastStartedAttackLessThanAgo(9);
+        return unit.getTarget().isTank() && !unit.isRanged() && unit.lastStartedAttackLessThanAgo(9);
     }
 
 }

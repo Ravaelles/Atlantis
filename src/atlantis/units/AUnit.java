@@ -332,7 +332,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is considered to be "ranged" unit (not melee).
      */
-    public boolean ranged() {
+    public boolean isRanged() {
         return (boolean) cache.get(
                 "isRanged",
                 () -> type().isRangedUnit()

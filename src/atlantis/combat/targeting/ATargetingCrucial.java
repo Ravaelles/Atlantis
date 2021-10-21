@@ -39,12 +39,14 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // =========================================================
         // Attack MINES
 
-        target = units.clone()
-                .ofType(AUnitType.Terran_Vulture_Spider_Mine)
-                .inShootRangeOf(groundRange + 4, unit)
-                .randomWithSeed(unit.getID());
-        if (target != null) {
-            return target;
+        if (unit.isRanged()) {
+            target = units.clone()
+                    .ofType(AUnitType.Terran_Vulture_Spider_Mine)
+                    .inShootRangeOf(groundRange + 4, unit)
+                    .randomWithSeed(unit.getID());
+            if (target != null) {
+                return target;
+            }
         }
 
         // =========================================================
@@ -70,17 +72,19 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // DEADLIEST shit out there,
         // Move to attack it WAY NOT IN RANGE
 
-        target = units.clone()
-                .ofType(
-                        AUnitType.Protoss_Observer,
-                        AUnitType.Zerg_Defiler,
-                        AUnitType.Terran_Siege_Tank_Siege_Mode
-                )
-//                .inShootRangeOf(unit)
-                .inRadius(5, unit)
-                .nearestTo(unit);
-        if (target != null) {
-            return target;
+        if (unit.isRanged()) {
+            target = units.clone()
+                    .ofType(
+                            AUnitType.Protoss_Observer,
+                            AUnitType.Zerg_Defiler,
+                            AUnitType.Terran_Siege_Tank_Siege_Mode
+                    )
+    //                .inShootRangeOf(unit)
+                    .inRadius(5, unit)
+                    .nearestTo(unit);
+            if (target != null) {
+                return target;
+            }
         }
 
         target = units.clone()

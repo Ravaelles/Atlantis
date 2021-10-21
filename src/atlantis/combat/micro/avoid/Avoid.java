@@ -52,7 +52,7 @@ public class Avoid {
         if (enemy.melee()) {
             return "MeleeRun" + dist;
         }
-        else if (enemy.ranged()) {
+        else if (enemy.isRanged()) {
             return "RangedRun" + dist;
         }
         else {

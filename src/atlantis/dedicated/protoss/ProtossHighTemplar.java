@@ -25,6 +25,10 @@ public class ProtossHighTemplar {
     // =========================================================
 
     private static boolean handlePsionic(AUnit highTemplar) {
+        if (highTemplar.energy() < 50) {
+            return tryMergingIntoArchon(highTemplar);
+        }
+
         if (highTemplar.energy() < 75) {
             return false;
         }
@@ -35,7 +39,10 @@ public class ProtossHighTemplar {
         }
 
         AUnit enemyCrucialUnit;
-        if ((enemyCrucialUnit = enemyCrucialUnit(highTemplar)) != null) {
+        if ((enemyCrucialUnit = enemyCrucialUnitClose(highTemplar)) != null) {
+            return usePsionic(highTemplar, enemyCrucialUnit);
+        }
+        if ((enemyCrucialUnit = enemyCrucialUnitFar(highTemplar)) != null) {
             return usePsionic(highTemplar, enemyCrucialUnit);
         }
 
@@ -48,7 +55,7 @@ public class ProtossHighTemplar {
 
     private static AUnit veryCondensedEnemy(AUnit highTemplar, boolean forceUsage) {
         Units condensedEnemies = new Units();
-        for (AUnit enemy : Select.enemyRealUnits().inRadius(forceUsage ? 14 : 8.8, highTemplar).list()) {
+        for (AUnit enemy : Select.enemyRealUnits().inRadius(forceUsage ? 8.8 : 11.5, highTemplar).list()) {
             condensedEnemies.addUnitWithValue(enemy, Select.enemyRealUnits().inRadius(3.3, enemy).count());
         }
         AUnit mostCondensedEnemy = condensedEnemies.unitWithHighestValue();
@@ -65,12 +72,20 @@ public class ProtossHighTemplar {
         return null;
     }
 
-    private static AUnit enemyCrucialUnit(AUnit highTemplar) {
+    private static AUnit enemyCrucialUnitClose(AUnit highTemplar) {
         return Select.enemy().ofType(
             AUnitType.Protoss_Reaver,
             AUnitType.Terran_Siege_Tank_Tank_Mode,
             AUnitType.Terran_Siege_Tank_Siege_Mode
-        ).inRadius(15, highTemplar).nearestTo(highTemplar);
+        ).inRadius(9, highTemplar).mostDistantTo(highTemplar);
+    }
+
+    private static AUnit enemyCrucialUnitFar(AUnit highTemplar) {
+        return Select.enemy().ofType(
+            AUnitType.Protoss_Reaver,
+            AUnitType.Terran_Siege_Tank_Tank_Mode,
+            AUnitType.Terran_Siege_Tank_Siege_Mode
+        ).inRadius(13, highTemplar).nearestTo(highTemplar);
     }
 
     private static boolean actWhenAlmostDead(AUnit highTemplar) {
@@ -103,5 +118,29 @@ public class ProtossHighTemplar {
 
         return false;
     }
+
+    private static boolean tryMergingIntoArchon(AUnit highTemplar) {
+        Units lowEnergyHTs = new Units();
+
+        for (AUnit other : Select.ourOfType(AUnitType.Protoss_High_Templar).list()) {
+            if (other.energy() < 70) {
+                lowEnergyHTs.addUnitWithValue(other, other.distTo(highTemplar));
+            }
+        }
+
+        AUnit closestOtherHT = lowEnergyHTs.unitWithLowestValue();
+        if (closestOtherHT != null) {
+            if (closestOtherHT.distTo(highTemplar) <= 3) {
+                highTemplar.useTech(TechType.Archon_Warp, closestOtherHT);
+            }
+            else {
+                highTemplar.move(closestOtherHT, UnitActions.MOVE, "WarpArchon");
+            }
+            return true;
+        }
+
+        return false;
+    }
+
 
 }
