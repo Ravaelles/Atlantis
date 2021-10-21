@@ -102,7 +102,7 @@ public class TerranTank {
     }
 
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
-        if (tank.getCooldownCurrent() <= 3) {
+        if (tank.cooldownRemaining() <= 3) {
             for (AUnit enemy : Select.enemyRealUnits().effCloaked().inRadius(11, tank).list()) {
                 if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
                     tank.attackPosition(enemy.getPosition());

@@ -16,7 +16,7 @@ public class DontInterruptStartedAttacks {
 
         int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
         int lastStartingAttack = AGame.framesAgo(unit._lastStartingAttack);
-        int cooldown = unit.getCooldownCurrent();
+        int cooldown = unit.cooldownRemaining();
         int cooldownAbs = unit.getCooldownAbsolute();
 //        int friends = Select.ourCombatUnits().inRadius(2.5, unit).count();
         boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);

@@ -1,7 +1,5 @@
 package atlantis.combat.micro;
 
-import atlantis.ACamera;
-import atlantis.AGameSpeed;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -24,7 +22,7 @@ public class Unfreezer {
         } else if (
                 unit.lastUnderAttackLessThanAgo(5)
                         && unit.getLastOrderFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES
-                        && unit.getCooldownCurrent() == 0
+                        && unit.cooldownRemaining() == 0
         ) {
             if (unit.lastX == unit.getX() && unit.lastY == unit.getY()) {
                 System.err.println("UNFREEZE #2!");

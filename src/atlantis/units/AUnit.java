@@ -802,7 +802,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns number of frames unit STILL has to wait before it can shoot again.
      * E.g. for Dragoon this value will vary between 0 and 30 inclusive.
      */
-    public int getCooldownCurrent() {
+    public int cooldownRemaining() {
         if (canAttackGroundUnits()) {
             return getGroundWeaponCooldown();
         }
@@ -1382,11 +1382,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int cooldownPercent() {
-        if (getCooldownCurrent() <= 0) {
+        if (cooldownRemaining() <= 0) {
             return 100;
         }
 
-        return 100 * getCooldownCurrent() / getCooldownAbsolute();
+        return 100 * cooldownRemaining() / getCooldownAbsolute();
     }
 
     /**

@@ -1,6 +1,5 @@
 package atlantis.units;
 
-import atlantis.AGame;
 import atlantis.position.APosition;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
@@ -26,7 +25,7 @@ public interface AUnitOrders {
             System.out.println(
                     "@ @" + A.now() + " ATTACK  / " +
                             "unit#" + unit().getID() + " // " +
-                            "cooldown " + unit().getCooldownCurrent()+ " // " +
+                            "cooldown " + unit().cooldownRemaining()+ " // " +
                             "attackFrame " + unit()._lastAttackFrame + " // " +
                             "StartingAttack " + unit()._lastStartingAttack + " // " +
                             unit().getTooltip()
@@ -39,7 +38,7 @@ public interface AUnitOrders {
         }
 
         // Do NOT issue double orders
-        if (unit().isCommand(UnitCommandType.Attack_Unit) && u().getTarget() != null && target.equals(unit().getTarget())) {
+        if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().getTarget())) {
 //            System.out.println("         ** DOUBLE ORDER");
             return true;
         }

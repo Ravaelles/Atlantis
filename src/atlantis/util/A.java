@@ -2,6 +2,7 @@ package atlantis.util;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.units.AUnit;
 import bwapi.Game;
 
 import java.awt.Button;
@@ -1100,5 +1101,12 @@ public class A {
 
     public static boolean notUms() {
         return !AGame.isUms();
+    }
+
+    /**
+     * Returns string like "(0.4)"
+     */
+    public static String dist(AUnit enemy, AUnit unit) {
+        return A.digit(unit.distTo(enemy));
     }
 }

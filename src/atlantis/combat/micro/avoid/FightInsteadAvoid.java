@@ -90,7 +90,7 @@ public class FightInsteadAvoid {
             if (unit.isQuickerOrSameSpeedAs(enemies) && unit.hasBiggerRangeThan(enemies)) {
 
                 // If needs to wait before next attack
-                return unit.getCooldownCurrent() <= 3 || unit.inActOfShooting();
+                return unit.cooldownRemaining() <= 3 || unit.inActOfShooting();
             }
 
             // Dragoon slower than Vultures, cannot outrun them

@@ -5,6 +5,7 @@ import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 import bwapi.Color;
 
 public class AAttackEnemyUnit {
@@ -36,7 +37,7 @@ public class AAttackEnemyUnit {
         }
 
         if (enemy != null) {
-            unit.setTooltip("->" + enemy.shortName() + "(" + unit.getCooldownCurrent() + ")");
+            unit.setTooltip("->" + enemy.shortName() + "(" + unit.cooldownRemaining() + ")");
             APainter.paintLine(unit, enemy, Color.Red);
             processAttackUnit(unit, enemy);
             return true;
@@ -46,19 +47,20 @@ public class AAttackEnemyUnit {
     }
 
     private static boolean processAttackUnit(AUnit unit, AUnit enemy) {
-        if (enemy.isTank() && enemy.distToMoreThan(unit, 0.5) && Select.all().inRadius(0.3, unit).atMost(3)) {
-            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz!")) {
+        if (
+                enemy.isTank()
+                        && enemy.distToMoreThan(unit, unit.melee() ? unit.groundWeaponRange() : 0.8)
+                        && Select.all().inRadius(0.4, unit).atMost(4)
+        ) {
+            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz!" + A.dist(enemy, unit))) {
                 return true;
             }
         }
 
-        if (!unit.isAttacking() || !enemy.equals(unit.getTarget())) {
-            unit.attackUnit(enemy);
-            unit.setTooltip("ShootTank");
-            return true;
-        }
-
-        return false;
+        boolean res = unit.attackUnit(enemy);
+        System.out.println(res);
+        unit.setTooltip("ShootTank(" + unit.cooldownRemaining() + ")");
+        return true;
     }
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
