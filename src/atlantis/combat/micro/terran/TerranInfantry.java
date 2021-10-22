@@ -40,7 +40,7 @@ public class TerranInfantry {
 
     private static AUnit defineBunkerToLoadTo(AUnit unit) {
         Select<?> bunkers = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
-                .inRadius(15, unit).havingSpaceFree(unit.getSpaceRequired());
+                .inRadius(15, unit).havingSpaceFree(unit.spaceRequired());
         AUnit bunker = bunkers.nearestTo(unit);
         if (bunker != null) {
             AUnit mainBase = Select.mainBase();

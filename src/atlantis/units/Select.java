@@ -474,7 +474,7 @@ public class Select<T> {
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
-    public Select<?> inRadius(double maxDist, Position position) {
+    public Select<T> inRadius(double maxDist, Position position) {
         Iterator<T> unitsIterator = data.iterator();// units.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = (AUnit) unitsIterator.next();
@@ -491,7 +491,7 @@ public class Select<T> {
     /**
      * Selects only units of given type(s).
      */
-    public Select<?> ofType(AUnitType... types) {
+    public Select<T> ofType(AUnitType... types) {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             Object unitOrData = unitsIterator.next();
@@ -867,6 +867,28 @@ public class Select<T> {
         return this;
     }
 
+    public Select<T> loaded() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (!unit.isLoaded()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
+    public Select<T> unloaded() {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.isLoaded()) {
+                unitsIterator.remove();
+            }
+        }
+        return this;
+    }
+
     /**
      * Selects these units (makes sense only for workers) who aren't assigned to repair any other unit.
      */
@@ -888,7 +910,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (unit.getSpaceRemaining() < spaceRequired) {
+            if (unit.spaceRemaining() < spaceRequired) {
                 unitsIterator.remove();
             }
         }

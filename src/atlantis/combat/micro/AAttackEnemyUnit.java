@@ -21,6 +21,10 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit, double maxDistFromEnemy) {
+        if (shouldNotAttack(unit)) {
+            return false;
+        }
+
         AUnit enemy = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
         if (enemy == null) {
             return false;
@@ -46,6 +50,10 @@ public class AAttackEnemyUnit {
         return false;
     }
 
+    private static boolean shouldNotAttack(AUnit unit) {
+        return unit.isUnitUnableToDoAnyDamage() || unit.lastActionLessThanAgo(20, UnitActions.LOAD);
+    }
+
     private static boolean processAttackUnit(AUnit unit, AUnit enemy) {
         if (handleMoveNextToTanksWhenAttackingThem(unit, enemy)) {
             return true;
@@ -64,7 +72,7 @@ public class AAttackEnemyUnit {
                         && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
                         && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
         ) {
-            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(11.2, unit).isEmpty()) {
+            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) {
                 return false;
             }
 

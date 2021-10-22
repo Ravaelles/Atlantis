@@ -409,7 +409,7 @@ public class Atlantis implements BWEventListener {
             return;
         }
         System.out.print(
-                "Total time: " + AGame.getTimeSeconds() + " seconds. " +
+                "Total time: " + AGame.timeSeconds() + " seconds. " +
                 "Killed: " + Atlantis.KILLED + ", Lost: " + Atlantis.LOST + ". "
         );
         System.out.println("Resource killed/lost balance: " + AGame.killsLossesResourceBalance());

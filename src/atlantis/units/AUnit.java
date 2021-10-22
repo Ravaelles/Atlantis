@@ -49,16 +49,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    private AUnitType _lastCachedType;
     private UnitAction unitAction = UnitActions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
-    public CappedList<Integer> lastHitPoints = new CappedList<>(20);
+    public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
     public int _lastAttackOrder;
     public int _lastAttackFrame;
+    public int _lastCooldown;
     public int _lastRetreat;
     public int _lastStartedRunning;
     public int _lastStoppedRunning;
-    public int _lastStartingAttack;
+    public int _lastStartedAttack;
+    public int _lastFrameOfStartingAttack;
     public int _lastUnderAttack;
-    public int lastX;
-    public int lastY;
+    public int _lastX;
+    public int _lastY;
 
     // =========================================================
 
@@ -1052,11 +1054,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         // In-game solutions sucks ass badly
 //        return u.isUnderAttack();
 
-        if (lastHitPoints.size() < inLastFrames) {
+        if (_lastHitPoints.size() < inLastFrames) {
             return false;
         }
 
-        return hp() < lastHitPoints.get(inLastFrames - 1);
+        return hp() < _lastHitPoints.get(inLastFrames - 1);
     }
 
     public boolean isUnderAttack() {
@@ -1239,9 +1241,34 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     
     public AUnit setUnitAction(UnitAction unitAction) {
         this.unitAction = unitAction;
+        cacheUnitAction(unitAction);
         return this;
     }
-    
+
+    private void cacheUnitAction(UnitAction unitAction) {
+        cache.set(
+                "_last" + unitAction.name(),
+                () -> A.now()
+        );
+    }
+
+    public boolean lastActionMoreThanAgo(int framesAgo, UnitAction unitAction) {
+        return A.now() - lastActionAgo(unitAction) >= framesAgo;
+    }
+
+    public boolean lastActionLessThanAgo(int framesAgo, UnitAction unitAction) {
+        return A.now() - lastActionAgo(unitAction) <= framesAgo;
+    }
+
+    public int lastActionAgo(UnitAction unitAction) {
+        Object time = cache.get("_last" + unitAction.name());
+
+        if (time == null) {
+            return 0;
+        }
+        return A.now() - ((int) time);
+    }
+
     // =========================================================
 
 //    public boolean shouldApplyAntiGlitch() {
@@ -1269,11 +1296,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().ut().spaceProvided();
     }
 
-    public int getSpaceRequired() {
+    public int spaceRequired() {
         return type().ut().spaceRequired();
     }
 
-    public int getSpaceRemaining() {
+    public int spaceRemaining() {
         return u().getSpaceRemaining();
     }
 
@@ -1286,11 +1313,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    }
 
     public boolean lastStartedAttackMoreThanAgo(int framesAgo) {
-        return AGame.framesAgo(_lastStartingAttack) >= framesAgo;
+        return AGame.framesAgo(_lastStartedAttack) >= framesAgo;
     }
 
     public boolean lastStartedAttackLessThanAgo(int framesAgo) {
-        return AGame.framesAgo(_lastStartingAttack) <= framesAgo;
+        return AGame.framesAgo(_lastStartedAttack) <= framesAgo;
     }
 
     public boolean lastUnderAttackLessThanAgo(int framesAgo) {
@@ -1305,8 +1332,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return AGame.framesAgo(_lastAttackOrder) <= framesAgo;
     }
 
+    public boolean lastFrameOfStartingAttackMoreThanAgo(int framesAgo) {
+        return AGame.framesAgo(_lastFrameOfStartingAttack) >= framesAgo;
+    }
+
+    public boolean lastFrameOfStartingAttackLessThanAgo(int framesAgo) {
+        return AGame.framesAgo(_lastFrameOfStartingAttack) <= framesAgo;
+    }
+
+    public int lastFrameOfStartingAttackAgo() {
+        return AGame.framesAgo(_lastFrameOfStartingAttack);
+    }
+
     public int lastStartedAttackAgo() {
-        return AGame.framesAgo(_lastStartingAttack);
+        return AGame.framesAgo(_lastStartedAttack);
     }
 
     public int lastRetreatedAgo() {
@@ -1326,7 +1365,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasNotMovedInAWhile() {
-        return getX() == lastX && getY() == lastY;
+        return getX() == _lastX && getY() == _lastY;
     }
 
     public boolean isQuick() {
@@ -1444,6 +1483,26 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isUltralisk() {
         return is(AUnitType.Zerg_Ultralisk);
+    }
+
+    public List<AUnit> loadedUnits() {
+        List<AUnit> loaded = new ArrayList<>();
+        for (Unit unit : u.getLoadedUnits()) {
+            loaded.add(AUnit.createFrom(unit));
+        }
+        return loaded;
+    }
+
+    public boolean hasCargo() {
+        return !u.getLoadedUnits().isEmpty();
+    }
+
+    public boolean hasFreeSpaceFor(AUnit passenger) {
+        return spaceRemaining() >= passenger.spaceRequired();
+    }
+
+    public boolean isUnitUnableToDoAnyDamage() {
+        return type().isUnitUnableToDoAnyDamage();
     }
 
 

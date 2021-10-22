@@ -56,7 +56,7 @@ public class AEnemyProtossStrategy extends AEnemyStrategy {
     // =========================================================
     
     public static AEnemyStrategy detectStrategy() {
-        int seconds = AGame.getTimeSeconds();
+        int seconds = AGame.timeSeconds();
         int gateways = Select.enemy().countUnitsOfType(AUnitType.Protoss_Gateway);
         int nexus = Select.enemy().countUnitsOfType(AUnitType.Protoss_Nexus);
         int citadel = Select.enemy().countUnitsOfType(AUnitType.Protoss_Citadel_of_Adun);

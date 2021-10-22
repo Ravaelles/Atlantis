@@ -95,7 +95,7 @@ public class ARepairerManager {
 
     protected static boolean handleIdleRepairer(AUnit repairer) {
         if (repairer.isMoving() || !repairer.isRepairing() || repairer.isIdle()) {
-            int maxAllowedDistToRoam = Missions.globalMission().isMissionDefend() ? 4 : 12;
+            int maxAllowedDistToRoam = Missions.globalMission().isMissionDefend() ? 4 : 13;
             
             // Try finding any repairable and wounded unit nearby
             AUnit nearestWoundedUnit = Select.our().repairable(true)

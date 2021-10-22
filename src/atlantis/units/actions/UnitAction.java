@@ -38,7 +38,7 @@ public class UnitAction {
         return run;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 

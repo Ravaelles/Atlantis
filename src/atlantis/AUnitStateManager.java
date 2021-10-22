@@ -21,8 +21,8 @@ public class AUnitStateManager {
 
     private static void updateUnitInfo(AUnit unit) {
         if (updatePosition) {
-            unit.lastX = unit.getX();
-            unit.lastY = unit.getY();
+            unit._lastX = unit.getX();
+            unit._lastY = unit.getY();
         }
 
         if (unit.isAttacking()) {
@@ -30,9 +30,21 @@ public class AUnitStateManager {
         }
         if (unit.isAttackFrame()) {
             unit._lastAttackFrame = now;
+            if (unit.isFirstCombatUnit()) {
+                System.out.println("unit._lastAttackFrame = " + unit._lastAttackFrame);
+            }
         }
         if (unit.isStartingAttack()) {
-            unit._lastStartingAttack = now;
+            unit._lastStartedAttack = now;
+            if (unit.isFirstCombatUnit()) {
+                System.out.println("unit._lastStartedAttack = " + unit._lastStartedAttack);
+            }
+        }
+        if (unit.isStartingAttack() && unit.cooldownRemaining() > unit._lastCooldown) {
+            unit._lastFrameOfStartingAttack = now;
+            if (unit.isFirstCombatUnit()) {
+                System.out.println("unit._lastFrameOfStartingAttack = " + unit._lastFrameOfStartingAttack);
+            }
         }
         if (unit.isUnderAttack()) {
             APainter.paintCircleFilled(unit, 12, Color.Blue);
@@ -42,7 +54,8 @@ public class AUnitStateManager {
 //            }
         }
 
-        unit.lastHitPoints.add(unit.hp());
+        unit._lastHitPoints.add(unit.hp());
+        unit._lastCooldown = unit.cooldownRemaining();
 
 //        if (unit.getID() == Select.ourCombatUnits().first().getID()) {
 //            System.out.println(AGame.getTimeFrames() + " ### "

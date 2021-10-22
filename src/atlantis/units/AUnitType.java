@@ -944,4 +944,24 @@ public class AUnitType implements Comparable<AUnitType> {
                 () -> isType(Protoss_Shuttle, Terran_Dropship, Zerg_Overlord)
         );
     }
+
+    public boolean isUnitUnableToDoAnyDamage() {
+        return (boolean) cache.get(
+                "isUnitUnableToDoAnyDamage",
+                () -> isType(
+                        Terran_Dropship,
+                        Terran_Medic,
+                        Protoss_Shuttle,
+                        Protoss_High_Templar,
+                        Protoss_Dark_Archon,
+                        Zerg_Overlord,
+                        Zerg_Defiler,
+                        Zerg_Queen
+                )
+        );
+    }
+
+    public int getID() {
+        return ID;
+    }
 }

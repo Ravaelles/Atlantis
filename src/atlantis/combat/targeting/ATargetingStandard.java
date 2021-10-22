@@ -22,7 +22,7 @@ public class ATargetingStandard extends AEnemyTargeting {
         // Target real units
 
         target = units.clone()
-                .inRadius(12, unit)
+                .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

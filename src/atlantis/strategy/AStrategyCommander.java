@@ -17,7 +17,7 @@ public class AStrategyCommander {
         }
         
         // If we don't know enemy strategy, try to define it based on enemy buildings/units we know
-        if (AGame.getTimeSeconds() < 500 && AGame.getTimeFrames() % 12 == 0) {
+        if (AGame.timeSeconds() < 500 && AGame.getTimeFrames() % 12 == 0) {
             if (AGame.isEnemyProtoss()) {
                 defineEnemyStrategyWhenEnemyIsProtoss();
             }

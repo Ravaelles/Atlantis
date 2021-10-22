@@ -118,6 +118,10 @@ public class AAdvancedPainter extends APainter {
      */
     protected static void paintCombatUnits() {
         for (AUnit unit : Select.ourCombatUnits().listUnits()) {
+            if (unit.isLoaded()) {
+                continue;
+            }
+
             APosition position = unit.getPosition();
 
             if (unit.isRunning()) {
@@ -214,7 +218,7 @@ public class AAdvancedPainter extends APainter {
         Mission mission = Squad.getAlphaSquad().mission();
 
         // Time
-        paintSideMessage("Time: " + AGame.getTimeSeconds() + "s", Color.Grey);
+        paintSideMessage("Time: " + AGame.timeSeconds() + "s", Color.Grey);
 
         // =========================================================
         // Global mission
@@ -560,7 +564,7 @@ public class AAdvancedPainter extends APainter {
      */
     private static void paintColoredCirclesAroundUnits() {
         for (AUnit unit : Select.ourRealUnits().listUnits()) {
-            if (unit.isWorker() && (unit.isGatheringMinerals() || unit.isGatheringGas())) {
+            if (unit.isWorker() && (unit.isGatheringMinerals() || unit.isGatheringGas()) || unit.isLoaded()) {
                 continue;
             }
 
@@ -911,6 +915,10 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().listUnits()) {
+            if (unit.isLoaded()) {
+                continue;
+            }
+
             if (unit.hasTooltip() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
                 String string = "";
 

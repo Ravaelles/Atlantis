@@ -55,7 +55,7 @@ public class AEnemyTerranStrategy extends AEnemyStrategy {
     // =========================================================
     
     public static AEnemyStrategy detectStrategy() {
-        int seconds = AGame.getTimeSeconds();
+        int seconds = AGame.timeSeconds();
         int barracks = Select.enemy().countUnitsOfType(AUnitType.Terran_Barracks);
         int bases = Select.enemy().countUnitsOfType(AUnitType.Terran_Command_Center);
         int factories = Select.enemy().countUnitsOfType(AUnitType.Terran_Factory);

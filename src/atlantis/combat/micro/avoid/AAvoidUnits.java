@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
+import atlantis.units.actions.UnitActions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,9 @@ public abstract class AAvoidUnits {
 //        if (unit.lastStoppedRunningLessThanAgo(6)) {
 //            return false;
 //        }
+        if (unit.lastActionLessThanAgo(10, UnitActions.ATTACK_UNIT)) {
+            return false;
+        }
 
         Units enemiesDangerouslyClose = getUnitsToAvoid(unit);
         if (enemiesDangerouslyClose.isEmpty()) {

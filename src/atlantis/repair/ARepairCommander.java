@@ -164,13 +164,13 @@ public class ARepairCommander {
                 // === We know enemy strategy ========================================
                 if (AEnemyStrategy.isEnemyStrategyKnown()) {
                     int repairersWhenRush = 1 
-                            + (AGame.getTimeSeconds() > 180 ? 1 : 0)
-                            + (AGame.getTimeSeconds() > 200 ? 1 : 0);
+                            + (AGame.timeSeconds() > 180 ? 1 : 0)
+                            + (AGame.timeSeconds() > 200 ? 1 : 0);
                     
                     if (AEnemyStrategy.getEnemyStrategy().isGoingCheese()) {
                         return repairersWhenRush 
                                 + 2
-                                + (AGame.getTimeSeconds() > 210 ? 1 : 0);
+                                + (AGame.timeSeconds() > 210 ? 1 : 0);
                     }
                     if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {
                         return repairersWhenRush;
@@ -179,8 +179,8 @@ public class ARepairCommander {
                 
                 // === We don't know enemy strategy ==================================
                 else {
-                    int enemyRaceBonus = !AGame.isEnemyTerran() && AGame.getTimeSeconds() > 175 ? 1 : 0;
-                    return 1 + (AGame.getTimeSeconds() > 230 ? 1 : 0) + enemyRaceBonus;
+                    int enemyRaceBonus = !AGame.isEnemyTerran() && AGame.timeSeconds() > 175 ? 1 : 0;
+                    return 1 + (AGame.timeSeconds() > 230 ? 1 : 0) + enemyRaceBonus;
                 }
             } 
 

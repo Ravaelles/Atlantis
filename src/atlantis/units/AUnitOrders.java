@@ -28,7 +28,7 @@ public interface AUnitOrders {
                             "unit#" + unit().getID() + " // " +
                             "cooldown " + unit().cooldownRemaining()+ " // " +
                             "attackFrame " + unit()._lastAttackFrame + " // " +
-                            "StartingAttack " + unit()._lastStartingAttack + " // " +
+                            "StartingAttack " + unit()._lastStartedAttack + " // " +
                             unit().getTooltip()
             );
         }
@@ -437,6 +437,7 @@ public interface AUnitOrders {
      */
     default boolean unload(AUnit target) {
         unit().setUnitAction(UnitActions.UNLOAD);
+        target.setUnitAction(UnitActions.UNLOAD);
         unit().setLastUnitOrderNow();
         return u().unload(target.u());
     }
@@ -453,6 +454,10 @@ public interface AUnitOrders {
     default boolean unloadAll() {
         unit().setUnitAction(UnitActions.UNLOAD);
         unit().setLastUnitOrderNow();
+        for (AUnit loaded : unit().loadedUnits()) {
+            loaded.setUnitAction(UnitActions.UNLOAD);
+            loaded.setLastUnitOrderNow();
+        }
         return u().unloadAll();
     }
 
@@ -468,6 +473,10 @@ public interface AUnitOrders {
     default boolean unloadAll(APosition target) {
         unit().setUnitAction(UnitActions.UNLOAD);
         unit().setLastUnitOrderNow();
+        for (AUnit loaded : unit().loadedUnits()) {
+            loaded.setUnitAction(UnitActions.UNLOAD);
+            loaded.setLastUnitOrderNow();
+        }
         return u().unloadAll(target);
     }
 

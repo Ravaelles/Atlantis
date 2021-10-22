@@ -22,7 +22,7 @@ public class AGameSpeed {
      */
     public static int frameSkip;
 
-    private static final int NORMAL_GAME_SPEED = 10;
+    private static final int NORMAL_GAME_SPEED = 30;
     private static final int NORMAL_FRAME_SKIP = 0;
 //    private static final int NORMAL_GAME_SPEED = 0;
 //    private static final int NORMAL_FRAME_SKIP = 30;
@@ -53,7 +53,7 @@ public class AGameSpeed {
      * Decreases game speed to the value specified in AtlantisConfig when action happens.
      */
     public static void allowToDynamicallySlowdownGameOnFirstFighting() {
-        dynamicSlowdown_lastTimeUnitDestroyed = AGame.getTimeSeconds();
+        dynamicSlowdown_lastTimeUnitDestroyed = AGame.timeSeconds();
         dynamicSlowdownIsAllowed = true;
         dynamicSlowdownIsActive = true;
 

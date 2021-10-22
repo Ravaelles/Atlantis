@@ -29,6 +29,10 @@ public class WantsToAvoid {
 
     private static boolean shouldNotAvoid(AUnit unit, Units enemies) {
 
+        if (unit.isRanged() && (unit.lastStartedAttackMoreThanAgo( 10) || unit.cooldownRemaining() == 0)) {
+            return true;
+        }
+
         // Running is not viable - so many other units nearby, would get stuck
         if (Select.all().inRadius(0.5, unit).count() >= 6) {
             return true;

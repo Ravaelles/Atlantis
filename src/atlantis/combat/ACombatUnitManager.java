@@ -8,6 +8,8 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.interrupt.DontInterruptStartedAttacks;
+import atlantis.interrupt.DisturbInterruptManager;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -27,22 +29,22 @@ public class ACombatUnitManager {
         }
 
         // =========================================================
-        // === SPECIAL units =======================================
-        // =========================================================
-
-        // 1) Overlords or Medics are using entirely dedicated managers.
-        //    These are stopping lower level actions.
-        // 2) Terran infantry has own managers, but these allow lower
-        //    level managers to take control.
-        if (ASpecialUnitManager.handledUsingDedicatedUnitManager(unit)) {
-            return true;
-        }
-
-        // =========================================================
         // === MEDIUM priority - TACTICAL level ====================
         // =========================================================
 
         if (handledMediumPriority(unit)) {
+            return true;
+        }
+
+        // =========================================================
+        // === SPECIAL units =======================================
+        // =========================================================
+
+        // 1) Overlords or Medics are using dedicated managers.
+        //    These are stopping lower level actions.
+        // 2) Terran infantry has own managers, but these allow lower
+        //    level managers to take control.
+        if (ASpecialUnitManager.handledUsingDedicatedUnitManager(unit)) {
             return true;
         }
 
@@ -81,6 +83,10 @@ public class ACombatUnitManager {
 
         if (unit.isRunning()) {
             unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
+            return true;
+        }
+
+        if (DisturbInterruptManager.dontInterrupt(unit)) {
             return true;
         }
 

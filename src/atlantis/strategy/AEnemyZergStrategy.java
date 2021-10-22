@@ -70,7 +70,7 @@ public class AEnemyZergStrategy extends AEnemyStrategy {
     }
     
     public static AEnemyStrategy detectStrategy() {
-        int seconds = AGame.getTimeSeconds();
+        int seconds = AGame.timeSeconds();
         int bases = Select.enemy().bases().count();
         int lair = Select.enemy().countUnitsOfType(AUnitType.Zerg_Lair);
         int pool = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spawning_Pool);

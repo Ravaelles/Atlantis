@@ -157,6 +157,10 @@ public class ATargetingCrucial extends AEnemyTargeting {
     }
 
     public static boolean isCrucialUnit(AUnit target) {
+        if (target == null) {
+            return false;
+        }
+
         if (target.is(AUnitType.Protoss_Carrier)) {
             return Select.enemies(AUnitType.Protoss_Observer).inRadius(12, target).isEmpty();
         }

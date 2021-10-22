@@ -59,7 +59,7 @@ public class ProtossHighTemplar {
 
     private static AUnit veryCondensedEnemy(AUnit highTemplar, boolean forceUsage) {
         Units condensedEnemies = new Units();
-        for (AUnit enemy : Select.enemyRealUnits().inRadius(forceUsage ? 8.8 : 11.5, highTemplar).list()) {
+        for (AUnit enemy : Select.enemyRealUnits().inRadius(forceUsage ? 8.8 : 12.5, highTemplar).list()) {
             condensedEnemies.addUnitWithValue(enemy, Select.enemyRealUnits().inRadius(3.3, enemy).count());
         }
         AUnit mostCondensedEnemy = condensedEnemies.unitWithHighestValue();

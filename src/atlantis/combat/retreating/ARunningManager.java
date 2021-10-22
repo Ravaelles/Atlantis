@@ -372,8 +372,12 @@ public class ARunningManager {
      * Tell other units that might be blocking our escape route to move.
      */
     private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
-        Select<AUnit> friendsTooClose = Select.ourRealUnits().exclude(unit)
-                .inRadius(0.17 + unit.woundPercent() / 300.0, unit);
+        if (unit.isAirUnit()) {
+            return;
+        }
+
+        Select<AUnit> friendsTooClose = Select.ourRealUnits()
+                .exclude(unit).groundUnits().inRadius(0.17 + unit.woundPercent() / 300.0, unit);
         APainter.paintCircleFilled(unit, 10, Color.Yellow);
 
         for (AUnit otherUnit : friendsTooClose.list()) {

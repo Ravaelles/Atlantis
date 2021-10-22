@@ -6,7 +6,6 @@ import atlantis.AtlantisConfig;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
 import atlantis.map.ARegion;
 import atlantis.position.APosition;
@@ -192,7 +191,7 @@ public class AScoutManager {
      * If we have no scout unit assigned, make one of our units a scout.
      */
     private static void assignScoutIfNeeded() {
-        if (AGame.getTimeSeconds() > 330) {
+        if (AGame.timeSeconds() > 330) {
             return;
         }
         
@@ -212,7 +211,7 @@ public class AScoutManager {
 
             // We know enemy building
             if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-                if (AGame.getTimeSeconds() < 350) {
+                if (AGame.timeSeconds() < 350) {
                     if (scouts.isEmpty()) {
                         for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
                             if (!worker.isBuilder()) {

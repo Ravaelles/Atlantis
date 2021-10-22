@@ -99,7 +99,7 @@ public class AGame {
     /**
      * Returns approximate number of in-game seconds elapsed.
      */
-    public static int getTimeSeconds() {
+    public static int timeSeconds() {
         return Atlantis.game().getFrameCount() / 30;
     }
 

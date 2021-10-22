@@ -74,7 +74,7 @@ public class TerranTank {
         // =========================================================
 
         if ((nearestEnemyUnit == null && nearestEnemyBuilding == null)
-                || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 11.2)) {
+                || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 12.2)) {
             tank.setTooltip("Considers unsiege");
 
             if (AGame.isUms()) {
@@ -182,13 +182,13 @@ public class TerranTank {
             return false;
         }
         
-        if (distanceToEnemy < 12 && enemy.type().isDangerousGroundUnit() && canSiegeHere(tank)) {
+        if (distanceToEnemy < 12.6 && enemy.type().isDangerousGroundUnit() && canSiegeHere(tank)) {
             tank.siege();
             tank.setTooltip("Better siege");
             return true;
         }
 
-        if (distanceToEnemy <= 11 && canSiegeHere(tank)) {
+        if (distanceToEnemy <= 12 && canSiegeHere(tank)) {
             tank.siege();
             tank.setTooltip("Siege!");
             return true;

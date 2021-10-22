@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.combat.micro.terran.*;
+import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.dedicated.protoss.ProtossHighTemplar;
 import atlantis.protoss.ProtossShieldBattery;
@@ -19,6 +20,10 @@ public class ASpecialUnitManager {
      * Returning false allows standard micro managers to be used.
      */
     public static boolean handledUsingDedicatedUnitManager(AUnit unit) {
+
+        if (unit.type().isTransportNoOverlords() && ATransportManager.handle(unit)) {
+            return true;
+        }
 
         // === Terran ========================================
 

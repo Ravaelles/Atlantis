@@ -132,7 +132,7 @@ public class AGasManager {
         
         int totalGasNeeded = 0;
         ArrayList<ProductionOrder> nextOrders = AProductionQueue.getProductionQueueNext(
-                1 + (AGame.getTimeSeconds() > 300 ? 2 : 0)
+                1 + (AGame.timeSeconds() > 300 ? 2 : 0)
         );
         for (ProductionOrder order : nextOrders) {
             totalGasNeeded += order.getGasRequired();

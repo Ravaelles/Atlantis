@@ -22,11 +22,11 @@ public class TerranMissionChangerWhenContain {
     }
 
     private static boolean killsBalanceSaysSo() {
-        if (AGame.getTimeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 900) {
+        if (AGame.timeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 900) {
             return true;
         }
 
-        return AGame.getTimeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
+        return AGame.timeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
     }
 
     /**

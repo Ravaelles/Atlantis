@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.combat.ACombatCommander;
+import atlantis.combat.missions.UmsActionsManager;
 import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
 import atlantis.protoss.ProtossSpecificBuildingsCommander;
@@ -49,14 +50,18 @@ public class AGameCommander {
             TerranSpecificBuildingsCommander.update();
         }
 
+        UmsActionsManager.update();
         AUnitStateManager.update();
 
         // === Handle UMS ===================================================
         
         if (AGame.isUms()) {
             AUnit umsUnit = Select.ourCombatUnits().groundUnits().first();
+//            AUnit umsUnit = Select.ourCombatUnits().transports(true).first();
             if (umsUnit != null) {
-                ACamera.centerCameraOn(umsUnit.getPosition());
+                if (AGame.timeSeconds() <= 3) {
+                    ACamera.centerCameraOn(umsUnit.getPosition());
+                }
             }
         }
     }

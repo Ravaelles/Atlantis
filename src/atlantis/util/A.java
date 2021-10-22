@@ -1082,7 +1082,11 @@ public class A {
     }
 
     public static int seconds() {
-        return AGame.getTimeSeconds();
+        return AGame.timeSeconds();
+    }
+
+    public static boolean everyNthGameFrame(int n) {
+        return Atlantis.game().getFrameCount() % n == 0;
     }
 
     public static double inRange(double min, double value, double max) {

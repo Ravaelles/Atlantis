@@ -72,7 +72,7 @@ public class ASquadCohesionManager {
 
         Select<AUnit> ourCombatUnits = Select.ourCombatUnits();
 
-        if (AGame.getTimeSeconds() < 350 && ourCombatUnits.clone().inRadius(1.3, unit).count() >= 2) {
+        if (AGame.timeSeconds() < 350 && ourCombatUnits.clone().inRadius(1.3, unit).count() >= 2) {
             return true;
         }
 
