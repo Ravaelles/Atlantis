@@ -65,6 +65,13 @@ public class ATargetingImportant extends AEnemyTargeting {
         AUnit target;
 
         // =========================================================
+        // Special case - SHUTTLE
+
+        if ((target = ATransportTargeting.target(unit)) != null) {
+            return target;
+        }
+
+        // =========================================================
         // Target COMBAT UNITS IN RANGE
 
         target = units.clone()

@@ -3,6 +3,7 @@ package atlantis.combat.targeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.util.A;
 
 public class AEnemyTargeting {
 
@@ -58,7 +59,7 @@ public class AEnemyTargeting {
 
         if ((target = ATargetingCrucial.target(unit)) != null) {
 //            if (!target.type().isCarrier()) {
-//                System.out.println(target + " // " + target.getHP());
+                System.out.println(A.now() + "  #" + unit.getID() + " " + unit.shortName() + " > " + target.shortName());
 //            }
             return target;
         }

@@ -6,14 +6,17 @@ import atlantis.AtlantisConfig;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
+import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
 import atlantis.map.ARegion;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 import bwapi.Color;
 import bwapi.Position;
@@ -119,7 +122,7 @@ public class AScoutManager {
 //        }
         // Define center point for our searches
         AUnit ourMainBase = Select.mainBase();
-        if (ourMainBase == null) {
+        if (ourMainBase == null && A.notUms()) {
             return false;
         }
 
@@ -130,11 +133,13 @@ public class AScoutManager {
 //        }
         // =========================================================
         // Get nearest unexplored starting location and go there
-        APosition startingLocation;
+
+//        APosition startingLocation;
+        HasPosition startingLocation;
         if (scout.isType(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
             startingLocation = AMap.getStartingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
-            ).getPosition();
+            );
         } else {
             startingLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
         }
@@ -147,7 +152,7 @@ public class AScoutManager {
 //        }
         // =========================================================
         if (startingLocation != null) {
-            scout.move(startingLocation.getPosition(), UnitActions.EXPLORE, "Explore");
+            scout.move(startingLocation, UnitActions.EXPLORE, "Explore");
             return true;
         }
         else {

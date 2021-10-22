@@ -441,7 +441,7 @@ public class AAdvancedPainter extends APainter {
             if (type.equals(AUnitType.Zerg_Egg)) {
                 type = unit.getBuildType();
             }
-            paintSideMessage(type.getShortName(), Color.Green);
+            paintSideMessage(type.shortName(), Color.Green);
         }
 
         // Techs
@@ -459,7 +459,7 @@ public class AAdvancedPainter extends APainter {
         ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(AProductionQueue.MODE_ALL_ORDERS
         );
         for (ProductionOrder order : produceNow) {
-            paintSideMessage(order.getShortName(), Color.Yellow);
+            paintSideMessage(order.shortName(), Color.Yellow);
         }
 
         // === Display next units to produce ================================================
@@ -468,12 +468,12 @@ public class AAdvancedPainter extends APainter {
                 5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);
-            if (order != null && order.getShortName() != null) {
+            if (order != null && order.shortName() != null) {
                 if (order.getUnitOrBuilding() != null
                         && !AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
                     continue;
                 }
-                paintSideMessage(order.getShortName(), Color.Red);
+                paintSideMessage(order.shortName(), Color.Red);
             }
         }
 
@@ -511,7 +511,7 @@ public class AAdvancedPainter extends APainter {
 
                 String status = constructionOrder.getStatus().toString().replace("CONSTRUCTION_", "");
                 String builder = (constructionOrder.getBuilder() + "").replace("AUnit(", "");
-                paintSideMessage(constructionOrder.getBuildingType().getShortName()
+                paintSideMessage(constructionOrder.getBuildingType().shortName()
                         + ", " + status + ", " + builder, color, yOffset);
             }
         }
@@ -549,7 +549,7 @@ public class AAdvancedPainter extends APainter {
                 // Draw text
                 paintTextCentered(
                         positionToBuild.translateByPixels(buildingType.getDimensionLeft(), 69),
-                        buildingType.getShortName(), color
+                        buildingType.shortName(), color
                 );
             }
         }
@@ -757,7 +757,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             // Display name of unit
-            String name = unit.getBuildType().getShortName();
+            String name = unit.getBuildType().shortName();
 
             // Paint building name
             paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 7),
@@ -854,7 +854,7 @@ public class AAdvancedPainter extends APainter {
             String trainedUnitString = "";
             if (unit != null) {
                 operationProgress = 100 * (unit.getTotalTrainTime() - building.getRemainingTrainTime()) / unit.getTotalTrainTime();
-                trainedUnitString = unit.getShortName();
+                trainedUnitString = unit.shortName();
             }
 
             // Paint box
@@ -949,7 +949,7 @@ public class AAdvancedPainter extends APainter {
                     enemyUnitData.type().getDimensionDown() / 32,
                     Color.Grey
             );
-            paintText(topLeft, enemyUnitData.type().getShortName(), Color.White);
+            paintText(topLeft, enemyUnitData.type().shortName(), Color.White);
         }
     }
 

@@ -3,6 +3,7 @@ package atlantis.combat;
 import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 
 public class DontInterruptStartedAttacks {
 
@@ -23,7 +24,7 @@ public class DontInterruptStartedAttacks {
 
         // =========================================================
 
-        if (unit.melee() || unit.type().isReaver()) {
+        if (unit.isMelee() || unit.type().isReaver()) {
             return true;
         }
 
@@ -31,7 +32,7 @@ public class DontInterruptStartedAttacks {
             return true;
         }
 
-        if ((shouldAvoidAnyUnit || unit.isUnderAttack(40)) && !unit.melee() && unit.woundPercent() > 65) {
+        if ((shouldAvoidAnyUnit || unit.isUnderAttack(40)) && !unit.isMelee() && unit.woundPercent() > 65) {
             return false;
         }
 
@@ -62,11 +63,16 @@ public class DontInterruptStartedAttacks {
     }
 
     private static boolean attackingCrucialUnit(AUnit unit) {
-        if (unit.getTarget() == null) {
+        AUnit target = unit.getTarget();
+        if (target == null) {
             return false;
         }
 
-        return unit.getTarget().isTank() && !unit.isRanged() && unit.lastStartedAttackLessThanAgo(9);
+        if (!unit.isRanged() && unit.lastStartedAttackLessThanAgo(9)) {
+            return true;
+        }
+
+        return target.isTank() || target.is(AUnitType.Protoss_Reaver);
     }
 
 }

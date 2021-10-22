@@ -232,11 +232,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     @Override
     public String toString() {
 //        Position position = this.getPosition();
-//        String toString = type().getShortName();
+//        String toString = type().shortName();
 //        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
 //        return toString;
 //        return "AUnit(" + u.getType().toString() + ")";
-        return "AUnit(" + type().getShortName()+ " #" + getID() + ") at " + getPosition().toString();
+        return "AUnit(" + type().shortName()+ " #" + getID() + ") at " + getPosition().toString();
     }
 
     @Override
@@ -342,7 +342,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is considered to be "melee" unit (not ranged).
      */
-    public boolean melee() {
+    public boolean isMelee() {
         return (boolean) cache.get(
                 "isMelee",
                 () -> type().isMeleeUnit()
@@ -400,11 +400,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public String shortName() {
-        return type().getShortName();
+        return type().shortName();
     }
 
-    public String getShortNamePlusId() {
-        return type().getShortName() + " #" + getID();
+    public String shortNamePlusId() {
+        return type().shortName() + " #" + getID();
     }
 
     public boolean isInWeaponRangeByGame(AUnit target) {

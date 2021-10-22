@@ -30,7 +30,7 @@ public class TerranTank {
         nearestEnemyBuilding = Select.enemy().buildings().nearestTo(tank);
         nearestEnemyBuildingDist = nearestEnemyBuilding != null ? tank.distTo(nearestEnemyBuilding) : 999;
 
-//        String string = (enemy != null ? enemy.getShortName() : "NULL");
+//        String string = (enemy != null ? enemy.shortName() : "NULL");
 //        if (enemy != null) {
 //             string += " (" + enemy.distanceTo(tank) + ")";
 //        }

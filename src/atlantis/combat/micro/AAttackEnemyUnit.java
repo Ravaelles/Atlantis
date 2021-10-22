@@ -60,9 +60,9 @@ public class AAttackEnemyUnit {
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
                 enemy.isTank()
-                        && (enemy.distToMoreThan(unit, unit.melee() ? 0.8 : 1.15))
+                        && (enemy.distToMoreThan(unit, unit.isMelee() ? 0.8 : 1.15))
                         && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
-                        && (unit.melee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
+                        && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
         ) {
             if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(11.2, unit).isEmpty()) {
                 return false;

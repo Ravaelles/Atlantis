@@ -410,9 +410,9 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * Returns short name for of unit type like e.g. "Zergling", "Marine", "Mutalisk", "Barracks".
      */
-    public String getShortName() {
+    public String shortName() {
         return (String) cache.get(
-                "getShortName",
+                "shortName",
                 () -> {
                     String name = getName();
                     name.replace("Terran_", "").replace("Protoss_", "")
@@ -929,5 +929,19 @@ public class AUnitType implements Comparable<AUnitType> {
 
     public boolean isSpell() {
         return ut.isSpell();
+    }
+
+    public boolean isTransportNoOverlords() {
+        return (boolean) cache.get(
+                "isTransportNoOverlords",
+                () -> isType(Protoss_Shuttle, Terran_Dropship)
+        );
+    }
+
+    public boolean isTransport() {
+        return (boolean) cache.get(
+                "isTransport",
+                () -> isType(Protoss_Shuttle, Terran_Dropship, Zerg_Overlord)
+        );
     }
 }

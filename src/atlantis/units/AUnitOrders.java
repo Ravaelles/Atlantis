@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
@@ -81,7 +82,7 @@ public interface AUnitOrders {
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {
         unit().setUnitAction(UnitActions.BUILD);
         boolean result = u().build(buildingType.ut(), buildTilePosition);
-        unit().setTooltip("Construct " + buildingType.getShortName());
+        unit().setTooltip("Construct " + buildingType.shortName());
         unit().setLastUnitOrderNow();
         return result;
     }
@@ -108,7 +109,7 @@ public interface AUnitOrders {
         return move(target.getPosition(), unitAction, tooltip);
     }
 
-    default boolean move(Position target, UnitAction unitAction, String tooltip) {
+    default boolean move(HasPosition target, UnitAction unitAction, String tooltip) {
         if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println("MOVE @" + A.now() + " / unit#" + unit().getID() + " // " + tooltip);
         }
@@ -154,7 +155,7 @@ public interface AUnitOrders {
 //            if (unit().isFirstCombatUnit()) {
 //                System.out.println(A.now() + " move");
 //            }
-            u().move(target);
+            u().move(target.getPosition());
 
             unit().setLastUnitOrderNow()
                 .setUnitAction(unitAction);

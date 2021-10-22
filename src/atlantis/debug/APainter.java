@@ -18,9 +18,9 @@ public class APainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
-    public static int paintingMode = MODE_NO_PAINTING;
+//    public static int paintingMode = MODE_NO_PAINTING;
+    public static int paintingMode = MODE_FULL_PAINTING;
 //    public static int paintingMode = MODE_PARTIAL_PAINTING;
-//    public static int paintingMode = MODE_FULL_PAINTING;
 
     protected static Game bwapi;
 

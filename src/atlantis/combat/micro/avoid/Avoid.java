@@ -49,7 +49,7 @@ public class Avoid {
     protected static String getTooltip(AUnit unit, AUnit enemy) {
         String dist = "(" + A.digit(unit.distTo(enemy)) + ")";
 
-        if (enemy.melee()) {
+        if (enemy.isMelee()) {
             return "MeleeRun" + dist;
         }
         else if (enemy.isRanged()) {
@@ -61,7 +61,7 @@ public class Avoid {
     }
 
     protected static boolean handleErrorRun(AUnit unit) {
-        System.err.println("ERROR_RUN for " + unit.getShortNamePlusId());
+        System.err.println("ERROR_RUN for " + unit.shortNamePlusId());
 
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         unit.setTooltip("Cant run, fight");

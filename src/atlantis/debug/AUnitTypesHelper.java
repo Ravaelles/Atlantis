@@ -54,27 +54,27 @@ public class AUnitTypesHelper {
         
         System.out.println("===== Best ground damage =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
-            System.out.println(unitType.getShortName() + " (" + unitType.getGroundWeapon() + ", range "
+            System.out.println(unitType.shortName() + " (" + unitType.getGroundWeapon() + ", range "
                     + (unitType.getGroundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
         }
         System.out.println();
         
         System.out.println("===== Best air damage =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
-            System.out.println(unitType.getShortName() + "(" + unitType.getGroundWeapon() + ", range "
+            System.out.println(unitType.shortName() + "(" + unitType.getGroundWeapon() + ", range "
                     + (unitType.getAirWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
         }
         System.out.println();
         
         System.out.println("===== Top quality / price ground units =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
-            System.out.println(unitType.getShortName() + " ratio: " + String.format("%.2f", bestGroundDamage.get(unitType)));
+            System.out.println(unitType.shortName() + " ratio: " + String.format("%.2f", bestGroundDamage.get(unitType)));
         }
         System.out.println();
         
         System.out.println("===== Top quality / price air units =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
-            System.out.println(unitType.getShortName() + " ratio: " + String.format("%.2f", bestAirDamage.get(unitType)));
+            System.out.println(unitType.shortName() + " ratio: " + String.format("%.2f", bestAirDamage.get(unitType)));
         }
         System.out.println();
     }

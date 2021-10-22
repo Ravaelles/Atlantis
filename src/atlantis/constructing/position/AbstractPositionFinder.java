@@ -38,7 +38,7 @@ public abstract class AbstractPositionFinder {
                 position.getTileX() % 7 <= 1
                 || (position.getTileX() + building.getDimensionRight() / 32) % 7 <= 1
         ) {
-//        System.out.println(building.getShortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
+//        System.out.println(building.shortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
 //                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
 //                (position.getTileX() + building.getDimensionRight() / 32) % 7 + ")");
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";

@@ -127,7 +127,7 @@ public class ABuildOrderLoader {
 //        System.out.println("Initial queue");
 //        for (ProductionOrder productionOrder : initialProductionQueue) {
 //            System.out.print(productionOrder.getRawFirstColumnInFile() + ":  ");
-//            System.out.println(productionOrder.getShortName());
+//            System.out.println(productionOrder.shortName());
 //        }
 //        System.out.println();
 //        System.out.println();
@@ -163,7 +163,7 @@ public class ABuildOrderLoader {
             
             // Add build order from file
             else {
-//            System.out.println("NAME: " + order.getShortName());
+//            System.out.println("NAME: " + order.shortName());
 //            System.out.println("MODIFIER: " + order.getModifier());
 
                 if (order.getModifier() != null && order.getModifier().charAt(0) == 'x' && order.getUpgrade() == null) {

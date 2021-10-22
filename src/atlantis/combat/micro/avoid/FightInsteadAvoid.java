@@ -21,6 +21,7 @@ public class FightInsteadAvoid {
     private final AUnit lurkerOrReaver;
     private final AUnit tankSieged;
     private final AUnit tanks;
+    private final AUnit reaver;
     private final AUnit vulture;
     private final AUnit ranged;
     private final AUnit melee;
@@ -38,6 +39,7 @@ public class FightInsteadAvoid {
         tankSieged = selector.clone().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
         tanks = selector.clone().tanks().first();
         vulture = selector.clone().ofType(AUnitType.Terran_Vulture).first();
+        reaver = selector.clone().ofType(AUnitType.Protoss_Reaver).first();
         defensiveBuilding = selector.clone().buildings().first();
         ranged = selector.clone().ranged().first();
         melee = selector.clone().melee().first();
@@ -50,15 +52,15 @@ public class FightInsteadAvoid {
             return false;
         }
 
+        // Attacking critically important unit
+        if (reaver != null || ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
+            unit.setTooltip("CrucialTarget!");
+            return true;
+        }
+
         // Always avoid invisible combat units
         if (invisibleDT != null || invisibleCombatUnit != null) {
             return false;
-        }
-
-        // Attacking critically important unit
-        if (unit.isAttacking() && unit.getTarget() != null && ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
-            unit.setTooltip("CrucialTarget!");
-            return true;
         }
 
         // Workers
@@ -125,7 +127,7 @@ public class FightInsteadAvoid {
             return unit.mission().allowsToAttackDefensiveBuildings();
         }
 
-        if (unit.melee()) {
+        if (unit.isMelee()) {
             return fightAsMeleeUnit();
         } else {
             return fightAsRangedUnit();

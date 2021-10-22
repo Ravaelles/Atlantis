@@ -112,9 +112,9 @@ public class ProductionOrder {
         }
     }
 
-    public String getShortName() {
+    public String shortName() {
         if (unitOrBuilding != null) {
-            return unitOrBuilding.getShortName();
+            return unitOrBuilding.shortName();
         } else if (upgrade != null) {
             return upgrade.toString();
         } else {

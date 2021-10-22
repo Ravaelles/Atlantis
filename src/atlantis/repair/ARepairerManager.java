@@ -53,7 +53,7 @@ public class ARepairerManager {
         if (!repairer.isRepairing()) {
             repairer.repair(
                 target,
-                "Repair " + target.getShortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
+                "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
             );
         }
         return true;

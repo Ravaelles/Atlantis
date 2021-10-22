@@ -8,7 +8,7 @@ import atlantis.units.actions.UnitActions;
 public class AvoidEdgesWhenMoving {
 
     public static boolean handle(AUnit unit) {
-        if (unit.isMoving() && !unit.isRunning()) {
+        if (unit.isMoving() && !unit.isRunning() && unit.isGroundUnit()) {
             APosition pos = unit.getPosition();
 
             if (AMap.distanceToNearestChokeLessThan(unit, 5)) {

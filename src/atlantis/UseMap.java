@@ -7,11 +7,12 @@ public class UseMap {
 
         // === UMS maps - great for bot development ============
 
-        return "ums/training-PvT.scx"; // Dragoons + Zealots vs. Vultures + Tanks
+        return "ums/trainzvreaver.scm"; // Zerglings & Hydras vs. 2 Reavers & Shuttle
+//        return "ums/training-PvT.scx"; // Dragoons & Zealots vs. Vultures & Tanks
 //        return "ums/trening nr 2.scx";
-//        return "ums/micro tvp 1.00.scx"; // Huge Terran army (tanks + vultures) against Zealots & HiTemplars & Dragoons
+//        return "ums/micro tvp 1.00.scx"; // Huge Terran army (tanks & vultures) vs. Zealots & Hi-Templars & Dragoons
 //        return "ums/micro3.scx";
-//        return "ums/wraiths_vs_carriers_obs.scx"; // Wraiths with Valkyries attacking Carriers with Observers
+//        return "ums/wraiths_vs_carriers_obs.scx"; // Wraiths & Valkyries vs. Carriers & Observers
 //        return "ums/(1)micro3_007.scx";
 //        return "ums/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
 //        return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons vs. mines

@@ -5,7 +5,6 @@ import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import atlantis.information.AFoggedUnit;
-import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
@@ -703,8 +702,20 @@ public class Select<T> {
     public Select<T> infantry() {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
-            AFoggedUnit unit = dataFrom(unitsIterator.next());	//(unitOrData instanceof AUnit ? (AUnit) unitOrData : ((UnitData)unitOrData).getUnit()); 
-            if (!unit.type().isOrganic()) { //replaced  isInfantry()
+            AFoggedUnit unit = dataFrom(unitsIterator.next());
+            if (!unit.type().isOrganic()) {
+                unitsIterator.remove();
+            }
+        }
+
+        return this;
+    }
+
+    public Select<T> transports(boolean excludeOverlords) {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AFoggedUnit unit = dataFrom(unitsIterator.next());
+            if (excludeOverlords && !unit.type().isTransportNoOverlords() || !unit.type().isTransport()) {
                 unitsIterator.remove();
             }
         }
@@ -776,7 +787,7 @@ public class Select<T> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitFrom(unitsIterator.next());
-            if (!unit.melee()) {
+            if (!unit.isMelee()) {
                 unitsIterator.remove();
             }
         }
@@ -1558,7 +1569,7 @@ public class Select<T> {
 //            System.out.println("data = ");
 //            for (T unit :
 //                    data) {
-//                System.out.println(((AUnit) unit).getShortName() + " - " + ((AUnit) unit).getHPPercent());
+//                System.out.println(((AUnit) unit).shortName() + " - " + ((AUnit) unit).getHPPercent());
 //            }
 //        }
 

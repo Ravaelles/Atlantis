@@ -202,6 +202,10 @@ public class AMap {
         ArrayList<ABaseLocation> baseLocations = new ArrayList<>();
         baseLocations.addAll(getStartingLocations(true));
 
+        if (baseLocations.isEmpty()) {
+            return null;
+        }
+
         return baseLocations.get(index % baseLocations.size());
     }
 

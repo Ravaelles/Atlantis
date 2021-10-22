@@ -23,7 +23,7 @@ public class SafetyMargin {
             throw new RuntimeException("Attacker is null");
         }
 
-        if (attacker.melee()) {
+        if (attacker.isMelee()) {
             return SafetyMarginAgainstMelee.calculate(attacker, defender);
         }
         else {
@@ -34,7 +34,7 @@ public class SafetyMargin {
     // =========================================================
 
     protected static double enemyWeaponRangeBonus(AUnit defender, AUnit attacker) {
-        return attacker.getWeaponRangeAgainst(defender) - (attacker.melee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
+        return attacker.getWeaponRangeAgainst(defender) - (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
     protected static double enemyMovementBonus(AUnit attacker, AUnit defender) {
@@ -60,7 +60,7 @@ public class SafetyMargin {
         // If unit is much slower than enemy, don't run at all. It's better to shoot instead.
         double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();
 
-        return -quicknessDifference / (quicknessDifference > 0 ? 2.5 : (attacker.melee() ? 0.6 : 1.5));
+        return -quicknessDifference / (quicknessDifference > 0 ? 2.5 : (attacker.isMelee() ? 0.6 : 1.5));
 //        return Math.min(0, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
     }
 
