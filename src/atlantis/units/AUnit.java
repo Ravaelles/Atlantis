@@ -46,7 +46,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
 
     private final Unit u;
-    private Cache<AUnit, Object> cache;
+    private Cache<Object> cache;
 //    private AUnitType _lastCachedType;
     private UnitAction unitAction = UnitActions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
@@ -90,7 +90,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         instances.remove(u.getID());
     }
 
-    private AUnit(Unit u) {
+    protected AUnit(Unit u) {
         if (u == null) {
             throw new RuntimeException("AUnit constructor: unit is null");
         }
@@ -124,15 +124,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public AUnitType type() {
         return (AUnitType) cache.get(
                 "type",
+                isOur() ? -1 : 3,
                 () -> {
                     AUnitType type = AUnitType.createFrom(u.getType());
                     if (AUnitType.Unknown.equals(type)) {
                         if (this.isOur()) {
                             System.err.println("Our unit (" + u.getType() + ") returned Unknown type");
-                        } else {
-                            System.err.println("Enemy unit type is Unknown...");
-//                            return _lastCachedType;
                         }
+                        // This is expected - invisible units return Unknown type
+//                        else {
+//                            System.err.println("Enemy unit type is Unknown...");
+//                        }
                     }
                     return type;
                 }
@@ -140,7 +142,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
     
     public void refreshType() {
-//        _lastCachedType = AUnitType.createFrom(u.getType());
         cache.forget("type");
         _isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
     }
@@ -540,9 +541,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Not that we're racists, but spider mines and larvas aren't really units...
      */
-    public boolean isUncontrollable() {
-        return isType(AUnitType.Terran_Vulture_Spider_Mine, AUnitType.Zerg_Egg, AUnitType.Zerg_Larva);
-    }
 
     /**
      * Not that we're racists, but spider mines and larvas aren't really units...
@@ -904,7 +902,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return "#" + u.getID();
     }
 
-    public int ID() {
+    public int id() {
         return u.getID();
     }
 

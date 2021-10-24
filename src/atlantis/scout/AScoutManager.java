@@ -86,7 +86,7 @@ public class AScoutManager {
         
         // === Avoid military buildings ============================
 
-        if (AAvoidUnits.avoid(scout)) {
+        if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
             return true;
         }
         

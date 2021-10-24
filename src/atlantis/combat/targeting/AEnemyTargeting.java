@@ -3,12 +3,11 @@ package atlantis.combat.targeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.A;
 
 public class AEnemyTargeting {
 
-    protected static Select<AUnit> buildings;
-    protected static Select<AUnit> units;
+    protected static Select<? extends AUnit> buildings;
+    protected static Select<? extends AUnit> units;
 
     /**
      * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
@@ -84,7 +83,7 @@ public class AEnemyTargeting {
     // =========================================================
 
     private static AUnit selectWeakestEnemyInRangeOfType(AUnitType enemyType, AUnit ourUnit) {
-        Select<AUnit> targets = Select.enemies(enemyType)
+        Select<AUnit> targets = (Select<AUnit>) Select.enemies(enemyType)
                 .effVisible().canBeAttackedBy(ourUnit, true, true);
 
         AUnit mostWounded = targets.clone().mostWounded();

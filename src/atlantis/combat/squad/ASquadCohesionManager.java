@@ -100,8 +100,7 @@ public class ASquadCohesionManager {
             return false;
         }
 
-//        int squadSize = unit.squad().size();
-        Select<AUnit> closeFriends = Select.ourCombatUnits().exclude(unit);
+        Select<AUnit> closeFriends = (Select<AUnit>) Select.ourCombatUnits().exclude(unit);
         AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
         APosition center = squadCenter(unit);
 

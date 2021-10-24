@@ -13,7 +13,6 @@ import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.util.A;
 
 public class ACombatUnitManager {
 
@@ -109,7 +108,7 @@ public class ACombatUnitManager {
         // - close melee units (Zealots)
         // - ranged units that can shoot at us (Dragoons)
         // - defensive buildings (Cannons)
-        if (AAvoidUnits.avoid(unit)) {
+        if (AAvoidUnits.avoidEnemiesIfNeeded(unit)) {
             return true;
         }
 

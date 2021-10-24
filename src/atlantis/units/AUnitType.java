@@ -5,11 +5,7 @@ import bwapi.TechType;
 import bwapi.UnitType;
 import bwapi.WeaponType;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Wrapper for BWMirror UnitType class that makes it much easier to use.<br /><br />
@@ -23,9 +19,9 @@ public class AUnitType implements Comparable<AUnitType> {
     private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
     private static int firstFreeID = 1;
 
+    private Cache<Object> cache;
+
     private final int ID;
-//    private String _name = null;
-//    private String _shortName = null;
 
     // =========================================================
 
@@ -40,7 +36,6 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     private final UnitType ut;
-    private Cache<UnitType, Object> cache;
 
     // =========================================================
 
@@ -414,8 +409,8 @@ public class AUnitType implements Comparable<AUnitType> {
                 "shortName",
                 () -> {
                     String name = getName()
-                            .replace("Terran", "").replace("Protoss", "")
-                            .replace("Zerg", "").replace("Hero_", "")
+                            .replace("Terran_", "").replace("Protoss_", "")
+                            .replace("Zerg_", "").replace("Hero_", "")
                             .replace("Special_", "").replace("Powerup_", "")
                             .replace("_", " ").replace("Terran ", "")
                             .replace("Protoss ", "").replace("Zerg ", "")

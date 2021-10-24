@@ -30,9 +30,9 @@ public class DontInterruptStartedAttacks {
 //            if (unit.isFirstCombatUnit()) {
 //                System.out.println(A.now() + "  " + unit.idWithHash() + " TARGET ACQUIRED");
 //            }
-            APainter.paintCircle(unit, 14, Color.White);
-            APainter.paintCircle(unit, 12, Color.White);
-            APainter.paintCircle(unit, 10, Color.White);
+//            APainter.paintCircle(unit, 14, Color.White);
+//            APainter.paintCircle(unit, 12, Color.White);
+//            APainter.paintCircle(unit, 10, Color.White);
             unit.setTooltip("Target(" + unit.lastTargetToAttackAcquiredAgo() + ")");
             return true;
         }
@@ -46,19 +46,19 @@ public class DontInterruptStartedAttacks {
 //            if (unit.isFirstCombatUnit()) {
 //                System.out.println(A.now() + "  " + unit.idWithHash() + " STARTED ATTACK ANIMATION");
 //            }
-            APainter.paintCircle(unit, 15, Color.Green);
-            APainter.paintCircle(unit, 13, Color.Green);
-            APainter.paintCircle(unit, 11, Color.Green);
+//            APainter.paintCircle(unit, 15, Color.Green);
+//            APainter.paintCircle(unit, 13, Color.Green);
+//            APainter.paintCircle(unit, 11, Color.Green);
             unit.setTooltip("Shoot(" + unit.lastFrameOfStartingAttackAgo() + ")");
             return true;
         }
 
         // =========================================================
 
-        if (attackingCrucialUnit(unit)) {
-            unit.setTooltip("Crucial");
-            return true;
-        }
+//        if (attackingCrucialUnit(unit)) {
+//            unit.setTooltip("Crucial");
+//            return true;
+//        }
 
 //        if (unit.isMelee() || unit.type().isReaver()) {
 //            return true;

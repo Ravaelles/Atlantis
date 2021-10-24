@@ -32,7 +32,8 @@ public class ProtossObserver {
     // =========================================================
 
     private static boolean handleSpreadOut(AUnit observer) {
-        Select<AUnit> observers = Select.ourOfType(AUnitType.Protoss_Observer).inRadius(17, observer).exclude(observer);
+        Select<AUnit> observers = (Select<AUnit>) Select.ourOfType(AUnitType.Protoss_Observer)
+                .inRadius(17, observer).exclude(observer);
         if (observers.count() > 0) {
             AUnit otherObserver = observers.nearestTo(observer);
             observer.moveAwayFrom(otherObserver.getPosition(), 5, "Spread observers");

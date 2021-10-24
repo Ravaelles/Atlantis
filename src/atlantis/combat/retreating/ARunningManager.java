@@ -367,7 +367,7 @@ public class ARunningManager {
             return false;
         }
 
-        Select<AUnit> friendsTooClose = Select.ourRealUnits()
+        Select<AUnit> friendsTooClose = (Select<AUnit>) Select.ourRealUnits()
                 .exclude(unit).groundUnits().inRadius(0.17 + unit.woundPercent() / 300.0, unit);
 
         if (friendsTooClose.count() <= 1) {

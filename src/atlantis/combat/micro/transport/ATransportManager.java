@@ -34,7 +34,7 @@ public class ATransportManager {
             return false;
         }
 
-        return AAvoidUnits.avoid(transport);
+        return AAvoidUnits.avoidEnemiesIfNeeded(transport);
     }
 
     private static AUnit babyToCarry(AUnit transport) {

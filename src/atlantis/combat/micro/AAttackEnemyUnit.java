@@ -4,6 +4,7 @@ import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.targeting.AEnemyTargeting;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
@@ -75,6 +76,13 @@ public class AAttackEnemyUnit {
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
                 enemy.isTank()
+                        && !unit.isAirUnit()
+                        && !unit.is(
+                                AUnitType.Terran_Siege_Tank_Siege_Mode,
+                                AUnitType.Terran_Siege_Tank_Tank_Mode,
+                                AUnitType.Protoss_Archon,
+                                AUnitType.Protoss_Reaver
+                        )
                         && (enemy.distToMoreThan(unit, unit.isMelee() ? 0.8 : 1.15))
                         && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
                         && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))

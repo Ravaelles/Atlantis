@@ -1,7 +1,6 @@
 package atlantis.information;
 
 import atlantis.position.APosition;
-import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -11,23 +10,21 @@ import atlantis.units.AUnitType;
  * @author Anderson
  *
  */
-public class AFoggedUnit implements HasPosition {
+//public class AFoggedUnit implements HasPosition {
+public class AFoggedUnit extends AUnit {
 
-    private APosition position;
     private final AUnit unit;
-    private AUnitType type;
+    private APosition _position;
     private AUnitType _lastCachedType;
-    private final AUnitType buildType;
-    
+
     // =========================================================
 
     public AFoggedUnit(AUnit unit) {
+        super(unit.u());
+
         this.unit = unit;
-        position = new APosition(unit.getPosition());
-//        type = unit.type();
-        type = AUnitType.createFrom(unit.u().getType());
-        _lastCachedType = type;
-        buildType = unit.getBuildType();
+        _position = new APosition(unit.getPosition());
+        _lastCachedType = AUnitType.createFrom(unit.u().getType());
     }
 
     // =========================================================
@@ -36,12 +33,12 @@ public class AFoggedUnit implements HasPosition {
      * Updates last known position of this unit.
      */
     public void updatePosition(APosition position) {
-        this.position = new APosition(position);
+        this._position = new APosition(position);
     }
-    
+
     @Override
     public APosition getPosition() {
-        return position;
+        return _position;
     }
 
     @Override
@@ -60,18 +57,13 @@ public class AFoggedUnit implements HasPosition {
      * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached 
      * type.
      */
+    @Override
     public AUnitType type() {
-        if (type.equals(AUnitType.Unknown)) {
-            return _lastCachedType;
+        if (_lastCachedType == null) {
+            _lastCachedType = super.type();
         }
-        else {
-            _lastCachedType = type;
-            return type;
-        }
-    }
 
-    public AUnitType getUnitType() {
-        return buildType;
+        return _lastCachedType;
     }
 
     public AUnit getUnit() {
@@ -84,8 +76,9 @@ public class AFoggedUnit implements HasPosition {
                     String.format("Unexpected unit ID. Expected %d, received %d", unit.getID(), updated.getID())
             );
         }
-        position = updated.getPosition();
-        type = unit.type();
+
+        _position = updated.getPosition();
+        _lastCachedType = unit.type();
 
         return this;
     }

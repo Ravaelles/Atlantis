@@ -32,7 +32,7 @@ public class FightInsteadAvoid {
         this.unit = unit;
         this.enemies = enemies;
 
-        Select<AUnit> selector = Select.from(enemies);
+        Select<AUnit> selector = (Select<AUnit>) Select.from(enemies);
         invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effCloaked().first();
         invisibleCombatUnit = selector.clone().effCloaked().combatUnits().first();
         lurkerOrReaver = selector.clone().ofType(AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver).first();
@@ -54,7 +54,11 @@ public class FightInsteadAvoid {
 
         // Attacking critically important unit
         if (ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
-            unit.setTooltip("CrucialTarget!");
+            unit.setTooltip("Crucial!");
+            return true;
+        }
+
+        if (forbidMeleeUnitsAbandoningCloseTargets(unit)) {
             return true;
         }
 
@@ -137,6 +141,14 @@ public class FightInsteadAvoid {
     }
 
     // =========================================================
+
+    private boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
+        return unit.isMelee()
+                && Select.enemyRealUnits()
+                    .canBeAttackedBy(unit, false, true)
+                    .inRadius(1, unit)
+                    .isNotEmpty();
+    }
 
     private boolean wayTooManyUnitsNearby(AUnit unit) {
         int unitsNearby = Select.all().exclude(unit).inRadius(0.3, unit).count();

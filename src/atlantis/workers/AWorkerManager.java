@@ -16,7 +16,7 @@ public class AWorkerManager {
     public static boolean update(AUnit worker) {
         worker.removeTooltip();
 
-        if (AAvoidUnits.avoid(worker)) {
+        if (AAvoidUnits.avoidEnemiesIfNeeded(worker)) {
             return true;
         }
 
