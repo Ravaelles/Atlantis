@@ -26,13 +26,13 @@ public class DontInterruptStartedAttacks {
 
         // === Target acquired recently, allow to attack ===========
 
-        if (unit.recentlyAcquiredTargetToAttack()) {
+        if (unit.recentlyAcquiredTargetToAttack() && !unit.isRunning()) {
 //            if (unit.isFirstCombatUnit()) {
 //                System.out.println(A.now() + "  " + unit.idWithHash() + " TARGET ACQUIRED");
 //            }
-//            APainter.paintCircle(unit, 14, Color.Teal);
-//            APainter.paintCircle(unit, 12, Color.Teal);
-//            APainter.paintCircle(unit, 10, Color.Teal);
+            APainter.paintCircle(unit, 14, Color.White);
+            APainter.paintCircle(unit, 12, Color.White);
+            APainter.paintCircle(unit, 10, Color.White);
             unit.setTooltip("Target(" + unit.lastTargetToAttackAcquiredAgo() + ")");
             return true;
         }
@@ -42,14 +42,13 @@ public class DontInterruptStartedAttacks {
         if (
                 UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
 //                        && NearestEnemy.rangedHasSmallerRangeThan(unit)
-                        && !unit.isRunning()
         ) {
 //            if (unit.isFirstCombatUnit()) {
 //                System.out.println(A.now() + "  " + unit.idWithHash() + " STARTED ATTACK ANIMATION");
 //            }
-//            APainter.paintCircle(unit, 15, Color.Green);
-//            APainter.paintCircle(unit, 13, Color.Green);
-//            APainter.paintCircle(unit, 11, Color.Green);
+            APainter.paintCircle(unit, 15, Color.Green);
+            APainter.paintCircle(unit, 13, Color.Green);
+            APainter.paintCircle(unit, 11, Color.Green);
             unit.setTooltip("Shoot(" + unit.lastFrameOfStartingAttackAgo() + ")");
             return true;
         }

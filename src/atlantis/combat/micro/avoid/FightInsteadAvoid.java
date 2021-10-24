@@ -53,7 +53,7 @@ public class FightInsteadAvoid {
         }
 
         // Attacking critically important unit
-        if (reaver != null || ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
+        if (ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
             unit.setTooltip("CrucialTarget!");
             return true;
         }

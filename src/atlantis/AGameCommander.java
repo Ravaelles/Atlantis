@@ -1,14 +1,13 @@
 package atlantis;
 
 import atlantis.combat.ACombatCommander;
-import atlantis.combat.missions.UmsSpecialActionsManager;
+import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
 import atlantis.protoss.ProtossSpecificBuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
 import atlantis.terran.TerranSpecificBuildingsCommander;
-import atlantis.ums.UmsSpecialActions;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.workers.AWorkerCommander;
@@ -32,9 +31,7 @@ public class AGameCommander {
         // === Execute code of every Commander and Manager ==================
 
         if (AGame.isUms()) {
-            if (UmsSpecialActions.update()) {
-                return;
-            }
+            UmsSpecialActionsManager.update();
         }
 
         AStrategyCommander.update();
@@ -59,9 +56,9 @@ public class AGameCommander {
             AUnit umsUnit = Select.ourCombatUnits().groundUnits().first();
 //            AUnit umsUnit = Select.ourCombatUnits().transports(true).first();
             if (umsUnit != null) {
-                if (AGame.timeSeconds() <= 3) {
+//                if (AGame.timeSeconds() <= 3) {
                     ACamera.centerCameraOn(umsUnit.getPosition());
-                }
+//                }
             }
         }
     }

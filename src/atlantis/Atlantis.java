@@ -1,12 +1,12 @@
 package atlantis;
 
+import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.constructing.*;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.repair.ARepairAssignments;
-import atlantis.ums.UmsSpecialActions;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
@@ -222,7 +222,7 @@ public class Atlantis implements BWEventListener {
             else {
                 if (!unit.isNotActualUnit()) {
                     System.out.println("Neutral unit discovered! " + unit.shortName());
-                    UmsSpecialActions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+                    UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
                 }
             }
         }
@@ -328,7 +328,7 @@ public class Atlantis implements BWEventListener {
         if (u.getPlayer().equals(AGame.getPlayerUs())) {
             ourNewUnit(newUnit);
             System.out.println("NEW RENEGADE FOR US " + newUnit.shortName());
-            UmsSpecialActions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = newUnit;
+            UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = newUnit;
         }
 
         // New unit for us e.g. some UMS maps give units

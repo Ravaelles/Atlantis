@@ -2,6 +2,7 @@ package atlantis;
 
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.util.A;
 
 public class AUnitStateManager {
 
@@ -62,6 +63,11 @@ public class AUnitStateManager {
 
         if (unit.isUnderAttack(3)) {
             unit._lastUnderAttack = now;
+
+            AUnit enemy = Select.enemy().nearestTo(unit);
+//            System.out.println("-------------- (" + A.dist(enemy, unit));
+//            System.out.println(unit.getPosition());
+//            System.out.println(enemy.getPosition());
         }
 //        if (unit.getID() == Select.ourCombatUnits().first().getID()) {
 //            System.out.println(AGame.getTimeFrames() + " ### "

@@ -53,6 +53,10 @@ public class AAttackEnemyUnit {
 
     public static boolean shouldNotAttack(AUnit unit) {
         return unit.isUnitUnableToDoAnyDamage()
+
+                // =========================================================
+                // =========================================================
+                // THESE SHOULDNT BE USED! RESPECT DECISIONS OF TOP SUPERIOR MANAGER!!!
 //                || unit.lastActionLessThanAgo(4, UnitActions.ATTACK_UNIT)
 //                || (unit.isTankUnsieged() && (!unit.isMoving() && unit.woundPercent() > 15));
         ;

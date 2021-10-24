@@ -9,7 +9,7 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.squad.ASquadCohesionManager;
-import atlantis.interrupt.DisturbInterrupt;
+import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -71,7 +71,7 @@ public class ACombatUnitManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
-        if (DisturbInterrupt.dontInterruptImportantActions(unit)) {
+        if (DontDisturbInterrupt.dontInterruptImportantActions(unit)) {
             return true;
         }
 
@@ -89,7 +89,7 @@ public class ACombatUnitManager {
         }
 
         if (unit.isRunning()) {
-            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
+//            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
             return true;
         }
 

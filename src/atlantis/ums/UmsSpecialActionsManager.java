@@ -1,4 +1,4 @@
-package atlantis.combat.missions;
+package atlantis.ums;
 
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
@@ -9,7 +9,34 @@ import bwapi.Color;
 
 public class UmsSpecialActionsManager {
 
+    public static AUnit NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = null;
+
+    // =========================================================
+
     public static void update() {
+        goToBeaconsIfNeeded();
+        goToNewCompanionsButStillNeutral();
+    }
+
+    private static boolean goToNewCompanionsButStillNeutral() {
+        if (NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US != null) {
+            AUnit goToRenegade = NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US;
+
+            System.out.println("Haaa! New companion!");
+
+            for (AUnit unit : Select.our().inRadius(10, goToRenegade).listUnits()) {
+                if (unit.distTo(goToRenegade) > 0.5) {
+                    unit.move(goToRenegade, UnitActions.MOVE, "Friendly Renegade!");
+                } else {
+                    NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = null;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean goToBeaconsIfNeeded() {
         Select<AUnit> ours = Select.our();
         Select<AUnit> beacons = Select.neutral().ofType(
                 AUnitType.Special_Terran_Beacon,
@@ -25,8 +52,9 @@ public class UmsSpecialActionsManager {
             AUnit nearestBeacon = beacons.clone().nearestTo(unit);
             unit.move(nearestBeacon, UnitActions.MOVE, "To beacon");
             APainter.paintLine(unit, nearestBeacon, Color.White);
-            return;
+            return true;
         }
+        return false;
     }
 
 }

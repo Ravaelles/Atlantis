@@ -42,8 +42,12 @@ public class Avoid {
 
     // =========================================================
 
-    protected static double getRunDistance(AUnit unit, HasPosition enemy) {
-        return 3.5;
+    protected static double getRunDistance(AUnit unit, HasPosition enemies) {
+        return 1.8;
+    }
+
+    protected static double getRunDistance(AUnit unit, AUnit enemy) {
+        return 1.8 + (enemy.isQuick() ? 2 : 0);
     }
 
     protected static String getTooltip(AUnit unit, AUnit enemy) {

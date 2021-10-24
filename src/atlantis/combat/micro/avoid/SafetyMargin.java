@@ -39,8 +39,21 @@ public class SafetyMargin {
 
     protected static double enemyMovementBonus(AUnit attacker, AUnit defender) {
 //         || defender.isOtherUnitFacingThisUnit(attacker)
-        return (defender.isTargettedBy(attacker))
-                ? (attacker.isMoving() ? 1.5 : 0.6) : -1.0;
+
+        if (attacker.isMoving()) {
+            boolean doingWell = defender.woundPercent() < 33 && defender.lastUnderAttackMoreThanAgo((int) (30 * (5 + defender.woundPercent())));
+            return defender.isTargettedBy(attacker) ? (doingWell ? 0.5 : 1.0) : (doingWell ? -1.4 : -0.9);
+        }
+        else {
+            return defender.isTargettedBy(attacker) ? 0.6 : -1.3;
+        }
+
+//        if (attacker.isMoving()) {
+//            return defender.isTargettedBy(attacker) ? 1.0 : -0.9;
+//        }
+//        else {
+//            return defender.isTargettedBy(attacker) ? 0.6 : -1.3;
+//        }
     }
 
     protected static double ourMovementBonus(AUnit defender) {

@@ -10,11 +10,14 @@ public class ProtossShieldBattery {
         if (shieldBattery.energy() >= 30) {
             shieldBattery.removeTooltip();
             for (AUnit unit : Select.ourRealUnits().inRadius(11, shieldBattery).listUnits()) {
-                if (unit.getShields() + 30 < unit.getMaxShields() ) {
+                if (unit.getShields() + 12 < unit.getMaxShields() ) {
                     if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).isNotEmpty()) {
                         return false;
                     }
 
+                    if (shieldBattery.groundDistance(unit) > 15) {
+                        return false;
+                    }
                     if (!shieldBattery.equals(unit.getTarget()) || A.chance(2)) {
                         unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
                     }

@@ -11,9 +11,9 @@ public class OnEveryFrame {
 
     public static void update() {
         for (AUnit unit : Select.ourCombatUnits().list()) {
-            if (unit.isUnderAttack(2) && unit.hpPercent() < 48) {
-                AGameSpeed.changeSpeedTo(30);
-            }
+//            if (unit.isUnderAttack(2) && unit.hpPercent() < 48) {
+//                AGameSpeed.changeSpeedTo(30);
+//            }
         }
     }
 

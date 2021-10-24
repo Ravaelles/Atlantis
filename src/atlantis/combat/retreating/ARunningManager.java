@@ -4,6 +4,7 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Count;
 import atlantis.units.Select;
@@ -63,9 +64,11 @@ public class ARunningManager {
             throw new RuntimeException("Null unit to run from");
         }
 
-        APosition runAwayFrom = null;
+        HasPosition runAwayFrom = (HasPosition) unitOrPosition;
         if (unitOrPosition instanceof AUnit) {
-            runAwayFrom = ((AUnit) unitOrPosition).getPosition();
+//            runAwayFrom = ((AUnit) unitOrPosition).getPosition();
+            AUnit runAwayFromAsUnit = ((AUnit) unitOrPosition);
+            runAwayFrom = runAwayFromAsUnit.getPosition();
         } else if (unitOrPosition instanceof APosition) {
             runAwayFrom = (APosition) unitOrPosition;
         }
@@ -114,7 +117,7 @@ public class ARunningManager {
     /**
      * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
      */
-    private APosition findBestPositionToRun(AUnit unit, APosition runAwayFrom, double dist) {
+    private APosition findBestPositionToRun(AUnit unit, HasPosition runAwayFrom, double dist) {
         APosition runTo = null;
 
         // === Run directly away from the enemy ========================================
@@ -158,7 +161,7 @@ public class ARunningManager {
     /**
      *
      */
-    public APosition getPositionAwayFrom(AUnit unit, APosition runAwayFrom, double dist) {
+    public APosition getPositionAwayFrom(AUnit unit, HasPosition runAwayFrom, double dist) {
         if (unit == null || runAwayFrom == null) {
             return null;
         }
@@ -190,7 +193,7 @@ public class ARunningManager {
     /**
      * Simplest case: add enemy-to-you-vector to your own position.
      */
-    private APosition findRunPositionShowYourBackToEnemy(AUnit unit, APosition runAwayFrom, double dist) {
+    private APosition findRunPositionShowYourBackToEnemy(AUnit unit, HasPosition runAwayFrom, double dist) {
         double minTiles = dist >= 1 ? dist : 1.1;
         double maxDist = dist >= 1 ? dist : 3.0;
 
@@ -219,7 +222,7 @@ public class ARunningManager {
         return null;
     }
 
-    private APosition canRunByShowingBackToEnemyTo(AUnit unit, APosition runAwayFrom, double dist) {
+    private APosition canRunByShowingBackToEnemyTo(AUnit unit, HasPosition runAwayFrom, double dist) {
         APosition runTo;
         double vectorLength = unit.getPosition().distTo(runAwayFrom);
 
@@ -260,7 +263,7 @@ public class ARunningManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
      * to given runAwayFrom position.
      */
-    private APosition findRunPositionAtAnyDirection(AUnit unit, APosition runAwayFrom) {
+    private APosition findRunPositionAtAnyDirection(AUnit unit, HasPosition runAwayFrom) {
 
         // === Define run from ====================================================
 //        Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
@@ -336,7 +339,7 @@ public class ARunningManager {
         double mostDistant = -99;
         APosition bestPosition = null;
         for (APosition position : potentialPositionsList) {
-            double dist = runAwayFrom.distTo(position);
+            double dist = position.distTo(runAwayFrom);
             if (bestPosition == null || dist >= mostDistant) {
                 bestPosition = position;
                 mostDistant = dist;
@@ -354,18 +357,6 @@ public class ARunningManager {
 //        AtlantisPainter.paintLine(unit.getPosition(), bestPosition, Color.Green);
 //        AtlantisPainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
         return bestPosition;
-    }
-
-    private static Units defineCloseEnemies(AUnit unit) {
-        Select<AUnit> veryCloseEnemies = Select.enemyCombatUnits().canShootAt(unit, 4);
-
-        System.out.println("veryCloseEnemies " + veryCloseEnemies.size());
-        if (veryCloseEnemies.size() > 0 && veryCloseEnemies.size() <= 1) {
-            return veryCloseEnemies.units();
-        }
-        else {
-            return Select.enemyCombatUnits().canShootAt(unit, 4).units();
-        }
     }
 
     /**
