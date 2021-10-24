@@ -51,12 +51,18 @@ public class ARepairerManager {
 
         // Target is wounded
         if (!repairer.isRepairing()) {
-            repairer.repair(
-                target,
-                "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
-            );
+            if (target.isAlive() && repairer.isAlive()) {
+                repairer.repair(
+                        target,
+                        "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
+                );
+                return true;
+            } else {
+                ARepairAssignments.removeRepairerOrProtector(repairer);
+            }
         }
-        return true;
+
+        return false;
     }
 
     // =========================================================

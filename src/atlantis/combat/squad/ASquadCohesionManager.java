@@ -32,12 +32,15 @@ public class ASquadCohesionManager {
         }
 
         APosition squadCenter = squadCenter(unit);
-        if (!unit.isRunning() && unit.distTo(squadCenter) >= 11 && unit.hasPathTo(squadCenter)) {
-            unit.move(squadCenter(unit), UnitActions.MOVE, "Ran too far!");
-            return true;
+        if (!unit.isRunning() && unit.distTo(squadCenter) >= maxDistanceToSquadCenter(unit) && unit.hasPathTo(squadCenter)) {
+            return unit.move(squadCenter(unit), UnitActions.MOVE, "Ran too far!");
         }
 
         return false;
+    }
+
+    private static double maxDistanceToSquadCenter(AUnit unit) {
+        return Math.max(11, unit.squadSize() / 3);
     }
 
     private static boolean shouldSkipExtremeUnitPositioning(AUnit unit) {
@@ -97,7 +100,7 @@ public class ASquadCohesionManager {
             return false;
         }
 
-        int squadSize = unit.squad().size();
+//        int squadSize = unit.squad().size();
         Select<AUnit> closeFriends = Select.ourCombatUnits().exclude(unit);
         AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
         APosition center = squadCenter(unit);

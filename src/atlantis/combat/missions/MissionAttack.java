@@ -34,6 +34,10 @@ public class MissionAttack extends Mission {
     private boolean handleAdvance(AUnit unit) {
         APosition focusPoint = focusPoint();
 
+        if (ASquadCohesionManager.handle(unit)) {
+            return true;
+        }
+
         // Focus point is well known
         if (focusPoint != null) {
             return AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint);

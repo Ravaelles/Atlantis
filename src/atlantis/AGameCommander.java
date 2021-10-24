@@ -56,9 +56,9 @@ public class AGameCommander {
             AUnit umsUnit = Select.ourCombatUnits().groundUnits().first();
 //            AUnit umsUnit = Select.ourCombatUnits().transports(true).first();
             if (umsUnit != null) {
-//                if (AGame.timeSeconds() <= 3) {
+                if (AGame.timeSeconds() <= 3) {
                     ACamera.centerCameraOn(umsUnit.getPosition());
-//                }
+                }
             }
         }
     }

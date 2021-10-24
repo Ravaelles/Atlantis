@@ -22,7 +22,7 @@ public class TerranVulture {
         // define that a mine planting has been finished.
 //        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
         if (unit.isUnitAction(UnitActions.USING_TECH) && unit.getLastOrderFramesAgo() > 15) {
-            unit.setUnitAction(null);
+            unit.setUnitAction(UnitActions.STOP);
             unit.setTooltip("Planted!");
             return false;
         }

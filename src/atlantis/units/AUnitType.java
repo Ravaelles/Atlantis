@@ -413,8 +413,8 @@ public class AUnitType implements Comparable<AUnitType> {
         return (String) cache.get(
                 "shortName",
                 () -> {
-                    String name = getName();
-                    name.replace("Terran", "").replace("Protoss", "")
+                    String name = getName()
+                            .replace("Terran", "").replace("Protoss", "")
                             .replace("Zerg", "").replace("Hero_", "")
                             .replace("Special_", "").replace("Powerup_", "")
                             .replace("_", " ").replace("Terran ", "")
