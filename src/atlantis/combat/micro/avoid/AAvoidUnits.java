@@ -11,18 +11,10 @@ import java.util.stream.Collectors;
 public abstract class AAvoidUnits {
 
     protected static AUnit unit;
-//    private static double _lastSafetyMargin;
 
     // =========================================================
 
     public static boolean avoid(AUnit unit) {
-//        if (unit.lastStoppedRunningLessThanAgo(6)) {
-//            return false;
-//        }
-        if (unit.lastActionLessThanAgo(10, UnitActions.ATTACK_UNIT)) {
-            return false;
-        }
-
         Units enemiesDangerouslyClose = getUnitsToAvoid(unit);
         if (enemiesDangerouslyClose.isEmpty()) {
             return false;
@@ -47,10 +39,6 @@ public abstract class AAvoidUnits {
             return new Units();
         }
 
-//        if (unit.isFirstCombatUnit()) {
-//            enemies.print();
-//        }
-
         if (onlyDangerouslyClose) {
             return enemies.replaceUnitsWith(
                     enemies.stream()
@@ -61,9 +49,6 @@ public abstract class AAvoidUnits {
         else {
             return enemies;
         }
-//        AUnit enemyDangerouslyClose = enemies.getUnitWithLowestValue();
-//        double safetyMargin = _lastSafetyMargin = enemies.getValueFor(enemyDangerouslyClose);
-//        return safetyMargin > 0 ? enemyDangerouslyClose : null;
     }
 
     public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {

@@ -31,7 +31,8 @@ public class ASquadCohesionManager {
             return false;
         }
 
-        if (!unit.isRunning() && unit.distTo(squadCenter(unit)) >= 11) {
+        APosition squadCenter = squadCenter(unit);
+        if (!unit.isRunning() && unit.distTo(squadCenter) >= 11 && unit.hasPathTo(squadCenter)) {
             unit.move(squadCenter(unit), UnitActions.MOVE, "Ran too far!");
             return true;
         }

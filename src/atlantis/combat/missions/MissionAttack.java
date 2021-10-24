@@ -40,7 +40,7 @@ public class MissionAttack extends Mission {
         }
 
         // Invalid focus point, no enemy can be found, roam around map
-        else if (!unit.isMoving() && !unit.isAttacking()) {
+        else if (!unit.isMoving() && !unit.isAttackingOrMovingToAttack()) {
             return handleWeDontKnowWhereTheEnemyIs(unit);
         }
 

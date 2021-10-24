@@ -1,9 +1,7 @@
 package atlantis;
 
-import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import bwapi.Color;
 
 public class AUnitStateManager {
 
@@ -25,38 +23,46 @@ public class AUnitStateManager {
             unit._lastY = unit.getY();
         }
 
-        if (unit.isAttacking()) {
-            unit._lastAttackOrder = now;
-        }
         if (unit.isAttackFrame()) {
             unit._lastAttackFrame = now;
-            if (unit.isFirstCombatUnit()) {
-                System.out.println("unit._lastAttackFrame = " + unit._lastAttackFrame);
-            }
+//            APainter.paintCircleFilled(unit, 8, Color.Yellow);
+//            if (unit.isFirstCombatUnit()) {
+//                System.out.println("unit._lastAttackFrame = " + unit._lastAttackFrame);
+//            }
         }
-        if (unit.isStartingAttack()) {
-            unit._lastStartedAttack = now;
-            if (unit.isFirstCombatUnit()) {
-                System.out.println("unit._lastStartedAttack = " + unit._lastStartedAttack);
-            }
+
+        if (unit.isAttackingOrMovingToAttack()) {
+            unit._lastAttackOrder = now;
         }
+
+        unit._lastCooldown = unit.cooldownRemaining();
+
         if (unit.isStartingAttack() && unit.cooldownRemaining() > unit._lastCooldown) {
+//            APainter.paintCircleFilled(unit, 8, Color.Orange);
             unit._lastFrameOfStartingAttack = now;
-            if (unit.isFirstCombatUnit()) {
-                System.out.println("unit._lastFrameOfStartingAttack = " + unit._lastFrameOfStartingAttack);
-            }
-        }
-        if (unit.isUnderAttack()) {
-            APainter.paintCircleFilled(unit, 12, Color.Blue);
-//            if (!unit.lastUnderAttackLessThanAgo(15)) {
-//                AGameSpeed.pauseGame();
-            unit._lastUnderAttack = now;
+//            if (unit.isFirstCombatUnit()) {
+//                System.out.println("unit._lastFrameOfStartingAttack = " + unit._lastFrameOfStartingAttack);
 //            }
         }
 
         unit._lastHitPoints.add(unit.hp());
-        unit._lastCooldown = unit.cooldownRemaining();
 
+        if (unit.isStartingAttack()) {
+            unit._lastStartedAttack = now;
+//            if (unit.isFirstCombatUnit()) {
+//                System.out.println("unit._lastStartedAttack = " + unit._lastStartedAttack);
+//            }
+        }
+
+        AUnit _oldLastTargetToAttack = unit._lastTargetToAttack;
+        unit._lastTargetToAttack = unit.isAttackingOrMovingToAttack() ? unit.getTarget() : null;
+        if (unit.getTarget() != null && !unit.getTarget().equals(_oldLastTargetToAttack)) {
+            unit._lastTargetToAttackAcquired = now;
+        }
+
+        if (unit.isUnderAttack(3)) {
+            unit._lastUnderAttack = now;
+        }
 //        if (unit.getID() == Select.ourCombatUnits().first().getID()) {
 //            System.out.println(AGame.getTimeFrames() + " ### "
 //                    + unit._lastAttackOrder + " // " + unit._lastAttackFrame + " // " + unit._lastStartingAttack);

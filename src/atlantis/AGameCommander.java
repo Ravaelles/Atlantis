@@ -1,7 +1,7 @@
 package atlantis;
 
 import atlantis.combat.ACombatCommander;
-import atlantis.combat.missions.UmsActionsManager;
+import atlantis.combat.missions.UmsSpecialActionsManager;
 import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
 import atlantis.protoss.ProtossSpecificBuildingsCommander;
@@ -50,7 +50,7 @@ public class AGameCommander {
             TerranSpecificBuildingsCommander.update();
         }
 
-        UmsActionsManager.update();
+        UmsSpecialActionsManager.update();
         AUnitStateManager.update();
 
         // === Handle UMS ===================================================

@@ -55,6 +55,10 @@ public class SafetyMargin {
         return defender.woundPercent() / 32.0;
     }
 
+    protected static double transportBonus(AUnit defender) {
+        return defender.type().isTransport() ? 4 : 0;
+    }
+
     protected static double quicknessBonus(AUnit attacker, AUnit defender) {
 
         // If unit is much slower than enemy, don't run at all. It's better to shoot instead.

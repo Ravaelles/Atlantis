@@ -1085,6 +1085,18 @@ public class A {
         return AGame.timeSeconds();
     }
 
+    public static int ago(int frame) {
+        return AGame.getTimeFrames() - frame;
+    }
+
+    public static boolean atMostFramesAgo(int frame, int maxFramesAgo) {
+        return AGame.framesAgo(frame) <= maxFramesAgo;
+    }
+
+    public static boolean atLestFramesAgo(int frame, int maxFramesAgo) {
+        return AGame.framesAgo(frame) <= maxFramesAgo;
+    }
+
     public static boolean everyNthGameFrame(int n) {
         return Atlantis.game().getFrameCount() % n == 0;
     }

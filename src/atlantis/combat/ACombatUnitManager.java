@@ -5,11 +5,11 @@ import atlantis.AGameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.squad.ASquadCohesionManager;
-import atlantis.interrupt.DontInterruptStartedAttacks;
-import atlantis.interrupt.DisturbInterruptManager;
+import atlantis.interrupt.DisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
@@ -71,6 +71,13 @@ public class ACombatUnitManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
+        if (DisturbInterrupt.dontInterruptImportantActions(unit)) {
+            return true;
+        }
+
+        if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
+            return true;
+        }
 
         // Handle units getting bugged by Starcraft
         if (Unfreezer.handleUnfreeze(unit)) {
@@ -83,15 +90,6 @@ public class ACombatUnitManager {
 
         if (unit.isRunning()) {
             unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
-            return true;
-        }
-
-        if (DisturbInterruptManager.dontInterrupt(unit)) {
-            return true;
-        }
-
-        // Don't INTERRUPT shooting units
-        if (DontInterruptStartedAttacks.shouldNotBeInterruptedStartedAttack(unit)) {
             return true;
         }
 

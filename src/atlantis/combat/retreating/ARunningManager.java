@@ -371,23 +371,27 @@ public class ARunningManager {
     /**
      * Tell other units that might be blocking our escape route to move.
      */
-    private void notifyNearbyUnitsToMakeSpace(AUnit unit) {
+    private boolean notifyNearbyUnitsToMakeSpace(AUnit unit) {
         if (unit.isAirUnit()) {
-            return;
+            return false;
         }
 
         Select<AUnit> friendsTooClose = Select.ourRealUnits()
                 .exclude(unit).groundUnits().inRadius(0.17 + unit.woundPercent() / 300.0, unit);
-        APainter.paintCircleFilled(unit, 10, Color.Yellow);
+
+        if (friendsTooClose.count() <= 1) {
+            return false;
+        }
 
         for (AUnit otherUnit : friendsTooClose.list()) {
-            if (!otherUnit.isMoving() && !otherUnit.isRunning()) {
-                boolean result = otherUnit.runningManager().runFrom(unit, 0.6);
+            if (!unit.isLoaded() && !otherUnit.isMoving() && !otherUnit.isRunning()) {
+                otherUnit.runningManager().runFrom(unit, 0.6);
+                APainter.paintCircleFilled(unit, 10, Color.Yellow);
                 APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
                 otherUnit.setTooltip("Make space (" + otherUnit.distTo(unit) + ")");
-//                AGameSpeed.pauseGame();
             }
         }
+        return true;
     }
 
     // =========================================================

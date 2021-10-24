@@ -1,6 +1,5 @@
 package atlantis.units;
 
-import atlantis.util.A;
 import atlantis.util.Cache;
 import bwapi.TechType;
 import bwapi.UnitType;
@@ -415,8 +414,8 @@ public class AUnitType implements Comparable<AUnitType> {
                 "shortName",
                 () -> {
                     String name = getName();
-                    name.replace("Terran_", "").replace("Protoss_", "")
-                            .replace("Zerg_", "").replace("Hero_", "")
+                    name.replace("Terran", "").replace("Protoss", "")
+                            .replace("Zerg", "").replace("Hero_", "")
                             .replace("Special_", "").replace("Powerup_", "")
                             .replace("_", " ").replace("Terran ", "")
                             .replace("Protoss ", "").replace("Zerg ", "")
@@ -424,7 +423,8 @@ public class AUnitType implements Comparable<AUnitType> {
                             .replace("Powerup ", "").replace("Resource ", "")
                             .replace("Resource_", "").replace("Siege Mode", "")
                             .replace("_Siege_Mode", "").replace("Tank Mode", "")
-                            .replace("_Tank_Mode", "").trim();
+                            .replace("_Tank_Mode", "").replace("_", "")
+                            .trim();
 
                     if (name.equals("Unknown")) {
                         System.err.println("Unknown? What? " + this);
@@ -558,15 +558,25 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
-    public boolean isSiegeTank() {
+    public boolean isTankSieged() {
         return (boolean) cache.get(
-                "isSiegeTank",
-                () -> isType(AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode)
+                "isTankSieged",
+                () -> isType(AUnitType.Terran_Siege_Tank_Siege_Mode)
+        );
+    }
+
+    public boolean isTankUnsieged() {
+        return (boolean) cache.get(
+                "isTankUnsieged",
+                () -> isType(AUnitType.Terran_Siege_Tank_Tank_Mode)
         );
     }
 
     public boolean isTank() {
-        return isSiegeTank();
+        return (boolean) cache.get(
+                "isTank",
+                () -> isType(Terran_Siege_Tank_Tank_Mode, Terran_Siege_Tank_Siege_Mode)
+        );
     }
 
     public boolean isFactory() {

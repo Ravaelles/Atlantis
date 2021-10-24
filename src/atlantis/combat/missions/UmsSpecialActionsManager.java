@@ -1,11 +1,13 @@
 package atlantis.combat.missions;
 
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
+import bwapi.Color;
 
-public class UmsActionsManager {
+public class UmsSpecialActionsManager {
 
     public static void update() {
         Select<AUnit> ours = Select.our();
@@ -22,6 +24,7 @@ public class UmsActionsManager {
             AUnit unit = ours.clone().inRadius(9, beacon).nearestTo(beacon);
             AUnit nearestBeacon = beacons.clone().nearestTo(unit);
             unit.move(nearestBeacon, UnitActions.MOVE, "To beacon");
+            APainter.paintLine(unit, nearestBeacon, Color.White);
             return;
         }
     }

@@ -10,6 +10,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AOurUnitsExtraInfo;
+import atlantis.interrupt.DontInterruptStartedAttacks;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
@@ -53,11 +54,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int _lastAttackOrder;
     public int _lastAttackFrame;
     public int _lastCooldown;
+    public int _lastFrameOfStartingAttack;
     public int _lastRetreat;
     public int _lastStartedRunning;
     public int _lastStoppedRunning;
     public int _lastStartedAttack;
-    public int _lastFrameOfStartingAttack;
+    public AUnit _lastTargetToAttack;
+    public int _lastTargetToAttackAcquired;
     public int _lastUnderAttack;
     public int _lastX;
     public int _lastY;
@@ -287,8 +290,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // Compare type methods
     public boolean isAlive() {
 //        return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
-        return isExists() && (!AEnemyUnits.isEnemyUnitDestroyed(this) 
-                && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this));
+        if (isOur()) {
+            return hp() > 0 && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this);
+        }
+
+        return !AEnemyUnits.isEnemyUnitDestroyed(this);
     }
 
     public boolean canBeHealed() {
@@ -642,7 +648,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         double dist = this.getPosition().distTo(targetUnit);
         return (weaponAgainstThisUnit.minRange() / 32) <= dist && dist <= (weaponAgainstThisUnit.maxRange() / 32 + safetyMargin);
+    }
 
+    public boolean hasGroundWeaponRange(APosition position, double safetyMargin) {
+        double weaponRange = groundWeaponRange();
+        if (weaponRange <= 0) {
+            return false;
+        }
+
+        double dist = this.getPosition().distTo(position);
+        return dist <= (weaponRange + safetyMargin);
     }
 
     /**
@@ -711,11 +726,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     /**
-     * Returns true if unit is starting an attack or already in the attack frame animation.
+     * Returns true if unit is in the middle of an attack and should not be interrupted otherwise
+     * it would never shoot, just raise the weapon.
      */
     public boolean isJustShooting() {
-//        return isAttacking() && (isAttackFrame() || isStartingAttack());
-        return (isAttackFrame() || isStartingAttack());
+        return DontInterruptStartedAttacks.shouldNotInterrupt(unit());
     }
 
     /**
@@ -791,7 +806,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns number of frames unit has to wait between the shots.
      * E.g. for Dragoon this value will be always 30.
      */
-    public int getCooldownAbsolute() {
+    public int cooldownAbsolute() {
         if (canAttackGroundUnits()) {
             return getGroundWeapon().damageCooldown();
         }
@@ -883,6 +898,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     
     public int getID() {
         return u.getID();
+    }
+
+    public String getIDWithHash() {
+        return "#" + u.getID();
+    }
+
+    public int ID() {
+        return u.getID();
+    }
+
+    public String idWithHash() {
+        return "#" + u.getID();
     }
 
     // =========================================================
@@ -1120,6 +1147,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isTank();
     }
 
+    public boolean isTankSieged() {
+        return type().isTankSieged();
+    }
+
+    public boolean isTankUnsieged() {
+        return type().isTankUnsieged();
+    }
+
     public boolean isMorphing() {
         return u.isMorphing();
     }
@@ -1128,7 +1163,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isMoving();
     }
 
-    public boolean isAttacking() {
+    public boolean isAttackingOrMovingToAttack() {
         return u.isAttacking() || (
             getUnitAction() != null && getUnitAction().isAttacking() && getTarget() != null && getTarget().isAlive()
         );
@@ -1324,12 +1359,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return AGame.framesAgo(_lastUnderAttack) <= framesAgo;
     }
 
+    public boolean lastUnderAttackMoreThanAgo(int framesAgo) {
+        return AGame.framesAgo(_lastUnderAttack) >= framesAgo;
+    }
+
     public boolean lastAttackOrderLessThanAgo(int framesAgo) {
         return AGame.framesAgo(_lastAttackOrder) <= framesAgo;
     }
 
     public boolean lastAttackOrderMoreThanAgo(int framesAgo) {
         return AGame.framesAgo(_lastAttackOrder) <= framesAgo;
+    }
+
+    public int lastAttackFrameAgo() {
+        return AGame.framesAgo(_lastAttackFrame);
     }
 
     public boolean lastFrameOfStartingAttackMoreThanAgo(int framesAgo) {
@@ -1422,11 +1465,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int cooldownPercent() {
-        if (cooldownRemaining() <= 0 || getCooldownAbsolute() == 0) {
+        if (cooldownRemaining() <= 0 || cooldownAbsolute() == 0) {
             return 100;
         }
 
-        return 100 * cooldownRemaining() / (getCooldownAbsolute() + 1);
+        return 100 * cooldownRemaining() / (cooldownAbsolute() + 1);
     }
 
     /**
@@ -1446,6 +1489,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isSlowerThan(Units enemies) {
         return enemies.stream().anyMatch(u -> u.maxSpeed() > this.maxSpeed());
+    }
+
+    public boolean hasBiggerRangeThan(AUnit enemy) {
+        if (isGroundUnit()) {
+            return groundWeaponRange() > enemy.groundWeaponRange();
+        }
+        return airWeaponRange() > enemy.airWeaponRange();
     }
 
     public boolean hasBiggerRangeThan(Units enemies) {
@@ -1473,9 +1523,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this.equals(attacker.getTarget());
     }
 
-    public boolean inActOfShooting() {
-        return lastStartedAttackLessThanAgo(8);
-    }
+//    public boolean inActOfShooting() {
+//        return lastStartedAttackLessThanAgo(8);
+//    }
 
     public boolean isArchon() {
         return is(AUnitType.Protoss_Archon);
@@ -1494,7 +1544,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasCargo() {
-        return !u.getLoadedUnits().isEmpty();
+        return u.getLoadedUnits().size() > 0;
     }
 
     public boolean hasFreeSpaceFor(AUnit passenger) {
@@ -1505,8 +1555,31 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isUnitUnableToDoAnyDamage();
     }
 
+    public boolean recentlyAcquiredTargetToAttack() {
+        if (getTarget() == null) {
+            return false;
+        }
 
-//    public boolean isFacingTheSameDirection(AUnit otherUnit) {
+//        if (!isAttackingOrMovingToAttack()) {
+//            return false;
+//        }
+
+//        System.out.println(unit().idWithHash() + " got target " + lastTargetToAttackAcquiredAgo() + " ago");
+
+//        int targetAcquiredAgo = A.atMostFramesAgo(_lastTargetToAttackAcquired, (int) (cooldownAbsolute() / 1.3));
+        int targetAcquiredAgo = lastTargetToAttackAcquiredAgo();
+
+        return getTarget().isAlive()
+                && (
+                    targetAcquiredAgo <= cooldownAbsolute() / 1.1
+                );
+    }
+
+    public int lastTargetToAttackAcquiredAgo() {
+        return A.ago(_lastTargetToAttackAcquired);
+    }
+
+    //    public boolean isFacingTheSameDirection(AUnit otherUnit) {
 //        return Math.abs(getAngle() - otherUnit.getAngle()) <= 0.3;
 //    }
 }

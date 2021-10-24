@@ -5,6 +5,7 @@ import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
 import atlantis.information.AFoggedUnit;
+import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
@@ -990,6 +991,20 @@ public class Select<T> {
             AUnit unit = unitFrom(unitsIterator.next());
             if (unit.isCompleted() && unit.isAlive()) {
                 boolean isInShotRange = unit.hasWeaponRange(targetUnit, shootingRangeBonus);
+                if (!isInShotRange) {
+                    unitsIterator.remove();
+                }
+            }
+        }
+        return this;
+    }
+
+    public Select<T> canShootAt(APosition position, double shootingRangeBonus) {
+        Iterator<T> unitsIterator = data.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitFrom(unitsIterator.next());
+            if (unit.isCompleted() && unit.isAlive()) {
+                boolean isInShotRange = unit.hasGroundWeaponRange(position, shootingRangeBonus);
                 if (!isInShotRange) {
                     unitsIterator.remove();
                 }

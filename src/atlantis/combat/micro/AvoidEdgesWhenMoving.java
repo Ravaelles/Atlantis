@@ -4,10 +4,15 @@ import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 
 public class AvoidEdgesWhenMoving {
 
     public static boolean handle(AUnit unit) {
+        if (A.isUms()) {
+            return false;
+        }
+
         if (unit.isMoving() && !unit.isRunning() && unit.isGroundUnit()) {
             APosition pos = unit.getPosition();
 

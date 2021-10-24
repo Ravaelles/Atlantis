@@ -1,5 +1,6 @@
 package atlantis.combat.micro;
 
+import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.targeting.AEnemyTargeting;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
@@ -42,7 +43,7 @@ public class AAttackEnemyUnit {
 
         if (enemy != null) {
             unit.setTooltip("->" + enemy.shortName() + "(" + unit.cooldownRemaining() + ")");
-            APainter.paintLine(unit, enemy, Color.Red);
+//            APainter.paintLine(unit, enemy, Color.Red);
             processAttackUnit(unit, enemy);
             return true;
         } 
@@ -50,8 +51,11 @@ public class AAttackEnemyUnit {
         return false;
     }
 
-    private static boolean shouldNotAttack(AUnit unit) {
-        return unit.isUnitUnableToDoAnyDamage() || unit.lastActionLessThanAgo(20, UnitActions.LOAD);
+    public static boolean shouldNotAttack(AUnit unit) {
+        return unit.isUnitUnableToDoAnyDamage()
+//                || unit.lastActionLessThanAgo(4, UnitActions.ATTACK_UNIT)
+//                || (unit.isTankUnsieged() && (!unit.isMoving() && unit.woundPercent() > 15));
+        ;
     }
 
     private static boolean processAttackUnit(AUnit unit, AUnit enemy) {
@@ -60,7 +64,6 @@ public class AAttackEnemyUnit {
         }
 
         unit.attackUnit(enemy);
-//        unit.setTooltip("ShootTank(" + unit.cooldownRemaining() + ")");
         return true;
     }
 

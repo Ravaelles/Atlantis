@@ -8,6 +8,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         double criticalDist = enemyWeaponRangeBonus(defender, attacker)
                 + quicknessBonus(defender, attacker)
                 + woundedBonus(defender)
+                + transportBonus(defender)
                 + ourUnitsNearbyBonus(defender)
                 + ourMovementBonus(defender)
                 + enemyMovementBonus(defender, attacker);

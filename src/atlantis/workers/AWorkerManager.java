@@ -77,7 +77,7 @@ public class AWorkerManager {
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).
         if (worker.isIdle() || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
-                && !worker.isConstructing() && !worker.isAttacking() && !worker.isRepairing())) {
+                && !worker.isConstructing() && !worker.isAttackingOrMovingToAttack() && !worker.isRepairing())) {
             worker.setTooltip("Move ass!");
             AMineralGathering.gatherResources(worker);
             return true;

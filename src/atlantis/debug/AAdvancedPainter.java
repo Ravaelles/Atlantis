@@ -177,9 +177,10 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintOurCombatUnitTargets(AUnit unit) {
-        if (unit.isAttacking()) {
-            paintLine(unit, unit.getTarget(), (unit.isAttacking() ? Color.Green : Color.Yellow));
-        }
+//        if (unit.isAttacking()) {
+//            paintLine(unit, unit.getTargetPosition(), (unit.isAttackingOrMovingToAttack() ? Color.Teal : Color.Grey));
+            paintLine(unit, unit.getTarget(), (unit.isAttackingOrMovingToAttack() ? Color.Green : Color.Yellow));
+//        }
 //        if (!paintLine(unit, unit.getTarget(), (unit.isAttacking() ? Color.Green : Color.Yellow))) {
 //            paintLine(unit, unit.getTargetPosition(), (unit.isAttacking() ? Color.Orange : Color.Yellow));
 //        }
@@ -599,7 +600,7 @@ public class AAdvancedPainter extends APainter {
                 paintCircle(unit, 10, Color.Teal);
             }
             // ATTACKING
-            if (unit.isAttacking()) {
+            if (unit.isAttackingOrMovingToAttack()) {
                 paintCircle(unit, unitRadius - 3, Color.Yellow);
                 paintCircle(unit, unitRadius - 2, Color.Yellow);
             }

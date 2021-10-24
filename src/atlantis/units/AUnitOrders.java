@@ -44,9 +44,9 @@ public interface AUnitOrders {
             return true;
         }
 
-        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("                  ------> ATTACK #" + target.getID());
-        }
+//        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+//            System.out.println("                  ------> ATTACK #" + target.getID());
+//        }
         unit().setUnitAction(UnitActions.ATTACK_UNIT);
         unit().setLastUnitOrderNow();
         return u().attack(target.u());

@@ -1,10 +1,12 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
+import atlantis.units.actions.UnitActions;
 
 public class WantsToAvoid {
 
@@ -29,14 +31,31 @@ public class WantsToAvoid {
 
     private static boolean shouldNotAvoid(AUnit unit, Units enemies) {
 
-        if (unit.isRanged() && (unit.lastStartedAttackMoreThanAgo( 10) || unit.cooldownRemaining() == 0)) {
+        if (unit.isJustShooting()) {
             return true;
         }
+
+        if (unit.lastUnderAttackMoreThanAgo(150) && unit.lastStartedAttackLessThanAgo(10)) {
+            unit.setTooltip("Kill");
+            return true;
+        }
+
+//        if (unit.isRanged() && (unit.lastStartedAttackMoreThanAgo( 10) || unit.cooldownRemaining() == 0)) {
+//            return true;
+//        }
 
         // Running is not viable - so many other units nearby, would get stuck
         if (Select.all().inRadius(0.5, unit).count() >= 6) {
             return true;
         }
+
+
+//                || unit.lastActionLessThanAgo(15, UnitActions.LOAD)
+//                || (
+//                unit.isRunning()
+//                        && ATransportManager.hasNearbyTransportAssigned(unit)
+//                        && ATransportManager.getTransportAssignedToUnit(unit).distToMoreThan(unit, 1)
+//        )
 
         return false;
     }

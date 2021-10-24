@@ -1,10 +1,10 @@
 package atlantis.interrupt;
 
-import atlantis.AGame;
-import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
+import atlantis.enemy.NearestEnemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.A;
 import bwapi.Color;
 
 public class DontInterruptStartedAttacks {
@@ -12,26 +12,52 @@ public class DontInterruptStartedAttacks {
     //    private static boolean DEBUG = true;
     private static final boolean DEBUG = false;
 
-    public static boolean shouldNotBeInterruptedStartedAttack(AUnit unit) {
-        if (!unit.isAttacking()) {
+    public static boolean shouldNotInterrupt(AUnit unit) {
+        if (!unit.isAttackingOrMovingToAttack()) {
             return false;
         }
 
-        int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
-        int lastStartingAttack = AGame.framesAgo(unit._lastStartedAttack);
-        int cooldown = unit.cooldownRemaining();
-        int cooldownAbs = unit.getCooldownAbsolute();
+//        int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
+//        int lastStartingAttack = AGame.framesAgo(unit._lastStartedAttack);
+//        int cooldown = unit.cooldownRemaining();
+//        int cooldownAbs = unit.cooldownAbsolute();
 //        int friends = Select.ourCombatUnits().inRadius(2.5, unit).count();
-        boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);
+//        boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);
 
-        // =========================================================
+        // === Target acquired recently, allow to attack ===========
 
-        if (UnitAttackWaitFrames.isUnitInTheMiddleOfAttack(unit)) {
-            APainter.paintCircle(unit, 15, Color.Cyan);
+        if (unit.recentlyAcquiredTargetToAttack()) {
+//            if (unit.isFirstCombatUnit()) {
+//                System.out.println(A.now() + "  " + unit.idWithHash() + " TARGET ACQUIRED");
+//            }
+//            APainter.paintCircle(unit, 14, Color.Teal);
+//            APainter.paintCircle(unit, 12, Color.Teal);
+//            APainter.paintCircle(unit, 10, Color.Teal);
+            unit.setTooltip("Target(" + unit.lastTargetToAttackAcquiredAgo() + ")");
             return true;
         }
 
+        // === Unit already started attack animation ===============
+
+        if (
+                UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
+//                        && NearestEnemy.rangedHasSmallerRangeThan(unit)
+                        && !unit.isRunning()
+        ) {
+//            if (unit.isFirstCombatUnit()) {
+//                System.out.println(A.now() + "  " + unit.idWithHash() + " STARTED ATTACK ANIMATION");
+//            }
+//            APainter.paintCircle(unit, 15, Color.Green);
+//            APainter.paintCircle(unit, 13, Color.Green);
+//            APainter.paintCircle(unit, 11, Color.Green);
+            unit.setTooltip("Shoot(" + unit.lastFrameOfStartingAttackAgo() + ")");
+            return true;
+        }
+
+        // =========================================================
+
         if (attackingCrucialUnit(unit)) {
+            unit.setTooltip("Crucial");
             return true;
         }
 

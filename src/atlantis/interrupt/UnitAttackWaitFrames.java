@@ -12,15 +12,18 @@ import atlantis.util.A;
  */
 public class UnitAttackWaitFrames {
 
-    public static boolean isUnitInTheMiddleOfAttack(AUnit unit) {
-        return unit.isAttacking()
+//    public static boolean unitAlreadyStartedAttackAnimation(AUnit unit) {
+//        return unit.isAttackingOrMovingToAttack()
+//                && unit.getTarget() != null
+//                && (unit.lastFrameOfStartingAttackAgo() + stopFrames(unit.type())) > A.now();
+//    }
+
+    public static boolean unitAlreadyStartedAttackAnimation(AUnit unit) {
+        return unit.isAttackingOrMovingToAttack()
                 && unit.getTarget() != null
+                && unit.lastFrameOfStartingAttackAgo() < (unit.cooldownAbsolute() / 3)
                 && (unit.lastFrameOfStartingAttackAgo() + stopFrames(unit.type())) > A.now();
     }
-
-//    remainingFramesUntilMoving: Int = Math.max(
-//    remainingCompletionFrames,
-//            With.framesUntil(lastFrameStartingAttack + unitClass.stopFrames))
 
     protected static int stopFrames(AUnitType type) {
         if (type == AUnitType.Terran_SCV) return 2;

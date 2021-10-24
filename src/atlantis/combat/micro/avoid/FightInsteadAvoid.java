@@ -91,8 +91,10 @@ public class FightInsteadAvoid {
             // Dragoon faster than Marines, can outrun them
             if (unit.isQuickerOrSameSpeedAs(enemies) && unit.hasBiggerRangeThan(enemies)) {
 
+                System.out.println("Aaaaa " + unit._lastUnderAttack);
+
                 // If needs to wait before next attack
-                return unit.cooldownRemaining() <= 3 || unit.inActOfShooting();
+                return unit.cooldownRemaining() <= 3 || unit.isJustShooting() || unit.lastUnderAttackMoreThanAgo(200);
             }
 
             // Dragoon slower than Vultures, cannot outrun them

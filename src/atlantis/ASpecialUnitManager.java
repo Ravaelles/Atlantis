@@ -4,7 +4,6 @@ import atlantis.combat.micro.terran.*;
 import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.dedicated.protoss.ProtossHighTemplar;
-import atlantis.protoss.ProtossShieldBattery;
 import atlantis.dedicated.protoss.ProtossObserver;
 import atlantis.dedicated.protoss.ProtossReaver;
 import atlantis.units.AUnit;
@@ -31,7 +30,7 @@ public class ASpecialUnitManager {
             return true;
         }
 
-        if (unit.type().isSiegeTank()) {
+        if (unit.type().isTank()) {
             return TerranTank.update(unit);
         } else if (unit.type().isVulture()) {
             return TerranVulture.update(unit);

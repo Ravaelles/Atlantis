@@ -9,13 +9,13 @@ import bwapi.Color;
 
 public class TransportUnits {
 
-    public static boolean transport(AUnit transport, AUnit baby) {
-        if (A.everyNthGameFrame(10)) {
-            if (shouldLiftTheBaby(transport, baby)) {
-                return liftTheBaby(transport, baby);
-            } else if (shouldDropTheBaby(transport, baby)) {
-                return dropTheBaby(transport, baby);
-            }
+    public static boolean handleTransporting(AUnit transport, AUnit baby) {
+        if (shouldLoadTheBaby(transport, baby)) {
+            return loadTheBaby(transport, baby);
+        }
+
+        if (shouldDropTheBaby(transport, baby)) {
+            return dropTheBaby(transport);
         }
 
         if (transport.hasCargo() && handleGoToSafety(transport, baby)) {
@@ -26,15 +26,43 @@ public class TransportUnits {
             return true;
         }
 
+        transport.setTooltip("Nothing");
+        return false;
+    }
+
+    public static boolean loadRunningUnitsIntoTransport(AUnit unit) {
+//        if (unit.cooldownRemaining() == 0) {
+//            return false;
+//        }
+
+        if (unit.lastActionLessThanAgo(5, UnitActions.LOAD)) {
+            AUnit transport = Select.our().transports(true).inRadius(3, unit).nearestTo(unit);
+            if (transport != null && transport.hasFreeSpaceFor(unit) && !transport.hasCargo()) {
+                unit.load(transport);
+                transport.load(unit);
+                unit.setTooltip("Embark!");
+                return true;
+            }
+
+            for (AUnit anotherTransport : Select.our().transports(true).inRadius(5, unit).list()) {
+                if (anotherTransport.hasFreeSpaceFor(unit)) {
+                    unit.load(anotherTransport);
+                    anotherTransport.load(unit);
+                    unit.setTooltip("Embark!");
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
     // =========================================================
 
     private static boolean handleGoToSafety(AUnit transport, AUnit baby) {
-        AUnit nearEnemy = Select.enemyCombatUnits().canShootAt(baby, 5).nearestTo(transport);
+        AUnit nearEnemy = Select.enemyCombatUnits().canShootAt(transport.getPosition(), 5).nearestTo(transport);
         if (nearEnemy != null) {
-            transport.moveAwayFrom(nearEnemy, 6, "Fly");
+            transport.moveAwayFrom(nearEnemy, 8, "ToSafety");
             APainter.paintLine(transport, transport.getTargetPosition(), Color.White);
             return true;
         }
@@ -42,59 +70,75 @@ public class TransportUnits {
         return false;
     }
 
-    private static boolean isBabyInDanger(AUnit baby) {
-        if (baby.woundPercent() < 75) {
-            return false;
+    private static boolean isBabyInDanger(AUnit baby, boolean allowMoreDangerousBehavior) {
+        boolean enemiesNear = Select.enemyCombatUnits()
+                .inShootRangeOf((allowMoreDangerousBehavior ? 1.5 : 0) + baby.woundPercent() / 100, baby)
+                .isNotEmpty();
+
+        if (!allowMoreDangerousBehavior && baby.woundPercent() < 75 && enemiesNear) {
+            return true;
         }
 
-        return Select.enemyCombatUnits().inShootRangeOf(1, baby).isNotEmpty();
-    }
-
-    private static boolean isTransportInDanger(AUnit transport) {
-        if (transport.woundPercent() < 80) {
-            return false;
-        }
-
-        return Select.enemyCombatUnits().inShootRangeOf(2, transport).isNotEmpty();
-    }
-
-    private static boolean followBaby(AUnit transport, AUnit baby) {
-        if (!baby.isLoaded() && transport.distToMoreThan(baby, 0.2)) {
-            transport.move(baby, UnitActions.MOVE, null);
+        if (baby.woundPercent() < 20 && enemiesNear) {
             return true;
         }
 
         return false;
     }
 
-    private static boolean shouldLiftTheBaby(AUnit transport, AUnit baby) {
-        return !baby.isLifted()
+    private static boolean isTransportInDanger(AUnit transport) {
+        if (transport.woundPercent() < 80) {
+            return true;
+        }
+
+        return Select.enemyCombatUnits().inShootRangeOf(2, transport).isNotEmpty();
+    }
+
+    private static boolean followBaby(AUnit transport, AUnit baby) {
+        if (!baby.isLoaded() && (baby.isMoving() || transport.distToMoreThan(baby, 0.2))) {
+            transport.move(baby, UnitActions.MOVE, "Follow");
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean shouldLoadTheBaby(AUnit transport, AUnit baby) {
+        System.out.println(baby.getID() + " baby.isUnderAttack(15) = " + baby.isUnderAttack(15));
+        return !baby.isLoaded()
                 && transport.hasFreeSpaceFor(baby)
-                && transport.lastActionMoreThanAgo(10, UnitActions.LOAD)
+                && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
                 && transport.lastActionMoreThanAgo(25, UnitActions.UNLOAD)
-                && (!isTransportInDanger(transport) && isBabyInDanger(baby));
+                && (baby.isUnderAttack(15))
+                && (baby.cooldownRemaining() > 0 && baby.lastStartedAttackMoreThanAgo(9) && baby.lastFrameOfStartingAttackMoreThanAgo(7))
+                && (!isTransportInDanger(transport) && isBabyInDanger(baby, false));
     }
 
     private static boolean shouldDropTheBaby(AUnit transport, AUnit baby) {
-        return baby.isLifted()
+        return baby.isLoaded()
                 && transport.hasCargo()
-                && transport.lastActionMoreThanAgo(150, UnitActions.LOAD)
-                && transport.lastActionMoreThanAgo(40, UnitActions.UNLOAD)
-                && (isTransportInDanger(transport) || !isBabyInDanger(baby));
+                && baby.cooldownRemaining() <= 8
+                && transport.lastActionMoreThanAgo(15, UnitActions.LOAD)
+                && (
+                        isTransportInDanger(transport)
+                        || transport.woundPercent() >= 87
+                        || !isBabyInDanger(baby, true)
+                );
     }
 
-    private static boolean liftTheBaby(AUnit transport, AUnit baby) {
+    private static boolean loadTheBaby(AUnit transport, AUnit baby) {
         transport.load(baby);
         baby.load(transport);
-        transport.setTooltip("LiftBaby");
-        System.out.println("LIFT " + baby.getID());
+        baby.runningManager().stopRunning();
+        transport.setTooltip("LoadBaby");
         return true;
     }
 
-    private static boolean dropTheBaby(AUnit transport, AUnit baby) {
-        transport.unload(transport.loadedUnits().get(0));
+    private static boolean dropTheBaby(AUnit transport) {
+        AUnit baby = transport.loadedUnits().get(0);
+        transport.unload(baby);
+        baby.unload(transport);
         transport.setTooltip("DropBaby");
-        System.out.println("UNLOAD " + baby.getID());
         return true;
     }
 
