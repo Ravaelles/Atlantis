@@ -55,7 +55,9 @@ public abstract class Mission {
     protected boolean handleWeDontKnowWhereTheEnemyIs(AUnit unit) {
         if (temporaryTarget == null || AMap.isExplored(temporaryTarget)) {
             temporaryTarget = AMap.getRandomUnexploredPosition(unit.getPosition());
-            System.out.println("Go to unexplored " + temporaryTarget);
+            if (temporaryTarget != null) {
+                System.out.println("Go to unexplored " + temporaryTarget);
+            }
         }
         if (temporaryTarget == null || AMap.isVisible(temporaryTarget)) {
             temporaryTarget = AMap.getRandomInvisiblePosition(unit.getPosition());
@@ -64,7 +66,7 @@ public abstract class Mission {
 
         if (temporaryTarget != null) {
             unit.move(temporaryTarget, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy");
-            APainter.paintLine(unit.getPosition(), temporaryTarget, Color.Black);
+            APainter.paintLine(unit.getPosition(), temporaryTarget, Color.Yellow);
             return true;
         }
         else {

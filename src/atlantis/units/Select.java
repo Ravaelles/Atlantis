@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionManager;
-import atlantis.information.AFoggedUnit;
+//import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
@@ -85,6 +85,10 @@ public class Select<T extends AUnit> {
                                     AUnit unit = AUnit.createFrom(u);
                                     if (unit.isAlive()) {
                                         data.add(unit);
+                                    } else {
+                                        System.err.println("Enemy unit not alive? Seems a terrible problem.");
+                                        System.err.println(unit);
+                                        System.err.println(unit.hp() + " // " + unit.isVisible() + " // " + unit.effVisible());
                                     }
                                 }
                             }
@@ -650,7 +654,11 @@ public class Select<T extends AUnit> {
         Iterator<T> unitsIterator = data.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unitOrData = unitsIterator.next();
-            boolean typeMatches = (unitOrData != null ? typeMatches(unitOrData, types) : typeMatches((AFoggedUnit) unitOrData, types));
+//            boolean typeMatches = (unitOrData != null ? typeMatches(unitOrData, types) : typeMatches((AFoggedUnit) unitOrData, types));
+//            if (!typeMatches) {
+//                unitsIterator.remove();
+//            }
+            boolean typeMatches = typeMatches(unitOrData, types);
             if (!typeMatches) {
                 unitsIterator.remove();
             }
@@ -674,14 +682,14 @@ public class Select<T extends AUnit> {
     /**
      * Returns whether the type in unit matches one in the haystack
      */
-    private boolean typeMatches(AFoggedUnit unit, AUnitType... haystack) {
-        for (AUnitType type : haystack) {
-            if (unit.type().equals(type) || (unit.type().equals(AUnitType.Zerg_Egg) && unit.type().equals(type))) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean typeMatches(AFoggedUnit unit, AUnitType... haystack) {
+//        for (AUnitType type : haystack) {
+//            if (unit.type().equals(type) || (unit.type().equals(AUnitType.Zerg_Egg) && unit.type().equals(type))) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * Selects only units of given type(s).
@@ -1305,10 +1313,11 @@ public class Select<T extends AUnit> {
      */
     private T dataFrom(Object unitOrData) {
 //        return (unitOrData instanceof AFoggedUnit ? (AFoggedUnit) unitOrData : new AFoggedUnit((AUnit) unitOrData));
-        if (unitOrData instanceof AFoggedUnit) {
-            return (T) unitOrData;
-        }
-        else if (unitOrData instanceof AUnit) {
+//        if (unitOrData instanceof AFoggedUnit) {
+//            return (T) unitOrData;
+//        }
+//        else
+        if (unitOrData instanceof AUnit) {
             return (T) unitOrData;
         }
 

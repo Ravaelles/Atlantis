@@ -305,12 +305,12 @@ public class AMap {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
-            position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValid();
-            if (AMap.isWalkable(position) &&!isVisible(position)) {
+            position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValidFarFromBounds();
+            if (isWalkable(position) && !isVisible(position) && startPoint.hasPathTo(position)) {
                 return position;
             }
         }
-        return position;
+        return null;
     }
 
     public static APosition getRandomUnexploredPosition(APosition startPoint) {
@@ -320,12 +320,12 @@ public class AMap {
             int maxRadius = mapDimension * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
-            position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValid();
-            if (AMap.isWalkable(position) && !isExplored(position) && startPoint.hasPathTo(position)) {
-                return getMostWalkablePositionNear(position, 4);
+            position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValidFarFromBounds();
+            if (isWalkable(position) && !isExplored(position) && startPoint.hasPathTo(position)) {
+                return getMostWalkablePositionNear(position, 2);
             }
         }
-        return position;
+        return null;
     }
 
     /**

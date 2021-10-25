@@ -30,6 +30,7 @@ public class AEnemyTargeting {
             throw new RuntimeException("This is crazy, it should never happen, but with wrong logic it can happen.");
         }
 
+//        return enemy;
         return selectWeakestEnemyInRangeOfType(enemy.type(), enemy, unit);
     }
 
@@ -107,6 +108,7 @@ public class AEnemyTargeting {
                 .effVisible()
                 .canBeAttackedBy(ourUnit, true, true);
 
+//        System.err.println(Select.enemy().size() + " // " + Select.enemy().ofType(enemyType).size());
 //        System.err.println(targets.size() + " // " + targets.clone() + " // " + targets.clone().mostWounded());
         AUnit mostWounded = targets.clone().mostWounded();
         if (mostWounded != null && mostWounded.isWounded()) {

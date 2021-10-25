@@ -8,9 +8,7 @@ import atlantis.constructing.AConstructionManager;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
-import atlantis.enemy.AEnemyUnits;
-import atlantis.enemy.AllUnitsArchive;
-import atlantis.information.AOurUnitsExtraInfo;
+import atlantis.enemy.UnitsArchive;
 import atlantis.interrupt.DontInterruptStartedAttacks;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
@@ -298,7 +296,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
     // Compare type methods
     public boolean isAlive() {
-        return !AllUnitsArchive.isDestroyed(id()) && hp() > 0;
+        return !UnitsArchive.isDestroyed(id());
 
 //        if (isOur()) {
 //            return hp() > 0 && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this);
@@ -993,7 +991,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isVisible();
     }
 
-    public boolean isEffectivelyVisible() {
+    public boolean effVisible() {
         return !effCloaked();
     }
 

@@ -8,9 +8,7 @@ import atlantis.strategy.AStrategyResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.CappedList;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,14 +125,13 @@ public class AEnemyUnits {
     public static void unitDestroyed(AUnit enemyUnit) {
         enemyUnitsDiscovered.remove(enemyUnit);
 //        enemyUnitsDestroyed.put(enemyUnit.id(), enemyUnit);
-        AllUnitsArchive.markUnitAsDestroyed(enemyUnit.id(), enemyUnit);
     }
     
     /**
      * Returns <b>true</b> if enemy unit has been destroyed and we know it.
      */
     public static boolean isEnemyUnitDestroyed(AUnit enemyUnit) {
-        return AllUnitsArchive.isDestroyed(enemyUnit.id());
+        return UnitsArchive.isDestroyed(enemyUnit.id());
     }
     
     /**

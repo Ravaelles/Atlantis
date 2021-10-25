@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.enemy.UnitsArchive;
 import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.constructing.*;
@@ -175,14 +176,10 @@ public class Atlantis implements BWEventListener {
     public void onUnitDestroy(Unit u) {
         AUnit unit = AUnit.createFrom(u);
 
+        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
+
 //        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
         if (unit != null) {
-            if (unit.isEnemyUnit()) {
-                AEnemyUnits.unitDestroyed(unit);
-            }
-            else if (unit.isOur()) {
-                AOurUnitsExtraInfo.idsOfOurDestroyedUnits.add(unit.getID());
-            }
 
             // Our unit
             if (unit.isOur()) {
@@ -200,6 +197,8 @@ public class Atlantis implements BWEventListener {
                 }
             }
         }
+
+        UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
     }
 
     /**

@@ -51,6 +51,15 @@ public class AFoggedUnit extends AUnit {
         return getPosition().getY();
     }
 
+    @Override
+    public String toString() {
+        return "AFoggedUnit{" +
+                "unit=" + unit +
+                ", _position=" + _position +
+                ", _lastCachedType=" + _lastCachedType +
+                '}';
+    }
+
     // =========================================================
     
     /**

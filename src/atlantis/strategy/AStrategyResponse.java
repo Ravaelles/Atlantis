@@ -51,7 +51,7 @@ public class AStrategyResponse {
     }
 
     public static void hiddenUnitDetected(AUnit enemyUnit) {
-        if (enemyUnit.isEffectivelyVisible()) {
+        if (enemyUnit.effVisible()) {
             return;
         }
 

@@ -36,16 +36,17 @@ public class MissionAttack extends Mission {
 
         // Focus point is well known
         if (focusPoint != null) {
+            unit.setTooltip("#MA:Advance");
             return AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint);
         }
 
         // Invalid focus point, no enemy can be found, roam around map
-//        if (!unit.isMoving() && !unit.isAttackingOrMovingToAttack()) {
-//        }
+        if (!unit.isMoving() && !unit.isAttackingOrMovingToAttack()) {
+            return handleWeDontKnowWhereTheEnemyIs(unit);
+        }
 
-        return handleWeDontKnowWhereTheEnemyIs(unit);
-//        unit.setTooltip("#MA-NoFocus");
-//        return false;
+        unit.setTooltip("#MA-NoFocus");
+        return false;
     }
 
     @Override

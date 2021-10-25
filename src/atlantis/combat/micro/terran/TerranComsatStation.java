@@ -48,7 +48,7 @@ public class TerranComsatStation {
 
     private static boolean scan(AUnit comsat, AUnit unitToScan) {
 //        System.out.println("unitToScan = " + unitToScan.getHP());
-        if (unitToScan.isEffectivelyVisible()) {
+        if (unitToScan.effVisible()) {
             return false;
         }
 

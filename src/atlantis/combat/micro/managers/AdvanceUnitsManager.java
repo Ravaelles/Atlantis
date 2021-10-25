@@ -21,17 +21,17 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 //    }
 
     public static boolean attackMoveToFocusPoint(AUnit unit, APosition focusPoint) {
-        return moveToFocusPoint(unit, focusPoint, false, false, false);
+        return moveToFocusPoint(unit, focusPoint, false, false);
     }
 
     public static boolean moveToFocusPoint(AUnit unit, APosition focusPoint) {
-        return moveToFocusPoint(unit, focusPoint, true, true, true);
+        return moveToFocusPoint(unit, focusPoint, true, true);
     }
 
     // =========================================================
 
     private static boolean moveToFocusPoint(
-            AUnit unit, APosition focusPoint, boolean allowTooClose, boolean allowCloseEnough, boolean allowTooFar
+            AUnit unit, APosition focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
         double optimalDist = 6.5;
         double distToFocusPoint = unit.distTo(focusPoint);
@@ -55,7 +55,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         // Too far
-        else if (allowTooFar && distToFocusPoint > optimalDist + margin) {
+        else if (distToFocusPoint > optimalDist + margin) {
             unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")");
             return true;
         }

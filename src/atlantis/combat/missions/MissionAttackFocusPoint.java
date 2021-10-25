@@ -29,21 +29,21 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //        Position enemyBase = AtlantisEnemyInformationManager.getEnemyBase();
         APosition enemyBase = AEnemyUnits.getEnemyBase();
         if (enemyBase != null) {
-            System.out.println("1 = " + enemyBase);
+//            System.out.println("1 = " + enemyBase);
             return enemyBase;
         }
 
         // Try going near any enemy building
         AFoggedUnit enemyBuilding = AEnemyUnits.getNearestEnemyBuilding();
         if (enemyBuilding != null) {
-            System.out.println("2 = " + enemyBuilding);
+//            System.out.println("2 = " + enemyBuilding);
             return enemyBuilding.getPosition();
         }
 
         // Try going to any known enemy unit
         AUnit anyEnemyUnit = Select.enemy().first();
         if (anyEnemyUnit != null) {
-            System.out.println("3 = " + anyEnemyUnit);
+//            System.out.println("3 = " + anyEnemyUnit);
             return anyEnemyUnit.getPosition();
         }
 
@@ -53,11 +53,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try to go to some starting location, hoping to find enemy there.
         APosition startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
-        //System.out.println("focus on start location");	//TODO debug
-//        System.out.println("4 = " + startLocation);
         return startLocation;
-
-        // Absolutely no enemy unit can be found
     }
 
 }

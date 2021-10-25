@@ -29,6 +29,7 @@ public class AAttackEnemyUnit {
 
         AUnit enemy = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
 //        System.out.println("enemy2 = " + enemy);
+//        System.out.println(Select.enemy());
         if (enemy == null) {
 //            System.out.println(A.now() + " empty...");
             return false;
