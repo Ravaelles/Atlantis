@@ -1123,6 +1123,6 @@ public class A {
      * Returns string like "(0.4)"
      */
     public static String dist(AUnit enemy, AUnit unit) {
-        return A.digit(unit.distTo(enemy));
+        return "(" + (enemy != null && unit != null ? A.digit(unit.distTo(enemy)) : "-") + ")";
     }
 }

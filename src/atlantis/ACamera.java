@@ -1,14 +1,13 @@
 package atlantis;
 
-import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import atlantis.units.AUnit;
 
 public class ACamera {
     
     protected static int SCREEN_WIDTH = 640;
     protected static int SCREEN_HEIGHT = 480;
-    
+    protected static boolean focusCameraOnFirstCombatUnit = true;
+
     // =========================================================
     
     public static void centerCameraOn(HasPosition position) {
@@ -16,5 +15,13 @@ public class ACamera {
                 position.getPosition().translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7)
         );
     }
-    
+
+    public static void toggleFocusCameraOnFirstCombatUnit() {
+        focusCameraOnFirstCombatUnit = !focusCameraOnFirstCombatUnit;
+    }
+
+    public static boolean isFocusCameraOnFirstCombatUnit() {
+        return focusCameraOnFirstCombatUnit;
+    }
+
 }

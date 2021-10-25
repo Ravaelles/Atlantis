@@ -20,7 +20,7 @@ public class ASpecialUnitManager {
      */
     public static boolean handledUsingDedicatedUnitManager(AUnit unit) {
 
-        if (unit.type().isTransportNoOverlords() && ATransportManager.handle(unit)) {
+        if (unit.type().isTransportExcludeOverlords() && ATransportManager.handle(unit)) {
             return true;
         }
 

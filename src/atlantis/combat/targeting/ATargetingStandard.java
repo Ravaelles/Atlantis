@@ -16,12 +16,11 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
 
         AUnit target;
-        double groundRange = unit.groundWeaponRange();
 
         // =========================================================
         // Target real units
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
@@ -31,8 +30,8 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // Workers IN SHOT RANGE
 
-        target = units.
-                workers()
+        target = enemyUnits.clone()
+                .workers()
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
@@ -42,11 +41,9 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // Defensive buildings
 
-        target = Select
-                .enemy()
-                .ofType(
-                        AUnitType.Terran_Bunker
-                )
+        target = Select.enemy()
+                .effVisible()
+                .ofType(AUnitType.Terran_Bunker)
                 .nearestTo(unit);
         if (target != null) {
 
@@ -63,8 +60,9 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // Workers
 
-        target = units.
-                workers()
+        target = enemyUnits.clone()
+                .workers()
+                .effVisible()
                 .inRadius(8, unit)
                 .nearestTo(unit);
         if (target != null) {
@@ -74,7 +72,7 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // Buildings worth destroying first
 
-        target = buildings.clone()
+        target = enemyBuildings.clone()
                 .ofType(
                         AUnitType.Protoss_Fleet_Beacon,
                         AUnitType.Protoss_Cybernetics_Core,
@@ -94,7 +92,7 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // Bases
 
-        target = buildings.clone()
+        target = enemyBuildings.clone()
                 .bases()
                 .nearestTo(unit);
         if (target != null) {
@@ -104,7 +102,10 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // Okay, try targeting any-fuckin-thing
 
-        return Select.enemy().effVisible().canBeAttackedBy(unit, false, true).nearestTo(unit);
+        return Select.enemy()
+                .effVisible()
+                .canBeAttackedBy(unit, false, true)
+                .nearestTo(unit);
     }
 
 }

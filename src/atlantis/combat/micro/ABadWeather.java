@@ -1,12 +1,14 @@
 package atlantis.combat.micro;
 
 import atlantis.Atlantis;
+import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import bwapi.Bullet;
 import bwapi.BulletType;
+import bwapi.Color;
 
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class ABadWeather {
     private static boolean handleMines(AUnit unit) {
         boolean canShootAtMines = unit.isRanged() && unit.canAttackGroundUnits();
 
-        int radius = Math.max(7, canShootAtMines ? unit.getGroundWeapon().maxRange() + 3 : 0);
+        int radius = Math.max(6, canShootAtMines ? unit.getGroundWeapon().maxRange() + 3 : 0);
         List<AUnit> mines = Select.allOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(radius, unit).listUnits();
         for (AUnit mine : mines) {
 
@@ -74,6 +76,7 @@ public class ABadWeather {
 
     private static boolean handleEnemyMineAsMeleeUnit(AUnit unit, AUnit mine) {
         unit.moveAwayFrom(mine.getPosition(), 1, "Avoid mine!");
+        APainter.paintLine(unit, mine, Color.Yellow);
         return true;
     }
 

@@ -20,35 +20,32 @@ public class MissionAttack extends Mission {
     public boolean update(AUnit unit) {
         unit.setTooltip("#MA");
 
-        // =========================================================
-
-        if (ASquadCohesionManager.handle(unit)) {
-            return true;
-        }
+//        if (ASquadCohesionManager.handle(unit)) {
+//            return true;
+//        }
 
         return handleAdvance(unit);
-
-        // =========================================================
     }
 
     private boolean handleAdvance(AUnit unit) {
         APosition focusPoint = focusPoint();
 
-        if (ASquadCohesionManager.handle(unit)) {
-            return true;
-        }
+//        if (ASquadCohesionManager.handle(unit)) {
+//            return true;
+//        }
 
         // Focus point is well known
         if (focusPoint != null) {
-            return AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint);
+            return AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint);
         }
 
         // Invalid focus point, no enemy can be found, roam around map
-        else if (!unit.isMoving() && !unit.isAttackingOrMovingToAttack()) {
-            return handleWeDontKnowWhereTheEnemyIs(unit);
-        }
+//        if (!unit.isMoving() && !unit.isAttackingOrMovingToAttack()) {
+//        }
 
-        return false;
+        return handleWeDontKnowWhereTheEnemyIs(unit);
+//        unit.setTooltip("#MA-NoFocus");
+//        return false;
     }
 
     @Override

@@ -15,6 +15,10 @@ public class ASquadCohesionManager {
             return false;
         }
 
+        if (handleExtremeUnitPositioningInSquad(unit)) {
+            return true;
+        }
+
         if (handleShouldSpreadOut(unit)) {
             return true;
         }

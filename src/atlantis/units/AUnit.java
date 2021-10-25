@@ -9,6 +9,7 @@ import atlantis.constructing.AConstructionRequests;
 import atlantis.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
+import atlantis.enemy.AllUnitsArchive;
 import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.interrupt.DontInterruptStartedAttacks;
 import atlantis.position.APosition;
@@ -77,13 +78,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             throw new RuntimeException("AUnit constructor: unit is null");
         }
 
+        AUnit unit;
         if (instances.containsKey(u.getID())) {
-            return instances.get(u.getID());
-        } else {
-            AUnit unit = new AUnit(u);
-            instances.put(u.getID(), unit);
-            return unit;
+            unit = instances.get(u.getID());
+            if (unit != null && unit.isAlive()) {
+                return unit;
+            }
+            instances.remove(u.getID());
         }
+        
+        unit = new AUnit(u);
+        instances.put(u.getID(), unit);
+        return unit;
     }
 
     public static void forgetUnitEntirely(Unit u) {
@@ -127,14 +133,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 isOur() ? -1 : 3,
                 () -> {
                     AUnitType type = AUnitType.createFrom(u.getType());
-                    if (AUnitType.Unknown.equals(type)) {
+                    if (type.isUnknown()) {
                         if (this.isOur()) {
                             System.err.println("Our unit (" + u.getType() + ") returned Unknown type");
                         }
                         // This is expected - invisible units return Unknown type
-//                        else {
+                        else {
 //                            System.err.println("Enemy unit type is Unknown...");
-//                        }
+//                            System.err.println(u.getType());
+//                            System.err.println(u.getHitPoints());
+                        }
                     }
                     return type;
                 }
@@ -142,7 +150,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
     
     public void refreshType() {
-        cache.forget("type");
+        cache.forgetAll();
         _isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
     }
 
@@ -290,12 +298,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
     // Compare type methods
     public boolean isAlive() {
-//        return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
-        if (isOur()) {
-            return hp() > 0 && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this);
-        }
+        return !AllUnitsArchive.isDestroyed(id()) && hp() > 0;
 
-        return !AEnemyUnits.isEnemyUnitDestroyed(this);
+//        if (isOur()) {
+//            return hp() > 0 && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this);
+//        }
+//
+//        return !AEnemyUnits.isEnemyUnitDestroyed(this);
     }
 
     public boolean canBeHealed() {
@@ -513,7 +522,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isAirUnit();
     }
 
-    public boolean isSpiderMine() {
+    public boolean isMine() {
         return type().equals(AUnitType.Terran_Vulture_Spider_Mine);
     }
 
@@ -533,9 +542,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Not that we're racists, but spider mines and larvas aren't really units...
      */
     public boolean isNotActualUnit() {
-        return type().ut().isNeutral() || isLarvaOrEgg() || isBuilding()
-                || type().isMineralField() || type().isGeyser() || type().isGasBuilding()
-                || type().isSpell();
+        return type().isNotActualUnit();
     }
 
     /**
@@ -870,7 +877,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemy() {
-        return getPlayer().isEnemy(AGame.getPlayerUs());
+        return (boolean) cache.get(
+                "isEnemy",
+                30,
+                () -> getPlayer().isEnemy(AGame.getPlayerUs())
+        );
     }
 
     /**
@@ -973,6 +984,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     private boolean plagued() {
         return u.isPlagued();
+    }
+
+    /**
+     * RETURNS TRUE IF UNIT IS VISIBLE ON MAP (NOT THAT UNIT IS NOT CLOAKED!).
+     */
+    public boolean isVisible() {
+        return u.isVisible();
     }
 
     public boolean isEffectivelyVisible() {
@@ -1514,7 +1532,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean is(AUnitType ...types) {
-        return isType(types);
+        return type().isType(types);
     }
 
     public boolean isTargettedBy(AUnit attacker) {

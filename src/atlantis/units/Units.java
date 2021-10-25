@@ -25,9 +25,14 @@ public class Units {
 
     // =====================================================================
 
-    public Units(Collection<AUnit> units) {
-        addUnits(units);
+    public Units(List<? extends AUnit> units) {
+        units = new ArrayList<>(units);
     }
+
+//    public Units(Collection<AUnit> units) {
+//        units = new ArrayList<>();
+//        addUnits(units);
+//    }
 
     public Units() {
     }

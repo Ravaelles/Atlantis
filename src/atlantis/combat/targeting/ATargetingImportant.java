@@ -36,18 +36,19 @@ public class ATargetingImportant extends AEnemyTargeting {
         // =========================================================
         // Target COMBAT UNITS IN RANGE
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .combatUnits()
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
             return target;
         }
 
         // =========================================================
         // Defensive buildings IN RANGE
 
-        target = buildings.clone()
+        target = enemyBuildings.clone()
                 .ofType(
                         AUnitType.Protoss_Photon_Cannon,
                         AUnitType.Zerg_Sunken_Colony
@@ -55,6 +56,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (AEnemyTargeting.DEBUG) System.out.println("C2 = " + target);
             return target;
         }
 
@@ -68,17 +70,19 @@ public class ATargetingImportant extends AEnemyTargeting {
         // Special case - SHUTTLE
 
         if ((target = ATransportTargeting.target(unit)) != null) {
+            if (AEnemyTargeting.DEBUG) System.out.println("C3 = " + target);
             return target;
         }
 
         // =========================================================
         // Target COMBAT UNITS IN RANGE
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .combatUnits()
                 .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (AEnemyTargeting.DEBUG) System.out.println("C4 = " + target);
             return target;
         }
 
@@ -86,7 +90,6 @@ public class ATargetingImportant extends AEnemyTargeting {
         // Including unfinished defensive buildings
 
         target = Select.enemy()
-                .canBeAttackedBy(unit, false, true)
                 .ofType(
                         AUnitType.Protoss_Photon_Cannon,
                         AUnitType.Zerg_Sunken_Colony,
@@ -96,9 +99,12 @@ public class ATargetingImportant extends AEnemyTargeting {
                         AUnitType.Terran_Missile_Turret
                 )
                 .inRadius(12, unit)
+                .effVisible()
+                .canBeAttackedBy(unit, false, true)
                 .nearestTo(unit);
 
-        return null;
+//        if (AEnemyTargeting.DEBUG) System.out.println("C5 = " + target);
+        return target;
     }
 
 }

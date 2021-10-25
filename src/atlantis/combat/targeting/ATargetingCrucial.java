@@ -40,10 +40,10 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // Attack MINES
 
         if (unit.isRanged()) {
-            target = units.clone()
+            target = enemyUnits.clone()
                     .ofType(AUnitType.Terran_Vulture_Spider_Mine)
                     .inShootRangeOf(groundRange + 4, unit)
-                    .randomWithSeed(unit.getID());
+                    .randomWithSeed(700 + unit.getID());
             if (target != null) {
                 return target;
             }
@@ -52,7 +52,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // =========================================================
         // Targetable observers near carriers
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .ofType(AUnitType.Protoss_Observer)
                 .effVisible()
                 .inRadius(unit.isAirUnit() ? 40 : 11, unit)
@@ -73,7 +73,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // Move to attack it WAY NOT IN RANGE
 
         if (unit.isRanged()) {
-            target = units.clone()
+            target = enemyUnits.clone()
                     .ofType(
                             AUnitType.Protoss_Observer,
                             AUnitType.Terran_Siege_Tank_Siege_Mode,
@@ -87,7 +87,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
             }
         }
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .ofType(
                         AUnitType.Protoss_Reaver,
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
@@ -99,7 +99,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
             return target;
         }
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .ofType(
                         AUnitType.Zerg_Defiler,
                         AUnitType.Protoss_Carrier,
@@ -115,7 +115,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // =========================================================
         // DEADLY, but ALLOW SMALL OUT OF RANGE bonus
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .ofType(
                         AUnitType.Protoss_High_Templar,
                         AUnitType.Protoss_Reaver,
@@ -130,7 +130,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // =========================================================
         // DEADLY units, but can wait to BE IN RANGE
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .ofType(
                         AUnitType.Protoss_Dark_Templar,
                         AUnitType.Zerg_Scourge,
@@ -146,7 +146,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // =========================================================
         // DEADLY but attack in last order
 
-        target = units.clone()
+        target = enemyUnits.clone()
                 .ofType(
                         AUnitType.Protoss_Archon,
                         AUnitType.Protoss_Observer,

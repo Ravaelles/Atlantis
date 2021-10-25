@@ -30,12 +30,12 @@ public class Cache<V> {
      * Get cached value or initialize it with given callback.
      */
     public V get(String cacheKey, Callback callback) {
-        if (data.containsKey(cacheKey)) {
-            return data.get(cacheKey);
-        }
-        else {
+//        if (data.containsKey(cacheKey)) {
+//            return data.get(cacheKey);
+//        }
+//        else {
             set(cacheKey, callback);
-        }
+//        }
 
         return data.get(cacheKey);
     }
@@ -44,12 +44,12 @@ public class Cache<V> {
      * Get cached value or initialize it with given callback, cached for cacheForFrames.
      */
     public V get(String cacheKey, int cacheForFrames, Callback callback) {
-        if (data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
-            return data.get(cacheKey);
-        }
-        else {
+//        if (data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
+//            return data.get(cacheKey);
+//        }
+//        else {
             set(cacheKey, cacheForFrames, callback);
-        }
+//        }
 
         return data.get(cacheKey);
     }
@@ -69,6 +69,11 @@ public class Cache<V> {
 
     public void forget(V cacheKey) {
         data.remove(cacheKey);
+    }
+
+    public void forgetAll() {
+        data.clear();
+        cachedUntil.clear();
     }
 
     // =========================================================

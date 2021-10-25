@@ -134,10 +134,6 @@ public class ACombatUnitManager {
      * Meaning no action was needed on *tactical* level - stick to *strategic* level.
      */
     private static boolean handleLowPriority(AUnit unit) {
-        if (ASquadCohesionManager.handleExtremeUnitPositioningInSquad(unit)) {
-            return true;
-        }
-
         if (AvoidEdgesWhenMoving.handle(unit)) {
             return true;
         }

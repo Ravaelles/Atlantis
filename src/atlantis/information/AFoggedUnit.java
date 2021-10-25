@@ -32,9 +32,9 @@ public class AFoggedUnit extends AUnit {
     /**
      * Updates last known position of this unit.
      */
-    public void updatePosition(APosition position) {
-        this._position = new APosition(position);
-    }
+//    public void updatePosition(APosition position) {
+//        this._position = new APosition(position);
+//    }
 
     @Override
     public APosition getPosition() {
@@ -70,17 +70,24 @@ public class AFoggedUnit extends AUnit {
         return unit;
     }
 
-    public AFoggedUnit update(AUnit updated) {
-        if (updated.getID() != unit.getID()) {
-            throw new RuntimeException(
-                    String.format("Unexpected unit ID. Expected %d, received %d", unit.getID(), updated.getID())
-            );
+    public void update(AUnit enemyUnit) {
+        _position = enemyUnit.getPosition();
+        if (_lastCachedType == null || !_lastCachedType.equals(enemyUnit.type())) {
+            _lastCachedType = enemyUnit.type();
         }
-
-        _position = updated.getPosition();
-        _lastCachedType = unit.type();
-
-        return this;
     }
+
+//    public AFoggedUnit update(AUnit updated) {
+//        if (updated.getID() != unit.getID()) {
+//            throw new RuntimeException(
+//                    String.format("Unexpected unit ID. Expected %d, received %d", unit.getID(), updated.getID())
+//            );
+//        }
+//
+//        _position = updated.getPosition();
+//        _lastCachedType = unit.type();
+//
+//        return this;
+//    }
 
 }

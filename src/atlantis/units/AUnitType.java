@@ -17,11 +17,10 @@ public class AUnitType implements Comparable<AUnitType> {
 
     public static boolean disableErrorReporting = false;
     private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
-    private static int firstFreeID = 1;
-
-    private Cache<Object> cache;
+    private static int firstFreeID = 1000;
 
     private final int ID;
+    private Cache<Object> cache;
 
     // =========================================================
 
@@ -63,6 +62,7 @@ public class AUnitType implements Comparable<AUnitType> {
         } else {
             AUnitType unitType = new AUnitType(ut);
             instances.put(ut, unitType);
+
             return unitType;
         }
 //        AUnitType unitType;
@@ -439,16 +439,20 @@ public class AUnitType implements Comparable<AUnitType> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
+//        if (this == obj) {
+//            return true;
+//        }
         if (obj == null) {
             return false;
         }
 
         if (obj instanceof AUnitType) {
             AUnitType other = (AUnitType) obj;
-            return (ut.toString().equals(other.ut.toString()));
+            return ut.name().equals(other.ut.name());
+        }
+        else if (obj instanceof UnitType) {
+            UnitType other = (UnitType) obj;
+            return ut.name().equals(other.name());
         }
 
         return false;
@@ -514,7 +518,10 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public boolean isInvincible() {
-        return ut.isInvincible();
+        return (boolean) cache.get(
+                "isInvincible",
+                () -> ut.isInvincible()
+        );
     }
 
     public boolean isInfantry() {
@@ -936,7 +943,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return ut.isSpell();
     }
 
-    public boolean isTransportNoOverlords() {
+    public boolean isTransportExcludeOverlords() {
         return (boolean) cache.get(
                 "isTransportNoOverlords",
                 () -> isType(Protoss_Shuttle, Terran_Dropship)
@@ -968,5 +975,51 @@ public class AUnitType implements Comparable<AUnitType> {
 
     public int getID() {
         return ID;
+    }
+
+    public int id() {
+        return ID;
+    }
+
+    public boolean isNotActualUnit() {
+        return (boolean) cache.get(
+                "isNotActualUnit",
+                () -> isNeutral() || isLarvaOrEgg() || isBuilding() || isMineralField()
+                        || isGeyser() || isGasBuilding() || isSpell() || isMine()
+        );
+    }
+
+    private boolean isNeutral() {
+        return (boolean) cache.get(
+                "isNeutral",
+                () -> ut.isNeutral()
+        );
+    }
+
+    private boolean isLarvaOrEgg() {
+        return (boolean) cache.get(
+                "isLarvaOrEgg",
+                () -> isType(Zerg_Larva, Zerg_Egg)
+        );
+    }
+
+    public boolean isCombatUnit() {
+        return (boolean) cache.get(
+                "isCombatUnit",
+                -1,
+                () -> !isWorker() && !isInvincible() && !isMine() && !isObserver() && (!isBuilding() || isCombatBuilding())
+        );
+    }
+
+    private boolean isObserver() {
+        return (boolean) cache.get(
+                "isObserver",
+                1,
+                () -> isType(Protoss_Observer)
+        );
+    }
+
+    public boolean isUnknown() {
+        return AUnitType.Unknown.equals(this);
     }
 }

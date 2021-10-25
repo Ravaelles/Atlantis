@@ -3,6 +3,7 @@ package atlantis.buildings.managers;
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

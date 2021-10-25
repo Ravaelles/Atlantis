@@ -3,6 +3,7 @@ package atlantis.debug;
 import atlantis.Atlantis;
 import atlantis.map.AChokepoint;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
 import atlantis.units.AUnit;
 import atlantis.util.CodeProfiler;
@@ -118,10 +119,10 @@ public class APainter {
         paintCircleFilled(unit.getPosition(), radius, color);
     }
 
-    public static void paintLine(APosition start, int dx, int dy, Color color) {
+    public static void paintLine(HasPosition start, int dx, int dy, Color color) {
         if (isDisabled()) { return; }
 
-        bwapi.drawLineMap(start, PositionHelper.translateByPixels(start, dx, dy), color);
+        bwapi.drawLineMap(start.getPosition(), PositionHelper.translateByPixels(start.getPosition(), dx, dy), color);
     }
 
     public static void paintLine(Position start, Position end, Color color) {
@@ -154,8 +155,8 @@ public class APainter {
         paintTextCentered(position, text, color, false);
     }
 
-    public static void paintTextCentered(APosition position, String text, Color color, double tileDX, double tileDY) {
-        paintTextCentered(position.translateByPixels(
+    public static void paintTextCentered(HasPosition position, String text, Color color, double tileDX, double tileDY) {
+        paintTextCentered(position.getPosition().translateByPixels(
                 (int) tileDX * 32, (int) tileDY * 32),
                 text, color, false
         );

@@ -25,10 +25,7 @@ import java.util.Objects;
  * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
  */
 public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
-    
-//    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 20;
-    
+
     private static final Map<Object, APosition> instances = new HashMap<>();
     
     private final Position p;
@@ -141,51 +138,38 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     public double distTo(AUnit unit) {
         return PositionUtil.distanceTo(p, unit);
     }
-    
-    /**
-     * Returns X coordinate in tiles, 1 tile = 32 pixels.
-     */
-    public int getTileX() {
-        return getX() / 32;
-    }
-    
-    /**
-     * Returns Y coordinate in tiles, 1 tile = 32 pixels.
-     */
-    public int getTileY() {
-        return getY() / 32;
-    }
-    
+
+
     /**
      * Returns new position object that is translated in [x,y] pixels.
      */
     public APosition translateByPixels(int pixelDX, int pixelDY) {
         return new APosition(getX() + pixelDX, getY() + pixelDY);
     }
-    
+
     /**
      * Returns new position object that is translated in [x,y] tiles.
      */
     public APosition translateByTiles(int tileDX, int tileDY) {
         return new APosition(getX() + tileDX * 32, getY() + tileDY * 32);
     }
-    
+
     /**
      * Paint it on screen for testing.
      */
-//    public void paintIt(int widthTiles, int heightTiles) {
+//    default void paintIt(int widthTiles, int heightTiles) {
 //        paintIt(widthTiles, heightTiles, Color.Red);
 //    }
-    
+
     /**
      * Paint it on screen for testing.
      */
-//    public void paintIt(int widthTiles, int heightTiles, Color color) {
+//    default void paintIt(int widthTiles, int heightTiles, Color color) {
 //        APainter.paintRectangle(this, widthTiles, heightTiles, color);
 //    }
-    
+
     // === High-abstraction ========================================
-    
+
     /**
      * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
      */
@@ -194,7 +178,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
                 this, towards, percentTowards
         );
     }
-    
+
     /**
      * Returns new position which is moved e.g. 0.5 tiles towards <b>towards</b>.
      */
@@ -203,9 +187,9 @@ public class APosition extends Position implements HasPosition, Comparable<Point
                 this, towards, tiles
         );
     }
-    
+
     // =========================================================
-    
+
     /**
      * Ensures that position's [x,y] are valid map coordinates.
      */
@@ -216,7 +200,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         boolean somethingChanged = false;
         int px = p.getX();
         int py = p.getY();
-        
+
         if (px <= 1) {
             px = 1;
             somethingChanged = true;
@@ -225,7 +209,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
             px = 32 * AMap.getMapWidthInTiles() - 1;
             somethingChanged = true;
         }
-        
+
         if (py < 1) {
             py = 1;
             somethingChanged = true;
@@ -234,16 +218,16 @@ public class APosition extends Position implements HasPosition, Comparable<Point
             py = 32 * AMap.getMapHeightInTiles() - 1;
             somethingChanged = true;
         }
-        
+
         if (somethingChanged) {
-//            p = new APosition(px, py);
+//            p = new HasPosition(px, py);
             return new APosition(px, py);
         }
         else {
             return this;
         }
     }
-    
+
     /**
      * Ensures that position's [x,y] are valid map coordinates and are "quite" far from map boundaries.
      */
@@ -251,9 +235,9 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         boolean somethingChanged = false;
         int px = p.getX();
         int py = p.getY();
-        
+
         // =========================================================
-        
+
         if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
             px = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
@@ -262,7 +246,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
             px = 32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
-        
+
         if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
             py = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
@@ -271,29 +255,29 @@ public class APosition extends Position implements HasPosition, Comparable<Point
             py = 32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
             somethingChanged = true;
         }
-        
-//        APainter.paintCircle(new APosition(
+
+//        APainter.paintCircle(new HasPosition(
 //                32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
 //                32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
 //        ), 32, Color.Yellow);
-//        
-//        APainter.paintCircle(new APosition(
+//
+//        APainter.paintCircle(new HasPosition(
 //                32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
 //                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
 //        ), 32, Color.Yellow);
-//        
-//        APainter.paintCircle(new APosition(
+//
+//        APainter.paintCircle(new HasPosition(
 //                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
 //                32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
 //        ), 32, Color.Yellow);
-//        
-//        APainter.paintCircle(new APosition(
+//
+//        APainter.paintCircle(new HasPosition(
 //                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
 //                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
 //        ), 32, Color.Yellow);
-        
+
         // =========================================================
-        
+
         if (somethingChanged) {
             return new APosition(px, py);
         }
@@ -301,6 +285,8 @@ public class APosition extends Position implements HasPosition, Comparable<Point
             return this;
         }
     }
+
+    // =========================================================
 
     @Override
     public String toString() {

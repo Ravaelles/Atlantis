@@ -1,5 +1,6 @@
 package atlantis.keyboard;
 
+import atlantis.ACamera;
 import atlantis.AGame;
 import atlantis.AGameSpeed;
 import atlantis.AtlantisConfig;
@@ -52,6 +53,14 @@ public class AKeyboard implements NativeKeyListener {
                 System.out.println("Exit requested by the user");
                 AGame.exit();
                 break;
+
+            // Key "c" / "C"
+            case 46:
+                ACamera.toggleFocusCameraOnFirstCombatUnit();
+                break;
+
+//            // Key "o" / "O"
+//            case 24 : case 42:
 
             // Key "p" / "P"
             case 25 : case 41:

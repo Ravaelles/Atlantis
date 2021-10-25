@@ -92,17 +92,18 @@ public class AAdvancedPainter extends APainter {
 //        paintMineralDistance();
         paintRegions();
         paintChokepoints();
+        paintImportantPlaces();
+        paintStrategicLocations();
 //        paintTestSupplyDepotLocationsNearMain();
         paintConstructionProgress();
 //        paintEnemyRegionDetails();
-        paintStrategicLocations();
         paintSquads();
 //        paintColoredCirclesAroundUnits();
         paintBuildingHealth();
         paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
         paintBarsUnderUnits();
-        paintEnemyDiscovered();
+        paintEnemyDiscoveredAkaAFoggedUnit();
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
@@ -199,6 +200,7 @@ public class AAdvancedPainter extends APainter {
             paintCombatEval(enemy, true);
             paintLifeBar(enemy);
             paintEnemyTargets(enemy);
+            paintTextCentered(enemy, enemy.idWithHash(), Color.Grey, 0, 1);
         }
 
         setTextSizeMedium();
@@ -367,22 +369,23 @@ public class AAdvancedPainter extends APainter {
 
         // =========================================================
 
+//        APosition missionFocusPoint;
         APosition missionFocusPoint = Missions.globalMission().focusPoint();
-
+//
         paintCircle(missionFocusPoint, 22, Color.Teal);
         paintCircle(missionFocusPoint, 20, Color.Teal);
         paintCircle(missionFocusPoint, 18, Color.Teal);
-        paintTextCentered(missionFocusPoint, "Focus", Color.Teal);
+        paintTextCentered(missionFocusPoint, "FOCUS", Color.Teal);
 
-        // Main DEFEND focus point
-//        position = MissionAttack.getInstance().focusPoint();
+//        // Main DEFEND focus point
+//        APosition position = MissionAttack.getInstance().focusPoint();
 //        if (position != null) {
 //            position = MissionDefend.getInstance().focusPoint();
 //            paintCircle(position, 20, Color.Orange);
 //            paintCircle(position, 19, Color.Orange);
 //            paintTextCentered(position, "DEFEND", Color.Orange);
 //        }
-
+//
 //        missionFocusPoint = MissionAttack.getInstance().focusPoint();
 //        if (missionFocusPoint != null) {
 //            paintCircle(missionFocusPoint, 20, Color.Red);
@@ -945,7 +948,7 @@ public class AAdvancedPainter extends APainter {
     /**
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
-    static void paintEnemyDiscovered() {
+    static void paintEnemyDiscoveredAkaAFoggedUnit() {
         for (AFoggedUnit enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
             APosition topLeft;
             topLeft = enemyUnitData.getPosition().translateByPixels(

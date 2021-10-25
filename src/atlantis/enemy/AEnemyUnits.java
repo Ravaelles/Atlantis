@@ -8,6 +8,7 @@ import atlantis.strategy.AStrategyResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.util.CappedList;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class AEnemyUnits {
 
     protected static Map<AUnit, AFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
-    protected static ArrayList<AUnit> enemyUnitsDestroyed = new ArrayList<>();
+//    protected static HashMap<Integer, AUnit> enemyUnitsDestroyed = new HashMap<>();
 
     // =========================================================
     // Top abstraction methods
@@ -55,7 +56,7 @@ public class AEnemyUnits {
         for (AFoggedUnit enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
 //            System.out.println(enemyUnitData.getType());
             if (enemyUnitData.type().isBase()) {
-                boolean isBaseAtStartingLocation = false;
+//                boolean isBaseAtStartingLocation = false;
                 APosition discoveredBase = enemyUnitData.getPosition();
                 
                 for (ABaseLocation startingLocation : AMap.getStartingLocations(false)) {
@@ -125,14 +126,15 @@ public class AEnemyUnits {
      */
     public static void unitDestroyed(AUnit enemyUnit) {
         enemyUnitsDiscovered.remove(enemyUnit);
-        enemyUnitsDestroyed.add(enemyUnit);
+//        enemyUnitsDestroyed.put(enemyUnit.id(), enemyUnit);
+        AllUnitsArchive.markUnitAsDestroyed(enemyUnit.id(), enemyUnit);
     }
     
     /**
      * Returns <b>true</b> if enemy unit has been destroyed and we know it.
      */
     public static boolean isEnemyUnitDestroyed(AUnit enemyUnit) {
-        return enemyUnitsDestroyed.contains(enemyUnit);
+        return AllUnitsArchive.isDestroyed(enemyUnit.id());
     }
     
     /**
@@ -147,7 +149,8 @@ public class AEnemyUnits {
      * Updates last known position of the enemy unit.
      */
     public static void updateEnemyUnitPosition(AUnit enemyUnit) {
-        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
+//        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
+        enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
     }
 
     // =========================================================

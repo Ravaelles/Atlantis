@@ -28,9 +28,14 @@ public class AAttackEnemyUnit {
         }
 
         AUnit enemy = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
+//        System.out.println("enemy2 = " + enemy);
         if (enemy == null) {
+//            System.out.println(A.now() + " empty...");
             return false;
         }
+
+//        System.out.println("enemy = " + enemy + " // alive:" + enemy.isAlive());
+//        System.out.println("----------------------------");
 
         if (!unit.canAttackThisUnit(enemy, false, true)) {
             unit.setTooltip("Invalid target");
@@ -91,7 +96,7 @@ public class AAttackEnemyUnit {
                 return false;
             }
 
-            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz(" + A.dist(enemy, unit) + "/" + count + ")")) {
+            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz" + A.dist(enemy, unit) + "/" + count)) {
                 return true;
             }
         }
