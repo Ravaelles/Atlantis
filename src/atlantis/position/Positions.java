@@ -225,7 +225,7 @@ public class Positions<T extends HasPosition> {
         for (T otherPosition : positions) {
             if (otherPosition.getPosition().getDistance(position) < closestDist) {
                 closestDist = otherPosition.getPosition().getDistance(position);
-                closestPosition = APosition.create(otherPosition.getX() / 32, otherPosition.getY() / 32);
+                closestPosition = APosition.create(otherPosition.x() / 32, otherPosition.y() / 32);
                 _lastIndex = index;
             }
             index++;

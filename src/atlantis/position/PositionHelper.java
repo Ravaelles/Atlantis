@@ -43,8 +43,8 @@ public class PositionHelper {
         
         for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
             AUnit unit = iterator.next();
-            xCoordinates.add(unit.getX());
-            yCoordinates.add(unit.getY());
+            xCoordinates.add(unit.x());
+            yCoordinates.add(unit.y());
         }
 
         return new APosition(
@@ -59,8 +59,8 @@ public class PositionHelper {
         
         for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
             AUnit unit = iterator.next();
-            totalX += unit.getX();
-            totalY += unit.getY();
+            totalX += unit.x();
+            totalY += unit.y();
         }
 
         return new APosition(totalX / units.size(), totalY / units.size());
@@ -76,8 +76,8 @@ public class PositionHelper {
             double distanceToUnit = unit.distTo(otherUnit);
             double factor = Math.pow(distanceToUnit, power);
             totalFactor += factor;
-            totalX += otherUnit.getX() * factor;
-            totalY += otherUnit.getY() * factor;
+            totalX += otherUnit.x() * factor;
+            totalY += otherUnit.y() * factor;
         }
 
         return new APosition((int) (totalX / totalFactor), (int) (totalY / totalFactor));
@@ -106,8 +106,8 @@ public class PositionHelper {
     // === Position between A and B ======================
     
     public static APosition getPositionMovedPercentTowards(HasPosition from, HasPosition movedToward, double percent) {
-        int finalX = (int) ((100 - percent) * from.getX() + percent * movedToward.getX()) / 100;
-        int finalY = (int) ((100 - percent) * from.getY() + percent * movedToward.getY()) / 100;
+        int finalX = (int) ((100 - percent) * from.x() + percent * movedToward.x()) / 100;
+        int finalY = (int) ((100 - percent) * from.y() + percent * movedToward.y()) / 100;
         return new APosition(finalX, finalY);
     }
     

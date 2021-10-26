@@ -175,10 +175,8 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitDestroy(Unit u) {
         AUnit unit = AUnit.createFrom(u);
+//        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 
-        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
-
-//        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
         if (unit != null) {
 
             // Our unit

@@ -1060,7 +1060,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintUnitProgressBar(AUnit unit, int dpy, int progressPercent, Color barColor) {
         int barWidth = 20;
         int barHeight = 4;
-        APosition topLeft = new APosition(unit.getX() - barWidth / 2, unit.getY() + dpy);
+        APosition topLeft = new APosition(unit.x() - barWidth / 2, unit.y() + dpy);
 
         // Progress bar
         paintRectangleFilled(topLeft, (int) A.inRange(1, barWidth * progressPercent / 100, 100), barHeight, barColor);

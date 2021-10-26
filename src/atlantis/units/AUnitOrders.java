@@ -591,7 +591,7 @@ public interface AUnitOrders {
             System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().getID());
         }
 
-        unit().setUnitAction(UnitActions.USING_TECH);
+        unit().setUnitAction(UnitActions.USING_TECH, tech, null);
         unit().setLastUnitOrderNow();
         return u().useTech(tech);
     }
@@ -601,7 +601,7 @@ public interface AUnitOrders {
             System.out.println("TECH_2 @" + A.now() + " / unit#" + unit().getID());
         }
 
-        unit().setUnitAction(UnitActions.USING_TECH);
+        unit().setUnitAction(UnitActions.USING_TECH, tech, target);
         unit().setLastUnitOrderNow();
         return u().useTech(tech, target);
     }
@@ -611,7 +611,7 @@ public interface AUnitOrders {
             System.out.println("TECH_3 @" + A.now() + " / unit#" + unit().getID());
         }
 
-        unit().setUnitAction(UnitActions.USING_TECH);
+        unit().setUnitAction(UnitActions.USING_TECH, tech, target.getPosition());
         unit().setLastUnitOrderNow();
         return u().useTech(tech, target.u());
     }

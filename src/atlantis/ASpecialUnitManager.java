@@ -13,12 +13,44 @@ import atlantis.util.Us;
 public class ASpecialUnitManager {
 
     /**
-     * There are some units that should have individual micro managers like Zerg Overlord. If unit is "dedicated unit"
-     * it will use its own manager and return true, meaning no other managers should be used.
+     * BLOCK other managers from taking precedence in action sequence.
      *
      * Returning false allows standard micro managers to be used.
      */
     public static boolean handledUsingDedicatedUnitManager(AUnit unit) {
+
+        // === Terran ========================================
+
+        if (Us.isTerran() && TerranCloakableManager.update(unit)) {
+            return true;
+        }
+
+        if (unit.isType(AUnitType.Terran_Medic)) {
+            return TerranMedic.update(unit);
+        }
+
+        // === Protoss ========================================
+
+        else if (unit.is(AUnitType.Protoss_Observer) && ProtossObserver.update(unit)) {
+            return true;
+        } else if (unit.is(AUnitType.Protoss_High_Templar) && ProtossHighTemplar.update(unit)) {
+            return true;
+        } else if (unit.is(AUnitType.Protoss_Reaver) && ProtossReaver.update(unit)) {
+            return true;
+        }
+
+        // === Zerg ========================================
+
+
+        // =========================================================
+
+        return false;
+    }
+
+    /**
+     * Does NOT block other managers from taking precedence.
+     */
+    public static boolean handledUsingSpecialUnitManager(AUnit unit) {
 
         if (unit.type().isTransportExcludeOverlords() && ATransportManager.handle(unit)) {
             return true;
@@ -36,19 +68,10 @@ public class ASpecialUnitManager {
             return TerranVulture.update(unit);
         } else if (unit.type().isTerranInfantry()) {
             return TerranInfantry.update(unit);
-        } else if (unit.isType(AUnitType.Terran_Medic)) {
-            return TerranMedic.update(unit);
         }
 
         // === Protoss ========================================
 
-        else if (unit.is(AUnitType.Protoss_Observer) && ProtossObserver.update(unit)) {
-            return true;
-        } else if (unit.is(AUnitType.Protoss_High_Templar) && ProtossHighTemplar.update(unit)) {
-            return true;
-        } else if (unit.is(AUnitType.Protoss_Reaver) && ProtossReaver.update(unit)) {
-            return true;
-        }
 
         // === Zerg ========================================
 
@@ -60,4 +83,5 @@ public class ASpecialUnitManager {
 
         return false;
     }
+
 }

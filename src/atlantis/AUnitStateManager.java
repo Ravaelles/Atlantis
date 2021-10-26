@@ -2,7 +2,6 @@ package atlantis;
 
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.util.A;
 
 public class AUnitStateManager {
 
@@ -20,8 +19,8 @@ public class AUnitStateManager {
 
     private static void updateUnitInfo(AUnit unit) {
         if (updatePosition) {
-            unit._lastX = unit.getX();
-            unit._lastY = unit.getY();
+            unit._lastX = unit.x();
+            unit._lastY = unit.y();
         }
 
         if (unit.isAttackFrame()) {

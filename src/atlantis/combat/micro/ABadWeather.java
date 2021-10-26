@@ -6,6 +6,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.util.A;
 import bwapi.Bullet;
 import bwapi.BulletType;
 import bwapi.Color;
@@ -24,6 +25,8 @@ public class ABadWeather {
 
                 // PSIONIC STORM
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {
+//                    System.err.println("------------- " + A.now() + " PSIONIC! ----------------");
+
                     if (handleMoveAwayIfCloserThan(unit, APosition.create(bullet.getPosition()), 3.2)) {
                         unit.setTooltip("Psionic Storm!");
                         return true;

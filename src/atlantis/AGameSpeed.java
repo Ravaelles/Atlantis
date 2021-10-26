@@ -23,7 +23,7 @@ public class AGameSpeed {
     public static int frameSkip;
 
     private static final int NORMAL_GAME_SPEED = 0;
-    private static final int NORMAL_FRAME_SKIP = 0;
+    private static final int NORMAL_FRAME_SKIP = 30;
 //    private static final int NORMAL_GAME_SPEED = 0;
 //    private static final int NORMAL_FRAME_SKIP = 30;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
@@ -107,6 +107,9 @@ public class AGameSpeed {
         if (speed < 0) {
             speed = 0;
         }
+        if (speed > 0) {
+            changeFrameSkipTo(0);
+        }
 
         AGameSpeed.pauseGame();
 
@@ -182,7 +185,6 @@ public class AGameSpeed {
      * Change game rendering frame skipping - speeds up game considerably.
      */
     public static void changeFrameSkipTo(int newFrameSkip) {
-        dynamicSlowdownIsActive = false;
         if (frameSkip <= 1) {
             frameSkip = 0;
         }

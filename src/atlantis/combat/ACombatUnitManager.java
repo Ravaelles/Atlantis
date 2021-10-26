@@ -20,6 +20,16 @@ public class ACombatUnitManager {
         preActions(unit);
 
         // =========================================================
+        // === SPECIAL units =======================================
+        // =========================================================
+
+        // Medics are using dedicated managers.
+        // These are stopping standard top priority managers
+        if (ASpecialUnitManager.handledUsingDedicatedUnitManager(unit)) {
+            return true;
+        }
+
+        // =========================================================
         // === TOP priority ========================================
         // =========================================================
 
@@ -39,11 +49,9 @@ public class ACombatUnitManager {
         // === SPECIAL units =======================================
         // =========================================================
 
-        // 1) Overlords or Medics are using dedicated managers.
-        //    These are stopping lower level actions.
-        // 2) Terran infantry has own managers, but these allow lower
-        //    level managers to take control.
-        if (ASpecialUnitManager.handledUsingDedicatedUnitManager(unit)) {
+        // Terran infantry has own managers, but these allow higher
+        // level managers to take control.
+        if (ASpecialUnitManager.handledUsingSpecialUnitManager(unit)) {
             return true;
         }
 

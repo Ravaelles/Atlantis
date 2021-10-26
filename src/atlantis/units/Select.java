@@ -29,23 +29,18 @@ import java.util.*;
  */
 public class Select<T extends AUnit> {
 
-    // =====================================================================
-
-//    private final List<T> data;
     private final List<T> data;
 
     // CACHED variables
     private static SelectUnitsCache cache = new SelectUnitsCache();
     private static Cache<Integer> cacheInt = new Cache<>();
-//    private static Cache<List<AUnit>> cacheList = new Cache<>();
+    private static Cache<List<AUnit>> cacheList = new Cache<>();
     private static AUnit _cached_mainBase = null;
 
     // =====================================================================
     // Constructor is private, use our(), enemy() or neutral() methods
 
     protected Select(Collection<T> unitsData) {
-//        data = new ArrayList<>();
-//        data.addAll(unitsData);
         data = new ArrayList<>(unitsData);
     }
 
@@ -53,10 +48,10 @@ public class Select<T extends AUnit> {
     // Helper for base object
 
     private static List<AUnit> ourUnits() {
-//        return cacheList.get(
-//                "ourUnits",
-//                1,
-//                () -> {
+        return cacheList.get(
+                "ourUnits",
+                1,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (Unit u : AGame.getPlayerUs().getUnits()) {
@@ -64,15 +59,15 @@ public class Select<T extends AUnit> {
                     }
 
                     return data;
-//                }
-//        );
+                }
+        );
     }
 
     private static List<AUnit> enemyUnits() {
-//        return cacheList.get(
-//                "enemyUnits",
-//                1,
-//                () -> {
+        return cacheList.get(
+                "enemyUnits",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     // === Handle UMS ==========================================
@@ -107,15 +102,15 @@ public class Select<T extends AUnit> {
                     }
 
                     return data;
-//                }
-//        );
+                }
+        );
     }
 
     private static List<AUnit> neutralUnits() {
-//        return cacheList.get(
-//                "neutralUnits",
-//                3,
-//                () -> {
+        return cacheList.get(
+                "neutralUnits",
+                3,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (Unit u : Atlantis.game().neutral().getUnits()) {
@@ -126,15 +121,15 @@ public class Select<T extends AUnit> {
                     }
 
                     return data;
-//                }
-//        );
+                }
+        );
     }
 
     private static List<AUnit> allUnits() {
-//        return cacheList.get(
-//                "allUnits",
-//                1,
-//                () -> {
+        return cacheList.get(
+                "allUnits",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (Unit u : Atlantis.game().getAllUnits()) {
@@ -145,8 +140,8 @@ public class Select<T extends AUnit> {
                     }
 
                     return data;
-//                }
-//        );
+                }
+        );
     }
 
     // =====================================================================
@@ -155,10 +150,10 @@ public class Select<T extends AUnit> {
      * Selects all of our finished and existing units (units, buildings, but no spider mines etc).
      */
     public static Select<AUnit> our() {
-//        return (Select<AUnit>) cache.get(
-//                "our",
-//                1,
-//                () -> {
+        return (Select<AUnit>) cache.get(
+                "our",
+                1,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
@@ -168,18 +163,18 @@ public class Select<T extends AUnit> {
                     }
 
                     return new Select<>(data);
-//                }
-//        );
+                }
+        );
     }
 
     /**
      * Selects all game units including minerals, geysers and enemy units.
      */
     public static Select<? extends AUnit> all() {
-//        return cache.get(
-//                "all",
-//                1,
-//                () -> {
+        return cache.get(
+                "all",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     data.addAll(ourUnits());
@@ -187,18 +182,18 @@ public class Select<T extends AUnit> {
                     data.addAll(neutralUnits());
 
                     return new Select<>(data);
-//                }
-//        );
+                }
+        );
     }
 
     /**
      * Selects all units of given type(s).
      */
     public static Select<? extends AUnit> allOfType(AUnitType type) {
-//        return cache.get(
-//                "allOfType:" + type.shortName(),
-//                1,
-//                () -> {
+        return cache.get(
+                "allOfType:" + type.shortName(),
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : allUnits()) {
@@ -209,8 +204,8 @@ public class Select<T extends AUnit> {
                     }
 
                     return new Select<>(data);
-//                }
-//        );
+                }
+        );
     }
 
     /**
@@ -389,10 +384,10 @@ public class Select<T extends AUnit> {
      * Selects our units, not buildings, not spider mines, not larvae.
      */
     public static Select<AUnit> ourRealUnits() {
-//        return (Select<AUnit>) cache.get(
-//                "ourRealUnits",
-//                1,
-//                () -> {
+        return (Select<AUnit>) cache.get(
+                "ourRealUnits",
+                1,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
@@ -402,8 +397,8 @@ public class Select<T extends AUnit> {
                     }
 
                     return new Select<>(data);
-//                }
-//        );
+                }
+        );
     }
 
     /**
@@ -432,10 +427,10 @@ public class Select<T extends AUnit> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Select<? extends AUnit> enemy() {
-//        return cache.get(
-//                "enemy",
-//                1,
-//                () -> {
+        return cache.get(
+                "enemy",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : enemyUnits()) {
@@ -445,8 +440,8 @@ public class Select<T extends AUnit> {
                     }
 
                     return new Select<>(data);
-//                }
-//        );
+                }
+        );
     }
 
     /**
@@ -468,10 +463,10 @@ public class Select<T extends AUnit> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Select<? extends AUnit> enemyCombatUnits() {
-//        return cache.get(
-//                "enemyCombatUnits",
-//                1,
-//                () -> {
+        return cache.get(
+                "enemyCombatUnits",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : enemyUnits()) {
@@ -481,32 +476,32 @@ public class Select<T extends AUnit> {
                     }
 
                     return new Select<>(data);
-//                }
-//        );
+                }
+        );
     }
 
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Select<? extends AUnit> enemyRealUnits() {
-//        return cache.get(
-//                "enemyRealUnits",
-//                1,
-//                () -> enemyRealUnits(true, true, false)
-//        );
-        return enemyRealUnits(true, true, false);
+        return cache.get(
+                "enemyRealUnits",
+                0,
+                () -> enemyRealUnits(true, true, false)
+        );
+//        return enemyRealUnits(true, true, false);
     }
 
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Select<? extends AUnit> enemyRealUnits(boolean includeBuildings) {
-//        return cache.get(
-//                "enemyRealUnits" + (includeBuildings ? "T" : "F"),
-//                1,
-//                () -> enemyRealUnits(true, true, includeBuildings)
-//        );
-        return enemyRealUnits(true, true, includeBuildings);
+        return cache.get(
+                "enemyRealUnits" + (includeBuildings ? "T" : "F"),
+                0,
+                () -> enemyRealUnits(true, true, includeBuildings)
+        );
+//        return enemyRealUnits(true, true, includeBuildings);
     }
 
     /**
@@ -515,26 +510,23 @@ public class Select<T extends AUnit> {
     public static Select<? extends AUnit> enemyRealUnits(
             boolean includeGroundUnits, boolean includeAirUnits, boolean includeBuildings
     ) {
-//        return cache.get(
-//                "enemyRealUnits" + (includeGroundUnits ? "T" : "F") + (includeAirUnits ? "T" : "F") + (includeBuildings ? "T" : "F"),
-//                1,
-//                () -> {
+        return cache.get(
+                "enemyRealUnits" + (includeGroundUnits ? "T" : "F") + (includeAirUnits ? "T" : "F") + (includeBuildings ? "T" : "F"),
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
-//                    System.out.println("-------- ENEMIES = ");
                     for (AUnit unit : enemyUnits()) {
                         if ((includeBuildings || !unit.isBuilding()) || unit.isActualUnit()) {
                             if ((includeGroundUnits && unit.isGroundUnit()) || (includeAirUnits && unit.isAirUnit())) {
                                 data.add(unit);
-//                                System.out.println(unit);
                             }
                         }
                     }
-//                    System.out.println("-------- End of ENEMIES");
 
                     return new Select<>(data);
-//                }
-//        );
+                }
+        );
     }
 
     /**
@@ -614,14 +606,14 @@ public class Select<T extends AUnit> {
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>otherUnit</b>.
      */
     public Select<? extends AUnit> inRadius(double maxDist, AUnit unit) {
-//        return cache.get(
-//                "inRadius:" + maxDist + ":" + unit.id(),
-//                0,
-//                () -> {
+        return cache.get(
+                "inRadius:" + maxDist + ":" + unit.id(),
+                0,
+                () -> {
                     data.removeIf(u -> u.distTo(unit) > maxDist);
                     return this;
-//                }
-//        );
+                }
+        );
     }
 
     /**

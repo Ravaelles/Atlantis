@@ -9,6 +9,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
 import atlantis.terran.TerranSpecificBuildingsCommander;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.workers.AWorkerCommander;
 
@@ -53,14 +54,26 @@ public class AGameCommander {
         // === Handle UMS ===================================================
         
         if (AGame.isUms()) {
-            AUnit umsUnit = Select.ourCombatUnits().groundUnits().first();
-//            AUnit umsUnit = Select.ourCombatUnits().transports(true).first();
-            if (umsUnit != null) {
-                if (AGame.timeSeconds() <= 1 || ACamera.isFocusCameraOnFirstCombatUnit()) {
-                    ACamera.centerCameraOn(umsUnit.getPosition());
-                }
+            AUnit cameraUnit = centerCameraOnUnit();
+            if (AGame.timeSeconds() <= 1 || ACamera.isFocusCameraOnUnit()) {
+                ACamera.centerCameraOn(cameraUnit);
             }
         }
+    }
+
+    private AUnit centerCameraOnUnit() {
+//        return null;
+        AUnit cameraUnit;
+
+        cameraUnit = Select.ourOfType(AUnitType.Protoss_High_Templar).groundUnits().first();
+        if (cameraUnit != null) {
+            if (AGameSpeed.gameSpeed <= 0 && AGameSpeed.frameSkip >= 1) {
+                AGameSpeed.changeSpeedTo(2);
+            }
+            return cameraUnit;
+        }
+
+        return Select.ourCombatUnits().groundUnits().first();
     }
 
 }

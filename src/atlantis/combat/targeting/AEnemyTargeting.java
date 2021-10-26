@@ -30,7 +30,6 @@ public class AEnemyTargeting {
             throw new RuntimeException("This is crazy, it should never happen, but with wrong logic it can happen.");
         }
 
-//        return enemy;
         return selectWeakestEnemyInRangeOfType(enemy.type(), enemy, unit);
     }
 

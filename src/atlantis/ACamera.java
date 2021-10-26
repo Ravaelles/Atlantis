@@ -11,6 +11,10 @@ public class ACamera {
     // =========================================================
     
     public static void centerCameraOn(HasPosition position) {
+        if (position == null) {
+            return;
+        }
+
         Atlantis.game().setScreenPosition(
                 position.getPosition().translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7)
         );
@@ -20,7 +24,7 @@ public class ACamera {
         focusCameraOnFirstCombatUnit = !focusCameraOnFirstCombatUnit;
     }
 
-    public static boolean isFocusCameraOnFirstCombatUnit() {
+    public static boolean isFocusCameraOnUnit() {
         return focusCameraOnFirstCombatUnit;
     }
 

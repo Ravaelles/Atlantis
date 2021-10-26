@@ -105,6 +105,16 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return this;
     }
 
+    @Override
+    public int x() {
+        return p.x;
+    }
+
+    @Override
+    public int y() {
+        return p.y;
+    }
+
     /**
      * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows

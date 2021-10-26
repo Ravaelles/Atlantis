@@ -17,8 +17,8 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
-//        int lastAttackFrame = AGame.framesAgo(unit._lastAttackFrame);
-//        int lastStartingAttack = AGame.framesAgo(unit._lastStartedAttack);
+//        int lastAttackFrame = A.ago(unit._lastAttackFrame);
+//        int lastStartingAttack = A.ago(unit._lastStartedAttack);
 //        int cooldown = unit.cooldownRemaining();
 //        int cooldownAbs = unit.cooldownAbsolute();
 //        int friends = Select.ourCombatUnits().inRadius(2.5, unit).count();

@@ -1,22 +1,16 @@
 package atlantis.position;
 
-import atlantis.map.AMap;
-import atlantis.units.AUnit;
-import bwapi.Point;
-import bwapi.Position;
-
 /**
  * This interface helps ease problems of overriding native bridge classes like e.g. BaseLocation which doesn't
  * have default constructor. Instead ABaseLocation can use this interface.
  */
 public interface HasPosition {
 
-    //    default static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
     public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 20;
 
     APosition getPosition();
-    int getX();
-    int getY();
+    int x();
+    int y();
 
     default boolean distToLessThan(HasPosition otherPosition, double maxDist) {
         if (otherPosition == null) {
@@ -39,14 +33,17 @@ public interface HasPosition {
      * Returns X coordinate in tiles, 1 tile = 32 pixels.
      */
     default int getTileX() {
-        return getX() / 32;
+        return x() / 32;
     }
 
     /**
      * Returns Y coordinate in tiles, 1 tile = 32 pixels.
      */
     default int getTileY() {
-        return getY() / 32;
+        return y() / 32;
     }
 
+    default LargeTile largeTile() {
+        return new LargeTile(this);
+    }
 }

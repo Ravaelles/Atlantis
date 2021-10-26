@@ -2,6 +2,7 @@ package atlantis.util;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import bwapi.Game;
 
@@ -1090,11 +1091,11 @@ public class A {
     }
 
     public static boolean atMostFramesAgo(int frame, int maxFramesAgo) {
-        return AGame.framesAgo(frame) <= maxFramesAgo;
+        return A.ago(frame) <= maxFramesAgo;
     }
 
     public static boolean atLestFramesAgo(int frame, int maxFramesAgo) {
-        return AGame.framesAgo(frame) <= maxFramesAgo;
+        return A.ago(frame) <= maxFramesAgo;
     }
 
     public static boolean everyNthGameFrame(int n) {
@@ -1122,7 +1123,7 @@ public class A {
     /**
      * Returns string like "(0.4)"
      */
-    public static String dist(AUnit enemy, AUnit unit) {
-        return "(" + (enemy != null && unit != null ? A.digit(unit.distTo(enemy)) : "-") + ")";
+    public static String dist(AUnit unit1, HasPosition unit2) {
+        return "(" + (unit1 != null && unit2 != null ? A.digit(unit1.distTo(unit2)) : "-") + ")";
     }
 }

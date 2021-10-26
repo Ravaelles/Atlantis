@@ -38,7 +38,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     private static void scarabs() {
         List<AUnit> reavers = Select.ourOfType(AUnitType.Protoss_Reaver).listUnits();
         for (AUnit reaver : reavers) {
-            if (reaver.getScarabCount() <= 2 && !reaver.isTrainingAnyUnit()) {
+            if (reaver.scarabCount() <= 2 && !reaver.isTrainingAnyUnit()) {
                 reaver.train(AUnitType.Protoss_Scarab);
             }
         }

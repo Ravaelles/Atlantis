@@ -226,12 +226,12 @@ public class ARunningManager {
         APosition runTo;
         double vectorLength = unit.getPosition().distTo(runAwayFrom);
 
-        double vectorX = runAwayFrom.getX() - unit.getPosition().getX();
-        double vectorY = runAwayFrom.getY() - unit.getPosition().getY();
+        double vectorX = runAwayFrom.x() - unit.getPosition().getX();
+        double vectorY = runAwayFrom.y() - unit.getPosition().getY();
         double ratio = dist / vectorLength;
 
         // Apply opposite 2D vector
-        runTo = new APosition((int) (unit.getX() - ratio * vectorX), (int) (unit.getY() - ratio * vectorY));
+        runTo = new APosition((int) (unit.x() - ratio * vectorX), (int) (unit.y() - ratio * vectorY));
 
         // === Ensure position is in bounds ========================================
         
@@ -363,7 +363,7 @@ public class ARunningManager {
      * Tell other units that might be blocking our escape route to move.
      */
     private boolean notifyNearbyUnitsToMakeSpace(AUnit unit) {
-        if (unit.isAirUnit()) {
+        if (unit.isAirUnit() || unit.isLoaded()) {
             return false;
         }
 
@@ -375,14 +375,18 @@ public class ARunningManager {
         }
 
         for (AUnit otherUnit : friendsTooClose.list()) {
-            if (!unit.isLoaded() && !otherUnit.isMoving() && !otherUnit.isRunning()) {
+            if (canBeNotifiedToMakeSpace(otherUnit)) {
                 otherUnit.runningManager().runFrom(unit, 0.6);
                 APainter.paintCircleFilled(unit, 10, Color.Yellow);
                 APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
-                otherUnit.setTooltip("Make space (" + otherUnit.distTo(unit) + ")");
+                otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit));
             }
         }
         return true;
+    }
+
+    private boolean canBeNotifiedToMakeSpace(AUnit unit) {
+        return !unit.isRunning() && !unit.type().isReaver();
     }
 
     // =========================================================

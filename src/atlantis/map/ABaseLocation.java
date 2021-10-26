@@ -24,12 +24,12 @@ public class ABaseLocation implements HasPosition {
     }
 
     @Override
-    public int getX() {
+    public int x() {
         return getPosition().getX();
     }
 
     @Override
-    public int getY() {
+    public int y() {
         return getPosition().getY();
     }
 

@@ -9,8 +9,8 @@ public class SelectUnitsCache extends Cache<Select<? extends AUnit>> {
         return super.get(cacheKey, cacheForFrames, callback).clone();
     }
 
-    public Select<? extends AUnit> get(String cacheKey, Callback callback) {
-        return super.get(cacheKey, callback).clone();
-    }
+//    public Select<? extends AUnit> get(String cacheKey, Callback callback) {
+//        return super.get(cacheKey, callback).clone();
+//    }
 
 }

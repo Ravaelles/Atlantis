@@ -1,12 +1,17 @@
 package atlantis.dedicated.protoss;
 
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
-import atlantis.units.actions.UnitActions;
 
 public class ProtossReaver {
 
     public static boolean update(AUnit reaver) {
+        if (reaver.scarabCount() <= 0) {
+            reaver.setTooltip("NoScarab");
+            return AAvoidUnits.avoidEnemiesIfNeeded(reaver);
+        }
+
         Select<? extends AUnit> enemiesInRange = Select.enemyRealUnits().inRadius(8, reaver);
         AUnit enemy;
 

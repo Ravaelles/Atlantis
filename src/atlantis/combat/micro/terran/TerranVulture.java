@@ -60,7 +60,7 @@ public class TerranVulture {
         if ((nearbyMines.count() <= 3 || (unit.getMinesCount() >= 3 && nearbyMines.count() <= 4)) 
                 && nearbyMines.inRadius(1, unit).count() == 0) {
             unit.useTech(TechType.Spider_Mines, unit.getPosition());
-            unit.setUnitAction(UnitActions.USING_TECH);
+            unit.setUnitAction(UnitActions.USING_TECH, TechType.Spider_Mines, unit.getPosition());
             unit.setTooltip("Plant mine");
             return true;
         }
