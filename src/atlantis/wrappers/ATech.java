@@ -6,6 +6,7 @@ import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
+import java.util.Set;
 
 
 public class ATech {
@@ -96,4 +97,7 @@ public class ATech {
         return currentlyUpgrading;
     }
 
+    public static boolean isOffensiveSpell(TechType tech) {
+        return !tech.name().contains("Warp_") && !tech.name().contains("Meld_");
+    }
 }

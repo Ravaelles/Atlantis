@@ -19,17 +19,19 @@ public class Unfreezer {
                 unit.setTooltip("UNFREEZE!");
                 return unfreeze(unit);
             }
-        } else if (
-                unit.lastUnderAttackLessThanAgo(5)
-                        && unit.getLastOrderFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES
-                        && unit.cooldownRemaining() == 0
-        ) {
-            if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
-                System.err.println("UNFREEZE #2!");
-                unit.setTooltip("UNFREEZE!");
-                return unfreeze(unit);
-            }
         }
+
+//        if (
+//                unit.lastUnderAttackLessThanAgo(5)
+//                        && unit.getLastOrderFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES
+//                        && unit.cooldownRemaining() == 0
+//        ) {
+//            if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
+//                System.err.println("UNFREEZE #2!");
+//                unit.setTooltip("UNFREEZE!");
+//                return unfreeze(unit);
+//            }
+//        }
 
         return false;
     }

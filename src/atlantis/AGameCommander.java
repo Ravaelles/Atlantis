@@ -67,9 +67,9 @@ public class AGameCommander {
 
         cameraUnit = Select.ourOfType(AUnitType.Protoss_High_Templar).groundUnits().first();
         if (cameraUnit != null) {
-            if (AGameSpeed.gameSpeed <= 0 && AGameSpeed.frameSkip >= 1) {
-                AGameSpeed.changeSpeedTo(2);
-            }
+//            if (AGameSpeed.gameSpeed <= 0 && AGameSpeed.frameSkip >= 1) {
+//                AGameSpeed.changeSpeedTo(2);
+//            }
             return cameraUnit;
         }
 

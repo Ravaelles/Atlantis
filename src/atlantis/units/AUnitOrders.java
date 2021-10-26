@@ -586,15 +586,15 @@ public interface AUnitOrders {
      * false if BWAPI determined that the command would fail. See also canUseTechWithOrWithoutTarget,
      * canUseTech, canUseTechWithoutTarget, canUseTechUnit, canUseTechPosition, TechTypes
      */
-    default boolean useTech(TechType tech) {
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().getID());
-        }
-
-        unit().setUnitAction(UnitActions.USING_TECH, tech, null);
-        unit().setLastUnitOrderNow();
-        return u().useTech(tech);
-    }
+//    default boolean useTech(TechType tech) {
+//        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+//            System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().getID());
+//        }
+//
+//        unit().setUnitAction(UnitActions.USING_TECH, tech, null);
+//        unit().setLastUnitOrderNow();
+//        return u().useTech(tech);
+//    }
 
     default boolean useTech(TechType tech, APosition target) {
         if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
@@ -611,7 +611,7 @@ public interface AUnitOrders {
             System.out.println("TECH_3 @" + A.now() + " / unit#" + unit().getID());
         }
 
-        unit().setUnitAction(UnitActions.USING_TECH, tech, target.getPosition());
+        unit().setUnitAction(UnitActions.USING_TECH, tech, target);
         unit().setLastUnitOrderNow();
         return u().useTech(tech, target.u());
     }

@@ -19,6 +19,7 @@ import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.position.PositionUtil;
 import atlantis.util.*;
+import atlantis.wrappers.ATech;
 import bwapi.*;
 
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int _lastTargetToAttackAcquired;
     public TechType _lastTech;
     public APosition _lastTechPosition;
+    public AUnit _lastTechUnit;
     public int _lastUnderAttack;
     public int _lastX;
     public int _lastY;
@@ -1309,6 +1311,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return setUnitAction(unitAction);
     }
 
+    public AUnit setUnitAction(UnitAction unitAction, TechType tech, AUnit usedOn) {
+        this._lastTech = tech;
+        this._lastTechUnit = usedOn;
+
+        if (ATech.isOffensiveSpell(tech)) {
+            SpellCoordinator.newSpellAt(usedOn.getPosition(), tech);
+        }
+
+        return setUnitAction(unitAction);
+    }
+
     private void cacheUnitActionTimestamp(UnitAction unitAction) {
         cacheInt.set(
                 "_last" + unitAction.name(),
@@ -1586,12 +1599,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return loaded;
     }
 
+    public int lastTechUsedAgo() {
+        return lastActionAgo(UnitActions.USING_TECH);
+    }
+
     public TechType lastTechUsed() {
         return _lastTech;
     }
 
     public APosition lastTechPosition() {
         return _lastTechPosition;
+    }
+
+    public AUnit lastTechUnit() {
+        return _lastTechUnit;
     }
 
     public boolean hasCargo() {

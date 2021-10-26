@@ -1,7 +1,9 @@
 
 package atlantis.dedicated.protoss;
 
+import atlantis.ACamera;
 import atlantis.AGame;
+import atlantis.AGameSpeed;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
@@ -19,14 +21,12 @@ import java.util.List;
 public class ProtossHighTemplar {
 
     public static boolean update(AUnit highTemplar) {
-//        System.out.println("lastTech = " + highTemplar.lastActionFrame(UnitActions.USING_TECH));
-
         if (dontDisturb(highTemplar)) {
             return true;
         }
 
-        if (highTemplar.energy() <= 50) {
-            return tryMergingIntoArchon(highTemplar);
+        if (tryMeldingIntoArchon(highTemplar)) {
+            return true;
         }
 
         if (AGame.everyNthGameFrame(3)) {
@@ -50,19 +50,27 @@ public class ProtossHighTemplar {
     // =========================================================
 
     private static boolean dontDisturb(AUnit highTemplar) {
-//        System.out.println(highTemplar.idWithHash() + " highTemplar.USING_TECH ago = " + highTemplar.lastActionAgo(UnitActions.USING_TECH));
 
-        if (highTemplar.lastActionLessThanAgo(40, UnitActions.USING_TECH)) {
-            highTemplar.setTooltip(highTemplar.lastTechUsed().name() + "...");
+        // Wants to Warp Archon
+        if (
+                highTemplar.lastActionLessThanAgo(50, UnitActions.USING_TECH)
+                && TechType.Archon_Warp.name().equals(highTemplar.lastTechUsed().name())
+                && highTemplar.lastTechUnit().isAlive()
+        ) {
+            highTemplar.setTooltip("Sex & Archon");
             return true;
         }
 
-        if (
-                highTemplar.lastActionLessThanAgo(90, UnitActions.USING_TECH)
-                && TechType.Archon_Warp.equals(highTemplar.lastTechUsed())
-        ) {
-            System.err.println("WARP ARCHON");
-            highTemplar.setTooltip("Sex & Archon");
+        // Is target of Archon Warp
+        for (AUnit otherHT : Select.ourOfType(AUnitType.Protoss_High_Templar).inRadius(3, highTemplar).list()) {
+            if (highTemplar.equals(otherHT.getTarget()) && highTemplar.lastTechUsedAgo() <= 90) {
+                highTemplar.setTooltip("Lets get it on");
+                return true;
+            }
+        }
+
+        if (highTemplar.lastActionLessThanAgo(40, UnitActions.USING_TECH)) {
+            highTemplar.setTooltip(highTemplar.lastTechUsed().name() + "...");
             return true;
         }
 
@@ -99,9 +107,9 @@ public class ProtossHighTemplar {
             }
         }
         else {
-            System.err.println(
-                    "On " + A.now() + " " + highTemplar.idWithHash() + "'s psionic was BLOCKED by another cast!"
-            );
+//            System.err.println(
+//                    "On " + A.now() + " " + highTemplar.idWithHash() + "'s psionic was BLOCKED by another cast!"
+//            );
         }
 
         return false;
@@ -120,7 +128,7 @@ public class ProtossHighTemplar {
             int most = (int) condensedEnemies.valueFor(mostCondensedEnemy);
             highTemplar.setTooltip("Psionic?(" + most + " enemies)");
 
-            int minUnitsInOnePlace = highTemplar.energy() >= 200 ? 5 : 6;
+            int minUnitsInOnePlace = highTemplar.energy() >= 180 ? 5 : 6;
             if (most >= minUnitsInOnePlace || forceUsage) {
                 return mostCondensedEnemy;
             }
@@ -136,7 +144,7 @@ public class ProtossHighTemplar {
         ).inRadius(12, highTemplar).sortDataByDistanceTo(highTemplar, false);
 
         for (AUnit enemy : enemyCrucialUnits) {
-            if (Select.ourRealUnits().inRadius(2, enemy).atMost(1)) {
+            if (Select.ourRealUnits().inRadius(2, enemy).atMost(2)) {
                 return enemy;
             }
         }
@@ -155,7 +163,10 @@ public class ProtossHighTemplar {
         ).inRadius(8.9, highTemplar).sortDataByDistanceTo(highTemplar, false);
 
         for (AUnit enemy : enemyCrucialUnits) {
-            if (Select.ourRealUnits().inRadius(2, enemy).atMost(1)) {
+            if (
+                    Select.ourRealUnits().inRadius(2, enemy).atMost(2)
+                    && Select.enemyRealUnits().inRadius(3, enemy).atLeast(2)
+            ) {
                 return enemy;
             }
         }
@@ -198,31 +209,38 @@ public class ProtossHighTemplar {
         return false;
     }
 
-    private static boolean tryMergingIntoArchon(AUnit highTemplar) {
-        Units lowEnergyHTs = new Units();
+    private static boolean tryMeldingIntoArchon(AUnit highTemplar) {
+        if (highTemplar.energy() > 65 && highTemplar.woundPercent() < 60) {
+            return false;
+        }
 
-        for (AUnit other : Select.ourOfType(AUnitType.Protoss_High_Templar).inRadius(5, highTemplar).list()) {
-            if (other.energy() <= 70) {
+        Units lowEnergyHTs = new Units();
+        for (AUnit other : Select.ourOfType(AUnitType.Protoss_High_Templar).inRadius(8, highTemplar).list()) {
+            if (other.energy() <= 70 || highTemplar.woundPercent() >= 60) {
                 lowEnergyHTs.addUnitWithValue(other, other.distTo(highTemplar));
             }
         }
 
         AUnit closestOtherHT = lowEnergyHTs.unitWithLowestValue();
         if (closestOtherHT != null) {
-            if (closestOtherHT.distTo(highTemplar) <= 0.9) {
+//            if (closestOtherHT.distTo(highTemplar) <= 0.9) {
                 highTemplar.useTech(TechType.Archon_Warp, closestOtherHT);
-                closestOtherHT.useTech(TechType.Archon_Warp, highTemplar);
-            }
-            else {
-                if (!highTemplar.isMoving() && closestOtherHT.lastActionMoreThanAgo(90, UnitActions.USING_TECH)) {
-                    highTemplar.useTech(TechType.Archon_Warp, closestOtherHT);
-                    highTemplar.move(closestOtherHT, UnitActions.MOVE, "WarpArchon");
-                }
-                if (!closestOtherHT.isMoving() && closestOtherHT.lastActionMoreThanAgo(90, UnitActions.USING_TECH)) {
-                    closestOtherHT.useTech(TechType.Archon_Warp, highTemplar);
-                    closestOtherHT.move(highTemplar, UnitActions.MOVE, "WarpArchon");
-                }
-            }
+//                System.out.println("Warp Archon");
+                highTemplar.setTooltip("WarpArchon");
+                closestOtherHT.setTooltip("OhArchon");
+//                AGameSpeed.changeSpeedTo(10);
+//                ACamera.centerCameraOn(highTemplar);
+//            }
+//            else {
+//                if (!highTemplar.isMoving() && closestOtherHT.lastActionMoreThanAgo(90, UnitActions.USING_TECH)) {
+//                    highTemplar.useTech(TechType.Archon_Warp, closestOtherHT);
+//                    highTemplar.move(closestOtherHT, UnitActions.MOVE, "WarpArchon");
+//                }
+//                if (!closestOtherHT.isMoving() && closestOtherHT.lastActionMoreThanAgo(90, UnitActions.USING_TECH)) {
+//                    closestOtherHT.useTech(TechType.Archon_Warp, highTemplar);
+//                    closestOtherHT.move(highTemplar, UnitActions.MOVE, "WarpArchon");
+//                }
+//            }
             return true;
         }
 

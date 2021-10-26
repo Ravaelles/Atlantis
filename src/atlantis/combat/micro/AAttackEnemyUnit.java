@@ -1,14 +1,11 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.targeting.AEnemyTargeting;
-import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
-import bwapi.Color;
 
 public class AAttackEnemyUnit {
 
@@ -38,17 +35,7 @@ public class AAttackEnemyUnit {
 //        System.out.println("enemy = " + enemy + " // alive:" + enemy.isAlive());
 //        System.out.println("----------------------------");
 
-        if (!unit.canAttackThisUnit(enemy, false, true)) {
-            unit.setTooltip("Invalid target");
-            System.err.println("Invalid target for " + unit + ": " + enemy + " (" + unit.distTo(enemy) + ")");
-            return false;
-        }
-
-        if (!missionAllowsToAttack(unit, enemy)) {
-            return false;
-        }
-
-        if (enemy != null) {
+        if (enemy != null && isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
             unit.setTooltip("->" + enemy.shortName() + "(" + unit.cooldownRemaining() + ")");
 //            APainter.paintLine(unit, enemy, Color.Red);
             processAttackUnit(unit, enemy);
@@ -67,6 +54,27 @@ public class AAttackEnemyUnit {
 //                || unit.lastActionLessThanAgo(4, UnitActions.ATTACK_UNIT)
 //                || (unit.isTankUnsieged() && (!unit.isMoving() && unit.woundPercent() > 15));
         ;
+    }
+
+    private static boolean isValidTargetAndAllowedToAttackUnit(AUnit unit, AUnit target) {
+        if (!missionAllowsToAttack(unit, target)) {
+            return false;
+        }
+
+        if (!unit.canAttackThisUnit(target, false, true)) {
+            unit.setTooltip("Invalid target");
+            System.err.println("Invalid target for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+            return false;
+        }
+
+        // Prevent units from switching attack of the same unit, to another unit of the same type
+        if (unit.isAttackingOrMovingToAttack() && unit.getTarget() != null && unit.getTarget().isTank()) {
+            if (unit.distToLessThan(unit.getTarget(), 3)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static boolean processAttackUnit(AUnit unit, AUnit enemy) {
