@@ -29,7 +29,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
      * Build Refineries/Assimilators/Extractors when it makes sense.
      */
     private static void gasBuildingIfNeeded() {
-        if (AGame.everyNthGameFrame(50)) {
+        if (AGame.everyNthGameFrame(35)) {
             return;
         }
         

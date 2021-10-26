@@ -66,6 +66,7 @@ public class AMineralGathering {
 
         // Get minerals near to our main base and sort them from closest to most distant one
         List<AUnit> minerals = Select.minerals().inRadius(12, base).listUnits();
+//        System.out.println(Select.minerals().inRadius(12, base));
         if (!minerals.isEmpty()) {
 
             // Count how many other workers gather this mineral

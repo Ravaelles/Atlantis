@@ -58,6 +58,11 @@ public class Select<T extends AUnit> {
                         data.add(AUnit.createFrom(u));
                     }
 
+//                    System.out.println("------------");
+//                    for (AUnit unit : data) {
+//                        System.out.println(unit);
+//                    }
+
                     return data;
                 }
         );
@@ -157,7 +162,7 @@ public class Select<T extends AUnit> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isCompleted() && unit.isActualUnit()) {
+                        if (unit.isCompleted()) {
                             data.add(unit);    //TODO: make it more efficient by just querying the cache of known units
                         }
                     }
@@ -198,7 +203,6 @@ public class Select<T extends AUnit> {
 
                     for (AUnit unit : allUnits()) {
                         if (unit.isCompleted() && unit.isType(type)) {
-                            System.out.println(unit);
                             data.add(unit);
                         }
                     }
@@ -328,7 +332,7 @@ public class Select<T extends AUnit> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isCompleted() && unit.isActualUnit() && !unit.isWorker()) {
+                        if (unit.isCompleted() && unit.isRealUnit() && !unit.isWorker()) {
                             data.add(unit);
                         }
                     }
@@ -349,9 +353,7 @@ public class Select<T extends AUnit> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isActualUnit()) {
-                            data.add(unit);
-                        }
+                        data.add(unit);
                     }
 
                     return new Select<>(data);
@@ -391,7 +393,7 @@ public class Select<T extends AUnit> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isCompleted() && unit.isActualUnit()) {
+                        if (unit.isCompleted() && unit.isRealUnit()) {
                             data.add(unit);
                         }
                     }
@@ -413,7 +415,7 @@ public class Select<T extends AUnit> {
 
                     for (AUnit unit : ourUnits()) {
 
-                        if (!unit.isCompleted() && unit.isActualUnit()) {
+                        if (!unit.isCompleted() && unit.isRealUnit()) {
                             data.add(unit);
                         }
                     }
@@ -470,7 +472,7 @@ public class Select<T extends AUnit> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : enemyUnits()) {
-                        if (!unit.isWorker() && unit.isActualUnit()) {
+                        if (!unit.isWorker() && unit.isRealUnit()) {
                             data.add(unit);
                         }
                     }
@@ -517,7 +519,7 @@ public class Select<T extends AUnit> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : enemyUnits()) {
-                        if ((includeBuildings || !unit.isBuilding()) || unit.isActualUnit()) {
+                        if ((includeBuildings || !unit.isBuilding()) || unit.isRealUnit()) {
                             if ((includeGroundUnits && unit.isGroundUnit()) || (includeAirUnits && unit.isAirUnit())) {
                                 data.add(unit);
                             }
@@ -643,19 +645,7 @@ public class Select<T extends AUnit> {
      * Selects only units of given type(s).
      */
     public Select<? extends AUnit> ofType(AUnitType... types) {
-        Iterator<T> unitsIterator = data.iterator();
-        while (unitsIterator.hasNext()) {
-            AUnit unitOrData = unitsIterator.next();
-//            boolean typeMatches = (unitOrData != null ? typeMatches(unitOrData, types) : typeMatches((AFoggedUnit) unitOrData, types));
-//            if (!typeMatches) {
-//                unitsIterator.remove();
-//            }
-            boolean typeMatches = typeMatches(unitOrData, types);
-            if (!typeMatches) {
-                unitsIterator.remove();
-            }
-        }
-
+        data.removeIf(unit -> !typeMatches(unit, types));
         return this;
     }
 
@@ -775,7 +765,7 @@ public class Select<T extends AUnit> {
      * Selects units that are gathering minerals.
      */
     public Select<? extends AUnit> gatheringMinerals(boolean onlyNotCarryingMinerals) {
-        data.removeIf(unit -> !unit.isGatheringMinerals() || (onlyNotCarryingMinerals && !unit.isCarryingMinerals()));
+        data.removeIf(unit -> !unit.isGatheringMinerals() || (onlyNotCarryingMinerals && unit.isCarryingMinerals()));
         return this;
     }
 
@@ -985,7 +975,7 @@ public class Select<T extends AUnit> {
                     AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
             );
         } else {
-            return (Select<AUnit>) ourBuildings().ofType(AtlantisConfig.BASE);
+            return (Select<AUnit>) our().ofType(AtlantisConfig.BASE);
         }
     }
 
@@ -993,9 +983,24 @@ public class Select<T extends AUnit> {
      * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe).
      */
     public static Select<AUnit> ourWorkers() {
-        Select<? extends AUnit> selectedUnits = Select.our();
-        selectedUnits.list().removeIf(unit -> !unit.isCompleted() || !unit.isWorker() || !unit.exists());
-        return (Select<AUnit>) selectedUnits;
+        return (Select<AUnit>) cache.get(
+                "ourWorkers",
+                1,
+                () -> {
+                    List<AUnit> data = new ArrayList<>();
+
+                    for (AUnit unit : ourUnits()) {
+                        if (unit.isCompleted() && unit.isWorker()) {
+                            data.add(unit);
+                        }
+                    }
+
+                    return new Select<>(data);
+                }
+        );
+//        Select<? extends AUnit> selectedUnits = Select.our();
+//        selectedUnits.list().removeIf(unit -> !unit.isWorker());
+//        return (Select<AUnit>) selectedUnits;
     }
 
     /**
@@ -1313,7 +1318,6 @@ public class Select<T extends AUnit> {
             return (T) unitOrData;
         }
 
-        System.err.println(unitOrData);
         throw new RuntimeException("Invalid dataFrom type");
     }
 

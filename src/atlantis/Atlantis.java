@@ -5,7 +5,6 @@ import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.constructing.*;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AOurUnitsExtraInfo;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.units.AUnit;
@@ -217,7 +216,7 @@ public class Atlantis implements BWEventListener {
             }
 
             else {
-                if (!unit.isNotActualUnit()) {
+                if (!unit.isNotRealUnit()) {
                     System.out.println("Neutral unit discovered! " + unit.shortName());
                     UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
                 }
@@ -250,6 +249,7 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitMorph(Unit u) {
         AUnit unit = AUnit.createFrom(u);
+        UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
 
         // A bit of safe approach: forget the unit and remember it again.
         // =========================================================
@@ -286,7 +286,7 @@ public class Atlantis implements BWEventListener {
                 AProductionQueueManager.rebuildQueue();
 
                 // Add to combat squad if it's military unit
-                if (unit.isActualUnit()) {
+                if (unit.isRealUnit()) {
                     ASquadManager.possibleCombatUnitCreated(unit);
                 }
             }

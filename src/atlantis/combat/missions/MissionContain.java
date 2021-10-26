@@ -2,6 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.combat.squad.SquadScout;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -25,9 +26,9 @@ public class MissionContain extends Mission {
 //            return true;
 //        }
 
-//        if (SquadScout.handle(unit)) {
-//            return true;
-//        }
+        if (SquadScout.handle(unit)) {
+            return true;
+        }
 
         if (ASquadCohesionManager.handle(unit)) {
             return true;

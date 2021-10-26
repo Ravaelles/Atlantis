@@ -423,9 +423,9 @@ public class AUnitType implements Comparable<AUnitType> {
                             .replace("_Tank_Mode", "").replace("_", "")
                             .trim();
 
-                    if (name.equals("Unknown")) {
-                        System.err.println("Unknown? What? " + this);
-                    }
+//                    if (name.equals("Unknown")) {
+//                        System.err.println("Unknown? What? ");
+//                    }
 
                     return name;
                 }
@@ -468,7 +468,7 @@ public class AUnitType implements Comparable<AUnitType> {
 
     @Override
     public String toString() {
-        return ut.toString();
+        return shortName();
     }
 
     // =========================================================
@@ -538,7 +538,11 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public boolean isPylon() {
-        return isType(Protoss_Pylon);
+        return (boolean) cache.get(
+                "isPylon",
+                -1,
+                () -> isType(Protoss_Pylon)
+        );
     }
 
     public boolean isReaver() {
@@ -601,7 +605,7 @@ public class AUnitType implements Comparable<AUnitType> {
     public boolean isGasBuilding() {
         return (boolean) cache.get(
                 "isGasBuilding",
-                -1,
+                0,
                 () -> isType(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor)
         );
     }
@@ -1014,12 +1018,13 @@ public class AUnitType implements Comparable<AUnitType> {
         return ID;
     }
 
-    public boolean isNotActualUnit() {
+    public boolean isNotRealUnit() {
         return (boolean) cache.get(
                 "isNotActualUnit",
                 -1,
-                () -> isNeutral() || isLarvaOrEgg() || isBuilding() || isMineralField()
-                        || isGeyser() || isGasBuilding() || isSpell() || isMine()
+                () -> isBuilding() || isNeutral() || isLarvaOrEgg() || isMineralField()
+                        || isGeyser() || isSpell() || isMine()
+//                        || isGasBuilding()
         );
     }
 

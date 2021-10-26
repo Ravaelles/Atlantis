@@ -147,6 +147,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                            System.err.println(u.getHitPoints());
                         }
                     }
+//                    System.out.println(this.u + " // " + type.ut().name());
                     return type;
                 }
         );
@@ -546,19 +547,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Not that we're racists, but spider mines and larvas aren't really units...
      */
-    public boolean isNotActualUnit() {
-        return type().isNotActualUnit();
+    public boolean isNotRealUnit() {
+        return type().isNotRealUnit();
     }
 
     /**
-     * Not that we're racists, but spider mines and larvas aren't really units...
+     * Not that we're racists, but buildings, spider mines and larvas aren't really units...
      */
-
-    /**
-     * Not that we're racists, but spider mines and larvas aren't really units...
-     */
-    public boolean isActualUnit() {
-        return !isNotActualUnit();
+    public boolean isRealUnit() {
+        return !type().isNotRealUnit();
     }
 
     // =========================================================
@@ -1323,6 +1320,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     private void cacheUnitActionTimestamp(UnitAction unitAction) {
+        if (unitAction == null) {
+            return;
+        }
         cacheInt.set(
                 "_last" + unitAction.name(),
                 -1,

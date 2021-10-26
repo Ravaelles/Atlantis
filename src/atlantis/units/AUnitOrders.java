@@ -266,15 +266,26 @@ public interface AUnitOrders {
      * would fail. Note There is a small chance for a command to fail after it has been passed to Broodwar.
      * See also isCarryingGas, isCarryingMinerals, canReturnCargo
      */
-    default boolean returnCargo() {
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("RETURN_CARGO @" + A.now() + " / unit#" + unit().getID());
-        }
-
-        unit().setUnitAction(UnitActions.MOVE);
-        unit().setLastUnitOrderNow();
-        return u().returnCargo();
-    }
+    // Bugged, doesn't work
+//    default boolean returnCargo() {
+//        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+//            System.out.println("RETURN_CARGO @" + A.now() + " / unit#" + unit().getID());
+//        }
+//
+//        AUnit base = Select.ourBases().nearestTo(unit());
+//        if (base != null) {
+//            unit().doRightClickAndYesIKnowIShouldAvoidUsingIt(base);
+//
+//            unit().setUnitAction(UnitActions.RETURN_CARGO);
+//            unit().setLastUnitOrderNow();
+//            unit().setTooltip("ReturnCargo");
+//
+//            return true;
+//        }
+//
+//        return false;
+////        return u().returnCargo();
+//    }
 
     /**
      * Orders the unit to repair the specified unit. Only Terran SCvs. can be ordered to repair, and the target

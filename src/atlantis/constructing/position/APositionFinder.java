@@ -77,7 +77,8 @@ public class APositionFinder {
                 }
                 else {
 //                    nearTo = Select.mainBase().getPosition();
-                    nearTo = Select.ourBases().random().getPosition();
+                    AUnit randomBase = Select.ourBases().random();
+                    nearTo = randomBase != null ? randomBase.getPosition() : Select.our().first().getPosition();
                 }
             }
 

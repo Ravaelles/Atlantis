@@ -202,8 +202,14 @@ public class AConstructionManager {
             return;
         }
 
+        if (order.getBuilder() == null) {
+            System.out.println("Weird case, " + order.getBuildingType() + " has no builder. Cancel.");
+            order.cancel();
+            return;
+        }
+
         int timeout = 30 * (
-                (order.getBuildingType().isBase() ? 25 : 9)
+                (order.getBuildingType().isBase() ? 40 : 15)
                 + (int) (1.6 * order.getPositionToBuild().distTo(order.getBuilder())
         ));
 

@@ -7,6 +7,7 @@ import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.actions.UnitActions;
 
 public class AWorkerManager {
 
@@ -15,6 +16,10 @@ public class AWorkerManager {
      */
     public static boolean update(AUnit worker) {
         worker.removeTooltip();
+
+        if (worker.lastActionLessThanAgo(20, UnitActions.RETURN_CARGO)) {
+            return true;
+        }
 
         if (AAvoidUnits.avoidEnemiesIfNeeded(worker)) {
             return true;
@@ -64,11 +69,10 @@ public class AWorkerManager {
         }
 
         // If is carrying minerals, return
-        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
-            worker.returnCargo();
-            worker.setTooltip("Cargo");
-            return true;
-        }
+//        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
+//            worker.returnCargo();
+//            return true;
+//        }
 
         if (worker.isMoving() || worker.getTarget() != null) {
             return true;

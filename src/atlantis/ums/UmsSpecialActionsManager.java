@@ -1,5 +1,6 @@
 package atlantis.ums;
 
+import atlantis.AGame;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -14,8 +15,10 @@ public class UmsSpecialActionsManager {
     // =========================================================
 
     public static void update() {
-        goToBeaconsIfNeeded();
-        goToNewCompanionsButStillNeutral();
+        if (AGame.isUms()) {
+            goToBeaconsIfNeeded();
+            goToNewCompanionsButStillNeutral();
+        }
     }
 
     private static boolean goToNewCompanionsButStillNeutral() {

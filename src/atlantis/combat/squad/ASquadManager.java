@@ -49,7 +49,7 @@ public class ASquadManager {
      * @return
      */
     private static boolean shouldSkipUnit(AUnit unit) {
-        return unit.isNotActualUnit() || unit.isWorker() || unit.type().isMine();
+        return unit.isNotRealUnit() || unit.isWorker() || unit.type().isMine();
     }
 
     // =========================================================

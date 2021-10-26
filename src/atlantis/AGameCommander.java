@@ -31,10 +31,6 @@ public class AGameCommander {
 
         // === Execute code of every Commander and Manager ==================
 
-        if (AGame.isUms()) {
-            UmsSpecialActionsManager.update();
-        }
-
         AStrategyCommander.update();
         ABuildingsCommander.update();
         AWorkerCommander.update();

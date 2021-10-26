@@ -73,6 +73,10 @@ public class AGame {
         Atlantis.getInstance().onEnd(false);
     }
 
+    public static void quit() {
+        exit();
+    }
+
     /**
      * Quits the game gently, killing all processes and cleaning up.
      */

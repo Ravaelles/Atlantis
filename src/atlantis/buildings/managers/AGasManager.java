@@ -30,7 +30,7 @@ public class AGasManager {
         // =========================================================
         
         Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).listUnits();
-        Collection<AUnit> workers = Select.ourWorkers().listUnits();
+//        Collection<AUnit> workers = Select.ourWorkers().listUnits();
         
         // =========================================================
         
@@ -79,11 +79,13 @@ public class AGasManager {
         }
 
         // If is carrying stuff, return first
-        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
-            worker.returnCargo();
-            worker.setTooltip("Cargo");
-            return;
-        }
+//        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
+//            worker.returnCargo();
+//            worker.setTooltip("Cargo");
+//
+//            System.out.println("ret cargo");
+//            return;
+//        }
 
         worker.gather(gasBuilding);
         worker.setTooltip("Gas");

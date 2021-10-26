@@ -21,7 +21,7 @@ public class AInitialActions {
         }
 
 //        try {
-            AMineralGathering.initialAssignWorkersToMinerals();
+        AMineralGathering.initialAssignWorkersToMinerals();
 //        } catch (Exception ex) {
 //            AGame.setUmsMode(true);
 //        }
