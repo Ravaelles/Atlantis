@@ -82,6 +82,7 @@ public abstract class AProductionQueueManager {
             }
 
             // ===  Protoss fix: wait for at least one Pylon ============
+
             if (AGame.isPlayingAsProtoss() && unitOrBuilding != null
                     && !unitOrBuilding.isType(AUnitType.Protoss_Pylon, AUnitType.Protoss_Assimilator)
                     && Select.our().countUnitsOfType(AUnitType.Protoss_Pylon) == 0) {

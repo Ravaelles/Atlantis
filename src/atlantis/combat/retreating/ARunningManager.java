@@ -75,7 +75,8 @@ public class ARunningManager {
 
         // === Define run to position ==============================
 
-        if (A.notUms() && A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30)) {
+//        if (A.notUms() && A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30)) {
+        if (A.notUms() && (Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30))) {
             runTo = Select.mainBase().getPosition();
         } else {
             runTo = getPositionAwayFrom(unit, runAwayFrom, dist);

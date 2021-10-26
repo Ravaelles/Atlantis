@@ -98,7 +98,7 @@ public class AProductionManager {
         // =========================================================
         // Non-worker
 
-        else if (AGame.canAfford(50 + unitType.getMineralPrice(), unitType.getGasPrice())) {
+        else if (AGame.canAffordWithReserved(50 + unitType.getMineralPrice(), unitType.getGasPrice())) {
             return AProductionQueue.getCurrentBuildOrder().produceUnit(unitType);
         }
 

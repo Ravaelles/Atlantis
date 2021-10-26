@@ -18,7 +18,7 @@ public class TerranDynamicUnitsManager {
     private static void handleFactoryProduction() {
         for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).listUnits()) {
             if (!factory.isTrainingAnyUnit()) {
-                if (AGame.canAfford(270, 110)) {
+                if (AGame.canAffordWithReserved(270, 110)) {
                     factory.train(AUnitType.Terran_Vulture);
                 }
             }

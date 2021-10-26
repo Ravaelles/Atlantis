@@ -3,6 +3,7 @@ package atlantis;
 import static atlantis.Atlantis.game;
 
 import atlantis.combat.missions.MissionChanger;
+import atlantis.production.orders.AProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.A;
@@ -49,7 +50,8 @@ public class AGame {
 
             int requiredAmount = unitType.getRequiredUnits().get(requiredType);
             int weHaveAmount = requiredType.equals(AUnitType.Zerg_Larva)
-                    ? Select.ourLarva().count() : Select.our().ofType(requiredType).count();
+                    ? Select.ourLarva().count()
+                    : (countUnfinished ? Select.ourIncludingUnfinished() : Select.our()).ofType(requiredType).count();
             if (weHaveAmount < requiredAmount) {
                 return false;
             }
@@ -328,6 +330,17 @@ public class AGame {
      */
     public static boolean canAfford(int minerals, int gas) {
         return hasMinerals(minerals) && hasGas(gas);
+    }
+
+    /**
+     * Returns true if we can afford both so many minerals and gas at the same time.
+     * Takes into account planned constructions and orders.
+     */
+    public static boolean canAffordWithReserved(int minerals, int gas) {
+        return canAfford(
+                minerals + AProductionQueue.getMineralsReserved(),
+                gas + AProductionQueue.getGasReserved()
+        );
     }
 
     public static int killsLossesResourceBalance() {

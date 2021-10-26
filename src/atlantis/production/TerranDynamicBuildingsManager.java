@@ -20,7 +20,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      * If all factories are busy (training units) request new ones.
      */
     private static void factoryIfNeeded() {
-        if (canAfford(250, 100)) {
+        if (AGame.canAffordWithReserved(250, 100)) {
             Select<?> factories = Select.ourOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
@@ -46,7 +46,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      * If there are buildings without addons, build them.
      */
     private static void addonIfNeeded() {
-        if (canAfford(100, 50)) {
+        if (AGame.canAffordWithReserved(100, 50)) {
             for (AUnit building : Select.ourBuildings().list()) {
                 if (building.type().isFactory() && !building.isBusy() && !building.hasAddon()) {
                     AUnitType addonType = building.type().getRelatedAddon();

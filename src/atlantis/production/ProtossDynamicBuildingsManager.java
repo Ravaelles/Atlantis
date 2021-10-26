@@ -21,7 +21,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     // =========================================================
 
     private static void gateways() {
-        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway);
+        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 70, 0);
     }
 
     private static void forge() {

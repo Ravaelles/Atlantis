@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.ACamera;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
+import atlantis.map.ABaseLocation;
 import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
@@ -46,12 +47,14 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             return containEnemyAtPoint = chokepoint.getCenter();
         }
 
-        APosition natural = AMap.getNaturalBaseLocation(enemyBase.getPosition()).getPosition();
-        if (natural == null) {
+        ABaseLocation natural = AMap.getNaturalBaseLocation(enemyBase.getPosition());
+        if (natural != null) {
             ACamera.centerCameraOn(natural);
+            return containEnemyAtPoint = natural.getPosition();
         }
 
-        return containEnemyAtPoint = natural;
+        System.err.println("Shouldnt be here mate?");
+        return null;
     }
 
 //    private APosition containPointIfEnemyBaseNotKnown() {

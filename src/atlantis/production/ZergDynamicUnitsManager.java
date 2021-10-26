@@ -19,7 +19,7 @@ public class ZergDynamicUnitsManager {
     // =========================================================
 
     private static void zerglingsIfNeeded() {
-        if (!AGame.canAfford(200, 0)) {
+        if (!AGame.canAffordWithReserved(200, 0)) {
             return;
         }
 

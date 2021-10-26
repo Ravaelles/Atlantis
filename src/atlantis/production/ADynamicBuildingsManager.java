@@ -67,14 +67,26 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         buildIfCanAfford(type, true, type.getMineralPrice(), type.getGasPrice());
     }
 
-    protected static void buildIfAllBusyButCanAfford(AUnitType type) {
+    protected static void buildIfCanAffordWithReserved(AUnitType type) {
+        buildIfCanAffordWithReserved(type, true, type.getMineralPrice(), type.getGasPrice());
+    }
+
+    protected static void buildIfAllBusyButCanAfford(AUnitType type, int extraMinerals, int extraGas) {
         if (Select.ourOfType(type).areAllBusy()) {
-            buildIfCanAfford(type, true, type.getMineralPrice(), type.getGasPrice());
+            buildIfCanAfford(type, true, type.getMineralPrice() + extraMinerals, type.getGasPrice() + extraGas);
         }
     }
 
     protected static void buildIfCanAfford(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!canAfford(hasMinerals, hasGas)) {
+        if (!AGame.canAfford(hasMinerals, hasGas)) {
+            return;
+        }
+
+        buildNow(type, onlyOneAtTime);
+    }
+
+    protected static void buildIfCanAffordWithReserved(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
+        if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) {
             return;
         }
 
@@ -95,13 +107,6 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     }
 
     // =========================================================
-
-    public static boolean canAfford(int minerals, int gas) {
-        return AGame.canAfford(
-                minerals + AProductionQueue.getMineralsReserved(),
-                gas + AProductionQueue.getGasReserved()
-        );
-    }
 
     public static boolean hasABaseWithFreeGeyser() {
         for (AUnit base : Select.ourBases().listUnits()) {

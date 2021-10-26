@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
-    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 20;
+    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
 
     // Mapping of native unit IDs to AUnit objects
     private static final Map<Integer, AUnit> instances = new HashMap<>();
