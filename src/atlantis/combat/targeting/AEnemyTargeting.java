@@ -3,7 +3,6 @@ package atlantis.combat.targeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.A;
 
 public class AEnemyTargeting {
 
@@ -25,8 +24,8 @@ public class AEnemyTargeting {
             return null;
         }
 
-        if (!enemy.isEnemy() || !enemy.isAlive() || !enemy.isVisible()) {
-            System.err.println(enemy + ", enemy:" + enemy.isEnemy() + ", alive:" + enemy.isAlive() + ", visible:" + enemy.isVisible());
+        if (!enemy.isEnemy() || !enemy.isAlive() || !enemy.isVisibleOnMap()) {
+            System.err.println(enemy + ", enemy:" + enemy.isEnemy() + ", alive:" + enemy.isAlive() + ", visible:" + enemy.isVisibleOnMap());
             throw new RuntimeException("This is crazy, it should never happen, but with wrong logic it can happen.");
         }
 

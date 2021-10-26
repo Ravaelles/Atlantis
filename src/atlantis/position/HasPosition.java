@@ -1,5 +1,7 @@
 package atlantis.position;
 
+import atlantis.map.AMap;
+
 /**
  * This interface helps ease problems of overriding native bridge classes like e.g. BaseLocation which doesn't
  * have default constructor. Instead ABaseLocation can use this interface.
@@ -46,4 +48,9 @@ public interface HasPosition {
     default LargeTile largeTile() {
         return new LargeTile(this);
     }
+
+    default boolean isVisible() {
+        return AMap.isVisible(getPosition());
+    }
+
 }

@@ -882,7 +882,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isEnemy() {
         return (boolean) cache.get(
                 "isEnemy",
-                30,
+                60,
                 () -> getPlayer().isEnemy(AGame.getPlayerUs())
         );
     }
@@ -897,7 +897,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if this unit is neutral (minerals, geysers, critters).
      */
-    public boolean isNeutralUnit() {
+    public boolean isNeutral() {
         return getPlayer().equals(AGame.getNeutralPlayer());
     }
 
@@ -993,7 +993,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * RETURNS TRUE IF UNIT IS VISIBLE ON MAP (NOT THAT UNIT IS NOT CLOAKED!).
      */
-    public boolean isVisible() {
+    public boolean isVisibleOnMap() {
         return u.isVisible();
     }
 

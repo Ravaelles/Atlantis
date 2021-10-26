@@ -27,14 +27,14 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try going near enemy base
 //        Position enemyBase = AtlantisEnemyInformationManager.getEnemyBase();
-        APosition enemyBase = AEnemyUnits.getEnemyBase();
+        APosition enemyBase = AEnemyUnits.enemyBase();
         if (enemyBase != null) {
 //            System.out.println("1 = " + enemyBase);
             return enemyBase;
         }
 
         // Try going near any enemy building
-        AFoggedUnit enemyBuilding = AEnemyUnits.getNearestEnemyBuilding();
+        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
         if (enemyBuilding != null) {
 //            System.out.println("2 = " + enemyBuilding);
             return enemyBuilding.getPosition();

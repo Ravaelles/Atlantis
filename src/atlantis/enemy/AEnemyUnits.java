@@ -16,11 +16,30 @@ import java.util.Map;
 public class AEnemyUnits {
 
     protected static Map<AUnit, AFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
-//    protected static HashMap<Integer, AUnit> enemyUnitsDestroyed = new HashMap<>();
 
     // =========================================================
-    // Top abstraction methods
-    
+
+    public static void updateFoggedUnits() {
+        for (AUnit enemy : Select.enemy().list()) {
+            AEnemyUnits.updateEnemyUnitPosition(enemy);
+        }
+
+        for (AFoggedUnit fogged : enemyUnitsDiscovered.values()) {
+//            System.err.println(fogged + " // " + fogged.isBuilding() + " // " + fogged.getPosition().isVisible() + " // " +fogged.isVisibleOnMap());
+            if (
+                    !fogged.isBuilding()
+                            && fogged.hasKnownPosition()
+                            && fogged.getPosition().isVisible()
+                            && !fogged.isVisibleOnMap()
+            ) {
+                fogged.positionUnknown();
+//                System.out.println("      " + fogged + " position now  unknown");
+            }
+        }
+    }
+
+    // =========================================================
+
     /**
      *
      */
@@ -32,7 +51,7 @@ public class AEnemyUnits {
      * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */
     public static boolean hasDiscoveredAnyEnemyBuilding() {
-        for (AUnit enemyUnit : enemyUnitsDiscovered.keySet()) {
+        for (AUnit enemyUnit : enemyUnitsDiscovered.values()) {
             if (enemyUnit.isBuilding()) {
                 return true;
             }
@@ -72,8 +91,8 @@ public class AEnemyUnits {
         return false;
     }
     
-    public static APosition getEnemyBase() {
-        for (AUnit enemyUnit : enemyUnitsDiscovered.keySet()) {
+    public static APosition enemyBase() {
+        for (AFoggedUnit enemyUnit : enemyUnitsDiscovered.values()) {
             if (enemyUnit.isBase()) {
                 return getLastPositionOfEnemyUnit(enemyUnit);
             }
@@ -81,7 +100,7 @@ public class AEnemyUnits {
         return null;
     }
     
-    public static AFoggedUnit getNearestEnemyBuilding() {
+    public static AFoggedUnit nearestEnemyBuilding() {
         AUnit ourMainBase = Select.mainBase();
         AFoggedUnit best = null;
         if (ourMainBase != null) {
@@ -145,7 +164,7 @@ public class AEnemyUnits {
     /**
      * Updates last known position of the enemy unit.
      */
-    public static void updateEnemyUnitPosition(AUnit enemyUnit) {
+    private static void updateEnemyUnitPosition(AUnit enemyUnit) {
 //        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
         enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
     }
@@ -159,12 +178,27 @@ public class AEnemyUnits {
      */
     public static int countEnemyKnownUnitsOfType(AUnitType type) {
         int total = 0;
-        for (AUnit enemyUnit : enemyUnitsDiscovered.keySet()) {
+        for (AUnit enemyUnit : enemyUnitsDiscovered.values()) {
             if (enemyUnit.isType(type)) {
                 total++;
             }
         }
         return total;
+    }
+
+    public static void printEnemyFoggedUnits() {
+        Collection<AFoggedUnit> foggedUnits = enemyUnitsDiscovered.values();
+        if (!foggedUnits.isEmpty()) {
+            System.out.println("--- Enemy fogged units (" + foggedUnits.size() + ") ---");
+            for (AUnit fogged : foggedUnits) {
+                System.out.println(
+                        fogged.type()
+                                + " " + fogged.getPosition()
+                                + ", isBase=" + fogged.isBase()
+                                + ", alive=" + fogged.isAlive()
+                );
+            }
+        }
     }
 
 }

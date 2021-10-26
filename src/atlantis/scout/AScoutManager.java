@@ -79,7 +79,7 @@ public class AScoutManager {
     }
     
     private static boolean update(AUnit scout) {
-        if (!scout.isAlive() || AEnemyUnits.getEnemyBase() != null) {
+        if (!scout.isAlive() || AEnemyUnits.enemyBase() != null) {
             scouts.remove(scout);
             return true;
         }
@@ -166,7 +166,7 @@ public class AScoutManager {
 
         // === Remain at the enemy base if it's known ==============
 
-        APosition enemyBase = AEnemyUnits.getEnemyBase();
+        APosition enemyBase = AEnemyUnits.enemyBase();
         if (enemyBase != null) {
             ARegion enemyBaseRegion = AMap.getRegion(enemyBase);
 

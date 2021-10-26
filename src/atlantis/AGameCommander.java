@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.combat.ACombatCommander;
+import atlantis.enemy.AEnemyUnits;
 import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
@@ -44,6 +45,7 @@ public class AGameCommander {
             TerranSpecificBuildingsCommander.update();
         }
 
+        AEnemyUnits.updateFoggedUnits();
         UmsSpecialActionsManager.update();
         AUnitStateManager.update();
 

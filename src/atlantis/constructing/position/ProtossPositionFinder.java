@@ -139,7 +139,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             }
 
             for (AUnit geyser : Select.geysers().inRadius(8, position).listUnits()) {
-                if (geyser.distTo(position) <= (building.isPylon() ? 5 : 4)) {
+                if (geyser.distTo(position) <= (building.isPylon() ? 7 : 4)) {
                     _CONDITION_THAT_FAILED = "Too close to geyser";
                     return true;
                 }

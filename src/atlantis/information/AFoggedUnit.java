@@ -3,6 +3,8 @@ package atlantis.information;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.A;
+import atlantis.util.Cache;
 
 /**
  * Stores information about units in order to retrieve them when they are out of sight
@@ -13,18 +15,18 @@ import atlantis.units.AUnitType;
 //public class AFoggedUnit implements HasPosition {
 public class AFoggedUnit extends AUnit {
 
-    private final AUnit unit;
+    private final AUnit aUnit;
     private APosition _position;
     private AUnitType _lastCachedType;
+    private Cache<Integer> cacheInt = new Cache<>();
 
     // =========================================================
 
     public AFoggedUnit(AUnit unit) {
         super(unit.u());
 
-        this.unit = unit;
-        _position = new APosition(unit.getPosition());
-        _lastCachedType = AUnitType.createFrom(unit.u().getType());
+        this.aUnit = unit;
+        update(unit);
     }
 
     // =========================================================
@@ -54,7 +56,7 @@ public class AFoggedUnit extends AUnit {
     @Override
     public String toString() {
         return "AFoggedUnit{" +
-                "unit=" + unit +
+                "unit=" + aUnit +
                 ", _position=" + _position +
                 ", _lastCachedType=" + _lastCachedType +
                 '}';
@@ -76,14 +78,44 @@ public class AFoggedUnit extends AUnit {
     }
 
     public AUnit getUnit() {
-        return unit;
+        return aUnit;
     }
 
-    public void update(AUnit enemyUnit) {
-        _position = enemyUnit.getPosition();
-        if (_lastCachedType == null || !_lastCachedType.equals(enemyUnit.type())) {
-            _lastCachedType = enemyUnit.type();
+    public void update(AUnit unit) {
+        updatePosition(unit);
+        updateType(unit);
+    }
+
+    protected void updatePosition(AUnit unit) {
+        if (unit.getPosition() != null) {
+//            System.out.println("Update " + unit.shortName() + " to " + unit.getPosition());
+            _position = new APosition(unit.x(), unit.y());
+            cacheInt.set("lastPositionUpdated", -1, A.now());
         }
+    }
+
+    protected void updateType(AUnit unit) {
+        if (_lastCachedType == null || (unit.type() != null && !_lastCachedType.equals(unit.type()))) {
+            _lastCachedType = AUnitType.createFrom(unit.u().getType());
+//            _lastCachedType = unit.type();
+        }
+    }
+
+    public void positionUnknown() {
+        _position = null;
+        cacheInt.set("lastPositionUpdated", -1, A.now());
+    }
+
+    public boolean hasKnownPosition() {
+        return _position != null;
+    }
+
+    public int lastPositionUpdated() {
+        return cacheInt.get("lastPositionUpdated");
+    }
+
+    public int lastPositionUpdatedAgo() {
+        return A.ago(cacheInt.get("lastPositionUpdated"));
     }
 
 //    public AFoggedUnit update(AUnit updated) {

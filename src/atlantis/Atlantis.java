@@ -249,6 +249,11 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitMorph(Unit u) {
         AUnit unit = AUnit.createFrom(u);
+//        System.out.println("MORPH u = " + u);
+//        System.out.println("MORPH = " + unit);
+//        System.out.println(unit.isEnemy());
+//        System.out.println(unit.isNeutral());
+//        System.out.println(unit.isOur());
         UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
 
         // A bit of safe approach: forget the unit and remember it again.
@@ -257,9 +262,10 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
             if (unit.isOur()) {
                 ASquadManager.battleUnitDestroyed(unit);
-            } else {
+            } if (unit.isEnemy()) {
                 AEnemyUnits.unitDestroyed(unit);
             }
+            unit = AUnit.createFrom(u);
         }
 
         // =========================================================

@@ -236,7 +236,7 @@ public class AMap {
      * Returns free base location which is as far from enemy starting location as possible.
      */
     public static ABaseLocation getExpansionBaseLocationMostDistantToEnemy() {
-        APosition farthestTo = AEnemyUnits.getEnemyBase();
+        APosition farthestTo = AEnemyUnits.enemyBase();
         if (farthestTo == null) {
             return getExpansionFreeBaseLocationNearestTo(Select.ourBases().first().getPosition());
         }
@@ -669,7 +669,7 @@ public class AMap {
     }
 
     public static APosition getEnemyNatural() {
-        APosition enemyBase = AEnemyUnits.getEnemyBase();
+        APosition enemyBase = AEnemyUnits.enemyBase();
         if (enemyBase == null) {
             return null;
         }
@@ -683,7 +683,7 @@ public class AMap {
     }
 
     public static AChokepoint getEnemyMainChokepoint() {
-        APosition enemyMain = AEnemyUnits.getEnemyBase();
+        APosition enemyMain = AEnemyUnits.enemyBase();
         if (enemyMain == null) {
             return null;
         }

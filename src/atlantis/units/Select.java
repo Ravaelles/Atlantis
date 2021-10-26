@@ -88,7 +88,7 @@ public class Select<T extends AUnit> {
                                     } else {
                                         System.err.println("Enemy unit not alive? Seems a terrible problem.");
                                         System.err.println(unit);
-                                        System.err.println(unit.hp() + " // " + unit.isVisible() + " // " + unit.effVisible());
+                                        System.err.println(unit.hp() + " // " + unit.isVisibleOnMap() + " // " + unit.effVisible());
                                     }
                                 }
                             }
@@ -698,7 +698,7 @@ public class Select<T extends AUnit> {
      * Selects only those units which are VISIBLE ON MAP (not behind fog of war).
      */
     public Select<? extends AUnit> visible() {
-        data.removeIf(unit -> !unit.isVisible());
+        data.removeIf(unit -> !unit.isVisibleOnMap());
         return this;
     }
 
@@ -706,7 +706,7 @@ public class Select<T extends AUnit> {
      * Selects only those units which are visible and not cloaked.
      */
     public Select<? extends AUnit> effVisible() {
-        data.removeIf(unit -> unit.effCloaked() || !unit.isVisible());
+        data.removeIf(unit -> unit.effCloaked() || !unit.isVisibleOnMap());
         return this;
     }
 

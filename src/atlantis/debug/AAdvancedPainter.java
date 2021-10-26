@@ -103,7 +103,7 @@ public class AAdvancedPainter extends APainter {
         paintWorkersAssignedToBuildings();
         paintUnitsBeingTrainedInBuildings();
         paintBarsUnderUnits();
-        paintEnemyDiscoveredAkaAFoggedUnit();
+        paintFoggedUnitsThatIsEnemiesDiscovered();
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
@@ -231,7 +231,7 @@ public class AAdvancedPainter extends APainter {
                 AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
         paintSideMessage("Mission: " + mission.getName(), Color.White);
         paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
-        paintSideMessage("Enemy base: " + AEnemyUnits.getEnemyBase(), Color.White);
+        paintSideMessage("Enemy base: " + AEnemyUnits.enemyBase(), Color.White);
 
         // =========================================================
         // Focus point
@@ -948,20 +948,30 @@ public class AAdvancedPainter extends APainter {
     /**
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
-    static void paintEnemyDiscoveredAkaAFoggedUnit() {
-        for (AFoggedUnit enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
+    static void paintFoggedUnitsThatIsEnemiesDiscovered() {
+        for (AFoggedUnit foggedEnemy : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
+            if (!foggedEnemy.hasKnownPosition()) {
+                continue;
+            }
+
             APosition topLeft;
-            topLeft = enemyUnitData.getPosition().translateByPixels(
-                    -enemyUnitData.type().getDimensionLeft(),
-                    -enemyUnitData.type().getDimensionUp()
+            topLeft = foggedEnemy.getPosition().translateByPixels(
+                    -foggedEnemy.type().getDimensionLeft(),
+                    -foggedEnemy.type().getDimensionUp()
             );
+//            paintRectangle(
+//                    topLeft,
+//                    foggedEnemy.type().getDimensionRight() / 32,
+//                    foggedEnemy.type().getDimensionDown() / 32,
+//                    Color.Grey
+//            );
             paintRectangle(
-                    topLeft,
-                    enemyUnitData.type().getDimensionRight() / 32,
-                    enemyUnitData.type().getDimensionDown() / 32,
+                    foggedEnemy.getPosition(),
+                    foggedEnemy.type().getDimensionRight() / 32,
+                    foggedEnemy.type().getDimensionDown() / 32,
                     Color.Grey
             );
-            paintText(topLeft, enemyUnitData.type().shortName(), Color.White);
+            paintText(topLeft, foggedEnemy.type().shortName() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
         }
     }
 
@@ -994,7 +1004,7 @@ public class AAdvancedPainter extends APainter {
      * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
      */
     private static void paintEnemyRegionDetails() {
-        APosition enemyBase = AEnemyUnits.getEnemyBase();
+        APosition enemyBase = AEnemyUnits.enemyBase();
         if (enemyBase != null) {
             ARegion enemyBaseRegion = AMap.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();

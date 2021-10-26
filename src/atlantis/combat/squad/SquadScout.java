@@ -19,7 +19,7 @@ public class SquadScout {
 
     private static boolean handleSquadScout(AUnit unit) {
 //        if (Select.enemy().inRadius(12.5, this).canShootAt(this, safetyMargin).isEmpty()) {
-        APosition enemyBase = AEnemyUnits.getEnemyBase();
+        APosition enemyBase = AEnemyUnits.enemyBase();
         if (enemyBase == null) {
             return false;
         }

@@ -13,9 +13,6 @@ public class Cache<V> {
      * Get cached value or return null.
      */
     public V get(String cacheKey) {
-//        for (String key : data.keySet()) {
-//            System.out.println(key + " - " + data.get(key));
-//        }
 
         if (data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
             return data.get(cacheKey);
