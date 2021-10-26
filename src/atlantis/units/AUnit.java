@@ -344,7 +344,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isInfantry() {
-        return type().isOrganic();
+        return (boolean) cache.get(
+                "isInfantry",
+                -1,
+                () -> type().isOrganic()
+        );
     }
 
     public boolean isVehicle() {

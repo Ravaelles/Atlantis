@@ -7,16 +7,29 @@ import atlantis.units.Select;
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     public static double calculate(AUnit attacker, AUnit defender) {
-        double criticalDist = enemyWeaponRangeBonus(defender, attacker)
-                        + quicknessBonus(defender, attacker)
-                        + woundedBonus(defender)
-                        + beastBonus(defender)
-                        + ourUnitsNearbyBonus(defender)
-                        + ourMovementBonus(defender)
-                        + workerBonus(defender, attacker)
-                        + enemyMovementBonus(defender, attacker);
+        double criticalDist;
 
-        criticalDist = Math.min(criticalDist, 3.9);
+        if (defender.isInfantry()) {
+            criticalDist = 1.3
+                    + woundedBonus(defender);
+        }
+        else {
+            criticalDist = enemyWeaponRangeBonus(defender, attacker)
+                    + woundedBonus(defender)
+                    + beastBonus(defender)
+                    + ourUnitsNearbyBonus(defender)
+                    + workerBonus(defender, attacker);
+
+            if (!defender.isInfantry()) {
+                criticalDist +=
+                        ourMovementBonus(defender)
+                                + quicknessBonus(defender, attacker)
+                                + enemyMovementBonus(defender, attacker);
+            }
+        }
+
+        criticalDist = Math.min(criticalDist, 3.7);
+//        System.out.println("criticalDist = " + criticalDist + " // " + ourUnitsNearbyBonus(defender));
 
         return attacker.distTo(defender) - criticalDist;
     }

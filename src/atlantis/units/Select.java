@@ -772,7 +772,7 @@ public class Select<T extends AUnit> {
     /**
      * Selects units being infantry.
      */
-    public Select<? extends AUnit> infantry() {
+    public Select<? extends AUnit> organic() {
         data.removeIf(unit -> !unit.type().isOrganic());
         return this;
     }
@@ -807,7 +807,7 @@ public class Select<T extends AUnit> {
      * Selects only units that do not currently have max hit points.
      */
     public Select<? extends AUnit> wounded() {
-        data.removeIf(unit -> unit.hp() < unit.maxHp());
+        data.removeIf(unit -> !unit.isWounded());
         return this;
     }
 

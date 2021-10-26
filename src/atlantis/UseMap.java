@@ -3,13 +3,13 @@ package atlantis;
 public class UseMap {
 
     public static String activeMap() {
-        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === UMS maps - great for bot development ============
 
-//        return "ums/a/TerranMicro_Beta.scx";
+//        return "ums/";
 //        return "ums/vsGosuComputer.scx";
-//        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
+        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
 //        return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships vs. Dragoons
 //        return "ums/trainzvreaver.scm"; // Zerglings & Hydras vs. 2 Reavers & Shuttle
 //        return "ums/training-PvT.scx"; // Dragoons & Zealots vs. Vultures & Tanks + slowly Hi-Templars & Archons

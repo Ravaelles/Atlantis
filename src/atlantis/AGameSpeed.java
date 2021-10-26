@@ -22,16 +22,16 @@ public class AGameSpeed {
      */
     public static int frameSkip;
 
-//    private static final int NORMAL_GAME_SPEED = 10;
-//    private static final int NORMAL_FRAME_SKIP = 0;
-    private static final int NORMAL_GAME_SPEED = 0;
-    private static final int NORMAL_FRAME_SKIP = 30;
+    private static final int NORMAL_GAME_SPEED = 30;
+    private static final int NORMAL_FRAME_SKIP = 0;
+//    private static final int NORMAL_GAME_SPEED = 0;
+//    private static final int NORMAL_FRAME_SKIP = 30;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
 
     // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
-    private static boolean dynamicSlowdownIsAllowed;
-    private static boolean dynamicSlowdownIsActive;
+    private static boolean dynamicSlowdownIsAllowed = false;
+    private static boolean dynamicSlowdownIsActive = false;
 
     // Last time unit has died; when unit dies, game slows down
     private static int dynamicSlowdown_lastTimeUnitDestroyed = 0;

@@ -288,7 +288,7 @@ public class ARunningManager {
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
 //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
-        int radius = (unit.isVulture() ? 3 : RUN_ANY_DIRECTION_GRID_BORDER);
+        int radius = (unit.isVulture() ? 3 : runDistanceForAnyDirection(unit));
         for (int dtx = -radius; dtx <= radius; dtx++) {
             for (int dty = -radius; dty <= radius; dty++) {
                 if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
@@ -360,6 +360,14 @@ public class ARunningManager {
         return bestPosition;
     }
 
+    private int runDistanceForAnyDirection(AUnit unit) {
+        if (unit.isInfantry()) {
+            return 3;
+        }
+
+        return RUN_ANY_DIRECTION_GRID_BORDER;
+    }
+
     /**
      * Tell other units that might be blocking our escape route to move.
      */
@@ -406,9 +414,9 @@ public class ARunningManager {
 
         boolean isOkay = AMap.isWalkable(position)
                 && (
-                    AMap.isWalkable(position.translateByTiles(1, 0))
+                    AMap.isWalkable(position.translateByTiles(2, 0))
                     && AMap.isWalkable(position.translateByTiles(-1, 0))
-                    && AMap.isWalkable(position.translateByTiles(0, 1))
+                    && AMap.isWalkable(position.translateByTiles(0, 2))
                     && AMap.isWalkable(position.translateByTiles(0, -1))
                 )
                 && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(1.3, position).count() <= 0)

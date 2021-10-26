@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.Us;
 
 public class WantsToAvoid {
 
@@ -30,12 +31,11 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldNotAvoid(AUnit unit, Units enemies) {
+//        if (unit.isJustShooting()) {
+//            return true;
+//        }
 
-        if (unit.isJustShooting()) {
-            return true;
-        }
-
-        if (unit.lastUnderAttackMoreThanAgo(150) && unit.lastStartedAttackLessThanAgo(10)) {
+        if (!Us.isTerran() && unit.lastUnderAttackMoreThanAgo(150) && unit.lastStartedAttackLessThanAgo(10)) {
             unit.setTooltip("Kill");
             return true;
         }

@@ -47,6 +47,10 @@ public class Avoid {
     }
 
     protected static double getRunDistance(AUnit unit, AUnit enemy) {
+        if (unit.isInfantry()) {
+            return 2.5;
+        }
+
         return 1.8 + (enemy.isQuick() ? 2 : 0);
     }
 

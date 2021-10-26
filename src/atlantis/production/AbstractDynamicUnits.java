@@ -24,7 +24,7 @@ public class AbstractDynamicUnits extends Helpers {
     }
 
     protected static void trainIfPossible(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) {
+        if (!AGame.canAfford(hasMinerals, hasGas)) {
             return;
         }
 
