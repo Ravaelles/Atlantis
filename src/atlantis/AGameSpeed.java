@@ -34,28 +34,24 @@ public class AGameSpeed {
     private static boolean dynamicSlowdownIsActive = false;
 
     // Last time unit has died; when unit dies, game slows down
-    private static int dynamicSlowdown_lastTimeUnitDestroyed = 0;
-
-    // =========================================================
-
-//    public AGameSpeed() {
-//        Atlantis.game().setLocalSpeed(0);
-//    }
+//    private static int dynamicSlowdown_lastTimeUnitDestroyed = 0;
 
     // =========================================================
 
     public static void init() {
         Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
+
+        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
     }
 
     /**
      * Decreases game speed to the value specified in AtlantisConfig when action happens.
      */
     public static void allowToDynamicallySlowdownGameOnFirstFighting() {
-        dynamicSlowdown_lastTimeUnitDestroyed = AGame.timeSeconds();
+//        dynamicSlowdown_lastTimeUnitDestroyed = AGame.timeSeconds();
         dynamicSlowdownIsAllowed = true;
-        dynamicSlowdownIsActive = true;
+        dynamicSlowdownIsActive = false;
 
         Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);

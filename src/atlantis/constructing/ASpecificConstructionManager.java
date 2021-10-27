@@ -48,17 +48,17 @@ public class ASpecificConstructionManager {
             return true;
         }
         
-        else if (building.isType(AUnitType.Zerg_Lair)) {
+        else if (building.is(AUnitType.Zerg_Lair)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair);
             return true;
         }
         
-        else if (building.isType(AUnitType.Zerg_Hive)) {
+        else if (building.is(AUnitType.Zerg_Hive)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Lair, AUnitType.Zerg_Hive);
             return true;
         }
         
-        else if (building.isType(AUnitType.Zerg_Greater_Spire)) {
+        else if (building.is(AUnitType.Zerg_Greater_Spire)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Spire, AUnitType.Zerg_Greater_Spire);
             return true;
         }

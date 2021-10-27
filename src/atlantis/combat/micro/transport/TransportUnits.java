@@ -35,7 +35,7 @@ public class TransportUnits {
 //            return false;
 //        }
 
-        if (unit.lastActionLessThanAgo(5, UnitActions.LOAD)) {
+        if (unit.lastActionMoreThanAgo(8, UnitActions.LOAD)) {
             AUnit transport = Select.our().transports(true).inRadius(3, unit).nearestTo(unit);
             if (transport != null && transport.hasFreeSpaceFor(unit) && !transport.hasCargo()) {
                 unit.load(transport);
@@ -72,7 +72,7 @@ public class TransportUnits {
 
     private static boolean isBabyInDanger(AUnit baby, boolean allowMoreDangerousBehavior) {
         boolean enemiesNear = Select.enemyCombatUnits()
-                .inShootRangeOf((allowMoreDangerousBehavior ? 1.5 : 0) + baby.woundPercent() / 100, baby)
+                .inShootRangeOf((allowMoreDangerousBehavior ? 0.5 : 2.5) + baby.woundPercent() / 100, baby)
                 .isNotEmpty();
 
         if (!allowMoreDangerousBehavior && baby.woundPercent() < 75 && enemiesNear) {
@@ -104,25 +104,25 @@ public class TransportUnits {
     }
 
     private static boolean shouldLoadTheBaby(AUnit transport, AUnit baby) {
-        System.out.println(baby.getID() + " baby.isUnderAttack(15) = " + baby.isUnderAttack(15));
+//        System.out.println(baby.getID() + " baby.isUnderAttack(15) = " + baby.isUnderAttack(15));
         return !baby.isLoaded()
                 && transport.hasFreeSpaceFor(baby)
-                && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
-                && transport.lastActionMoreThanAgo(25, UnitActions.UNLOAD)
+//                && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
+                && transport.lastActionMoreThanAgo(8, UnitActions.UNLOAD)
                 && (baby.isUnderAttack(15))
-                && (baby.cooldownRemaining() > 0 && baby.lastStartedAttackMoreThanAgo(9) && baby.lastFrameOfStartingAttackMoreThanAgo(7))
+//                && (baby.cooldownRemaining() > 0 && baby.lastStartedAttackMoreThanAgo(9) && baby.lastFrameOfStartingAttackMoreThanAgo(7))
                 && (!isTransportInDanger(transport) && isBabyInDanger(baby, false));
     }
 
     private static boolean shouldDropTheBaby(AUnit transport, AUnit baby) {
         return baby.isLoaded()
                 && transport.hasCargo()
-                && baby.cooldownRemaining() <= 8
-                && transport.lastActionMoreThanAgo(15, UnitActions.LOAD)
+                && baby.cooldownRemaining() <= 2
+                && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
                 && (
                         isTransportInDanger(transport)
                         || transport.woundPercent() >= 87
-                        || !isBabyInDanger(baby, true)
+                        || !isBabyInDanger(baby, false)
                 );
     }
 

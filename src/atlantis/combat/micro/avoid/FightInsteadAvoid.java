@@ -62,6 +62,10 @@ public class FightInsteadAvoid {
             return true;
         }
 
+        if (forbidAntiAirAbandoningCloseTargets(unit)) {
+            return true;
+        }
+
         // Always avoid invisible combat units
         if (invisibleDT != null || invisibleCombatUnit != null) {
             return false;
@@ -91,6 +95,12 @@ public class FightInsteadAvoid {
         }
 
         if (ranged != null) {
+
+            if (unit.lastUnderAttackLessThanAgo(30 * 3)) {
+                if (unit.isTank()) {
+                    return false;
+                }
+            }
 
             // Dragoon faster than Marines, can outrun them
             if (unit.isQuickerOrSameSpeedAs(enemies) && unit.hasBiggerRangeThan(enemies)) {
@@ -145,8 +155,16 @@ public class FightInsteadAvoid {
         return unit.isMelee()
                 && Select.enemyRealUnits()
                     .canBeAttackedBy(unit, false, true)
-                    .inRadius(1, unit)
+                    .inRadius(2, unit)
                     .isNotEmpty();
+    }
+
+    private boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
+        return unit.isAirUnitAntiAir()
+                && Select.enemyRealUnits()
+                .canBeAttackedBy(unit, false, true)
+                .inRadius(6, unit)
+                .isNotEmpty();
     }
 
     private boolean wayTooManyUnitsNearby(AUnit unit) {

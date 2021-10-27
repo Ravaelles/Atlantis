@@ -384,7 +384,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isType(AUnitType... types) {
-        return type().isType(types);
+        return type().is(types);
     }
 
     public boolean isFullyHealthy() {
@@ -1350,7 +1350,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        }
 
         if (time == null) {
-            return A.now();
+            return 999 + A.now();
         }
         return A.now() - time;
     }
@@ -1576,7 +1576,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean is(AUnitType ...types) {
-        return type().isType(types);
+        return type().is(types);
     }
 
     public boolean isTargettedBy(AUnit attacker) {
@@ -1654,6 +1654,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int lastTargetToAttackAcquiredAgo() {
         return A.ago(_lastTargetToAttackAcquired);
+    }
+
+    public boolean isAirUnitAntiAir() {
+        return type().isAirUnitAntiAir();
     }
 
     //    public boolean isFacingTheSameDirection(AUnit otherUnit) {

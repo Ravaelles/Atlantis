@@ -347,7 +347,7 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * Returns true if given type equals to one of types passed as parameter.
      */
-    public boolean isType(AUnitType... types) {
+    public boolean is(AUnitType... types) {
         for (AUnitType otherType : types) {
             if (this.equals(otherType)) {
                 return true;
@@ -506,7 +506,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isBase",
                 -1,
-                () -> isType(
+                () -> is(
                         AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus, AUnitType.Zerg_Hatchery,
                         AUnitType.Zerg_Lair, AUnitType.Zerg_Hive
                 )
@@ -517,7 +517,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isPrimaryBase",
                 -1,
-                () -> isType(AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus, AUnitType.Zerg_Hatchery)
+                () -> is(AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus, AUnitType.Zerg_Hatchery)
         );
     }
 
@@ -534,27 +534,27 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public boolean isBunker() {
-        return isType(Terran_Bunker);
+        return is(Terran_Bunker);
     }
 
     public boolean isPylon() {
         return (boolean) cache.get(
                 "isPylon",
                 -1,
-                () -> isType(Protoss_Pylon)
+                () -> is(Protoss_Pylon)
         );
     }
 
     public boolean isReaver() {
-        return isType(Protoss_Reaver);
+        return is(Protoss_Reaver);
     }
 
     public boolean isCannon() {
-        return isType(Protoss_Photon_Cannon);
+        return is(Protoss_Photon_Cannon);
     }
 
     public boolean isCarrier() {
-        return isType(Protoss_Carrier);
+        return is(Protoss_Carrier);
     }
 
     public boolean isVehicle() {
@@ -565,7 +565,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isTerranInfantry",
                 -1,
-                () -> isType(AUnitType.Terran_Marine, AUnitType.Terran_Medic,
+                () -> is(AUnitType.Terran_Marine, AUnitType.Terran_Medic,
                         AUnitType.Terran_Firebat, AUnitType.Terran_Ghost)
         );
     }
@@ -574,7 +574,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isTankSieged",
                 -1,
-                () -> isType(AUnitType.Terran_Siege_Tank_Siege_Mode)
+                () -> is(AUnitType.Terran_Siege_Tank_Siege_Mode)
         );
     }
 
@@ -582,7 +582,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isTankUnsieged",
                 -1,
-                () -> isType(AUnitType.Terran_Siege_Tank_Tank_Mode)
+                () -> is(AUnitType.Terran_Siege_Tank_Tank_Mode)
         );
     }
 
@@ -590,23 +590,23 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isTank",
                 -1,
-                () -> isType(Terran_Siege_Tank_Tank_Mode, Terran_Siege_Tank_Siege_Mode)
+                () -> is(Terran_Siege_Tank_Tank_Mode, Terran_Siege_Tank_Siege_Mode)
         );
     }
 
     public boolean isFactory() {
-        return isType(AUnitType.Terran_Factory);
+        return is(AUnitType.Terran_Factory);
     }
 
     public boolean isMedic() {
-        return isType(AUnitType.Terran_Medic);
+        return is(AUnitType.Terran_Medic);
     }
 
     public boolean isGasBuilding() {
         return (boolean) cache.get(
                 "isGasBuilding",
                 0,
-                () -> isType(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor)
+                () -> is(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor)
         );
     }
 
@@ -686,7 +686,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isWorker",
                 -1,
-                () -> isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone)
+                () -> is(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone)
         );
     }
 
@@ -694,7 +694,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isMineralField",
                 -1,
-                () -> isType(Resource_Mineral_Field)
+                () -> is(Resource_Mineral_Field)
         );
     }
 
@@ -702,7 +702,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isSupplyUnit",
                 -1,
-                () -> isType(Protoss_Pylon, Terran_Supply_Depot, Zerg_Overlord)
+                () -> is(Protoss_Pylon, Terran_Supply_Depot, Zerg_Overlord)
         );
     }
 
@@ -715,7 +715,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isMilitaryBuildingAntiGround",
                 -1,
-                () -> isType(AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony)
+                () -> is(AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony)
         );
 
     }
@@ -729,7 +729,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isMilitaryBuildingAntiAir",
                 -1,
-                () -> isType(
+                () -> is(
                         AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
                 )
         );
@@ -773,7 +773,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isCombatBuilding",
                 -1,
-                () -> isType(
+                () -> is(
                         AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret,
                         AUnitType.Protoss_Photon_Cannon,
@@ -825,7 +825,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "canHaveAddon",
                 -1,
-                () -> isType(AUnitType.Terran_Factory, AUnitType.Terran_Command_Center,
+                () -> is(AUnitType.Terran_Factory, AUnitType.Terran_Command_Center,
                         AUnitType.Terran_Starport, AUnitType.Terran_Science_Facility)
         );
     }
@@ -858,7 +858,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isDangerousGroundUnit",
                 -1,
-                () -> isType(
+                () -> is(
                         AUnitType.Terran_Siege_Tank_Siege_Mode,
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
                         AUnitType.Protoss_Reaver,
@@ -873,7 +873,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isMine",
                 -1,
-                () -> isType(
+                () -> is(
                         AUnitType.Terran_Vulture_Spider_Mine
                 )
         );
@@ -883,7 +883,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isVulture",
                 -1,
-                () -> isType(AUnitType.Terran_Vulture)
+                () -> is(AUnitType.Terran_Vulture)
         );
     }
 
@@ -891,7 +891,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isDragoon",
                 -1,
-                () -> isType(AUnitType.Protoss_Dragoon)
+                () -> is(AUnitType.Protoss_Dragoon)
         );
     }
 
@@ -961,7 +961,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isGeyser",
                 -1,
-                () -> isType(Resource_Vespene_Geyser)
+                () -> is(Resource_Vespene_Geyser)
         );
     }
 
@@ -981,7 +981,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isTransportNoOverlords",
                 -1,
-                () -> isType(Protoss_Shuttle, Terran_Dropship)
+                () -> is(Protoss_Shuttle, Terran_Dropship)
         );
     }
 
@@ -989,7 +989,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isTransport",
                 -1,
-                () -> isType(Protoss_Shuttle, Terran_Dropship, Zerg_Overlord)
+                () -> is(Protoss_Shuttle, Terran_Dropship, Zerg_Overlord)
         );
     }
 
@@ -997,7 +997,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isUnitUnableToDoAnyDamage",
                 -1,
-                () -> isType(
+                () -> is(
                         Terran_Dropship,
                         Terran_Medic,
                         Protoss_Shuttle,
@@ -1023,8 +1023,24 @@ public class AUnitType implements Comparable<AUnitType> {
                 "isNotActualUnit",
                 -1,
                 () -> isBuilding() || isNeutral() || isLarvaOrEgg() || isMineralField()
-                        || isGeyser() || isSpell() || isMine()
+                        || isInvincible() || isGeyser() || isSpell() || isMine() || isFlagOrBeacon()
 //                        || isGasBuilding()
+        );
+    }
+
+    private boolean isFlagOrBeacon() {
+        return (boolean) cache.get(
+                "isFlagOrBeacon",
+                -1,
+                () -> ut.isFlagBeacon() || is(
+                        AUnitType.Powerup_Flag,
+                        AUnitType.Special_Terran_Beacon,
+                        AUnitType.Special_Terran_Flag_Beacon,
+                        AUnitType.Special_Protoss_Beacon,
+                        AUnitType.Special_Protoss_Flag_Beacon,
+                        AUnitType.Special_Zerg_Beacon,
+                        AUnitType.Special_Zerg_Flag_Beacon
+                )
         );
     }
 
@@ -1040,7 +1056,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isLarvaOrEgg",
                 -1,
-                () -> isType(Zerg_Larva, Zerg_Egg)
+                () -> is(Zerg_Larva, Zerg_Egg)
         );
     }
 
@@ -1055,12 +1071,23 @@ public class AUnitType implements Comparable<AUnitType> {
     private boolean isObserver() {
         return (boolean) cache.get(
                 "isObserver",
-                1,
-                () -> isType(Protoss_Observer)
+                -1,
+                () -> is(Protoss_Observer)
         );
     }
 
     public boolean isUnknown() {
         return AUnitType.Unknown.equals(this);
+    }
+
+    public boolean isAirUnitAntiAir() {
+        return (boolean) cache.get(
+                "isAirUnitAntiAir",
+                -1,
+                () -> is(
+                        Protoss_Corsair,
+                        Zerg_Scourge
+                )
+        );
     }
 }

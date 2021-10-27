@@ -288,7 +288,7 @@ public class ARunningManager {
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
 //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
-        int radius = (unit.isVulture() ? 3 : runDistanceForAnyDirection(unit));
+        int radius = (unit.isVulture() ? 5 : runDistanceForAnyDirection(unit));
         for (int dtx = -radius; dtx <= radius; dtx++) {
             for (int dty = -radius; dty <= radius; dty++) {
                 if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {

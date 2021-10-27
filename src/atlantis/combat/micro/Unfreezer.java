@@ -41,7 +41,7 @@ public class Unfreezer {
     public static boolean unfreeze(AUnit unit) {
         unit.runningManager().stopRunning();
 
-//        ACamera.centerCameraOn(unit);
+//        CameraManager.centerCameraOn(unit);
 
         boolean paintingDisabled = APainter.isDisabled();
         if (paintingDisabled) {

@@ -1,6 +1,6 @@
 package atlantis.combat.missions;
 
-import atlantis.ACamera;
+import atlantis.CameraManager;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
@@ -43,13 +43,13 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
         AChokepoint chokepoint = AMap.getChokepointForNaturalBase(enemyBase);
         if (chokepoint != null) {
-            ACamera.centerCameraOn(chokepoint.getCenter());
+            CameraManager.centerCameraOn(chokepoint.getCenter());
             return containEnemyAtPoint = chokepoint.getCenter();
         }
 
         ABaseLocation natural = AMap.getNaturalBaseLocation(enemyBase.getPosition());
         if (natural != null) {
-            ACamera.centerCameraOn(natural);
+            CameraManager.centerCameraOn(natural);
             return containEnemyAtPoint = natural.getPosition();
         }
 

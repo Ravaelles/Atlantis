@@ -13,6 +13,8 @@ import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 
 public class ACombatUnitManager {
 
@@ -66,10 +68,11 @@ public class ACombatUnitManager {
     }
 
     private static void preActions(AUnit unit) {
-        if (AGameSpeed.isDynamicSlowdownAllowed() && !AGameSpeed.isDynamicSlowdownActive()
-                && (unit.lastAttackOrderLessThanAgo(1) || unit.isUnderAttack())) {
+        if (A.seconds() >= 1 && AGameSpeed.isDynamicSlowdownAllowed() && !AGameSpeed.isDynamicSlowdownActive()
+                && (unit.lastActionLessThanAgo(2, UnitActions.ATTACK_UNIT) || unit.isUnderAttack(3))) {
+//            System.out.println("Dynamic slowdown - lower game speed when fighting happens");
             AGameSpeed.activateDynamicSlowdown();
-            AGameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
+//            AGameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
         }
 
         unit.setTooltip(unit.getTooltip() + ".");
@@ -78,11 +81,11 @@ public class ACombatUnitManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
-        if (DontDisturbInterrupt.dontInterruptImportantActions(unit)) {
+        if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
             return true;
         }
 
-        if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
+        if (DontDisturbInterrupt.dontInterruptImportantActions(unit)) {
             return true;
         }
 

@@ -1,7 +1,7 @@
 package atlantis.scout;
 
 import atlantis.AGame;
-import atlantis.ACamera;
+import atlantis.CameraManager;
 import atlantis.AtlantisConfig;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
@@ -293,7 +293,7 @@ public class AScoutManager {
         }
 
         if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
-            ACamera.centerCameraOn(scout.getPosition());
+            CameraManager.centerCameraOn(scout.getPosition());
         }
     }
     

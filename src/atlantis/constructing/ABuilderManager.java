@@ -66,7 +66,7 @@ public class ABuilderManager {
         double distance = builder.distTo(buildPositionCenter);
         String distString = "(" + A.digit(distance) + ")";
 
-//        ACamera.centerCameraOn(builder.getPosition());
+//        CameraManager.centerCameraOn(builder.getPosition());
 
         // Move builder to the build position
         if (distance > minDistanceToIssueBuildOrder) {

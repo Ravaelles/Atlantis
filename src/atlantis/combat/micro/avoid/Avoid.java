@@ -47,6 +47,10 @@ public class Avoid {
     }
 
     protected static double getRunDistance(AUnit unit, AUnit enemy) {
+        if (unit.isVulture()) {
+            return 4.5;
+        }
+
         if (unit.isInfantry()) {
             return 2.5;
         }

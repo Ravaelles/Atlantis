@@ -2,6 +2,7 @@ package atlantis.interrupt;
 
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 
 public class DontDisturbInterrupt {
 
@@ -9,11 +10,13 @@ public class DontDisturbInterrupt {
 
         // Don't INTERRUPT shooting units
         if (DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
+//            System.out.println(A.now() + " SHOOT");
             return true;
         }
 
         // Allow unit to load to shuttle
         if (allowUnitToLoadToTransport(unit)) {
+//            System.out.println(A.now() + " TRANSP");
             return true;
         }
 

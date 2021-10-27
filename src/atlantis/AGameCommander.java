@@ -48,30 +48,7 @@ public class AGameCommander {
         AEnemyUnits.updateFoggedUnits();
         UmsSpecialActionsManager.update();
         AUnitStateManager.update();
-
-        // === Handle UMS ===================================================
-        
-        if (AGame.isUms()) {
-            AUnit cameraUnit = centerCameraOnUnit();
-            if (AGame.timeSeconds() <= 1 || ACamera.isFocusCameraOnUnit()) {
-                ACamera.centerCameraOn(cameraUnit);
-            }
-        }
-    }
-
-    private AUnit centerCameraOnUnit() {
-//        return null;
-        AUnit cameraUnit;
-
-        cameraUnit = Select.ourOfType(AUnitType.Protoss_High_Templar).groundUnits().first();
-        if (cameraUnit != null) {
-//            if (AGameSpeed.gameSpeed <= 0 && AGameSpeed.frameSkip >= 1) {
-//                AGameSpeed.changeSpeedTo(2);
-//            }
-            return cameraUnit;
-        }
-
-        return Select.ourCombatUnits().groundUnits().first();
+        CameraManager.update();
     }
 
 }

@@ -85,11 +85,12 @@ public class Select<T extends AUnit> {
                                     AUnit unit = AUnit.createFrom(u);
                                     if (unit.isAlive()) {
                                         data.add(unit);
-                                    } else {
-                                        System.err.println("Enemy unit not alive? Seems a terrible problem.");
-                                        System.err.println(unit);
-                                        System.err.println(unit.hp() + " // " + unit.isVisibleOnMap() + " // " + unit.effVisible());
                                     }
+//                                    else {
+//                                        System.err.println("Enemy unit not alive? Seems a terrible problem.");
+//                                        System.err.println(unit);
+//                                        System.err.println(unit.hp() + " // " + unit.isVisibleOnMap() + " // " + unit.effVisible());
+//                                    }
                                 }
                             }
                         }
@@ -719,7 +720,7 @@ public class Select<T extends AUnit> {
     }
 
     public Select<? extends AUnit> cloakedButEffVisible() {
-        data.removeIf(unit -> !unit.isCloaked() || (unit.isCloaked() && !unit.effCloaked()));
+        data.removeIf(unit -> !unit.effCloaked());
         return this;
     }
 

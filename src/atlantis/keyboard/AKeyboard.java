@@ -1,6 +1,6 @@
 package atlantis.keyboard;
 
-import atlantis.ACamera;
+import atlantis.CameraManager;
 import atlantis.AGame;
 import atlantis.AGameSpeed;
 import atlantis.AtlantisConfig;
@@ -56,7 +56,7 @@ public class AKeyboard implements NativeKeyListener {
 
             // Key "c" / "C"
             case 46:
-                ACamera.toggleFocusCameraOnFirstCombatUnit();
+                CameraManager.toggleFocusCameraOnFirstCombatUnit();
                 break;
 
 //            // Key "o" / "O"

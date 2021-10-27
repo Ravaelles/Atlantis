@@ -27,7 +27,6 @@ public class OnStart {
 
         // Game speed mode that starts fast, slows down when units are attacking
         AGameSpeed.init();
-//        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
 
         // One time map analysis for every map
         AMap.initMapAnalysis();

@@ -3,7 +3,10 @@ package atlantis.combat.micro.managers;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.Count;
+import atlantis.units.Select;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.Us;
 
 public class AdvanceUnitsManager extends MissionUnitManager {
 
@@ -37,6 +40,10 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         double distToFocusPoint = unit.distTo(focusPoint);
         double margin = Math.max(0, (unit.squadSize() - 6) / 10);
 
+        if (Us.isTerran() && handleTerranAdvance(unit)) {
+            return true;
+        }
+
         // Too close
         if (
                 allowTooClose
@@ -61,6 +68,32 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         return false;
+    }
+
+    // =========================================================
+
+    private static boolean handleTerranAdvance(AUnit unit) {
+        if (Select.our().tanks().isEmpty()) {
+            return false;
+        }
+
+        if (unit.isTank()) {
+            return false;
+        }
+
+        double maxRadiusFromTank = 4 + Math.sqrt(Count.ourCombatUnits());
+        int tanksNearby = Select.our().tanks().inRadius(maxRadiusFromTank, unit).count();
+
+        if (tanksNearby >= 1) {
+            return false;
+        }
+
+        unit.move(
+                unit.getPosition().translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
+                UnitActions.MOVE_TO_FOCUS,
+                "ToTank"
+        );
+        return true;
     }
 
 }

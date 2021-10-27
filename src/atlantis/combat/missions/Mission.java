@@ -1,5 +1,6 @@
 package atlantis.combat.missions;
 
+import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
@@ -61,7 +62,9 @@ public abstract class Mission {
         }
         if (temporaryTarget == null || AMap.isVisible(temporaryTarget)) {
             temporaryTarget = AMap.getRandomInvisiblePosition(unit.getPosition());
-            System.out.println("Go to invisible " + temporaryTarget);
+            if (temporaryTarget != null) {
+                System.out.println("Go to invisible " + temporaryTarget);
+            }
         }
 
         if (temporaryTarget != null) {
@@ -70,7 +73,9 @@ public abstract class Mission {
             return true;
         }
         else {
-            System.err.println("No invisible position found");
+            if (!AGame.isUms()) {
+                System.err.println("No invisible position found");
+            }
             return false;
         }
     }

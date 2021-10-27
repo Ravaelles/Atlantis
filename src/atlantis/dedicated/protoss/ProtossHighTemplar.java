@@ -1,9 +1,7 @@
 
 package atlantis.dedicated.protoss;
 
-import atlantis.ACamera;
 import atlantis.AGame;
-import atlantis.AGameSpeed;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
@@ -53,7 +51,8 @@ public class ProtossHighTemplar {
 
         // Wants to Warp Archon
         if (
-                highTemplar.lastActionLessThanAgo(50, UnitActions.USING_TECH)
+                highTemplar.lastTechUsed() != null
+                && highTemplar.lastActionLessThanAgo(50, UnitActions.USING_TECH)
                 && TechType.Archon_Warp.name().equals(highTemplar.lastTechUsed().name())
                 && highTemplar.lastTechUnit().isAlive()
         ) {
@@ -229,7 +228,7 @@ public class ProtossHighTemplar {
                 highTemplar.setTooltip("WarpArchon");
                 closestOtherHT.setTooltip("OhArchon");
 //                AGameSpeed.changeSpeedTo(10);
-//                ACamera.centerCameraOn(highTemplar);
+//                CameraManager.centerCameraOn(highTemplar);
 //            }
 //            else {
 //                if (!highTemplar.isMoving() && closestOtherHT.lastActionMoreThanAgo(90, UnitActions.USING_TECH)) {

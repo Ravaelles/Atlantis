@@ -8,9 +8,17 @@ public class UseMap {
         // === UMS maps - great for bot development ============
 
 //        return "ums/";
+//        return "ums/";
+//        return "ums/";
+//        return "ums/";
+//        return "ums/";
+//        return "ums/";
+//        return "ums/micro challenge.scx"; // Even more minigames
+//        return "ums/ConTrol2.scx"; // More minigames
+//        return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones vs. 2 drones, lings vs. goons etc
 //        return "ums/vsGosuComputer.scx";
-        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
-//        return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships vs. Dragoons
+//        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
+        return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships vs. Dragoons
 //        return "ums/trainzvreaver.scm"; // Zerglings & Hydras vs. 2 Reavers & Shuttle
 //        return "ums/training-PvT.scx"; // Dragoons & Zealots vs. Vultures & Tanks + slowly Hi-Templars & Archons
 //        return "ums/trening nr 2.scx";
@@ -22,10 +30,9 @@ public class UseMap {
 //        return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons vs. mines
 //        return "ums/marines_vs_zerglings.scm"; // 12 marines vs. 24 zerglings
 //        return "ums/vulture_control.scx"; // Vulture vs. Broodlings
-//        return "ums/1a2a3a Micro 2.scx";
-//        return "ums/MultiTask PvT.scx";
+//        return "ums/MultiTask PvT.scx"; // Weird - ums but starts with bases
 //        return "ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs. Zerg
-//        return "ums/protoss_micro.scx";
+//        return "ums/protoss_micro.scx"; // Huge parallel map, bad performance wise
     }
 
     // =========================================================
