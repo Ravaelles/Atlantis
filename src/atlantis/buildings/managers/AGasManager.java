@@ -3,7 +3,7 @@ package atlantis.buildings.managers;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.AProductionQueue;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
 import atlantis.workers.AWorkerManager;
@@ -133,7 +133,7 @@ public class AGasManager {
         }
         
         int totalGasNeeded = 0;
-        ArrayList<ProductionOrder> nextOrders = AProductionQueue.getProductionQueueNext(
+        ArrayList<ProductionOrder> nextOrders = ProductionQueue.getProductionQueueNext(
                 1 + (AGame.timeSeconds() > 300 ? 2 : 0)
         );
         for (ProductionOrder order : nextOrders) {

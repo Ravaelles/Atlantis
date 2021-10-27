@@ -8,6 +8,7 @@ import atlantis.production.orders.AProductionQueueManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.util.Us;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,6 +51,22 @@ public class AConstructionRequests {
 
         if (ASpecificConstructionManager.handledAsSpecialBuilding(building, order)) {
             return true;
+        }
+
+        if (!AGame.hasTechAndBuildingsToProduce(building)) {
+            System.out.println("No req for = " + building);
+            System.out.println(building.getWhatIsRequired());
+            System.out.println(building.getWhatBuildsIt());
+            if (Us.isProtoss() && AGame.getSupplyTotal() <= 10) {
+                return false;
+            }
+
+            AUnitType requiredBuilding = building.getWhatIsRequired();
+            if (countExistingAndPlannedConstructions(requiredBuilding) == 0) {
+                AConstructionRequests.requestConstructionOf(requiredBuilding);
+                return true;
+            }
+            return false;
         }
 
         // =========================================================

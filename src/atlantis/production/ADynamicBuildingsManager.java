@@ -4,7 +4,6 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.AExpansionManager;
 import atlantis.constructing.AConstructionRequests;
-import atlantis.production.orders.AProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Count;

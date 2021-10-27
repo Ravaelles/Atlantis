@@ -1,6 +1,7 @@
 package atlantis.strategy;
 
 import atlantis.AGame;
+import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.util.Us;
 
@@ -37,6 +38,13 @@ public class OurStrategy {
         System.out.println("### Use strategy `" + strategy + "` ###");
 
         ourStrategy = strategy;
+
+//        System.out.println("--------------");
+//        for (ProductionOrder po : ourStrategy.buildOrder().getProductionOrders()) {
+//            System.out.println(po);
+//        }
+//        System.out.println("--------------");
+
         AProductionQueueManager.switchToBuildOrder(strategy.buildOrder());
     }
 

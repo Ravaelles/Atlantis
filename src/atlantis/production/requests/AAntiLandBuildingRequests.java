@@ -42,10 +42,7 @@ public class AAntiLandBuildingRequests {
     public static boolean requestDefensiveBuildingAntiLand(APosition nearTo) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
 
-        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
-        if (!AGame.hasTechAndBuildingsToProduce(building)) {
-            return false;
-        }
+//        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
 
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
         if (nearTo == null) {

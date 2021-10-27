@@ -22,7 +22,7 @@ import atlantis.map.ARegion;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.AProductionQueue;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
@@ -253,8 +253,8 @@ public class AAdvancedPainter extends APainter {
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
         paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + AProductionQueue.getMineralsReserved(), Color.Grey);
-        paintSideMessage("Reserved gas: " + AProductionQueue.getGasReserved(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + ProductionQueue.getMineralsReserved(), Color.Grey);
+        paintSideMessage("Reserved gas: " + ProductionQueue.getGasReserved(), Color.Grey);
     }
 
     private static void paintCombatEval(AUnit unit, boolean isEnemy) {
@@ -447,14 +447,14 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units that should be produced right now or any time ==================
 
-        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(AProductionQueue.MODE_ALL_ORDERS);
+        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(ProductionQueue.MODE_ALL_ORDERS);
         for (ProductionOrder order : produceNow) {
             paintSideMessage(order.shortName(), Color.Yellow);
         }
 
         // === Display next units to produce ================================================
 
-        ArrayList<ProductionOrder> fullQueue = AProductionQueue.getProductionQueueNext(
+        ArrayList<ProductionOrder> fullQueue = ProductionQueue.getProductionQueueNext(
                 5 - produceNow.size());
         for (int index = produceNow.size(); index < fullQueue.size(); index++) {
             ProductionOrder order = fullQueue.get(index);

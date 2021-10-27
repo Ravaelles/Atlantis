@@ -50,7 +50,7 @@ public class AStrategy {
 
     // =========================================================
 
-    public String getName() {
+    public String name() {
         return name;
     }
 

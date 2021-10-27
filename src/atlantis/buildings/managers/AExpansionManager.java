@@ -36,7 +36,7 @@ public class AExpansionManager {
         }
 
         // If there're still things to produce, don't auto-expand.
-//        ArrayList<ProductionOrder> nextOrders = AProductionQueue.getProductionQueueNext(5);
+//        ArrayList<ProductionOrder> nextOrders = ProductionQueue.getProductionQueueNext(5);
 //        if (nextOrders.size() >= 3 && !AGame.hasMinerals(minMinerals + 50)) {
 //            return;
 //        }

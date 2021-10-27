@@ -10,10 +10,11 @@ public class ProtossStrategyResponse extends AStrategyResponse {
             return false;
         }
 
+        AStrategyInformations.antiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
         return true;
     }
 
-    protected static int rushDefenseDefensiveBuildings(AStrategy enemyStrategy) {
+    protected static int rushDefenseDefensiveBuildingsNeeded(AStrategy enemyStrategy) {
         return enemyStrategy.isGoingCheese() ? 3 : 2;
     }
 

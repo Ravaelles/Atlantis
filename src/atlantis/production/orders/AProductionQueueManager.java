@@ -24,10 +24,12 @@ public abstract class AProductionQueueManager {
      * <b>currentProductionQueue</b> are populated.
      */
     public static void switchToBuildOrder(ABuildOrder buildOrder) {
-        AProductionQueue.initialProductionQueue.clear();
-        AProductionQueue.currentProductionQueue.clear();
+        ABuildOrderApplicator.applyNow(buildOrder);
 
-        AProductionQueue.currentBuildOrder = buildOrder;
+//        ProductionQueue.initialProductionQueue.clear();
+        ProductionQueue.currentProductionQueue.clear();
+
+        ProductionQueue.setBuildOrder(buildOrder);
 
         rebuildQueue();
     }
@@ -40,8 +42,8 @@ public abstract class AProductionQueueManager {
 //    public static ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
 //        ArrayList<ProductionOrder> result = new ArrayList<>();
 //
-//        for (int i = 0; i < howMany && i < AProductionQueue.currentProductionQueue.size(); i++) {
-//            ProductionOrder productionOrder = AProductionQueue.currentProductionQueue.get(i);
+//        for (int i = 0; i < howMany && i < ProductionQueue.currentProductionQueue.size(); i++) {
+//            ProductionOrder productionOrder = ProductionQueue.currentProductionQueue.get(i);
 //            result.add(productionOrder);
 //        }
 //
@@ -63,21 +65,21 @@ public abstract class AProductionQueueManager {
         ArrayList<ProductionOrder> result = new ArrayList<>();
         int[] resourcesNeededForNotStartedBuildings
                 = AConstructionRequests.countResourcesNeededForNotStartedConstructions();
-        AProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
-        AProductionQueue.gasNeeded = resourcesNeededForNotStartedBuildings[1];
+        ProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
+        ProductionQueue.gasNeeded = resourcesNeededForNotStartedBuildings[1];
 
         // =========================================================
         // The idea as follows: as long as we can afford next enqueued production order,
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
 
-        for (ProductionOrder order : AProductionQueue.currentProductionQueue) {
+        for (ProductionOrder order : ProductionQueue.currentProductionQueue) {
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
             UpgradeType upgrade = order.getUpgrade();
             TechType tech = order.getTech();
 
             // Check if include only units
-            if (mode == AProductionQueue.MODE_ONLY_UNITS && unitOrBuilding == null) {
+            if (mode == ProductionQueue.MODE_ONLY_UNITS && unitOrBuilding == null) {
                 continue;
             }
 
@@ -97,26 +99,26 @@ public abstract class AProductionQueueManager {
                     continue;
                 }
 
-                AProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
-                AProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
+                ProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
+                ProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
             }
 
             // UPGRADE
             else if (upgrade != null) {
-                AProductionQueue.mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
-                AProductionQueue.gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
+                ProductionQueue.mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
+                ProductionQueue.gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
             }
 
             // TECH
             else if (tech != null) {
-                AProductionQueue.mineralsNeeded += tech.mineralPrice();
-                AProductionQueue.gasNeeded += tech.gasPrice();
+                ProductionQueue.mineralsNeeded += tech.mineralPrice();
+                ProductionQueue.gasNeeded += tech.gasPrice();
             }
 
             // =========================================================
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
 
-            if (AGame.canAfford(AProductionQueue.mineralsNeeded, AProductionQueue.gasNeeded)) {
+            if (AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded)) {
                 result.add(order);
             }
 
@@ -135,8 +137,10 @@ public abstract class AProductionQueueManager {
         // For proper build order files this feature will activate in late game.
 
         if (result.isEmpty() && AGame.canAfford(350, 250)
-                && (AGame.getSupplyUsed() >= 25 || AProductionQueue.initialProductionQueue.isEmpty())) {
-            for (AUnitType unitType : AProductionQueue.currentBuildOrder.produceWhenNoProductionOrders()) {
+                // @TODO WHAT THE FUCK
+//                && (AGame.getSupplyUsed() >= 25 || ProductionQueue.get().isEmpty())) {
+                && (AGame.getSupplyUsed() >= 25 || ProductionQueue.hasNothingToProduce())) {
+            for (AUnitType unitType : ProductionQueue.get().produceWhenNoProductionOrders()) {
                 if (AGame.hasBuildingsToProduce(unitType, false)) {
                     result.add(new ProductionOrder(unitType));
                 }
@@ -157,15 +161,15 @@ public abstract class AProductionQueueManager {
     public static void rebuildQueue() {
 
         // Clear old production queue.
-        AProductionQueue.currentProductionQueue.clear();
+        ProductionQueue.currentProductionQueue.clear();
 
-        // It will store [UnitType->(int)howMany] mapping as we gonna process initial production queue and check if we
-        // currently have units needed
+        // It will store [UnitType->(int)howMany] mapping as we gonna process initial
+        // production queue and check if we currently have units needed
         MappingCounter<AUnitType> virtualCounter = new MappingCounter<>();
 
         // =========================================================
 
-        for (ProductionOrder order : AProductionQueue.initialProductionQueue) {
+        for (ProductionOrder order : ProductionQueue.get().productionOrders()) {
             boolean isOkayToAdd = false;
 
             // === Unit ========================================
@@ -188,6 +192,8 @@ public abstract class AProductionQueueManager {
                 if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
                     isOkayToAdd = true;
                 }
+
+                System.out.println(order.getUnitOrBuilding() + ", isOkayToAdd = " + isOkayToAdd);
             }
 
             // === Tech ========================================
@@ -204,8 +210,8 @@ public abstract class AProductionQueueManager {
 
             // =========================================================
             if (isOkayToAdd) {
-                AProductionQueue.currentProductionQueue.add(order);
-                if (AProductionQueue.currentProductionQueue.size() >= 15) {
+                ProductionQueue.currentProductionQueue.add(order);
+                if (ProductionQueue.currentProductionQueue.size() >= 15) {
                     break;
                 }
             }

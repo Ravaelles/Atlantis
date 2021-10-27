@@ -3,7 +3,7 @@ package atlantis;
 import static atlantis.Atlantis.game;
 
 import atlantis.combat.missions.MissionChanger;
-import atlantis.production.orders.AProductionQueue;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.A;
@@ -338,8 +338,8 @@ public class AGame {
      */
     public static boolean canAffordWithReserved(int minerals, int gas) {
         return canAfford(
-                minerals + AProductionQueue.getMineralsReserved(),
-                gas + AProductionQueue.getGasReserved()
+                minerals + ProductionQueue.getMineralsReserved(),
+                gas + ProductionQueue.getGasReserved()
         );
     }
 

@@ -2,7 +2,7 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.constructing.AConstructionRequests;
-import atlantis.production.orders.AProductionQueue;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Count;
@@ -55,7 +55,7 @@ public class AbstractDynamicUnits extends Helpers {
             return;
         }
 
-        if (AProductionQueue.isAtTopOfProductionQueue(type, 3)) {
+        if (ProductionQueue.isAtTopOfProductionQueue(type, 3)) {
             return;
         }
         
@@ -63,7 +63,7 @@ public class AbstractDynamicUnits extends Helpers {
     }
     
     protected static void trainNow(AUnitType type, boolean onlyOneAtTime) {
-        AProductionQueue.addWithTopPriority(type);
+        ProductionQueue.addWithTopPriority(type);
     }
 
 }

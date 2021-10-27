@@ -1,20 +1,14 @@
 package atlantis.production.orders;
 
-import atlantis.AGame;
-import atlantis.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import atlantis.wrappers.ATech;
-import atlantis.wrappers.MappingCounter;
-import bwapi.TechType;
-import bwapi.UpgradeType;
+
 import java.util.ArrayList;
 
 /**
  * Current production queue. Based on Build Order loaded from file, with some dynamic changes applied.
  */
-public abstract class AProductionQueue {
+public abstract class ProductionQueue {
 
     public static final int MODE_ALL_ORDERS = 1;
     public static final int MODE_ONLY_UNITS = 2;
@@ -23,12 +17,12 @@ public abstract class AProductionQueue {
      * Build order currently in use.
      * switchToBuildOrder(ABuildOrder buildOrder)
      */
-    protected static ABuildOrder currentBuildOrder = null;
+    private static ABuildOrder currentBuildOrder = null;
 
     /**
-     * Ordered list of production orders as initially read from the file. It never changes
+     * Ordered list of production orders as initially read from the file.
      */
-    protected static ArrayList<ProductionOrder> initialProductionQueue = new ArrayList<>();
+//    protected static ArrayList<ProductionOrder> initialProductionQueue = new ArrayList<>();
 
     /**
      * Ordered list of next units we should build. It is re-generated when events like "started
@@ -76,15 +70,23 @@ public abstract class AProductionQueue {
         return false;
     }
 
+    public static boolean hasNothingToProduce() {
+        return currentProductionQueue.isEmpty();
+    }
+
     // === Getters =============================================
 
     /**
      * Returns currently active build order.
      */
-    public static ABuildOrder getCurrentBuildOrder() {
+    public static ABuildOrder get() {
         return currentBuildOrder;
     }
-    
+
+    public static void setBuildOrder(ABuildOrder currentBuildOrder) {
+        ProductionQueue.currentBuildOrder = currentBuildOrder;
+    }
+
     /**
      * Number of minerals reserved to produce some units/buildings in the build order that according to it
      * should be produced right now (judging by the supply used).
@@ -100,5 +102,6 @@ public abstract class AProductionQueue {
     public static int getGasReserved() {
         return gasNeeded;
     }
+
 
 }

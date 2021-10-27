@@ -26,8 +26,8 @@ public class ABuildOrderLoader {
     
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
 //        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
-        String filePath = BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.getName() + ".txt";
-        System.out.println("\r\nUse build order from file: `" + strategy.getName() + ".txt`");
+        String filePath = BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
+        System.out.println("\r\nUse build order from file: `" + strategy.name() + ".txt`");
 
         File f = new File(filePath);
         if (!f.exists()) {
@@ -41,7 +41,7 @@ public class ABuildOrderLoader {
         }
 
         ABuildOrderLoader loader = new ABuildOrderLoader();
-        return loader.readBuildOrdersFromFile(strategy.race(), filePath);
+        return loader.readBuildOrdersFromFile(strategy.race(), strategy.name(), filePath);
     }
 
     // =========================================================
@@ -49,14 +49,13 @@ public class ABuildOrderLoader {
     /**
      * Reads build orders from CSV file and converts them into ArrayList.
      */
-    protected ABuildOrder readBuildOrdersFromFile(String race, String filePath) {
+    protected ABuildOrder readBuildOrdersFromFile(String race, String name, String filePath) {
         final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
         // Read file into 2D String array
         String buildOrdersFile = filePath;
-        System.out.println();
         System.out.println(
-                "Using `" + filePath.replace(ABuildOrderLoader.BUILD_ORDERS_PATH, "") + "` build orders file."
+                "\r\nUsing `" + filePath.replace(ABuildOrderLoader.BUILD_ORDERS_PATH, "") + "` build orders file."
         );
 
         // Parse CSV
@@ -66,22 +65,16 @@ public class ABuildOrderLoader {
         //displayLoadedFile(loadedFile);
 
         // =========================================================
-        // Skip first row as it's CSV header
-        int counter = 0;
 
         ArrayList<ProductionOrder> productionOrders = new ArrayList<>();
         for (String[] row : loadedFile) {
-//            System.out.print("Processing row:  #" + counter + "/" + loadedFile.length + ":  ");
-//            System.out.println(row[0] + " - " + (row.length > 1 ? row[1] : "") + ",   SIZE OF INITIAL: " + initialProductionQueue.size());
             ProductionOrder productionOrder = parseCsvRow(row);
-            productionOrders.add(productionOrder);
-//            counter++;
+            if (productionOrder != null) {
+                productionOrders.add(productionOrder);
+            }
         }
 
         ABuildOrder buildOrder = ABuildOrderFactory.forRace(race, filePath, productionOrders);
-
-        System.out.println("buildOrder");
-        System.out.println(buildOrder);
 
         return buildOrder;
 
@@ -251,7 +244,7 @@ public class ABuildOrderLoader {
         }
 
         // Enqueue created order
-//        AProductionQueue.initialProductionQueue.add(order);
+//        ProductionQueue.initialProductionQueue.add(order);
 
         return order;
     }

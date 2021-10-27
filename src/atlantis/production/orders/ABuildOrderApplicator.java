@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class ABuildOrderApplicator {
 
-    public static void applyBuildOrderNow(ABuildOrder buildOrder) {
+    public static void applyNow(ABuildOrder buildOrder) {
         buildFullBuildOrderSequenceBasedOnRawOrders();
     }
 
@@ -51,15 +51,17 @@ public class ABuildOrderApplicator {
 //        System.out.println();
 //        System.out.println();
 
+        ABuildOrder buildOrder = ProductionQueue.get();
+
         int lastSupplyFromFile = -1;
         for (int currentSupply = 4; currentSupply <= 200; currentSupply++) {
 
             // If no more orders left, exit the loop
-            if (AProductionQueue.initialProductionQueue.isEmpty()) {
+            if (buildOrder.productionOrders().isEmpty()) {
                 break;
             }
 
-            ProductionOrder order = AProductionQueue.initialProductionQueue.get(0);
+            ProductionOrder order = buildOrder.productionOrders().get(0);
 
             // === Check if should worker build order ========================================
 
@@ -97,15 +99,16 @@ public class ABuildOrderApplicator {
                 }
 
                 ProductionOrder newOrder = order.copy();
-                AProductionQueue.initialProductionQueue.remove(0);
+                // @TODO - WHAT THE FUCK
+//                ProductionQueue.initialProductionQueue.remove(0);
                 newInitialQueue.add(newOrder);
             }
         }
 
         // Replace old initial queue with new
-//        AProductionQueue.initialProductionQueue.clear();
-//        AProductionQueue.initialProductionQueue.addAll(newInitialQueue);
-//        AProductionQueue.currentProductionQueue.addAll(newInitialQueue);
+//        ProductionQueue.initialProductionQueue.clear();
+//        ProductionQueue.initialProductionQueue.addAll(newInitialQueue);
+//        ProductionQueue.currentProductionQueue.addAll(newInitialQueue);
     }
 
 }

@@ -17,17 +17,17 @@ public abstract class ABuildOrder {
     /**
      * Relative path to build order file as seen from project root.
      */
-    protected final String name;
+    private final String name;
 
     /**
      * Sequence of units/buildings/techs to be produced in this build.
      */
-    protected final ArrayList<ProductionOrder> productionOrders;
+    private final ArrayList<ProductionOrder> productionOrders;
 
     // === Constructor =========================================
 
     public ABuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
-        this.name = name + ".txt";
+        this.name = name;
         this.productionOrders = productionOrders;
     }
 
@@ -94,5 +94,8 @@ public abstract class ABuildOrder {
         
         return name;
     }
-    
+
+    public ArrayList<ProductionOrder> productionOrders() {
+        return productionOrders;
+    }
 }

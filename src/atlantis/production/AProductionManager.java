@@ -3,11 +3,10 @@ package atlantis.production;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionRequests;
-import atlantis.production.orders.AProductionQueue;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.tech.ATechRequests;
 import atlantis.units.AUnitType;
-import atlantis.util.A;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class AProductionManager {
         // =========================================================
         
         // Get build orders (aka production orders) from the manager
-        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(AProductionQueue.MODE_ALL_ORDERS);
+        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(ProductionQueue.MODE_ALL_ORDERS);
         for (ProductionOrder order : produceNow) {
 
             // =========================================================
@@ -68,14 +67,14 @@ public class AProductionManager {
         
         // === Fix - refresh entire queue ==============================
         
-        AProductionQueue.getProductionQueueNext(20);
+        ProductionQueue.getProductionQueueNext(20);
     }
 
     // =========================================================
     // Hi-level produce
     
     public static boolean produceWorker() {
-        return AProductionQueue.getCurrentBuildOrder().produceWorker();
+        return ProductionQueue.get().produceWorker();
     }
 
     private static boolean produceUnit(AUnitType unitType) {
@@ -97,7 +96,7 @@ public class AProductionManager {
         // Non-worker
 
         else if (AGame.canAffordWithReserved(50 + unitType.getMineralPrice(), unitType.getGasPrice())) {
-            return AProductionQueue.getCurrentBuildOrder().produceUnit(unitType);
+            return ProductionQueue.get().produceUnit(unitType);
         }
 
         return false;

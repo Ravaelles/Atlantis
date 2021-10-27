@@ -99,7 +99,7 @@ public class AStrategyResponse {
         if (Us.isTerran() && TerranStrategyResponse.rushDefense(enemyStrategy)) {
             return true;
         }
-        else if (Us.isTerran() && ProtossStrategyResponse.rushDefense(enemyStrategy)) {
+        else if (Us.isProtoss() && ProtossStrategyResponse.rushDefense(enemyStrategy)) {
             return true;
         }
 
@@ -107,11 +107,11 @@ public class AStrategyResponse {
             return false;
         }
         
-        AStrategyInformations.antiLandBuildingsNeeded(rushDefenseDefensiveBuildings(enemyStrategy));
+        AStrategyInformations.antiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
         return true;
     }
 
-    protected static int rushDefenseDefensiveBuildings(AStrategy enemyStrategy) {
+    protected static int rushDefenseDefensiveBuildingsNeeded(AStrategy enemyStrategy) {
         return enemyStrategy.isGoingCheese() ? 3 : 2;
     }
 
