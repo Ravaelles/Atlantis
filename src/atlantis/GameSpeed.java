@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import static atlantis.Atlantis.game;
 
-public class AGameSpeed {
+public class GameSpeed {
 
     private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
 
@@ -22,10 +22,10 @@ public class AGameSpeed {
      */
     public static int frameSkip;
 
-    private static final int NORMAL_GAME_SPEED = 30;
-    private static final int NORMAL_FRAME_SKIP = 0;
-//    private static final int NORMAL_GAME_SPEED = 0;
-//    private static final int NORMAL_FRAME_SKIP = 30;
+//    private static final int NORMAL_GAME_SPEED = 30;
+//    private static final int NORMAL_FRAME_SKIP = 0;
+    private static final int NORMAL_GAME_SPEED = 0;
+    private static final int NORMAL_FRAME_SKIP = 30;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
 
@@ -42,7 +42,7 @@ public class AGameSpeed {
         Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
-        AGameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
+        GameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
     }
 
     /**
@@ -107,7 +107,7 @@ public class AGameSpeed {
             changeFrameSkipTo(0);
         }
 
-        AGameSpeed.pauseGame();
+        GameSpeed.pauseGame();
 
         try {
             TimeUnit.MILLISECONDS.sleep(30);
@@ -133,7 +133,7 @@ public class AGameSpeed {
         } catch (InterruptedException e) {
         }
 
-        AGameSpeed.unpauseGame();
+        GameSpeed.unpauseGame();
 //        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
 //        sendMessage("Game speed: " + speedString);
     }

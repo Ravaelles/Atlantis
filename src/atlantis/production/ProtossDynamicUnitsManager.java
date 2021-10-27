@@ -2,6 +2,8 @@
 package atlantis.production;
 
 import atlantis.AGame;
+import atlantis.strategy.EnemyStrategy;
+import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Count;
@@ -26,10 +28,19 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     // =========================================================
 
     private static void dragoons() {
+        if (GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese()) {
+            return;
+        }
+
         trainIfPossible(17, AUnitType.Protoss_Dragoon, false);
     }
 
     private static void zealots() {
+        if (GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese()) {
+            trainIfPossible(11, AUnitType.Protoss_Zealot, false);
+            return;
+        }
+
         if (AGame.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) {
             trainIfPossible(11, AUnitType.Protoss_Zealot, true);
         }

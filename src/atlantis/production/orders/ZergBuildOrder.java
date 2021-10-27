@@ -2,6 +2,7 @@ package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.production.ADynamicWorkerProductionManager;
+import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -9,12 +10,12 @@ import java.util.ArrayList;
 
 public class ZergBuildOrder extends ABuildOrder {
     
-    public static final ZergBuildOrder ZERG_13_POOL_MUTA = new ZergBuildOrder("13 Pool Muta");
-    
+//    public static final ZergBuildOrder ZERG_13_POOL_MUTA = new ZergBuildOrder("13 Pool Muta");
+
     // =========================================================
-    
-    private ZergBuildOrder(String relativePath) {
-        super("Zerg/" + relativePath);
+
+    public ZergBuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
+        super(name, productionOrders);
     }
 
     // =========================================================

@@ -77,7 +77,7 @@ public class ABuilderManager {
 
             if (AGame.everyNthGameFrame(3)) {
                 if (!builder.isMoving()) {
-//                    AGameSpeed.changeSpeedTo(60);
+//                    GameSpeed.changeSpeedTo(60);
                     builder.move(
                         constructionOrder.getPositionToBuildCenter(),
                         UnitActions.MOVE_TO_BUILD,

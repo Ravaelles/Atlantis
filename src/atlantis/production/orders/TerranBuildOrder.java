@@ -3,22 +3,23 @@ package atlantis.production.orders;
 import atlantis.AtlantisConfig;
 import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.production.AProductionManager;
+import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import java.util.ArrayList;
 
 public class TerranBuildOrder extends ABuildOrder {
-    
-    public static final TerranBuildOrder TERRAN_BBS = new TerranBuildOrder("BBS");
-    public static final TerranBuildOrder TERRAN_1_FE = new TerranBuildOrder("1 Fact FE");
-    public static final TerranBuildOrder TERRAN_1_Base_Vultures = new TerranBuildOrder("1 Base Vultures");
-    public static final TerranBuildOrder TERRAN_Nada_2_Fact = new TerranBuildOrder("Nada 2 Fact");
+
+//    public static final TerranBuildOrder TERRAN_BBS = new TerranBuildOrder("BBS");
+//    public static final TerranBuildOrder TERRAN_1_FE = new TerranBuildOrder("1 Fact FE");
+//    public static final TerranBuildOrder TERRAN_1_Base_Vultures = new TerranBuildOrder("1 Base Vultures");
+//    public static final TerranBuildOrder TERRAN_Nada_2_Fact = new TerranBuildOrder("Nada 2 Fact");
 
     // =========================================================
-    
-    private TerranBuildOrder(String relativePath) {
-        super("Terran/" + relativePath);
+
+    public TerranBuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
+        super(name, productionOrders);
     }
 
     // =========================================================

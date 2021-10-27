@@ -1,14 +1,13 @@
 package atlantis.combat;
 
 import atlantis.AGame;
-import atlantis.AGameSpeed;
+import atlantis.GameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
-import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
@@ -68,11 +67,11 @@ public class ACombatUnitManager {
     }
 
     private static void preActions(AUnit unit) {
-        if (A.seconds() >= 1 && AGameSpeed.isDynamicSlowdownAllowed() && !AGameSpeed.isDynamicSlowdownActive()
+        if (A.seconds() >= 1 && GameSpeed.isDynamicSlowdownAllowed() && !GameSpeed.isDynamicSlowdownActive()
                 && (unit.lastActionLessThanAgo(2, UnitActions.ATTACK_UNIT) || unit.isUnderAttack(3))) {
 //            System.out.println("Dynamic slowdown - lower game speed when fighting happens");
-            AGameSpeed.activateDynamicSlowdown();
-//            AGameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
+            GameSpeed.activateDynamicSlowdown();
+//            GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
         }
 
         unit.setTooltip(unit.getTooltip() + ".");

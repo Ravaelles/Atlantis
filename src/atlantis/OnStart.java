@@ -1,11 +1,13 @@
 package atlantis;
 
 import atlantis.debug.APainter;
-import atlantis.debug.AUnitTypesHelper;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
 import atlantis.production.orders.AProductionQueue;
-import atlantis.production.orders.AProductionQueueManager;
+import atlantis.strategy.OurStrategyManager;
+import atlantis.strategy.ProtossStrategies;
+import atlantis.strategy.TerranStrategies;
+import atlantis.strategy.ZergStrategies;
 
 public class OnStart {
 
@@ -26,13 +28,16 @@ public class OnStart {
         AtlantisConfig.validate();
 
         // Game speed mode that starts fast, slows down when units are attacking
-        AGameSpeed.init();
+        GameSpeed.init();
 
         // One time map analysis for every map
         AMap.initMapAnalysis();
 
-        // Set prodction strategy (build orders) to use. It can be always changed dynamically.
-        initializeBuildOrder();
+        // Create list of all strategies in memory
+        initializeAllStrategies();
+
+        // Set strategy and unit production sequence (Build Order) to use. It can be later changed dynamically.
+        initializeOurStrategyAndBuildOrder();
 
         try {
             AInitialActions.executeInitialActions();
@@ -51,9 +56,15 @@ public class OnStart {
         }
     }
 
-    private static void initializeBuildOrder() {
+    private static void initializeAllStrategies() {
+        TerranStrategies.initialize();
+        ProtossStrategies.initialize();
+        ZergStrategies.initialize();
+    }
+
+    private static void initializeOurStrategyAndBuildOrder() {
         try {
-            AProductionQueueManager.switchToBuildOrder(AtlantisConfig.DEFAULT_BUILD_ORDER);
+            OurStrategyManager.initialize();
 
             if (AProductionQueue.getCurrentBuildOrder() != null) {
                 System.out.println("Use build order: `" + AProductionQueue.getCurrentBuildOrder().getName() + "`");

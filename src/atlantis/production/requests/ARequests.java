@@ -30,11 +30,11 @@ public abstract class ARequests {
     }
 
     public void requestAntiAirQuick(APosition where) {
-        AAntiAirRequest.requestAntiAirQuick(where);
+        AAntiAirBuildingRequests.requestAntiAirQuick(where);
     }
 
     public void requestDefBuildingAntiAir(APosition where) {
-        AAntiAirRequest.requestDefensiveBuildingAntiAir(where);
+        AAntiAirBuildingRequests.requestDefensiveBuildingAntiAir(where);
     }
 
     public void requestDefensiveBuildingAntiAir(APosition where) {
@@ -42,7 +42,7 @@ public abstract class ARequests {
     }
     
     public void requestDefensiveBuildingAntiLand(APosition where) {
-        AAntiLandRequest.requestDefensiveBuildingAntiLand(where);
+        AAntiLandBuildingRequests.requestDefensiveBuildingAntiLand(where);
     }
 
 }

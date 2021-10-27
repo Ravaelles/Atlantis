@@ -88,7 +88,7 @@ public class AtlantisConfig {
     public static AUnitType GAS_BUILDING = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_LAND = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
-    public static ABuildOrder DEFAULT_BUILD_ORDER = null;
+//    public static ABuildOrder DEFAULT_BUILD_ORDER = null;
 
     // =========================================================
 
@@ -102,7 +102,7 @@ public class AtlantisConfig {
         validate("BARRACKS", BARRACKS);
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
-        validate("You have to define default build order\n-> AtlantisConfig.DEFAULT_BUILD_ORDER", DEFAULT_BUILD_ORDER);
+//        validate("You have to define default build order\n-> AtlantisConfig.DEFAULT_BUILD_ORDER", DEFAULT_BUILD_ORDER);
 
         System.out.println("Atlantis config is valid.");
         System.out.println();

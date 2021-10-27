@@ -1,8 +1,5 @@
 package atlantis;
 
-import atlantis.production.orders.ProtossBuildOrder;
-import atlantis.production.orders.TerranBuildOrder;
-import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 
@@ -23,7 +20,7 @@ public class AtlantisConfigChanger {
      * Helper method for using Terran race.
      */
     public static void useConfigForTerran() {
-        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_Base_Vultures;
+//        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_Base_Vultures;
 //        AtlantisConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_BBS;
 
         AtlantisConfig.MY_RACE = Race.Terran;
@@ -42,7 +39,7 @@ public class AtlantisConfigChanger {
      */
     public static void useConfigForProtoss() {
 //        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATEWAY_ZEALOT;
-        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATE_RANGE_EXPAND;
+//        AtlantisConfig.DEFAULT_BUILD_ORDER = ProtossBuildOrder.PROTOSS_2_GATE_RANGE_EXPAND;
 
         AtlantisConfig.MY_RACE = Race.Protoss;
         AtlantisConfig.BASE = AUnitType.Protoss_Nexus;
@@ -59,7 +56,7 @@ public class AtlantisConfigChanger {
      * Helper method for using Zerg race.
      */
     public static void useConfigForZerg() {
-        AtlantisConfig.DEFAULT_BUILD_ORDER = ZergBuildOrder.ZERG_13_POOL_MUTA;
+//        AtlantisConfig.DEFAULT_BUILD_ORDER = ZergBuildOrder.ZERG_13_POOL_MUTA;
 
         AtlantisConfig.MY_RACE = Race.Zerg;
         AtlantisConfig.BASE = AUnitType.Zerg_Hatchery;

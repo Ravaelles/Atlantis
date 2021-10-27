@@ -25,7 +25,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.orders.AProductionQueue;
 import atlantis.production.orders.AProductionQueueManager;
 import atlantis.scout.AScoutManager;
-import atlantis.strategy.AEnemyStrategy;
+import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -226,9 +226,9 @@ public class AAdvancedPainter extends APainter {
         // =========================================================
         // Global mission
 
-        paintSideMessage("Enemy strategy: " + (AEnemyStrategy.isEnemyStrategyKnown()
-                ? AEnemyStrategy.getEnemyStrategy().toString() : "Unknown"),
-                AEnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
+        paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
+                ? EnemyStrategy.get().toString() : "Unknown"),
+                EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
         paintSideMessage("Mission: " + mission.getName(), Color.White);
         paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
         paintSideMessage("Enemy base: " + AEnemyUnits.enemyBase(), Color.White);

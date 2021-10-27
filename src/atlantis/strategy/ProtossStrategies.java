@@ -5,28 +5,29 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 
-public class AEnemyProtossStrategies extends AEnemyStrategy {
+public class ProtossStrategies extends AStrategy {
     
     // Rush
-    public static final AEnemyStrategy PROTOSS_2_Gate = new AEnemyProtossStrategies();
+    public static final AStrategy PROTOSS_2_Gate_Zealot = new AStrategy();
     
     // Cheese
-    public static final AEnemyStrategy PROTOSS_3_Gate = new AEnemyProtossStrategies();
+    public static final AStrategy PROTOSS_3_Gate = new AStrategy();
     
     // Expansion
-    public static final AEnemyStrategy PROTOSS_12_Nexus = new AEnemyProtossStrategies();
+    public static final AStrategy PROTOSS_12_Nexus = new AStrategy();
     
     // Tech
-    public static final AEnemyStrategy PROTOSS_2_Gate_DT = new AEnemyProtossStrategies();
-    public static final AEnemyStrategy PROTOSS_Carrier_Push = new AEnemyProtossStrategies();
+    public static final AStrategy PROTOSS_2_Gate_Range_Expand = new AStrategy();
+    public static final AStrategy PROTOSS_2_Gate_DT = new AStrategy();
+    public static final AStrategy PROTOSS_Carrier_Push = new AStrategy();
     
     // =========================================================
 
-    protected static void initialize() {
+    public static void initialize() {
         
         // === Rushes ========================================
         
-        PROTOSS_2_Gate.setProtoss().setName("2 Gate")
+        PROTOSS_2_Gate_Zealot.setProtoss().setName("2 Gate Zealot")
                 .setGoingRush()
                 .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_Zealot_(vs._Terran)");
 
@@ -44,10 +45,14 @@ public class AEnemyProtossStrategies extends AEnemyStrategy {
 
         // === Tech ==========================================
         
+        PROTOSS_2_Gate_Range_Expand.setProtoss().setName("2 Gate Range Expand")
+                .setGoingTech()
+                .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_Range_Expand");
+
         PROTOSS_2_Gate_DT.setProtoss().setName("2 Gate DT")
                 .setGoingTech().setGoingHiddenUnits()
                 .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_DT");
-        
+
         PROTOSS_Carrier_Push.setProtoss().setName("Carrier Push")
                 .setGoingTech().setGoingAirUnitsLate()
                 .setUrl("---");
@@ -55,7 +60,7 @@ public class AEnemyProtossStrategies extends AEnemyStrategy {
     
     // =========================================================
     
-    public static AEnemyStrategy detectStrategy() {
+    public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
         int gateways = Select.enemy().countUnitsOfType(AUnitType.Protoss_Gateway);
         int nexus = Select.enemy().countUnitsOfType(AUnitType.Protoss_Nexus);
@@ -64,25 +69,25 @@ public class AEnemyProtossStrategies extends AEnemyStrategy {
         // === Dark Templar ========================================
         
         if (citadel >= 1 && seconds < 320) {
-            return AEnemyProtossStrategies.PROTOSS_2_Gate_DT;
+            return ProtossStrategies.PROTOSS_2_Gate_DT;
         }
 
         // === Three Gateway =======================================
         
         if (gateways >= 3 && seconds < 300) {
-            return AEnemyProtossStrategies.PROTOSS_3_Gate;
+            return ProtossStrategies.PROTOSS_3_Gate;
         }
 
         // === Two Gateway =========================================
         
         if (gateways == 2 && seconds < 290) {
-            return AEnemyProtossStrategies.PROTOSS_2_Gate;
+            return ProtossStrategies.PROTOSS_2_Gate_Zealot;
         }
 
         // === 12 Nexus ============================================
         
         if (nexus == 2 && seconds < 290) {
-            return AEnemyProtossStrategies.PROTOSS_12_Nexus;
+            return ProtossStrategies.PROTOSS_12_Nexus;
         }
         
         // === Carrier Push ========================================

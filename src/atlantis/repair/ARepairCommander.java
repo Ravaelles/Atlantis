@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.combat.missions.Missions;
 import atlantis.map.AChokepoint;
 import atlantis.map.AMap;
-import atlantis.strategy.AEnemyStrategy;
+import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -162,17 +162,17 @@ public class ARepairCommander {
             if (AGame.isPlayingAsTerran()) {
 
                 // === We know enemy strategy ========================================
-                if (AEnemyStrategy.isEnemyStrategyKnown()) {
+                if (EnemyStrategy.isEnemyStrategyKnown()) {
                     int repairersWhenRush = 1 
                             + (AGame.timeSeconds() > 180 ? 1 : 0)
                             + (AGame.timeSeconds() > 200 ? 1 : 0);
                     
-                    if (AEnemyStrategy.getEnemyStrategy().isGoingCheese()) {
+                    if (EnemyStrategy.get().isGoingCheese()) {
                         return repairersWhenRush 
                                 + 2
                                 + (AGame.timeSeconds() > 210 ? 1 : 0);
                     }
-                    if (AEnemyStrategy.getEnemyStrategy().isGoingRush()) {
+                    if (EnemyStrategy.get().isRush()) {
                         return repairersWhenRush;
                     }
                 } 

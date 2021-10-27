@@ -30,8 +30,8 @@ public class CameraManager {
 
         cameraUnit = Select.ourOfType(AUnitType.Protoss_High_Templar).groundUnits().first();
         if (cameraUnit != null) {
-//            if (AGameSpeed.gameSpeed <= 0 && AGameSpeed.frameSkip >= 1) {
-//                AGameSpeed.changeSpeedTo(2);
+//            if (GameSpeed.gameSpeed <= 0 && GameSpeed.frameSkip >= 1) {
+//                GameSpeed.changeSpeedTo(2);
 //            }
             return cameraUnit;
         }

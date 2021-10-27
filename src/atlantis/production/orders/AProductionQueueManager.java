@@ -28,8 +28,7 @@ public abstract class AProductionQueueManager {
         AProductionQueue.currentProductionQueue.clear();
 
         AProductionQueue.currentBuildOrder = buildOrder;
-        ABuildOrderLoader.loadBuildOrderFromFile(AProductionQueue.currentBuildOrder);
-        
+
         rebuildQueue();
     }
 

@@ -34,7 +34,7 @@ public class Atlantis implements BWEventListener {
     /**
      * Class controlling game speed.
      */
-    private static AGameSpeed gameSpeed;
+    private static GameSpeed gameSpeed;
 
     /**
      * Top abstraction-level class that governs all units, buildings etc.
@@ -106,7 +106,7 @@ public class Atlantis implements BWEventListener {
 
         // === Handle PAUSE ================================================
         // If game is paused wait 100ms - pause is handled by PauseBreak button
-        while (AGameSpeed.isPaused()) {
+        while (GameSpeed.isPaused()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) { }
@@ -412,10 +412,10 @@ public class Atlantis implements BWEventListener {
             return;
         }
         System.out.print(
-                "Total time: " + AGame.timeSeconds() + " seconds. " +
-                "Killed: " + Atlantis.KILLED + ", Lost: " + Atlantis.LOST + ". "
+                "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
+                "### Killed: " + Atlantis.KILLED + ", Lost: " + Atlantis.LOST + " ###"
         );
-        System.out.println("Resource killed/lost balance: " + AGame.killsLossesResourceBalance());
+        System.out.println("### Resource killed/lost balance: " + AGame.killsLossesResourceBalance() + " ###");
     }
 
     /**

@@ -4,12 +4,14 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.combat.missions.MissionsFromBuildOrder;
 import atlantis.production.ProductionOrder;
+import atlantis.strategy.AStrategy;
 import atlantis.units.AUnitType;
 import atlantis.util.A;
 import atlantis.util.NameUtil;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -22,27 +24,41 @@ public class ABuildOrderLoader {
     
     // =========================================================
     
-    public static void loadBuildOrderFromFile(ABuildOrder buildOrder) {
-        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
-        
+    public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
+//        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
+        String filePath = BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.getName() + ".txt";
+        System.out.println("\r\nUse build order from file: `" + strategy.getName() + ".txt`");
+
+        File f = new File(filePath);
+        if (!f.exists()) {
+            String message = "### Build order file does not exist:\r\n" + filePath + "\r\n### Quit ###";
+
+            if (A.seconds() < 1) {
+                throw new RuntimeException(message);
+            } else {
+                System.err.println(message);
+            }
+        }
+
         ABuildOrderLoader loader = new ABuildOrderLoader();
-        loader.readBuildOrdersFile(filePath);
+        return loader.readBuildOrdersFromFile(strategy.race(), filePath);
     }
-    
+
     // =========================================================
 
     /**
      * Reads build orders from CSV file and converts them into ArrayList.
      */
-    protected void readBuildOrdersFile(String filePath) {
+    protected ABuildOrder readBuildOrdersFromFile(String race, String filePath) {
         final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
         // Read file into 2D String array
         String buildOrdersFile = filePath;
         System.out.println();
-        System.out.println("Using `" + filePath.replace(ABuildOrderLoader.BUILD_ORDERS_PATH, "") 
-                + "` build orders file.");
-        
+        System.out.println(
+                "Using `" + filePath.replace(ABuildOrderLoader.BUILD_ORDERS_PATH, "") + "` build orders file."
+        );
+
         // Parse CSV
         String[][] loadedFile = A.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
 
@@ -52,12 +68,22 @@ public class ABuildOrderLoader {
         // =========================================================
         // Skip first row as it's CSV header
         int counter = 0;
+
+        ArrayList<ProductionOrder> productionOrders = new ArrayList<>();
         for (String[] row : loadedFile) {
 //            System.out.print("Processing row:  #" + counter + "/" + loadedFile.length + ":  ");
 //            System.out.println(row[0] + " - " + (row.length > 1 ? row[1] : "") + ",   SIZE OF INITIAL: " + initialProductionQueue.size());
-            parseCsvRow(row);
-            counter++;
+            ProductionOrder productionOrder = parseCsvRow(row);
+            productionOrders.add(productionOrder);
+//            counter++;
         }
+
+        ABuildOrder buildOrder = ABuildOrderFactory.forRace(race, filePath, productionOrders);
+
+        System.out.println("buildOrder");
+        System.out.println(buildOrder);
+
+        return buildOrder;
 
         // =========================================================
         // Converts shortcut notations like:
@@ -83,7 +109,7 @@ public class ABuildOrderLoader {
         //   - SCV
         //   - SCV
         //   - Supply Depot
-        buildFullBuildOrderSequeneBasedOnRawOrders();
+//        buildFullBuildOrderSequenceBasedOnRawOrders();
 
         // === Display initial production queue ====================
 //        System.out.println("Initial production order queue:");
@@ -92,101 +118,6 @@ public class ABuildOrderLoader {
 //        }
 //        System.out.println("END OF Initial production order queue");
 //        Atlantis.end();
-    }
-
-    /**
-     * Converts (and repeats if needed) shortcut build order notations like: 
-            6 - Barracks
-            8 - Supply Depot
-            8 - Marine - x2
-            Marine - x3
-            15 - Supply Depot
-    
-     To full build order sequence like this:
-       - SCV
-       - SCV
-       - Barracks
-       - SCV
-       - Supply Depot
-       - Marine
-       - Marine
-       - Marine
-       - Marine
-       - Marine
-       - SCV
-       - SCV
-       - SCV
-       - SCV
-       - Supply Depot
-     */
-    protected void buildFullBuildOrderSequeneBasedOnRawOrders() {
-        ArrayList<ProductionOrder> newInitialQueue = new ArrayList<>();
-        
-//        System.out.println();
-//        System.out.println();
-//        System.out.println("Initial queue");
-//        for (ProductionOrder productionOrder : initialProductionQueue) {
-//            System.out.print(productionOrder.getRawFirstColumnInFile() + ":  ");
-//            System.out.println(productionOrder.shortName());
-//        }
-//        System.out.println();
-//        System.out.println();
-
-        int lastSupplyFromFile = -1;
-        for (int currentSupply = 4; currentSupply <= 200; currentSupply++) {
-            
-            // If no more orders left, exit the loop
-            if (AProductionQueue.initialProductionQueue.isEmpty()) {
-                break;
-            }
-            
-            ProductionOrder order = AProductionQueue.initialProductionQueue.get(0);
-            
-            // === Check if should worker build order ========================================
-            
-            int orderSupplyRequired;
-            try {
-                orderSupplyRequired = Integer.parseInt(order.getRawFirstColumnInFile());
-            }
-            catch (NumberFormatException e) {
-                orderSupplyRequired = lastSupplyFromFile + 1; // Take last order supply value and increment it
-            }
-            lastSupplyFromFile = orderSupplyRequired;
-
-            // =========================================================
-            
-            // Insert additional worker build order
-            if (orderSupplyRequired < 0 || currentSupply < orderSupplyRequired) {
-                ProductionOrder workerOrder = new ProductionOrder(AtlantisConfig.WORKER);
-                newInitialQueue.add(workerOrder);
-            }
-            
-            // Add build order from file
-            else {
-//            System.out.println("NAME: " + order.shortName());
-//            System.out.println("MODIFIER: " + order.getModifier());
-
-                if (order.getModifier() != null && order.getModifier().charAt(0) == 'x' && order.getUpgrade() == null) {
-                    int timesToMultiply = 1;
-                    if (order.getModifier() != null) {
-                        timesToMultiply = Integer.parseInt(order.getModifier().substring(1)) - 1;
-                    }
-                    for (int multiplyCounter = 0; multiplyCounter < timesToMultiply; multiplyCounter++) {
-                        ProductionOrder newOrder = order.copy();
-                        newInitialQueue.add(newOrder);
-                    }
-                }
-
-                ProductionOrder newOrder = order.copy();
-                AProductionQueue.initialProductionQueue.remove(0);
-                newInitialQueue.add(newOrder);
-            }
-        }
-
-        // Replace old initial queue with new
-        AProductionQueue.initialProductionQueue.clear();
-        AProductionQueue.initialProductionQueue.addAll(newInitialQueue);
-        AProductionQueue.currentProductionQueue.addAll(newInitialQueue);
     }
 
     /**
@@ -224,19 +155,20 @@ public class ABuildOrderLoader {
     
     /**
      * Analyzes CSV row, where each array element is one column.
+     * @return
      */
-    protected void parseCsvRow(String[] row) {
+    protected ProductionOrder parseCsvRow(String[] row) {
 
         // =========================================================
         // Ignore comments and blank lines
         if (isCommentLine(row)) {
-            return;
+            return null;
         }
 
         // Check for special commands that start with #
         if (isSpecialCommand(row)) {
             handleSpecialCommand(row);
-            return;
+            return null;
         }
 
         // =========================================================
@@ -319,7 +251,9 @@ public class ABuildOrderLoader {
         }
 
         // Enqueue created order
-        AProductionQueue.initialProductionQueue.add(order);
+//        AProductionQueue.initialProductionQueue.add(order);
+
+        return order;
     }
 
     /**

@@ -48,6 +48,8 @@ public class AMap {
 
         BWTA.readMap(Atlantis.game());
         BWTA.analyze();
+
+        System.out.println("OK.");
     }
 
     // =========================================================

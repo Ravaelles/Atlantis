@@ -51,8 +51,8 @@ public class Unfreezer {
         if (paintingDisabled) {
             APainter.disablePainting();
         }
-//        AGameSpeed.changeSpeedTo(70);
-//        AGameSpeed.pauseGame();
+//        GameSpeed.changeSpeedTo(70);
+//        GameSpeed.pauseGame();
 
         if (Select.mainBase() != null && unit.move(Select.mainBase(), UnitActions.MOVE, "Unfreeze")) {
             return true;

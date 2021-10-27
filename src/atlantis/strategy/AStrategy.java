@@ -1,21 +1,21 @@
 package atlantis.strategy;
 
+import atlantis.production.orders.ABuildOrder;
+import atlantis.production.orders.ABuildOrderLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class AEnemyStrategy {
-    
-    private static final List<AEnemyStrategy> allStrategies = new ArrayList<>();
-    
+public class AStrategy {
+
+    private static final List<AStrategy> allStrategies = new ArrayList<>();
+
     // =========================================================
-    
-    private static AEnemyStrategy enemyStrategy = null;
-    
-    // =========================================================
-    
+
     private String name;
     private String url;
+    private ABuildOrder buildOrder = null;
     private boolean terran = false;
     private boolean protoss = false;
     private boolean zerg = false;
@@ -26,39 +26,35 @@ public class AEnemyStrategy {
     private boolean goingHiddenUnits = false;
     private boolean goingAirUnitsQuickly = false;
     private boolean goingAirUnitsLate = false;
-    
+    protected boolean unknown = true;
+
     // =========================================================
 
-    protected AEnemyStrategy() {
+    protected AStrategy() {
         allStrategies.add(this);
     }
-    
+
     // =========================================================
+
+    /**
+     * Assigns build order for this strategy from build orders directory. Uses corresponding strategy/build order name.
+     */
+    private void assignBuildOrder() {
+        buildOrder = ABuildOrderLoader.getBuildOrderForStrategy(this);
+    }
 
     @Override
     public String toString() {
         return name;
     }
-    
+
     // =========================================================
-
-    public static boolean isEnemyStrategyKnown() {
-        return enemyStrategy != null;
-    }
-
-    public static AEnemyStrategy getEnemyStrategy() {
-        return enemyStrategy;
-    }
-
-    protected static void setEnemyStrategy(AEnemyStrategy enemyStrategy) {
-        AEnemyStrategy.enemyStrategy = enemyStrategy;
-    }
 
     public String getName() {
         return name;
     }
 
-    public AEnemyStrategy setName(String name) {
+    public AStrategy setName(String name) {
         this.name = name;
         return this;
     }
@@ -67,16 +63,20 @@ public class AEnemyStrategy {
         return url;
     }
 
-    public AEnemyStrategy setUrl(String url) {
+    public AStrategy setUrl(String url) {
         this.url = url;
         return this;
     }
-    
-    public boolean isGoingRush() {
+
+    public boolean isRushOrCheese() {
+        return goingRush || goingCheese;
+    }
+
+    public boolean isRush() {
         return goingRush;
     }
 
-    public AEnemyStrategy setGoingRush() {
+    public AStrategy setGoingRush() {
         this.goingRush = true;
         return this;
     }
@@ -85,16 +85,16 @@ public class AEnemyStrategy {
         return goingCheese;
     }
 
-    public AEnemyStrategy setGoingCheese() {
+    public AStrategy setGoingCheese() {
         this.goingCheese = true;
         return this;
     }
 
-    public boolean isGoingExpansion() {
+    public boolean isExpansion() {
         return goingExpansion;
     }
 
-    public AEnemyStrategy setGoingExpansion() {
+    public AStrategy setGoingExpansion() {
         this.goingExpansion = true;
         return this;
     }
@@ -103,16 +103,16 @@ public class AEnemyStrategy {
         return goingTech;
     }
 
-    public AEnemyStrategy setGoingTech() {
+    public AStrategy setGoingTech() {
         this.goingTech = true;
         return this;
     }
 
-    public boolean isGoingHiddenUnits() {
+    public boolean isHiddenUnits() {
         return goingHiddenUnits;
     }
 
-    public AEnemyStrategy setGoingHiddenUnits() {
+    public AStrategy setGoingHiddenUnits() {
         this.goingHiddenUnits = true;
         return this;
     }
@@ -120,14 +120,14 @@ public class AEnemyStrategy {
     /**
      * Quick air units are: Mutalisk, Wraith, Protoss Scout.
      */
-    public boolean isGoingAirUnitsQuickly() {
+    public boolean isAirUnits() {
         return goingAirUnitsQuickly;
     }
 
     /**
      * Quick air units are: Mutalisk, Wraith, Protoss Scout.
      */
-    public AEnemyStrategy setGoingAirUnitsQuickly() {
+    public AStrategy setGoingAirUnitsQuickly() {
         this.goingAirUnitsQuickly = true;
         return this;
     }
@@ -142,7 +142,7 @@ public class AEnemyStrategy {
     /**
      * Late units are: Carrier, Guardian, Battlecruiser.
      */
-    public AEnemyStrategy setGoingAirUnitsLate() {
+    public AStrategy setGoingAirUnitsLate() {
         this.goingAirUnitsLate = true;
         return this;
     }
@@ -151,7 +151,7 @@ public class AEnemyStrategy {
         return terran;
     }
 
-    public AEnemyStrategy setTerran() {
+    public AStrategy setTerran() {
         this.terran = true;
         return this;
     }
@@ -160,7 +160,7 @@ public class AEnemyStrategy {
         return protoss;
     }
 
-    public AEnemyStrategy setProtoss() {
+    public AStrategy setProtoss() {
         this.protoss = true;
         return this;
     }
@@ -169,9 +169,30 @@ public class AEnemyStrategy {
         return zerg;
     }
 
-    public AEnemyStrategy setZerg() {
+    public AStrategy setZerg() {
         this.zerg = true;
         return this;
     }
-    
+
+    public boolean isUnknown() {
+        return unknown;
+    }
+
+    public ABuildOrder buildOrder() {
+        if (buildOrder == null) {
+            assignBuildOrder();
+        }
+
+        return buildOrder;
+    }
+
+    public String race() {
+        if (isProtoss()) {
+            return "Protoss";
+        } if (isTerran()) {
+            return "Terran";
+        } else {
+            return "Zerg";
+        }
+    }
 }

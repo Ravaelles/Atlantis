@@ -227,7 +227,7 @@ public class ProtossHighTemplar {
 //                System.out.println("Warp Archon");
                 highTemplar.setTooltip("WarpArchon");
                 closestOtherHT.setTooltip("OhArchon");
-//                AGameSpeed.changeSpeedTo(10);
+//                GameSpeed.changeSpeedTo(10);
 //                CameraManager.centerCameraOn(highTemplar);
 //            }
 //            else {

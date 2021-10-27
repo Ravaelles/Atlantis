@@ -1,5 +1,6 @@
 package atlantis.production.requests;
 
+import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.position.APosition;
@@ -9,7 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.Us;
 
-public class AAntiLandRequest {
+public class AAntiLandBuildingRequests {
 
     public static boolean handle() {
         if (shouldBuild()) {
@@ -23,7 +24,7 @@ public class AAntiLandRequest {
 
     private static boolean shouldBuild() {
         int defBuildingAntiLand = AConstructionRequests.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
-        return defBuildingAntiLand < AStrategyInformations.needDefBuildingAntiLand;
+        return defBuildingAntiLand < Math.max(expectedUnits(), AStrategyInformations.antiLandBuildingsNeeded);
     }
 
     public static int expectedUnits() {
@@ -38,12 +39,16 @@ public class AAntiLandRequest {
         return 3 * Select.ourBases().count();
     }
 
-    public static boolean requestDefensiveBuildingAntiLand(APosition where) {
+    public static boolean requestDefensiveBuildingAntiLand(APosition nearTo) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
-        APosition nearTo = where;
+
+        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
+        if (!AGame.hasTechAndBuildingsToProduce(building)) {
+            return false;
+        }
 
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
-        if (where == null) {
+        if (nearTo == null) {
             if (previousBuilding != null) {
 //            AGame.sendMessage("New bunker near " + previousBuilding);
 //            System.out.println("New bunker near " + previousBuilding);

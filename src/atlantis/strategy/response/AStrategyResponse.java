@@ -1,19 +1,21 @@
 package atlantis.strategy.response;
 
 import atlantis.AGame;
-import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionRequests;
+import atlantis.combat.missions.Missions;
 import atlantis.map.AMap;
-import atlantis.production.requests.AAntiAirRequest;
-import atlantis.production.requests.AAntiLandRequest;
+import atlantis.production.requests.AAntiAirBuildingRequests;
+import atlantis.production.requests.AAntiLandBuildingRequests;
 import atlantis.production.requests.ADetectorRequest;
 import atlantis.production.requests.ARequests;
 import atlantis.scout.AScoutManager;
-import atlantis.strategy.AEnemyStrategy;
+import atlantis.strategy.EnemyStrategy;
+import atlantis.strategy.AStrategy;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
+import atlantis.util.Enemy;
+import atlantis.util.Us;
 
 
 public class AStrategyResponse {
@@ -23,7 +25,13 @@ public class AStrategyResponse {
             return false;
         }
 
-        if (AAntiLandRequest.handle()) {
+        // Anti-LAND
+        if (AAntiLandBuildingRequests.handle()) {
+            return true;
+        }
+
+        // Anti-AIR
+        if (AAntiAirBuildingRequests.handle()) {
             return true;
         }
 
@@ -33,27 +41,39 @@ public class AStrategyResponse {
     // =========================================================
 
     public static void updateEnemyStrategyChanged() {
-        AEnemyStrategy enemyStrategy = AEnemyStrategy.getEnemyStrategy();
-        
+        AStrategy enemyStrategy = EnemyStrategy.get();
+
         // === Rush ========================================
         
-        if (enemyStrategy.isGoingRush()) {
-            handleRushDefense(enemyStrategy);
+        if (enemyStrategy.isRushOrCheese()) {
+            rushDefense(enemyStrategy);
+            Missions.setGlobalMissionDefend();
         }
-        
+
+        // === Expansion ===================================
+
+        if (enemyStrategy.isExpansion()) {
+            Missions.setGlobalMissionContain();
+        }
+
         // === Tech ========================================
-        
-        if (enemyStrategy.isGoingHiddenUnits()) {
-            if (AGame.everyNthGameFrame(19)) {
-                AStrategyInformations.needDefBuildingAntiLandAtLeast(1);
-                ADetectorRequest.requestDetectorImmediately(null);
+
+        if (enemyStrategy.isHiddenUnits()) {
+            if (!Enemy.terran()) {
+                Missions.setGlobalMissionDefend();
             }
+
+            AStrategyInformations.antiLandBuildingsNeeded(1);
+            ADetectorRequest.requestDetectorImmediately(null);
         }
-        
-        if (enemyStrategy.isGoingAirUnitsQuickly()) {
-            if (AGame.everyNthGameFrame(21)) {
-                AAntiAirRequest.requestAntiAirQuick(null);
+
+        if (enemyStrategy.isAirUnits()) {
+            if (!Enemy.protoss()) {
+                Missions.setGlobalMissionDefend();
             }
+
+            AStrategyInformations.antiAirBuildingsNeeded(3);
+            AAntiAirBuildingRequests.requestAntiAirQuick(null);
         }
     }
 
@@ -63,6 +83,7 @@ public class AStrategyResponse {
         }
 
         if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar)) {
+            AStrategyInformations.detectorsNeeded(1);
             ARequests.getInstance().requestDetectorQuick(
                     AMap.getChokepointForMainBase().getCenter()
             );
@@ -74,24 +95,27 @@ public class AStrategyResponse {
     
     // =========================================================
 
-    private static void handleRushDefense(AEnemyStrategy enemyStrategy) {
+    protected static boolean rushDefense(AStrategy enemyStrategy) {
+        if (Us.isTerran() && TerranStrategyResponse.rushDefense(enemyStrategy)) {
+            return true;
+        }
+        else if (Us.isTerran() && ProtossStrategyResponse.rushDefense(enemyStrategy)) {
+            return true;
+        }
+
         if (shouldSkipAntiRushDefensiveBuilding(enemyStrategy)) {
-            return;
+            return false;
         }
         
-        if (AGame.isPlayingAsTerran()) {
-            int minBunkers = 1;
-
-            // Anti-cheese
-            if (enemyStrategy.isGoingCheese()) {
-                minBunkers = 2;
-            }
-
-            AStrategyInformations.needDefBuildingAntiLandAtLeast(minBunkers);
-        }
+        AStrategyInformations.antiLandBuildingsNeeded(rushDefenseDefensiveBuildings(enemyStrategy));
+        return true;
     }
 
-    private static boolean shouldSkipAntiRushDefensiveBuilding(AEnemyStrategy enemyStrategy) {
+    protected static int rushDefenseDefensiveBuildings(AStrategy enemyStrategy) {
+        return enemyStrategy.isGoingCheese() ? 3 : 2;
+    }
+
+    protected static boolean shouldSkipAntiRushDefensiveBuilding(AStrategy enemyStrategy) {
         if (enemyStrategy == null) {
             return false;
         }
@@ -102,7 +126,7 @@ public class AStrategyResponse {
         
         // =========================================================
 
-        return !enemyStrategy.isGoingRush() && !enemyStrategy.isGoingCheese();
+        return !enemyStrategy.isRush() && !enemyStrategy.isGoingCheese();
     }
     
 }

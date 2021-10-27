@@ -25,7 +25,7 @@ public class SquadScout {
         }
 
         if (enemyBase.distTo(unit) > 4) {
-            unit.move(enemyBase.getPosition(), UnitActions.SCOUT, "Scout!");
+            unit.move(enemyBase.getPosition(), UnitActions.SCOUT, "Pioneer");
             return true;
         }
         else if (unit.isMoving()) {

@@ -2,7 +2,7 @@ package atlantis.keyboard;
 
 import atlantis.CameraManager;
 import atlantis.AGame;
-import atlantis.AGameSpeed;
+import atlantis.GameSpeed;
 import atlantis.AtlantisConfig;
 import atlantis.debug.APainter;
 import java.util.logging.Level;
@@ -69,64 +69,64 @@ public class AKeyboard implements NativeKeyListener {
 
             // Key "PauseBreak"
             case 3653:
-                AGameSpeed.pauseModeToggle();
+                GameSpeed.pauseModeToggle();
                 break;
 
             // Keys "-" and NumPad "-" and "["
             case 12: case 3658: case 26:
-                AGameSpeed.changeSpeedBy(+120);
-                System.out.println("Notice: SPEED SLOWER (" + AGameSpeed.gameSpeed + ")");
+                GameSpeed.changeSpeedBy(+120);
+                System.out.println("Notice: SPEED SLOWER (" + GameSpeed.gameSpeed + ")");
                 break;
 
             // Keys "+" and NumPad "+" and "]"
             case 13: case 3662: case 27:
-                AGameSpeed.changeSpeedBy(-120);
-                System.out.println("Notice: SPEED FASTER (" + AGameSpeed.gameSpeed + ")");
+                GameSpeed.changeSpeedBy(-120);
+                System.out.println("Notice: SPEED FASTER (" + GameSpeed.gameSpeed + ")");
                 break;
 
             // Key "1"
             case 2: 
-                AGameSpeed.changeFrameSkipTo(0);
+                GameSpeed.changeFrameSkipTo(0);
                 break;
 
             // Key "2"
             case 3:
-                AGameSpeed.changeFrameSkipTo(10);
+                GameSpeed.changeFrameSkipTo(10);
                 break;
 
             // Key "3"
             case 4:
-                AGameSpeed.changeFrameSkipTo(20);
+                GameSpeed.changeFrameSkipTo(20);
                 break;
 
             // Key "4"
             case 5:
-                AGameSpeed.changeFrameSkipTo(30);
+                GameSpeed.changeFrameSkipTo(30);
                 break;
 
             // Key "5"
             case 6:
-                AGameSpeed.changeFrameSkipTo(40);
+                GameSpeed.changeFrameSkipTo(40);
                 break;
 
             // Key "6"
             case 7:
-                AGameSpeed.changeFrameSkipTo(50);
+                GameSpeed.changeFrameSkipTo(50);
                 break;
 
             // Key "7"
             case 8:
-                AGameSpeed.changeFrameSkipTo(60);
+                GameSpeed.changeFrameSkipTo(60);
                 break;
 
             // Key "8"
             case 9:
-                AGameSpeed.changeFrameSkipTo(70);
+                GameSpeed.changeFrameSkipTo(70);
                 break;
 
             // Key "9"
             case 10:
-                AGameSpeed.changeFrameSkipTo(150);
+                GameSpeed.changeFrameSkipTo(150);
                 break;
 
             // Key "0"

@@ -13,20 +13,17 @@ public class AStrategyCommander {
      * Detect enemy strategy and use our strategy accordingly.
      */
     public static void update() {
-        if (!hasBeenInitialized) {
-            autoInitialize();
-        }
-        
-        // If we don't know enemy strategy, try to define it based on enemy buildings/units we know
+
+        // If we don't know enemy strategy, try to guess it based on enemy buildings/units we know
         if (AGame.timeSeconds() < 500 && AGame.getTimeFrames() % 12 == 0) {
             if (AGame.isEnemyProtoss()) {
-                defineEnemyStrategyWhenEnemyIsProtoss();
+                guessEnemyStrategyWhenEnemyIsProtoss();
             }
             else if (AGame.isEnemyTerran()) {
-                defineEnemyStrategyWhenEnemyIsTerran();
+                guessEnemyStrategyWhenEnemyIsTerran();
             }
             else if (AGame.isEnemyZerg()) {
-                defineEnemyStrategyWhenEnemyIsZerg();
+                guessEnemyStrategyWhenEnemyIsZerg();
             }
         }
 
@@ -36,34 +33,23 @@ public class AStrategyCommander {
     }
     
     // =========================================================
-    
-    /**
-     * Executed on class load.
-     */
-    private static void autoInitialize() {
-        AEnemyTerranStrategies.initialize();
-        AEnemyProtossStrategies.initialize();
-        AEnemyZergStrategies.initialize();
-    }
-    
-    // =========================================================
 
-    private static void defineEnemyStrategyWhenEnemyIsProtoss() {
-        AEnemyStrategy detectedStrategy = AEnemyProtossStrategies.detectStrategy();
+    private static void guessEnemyStrategyWhenEnemyIsProtoss() {
+        AStrategy detectedStrategy = ProtossStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }
     }
 
-    private static void defineEnemyStrategyWhenEnemyIsTerran() {
-        AEnemyStrategy detectedStrategy = AEnemyTerranStrategies.detectStrategy();
+    private static void guessEnemyStrategyWhenEnemyIsTerran() {
+        AStrategy detectedStrategy = TerranStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }
     }
 
-    private static void defineEnemyStrategyWhenEnemyIsZerg() {
-        AEnemyStrategy detectedStrategy = AEnemyZergStrategies.detectStrategy();
+    private static void guessEnemyStrategyWhenEnemyIsZerg() {
+        AStrategy detectedStrategy = ZergStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }
@@ -71,11 +57,11 @@ public class AStrategyCommander {
     
     // =========================================================
 
-    private static void changeEnemyStrategyTo(AEnemyStrategy strategy) {
-        if (!AEnemyStrategy.isEnemyStrategyKnown()) {
+    private static void changeEnemyStrategyTo(AStrategy strategy) {
+        if (!EnemyStrategy.isEnemyStrategyKnown()) {
             AGame.sendMessage("Enemy strategy: " + strategy);
         }
-        AEnemyStrategy.setEnemyStrategy(strategy);
+        EnemyStrategy.setEnemyStrategy(strategy);
         AStrategyResponse.updateEnemyStrategyChanged();
     }
     

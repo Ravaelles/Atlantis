@@ -8,7 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
-public class AAntiAirRequest {
+public class AAntiAirBuildingRequests {
 
     public static boolean handle() {
         if (shouldBuild()) {
@@ -22,16 +22,15 @@ public class AAntiAirRequest {
 
     private static boolean shouldBuild() {
         int defBuildingAntiLand = AConstructionRequests.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
-        return defBuildingAntiLand < AStrategyInformations.needDefBuildingAntiLand;
+        return defBuildingAntiLand < AStrategyInformations.antiLandBuildingsNeeded;
     }
 
     public static int expectedUnits() {
         return 3 * Select.ourBases().count();
     }
 
-    public static boolean requestDefensiveBuildingAntiAir(APosition where) {
+    public static boolean requestDefensiveBuildingAntiAir(APosition nearTo) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
-        APosition nearTo = where;
 
         if (nearTo == null) {
             for (AUnit base : Select.ourBases().listUnits()) {

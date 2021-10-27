@@ -49,6 +49,18 @@ public class Missions {
         return globalMission().isMissionAttack();
     }
 
+    public static void setGlobalMissionAttack() {
+        currentGlobalMission = ATTACK;
+    }
+
+    public static void setGlobalMissionDefend() {
+        currentGlobalMission = DEFEND;
+    }
+
+    public static void setGlobalMissionContain() {
+        currentGlobalMission = CONTAIN;
+    }
+
     public static Mission getInitialMission() {
 
         // === Handle UMS ==========================================

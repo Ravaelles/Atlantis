@@ -1,26 +1,27 @@
 package atlantis.production.orders;
 
-import atlantis.AGame;
-import atlantis.AGameSpeed;
-import atlantis.AtlantisConfig;
 import atlantis.production.ADynamicWorkerProductionManager;
+import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.A;
 
 import java.util.ArrayList;
 
 public class ProtossBuildOrder extends ABuildOrder {
-    
-    public static final ProtossBuildOrder PROTOSS_2_GATE_RANGE_EXPAND = new ProtossBuildOrder("2 Gate Range Expand");
-    public static final ProtossBuildOrder PROTOSS_2_GATEWAY_ZEALOT = new ProtossBuildOrder("2 Gateway Zealot");
-    
+
+//    public static final ProtossBuildOrder PROTOSS_2_GATE_RANGE_EXPAND = new ProtossBuildOrder("2 Gate Range Expand");
+//    public static final ProtossBuildOrder PROTOSS_2_GATEWAY_ZEALOT = new ProtossBuildOrder("2 Gateway Zealot");
+
     // =========================================================
-    
-    private ProtossBuildOrder(String relativePath) {
-        super("Protoss/" + relativePath);
+
+    public ProtossBuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
+        super(name, productionOrders);
     }
+//    protected ProtossBuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
+////        super("Protoss/" + name);
+//        super(name);
+//    }
 
     // =========================================================
 

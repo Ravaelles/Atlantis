@@ -2,10 +2,10 @@ package atlantis.production.orders;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
+import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
-import atlantis.util.A;
 
 import java.util.ArrayList;
 
@@ -17,12 +17,18 @@ public abstract class ABuildOrder {
     /**
      * Relative path to build order file as seen from project root.
      */
-    private final String buildOrderRelativePath;
-    
+    protected final String name;
+
+    /**
+     * Sequence of units/buildings/techs to be produced in this build.
+     */
+    protected final ArrayList<ProductionOrder> productionOrders;
+
     // === Constructor =========================================
 
-    public ABuildOrder(String filename) {
-        this.buildOrderRelativePath = filename + ".txt";
+    public ABuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
+        this.name = name + ".txt";
+        this.productionOrders = productionOrders;
     }
 
     // === Abstract methods ====================================
@@ -32,7 +38,6 @@ public abstract class ABuildOrder {
      * the race played.
      *
      * See ADynamicWorkerProductionManager which is also used to produce workers.
-     * @return
      */
     public boolean produceWorker() {
         if (!AGame.canAfford(50, 0) || AGame.getSupplyFree() < 1) {
@@ -73,15 +78,16 @@ public abstract class ABuildOrder {
     /**
      * Returns relative file path as seen from project root.
      */
-    public String getBuildOrderRelativePath() {
-        return buildOrderRelativePath;
+    public String getName() {
+        return name;
     }
 
     /**
      * Returns human readable name of the file.
      */
-    public String getName() {
-        String name = buildOrderRelativePath;
+    @Override
+    public String toString() {
+        String name = this.name;
         
         name = name.substring(name.lastIndexOf("/") + 1);
         name = name.substring(0, name.lastIndexOf(".txt"));

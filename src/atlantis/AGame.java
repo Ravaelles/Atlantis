@@ -99,7 +99,7 @@ public class AGame {
      * Returns game speed.
      */
     public static int getGameSpeed() {
-        return AGameSpeed.gameSpeed;
+        return GameSpeed.gameSpeed;
     }
 
     /**
