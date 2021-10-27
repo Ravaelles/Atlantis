@@ -38,16 +38,16 @@ public abstract class AProductionQueueManager {
     /**
      * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
      */
-    public static ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
-        ArrayList<ProductionOrder> result = new ArrayList<>();
-
-        for (int i = 0; i < howMany && i < AProductionQueue.currentProductionQueue.size(); i++) {
-            ProductionOrder productionOrder = AProductionQueue.currentProductionQueue.get(i);
-            result.add(productionOrder);
-        }
-
-        return result;
-    }
+//    public static ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
+//        ArrayList<ProductionOrder> result = new ArrayList<>();
+//
+//        for (int i = 0; i < howMany && i < AProductionQueue.currentProductionQueue.size(); i++) {
+//            ProductionOrder productionOrder = AProductionQueue.currentProductionQueue.get(i);
+//            result.add(productionOrder);
+//        }
+//
+//        return result;
+//    }
 
     // === Getters =============================================
 
@@ -71,6 +71,7 @@ public abstract class AProductionQueueManager {
         // The idea as follows: as long as we can afford next enqueued production order,
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
+
         for (ProductionOrder order : AProductionQueue.currentProductionQueue) {
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
             UpgradeType upgrade = order.getUpgrade();
@@ -115,6 +116,7 @@ public abstract class AProductionQueueManager {
 
             // =========================================================
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
+
             if (AGame.canAfford(AProductionQueue.mineralsNeeded, AProductionQueue.gasNeeded)) {
                 result.add(order);
             }
@@ -132,7 +134,8 @@ public abstract class AProductionQueueManager {
         // Produce some generic units (preferably combat units) if queue is empty.
         // This can mean that we run out of build orders from build order file.
         // For proper build order files this feature will activate in late game.
-        if (result.isEmpty() && AGame.canAfford(450, 250)
+
+        if (result.isEmpty() && AGame.canAfford(350, 250)
                 && (AGame.getSupplyUsed() >= 25 || AProductionQueue.initialProductionQueue.isEmpty())) {
             for (AUnitType unitType : AProductionQueue.currentBuildOrder.produceWhenNoProductionOrders()) {
                 if (AGame.hasBuildingsToProduce(unitType, false)) {

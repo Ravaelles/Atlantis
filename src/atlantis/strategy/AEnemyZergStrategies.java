@@ -5,23 +5,23 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 
-public class AEnemyZergStrategy extends AEnemyStrategy {
+public class AEnemyZergStrategies extends AEnemyStrategy {
     
     // Rush
-    public static final AEnemyStrategy ZERG_9_Pool = new AEnemyZergStrategy();
+    public static final AEnemyStrategy ZERG_9_Pool = new AEnemyZergStrategies();
     
     // Cheese
-    public static final AEnemyStrategy ZERG_4_Pool = new AEnemyZergStrategy();
-    public static final AEnemyStrategy ZERG_5_Pool = new AEnemyZergStrategy();
-    public static final AEnemyStrategy ZERG_6_Pool = new AEnemyZergStrategy();
+    public static final AEnemyStrategy ZERG_4_Pool = new AEnemyZergStrategies();
+    public static final AEnemyStrategy ZERG_5_Pool = new AEnemyZergStrategies();
+    public static final AEnemyStrategy ZERG_6_Pool = new AEnemyZergStrategies();
     
     // Expansion
-    public static final AEnemyStrategy ZERG_3_Hatch_Before_Pool = new AEnemyZergStrategy();
+    public static final AEnemyStrategy ZERG_3_Hatch_Before_Pool = new AEnemyZergStrategies();
     
     // Tech
-    public static final AEnemyStrategy ZERG_1_Hatch_Lurker = new AEnemyZergStrategy();
-    public static final AEnemyStrategy ZERG_2_Hatch_Lurker = new AEnemyZergStrategy();
-    public static final AEnemyStrategy ZERG_13_Pool_Muta = new AEnemyZergStrategy();
+    public static final AEnemyStrategy ZERG_1_Hatch_Lurker = new AEnemyZergStrategies();
+    public static final AEnemyStrategy ZERG_2_Hatch_Lurker = new AEnemyZergStrategies();
+    public static final AEnemyStrategy ZERG_13_Pool_Muta = new AEnemyZergStrategies();
     
     // =========================================================
 
@@ -103,21 +103,21 @@ public class AEnemyZergStrategy extends AEnemyStrategy {
         // === Cheese ==============================================
         
         if (pool == 1 && drones <= 4 && seconds < 120) {
-            return AEnemyZergStrategy.ZERG_4_Pool;
+            return AEnemyZergStrategies.ZERG_4_Pool;
         }
         
         if (pool == 1 && drones <= 5 && seconds < 140) {
-            return AEnemyZergStrategy.ZERG_5_Pool;
+            return AEnemyZergStrategies.ZERG_5_Pool;
         }
         
         if (pool == 1 && drones <= 6 && seconds < 160) {
-            return AEnemyZergStrategy.ZERG_6_Pool;
+            return AEnemyZergStrategies.ZERG_6_Pool;
         }
         
         // === Rushes ==============================================
         
         if (pool == 1 && drones <= 10 && seconds < 220) {
-            return AEnemyZergStrategy.ZERG_9_Pool;
+            return AEnemyZergStrategies.ZERG_9_Pool;
         }
         
         // =========================================================

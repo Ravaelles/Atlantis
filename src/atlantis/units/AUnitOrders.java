@@ -5,6 +5,7 @@ import atlantis.position.HasPosition;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
+import atlantis.wrappers.ATech;
 import bwapi.*;
 
 /**
@@ -96,12 +97,14 @@ public interface AUnitOrders {
     default boolean upgrade(UpgradeType upgrade) {
         unit().setUnitAction(UnitActions.RESEARCH_OR_UPGRADE);
         unit().setLastUnitOrderNow();
+        ATech.markAsBeingUpgraded(upgrade);
         return u().upgrade(upgrade);
     }
 
     default boolean research(TechType tech) {
         unit().setUnitAction(UnitActions.RESEARCH_OR_UPGRADE);
         unit().setLastUnitOrderNow();
+        ATech.markAsBeingResearched(tech);
         return u().research(tech);
     }
 

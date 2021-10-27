@@ -34,6 +34,7 @@ public class Select<T extends AUnit> {
     // CACHED variables
     private static SelectUnitsCache cache = new SelectUnitsCache();
     private static Cache<Integer> cacheInt = new Cache<>();
+    private static Cache<AUnit> cacheUnit = new Cache<>();
     private static Cache<List<AUnit>> cacheList = new Cache<>();
     private static AUnit _cached_mainBase = null;
 
@@ -970,14 +971,20 @@ public class Select<T extends AUnit> {
      * Selects all of our bases.
      */
     public static Select<AUnit> ourBases() {
-        if (AGame.isPlayingAsZerg()) {
-            return (Select<AUnit>) ourBuildings().ofType(
-                    AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
-                    AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
-            );
-        } else {
-            return (Select<AUnit>) our().ofType(AtlantisConfig.BASE);
-        }
+        return (Select<AUnit>) cache.get(
+                "ourBases",
+                20,
+                () -> {
+                    if (AGame.isPlayingAsZerg()) {
+                        return (Select<AUnit>) ourBuildings().ofType(
+                                AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
+                                AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
+                        );
+                    } else {
+                        return (Select<AUnit>) our().ofType(AtlantisConfig.BASE);
+                    }
+                }
+        );
     }
 
     /**
@@ -1179,21 +1186,22 @@ public class Select<T extends AUnit> {
     /**
      * Returns second (natural) base <b>or if we have only one base</b>, it returns the only base we have.
      */
-    public static AUnit secondBaseOrMainIfNoSecond() {
-        List<? extends AUnit> bases = Select.ourBases().list();
+    public static AUnit naturalBaseOrMain() {
+        return cacheUnit.get(
+                "naturalBaseOrMainIfNoSecond",
+                10,
+                () -> {
+                    List<? extends AUnit> bases = Select.ourBases().list();
 
-        int counter = 0;
-        for (AUnit base : bases) {
-            if (bases.size() <= 1) {
-                return base;
-            } else if (counter > 0) {
-                return base;
-            }
-
-            counter++;
-        }
-
-        return null;
+                    if (bases.size() >= 2) {
+                        return bases.get(1);
+                    } else if (bases.size() == 1) {
+                        return bases.get(0);
+                    } else {
+                        return null;
+                    }
+                }
+        );
     }
 
     /**

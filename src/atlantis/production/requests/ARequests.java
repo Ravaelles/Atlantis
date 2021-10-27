@@ -34,12 +34,12 @@ public abstract class ARequests {
     }
 
     public void requestDefBuildingAntiAir(APosition where) {
-        AAntiAirRequest.requestDefBuildingAntiAir(where);
+        AAntiAirRequest.requestDefensiveBuildingAntiAir(where);
     }
 
-//    public void requestDefensiveBuildingAntiAir(APosition where) {
-//        requestDefensiveBuildingAntiLand(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
-//    }
+    public void requestDefensiveBuildingAntiAir(APosition where) {
+        requestDefensiveBuildingAntiAir(where);
+    }
     
     public void requestDefensiveBuildingAntiLand(APosition where) {
         AAntiLandRequest.requestDefensiveBuildingAntiLand(where);

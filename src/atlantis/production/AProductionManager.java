@@ -28,9 +28,7 @@ public class AProductionManager {
         // =========================================================
         
         // Get build orders (aka production orders) from the manager
-        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(
-                AProductionQueue.MODE_ALL_ORDERS
-        );
+        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(AProductionQueue.MODE_ALL_ORDERS);
         for (ProductionOrder order : produceNow) {
 
             // =========================================================

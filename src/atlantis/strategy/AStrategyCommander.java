@@ -1,6 +1,7 @@
 package atlantis.strategy;
 
 import atlantis.AGame;
+import atlantis.strategy.response.AStrategyResponse;
 
 public class AStrategyCommander {
     
@@ -40,29 +41,29 @@ public class AStrategyCommander {
      * Executed on class load.
      */
     private static void autoInitialize() {
-        AEnemyTerranStrategy.initialize();
-        AEnemyProtossStrategy.initialize();
-        AEnemyZergStrategy.initialize();
+        AEnemyTerranStrategies.initialize();
+        AEnemyProtossStrategies.initialize();
+        AEnemyZergStrategies.initialize();
     }
     
     // =========================================================
 
     private static void defineEnemyStrategyWhenEnemyIsProtoss() {
-        AEnemyStrategy detectedStrategy = AEnemyProtossStrategy.detectStrategy();
+        AEnemyStrategy detectedStrategy = AEnemyProtossStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }
     }
 
     private static void defineEnemyStrategyWhenEnemyIsTerran() {
-        AEnemyStrategy detectedStrategy = AEnemyTerranStrategy.detectStrategy();
+        AEnemyStrategy detectedStrategy = AEnemyTerranStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }
     }
 
     private static void defineEnemyStrategyWhenEnemyIsZerg() {
-        AEnemyStrategy detectedStrategy = AEnemyZergStrategy.detectStrategy();
+        AEnemyStrategy detectedStrategy = AEnemyZergStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }

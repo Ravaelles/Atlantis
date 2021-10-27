@@ -11,6 +11,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.position.PositionUtil;
+import atlantis.units.Select;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
@@ -26,7 +27,7 @@ public abstract class AbstractPositionFinder {
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         
         // Special buildings can be build anywhere
-        if (building.isBase() || building.isGasBuilding() || building.isBunker()) {
+        if (building.isBase() || building.isGasBuilding() || building.isCombatBuilding()) {
             return false;
         }
         
@@ -111,6 +112,40 @@ public abstract class AbstractPositionFinder {
             if (!base.isStartLocation() && base.getPosition().distTo(position) <= 5.6) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
+        if (building.isCombatBuilding()) {
+            return false;
+        }
+
+        // We have problem only if building is both close to base and to minerals or to geyser
+        AUnit nearestBase = Select.ourBases().nearestTo(position);
+        double distToBase = nearestBase.distTo(position);
+        if (nearestBase != null && distToBase <= 8) {
+            for (AUnit mineral : Select.minerals().inRadius(8, position).listUnits()) {
+                if (mineral.distTo(position) <= (building.isPylon() ? 5 : 4)) {
+                    _CONDITION_THAT_FAILED = "Too close to mineral";
+                    return true;
+                }
+            }
+
+            for (AUnit geyser : Select.geysers().inRadius(8, position).listUnits()) {
+                if (geyser.distTo(position) <= (building.isPylon() ? 7 : 4)) {
+                    _CONDITION_THAT_FAILED = "Too close to geyser";
+                    return true;
+                }
+            }
+
+            for (AUnit gasBuilding : Select.geyserBuildings().inRadius(8, position).listUnits()) {
+                if (gasBuilding.distTo(position) <= 2 && distToBase <= 4) {
+                    _CONDITION_THAT_FAILED = "Too close to gas building";
+                    return true;
+                }
             }
         }
 

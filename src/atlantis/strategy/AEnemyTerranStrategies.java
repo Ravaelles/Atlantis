@@ -5,20 +5,20 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 
-public class AEnemyTerranStrategy extends AEnemyStrategy {
+public class AEnemyTerranStrategies extends AEnemyStrategy {
     
     // Rush
-    public static final AEnemyStrategy TERRAN_2_Rax_MnM = new AEnemyTerranStrategy();
-    public static final AEnemyStrategy TERRAN_3_Rax_MnM = new AEnemyTerranStrategy();
+    public static final AEnemyStrategy TERRAN_2_Rax_MnM = new AEnemyTerranStrategies();
+    public static final AEnemyStrategy TERRAN_3_Rax_MnM = new AEnemyTerranStrategies();
     
     // Cheese
-    public static final AEnemyStrategy TERRAN_BBS = new AEnemyTerranStrategy();
+    public static final AEnemyStrategy TERRAN_BBS = new AEnemyTerranStrategies();
     
     // Expansion
-    public static final AEnemyStrategy TERRAN_1_Rax_FE = new AEnemyTerranStrategy();
+    public static final AEnemyStrategy TERRAN_1_Rax_FE = new AEnemyTerranStrategies();
     
     // Tech
-    public static final AEnemyStrategy TERRAN_Three_Factory_Vultures = new AEnemyTerranStrategy();
+    public static final AEnemyStrategy TERRAN_Three_Factory_Vultures = new AEnemyTerranStrategies();
     
     // =========================================================
 
@@ -66,23 +66,23 @@ public class AEnemyTerranStrategy extends AEnemyStrategy {
         // === Cheese ==============================================
         
         if (barracks >= 3 && seconds < 350) {
-            return AEnemyTerranStrategy.TERRAN_3_Rax_MnM;
+            return AEnemyTerranStrategies.TERRAN_3_Rax_MnM;
         }
         
         if (barracks >= 2 && seconds < 200) {
-            return AEnemyTerranStrategy.TERRAN_BBS;
+            return AEnemyTerranStrategies.TERRAN_BBS;
         }
 
         // === Expansion ===========================================
         
         if (bases >= 2 && factories >= 1 && seconds < 300) {
-            return AEnemyTerranStrategy.TERRAN_1_Rax_FE;
+            return AEnemyTerranStrategies.TERRAN_1_Rax_FE;
         }
 
         // === Rush ================================================
         
         if (barracks >= 2 && seconds < 350) {
-            return AEnemyTerranStrategy.TERRAN_2_Rax_MnM;
+            return AEnemyTerranStrategies.TERRAN_2_Rax_MnM;
         }
         
         // =========================================================

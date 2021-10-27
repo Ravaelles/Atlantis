@@ -3,21 +3,54 @@ package atlantis.production.requests;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.position.APosition;
+import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 public class AAntiAirRequest {
 
-    public static void requestDefBuildingAntiAir(APosition where) {
+    public static boolean handle() {
+        if (shouldBuild()) {
+            return requestDefensiveBuildingAntiAir(null);
+        }
+
+        return false;
+    }
+
+    // =========================================================
+
+    private static boolean shouldBuild() {
+        int defBuildingAntiLand = AConstructionRequests.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
+        return defBuildingAntiLand < AStrategyInformations.needDefBuildingAntiLand;
+    }
+
+    public static int expectedUnits() {
+        return 3 * Select.ourBases().count();
+    }
+
+    public static boolean requestDefensiveBuildingAntiAir(APosition where) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
         APosition nearTo = where;
 
-//        if (where == null) {
-//
-//        }
+        if (nearTo == null) {
+            for (AUnit base : Select.ourBases().listUnits()) {
+                int numberOfAntiAirBuildingsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
+                        building, 8, base.getPosition()
+                );
 
-        AConstructionRequests.requestConstructionOf(building, nearTo);
+                for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
+                    AConstructionRequests.requestConstructionOf(building, base.getPosition());
+                }
+            }
+        }
+
+        if (nearTo != null) {
+            AConstructionRequests.requestConstructionOf(building, nearTo);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -25,7 +58,7 @@ public class AAntiAirRequest {
      */
     public static void requestAntiAirQuick(APosition where) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
-        int antiAirBuildings = AConstructionRequests.countExistingAndPlannedConstructions(building);
+//        int antiAirBuildings = AConstructionRequests.countExistingAndPlannedConstructions(building);
 
         // === Ensure we have required units ========================================
 
@@ -42,9 +75,10 @@ public class AAntiAirRequest {
                     building, 8, base.getPosition()
             );
 
-            for (int i = 0; i < 2 - numberOfAntiAirBuildingsNearBase; i++) {
+            for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
                 AConstructionRequests.requestConstructionOf(building, base.getPosition());
             }
         }
     }
+
 }

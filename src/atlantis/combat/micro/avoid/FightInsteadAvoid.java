@@ -155,7 +155,7 @@ public class FightInsteadAvoid {
         return unit.isMelee()
                 && Select.enemyRealUnits()
                     .canBeAttackedBy(unit, false, true)
-                    .inRadius(2, unit)
+                    .inRadius(3, unit)
                     .isNotEmpty();
     }
 

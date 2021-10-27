@@ -1,4 +1,4 @@
-package atlantis.strategy;
+package atlantis.strategy.response;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
@@ -9,6 +9,8 @@ import atlantis.production.requests.AAntiLandRequest;
 import atlantis.production.requests.ADetectorRequest;
 import atlantis.production.requests.ARequests;
 import atlantis.scout.AScoutManager;
+import atlantis.strategy.AEnemyStrategy;
+import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -16,16 +18,21 @@ import atlantis.units.Select;
 
 public class AStrategyResponse {
     
-    public static void update() {
-        int defBuildingAntiLand = AConstructionRequests.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
-        if (defBuildingAntiLand < AStrategyInformations.needDefBuildingAntiLand) {
-            AAntiLandRequest.requestDefensiveBuildingAntiLand(null);
+    public static boolean update() {
+        if (AGame.notNthGameFrame(10)) {
+            return false;
         }
+
+        if (AAntiLandRequest.handle()) {
+            return true;
+        }
+
+        return false;
     }
     
     // =========================================================
 
-    protected static void updateEnemyStrategyChanged() {
+    public static void updateEnemyStrategyChanged() {
         AEnemyStrategy enemyStrategy = AEnemyStrategy.getEnemyStrategy();
         
         // === Rush ========================================

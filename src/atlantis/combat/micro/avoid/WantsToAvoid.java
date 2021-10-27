@@ -35,17 +35,17 @@ public class WantsToAvoid {
 //            return true;
 //        }
 
-        if (!Us.isTerran() && unit.lastUnderAttackMoreThanAgo(150) && unit.lastStartedAttackLessThanAgo(10)) {
-            unit.setTooltip("Kill");
-            return true;
-        }
+//        if (!Us.isTerran() && unit.lastUnderAttackMoreThanAgo(150) && unit.lastStartedAttackLessThanAgo(10)) {
+//            unit.setTooltip("Kill");
+//            return true;
+//        }
 
 //        if (unit.isRanged() && (unit.lastStartedAttackMoreThanAgo( 10) || unit.cooldownRemaining() == 0)) {
 //            return true;
 //        }
 
         // Running is not viable - so many other units nearby, would get stuck
-        if (Select.all().inRadius(0.5, unit).count() >= 6) {
+        if (Select.all().inRadius(0.4, unit).count() >= 6) {
             return true;
         }
 

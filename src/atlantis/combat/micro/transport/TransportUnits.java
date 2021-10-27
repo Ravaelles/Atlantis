@@ -117,12 +117,13 @@ public class TransportUnits {
     private static boolean shouldDropTheBaby(AUnit transport, AUnit baby) {
         return baby.isLoaded()
                 && transport.hasCargo()
-                && baby.cooldownRemaining() <= 2
+//                && baby.cooldownRemaining() <= 8
                 && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
                 && (
                         isTransportInDanger(transport)
                         || transport.woundPercent() >= 87
                         || !isBabyInDanger(baby, false)
+                        || transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD)
                 );
     }
 

@@ -125,37 +125,6 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         return pylonsNearby > 0;
     }
 
-    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
-
-        // We have problem only if building is both close to base and to minerals or to geyser
-        AUnit nearestBase = Select.ourBases().nearestTo(position);
-        double distToBase = nearestBase.distTo(position);
-        if (nearestBase != null && distToBase <= 8) {
-            for (AUnit mineral : Select.minerals().inRadius(8, position).listUnits()) {
-                if (mineral.distTo(position) <= (building.isPylon() ? 5 : 4)) {
-                    _CONDITION_THAT_FAILED = "Too close to mineral";
-                    return true;
-                }
-            }
-
-            for (AUnit geyser : Select.geysers().inRadius(8, position).listUnits()) {
-                if (geyser.distTo(position) <= (building.isPylon() ? 7 : 4)) {
-                    _CONDITION_THAT_FAILED = "Too close to geyser";
-                    return true;
-                }
-            }
-
-            for (AUnit gasBuilding : Select.geyserBuildings().inRadius(8, position).listUnits()) {
-                if (gasBuilding.distTo(position) <= 2 && distToBase <= 4) {
-                    _CONDITION_THAT_FAILED = "Too close to gas building";
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     private static boolean isPowerConditionFulfilled(AUnitType building, APosition position) {
         return Atlantis.game().hasPower(position.toTilePosition())
                 || building.isPylon()

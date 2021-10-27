@@ -443,29 +443,11 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units currently in production ========================================
 
-        // Units
-        for (AUnit unit : Select.ourUnfinished().listUnits()) {
-            AUnitType type = unit.type();
-            if (type.equals(AUnitType.Zerg_Egg)) {
-                type = unit.getBuildType();
-            }
-            paintSideMessage(type.shortName(), Color.Green);
-        }
-
-        // Techs
-        for (TechType techType : ATech.getCurrentlyResearching()) {
-            paintSideMessage(techType.toString(), Color.Green);
-        }
-
-        // Upgrades
-        for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
-            paintSideMessage(upgradeType.toString(), Color.Green);
-        }
+        paintCurrentlyInProduction();
 
         // === Display units that should be produced right now or any time ==================
 
-        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(AProductionQueue.MODE_ALL_ORDERS
-        );
+        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(AProductionQueue.MODE_ALL_ORDERS);
         for (ProductionOrder order : produceNow) {
             paintSideMessage(order.shortName(), Color.Yellow);
         }
@@ -489,6 +471,33 @@ public class AAdvancedPainter extends APainter {
 
         if (produceNow.isEmpty() && fullQueue.isEmpty()) {
             paintSideMessage("Nothing to produce - it seems to be a bug", Color.Red);
+        }
+    }
+
+    private static void paintCurrentlyInProduction() {
+        // Units & buildings
+        for (AUnit unit : Select.ourUnfinished().list()) {
+            AUnitType type = unit.type();
+            if (type.equals(AUnitType.Zerg_Egg)) {
+                type = unit.getBuildType();
+            }
+            paintSideMessage(type.shortName(), Color.Green);
+        }
+
+        // Constructions already planned
+        for (ConstructionOrder order : AConstructionRequests.getNotStartedConstructions()) {
+            AUnitType type = order.getBuildingType();
+            paintSideMessage(type.shortName(), Color.Teal);
+        }
+
+        // Techs
+        for (TechType techType : ATech.getCurrentlyResearching()) {
+            paintSideMessage(techType.toString(), Color.Green);
+        }
+
+        // Upgrades
+        for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
+            paintSideMessage(upgradeType.toString(), Color.Green);
         }
     }
 

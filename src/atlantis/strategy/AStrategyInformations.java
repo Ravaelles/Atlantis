@@ -13,7 +13,7 @@ import atlantis.units.Select;
 
 public class AStrategyInformations {
     
-    protected static int needDefBuildingAntiLand = 0;
+    public static int needDefBuildingAntiLand = 0;
 
     // === Setters ========================================
     

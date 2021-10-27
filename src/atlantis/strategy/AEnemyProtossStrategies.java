@@ -5,20 +5,20 @@ import atlantis.units.AUnitType;
 import atlantis.units.Select;
 
 
-public class AEnemyProtossStrategy extends AEnemyStrategy {
+public class AEnemyProtossStrategies extends AEnemyStrategy {
     
     // Rush
-    public static final AEnemyStrategy PROTOSS_2_Gate = new AEnemyProtossStrategy();
+    public static final AEnemyStrategy PROTOSS_2_Gate = new AEnemyProtossStrategies();
     
     // Cheese
-    public static final AEnemyStrategy PROTOSS_3_Gate = new AEnemyProtossStrategy();
+    public static final AEnemyStrategy PROTOSS_3_Gate = new AEnemyProtossStrategies();
     
     // Expansion
-    public static final AEnemyStrategy PROTOSS_12_Nexus = new AEnemyProtossStrategy();
+    public static final AEnemyStrategy PROTOSS_12_Nexus = new AEnemyProtossStrategies();
     
     // Tech
-    public static final AEnemyStrategy PROTOSS_2_Gate_DT = new AEnemyProtossStrategy();
-    public static final AEnemyStrategy PROTOSS_Carrier_Push = new AEnemyProtossStrategy();
+    public static final AEnemyStrategy PROTOSS_2_Gate_DT = new AEnemyProtossStrategies();
+    public static final AEnemyStrategy PROTOSS_Carrier_Push = new AEnemyProtossStrategies();
     
     // =========================================================
 
@@ -64,25 +64,25 @@ public class AEnemyProtossStrategy extends AEnemyStrategy {
         // === Dark Templar ========================================
         
         if (citadel >= 1 && seconds < 320) {
-            return AEnemyProtossStrategy.PROTOSS_2_Gate_DT;
+            return AEnemyProtossStrategies.PROTOSS_2_Gate_DT;
         }
 
         // === Three Gateway =======================================
         
         if (gateways >= 3 && seconds < 300) {
-            return AEnemyProtossStrategy.PROTOSS_3_Gate;
+            return AEnemyProtossStrategies.PROTOSS_3_Gate;
         }
 
         // === Two Gateway =========================================
         
         if (gateways == 2 && seconds < 290) {
-            return AEnemyProtossStrategy.PROTOSS_2_Gate;
+            return AEnemyProtossStrategies.PROTOSS_2_Gate;
         }
 
         // === 12 Nexus ============================================
         
         if (nexus == 2 && seconds < 290) {
-            return AEnemyProtossStrategy.PROTOSS_12_Nexus;
+            return AEnemyProtossStrategies.PROTOSS_12_Nexus;
         }
         
         // === Carrier Push ========================================

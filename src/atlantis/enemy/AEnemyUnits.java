@@ -4,7 +4,7 @@ import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
-import atlantis.strategy.AStrategyResponse;
+import atlantis.strategy.response.AStrategyResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;

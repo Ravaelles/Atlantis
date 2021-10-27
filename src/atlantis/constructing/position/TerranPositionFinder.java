@@ -108,22 +108,22 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     // =========================================================
     // Low-level
     
-    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
-
-        // We have problem only if building is both close to base and to minerals or to geyser
-        AUnit nearestBase = Select.ourBases().nearestTo(position);
-        if (nearestBase != null && nearestBase.distTo(position) <= 3) {
-            Collection<AUnit> mineralsInRange
-                    = Select.minerals().inRadius(3, position).listUnits();
-            for (AUnit mineral : mineralsInRange) {
-                if (mineral.distTo(position) <= (1 + building.getDimensionRight() / 32)) {
-                    _CONDITION_THAT_FAILED = "MINERAL TOO CLOSE";
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+//    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
+//
+//        // We have problem only if building is both close to base and to minerals or to geyser
+//        AUnit nearestBase = Select.ourBases().nearestTo(position);
+//        if (nearestBase != null && nearestBase.distTo(position) <= 3) {
+//            Collection<AUnit> mineralsInRange
+//                    = Select.minerals().inRadius(3, position).listUnits();
+//            for (AUnit mineral : mineralsInRange) {
+//                if (mineral.distTo(position) <= (1 + building.getDimensionRight() / 32)) {
+//                    _CONDITION_THAT_FAILED = "MINERAL TOO CLOSE";
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
     private static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
         boolean canThisBuildingHaveAddon = building.canHaveAddon();

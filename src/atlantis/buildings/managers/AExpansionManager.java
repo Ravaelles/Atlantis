@@ -84,7 +84,7 @@ public class AExpansionManager {
                 requestConstructionOf(
                         AtlantisConfig.BASE, 
                         fakeProductionOrder,
-                        Select.secondBaseOrMainIfNoSecond().getPosition()
+                        Select.naturalBaseOrMain().getPosition()
                 );
             } 
             

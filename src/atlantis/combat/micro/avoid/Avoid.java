@@ -55,7 +55,7 @@ public class Avoid {
             return 2.5;
         }
 
-        return 1.8 + (enemy.isQuick() ? 2 : 0);
+        return 3;
     }
 
     protected static String getTooltip(AUnit unit, AUnit enemy) {

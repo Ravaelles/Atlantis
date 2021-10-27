@@ -227,6 +227,16 @@ public class AConstructionRequests {
         return notStarted;
     }
 
+    public static ArrayList<ConstructionOrder> getNotStartedConstructions() {
+        ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
+        for (ConstructionOrder constructionOrder : constructionOrders) {
+            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+                notStarted.add(constructionOrder);
+            }
+        }
+        return notStarted;
+    }
+
     /**
      * Returns every construction order that is active in this moment. It will include even those buildings
      * that haven't been started yet.
