@@ -1,11 +1,11 @@
 package atlantis;
 
 import atlantis.enemy.UnitsArchive;
+import atlantis.production.orders.ProductionQueueRefresher;
 import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.constructing.*;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.production.orders.AProductionQueueManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
@@ -141,7 +141,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOur()) {
-                AProductionQueueManager.rebuildQueue();
+                ProductionQueueRefresher.rebuildProductionQueue();
 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
                 if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
@@ -180,7 +180,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOur()) {
-                AProductionQueueManager.rebuildQueue();
+                ProductionQueueRefresher.rebuildProductionQueue();
                 ASquadManager.battleUnitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
                 if (!unit.type().isGasBuilding()) {
@@ -289,7 +289,7 @@ public class Atlantis implements BWEventListener {
                 }
 
                 // =========================================================
-                AProductionQueueManager.rebuildQueue();
+                ProductionQueueRefresher.rebuildProductionQueue();
 
                 // Add to combat squad if it's military unit
                 if (unit.isRealUnit()) {
@@ -346,7 +346,7 @@ public class Atlantis implements BWEventListener {
     }
 
     private void ourNewUnit(AUnit unit) {
-        AProductionQueueManager.rebuildQueue();
+        ProductionQueueRefresher.rebuildProductionQueue();
 
         // Our unit
         if (unit.isOur()) {

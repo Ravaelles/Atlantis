@@ -22,7 +22,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 
         APosition enemyBase = AEnemyUnits.enemyBase();
         if (enemyBase != null) {
-            return containEnemyAtPoint = containPointIfEnemyBaseIsKnown(containEnemyAtPoint);
+            return containEnemyAtPoint = containPointIfEnemyBaseIsKnown(enemyBase);
         }
 
         AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();

@@ -4,10 +4,8 @@ import atlantis.AGame;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.units.Count;
 import atlantis.units.Select;
 import atlantis.wrappers.ATech;
-import atlantis.wrappers.MappingCounter;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -24,14 +22,14 @@ public abstract class AProductionQueueManager {
      * <b>currentProductionQueue</b> are populated.
      */
     public static void switchToBuildOrder(ABuildOrder buildOrder) {
-        ABuildOrderApplicator.applyNow(buildOrder);
-
-//        ProductionQueue.initialProductionQueue.clear();
-        ProductionQueue.currentProductionQueue.clear();
-
         ProductionQueue.setBuildOrder(buildOrder);
 
-        rebuildQueue();
+//        ProductionQueueRefresher.applyNow(buildOrder);
+
+//        ProductionQueue.initialProductionQueue.clear();
+//        ProductionQueue.currentProductionQueue.clear();
+
+        ProductionQueueRefresher.rebuildProductionQueue();
     }
 
     // =========================================================
@@ -150,71 +148,4 @@ public abstract class AProductionQueueManager {
         return result;
     }
 
-    /**
-     * If new unit is created (it doesn't need to exist, it's enough that it's just started training) or your
-     * unit is destroyed, we need to rebuild the production orders queue from the beginning (based on initial
-     * queue read from file). <br />
-     * This method will detect which units we lack and assign to <b>currentProductionQueue</b> list next units
-     * that we need. Note this method doesn't check if we can afford them, it only sets up proper sequence of
-     * next units to produce.
-     */
-    public static void rebuildQueue() {
-
-        // Clear old production queue.
-        ProductionQueue.currentProductionQueue.clear();
-
-        // It will store [UnitType->(int)howMany] mapping as we gonna process initial
-        // production queue and check if we currently have units needed
-        MappingCounter<AUnitType> virtualCounter = new MappingCounter<>();
-
-        // =========================================================
-
-        for (ProductionOrder order : ProductionQueue.get().productionOrders()) {
-            boolean isOkayToAdd = false;
-
-            // === Unit ========================================
-
-            if (order.getUnitOrBuilding() != null) {
-                AUnitType type = order.getUnitOrBuilding();
-                virtualCounter.incrementValueFor(type);
-
-                int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0)
-                        + (type.isBase() ? (type.isPrimaryBase() ? 1 : 0) : 0)
-                        + (type.isOverlord() ? 1 : 0) + virtualCounter.getValueFor(type);
-
-                int weHaveThisManyUnits = Count.unitsOfGivenTypeOrSimilar(type);
-
-                if (type.isBuilding()) {
-                    weHaveThisManyUnits += AConstructionRequests.countNotFinishedConstructionsOfType(type);
-                }
-
-                // If we don't have this unit, add it to the current production queue.
-                if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
-                    isOkayToAdd = true;
-                }
-
-                System.out.println(order.getUnitOrBuilding() + ", isOkayToAdd = " + isOkayToAdd);
-            }
-
-            // === Tech ========================================
-
-            else if (order.getTech() != null) {
-                isOkayToAdd = !ATech.isResearched(order.getTech(), order);
-            }
-
-            // === Upgrade ========================================
-
-            else if (order.getUpgrade() != null) {
-                isOkayToAdd = !ATech.isResearched(order.getUpgrade(), order);
-            }
-
-            // =========================================================
-            if (isOkayToAdd) {
-                ProductionQueue.currentProductionQueue.add(order);
-                if (ProductionQueue.currentProductionQueue.size() >= 15) {
-                    break;
-                }
-            }
-        }
-    }
 }

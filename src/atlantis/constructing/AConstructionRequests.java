@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.AProductionQueueManager;
+import atlantis.production.orders.ProductionQueueRefresher;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -54,9 +54,6 @@ public class AConstructionRequests {
         }
 
         if (!AGame.hasTechAndBuildingsToProduce(building)) {
-            System.out.println("No req for = " + building);
-            System.out.println(building.getWhatIsRequired());
-            System.out.println(building.getWhatBuildsIt());
             if (Us.isProtoss() && AGame.getSupplyTotal() <= 10) {
                 return false;
             }
@@ -105,7 +102,7 @@ public class AConstructionRequests {
             constructionOrders.add(newConstructionOrder);
 
             // Rebuild production queue as new building is about to be built
-            AProductionQueueManager.rebuildQueue();
+            ProductionQueueRefresher.rebuildProductionQueue();
 
             return true;
         }
