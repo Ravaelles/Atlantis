@@ -422,6 +422,7 @@ public class ARunningManager {
                 && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(1.3, position).count() <= 0)
                 && Select.neutral().inRadius(3.5, position).isEmpty()
                 && unitPosition.hasPathTo(position)
+                && unitPosition.groundDistanceTo(position) <= 10
 //                && Select.neutral().inRadius(1.2, position).count() == 0
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0

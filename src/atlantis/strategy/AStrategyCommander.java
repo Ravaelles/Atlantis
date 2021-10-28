@@ -2,6 +2,7 @@ package atlantis.strategy;
 
 import atlantis.AGame;
 import atlantis.strategy.response.AStrategyResponse;
+import atlantis.strategy.response.AStrategyResponseFactory;
 
 public class AStrategyCommander {
     
@@ -29,7 +30,7 @@ public class AStrategyCommander {
 
         // =========================================================
         
-        AStrategyResponse.update();
+        AStrategyResponseFactory.forOurRace().update();
     }
     
     // =========================================================
@@ -62,7 +63,7 @@ public class AStrategyCommander {
             AGame.sendMessage("Enemy strategy: " + strategy);
         }
         EnemyStrategy.setEnemyStrategy(strategy);
-        AStrategyResponse.updateEnemyStrategyChanged();
+        AStrategyResponseFactory.forOurRace().updateEnemyStrategyChanged();
     }
     
 }

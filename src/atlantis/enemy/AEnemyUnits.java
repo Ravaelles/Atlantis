@@ -5,6 +5,7 @@ import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.strategy.response.AStrategyResponse;
+import atlantis.strategy.response.AStrategyResponseFactory;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
@@ -134,7 +135,7 @@ public class AEnemyUnits {
         enemyUnitsDiscovered.put(enemyUnit, new AFoggedUnit(enemyUnit));
 
         if (enemyUnit.effCloaked()) {
-            AStrategyResponse.hiddenUnitDetected(enemyUnit);
+            AStrategyResponseFactory.forOurRace().updateHiddenUnitDetected(enemyUnit);
         }
     }
 

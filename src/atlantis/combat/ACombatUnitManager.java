@@ -80,11 +80,11 @@ public class ACombatUnitManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
-        if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
+        if (DontDisturbInterrupt.dontInterruptImportantActions(unit)) {
             return true;
         }
 
-        if (DontDisturbInterrupt.dontInterruptImportantActions(unit)) {
+        if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
             return true;
         }
 

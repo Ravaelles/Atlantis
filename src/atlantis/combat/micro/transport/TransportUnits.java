@@ -40,6 +40,7 @@ public class TransportUnits {
             if (transport != null && transport.hasFreeSpaceFor(unit) && !transport.hasCargo()) {
                 unit.load(transport);
                 transport.load(unit);
+                APainter.paintCircleFilled(unit, 7, Color.Blue);
                 unit.setTooltip("Embark!");
                 return true;
             }

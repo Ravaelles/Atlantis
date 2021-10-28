@@ -77,6 +77,7 @@ public class ZergStrategies extends AStrategy {
         int pool = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spawning_Pool);
         int extractor = Select.enemy().countUnitsOfType(AUnitType.Zerg_Extractor);
         int spires = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spire);
+        int mutalisks = Select.enemy().countUnitsOfType(AUnitType.Zerg_Mutalisk);
         int hydraliskDen = Select.enemy().countUnitsOfType(AUnitType.Zerg_Hydralisk_Den);
         int drones = Select.enemy().countUnitsOfType(AUnitType.Zerg_Drone);
         int lings = Select.enemy().countUnitsOfType(AUnitType.Zerg_Zergling);
@@ -89,10 +90,10 @@ public class ZergStrategies extends AStrategy {
         
         // === Tech ================================================
         
-        if (extractor >= 1 && hydraliskDen == 0 && bases >= 2 && drones >= 12 || spires >= 1) {
+        if (extractor >= 1 && hydraliskDen == 0 && bases >= 2 && drones >= 12 || spires >= 1 || mutalisks >= 1) {
             return ZERG_13_Pool_Muta;
         }
-        
+
         if (extractor >= 1 && pool >= 1 && lair >= 1 && bases < 2) {
             return ZERG_1_Hatch_Lurker;
         }

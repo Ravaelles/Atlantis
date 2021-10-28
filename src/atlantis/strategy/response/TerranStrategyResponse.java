@@ -5,7 +5,7 @@ import atlantis.strategy.AStrategyInformations;
 
 public class TerranStrategyResponse extends AStrategyResponse {
 
-    protected static boolean rushDefense(AStrategy enemyStrategy) {
+    protected boolean rushDefense(AStrategy enemyStrategy) {
         if (shouldSkipAntiRushDefensiveBuilding(enemyStrategy)) {
             return false;
         }
@@ -14,7 +14,7 @@ public class TerranStrategyResponse extends AStrategyResponse {
         return true;
     }
 
-    protected static int rushDefenseDefensiveBuildings(AStrategy enemyStrategy) {
+    protected int rushDefenseDefensiveBuildings(AStrategy enemyStrategy) {
         return enemyStrategy.isGoingCheese() ? 2 : 1;
     }
 

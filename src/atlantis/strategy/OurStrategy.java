@@ -35,9 +35,8 @@ public class OurStrategy {
      * Use this strategy and build order.
      */
     public static void setTo(AStrategy strategy) {
-        System.out.println("### Use strategy `" + strategy + "` ###");
-
         ourStrategy = strategy;
+        System.out.println("### Use strategy `" + strategy + "` ###");
 
 //        System.out.println("--------------");
 //        for (ProductionOrder po : ourStrategy.buildOrder().getProductionOrders()) {

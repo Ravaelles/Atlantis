@@ -2,6 +2,9 @@ package atlantis.util;
 
 import java.util.TreeMap;
 
+/**
+ * V is type of objects stored e.g. Booleans or generic Object (which can be then cast in methods).
+ */
 public class Cache<V> {
 
     protected final TreeMap<String, V> data = new TreeMap<>();

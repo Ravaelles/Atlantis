@@ -3,7 +3,7 @@ package atlantis;
 public class UseMap {
 
     public static String activeMap() {
-        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === UMS maps - great for bot development ============
 
@@ -16,7 +16,7 @@ public class UseMap {
 //        return "ums/micro challenge.scx"; // Even more minigames
 //        return "ums/ConTrol2.scx"; // More minigames
 //        return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones vs. 2 drones, lings vs. goons etc
-//        return "ums/vsGosuComputer.scx"; // Game somewhat against a player
+        return "ums/vsGosuComputer.scx"; // Game somewhat against a player
 //        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
 //        return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships vs. Dragoons
 //        return "ums/trainzvreaver.scm"; // Zerglings & Hydras vs. 2 Reavers & Shuttle
