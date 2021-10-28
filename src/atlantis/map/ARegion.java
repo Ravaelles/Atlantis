@@ -2,7 +2,6 @@ package atlantis.map;
 
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import bwta.BaseLocation;
 import bwta.Region;
 
 import java.util.List;
@@ -56,8 +55,8 @@ public class ARegion implements HasPosition {
         return APosition.create(region.getCenter());
     }
 
-    public List<AChokepoint> getChokepoints() {
-        return region.getChokepoints().stream().map(AChokepoint::create).collect(Collectors.toList());
+    public List<AChoke> chokes() {
+        return region.getChokepoints().stream().map(AChoke::create).collect(Collectors.toList());
     }
 
     public List<ABaseLocation> getBaseLocations() {

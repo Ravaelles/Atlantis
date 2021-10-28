@@ -16,7 +16,7 @@ public class AInitialActions {
             AGame.setUmsMode(true);
         }
 
-        if (!AMap.disableSomeOfTheChokePoints() || Select.ourWorkers().count() != 4) {
+        if (!AMap.disableSomeOfTheChokes() || Select.ourWorkers().count() != 4) {
             AGame.setUmsMode(true);
         }
 

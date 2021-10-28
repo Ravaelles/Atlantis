@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 public class AMap {
 
     private static final BWTA bwta = null;
-    private static final Set<AChokepoint> disabledChokepoints = new HashSet<>();
+    private static final Set<AChoke> disabledChokes = new HashSet<>();
     private static List<ARegion> cached_regions;
-    private static List<AChokepoint> cached_chokePoints = null;
-    private static AChokepoint cached_mainBaseChokepoint = null;
-    private static HashMap<APosition, AChokepoint> cached_basesToChokepoints;
-//    private static AChokepoint cached_basesToChokepoints = null;
+    private static List<AChoke> cached_chokes = null;
+    private static AChoke cached_mainBaseChoke = null;
+    private static HashMap<APosition, AChoke> cached_basesToChokes;
+//    private static AChoke cached_basesToChokepoints = null;
 //    private static Map<String, Positions> regionsToPolygonPoints = new HashMap<>();
 
     // =========================================================
@@ -43,7 +43,7 @@ public class AMap {
     public static void initMapAnalysis() {
         System.out.print("Analyzing map... ");
 
-        cached_basesToChokepoints = new HashMap<>();
+        cached_basesToChokes = new HashMap<>();
         cached_regions = new ArrayList<>();
 
         BWTA.readMap(Atlantis.game());
@@ -81,8 +81,8 @@ public class AMap {
      * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
      * method returns this choke point. It's perfect position to defend (because it's *choke* point).
      */
-    public static AChokepoint getChokepointForMainBase() {
-        if (cached_mainBaseChokepoint == null) {
+    public static AChoke getChokeForMainBase() {
+        if (cached_mainBaseChoke == null) {
             AUnit mainBase = Select.mainBase();
             if (mainBase != null) {
 
@@ -107,37 +107,37 @@ public class AMap {
                     }
 
                     // Try to match choke points between the two regions
-                    for (AChokepoint mainRegionChoke : mainRegion.getChokepoints()) {
+                    for (AChoke mainRegionChoke : mainRegion.chokes()) {
                         // System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
                         // + (mainRegionChoke.getFirstRegion()) + " / " + (mainRegionChoke.getSecondRegion()));
                         if (naturalBaseRegion.equals(mainRegionChoke.getFirstRegion())
                                 || naturalBaseRegion.equals(mainRegionChoke.getSecondRegion())) {
-                            cached_mainBaseChokepoint = mainRegionChoke;
+                            cached_mainBaseChoke = mainRegionChoke;
                             // System.out.println("MAIN CHOKE FOUND! " + cached_mainBaseChokepoint);
                             break;
                         }
                     }
 
-                    if (cached_mainBaseChokepoint == null) {
-                        cached_mainBaseChokepoint = mainRegion.getChokepoints().iterator().next();
+                    if (cached_mainBaseChoke == null) {
+                        cached_mainBaseChoke = mainRegion.chokes().iterator().next();
                     }
                 }
             }
         }
 
-        return cached_mainBaseChokepoint;
+        return cached_mainBaseChoke;
     }
 
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
-    public static AChokepoint getChokepointForNaturalBase(APosition relativeTo) {
+    public static AChoke getChokeForNaturalBase(APosition relativeTo) {
         if (relativeTo == null) {
             return null;
         }
 
-        if (cached_basesToChokepoints.containsKey(relativeTo)) {
-            AChokepoint choke = cached_basesToChokepoints.get(relativeTo);
+        if (cached_basesToChokes.containsKey(relativeTo)) {
+            AChoke choke = cached_basesToChokes.get(relativeTo);
 //            APainter.paintCircle(APosition.create(choke.getCenter()), 5, Color.White);
 //            APainter.paintCircle(APosition.create(choke.getCenter()), 7, Color.White);
 //            APainter.paintTextCentered(
@@ -157,18 +157,18 @@ public class AMap {
             return null;
         }
 
-        AChokepoint chokepointForMainBase = getChokepointForMainBase();
-        if (chokepointForMainBase == null) {
+        AChoke chokeForMainBase = getChokeForMainBase();
+        if (chokeForMainBase == null) {
             return null;
         }
 
-        for (AChokepoint chokepoint : naturalRegion.getChokepoints()) {
+        for (AChoke choke : naturalRegion.chokes()) {
 //            naturalRegion.
 //            APosition center = APosition.create(chokepoint.getCenter());
 //            if (chokepoint.getCenter() > 1) {
-            if (chokepoint.getCenter().distTo(chokepointForMainBase) > 1) {
-                cached_basesToChokepoints.put(relativeTo, chokepoint);
-                return chokepoint;
+            if (choke.getCenter().distTo(chokeForMainBase) > 1) {
+                cached_basesToChokes.put(relativeTo, choke);
+                return choke;
             }
         }
 
@@ -418,11 +418,11 @@ public class AMap {
 //        return null;
 //    }
 
-    public static AChokepoint getNearestChokepoint(APosition position) {
+    public static AChoke getNearestChoke(APosition position) {
         double nearestDist = 99999;
-        AChokepoint nearest = null;
+        AChoke nearest = null;
 
-        for (AChokepoint chokePoint : getChokePoints()) {
+        for (AChoke chokePoint : getChokes()) {
             double dist = position.groundDistanceTo(chokePoint.getCenter()) - chokePoint.getWidth() / 32.0 / 2;
             if (dist < nearestDist) {
                 nearestDist = dist;
@@ -525,16 +525,16 @@ public class AMap {
      * Returns list of all choke points i.e. places where suddenly it gets extra tight and fighting there
      * usually prefers ranged units. They are perfect places for terran bunkers.
      */
-    public static List<AChokepoint> getChokePoints() {
-        if (cached_chokePoints == null) {
-            cached_chokePoints = new ArrayList<>();
+    public static List<AChoke> getChokes() {
+        if (cached_chokes == null) {
+            cached_chokes = new ArrayList<>();
             for (Chokepoint choke : BWTA.getChokepoints()) {
-                if (!disabledChokepoints.contains(choke)) { // choke.isDisabled()
-                    cached_chokePoints.add(AChokepoint.create(choke));
+                if (!disabledChokes.contains(choke)) { // choke.isDisabled()
+                    cached_chokes.add(AChoke.create(choke));
                 }
             }
         }
-        return cached_chokePoints;
+        return cached_chokes;
     }
 
     public static List<ARegion> getRegions() {
@@ -613,7 +613,7 @@ public class AMap {
      *
      * @return true if everything went okay
      */
-    public static boolean disableSomeOfTheChokePoints() {
+    public static boolean disableSomeOfTheChokes() {
         AUnit mainBase = Select.mainBase();
         if (mainBase == null) {
             return false;
@@ -627,11 +627,11 @@ public class AMap {
             return false;
         }
 
-        Collection<AChokepoint> chokes = baseRegion.getChokepoints();
-        for (AChokepoint choke : chokes) {
-            if (baseRegion.getChokepoints().contains(choke)) {
+        Collection<AChoke> chokes = baseRegion.chokes();
+        for (AChoke choke : chokes) {
+            if (baseRegion.chokes().contains(choke)) {
                 System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
-                disabledChokepoints.add(choke);    //choke.setDisabled(true);
+                disabledChokes.add(choke);    //choke.setDisabled(true);
             }
         }
 
@@ -684,22 +684,22 @@ public class AMap {
         return null;
     }
 
-    public static AChokepoint getEnemyMainChokepoint() {
+    public static AChoke getEnemyMainChoke() {
         APosition enemyMain = AEnemyUnits.enemyBase();
         if (enemyMain == null) {
             return null;
         }
 
-        return getNearestChokepoint(enemyMain);
+        return getNearestChoke(enemyMain);
     }
 
-    public static AChokepoint getEnemyNaturalChokepoint() {
+    public static AChoke getEnemyNaturalChoke() {
         APosition enemyNatural = getEnemyNatural();
         if (enemyNatural == null) {
             return null;
         }
 
-        return getChokepointForNaturalBase(enemyNatural);
+        return getChokeForNaturalBase(enemyNatural);
     }
 
     /**
@@ -712,7 +712,7 @@ public class AMap {
     }
 
     public static boolean distanceToNearestChokeLessThan(AUnit unit, double dist) {
-        for (AChokepoint choke : getChokePoints()) {
+        for (AChoke choke : getChokes()) {
             if ((choke.getCenter().distTo(unit) - choke.getWidth()) <= dist) {
                 return true;
             }

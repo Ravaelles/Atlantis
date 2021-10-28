@@ -16,7 +16,7 @@ import atlantis.constructing.ConstructionOrderStatus;
 import atlantis.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
-import atlantis.map.AChokepoint;
+import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.ARegion;
 import atlantis.position.APosition;
@@ -24,6 +24,7 @@ import atlantis.position.PositionHelper;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.AProductionQueueManager;
+import atlantis.production.requests.AAntiLandBuildingRequests;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
@@ -548,28 +549,35 @@ public class AAdvancedPainter extends APainter {
                     continue;
                 }
 
-                // Paint box
-                paintRectangle(positionToBuild,
-                        buildingType.getTileWidth(), buildingType.getTileHeight(), color);
-
-                // Draw X
-                paintLine(PositionHelper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
-                        PositionHelper.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
-                        color
-                );
-                paintLine(positionToBuild,
-                        buildingType.getTileWidth() * 32,
-                        buildingType.getTileHeight() * 32,
-                        color
-                );
-
-                // Draw text
-                paintTextCentered(
-                        positionToBuild.translateByPixels(buildingType.getDimensionLeft(), 69),
-                        buildingType.shortName(), color
-                );
+                paintConstructionPlace(positionToBuild, buildingType, null, color);
             }
         }
+    }
+
+    private static void paintConstructionPlace(APosition positionToBuild, AUnitType buildingType, String text, Color color) {
+        if (text == null) {
+            text = buildingType.shortName();
+        }
+
+        // Paint box
+        paintRectangle(positionToBuild,
+                buildingType.getTileWidth(), buildingType.getTileHeight(), color);
+
+        // Draw X
+        paintLine(PositionHelper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
+                PositionHelper.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
+                color
+        );
+        paintLine(positionToBuild,
+                buildingType.getTileWidth() * 32,
+                buildingType.getTileHeight() * 32,
+                color
+        );
+
+        // Draw text
+        paintTextCentered(
+                positionToBuild.translateByPixels(buildingType.getDimensionLeft(), 69), text, color
+        );
     }
 
     /**
@@ -1117,8 +1125,8 @@ public class AAdvancedPainter extends APainter {
     protected static void paintChokepoints() {
 
         // All chokes
-        List<AChokepoint> chokePoints = AMap.getChokePoints();
-        for (AChokepoint choke : chokePoints) {
+        List<AChoke> chokePoints = AMap.getChokes();
+        for (AChoke choke : chokePoints) {
             paintChoke(choke, Color.Brown, "");
         }
     }
@@ -1138,13 +1146,25 @@ public class AAdvancedPainter extends APainter {
         APosition enemyBase = AMap.getEnemyNatural();
         paintBase(enemyBase, "Enemy natural", Color.Orange);
 
+        // Our main choke
+        AChoke mainChoke = AMap.getChokeForMainBase();
+        paintChoke(mainChoke, Color.Green, "Main choke");
+
         // Our natural choke
-        AChokepoint naturalChoke = AMap.getChokepointForNaturalBase(AMap.getNaturalBaseLocation());
+        AChoke naturalChoke = AMap.getChokeForNaturalBase(AMap.getNaturalBaseLocation());
         paintChoke(naturalChoke, Color.Green, "Natural choke");
 
         // Enemy natural choke
-        AChokepoint enemyNaturalChoke = AMap.getEnemyNaturalChokepoint();
+        AChoke enemyNaturalChoke = AMap.getEnemyNaturalChoke();
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
+
+        // Next defensive building position
+        AUnitType building = AAntiLandBuildingRequests.building();
+        paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.shortName(), Color.Brown);
+    }
+
+    private static void paintBuildingPlanned(APosition position, Color brown, String shortName) {
+
     }
 
     private static void paintMineralDistance() {

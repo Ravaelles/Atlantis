@@ -15,7 +15,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Select;
 import atlantis.util.Enemy;
-import atlantis.util.Us;
 
 public abstract class AStrategyResponse {
 
@@ -84,10 +83,10 @@ public abstract class AStrategyResponse {
         if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
             AStrategyInformations.detectorsNeeded(1);
             ARequests.getInstance().requestDetectorQuick(
-                    AMap.getChokepointForMainBase().getCenter()
+                    AMap.getChokeForMainBase().getCenter()
             );
             ARequests.getInstance().requestDetectorQuick(
-                    AMap.getChokepointForNaturalBase(Select.mainBase().getPosition()).getCenter()
+                    AMap.getChokeForNaturalBase(Select.mainBase().getPosition()).getCenter()
             );
         }
     }

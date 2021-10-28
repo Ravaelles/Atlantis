@@ -4,7 +4,7 @@ import atlantis.CameraManager;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
-import atlantis.map.AChokepoint;
+import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -41,7 +41,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     // =========================================================
 
     private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
-        AChokepoint chokepoint = AMap.getChokepointForNaturalBase(enemyBase);
+        AChoke chokepoint = AMap.getChokeForNaturalBase(enemyBase);
         if (chokepoint != null) {
             CameraManager.centerCameraOn(chokepoint.getCenter());
             return containEnemyAtPoint = chokepoint.getCenter();
@@ -70,7 +70,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 ////            return null;
 ////        }
 ////
-////        AChokepoint choke = AMap.getChokepointForNaturalBase(mainBase.getPosition());
+////        AChoke choke = AMap.getChokepointForNaturalBase(mainBase.getPosition());
 ////        return choke == null ? null : choke.getCenter();
 //    }
 

@@ -1,12 +1,11 @@
 package atlantis.debug;
 
 import atlantis.Atlantis;
-import atlantis.map.AChokepoint;
+import atlantis.map.AChoke;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
 import atlantis.units.AUnit;
-import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import bwapi.*;
 
@@ -206,7 +205,7 @@ public class APainter {
         bwapi.setTextSize(Text.Size.Large);
     }
 
-    protected static void paintChoke(AChokepoint choke, Color color, String extraText) {
+    protected static void paintChoke(AChoke choke, Color color, String extraText) {
         if (choke == null || isDisabled()) {
             return;
         }

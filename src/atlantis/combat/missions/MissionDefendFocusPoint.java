@@ -1,51 +1,66 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.map.AChokepoint;
+import atlantis.AtlantisConfig;
+import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Select;
+import atlantis.util.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
 
+    private Cache<APosition> cache = new Cache<>();
+
+    // =========================================================
+
     @Override
     public APosition focusPoint() {
-        if (AGame.isUms()) {
-            return null;
-        }
+        return cache.get(
+            "focusPoint",
+            30,
+            () -> {
+                if (AGame.isUms()) {
+                    return null;
+                }
 
-        AUnit mainBase = Select.mainBase();
-        if (mainBase == null) {
-            return null;
-        }
+                AUnit mainBase = Select.mainBase();
+                if (mainBase == null) {
+                    return null;
+                }
 
-        // === Focus enemy attacking the main base =================
+                // === Focus enemy attacking the main base =================
 
-        AUnit nearEnemy = Select.enemy().combatUnits().nearestTo(mainBase);
-        if (nearEnemy != null) {
-            return nearEnemy.getPosition();
-        }
+                AUnit nearEnemy = Select.enemy().combatUnits().inRadius(10, mainBase).nearestTo(mainBase);
+                if (nearEnemy != null) {
+                    return nearEnemy.getPosition();
+                }
 
-        // === Return position near the choke point ================
+                // === Gather around defensive buildings ===================
 
-//        if (Select.ourBases().count() <= 1) {
-//            return APosition.create(AtlantisMap.getChokepointForMainBase().getCenter());
-//        }
-//        else {
-        AChokepoint chokepointForNaturalBase = AMap.getChokepointForNaturalBase(mainBase.getPosition());
-        if (chokepointForNaturalBase != null) {
-            return APosition.create(chokepointForNaturalBase.getCenter());
-        }
+                AUnit defBuilding = Select.ourOfTypeIncludingUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
+                if (defBuilding != null) {
+                    return defBuilding.getPosition().translateTilesTowards(mainBase.getPosition(), 4);
+                }
 
-        // === Return position near the first building ================
+                // === Return position near the choke point ================
 
-        AUnit building = Select.ourBuildings().first();
-        if (building != null) {
-            return APosition.create(AMap.getNearestChokepoint(building.getPosition()).getCenter());
-        }
+                AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.getPosition());
+                if (chokepointForNaturalBase != null) {
+                    return APosition.create(chokepointForNaturalBase.getCenter());
+                }
 
-        return null;
+                // === Return position near the first building ================
+
+                AUnit building = Select.ourBuildings().first();
+                if (building != null) {
+                    return APosition.create(AMap.getNearestChoke(building.getPosition()).getCenter());
+                }
+
+                return null;
+            }
+        );
     }
 
 //    public static APosition focusPoint() {

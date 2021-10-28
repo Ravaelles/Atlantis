@@ -1,10 +1,8 @@
 package atlantis.position;
 
 import atlantis.map.ABaseLocation;
-import atlantis.map.AChokepoint;
-import atlantis.position.APosition;
+import atlantis.map.AChoke;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwapi.Unit;
@@ -65,8 +63,8 @@ public class PositionUtil {
         else if (object2 instanceof Position) {
             toPosition = (Position) object2;
         }
-        else if (object2 instanceof AChokepoint) {
-            toPosition = ((AChokepoint) object2).getCenter();
+        else if (object2 instanceof AChoke) {
+            toPosition = ((AChoke) object2).getCenter();
         }
         else if (object2 instanceof ABaseLocation) {
             toPosition = ((ABaseLocation) object2).getPosition();

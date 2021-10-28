@@ -52,6 +52,10 @@ public class FightInsteadAvoid {
             return false;
         }
 
+        if (unit.isSquadScout()) {
+            return Select.our().inRadius(6, unit).atLeast(3);
+        }
+
         // Attacking critically important unit
         if (ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
             unit.setTooltip("Crucial!");

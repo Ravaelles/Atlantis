@@ -34,6 +34,18 @@ public class ATargetingImportant extends AEnemyTargeting {
         AUnit target;
 
         // =========================================================
+        // Target AIR UNITS INRANGE
+
+        target = enemyUnits.clone()
+                .air()
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
+        if (target != null) {
+            if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
+            return target;
+        }
+
+        // =========================================================
         // Target COMBAT UNITS IN RANGE
 
         target = enemyUnits.clone()

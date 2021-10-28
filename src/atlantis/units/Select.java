@@ -771,6 +771,11 @@ public class Select<T extends AUnit> {
         return this;
     }
 
+    public Select<? extends AUnit> notGathering() {
+        data.removeIf(unit -> unit.isGatheringMinerals() || unit.isGatheringGas());
+        return this;
+    }
+
     /**
      * Selects units being infantry.
      */
@@ -794,6 +799,11 @@ public class Select<T extends AUnit> {
 
     public Select<? extends AUnit> workers() {
         data.removeIf(unit -> !unit.isWorker());
+        return this;
+    }
+
+    public Select<? extends AUnit> air() {
+        data.removeIf(unit -> !unit.isAirUnit());
         return this;
     }
 

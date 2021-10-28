@@ -2,7 +2,7 @@ package atlantis.combat.micro.terran;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
-import atlantis.map.AChokepoint;
+import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -200,7 +200,7 @@ public class TerranTank {
     // =========================================================
     
     private static boolean canSiegeHere(AUnit tank) {
-        AChokepoint choke = AMap.getNearestChokepoint(tank.getPosition());
+        AChoke choke = AMap.getNearestChoke(tank.getPosition());
         if (choke == null) {
             return true;
         }

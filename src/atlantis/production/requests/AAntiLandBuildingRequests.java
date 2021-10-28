@@ -1,8 +1,9 @@
 package atlantis.production.requests;
 
-import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.constructing.AConstructionRequests;
+import atlantis.map.AChoke;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
@@ -40,33 +41,50 @@ public class AAntiLandBuildingRequests {
     }
 
     public static boolean requestDefensiveBuildingAntiLand(APosition nearTo) {
-        AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
-
-//        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
-
-        AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
         if (nearTo == null) {
-            if (previousBuilding != null) {
-//            AGame.sendMessage("New bunker near " + previousBuilding);
-//            System.out.println("New bunker near " + previousBuilding);
-                nearTo = previousBuilding.getPosition();
-            }
-            else {
-    //            System.out.println("New bunker at default");
-                nearTo = null;
-            }
-        }
-
-        if (nearTo == null) {
-            nearTo = Select.naturalBaseOrMain() != null ? Select.naturalBaseOrMain().getPosition() : null;
+            nearTo = positionForNextBuilding();
         }
 
         if (nearTo != null) {
-            AConstructionRequests.requestConstructionOf(building, nearTo);
+            AConstructionRequests.requestConstructionOf(building(), nearTo);
             return true;
         }
 
         return false;
+    }
+
+    public static APosition positionForNextBuilding() {
+        AUnitType building = building();
+        APosition nearTo = null;
+
+//        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
+
+
+        AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
+        if (previousBuilding != null) {
+            nearTo = previousBuilding.getPosition();
+        }
+
+        if (nearTo == null) {
+
+            // Place near the base
+            nearTo = Select.naturalBaseOrMain() != null ? Select.naturalBaseOrMain().getPosition() : null;
+//            nearTo = Select.mainBase();
+        }
+
+        // Move towards nearest choke
+        if (nearTo != null) {
+            AChoke choke = AMap.getNearestChoke(nearTo);
+            if (choke != null) {
+                nearTo = nearTo.translateTilesTowards(choke.getPosition(), 7);
+            }
+        }
+
+        return nearTo;
+    }
+
+    public static AUnitType building() {
+        return AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
     }
 
 }

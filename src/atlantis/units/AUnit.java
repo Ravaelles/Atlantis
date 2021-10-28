@@ -1660,6 +1660,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isAirUnitAntiAir();
     }
 
+    public boolean isSquadScout() {
+        return squad() != null && equals(squad().getSquadScout());
+    }
+
     //    public boolean isFacingTheSameDirection(AUnit otherUnit) {
 //        return Math.abs(getAngle() - otherUnit.getAngle()) <= 0.3;
 //    }

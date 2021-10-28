@@ -8,15 +8,15 @@ import bwta.Region;
 
 import java.util.Objects;
 
-public class AChokepoint implements HasPosition {
+public class AChoke implements HasPosition {
 
     private Chokepoint chokepoint;
 
-    public static AChokepoint create(Chokepoint chokepoint) {
-        AChokepoint aChokepoint = new AChokepoint();
-        aChokepoint.chokepoint = chokepoint;
+    public static AChoke create(Chokepoint chokepoint) {
+        AChoke choke = new AChoke();
+        choke.chokepoint = chokepoint;
 
-        return aChokepoint;
+        return choke;
     }
 
 
@@ -40,8 +40,8 @@ public class AChokepoint implements HasPosition {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AChokepoint)) return false;
-        AChokepoint that = (AChokepoint) o;
+        if (!(o instanceof AChoke)) return false;
+        AChoke that = (AChoke) o;
         return chokepoint.equals(that.chokepoint);
     }
 

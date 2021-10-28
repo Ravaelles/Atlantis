@@ -1,6 +1,6 @@
 package atlantis.position;
 
-import atlantis.map.AChokepoint;
+import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.ARegion;
 import atlantis.units.AUnit;
@@ -136,7 +136,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return PositionUtil.groundDistanceTo(this, position);
     }
 
-    public double distTo(AChokepoint choke) {
+    public double distTo(AChoke choke) {
         return PositionUtil.distanceTo(p, choke);
     }
 
