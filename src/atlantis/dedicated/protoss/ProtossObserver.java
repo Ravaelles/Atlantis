@@ -5,6 +5,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 
 public class ProtossObserver {
@@ -32,7 +33,7 @@ public class ProtossObserver {
     // =========================================================
 
     private static boolean handleSpreadOut(AUnit observer) {
-        Select<AUnit> observers = (Select<AUnit>) Select.ourOfType(AUnitType.Protoss_Observer)
+        Selection observers = Select.ourOfType(AUnitType.Protoss_Observer)
                 .inRadius(17, observer).exclude(observer);
         if (observers.count() > 0) {
             AUnit otherObserver = observers.nearestTo(observer);

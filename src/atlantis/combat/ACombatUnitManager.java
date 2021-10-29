@@ -12,6 +12,7 @@ import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
 

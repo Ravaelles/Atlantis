@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
@@ -56,7 +57,7 @@ public class TerranVulture {
         }
         
         // Don't cluster mines too much
-        Select<?> nearbyMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);
+        Selection nearbyMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);
         if ((nearbyMines.count() <= 3 || (unit.getMinesCount() >= 3 && nearbyMines.count() <= 4)) 
                 && nearbyMines.inRadius(1, unit).count() == 0) {
             unit.useTech(TechType.Spider_Mines, unit.position());

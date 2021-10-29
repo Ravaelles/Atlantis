@@ -9,6 +9,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {

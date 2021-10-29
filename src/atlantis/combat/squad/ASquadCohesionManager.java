@@ -5,6 +5,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.Us;
 
@@ -78,7 +79,7 @@ public class ASquadCohesionManager {
             return false;
         }
 
-        Select<AUnit> ourCombatUnits = Select.ourCombatUnits();
+        Selection ourCombatUnits = Select.ourCombatUnits();
 
         if (AGame.timeSeconds() < 350 && ourCombatUnits.clone().inRadius(1.3, unit).count() >= 2) {
             return true;
@@ -104,7 +105,7 @@ public class ASquadCohesionManager {
             return false;
         }
 
-        Select<AUnit> closeFriends = (Select<AUnit>) Select.ourCombatUnits().exclude(unit);
+        Selection closeFriends = Select.ourCombatUnits().exclude(unit);
         AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
         APosition center = squadCenter(unit);
 
@@ -129,7 +130,7 @@ public class ASquadCohesionManager {
 
     // =========================================================
 
-    private static boolean isSquadQuiteNumerousAndUnitTooFarFromCenter(AUnit unit, AUnit nearestFriend, Select<AUnit> closeFriends) {
+    private static boolean isSquadQuiteNumerousAndUnitTooFarFromCenter(AUnit unit, AUnit nearestFriend, Selection closeFriends) {
         if (
                 (unit.squadSize() >= 5 && closeFriends.clone().inRadius(3, unit).count() <= 1)
                         && (unit.squadSize() >= 12 && closeFriends.clone().inRadius(5, unit).count() <= 1)

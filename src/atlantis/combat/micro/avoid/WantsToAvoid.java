@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.Units;
 
 public class WantsToAvoid {

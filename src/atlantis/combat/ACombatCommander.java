@@ -7,6 +7,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 

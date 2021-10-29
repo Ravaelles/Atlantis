@@ -4,6 +4,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 
 public class TerranInfantry {
@@ -39,7 +40,7 @@ public class TerranInfantry {
     // =========================================================
 
     private static AUnit defineBunkerToLoadTo(AUnit unit) {
-        Select<?> bunkers = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
+        Selection bunkers = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
                 .inRadius(15, unit).havingSpaceFree(unit.spaceRequired());
         AUnit bunker = bunkers.nearestTo(unit);
         if (bunker != null) {

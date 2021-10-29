@@ -5,7 +5,9 @@ import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.Units;
+import atlantis.units.select.Selection;
 
 public class FightInsteadAvoid {
 
@@ -32,7 +34,7 @@ public class FightInsteadAvoid {
         this.unit = unit;
         this.enemies = enemies;
 
-        Selection<AUnit> selector = Select.from(enemies);
+        Selection selector = Select.from(enemies);
         invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effCloaked().first();
         invisibleCombatUnit = selector.clone().effCloaked().combatUnits().first();
         lurkerOrReaver = selector.clone().ofType(AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver).first();

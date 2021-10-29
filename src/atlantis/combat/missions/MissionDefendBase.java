@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class MissionDefendBase extends Mission {
 

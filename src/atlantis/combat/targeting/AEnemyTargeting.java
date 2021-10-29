@@ -3,14 +3,16 @@ package atlantis.combat.targeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
+import atlantis.units.select.Selection;
 
 public class AEnemyTargeting {
 
 //    protected static final boolean DEBUG = true;
     protected static final boolean DEBUG = false;
 
-    protected static Select<? extends AUnit> enemyBuildings;
-    protected static Select<? extends AUnit> enemyUnits;
+    protected static Selection enemyBuildings;
+    protected static Selection enemyUnits;
 
     /**
      * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
@@ -100,9 +102,9 @@ public class AEnemyTargeting {
     // =========================================================
 
     private static AUnit selectWeakestEnemyInRangeOfType(AUnitType enemyType, AUnit enemy, AUnit ourUnit) {
-        Select<AUnit> targets = (Select<AUnit>) Select.enemy()
+        Selection targets = Select.enemy()
                 .ofType(enemyType)
-//        Select<AUnit> targets = (Select<AUnit>) Select.enemies(enemyType)
+//        Selection targets = Select.enemies(enemyType)
                 .effVisible()
                 .canBeAttackedBy(ourUnit, true, true);
 

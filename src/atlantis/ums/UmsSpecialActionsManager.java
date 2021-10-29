@@ -5,6 +5,7 @@ import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
@@ -40,8 +41,8 @@ public class UmsSpecialActionsManager {
     }
 
     private static boolean goToBeaconsIfNeeded() {
-        Select<AUnit> ours = Select.our();
-        Select<AUnit> beacons = (Select<AUnit>) Select.neutral().ofType(
+        Selection ours = Select.our();
+        Selection beacons = Select.neutral().ofType(
                 AUnitType.Special_Terran_Beacon,
                 AUnitType.Special_Terran_Flag_Beacon,
                 AUnitType.Special_Protoss_Beacon,

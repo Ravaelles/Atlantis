@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.Units;
 
 import java.util.List;

@@ -9,6 +9,7 @@ import atlantis.tech.SpellCoordinator;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;

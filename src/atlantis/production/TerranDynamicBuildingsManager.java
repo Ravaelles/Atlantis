@@ -5,6 +5,7 @@ import atlantis.constructing.AConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
@@ -21,7 +22,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      */
     private static void factoryIfNeeded() {
         if (AGame.canAffordWithReserved(250, 100)) {
-            Select<?> factories = Select.ourOfType(AUnitType.Terran_Factory);
+            Selection factories = Select.ourOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
                     AConstructionRequests.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);

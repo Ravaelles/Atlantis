@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 
 public class ADynamicWorkerProductionManager {

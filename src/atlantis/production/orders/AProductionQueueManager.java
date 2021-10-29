@@ -5,6 +5,7 @@ import atlantis.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;

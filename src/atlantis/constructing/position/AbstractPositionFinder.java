@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {

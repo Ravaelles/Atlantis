@@ -3,6 +3,7 @@ package atlantis.combat;
 import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.position.PositionUtil;
 
 public class ACombatEvaluatorExtraConditions {

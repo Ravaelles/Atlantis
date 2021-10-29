@@ -7,6 +7,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 /**
  * Represents construction of a building, including ones not yet started.

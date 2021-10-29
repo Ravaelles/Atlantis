@@ -2,6 +2,8 @@ package atlantis.units.select;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
+import atlantis.constructing.AConstructionManager;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -48,7 +50,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all of our finished and existing units (units AND buildings).
      */
-    public static Selection<AUnit> our() {
+    public static Selection our() {
         String cachePath;
         return cache.get(
                 cachePath = "our",
@@ -62,7 +64,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -70,7 +72,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
-    public static Selection<? extends AUnit> enemy() {
+    public static Selection enemy() {
         String cachePath;
         return cache.get(
                 cachePath = "enemy",
@@ -84,7 +86,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -92,7 +94,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all game units including minerals, geysers and enemy units.
      */
-    public static Selection<? extends AUnit> all() {
+    public static Selection all() {
         String cachePath;
         return cache.get(
                 cachePath = "all",
@@ -104,7 +106,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     data.addAll(enemyUnits());
                     data.addAll(neutralUnits());
 
-                    return new Selection<>(data, "all");
+                    return new Selection(data, "all");
                 }
         );
     }
@@ -115,7 +117,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all of our bases.
      */
-    public static Selection<AUnit> ourBases() {
+    public static Selection ourBases() {
         String cachePath;
         return cache.get(
                 cachePath = "ourBases",
@@ -136,7 +138,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe).
      */
-    public static Selection<AUnit> ourWorkers() {
+    public static Selection ourWorkers() {
         String cachePath;
         return cache.get(
                 cachePath = "ourWorkers",
@@ -150,7 +152,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -158,7 +160,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all units of given type(s).
      */
-    public static Selection<? extends AUnit> allOfType(AUnitType type) {
+    public static Selection allOfType(AUnitType type) {
         String cachePath;
         return cache.get(
                 cachePath = "allOfType:" + type.shortName(),
@@ -172,7 +174,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -180,7 +182,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
-    public static Selection<? extends AUnit> enemyCombatUnits() {
+    public static Selection enemyCombatUnits() {
         String cachePath;
         return cache.get(
                 cachePath = "enemyCombatUnits",
@@ -194,7 +196,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -202,8 +204,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects enemy units of given type(s).
      */
-//    public static Selection<? extends AUnit> enemies(AUnitType... type) {
-    public static Selection<? extends AUnit> enemies(AUnitType type) {
+//    public static Selection enemies(AUnitType... type) {
+    public static Selection enemies(AUnitType type) {
         String cachePath;
         return cache.get(
                 cachePath = "enemies",
@@ -217,7 +219,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -225,7 +227,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects our units of given type(s).
      */
-    public static Selection<AUnit> ourOfType(AUnitType... type) {
+    public static Selection ourOfType(AUnitType... type) {
         String cachePath;
         return cache.get(
                 cachePath = "ourOfType",
@@ -239,7 +241,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -289,7 +291,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects our units of given type(s).
      */
-    public static Selection<AUnit> ourOfTypeIncludingUnfinished(AUnitType type) {
+    public static Selection ourOfTypeIncludingUnfinished(AUnitType type) {
         String cachePath;
         return cache.get(
                 cachePath = "ourOfTypeIncludingUnfinished:" + type.shortName(),
@@ -303,7 +305,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -311,7 +313,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all of our finished combat units (no buildings, workers, spider mines etc).
      */
-    public static Selection<AUnit> ourCombatUnits() {
+    public static Selection ourCombatUnits() {
         String cachePath;
         return cache.get(
                 cachePath = "ourCombatUnits",
@@ -325,7 +327,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -333,19 +335,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all of our units (units, buildings, but no spider mines etc), <b>even those unfinished</b>.
      */
-    public static Selection<AUnit> ourIncludingUnfinished() {
+    public static Selection ourIncludingUnfinished() {
         String cachePath;
         return cache.get(
                 cachePath = "ourIncludingUnfinished",
                 1,
                 () -> {
-                    List<AUnit> data = new ArrayList<>();
+                    List<AUnit> data = new ArrayList<>(ourUnits());
 
-                    for (AUnit unit : ourUnits()) {
-                        data.add(unit);
-                    }
-
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -353,7 +351,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects our unfinished units.
      */
-    public static Selection<AUnit> ourUnfinished() {
+    public static Selection ourUnfinished() {
         String cachePath;
         return cache.get(
                 cachePath = "ourUnfinished",
@@ -367,7 +365,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -375,7 +373,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects our units, not buildings, not spider mines, not larvae.
      */
-    public static Selection<AUnit> ourRealUnits() {
+    public static Selection ourRealUnits() {
         String cachePath;
         return cache.get(
                 cachePath = "ourRealUnits",
@@ -389,7 +387,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -397,7 +395,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects our unfinished units.
      */
-    public static Selection<AUnit> ourUnfinishedRealUnits() {
+    public static Selection ourUnfinishedRealUnits() {
         String cachePath;
         return cache.get(
                 cachePath = "ourUnfinishedRealUnits",
@@ -412,7 +410,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -420,7 +418,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
-    public static Selection<? extends AUnit> enemyRealUnits() {
+    public static Selection enemyRealUnits() {
         String cachePath;
         return cache.get(
                 cachePath = "enemyRealUnits",
@@ -433,7 +431,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
-    public static Selection<? extends AUnit> enemyRealUnits(boolean includeBuildings) {
+    public static Selection enemyRealUnits(boolean includeBuildings) {
         String cachePath;
         return cache.get(
                 cachePath = "enemyRealUnits" + (includeBuildings ? "T" : "F"),
@@ -446,7 +444,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
-    public static Selection<? extends AUnit> enemyRealUnits(
+    public static Selection enemyRealUnits(
             boolean includeGroundUnits, boolean includeAirUnits, boolean includeBuildings
     ) {
         String cachePath;
@@ -464,7 +462,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         }
                     }
 
-                    return new Selection<>(data, cachePath);
+                    return new Selection(data, cachePath);
                 }
         );
     }
@@ -473,19 +471,19 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all visible neutral units (minerals, geysers, critters). Since they're visible, the
      * parameterized type is AUnit
      */
-    public static Selection<? extends AUnit> neutral() {
+    public static Selection neutral() {
         String cachePath;
         return cache.get(
                 cachePath = "neutral",
                 1,
-                () -> new Selection<>(neutralUnits(), cachePath)
+                () -> new Selection(neutralUnits(), cachePath)
         );
     }
 
     /**
      * Selects all (accessible) minerals on the map.
      */
-    public static Selection<? extends AUnit> minerals() {
+    public static Selection minerals() {
         String cachePath;
         return cache.get(
                 cachePath = "minerals",
@@ -501,7 +499,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all geysers on the map.
      */
-    public static Selection<? extends AUnit> geysers() {
+    public static Selection geysers() {
         String cachePath;
         return cache.get(
                 cachePath = "geysers",
@@ -510,7 +508,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
-    public static Selection<? extends AUnit> geyserBuildings() {
+    public static Selection geyserBuildings() {
         String cachePath;
         return cache.get(
                 cachePath = "geyserBuildings",
@@ -526,15 +524,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Create initial search-pool of units from given collection of units.
      */
-    public static Selection<? extends AUnit> from(Collection<AUnit> units) {
-        return new Selection<>(units, null);
+    public static Selection from(Collection<AUnit> units) {
+        return new Selection(units, null);
     }
 
     /**
      * Create initial search-pool of units from Units object.
      */
-    public static Selection<? extends AUnit> from(Units units) {
-        return new Selection<>(units.list(), null);
+    public static Selection from(Units units) {
+        return new Selection(units.list(), null);
     }
 
     /**
@@ -596,7 +594,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all our tanks, both sieged and unsieged.
      */
-    public static Selection<AUnit> ourTanks() {
+    public static Selection ourTanks() {
         String cachePath;
         return cache.get(
                 cachePath = "ourTanks",
@@ -608,7 +606,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all our sieged tanks.
      */
-    public static Selection<AUnit> ourTanksSieged() {
+    public static Selection ourTanksSieged() {
         String cachePath;
         return cache.get(
                 cachePath = "ourTanksSieged",
@@ -620,7 +618,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all of our Marines, Firebats, Ghosts and Medics.
      */
-    public static Selection<AUnit> ourTerranInfantry() {
+    public static Selection ourTerranInfantry() {
         String cachePath;
         return cache.get(
                 cachePath = "ourTerranInfantry",
@@ -632,7 +630,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all of our Marines, Firebats, Ghosts.
      */
-    public static Selection<AUnit> ourTerranInfantryWithoutMedics() {
+    public static Selection ourTerranInfantryWithoutMedics() {
         String cachePath;
         return cache.get(
                 cachePath = "ourTerranInfantryWithoutMedics",
@@ -644,13 +642,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all of our Zerg Larvas.
      */
-    public static Selection<AUnit> ourLarva() {
+    public static Selection ourLarva() {
         String cachePath;
         return cache.get(
                 cachePath = "ourLarva",
                 1,
                 () -> {
-                    Selection<? extends AUnit> selectedUnits = ourIncludingUnfinished();
+                    Selection selectedUnits = ourIncludingUnfinished();
                     selectedUnits.list().removeIf(unit -> !unit.is(AUnitType.Zerg_Larva));
                     return selectedUnits;
                 }
@@ -660,13 +658,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all our buildings including those unfinished.
      */
-    public static Selection<AUnit> ourBuildingsIncludingUnfinished() {
+    public static Selection ourBuildingsIncludingUnfinished() {
         String cachePath;
         return cache.get(
                 cachePath = "ourBuildingsIncludingUnfinished",
                 1,
                 () -> {
-                    Selection<? extends AUnit> selectedUnits = Select.ourIncludingUnfinished();
+                    Selection selectedUnits = Select.ourIncludingUnfinished();
                     selectedUnits.list().removeIf(unit -> !unit.type().isBuilding() && !unit.type().isAddon());
                     return selectedUnits;
                 }
@@ -676,7 +674,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all our finished buildings.
      */
-    public static Selection<AUnit> ourBuildings() {
+    public static Selection ourBuildings() {
         String cachePath;
         return cache.get(
                 cachePath = "ourBuildings",
@@ -695,6 +693,33 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             }
         }
         return null;
+    }
+
+    /**
+     * Selects our workers that are free to construct building or repair a unit. That means they mustn't
+     * repait any other unit or construct other building.
+     */
+    public static Selection ourWorkersFreeToBuildOrRepair() {
+        Selection selectedUnits = Select.ourWorkers();
+        selectedUnits.list().removeIf(unit ->
+                unit.isConstructing() || unit.isRepairing() || AConstructionManager.isBuilder(unit)
+                        || AScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()
+        );
+
+        return selectedUnits;
+    }
+
+    /**
+     * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe) that are either
+     * gathering minerals or gas.
+     */
+    public static Selection ourWorkersThatGather(boolean onlyNotCarryingAnything) {
+        Selection selectedUnits = Select.our();
+        selectedUnits.list().removeIf(unit ->
+                !unit.isWorker() || (!unit.isGatheringGas() && !unit.isGatheringMinerals())
+                        || (onlyNotCarryingAnything && (unit.isCarryingGas() || unit.isCarryingMinerals()))
+        );
+        return selectedUnits;
     }
 
 }

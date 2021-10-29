@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class ABarracksManager {
 
@@ -57,23 +58,23 @@ public class ABarracksManager {
 
     // =========================================================
     
-    private static void buildUnit(AUnit barracks) {
-        AUnitType unitToBuild = defineUnitToBuild(barracks);
-        if (unitToBuild != null) {
-            barracks.train(unitToBuild);
-        }
-    }
+//    private static void buildUnit(AUnit barracks) {
+//        AUnitType unitToBuild = defineUnitToBuild(barracks);
+//        if (unitToBuild != null) {
+//            barracks.train(unitToBuild);
+//        }
+//    }
 
     private static AUnitType defineUnitToBuild(AUnit barracks) {
         return AUnitType.Terran_Marine;
     }
 
-    private static boolean hasEmptySlot(AUnit barracks) {
-        if (AGame.isPlayingAsZerg()) {
-            return Select.ourLarva().count() > 0;
-        } else {
-            return barracks.getTrainingQueue().size() == 0;
-        }
-    }
+//    private static boolean hasEmptySlot(AUnit barracks) {
+//        if (AGame.isPlayingAsZerg()) {
+//            return Select.ourLarva().count() > 0;
+//        } else {
+//            return barracks.getTrainingQueue().size() == 0;
+//        }
+//    }
 
 }

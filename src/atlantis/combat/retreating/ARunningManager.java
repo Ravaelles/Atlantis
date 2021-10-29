@@ -8,8 +8,10 @@ import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
+import atlantis.units.select.Selection;
 import atlantis.util.A;
 import bwapi.Color;
 
@@ -376,7 +378,7 @@ public class ARunningManager {
             return false;
         }
 
-        Select<AUnit> friendsTooClose = (Select<AUnit>) Select.ourRealUnits()
+        Selection friendsTooClose = Select.ourRealUnits()
                 .exclude(unit).groundUnits().inRadius(0.17 + unit.woundPercent() / 300.0, unit);
 
         if (friendsTooClose.count() <= 1) {

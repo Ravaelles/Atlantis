@@ -14,15 +14,13 @@ import bwapi.Position;
 
 import java.util.*;
 
-//public class Selection<T extends AUnit> {
 public class Selection {
 
-//    protected final List data;
     protected final List<AUnit> data;
 
     /**
      * To cache a value we need all previous filters so in the end it looks like:
-     * "our.buildings.inRadius:2,[2,8]"
+     * "our.buildings.inRadius:2,10"
      */
     protected String currentCachePath = null;
 
@@ -37,7 +35,7 @@ public class Selection {
 
     protected String addToCachePath(String method) {
         currentCachePath += (currentCachePath.length() > 0 ? "." : "") + method;
-        System.out.println("path = " + currentCachePath);
+//        System.out.println("path = " + currentCachePath);
         return currentCachePath;
     }
 
@@ -67,9 +65,7 @@ public class Selection {
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>otherUnit</b>.
      */
     public Selection inRadius(double maxDist, AUnit unit) {
-        String cachePath;
         return Select.cache.get(
-//                "inRadius:" + maxDist + ":" + unit.id(),
                 addToCachePath("inRadius:" + maxDist + ":" + unit.id()),
                 0,
                 () -> {
@@ -83,21 +79,21 @@ public class Selection {
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
     public Selection inRadius(double maxDist, Position position) {
-//        return cache.get(
-//                "inRadius:" + maxDist + ":" + position.toString(),
-//                0,
-//                () -> {
-        Iterator unitsIterator = data.iterator();// units.iterator();
-        while (unitsIterator.hasNext()) {
-            AUnit unit = (AUnit) unitsIterator.next();
-            if (unit.distTo(position) > maxDist) {
-                unitsIterator.remove();
-            }
-        }
+        return Select.cache.get(
+                addToCachePath("inRadius:" + maxDist + ":" + position),
+                1,
+                () -> {
+                    Iterator unitsIterator = data.iterator();// units.iterator();
+                    while (unitsIterator.hasNext()) {
+                        AUnit unit = (AUnit) unitsIterator.next();
+                        if (unit.distTo(position) > maxDist) {
+                            unitsIterator.remove();
+                        }
+                    }
 
-        return this;
-//                }
-//        );
+                    return this;
+                }
+        );
     }
 
     /**
@@ -409,32 +405,6 @@ public class Selection {
         return canShootAt(attacker, shootingRangeBonus);
     }
 
-     /**
-     * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe) that are either
-     * gathering minerals or gas.
-     */
-    public static Selection ourWorkersThatGather(boolean onlyNotCarryingAnything) {
-        Selection selectedUnits = Select.our();
-        selectedUnits.list().removeIf(unit ->
-                !unit.isWorker() || (!unit.isGatheringGas() && !unit.isGatheringMinerals())
-                        || (onlyNotCarryingAnything && (unit.isCarryingGas() || unit.isCarryingMinerals()))
-        );
-        return selectedUnits;
-    }
-
-    /**
-     * Selects our workers that are free to construct building or repair a unit. That means they mustn't
-     * repait any other unit or construct other building.
-     */
-    public static Selection ourWorkersFreeToBuildOrRepair() {
-        Selection selectedUnits = Select.ourWorkers();
-        selectedUnits.list().removeIf(unit ->
-                unit.isConstructing() || unit.isRepairing() || AConstructionManager.isBuilder(unit)
-                        || AScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()
-        );
-
-        return selectedUnits;
-    }
 
     /**
      * Counts all of our Zerg Larvas.

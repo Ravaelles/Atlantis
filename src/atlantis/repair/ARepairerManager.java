@@ -7,6 +7,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 import java.util.Collection;
 import java.util.Iterator;

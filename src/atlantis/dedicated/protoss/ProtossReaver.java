@@ -3,6 +3,7 @@ package atlantis.dedicated.protoss;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class ProtossReaver {
 
@@ -12,7 +13,7 @@ public class ProtossReaver {
             return AAvoidUnits.avoidEnemiesIfNeeded(reaver);
         }
 
-        Select<? extends AUnit> enemiesInRange = Select.enemyRealUnits().inRadius(8, reaver);
+        Selection enemiesInRange = Select.enemyRealUnits().inRadius(8, reaver);
         AUnit enemy;
 
         // First attack very close enemies
