@@ -5,7 +5,7 @@ import atlantis.constructing.position.APositionFinder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 
 public class ZergCreepColony {
@@ -13,7 +13,7 @@ public class ZergCreepColony {
     public static APosition findPosition(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
         AUnit secondBase = Select.naturalBaseOrMain();
         if (secondBase != null) {
-            return APositionFinder.findStandardPosition(builder, building, secondBase.getPosition(), 10);
+            return APositionFinder.findStandardPosition(builder, building, secondBase.position(), 10);
         }
         else {
             return null;

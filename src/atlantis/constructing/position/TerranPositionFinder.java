@@ -4,8 +4,7 @@ import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import java.util.Collection;
+import atlantis.units.select.Select;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
 
@@ -132,7 +131,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         // === Compare against existing buildings ========================================
         
         for (AUnit otherBuilding : Select.ourBuildingsIncludingUnfinished().inRadius(8, position).listUnits()) {
-            double distance = otherBuilding.getPosition().distTo(position);
+            double distance = otherBuilding.position().distTo(position);
 
             // Check for this building's addon if needed
             if (canThisBuildingHaveAddon && !isBase) {

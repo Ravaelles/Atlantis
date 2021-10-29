@@ -1086,6 +1086,8 @@ public class AUnitType implements Comparable<AUnitType> {
                 -1,
                 () -> is(
                         Protoss_Corsair,
+                        Terran_Valkyrie,
+                        Zerg_Devourer,
                         Zerg_Scourge
                 )
         );

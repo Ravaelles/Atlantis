@@ -1,7 +1,6 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.Atlantis;
 import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
@@ -55,13 +54,13 @@ public abstract class Mission {
 
     protected boolean handleWeDontKnowWhereTheEnemyIs(AUnit unit) {
         if (temporaryTarget == null || AMap.isExplored(temporaryTarget)) {
-            temporaryTarget = AMap.getRandomUnexploredPosition(unit.getPosition());
+            temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
             if (temporaryTarget != null) {
                 System.out.println("Go to unexplored " + temporaryTarget);
             }
         }
         if (temporaryTarget == null || AMap.isVisible(temporaryTarget)) {
-            temporaryTarget = AMap.getRandomInvisiblePosition(unit.getPosition());
+            temporaryTarget = AMap.getRandomInvisiblePosition(unit.position());
             if (temporaryTarget != null) {
                 System.out.println("Go to invisible " + temporaryTarget);
             }
@@ -69,7 +68,7 @@ public abstract class Mission {
 
         if (temporaryTarget != null) {
             unit.move(temporaryTarget, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy");
-            APainter.paintLine(unit.getPosition(), temporaryTarget, Color.Yellow);
+            APainter.paintLine(unit.position(), temporaryTarget, Color.Yellow);
             return true;
         }
         else {

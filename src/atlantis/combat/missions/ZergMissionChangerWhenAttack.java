@@ -1,6 +1,6 @@
 package atlantis.combat.missions;
 
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
 

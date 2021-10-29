@@ -23,18 +23,18 @@ public class AChoke implements HasPosition {
     // =========================================================
 
     @Override
-    public APosition getPosition() {
+    public APosition position() {
         return APosition.create(chokepoint.getCenter());
     }
 
     @Override
     public int x() {
-        return getPosition().getX();
+        return position().getX();
     }
 
     @Override
     public int y() {
-        return getPosition().getY();
+        return position().getY();
     }
 
     @Override
@@ -78,4 +78,11 @@ public class AChoke implements HasPosition {
         return ARegion.create(chokepoint.getRegions().getSecond());
     }
 
+    @Override
+    public String toString() {
+        return "AChoke{" +
+                "width=" + getWidth() +
+                ", chokepoint=" + chokepoint.getCenter() +
+                '}';
+    }
 }

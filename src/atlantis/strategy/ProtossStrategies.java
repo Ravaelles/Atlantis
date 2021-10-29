@@ -2,7 +2,7 @@ package atlantis.strategy;
 
 import atlantis.AGame;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 
 public class ProtossStrategies extends AStrategy {

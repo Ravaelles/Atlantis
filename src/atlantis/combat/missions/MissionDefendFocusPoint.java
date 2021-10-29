@@ -6,7 +6,7 @@ import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.util.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
@@ -34,19 +34,19 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit nearEnemy = Select.enemy().combatUnits().inRadius(10, mainBase).nearestTo(mainBase);
                 if (nearEnemy != null) {
-                    return nearEnemy.getPosition();
+                    return nearEnemy.position();
                 }
 
                 // === Gather around defensive buildings ===================
 
                 AUnit defBuilding = Select.ourOfTypeIncludingUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
                 if (defBuilding != null) {
-                    return defBuilding.getPosition().translateTilesTowards(mainBase.getPosition(), 4);
+                    return defBuilding.position().translateTilesTowards(mainBase.position(), 4);
                 }
 
                 // === Return position near the choke point ================
 
-                AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.getPosition());
+                AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.position());
                 if (chokepointForNaturalBase != null) {
                     return APosition.create(chokepointForNaturalBase.getCenter());
                 }
@@ -55,7 +55,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit building = Select.ourBuildings().first();
                 if (building != null) {
-                    return APosition.create(AMap.getNearestChoke(building.getPosition()).getCenter());
+                    return APosition.create(AMap.nearestChoke(building.position()).getCenter());
                 }
 
                 return null;

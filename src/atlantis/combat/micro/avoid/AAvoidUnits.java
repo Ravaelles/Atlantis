@@ -1,9 +1,8 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.Units;
-import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,7 +1,7 @@
 package atlantis.combat.micro.stack;
 
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class StackedUnitsManager {
 

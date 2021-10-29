@@ -254,8 +254,8 @@ public class Units {
                 if (p2 == null) {
                     return 1;
                 }
-                double distance1 = p1.getPosition().distTo(position);
-                double distance2 = p2.getPosition().distTo(position);
+                double distance1 = p1.position().distTo(position);
+                double distance2 = p2.position().distTo(position);
                 if (distance1 == distance2) {
                     return 0;
                 } else {
@@ -286,10 +286,10 @@ public class Units {
                     return 1;
                 }
                 double distance1 = BWTA.getGroundDistance(
-                        p1.getPosition().toTilePosition(), position.toTilePosition()
+                        p1.position().toTilePosition(), position.toTilePosition()
                 );
                 double distance2 = BWTA.getGroundDistance(
-                        p2.getPosition().toTilePosition(), position.toTilePosition()
+                        p2.position().toTilePosition(), position.toTilePosition()
                 );
                 if (distance1 == distance2) {
                     return 0;

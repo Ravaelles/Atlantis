@@ -3,8 +3,8 @@ package atlantis.combat.micro.managers;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Count;
-import atlantis.units.Select;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.Us;
 
@@ -89,7 +89,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         unit.move(
-                unit.getPosition().translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
+                unit.position().translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
                 UnitActions.MOVE_TO_FOCUS,
                 "ToTank"
         );

@@ -1,6 +1,7 @@
-package atlantis.units;
+package atlantis.units.select;
 
 import atlantis.constructing.AConstructionRequests;
+import atlantis.units.AUnitType;
 
 /**
  * Quick auxiliary class for counting our units.

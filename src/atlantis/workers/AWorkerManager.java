@@ -6,7 +6,7 @@ import atlantis.constructing.AConstructionManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 
 public class AWorkerManager {
@@ -16,6 +16,10 @@ public class AWorkerManager {
      */
     public static boolean update(AUnit worker) {
         worker.removeTooltip();
+
+        if (AWorkerDefenceManager.handleDefenceIfNeeded(worker)) {
+            return true;
+        }
 
         if (worker.lastActionLessThanAgo(20, UnitActions.RETURN_CARGO)) {
             return true;

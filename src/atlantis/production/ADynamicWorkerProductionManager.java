@@ -2,10 +2,8 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.units.AUnit;
-import atlantis.units.Count;
-import atlantis.units.Select;
-import atlantis.util.A;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 
 
 public class ADynamicWorkerProductionManager {

@@ -8,7 +8,7 @@ import atlantis.position.APosition;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.util.Us;
 
 public class AAntiLandBuildingRequests {
@@ -62,21 +62,21 @@ public class AAntiLandBuildingRequests {
 
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
         if (previousBuilding != null) {
-            nearTo = previousBuilding.getPosition();
+            nearTo = previousBuilding.position();
         }
 
         if (nearTo == null) {
 
             // Place near the base
-            nearTo = Select.naturalBaseOrMain() != null ? Select.naturalBaseOrMain().getPosition() : null;
+            nearTo = Select.naturalBaseOrMain() != null ? Select.naturalBaseOrMain().position() : null;
 //            nearTo = Select.mainBase();
         }
 
         // Move towards nearest choke
         if (nearTo != null) {
-            AChoke choke = AMap.getNearestChoke(nearTo);
+            AChoke choke = AMap.nearestChoke(nearTo);
             if (choke != null) {
-                nearTo = nearTo.translateTilesTowards(choke.getPosition(), 7);
+                nearTo = nearTo.translateTilesTowards(choke, 7);
             }
         }
 

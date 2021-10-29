@@ -1,6 +1,8 @@
 package atlantis.position;
 
 import atlantis.map.AMap;
+import bwapi.Point;
+import bwapi.Position;
 
 /**
  * This interface helps ease problems of overriding native bridge classes like e.g. BaseLocation which doesn't
@@ -10,16 +12,42 @@ public interface HasPosition {
 
     public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 20;
 
-    APosition getPosition();
+    APosition position();
     int x();
     int y();
+
+    // === High-abstraction ========================================
+
+    /**
+     * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
+     */
+    default APosition translatePercentTowards(HasPosition towards, int percentTowards) {
+        return PositionHelper.getPositionMovedPercentTowards(
+                this, towards, percentTowards
+        );
+    }
+
+    /**
+     * Returns new position which is moved e.g. 0.5 tiles towards <b>towards</b>.
+     */
+    default APosition translateTilesTowards(HasPosition towards, double tiles) {
+        return PositionHelper.getPositionMovedTilesTowards(
+                this, towards, tiles
+        );
+    }
+
+    // =========================================================
+
+    default double distTo(HasPosition position) {
+        return PositionUtil.distanceTo(this, position);
+    }
 
     default boolean distToLessThan(HasPosition otherPosition, double maxDist) {
         if (otherPosition == null) {
             return false;
         }
 
-        return getPosition().distTo(otherPosition.getPosition()) <= maxDist;
+        return position().distTo(otherPosition.position()) <= maxDist;
     }
 
     default boolean distToMoreThan(HasPosition otherPosition, double minDist) {
@@ -27,9 +55,10 @@ public interface HasPosition {
             return false;
         }
 
-        return getPosition().distTo(otherPosition.getPosition()) >= minDist;
+        return position().distTo(otherPosition.position()) >= minDist;
     }
 
+    // =========================================================
 
     /**
      * Returns X coordinate in tiles, 1 tile = 32 pixels.
@@ -50,7 +79,7 @@ public interface HasPosition {
     }
 
     default boolean isVisible() {
-        return AMap.isVisible(getPosition());
+        return AMap.isVisible(position());
     }
 
 }

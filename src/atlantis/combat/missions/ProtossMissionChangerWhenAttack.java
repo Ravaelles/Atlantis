@@ -1,7 +1,6 @@
 package atlantis.combat.missions;
 
-import atlantis.units.Count;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 

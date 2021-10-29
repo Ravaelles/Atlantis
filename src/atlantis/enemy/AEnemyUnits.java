@@ -4,11 +4,10 @@ import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
-import atlantis.strategy.response.AStrategyResponse;
 import atlantis.strategy.response.AStrategyResponseFactory;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,7 +29,7 @@ public class AEnemyUnits {
             if (
                     !fogged.isBuilding()
                             && fogged.hasKnownPosition()
-                            && fogged.getPosition().isVisible()
+                            && fogged.position().isVisible()
                             && !fogged.isVisibleOnMap()
             ) {
                 fogged.positionUnknown();
@@ -45,7 +44,7 @@ public class AEnemyUnits {
      *
      */
     public static APosition getLastPositionOfEnemyUnit(AUnit enemyUnit) {
-        return enemyUnitsDiscovered.get(enemyUnit).getPosition();
+        return enemyUnitsDiscovered.get(enemyUnit).position();
     }
     
     /**
@@ -75,10 +74,10 @@ public class AEnemyUnits {
 //            System.out.println(enemyUnitData.getType());
             if (enemyUnitData.type().isBase()) {
 //                boolean isBaseAtStartingLocation = false;
-                APosition discoveredBase = enemyUnitData.getPosition();
+                APosition discoveredBase = enemyUnitData.position();
                 
                 for (ABaseLocation startingLocation : AMap.getStartingLocations(false)) {
-                    if (discoveredBase.distTo(startingLocation.getPosition()) <= 7) {
+                    if (discoveredBase.distTo(startingLocation.position()) <= 7) {
 //                        System.out.println("Discovered main enemy base");
                         return true;
                     }
@@ -109,7 +108,7 @@ public class AEnemyUnits {
             
             for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
                 if (enemy.type().isBuilding()) {
-                    double dist = enemy.getPosition().distTo(ourMainBase);
+                    double dist = enemy.position().distTo(ourMainBase);
                     if (minDist > dist) {
                         minDist = dist;
                         best = null;
@@ -194,7 +193,7 @@ public class AEnemyUnits {
             for (AUnit fogged : foggedUnits) {
                 System.out.println(
                         fogged.type()
-                                + " " + fogged.getPosition()
+                                + " " + fogged.position()
                                 + ", isBase=" + fogged.isBase()
                                 + ", alive=" + fogged.isAlive()
                 );

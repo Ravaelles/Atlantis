@@ -5,9 +5,7 @@ import atlantis.AtlantisConfig;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
 import bwapi.Position;
-import java.util.Collection;
 
 public class ZergPositionFinder extends AbstractPositionFinder {
 

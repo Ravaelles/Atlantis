@@ -1,7 +1,7 @@
 package atlantis.repair;
 
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 import java.util.ArrayList;
 import java.util.Collection;

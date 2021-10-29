@@ -54,7 +54,7 @@ public class MissionContain extends Mission {
         }
 
         // Allow to defend base
-        APosition natural = AMap.getNaturalBaseLocation();
+        APosition natural = AMap.naturalBase();
         return natural != null && enemy.distTo(natural) <= 35;
     }
 }

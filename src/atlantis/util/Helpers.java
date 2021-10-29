@@ -2,7 +2,7 @@ package atlantis.util;
 
 import atlantis.AGame;
 import atlantis.units.AUnitType;
-import atlantis.units.Count;
+import atlantis.units.select.Count;
 import bwapi.UnitType;
 
 public class Helpers {

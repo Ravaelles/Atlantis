@@ -6,7 +6,7 @@ import atlantis.position.APosition;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class AAntiAirBuildingRequests {
 
@@ -35,11 +35,11 @@ public class AAntiAirBuildingRequests {
         if (nearTo == null) {
             for (AUnit base : Select.ourBases().listUnits()) {
                 int numberOfAntiAirBuildingsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
-                        building, 8, base.getPosition()
+                        building, 8, base.position()
                 );
 
                 for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-                    AConstructionRequests.requestConstructionOf(building, base.getPosition());
+                    AConstructionRequests.requestConstructionOf(building, base.position());
                 }
             }
         }
@@ -71,11 +71,11 @@ public class AAntiAirBuildingRequests {
 
         for (AUnit base : Select.ourBases().listUnits()) {
             int numberOfAntiAirBuildingsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
-                    building, 8, base.getPosition()
+                    building, 8, base.position()
             );
 
             for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-                AConstructionRequests.requestConstructionOf(building, base.getPosition());
+                AConstructionRequests.requestConstructionOf(building, base.position());
             }
         }
     }

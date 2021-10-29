@@ -5,8 +5,7 @@ import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import atlantis.util.A;
+import atlantis.units.select.Select;
 import bwapi.Bullet;
 import bwapi.BulletType;
 import bwapi.Color;
@@ -52,7 +51,7 @@ public class ABadWeather {
             // Our mine
             if (mine.isOur()) {
                 if (mine.isMoving() && mine.distTo(unit) <= 3.5) {
-                    unit.moveAwayFrom(mine.getPosition(), 2, "Avoid mine!");
+                    unit.moveAwayFrom(mine.position(), 2, "Avoid mine!");
                     return true;
                 }
             }
@@ -78,7 +77,7 @@ public class ABadWeather {
     }
 
     private static boolean handleEnemyMineAsMeleeUnit(AUnit unit, AUnit mine) {
-        unit.moveAwayFrom(mine.getPosition(), 1, "Avoid mine!");
+        unit.moveAwayFrom(mine.position(), 1, "Avoid mine!");
         APainter.paintLine(unit, mine, Color.Yellow);
         return true;
     }

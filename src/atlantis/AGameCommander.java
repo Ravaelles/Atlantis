@@ -9,9 +9,6 @@ import atlantis.protoss.ProtossSpecificBuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
 import atlantis.terran.TerranSpecificBuildingsCommander;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.Select;
 import atlantis.workers.AWorkerCommander;
 
 /**

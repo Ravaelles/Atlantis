@@ -1,5 +1,7 @@
 package atlantis.util;
 
+import atlantis.units.AUnit;
+
 import java.util.TreeMap;
 
 /**
@@ -60,7 +62,9 @@ public class Cache<V> {
     }
 
     public void print(String message, boolean includeExpired) {
-        System.out.println("--- " + message + ":");
+        if (message != null) {
+            System.out.println("--- " + message + ":");
+        }
         for (String key : data.keySet()) {
             if (includeExpired || isCacheStillValid(key)) {
                 System.out.println(key + " - " + data.get(key));

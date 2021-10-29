@@ -5,7 +5,7 @@ import static atlantis.Atlantis.game;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import bwapi.*;

@@ -6,8 +6,8 @@ import atlantis.strategy.EnemyStrategy;
 import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Count;
-import atlantis.units.Select;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 
 import java.util.List;
 
@@ -37,12 +37,12 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
     private static void zealots() {
         if (GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese()) {
-            trainIfPossible(11, AUnitType.Protoss_Zealot, false);
+            trainIfPossible(8, AUnitType.Protoss_Zealot, false);
             return;
         }
 
         if (AGame.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) {
-            trainIfPossible(11, AUnitType.Protoss_Zealot, true);
+            trainIfPossible(8, AUnitType.Protoss_Zealot, true);
         }
     }
 

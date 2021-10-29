@@ -2,7 +2,7 @@ package atlantis.combat.micro;
 
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
@@ -59,16 +59,16 @@ public class Unfreezer {
         }
 
 //        if (unit.isHoldingPosition()) {
-        if (unit.move(unit.getPosition().translateByPixels(8, 0), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.move(unit.position().translateByPixels(8, 0), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.getPosition().translateByPixels(-8, 0), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.move(unit.position().translateByPixels(-8, 0), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.getPosition().translateByPixels(0, 8), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.move(unit.position().translateByPixels(0, 8), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.getPosition().translateByPixels(0, -8), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.move(unit.position().translateByPixels(0, -8), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
 //        } else {

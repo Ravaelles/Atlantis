@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 import bwapi.TechType;
 
@@ -70,11 +70,11 @@ public class TerranMedic {
             double dist = assignment.distTo(medic);
 
             if (dist > 1.9) {
-                medic.move(assignment.getPosition(), UnitActions.MOVE, "Stick");
+                medic.move(assignment.position(), UnitActions.MOVE, "Stick");
                 return true;
             }
             else if (dist <= 1.4) {
-                medic.moveAwayFrom(assignment.getPosition(), 0.4, "Spread");
+                medic.moveAwayFrom(assignment.position(), 0.4, "Spread");
                 return true;
             }
         }

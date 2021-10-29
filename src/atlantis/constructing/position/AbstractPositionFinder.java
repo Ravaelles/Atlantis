@@ -11,7 +11,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.position.PositionUtil;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
@@ -109,7 +109,7 @@ public abstract class AbstractPositionFinder {
         }
 
         for (ABaseLocation base : AMap.getBaseLocations()) {
-            if (!base.isStartLocation() && base.getPosition().distTo(position) <= 5.6) {
+            if (!base.isStartLocation() && base.position().distTo(position) <= 5.6) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";
                 return true;
             }

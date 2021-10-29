@@ -116,8 +116,8 @@ public class Squad extends Units {
         ArrayList<Integer> yCoords = new ArrayList<>();
 
         for (AUnit unit : list()) {
-            xCoords.add(unit.getPosition().getX());
-            yCoords.add(unit.getPosition().getY());
+            xCoords.add(unit.position().getX());
+            yCoords.add(unit.position().getY());
         }
 
         Collections.sort(xCoords);

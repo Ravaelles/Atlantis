@@ -93,7 +93,7 @@ public class Positions<T extends HasPosition> {
         Collections.sort(positions, new Comparator<T>() {
             @Override
             public int compare(T u1, T u2) {
-                return position.getDistance(u1.getPosition()) < position.getDistance(u2.getPosition())
+                return position.getDistance(u1.position()) < position.getDistance(u2.position())
                         ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
         });
@@ -109,11 +109,11 @@ public class Positions<T extends HasPosition> {
         positions.sort(new Comparator<T>() {
             @Override
             public int compare(T u1, T u2) {
-                double distToU1 = BWTA.getGroundDistance(position.toTilePosition(), u1.getPosition().toTilePosition());
+                double distToU1 = BWTA.getGroundDistance(position.toTilePosition(), u1.position().toTilePosition());
                 if (distToU1 < 0) {
                     distToU1 = 99999;
                 }
-                double distToU2 = BWTA.getGroundDistance(position.toTilePosition(), u2.getPosition().toTilePosition());
+                double distToU2 = BWTA.getGroundDistance(position.toTilePosition(), u2.position().toTilePosition());
                 return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
         });
@@ -223,8 +223,8 @@ public class Positions<T extends HasPosition> {
         
         int index = 0;
         for (T otherPosition : positions) {
-            if (otherPosition.getPosition().getDistance(position) < closestDist) {
-                closestDist = otherPosition.getPosition().getDistance(position);
+            if (otherPosition.position().getDistance(position) < closestDist) {
+                closestDist = otherPosition.position().getDistance(position);
                 closestPosition = APosition.create(otherPosition.x() / 32, otherPosition.y() / 32);
                 _lastIndex = index;
             }

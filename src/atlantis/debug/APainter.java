@@ -18,9 +18,9 @@ public class APainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
-    public static int paintingMode = MODE_NO_PAINTING;
+//    public static int paintingMode = MODE_NO_PAINTING;
 //    public static int paintingMode = MODE_FULL_PAINTING;
-//    public static int paintingMode = MODE_PARTIAL_PAINTING;
+    public static int paintingMode = MODE_PARTIAL_PAINTING;
 
     protected static Game bwapi;
 
@@ -93,7 +93,7 @@ public class APainter {
     }
 
     public static void paintCircle(AUnit unit, int radius, Color color) {
-        paintCircle(unit.getPosition(), radius, color);
+        paintCircle(unit.position(), radius, color);
     }
 
     public static void paintCircle(Position position, int radius, Color color) {
@@ -115,13 +115,13 @@ public class APainter {
     }
 
     public static void paintCircleFilled(AUnit unit, int radius, Color color) {
-        paintCircleFilled(unit.getPosition(), radius, color);
+        paintCircleFilled(unit.position(), radius, color);
     }
 
     public static void paintLine(HasPosition start, int dx, int dy, Color color) {
         if (isDisabled()) { return; }
 
-        bwapi.drawLineMap(start.getPosition(), PositionHelper.translateByPixels(start.getPosition(), dx, dy), color);
+        bwapi.drawLineMap(start.position(), PositionHelper.translateByPixels(start.position(), dx, dy), color);
     }
 
     public static void paintLine(Position start, Position end, Color color) {
@@ -135,7 +135,7 @@ public class APainter {
         if (unit == null || end == null || isDisabled()) {
             return false;
         }
-        bwapi.drawLineMap(unit.getPosition(), end.getPosition(), color);
+        bwapi.drawLineMap(unit.position(), end.position(), color);
         return true;
     }
 
@@ -143,11 +143,11 @@ public class APainter {
         if (unit == null || end == null || isDisabled()) {
             return;
         }
-        bwapi.drawLineMap(unit.getPosition(), end, color);
+        bwapi.drawLineMap(unit.position(), end, color);
     }
 
     public static void paintTextCentered(AUnit unit, String text, Color color) {
-        paintTextCentered(unit.getPosition(), text, color, false);
+        paintTextCentered(unit.position(), text, color, false);
     }
 
     public static void paintTextCentered(APosition position, String text, Color color) {
@@ -155,14 +155,14 @@ public class APainter {
     }
 
     public static void paintTextCentered(HasPosition position, String text, Color color, double tileDX, double tileDY) {
-        paintTextCentered(position.getPosition().translateByPixels(
+        paintTextCentered(position.position().translateByPixels(
                 (int) tileDX * 32, (int) tileDY * 32),
                 text, color, false
         );
     }
 
     public static void paintTextCentered(AUnit unit, String text, boolean screenCords) {
-        paintTextCentered(unit.getPosition(), text, null, screenCords);
+        paintTextCentered(unit.position(), text, null, screenCords);
     }
 
     public static void paintTextCentered(APosition position, String text, boolean screenCords) {

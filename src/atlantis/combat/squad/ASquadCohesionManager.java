@@ -3,8 +3,8 @@ package atlantis.combat.squad;
 import atlantis.AGame;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Count;
-import atlantis.units.Select;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.Us;
 
@@ -135,7 +135,7 @@ public class ASquadCohesionManager {
                         && (unit.squadSize() >= 12 && closeFriends.clone().inRadius(5, unit).count() <= 1)
         ) {
             unit.move(
-                    unit.getPosition().translatePercentTowards(nearestFriend, 20),
+                    unit.position().translatePercentTowards(nearestFriend, 20),
                     UnitActions.MOVE,
                     "Together(" + (int) nearestFriend.distTo(unit) + ")"
             );
@@ -153,7 +153,7 @@ public class ASquadCohesionManager {
                         && unit.distTo(nearestFriend) > 3
         ) {
             unit.move(
-                    unit.getPosition().translatePercentTowards(center, 20),
+                    unit.position().translatePercentTowards(center, 20),
                     UnitActions.MOVE,
                     "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
             );

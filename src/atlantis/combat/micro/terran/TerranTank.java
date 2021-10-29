@@ -6,7 +6,7 @@ import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 
 
@@ -105,7 +105,7 @@ public class TerranTank {
         if (tank.cooldownRemaining() <= 3) {
             for (AUnit enemy : Select.enemyRealUnits().effCloaked().inRadius(11, tank).list()) {
                 if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
-                    tank.attackPosition(enemy.getPosition());
+                    tank.attackPosition(enemy.position());
                     tank.setTooltip("Smash invisible!");
                     return true;
                 }
@@ -200,7 +200,7 @@ public class TerranTank {
     // =========================================================
     
     private static boolean canSiegeHere(AUnit tank) {
-        AChoke choke = AMap.getNearestChoke(tank.getPosition());
+        AChoke choke = AMap.nearestChoke(tank.position());
         if (choke == null) {
             return true;
         }

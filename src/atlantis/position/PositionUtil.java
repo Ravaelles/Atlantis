@@ -67,7 +67,7 @@ public class PositionUtil {
             toPosition = ((AChoke) object2).getCenter();
         }
         else if (object2 instanceof ABaseLocation) {
-            toPosition = ((ABaseLocation) object2).getPosition();
+            toPosition = ((ABaseLocation) object2).position();
         }
 
         if (toPosition == null && toUnit == null) {

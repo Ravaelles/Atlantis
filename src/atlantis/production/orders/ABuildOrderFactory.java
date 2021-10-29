@@ -1,13 +1,7 @@
 
 package atlantis.production.orders;
 
-import atlantis.AGame;
-import atlantis.AtlantisConfig;
 import atlantis.production.ProductionOrder;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import atlantis.util.Us;
 
 import java.util.ArrayList;
 

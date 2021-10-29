@@ -1,7 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class TerranMissionChangerWhenContain {
 

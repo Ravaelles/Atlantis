@@ -6,7 +6,7 @@ import atlantis.constructing.ConstructionOrder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class APositionFinder {
 
@@ -73,18 +73,18 @@ public class APositionFinder {
             if (nearTo == null) {
                 if (AGame.isPlayingAsZerg()) {
 //                    nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
-                    nearTo = Select.mainBase().getPosition();
+                    nearTo = Select.mainBase().position();
                 }
                 else {
 //                    nearTo = Select.mainBase().getPosition();
                     AUnit randomBase = Select.ourBases().random();
-                    nearTo = randomBase != null ? randomBase.getPosition() : Select.our().first().getPosition();
+                    nearTo = randomBase != null ? randomBase.position() : Select.our().first().position();
                 }
             }
 
             // If all of our bases have been destroyed, build somewhere near our first unit alive
             if (nearTo == null) {
-                nearTo = Select.our().first().getPosition();
+                nearTo = Select.our().first().position();
             }
 
             // Hopeless case, all units have died, just quit.

@@ -8,7 +8,7 @@ import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class MissionContainFocusPoint extends MissionFocusPoint {
 
@@ -27,12 +27,12 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 
         AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
         if (enemyBuilding != null) {
-            return containEnemyAtPoint = enemyBuilding.getPosition();
+            return containEnemyAtPoint = enemyBuilding.position();
         }
 
         AUnit nearestEnemy = Select.enemy().nearestTo(Select.our().first());
         if (nearestEnemy != null) {
-            return containEnemyAtPoint = nearestEnemy.getPosition();
+            return containEnemyAtPoint = nearestEnemy.position();
         }
 
         return null;
@@ -47,10 +47,10 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             return containEnemyAtPoint = chokepoint.getCenter();
         }
 
-        ABaseLocation natural = AMap.getNaturalBaseLocation(enemyBase.getPosition());
+        ABaseLocation natural = AMap.naturalBase(enemyBase.position());
         if (natural != null) {
             CameraManager.centerCameraOn(natural);
-            return containEnemyAtPoint = natural.getPosition();
+            return containEnemyAtPoint = natural.position();
         }
 
         System.err.println("Shouldnt be here mate?");

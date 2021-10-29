@@ -13,7 +13,7 @@ import atlantis.position.HasPosition;
 import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
@@ -140,7 +140,7 @@ public class AScoutManager {
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {
-            startingLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
+            startingLocation = AMap.getNearestUnexploredStartingLocation(scout.position());
         }
 
         // =========================================================
@@ -242,9 +242,9 @@ public class AScoutManager {
     }
 
     private static void scoutForTheNextBase(AUnit scout) {
-        APosition baseLocation = AMap.getNearestUnexploredStartingLocation(scout.getPosition());
+        APosition baseLocation = AMap.getNearestUnexploredStartingLocation(scout.position());
         if (baseLocation != null) {
-            scout.move(baseLocation.getPosition(), UnitActions.EXPLORE, "Explore next base");
+            scout.move(baseLocation.position(), UnitActions.EXPLORE, "Explore next base");
         }
     }
 
@@ -288,12 +288,12 @@ public class AScoutManager {
 
         if (APainter.paintingMode == APainter.MODE_FULL_PAINTING) {
             APainter.paintLine(
-                    scoutingAroundBaseLastPolygonPoint, scout.getPosition(), Color.Yellow
+                    scoutingAroundBaseLastPolygonPoint, scout.position(), Color.Yellow
             );
         }
 
         if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
-            CameraManager.centerCameraOn(scout.getPosition());
+            CameraManager.centerCameraOn(scout.position());
         }
     }
     
@@ -332,7 +332,7 @@ public class AScoutManager {
     }
 
     private static APosition useNearestPolygonPoint(ARegion region, AUnit scout) {
-        APosition nearest = scoutingAroundBasePoints.nearestTo(scout.getPosition());
+        APosition nearest = scoutingAroundBasePoints.nearestTo(scout.position());
         scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.getLastIndex();
         return nearest;
     }

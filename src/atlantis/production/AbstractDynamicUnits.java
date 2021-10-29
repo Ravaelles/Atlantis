@@ -5,8 +5,8 @@ import atlantis.constructing.AConstructionRequests;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Count;
-import atlantis.units.Select;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {

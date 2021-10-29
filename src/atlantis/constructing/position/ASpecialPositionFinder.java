@@ -6,7 +6,7 @@ import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class ASpecialPositionFinder {
     
@@ -44,7 +44,7 @@ public class ASpecialPositionFinder {
             AUnit geyser = Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
             if (geyser != null && geyser.distTo(base) < 12) {
-                APosition position = geyser.getPosition().translateByPixels(-64, -32);
+                APosition position = geyser.position().translateByPixels(-64, -32);
                 return position;
             }
         }
@@ -85,7 +85,7 @@ public class ASpecialPositionFinder {
         if (ourBasesCount <= 2) {
             AUnit mainBase = Select.mainBase();
 
-            baseLocationToExpand = AMap.getExpansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.getPosition() : null);
+            baseLocationToExpand = AMap.getExpansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
         }
         else {
             baseLocationToExpand = AMap.getExpansionBaseLocationMostDistantToEnemy();
@@ -98,7 +98,7 @@ public class ASpecialPositionFinder {
             return null;
         }
         
-        APosition near = APosition.create(baseLocationToExpand.getPosition()).translateByPixels(-64, -48);
+        APosition near = APosition.create(baseLocationToExpand.position()).translateByPixels(-64, -48);
         constructionOrder.setMaxDistance(6);
 
 //        System.out.println("Main base = " + Select.mainBase());
@@ -111,7 +111,7 @@ public class ASpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = Select.mainBase().getPosition().translateByPixels(-64, -48);
+        APosition near = Select.mainBase().position().translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);
         constructionOrder.setMaxDistance(40);
@@ -120,7 +120,7 @@ public class ASpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = APosition.create(AMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().getPosition()).getPosition()
+        APosition near = APosition.create(AMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().position()).position()
         ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);

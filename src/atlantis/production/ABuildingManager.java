@@ -4,7 +4,7 @@ import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.protoss.ProtossShieldBattery;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class ABuildingManager {
 

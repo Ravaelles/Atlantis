@@ -1,8 +1,10 @@
 package atlantis.production;
 
 import atlantis.AGame;
+import atlantis.strategy.EnemyStrategy;
 import atlantis.tech.ATechRequests;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import bwapi.TechType;
 
 public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
@@ -21,6 +23,11 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     // =========================================================
 
     private static void gateways() {
+        if (EnemyStrategy.get().isRushOrCheese() && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) < 2) {
+            buildIfCanAfford(AUnitType.Protoss_Gateway);
+            return;
+        }
+
         buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 70, 0);
     }
 

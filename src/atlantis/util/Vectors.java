@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 public class Vectors {
 
     public static Vector fromPositionsBetween(AUnit unit1, AUnit unit2) {
-        return fromPositionsBetween(unit1.getPosition(), unit2.getPosition());
+        return fromPositionsBetween(unit1.position(), unit2.position());
     }
 
     public static Vector fromPositionsBetween(APosition p1, APosition p2) {

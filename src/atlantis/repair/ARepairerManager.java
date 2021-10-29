@@ -6,7 +6,7 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Missions;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 import java.util.Collection;
 import java.util.Iterator;

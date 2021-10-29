@@ -29,7 +29,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
@@ -124,7 +124,7 @@ public class AAdvancedPainter extends APainter {
                 continue;
             }
 
-            APosition position = unit.getPosition();
+            APosition position = unit.position();
 
             if (unit.isRunning()) {
                 paintRunningUnitWhiteFlag(unit);
@@ -259,7 +259,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCombatEval(AUnit unit, boolean isEnemy) {
-        APosition unitPosition = unit.getPosition();
+        APosition unitPosition = unit.position();
         double eval = (int) ACombatEvaluator.evaluateSituation(unit, true, isEnemy);
         String combatStrength = ColorUtil.getColorString(Color.Red)
                 + ACombatEvaluator.getEvalString(unit, eval);
@@ -560,11 +560,11 @@ public class AAdvancedPainter extends APainter {
         }
 
         // Paint box
-        paintRectangle(positionToBuild,
-                buildingType.getTileWidth(), buildingType.getTileHeight(), color);
+        paintRectangle(positionToBuild, buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, color);
 
         // Draw X
-        paintLine(PositionHelper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
+        paintLine(
+                PositionHelper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
                 PositionHelper.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
                 color
         );
@@ -589,7 +589,7 @@ public class AAdvancedPainter extends APainter {
                 continue;
             }
 
-            APosition unitPosition = unit.getPosition();
+            APosition unitPosition = unit.position();
             APosition targetPosition = unit.getTargetPosition();
             int unitRadius = unit.type().getDimensionLeft();
 
@@ -603,7 +603,7 @@ public class AAdvancedPainter extends APainter {
             }
             // ATTACK FRAME
             if (unit.isAttackFrame()) {
-                paintRectangleFilled(unit.getPosition().translateByPixels(-5, -10), 10, 20, Color.Red);
+                paintRectangleFilled(unit.position().translateByPixels(-5, -10), 10, 20, Color.Red);
 //                paintCircle(unit, 2, Color.Red);
 //                paintCircle(unit, 4, Color.Red);
 //                paintCircle(unit, 5, Color.Red);
@@ -631,7 +631,7 @@ public class AAdvancedPainter extends APainter {
                 paintCircle(unit, unitRadius - 2, Color.Blue);
                 if (unit.getTargetPosition()!= null) {
                     paintCircleFilled(unit.getTargetPosition(), 4, Color.Blue);
-                    paintLine(unit.getPosition(), unit.getTargetPosition(), Color.Blue);
+                    paintLine(unit.position(), unit.getTargetPosition(), Color.Blue);
                 }
             }
 //            // CONSTRUCTING
@@ -642,8 +642,8 @@ public class AAdvancedPainter extends APainter {
 
             // RUN
             if (unit.isRunning()) {
-                paintLine(unit.getPosition(), unit.runningManager().getRunToPosition(), Color.Yellow);
-                paintLine(unit.getPosition().translateByPixels(1, 1), unit.runningManager().getRunToPosition(), Color.Yellow);
+                paintLine(unit.position(), unit.runningManager().getRunToPosition(), Color.Yellow);
+                paintLine(unit.position().translateByPixels(1, 1), unit.runningManager().getRunToPosition(), Color.Yellow);
 
                 if (unit.runningManager().getRunToPosition() != null) {
                     paintCircleFilled(unit.runningManager().getRunToPosition(), 10, Color.Yellow);
@@ -653,7 +653,7 @@ public class AAdvancedPainter extends APainter {
             }
 
             // Paint #ID
-            paintTextCentered(unit.getPosition().translateByTiles(0, 1),
+            paintTextCentered(unit.position().translateByTiles(0, 1),
                     "#" + unit.getID() + " " + unit.getUnitAction(), Color.Cyan);
 
             // BUILDER
@@ -712,11 +712,11 @@ public class AAdvancedPainter extends APainter {
 
         paintLine(unit, unit.getTargetPosition(), Color.Blue); // Where unit is running to
 
-        paintRectangleFilled(unit.getPosition().translateByPixels(0, -flagHeight - dy),
+        paintRectangleFilled(unit.position().translateByPixels(0, -flagHeight - dy),
                 flagWidth, flagHeight, Color.White); // White flag
-        paintRectangle(unit.getPosition().translateByPixels(0, -flagHeight - dy),
+        paintRectangle(unit.position().translateByPixels(0, -flagHeight - dy),
                 flagWidth, flagHeight, Color.Grey); // Flag border
-        paintRectangleFilled(unit.getPosition().translateByPixels(-1, flagHeight - dy),
+        paintRectangleFilled(unit.position().translateByPixels(-1, flagHeight - dy),
                 2, flagHeight, Color.Grey); // Flag stick
     }
 
@@ -734,8 +734,8 @@ public class AAdvancedPainter extends APainter {
 
             int labelMaxWidth = 60;
             int labelHeight = 14;
-            int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
-            int labelTop = unit.getPosition().getY() + 8;
+            int labelLeft = unit.position().getX() - labelMaxWidth / 2;
+            int labelTop = unit.position().getY() + 8;
 
             double progress = (double) unit.hp() / unit.maxHp();
             int labelProgress = (int) (1 + 99 * progress);
@@ -785,7 +785,7 @@ public class AAdvancedPainter extends APainter {
             String name = unit.getBuildType().shortName();
 
             // Paint building name
-            paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 7),
+            paintTextCentered(new APosition(unit.position().getX(), unit.position().getY() - 7),
                     name, Color.White);
         }
 
@@ -802,8 +802,8 @@ public class AAdvancedPainter extends APainter {
             }
             int labelMaxWidth = 56;
             int labelHeight = 4;
-            int labelLeft = unit.getPosition().getX() - labelMaxWidth / 2;
-            int labelTop = unit.getPosition().getY() + 13;
+            int labelLeft = unit.position().getX() - labelMaxWidth / 2;
+            int labelTop = unit.position().getY() + 13;
 
             double hpRatio = (double) unit.hp() / unit.maxHp();
             int hpProgress = (int) (1 + 99 * hpRatio);
@@ -851,7 +851,7 @@ public class AAdvancedPainter extends APainter {
             if (workers > 0) {
                 String workersAssigned = workers + "";
                 paintTextCentered(
-                        PositionHelper.translateByPixels(building.getPosition(), -5, -36),
+                        PositionHelper.translateByPixels(building.position(), -5, -36),
                         workersAssigned, Color.Grey
                 );
             }
@@ -871,8 +871,8 @@ public class AAdvancedPainter extends APainter {
 
             int labelMaxWidth = 90;
             int labelHeight = 14;
-            int labelLeft = building.getPosition().getX() - labelMaxWidth / 2;
-            int labelTop = building.getPosition().getY();
+            int labelLeft = building.position().getX() - labelMaxWidth / 2;
+            int labelTop = building.position().getY();
 
             int operationProgress = 1;
             AUnitType unit = building.getTrainingQueue().get(0);
@@ -957,7 +957,7 @@ public class AAdvancedPainter extends APainter {
 //            else {
 //                string += "no_mission";
 //            }
-                paintTextCentered(unit.getPosition(), string, Color.White);
+                paintTextCentered(unit.position(), string, Color.White);
             }
         }
     }
@@ -972,7 +972,7 @@ public class AAdvancedPainter extends APainter {
             }
 
             APosition topLeft;
-            topLeft = foggedEnemy.getPosition().translateByPixels(
+            topLeft = foggedEnemy.position().translateByPixels(
                     -foggedEnemy.type().getDimensionLeft(),
                     -foggedEnemy.type().getDimensionUp()
             );
@@ -983,7 +983,7 @@ public class AAdvancedPainter extends APainter {
 //                    Color.Grey
 //            );
             paintRectangle(
-                    foggedEnemy.getPosition(),
+                    foggedEnemy.position(),
                     foggedEnemy.type().getDimensionRight() / 32,
                     foggedEnemy.type().getDimensionDown() / 32,
                     Color.Grey
@@ -999,8 +999,8 @@ public class AAdvancedPainter extends APainter {
     private static void paintTestSupplyDepotLocationsNearMain() {
         AUnit worker = Select.ourWorkers().first();
         AUnit base = Select.ourBases().first();
-        int tileX = base.getPosition().getTileX();
-        int tileY = base.getPosition().getTileY();
+        int tileX = base.position().getTileX();
+        int tileY = base.position().getTileY();
         for (int x = tileX - 10; x <= tileX + 10; x++) {
             for (int y = tileY - 10; y <= tileY + 10; y++) {
                 APosition position = APosition.create(x, y);
@@ -1139,7 +1139,7 @@ public class AAdvancedPainter extends APainter {
         APainter.setTextSizeMedium();
 
         // Natural base
-        APosition natural = AMap.getNaturalBaseLocation();
+        APosition natural = AMap.naturalBase();
         paintBase(natural, "Our natural", Color.Grey);
 
         // Enemy base
@@ -1147,15 +1147,15 @@ public class AAdvancedPainter extends APainter {
         paintBase(enemyBase, "Enemy natural", Color.Orange);
 
         // Our main choke
-        AChoke mainChoke = AMap.getChokeForMainBase();
+        AChoke mainChoke = AMap.mainBaseChoke();
         paintChoke(mainChoke, Color.Green, "Main choke");
 
         // Our natural choke
-        AChoke naturalChoke = AMap.getChokeForNaturalBase(AMap.getNaturalBaseLocation());
+        AChoke naturalChoke = AMap.getChokeForNaturalBase(AMap.naturalBase());
         paintChoke(naturalChoke, Color.Green, "Natural choke");
 
         // Enemy natural choke
-        AChoke enemyNaturalChoke = AMap.getEnemyNaturalChoke();
+        AChoke enemyNaturalChoke = AMap.enemyNaturalChoke();
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
         // Next defensive building position

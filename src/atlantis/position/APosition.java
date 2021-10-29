@@ -38,8 +38,8 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     }
 
     private APosition(HasPosition p) {
-        super(p.getPosition().getX(), p.getPosition().getY());
-        this.p = p.getPosition();
+        super(p.position().getX(), p.position().getY());
+        this.p = p.position();
     }
 
     public APosition(int pixelX, int pixelY) {
@@ -67,7 +67,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
             APosition position = null;
 
             if (p instanceof HasPosition) {
-                position = new APosition(((HasPosition) p).getPosition());
+                position = new APosition(((HasPosition) p).position());
             } else if (p instanceof Position) {
                 position = new APosition((Position) p);
             } else {
@@ -101,7 +101,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return p;
     }
 
-    public APosition getPosition() {
+    public APosition position() {
         return this;
     }
 
@@ -121,10 +121,6 @@ public class APosition extends Position implements HasPosition, Comparable<Point
      * building dimensions.
      */
     public double distTo(Position position) {
-        return PositionUtil.distanceTo(p, position);
-    }
-
-    public double distTo(HasPosition position) {
         return PositionUtil.distanceTo(p, position);
     }
 
@@ -177,26 +173,6 @@ public class APosition extends Position implements HasPosition, Comparable<Point
 //    default void paintIt(int widthTiles, int heightTiles, Color color) {
 //        APainter.paintRectangle(this, widthTiles, heightTiles, color);
 //    }
-
-    // === High-abstraction ========================================
-
-    /**
-     * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
-     */
-    public APosition translatePercentTowards(HasPosition towards, int percentTowards) {
-        return PositionHelper.getPositionMovedPercentTowards(
-                this, towards, percentTowards
-        );
-    }
-
-    /**
-     * Returns new position which is moved e.g. 0.5 tiles towards <b>towards</b>.
-     */
-    public APosition translateTilesTowards(Point<Position> towards, double tiles) {
-        return PositionHelper.getPositionMovedTilesTowards(
-                this, towards, tiles
-        );
-    }
 
     // =========================================================
 
@@ -301,6 +277,10 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     @Override
     public String toString() {
         return "(" + getTileX() + ", " + getTileY() + ")";
+    }
+
+    public String toStringPixels() {
+        return "(" + x + ", " + y + ")";
     }
 
     @Override

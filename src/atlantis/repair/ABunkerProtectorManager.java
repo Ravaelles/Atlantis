@@ -19,7 +19,7 @@ public class ABunkerProtectorManager {
             else {
                 double distanceToUnit = unit.distTo(protector);
                 if (distanceToUnit > 1 && !protector.isMoving()) {
-                    protector.move(unit.getPosition(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.shortName());
+                    protector.move(unit.position(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.shortName());
                     return true;
                 }
                 else {

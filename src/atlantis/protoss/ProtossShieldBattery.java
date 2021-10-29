@@ -1,7 +1,7 @@
 package atlantis.protoss;
 
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 
 public class ProtossShieldBattery {

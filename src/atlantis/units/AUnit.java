@@ -18,6 +18,7 @@ import atlantis.tech.SpellCoordinator;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.position.PositionUtil;
+import atlantis.units.select.Select;
 import atlantis.util.*;
 import atlantis.wrappers.ATech;
 import bwapi.*;
@@ -159,7 +160,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     @Override
-    public APosition getPosition() {
+    public APosition position() {
         return APosition.create(u.getPosition());
     }
 
@@ -229,7 +230,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                this, newPosition, -1, 9999, true
 //        ) && move(newPosition, UnitActions.MOVE)) {
         if (
-                runningManager().isPossibleAndReasonablePosition(this.getPosition(), newPosition, false)
+                runningManager().isPossibleAndReasonablePosition(this.position(), newPosition, false)
                 && move(newPosition, UnitActions.MOVE, "Move away")
         ) {
             this.setTooltip(tooltip);
@@ -238,7 +239,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
 //        else {
 //            System.out.println("CANT = " + position.distanceTo(newPosition));
-            APainter.paintLine(position.getPosition(), newPosition.getPosition(), Color.Teal);
+            APainter.paintLine(position.position(), newPosition.position(), Color.Teal);
             this.setTooltip("Cant move away");
             move(newPosition, UnitActions.MOVE, "Force move");
             return true;
@@ -254,7 +255,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
 //        return toString;
 //        return "AUnit(" + u.getType().toString() + ")";
-        return "AUnit(" + type().shortName()+ " #" + getID() + ") at " + getPosition().toString();
+        return "AUnit(" + type().shortName()+ " #" + getID() + ") at " + position().toString();
     }
 
     @Override
@@ -573,11 +574,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
     public double groundDistance(AUnit otherUnit) {
-        return PositionUtil.groundDistanceTo(this.getPosition(), otherUnit.getPosition());
+        return PositionUtil.groundDistanceTo(this.position(), otherUnit.position());
     }
 
     public double distTo(Object o) {
-        return PositionUtil.distanceTo(getPosition(), o);
+        return PositionUtil.distanceTo(position(), o);
     }
 
     /**
@@ -657,7 +658,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        double dist = this.getPosition().distTo(targetUnit);
+        double dist = this.position().distTo(targetUnit);
         return (weaponAgainstThisUnit.minRange() / 32) <= dist && dist <= (weaponAgainstThisUnit.maxRange() / 32 + safetyMargin);
     }
 
@@ -667,7 +668,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        double dist = this.getPosition().distTo(position);
+        double dist = this.position().distTo(position);
         return dist <= (weaponRange + safetyMargin);
     }
 
@@ -1247,7 +1248,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasPathTo(AUnit unit) {
-        return u.hasPath(unit.getPosition());
+        return u.hasPath(unit.position());
     }
 
     public boolean isTrainingAnyUnit() {
@@ -1317,7 +1318,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         this._lastTechUnit = usedOn;
 
         if (ATech.isOffensiveSpell(tech)) {
-            SpellCoordinator.newSpellAt(usedOn.getPosition(), tech);
+            SpellCoordinator.newSpellAt(usedOn.position(), tech);
         }
 
         return setUnitAction(unitAction);

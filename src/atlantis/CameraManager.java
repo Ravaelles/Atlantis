@@ -3,7 +3,7 @@ package atlantis;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class CameraManager {
     
@@ -45,7 +45,7 @@ public class CameraManager {
         }
 
         Atlantis.game().setScreenPosition(
-                position.getPosition().translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7)
+                position.position().translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7)
         );
     }
 

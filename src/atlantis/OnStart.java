@@ -3,6 +3,7 @@ package atlantis;
 import atlantis.debug.APainter;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
+import atlantis.position.APosition;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.strategy.OurStrategyManager;
 import atlantis.strategy.ProtossStrategies;
@@ -63,6 +64,14 @@ public class OnStart {
     }
 
     private static void initializeOurStrategyAndBuildOrder() {
+//        APosition p1 = new APosition(100, 100);
+//        APosition p2 = new APosition(200, 110);
+//
+//        System.out.println(p1.translateTilesTowards(p2, 1).toStringPixels());
+//        System.out.println(p1.translateTilesTowards(p2, 2).toStringPixels());
+//        System.out.println(p1.translatePercentTowards(p2, 10).toStringPixels());
+//        System.out.println(p1.translatePercentTowards(p2, 99).toStringPixels());
+
         try {
             OurStrategyManager.initialize();
 

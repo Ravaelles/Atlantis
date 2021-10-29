@@ -3,7 +3,6 @@ package atlantis.interrupt;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
 import bwapi.Color;
 
 public class DontDisturbInterrupt {
@@ -13,13 +12,13 @@ public class DontDisturbInterrupt {
         // Don't INTERRUPT shooting units
         if (DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
 //            System.out.println(A.now() + " SHOOT");
-            APainter.paintRectangle(unit.getPosition().translateByPixels(-5, 0), 10, 3, Color.Red);
+            APainter.paintRectangle(unit.position().translateByPixels(-5, 0), 10, 3, Color.Red);
             return true;
         }
 
         // Allow unit to load to shuttle
         if (allowUnitToLoadToTransport(unit)) {
-            APainter.paintRectangle(unit.getPosition().translateByPixels(-5, 0), 10, 3, Color.Blue);
+            APainter.paintRectangle(unit.position().translateByPixels(-5, 0), 10, 3, Color.Blue);
 //            System.out.println(A.now() + " TRANSP");
             return true;
         }

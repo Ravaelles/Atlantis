@@ -8,7 +8,7 @@ import static atlantis.constructing.AConstructionRequests.requestConstructionOf;
 import atlantis.constructing.AConstructionRequests;
 import atlantis.map.AMap;
 import atlantis.production.ProductionOrder;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 
 public class AExpansionManager {
@@ -84,7 +84,7 @@ public class AExpansionManager {
                 requestConstructionOf(
                         AtlantisConfig.BASE, 
                         fakeProductionOrder,
-                        Select.naturalBaseOrMain().getPosition()
+                        Select.naturalBaseOrMain().position()
                 );
             } 
             

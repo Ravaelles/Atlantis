@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.enemy.AEnemyUnits;
+import atlantis.units.select.Select;
 
 public class OnEveryFrame {
 
@@ -15,6 +16,8 @@ public class OnEveryFrame {
 
 //        AEnemyUnits.printEnemyFoggedUnits();
 //        System.out.println("ENEMY BASE = " + AEnemyUnits.enemyBase());
+
+        Select.printCache();
     }
 
 }

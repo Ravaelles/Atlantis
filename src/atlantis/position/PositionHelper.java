@@ -25,8 +25,8 @@ public class PositionHelper {
         ArrayList<Integer> xCoordinates = new ArrayList<>();
         ArrayList<Integer> yCoordinates = new ArrayList<>();
         for (AUnit unit : units) {
-            xCoordinates.add(unit.getPosition().getX());	//TODO: check whether position is in Pixels
-            yCoordinates.add(unit.getPosition().getX());
+            xCoordinates.add(unit.position().getX());	//TODO: check whether position is in Pixels
+            yCoordinates.add(unit.position().getX());
         }
         Collections.sort(xCoordinates);
         Collections.sort(yCoordinates);
@@ -111,19 +111,14 @@ public class PositionHelper {
         return new APosition(finalX, finalY);
     }
     
-    public static APosition getPositionMovedTilesTowards(APosition from, Point<Position> to, double tiles) {
-        int dirX = to.getX() - from.getX();
-        int dirY = to.getY() - from.getY();
-        
+    public static APosition getPositionMovedTilesTowards(HasPosition from, HasPosition to, double tiles) {
+        double modifier = tiles / from.distTo(to);
+        int dirX = (int) ((to.x() - from.x()) * modifier);
+        int dirY = (int) ((to.y() - from.y()) * modifier);
+
 //        double hyp = Math.sqrt(dirX * dirX + dirY * dirY);
-        double hyp = tiles * 32;
-        dirX /= hyp;
-        dirY /= hyp;
-        
-        int finalX = from.getX() + dirX;
-        int finalY = from.getY() + dirY;
-        
-        return new APosition(finalX, finalY);
+
+        return new APosition(from.x() + dirX, from.y() + dirY);
     }
 
     // === Translate position ============================
@@ -156,8 +151,8 @@ public class PositionHelper {
         int totalX = 0;
         int totalY = 0;
         for (AUnit unit : units) {
-            totalX += unit.getPosition().getX();
-            totalY += unit.getPosition().getY();
+            totalX += unit.position().getX();
+            totalY += unit.position().getY();
         }
         return new APosition(
             totalX / units.size(),

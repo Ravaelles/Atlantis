@@ -4,7 +4,7 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.Units;
 
 public class FightInsteadAvoid {
@@ -32,7 +32,7 @@ public class FightInsteadAvoid {
         this.unit = unit;
         this.enemies = enemies;
 
-        Select<AUnit> selector = (Select<AUnit>) Select.from(enemies);
+        Selection<AUnit> selector = Select.from(enemies);
         invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effCloaked().first();
         invisibleCombatUnit = selector.clone().effCloaked().combatUnits().first();
         lurkerOrReaver = selector.clone().ofType(AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver).first();
@@ -52,9 +52,38 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        if (unit.isSquadScout()) {
-            return Select.our().inRadius(6, unit).atLeast(3);
+        if (dontFightInImportantCases()) {
+            return false;
         }
+
+        if (fightInImportantCases()) {
+            return true;
+        }
+
+        // Workers
+        if (unit.isWorker()) {
+            return fightAsWorker(unit, enemies);
+        }
+
+        // Combat units
+        else {
+            return fightAsCombatUnit();
+        }
+    }
+
+    // =========================================================
+
+    private boolean dontFightInImportantCases() {
+
+        // Always avoid invisible combat units
+        if (invisibleDT != null || invisibleCombatUnit != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean fightInImportantCases() {
 
         // Attacking critically important unit
         if (ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
@@ -70,23 +99,8 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        // Always avoid invisible combat units
-        if (invisibleDT != null || invisibleCombatUnit != null) {
-            return false;
-        }
-
-        // Workers
-        if (unit.isWorker()) {
-            return fightAsWorker(unit, enemies);
-        }
-
-        // Combat units
-        else {
-            return fightAsCombatUnit();
-        }
+        return false;
     }
-
-    // =========================================================
 
     // RANGED
     private boolean fightAsRangedUnit() {
@@ -136,6 +150,10 @@ public class FightInsteadAvoid {
     private boolean fightAsCombatUnit() {
         if (wayTooManyUnitsNearby(unit)) {
             return true;
+        }
+
+        if (unit.isSquadScout()) {
+            return Select.our().inRadius(6, unit).atLeast(3);
         }
 
         if (tankSieged != null || tanks != null) {

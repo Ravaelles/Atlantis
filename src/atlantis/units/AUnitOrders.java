@@ -109,7 +109,7 @@ public interface AUnitOrders {
     }
 
     default boolean move(AUnit target, UnitAction unitAction, String tooltip) {
-        return move(target.getPosition(), unitAction, tooltip);
+        return move(target.position(), unitAction, tooltip);
     }
 
     default boolean move(HasPosition target, UnitAction unitAction, String tooltip) {
@@ -158,7 +158,7 @@ public interface AUnitOrders {
 //            if (unit().isFirstCombatUnit()) {
 //                System.out.println(A.now() + " move");
 //            }
-            u().move(target.getPosition());
+            u().move(target.position());
 
             unit().setLastUnitOrderNow()
                 .setUnitAction(unitAction);

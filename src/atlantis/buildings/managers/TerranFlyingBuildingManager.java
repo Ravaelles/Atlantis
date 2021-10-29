@@ -3,10 +3,9 @@ package atlantis.buildings.managers;
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
-import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 import java.util.ArrayList;
 
@@ -64,7 +63,7 @@ public class TerranFlyingBuildingManager {
             return containFocusPoint.translateTilesTowards(attackFocusPoint, 4);
         }
 
-        return Select.ourTanks().first().getPosition();
+        return Select.ourTanks().first().position();
     }
 
     // =========================================================

@@ -5,7 +5,7 @@ import atlantis.information.AFoggedUnit;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
 
@@ -37,14 +37,14 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
         if (enemyBuilding != null) {
 //            System.out.println("2 = " + enemyBuilding);
-            return enemyBuilding.getPosition();
+            return enemyBuilding.position();
         }
 
         // Try going to any known enemy unit
         AUnit anyEnemyUnit = Select.enemy().first();
         if (anyEnemyUnit != null) {
 //            System.out.println("3 = " + anyEnemyUnit);
-            return anyEnemyUnit.getPosition();
+            return anyEnemyUnit.position();
         }
 
         if (Select.mainBase() == null) {
@@ -52,7 +52,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Try to go to some starting location, hoping to find enemy there.
-        APosition startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().getPosition());
+        APosition startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().position());
         return startLocation;
     }
 

@@ -8,7 +8,7 @@ import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 
 public class TerranBunkerPositionFinder {
@@ -29,7 +29,7 @@ public class TerranBunkerPositionFinder {
         if (nearTo == null) {
             AUnit existingBunker = Select.ourOfType(AUnitType.Terran_Bunker).first();
             if (existingBunker != null) {
-                nearTo = existingBunker.getPosition();
+                nearTo = existingBunker.position();
                 APosition defendPoint = MissionDefend.getInstance().focusPoint();
                 if (defendPoint != null) {
                     nearTo = nearTo.translatePercentTowards(defendPoint, 15);
@@ -38,7 +38,7 @@ public class TerranBunkerPositionFinder {
             else {
                 AUnit mainBase = Select.mainBase();
                 if (mainBase != null) {
-                    nearTo = Select.mainBase().getPosition();
+                    nearTo = Select.mainBase().position();
                 }
             }
         }
@@ -58,18 +58,18 @@ public class TerranBunkerPositionFinder {
 
         // Bunker at MAIN CHOKEPOINT
         if (locationModifier.equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
-            AChoke chokepointForNaturalBase = AMap.getChokeForMainBase();
+            AChoke chokepointForNaturalBase = AMap.mainBaseChoke();
             if (chokepointForNaturalBase != null) {
                 return APosition.create(chokepointForNaturalBase.getCenter())
-                        .translatePercentTowards(mainBase.getPosition(), 5);
+                        .translatePercentTowards(mainBase.position(), 5);
             }
         }
 
         // Bunker at NATURAL CHOKEPOINT
         else {
-            AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.getPosition());
+            AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.position());
             if (chokepointForNaturalBase != null && mainBase != null) {
-                ABaseLocation naturalBase = AMap.getNaturalBaseLocation(Select.mainBase().getPosition());
+                ABaseLocation naturalBase = AMap.naturalBase(Select.mainBase().position());
                 return APosition.create(chokepointForNaturalBase.getCenter())
                         .translatePercentTowards(naturalBase, 25);
 

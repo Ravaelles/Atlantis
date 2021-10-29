@@ -1,7 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 /**
  * Handles the global mission that is mission that affects the battle squad Alpha.

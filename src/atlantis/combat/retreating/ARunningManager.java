@@ -6,8 +6,8 @@ import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.Count;
-import atlantis.units.Select;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
@@ -68,7 +68,7 @@ public class ARunningManager {
         if (unitOrPosition instanceof AUnit) {
 //            runAwayFrom = ((AUnit) unitOrPosition).getPosition();
             AUnit runAwayFromAsUnit = ((AUnit) unitOrPosition);
-            runAwayFrom = runAwayFromAsUnit.getPosition();
+            runAwayFrom = runAwayFromAsUnit.position();
         } else if (unitOrPosition instanceof APosition) {
             runAwayFrom = (APosition) unitOrPosition;
         }
@@ -77,7 +77,7 @@ public class ARunningManager {
 
 //        if (A.notUms() && A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30)) {
         if (A.notUms() && (Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30))) {
-            runTo = Select.mainBase().getPosition();
+            runTo = Select.mainBase().position();
         } else {
             runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
         }
@@ -123,9 +123,9 @@ public class ARunningManager {
 
         // === Run directly away from the enemy ========================================
         
-        if (!unit.getPosition().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
+        if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
             if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() == 1) {
-                runAwayFrom = closeEnemies.first().getPosition();
+                runAwayFrom = closeEnemies.first().position();
             }
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
         }
@@ -140,12 +140,12 @@ public class ARunningManager {
 
         if (
                 runTo != null && runTo.distTo(unit) <= 0.3
-                && isPossibleAndReasonablePosition(unit.getPosition(), runTo.getPosition(), true)
+                && isPossibleAndReasonablePosition(unit.position(), runTo.position(), true)
         ) {
             System.err.println("Invalid run position, dist = " + runTo.distTo(unit));
             APainter.paintLine(unit, runTo, Color.Purple);
             APainter.paintLine(
-                    unit.getPosition().translateByPixels(0, 1),
+                    unit.position().translateByPixels(0, 1),
                     runTo.translateByPixels(0, 1),
                     Color.Purple
             );
@@ -225,10 +225,10 @@ public class ARunningManager {
 
     private APosition canRunByShowingBackToEnemyTo(AUnit unit, HasPosition runAwayFrom, double dist) {
         APosition runTo;
-        double vectorLength = unit.getPosition().distTo(runAwayFrom);
+        double vectorLength = unit.position().distTo(runAwayFrom);
 
-        double vectorX = runAwayFrom.x() - unit.getPosition().getX();
-        double vectorY = runAwayFrom.y() - unit.getPosition().getY();
+        double vectorX = runAwayFrom.x() - unit.position().getX();
+        double vectorY = runAwayFrom.y() - unit.position().getY();
         double ratio = dist / vectorLength;
 
         // Apply opposite 2D vector
@@ -250,9 +250,9 @@ public class ARunningManager {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (isPossibleAndReasonablePosition(unit.getPosition(), runTo, true, "O", "X")) {
-            APainter.paintLine(unit.getPosition(), runTo, Color.Purple);
-            APainter.paintLine(unit.getPosition().translateByPixels(-1, -1), runTo, Color.Purple);
+        if (isPossibleAndReasonablePosition(unit.position(), runTo, true, "O", "X")) {
+            APainter.paintLine(unit.position(), runTo, Color.Purple);
+            APainter.paintLine(unit.position().translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
             return runTo;
         } else {
@@ -280,7 +280,7 @@ public class ARunningManager {
         
         // ========================================================================
         
-        APosition unitPosition = unit.getPosition();
+        APosition unitPosition = unit.position();
 //        int tx = unitPosition.getTileX();
 //        int ty = unitPosition.getTileY();
 

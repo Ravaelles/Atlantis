@@ -3,10 +3,12 @@ package atlantis.constructing.position;
 import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.debug.APainter;
+import atlantis.map.AChoke;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {
@@ -22,6 +24,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             double maxDistance) {
         _CONDITION_THAT_FAILED = null;
         int initSearchRadius = building.isPylon() ? 5 : 0;
+
+        // First pylon should be orientated towards the nearest choke
+        if (building.isPylon() && AGame.getSupplyTotal() <= 10) {
+            nearTo = positionForFirstPylon();
+            System.out.println("nearTo=" + nearTo);
+        }
 
         int searchRadius = initSearchRadius;
         while (searchRadius < maxDistance) {
@@ -129,5 +137,15 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         return Atlantis.game().hasPower(position.toTilePosition())
                 || building.isPylon()
                 || building.equals(AUnitType.Protoss_Nexus);
+    }
+
+    private static APosition positionForFirstPylon() {
+        AUnit base = Select.mainBase();
+        AChoke mainChoke = AMap.mainBaseChoke();
+        if (base == null || mainChoke == null) {
+            return Select.our().first().position();
+        }
+
+        return base.position().translateTilesTowards(mainChoke, 8);
     }
 }

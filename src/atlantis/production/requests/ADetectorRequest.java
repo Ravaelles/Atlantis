@@ -6,7 +6,7 @@ import atlantis.constructing.AConstructionRequests;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 public class ADetectorRequest {
 
@@ -72,12 +72,12 @@ public class ADetectorRequest {
 //
         for (AUnit base : Select.ourBases().listUnits()) {
             int numberOfDetectorsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
-                    detectorBuilding, 15, base.getPosition()
+                    detectorBuilding, 15, base.position()
             );
 
             for (int i = 0; i <= 2 - numberOfDetectorsNearBase; i++) {
                 System.out.println("Detector construction (" + detectorBuilding.shortName() + ") requested!");
-                AConstructionRequests.requestConstructionOf(detectorBuilding, base.getPosition());
+                AConstructionRequests.requestConstructionOf(detectorBuilding, base.position());
             }
         }
     }

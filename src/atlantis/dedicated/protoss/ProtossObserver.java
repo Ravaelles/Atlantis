@@ -4,7 +4,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 
 public class ProtossObserver {
@@ -36,7 +36,7 @@ public class ProtossObserver {
                 .inRadius(17, observer).exclude(observer);
         if (observers.count() > 0) {
             AUnit otherObserver = observers.nearestTo(observer);
-            observer.moveAwayFrom(otherObserver.getPosition(), 5, "Spread observers");
+            observer.moveAwayFrom(otherObserver.position(), 5, "Spread observers");
             return true;
         }
 
@@ -94,7 +94,7 @@ public class ProtossObserver {
         if (dangerousInvisibleEnemy != null) {
             observerForBase = observer;
             if (observerForBase.distTo(dangerousInvisibleEnemy) > 0.2) {
-                observerForBase.move(dangerousInvisibleEnemy.getPosition(), UnitActions.MOVE, "Reveal enemy in base");
+                observerForBase.move(dangerousInvisibleEnemy.position(), UnitActions.MOVE, "Reveal enemy in base");
             }
             return true;
         }

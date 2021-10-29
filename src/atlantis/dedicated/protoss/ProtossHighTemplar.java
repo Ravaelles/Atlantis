@@ -8,7 +8,7 @@ import atlantis.position.APosition;
 import atlantis.tech.SpellCoordinator;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
@@ -99,7 +99,7 @@ public class ProtossHighTemplar {
     }
 
     private static boolean usePsionic(AUnit highTemplar, AUnit enemy) {
-        if (SpellCoordinator.noOtherSpellAssignedHere(enemy.getPosition(), TechType.Psionic_Storm)) {
+        if (SpellCoordinator.noOtherSpellAssignedHere(enemy.position(), TechType.Psionic_Storm)) {
             if (!enemy.isUnderStorm()) {
                 highTemplar.useTech(TechType.Psionic_Storm, enemy);
                 return true;

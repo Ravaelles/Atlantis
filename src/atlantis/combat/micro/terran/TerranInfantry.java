@@ -3,7 +3,7 @@ package atlantis.combat.micro.terran;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 
 
 public class TerranInfantry {
@@ -49,7 +49,7 @@ public class TerranInfantry {
             if (Missions.isGlobalMissionDefend() && mainBase != null) {
                 AUnit mostDistantBunker = bunkers
                         .units()
-                        .sortByGroundDistTo(mainBase.getPosition(), false)
+                        .sortByGroundDistTo(mainBase.position(), false)
                         .first();
                 return mostDistantBunker;
             }

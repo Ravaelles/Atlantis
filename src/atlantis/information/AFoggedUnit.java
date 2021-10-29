@@ -39,18 +39,18 @@ public class AFoggedUnit extends AUnit {
 //    }
 
     @Override
-    public APosition getPosition() {
+    public APosition position() {
         return _position;
     }
 
     @Override
     public int x() {
-        return getPosition().getX();
+        return position().getX();
     }
 
     @Override
     public int y() {
-        return getPosition().getY();
+        return position().getY();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class AFoggedUnit extends AUnit {
     }
 
     protected void updatePosition(AUnit unit) {
-        if (unit.getPosition() != null) {
+        if (unit.position() != null) {
 //            System.out.println("Update " + unit.shortName() + " to " + unit.getPosition());
             _position = new APosition(unit.x(), unit.y());
             cacheInt.set("lastPositionUpdated", -1, A.now());

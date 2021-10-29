@@ -1,12 +1,6 @@
 package atlantis.combat.missions;
 
-import atlantis.map.AMap;
-import atlantis.map.ARegion;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
-import atlantis.units.actions.UnitActions;
-import bwta.Region;
 
 /**
  * This is the mission that is best used in UMS maps.

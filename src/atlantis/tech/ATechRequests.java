@@ -3,7 +3,7 @@ package atlantis.tech;
 import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

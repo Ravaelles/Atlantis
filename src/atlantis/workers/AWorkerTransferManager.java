@@ -2,7 +2,7 @@ package atlantis.workers;
 
 import atlantis.AGame;
 import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 
@@ -69,8 +69,8 @@ public class AWorkerTransferManager {
     }
 
     private static void transferWorkerTo(AUnit worker, AUnit baseWithFewestWorkers) {
-        if (worker.distTo(baseWithFewestWorkers.getPosition()) > 6) {
-            worker.move(baseWithFewestWorkers.getPosition(), UnitActions.TRANSFER, "Transfer");
+        if (worker.distTo(baseWithFewestWorkers.position()) > 6) {
+            worker.move(baseWithFewestWorkers.position(), UnitActions.TRANSFER, "Transfer");
         } else if (worker.isMoving()) {
             worker.holdPosition("Transferred!");
         }
