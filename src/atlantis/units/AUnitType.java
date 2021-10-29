@@ -512,7 +512,17 @@ public class AUnitType implements Comparable<AUnitType> {
                 )
         );
     }
-    
+
+    public boolean isInitialBase() {
+        return (boolean) cache.get(
+                "isInitialBase",
+                -1,
+                () -> is(
+                        AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus, AUnitType.Zerg_Hatchery
+                )
+        );
+    }
+
     public boolean isPrimaryBase() {
         return (boolean) cache.get(
                 "isPrimaryBase",
@@ -929,14 +939,14 @@ public class AUnitType implements Comparable<AUnitType> {
                 () -> {
                     if (isBuilding()) {
                         for (AUnitType requiredUnit : getRequiredUnits().keySet()) {
-                            if (requiredUnit.isBuilding()) {
+                            if (requiredUnit.isBuilding() && requiredUnit.isInitialBase()) {
                                 return requiredUnit;
                             }
                         }
-                        System.err.println("getWhatTypeIsRequired reached end for: " + this);
-                        for (AUnitType requiredUnit : getRequiredUnits().keySet()) {
-                            System.err.println(requiredUnit + " x" + getRequiredUnits().get(requiredUnit));
-                        }
+//                        System.err.println("getWhatTypeIsRequired reached end for: " + this);
+//                        for (AUnitType requiredUnit : getRequiredUnits().keySet()) {
+//                            System.err.println(requiredUnit + " x" + getRequiredUnits().get(requiredUnit));
+//                        }
                         return null;
                     } else {
                         return getWhatBuildsIt();

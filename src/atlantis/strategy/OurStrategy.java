@@ -1,9 +1,6 @@
 package atlantis.strategy;
 
-import atlantis.AGame;
-import atlantis.production.ProductionOrder;
-import atlantis.production.orders.AProductionQueueManager;
-import atlantis.util.Us;
+import atlantis.production.orders.ProductionQueue;
 
 public class OurStrategy {
 
@@ -44,7 +41,7 @@ public class OurStrategy {
 //        }
 //        System.out.println("--------------");
 
-        AProductionQueueManager.switchToBuildOrder(strategy.buildOrder());
+        ProductionQueue.useBuildOrderFrom(strategy);
     }
 
 }

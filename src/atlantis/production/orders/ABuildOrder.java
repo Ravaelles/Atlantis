@@ -6,7 +6,6 @@ import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 import java.util.ArrayList;
 
@@ -41,7 +40,7 @@ public abstract class ABuildOrder {
      * See ADynamicWorkerProductionManager which is also used to produce workers.
      */
     public boolean produceWorker() {
-        if (!AGame.canAfford(50, 0) || AGame.getSupplyFree() < 1) {
+        if (!AGame.canAfford(50, 0) || AGame.supplyFree() < 1) {
             return false;
         }
 
@@ -55,7 +54,7 @@ public abstract class ABuildOrder {
             if (
                     base.getRemainingTrainTime() <= 4
                             && base.hasNothingInQueue()
-                            && AGame.getSupplyFree() >= 2
+                            && AGame.supplyFree() >= 2
             ) {
                 return base.train(AtlantisConfig.WORKER);
             }
@@ -70,9 +69,26 @@ public abstract class ABuildOrder {
     public abstract boolean produceUnit(AUnitType unitType);
 
     /**
-     * When production orders run out, we should always produce some units.
+     * Returns human readable name of the file.
      */
-    public abstract ArrayList<AUnitType> produceWhenNoProductionOrders();
+    @Override
+    public String toString() {
+        String name = this.name;
+
+        name = name.substring(name.lastIndexOf("/") + 1);
+        name = name.substring(0, name.lastIndexOf(".txt"));
+
+        return name;
+    }
+
+
+    public void print() {
+        System.out.println("--- Full production order list ---");
+        for (ProductionOrder productionOrder : productionOrders()) {
+            System.out.println("   - " + productionOrder.toString());
+        }
+        System.out.println("--- END OF production order list ---");
+    }
 
     // === Getters =============================================
 
@@ -83,20 +99,8 @@ public abstract class ABuildOrder {
         return name;
     }
 
-    /**
-     * Returns human readable name of the file.
-     */
-    @Override
-    public String toString() {
-        String name = this.name;
-        
-        name = name.substring(name.lastIndexOf("/") + 1);
-        name = name.substring(0, name.lastIndexOf(".txt"));
-        
-        return name;
-    }
-
     public ArrayList<ProductionOrder> productionOrders() {
         return productionOrders;
     }
+
 }

@@ -1,5 +1,6 @@
 package atlantis.production;
 
+import atlantis.position.APosition;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -21,6 +22,11 @@ public class ProductionOrder {
      * AUnit type to be build. Can be null if this production order is for something else than upgrade.
      */
     private AUnitType unitOrBuilding = null;
+
+    /**
+     * Makes sense only for buildings.
+     */
+    private APosition position = null;
 
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
@@ -48,6 +54,11 @@ public class ProductionOrder {
     private int numberOfColumnsInRow;
 
     /**
+     * Metadata - used in APainter to show if we can afford it or not.
+     */
+    private boolean hasWhatRequired;
+
+    /**
      *
      */
 //    private int priority;
@@ -59,18 +70,20 @@ public class ProductionOrder {
 
     // =========================================================
     
+    public ProductionOrder(AUnitType unitOrBuilding, APosition position) {
+        this.unitOrBuilding = unitOrBuilding;
+        this.position = position;
+    }
+    
     public ProductionOrder(AUnitType unitOrBuilding) {
-        this();
         this.unitOrBuilding = unitOrBuilding;
     }
 
     public ProductionOrder(UpgradeType upgrade) {
-        super();
         this.upgrade = upgrade;
     }
 
     public ProductionOrder(TechType tech) {
-        super();
         this.tech = tech;
     }
 
@@ -99,13 +112,13 @@ public class ProductionOrder {
     @Override
     public String toString() {
         if (unitOrBuilding != null) {
-            return "Order: " + unitOrBuilding;
+            return "Order: " + shortName();
         }
         else if (upgrade != null) {
-            return "Order: " + upgrade;
+            return "Order: " + shortName();
         }
         else if (tech != null) {
-            return "Order: " + tech;
+            return "Order: " + shortName();
         }
         else {
             return "InvalidEmptyOrder";
@@ -116,9 +129,11 @@ public class ProductionOrder {
         if (unitOrBuilding != null) {
             return unitOrBuilding.shortName();
         } else if (upgrade != null) {
-            return upgrade.toString();
+            return upgrade.toString().replace("_", " ");
+        } else if (tech != null) {
+            return tech.toString().replace("_", " ");
         } else {
-            return "Unknown";
+            return "Unknown - BUG";
         }
     }
 
@@ -202,12 +217,19 @@ public class ProductionOrder {
         this.rawFirstColumnInFile = rawFirstColumnInFile;
     }
 
-    public int getNumberOfColumnsInRow() {
-        return numberOfColumnsInRow;
-    }
-
     public void setNumberOfColumnsInRow(int numberOfColumnsInRow) {
         this.numberOfColumnsInRow = numberOfColumnsInRow;
     }
-    
+
+    public void setHasWhatRequired(boolean hasWhatRequired) {
+        this.hasWhatRequired = hasWhatRequired;
+    }
+
+    public boolean canHasWhatRequired() {
+        return hasWhatRequired;
+    }
+
+    public APosition getPosition() {
+        return position;
+    }
 }

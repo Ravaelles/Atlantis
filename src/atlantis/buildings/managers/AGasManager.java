@@ -6,7 +6,6 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.workers.AWorkerManager;
 
 import java.util.ArrayList;
@@ -14,10 +13,6 @@ import java.util.Collection;
 
 public class AGasManager {
 
-    private static final int MAX_GAS_WORKERS_PER_BUILDING = 3;
-
-    // =========================================================
-    
     /**
      * If any of our gas extracting buildings needs worker, it will assign exactly one worker per frame (until
      * no more needed).
@@ -134,7 +129,7 @@ public class AGasManager {
         }
         
         int totalGasNeeded = 0;
-        ArrayList<ProductionOrder> nextOrders = ProductionQueue.getProductionQueueNext(
+        ArrayList<ProductionOrder> nextOrders = ProductionQueue.nextInProductionQueue(
                 1 + (AGame.timeSeconds() > 300 ? 2 : 0)
         );
         for (ProductionOrder order : nextOrders) {

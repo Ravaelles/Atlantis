@@ -109,12 +109,11 @@ public class GameSpeed {
 
         GameSpeed.pauseGame();
 
-        try {
-            TimeUnit.MILLISECONDS.sleep(30);
-        } catch (InterruptedException e) {
-        }
+        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
 
         gameSpeed = speed;
+
+        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
 
 //        try {
 //            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
@@ -126,12 +125,8 @@ public class GameSpeed {
 //        }
         game().setLocalSpeed(gameSpeed);
         game().setLocalSpeed(gameSpeed);
+        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
         AGame.sendMessage("/speed " + gameSpeed);
-
-        try {
-            TimeUnit.MILLISECONDS.sleep(30);
-        } catch (InterruptedException e) {
-        }
 
         GameSpeed.unpauseGame();
 //        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");

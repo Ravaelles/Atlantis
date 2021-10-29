@@ -9,7 +9,7 @@ public class ATransportTargeting {
     public static AUnit target(AUnit unit) {
         AUnit nearTransport = Select.enemy()
                 .transports(true)
-                .canBeAttackedBy(unit, false, true)
+                .canBeAttackedBy(unit, 1)
                 .inRadius(13, unit)
                 .nearestTo(unit);
 

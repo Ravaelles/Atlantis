@@ -76,8 +76,6 @@ public class ABuildOrderLoader {
 
         ABuildOrder buildOrder = ABuildOrderFactory.forRace(race, filePath, productionOrders);
 
-        return buildOrder;
-
         // =========================================================
         // Converts shortcut notations like:
         //        6 - Barracks
@@ -102,15 +100,13 @@ public class ABuildOrderLoader {
         //   - SCV
         //   - SCV
         //   - Supply Depot
-//        buildFullBuildOrderSequenceBasedOnRawOrders();
+        buildOrder.print();
 
-        // === Display initial production queue ====================
-//        System.out.println("Initial production order queue:");
-//        for (ProductionOrder productionOrder : initialProductionQueue) {
-//            System.out.println("   - " + productionOrder.toString());
-//        }
-//        System.out.println("END OF Initial production order queue");
-//        Atlantis.end();
+//        buildOrder.overrideProductionOrders(BuildOrderNotationConverter.convertNotation(buildOrder));
+//
+//        buildOrder.print();
+
+        return buildOrder;
     }
 
     /**

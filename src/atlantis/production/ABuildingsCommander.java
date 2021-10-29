@@ -2,9 +2,8 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.buildings.managers.ASupplyManager;
-import atlantis.buildings.managers.TerranFlyingBuildingManager;
-import atlantis.constructing.AConstructionManager;
-import atlantis.repair.ARepairCommander;
+import atlantis.production.constructing.AConstructionManager;
+import atlantis.production.dynamic.ADynamicProductionCommander;
 import atlantis.util.CodeProfiler;
 
 /**

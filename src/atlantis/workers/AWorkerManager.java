@@ -1,13 +1,12 @@
 package atlantis.workers;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.constructing.ABuilderManager;
-import atlantis.constructing.AConstructionManager;
+import atlantis.production.constructing.ABuilderManager;
+import atlantis.production.constructing.AConstructionManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 
 public class AWorkerManager {
@@ -22,11 +21,11 @@ public class AWorkerManager {
             return true;
         }
 
-        if (worker.lastActionLessThanAgo(20, UnitActions.RETURN_CARGO)) {
+        if (AAvoidUnits.avoidEnemiesIfNeeded(worker)) {
             return true;
         }
 
-        if (AAvoidUnits.avoidEnemiesIfNeeded(worker)) {
+        if (worker.lastActionLessThanAgo(20, UnitActions.RETURN_CARGO)) {
             return true;
         }
 

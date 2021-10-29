@@ -26,7 +26,7 @@ public class AStrategy {
     private boolean goingHiddenUnits = false;
     private boolean goingAirUnitsQuickly = false;
     private boolean goingAirUnitsLate = false;
-    protected boolean unknown = true;
+    protected boolean unknown = false;
 
     // =========================================================
 

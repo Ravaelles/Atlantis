@@ -1,6 +1,7 @@
 package atlantis.workers;
 
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -10,10 +11,6 @@ public class AWorkerDefenceManager {
      * Attack other workers, run from enemies etc.
      */
     public static boolean handleDefenceIfNeeded(AUnit worker) {
-        if (worker.hp() <= 11) {
-            return false;
-        }
-
         if (handleFightEnemyIfNeeded(worker)) {
             return true;
         }
@@ -28,13 +25,23 @@ public class AWorkerDefenceManager {
      * Sometimes workers need to fight.
      */
     private static boolean handleFightEnemyIfNeeded(AUnit worker) {
-        
+        if (worker.hp() <= 6) {
+            return false;
+        }
+
+        // FIGHT against ZEARGLINGS
+        for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).listUnits()) {
+            if (worker.hp() <= 21) {
+                return false;
+            }
+            worker.attackUnit(enemy);
+            worker.setTooltip("ForMotherland!");
+            return true;
+        }
+
         // DESTROY ENEMY BUILDINGS that are being built close to main base.
         if (Select.ourBases().inRadius(20, worker).count() > 0) {
             for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).listUnits()) {
-                System.out.println("enemyBuilding = " + enemyBuilding);
-
-                // Attack enemy building
                 worker.attackUnit(enemyBuilding);
                 worker.setTooltip("Cheesy!");
                 return true;
@@ -44,7 +51,6 @@ public class AWorkerDefenceManager {
         // FIGHT against enemy WORKERS
         for (AUnit enemy : Select.enemy().inRadius(2, worker).listUnits()) {
             if (enemy.isWorker() && worker.hp() >= 11) {
-                System.out.println("enemy = " + enemy);
                 worker.setTooltip("NastyFuckers!");
                 worker.attackUnit(enemy);
                 return true;
@@ -53,7 +59,6 @@ public class AWorkerDefenceManager {
 
         // FIGHT against COMBAT UNITS
         for (AUnit enemy : Select.enemy().combatUnits().inRadius(1, worker).listUnits()) {
-            System.out.println("enemy combat = " + enemy);
             worker.attackUnit(enemy);
             worker.setTooltip("ForMotherland!");
             return true;

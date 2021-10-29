@@ -2,7 +2,8 @@ package atlantis.buildings.managers;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionRequests;
+import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
@@ -15,13 +16,13 @@ public class ASupplyManager {
     // =========================================================
     
     public static void update() {
-        supplyTotal = AGame.getSupplyTotal();
+        supplyTotal = AGame.supplyTotal();
 
         /**
          * Check if should use auto supply manager
          */
         if (supplyTotal >= AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS) {
-            supplyFree = AGame.getSupplyFree();
+            supplyFree = AGame.supplyFree();
 
             int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
@@ -60,7 +61,7 @@ public class ASupplyManager {
 
         // Terran + Protoss
         else {
-            AConstructionRequests.requestConstructionOf(AtlantisConfig.SUPPLY);
+            AddToQueue.addWithHighPriority(AtlantisConfig.SUPPLY);
         }
     }
 

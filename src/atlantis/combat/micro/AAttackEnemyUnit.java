@@ -4,7 +4,6 @@ import atlantis.combat.targeting.AEnemyTargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
 
@@ -62,7 +61,7 @@ public class AAttackEnemyUnit {
             return false;
         }
 
-        if (!unit.canAttackThisUnit(target, false, true)) {
+        if (!unit.canAttackTarget(target, false, true)) {
             unit.setTooltip("Invalid target");
             System.err.println("Invalid target for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
             return false;

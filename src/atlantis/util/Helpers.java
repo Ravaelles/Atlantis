@@ -28,11 +28,11 @@ public class Helpers {
     }
 
     public static boolean supply(int minSupply) {
-        return AGame.getSupplyUsed() >= minSupply;
+        return AGame.supplyUsed() >= minSupply;
     }
 
     public static boolean noSupply(int minSupply) {
-        return AGame.getSupplyUsed() < minSupply;
+        return AGame.supplyUsed() < minSupply;
     }
 
     public static boolean hasRequiredUnitFor(AUnitType type) {

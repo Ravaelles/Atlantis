@@ -1,6 +1,8 @@
 package atlantis.production.orders;
 
+import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
+import atlantis.strategy.AStrategy;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
@@ -10,9 +12,6 @@ import java.util.ArrayList;
  */
 public abstract class ProductionQueue {
 
-    public static final int MODE_ALL_ORDERS = 1;
-    public static final int MODE_ONLY_UNITS = 2;
-
     /**
      * Build order currently in use.
      * switchToBuildOrder(ABuildOrder buildOrder)
@@ -20,13 +19,8 @@ public abstract class ProductionQueue {
     private static ABuildOrder currentBuildOrder = null;
 
     /**
-     * Ordered list of production orders as initially read from the file.
-     */
-//    protected static ArrayList<ProductionOrder> initialProductionQueue = new ArrayList<>();
-
-    /**
-     * Ordered list of next units we should build. It is re-generated when events like "started
-     * training/building new unit"
+     * Ordered list of next units we should build.
+     * It gets rebuild whenever new unit is created.
      */
     protected static ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
 
@@ -45,7 +39,7 @@ public abstract class ProductionQueue {
     /**
      * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
      */
-    public static ArrayList<ProductionOrder> getProductionQueueNext(int howMany) {
+    public static ArrayList<ProductionOrder> nextInProductionQueue(int howMany) {
         ArrayList<ProductionOrder> result = new ArrayList<>();
 
         for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
@@ -56,12 +50,7 @@ public abstract class ProductionQueue {
         return result;
     }
 
-    public static void addWithTopPriority(AUnitType type) {
-        ProductionOrder productionOrder = new ProductionOrder(type);
-        currentProductionQueue.add(0, productionOrder);
-    }
-
-    public static boolean isAtTopOfProductionQueue(AUnitType type, int amongNTop) {
+    public static boolean isAtTheTopOfQueue(AUnitType type, int amongNTop) {
         for (int i = 0; i < amongNTop && i < currentProductionQueue.size(); i++) {
             if (type.equals(currentProductionQueue.get(i).getUnitOrBuilding())) {
                 return true;
@@ -70,9 +59,19 @@ public abstract class ProductionQueue {
         return false;
     }
 
-    public static boolean hasNothingToProduce() {
-        return currentProductionQueue.isEmpty();
+    public static int countInTopOfQueue(AUnitType type, int amongNTop) {
+        int count = 0;
+        for (int i = 0; i < amongNTop && i < currentProductionQueue.size(); i++) {
+            if (type.equals(currentProductionQueue.get(i).getUnitOrBuilding())) {
+                count++;
+            }
+        }
+        return count;
     }
+
+//    public static boolean hasNothingToProduce() {
+//        return currentProductionQueue.isEmpty();
+//    }
 
     // === Getters =============================================
 
@@ -83,15 +82,16 @@ public abstract class ProductionQueue {
         return currentBuildOrder;
     }
 
-    public static void setBuildOrder(ABuildOrder currentBuildOrder) {
-        ProductionQueue.currentBuildOrder = currentBuildOrder;
+    public static void useBuildOrderFrom(AStrategy strategy) {
+        currentBuildOrder = strategy.buildOrder();
+        ProductionQueueRebuilder.rebuildProductionQueue();
     }
 
     /**
      * Number of minerals reserved to produce some units/buildings in the build order that according to it
      * should be produced right now (judging by the supply used).
      */
-    public static int getMineralsReserved() {
+    public static int mineralsReserved() {
         return mineralsNeeded;
     }
 
@@ -99,9 +99,8 @@ public abstract class ProductionQueue {
      * Number of gas reserved to produce some units/buildings in the build order that according to it
      * should be produced right now (judging by the supply used).
      */
-    public static int getGasReserved() {
+    public static int gasReserved() {
         return gasNeeded;
     }
-
 
 }

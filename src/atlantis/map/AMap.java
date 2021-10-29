@@ -2,8 +2,8 @@ package atlantis.map;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.constructing.AConstructionRequests;
-import atlantis.constructing.ConstructionOrder;
+import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionOrder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
@@ -11,7 +11,6 @@ import atlantis.position.PositionHelper;
 import atlantis.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.A;
 import atlantis.position.PositionUtil;
 import bwapi.Position;

@@ -45,7 +45,7 @@ public class AEnemyTargeting {
         if (Select.enemyRealUnits(true)
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, false, true)
+                .canBeAttackedBy(unit, 3)
                 .count() == 0) {
             return null;
         }
@@ -57,11 +57,11 @@ public class AEnemyTargeting {
                 .effVisible()
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, false, true);
+                .canBeAttackedBy(unit, 13);
         enemyUnits = Select.enemyRealUnits(false)
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, false, true);
+                .canBeAttackedBy(unit, 13);
 
         // =========================================================
 
@@ -106,7 +106,7 @@ public class AEnemyTargeting {
                 .ofType(enemyType)
 //        Selection targets = Select.enemies(enemyType)
                 .effVisible()
-                .canBeAttackedBy(ourUnit, true, true);
+                .canBeAttackedBy(ourUnit, 0);
 
 //        System.err.println(Select.enemy().size() + " // " + Select.enemy().ofType(enemyType).size());
 //        System.err.println(targets.size() + " // " + targets.clone() + " // " + targets.clone().mostWounded());

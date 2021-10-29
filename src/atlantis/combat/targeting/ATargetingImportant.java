@@ -112,8 +112,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                         AUnitType.Terran_Missile_Turret
                 )
                 .inRadius(12, unit)
-                .effVisible()
-                .canBeAttackedBy(unit, false, true)
+                .canBeAttackedBy(unit, 4)
                 .nearestTo(unit);
 
 //        if (AEnemyTargeting.DEBUG) System.out.println("C5 = " + target);

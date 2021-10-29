@@ -42,7 +42,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit defBuilding = Select.ourOfTypeIncludingUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
                 if (defBuilding != null) {
-                    return defBuilding.position().translateTilesTowards(mainBase.position(), 4);
+                    return defBuilding.position().translateTilesTowards(mainBase.position(), 5);
                 }
 
                 // === Return position near the choke point ================

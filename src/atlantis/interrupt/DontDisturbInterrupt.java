@@ -9,6 +9,12 @@ public class DontDisturbInterrupt {
 
     public static boolean dontInterruptImportantActions(AUnit unit) {
 
+        // "Patrol" is used only for user manual actions and unit will not be interrupted
+        if (unit.isPatrolling()) {
+            unit.setTooltip("Manual control");
+            return true;
+        }
+
         // Don't INTERRUPT shooting units
         if (DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
 //            System.out.println(A.now() + " SHOOT");

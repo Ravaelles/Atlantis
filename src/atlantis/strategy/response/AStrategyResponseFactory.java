@@ -1,5 +1,8 @@
 package atlantis.strategy.response;
 
+import atlantis.strategy.response.protoss.ProtossStrategyResponse;
+import atlantis.strategy.response.terran.TerranStrategyResponse;
+import atlantis.strategy.response.zerg.ZergStrategyResponse;
 import atlantis.util.Cache;
 import atlantis.util.Us;
 import bwapi.Race;

@@ -15,7 +15,7 @@ public class TerranCloakableManager {
         if (unit.canCloak()) {
             boolean enemiesNearby = Select.enemyRealUnits()
                     .inRadius(11, unit)
-                    .canAttack(unit, false, true)
+                    .canAttack(unit, true, true, 3)
                     .isNotEmpty();
             boolean detectorsNearby = Select.enemy()
                     .detectors()

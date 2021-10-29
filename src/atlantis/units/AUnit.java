@@ -4,9 +4,9 @@ import atlantis.AGame;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.Squad;
-import atlantis.constructing.AConstructionManager;
-import atlantis.constructing.AConstructionRequests;
-import atlantis.constructing.ConstructionOrder;
+import atlantis.production.constructing.AConstructionManager;
+import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.enemy.UnitsArchive;
 import atlantis.interrupt.DontInterruptStartedAttacks;
@@ -19,7 +19,6 @@ import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.*;
 import atlantis.wrappers.ATech;
 import bwapi.*;
@@ -611,26 +610,56 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
     // RANGE and ATTACK methods
     /**
-     * Returns true if this unit is capable of attacking <b>otherUnit</b>. For example Zerglings can't attack
+     * Returns true if this unit is capable of attacking <b>target</b>. For example Zerglings can't attack
      * flying targets and Corsairs can't attack ground targets.
-     *
-     * @param includeCooldown if true, then unit will be considered able to attack only if the cooldown after
-     * the last shot allows it
      */
-    public boolean canAttackThisUnit(AUnit otherUnit, boolean includeCooldown, boolean checkVisibility) {
-        if (checkVisibility && otherUnit.effCloaked()) {
+    public boolean canAttackTarget(AUnit target) {
+        return canAttackTarget(target, true, true, false, 0);
+    }
+
+    public boolean canAttackTarget(
+            AUnit target,
+            boolean checkShootingRange
+    ) {
+        return canAttackTarget(target, checkShootingRange, true, false, 0);
+    }
+
+    public boolean canAttackTarget(
+            AUnit target,
+            boolean checkShootingRange,
+            boolean checkVisibility
+    ) {
+        return canAttackTarget(target, checkShootingRange, checkVisibility, false, 0);
+    }
+
+    public boolean canAttackTarget(
+            AUnit target,
+            boolean checkShootingRange,
+            boolean checkVisibility,
+            boolean includeCooldown,
+            double safetyMargin
+    ) {
+        // Target CLOAKED
+        if (checkVisibility && target.effCloaked()) {
             return false;
         }
 
-        // Enemy is GROUND unit
-        if (otherUnit.isGroundUnit()) {
-            return canAttackGroundUnits() && (!includeCooldown || getGroundWeaponCooldown() == 0);
+        // Target is GROUND unit
+        if (target.isGroundUnit() && (!canAttackGroundUnits() || (includeCooldown && cooldownRemaining() >= 4))) {
+            return false;
         }
 
-        // Enemy is AIR unit
-        else {
-            return canAttackAirUnits() && (!includeCooldown || getAirWeaponCooldown() == 0);
+        // Target is AIR unit
+        if (target.isAirUnit() && (!target.canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) {
+            return false;
         }
+
+        // Shooting RANGE
+        if (checkShootingRange && !this.hasWeaponRange(target, safetyMargin)) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean hasWeaponToAttackThisUnit(AUnit otherUnit) {
@@ -836,10 +865,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public int cooldownRemaining() {
         if (canAttackGroundUnits()) {
-            return getGroundWeaponCooldown();
+            return groundWeaponCooldown();
         }
         if (canAttackAirUnits()) {
-            return getAirWeaponCooldown();
+            return airWeaponCooldown();
         }
         return 0;
     }
@@ -1011,7 +1040,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Unit is effectvely cloaked and we can't attack it. Need to detect it first.
      */
     public boolean effCloaked() {
-        if (!isCloaked() || ensnared() || plagued()) {
+        if ((!isCloaked() && !isBurrowed()) || ensnared() || plagued()) {
             return false;
         }
 
@@ -1067,11 +1096,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isRepairing();
     }
 
-    public int getGroundWeaponCooldown() {
+    public int groundWeaponCooldown() {
         return u.getGroundWeaponCooldown();
     }
 
-    public int getAirWeaponCooldown() {
+    public int airWeaponCooldown() {
         return u.getAirWeaponCooldown();
     }
 
@@ -1093,6 +1122,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isHoldingPosition() {
         return u.isHoldingPosition();
+    }
+
+    public boolean isPatrolling() {
+        return u.isPatrolling();
     }
 
     public boolean isSieged() {
@@ -1374,7 +1407,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    }
 
     public boolean noCooldown() {
-        return getGroundWeaponCooldown() <= 0 || getAirWeaponCooldown() <= 0;
+        return groundWeaponCooldown() <= 0 || airWeaponCooldown() <= 0;
     }
     
     public int scarabCount() {
@@ -1664,6 +1697,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isSquadScout() {
         return squad() != null && equals(squad().getSquadScout());
+    }
+
+    public boolean isNotAttackableByRangedDueToSpell() {
+        return isUnderDarkSwarm();
     }
 
     //    public boolean isFacingTheSameDirection(AUnit otherUnit) {

@@ -1,18 +1,18 @@
 package atlantis.production.requests;
 
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionRequests;
+import atlantis.production.constructing.AConstructionRequests;
 import atlantis.position.APosition;
+import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class AAntiAirBuildingRequests {
 
     public static boolean handle() {
-        if (shouldBuild()) {
+        if (shouldBuildNew()) {
             return requestDefensiveBuildingAntiAir(null);
         }
 
@@ -21,8 +21,10 @@ public class AAntiAirBuildingRequests {
 
     // =========================================================
 
-    private static boolean shouldBuild() {
-        int defBuildingAntiLand = AConstructionRequests.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
+    private static boolean shouldBuildNew() {
+        int defBuildingAntiLand = AConstructionRequests.countExistingAndExpectedInNearFuture(
+                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR, 6
+        );
         return defBuildingAntiLand < AStrategyInformations.antiLandBuildingsNeeded;
     }
 
@@ -40,13 +42,13 @@ public class AAntiAirBuildingRequests {
                 );
 
                 for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-                    AConstructionRequests.requestConstructionOf(building, base.position());
+                    AddToQueue.addWithTopPriority(building, base.position());
                 }
             }
         }
 
         if (nearTo != null) {
-            AConstructionRequests.requestConstructionOf(building, nearTo);
+            AddToQueue.addWithTopPriority(building, nearTo);
             return true;
         }
 
@@ -62,9 +64,9 @@ public class AAntiAirBuildingRequests {
 
         // === Ensure we have required units ========================================
 
-        int requiredParents = AConstructionRequests.countExistingAndPlannedConstructions(building.getWhatIsRequired());
+        int requiredParents = AConstructionRequests.countExistingAndNotFinished(building.getWhatIsRequired());
         if (requiredParents == 0) {
-            AConstructionRequests.requestConstructionOf(building.getWhatIsRequired());
+            AddToQueue.addWithHighPriority(building.getWhatIsRequired());
             return;
         }
 
@@ -76,7 +78,7 @@ public class AAntiAirBuildingRequests {
             );
 
             for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-                AConstructionRequests.requestConstructionOf(building, base.position());
+                AddToQueue.addWithTopPriority(building, base.position());
             }
         }
     }

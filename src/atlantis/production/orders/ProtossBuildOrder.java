@@ -1,11 +1,9 @@
 package atlantis.production.orders;
 
-import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 import java.util.ArrayList;
 
@@ -38,21 +36,6 @@ public class ProtossBuildOrder extends ABuildOrder {
 //        }
 
         return false;
-    }
-
-    @Override
-    public ArrayList<AUnitType> produceWhenNoProductionOrders() {
-        ArrayList<AUnitType> units = new ArrayList<>();
-        
-        if (ADynamicWorkerProductionManager.shouldTrainWorkers()) {
-            units.add(AUnitType.Protoss_Probe);
-            units.add(AUnitType.Protoss_Probe);
-        }
-                
-        units.add(AUnitType.Protoss_Dragoon);
-        units.add(AUnitType.Protoss_Zealot);
-        
-        return units;
     }
 
 }

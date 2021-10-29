@@ -1,21 +1,22 @@
 package atlantis.production.requests;
 
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionRequests;
+import atlantis.production.constructing.AConstructionRequests;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
+import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.Us;
 
 public class AAntiLandBuildingRequests {
 
     public static boolean handle() {
-        if (shouldBuild()) {
+        if (shouldBuildNew()) {
+            System.out.println("ENQUEUE NEW CANNON");
             return requestDefensiveBuildingAntiLand(null);
         }
 
@@ -24,8 +25,10 @@ public class AAntiLandBuildingRequests {
 
     // =========================================================
 
-    private static boolean shouldBuild() {
-        int defBuildingAntiLand = AConstructionRequests.countExistingAndPlannedConstructions(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
+    private static boolean shouldBuildNew() {
+        int defBuildingAntiLand = AConstructionRequests.countExistingAndExpectedInNearFuture(
+                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND, 6
+        );
         return defBuildingAntiLand < Math.max(expectedUnits(), AStrategyInformations.antiLandBuildingsNeeded);
     }
 
@@ -47,7 +50,7 @@ public class AAntiLandBuildingRequests {
         }
 
         if (nearTo != null) {
-            AConstructionRequests.requestConstructionOf(building(), nearTo);
+            AddToQueue.addWithTopPriority(building(), nearTo);
             return true;
         }
 
@@ -59,7 +62,6 @@ public class AAntiLandBuildingRequests {
         APosition nearTo = null;
 
 //        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
-
 
         AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
         if (previousBuilding != null) {

@@ -1,45 +1,46 @@
 package atlantis.production;
 
 import atlantis.AGame;
-import atlantis.constructing.AConstructionRequests;
+import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {
 
-    protected static void trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
+    protected static boolean trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
         if (noSupply(minSupply)) {
-            return;
+            return false;
         }
 
-        trainIfPossible(type, onlyOneAtTime, type.getMineralPrice(), type.getGasPrice());
+        return trainIfPossible(type, onlyOneAtTime, type.getMineralPrice(), type.getGasPrice());
     }
 
-    protected static void trainIfPossible(AUnitType type, boolean onlyOneAtTime) {
-        trainIfPossible(type, onlyOneAtTime, 0, 0);
+    protected static boolean trainIfPossible(AUnitType type, boolean onlyOneAtTime) {
+        return trainIfPossible(type, onlyOneAtTime, 0, 0);
     }
 
-    protected static void trainIfPossible(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
+    protected static boolean trainIfPossible(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
         if (!AGame.canAfford(hasMinerals, hasGas)) {
-            return;
+            return false;
         }
 
-        if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(type)) {
-            return;
+        if (onlyOneAtTime && type.isBuilding() && AConstructionRequests.hasRequestedConstructionOf(type)) {
+            return false;
         }
 
         AUnitType building = type.getWhatBuildsIt();
         for (AUnit buildingProducing : Select.ourOfType(building).listUnits()) {
             if (!buildingProducing.isTrainingAnyUnit()) {
                 buildingProducing.train(type);
-                return;
+                return true;
             }
         }
+        return false;
     }
     
     protected static void trainNowIfHaveWhatsRequired(AUnitType type, boolean onlyOneAtTime) {
@@ -56,7 +57,7 @@ public class AbstractDynamicUnits extends Helpers {
             return;
         }
 
-        if (ProductionQueue.isAtTopOfProductionQueue(type, 3)) {
+        if (ProductionQueue.isAtTheTopOfQueue(type, 3)) {
             return;
         }
         
@@ -64,7 +65,7 @@ public class AbstractDynamicUnits extends Helpers {
     }
     
     protected static void trainNow(AUnitType type, boolean onlyOneAtTime) {
-        ProductionQueue.addWithTopPriority(type);
+        AddToQueue.addWithTopPriority(type);
     }
 
 }

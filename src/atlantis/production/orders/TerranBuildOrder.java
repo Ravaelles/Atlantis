@@ -1,12 +1,10 @@
 package atlantis.production.orders;
 
-import atlantis.AtlantisConfig;
-import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
+
 import java.util.ArrayList;
 
 public class TerranBuildOrder extends ABuildOrder {
@@ -41,26 +39,6 @@ public class TerranBuildOrder extends ABuildOrder {
     @Override
     public boolean produceWorker() {
         return super.produceWorker();
-    }
-
-    @Override
-    public ArrayList<AUnitType> produceWhenNoProductionOrders() {
-        ArrayList<AUnitType> units = new ArrayList<>();
-        
-        if (ADynamicWorkerProductionManager.shouldTrainWorkers()) {
-            units.add(AtlantisConfig.WORKER);
-            units.add(AtlantisConfig.WORKER);
-        }
-        
-        // =========================================================
-        
-        units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
-        units.add(AUnitType.Terran_Goliath);
-        units.add(AUnitType.Terran_Wraith);
-        units.add(AUnitType.Terran_Marine);
-        units.add(AUnitType.Terran_Siege_Tank_Tank_Mode);
-        
-        return units;
     }
 
 }

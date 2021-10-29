@@ -2,7 +2,7 @@ package atlantis.units.select;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionManager;
+import atlantis.production.constructing.AConstructionManager;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

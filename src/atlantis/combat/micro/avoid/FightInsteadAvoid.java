@@ -178,7 +178,7 @@ public class FightInsteadAvoid {
     private boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()
                 && Select.enemyRealUnits()
-                    .canBeAttackedBy(unit, false, true)
+                    .canBeAttackedBy(unit, 3)
                     .inRadius(3, unit)
                     .isNotEmpty();
     }
@@ -186,7 +186,7 @@ public class FightInsteadAvoid {
     private boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
         return unit.isAirUnitAntiAir()
                 && Select.enemyRealUnits()
-                .canBeAttackedBy(unit, false, true)
+                .canBeAttackedBy(unit, 3)
                 .inRadius(6, unit)
                 .isNotEmpty();
     }

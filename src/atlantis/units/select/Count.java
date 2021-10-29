@@ -1,6 +1,6 @@
 package atlantis.units.select;
 
-import atlantis.constructing.AConstructionRequests;
+import atlantis.production.constructing.AConstructionRequests;
 import atlantis.units.AUnitType;
 
 /**
@@ -51,5 +51,13 @@ public class Count {
 
     public static int workers() {
         return Select.ourWorkers().count();
+    }
+
+    public static int dragoons() {
+        return ofType(AUnitType.Protoss_Dragoon);
+    }
+
+    public static int zealots() {
+        return ofType(AUnitType.Protoss_Zealot);
     }
 }

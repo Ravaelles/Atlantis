@@ -39,7 +39,7 @@ public class ATargetingStandard extends AEnemyTargeting {
 
             // Target repairers
             AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, target)
-                    .canBeAttackedBy(unit, false, true).nearestTo(unit);
+                    .canBeAttackedBy(unit, 1).nearestTo(unit);
             if (repairer != null) {
                 return repairer;
             }
@@ -105,7 +105,7 @@ public class ATargetingStandard extends AEnemyTargeting {
 
         return Select.enemy()
                 .effVisible()
-                .canBeAttackedBy(unit, false, true)
+                .canBeAttackedBy(unit, 5)
                 .nearestTo(unit);
     }
 

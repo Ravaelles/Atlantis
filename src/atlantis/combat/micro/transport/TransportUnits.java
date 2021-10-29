@@ -61,7 +61,7 @@ public class TransportUnits {
     // =========================================================
 
     private static boolean handleGoToSafety(AUnit transport, AUnit baby) {
-        AUnit nearEnemy = Select.enemyCombatUnits().canShootAt(transport.position(), 5).nearestTo(transport);
+        AUnit nearEnemy = Select.enemyCombatUnits().canAttack(baby, 5).nearestTo(transport);
         if (nearEnemy != null) {
             transport.moveAwayFrom(nearEnemy, 8, "ToSafety");
             APainter.paintLine(transport, transport.getTargetPosition(), Color.White);
@@ -72,8 +72,10 @@ public class TransportUnits {
     }
 
     private static boolean isBabyInDanger(AUnit baby, boolean allowMoreDangerousBehavior) {
+        double safetyMargin = (allowMoreDangerousBehavior ? 0.5 : 2.5) + baby.woundPercent() / 100;
         boolean enemiesNear = Select.enemyCombatUnits()
-                .inShootRangeOf((allowMoreDangerousBehavior ? 0.5 : 2.5) + baby.woundPercent() / 100, baby)
+//                .inShootRangeOf((allowMoreDangerousBehavior ? 0.5 : 2.5) + baby.woundPercent() / 100, baby)
+                .canAttack(baby, safetyMargin)
                 .isNotEmpty();
 
         if (!allowMoreDangerousBehavior && baby.woundPercent() < 75 && enemiesNear) {
@@ -92,7 +94,7 @@ public class TransportUnits {
             return true;
         }
 
-        return Select.enemyCombatUnits().inShootRangeOf(2, transport).isNotEmpty();
+        return Select.enemyCombatUnits().canAttack(transport, 2.5).isNotEmpty();
     }
 
     private static boolean followBaby(AUnit transport, AUnit baby) {

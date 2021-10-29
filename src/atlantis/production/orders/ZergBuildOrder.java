@@ -1,12 +1,11 @@
 package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
-import atlantis.production.ADynamicWorkerProductionManager;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
+
 import java.util.ArrayList;
 
 public class ZergBuildOrder extends ABuildOrder {
@@ -29,29 +28,6 @@ public class ZergBuildOrder extends ABuildOrder {
     @Override
     public boolean produceUnit(AUnitType unitType) {
         return produceZergUnit(unitType);
-    }
-
-    @Override
-    public ArrayList<AUnitType> produceWhenNoProductionOrders() {
-        ArrayList<AUnitType> units = new ArrayList<>();
-        
-        boolean shouldTrainWorkers = ADynamicWorkerProductionManager.shouldTrainWorkers();
-        
-        if (shouldTrainWorkers) {
-            units.add(AUnitType.Zerg_Drone);
-        }
-        
-        units.add(AUnitType.Zerg_Hydralisk);
-        units.add(AUnitType.Zerg_Zergling);
-        
-        if (shouldTrainWorkers) {
-            units.add(AUnitType.Zerg_Drone);
-        }
-        
-        units.add(AUnitType.Zerg_Mutalisk);
-        units.add(AUnitType.Zerg_Mutalisk);
-        
-        return units;
     }
 
     // =========================================================

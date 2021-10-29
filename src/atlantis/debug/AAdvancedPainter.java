@@ -2,6 +2,7 @@ package atlantis.debug;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.GameSpeed;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.ACombatEvaluator;
 import atlantis.combat.micro.avoid.AAvoidUnits;
@@ -10,10 +11,10 @@ import atlantis.combat.missions.MissionAttack;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.Squad;
-import atlantis.constructing.AConstructionRequests;
-import atlantis.constructing.ConstructionOrder;
-import atlantis.constructing.ConstructionOrderStatus;
-import atlantis.constructing.position.TerranPositionFinder;
+import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.ConstructionOrderStatus;
+import atlantis.production.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.AChoke;
@@ -22,15 +23,15 @@ import atlantis.map.ARegion;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
 import atlantis.production.ProductionOrder;
+import atlantis.production.orders.CurrentProductionOrders;
 import atlantis.production.orders.ProductionQueue;
-import atlantis.production.orders.AProductionQueueManager;
+import atlantis.production.orders.ProductionQueueMode;
 import atlantis.production.requests.AAntiLandBuildingRequests;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
@@ -74,7 +75,7 @@ public class AAdvancedPainter extends APainter {
 //        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
         setTextSizeMedium();
 
-        paintInfo();
+        paintSidebarInfo();
         paintKilledAndLost();
         paintProductionQueue();
         paintSidebarConstructionsPending();
@@ -208,21 +209,24 @@ public class AAdvancedPainter extends APainter {
         setTextSizeMedium();
         for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
             paintCircleFilled(enemy, 18, Color.Orange);
-            paintTextCentered(enemy, "Cloaked", Color.Orange);
+            paintTextCentered(enemy, "Cloaked,HP=" + enemy.hp(), Color.Orange);
         }
         for (AUnit enemy : Select.enemy().cloakedButEffVisible().listUnits()) {
             paintCircleFilled(enemy, 18, Color.Green);
-            paintTextCentered(enemy, "CloakedVisible", Color.Green);
+            paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.Green);
         }
     }
 
     /**
      * Paint focus point for global attack mission etc.
      */
-    static void paintInfo() {
+    static void paintSidebarInfo() {
         Mission mission = Squad.getAlphaSquad().mission();
 
         // Time
+        if (AGame.isUms()) {
+            paintSideMessage("UMS map mode enabled", Color.Green);
+        }
         paintSideMessage("Time: " + AGame.timeSeconds() + "s", Color.Grey);
 
         // =========================================================
@@ -255,8 +259,8 @@ public class AAdvancedPainter extends APainter {
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
         paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + ProductionQueue.getMineralsReserved(), Color.Grey);
-        paintSideMessage("Reserved gas: " + ProductionQueue.getGasReserved(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + ProductionQueue.mineralsReserved(), Color.Grey);
+        paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
     }
 
     private static void paintCombatEval(AUnit unit, boolean isEnemy) {
@@ -449,30 +453,34 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units that should be produced right now or any time ==================
 
-        ArrayList<ProductionOrder> produceNow = AProductionQueueManager.getThingsToProduceRightNow(ProductionQueue.MODE_ALL_ORDERS);
+        ArrayList<ProductionOrder> produceNow = CurrentProductionOrders.thingsToProduce(ProductionQueueMode.ENTIRE_QUEUE);
+        int counter = 1;
         for (ProductionOrder order : produceNow) {
-            paintSideMessage(order.shortName(), Color.Yellow);
+            paintSideMessage(order.shortName(), order.canHasWhatRequired() ? Color.Yellow : Color.Red);
+            if (++counter >= 10) {
+                break;
+            }
         }
 
         // === Display next units to produce ================================================
 
-        ArrayList<ProductionOrder> fullQueue = ProductionQueue.getProductionQueueNext(
-                5 - produceNow.size());
-        for (int index = produceNow.size(); index < fullQueue.size(); index++) {
-            ProductionOrder order = fullQueue.get(index);
-            if (order != null && order.shortName() != null) {
-                if (order.getUnitOrBuilding() != null
-                        && !AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
-                    continue;
-                }
-                paintSideMessage(order.shortName(), Color.Red);
-            }
-        }
+//        ArrayList<ProductionOrder> fullQueue = ProductionQueue.nextInProductionQueue(
+//                5 - produceNow.size());
+//        for (int index = produceNow.size(); index < fullQueue.size(); index++) {
+//            ProductionOrder order = fullQueue.get(index);
+//            if (order != null && order.shortName() != null) {
+//                if (order.getUnitOrBuilding() != null
+//                        && !AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
+//                    continue;
+//                }
+//                paintSideMessage(order.shortName(), Color.Red);
+//            }
+//        }
 
         // === Paint info if queues are empty ===============================================
 
-        if (produceNow.isEmpty() && fullQueue.isEmpty()) {
-            paintSideMessage("Nothing to produce - it seems to be a bug", Color.Red);
+        if (produceNow.isEmpty()) {
+            paintSideMessage("Nothing to produce - it's a bug", Color.Red);
         }
     }
 
@@ -486,12 +494,6 @@ public class AAdvancedPainter extends APainter {
             paintSideMessage(type.shortName(), Color.Green);
         }
 
-        // Constructions already planned
-        for (ConstructionOrder order : AConstructionRequests.getNotStartedConstructions()) {
-            AUnitType type = order.getBuildingType();
-            paintSideMessage(type.shortName(), Color.Teal);
-        }
-
         // Techs
         for (TechType techType : ATech.getCurrentlyResearching()) {
             paintSideMessage(techType.toString(), Color.Green);
@@ -500,6 +502,12 @@ public class AAdvancedPainter extends APainter {
         // Upgrades
         for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
             paintSideMessage(upgradeType.toString(), Color.Green);
+        }
+
+        // Constructions already planned
+        for (ConstructionOrder order : AConstructionRequests.getNotStartedConstructions()) {
+            AUnitType type = order.getBuildingType();
+            paintSideMessage(type.shortName(), Color.Teal);
         }
     }
 
@@ -1161,11 +1169,11 @@ public class AAdvancedPainter extends APainter {
 
         // Next defensive building position
         AUnitType building = AAntiLandBuildingRequests.building();
+        APosition defBuild = AAntiLandBuildingRequests.positionForNextBuilding();
         paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.shortName(), Color.Brown);
-    }
-
-    private static void paintBuildingPlanned(APosition position, Color brown, String shortName) {
-
+        if (defBuild != null) {
+            GameSpeed.changeSpeedTo(20);
+        }
     }
 
     private static void paintMineralDistance() {

@@ -1,11 +1,9 @@
 package atlantis.units.select;
 
-import atlantis.constructing.AConstructionManager;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionUtil;
 import atlantis.repair.ARepairAssignments;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -355,18 +353,37 @@ public class Selection {
         return this;
     }
 
-    public Selection canShootAt(AUnit targetUnit) {
-        data.removeIf(unit -> !unit.isCompleted() || !unit.isAlive() || !unit.hasWeaponRange(targetUnit, 0));
-        return this;
-    }
+//    public Selection canShootAt(AUnit targetUnit) {
+//        data.removeIf(unit -> !unit.isCompleted() || !unit.isAlive() || !unit.hasWeaponRange(targetUnit, 0));
+//        return this;
+//    }
+//
+//    public Selection canShootAt(AUnit targetUnit, double shootingRangeBonus) {
+//        data.removeIf(unit -> !unit.isCompleted() || !unit.isAlive() || !unit.hasWeaponRange(targetUnit, shootingRangeBonus));
+//        return this;
+//    }
+//
+//    public Selection canShootAt(APosition position, double shootingRangeBonus) {
+//        data.removeIf(unit -> !unit.isCompleted() || !unit.isAlive() || !unit.hasGroundWeaponRange(position, shootingRangeBonus));
+//        return this;
+//    }
 
-    public Selection canShootAt(AUnit targetUnit, double shootingRangeBonus) {
-        data.removeIf(unit -> !unit.isCompleted() || !unit.isAlive() || !unit.hasWeaponRange(targetUnit, shootingRangeBonus));
-        return this;
-    }
+//    public Selection canBeAttackedBy(AUnit attacker, boolean checkShootingRange, boolean checkVisibility) {
+//        data.removeIf(target -> !attacker.canAttackTarget(target, checkShootingRange, checkVisibility, false, 0));
+//        return this;
+//    }
 
-    public Selection canShootAt(APosition position, double shootingRangeBonus) {
-        data.removeIf(unit -> !unit.isCompleted() || !unit.isAlive() || !unit.hasGroundWeaponRange(position, shootingRangeBonus));
+//    public Selection canBeAttackedBy(AUnit attacker) {
+//        data.removeIf(target -> !attacker.canAttackTarget(
+//                target, true, true, false, 0
+//        ));
+//        return this;
+//    }
+
+    public Selection canBeAttackedBy(AUnit attacker, double safetyMargin) {
+        data.removeIf(target -> !attacker.canAttackTarget(
+                target, true, true, false, safetyMargin
+        ));
         return this;
     }
 
@@ -374,37 +391,27 @@ public class Selection {
      * Selects only those units from current selection, which can be both <b>attacked by</b> given unit (e.g.
      * Zerglings can't attack Overlord) and are <b>in shot range</b> to the given <b>unit</b>.
      */
-    public Selection canBeAttackedBy(AUnit attacker, boolean checkShootingRange, boolean checkVisibility) {
-        Iterator<AUnit> unitsIterator = data.iterator();
-        while (unitsIterator.hasNext()) {
-            AUnit target = unitsIterator.next();
-
-            if (!attacker.hasWeaponToAttackThisUnit(target) || (checkVisibility && target.effCloaked())) {
-                unitsIterator.remove();
-            }
-            else if (checkShootingRange && !attacker.hasWeaponRange(target, 0)) {
-                unitsIterator.remove();
-            }
-        }
+    public Selection canAttack(AUnit target, boolean checkShootingRange, boolean checkVisibility, double safetyMargin) {
+        data.removeIf(attacker -> !attacker.canAttackTarget(
+                target, checkShootingRange, checkVisibility, false, safetyMargin
+        ));
         return this;
     }
 
-    public Selection canAttack(AUnit defender, boolean checkShootingRange, boolean checkVisibility) {
-        data.removeIf(attacker ->
-                !attacker.canAttackThisUnit(defender, checkShootingRange, checkVisibility)
-                        || (checkShootingRange && !attacker.hasWeaponRange(defender, 0))
-        );
+    public Selection canAttack(AUnit target, double safetyMargin) {
+        data.removeIf(attacker -> !attacker.canAttackTarget(
+                target, true, true, false, safetyMargin
+        ));
         return this;
     }
 
     public Selection inShootRangeOf(AUnit attacker) {
-        return canBeAttackedBy(attacker, true, false);
+        return canBeAttackedBy(attacker, 0);
     }
 
     public Selection inShootRangeOf(double shootingRangeBonus, AUnit attacker) {
-        return canShootAt(attacker, shootingRangeBonus);
+        return canBeAttackedBy(attacker, shootingRangeBonus);
     }
-
 
     /**
      * Counts all of our Zerg Larvas.
@@ -772,6 +779,5 @@ public class Selection {
     public Selection clone() {
         return new Selection(this.data, currentCachePath);
     }
-
 
 }

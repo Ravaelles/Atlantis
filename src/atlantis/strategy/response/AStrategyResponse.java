@@ -62,7 +62,7 @@ public abstract class AStrategyResponse {
             }
 
             AStrategyInformations.antiLandBuildingsNeeded(1);
-            ADetectorRequest.requestDetectorImmediately(null);
+//            ADetectorRequest.requestDetectorImmediately(null);
         }
 
         if (enemyStrategy.isAirUnits()) {

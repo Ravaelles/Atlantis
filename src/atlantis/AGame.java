@@ -3,10 +3,9 @@ package atlantis;
 import static atlantis.Atlantis.game;
 
 import atlantis.combat.missions.MissionChanger;
+import atlantis.production.Requirements;
 import atlantis.production.orders.ProductionQueue;
-import atlantis.units.AUnitType;import atlantis.units.select.Selection;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
+import atlantis.units.AUnitType;
 import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import bwapi.*;
@@ -22,50 +21,6 @@ public class AGame {
 
     private static boolean umsMode = false; // Should be set to `true` on UMS (custom) maps
     private static Player _enemy = null; // Cached enemy player
-
-    // =========================================================
-
-    /**
-     * Returns true if we have all techs needed for given unit (but we may NOT have some of the buildings!).
-     */
-    public static boolean hasTechToProduce(AUnitType unitType) {
-
-        // Needs to have tech
-        TechType techType = unitType.getRequiredTech();
-        return techType == null || techType == TechType.None || ATech.isResearched(techType);
-    }
-
-    /**
-     * Returns true if we have all buildings needed for given unit.
-     *
-     * @param countUnfinished if true, then if it will require required units to be finished to return
-     * true e.g. to produce Zealot you need at least one finished Gateway
-     */
-    public static boolean hasBuildingsToProduce(AUnitType unitType, boolean countUnfinished) {
-
-        // Need to have every prerequisite building
-        for (AUnitType requiredType : unitType.getRequiredUnits().keySet()) {
-            if (requiredType.equals(AUnitType.Zerg_Larva)) {
-                continue;
-            }
-
-            int requiredAmount = unitType.getRequiredUnits().get(requiredType);
-            int weHaveAmount = requiredType.equals(AUnitType.Zerg_Larva)
-                    ? Select.ourLarva().count()
-                    : (countUnfinished ? Select.ourIncludingUnfinished() : Select.our()).ofType(requiredType).count();
-            if (weHaveAmount < requiredAmount) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Returns true if it's possible to produce unit (or building) of given type.
-     */
-    public static boolean hasTechAndBuildingsToProduce(AUnitType unitType) {
-        return hasTechToProduce(unitType) && hasBuildingsToProduce(unitType, true);
-    }
 
     // =========================================================
     
@@ -162,25 +117,25 @@ public class AGame {
     /**
      * Number of free supply.
      */
-    public static int getSupplyFree() {
-        return getSupplyTotal() - getSupplyUsed();
+    public static int supplyFree() {
+        return supplyTotal() - supplyUsed();
     }
 
     /**
      * Number of supply used.
      */
-    public static int getSupplyUsed() {
+    public static int supplyUsed() {
         return Atlantis.game().self().supplyUsed() / 2;
     }
 
     public static boolean hasSupply(int minSupply) {
-        return getSupplyUsed() >= minSupply;
+        return supplyUsed() >= minSupply;
     }
 
     /**
      * Number of supply totally available.
      */
-    public static int getSupplyTotal() {
+    public static int supplyTotal() {
         return Atlantis.game().self().supplyTotal() / 2;
     }
 
@@ -339,8 +294,8 @@ public class AGame {
      */
     public static boolean canAffordWithReserved(int minerals, int gas) {
         return canAfford(
-                minerals + ProductionQueue.getMineralsReserved(),
-                gas + ProductionQueue.getGasReserved()
+                minerals + ProductionQueue.mineralsReserved(),
+                gas + ProductionQueue.gasReserved()
         );
     }
 

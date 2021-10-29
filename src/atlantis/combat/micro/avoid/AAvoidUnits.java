@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.Units;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public abstract class AAvoidUnits {
 
     public static Units getUnitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
         Units enemies = new Units();
-        for (AUnit enemy : searchAmongEnemyUnits(unit)) {
+        for (AUnit enemy : searchProblematicEnemyUnits(unit)) {
             enemies.addUnitWithValue(enemy, SafetyMargin.calculate(enemy, unit));
         }
 
@@ -70,9 +69,9 @@ public abstract class AAvoidUnits {
 
     // =========================================================
 
-    protected static List<? extends AUnit> searchAmongEnemyUnits(AUnit unit) {
+    protected static List<? extends AUnit> searchProblematicEnemyUnits(AUnit unit) {
         return Select.enemyRealUnits(true, true, true)
-                .canAttack(unit, false, true)
+                .canAttack(unit, true, true, 3)
                 .inRadius(13, unit)
                 .list();
     }

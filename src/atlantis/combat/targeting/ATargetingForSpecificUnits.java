@@ -17,7 +17,7 @@ public class ATargetingForSpecificUnits {
     // =========================================================
 
     private static AUnit furthestTargetInRange(AUnit unit) {
-        return Select.enemyRealUnits().canBeAttackedBy(unit, true, true).mostDistantTo(unit);
+        return Select.enemyRealUnits().canBeAttackedBy(unit, 0).mostDistantTo(unit);
     }
 
 }

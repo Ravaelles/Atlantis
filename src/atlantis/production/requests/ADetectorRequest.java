@@ -2,12 +2,12 @@ package atlantis.production.requests;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionRequests;
+import atlantis.production.constructing.AConstructionRequests;
 import atlantis.position.APosition;
+import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class ADetectorRequest {
 
@@ -57,15 +57,15 @@ public class ADetectorRequest {
     }
 
     private static void requestDetectorConstruction(AUnitType detectorBuilding) {
-        int detectors = AConstructionRequests.countExistingAndPlannedConstructions(detectorBuilding);
+        int detectors = AConstructionRequests.countExistingAndNotFinished(detectorBuilding);
         System.out.println("detectors = " + detectors);
 
         // === Ensure parent exists ========================================
 
-        int requiredParents = AConstructionRequests.countExistingAndPlannedConstructions(detectorBuilding.getWhatIsRequired());
+        int requiredParents = AConstructionRequests.countExistingAndNotFinished(detectorBuilding.getWhatIsRequired());
         if (requiredParents == 0) {
             System.out.println("Detector dependency requested: " + detectorBuilding.getWhatIsRequired().shortName());
-            AConstructionRequests.requestConstructionOf(detectorBuilding.getWhatIsRequired());
+            AddToQueue.addWithTopPriority(detectorBuilding.getWhatIsRequired());
             return;
         }
 
@@ -78,7 +78,7 @@ public class ADetectorRequest {
 
             for (int i = 0; i <= 2 - numberOfDetectorsNearBase; i++) {
                 System.out.println("Detector construction (" + detectorBuilding.shortName() + ") requested!");
-                AConstructionRequests.requestConstructionOf(detectorBuilding, base.position());
+                AddToQueue.addWithTopPriority(detectorBuilding, base.position());
             }
         }
     }
