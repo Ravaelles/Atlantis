@@ -4,7 +4,6 @@ import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 
 public class TerranDynamicUnitsManager {
@@ -35,7 +34,7 @@ public class TerranDynamicUnitsManager {
             // Force at least one marine per bunker
             if (marines < shouldHaveMarines) {
                 for (int i = 0; i < shouldHaveMarines - marines; i++) {
-                    AUnit idleBarrack = Select.ourOneIdle(AUnitType.Terran_Barracks);
+                    AUnit idleBarrack = Select.ourOneNotTrainingUnits(AUnitType.Terran_Barracks);
                     if (idleBarrack != null) {
                         idleBarrack.train(AUnitType.Terran_Marine);
                     }

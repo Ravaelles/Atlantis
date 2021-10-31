@@ -6,6 +6,7 @@ import bwapi.UnitType;
 import bwapi.WeaponType;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Wrapper for BWMirror UnitType class that makes it much easier to use.<br /><br />
@@ -441,9 +442,9 @@ public class AUnitType implements Comparable<AUnitType> {
 
     @Override
     public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
@@ -939,7 +940,7 @@ public class AUnitType implements Comparable<AUnitType> {
                 () -> {
                     if (isBuilding()) {
                         for (AUnitType requiredUnit : getRequiredUnits().keySet()) {
-                            if (requiredUnit.isBuilding() && requiredUnit.isInitialBase()) {
+                            if (requiredUnit.isBuilding() && !requiredUnit.isInitialBase()) {
                                 return requiredUnit;
                             }
                         }
@@ -1101,5 +1102,21 @@ public class AUnitType implements Comparable<AUnitType> {
                         Zerg_Scourge
                 )
         );
+    }
+
+    public boolean hasRequiredUnit() {
+        return (boolean) cache.get(
+                "requiresUnit",
+                1,
+                () -> getWhatIsRequired() != null
+        );
+    }
+
+    public static String arrayToIds(AUnitType[] types) {
+        StringBuilder result = new StringBuilder();
+        for (AUnitType type : types) {
+            result.append((result.length() > 0) ? "," : "").append(type.id());
+        }
+        return result.toString();
     }
 }

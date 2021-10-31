@@ -16,8 +16,8 @@ public class TerranBuildOrder extends ABuildOrder {
 
     // =========================================================
 
-    public TerranBuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
-        super(name, productionOrders);
+    public TerranBuildOrder(String name) {
+        super(name);
     }
 
     // =========================================================
@@ -25,7 +25,7 @@ public class TerranBuildOrder extends ABuildOrder {
     @Override
     public boolean produceUnit(AUnitType unitType) {
         AUnitType whatBuildsIt = unitType.getWhatBuildsIt();
-        AUnit unitThatWillProduce = Select.ourOneIdle(whatBuildsIt);
+        AUnit unitThatWillProduce = Select.ourOneNotTrainingUnits(whatBuildsIt);
         if (unitThatWillProduce != null) {
             return unitThatWillProduce.train(unitType);
         }

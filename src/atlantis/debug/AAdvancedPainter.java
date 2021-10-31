@@ -454,9 +454,13 @@ public class AAdvancedPainter extends APainter {
         // === Display units that should be produced right now or any time ==================
 
         ArrayList<ProductionOrder> produceNow = CurrentProductionOrders.thingsToProduce(ProductionQueueMode.ENTIRE_QUEUE);
+//        ArrayList<ProductionOrder> produceNow = CurrentProductionOrders.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         int counter = 1;
         for (ProductionOrder order : produceNow) {
-            paintSideMessage(order.shortName(), order.canHasWhatRequired() ? Color.Yellow : Color.Red);
+            paintSideMessage(
+                    order.shortName(),
+                    order.canHasWhatRequired() ? (order.canAffordNow() ? Color.Green : Color.Yellow) : Color.Red
+            );
             if (++counter >= 10) {
                 break;
             }

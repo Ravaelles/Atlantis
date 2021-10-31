@@ -16,6 +16,8 @@ import java.util.ArrayList;
 
 
 public class ABuildOrderLoader {
+
+    final int NUMBER_OF_COLUMNS_IN_FILE = 2;
     
     /**
      * Directory that contains build orders.
@@ -50,7 +52,7 @@ public class ABuildOrderLoader {
      * Reads build orders from CSV file and converts them into ArrayList.
      */
     protected ABuildOrder readBuildOrdersFromFile(String race, String name, String filePath) {
-        final int NUMBER_OF_COLUMNS_IN_FILE = 2;
+        ABuildOrder buildOrder = ABuildOrderFactory.forRace(race, filePath);
 
         // Read file into 2D String array
         String buildOrdersFile = filePath;
@@ -67,14 +69,15 @@ public class ABuildOrderLoader {
         // =========================================================
 
         ArrayList<ProductionOrder> productionOrders = new ArrayList<>();
+
         for (String[] row : loadedFile) {
-            ProductionOrder productionOrder = parseCsvRow(row);
+            ProductionOrder productionOrder = parseCsvRow(row, buildOrder);
             if (productionOrder != null) {
                 productionOrders.add(productionOrder);
             }
         }
 
-        ABuildOrder buildOrder = ABuildOrderFactory.forRace(race, filePath, productionOrders);
+        buildOrder.useProductionOrdersLoadedFromFile(productionOrders);
 
         // =========================================================
         // Converts shortcut notations like:
@@ -146,7 +149,7 @@ public class ABuildOrderLoader {
      * Analyzes CSV row, where each array element is one column.
      * @return
      */
-    protected ProductionOrder parseCsvRow(String[] row) {
+    protected ProductionOrder parseCsvRow(String[] row, ABuildOrder buildOrder) {
 
         // =========================================================
         // Ignore comments and blank lines
@@ -156,7 +159,7 @@ public class ABuildOrderLoader {
 
         // Check for special commands that start with #
         if (isSpecialCommand(row)) {
-            handleSpecialCommand(row);
+            handleSpecialCommand(row, buildOrder);
             return null;
         }
 
@@ -322,7 +325,7 @@ public class ABuildOrderLoader {
     /**
      * If the first character in column is # it means it's special command. Here we handle all of them.
      */
-    protected void handleSpecialCommand(String[] row) {
+    protected void handleSpecialCommand(String[] row, ABuildOrder buildOrder) {
         String commandLine = row[0].toUpperCase();
 
         if (commandLine.startsWith("//")) {

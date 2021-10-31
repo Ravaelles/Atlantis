@@ -10,7 +10,7 @@ public class Requirements {
 
     public static boolean hasRequirements(ProductionOrder order) {
         if (order.getUnitOrBuilding() != null) {
-            return hasRequirements(order.getUnitOrBuilding());
+            return !order.getUnitOrBuilding().hasRequiredUnit() || hasRequirements(order.getUnitOrBuilding());
         }
         else if (order.getTech() != null) {
             return hasRequirements(order.getTech());
@@ -18,6 +18,7 @@ public class Requirements {
         else if (order.getUpgrade() != null) {
             return hasRequirements(order.getUpgrade());
         }
+        System.err.println(order);
         throw new RuntimeException("Shouldn't reach here");
     }
 
@@ -26,8 +27,7 @@ public class Requirements {
             return true;
         }
 
-        AUnitType building = type.getWhatBuildsIt();
-        if (Count.ofType(building) == 0) {
+        if (type.hasRequiredUnit() && Count.ofType(type.getWhatIsRequired()) == 0) {
             return false;
         }
 

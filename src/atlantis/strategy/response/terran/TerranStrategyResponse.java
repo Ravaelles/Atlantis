@@ -11,7 +11,7 @@ public class TerranStrategyResponse extends AStrategyResponse {
             return false;
         }
 
-        AStrategyInformations.antiLandBuildingsNeeded(rushDefenseDefensiveBuildings(enemyStrategy));
+        AStrategyInformations.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildings(enemyStrategy));
         return true;
     }
 

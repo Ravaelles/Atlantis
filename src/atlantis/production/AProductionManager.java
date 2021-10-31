@@ -2,6 +2,7 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
+import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.CurrentProductionOrders;
 import atlantis.production.orders.ProductionQueue;
@@ -70,9 +71,10 @@ public class AProductionManager {
     }
 
     private static boolean produceUnit(AUnitType unitType) {
+        assert !unitType.isBuilding();
 
         // Supply: OVERLORD / PYLON / DEPOT
-        if (AGame.supplyFree() == 0 && !unitType.isSupplyUnit() && !unitType.isBuilding()) {
+        if (AGame.supplyFree() == 0 && !unitType.isSupplyUnit()) {
             // Supply production is handled by AtlantisSupplyManager
             return false;
         }
@@ -98,7 +100,7 @@ public class AProductionManager {
         if (!type.isBuilding()) {
             System.err.println("produceBuilding has been given wrong argument: " + type);
         }
-        AddToQueue.addWithHighPriority(type);
+        AConstructionRequests.requestConstructionOf(order);
     }
     
 }

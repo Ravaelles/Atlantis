@@ -22,13 +22,12 @@ public abstract class ABuildOrder {
     /**
      * Sequence of units/buildings/techs to be produced in this build.
      */
-    private final ArrayList<ProductionOrder> productionOrders;
+    private ArrayList<ProductionOrder> productionOrders;
 
     // === Constructor =========================================
 
-    public ABuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
+    public ABuildOrder(String name) {
         this.name = name;
-        this.productionOrders = productionOrders;
     }
 
     // === Abstract methods ====================================
@@ -44,7 +43,7 @@ public abstract class ABuildOrder {
             return false;
         }
 
-        AUnit building = Select.ourOneIdle(AtlantisConfig.BASE);
+        AUnit building = Select.ourOneNotTrainingUnits(AtlantisConfig.BASE);
         if (building != null) {
             return building.train(AtlantisConfig.WORKER);
         }
@@ -56,7 +55,8 @@ public abstract class ABuildOrder {
                             && base.hasNothingInQueue()
                             && AGame.supplyFree() >= 2
             ) {
-                return base.train(AtlantisConfig.WORKER);
+                base.train(AtlantisConfig.WORKER);
+                return true;
             }
         }
 
@@ -103,4 +103,7 @@ public abstract class ABuildOrder {
         return productionOrders;
     }
 
+    public void useProductionOrdersLoadedFromFile(ArrayList<ProductionOrder> productionOrders) {
+        this.productionOrders = productionOrders;
+    }
 }

@@ -3,28 +3,41 @@ package atlantis.strategy;
 
 public class AStrategyInformations {
     
-    public static int antiLandBuildingsNeeded = 0;
-    public static int antiAirBuildingsNeeded = 0;
-    public static int detectorsNeeded = 0;
+    private static int antiLandBuildingsNeeded = 0;
+    private static int antiAirBuildingsNeeded = 0;
+    private static int detectorsNeeded = 0;
 
     // === Setters ========================================
     
-    public static void antiLandBuildingsNeeded(int min) {
+    public static void setAntiLandBuildingsNeeded(int min) {
         if (antiLandBuildingsNeeded < min) {
             antiLandBuildingsNeeded = min;
         }
     }
 
-    public static void antiAirBuildingsNeeded(int min) {
+    public static void setAntiAirBuildingsNeeded(int min) {
         if (antiAirBuildingsNeeded < min) {
             antiAirBuildingsNeeded = min;
         }
     }
 
-    public static void detectorsNeeded(int min) {
+    public static void setDetectorsNeeded(int min) {
         if (detectorsNeeded < min) {
             detectorsNeeded = min;
         }
     }
 
+    // =========================================================
+
+    public static int antiLandBuildingsNeeded() {
+        return antiLandBuildingsNeeded;
+    }
+
+    public static int antiAirBuildingsNeeded() {
+        return antiAirBuildingsNeeded;
+    }
+
+    public static int detectorsNeeded() {
+        return detectorsNeeded;
+    }
 }

@@ -76,7 +76,6 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         }
         
         AConstructionRequests.removeOrder(this);
-//        status = ConstructionOrderStatus.CONSTRUCTION_FINISHED;
     }
     
     // =========================================================

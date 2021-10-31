@@ -1,6 +1,7 @@
 package atlantis.production;
 
 import atlantis.position.APosition;
+import atlantis.production.orders.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -15,6 +16,7 @@ public class ProductionOrder {
     private static final int PRIORITY_HIGHEST = 8;
 
     // =========================================================
+
     private static int firstFreeId = 1;
     private int id = firstFreeId++;
 
@@ -59,9 +61,14 @@ public class ProductionOrder {
     private boolean hasWhatRequired;
 
     /**
+     * Metadata - if we have enough minerals and gas to build it (including reserved for other untis, higher in queue).
+     */
+    private boolean canAffordNow;
+
+    /**
      *
      */
-//    private int priority;
+    private ProductionOrderPriority priority = ProductionOrderPriority.STANDARD;
 
     /**
      * If true, no other order that comes after this order in the ProductionQueue can be started.
@@ -71,19 +78,27 @@ public class ProductionOrder {
     // =========================================================
     
     public ProductionOrder(AUnitType unitOrBuilding, APosition position) {
+        assert unitOrBuilding != null;
+
         this.unitOrBuilding = unitOrBuilding;
         this.position = position;
     }
-    
+
     public ProductionOrder(AUnitType unitOrBuilding) {
+        assert unitOrBuilding != null;
+
         this.unitOrBuilding = unitOrBuilding;
     }
 
     public ProductionOrder(UpgradeType upgrade) {
+        assert upgrade != null;
+
         this.upgrade = upgrade;
     }
 
     public ProductionOrder(TechType tech) {
+        assert tech != null;
+
         this.tech = tech;
     }
 
@@ -231,5 +246,21 @@ public class ProductionOrder {
 
     public APosition getPosition() {
         return position;
+    }
+
+    public ProductionOrderPriority priority() {
+        return priority;
+    }
+
+    public void setPriority(ProductionOrderPriority priority) {
+        this.priority = priority;
+    }
+
+    public void setCanAffordNow(boolean canAffordNow) {
+        this.canAffordNow = canAffordNow;
+    }
+
+    public boolean canAffordNow() {
+        return canAffordNow;
     }
 }

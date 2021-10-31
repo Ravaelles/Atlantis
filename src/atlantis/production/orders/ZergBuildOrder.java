@@ -14,8 +14,8 @@ public class ZergBuildOrder extends ABuildOrder {
 
     // =========================================================
 
-    public ZergBuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
-        super(name, productionOrders);
+    public ZergBuildOrder(String name) {
+        super(name);
     }
 
     // =========================================================

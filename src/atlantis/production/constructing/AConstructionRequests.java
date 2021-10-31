@@ -27,16 +27,12 @@ public class AConstructionRequests {
      * Issues request of constructing new building. It will automatically find position and builder unit for
      * it.
      */
-    protected static void requestConstructionOf(AUnitType building) {
+    public static void requestConstructionOf(AUnitType building) {
         requestConstructionOf(building, null, null);
     }
 
-    /**
-     * Issues request of constructing new building. It will automatically find position and builder unit for
-     * it.
-     */
-    protected static void requestConstructionOf(AUnitType building, APosition near) {
-        requestConstructionOf(building, null, near);
+    public static boolean requestConstructionOf(ProductionOrder order) {
+        return requestConstructionOf(order.getUnitOrBuilding(), order.getPosition(), order);
     }
 
     /**
@@ -44,7 +40,7 @@ public class AConstructionRequests {
      *
      * WARNING: passed order parameter can later override nearTo parameter.
      */
-    protected static boolean requestConstructionOf(AUnitType building, ProductionOrder order, APosition near) {
+    public static boolean requestConstructionOf(AUnitType building, APosition near, ProductionOrder order) {
 
         // Validate
         if (!building.isBuilding()) {
@@ -219,16 +215,28 @@ public class AConstructionRequests {
     }
 
     public static int countExistingAndExpectedInNearFuture(AUnitType type, int amongNTop) {
-        return Select.ourOfTypeIncludingUnfinished(type).count()
-                + ProductionQueue.countInTopOfQueue(type, amongNTop);
+        if (!type.isBuilding()) {
+            throw new RuntimeException("Can only use it for buildings: " + type);
+        }
+
+        return Select.ourOfType(type).count()
+                + ProductionQueue.countInQueue(type, amongNTop);
     }
 
     public static int countExistingAndNotFinished(AUnitType type) {
+        if (!type.isBuilding()) {
+            throw new RuntimeException("Can only use it for buildings: " + type);
+        }
+
         return Select.ourOfTypeIncludingUnfinished(type).count()
                 + countNotFinishedConstructionsOfType(type);
     }
 
     public static int countExistingAndPlannedConstructionsInRadius(AUnitType type, double radius, APosition position) {
+        if (!type.isBuilding()) {
+            throw new RuntimeException("Can only use it for buildings: " + type);
+        }
+
         return Select.ourOfTypeIncludingUnfinished(type).inRadius(radius, position).count()
                 + countNotFinishedConstructionsOfTypeInRadius(type, radius, position);
     }

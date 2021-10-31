@@ -59,7 +59,7 @@ public abstract class ProductionQueue {
         return false;
     }
 
-    public static int countInTopOfQueue(AUnitType type, int amongNTop) {
+    public static int countInQueue(AUnitType type, int amongNTop) {
         int count = 0;
         for (int i = 0; i < amongNTop && i < currentProductionQueue.size(); i++) {
             if (type.equals(currentProductionQueue.get(i).getUnitOrBuilding())) {
@@ -103,4 +103,15 @@ public abstract class ProductionQueue {
         return gasNeeded;
     }
 
+//    public static int countOrdersWithPriority(AUnitType type, ProductionOrderPriority priority) {
+    public static int countOrdersWithPriorityAtLeast(ProductionOrderPriority priority) {
+        int total = 0;
+        for (ProductionOrder order : currentProductionQueue) {
+//            if (type.equals(order.getUnitOrBuilding())) {
+            if (order.priority().compareTo(priority) >= 0) {
+                total++;
+            }
+        }
+        return total;
+    }
 }

@@ -7,6 +7,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.util.A;
 import atlantis.util.Cache;
 
 import java.util.*;
@@ -227,20 +228,25 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects our units of given type(s).
      */
-    public static Selection ourOfType(AUnitType... type) {
+    public static Selection ourOfType(AUnitType... types) {
         String cachePath;
         return cache.get(
-                cachePath = "ourOfType",
+                cachePath = "ourOfType:" + AUnitType.arrayToIds(types),
                 1,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isCompleted() && unit.isType(type)) {
+                        if (unit.isCompleted() && unit.isType(types)) {
+//                            System.out.println(unit.idWithHash() + " at " + A.now() + " // " + types[0]);
                             data.add(unit);
                         }
+//                        else {
+//                            System.out.println(unit.type() + " // " + unit.isCompleted() + " // " + unit.isType(types) + " (" + types[0]);
+//                        }
                     }
 
+//                    System.out.println(cachePath + " // " + data.size());
                     return new Selection(data, cachePath);
                 }
         );
@@ -686,9 +692,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Returns first idle our unit of given type or null if no idle units found.
      */
-    public static AUnit ourOneIdle(AUnitType type) {
+    public static AUnit ourOneNotTrainingUnits(AUnitType type) {
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && unit.isIdle() && unit.is(type)) {
+            if (unit.isCompleted() && !unit.isTrainingAnyUnit() && unit.is(type)) {
                 return unit;
             }
         }

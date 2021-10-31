@@ -7,6 +7,8 @@ import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
+import atlantis.util.Us;
 
 public class ASupplyManager {
 
@@ -18,13 +20,13 @@ public class ASupplyManager {
     public static void update() {
         supplyTotal = AGame.supplyTotal();
 
-        /**
-         * Check if should use auto supply manager
-         */
+        // Should use auto supply manager
+        System.out.println(supplyTotal + " // " + AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS);
         if (supplyTotal >= AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS) {
             supplyFree = AGame.supplyFree();
 
-            int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
+            int suppliesBeingBuilt = requestedConstructionsOfSupply();
+            System.out.println("suppliesBeingBuilt = " + suppliesBeingBuilt);
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
             if (supplyTotal <= 11) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
@@ -69,14 +71,14 @@ public class ASupplyManager {
         return AConstructionRequests.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY) > 0;
     }
 
-    private static int requestedConstructionOfSupplyNumber() {
+    private static int requestedConstructionsOfSupply() {
+        if (Us.isZerg()) {
+            return Count.ourOfTypeIncludingUnfinished(AUnitType.Zerg_Overlord);
+        }
+
         return AConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
-        
-        // Zerg
-//        if (AGame.playsAsZerg()) {
-//            return AtlantisConstructingManager.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
-//        }
-//        
+
+//
 //        // =========================================================
 //        // Terran + Protoss
 //        else {

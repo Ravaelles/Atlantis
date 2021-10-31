@@ -62,25 +62,27 @@ public class ProductionQueueRebuilder {
 
     // =========================================================
 
-    private static boolean addUnitOrBuilding(ProductionOrder order, MappingCounter<AUnitType> virtualCounter) {
+    private static boolean addUnitOrBuilding(ProductionOrder order, MappingCounter<AUnitType> counterFromBO) {
         AUnitType type = order.getUnitOrBuilding();
-        virtualCounter.incrementValueFor(type);
+        counterFromBO.incrementValueFor(type);
 
         int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0)
                 + (type.isBase() ? (type.isPrimaryBase() ? 1 : 0) : 0)
-                + (type.isOverlord() ? 1 : 0) + virtualCounter.getValueFor(type);
+                + (type.isOverlord() ? 1 : 0) + counterFromBO.getValueFor(type);
 
-        int weHaveThisManyUnits = Count.unitsOfGivenTypeOrSimilar(type);
+        int weHaveThisManyUnits = Count.existingOrInProduction(type);
 
         if (type.isBuilding()) {
             weHaveThisManyUnits += AConstructionRequests.countNotFinishedConstructionsOfType(type);
         }
 
         // If we don't have this unit, add it to the current production queue.
+//        System.out.println(type + " // " + weHaveThisManyUnits + " < " + shouldHaveThisManyUnits);
         if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
             return true;
         }
 
         return false;
     }
+
 }

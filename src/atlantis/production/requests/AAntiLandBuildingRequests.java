@@ -1,14 +1,16 @@
 package atlantis.production.requests;
 
 import atlantis.AtlantisConfig;
-import atlantis.production.constructing.AConstructionRequests;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
+import atlantis.production.Requirements;
 import atlantis.production.orders.AddToQueue;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Us;
 
@@ -26,10 +28,25 @@ public class AAntiLandBuildingRequests {
     // =========================================================
 
     private static boolean shouldBuildNew() {
-        int defBuildingAntiLand = AConstructionRequests.countExistingAndExpectedInNearFuture(
-                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND, 6
-        );
-        return defBuildingAntiLand < Math.max(expectedUnits(), AStrategyInformations.antiLandBuildingsNeeded);
+        if (!Requirements.hasRequirements(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND)) {
+            return false;
+        }
+
+        int defBuildingAntiLand = Count.existingOrInProductionOrInQueue(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
+//        int defBuildingAntiLand = AConstructionRequests.countExistingAndExpectedInNearFuture(
+//                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND, 8
+//        );
+//        System.out.println(
+//                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND
+//                + " // "
+//                + defBuildingAntiLand
+//                + " < "
+//                + Math.max(expectedUnits(), AStrategyInformations.antiLandBuildingsNeeded())
+//                + " //// " +
+//                + ProductionQueue.countInQueue(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND, 8)
+//
+//        );
+        return defBuildingAntiLand < Math.max(expectedUnits(), AStrategyInformations.antiLandBuildingsNeeded());
     }
 
     public static int expectedUnits() {
@@ -38,7 +55,7 @@ public class AAntiLandBuildingRequests {
         }
 
         if (Us.isProtoss()) {
-            return 2;
+            return 1;
         }
 
         return 3 * Select.ourBases().count();

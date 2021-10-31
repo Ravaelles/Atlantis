@@ -47,7 +47,7 @@ public abstract class CurrentProductionOrders {
             if (
                     AGame.isPlayingAsProtoss()
                     && mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD
-                    && !unitOrBuilding.is(AUnitType.Protoss_Pylon)
+                    && (unitOrBuilding != null && !unitOrBuilding.is(AUnitType.Protoss_Pylon))
                     && Count.ofType(AUnitType.Protoss_Pylon) == 0
             ) {
                 continue;
@@ -84,18 +84,19 @@ public abstract class CurrentProductionOrders {
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
 
             boolean canAfford = AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded);
+            order.setCanAffordNow(canAfford);
+            order.setHasWhatRequired(canAfford);
 //            System.out.println(order.shortName() + " // aff=" + canAfford + " // req=" + hasWhatRequired);
+//            System.out.println(order.shortName() + " has requirements = " + hasWhatRequired);
             if (
                     mode == ProductionQueueMode.ENTIRE_QUEUE || (canAfford && hasWhatRequired)
             ) {
-                order.setHasWhatRequired(hasWhatRequired);
                 queue.add(order);
             }
 
             // We can't afford to produce this order (possibly other, previous orders are blocking it).
             // Return current list of production orders (can be empty).
             else {
-                order.setHasWhatRequired(false);
                 break;
             }
         }
@@ -103,6 +104,13 @@ public abstract class CurrentProductionOrders {
         // At this moment production queue coming from build order might be empty.
         // Race-specific dynamic production managers should take care of that by
         // adding production orders dynamically.
+
+        if (mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD && queue.size() > 0) {
+            System.out.println("----- " + queue.size());
+            for (ProductionOrder order : queue) {
+                System.out.println(order);
+            }
+        }
 
         return queue;
     }

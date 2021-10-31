@@ -5,7 +5,6 @@ import atlantis.combat.missions.Missions;
 import atlantis.map.AMap;
 import atlantis.production.requests.AAntiAirBuildingRequests;
 import atlantis.production.requests.AAntiLandBuildingRequests;
-import atlantis.production.requests.ADetectorRequest;
 import atlantis.production.requests.ARequests;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
@@ -14,7 +13,6 @@ import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 public abstract class AStrategyResponse {
@@ -61,7 +59,7 @@ public abstract class AStrategyResponse {
                 Missions.setGlobalMissionDefend();
             }
 
-            AStrategyInformations.antiLandBuildingsNeeded(1);
+            AStrategyInformations.setAntiLandBuildingsNeeded(1);
 //            ADetectorRequest.requestDetectorImmediately(null);
         }
 
@@ -82,7 +80,7 @@ public abstract class AStrategyResponse {
         }
 
         if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
-            AStrategyInformations.detectorsNeeded(1);
+            AStrategyInformations.setDetectorsNeeded(1);
             ARequests.getInstance().requestDetectorQuick(
                     AMap.mainBaseChoke().getCenter()
             );
@@ -102,7 +100,7 @@ public abstract class AStrategyResponse {
             return false;
         }
         
-        AStrategyInformations.antiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
+        AStrategyInformations.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
         return true;
     }
 
@@ -111,7 +109,7 @@ public abstract class AStrategyResponse {
     }
 
     protected void handleAirUnitsDefence() {
-        AStrategyInformations.antiAirBuildingsNeeded(5);
+        AStrategyInformations.setAntiAirBuildingsNeeded(5);
         AAntiAirBuildingRequests.requestAntiAirQuick(null);
     }
 

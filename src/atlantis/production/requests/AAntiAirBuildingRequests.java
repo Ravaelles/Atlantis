@@ -1,12 +1,14 @@
 package atlantis.production.requests;
 
 import atlantis.AtlantisConfig;
+import atlantis.production.Requirements;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.position.APosition;
 import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class AAntiAirBuildingRequests {
@@ -22,10 +24,12 @@ public class AAntiAirBuildingRequests {
     // =========================================================
 
     private static boolean shouldBuildNew() {
-        int defBuildingAntiLand = AConstructionRequests.countExistingAndExpectedInNearFuture(
-                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR, 6
-        );
-        return defBuildingAntiLand < AStrategyInformations.antiLandBuildingsNeeded;
+        if (!Requirements.hasRequirements(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND)) {
+            return false;
+        }
+
+        int defBuildingAntiLand = Count.existingOrInProductionOrInQueue(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
+        return defBuildingAntiLand < AStrategyInformations.antiLandBuildingsNeeded();
     }
 
     public static int expectedUnits() {

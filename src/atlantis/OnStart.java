@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.debug.APainter;
+import atlantis.debug.AUnitTypesHelper;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
@@ -9,6 +10,7 @@ import atlantis.strategy.OurStrategyManager;
 import atlantis.strategy.ProtossStrategies;
 import atlantis.strategy.TerranStrategies;
 import atlantis.strategy.ZergStrategies;
+import atlantis.units.AUnitType;
 
 public class OnStart {
 
@@ -49,6 +51,8 @@ public class OnStart {
         }
 
         System.out.println("### Atlantis is working! ###");
+
+//        AUnitTypesHelper.paintUnitsAndRequirements();
     }
 
     private static void handleCheckIfUmsMap() {

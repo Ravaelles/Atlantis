@@ -48,16 +48,20 @@ public class AbstractDynamicUnits extends Helpers {
             AGame.exit("Unhandled yet");
         }
 
-        AUnitType building = type.getWhatBuildsIt();
-        if (Count.ofType(building) == 0) {
+        if (!Requirements.hasRequirements(type)) {
             return;
         }
 
-        if (onlyOneAtTime && Count.ourOfTypeIncludingUnfinished(type) > 0) {
-            return;
-        }
+//        AUnitType building = type.getWhatBuildsIt();
+//        if (Count.ofType(building) == 0) {
+//            return;
+//        }
+//
+//        if (onlyOneAtTime && Count.ourOfTypeIncludingUnfinished(type) > 0) {
+//            return;
+//        }
 
-        if (ProductionQueue.isAtTheTopOfQueue(type, 3)) {
+        if (ProductionQueue.isAtTheTopOfQueue(type, 8)) {
             return;
         }
         

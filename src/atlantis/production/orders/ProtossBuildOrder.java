@@ -14,8 +14,8 @@ public class ProtossBuildOrder extends ABuildOrder {
 
     // =========================================================
 
-    public ProtossBuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
-        super(name, productionOrders);
+    public ProtossBuildOrder(String name) {
+        super(name);
     }
 //    protected ProtossBuildOrder(String name, ArrayList<ProductionOrder> productionOrders) {
 ////        super("Protoss/" + name);
@@ -27,13 +27,15 @@ public class ProtossBuildOrder extends ABuildOrder {
     @Override
     public boolean produceUnit(AUnitType unitType) {
         AUnitType whatBuildsIt = unitType.getWhatBuildsIt();
-        AUnit unitThatWillProduce = Select.ourOneIdle(whatBuildsIt);
+        if (whatBuildsIt == null) {
+            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
+        }
+
+        AUnit unitThatWillProduce = Select.ourOneNotTrainingUnits(whatBuildsIt);
+//        System.out.println("producer = " + unitThatWillProduce);
         if (unitThatWillProduce != null) {
             return unitThatWillProduce.train(unitType);
         }
-//        else {
-//            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
-//        }
 
         return false;
     }

@@ -24,7 +24,7 @@ public class AExpansionManager {
             return;
         }
 
-        int inConstruction = ProductionQueue.countInTopOfQueue(AtlantisConfig.BASE, 8);
+        int inConstruction = ProductionQueue.countInQueue(AtlantisConfig.BASE, 8);
         if (inConstruction >= 1) {
             return;
         }
