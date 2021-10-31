@@ -68,11 +68,12 @@ public class ACombatUnitManager {
     }
 
     private static void preActions(AUnit unit) {
-        if (A.seconds() >= 1 && GameSpeed.isDynamicSlowdownAllowed() && !GameSpeed.isDynamicSlowdownActive()
+        if (
+                A.seconds() >= 1
+                && GameSpeed.isDynamicSlowdownAllowed()
+                && !GameSpeed.isDynamicSlowdownActive()
                 && (unit.lastActionLessThanAgo(2, UnitActions.ATTACK_UNIT) || unit.isUnderAttack(3))) {
-//            System.out.println("Dynamic slowdown - lower game speed when fighting happens");
             GameSpeed.activateDynamicSlowdown();
-//            GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
         }
 
         unit.setTooltip(unit.getTooltip() + ".");

@@ -283,70 +283,12 @@ public class ARunningManager {
         // ========================================================================
         
         APosition unitPosition = unit.position();
-//        int tx = unitPosition.getTileX();
-//        int ty = unitPosition.getTileY();
-
-        // Build list of possible run positions, basically around the clock
-        ArrayList<APosition> potentialPositionsList = new ArrayList<>();
-//        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
-
-        int radius = (unit.isVulture() ? 5 : runDistanceForAnyDirection(unit));
-        for (int dtx = -radius; dtx <= radius; dtx++) {
-            for (int dty = -radius; dty <= radius; dty++) {
-                if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
-                    continue;
-                }
-                
-//                // Define point
-//                APosition potentialPosition = APosition.createFrom(
-//                        tx + dx * expectedVectorLength, ty + dy * expectedVectorLength
-//                );
-//                
-//                // Scale vector if needed
-//                double vectorLength = potentialPosition.distanceTo(unit) + 0.01;
-//                if (Math.abs(vectorLength - expectedVectorLength) > 0.1) {
-//                    potentialPosition = APosition.createFrom(
-//                            (int) (tx + dx * vectorLength * expectedVectorLength / vectorLength), 
-//                            (int) (ty + dy * expectedVectorLength / vectorLength)
-//                    );
-//                }
-                // Define vevtor
-//                double vectorX = dtx;
-//                double vectorY = dty;
-//                double vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-//
-//                // Normalize
-//                vectorX /= vectorLength;
-//                vectorY /= vectorLength;
-//
-//                // Scale vector
-//                vectorX *= expectedLength;
-//                vectorY *= expectedLength;
-//                vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-
-                // Create position, Make sure it's inbounds
-                APosition potentialPosition = unitPosition.translateByTiles(dtx, dty).makeValidFarFromBounds();
-
-                // If has path to given point, add it to the list of potential points
-//                APainter.paintLine(unitPosition, potentialPosition, Color.Red);
-                if (isPossibleAndReasonablePosition(unitPosition, potentialPosition, true, "v", "x")) {
-                    potentialPositionsList.add(potentialPosition);
-                }
-            }
-        }
-
-//        System.out.println("potentialPositionsList = " + potentialPositionsList.size());
-        
-        // =========================================================
-        // Find the location that would be most distant to the enemy location
-        double mostDistant = -99;
+        int radius = runDistanceForAnyDirection(unit);
+        int maxRadius = 12;
         APosition bestPosition = null;
-        for (APosition position : potentialPositionsList) {
-            double dist = position.distTo(runAwayFrom);
-            if (bestPosition == null || dist >= mostDistant) {
-                bestPosition = position;
-                mostDistant = dist;
-            }
+        while (bestPosition == null && radius <= maxRadius) {
+            bestPosition = findRunPositionInRadius(unitPosition, runAwayFrom, radius);
+            radius += 3;
         }
         
         // =========================================================
@@ -362,7 +304,51 @@ public class ARunningManager {
         return bestPosition;
     }
 
+    private APosition findRunPositionInRadius(APosition unitPosition, HasPosition runAwayFrom, int radius) {
+
+        // Build list of possible run positions, basically around the clock
+        ArrayList<APosition> potentialPositionsList = new ArrayList<>();
+//        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
+
+        for (int dtx = -radius; dtx <= radius; dtx++) {
+            for (int dty = -radius; dty <= radius; dty++) {
+                if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
+                    continue;
+                }
+
+                // Create position, Make sure it's inbounds
+                APosition potentialPosition = unitPosition.translateByTiles(dtx, dty).makeValidFarFromBounds();
+
+                // If has path to given point, add it to the list of potential points
+                APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
+                if (isPossibleAndReasonablePosition(unitPosition, potentialPosition, true, "v", "x")) {
+                    potentialPositionsList.add(potentialPosition);
+                }
+            }
+        }
+
+//        System.out.println("potentialPositionsList = " + potentialPositionsList.size());
+
+        // =========================================================
+        // Find the location that would be most distant to the enemy location
+        double mostDistant = -99;
+        APosition bestPosition = null;
+        for (APosition position : potentialPositionsList) {
+            double dist = position.distTo(runAwayFrom);
+            if (bestPosition == null || dist >= mostDistant) {
+                bestPosition = position;
+                mostDistant = dist;
+            }
+        }
+
+        return bestPosition;
+    }
+
     private int runDistanceForAnyDirection(AUnit unit) {
+        if (unit.isVulture()){
+            return 5;
+        }
+
         if (unit.isInfantry()) {
             return 3;
         }
@@ -421,10 +407,10 @@ public class ARunningManager {
                     && AMap.isWalkable(position.translateByTiles(0, 2))
                     && AMap.isWalkable(position.translateByTiles(0, -1))
                 )
-                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(1.3, position).count() <= 0)
-                && Select.neutral().inRadius(3.5, position).isEmpty()
+                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
+                && Select.neutral().inRadius(1.2, position).isEmpty()
                 && unitPosition.hasPathTo(position)
-                && unitPosition.groundDistanceTo(position) <= 10
+                && unitPosition.groundDistanceTo(position) <= 15
 //                && Select.neutral().inRadius(1.2, position).count() == 0
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0
