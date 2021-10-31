@@ -332,19 +332,21 @@ public class ABuildOrderLoader {
             return;
         }
 
-//        if (command.startsWith("AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS")) {
-//            AtlantisConfig.AUTO_PRODUCE_WORKERS_UNTIL_N_WORKERS = extractSpecialCommandValue(row);
-//        } else 
-        if (commandLine.startsWith("#AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS")) {
-            AtlantisConfig.AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = extractSpecialCommandValue(row);
-        } else if (commandLine.startsWith("#AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
-            AtlantisConfig.AUTO_PRODUCE_WORKERS_MAX_WORKERS = extractSpecialCommandValue(row);
-        } else if (commandLine.startsWith("#SCOUT_IS_NTH_WORKER")) {
-            AtlantisConfig.SCOUT_IS_NTH_WORKER = extractSpecialCommandValue(row);
-        } else if (commandLine.startsWith("#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
-            AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = extractSpecialCommandValue(row);
-        } else if (commandLine.contains("MISSION - ")) {
-            handleMissionCommand(commandLine);
+        String settingKey;
+        if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MIN_WORKERS")) {
+            buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
+        } else if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
+            buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
+        } else if (commandLine.startsWith(settingKey = "#SCOUT_IS_NTH_WORKER")) {
+            buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
+        } else if (commandLine.startsWith(settingKey = "#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
+            buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
+        }
+//        else if (commandLine.contains("MISSION - ")) {
+//            handleMissionCommand(commandLine);
+//        }
+        else {
+            throw new RuntimeException("Unhandled command in build order: " + commandLine);
         }
     }
 

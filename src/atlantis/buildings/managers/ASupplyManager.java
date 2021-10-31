@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.orders.AddToQueue;
-import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -21,12 +21,11 @@ public class ASupplyManager {
         supplyTotal = AGame.supplyTotal();
 
         // Should use auto supply manager
-        System.out.println(supplyTotal + " // " + AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS);
-        if (supplyTotal >= AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS) {
+//        System.out.println(supplyTotal + " // " + CurrentBuildOrder.settingAutoSupplyManagerWhenSupplyExceeds());
+        if (supplyTotal >= CurrentBuildOrder.settingAutoSupplyManagerWhenSupplyExceeds()) {
             supplyFree = AGame.supplyFree();
 
             int suppliesBeingBuilt = requestedConstructionsOfSupply();
-            System.out.println("suppliesBeingBuilt = " + suppliesBeingBuilt);
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
             if (supplyTotal <= 11) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
@@ -58,7 +57,7 @@ public class ASupplyManager {
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {
-            ((ZergBuildOrder) ProductionQueue.get()).produceZergUnit(AUnitType.Zerg_Overlord);
+            ((ZergBuildOrder) CurrentBuildOrder.get()).produceZergUnit(AUnitType.Zerg_Overlord);
         } 
 
         // Terran + Protoss

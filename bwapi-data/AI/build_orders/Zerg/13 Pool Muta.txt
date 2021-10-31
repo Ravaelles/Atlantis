@@ -4,7 +4,7 @@
 #SCOUT_IS_NTH_WORKER=8
 
 // When supply is bigger than N, then start auto-producing supply units
-#USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=22
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=22
 
 // === Raw build order used - taken from Liquipedia or so =============
 

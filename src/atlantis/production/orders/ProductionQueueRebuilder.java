@@ -28,7 +28,7 @@ public class ProductionQueueRebuilder {
 
         // =========================================================
 
-        for (ProductionOrder order : ProductionQueue.get().productionOrders()) {
+        for (ProductionOrder order : CurrentBuildOrder.get().productionOrders()) {
             boolean isOkayToAdd = false;
 
             // === Unit ========================================

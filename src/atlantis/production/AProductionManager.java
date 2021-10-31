@@ -3,10 +3,7 @@ package atlantis.production;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.production.constructing.AConstructionRequests;
-import atlantis.production.orders.AddToQueue;
-import atlantis.production.orders.CurrentProductionOrders;
-import atlantis.production.orders.ProductionQueue;
-import atlantis.production.orders.ProductionQueueMode;
+import atlantis.production.orders.*;
 import atlantis.tech.ATechRequests;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
@@ -67,7 +64,7 @@ public class AProductionManager {
     // =========================================================
 
     public static boolean produceWorker() {
-        return ProductionQueue.get().produceWorker();
+        return CurrentBuildOrder.get().produceWorker();
     }
 
     private static boolean produceUnit(AUnitType unitType) {
@@ -90,7 +87,7 @@ public class AProductionManager {
         // Non-worker
 
         else if (AGame.canAffordWithReserved(50 + unitType.getMineralPrice(), unitType.getGasPrice())) {
-            return ProductionQueue.get().produceUnit(unitType);
+            return CurrentBuildOrder.get().produceUnit(unitType);
         }
 
         return false;

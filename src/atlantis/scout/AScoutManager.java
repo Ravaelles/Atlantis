@@ -11,6 +11,7 @@ import atlantis.map.ARegion;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.Positions;
+import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -232,7 +233,7 @@ public class AScoutManager {
         // =========================================================
         // TERRAN + PROTOSS
 
-        else if (scouts.isEmpty() && Select.ourWorkers().count() >= AtlantisConfig.SCOUT_IS_NTH_WORKER) {
+        else if (scouts.isEmpty() && Select.ourWorkers().count() >= CurrentBuildOrder.settingScoutIsNthWorker()) {
             for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
                 if (!worker.isBuilder()) {
                     scouts.add(worker);

@@ -29,8 +29,8 @@ public class AddToQueue {
 
     private static void addToQueue(AUnitType type, APosition position, int index) {
         if (Us.isProtoss() && type.isBuilding() && !type.isPylon() && Count.pylons() == 0) {
-            System.out.println("PREVENT " + type);
-            return; // Don't add any building before we have at least one pylon
+            System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
+            return;
         }
 
         ProductionOrder productionOrder = new ProductionOrder(type, position);
@@ -49,12 +49,5 @@ public class AddToQueue {
     private static int indexForPriority(ProductionOrderPriority priority) {
         return ProductionQueue.countOrdersWithPriorityAtLeast(priority);
     }
-
-//    private static int topPriorityIndex(AUnitType type) {
-//        return ProductionQueue.countOrdersWithPriorityAtLeast(ProductionOrderPriority.TOP);
-////        if (Us.isProtoss()) {
-////            return Count.ofType(AUnitType.Protoss_Pylon) > 0 ? 0 : ProductionQueue.queueIndexOf(AUnitType.Protoss_Pylon);
-////        }
-//    }
 
 }

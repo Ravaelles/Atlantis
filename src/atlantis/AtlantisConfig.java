@@ -54,24 +54,24 @@ public class AtlantisConfig {
      * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They
      * will be <b>automatically built only if your total supply exceeds this value</b>.
      */
-    public static int USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
+//    public static int AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
 
     /**
      * Force production of a worker whenever you have minerals and more than N workers, but less than
      * AUTO_PRODUCE_WORKERS_MAX_WORKERS.
      */
-    public static int AUTO_PRODUCE_WORKERS_SINCE_N_WORKERS = 1;
+//    public static int AUTO_PRODUCE_WORKERS_MIN_WORKERS = 1;
 
     /**
      * Maximum number of workers. This variable ONLY MAKES SENSE WHEN USED TOGETHER WITH 
      * <b>AUTO_PRODUCE_WORKERS_MAX_WORKERS</b>.
      */
-    public static int AUTO_PRODUCE_WORKERS_MAX_WORKERS = 50;
+//    public static int AUTO_PRODUCE_WORKERS_MAX_WORKERS = 50;
 
     /**
      * We must reach at least N workers (SCVs, Probes) to scout for the enemy location.
      */
-    public static int SCOUT_IS_NTH_WORKER = 8;
+//    public static int SCOUT_IS_NTH_WORKER = 8;
 
     // =========================================================
     // =========================================================

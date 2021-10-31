@@ -8,6 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * Represents sequence of commands to produce units/buildings.
@@ -22,7 +23,12 @@ public abstract class ABuildOrder {
     /**
      * Sequence of units/buildings/techs to be produced in this build.
      */
-    private ArrayList<ProductionOrder> productionOrders;
+    private ArrayList<ProductionOrder> productionOrders = new ArrayList<>();
+
+    /**
+     *
+     */
+    private TreeMap<String, BuildOrderSetting> settings = new TreeMap<>();
 
     // === Constructor =========================================
 
@@ -105,5 +111,26 @@ public abstract class ABuildOrder {
 
     public void useProductionOrdersLoadedFromFile(ArrayList<ProductionOrder> productionOrders) {
         this.productionOrders = productionOrders;
+    }
+
+    public void addSetting(String key, int value) {
+        if (key.charAt(0) == '#') {
+            key = key.substring(1);
+        }
+
+        BuildOrderSetting setting = new BuildOrderSetting(key, value);
+        settings.put(key, setting);
+    }
+
+    protected boolean settingBooleanValue(String key) {
+        return settings.get(key).valueBoolean();
+    }
+
+    protected int settingIntValue(String key) {
+        if (!settings.containsKey(key)) {
+            throw new RuntimeException("No setting in build order: " + key);
+        }
+
+        return settings.get(key).valueInt();
     }
 }

@@ -1,16 +1,13 @@
 package atlantis;
 
 import atlantis.debug.APainter;
-import atlantis.debug.AUnitTypesHelper;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
-import atlantis.position.APosition;
-import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.strategy.OurStrategyManager;
 import atlantis.strategy.ProtossStrategies;
 import atlantis.strategy.TerranStrategies;
 import atlantis.strategy.ZergStrategies;
-import atlantis.units.AUnitType;
 
 public class OnStart {
 
@@ -79,8 +76,8 @@ public class OnStart {
         try {
             OurStrategyManager.initialize();
 
-            if (ProductionQueue.get() != null) {
-                System.out.println("Use build order: `" + ProductionQueue.get().getName() + "`");
+            if (CurrentBuildOrder.get() != null) {
+                System.out.println("Use build order: `" + CurrentBuildOrder.get().getName() + "`");
             }
             else {
                 System.err.println("Invalid (empty) build order in AtlantisConfig!");

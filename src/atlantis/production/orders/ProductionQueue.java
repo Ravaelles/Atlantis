@@ -1,6 +1,5 @@
 package atlantis.production.orders;
 
-import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
 import atlantis.strategy.AStrategy;
 import atlantis.units.AUnitType;
@@ -11,12 +10,6 @@ import java.util.ArrayList;
  * Current production queue. Based on Build Order loaded from file, with some dynamic changes applied.
  */
 public abstract class ProductionQueue {
-
-    /**
-     * Build order currently in use.
-     * switchToBuildOrder(ABuildOrder buildOrder)
-     */
-    private static ABuildOrder currentBuildOrder = null;
 
     /**
      * Ordered list of next units we should build.
@@ -75,15 +68,8 @@ public abstract class ProductionQueue {
 
     // === Getters =============================================
 
-    /**
-     * Returns currently active build order.
-     */
-    public static ABuildOrder get() {
-        return currentBuildOrder;
-    }
-
     public static void useBuildOrderFrom(AStrategy strategy) {
-        currentBuildOrder = strategy.buildOrder();
+        CurrentBuildOrder.set(strategy.buildOrder());
         ProductionQueueRebuilder.rebuildProductionQueue();
     }
 
