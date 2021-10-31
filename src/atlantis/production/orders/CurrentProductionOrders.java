@@ -6,6 +6,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.Us;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -45,10 +46,10 @@ public abstract class CurrentProductionOrders {
             // ===  Protoss fix: wait for at least one Pylon ============
 
             if (
-                    AGame.isPlayingAsProtoss()
+                    Us.isProtoss()
                     && mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD
-                    && (unitOrBuilding != null && !unitOrBuilding.is(AUnitType.Protoss_Pylon))
-                    && Count.ofType(AUnitType.Protoss_Pylon) == 0
+                    && (unitOrBuilding != null && !unitOrBuilding.isPylon())
+                    && Count.pylons() == 0
             ) {
                 continue;
             }
@@ -74,19 +75,15 @@ public abstract class CurrentProductionOrders {
             }
 
             // =========================================================
-
-//            queue.add(order);
-//            if (queue.size() >= Math.max(5, AGame.supplyTotal() / 13)) {
-//                break;
-//            }
-
-            // =========================================================
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
 
             boolean canAfford = AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded);
             order.setCanAffordNow(canAfford);
             order.setHasWhatRequired(canAfford);
-//            System.out.println(order.shortName() + " // aff=" + canAfford + " // req=" + hasWhatRequired);
+
+//            if (unitOrBuilding != null && unitOrBuilding.isPylon()) {
+//                System.out.println(order.shortName() + " // aff=" + canAfford + " // req=" + hasWhatRequired);
+//            }
 //            System.out.println(order.shortName() + " has requirements = " + hasWhatRequired);
             if (
                     mode == ProductionQueueMode.ENTIRE_QUEUE || (canAfford && hasWhatRequired)
@@ -105,12 +102,12 @@ public abstract class CurrentProductionOrders {
         // Race-specific dynamic production managers should take care of that by
         // adding production orders dynamically.
 
-        if (mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD && queue.size() > 0) {
-            System.out.println("----- " + queue.size());
-            for (ProductionOrder order : queue) {
-                System.out.println(order);
-            }
-        }
+//        if (mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD && queue.size() > 0) {
+//            System.out.println("----- " + queue.size());
+//            for (ProductionOrder order : queue) {
+//                System.out.println(order);
+//            }
+//        }
 
         return queue;
     }

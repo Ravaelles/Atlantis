@@ -42,14 +42,14 @@ public class GameSpeed {
         Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
-        GameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
+//        GameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
+        GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
     }
 
     /**
      * Decreases game speed to the value specified in AtlantisConfig when action happens.
      */
     public static void allowToDynamicallySlowdownGameOnFirstFighting() {
-//        dynamicSlowdown_lastTimeUnitDestroyed = AGame.timeSeconds();
         dynamicSlowdownIsAllowed = true;
         dynamicSlowdownIsActive = false;
 

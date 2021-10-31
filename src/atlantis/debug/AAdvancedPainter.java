@@ -511,7 +511,7 @@ public class AAdvancedPainter extends APainter {
         // Constructions already planned
         for (ConstructionOrder order : AConstructionRequests.getNotStartedConstructions()) {
             AUnitType type = order.getBuildingType();
-            paintSideMessage(type.shortName(), Color.Teal);
+            paintSideMessage(type.shortName(), Color.Cyan);
         }
     }
 

@@ -71,10 +71,10 @@ public class AProductionManager {
         assert !unitType.isBuilding();
 
         // Supply: OVERLORD / PYLON / DEPOT
-        if (AGame.supplyFree() == 0 && !unitType.isSupplyUnit()) {
-            // Supply production is handled by AtlantisSupplyManager
-            return false;
-        }
+//        if (AGame.supplyFree() == 0 && !unitType.isSupplyUnit()) {
+//            // Supply production is handled by AtlantisSupplyManager
+//            return false;
+//        }
 
         // =========================================================
         // Worker
