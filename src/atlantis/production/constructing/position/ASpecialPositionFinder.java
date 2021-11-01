@@ -99,7 +99,7 @@ public class ASpecialPositionFinder {
         }
         
         APosition near = APosition.create(baseLocationToExpand.position()).translateByPixels(-64, -48);
-        constructionOrder.setMaxDistance(6);
+        constructionOrder.setMaxDistance(3);
 
 //        System.out.println("Main base = " + Select.mainBase());
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
@@ -124,7 +124,7 @@ public class ASpecialPositionFinder {
         ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);
-        constructionOrder.setMaxDistance(10);
+        constructionOrder.setMaxDistance(3);
         
         return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
     }

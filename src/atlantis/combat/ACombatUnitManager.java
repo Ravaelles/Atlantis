@@ -68,13 +68,14 @@ public class ACombatUnitManager {
     }
 
     private static void preActions(AUnit unit) {
-        if (
-                A.seconds() >= 1
-                && GameSpeed.isDynamicSlowdownAllowed()
-                && !GameSpeed.isDynamicSlowdownActive()
-                && (unit.lastActionLessThanAgo(2, UnitActions.ATTACK_UNIT) || unit.isUnderAttack(3))) {
-            GameSpeed.activateDynamicSlowdown();
-        }
+//        if (
+//                A.seconds() >= 1
+//                && GameSpeed.isDynamicSlowdownAllowed()
+//                && !GameSpeed.isDynamicSlowdownActive()
+//                && (unit.lastActionLessThanAgo(2, UnitActions.ATTACK_UNIT) || unit.isUnderAttack(3)))
+//        {
+//            GameSpeed.activateDynamicSlowdown();
+//        }
 
         unit.setTooltip(unit.getTooltip() + ".");
     }

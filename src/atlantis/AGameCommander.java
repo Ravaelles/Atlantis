@@ -9,6 +9,7 @@ import atlantis.protoss.ProtossSpecificBuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
 import atlantis.terran.TerranSpecificBuildingsCommander;
+import atlantis.util.CodeProfiler;
 import atlantis.workers.AWorkerCommander;
 
 /**
@@ -27,20 +28,37 @@ public class AGameCommander {
         
         AAdvancedPainter.paint();
 
-        // === Execute code of every Commander and Manager ==================
+        // === Strategy =====================================================
 
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_STRATEGY);
         AStrategyCommander.update();
-        ABuildingsCommander.update();
-        AWorkerCommander.update();
-        ACombatCommander.update();
-        AScoutManager.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_STRATEGY);
 
-        if (AGame.isPlayingAsProtoss()) {
-            ProtossSpecificBuildingsCommander.update();
-        }
-        else if (AGame.isPlayingAsTerran()) {
-            TerranSpecificBuildingsCommander.update();
-        }
+        // === Production ===================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_BUILDINGS);
+        ABuildingsCommander.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_BUILDINGS);
+
+        // === Workers ======================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_WORKERS);
+        AWorkerCommander.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_WORKERS);
+
+        // === Combat =======================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
+        ACombatCommander.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_COMBAT);
+
+        // === Scout ========================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_SCOUTING);
+        AScoutManager.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_SCOUTING);
+
+        // =========================================================
 
         AEnemyUnits.updateFoggedUnits();
         UmsSpecialActionsManager.update();

@@ -14,7 +14,6 @@ public class AWorkerCommander {
      * Executed only once per frame.
      */
     public static void update() {
-        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_WORKERS);
 
         // === Handle assigning workers to gas / bases ============================
         
@@ -26,10 +25,6 @@ public class AWorkerCommander {
         for (AUnit worker : Select.ourWorkers().listUnits()) {
             AWorkerManager.update(worker);
         }
-        
-        // =========================================================
-        
-        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_WORKERS);
     }
 
 }

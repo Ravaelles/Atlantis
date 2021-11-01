@@ -37,6 +37,7 @@ public abstract class CurrentProductionOrders {
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
 
+        int countCanNotAfford = 0;
         for (ProductionOrder order : ProductionQueue.currentProductionQueue) {
             boolean hasWhatRequired = Requirements.hasRequirements(order);
             AUnitType unitOrBuilding = order.getUnitOrBuilding();
@@ -81,10 +82,11 @@ public abstract class CurrentProductionOrders {
             order.setCanAffordNow(canAfford);
             order.setHasWhatRequired(canAfford);
 
-//            if (unitOrBuilding != null && unitOrBuilding.isPylon()) {
+//            if (AGame.supplyUsed() >= 11 && unitOrBuilding != null && unitOrBuilding.isPylon()) {
 //                System.out.println(order.shortName() + " // aff=" + canAfford + " // req=" + hasWhatRequired);
 //            }
 //            System.out.println(order.shortName() + " has requirements = " + hasWhatRequired);
+
             if (
                     mode == ProductionQueueMode.ENTIRE_QUEUE || (canAfford && hasWhatRequired)
             ) {
@@ -93,7 +95,7 @@ public abstract class CurrentProductionOrders {
 
             // We can't afford to produce this order (possibly other, previous orders are blocking it).
             // Return current list of production orders (can be empty).
-            else {
+            else if (++countCanNotAfford >= 5) {
                 break;
             }
         }

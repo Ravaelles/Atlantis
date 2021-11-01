@@ -60,10 +60,6 @@ public class AScoutManager {
             return;
         }
 
-        // =========================================================
-        
-        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_SCOUTING);
-        
         // === Act with every scout ================================
         
         assignScoutIfNeeded();
@@ -74,10 +70,6 @@ public class AScoutManager {
             }
         }
         catch (ConcurrentModificationException ignore) { }
-
-        // =========================================================
-        
-        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_SCOUTING);
     }
     
     private static boolean update(AUnit scout) {

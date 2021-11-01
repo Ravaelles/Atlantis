@@ -23,8 +23,6 @@ public class ABuildingsCommander {
             return;
         }
 
-        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_BUILDINGS);
-
         // Check if need to increase supply and if so, take care of it.
         ASupplyManager.update();
 
@@ -36,10 +34,6 @@ public class ABuildingsCommander {
 
         // When it can be applied and makes sense, automatically produce units like workers, factories.
         ADynamicProductionCommander.update();
-
-        // =========================================================
-        
-        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_BUILDINGS);
     }
 
 }

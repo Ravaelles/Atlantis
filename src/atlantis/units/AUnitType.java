@@ -1,12 +1,10 @@
 package atlantis.units;
 
 import atlantis.util.Cache;
-import bwapi.TechType;
-import bwapi.UnitType;
-import bwapi.WeaponType;
+import bwapi.*;
+
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Wrapper for BWMirror UnitType class that makes it much easier to use.<br /><br />
@@ -956,15 +954,19 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
-    public int getWeaponRangeAgainst(AUnit anotherUnit) {
+    public int weaponRangeAgainst(AUnit anotherUnit) {
         if (isCannon()) {
             return 7;
         }
 
-        if (anotherUnit.isAirUnit()) {
-            return getAirWeapon().maxRange() / 32;
+        return weaponAgainst(anotherUnit.type()).maxRange() / 32;
+    }
+
+    public WeaponType weaponAgainst(AUnitType target) {
+        if (target.isGroundUnit()) {
+            return getGroundWeapon();
         } else {
-            return getGroundWeapon().maxRange() / 32;
+            return getAirWeapon();
         }
     }
 
@@ -1118,5 +1120,37 @@ public class AUnitType implements Comparable<AUnitType> {
             result.append((result.length() > 0) ? "," : "").append(type.id());
         }
         return result.toString();
+    }
+
+    public DamageType damageTypeAgainst(AUnitType target) {
+        return (DamageType) cache.get(
+                "damageTypeAgainst",
+                -1,
+                () -> this.weaponAgainst(target).damageType()
+        );
+    }
+
+    public boolean isSmall() {
+        return (boolean) cache.get(
+                "isSmall",
+                -1,
+                () -> ut.size() == UnitSizeType.Small
+        );
+    }
+
+    public boolean isMedium() {
+        return (boolean) cache.get(
+                "isMedium",
+                -1,
+                () -> ut.size() == UnitSizeType.Medium
+        );
+    }
+
+    public boolean isLarge() {
+        return (boolean) cache.get(
+                "isLarge",
+                -1,
+                () -> ut.size() == UnitSizeType.Large
+        );
     }
 }

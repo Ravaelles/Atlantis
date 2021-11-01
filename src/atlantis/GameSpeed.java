@@ -25,7 +25,7 @@ public class GameSpeed {
 //    private static final int NORMAL_GAME_SPEED = 30;
 //    private static final int NORMAL_FRAME_SKIP = 0;
     private static final int NORMAL_GAME_SPEED = 0;
-    private static final int NORMAL_FRAME_SKIP = 10;
+    private static final int NORMAL_FRAME_SKIP = 20;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
 
@@ -39,11 +39,10 @@ public class GameSpeed {
     // =========================================================
 
     public static void init() {
+        GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
+
         Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
-
-//        GameSpeed.allowToDynamicallySlowdownGameOnFirstFighting();
-        GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
     }
 
     /**
@@ -65,9 +64,6 @@ public class GameSpeed {
 
     public static void activateDynamicSlowdown() {
         dynamicSlowdownIsActive = true;
-
-        Atlantis.game().setLocalSpeed(DYNAMIC_SLOWDOWN_GAME_SPEED);
-        Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
 
         Atlantis.game().setLocalSpeed(DYNAMIC_SLOWDOWN_GAME_SPEED);
         Atlantis.game().setFrameSkip(DYNAMIC_SLOWDOWN_FRAME_SKIP);
@@ -109,11 +105,11 @@ public class GameSpeed {
 
         GameSpeed.pauseGame();
 
-        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
+//        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
 
         gameSpeed = speed;
 
-        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
+//        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
 
 //        try {
 //            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
@@ -124,8 +120,7 @@ public class GameSpeed {
 //            // Ignore
 //        }
         game().setLocalSpeed(gameSpeed);
-        game().setLocalSpeed(gameSpeed);
-        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
+//        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
         AGame.sendMessage("/speed " + gameSpeed);
 
         GameSpeed.unpauseGame();
@@ -140,7 +135,6 @@ public class GameSpeed {
     public static void changeSpeedBy(int deltaSpeed) {
 //        int speed = gameSpeed + deltaSpeed;
         int speed;
-
 
         if (deltaSpeed < 0) {
             if (gameSpeed > 1) {

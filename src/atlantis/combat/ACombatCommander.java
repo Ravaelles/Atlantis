@@ -17,8 +17,6 @@ public class ACombatCommander {
      * Acts with all battle units.
      */
     public static void update() {
-        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
-        
         if (AGame.everyNthGameFrame(40)) {
             MissionChanger.evaluateGlobalMission();
         }
@@ -28,10 +26,6 @@ public class ACombatCommander {
         for (Squad squad : Squad.getSquads()) {
             handleSquad(squad);
         }
-        
-        // =========================================================
-        
-        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_COMBAT);
     }
 
     // =============================================================

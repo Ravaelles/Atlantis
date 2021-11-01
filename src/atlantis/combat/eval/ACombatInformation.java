@@ -1,4 +1,4 @@
-package atlantis.combat;
+package atlantis.combat.eval;
 
 import atlantis.AGame;
 import atlantis.units.AUnit;

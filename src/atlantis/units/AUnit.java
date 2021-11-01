@@ -465,7 +465,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns max shoot range (in build tiles) of this unit against given <b>opponentUnit</b>.
      */
     public int getWeaponRangeAgainst(AUnit opponentUnit) {
-        return opponentUnit.type().getWeaponRangeAgainst(this);
+        return opponentUnit.type().weaponRangeAgainst(this);
     }
 
     /**

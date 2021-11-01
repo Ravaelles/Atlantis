@@ -94,9 +94,8 @@ public class AProductionManager {
     }
 
     private static void produceBuilding(AUnitType type, ProductionOrder order) {
-        if (!type.isBuilding()) {
-            System.err.println("produceBuilding has been given wrong argument: " + type);
-        }
+        assert type.isBuilding();
+
         AConstructionRequests.requestConstructionOf(order);
     }
     

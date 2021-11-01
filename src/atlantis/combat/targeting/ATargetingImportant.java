@@ -47,6 +47,41 @@ public class ATargetingImportant extends AEnemyTargeting {
         }
 
         // =========================================================
+        // Defensive buildings IN RANGE
+
+        target = Select.enemy()
+                .ofType(
+                        AUnitType.Protoss_Photon_Cannon,
+                        AUnitType.Terran_Bunker,
+                        AUnitType.Zerg_Sunken_Colony
+                )
+                .inShootRangeOf(1, unit)
+                .nearestTo(unit);
+        if (target != null) {
+
+            // Target repairers
+            AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, target)
+                    .canBeAttackedBy(unit, 1).nearestTo(unit);
+            if (repairer != null) {
+                return repairer;
+            }
+
+            return target;
+        }
+
+//        target = enemyBuildings.clone()
+//                .ofType(
+//                        AUnitType.Protoss_Photon_Cannon,
+//                        AUnitType.Zerg_Sunken_Colony
+//                )
+//                .inShootRangeOf(unit)
+//                .nearestTo(unit);
+//        if (target != null) {
+//            if (AEnemyTargeting.DEBUG) System.out.println("C2 = " + target);
+//            return target;
+//        }
+
+        // =========================================================
         // Target COMBAT UNITS IN RANGE
 
         target = enemyUnits.clone()
@@ -55,21 +90,6 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .nearestTo(unit);
         if (target != null) {
             if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
-            return target;
-        }
-
-        // =========================================================
-        // Defensive buildings IN RANGE
-
-        target = enemyBuildings.clone()
-                .ofType(
-                        AUnitType.Protoss_Photon_Cannon,
-                        AUnitType.Zerg_Sunken_Colony
-                )
-                .inShootRangeOf(unit)
-                .nearestTo(unit);
-        if (target != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("C2 = " + target);
             return target;
         }
 

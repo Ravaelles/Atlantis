@@ -1,11 +1,10 @@
 package atlantis.combat.retreating;
 
 import atlantis.AGame;
-import atlantis.combat.ACombatEvaluator;
+import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.Units;
 
 import java.util.Objects;

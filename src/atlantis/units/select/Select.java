@@ -520,6 +520,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 cachePath = "geyserBuildings",
                 10,
                 () -> neutral().ofType(
+                        AUnitType.Resource_Vespene_Geyser,
                         AUnitType.Protoss_Assimilator,
                         AUnitType.Terran_Refinery,
                         AUnitType.Zerg_Extractor

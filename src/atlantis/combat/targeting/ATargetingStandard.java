@@ -29,25 +29,6 @@ public class ATargetingStandard extends AEnemyTargeting {
         }
 
         // =========================================================
-        // Defensive buildings
-
-        target = Select.enemy()
-                .effVisible()
-                .ofType(AUnitType.Terran_Bunker)
-                .nearestTo(unit);
-        if (target != null) {
-
-            // Target repairers
-            AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, target)
-                    .canBeAttackedBy(unit, 1).nearestTo(unit);
-            if (repairer != null) {
-                return repairer;
-            }
-
-            return target;
-        }
-
-        // =========================================================
         // WORKERS IN RANGE
 
         target = enemyUnits.clone()

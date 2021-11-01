@@ -1,11 +1,9 @@
-package atlantis.combat;
+package atlantis.combat.eval;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.ColorUtil;
-import atlantis.position.PositionUtil;
 import atlantis.util.WeaponUtil;
 import bwapi.Color;
 import java.util.Collection;
@@ -14,27 +12,11 @@ import java.util.Map;
 
 
 public class ACombatEvaluator {
-    
-    /**
-     * Fight only if our army is locally stronger X% than enemy army. 0.5 = 50%.
-     */
-    private static final double SAFETY_MARGIN_ATTACK = 0.4;
-    private static final double SAFETY_MARGIN_RETREAT = -0.4;
-
-    /**
-     * Multiplier for hit points factor when evaluating unit's combat value.
-     */
-    private static final double EVAL_HIT_POINTS_FACTOR = 0.3;
-
-    /**
-     * Multiplier for damage factor when evaluating unit's combat value.
-     */
-    private static final double EVAL_DAMAGE_FACTOR = 1.0;
 
     /**
      * Maximum allowed value as a result of evaluation.
      */
-    private static final int MAX_VALUE = 999999999;
+    private static final int MAX_VALUE = 999;
 
     /**
      * Stores the instances of AtlantisCombatInformation for each unit
@@ -72,15 +54,15 @@ public class ACombatEvaluator {
      * engage in combat with nearby enemy units. Returns
      * <b>FALSE</b> if enemy is too strong and we should pull back.
      */
-    public static boolean isSituationExtremelyFavorable(AUnit unit, boolean isPendingFight) {
-        AUnit nearestEnemy = Select.enemy().nearestTo(unit);
-
-        if (ACombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
-            return false;
-        }
-
-        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight) + 0.5;
-    }
+//    public static boolean isSituationExtremelyFavorable(AUnit unit, boolean isPendingFight) {
+//        AUnit nearestEnemy = Select.enemy().nearestTo(unit);
+//
+//        if (ACombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
+//            return false;
+//        }
+//
+//        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight) + 0.5;
+//    }
 
     /**
      * Returns <b>POSITIVE</b> value if our unit <b>unit</b> should engage in combat with nearby units or
@@ -117,8 +99,8 @@ public class ACombatEvaluator {
 
         // =========================================================
         // Evaluate our and enemy strength
-        double enemyEvaluation = evaluateUnitsAgainstUnit(enemyUnits, unit, true);
-        double ourEvaluation = evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
+        double enemyEvaluation = Evaluate.evaluateUnitsAgainstUnit(enemyUnits, unit, true);
+        double ourEvaluation = Evaluate.evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
 
         // Return non-relative absolute value
         if (returnAbsoluteValue) {
@@ -142,108 +124,11 @@ public class ACombatEvaluator {
     // =========================================================
     // Safety margin
     
-    private static double calculateFavorableValueThreshold(boolean isPendingFight) {
-//        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK) 
-//                + Math.min(0.1, AGame.getTimeSeconds() / 3000);
-        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK);
-    }
-
-    // =========================================================
-    
-    /**
-     * Calculate total strength value of given units set. 
-     * It's always evaluated from a perspective of particular unit, in this case <b>againstUnit</b>.
-     * Also it makes sense to distguish before enemy evaluation (we will almost always understimate enemy
-     * strength) or our own evaluation (we're likely to overestimate our strength).
-     */
-    private static double evaluateUnitsAgainstUnit(Collection<AUnit> units, AUnit againstUnit, boolean isEnemyEval) {
-        double strength = 0;
-        boolean enemyDefensiveBuildingFound = false;
-        boolean enemyDefensiveBuildingInRange = false;
-
-        // =========================================================
-        for (AUnit unit : units) {
-            double unitStrengthEval = evaluateUnitHPandDamage(unit, againstUnit);
-
-            // =========================================================
-            // WORKER
-
-            if (unit.isWorker()) {
-                strength += 0.15 * unitStrengthEval;
-            }
-
-            // =========================================================
-            // BUILDING
-            else if (unit.type().isBuilding() && unit.isCompleted()) {
-                boolean antiGround = (againstUnit == null || !againstUnit.isAirUnit());
-                boolean antiAir = (againstUnit == null || againstUnit.isAirUnit());
-                if (unit.type().isMilitaryBuilding(antiGround, antiAir)) {
-                    enemyDefensiveBuildingFound = true;
-                    if (unit.is(AUnitType.Terran_Bunker)) {
-                        strength += 7 * evaluateUnitHPandDamage(AUnitType.Terran_Marine, againstUnit);
-                    } else {
-                        strength += 1.3 * unitStrengthEval;
-                    }
-
-                    if (PositionUtil.distanceTo(unit, againstUnit) <= 8.5) {
-                        enemyDefensiveBuildingInRange = true;
-                    }
-                }
-            } // =========================================================
-            // Ordinary MILITARY UNIT
-            else {
-                strength += unitStrengthEval;
-            }
-        }
-
-        // =========================================================
-        // Extra bonus for DEFENSIVE BUILDING PRESENCE
-
-        if (!isEnemyEval) {
-            if (enemyDefensiveBuildingFound) {
-                strength += 10;
-            }
-            if (enemyDefensiveBuildingInRange) {
-                strength += 30;
-            }
-        }
-
-        return strength;
-    }
-
-    // =========================================================
-    
-    private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
-        return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);
-    }
-
-    private static double evaluateUnitHPandDamage(AUnitType evaluate, AUnit againstUnit) {
-//        System.out.println(evaluate.getType() + " damage: " + evaluate.getType().getGroundWeapon().getDamageNormalized());
-        return evaluateUnitHPandDamage(evaluate, evaluate.getMaxHitPoints(), againstUnit);
-    }
-
-    private static double evaluateUnitHPandDamage(AUnitType evaluateType, int hp, AUnit againstUnit) {
-        if (evaluateType.isMine() || evaluateType.isNeutralType() || evaluateType.isInvincible()) {
-            return 0;
-        }
-        
-        // =========================================================
-        
-        double damage = ( againstUnit.isAirUnit()
-            ? WeaponUtil.getDamageNormalized(evaluateType.getAirWeapon())
-            : WeaponUtil.getDamageNormalized(evaluateType.getGroundWeapon())
-        );
-        double total = hp * EVAL_HIT_POINTS_FACTOR + damage * EVAL_DAMAGE_FACTOR;
-
-        // =========================================================
-        // Diminish role of NON-SHOOTING units
-
-//        if (damage == 0 && !evaluateType.equals(AUnitType.Terran_Medic)) {
-//            total /= 15;
-//        }
-
-        return total;
-    }
+//    private static double calculateFavorableValueThreshold(boolean isPendingFight) {
+////        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK)
+////                + Math.min(0.1, AGame.getTimeSeconds() / 3000);
+//        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK);
+//    }
 
     // =========================================================
     // Auxiliary

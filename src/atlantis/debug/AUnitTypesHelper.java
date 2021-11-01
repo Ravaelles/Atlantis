@@ -26,8 +26,8 @@ public class AUnitTypesHelper {
                 continue;
             }
             
-            double dmgGround = WeaponUtil.getDamageNormalized(type.getGroundWeapon());
-            double dmgAir = WeaponUtil.getDamageNormalized(type.getAirWeapon());
+            double dmgGround = WeaponUtil.damageNormalized(type.getGroundWeapon());
+            double dmgAir = WeaponUtil.damageNormalized(type.getAirWeapon());
             double unitPrice = type.getMineralPrice() + type.getGasPrice() * 1.5;
             
             if (dmgGround > 0) {

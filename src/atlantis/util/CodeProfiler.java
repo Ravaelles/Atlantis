@@ -8,6 +8,7 @@ public class CodeProfiler {
     public static final String ASPECT_PAINTING = "painting";
     public static final String ASPECT_BUILDINGS = "production";
     public static final String ASPECT_SCOUTING = "scouting";
+    public static final String ASPECT_STRATEGY = "scouting";
     public static final String ASPECT_WORKERS = "workers";
     
     // =========================================================

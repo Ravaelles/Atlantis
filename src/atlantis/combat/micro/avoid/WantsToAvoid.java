@@ -13,7 +13,7 @@ public class WantsToAvoid {
             return false;
         }
 
-        if ((new FightInsteadAvoid(unit, enemies)).shouldFight()) {
+        if ((new FightInsteadAvoid(unit, enemies)).shouldFight() && !AAttackEnemyUnit.shouldNotAttack(unit)) {
             return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         }
 

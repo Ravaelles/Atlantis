@@ -2,9 +2,8 @@ package atlantis.debug;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.GameSpeed;
 import atlantis.buildings.managers.AGasManager;
-import atlantis.combat.ACombatEvaluator;
+import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionAttack;
@@ -1173,11 +1172,8 @@ public class AAdvancedPainter extends APainter {
 
         // Next defensive building position
         AUnitType building = AAntiLandBuildingRequests.building();
-        APosition defBuild = AAntiLandBuildingRequests.positionForNextBuilding();
+//        APosition defBuild = AAntiLandBuildingRequests.positionForNextBuilding();
         paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.shortName(), Color.Brown);
-        if (defBuild != null) {
-            GameSpeed.changeSpeedTo(20);
-        }
     }
 
     private static void paintMineralDistance() {
