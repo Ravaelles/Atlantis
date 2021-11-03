@@ -26,7 +26,7 @@ public class AEnemyTargeting {
             return null;
         }
 
-        if (!enemy.isEnemy() || !enemy.isAlive() || !enemy.isVisibleOnMap()) {
+        if (!enemy.isEnemy() || !enemy.isVisibleOnMap()) {
             System.err.println(enemy + ", enemy:" + enemy.isEnemy() + ", alive:" + enemy.isAlive() + ", visible:" + enemy.isVisibleOnMap());
             throw new RuntimeException("This is crazy, it should never happen, but with wrong logic it can happen.");
         }

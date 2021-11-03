@@ -21,6 +21,7 @@ import bwapi.Color;
 import bwapi.Position;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 public class AScoutManager {
@@ -61,17 +62,12 @@ public class AScoutManager {
         
         assignScoutIfNeeded();
 
-        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
-            update(iterator.next());
+        try {
+            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+                update(iterator.next());
+            }
         }
-
-//        try {
-//            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
-//                AUnit scout = iterator.next();
-//                update(scout);
-//            }
-//        }
-//        catch (ConcurrentModificationException ignore) { }
+        catch (ConcurrentModificationException ignore) { }
     }
     
     private static boolean update(AUnit scout) {

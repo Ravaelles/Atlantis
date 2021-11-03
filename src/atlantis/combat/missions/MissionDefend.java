@@ -44,9 +44,10 @@ public class MissionDefend extends Mission {
         // =========================================================
 
         int alliesNear = Select.our().inRadius(2, unit).count();
-        double expectedDist = 0.6
+        double expectedDist = 0.1
                 + (unit.isRanged() ? 3 : 0)
-                + (alliesNear >= 6 ? alliesNear / 20.0 : 0);
+//                + (alliesNear >= 2 ? alliesNear / 20.0 : 0);
+                + (alliesNear / 20.0);
 
         if (unit.distTo(focusPoint) > expectedDist) {
             return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "MoveToDefend");
@@ -66,6 +67,10 @@ public class MissionDefend extends Mission {
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         if (unit.isRanged() || enemy.isRanged()) {
+            return true;
+        }
+
+        if (unit.distToLessThan(focusPoint(), 1.5)) {
             return true;
         }
 

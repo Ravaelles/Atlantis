@@ -88,7 +88,8 @@ public class Missions {
             case "ATTACK" : return ATTACK;
             case "CONTAIN" : return CONTAIN;
             case "DEFEND" : return DEFEND;
-            default : AGame.exit("Invalid mission: " + mission); return null;
+//            default : AGame.exit("Invalid mission: " + mission); return null;
+            default : return null;
         }
     }
 

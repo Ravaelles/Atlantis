@@ -302,7 +302,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
     // Compare type methods
     public boolean isAlive() {
-        return !UnitsArchive.isDestroyed(id());
+        if (isOur()) {
+            return hp() > 0;
+        }
+
+        return hp() > 0 || !UnitsArchive.isDestroyed(id());
 
 //        if (isOur()) {
 //            return hp() > 0 && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this);

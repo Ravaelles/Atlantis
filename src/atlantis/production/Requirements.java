@@ -2,6 +2,7 @@ package atlantis.production;
 
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -17,6 +18,9 @@ public class Requirements {
         }
         else if (order.upgrade() != null) {
             return hasRequirements(order.upgrade());
+        }
+        else if (order.mission() != null) {
+            return A.supplyUsed() >= order.minSupply();
         }
         System.err.println(order);
         throw new RuntimeException("Shouldn't reach here");

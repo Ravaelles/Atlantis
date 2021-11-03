@@ -41,7 +41,13 @@ public class PositionUtil {
         else if (object1 instanceof Position) {
             fromPosition = (Position) object1;
         }
-        
+        else if (object1 instanceof AChoke) {
+            fromPosition = ((AChoke) object1).getCenter();
+        }
+        else if (object1 instanceof ABaseLocation) {
+            fromPosition = ((ABaseLocation) object1).position();
+        }
+
         if (fromPosition == null && fromUnit == null) {
             throw new RuntimeException("Invalid class for argument `from`: " + object1);
         }

@@ -3,6 +3,7 @@ package atlantis.production.dynamic;
 
 import atlantis.AGame;
 import atlantis.production.AbstractDynamicUnits;
+import atlantis.production.orders.BuildOrderSettings;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
@@ -50,6 +51,11 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
+        if (BuildOrderSettings.autoProduceZealots()) {
+            trainIfPossible(AUnitType.Protoss_Zealot);
+            return;
+        }
+
         if (
                 GamePhase.isEarlyGame()
                         && EnemyStrategy.get().isRushOrCheese()
@@ -61,6 +67,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
         if (AGame.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) {
             trainIfPossible(8, AUnitType.Protoss_Zealot, true);
+            return;
         }
     }
 

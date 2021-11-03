@@ -20,6 +20,10 @@ public class AbstractDynamicUnits extends Helpers {
         return trainIfPossible(type, onlyOneAtTime, type.getMineralPrice(), type.getGasPrice());
     }
 
+    protected static boolean trainIfPossible(AUnitType type) {
+        return trainIfPossible(type, false, type.getMineralPrice(), type.getGasPrice());
+    }
+
     protected static boolean trainIfPossible(AUnitType type, boolean onlyOneAtTime) {
         return trainIfPossible(type, onlyOneAtTime, 0, 0);
     }
@@ -36,7 +40,7 @@ public class AbstractDynamicUnits extends Helpers {
         AUnitType building = type.getWhatBuildsIt();
         for (AUnit buildingProducing : Select.ourOfType(building).listUnits()) {
             if (!buildingProducing.isTrainingAnyUnit()) {
-                buildingProducing.train(type);
+                trainNow(type);
                 return true;
             }
         }
@@ -68,6 +72,10 @@ public class AbstractDynamicUnits extends Helpers {
         trainNow(AUnitType.Protoss_Arbiter, onlyOneAtTime);
     }
     
+    protected static void trainNow(AUnitType type) {
+        AddToQueue.addWithTopPriority(type);
+    }
+
     protected static void trainNow(AUnitType type, boolean onlyOneAtTime) {
         AddToQueue.addWithTopPriority(type);
     }

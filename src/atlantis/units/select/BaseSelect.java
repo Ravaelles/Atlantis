@@ -12,13 +12,13 @@ import java.util.List;
 
 public class BaseSelect<T extends AUnit> {
 
-//    private static final Cache<List<AUnit>> cacheList = new Cache<>();
+    private static final Cache<List<AUnit>> cacheList = new Cache<>();
 
     protected static List<AUnit> ourUnits() {
-//        return cacheList.get(
-//                "ourUnits",
-//                1,
-//                () -> {
+        return cacheList.get(
+                "ourUnits",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (Unit u : AGame.getPlayerUs().getUnits()) {
@@ -31,15 +31,15 @@ public class BaseSelect<T extends AUnit> {
                     //                    }
 
                     return data;
-//                }
-//        );
+                }
+        );
     }
 
     protected static List<AUnit> enemyUnits() {
-//        return cacheList.get(
-//                "enemyUnits",
-//                0,
-//                () -> {
+        return cacheList.get(
+                "enemyUnits",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     // === Handle UMS ==========================================
@@ -50,9 +50,9 @@ public class BaseSelect<T extends AUnit> {
                             if (player.isEnemy(playerUs)) {
                                 for (Unit u : player.getUnits()) {
                                     AUnit unit = AUnit.createFrom(u);
-                                    if (unit.isAlive()) {
+//                                    if (unit.isAlive()) {
                                         data.add(unit);
-                                    }
+//                                    }
                                     //                                    else {
                                     //                                        System.err.println("Enemy unit not alive? Seems a terrible problem.");
                                     //                                        System.err.println(unit);
@@ -68,53 +68,53 @@ public class BaseSelect<T extends AUnit> {
                     else {
                         for (Unit u : AGame.getEnemy().getUnits()) {
                             AUnit unit = AUnit.createFrom(u);
-                            if (unit.isAlive()) {
+//                            if (unit.isAlive()) {
                                 data.add(unit);
-                            }
+//                            }
                         }
                     }
 
                     return data;
-//                }
-//        );
+                }
+        );
     }
 
     protected static List<AUnit> neutralUnits() {
-//        return cacheList.get(
-//                "neutralUnits",
-//                3,
-//                () -> {
+        return cacheList.get(
+                "neutralUnits",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (Unit u : Atlantis.game().neutral().getUnits()) {
                         AUnit unit = AUnit.createFrom(u);
-                        if (unit.isAlive()) {
+//                        if (unit.isAlive()) {
                             data.add(unit);
-                        }
+//                        }
                     }
 
                     return data;
-//                }
-//        );
+                }
+        );
     }
 
     protected static List<AUnit> allUnits() {
-//        return cacheList.get(
-//                "allUnits",
-//                0,
-//                () -> {
+        return cacheList.get(
+                "allUnits",
+                0,
+                () -> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (Unit u : Atlantis.game().getAllUnits()) {
                         AUnit unit = AUnit.createFrom(u);
-                        if (unit.isAlive()) {
+//                        if (unit.isAlive()) {
                             data.add(unit);
-                        }
+//                        }
                     }
 
                     return data;
-//                }
-//        );
+                }
+        );
     }
 
 }

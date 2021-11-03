@@ -27,9 +27,10 @@ public abstract class ABuildOrder {
     private ArrayList<ProductionOrder> productionOrders = new ArrayList<>();
 
     /**
-     *
+     * Special settings associated with this build order e.g. change mission to attack
+     * or auto produce workers if have more than N workers.
      */
-    private TreeMap<String, BuildOrderSetting> settings = new TreeMap<>();
+    protected TreeMap<String, BuildOrderSetting> settings = new TreeMap<>();
 
     // === Constructor =========================================
 
@@ -123,15 +124,4 @@ public abstract class ABuildOrder {
         settings.put(key, setting);
     }
 
-    protected boolean settingBooleanValue(String key) {
-        return settings.get(key).valueBoolean();
-    }
-
-    protected int settingIntValue(String key) {
-        if (!settings.containsKey(key)) {
-            throw new RuntimeException("No setting in build order: " + key);
-        }
-
-        return settings.get(key).valueInt();
-    }
 }

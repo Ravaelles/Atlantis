@@ -1,6 +1,7 @@
 package atlantis.production.orders;
 
 import atlantis.AGame;
+import atlantis.combat.missions.Missions;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
@@ -115,5 +116,20 @@ public abstract class CurrentProductionOrders {
 
         return queue;
     }
+
+    // =========================================================
+
+//    private static void addOrApplyOrder(ProductionOrder order, ArrayList<ProductionOrder> queue) {
+//        if (order.mission() != null) {
+//            applySpecialOrder(order);
+//        }
+//        else {
+//            queue.add(order);
+//        }
+//    }
+//
+//    private static void applySpecialOrder(ProductionOrder order) {
+//        Missions.setGlobalMissionTo(order.mission());
+//    }
 
 }

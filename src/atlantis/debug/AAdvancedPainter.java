@@ -199,7 +199,6 @@ public class AAdvancedPainter extends APainter {
      * Paint extra information about visible enemy combat units.
      */
     static void paintEnemyCombatUnits() {
-        System.out.println(Select.enemy().count());
         for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
             paintCombatEval(enemy, true);
             paintLifeBar(enemy);

@@ -195,6 +195,7 @@ public class Atlantis implements BWEventListener {
             }
         }
 
+        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.shortName());
         UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
     }
 
