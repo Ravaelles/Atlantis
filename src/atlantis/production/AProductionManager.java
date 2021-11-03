@@ -2,6 +2,8 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
+import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.Missions;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.orders.*;
 import atlantis.tech.ATechRequests;
@@ -39,17 +41,24 @@ public class AProductionManager {
         // =========================================================
         // Produce UPGRADE
 
-        else if (order.getUpgrade() != null) {
-            UpgradeType upgrade = order.getUpgrade();
+        else if (order.upgrade() != null) {
+            UpgradeType upgrade = order.upgrade();
             ATechRequests.researchUpgrade(upgrade);
         }
 
         // =========================================================
         // Produce TECH
 
-        else if (order.getTech()!= null) {
-            TechType tech = order.getTech();
+        else if (order.tech()!= null) {
+            TechType tech = order.tech();
             ATechRequests.researchTech(tech);
+        }
+
+        // =========================================================
+        // Mission CHANGE
+
+        else if (order.mission() != null) {
+            Missions.setGlobalMissionTo(order.mission());
         }
 
         // === Nothing! ============================================

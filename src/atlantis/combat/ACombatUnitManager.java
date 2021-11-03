@@ -1,7 +1,6 @@
 package atlantis.combat;
 
 import atlantis.AGame;
-import atlantis.GameSpeed;
 import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.*;
 import atlantis.combat.micro.avoid.AAvoidUnits;
@@ -12,9 +11,6 @@ import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
 
 public class ACombatUnitManager {
 
@@ -158,7 +154,7 @@ public class ACombatUnitManager {
 
         Mission mission = unit.mission();
         if (mission != null) {
-            unit.setTooltip(mission.getName());
+            unit.setTooltip(mission.name());
             return mission.update(unit);
         }
 

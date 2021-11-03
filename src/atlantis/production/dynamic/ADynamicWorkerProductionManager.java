@@ -2,7 +2,7 @@ package atlantis.production.dynamic;
 
 import atlantis.AGame;
 import atlantis.production.AProductionManager;
-import atlantis.production.orders.CurrentBuildOrder;
+import atlantis.production.orders.BuildOrderSettings;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
@@ -50,8 +50,8 @@ public class ADynamicWorkerProductionManager {
     // =========================================================
         
     public static boolean isAutoProduceWorkersActive(int workers) {
-        int autoProduceMinWorkers = CurrentBuildOrder.settingAutoProduceWorkersMinWorkers();
-        int autoProduceMaxWorkers = CurrentBuildOrder.settingAutoProduceWorkersMaxWorkers();
+        int autoProduceMinWorkers = BuildOrderSettings.autoProduceWorkersMinWorkers();
+        int autoProduceMaxWorkers = BuildOrderSettings.autoProduceWorkersMaxWorkers();
 
         return autoProduceMinWorkers <= workers && workers < autoProduceMaxWorkers;
     }

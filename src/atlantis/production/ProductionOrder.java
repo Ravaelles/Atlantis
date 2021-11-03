@@ -1,5 +1,6 @@
 package atlantis.production;
 
+import atlantis.combat.missions.Mission;
 import atlantis.position.APosition;
 import atlantis.production.orders.ProductionOrderPriority;
 import atlantis.units.AUnitType;
@@ -44,7 +45,12 @@ public class ProductionOrder {
      * Tech type to research. Can be null if this production order is for something else than upgrade.
      */
     private TechType tech;
-    
+
+    /**
+     * At this supply we should change global mission to this.
+     */
+    private Mission mission;
+
     /**
      * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
      */
@@ -96,6 +102,11 @@ public class ProductionOrder {
         this(null, null, tech, null, minSupply);
     }
 
+    public ProductionOrder(Mission mission, int minSupply) {
+        this(null, null, null, null, minSupply);
+        setMission(mission);
+    }
+
     public ProductionOrder(AUnitType unitOrBuilding, APosition position, int minSupply) {
         this(unitOrBuilding, position, null, null, minSupply);
     }
@@ -141,6 +152,9 @@ public class ProductionOrder {
         else if (tech != null) {
             return "Order at " + minSupply + " " + shortName();
         }
+        else if (mission != null) {
+            return "Order at " + minSupply + " " + mission.name();
+        }
         else {
             return "InvalidEmptyOrder";
         }
@@ -153,6 +167,8 @@ public class ProductionOrder {
             return upgrade.toString().replace("_", " ");
         } else if (tech != null) {
             return tech.toString().replace("_", " ");
+        } else if (mission != null) {
+            return mission.toString().replace("_", " ");
         } else {
             return "Unknown - BUG";
         }
@@ -199,7 +215,7 @@ public class ProductionOrder {
      * If this production order concerns upgrade (UpgradeType class) to be researched, it will return non-null
      * value being unit type.
      */
-    public UpgradeType getUpgrade() {
+    public UpgradeType upgrade() {
         return upgrade;
     }
 
@@ -207,7 +223,7 @@ public class ProductionOrder {
      * If this production order concerns technology (TechType class) to be researched, it will return non-null
      * value being unit type.
      */
-    public TechType getTech() {
+    public TechType tech() {
         return tech;
     }
 
@@ -222,6 +238,12 @@ public class ProductionOrder {
      * Special modifier e.g. base position modifier. See ProductionOrder constants.
      */
     public void setModifier(String modifier) {
+        if (modifier != null) {
+            modifier = modifier.trim();
+        }
+        if (modifier != null && modifier.charAt(0) == '@') {
+            modifier = modifier.substring(1);
+        }
         if (modifier != null) {
             modifier = modifier.trim();
         }
@@ -278,5 +300,13 @@ public class ProductionOrder {
 
     public void setCurrentlyInProduction(boolean currentlyInProduction) {
         this.currentlyInProduction = currentlyInProduction;
+    }
+
+    public Mission mission() {
+        return mission;
+    }
+
+    public void setMission(Mission mission) {
+        this.mission = mission;
     }
 }

@@ -104,7 +104,6 @@ public class AEnemyTargeting {
     private static AUnit selectWeakestEnemyInRangeOfType(AUnitType enemyType, AUnit enemy, AUnit ourUnit) {
         Selection targets = Select.enemy()
                 .ofType(enemyType)
-//        Selection targets = Select.enemies(enemyType)
                 .effVisible()
                 .canBeAttackedBy(ourUnit, 0);
 

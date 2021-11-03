@@ -236,7 +236,7 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
                 ? EnemyStrategy.get().toString() : "Unknown"),
                 EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
-        paintSideMessage("Mission: " + mission.getName(), Color.White);
+        paintSideMessage("Mission: " + mission.name(), Color.White);
         paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
         paintSideMessage("Enemy base: " + AEnemyUnits.enemyBase(), Color.White);
 

@@ -43,8 +43,8 @@ public abstract class CurrentProductionOrders {
         for (ProductionOrder order : ProductionQueue.currentProductionQueue) {
             boolean hasWhatRequired = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
             AUnitType unitOrBuilding = order.unit();
-            UpgradeType upgrade = order.getUpgrade();
-            TechType tech = order.getTech();
+            UpgradeType upgrade = order.upgrade();
+            TechType tech = order.tech();
 
             // ===  Protoss fix: wait for at least one Pylon ============
 

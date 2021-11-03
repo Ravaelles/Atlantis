@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.orders.AddToQueue;
+import atlantis.production.orders.BuildOrderSettings;
 import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
@@ -22,7 +23,7 @@ public class ASupplyManager {
 
         // Should use auto supply manager
 //        System.out.println(supplyTotal + " // " + CurrentBuildOrder.settingAutoSupplyManagerWhenSupplyExceeds());
-        if (supplyTotal >= CurrentBuildOrder.settingAutoSupplyManagerWhenSupplyExceeds()) {
+        if (supplyTotal >= BuildOrderSettings.autoSupplyManagerWhenSupplyExceeds()) {
             supplyFree = AGame.supplyFree();
 
             int suppliesBeingBuilt = requestedConstructionsOfSupply();

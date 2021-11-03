@@ -81,11 +81,18 @@ public abstract class Mission {
 
     // =========================================================
 
+    @Override
+    public String toString() {
+        return "Mission " + name;
+    }
+
+    // =========================================================
+
     public static Mission getInstance() {
         return instance;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 

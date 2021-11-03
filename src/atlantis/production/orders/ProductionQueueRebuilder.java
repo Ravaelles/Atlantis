@@ -4,12 +4,9 @@ import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class ProductionQueueRebuilder {
@@ -46,14 +43,14 @@ public class ProductionQueueRebuilder {
 
             // === Tech
 
-            else if (order.getTech() != null) {
-                isOkayToAdd = !ATech.isResearched(order.getTech(), order);
+            else if (order.tech() != null) {
+                isOkayToAdd = !ATech.isResearched(order.tech(), order);
             }
 
             // === Upgrade
 
-            else if (order.getUpgrade() != null) {
-                isOkayToAdd = !ATech.isResearched(order.getUpgrade(), order);
+            else if (order.upgrade() != null) {
+                isOkayToAdd = !ATech.isResearched(order.upgrade(), order);
             }
 
             // =========================================================

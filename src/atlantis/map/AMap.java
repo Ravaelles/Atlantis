@@ -132,6 +132,10 @@ public class AMap {
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
+    public static AChoke chokeForNaturalBase() {
+        return chokeForNaturalBase(naturalBase());
+    }
+
     public static AChoke chokeForNaturalBase(APosition relativeTo) {
         if (relativeTo == null) {
             return null;

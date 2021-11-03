@@ -91,4 +91,8 @@ public class Missions {
             default : AGame.exit("Invalid mission: " + mission); return null;
         }
     }
+
+    public static void setGlobalMissionTo(Mission mission) {
+        currentGlobalMission = mission;
+    }
 }

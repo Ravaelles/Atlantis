@@ -1,6 +1,8 @@
 package atlantis.production.orders;
 
 import atlantis.AGame;
+import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.MissionsFromBuildOrder;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -89,7 +91,7 @@ public class BuildOrderRowParser {
         AUnitType unitType = AUnitType.getByName(nameString);
         UpgradeType upgrade = NameUtil.getUpgradeTypeByName(nameString); //TODO: put this in UpgradeUtil
         TechType tech = NameUtil.getTechTypeByName(nameString); //TODO: put this in TechUtil
-        String mission = null;
+        Mission mission = Missions.fromString(nameString);
 
         // Define convenience boolean variables
         boolean isUnit = unitType != null;
@@ -104,16 +106,28 @@ public class BuildOrderRowParser {
         }
 
         // =========================================================
+
         // Unit
         if (isUnit) {
             order = new ProductionOrder(unitType, minSupplyForThisOrder);
-        } // Upgrade
+        }
+
+        // Upgrade
         else if (isUpgrade) {
             order = new ProductionOrder(upgrade, minSupplyForThisOrder);
-        } // Tech
+        }
+
+        // Tech
         else if (isTech) {
             order = new ProductionOrder(tech, minSupplyForThisOrder);
-        } // Invalid entry type
+        }
+
+        // Mission
+        else if (isMission) {
+            order = new ProductionOrder(mission, minSupplyForThisOrder);
+        }
+
+        // Invalid entry type
         else {
             System.err.println("Invalid build order: " + nameString);
             System.err.println("Please correct it.");
@@ -140,7 +154,6 @@ public class BuildOrderRowParser {
     }
 
     // =========================================================
-
 
     protected static boolean _isCommentMode = false;
 

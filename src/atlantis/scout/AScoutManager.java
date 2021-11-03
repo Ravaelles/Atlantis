@@ -2,7 +2,6 @@ package atlantis.scout;
 
 import atlantis.AGame;
 import atlantis.CameraManager;
-import atlantis.AtlantisConfig;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
@@ -11,19 +10,17 @@ import atlantis.map.ARegion;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.Positions;
-import atlantis.production.orders.CurrentBuildOrder;
+import atlantis.production.orders.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
-import atlantis.util.CodeProfiler;
 import bwapi.Color;
 import bwapi.Position;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 public class AScoutManager {
@@ -63,13 +60,18 @@ public class AScoutManager {
         // === Act with every scout ================================
         
         assignScoutIfNeeded();
-        try {
-            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
-                AUnit scout = iterator.next();
-                update(scout);
-            }
+
+        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+            update(iterator.next());
         }
-        catch (ConcurrentModificationException ignore) { }
+
+//        try {
+//            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+//                AUnit scout = iterator.next();
+//                update(scout);
+//            }
+//        }
+//        catch (ConcurrentModificationException ignore) { }
     }
     
     private static boolean update(AUnit scout) {
@@ -181,23 +183,20 @@ public class AScoutManager {
     }
     
     // =========================================================
+
     /**
      * If we have no scout unit assigned, make one of our units a scout.
      */
     private static void assignScoutIfNeeded() {
-        if (AGame.timeSeconds() > 330) {
+
+        // Build order defines which worker should be a scout
+        if (Count.workers() < BuildOrderSettings.scoutIsNthWorker()) {
             return;
         }
         
         // === Remove dead scouts ========================================
         
-        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
-            AUnit scout = iterator.next();
-            if (!scout.isAlive()) {
-                iterator.remove();
-                anyScoutBeenKilled = true;
-            }
-        }
+        removeDeadScouts();
         
         // === Zerg =================================================
 
@@ -225,12 +224,21 @@ public class AScoutManager {
         // =========================================================
         // TERRAN + PROTOSS
 
-        else if (scouts.isEmpty() && Select.ourWorkers().count() >= CurrentBuildOrder.settingScoutIsNthWorker()) {
-            for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
-                if (!worker.isBuilder()) {
-                    scouts.add(worker);
-                    break;
-                }
+        else if (scouts.isEmpty()) {
+            AUnit scout = Select.ourWorkers().nearestTo(AMap.chokeForNaturalBase());
+            if (!scout.isBuilder()) {
+                scouts.add(scout);
+                return;
+            }
+        }
+    }
+
+    private static void removeDeadScouts() {
+        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+            AUnit scout = iterator.next();
+            if (!scout.isAlive()) {
+                iterator.remove();
+                anyScoutBeenKilled = true;
             }
         }
     }

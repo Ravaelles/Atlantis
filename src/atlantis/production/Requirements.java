@@ -12,11 +12,11 @@ public class Requirements {
         if (order.unit() != null) {
             return !order.unit().hasRequiredUnit() || hasRequirements(order.unit());
         }
-        else if (order.getTech() != null) {
-            return hasRequirements(order.getTech());
+        else if (order.tech() != null) {
+            return hasRequirements(order.tech());
         }
-        else if (order.getUpgrade() != null) {
-            return hasRequirements(order.getUpgrade());
+        else if (order.upgrade() != null) {
+            return hasRequirements(order.upgrade());
         }
         System.err.println(order);
         throw new RuntimeException("Shouldn't reach here");
