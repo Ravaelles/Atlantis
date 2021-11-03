@@ -49,12 +49,16 @@ public class MissionContain extends Mission {
         }
 
         // Only attack enemies near squad center
-        if (enemy.distTo(focusPoint) <= 13) {
+        if (enemy.distTo(unit.squad().median()) <= 8) {
             return true;
         }
 
         // Allow to defend base
         APosition natural = AMap.naturalBase();
-        return natural != null && enemy.distTo(natural) <= 35;
+        if (natural != null && enemy.distTo(natural) <= 35) {
+            return true;
+        }
+
+        return false;
     }
 }

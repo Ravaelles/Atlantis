@@ -55,4 +55,12 @@ public class MappingCounter<K> {
         return map;
     }
 
+    public void print(String message) {
+        if (message != null) {
+            System.out.println("--- " + message + " ---");
+        }
+        for (K key : mapping.keySet()) {
+            System.out.println(key + ": " + mapping.get(key));
+        }
+    }
 }

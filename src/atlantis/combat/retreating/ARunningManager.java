@@ -84,6 +84,12 @@ public class ARunningManager {
             runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
         }
 
+        // === Run to base as a fallback ===========================
+
+        if (runTo == null) {
+            runTo = handleRunToMainAsAFallback(unit, runAwayFrom);
+        }
+
         // === Actual run order ====================================
 
         if (runTo != null && runTo.distTo(unit) >= 0.2) {
@@ -94,6 +100,16 @@ public class ARunningManager {
 
         unit.setTooltip("Cant run");
         return false;
+    }
+
+    private APosition handleRunToMainAsAFallback(AUnit unit, HasPosition runAwayFrom) {
+        if (Select.mainBase() != null && Select.mainBase().distToMoreThan(runAwayFrom, 15)) {
+            if (Select.our().inRadius(0.7, unit).exclude(unit).atMost(2)) {
+                return Select.mainBase().position();
+            }
+        }
+
+        return null;
     }
 
 //    public boolean runFromCloseEnemies() {
@@ -402,15 +418,19 @@ public class ARunningManager {
 
         boolean isOkay = AMap.isWalkable(position)
                 && (
-                    AMap.isWalkable(position.translateByTiles(2, 0))
-                    && AMap.isWalkable(position.translateByTiles(-1, 0))
-                    && AMap.isWalkable(position.translateByTiles(0, 2))
-                    && AMap.isWalkable(position.translateByTiles(0, -1))
+                    (
+                            AMap.isWalkable(position.translateByTiles(1, 0))
+                            && AMap.isWalkable(position.translateByTiles(0, -1))
+                    )
+                    || (
+                            AMap.isWalkable(position.translateByTiles(0, 1))
+                            && AMap.isWalkable(position.translateByTiles(-1, 0))
+                    )
                 )
                 && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
-                && Select.neutral().inRadius(1.2, position).isEmpty()
+                && Select.neutral().inRadius(0.6, position).isEmpty()
                 && unitPosition.hasPathTo(position)
-                && unitPosition.groundDistanceTo(position) <= 15
+                && unitPosition.groundDistanceTo(position) <= 18
 //                && Select.neutral().inRadius(1.2, position).count() == 0
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0

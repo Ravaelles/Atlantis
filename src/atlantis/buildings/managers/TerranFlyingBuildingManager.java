@@ -50,6 +50,7 @@ public class TerranFlyingBuildingManager {
             
             if (distToFocusPoint > 2) {
                 flyingBuilding.move(focusPoint, UnitActions.MOVE, "Fly baby!");
+                return true;
             }
         }
 

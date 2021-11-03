@@ -5,6 +5,7 @@ import atlantis.combat.micro.terran.TerranInfantry;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
+import atlantis.units.select.Select;
 
 public class MissionDefend extends Mission {
 
@@ -42,19 +43,46 @@ public class MissionDefend extends Mission {
 
         // =========================================================
 
-        if (unit.distTo(focusPoint) >= 5) {
-            unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "MoveToDefend");
-            return true;
+        int alliesNear = Select.our().inRadius(2, unit).count();
+        double expectedDist = 0.6
+                + (unit.isRanged() ? 3 : 0)
+                + (alliesNear >= 6 ? alliesNear / 20.0 : 0);
+
+        if (unit.distTo(focusPoint) > expectedDist) {
+            return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "MoveToDefend");
         }
-        else if (unit.distTo(focusPoint) >= 4) {
+        else if (unit.distTo(focusPoint) <= expectedDist - 0.1) {
+            return unit.moveAwayFrom(focusPoint, 0.2, "Uhm");
+        }
+        else {
             if (unit.isMoving()) {
                 unit.holdPosition("DefendHere");
+                return true;
             }
-            return true;
-        } else {
-            unit.moveAwayFrom(focusPoint, 0.5, "TooFar");
+//            return true;
+            return false;
+        }
+    }
+
+    public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (unit.isRanged() || enemy.isRanged()) {
             return true;
         }
+
+        if (Select.enemy().inRadius(14, Select.mainBase()).atLeast(2)) {
+            return true;
+        }
+
+//        if (unit.isInWeaponRangeByGame(enemy)) {
+        if (unit.hasWeaponRange(enemy, 0.8)) {
+            return true;
+        }
+
+//        if () {
+//            return true;
+//        }
+
+        return false;
     }
 
 }

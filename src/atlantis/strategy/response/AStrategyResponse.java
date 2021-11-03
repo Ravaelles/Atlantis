@@ -85,7 +85,7 @@ public abstract class AStrategyResponse {
                     AMap.mainBaseChoke().getCenter()
             );
             ARequests.getInstance().requestDetectorQuick(
-                    AMap.getChokeForNaturalBase(Select.mainBase().position()).getCenter()
+                    AMap.chokeForNaturalBase(Select.mainBase().position()).getCenter()
             );
         }
     }

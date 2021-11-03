@@ -353,6 +353,11 @@ public class Selection {
         return this;
     }
 
+    public Selection excludeTypes(AUnitType ...types) {
+        data.removeIf(unit -> unit.is(types));
+        return this;
+    }
+
 //    public Selection canShootAt(AUnit targetUnit) {
 //        data.removeIf(unit -> !unit.isCompleted() || !unit.isAlive() || !unit.hasWeaponRange(targetUnit, 0));
 //        return this;

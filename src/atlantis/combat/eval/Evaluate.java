@@ -90,14 +90,19 @@ public class Evaluate {
 
     // =========================================================
 
+    private static double evaluateUnitHPandDamage(AUnitType evaluate, AUnit againstUnit) {
+//        return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);
+        return evaluateUnitHPandDamage(evaluate, evaluate.getMaxHitPoints(), againstUnit);
+    }
+
     private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
         return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);
     }
 
-    private static double evaluateUnitHPandDamage(AUnitType evaluate, AUnit againstUnit) {
-//        System.out.println(evaluate.getType() + " damage: " + evaluate.getType().getGroundWeapon().getDamageNormalized());
-        return evaluateUnitHPandDamage(evaluate, evaluate.getMaxHitPoints(), againstUnit);
-    }
+//    private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
+////        System.out.println(evaluate.getType() + " damage: " + evaluate.getType().getGroundWeapon().getDamageNormalized());
+//        return evaluateUnitHPandDamage(evaluate, againstUnit);
+//    }
 
     private static double evaluateUnitHPandDamage(AUnitType type, int hp, AUnit againstUnit) {
         if (type.isMine() || type.isNeutralType() || type.isInvincible()) {
@@ -107,16 +112,19 @@ public class Evaluate {
         // === Special types =======================================
 
         double customEval;
-        if ((customEval = customEvaluation(type, hp, againstUnit)) >= 0) {
+        if ((customEval = customEvaluation(type, againstUnit)) >= 0) {
             return customEval;
         }
 
         // =========================================================
 
+        double hpValue = (double) hp / type.getMaxHitPoints();
+
         int damage = againstUnit.isAirUnit()
                 ? WeaponUtil.damageNormalized(type.getAirWeapon())
                 : WeaponUtil.damageNormalized(type.getGroundWeapon());
-        double total = hp * EVAL_HIT_POINTS_FACTOR
+
+        double total = hpValue * EVAL_HIT_POINTS_FACTOR
                 + (damage * WeaponUtil.damageModifier(type, againstUnit.type())) * EVAL_DAMAGE_FACTOR;
 
         // =========================================================
@@ -125,8 +133,8 @@ public class Evaluate {
         return total;
     }
 
-    private static double customEvaluation(AUnitType type, int hp, AUnit againstUnit) {
-        if (type.equals(AUnitType.Terran_Medic)) {
+    private static double customEvaluation(AUnitType type, AUnit againstUnit) {
+        if (type.is(AUnitType.Terran_Medic)) {
             return 7;
         }
 

@@ -1126,4 +1126,12 @@ public class A {
     public static String dist(AUnit unit1, HasPosition unit2) {
         return "(" + (unit1 != null && unit2 != null ? A.digit(unit1.distTo(unit2)) : "-") + ")";
     }
+
+    public static int supplyUsed() {
+        return AGame.supplyUsed();
+    }
+
+    public static boolean supplyAtLeast(int minSupply) {
+        return AGame.supplyUsed() >= minSupply;
+    }
 }

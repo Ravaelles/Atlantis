@@ -1,13 +1,12 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.AtlantisConfig;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
@@ -31,26 +30,38 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     return null;
                 }
 
+                // === Main choke ================
+
+                AChoke mainChoke = AMap.mainBaseChoke();
+                if (mainChoke != null) {
+                    return mainChoke.getCenter();
+                }
+
                 // === Focus enemy attacking the main base =================
 
-                AUnit nearEnemy = Select.enemy().combatUnits().inRadius(10, mainBase).nearestTo(mainBase);
+                AUnit nearEnemy = Select.enemy()
+                        .combatUnits()
+                        .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Zerg_Overlord)
+                        .effVisible()
+                        .inRadius(12, mainBase)
+                        .nearestTo(mainBase);
                 if (nearEnemy != null) {
                     return nearEnemy.position();
                 }
-
-                // === Gather around defensive buildings ===================
-
-                AUnit defBuilding = Select.ourOfTypeIncludingUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
-                if (defBuilding != null) {
-                    return defBuilding.position().translateTilesTowards(mainBase.position(), 5);
-                }
+//
+//                // === Gather around defensive buildings ===================
+//
+//                AUnit defBuilding = Select.ourOfTypeIncludingUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
+//                if (defBuilding != null) {
+//                    return defBuilding.position().translateTilesTowards(mainBase.position(), 5);
+//                }
 
                 // === Return position near the choke point ================
 
-                AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.position());
-                if (chokepointForNaturalBase != null) {
-                    return APosition.create(chokepointForNaturalBase.getCenter());
-                }
+//                AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.position());
+//                if (chokepointForNaturalBase != null) {
+//                    return APosition.create(chokepointForNaturalBase.getCenter());
+//                }
 
                 // === Return position near the first building ================
 

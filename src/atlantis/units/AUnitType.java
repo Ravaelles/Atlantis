@@ -1153,4 +1153,12 @@ public class AUnitType implements Comparable<AUnitType> {
                 () -> ut.size() == UnitSizeType.Large
         );
     }
+
+    public int supplyNeeded() {
+        return (int) cache.get(
+                "supplyNeeded",
+                -1,
+                ut::supplyRequired
+        );
+    }
 }

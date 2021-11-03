@@ -30,6 +30,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
@@ -198,6 +199,7 @@ public class AAdvancedPainter extends APainter {
      * Paint extra information about visible enemy combat units.
      */
     static void paintEnemyCombatUnits() {
+        System.out.println(Select.enemy().count());
         for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
             paintCombatEval(enemy, true);
             paintLifeBar(enemy);
@@ -448,7 +450,8 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units currently in production ========================================
 
-        paintCurrentlyInProduction();
+//        paintCurrentlyInProduction();
+        paintNotStartedConstructions();
 
         // === Display units that should be produced right now or any time ==================
 
@@ -457,8 +460,8 @@ public class AAdvancedPainter extends APainter {
         int counter = 1;
         for (ProductionOrder order : produceNow) {
             paintSideMessage(
-                    order.shortName(),
-                    order.canHasWhatRequired() ? (order.canAffordNow() ? Color.Green : Color.Yellow) : Color.Red
+                    String.format("%02d", order.minSupply()) + " - " + order.shortName(),
+                    order.canHasWhatRequired() ? (order.currentlyInProduction() ? Color.Green : Color.Yellow) : Color.Red
             );
             if (++counter >= 10) {
                 break;
@@ -487,6 +490,15 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
+    private static void paintNotStartedConstructions() {
+
+        // Constructions already planned
+        for (ConstructionOrder order : AConstructionRequests.getNotStartedConstructions()) {
+            AUnitType type = order.getBuildingType();
+            paintSideMessage(type.shortName(), Color.Cyan);
+        }
+    }
+
     private static void paintCurrentlyInProduction() {
         // Units & buildings
         for (AUnit unit : Select.ourUnfinished().list()) {
@@ -505,12 +517,6 @@ public class AAdvancedPainter extends APainter {
         // Upgrades
         for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
             paintSideMessage(upgradeType.toString(), Color.Green);
-        }
-
-        // Constructions already planned
-        for (ConstructionOrder order : AConstructionRequests.getNotStartedConstructions()) {
-            AUnitType type = order.getBuildingType();
-            paintSideMessage(type.shortName(), Color.Cyan);
         }
     }
 
@@ -567,6 +573,14 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintConstructionPlace(APosition positionToBuild, AUnitType buildingType, String text, Color color) {
+        if (positionToBuild == null) {
+            if (Select.mainBase() != null) {
+                throw new RuntimeException("That's unacceptable, lad!");
+            } else {
+                return;
+            }
+        }
+
         if (text == null) {
             text = buildingType.shortName();
         }
@@ -1163,7 +1177,7 @@ public class AAdvancedPainter extends APainter {
         paintChoke(mainChoke, Color.Green, "Main choke");
 
         // Our natural choke
-        AChoke naturalChoke = AMap.getChokeForNaturalBase(AMap.naturalBase());
+        AChoke naturalChoke = AMap.chokeForNaturalBase(AMap.naturalBase());
         paintChoke(naturalChoke, Color.Green, "Natural choke");
 
         // Enemy natural choke
@@ -1171,9 +1185,10 @@ public class AAdvancedPainter extends APainter {
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
         // Next defensive building position
-        AUnitType building = AAntiLandBuildingRequests.building();
-//        APosition defBuild = AAntiLandBuildingRequests.positionForNextBuilding();
-        paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.shortName(), Color.Brown);
+        if (Count.bases() > 0) {
+            AUnitType building = AAntiLandBuildingRequests.building();
+            paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.shortName(), Color.Brown);
+        }
     }
 
     private static void paintMineralDistance() {

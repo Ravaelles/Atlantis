@@ -9,8 +9,8 @@ import bwapi.UpgradeType;
 public class Requirements {
 
     public static boolean hasRequirements(ProductionOrder order) {
-        if (order.getUnitOrBuilding() != null) {
-            return !order.getUnitOrBuilding().hasRequiredUnit() || hasRequirements(order.getUnitOrBuilding());
+        if (order.unit() != null) {
+            return !order.unit().hasRequiredUnit() || hasRequirements(order.unit());
         }
         else if (order.getTech() != null) {
             return hasRequirements(order.getTech());

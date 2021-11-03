@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ProductionQueue;
+import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.workers.AWorkerManager;
@@ -124,23 +125,29 @@ public class AGasManager {
 //            return 1;
 //        }
 
-        if (Select.ourBases().inRadius(10, gasBuilding).isEmpty()) {
-            return 0;
-        }
+//        if (gasBuilding.isDepleted()) {
+//            return GamePhase.isLateGame() && AGame.canAfford(0, 200) ? 0 : 1;
+//        }
+
+//        if (Select.ourBases().inRadius(10, gasBuilding).isEmpty()) {
+//            return 0;
+//        }
+
+        return 3;
         
-        int totalGasNeeded = 0;
-        ArrayList<ProductionOrder> nextOrders = ProductionQueue.nextInProductionQueue(
-                1 + (AGame.timeSeconds() > 300 ? 2 : 0)
-        );
-        for (ProductionOrder order : nextOrders) {
-            totalGasNeeded += order.getGasRequired();
-        }
-
-        if (Select.ourWorkers().count() >= 30) {
-            return 3;
-        }
-
-        return (totalGasNeeded > 0 && !AGame.hasGas(totalGasNeeded) ? 3 : 1);
+//        int totalGasNeeded = 0;
+//        ArrayList<ProductionOrder> nextOrders = ProductionQueue.nextInProductionQueue(
+//                1 + (AGame.timeSeconds() > 300 ? 2 : 0)
+//        );
+//        for (ProductionOrder order : nextOrders) {
+//            totalGasNeeded += order.getGasRequired();
+//        }
+//
+//        if (Select.ourWorkers().count() >= 30) {
+//            return 3;
+//        }
+//
+//        return (totalGasNeeded > 0 && !AGame.hasGas(totalGasNeeded) ? 3 : 1);
     }
 
 }

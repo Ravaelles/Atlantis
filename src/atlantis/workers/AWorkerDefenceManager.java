@@ -2,8 +2,8 @@ package atlantis.workers;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class AWorkerDefenceManager {
 
@@ -31,8 +31,8 @@ public class AWorkerDefenceManager {
 
         // FIGHT against ZEARGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).listUnits()) {
-            if (worker.hp() <= 21) {
-                return false;
+            if (worker.hp() <= 21 && runToFarthestMineral(worker, enemy)) {
+                return true;
             }
             worker.attackUnit(enemy);
             worker.setTooltip("ForMotherland!");
@@ -66,7 +66,17 @@ public class AWorkerDefenceManager {
 
         return false;
     }
-    
+
+    private static boolean runToFarthestMineral(AUnit worker, AUnit enemy) {
+        AUnit mineral = Select.minerals().inRadius(10, enemy).mostDistantTo(enemy);
+        if (mineral != null) {
+            worker.gather(mineral);
+            worker.setTooltip("DidntSignUpForThis");
+            return true;
+        }
+        return false;
+    }
+
     /**
      * If unit is overwhelmed, low on health etc, just run from enemy.
      */

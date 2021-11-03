@@ -35,6 +35,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     protected static Cache<Integer> cacheInt = new Cache<>();
     protected static Cache<AUnit> cacheUnit = new Cache<>();
 //    private static Cache<List<AUnit>> cacheList = new Cache<>();
+    
+    protected static int microCacheDuration = 0;
 
     // =====================================================================
     // Constructor is private, use our(), enemy() or neutral() methods
@@ -55,7 +57,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "our",
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -82,9 +84,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : enemyUnits()) {
-                        if (unit.isAlive()) {
-                            data.add(unit);
-                        }
+//                        if (unit.isAlive()) {
+                        data.add(unit);
+//                        }
                     }
 
                     return new Selection(data, cachePath);
@@ -143,7 +145,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourWorkers",
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -210,7 +212,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "enemies",
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -232,7 +234,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourOfType:" + AUnitType.arrayToIds(types),
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -258,7 +260,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static int countOurOfType(AUnitType type) {
         return cacheInt.get(
                 "countOurOfType:" + type.shortName(),
-                1,
+                microCacheDuration,
                 () -> {
                     int total = 0;
 
@@ -279,7 +281,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static int countOurOfTypeIncludingUnfinished(AUnitType type) {
         return cacheInt.get(
                 "countOurOfTypeIncludingUnfinished:" + type.shortName(),
-                1,
+                microCacheDuration,
                 () -> {
                     int total = 0;
 
@@ -301,7 +303,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourOfTypeIncludingUnfinished:" + type.shortName(),
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -323,7 +325,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourCombatUnits",
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -345,7 +347,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourIncludingUnfinished",
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>(ourUnits());
 
@@ -361,7 +363,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourUnfinished",
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -383,7 +385,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourRealUnits",
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -405,7 +407,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourUnfinishedRealUnits",
-                1,
+                microCacheDuration,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
@@ -481,7 +483,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "neutral",
-                1,
+                microCacheDuration,
                 () -> new Selection(neutralUnits(), cachePath)
         );
     }
@@ -566,10 +568,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cacheUnit.get(
                 cachePath = "mainBase",
-                20,
+                0,
                 () -> {
                     List<AUnit> bases = ourBases().list();
-                    return bases.isEmpty() ? Select.ourBuildings().first() : bases.get(0);
+                    return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);
                 }
         );
     }
@@ -605,7 +607,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourTanks",
-                1,
+                microCacheDuration,
                 () -> our().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode)
         );
     }
@@ -617,7 +619,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourTanksSieged",
-                1,
+                microCacheDuration,
                 () -> our().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode)
         );
     }
@@ -629,7 +631,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourTerranInfantry",
-                1,
+                microCacheDuration,
                 () -> our().ofType(AUnitType.Terran_Marine, AUnitType.Terran_Medic, AUnitType.Terran_Firebat, AUnitType.Terran_Ghost)
         );
     }
@@ -641,7 +643,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourTerranInfantryWithoutMedics",
-                1,
+                microCacheDuration,
                 () -> our().ofType(AUnitType.Terran_Marine, AUnitType.Terran_Firebat, AUnitType.Terran_Ghost)
         );
     }
@@ -653,7 +655,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourLarva",
-                1,
+                microCacheDuration,
                 () -> {
                     Selection selectedUnits = ourIncludingUnfinished();
                     selectedUnits.list().removeIf(unit -> !unit.is(AUnitType.Zerg_Larva));
@@ -669,7 +671,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourBuildingsIncludingUnfinished",
-                1,
+                microCacheDuration,
                 () -> {
                     Selection selectedUnits = Select.ourIncludingUnfinished();
                     selectedUnits.list().removeIf(unit -> !unit.type().isBuilding() && !unit.type().isAddon());
@@ -685,7 +687,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourBuildings",
-                1,
+                microCacheDuration,
                 () -> our().buildings()
         );
     }

@@ -32,20 +32,20 @@ public abstract class ProductionQueue {
     /**
      * Returns <b>howMany</b> of next units to build, no matter if we can afford them or not.
      */
-    public static ArrayList<ProductionOrder> nextInProductionQueue(int howMany) {
-        ArrayList<ProductionOrder> result = new ArrayList<>();
-
-        for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
-            ProductionOrder productionOrder = currentProductionQueue.get(i);
-            result.add(productionOrder);
-        }
-
-        return result;
-    }
+//    public static ArrayList<ProductionOrder> nextInProductionQueue(int howMany) {
+//        ArrayList<ProductionOrder> result = new ArrayList<>();
+//
+//        for (int i = 0; i < howMany && i < currentProductionQueue.size(); i++) {
+//            ProductionOrder productionOrder = currentProductionQueue.get(i);
+//            result.add(productionOrder);
+//        }
+//
+//        return result;
+//    }
 
     public static boolean isAtTheTopOfQueue(AUnitType type, int amongNTop) {
         for (int i = 0; i < amongNTop && i < currentProductionQueue.size(); i++) {
-            if (type.equals(currentProductionQueue.get(i).getUnitOrBuilding())) {
+            if (type.equals(currentProductionQueue.get(i).unit())) {
                 return true;
             }
         }
@@ -55,7 +55,7 @@ public abstract class ProductionQueue {
     public static int countInQueue(AUnitType type, int amongNTop) {
         int count = 0;
         for (int i = 0; i < amongNTop && i < currentProductionQueue.size(); i++) {
-            if (type.equals(currentProductionQueue.get(i).getUnitOrBuilding())) {
+            if (type.equals(currentProductionQueue.get(i).unit())) {
                 count++;
             }
         }
@@ -70,7 +70,7 @@ public abstract class ProductionQueue {
 
     public static void useBuildOrderFrom(AStrategy strategy) {
         CurrentBuildOrder.set(strategy.buildOrder());
-        ProductionQueueRebuilder.rebuildProductionQueue();
+        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
     }
 
     /**

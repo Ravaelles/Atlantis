@@ -32,7 +32,7 @@ public class AConstructionRequests {
     }
 
     public static boolean requestConstructionOf(ProductionOrder order) {
-        return requestConstructionOf(order.getUnitOrBuilding(), order.getPosition(), order);
+        return requestConstructionOf(order.unit(), order.getPosition(), order);
     }
 
     /**
@@ -103,7 +103,7 @@ public class AConstructionRequests {
             constructionOrders.add(newConstructionOrder);
 
             // Rebuild production queue as new building is about to be built
-            ProductionQueueRebuilder.rebuildProductionQueue();
+            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
 
             return true;
         }

@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.AGame;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 /**
  * Handles the global mission that is mission that affects the battle squad Alpha.
@@ -72,6 +73,10 @@ public class Missions {
         }
 
         // =========================================================
+
+        if (Enemy.zerg()) {
+            return Missions.DEFEND;
+        }
 
 //        return Missions.DEFEND;
         return Missions.ATTACK;

@@ -1,15 +1,10 @@
 package atlantis.combat.missions;
 
 import atlantis.CameraManager;
-import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
-import atlantis.units.AUnit;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class MissionContainFocusPoint extends MissionFocusPoint {
 
@@ -21,28 +16,33 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             return containEnemyAtPoint;
         }
 
-        APosition enemyBase = AEnemyUnits.enemyBase();
-        if (enemyBase != null) {
-            return containEnemyAtPoint = containPointIfEnemyBaseIsKnown(enemyBase);
+        AChoke choke = AMap.enemyMainChoke();
+        if (choke != null) {
+            containEnemyAtPoint = choke.position();
         }
 
-        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-        if (enemyBuilding != null) {
-            return containEnemyAtPoint = enemyBuilding.position();
-        }
+//        APosition enemyBase = AEnemyUnits.enemyBase();
+//        if (enemyBase != null) {
+//            return containEnemyAtPoint = containPointIfEnemyBaseIsKnown(enemyBase);
+//        }
+//
+//        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+//        if (enemyBuilding != null) {
+//            return containEnemyAtPoint = enemyBuilding.position();
+//        }
+//
+//        AUnit nearestEnemy = Select.enemy().nearestTo(Select.our().first());
+//        if (nearestEnemy != null) {
+//            return containEnemyAtPoint = nearestEnemy.position();
+//        }
 
-        AUnit nearestEnemy = Select.enemy().nearestTo(Select.our().first());
-        if (nearestEnemy != null) {
-            return containEnemyAtPoint = nearestEnemy.position();
-        }
-
-        return null;
+        return containEnemyAtPoint;
     }
 
     // =========================================================
 
     private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
-        AChoke chokepoint = AMap.getChokeForNaturalBase(enemyBase);
+        AChoke chokepoint = AMap.chokeForNaturalBase(enemyBase);
         if (chokepoint != null) {
             CameraManager.centerCameraOn(chokepoint.getCenter());
             return containEnemyAtPoint = chokepoint.getCenter();

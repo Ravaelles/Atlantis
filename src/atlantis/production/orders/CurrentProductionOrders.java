@@ -6,6 +6,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.A;
 import atlantis.util.Us;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
@@ -28,6 +29,7 @@ public abstract class CurrentProductionOrders {
      */
     public static ArrayList<ProductionOrder> thingsToProduce(ProductionQueueMode mode) {
         ArrayList<ProductionOrder> queue = new ArrayList<>();
+//        boolean hasGas
         int[] resourcesNeededForNotStartedBuildings = AConstructionRequests.resourcesNeededForNotStartedConstructions();
         ProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         ProductionQueue.gasNeeded = resourcesNeededForNotStartedBuildings[1];
@@ -39,8 +41,8 @@ public abstract class CurrentProductionOrders {
 
         int countCanNotAfford = 0;
         for (ProductionOrder order : ProductionQueue.currentProductionQueue) {
-            boolean hasWhatRequired = Requirements.hasRequirements(order);
-            AUnitType unitOrBuilding = order.getUnitOrBuilding();
+            boolean hasWhatRequired = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
+            AUnitType unitOrBuilding = order.unit();
             UpgradeType upgrade = order.getUpgrade();
             TechType tech = order.getTech();
 
@@ -50,7 +52,7 @@ public abstract class CurrentProductionOrders {
                     Us.isProtoss()
                     && mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD
                     && (unitOrBuilding != null && !unitOrBuilding.isPylon())
-                    && Count.pylons() == 0
+                    && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Pylon) == 0
             ) {
                 continue;
             }
@@ -58,19 +60,19 @@ public abstract class CurrentProductionOrders {
             // === Define order type: UNIT/BUILDING or UPGRADE or TECH ==
 
             // UNIT/BUILDING
-            if (unitOrBuilding != null && hasWhatRequired) {
+            if (unitOrBuilding != null && A.supplyAtLeast(order.minSupply())) {
                 ProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
                 ProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
             }
 
             // UPGRADE
-            else if (upgrade != null && hasWhatRequired) {
+            else if (upgrade != null && A.supplyAtLeast(order.minSupply())) {
                 ProductionQueue.mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
                 ProductionQueue.gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
             }
 
             // TECH
-            else if (tech != null && hasWhatRequired) {
+            else if (tech != null && A.supplyAtLeast(order.minSupply())) {
                 ProductionQueue.mineralsNeeded += tech.mineralPrice();
                 ProductionQueue.gasNeeded += tech.gasPrice();
             }
@@ -80,7 +82,7 @@ public abstract class CurrentProductionOrders {
 
             boolean canAfford = AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded);
             order.setCanAffordNow(canAfford);
-            order.setHasWhatRequired(canAfford);
+            order.setHasWhatRequired(hasWhatRequired);
 
 //            if (AGame.supplyUsed() >= 11 && unitOrBuilding != null && unitOrBuilding.isPylon()) {
 //                System.out.println(order.shortName() + " // aff=" + canAfford + " // req=" + hasWhatRequired);

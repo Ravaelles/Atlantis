@@ -132,7 +132,7 @@ public class AMap {
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
-    public static AChoke getChokeForNaturalBase(APosition relativeTo) {
+    public static AChoke chokeForNaturalBase(APosition relativeTo) {
         if (relativeTo == null) {
             return null;
         }
@@ -700,7 +700,7 @@ public class AMap {
             return null;
         }
 
-        return getChokeForNaturalBase(enemyNatural);
+        return chokeForNaturalBase(enemyNatural);
     }
 
     /**

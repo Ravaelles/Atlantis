@@ -30,6 +30,10 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     // =========================================================
 
     private static void dragoons() {
+        if (Count.ofType(AUnitType.Protoss_Gateway) == 0) {
+            return;
+        }
+
         if (GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese() && Count.zealots() > minZealotsInRush()) {
             return;
         }
@@ -42,7 +46,15 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void zealots() {
-        if (GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese() && Count.zealots() <= minZealotsInRush()) {
+        if (Count.ofType(AUnitType.Protoss_Gateway) == 0) {
+            return;
+        }
+
+        if (
+                GamePhase.isEarlyGame()
+                        && EnemyStrategy.get().isRushOrCheese()
+                        && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Zealot) <= minZealotsInRush()
+        ) {
             trainNow(AUnitType.Protoss_Zealot, false);
             return;
         }
@@ -62,6 +74,10 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void arbiters() {
+        if (Count.ofType(AUnitType.Protoss_Arbiter_Tribunal) == 0) {
+            return;
+        }
+
         trainNowIfHaveWhatsRequired(AUnitType.Protoss_Arbiter, true);
     }
 

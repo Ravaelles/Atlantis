@@ -95,7 +95,7 @@ public class Atlantis implements BWEventListener {
 //        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
 //        game.setGUI(false);                           // Turn off GUI - will speed up game considerably
         game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
-//        game.enableFlag(Flag.CompleteMapInformation); // See entire map - must be disabled for real games
+        game.enableFlag(Flag.CompleteMapInformation);   // See entire map - must be disabled for real games
     }
 
     /**
@@ -141,7 +141,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOur()) {
-                ProductionQueueRebuilder.rebuildProductionQueue();
+                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
 
                 // Apply construction fix: detect new Protoss buildings and remove them from queue.
                 if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
@@ -180,7 +180,7 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOur()) {
-                ProductionQueueRebuilder.rebuildProductionQueue();
+                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
                 ASquadManager.battleUnitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
                 if (!unit.type().isGasBuilding()) {
@@ -289,7 +289,7 @@ public class Atlantis implements BWEventListener {
                 }
 
                 // =========================================================
-                ProductionQueueRebuilder.rebuildProductionQueue();
+                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
 
                 // Add to combat squad if it's military unit
                 if (unit.isRealUnit()) {
@@ -346,7 +346,7 @@ public class Atlantis implements BWEventListener {
     }
 
     private void ourNewUnit(AUnit unit) {
-        ProductionQueueRebuilder.rebuildProductionQueue();
+        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
 
         // Our unit
         if (unit.isOur()) {

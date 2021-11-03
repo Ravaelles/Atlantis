@@ -1,6 +1,5 @@
 package atlantis.units.select;
 
-import atlantis.AtlantisConfig;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnitType;
@@ -40,14 +39,14 @@ public class Count {
 
     public static int countInProduction(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
-            return Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
-                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
+            return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
+                    + Select.ourUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
                     + AConstructionRequests.countNotStartedConstructionsOfType(AUnitType.Zerg_Creep_Colony)
                     + AConstructionRequests.countNotStartedConstructionsOfType(AUnitType.Zerg_Sunken_Colony);
         }
         else if (type.equals(AUnitType.Zerg_Spore_Colony)) {
-            return Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
-                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+            return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
+                    + Select.ourUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
                     + AConstructionRequests.countNotStartedConstructionsOfType(AUnitType.Zerg_Creep_Colony)
                     + AConstructionRequests.countNotStartedConstructionsOfType(AUnitType.Zerg_Spore_Colony);
         }
@@ -63,11 +62,11 @@ public class Count {
                     + AConstructionRequests.countNotStartedConstructionsOfType(AUnitType.Zerg_Hive);
         }
         else if (type.isBase() && !type.isPrimaryBase()) {
-            return Select.ourIncludingUnfinished().ofType(type).count()
+            return Select.ourUnfinished().ofType(type).count()
                     + AConstructionRequests.countNotStartedConstructionsOfType(type);
         }
         else {
-            return Select.ourIncludingUnfinished().ofType(type).count()
+            return Select.ourUnfinished().ofType(type).count()
                     + AConstructionRequests.countNotStartedConstructionsOfType(type);
         }
     }
@@ -111,5 +110,9 @@ public class Count {
 
     public static int pylons() {
         return Select.countOurOfType(AUnitType.Protoss_Pylon);
+    }
+
+    public static int bases() {
+        return Select.ourBases().count();
     }
 }

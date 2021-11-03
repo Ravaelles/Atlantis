@@ -241,8 +241,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //            System.out.println("CANT = " + position.distanceTo(newPosition));
             APainter.paintLine(position.position(), newPosition.position(), Color.Teal);
             this.setTooltip("Cant move away");
-            move(newPosition, UnitActions.MOVE, "Force move");
-            return true;
+            return move(newPosition, UnitActions.MOVE, "Force move");
 //            return false;
 //        }
     }
@@ -1702,6 +1701,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isNotAttackableByRangedDueToSpell() {
         return isUnderDarkSwarm();
     }
+
+//    public boolean isDepleted() {
+//        return u.getAcidSporeCount();
+//    }
 
     //    public boolean isFacingTheSameDirection(AUnit otherUnit) {
 //        return Math.abs(getAngle() - otherUnit.getAngle()) <= 0.3;

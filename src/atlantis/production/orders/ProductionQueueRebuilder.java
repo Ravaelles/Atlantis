@@ -4,8 +4,13 @@ import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ProductionQueueRebuilder {
 
@@ -17,10 +22,11 @@ public class ProductionQueueRebuilder {
      * that we need. Note this method doesn't check if we can afford them, it only sets up proper sequence of
      * next units to produce.
      */
-    public static void rebuildProductionQueue() {
+    public static void rebuildProductionQueueToExcludeProducedOrders() {
 
         // Clear old production queue.
         ProductionQueue.currentProductionQueue.clear();
+//        ProductionQueue.currentProductionQueue.addAll(CurrentBuildOrder.get().productionOrders());
 
         // It will store [UnitType->(int)howMany] mapping as we gonna process initial
         // production queue and check if we currently have units needed
@@ -28,22 +34,23 @@ public class ProductionQueueRebuilder {
 
         // =========================================================
 
+//        System.out.println(A.now() + " #####################################");
         for (ProductionOrder order : CurrentBuildOrder.get().productionOrders()) {
             boolean isOkayToAdd = false;
 
-            // === Unit ========================================
+            // === Unit
 
-            if (order.getUnitOrBuilding() != null) {
-                isOkayToAdd = addUnitOrBuilding(order, virtualCounter);
+            if (order.unit() != null) {
+                isOkayToAdd = addUnitOrBuildingIfDontHaveIt(order, virtualCounter);
             }
 
-            // === Tech ========================================
+            // === Tech
 
             else if (order.getTech() != null) {
                 isOkayToAdd = !ATech.isResearched(order.getTech(), order);
             }
 
-            // === Upgrade ========================================
+            // === Upgrade
 
             else if (order.getUpgrade() != null) {
                 isOkayToAdd = !ATech.isResearched(order.getUpgrade(), order);
@@ -53,17 +60,22 @@ public class ProductionQueueRebuilder {
 
             if (isOkayToAdd) {
                 ProductionQueue.currentProductionQueue.add(order);
-                if (ProductionQueue.currentProductionQueue.size() >= 15) {
+                if (ProductionQueue.currentProductionQueue.size() >= 12) {
                     break;
                 }
             }
         }
+
+        // It may happen that due to invalid build order sequence the supply order is not maintained
+        // Make sure to sort by supply needed for the order.
+        ProductionQueue.currentProductionQueue.sort(Comparator.comparingInt(ProductionOrder::minSupply));
     }
 
     // =========================================================
 
-    private static boolean addUnitOrBuilding(ProductionOrder order, MappingCounter<AUnitType> counterFromBO) {
-        AUnitType type = order.getUnitOrBuilding();
+    private static boolean addUnitOrBuildingIfDontHaveIt(ProductionOrder order, MappingCounter<AUnitType> counterFromBO) {
+//    private static boolean addUnitOrBuildingIfDontHaveIt(ProductionOrder order) {
+        AUnitType type = order.unit();
         counterFromBO.incrementValueFor(type);
 
         int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0)
@@ -73,11 +85,15 @@ public class ProductionQueueRebuilder {
         int weHaveThisManyUnits = Count.existingOrInProduction(type);
 
         if (type.isBuilding()) {
-            weHaveThisManyUnits += AConstructionRequests.countNotFinishedConstructionsOfType(type);
+            weHaveThisManyUnits += AConstructionRequests.countNotStartedConstructionsOfType(type);
         }
 
         // If we don't have this unit, add it to the current production queue.
-//        System.out.println(type + " // " + weHaveThisManyUnits + " < " + shouldHaveThisManyUnits);
+//        if (type.is(AUnitType.Protoss_Gateway)) {
+//        if (type.is(AUnitType.Protoss_Zealot)) {
+//            System.out.println(type + " // have(" + weHaveThisManyUnits + ") < need(" + shouldHaveThisManyUnits
+//                    + "),   (notStarted = " + AConstructionRequests.countNotStartedConstructionsOfType(type) + ")");
+//        }
         if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
             return true;
         }

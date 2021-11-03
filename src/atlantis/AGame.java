@@ -4,6 +4,7 @@ import static atlantis.Atlantis.game;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.production.Requirements;
+import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.util.A;
@@ -293,9 +294,11 @@ public class AGame {
      * Takes into account planned constructions and orders.
      */
     public static boolean canAffordWithReserved(int minerals, int gas) {
+        int[] reserved = AConstructionRequests.resourcesNeededForNotStartedConstructions();
+
         return canAfford(
-                minerals + ProductionQueue.mineralsReserved(),
-                gas + ProductionQueue.gasReserved()
+                minerals + reserved[0],
+                gas + reserved[1]
         );
     }
 

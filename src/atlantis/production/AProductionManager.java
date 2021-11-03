@@ -27,8 +27,8 @@ public class AProductionManager {
     private static void handleProductionOrder(ProductionOrder order) {
 
         // Produce UNIT
-        if (order.getUnitOrBuilding() != null) {
-            AUnitType unitType = order.getUnitOrBuilding();
+        if (order.unit() != null) {
+            AUnitType unitType = order.unit();
             if (unitType.isBuilding()) {
                 produceBuilding(unitType, order);
             } else {
@@ -67,8 +67,8 @@ public class AProductionManager {
         return CurrentBuildOrder.get().produceWorker();
     }
 
-    private static boolean produceUnit(AUnitType unitType) {
-        assert !unitType.isBuilding();
+    private static boolean produceUnit(AUnitType type) {
+        assert !type.isBuilding();
 
         // Supply: OVERLORD / PYLON / DEPOT
 //        if (AGame.supplyFree() == 0 && !unitType.isSupplyUnit()) {
@@ -79,17 +79,18 @@ public class AProductionManager {
         // =========================================================
         // Worker
 
-        if (unitType.equals(AtlantisConfig.WORKER)) {
+        if (type.equals(AtlantisConfig.WORKER)) {
             return produceWorker();
         } 
 
         // =========================================================
         // Non-worker
 
-        else if (AGame.canAffordWithReserved(50 + unitType.getMineralPrice(), unitType.getGasPrice())) {
-            return CurrentBuildOrder.get().produceUnit(unitType);
+        else if (AGame.canAffordWithReserved(type.getMineralPrice(), type.getGasPrice())) {
+            return CurrentBuildOrder.get().produceUnit(type);
         }
 
+        System.err.println("Can't afford " + type);
         return false;
     }
 

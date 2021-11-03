@@ -41,12 +41,15 @@ public class WeaponUtil {
 
     private static double damageExplosiveModifierAgainst(AUnitType target) {
         if (target.isSmall()) {
+//            System.out.println("Explosive against " + target + " is 0.5");
             return 0.5;
         }
         else if (target.isLarge()) {
+//            System.out.println("Explosive against " + target + " is 1");
             return 1;
         }
         else {
+//            System.out.println("Explosive against " + target + " is 0.75");
             return 0.75;
         }
     }

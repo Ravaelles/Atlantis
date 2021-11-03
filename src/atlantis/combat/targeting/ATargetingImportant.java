@@ -84,8 +84,20 @@ public class ATargetingImportant extends AEnemyTargeting {
         // =========================================================
         // Target COMBAT UNITS IN RANGE
 
+        // Ignore MEDICS
         target = enemyUnits.clone()
                 .combatUnits()
+                .excludeTypes(AUnitType.Terran_Medic)
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
+        if (target != null) {
+            if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
+            return target;
+        }
+
+        // Take into account excluded units above e.g. MEDICS
+        target = enemyUnits.clone()
+                .ofType(AUnitType.Terran_Medic)
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {

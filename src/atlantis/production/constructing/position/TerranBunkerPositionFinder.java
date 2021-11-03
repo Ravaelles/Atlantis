@@ -67,7 +67,7 @@ public class TerranBunkerPositionFinder {
 
         // Bunker at NATURAL CHOKEPOINT
         else {
-            AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.position());
+            AChoke chokepointForNaturalBase = AMap.chokeForNaturalBase(mainBase.position());
             if (chokepointForNaturalBase != null && mainBase != null) {
                 ABaseLocation naturalBase = AMap.naturalBase(Select.mainBase().position());
                 return APosition.create(chokepointForNaturalBase.getCenter())

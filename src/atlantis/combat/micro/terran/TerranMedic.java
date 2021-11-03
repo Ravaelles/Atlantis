@@ -71,12 +71,10 @@ public class TerranMedic {
             double dist = assignment.distTo(medic);
 
             if (dist > 1.9) {
-                medic.move(assignment.position(), UnitActions.MOVE, "Stick");
-                return true;
+                return medic.move(assignment.position(), UnitActions.MOVE, "Stick");
             }
             else if (dist <= 1.4) {
-                medic.moveAwayFrom(assignment.position(), 0.4, "Spread");
-                return true;
+                return medic.moveAwayFrom(assignment.position(), 0.4, "Spread");
             }
         }
         

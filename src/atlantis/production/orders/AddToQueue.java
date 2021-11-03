@@ -5,6 +5,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.A;
 import atlantis.util.Us;
 
 public class AddToQueue {
@@ -28,23 +29,39 @@ public class AddToQueue {
     // =========================================================
 
     private static void addToQueue(AUnitType type, APosition position, int index) {
-        if (Us.isProtoss() && type.isBuilding() && !type.isPylon() && Count.pylons() == 0) {
+        assert type != null;
+
+        if (Us.isProtoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
             System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
             return;
         }
 
-        ProductionOrder productionOrder = new ProductionOrder(type, position);
-        ProductionQueue.currentProductionQueue.add(index, productionOrder);
-
-        if (type.getWhatIsRequired() != null && !Requirements.hasRequirements(type)) {
-            if (!ProductionQueue.isAtTheTopOfQueue(type, 6)) {
-                System.out.println("FIRST ADD REQUIREMENT = " + type.getWhatIsRequired() + " // " + type.getWhatBuildsIt() + " (for " + type + ")");
-                addToQueue(type.getWhatIsRequired(), null, 0);
+        if (!allowBuildingRequirements(type)) {
+//            ProductionOrder productionOrder = new ProductionOrder(type, position, A.supplyUsed() - 2);
+            int minSupply = 0;
+            ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
+            ProductionQueue.currentProductionQueue.add(index, productionOrder);
+        }
+        else {
+            if (
+                    type.getWhatIsRequired() != null
+                            && !type.getWhatIsRequired().isPylon()
+                            && !type.getWhatIsRequired().isPrimaryBase()
+                            && !Requirements.hasRequirements(type)
+            ) {
+                if (!ProductionQueue.isAtTheTopOfQueue(type, 6)) {
+                    System.out.println("FIRST ADD REQUIREMENT = " + type.getWhatIsRequired() + " // " + type.getWhatBuildsIt() + " (for " + type + ")");
+                    addToQueue(type.getWhatIsRequired(), null, 0);
+                }
             }
         }
     }
 
     // =========================================================
+
+    private static boolean allowBuildingRequirements(AUnitType type) {
+        return type.isCombatBuilding();
+    }
 
     private static int indexForPriority(ProductionOrderPriority priority) {
         return ProductionQueue.countOrdersWithPriorityAtLeast(priority);

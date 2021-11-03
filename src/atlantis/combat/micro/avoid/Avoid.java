@@ -6,6 +6,7 @@ import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 import bwapi.Color;
 

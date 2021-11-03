@@ -99,8 +99,7 @@ public class TransportUnits {
 
     private static boolean followBaby(AUnit transport, AUnit baby) {
         if (!baby.isLoaded() && (baby.isMoving() || transport.distToMoreThan(baby, 0.2))) {
-            transport.move(baby, UnitActions.MOVE, "Follow");
-            return true;
+            return transport.move(baby, UnitActions.MOVE, "Follow");
         }
 
         return false;

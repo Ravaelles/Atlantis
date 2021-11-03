@@ -92,7 +92,7 @@ public class ARepairCommander {
         // Assign two repairers to a bunker if it's not surrounded by many of our combat units
 //        if (bunkersCounter == 1) {
 //        for (AUnit bunker : bunkers.list()) {
-        AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.position());
+        AChoke chokepointForNaturalBase = AMap.chokeForNaturalBase(mainBase.position());
         if (chokepointForNaturalBase != null) {
             AUnit bunker = bunkers.nearestTo(chokepointForNaturalBase.getCenter());
             if (bunker == null) {

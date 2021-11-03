@@ -2,6 +2,7 @@ package atlantis.production.orders;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
+import atlantis.information.Neighborhood;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -49,9 +50,9 @@ public abstract class ABuildOrder {
             return false;
         }
 
-        AUnit building = Select.ourOneNotTrainingUnits(AtlantisConfig.BASE);
-        if (building != null) {
-            return building.train(AtlantisConfig.WORKER);
+        AUnit aBase = Select.ourOneNotTrainingUnits(AtlantisConfig.BASE);
+        if (aBase != null && Neighborhood.isItSafeToProduceWorker(aBase)) {
+            return aBase.train(AtlantisConfig.WORKER);
         }
 
         // If we're here it means all bases are busy. Try queue request

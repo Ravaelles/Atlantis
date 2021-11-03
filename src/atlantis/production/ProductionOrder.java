@@ -18,7 +18,12 @@ public class ProductionOrder {
     // =========================================================
 
     private static int firstFreeId = 1;
-    private int id = firstFreeId++;
+    private int id;
+
+    /**
+     * How much supply has to be used for this order to become active
+     */
+    private int minSupply;
 
     /**
      * AUnit type to be build. Can be null if this production order is for something else than upgrade.
@@ -44,7 +49,9 @@ public class ProductionOrder {
      * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
      */
     private String modifier = null;
-    
+
+    private boolean currentlyInProduction = false;
+
     /**
      * Contains first column 
      */
@@ -76,33 +83,32 @@ public class ProductionOrder {
 //    private boolean blocking = false;
 
     // =========================================================
-    
-    public ProductionOrder(AUnitType unitOrBuilding, APosition position) {
-        assert unitOrBuilding != null;
 
+    public ProductionOrder(AUnitType unitOrBuilding, int minSupply) {
+        this(unitOrBuilding, null, null, null, minSupply);
+    }
+
+    public ProductionOrder(UpgradeType upgrade, int minSupply) {
+        this(null, null, null, upgrade, minSupply);
+    }
+
+    public ProductionOrder(TechType tech, int minSupply) {
+        this(null, null, tech, null, minSupply);
+    }
+
+    public ProductionOrder(AUnitType unitOrBuilding, APosition position, int minSupply) {
+        this(unitOrBuilding, position, null, null, minSupply);
+    }
+
+    public ProductionOrder(AUnitType unitOrBuilding, APosition position, TechType tech, UpgradeType upgrade, int minSupply) {
+        assert unitOrBuilding != null || tech != null || upgrade != null;
+
+        this.id = firstFreeId++;
         this.unitOrBuilding = unitOrBuilding;
         this.position = position;
-    }
-
-    public ProductionOrder(AUnitType unitOrBuilding) {
-        assert unitOrBuilding != null;
-
-        this.unitOrBuilding = unitOrBuilding;
-    }
-
-    public ProductionOrder(UpgradeType upgrade) {
-        assert upgrade != null;
-
-        this.upgrade = upgrade;
-    }
-
-    public ProductionOrder(TechType tech) {
-        assert tech != null;
-
+        this.minSupply = minSupply;
         this.tech = tech;
-    }
-
-    private ProductionOrder() {
+        this.upgrade = upgrade;
     }
 
     // =========================================================
@@ -127,13 +133,13 @@ public class ProductionOrder {
     @Override
     public String toString() {
         if (unitOrBuilding != null) {
-            return "Order: " + shortName();
+            return "Order at " + minSupply + " " + shortName();
         }
         else if (upgrade != null) {
-            return "Order: " + shortName();
+            return "Order at " + minSupply + " " + shortName();
         }
         else if (tech != null) {
-            return "Order: " + shortName();
+            return "Order at " + minSupply + " " + shortName();
         }
         else {
             return "InvalidEmptyOrder";
@@ -152,19 +158,17 @@ public class ProductionOrder {
         }
     }
 
-    public ProductionOrder copy() {
-        ProductionOrder clone = new ProductionOrder();
-        
-        clone.id = firstFreeId++;
-        clone.modifier = this.modifier;
-        clone.numberOfColumnsInRow = this.numberOfColumnsInRow;
-        clone.rawFirstColumnInFile = this.rawFirstColumnInFile;
-        clone.tech = this.tech;
-        clone.unitOrBuilding = this.unitOrBuilding;
-        clone.upgrade = this.upgrade;
-        
-        return clone;
-    }
+//    public ProductionOrder copy() {
+//        ProductionOrder clone = new ProductionOrder(unitOrBuilding, position, tech, upgrade, minSupply);
+//
+//        clone.id = firstFreeId++;
+//        clone.modifier = this.modifier;
+//        clone.numberOfColumnsInRow = this.numberOfColumnsInRow;
+//        clone.rawFirstColumnInFile = this.rawFirstColumnInFile;
+//        clone.upgrade = this.upgrade;
+//
+//        return clone;
+//    }
     
     // === Getters =============================================
     
@@ -187,7 +191,7 @@ public class ProductionOrder {
      * If this production order concerns unit to be build (or building, AUnit class), it will return non-null
      * value being unit type.
      */
-    public AUnitType getUnitOrBuilding() {
+    public AUnitType unit() {
         return unitOrBuilding;
     }
 
@@ -262,5 +266,17 @@ public class ProductionOrder {
 
     public boolean canAffordNow() {
         return canAffordNow;
+    }
+
+    public int minSupply() {
+        return minSupply;
+    }
+
+    public boolean currentlyInProduction() {
+        return currentlyInProduction;
+    }
+
+    public void setCurrentlyInProduction(boolean currentlyInProduction) {
+        this.currentlyInProduction = currentlyInProduction;
     }
 }

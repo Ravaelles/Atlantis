@@ -77,6 +77,11 @@ public class ACombatUnitManager {
 //            GameSpeed.activateDynamicSlowdown();
 //        }
 
+//        if (unit.isUnderAttack(1) && !GameSpeed.oneTimeSlowdownUsed) {
+//            GameSpeed.changeSpeedTo(30);
+//            GameSpeed.oneTimeSlowdownUsed = true;
+//        }
+
         unit.setTooltip(unit.getTooltip() + ".");
     }
 

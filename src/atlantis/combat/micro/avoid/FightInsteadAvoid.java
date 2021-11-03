@@ -11,22 +11,22 @@ import atlantis.units.select.Selection;
 
 public class FightInsteadAvoid {
 
-    private final AUnit unit;
-    private final Units enemies;
+    protected final AUnit unit;
+    protected final Units enemies;
 
     /**
      * Enemy units of different types that are dangerously close, extracted as variables for easier access
      */
-    private final AUnit defensiveBuilding;
-    private final AUnit invisibleDT;
-    private final AUnit invisibleCombatUnit;
-    private final AUnit lurkerOrReaver;
-    private final AUnit tankSieged;
-    private final AUnit tanks;
-    private final AUnit reaver;
-    private final AUnit vulture;
-    private final AUnit ranged;
-    private final AUnit melee;
+    protected final AUnit defensiveBuilding;
+    protected final AUnit invisibleDT;
+    protected final AUnit invisibleCombatUnit;
+    protected final AUnit lurkerOrReaver;
+    protected final AUnit tankSieged;
+    protected final AUnit tanks;
+    protected final AUnit reaver;
+    protected final AUnit vulture;
+    protected final AUnit ranged;
+    protected final AUnit melee;
 
     // =========================================================
 
@@ -75,7 +75,7 @@ public class FightInsteadAvoid {
 
     // =========================================================
 
-    private boolean dontFightInImportantCases() {
+    protected boolean dontFightInImportantCases() {
 
         // Always avoid invisible combat units
         if (invisibleDT != null || invisibleCombatUnit != null) {
@@ -85,7 +85,7 @@ public class FightInsteadAvoid {
         return false;
     }
 
-    private boolean fightInImportantCases() {
+    protected boolean fightInImportantCases() {
 
         // Attacking critically important unit
         if (ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
@@ -105,7 +105,7 @@ public class FightInsteadAvoid {
     }
 
     // RANGED
-    private boolean fightAsRangedUnit() {
+    protected boolean fightAsRangedUnit() {
         if (melee != null) {
             return false;
         }
@@ -116,10 +116,8 @@ public class FightInsteadAvoid {
 
         if (ranged != null) {
 
-            if (unit.lastUnderAttackLessThanAgo(30 * 3)) {
-                if (unit.isTank()) {
-                    return false;
-                }
+            if (unit.isTank() && unit.lastUnderAttackLessThanAgo(30 * 3)) {
+                return false;
             }
 
             // Dragoon faster than Marines, can outrun them
@@ -127,13 +125,18 @@ public class FightInsteadAvoid {
 
                 // If needs to wait before next attack
 //                return unit.cooldownRemaining() <= 3 || unit.isJustShooting() || unit.lastUnderAttackMoreThanAgo(200);
-                return unit.woundPercent() <= 30 && (unit.isJustShooting() || unit.lastUnderAttackMoreThanAgo(200));
+                return unit.woundPercent() <= 40 && unit.lastUnderAttackMoreThanAgo(30 * 8);
             }
 
             // Dragoon slower than Vultures, cannot outrun them
             else {
+//                AUnit main = Select.mainBase();
+//                if (main != null && main.distToLessThan(unit, 9)) {
+//                    return true;
+//                }
+
 //                return unit.hpPercent() > 50 && unit.getCooldownCurrent() <= 2 && unit.hasWeaponRange(ranged, 0);
-                return true;
+                return false;
             }
         }
 
@@ -141,7 +144,7 @@ public class FightInsteadAvoid {
     }
 
     // MELEE
-    private boolean fightAsMeleeUnit() {
+    protected boolean fightAsMeleeUnit() {
         if (invisibleDT != null || invisibleCombatUnit != null) {
             return false;
         }
@@ -149,14 +152,14 @@ public class FightInsteadAvoid {
         return RetreatManager.shouldNotRetreat(unit, enemies);
     }
 
-    private boolean fightAsCombatUnit() {
+    protected boolean fightAsCombatUnit() {
         if (wayTooManyUnitsNearby(unit)) {
             return true;
         }
 
-        if (unit.isSquadScout()) {
-            return Select.our().inRadius(6, unit).atLeast(3);
-        }
+//        if (unit.isSquadScout()) {
+//            return Select.our().inRadius(3, unit).atLeast(3);
+//        }
 
         if (tankSieged != null || tanks != null) {
             return true;
@@ -175,7 +178,7 @@ public class FightInsteadAvoid {
 
     // =========================================================
 
-    private boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
+    protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()
                 && Select.enemyRealUnits()
                     .canBeAttackedBy(unit, 3)
@@ -183,7 +186,7 @@ public class FightInsteadAvoid {
                     .isNotEmpty();
     }
 
-    private boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
+    protected boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
         return unit.isAirUnitAntiAir()
                 && Select.enemyRealUnits()
                 .canBeAttackedBy(unit, 3)
@@ -191,7 +194,7 @@ public class FightInsteadAvoid {
                 .isNotEmpty();
     }
 
-    private boolean wayTooManyUnitsNearby(AUnit unit) {
+    protected boolean wayTooManyUnitsNearby(AUnit unit) {
         int unitsNearby = Select.all().exclude(unit).inRadius(0.3, unit).count();
         int ourNearby = Select.our().exclude(unit).inRadius(0.3, unit).count();
 
@@ -202,7 +205,7 @@ public class FightInsteadAvoid {
         return ourNearby >= 5 || unitsNearby >= 6;
     }
 
-    private boolean fightAsWorker(AUnit unit, Units enemies) {
+    protected boolean fightAsWorker(AUnit unit, Units enemies) {
         if (defensiveBuilding != null || lurkerOrReaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {
             return false;
         }
