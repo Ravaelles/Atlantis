@@ -3,6 +3,7 @@ package atlantis.production.dynamic;
 import atlantis.AGame;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.strategy.EnemyStrategy;
+import atlantis.strategy.GamePhase;
 import atlantis.tech.ATechRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -24,7 +25,11 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     // =========================================================
 
     private static void gateways() {
-        if (EnemyStrategy.get().isRushOrCheese() && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) < 2) {
+        if (
+                GamePhase.isEarlyGame()
+                && EnemyStrategy.get().isRushOrCheese()
+                && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) < 2
+        ) {
             buildIfCanAfford(AUnitType.Protoss_Gateway);
             return;
         }

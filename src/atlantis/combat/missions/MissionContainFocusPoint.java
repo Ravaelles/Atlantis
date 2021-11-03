@@ -16,9 +16,16 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             return containEnemyAtPoint;
         }
 
-        AChoke choke = AMap.enemyMainChoke();
-        if (choke != null) {
-            containEnemyAtPoint = choke.position();
+        AChoke naturalChoke = AMap.enemyNaturalChoke();
+        if (naturalChoke != null) {
+            System.out.println("naturalChoke = " + naturalChoke);
+            containEnemyAtPoint = naturalChoke.position();
+        }
+
+        AChoke mainChoke = AMap.enemyMainChoke();
+        if (mainChoke != null) {
+            System.out.println("mainChoke = " + mainChoke);
+            containEnemyAtPoint = mainChoke.position();
         }
 
 //        APosition enemyBase = AEnemyUnits.enemyBase();

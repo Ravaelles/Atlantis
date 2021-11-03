@@ -44,7 +44,8 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         APosition focusPoint = focusPoint();
 
-        if (enemy.distTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
+        if (enemy.hasWeaponRange(unit, 0.8) || unit.hasWeaponRange(enemy, 0.8)) {
+//        if (enemy.distTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
             return true;
         }
 
