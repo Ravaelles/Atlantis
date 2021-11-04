@@ -24,7 +24,7 @@ public class ATechRequests {
     public static boolean researchTech(TechType tech) {
         AUnitType buildingType = AUnitType.createFrom(tech.whatResearches());
         if (buildingType != null) {
-            AUnit building = Select.ourBuildings().ofType(buildingType).first();
+            AUnit building = Select.ourBuildings().ofType(buildingType).free().first();
             if (building != null && !building.isBusy()) {
                 building.research(tech);
                 return true;
@@ -36,7 +36,7 @@ public class ATechRequests {
     public static boolean researchUpgrade(UpgradeType upgrade) {
         AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades());
         if (buildingType != null) {
-            AUnit building = Select.ourBuildings().ofType(buildingType).first();
+            AUnit building = Select.ourBuildings().ofType(buildingType).free().first();
             if (building != null && !building.isBusy()) {
                 building.upgrade(upgrade);
                 return true;

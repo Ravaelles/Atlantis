@@ -84,7 +84,8 @@ public class Missions {
     }
 
     public static Mission fromString(String mission) {
-        switch (mission.toUpperCase()) {
+        mission = mission.toUpperCase().replace("MISSION=", "");
+        switch (mission) {
             case "ATTACK" : return ATTACK;
             case "CONTAIN" : return CONTAIN;
             case "DEFEND" : return DEFEND;

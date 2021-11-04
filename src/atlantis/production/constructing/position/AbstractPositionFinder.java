@@ -123,8 +123,17 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
+        if (Select.mainBase() == null) {
+            return false;
+        }
+
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
+
+        if (nearestBase == null) {
+            return false;
+        }
+
         double distToBase = nearestBase.distTo(position);
         if (nearestBase != null && distToBase <= 8) {
             for (AUnit mineral : Select.minerals().inRadius(8, position).listUnits()) {

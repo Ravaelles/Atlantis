@@ -20,7 +20,7 @@ public class ABaseLocation implements HasPosition {
 
     public static ABaseLocation create(TilePosition tilePosition) {
         ABaseLocation aBaseLocation = new ABaseLocation();
-        aBaseLocation.position = APosition.create(tilePosition);
+        aBaseLocation.position = APosition.create(tilePosition.toPosition());
 
         return aBaseLocation;
     }

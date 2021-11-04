@@ -37,7 +37,7 @@ public class OnStart {
         initializeAllStrategies();
 
         // Set strategy and unit production sequence (Build Order) to use. It can be later changed dynamically.
-        initializeOurStrategyAndBuildOrder();
+        initStrategyAndBuildOrder();
 
         try {
             AInitialActions.executeInitialActions();
@@ -64,7 +64,7 @@ public class OnStart {
         ZergStrategies.initialize();
     }
 
-    private static void initializeOurStrategyAndBuildOrder() {
+    private static void initStrategyAndBuildOrder() {
 //        APosition p1 = new APosition(100, 100);
 //        APosition p2 = new APosition(200, 110);
 //

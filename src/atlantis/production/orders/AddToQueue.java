@@ -1,6 +1,7 @@
 package atlantis.production.orders;
 
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
@@ -22,8 +23,8 @@ public class AddToQueue {
         addWithHighPriority(type, null);
     }
 
-    public static void addWithHighPriority(AUnitType type, APosition position) {
-        addToQueue(type, position, indexForPriority(ProductionOrderPriority.HIGH));
+    public static void addWithHighPriority(AUnitType type, HasPosition position) {
+        addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.HIGH));
     }
 
     // =========================================================

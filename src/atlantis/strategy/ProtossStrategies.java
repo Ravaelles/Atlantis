@@ -3,14 +3,14 @@ package atlantis.strategy;
 import atlantis.AGame;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 
 public class ProtossStrategies extends AStrategy {
     
     // Rush
     public static final AStrategy PROTOSS_2_Gate_Zealot = new AStrategy();
-    
+    public static final AStrategy PROTOSS_Speedzealot = new AStrategy();
+
     // Cheese
     public static final AStrategy PROTOSS_3_Gate = new AStrategy();
     
@@ -31,6 +31,10 @@ public class ProtossStrategies extends AStrategy {
         PROTOSS_2_Gate_Zealot.setProtoss().setName("2 Gate Zealot")
                 .setGoingRush()
                 .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_Zealot_(vs._Terran)");
+
+        PROTOSS_Speedzealot.setProtoss().setName("+1 Speedzealot")
+                .setGoingRush()
+                .setUrl("https://liquipedia.net/starcraft/%2B1_Speedzealot_(vs_Zerg)");
 
         // === Cheese ========================================
         

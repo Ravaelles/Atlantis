@@ -7,6 +7,7 @@ import atlantis.position.APosition;
 import atlantis.production.Requirements;
 import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.AStrategyInformations;
+import atlantis.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -20,7 +21,7 @@ public class AAntiLandBuildingRequests {
 
     public static boolean handle() {
         if (shouldBuildNew()) {
-            System.out.println("ENQUEUE NEW CANNON");
+            System.out.println("ENQUEUE NEW ANTI LAND");
             return requestDefensiveBuildingAntiLand(null);
         }
 
@@ -53,14 +54,20 @@ public class AAntiLandBuildingRequests {
 
     public static int expectedUnits() {
         if (Us.isTerran()) {
-            return 1;
+            return 0;
         }
 
         if (Us.isProtoss()) {
-            return 1;
+            return 0;
         }
 
-        return 3 * Select.ourBases().count();
+        if (Us.isZerg()) {
+            if (!OurStrategy.ourStrategy().isRushOrCheese()) {
+                return 3 * Select.ourBases().count();
+            }
+        }
+
+        return 0;
     }
 
     public static boolean requestDefensiveBuildingAntiLand(APosition nearTo) {

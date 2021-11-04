@@ -1023,6 +1023,8 @@ public class A {
 
             while (inputStream.hasNextLine()) {
                 String line = inputStream.nextLine();
+                line = line.replace("—", "-"); // Replace em dashes with hyphens - omfg, that's funny
+
                 String[] fields = line.split(";");
                 
                 if (fields.length == 1 && line.contains(" - ")) {
@@ -1137,5 +1139,9 @@ public class A {
 
     public static int resourcesBalance() {
         return AGame.killsLossesResourceBalance();
+    }
+
+    public static boolean hasFreeSupply(int supplyNeeded) {
+        return AGame.supplyFree() >= supplyNeeded;
     }
 }

@@ -57,7 +57,7 @@ public class BuildOrderRowParser {
             nameString = row[0];
         }
         // Example: Gateway - x2
-        else if (row.length == 2 && row[1].length() > 0 && row[1].charAt(0) == 'x') {
+        else if (row.length == 2 && row[1].length() > 0 && (row[1].charAt(0) == 'x' || row[1].charAt(0) == '@')) {
             minSupplyForThisOrder = currentSupply;
             nameString = row[0];
             modifier = row[1];

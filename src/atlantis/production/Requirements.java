@@ -42,15 +42,16 @@ public class Requirements {
     // =========================================================
 
     private static boolean hasRequirements(TechType tech) {
-
-        if (Count.ofType(AUnitType.createFrom(tech.requiredUnit())) == 0) {
+        AUnitType required = AUnitType.createFrom(tech.requiredUnit());
+        if (required != null && Count.ofType(AUnitType.createFrom(tech.requiredUnit())) == 0) {
             return false;
         }
         return true;
     }
 
     private static boolean hasRequirements(UpgradeType upgrade) {
-        if (Count.ofType(AUnitType.createFrom(upgrade.whatsRequired())) == 0) {
+        AUnitType required = AUnitType.createFrom(upgrade.whatsRequired());
+        if (required != null && Count.ofType(required) == 0) {
             return false;
         }
         return true;

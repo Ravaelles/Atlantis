@@ -3,14 +3,14 @@ package atlantis.strategy;
 import atlantis.AGame;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 
 public class ZergStrategies extends AStrategy {
     
     // Rush
-    public static final AStrategy ZERG_9_Pool = new AStrategy();
-    
+    public static final AStrategy ZERG_9_Pool_vP = new AStrategy();
+    public static final AStrategy ZERG_9_Pool_vZ = new AStrategy();
+
     // Cheese
     public static final AStrategy ZERG_4_Pool = new AStrategy();
     public static final AStrategy ZERG_5_Pool = new AStrategy();
@@ -19,7 +19,8 @@ public class ZergStrategies extends AStrategy {
 
     // Expansion
     public static final AStrategy ZERG_3_Hatch_Before_Pool = new AStrategy();
-    
+    public static final AStrategy ZERG_12_Hatch_vZ = new AStrategy();
+
     // Tech
     public static final AStrategy ZERG_1_Hatch_Lurker = new AStrategy();
     public static final AStrategy ZERG_2_Hatch_Lurker = new AStrategy();
@@ -31,9 +32,13 @@ public class ZergStrategies extends AStrategy {
         
         // === Rushes ========================================
         
-        ZERG_9_Pool.setZerg().setName("9 Pool")
+        ZERG_9_Pool_vP.setZerg().setName("9 Pool vP")
                 .setGoingRush()
                 .setUrl("https://liquipedia.net/starcraft/9_Pool_(vs._Protoss)");
+
+        ZERG_9_Pool_vZ.setZerg().setName("9 Pool vZ")
+                .setGoingRush()
+                .setUrl("https://liquipedia.net/starcraft/9_Pool_(vs._Zerg)");
 
         // === Cheese ========================================
         
@@ -51,9 +56,13 @@ public class ZergStrategies extends AStrategy {
 
         // === Expansion =====================================
         
-        ZERG_3_Hatch_Before_Pool.setZerg().setName("3_Hatch_Before_Pool")
+        ZERG_3_Hatch_Before_Pool.setZerg().setName("3 Hatch Before Pool")
                 .setGoingExpansion()
                 .setUrl("http://wiki.teamliquid.net/starcraft/3_Hatch_Before_Pool_(vs._Terran)");
+
+        ZERG_12_Hatch_vZ.setZerg().setName("12 Hatch vZ")
+                .setGoingExpansion()
+                .setUrl("12 Hatch vZ");
 
         // === Tech ==========================================
         
@@ -120,7 +129,7 @@ public class ZergStrategies extends AStrategy {
         // === Rushes ==============================================
         
         if (pool == 1 && drones <= 10 && seconds < 220) {
-            return ZergStrategies.ZERG_9_Pool;
+            return ZergStrategies.ZERG_9_Pool_vP;
         }
         
         // =========================================================

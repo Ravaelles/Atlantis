@@ -324,7 +324,7 @@ public class Atlantis implements BWEventListener {
         onUnitDestroy(u);
         AUnit.forgetUnitEntirely(u);
         AUnit newUnit = AUnit.createFrom(u);
-        if (newUnit.type().isGasBuilding()) {
+        if (newUnit.type().isGasBuilding() || newUnit.type().isGeyser()) {
             return;
         }
 

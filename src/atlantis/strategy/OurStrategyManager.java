@@ -26,7 +26,8 @@ public class OurStrategyManager {
 
     private static AStrategy initForProtoss() {
         if (Enemy.zerg()) {
-            return ProtossStrategies.PROTOSS_2_Gate_Zealot;
+//            return ProtossStrategies.PROTOSS_2_Gate_Zealot;
+            return ProtossStrategies.PROTOSS_Speedzealot;
         }
 
         return ProtossStrategies.PROTOSS_2_Gate_Range_Expand;
@@ -38,7 +39,9 @@ public class OurStrategyManager {
     }
 
     private static AStrategy initForZerg() {
-        return ZergStrategies.ZERG_13_Pool_Muta;
+//        return ZergStrategies.ZERG_13_Pool_Muta;
+//        return ZergStrategies.ZERG_12_Hatch_vZ;
+        return ZergStrategies.ZERG_9_Pool_vZ;
     }
 
 }

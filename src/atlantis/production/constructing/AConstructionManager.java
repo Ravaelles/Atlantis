@@ -64,11 +64,13 @@ public class AConstructionManager {
                 if (!builder.is(AtlantisConfig.WORKER)) {
 
                     // Happens for Extractor
-                    if (constructionOrder.getBuilder().getBuildType().equals(AUnitType.None)) {
+                    if (builder.getBuildType() == null || builder.getBuildType().equals(AUnitType.None)) {
                         building = builder;
                         constructionOrder.setConstruction(builder);
                     }
-                } // Builder did not change it's type so it's not Zerg Extractor case
+                }
+
+                // Builder did not change it's type so it's not Zerg Extractor case
                 else {
 //                    System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
 //                    System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());

@@ -47,7 +47,6 @@ public class AMap {
         bwem.getMap().assignStartingLocationsToSuitableBases();
 
         // Init JBWEB
-        System.out.println("PRe..........");
         JBWEB.onStart(Atlantis.game(), bwem);
         Blocks.findBlocks();
 

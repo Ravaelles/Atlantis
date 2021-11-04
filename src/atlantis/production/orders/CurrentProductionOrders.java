@@ -1,6 +1,7 @@
 package atlantis.production.orders;
 
 import atlantis.AGame;
+import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
@@ -46,6 +47,7 @@ public abstract class CurrentProductionOrders {
             AUnitType unitOrBuilding = order.unit();
             UpgradeType upgrade = order.upgrade();
             TechType tech = order.tech();
+            Mission mission = order.mission();
 
             // ===  Protoss fix: wait for at least one Pylon ============
 
@@ -68,6 +70,9 @@ public abstract class CurrentProductionOrders {
 
             // UPGRADE
             else if (upgrade != null && A.supplyAtLeast(order.minSupply())) {
+//                System.out.println("====== WE'RE AT " + upgrade.name() + " --> " + hasWhatRequired);
+//                System.out.println("lvl = " + ATech.getUpgradeLevel(upgrade));
+//                System.out.println(upgrade.mineralPrice() + " // " + upgrade.gasPrice());
                 ProductionQueue.mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
                 ProductionQueue.gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
             }
@@ -76,6 +81,11 @@ public abstract class CurrentProductionOrders {
             else if (tech != null && A.supplyAtLeast(order.minSupply())) {
                 ProductionQueue.mineralsNeeded += tech.mineralPrice();
                 ProductionQueue.gasNeeded += tech.gasPrice();
+            }
+
+            // MISSION - handled in AProductionManager
+            else if (mission != null && A.supplyAtLeast(order.minSupply())) {
+                continue;
             }
 
             // =========================================================
@@ -93,6 +103,10 @@ public abstract class CurrentProductionOrders {
             if (
                     mode == ProductionQueueMode.ENTIRE_QUEUE || (canAfford && hasWhatRequired)
             ) {
+                if (unitOrBuilding != null && !A.hasFreeSupply(unitOrBuilding.supplyNeeded())) {
+                    continue;
+                }
+
                 queue.add(order);
             }
 

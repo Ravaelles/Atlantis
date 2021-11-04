@@ -56,6 +56,10 @@ public class AUnitType implements Comparable<AUnitType> {
             throw new RuntimeException("AUnitType constructor: type is null");
         }
 
+        if (ut.name().equals(UnitType.None.name())) {
+            return null;
+        }
+
         if (instances.containsKey(ut)) {
             return instances.get(ut);
         } else {
@@ -318,14 +322,15 @@ public class AUnitType implements Comparable<AUnitType> {
     public static AUnitType getByName(String unitName) {
         unitName = unitName.replace(" ", "_").toLowerCase()
                 .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
+//        System.out.println(unitName);
 
         for (Field field : UnitType.class.getFields()) {
             String otherTypeName = field.getName().toLowerCase()
                     .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
+//            System.out.println(unitName + " // " + otherTypeName +" // " + field.getName());
             if (!otherTypeName.startsWith("Hero") && otherTypeName.equals(unitName)) {
                 try {
                     AUnitType unitType = (AUnitType) AUnitType.class.getField(field.getName()).get(null);
-//                    return instances.get(unitType);
                     return unitType;
                 } catch (Exception e) {
                     if (!disableErrorReporting) {

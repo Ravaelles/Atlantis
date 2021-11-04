@@ -1,7 +1,7 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=8
+#SCOUT_IS_NTH_WORKER=9
 
 // When supply is bigger than N, then start auto-producing supply units
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=22
@@ -29,12 +29,10 @@ http://wiki.teamliquid.net/starcraft/13_Pool_Muta_(vs._Terran)
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-4 - Mutalisk
-6 - Mutalisk - x20
 9 - Overlord
-13 - Spawning Pool
+12 - Spawning Pool
 12 - Extractor
-13 - Hatchery - NATURAL
+13 - Hatchery - @NATURAL
 13 - Lair
 13 - Zergling
 14 - Zergling
@@ -44,4 +42,5 @@ http://wiki.teamliquid.net/starcraft/13_Pool_Muta_(vs._Terran)
 18 - Creep Colony
 20 - Sunken Colony
 // 20 - Stop Drone production
-20 - Overlord - x2
+20 - Overlord
+Mutalisk - x20

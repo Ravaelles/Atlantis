@@ -572,6 +572,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintConstructionPlace(APosition positionToBuild, AUnitType buildingType, String text, Color color) {
         if (positionToBuild == null) {
             if (Select.mainBase() != null) {
+                System.err.println(buildingType + " has no position to build");
                 throw new RuntimeException("That's unacceptable, lad!");
             } else {
                 return;
