@@ -35,7 +35,8 @@ public class OurStrategyManager {
 
     private static AStrategy initForTerran() {
 //        return TerranStrategies.TERRAN_3_Rax_MnM;
-        return TerranStrategies.TERRAN_Nada_2_Factory;
+        return TerranStrategies.TERRAN_Nada_2_Fac;
+//        return TerranStrategies.TERRAN_1_Base_Vultures;
     }
 
     private static AStrategy initForZerg() {

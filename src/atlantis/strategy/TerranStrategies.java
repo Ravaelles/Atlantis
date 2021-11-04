@@ -3,7 +3,6 @@ package atlantis.strategy;
 import atlantis.AGame;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 
 public class TerranStrategies {
@@ -19,7 +18,7 @@ public class TerranStrategies {
     public static final AStrategy TERRAN_1_Rax_FE = new AStrategy();
     
     // Tech
-    public static final AStrategy TERRAN_Nada_2_Factory = new AStrategy();
+    public static final AStrategy TERRAN_Nada_2_Fac = new AStrategy();
     public static final AStrategy TERRAN_Three_Factory_Vultures = new AStrategy();
 
     // =========================================================
@@ -49,7 +48,7 @@ public class TerranStrategies {
 
         // === Tech ==========================================
 
-        TERRAN_Nada_2_Factory.setTerran().setName("Nada 2 Factory")
+        TERRAN_Nada_2_Fac.setTerran().setName("Nada 2 Fac")
                 .setGoingTech()
                 .setUrl("https://liquipedia.net/starcraft/Nada_2_Fac");
 

@@ -76,7 +76,7 @@ public class AConstructionRequests {
         newConstructionOrder.assignRandomBuilderForNow();
 
         if (newConstructionOrder.getBuilder() == null) {
-            if (AGame.supplyUsed() >= 7) {
+            if (AGame.supplyUsed() >= 7 && Select.mainBase() != null) {
                 System.err.println("Builder is null, got damn it!");
             }
             return false;
