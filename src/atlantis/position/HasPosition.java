@@ -1,5 +1,6 @@
 package atlantis.position;
 
+import atlantis.Atlantis;
 import atlantis.map.AMap;
 import bwapi.Point;
 import bwapi.Position;
@@ -58,6 +59,26 @@ public interface HasPosition {
         return position().distTo(otherPosition.position()) >= minDist;
     }
 
+    default boolean isWalkable() {
+        return Atlantis.game().isWalkable(position().toWalkPosition());
+    }
+
+    default boolean isExplored() {
+        return Atlantis.game().isExplored(position().toTilePosition());
+    }
+
+    default boolean isVisible() {
+        return Atlantis.game().isVisible(position().toTilePosition());
+    }
+
+    default boolean isBuildable() {
+        return Atlantis.game().isBuildable(position().toTilePosition());
+    }
+
+    default boolean isConnected() {
+        return Atlantis.game().isVisible(position().toTilePosition());
+    }
+
     // =========================================================
 
     /**
@@ -76,10 +97,6 @@ public interface HasPosition {
 
     default LargeTile largeTile() {
         return new LargeTile(this);
-    }
-
-    default boolean isVisible() {
-        return AMap.isVisible(position());
     }
 
 }

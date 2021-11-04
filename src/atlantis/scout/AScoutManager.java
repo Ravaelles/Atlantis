@@ -5,8 +5,7 @@ import atlantis.CameraManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.map.AMap;
-import atlantis.map.ARegion;
+import atlantis.map.*;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.Positions;
@@ -128,11 +127,11 @@ public class AScoutManager {
 //        APosition startingLocation;
         HasPosition startingLocation;
         if (scout.isType(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
-            startingLocation = AMap.getStartingLocationBasedOnIndex(
+            startingLocation = BaseLocations.getStartingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {
-            startingLocation = AMap.getNearestUnexploredStartingLocation(scout.position());
+            startingLocation = BaseLocations.getNearestUnexploredStartingLocation(scout.position());
         }
 
         // =========================================================
@@ -160,7 +159,7 @@ public class AScoutManager {
 
         APosition enemyBase = AEnemyUnits.enemyBase();
         if (enemyBase != null) {
-            ARegion enemyBaseRegion = AMap.getRegion(enemyBase);
+            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
 
             if (scoutingAroundBasePoints.isEmpty()) {
                 initializeEnemyRegionPolygonPoints(scout, enemyBaseRegion);
@@ -221,7 +220,7 @@ public class AScoutManager {
         // TERRAN + PROTOSS
 
         else if (scouts.isEmpty()) {
-            AUnit scout = Select.ourWorkers().nearestTo(AMap.chokeForNaturalBase());
+            AUnit scout = Select.ourWorkers().nearestTo(MapChokes.chokeForNaturalBase());
             if (!scout.isBuilder()) {
                 scouts.add(scout);
                 return;
@@ -240,7 +239,7 @@ public class AScoutManager {
     }
 
     private static void scoutForTheNextBase(AUnit scout) {
-        APosition baseLocation = AMap.getNearestUnexploredStartingLocation(scout.position());
+        APosition baseLocation = BaseLocations.getNearestUnexploredStartingLocation(scout.position());
         if (baseLocation != null) {
             scout.move(baseLocation.position(), UnitActions.EXPLORE, "Explore next base");
         }
@@ -315,7 +314,7 @@ public class AScoutManager {
 //            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
 //
 //            // If positions is walkable, not in different region and has path to it, it should be ok
-//            if (AMap.isWalkable(position) && enemyBaseRegion.getPolygon().isInside(position)
+//            if (position.isWalkable() && enemyBaseRegion.getPolygon().isInside(position)
 //                    && scout.hasPathTo(position) && groundDistance >= 4
 //                    && groundDistance <= 1.7 * scout.distanceTo(position)) {
 //                scoutingAroundBasePoints.addPosition(position);
@@ -336,7 +335,7 @@ public class AScoutManager {
     }
 
     public static APosition getUmsFocusPoint(APosition startPosition) {
-        ARegion nearestUnexploredRegion = AMap.getNearestUnexploredRegion(startPosition);
+        ARegion nearestUnexploredRegion = Regions.getNearestUnexploredRegion(startPosition);
         return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
     }
 

@@ -2,6 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
@@ -14,7 +15,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        return Select.ourCombatUnits().atLeast(10);
+        return Select.ourCombatUnits().atLeast(20) || A.resourcesBalance() >= 450;
     }
 
 }

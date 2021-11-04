@@ -1,8 +1,8 @@
 package atlantis.production.constructing.position;
 
+import atlantis.map.BaseLocations;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.map.ABaseLocation;
-import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -85,10 +85,10 @@ public class ASpecialPositionFinder {
         if (ourBasesCount <= 2) {
             AUnit mainBase = Select.mainBase();
 
-            baseLocationToExpand = AMap.getExpansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
+            baseLocationToExpand = BaseLocations.getExpansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
         }
         else {
-            baseLocationToExpand = AMap.getExpansionBaseLocationMostDistantToEnemy();
+            baseLocationToExpand = BaseLocations.getExpansionBaseLocationMostDistantToEnemy();
         }
         
         if (baseLocationToExpand == null) {
@@ -120,7 +120,7 @@ public class ASpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = APosition.create(AMap.getExpansionFreeBaseLocationNearestTo(Select.mainBase().position()).position()
+        APosition near = APosition.create(BaseLocations.getExpansionFreeBaseLocationNearestTo(Select.mainBase().position()).position()
         ).translateByPixels(-64, -48);
         
         constructionOrder.setNearTo(near);

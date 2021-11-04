@@ -3,6 +3,8 @@ package atlantis;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import jbweb.Block;
+import jbweb.Blocks;
 
 public class OnEveryFrame {
 
@@ -19,6 +21,14 @@ public class OnEveryFrame {
 //        System.out.println("ENEMY BASE = " + AEnemyUnits.enemyBase());
 
 //        Select.printCache();
+
+        Blocks.draw();
+
+//        if (AGame.everyNthGameFrame(100)) {
+//            for (Block block : Blocks.getBlocks()) {
+//                System.out.println(block.isDefensive());
+//            }
+//        }
     }
 
 }

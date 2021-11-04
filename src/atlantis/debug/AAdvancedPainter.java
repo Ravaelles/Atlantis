@@ -10,15 +10,13 @@ import atlantis.combat.missions.MissionAttack;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.Squad;
+import atlantis.map.*;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.position.TerranPositionFinder;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
-import atlantis.map.AChoke;
-import atlantis.map.AMap;
-import atlantis.map.ARegion;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
 import atlantis.production.ProductionOrder;
@@ -1048,7 +1046,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintEnemyRegionDetails() {
         APosition enemyBase = AEnemyUnits.enemyBase();
         if (enemyBase != null) {
-            ARegion enemyBaseRegion = AMap.getRegion(enemyBase);
+            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
             for (APosition point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
@@ -1131,7 +1129,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     protected static void paintRegions() {
-        List<ARegion> regions = AMap.getRegions();
+        List<ARegion> regions = Regions.regions();
         for (ARegion region : regions) {
             APainter.paintRectangle(
                     region.getCenter().translateByTiles(-3, -3),
@@ -1150,7 +1148,7 @@ public class AAdvancedPainter extends APainter {
     protected static void paintChokepoints() {
 
         // All chokes
-        List<AChoke> chokePoints = AMap.getChokes();
+        List<AChoke> chokePoints = MapChokes.chokes();
         for (AChoke choke : chokePoints) {
             paintChoke(choke, Color.Brown, "");
         }
@@ -1164,23 +1162,23 @@ public class AAdvancedPainter extends APainter {
         APainter.setTextSizeMedium();
 
         // Natural base
-        APosition natural = AMap.naturalBase();
+        APosition natural = BaseLocations.naturalBase();
         paintBase(natural, "Our natural", Color.Grey);
 
         // Enemy base
-        APosition enemyBase = AMap.getEnemyNatural();
+        APosition enemyBase = BaseLocations.enemyNatural();
         paintBase(enemyBase, "Enemy natural", Color.Orange);
 
         // Our main choke
-        AChoke mainChoke = AMap.mainBaseChoke();
+        AChoke mainChoke = MapChokes.mainBaseChoke();
         paintChoke(mainChoke, Color.Green, "Main choke");
 
         // Our natural choke
-        AChoke naturalChoke = AMap.chokeForNaturalBase(AMap.naturalBase());
+        AChoke naturalChoke = MapChokes.chokeForNaturalBase(BaseLocations.naturalBase());
         paintChoke(naturalChoke, Color.Green, "Natural choke");
 
         // Enemy natural choke
-        AChoke enemyNaturalChoke = AMap.enemyNaturalChoke();
+        AChoke enemyNaturalChoke = MapChokes.enemyNaturalChoke();
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
         // Next defensive building position

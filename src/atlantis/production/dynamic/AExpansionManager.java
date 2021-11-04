@@ -2,8 +2,8 @@ package atlantis.production.dynamic;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
+import atlantis.map.BaseLocations;
 import atlantis.production.constructing.AConstructionRequests;
-import atlantis.map.AMap;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.select.Select;
@@ -47,7 +47,7 @@ public class AExpansionManager {
         
         // === Check if we have almost as many bases as base locations; if so, exit ======
         
-        if (numberOfBases >= AMap.getBaseLocations().size() - 2) {
+        if (numberOfBases >= BaseLocations.baseLocations().size() - 2) {
             return;
         }
 

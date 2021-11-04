@@ -1,12 +1,14 @@
 package atlantis.position;
 
+import atlantis.AGame;
+import atlantis.Atlantis;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.ARegion;
+import atlantis.map.Regions;
 import atlantis.units.AUnit;
 import bwapi.Point;
 import bwapi.Position;
-import bwta.BWTA;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,8 +130,8 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return PositionUtil.distanceTo(p, position);
     }
 
-    public double groundDistanceTo(APosition position) {
-        return PositionUtil.groundDistanceTo(this, position);
+    public double groundDistanceTo(HasPosition position) {
+        return PositionUtil.groundDistanceTo(this, position.position());
     }
 
     public double distTo(AChoke choke) {
@@ -325,7 +327,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
      * Returns true if given position has land connection to given point.
      */
     public boolean hasPathTo(APosition point) {
-        return BWTA.isConnected(this.toTilePosition(), point.toTilePosition());
+        return Atlantis.game().hasPath(this, point);
     }
 
     public boolean isCloseToMapBounds() {
@@ -349,7 +351,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
      * Return BWTA region for this position.
      */
     public ARegion getRegion() {
-        return AMap.getRegion(this);
+        return Regions.getRegion(this);
     }
 
 }

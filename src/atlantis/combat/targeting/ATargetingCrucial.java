@@ -5,6 +5,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
+import java.util.List;
+
 public class ATargetingCrucial extends AEnemyTargeting {
 
     public static AUnit target(AUnit unit) {
@@ -60,6 +62,16 @@ public class ATargetingCrucial extends AEnemyTargeting {
                 .mostWounded();
         if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(14, target).atLeast(1)) {
             return target;
+        }
+
+        // =========================================================
+        // MELEE should attack CLOSE targets if too clustered
+
+        if (unit.isMelee()) {
+            Selection nearbyEnemies = enemyUnits.clone().inRadius(0.9, unit);
+            if (nearbyEnemies.atLeast(2)) {
+                return nearbyEnemies.mostWounded();
+            }
         }
 
         return null;
@@ -153,7 +165,9 @@ public class ATargetingCrucial extends AEnemyTargeting {
                         AUnitType.Protoss_Observer,
                         AUnitType.Zerg_Lurker,
                         AUnitType.Zerg_Ultralisk
-                ).nearestTo(unit);
+                )
+                .inRadius(groundRange + 0.7, unit)
+                .nearestTo(unit);
         return target;
     }
 

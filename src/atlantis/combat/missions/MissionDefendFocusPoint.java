@@ -2,7 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.map.AChoke;
-import atlantis.map.AMap;
+import atlantis.map.MapChokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -25,19 +25,26 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     return null;
                 }
 
-                AUnit mainBase = Select.mainBase();
-                if (mainBase == null) {
-                    return null;
+                // === Natural choke ================
+
+                AChoke naturalChoke = MapChokes.enemyNaturalChoke();
+                if (naturalChoke != null) {
+                    return naturalChoke.getCenter();
                 }
 
                 // === Main choke ================
 
-                AChoke mainChoke = AMap.mainBaseChoke();
+                AChoke mainChoke = MapChokes.enemyMainChoke();
                 if (mainChoke != null) {
                     return mainChoke.getCenter();
                 }
 
                 // === Focus enemy attacking the main base =================
+
+                AUnit mainBase = Select.mainBase();
+                if (mainBase == null) {
+                    return null;
+                }
 
                 AUnit nearEnemy = Select.enemy()
                         .combatUnits()
@@ -67,7 +74,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit building = Select.ourBuildings().first();
                 if (building != null) {
-                    return APosition.create(AMap.nearestChoke(building.position()).getCenter());
+                    return APosition.create(MapChokes.nearestChoke(building.position()).getCenter());
                 }
 
                 return null;

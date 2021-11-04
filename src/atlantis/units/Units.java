@@ -3,9 +3,9 @@ package atlantis.units;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
+import atlantis.position.PositionUtil;
 import atlantis.util.A;
 import bwapi.Position;
-import bwta.BWTA;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -271,7 +271,7 @@ public class Units {
      * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first unit will be the one closest to given position.
      */
-    public Units sortByGroundDistTo(final Position position, final boolean nearestFirst) {
+    public Units sortByGroundDistTo(final HasPosition position, final boolean nearestFirst) {
         if (position == null) {
             return null;
         }
@@ -285,11 +285,11 @@ public class Units {
                 if (!(p2 instanceof HasPosition)) {
                     return 1;
                 }
-                double distance1 = BWTA.getGroundDistance(
-                        p1.position().toTilePosition(), position.toTilePosition()
+                double distance1 = PositionUtil.groundDistanceTo(
+                        p1.position(), position.position()
                 );
-                double distance2 = BWTA.getGroundDistance(
-                        p2.position().toTilePosition(), position.toTilePosition()
+                double distance2 = PositionUtil.groundDistanceTo(
+                        p2.position(), position.position()
                 );
                 if (distance1 == distance2) {
                     return 0;

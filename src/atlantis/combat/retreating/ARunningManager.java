@@ -416,15 +416,15 @@ public class ARunningManager {
             APosition unitPosition, APosition position, boolean includeUnitCheck, String charForIsOk, String charForNotOk
     ) {
 
-        boolean isOkay = AMap.isWalkable(position)
+        boolean isOkay = position.isWalkable()
                 && (
                     (
-                            AMap.isWalkable(position.translateByTiles(1, 0))
-                            && AMap.isWalkable(position.translateByTiles(0, -1))
+                            position.translateByTiles(1, 0).isWalkable()
+                            && position.translateByTiles(0, -1).isWalkable()
                     )
                     || (
-                            AMap.isWalkable(position.translateByTiles(0, 1))
-                            && AMap.isWalkable(position.translateByTiles(-1, 0))
+                            position.translateByTiles(0, 1).isWalkable()
+                            && position.translateByTiles(-1, 0).isWalkable()
                     )
                 )
                 && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)

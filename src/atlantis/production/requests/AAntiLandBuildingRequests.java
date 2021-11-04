@@ -2,11 +2,10 @@ package atlantis.production.requests;
 
 import atlantis.AtlantisConfig;
 import atlantis.map.AChoke;
-import atlantis.map.AMap;
+import atlantis.map.MapChokes;
 import atlantis.position.APosition;
 import atlantis.production.Requirements;
 import atlantis.production.orders.AddToQueue;
-import atlantis.production.orders.ProductionQueue;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -97,7 +96,7 @@ public class AAntiLandBuildingRequests {
 
         // Move towards nearest choke
         if (nearTo != null) {
-            AChoke choke = AMap.nearestChoke(nearTo);
+            AChoke choke = MapChokes.nearestChoke(nearTo);
             if (choke != null) {
                 nearTo = nearTo.translateTilesTowards(choke, 7);
             }

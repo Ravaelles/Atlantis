@@ -1,26 +1,15 @@
 package atlantis.map;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.production.constructing.AConstructionRequests;
-import atlantis.production.constructing.ConstructionOrder;
-import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
-import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
-import atlantis.position.Positions;
-import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.util.A;
-import atlantis.position.PositionUtil;
-import bwapi.Position;
+import atlantis.util.Cache;
 import bwapi.TilePosition;
-import bwta.BWTA;
-import bwta.Chokepoint;
-import bwta.Region;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import bwem.BWEM;
+import bwem.BWMap;
+import jbweb.Blocks;
+import jbweb.JBWEB;
 
 /**
  * This class provides information about high-abstraction level map operations like returning place for the
@@ -28,13 +17,13 @@ import java.util.stream.Collectors;
  */
 public class AMap {
 
-    private static final BWTA bwta = null;
-    private static final Set<AChoke> disabledChokes = new HashSet<>();
-    private static List<ARegion> cached_regions;
-    private static List<AChoke> cached_chokes = null;
-    private static AChoke cached_mainBaseChoke = null;
-    private static HashMap<APosition, AChoke> cached_basesToChokes;
-//    private static AChoke cached_basesToChokepoints = null;
+    private static BWEM bwem = null;
+//    private static final BWTA bwta = null;
+
+    private static Cache<Object> cache = new Cache<>();
+    //    private static List<ARegion> cached_regions;
+//    private static List<AChoke> cached_chokes = null;
+//    private static AChoke cached_mainBaseChoke = null;
 //    private static Map<String, Positions> regionsToPolygonPoints = new HashMap<>();
 
     // =========================================================
@@ -43,11 +32,24 @@ public class AMap {
     public static void initMapAnalysis() {
         System.out.print("Analyzing map... ");
 
-        cached_basesToChokes = new HashMap<>();
-        cached_regions = new ArrayList<>();
+//        cached_basesToChokes = new HashMap<>();
+//        cached_regions = new ArrayList<>();
 
-        BWTA.readMap(Atlantis.game());
-        BWTA.analyze();
+        // Fake BWTA class using BWEM behind the scenes
+//        BWTA.readMap(Atlantis.game());
+//        BWTA.analyze();
+
+//        game = bwClient.getGame();
+
+        // Init BWEM - Terran analysis tool
+        bwem = new BWEM(Atlantis.game());
+        bwem.initialize();
+        bwem.getMap().assignStartingLocationsToSuitableBases();
+
+        // Init JBWEB
+        System.out.println("PRe..........");
+        JBWEB.onStart(Atlantis.game(), bwem);
+        Blocks.findBlocks();
 
         System.out.println("OK.");
     }
@@ -57,9 +59,12 @@ public class AMap {
     /**
      * Returns map object.
      */
-    public static BWTA getMap() {
-        return bwta;
+    public static BWMap getMap() {
+        return bwem.getMap();
     }
+//    public static BWTA getMap() {
+//        return bwta;
+//    }
 
     /**
      * Returns map width in tiles.
@@ -78,232 +83,6 @@ public class AMap {
     // === Choke points ========================================    
 
     /**
-     * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
-     * method returns this choke point. It's perfect position to defend (because it's *choke* point).
-     */
-    public static AChoke mainBaseChoke() {
-        if (cached_mainBaseChoke == null) {
-            AUnit mainBase = Select.mainBase();
-            if (mainBase == null) {
-                return null;
-            }
-
-            // Define region where our main base is
-            ARegion mainRegion = getRegion(mainBase.position());
-            // System.out.println("mainRegion = " + mainRegion);
-            if (mainRegion == null) {
-                return null;
-            }
-
-            // Define localization of the second base to expand
-            APosition naturalBase = naturalBase();
-            // System.out.println("secondBase = " + secondBase);
-            if (naturalBase == null) {
-                return null;
-            }
-
-            // Define region of the second base
-            ARegion naturalBaseRegion = naturalBase.getRegion();
-            // System.out.println("secondRegion = " + secondRegion);
-            if (naturalBaseRegion == null) {
-                return null;
-            }
-
-            // Try to match choke points between the two regions
-            for (AChoke mainRegionChoke : mainRegion.chokes()) {
-                // System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
-                // + (mainRegionChoke.getFirstRegion()) + " / " + (mainRegionChoke.getSecondRegion()));
-                if (naturalBaseRegion.equals(mainRegionChoke.getFirstRegion())
-                        || naturalBaseRegion.equals(mainRegionChoke.getSecondRegion())) {
-                    cached_mainBaseChoke = mainRegionChoke;
-                    // System.out.println("MAIN CHOKE FOUND! " + cached_mainBaseChokepoint);
-                    break;
-                }
-            }
-
-            if (cached_mainBaseChoke == null) {
-                cached_mainBaseChoke = mainRegion.chokes().iterator().next();
-            }
-        }
-
-        return cached_mainBaseChoke;
-    }
-
-    /**
-     * Returns chokepoint to defend for the natural (second) base.
-     */
-    public static AChoke chokeForNaturalBase() {
-        return chokeForNaturalBase(naturalBase());
-    }
-
-    public static AChoke chokeForNaturalBase(APosition relativeTo) {
-        if (relativeTo == null) {
-            return null;
-        }
-
-        if (cached_basesToChokes.containsKey(relativeTo)) {
-            AChoke choke = cached_basesToChokes.get(relativeTo);
-//            APainter.paintCircle(APosition.create(choke.getCenter()), 5, Color.White);
-//            APainter.paintCircle(APosition.create(choke.getCenter()), 7, Color.White);
-//            APainter.paintTextCentered(
-//                    choke.getCenter().translateByTiles(0, 3),
-//                    choke.getWidth() + " wide",
-//                    Color.White
-//            );
-            return choke;
-        }
-
-        // =========================================================
-
-        ARegion naturalRegion = getRegion(naturalBase(relativeTo.position()));
-        if (naturalRegion == null) {
-            System.err.println("Can't find region for natural base");
-            AGame.setUmsMode(true);
-            return null;
-        }
-
-        AChoke chokeForMainBase = mainBaseChoke();
-        if (chokeForMainBase == null) {
-            return null;
-        }
-
-        for (AChoke choke : naturalRegion.chokes()) {
-//            naturalRegion.
-//            APosition center = APosition.create(chokepoint.getCenter());
-//            if (chokepoint.getCenter() > 1) {
-            if (choke.getCenter().distTo(chokeForMainBase) > 1) {
-                cached_basesToChokes.put(relativeTo, choke);
-                return choke;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns starting location that's nearest to given position and is not yet explored (black space, not
-     * fog of war).
-     */
-    public static APosition getNearestUnexploredStartingLocation(APosition nearestTo) {
-        if (nearestTo == null) {
-            return null;
-        }
-
-        // Get list of all starting locations
-        Positions<ABaseLocation> startingLocations = new Positions<>();
-        startingLocations.addPositions(getStartingLocations(true));
-
-        // Sort them all by closest to given nearestTo position
-        startingLocations.sortByDistanceTo(nearestTo, true);
-
-        // For every location...
-        for (ABaseLocation baseLocationPosition : startingLocations.list()) {
-            if (!isExplored(baseLocationPosition.position())) {
-                return APosition.create(baseLocationPosition);
-            }
-        }
-        return null;
-    }
-
-    public static ABaseLocation getStartingLocationBasedOnIndex(int index) {
-        ArrayList<ABaseLocation> baseLocations = new ArrayList<>();
-        baseLocations.addAll(getStartingLocations(true));
-
-        if (baseLocations.isEmpty()) {
-            return null;
-        }
-
-        return baseLocations.get(index % baseLocations.size());
-    }
-
-    /**
-     * Returns nearest free base location where we don't have base built yet.
-     */
-    public static ABaseLocation getExpansionFreeBaseLocationNearestTo(Position nearestTo) {
-
-        // Get list of all base locations
-        Positions<ABaseLocation> baseLocations = new Positions<>();
-        baseLocations.addPositions(getBaseLocations());
-
-        // Sort them all by closest to given nearestTo position
-        if (nearestTo != null) {
-            baseLocations.sortByDistanceTo(nearestTo, true);
-        }
-
-        // For every location...
-        for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation)) {
-                return baseLocation;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns free base location which is as far from enemy starting location as possible.
-     */
-    public static ABaseLocation getExpansionBaseLocationMostDistantToEnemy() {
-        APosition farthestTo = AEnemyUnits.enemyBase();
-        if (farthestTo == null) {
-            return getExpansionFreeBaseLocationNearestTo(Select.ourBases().first().position());
-        }
-
-        // =========================================================
-
-        // Get list of all base locations
-        Positions<ABaseLocation> baseLocations = new Positions<>();
-        baseLocations.addPositions(getBaseLocations());
-
-        // Sort them all by closest to given nearestTo position
-        if (farthestTo != null) {
-            baseLocations.sortByDistanceTo(farthestTo, false);
-        }
-
-        // For every location...
-        for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation)) {
-                return baseLocation;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns nearest base location (by the actual ground distance) to the given base location.
-     */
-    public static APosition naturalBase() {
-        if (Select.mainBase() == null) {
-            return null;
-        }
-
-        ABaseLocation naturalBaseLocation = naturalBase(Select.mainBase().position());
-        if (naturalBaseLocation != null) {
-            return naturalBaseLocation.position();
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns nearest base location (by the actual ground distance) to the given base location.
-     */
-    public static ABaseLocation naturalBase(APosition nearestTo) {
-        // Get all base locations, sort by being closest to given nearestTo position
-        Positions<ABaseLocation> baseLocations = new Positions<>();
-        baseLocations.addPositions(getBaseLocations());
-        baseLocations.sortByGroundDistanceTo(nearestTo, true);
-
-        for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.position())) {
-                continue;
-            }
-            return baseLocation;
-        }
-
-        return null;
-    }
-
-    /**
      * Returns random point on map with fog of war, preferably unexplored one.
      */
     public static APosition getRandomInvisiblePosition(APosition startPoint) {
@@ -313,7 +92,7 @@ public class AMap {
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValidFarFromBounds();
-            if (isWalkable(position) && !isVisible(position) && startPoint.hasPathTo(position)) {
+            if (position.isWalkable() && !position.isVisible() && startPoint.hasPathTo(position)) {
                 return position;
             }
         }
@@ -328,32 +107,10 @@ public class AMap {
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValidFarFromBounds();
-            if (isWalkable(position) && !isExplored(position) && startPoint.hasPathTo(position)) {
+            if (position.isWalkable() && !position.isExplored() && startPoint.hasPathTo(position)) {
                 return getMostWalkablePositionNear(position, 2);
             }
         }
-        return null;
-    }
-
-    /**
-     * Returns nearest (preferably directly connected) region which has center of it still unexplored.
-     */
-    public static ARegion getNearestUnexploredRegion(APosition position) {
-        ARegion region = AMap.getRegion(position);
-        if (region == null) {
-            return null;
-        }
-
-        ARegion regionToVisit = null;
-
-        for (ARegion reachableRegion : region.getReachableRegions()) {
-            if (!AMap.isExplored(reachableRegion.getCenter())) {
-                regionToVisit = reachableRegion;
-//                return APosition.createFrom(regionToVisit.getCenter());
-                return regionToVisit;
-            }
-        }
-
         return null;
     }
 
@@ -389,7 +146,7 @@ public class AMap {
         for (int dtx = -tileSearchRadius; dtx <= 2 * tileSearchRadius; dtx += 3) {
             for (int dty = -tileSearchRadius; dty <= 2 * tileSearchRadius; dty += 3) {
                 if (tileSearchRadius <= dtx + dty && dtx + dty <= tileSearchRadius + 1) {
-                    score += isWalkable(position.translateByTiles(dtx, dty).makeValid()) ? 1 : 0;
+                    score += position.translateByTiles(dtx, dty).makeValid().isWalkable() ? 1 : 0;
                 }
             }
         }
@@ -397,214 +154,8 @@ public class AMap {
         return score;
     }
 
-    /**
-     * Returns nearest land-connected position on map which hasn't been explored.
-     */
-//    public static APosition getNearestUnexploredAccessiblePosition(APosition position) {
-//        int maxRadius = Math.max(getMapWidthInTiles(), getMapHeightInTiles());
-//        int currentRadius = 6;
-//        int step = 3;
-//
-//        while (currentRadius < maxRadius) {
-//            double doubleCurrentRadius = currentRadius * 2;
-//            for (int dx = -currentRadius; dx <= currentRadius; dx += doubleCurrentRadius) {
-//                for (int dy = -currentRadius; dy <= currentRadius; dy += doubleCurrentRadius) {
-//                    APosition potentialPosition = position.translateByTiles(dx, dy).makeValid();
-//                    if (!isExplored(potentialPosition) && position.hasPathTo(potentialPosition)) {
-//                        return potentialPosition;
-//                    }
-//                }
-//            }
-//
-//            currentRadius += 3;
-//        }
-//
-////        System.err.println("Can't find getNearestUnexploredAccessiblePosition");
-//        return null;
-//    }
-
-    public static AChoke nearestChoke(APosition position) {
-        double nearestDist = 99999;
-        AChoke nearest = null;
-
-        for (AChoke chokePoint : getChokes()) {
-            double dist = position.groundDistanceTo(chokePoint.getCenter()) - (chokePoint.getWidth() / 64.0);
-            if (dist < nearestDist) {
-                nearestDist = dist;
-                nearest = chokePoint;
-            }
-        }
-
-        return nearest;
-    }
-
-    /**
-     * @fix
-     * @broken due to BWTA Polygon gone from the bridge :- ( It was working in BWMirror.
-     *
-     * Can be used to avoid getting to close to the region edges, which may cause unit to get stuck.
-     */
-//    public static double getDistanceToAnyRegionPolygonPoint(APosition unitPosition) {
-//        return 99;
-//        Region region = unitPosition.getRegion();
-//
-//        if (region == null) {
-//            System.err.println("isPositionFarFromAnyRegionPolygonPoint -> Region is null");
-//            return 999;
-//        }
-//        if (region.getPolygon() == null) {
-//            System.err.println("isPositionFarFromAnyRegionPolygonPoint -> region.getPolygon() is null");
-//            return 999;
-//        }
-//
-//        // === Define polygon points for given region ==============
-//
-//        Positions polygonPoints = new Positions();
-//        if (regionsToPolygonPoints.containsKey(region.toString())) {
-//            polygonPoints = regionsToPolygonPoints.get(region.toString());
-//        } else {
-//            polygonPoints = new Positions();
-//            polygonPoints.addPositions(region.getPolygon().getPoints());
-//            regionsToPolygonPoints.put(region.toString(), polygonPoints);
-//        }
-//
-////        for (Positions positions : regionsToPolygonPoints.values()) {
-////            for (Iterator it = positions.arrayList().iterator(); it.hasNext();) {
-////                Position position = (Position) it.next();
-////                APainter.paintCircle(position, 13, Color.Yellow);
-////                APainter.paintCircle(position, 16, Color.Yellow);
-////            }
-////        }
-//
-//        APosition nearestPolygon = polygonPoints.nearestTo(unitPosition);
-//
-//        // =========================================================
-//
-//        if (nearestPolygon != null) {
-//            double distanceTo = nearestPolygon.distanceTo(unitPosition);
-//            return nearestPolygon.distanceTo(unitPosition);
-//        } else {
-//            return 99;
-//        }
-//    }
-
-    // =========================================================
-
-    /**
-     * Returns list of places that have geyser and mineral fields so they are the places where you could build
-     * a base. Starting locations are also included here.
-     */
-    public static List<ABaseLocation> getBaseLocations() {
-//        return BWTA.getBaseLocations();
-        return BWTA.getBaseLocations()
-                .stream()
-                .map(base -> ABaseLocation.create(base))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns list of all places where players can start a game. Note, that if you play map for two players
-     * and you know location of your own base. So you also know the location of enemy base (enemy *must* be
-     * there), but still obviously you don't see him.
-     */
-    public static List<ABaseLocation> getStartingLocations(boolean excludeOurStartLocation) {
-        ArrayList<ABaseLocation> startingLocations = new ArrayList<>();
-        for (ABaseLocation baseLocation : AMap.getBaseLocations()) {
-            if (baseLocation.isStartLocation()) {
-
-                // Exclude our base location if needed.
-                if (excludeOurStartLocation) {
-                    AUnit mainBase = Select.mainBase();
-                    if (mainBase != null && PositionUtil.distanceTo(mainBase, baseLocation.position()) <= 10) {
-                        continue;
-                    }
-                }
-
-                startingLocations.add(baseLocation);
-            }
-        }
-        return startingLocations;
-    }
-
-    /**
-     * Returns list of all choke points i.e. places where suddenly it gets extra tight and fighting there
-     * usually prefers ranged units. They are perfect places for terran bunkers.
-     */
-    public static List<AChoke> getChokes() {
-        if (cached_chokes == null) {
-            cached_chokes = new ArrayList<>();
-            for (Chokepoint choke : BWTA.getChokepoints()) {
-                if (!disabledChokes.contains(choke)) { // choke.isDisabled()
-                    cached_chokes.add(AChoke.create(choke));
-                }
-            }
-        }
-        return cached_chokes;
-    }
-
-    public static List<ARegion> getRegions() {
-        if (cached_regions == null) {
-            cached_regions = new ArrayList<>();
-            for (Region region : BWTA.getRegions()) {
-                cached_regions.add(ARegion.create(region));
-            }
-        }
-        return cached_regions;
-    }
-
-    /**
-     * Returns region object for given <b>position</b>. This object provides some very helpful informations
-     * like you can access list of choke points that belong to it etc.
-     *
-     * @see ARegion
-     */
-    public static ARegion getRegion(Object param) {
-        Position position = null;
-
-        if (param instanceof Position) {
-            position = (Position) param;
-        } else if (param instanceof Region) {
-            position = ((Region) param).getCenter();
-        } else if (param instanceof HasPosition) {
-            position = ((HasPosition) param).position();
-        } else {
-            System.err.println("getRegion failed for " + param);
-            return null;
-        }
-
-        return ARegion.create(BWTA.getRegion(position));
-    }
-
     public static String getMapName() {
         return Atlantis.game().mapName();
-    }
-
-    /**
-     * Returns true if given position is explored i.e. if it's not black screen (but could be fog of war).
-     */
-    public static boolean isExplored(APosition position) {
-        return Atlantis.game().isExplored(position.toTilePosition());
-    }
-
-    /**
-     * Returns true if given position visible.
-     */
-    public static boolean isVisible(APosition position) {
-        return Atlantis.game().isVisible(position.toTilePosition());
-    }
-
-    /**
-     * Returns true if given position can be traversed by land units.
-     */
-    public static boolean isWalkable(APosition position) {
-        return Atlantis.game().isWalkable(position.getX() / 8, position.getY() / 8);
-    }
-
-    /**
-     * Returns true if it's possible to build on the given position.
-     */
-    public static boolean isBuildable(APosition position) {
-        return Atlantis.game().isBuildable(position.getX() / 8, position.getY() / 8);
     }
 
     // =========================================================
@@ -618,121 +169,29 @@ public class AMap {
      *
      * @return true if everything went okay
      */
-    public static boolean disableSomeOfTheChokes() {
-        AUnit mainBase = Select.mainBase();
-        if (mainBase == null) {
-            return false;
-        }
-
-        ARegion baseRegion = getRegion(mainBase.position());
-        if (baseRegion == null) {
-            System.err.println("Error #821493b");
-            System.err.println("Main base = " + mainBase);
-            System.err.println("Base region = " + baseRegion);
-            return false;
-        }
-
-        Collection<AChoke> chokes = baseRegion.chokes();
-        for (AChoke choke : chokes) {
-            if (baseRegion.chokes().contains(choke)) {
-                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
-                disabledChokes.add(choke);    //choke.setDisabled(true);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Returns true if given base location is free from units, meaning it's a good place for expansion.
-     * <p>
-     * Trying to avoid:
-     * - existing buildings
-     * - any enemy units
-     * - planned constructions
-     */
-    public static boolean isBaseLocationFreeOfBuildingsAndEnemyUnits(ABaseLocation baseLocation) {
-
-        // If we have any base, FALSE.
-        if (Select.ourBases().inRadius(7, baseLocation.position()).count() > 0) {
-            return false;
-        }
-
-        // If any enemy unit is nearby
-        if (Select.enemy().inRadius(11, baseLocation.position()).count() > 0) {
-            return false;
-        }
-
-        // Check for planned constructions
-        for (ConstructionOrder constructionOrder : AConstructionRequests.getAllConstructionOrders()) {
-            APosition constructionPlace = constructionOrder.getPositionToBuildCenter();
-            if (constructionPlace != null && constructionPlace.distTo(baseLocation.position()) < 8) {
-                return false;
-            }
-        }
-
-        // All conditions have been fulfilled.
-        return true;
-    }
-
-    public static APosition getEnemyNatural() {
-        APosition enemyBase = AEnemyUnits.enemyBase();
-        if (enemyBase == null) {
-            return null;
-        }
-
-        ABaseLocation baseLocation = AMap.naturalBase(enemyBase);
-        if (baseLocation != null) {
-            return baseLocation.position();
-        }
-
-        return null;
-    }
-
-    public static AChoke enemyMainChoke() {
-        APosition enemyMain = AEnemyUnits.enemyBase();
-        if (enemyMain == null) {
-            return null;
-        }
-
-        return nearestChoke(enemyMain);
-    }
-
-    public static AChoke enemyNaturalChoke() {
-        APosition enemyNatural = getEnemyNatural();
-        if (enemyNatural == null) {
-            return null;
-        }
-
-        return chokeForNaturalBase(enemyNatural);
-    }
-
-    /**
-     * Warning - takes very long time.
-     * <p>
-     * Returns land distance (in tiles) between unit and given position.
-     */
-    public static double groundDist(AUnit unit, APosition runTo) {
-        return BWTA.getGroundDistance(unit.position().toTilePosition(), runTo.toTilePosition()) / 32;
-    }
-
-    public static boolean distanceToNearestChokeLessThan(AUnit unit, double dist) {
-        for (AChoke choke : getChokes()) {
-            if ((choke.getCenter().distTo(unit) - choke.getWidth()) <= dist) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Warning - takes very long time.
-     *
-     * Returns shortest land distance (in tiles) between unit and given position.
-     */
-//    public static double getShortestPath(AUnit unit, APosition runTo) {
-//        return BWTA.get(unit.getPosition().toTilePosition(), runTo.toTilePosition()) / 32;
+//    public static boolean disableSomeOfTheChokes() {
+//        AUnit mainBase = Select.mainBase();
+//        if (mainBase == null) {
+//            return false;
+//        }
+//
+//        ARegion baseRegion = getRegion(mainBase.position());
+//        if (baseRegion == null) {
+//            System.err.println("Error #821493b");
+//            System.err.println("Main base = " + mainBase);
+//            System.err.println("Base region = " + baseRegion);
+//            return false;
+//        }
+//
+//        Collection<AChoke> chokes = baseRegion.chokes();
+//        for (AChoke choke : chokes) {
+//            if (baseRegion.chokes().contains(choke)) {
+//                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
+//                MapChokes.disabledChokes.add(choke);    //choke.setDisabled(true);
+//            }
+//        }
+//
+//        return true;
 //    }
 
 }

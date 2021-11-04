@@ -40,6 +40,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         double optimalDist = 6.5;
         double distToFocusPoint = unit.distTo(focusPoint);
         double margin = Math.max(1.2, (unit.squadSize() - 6) / 10.0);
+        boolean result;
 
         if (Us.isTerran() && handleTerranAdvance(unit)) {
             return true;
@@ -49,9 +50,9 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         if (
                 allowTooClose
                 && distToFocusPoint <= optimalDist - margin
-                && unit.moveAwayFrom(focusPoint, 2.5, "#Adv:TooClose(" + (int) distToFocusPoint + ")")
+                && (result = unit.moveAwayFrom(focusPoint, 2.5, "#Adv:TooClose(" + (int) distToFocusPoint + ")"))
         ) {
-            return true;
+            return result;
         }
 
         // Close enough
@@ -64,8 +65,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // Too far
         else if (distToFocusPoint > optimalDist + margin) {
-            unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")");
-            return true;
+            return unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")");
         }
 
         return false;

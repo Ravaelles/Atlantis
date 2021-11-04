@@ -24,11 +24,13 @@ public class SafetyMargin {
             throw new RuntimeException("Attacker is null");
         }
 
+        double base = defender.isOur() && defender.isSquadScout() ? 2 : 0;
+
         if (attacker.isMelee()) {
-            return SafetyMarginAgainstMelee.calculate(attacker, defender);
+            return base + SafetyMarginAgainstMelee.calculate(attacker, defender);
         }
         else {
-            return SafetyMarginAgainstRanged.calculate(attacker, defender);
+            return base + SafetyMarginAgainstRanged.calculate(attacker, defender);
         }
     }
 

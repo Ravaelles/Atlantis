@@ -2,11 +2,11 @@ package atlantis.production.constructing.position;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.map.BaseLocations;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.map.ABaseLocation;
-import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -108,7 +108,7 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
-        for (ABaseLocation base : AMap.getBaseLocations()) {
+        for (ABaseLocation base : BaseLocations.baseLocations()) {
             if (!base.isStartLocation() && base.position().distTo(position) <= 5.6) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";
                 return true;

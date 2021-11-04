@@ -1134,4 +1134,8 @@ public class A {
     public static boolean supplyAtLeast(int minSupply) {
         return AGame.supplyUsed() >= minSupply;
     }
+
+    public static int resourcesBalance() {
+        return AGame.killsLossesResourceBalance();
+    }
 }

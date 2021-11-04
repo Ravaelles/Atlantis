@@ -2,13 +2,12 @@ package atlantis.enemy;
 
 import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
-import atlantis.map.AMap;
+import atlantis.map.BaseLocations;
 import atlantis.position.APosition;
 import atlantis.strategy.response.AStrategyResponseFactory;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -77,7 +76,7 @@ public class AEnemyUnits {
 //                boolean isBaseAtStartingLocation = false;
                 APosition discoveredBase = enemyUnitData.position();
                 
-                for (ABaseLocation startingLocation : AMap.getStartingLocations(false)) {
+                for (ABaseLocation startingLocation : BaseLocations.startingLocations(false)) {
                     if (discoveredBase.distTo(startingLocation.position()) <= 7) {
 //                        System.out.println("Discovered main enemy base");
                         return true;

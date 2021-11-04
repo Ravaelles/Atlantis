@@ -1,9 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.CameraManager;
-import atlantis.map.ABaseLocation;
-import atlantis.map.AChoke;
-import atlantis.map.AMap;
+import atlantis.map.*;
 import atlantis.position.APosition;
 
 public class MissionContainFocusPoint extends MissionFocusPoint {
@@ -16,13 +14,13 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             return containEnemyAtPoint;
         }
 
-        AChoke naturalChoke = AMap.enemyNaturalChoke();
+        AChoke naturalChoke = MapChokes.enemyNaturalChoke();
         if (naturalChoke != null) {
             System.out.println("naturalChoke = " + naturalChoke);
             containEnemyAtPoint = naturalChoke.position();
         }
 
-        AChoke mainChoke = AMap.enemyMainChoke();
+        AChoke mainChoke = MapChokes.enemyMainChoke();
         if (mainChoke != null) {
             System.out.println("mainChoke = " + mainChoke);
             containEnemyAtPoint = mainChoke.position();
@@ -49,13 +47,13 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     // =========================================================
 
     private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
-        AChoke chokepoint = AMap.chokeForNaturalBase(enemyBase);
+        AChoke chokepoint = MapChokes.chokeForNaturalBase(enemyBase);
         if (chokepoint != null) {
             CameraManager.centerCameraOn(chokepoint.getCenter());
             return containEnemyAtPoint = chokepoint.getCenter();
         }
 
-        ABaseLocation natural = AMap.naturalBase(enemyBase.position());
+        ABaseLocation natural = BaseLocations.naturalBase(enemyBase.position());
         if (natural != null) {
             CameraManager.centerCameraOn(natural);
             return containEnemyAtPoint = natural.position();

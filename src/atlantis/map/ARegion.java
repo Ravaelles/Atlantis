@@ -2,7 +2,7 @@ package atlantis.map;
 
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import bwta.Region;
+import bwem.Area;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,20 +10,30 @@ import java.util.stream.Collectors;
 
 public class ARegion implements HasPosition {
 
-    private Region region;
+//    private Region region;
+//
+//    public static ARegion create(Region region) {
+//        ARegion aRegion = new ARegion();
+//        aRegion.region = region;
+//
+//        return aRegion;
+//    }
 
-    public static ARegion create(Region region) {
-        ARegion aRegion = new ARegion();
-        aRegion.region = region;
+    private Area area;
+    private APosition center;
 
-        return aRegion;
+    public static ARegion create(Area area) {
+        ARegion region = new ARegion();
+        region.area = area;
+
+        return region;
     }
 
     // =========================================================
 
     @Override
     public APosition position() {
-        return APosition.create(region.getCenter());
+        return APosition.create(getCenter());
     }
 
     @Override
@@ -41,34 +51,41 @@ public class ARegion implements HasPosition {
         if (this == o) return true;
         if (!(o instanceof ARegion)) return false;
         ARegion aRegion = (ARegion) o;
-        return region.equals(aRegion.region);
+        return area.equals(aRegion.area);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(region);
+        return Objects.hash(area);
     }
 
     // =========================================================
 
     public APosition getCenter() {
-        return APosition.create(region.getCenter());
+        if (center == null) {
+            center = new APosition(
+                    area.getTopLeft().x + area.getBottomRight().x / 2,
+                    area.getTopLeft().y + area.getBottomRight().y / 2
+            );
+        }
+
+        return center;
     }
 
     public List<AChoke> chokes() {
-        return region.getChokepoints().stream().map(AChoke::create).collect(Collectors.toList());
+        return area.getChokePoints().stream().map(AChoke::create).collect(Collectors.toList());
     }
 
     public List<ABaseLocation> getBaseLocations() {
-        return region.getBaseLocations().stream().map(ABaseLocation::create).collect(Collectors.toList());
+        return area.getBases().stream().map(ABaseLocation::create).collect(Collectors.toList());
     }
 
     public boolean isReachable(ARegion otherRegion) {
-        return region.isReachable(otherRegion.region);
+        return area.isAccessibleFrom(otherRegion.area);
     }
 
     public List<ARegion> getReachableRegions() {
-        return region.getReachableRegions().stream().map(ARegion::create).collect(Collectors.toList());
+        return area.getAccessibleNeighbors().stream().map(ARegion::create).collect(Collectors.toList());
     }
 
 }

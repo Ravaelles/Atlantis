@@ -2,7 +2,7 @@ package atlantis.strategy.response;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
-import atlantis.map.AMap;
+import atlantis.map.MapChokes;
 import atlantis.production.requests.AAntiAirBuildingRequests;
 import atlantis.production.requests.AAntiLandBuildingRequests;
 import atlantis.production.requests.ARequests;
@@ -82,10 +82,10 @@ public abstract class AStrategyResponse {
         if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
             AStrategyInformations.setDetectorsNeeded(1);
             ARequests.getInstance().requestDetectorQuick(
-                    AMap.mainBaseChoke().getCenter()
+                    MapChokes.mainBaseChoke().getCenter()
             );
             ARequests.getInstance().requestDetectorQuick(
-                    AMap.chokeForNaturalBase(Select.mainBase().position()).getCenter()
+                    MapChokes.chokeForNaturalBase(Select.mainBase().position()).getCenter()
             );
         }
     }

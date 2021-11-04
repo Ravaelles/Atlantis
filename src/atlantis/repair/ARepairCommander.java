@@ -3,7 +3,7 @@ package atlantis.repair;
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
 import atlantis.map.AChoke;
-import atlantis.map.AMap;
+import atlantis.map.MapChokes;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -92,7 +92,7 @@ public class ARepairCommander {
         // Assign two repairers to a bunker if it's not surrounded by many of our combat units
 //        if (bunkersCounter == 1) {
 //        for (AUnit bunker : bunkers.list()) {
-        AChoke chokepointForNaturalBase = AMap.chokeForNaturalBase(mainBase.position());
+        AChoke chokepointForNaturalBase = MapChokes.chokeForNaturalBase(mainBase.position());
         if (chokepointForNaturalBase != null) {
             AUnit bunker = bunkers.nearestTo(chokepointForNaturalBase.getCenter());
             if (bunker == null) {

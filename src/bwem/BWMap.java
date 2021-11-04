@@ -124,7 +124,7 @@ public abstract class BWMap {
         return getGraph().getBases();
     }
 
-    public List<ChokePoint> getChokePoints() {
+    public List<ChokePoint> chokes() {
         return getGraph().getChokePoints();
     }
 

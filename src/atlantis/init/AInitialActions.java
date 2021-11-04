@@ -17,7 +17,8 @@ public class AInitialActions {
             AGame.setUmsMode(true);
         }
 
-        if (!AMap.disableSomeOfTheChokes() || Select.ourWorkers().count() != 4) {
+//        if (!AMap.disableSomeOfTheChokes() || Select.ourWorkers().count() != 4) {
+        if (Select.ourWorkers().count() != 4) {
             AGame.setUmsMode(true);
         }
 

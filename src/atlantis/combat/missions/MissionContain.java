@@ -1,9 +1,8 @@
 package atlantis.combat.missions;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
-import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.SquadScout;
-import atlantis.map.AMap;
+import atlantis.map.BaseLocations;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.util.A;
@@ -30,9 +29,9 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        if (ASquadCohesionManager.handle(unit)) {
-            return true;
-        }
+//        if (ASquadCohesionManager.handle(unit)) {
+//            return true;
+//        }
 
         // Focus point is well known
         return focusPoint != null && AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint);
@@ -55,7 +54,7 @@ public class MissionContain extends Mission {
         }
 
         // Allow to defend base
-        APosition natural = AMap.naturalBase();
+        APosition natural = BaseLocations.naturalBase();
         if (natural != null && enemy.distTo(natural) <= 35) {
             return true;
         }

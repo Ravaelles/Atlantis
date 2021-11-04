@@ -2,11 +2,10 @@ package atlantis.combat.missions;
 
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
-import atlantis.map.AMap;
+import atlantis.map.BaseLocations;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
 
@@ -53,7 +52,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Try to go to some starting location, hoping to find enemy there.
-        APosition startLocation = AMap.getNearestUnexploredStartingLocation(Select.mainBase().position());
+        APosition startLocation = BaseLocations.getNearestUnexploredStartingLocation(Select.mainBase().position());
         return startLocation;
     }
 

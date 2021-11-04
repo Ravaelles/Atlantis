@@ -4,9 +4,8 @@ import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.units.AUnit;
 import bwapi.Position;
-import bwapi.TilePosition;
 import bwapi.Unit;
-import bwta.BWTA;
+import jbweb.JBWEB;
 
 public class PositionUtil {
 
@@ -110,7 +109,8 @@ public class PositionUtil {
     /**
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
-    public static double groundDistanceTo(APosition from, APosition to) {
-        return BWTA.getGroundDistance(new TilePosition(from.p()), new TilePosition(to.p())) / 32.0;
+    public static double groundDistanceTo(Position from, Position to) {
+//        return BWTA.getGroundDistance(new TilePosition(from.p()), new TilePosition(to.p())) / 32.0;
+        return JBWEB.getGroundDistance(from, to) / 32.0;
     }
 }

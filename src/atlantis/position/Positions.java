@@ -2,7 +2,6 @@ package atlantis.position;
 
 import atlantis.util.A;
 import bwapi.Position;
-import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -105,15 +104,15 @@ public class Positions<T extends HasPosition> {
      * Sorts all positions according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first position will be the one closest to given position.
      */
-    public Positions<T> sortByGroundDistanceTo(final Position position, final boolean nearestFirst) {
+    public Positions<T> sortByGroundDistanceTo(final HasPosition position, final boolean nearestFirst) {
         positions.sort(new Comparator<T>() {
             @Override
             public int compare(T u1, T u2) {
-                double distToU1 = BWTA.getGroundDistance(position.toTilePosition(), u1.position().toTilePosition());
+                double distToU1 = position.position().groundDistanceTo(u1);
                 if (distToU1 < 0) {
                     distToU1 = 99999;
                 }
-                double distToU2 = BWTA.getGroundDistance(position.toTilePosition(), u2.position().toTilePosition());
+                double distToU2 = position.position().groundDistanceTo(u2);;
                 return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
         });

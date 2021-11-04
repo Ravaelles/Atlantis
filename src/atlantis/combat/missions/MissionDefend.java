@@ -70,6 +70,10 @@ public class MissionDefend extends Mission {
             return true;
         }
 
+        if (unit.hasWeaponRange(enemy, 1.2)) {
+            return true;
+        }
+
         if (unit.distToLessThan(focusPoint(), 1.5)) {
             return true;
         }
@@ -79,9 +83,6 @@ public class MissionDefend extends Mission {
         }
 
 //        if (unit.isInWeaponRangeByGame(enemy)) {
-        if (unit.hasWeaponRange(enemy, 0.8)) {
-            return true;
-        }
 
 //        if () {
 //            return true;
