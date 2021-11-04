@@ -20,7 +20,7 @@ public class MapChokes {
      * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
      * method returns this choke point. It's perfect position to defend (because it's *choke* point).
      */
-    public static AChoke mainBaseChoke() {
+    public static AChoke mainChoke() {
         return (AChoke) cache.get(
                 "mainBaseChoke",
                 -1,
@@ -38,16 +38,16 @@ public class MapChokes {
 //                    }
 //
 //                    // Define localization of the second base to expand
-//                    APosition naturalBase = naturalBase();
+//                    APosition natural = natural();
 //                    // System.out.println("secondBase = " + secondBase);
-//                    if (naturalBase == null) {
+//                    if (natural == null) {
 //                        return null;
 //                    }
 //
 //                    // Define region of the second base
-//                    ARegion naturalBaseRegion = naturalBase.getRegion();
+//                    ARegion naturalRegion = natural.getRegion();
 //                    // System.out.println("secondRegion = " + secondRegion);
-//                    if (naturalBaseRegion == null) {
+//                    if (naturalRegion == null) {
 //                        return null;
 //                    }
 //
@@ -55,8 +55,8 @@ public class MapChokes {
 //                    for (AChoke mainRegionChoke : mainRegion.chokes()) {
 //                        // System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
 //                        // + (mainRegionChoke.getFirstRegion()) + " / " + (mainRegionChoke.getSecondRegion()));
-//                        if (naturalBaseRegion.equals(mainRegionChoke.getFirstRegion())
-//                                || naturalBaseRegion.equals(mainRegionChoke.getSecondRegion())) {
+//                        if (naturalRegion.equals(mainRegionChoke.getFirstRegion())
+//                                || naturalRegion.equals(mainRegionChoke.getSecondRegion())) {
 //                            return mainRegionChoke;
 //                            // System.out.println("MAIN CHOKE FOUND! " + cached_mainBaseChokepoint);
 //                        }
@@ -72,32 +72,32 @@ public class MapChokes {
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
-    public static AChoke chokeForNaturalBase() {
+    public static AChoke chokeForNatural() {
         return (AChoke) cache.get(
-                "chokeForNaturalBase",
+                "chokeForNatural",
                 -1,
                 () -> AChoke.create(JBWEB.getNaturalChoke())
         );
-//        return chokeForNaturalBase(AMap.naturalBase());
+//        return chokeForNatural(AMap.natural());
     }
 
-    public static AChoke chokeForNaturalBase(APosition relativeTo) {
+    public static AChoke chokeForNatural(APosition relativeTo) {
         if (relativeTo == null) {
             return null;
         }
 
         return (AChoke) cache.get(
-                "chokeForNaturalBase:" + relativeTo.toStringPixels(),
+                "chokeForNatural:" + relativeTo.toStringPixels(),
                 400,
                 () -> {
-                    ARegion naturalRegion = Regions.getRegion(BaseLocations.naturalBase(relativeTo.position()));
+                    ARegion naturalRegion = Regions.getRegion(BaseLocations.natural(relativeTo.position()));
                     if (naturalRegion == null) {
                         System.err.println("Can't find region for natural base");
                         AGame.setUmsMode(true);
                         return null;
                     }
 
-                    AChoke chokeForMainBase = mainBaseChoke();
+                    AChoke chokeForMainBase = mainChoke();
                     if (chokeForMainBase == null) {
                         return null;
                     }
@@ -174,7 +174,7 @@ public class MapChokes {
         return (AChoke) cache.get(
                 "enemyNaturalChoke",
                 100,
-                () -> chokeForNaturalBase(enemyNatural)
+                () -> chokeForNatural(enemyNatural)
         );
     }
 

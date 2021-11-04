@@ -579,11 +579,11 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Returns second (natural) base <b>or if we have only one base</b>, it returns the only base we have.
      */
-    public static AUnit naturalBaseOrMain() {
+    public static AUnit naturalOrMain() {
         String cachePath;
 
         return cacheUnit.get(
-                cachePath = "naturalBaseOrMainIfNoSecond",
+                cachePath = "naturalOrMainIfNoSecond",
                 10,
                 () -> {
                     List<? extends AUnit> bases = Select.ourBases().list();

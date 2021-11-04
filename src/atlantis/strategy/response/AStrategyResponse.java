@@ -82,10 +82,10 @@ public abstract class AStrategyResponse {
         if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
             AStrategyInformations.setDetectorsNeeded(1);
             ARequests.getInstance().requestDetectorQuick(
-                    MapChokes.mainBaseChoke().getCenter()
+                    MapChokes.mainChoke().getCenter()
             );
             ARequests.getInstance().requestDetectorQuick(
-                    MapChokes.chokeForNaturalBase(Select.mainBase().position()).getCenter()
+                    MapChokes.chokeForNatural(Select.mainBase().position()).getCenter()
             );
         }
     }

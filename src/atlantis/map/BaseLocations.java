@@ -111,14 +111,14 @@ public class BaseLocations {
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
-    public static APosition naturalBase() {
+    public static APosition natural() {
         if (Select.mainBase() == null) {
             return null;
         }
 
-        ABaseLocation naturalBaseLocation = naturalBase(Select.mainBase().position());
-        if (naturalBaseLocation != null) {
-            return naturalBaseLocation.position();
+        ABaseLocation naturalLocation = natural(Select.mainBase().position());
+        if (naturalLocation != null) {
+            return naturalLocation.position();
         }
 
         return null;
@@ -127,7 +127,7 @@ public class BaseLocations {
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
-    public static ABaseLocation naturalBase(APosition nearestTo) {
+    public static ABaseLocation natural(APosition nearestTo) {
         // Get all base locations, sort by being closest to given nearestTo position
         Positions<ABaseLocation> baseLocations = new Positions<>();
         baseLocations.addPositions(baseLocations());
@@ -239,7 +239,7 @@ public class BaseLocations {
                         return null;
                     }
 
-                    ABaseLocation baseLocation = naturalBase(enemyBase);
+                    ABaseLocation baseLocation = natural(enemyBase);
                     if (baseLocation != null) {
                         return baseLocation.position();
                     }

@@ -16,13 +16,11 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 
         AChoke naturalChoke = MapChokes.enemyNaturalChoke();
         if (naturalChoke != null) {
-            System.out.println("naturalChoke = " + naturalChoke);
             containEnemyAtPoint = naturalChoke.position();
         }
 
         AChoke mainChoke = MapChokes.enemyMainChoke();
         if (mainChoke != null) {
-            System.out.println("mainChoke = " + mainChoke);
             containEnemyAtPoint = mainChoke.position();
         }
 
@@ -47,13 +45,13 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     // =========================================================
 
     private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
-        AChoke chokepoint = MapChokes.chokeForNaturalBase(enemyBase);
+        AChoke chokepoint = MapChokes.chokeForNatural(enemyBase);
         if (chokepoint != null) {
             CameraManager.centerCameraOn(chokepoint.getCenter());
             return containEnemyAtPoint = chokepoint.getCenter();
         }
 
-        ABaseLocation natural = BaseLocations.naturalBase(enemyBase.position());
+        ABaseLocation natural = BaseLocations.natural(enemyBase.position());
         if (natural != null) {
             CameraManager.centerCameraOn(natural);
             return containEnemyAtPoint = natural.position();
@@ -76,7 +74,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 ////            return null;
 ////        }
 ////
-////        AChoke choke = AMap.getChokepointForNaturalBase(mainBase.getPosition());
+////        AChoke choke = AMap.getChokepointForNatural(mainBase.getPosition());
 ////        return choke == null ? null : choke.getCenter();
 //    }
 

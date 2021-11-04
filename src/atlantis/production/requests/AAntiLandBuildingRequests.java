@@ -90,7 +90,7 @@ public class AAntiLandBuildingRequests {
         if (nearTo == null) {
 
             // Place near the base
-            nearTo = Select.naturalBaseOrMain() != null ? Select.naturalBaseOrMain().position() : null;
+            nearTo = Select.naturalOrMain() != null ? Select.naturalOrMain().position() : null;
 //            nearTo = Select.mainBase();
         }
 

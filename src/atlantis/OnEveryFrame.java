@@ -22,7 +22,8 @@ public class OnEveryFrame {
 
 //        Select.printCache();
 
-        Blocks.draw();
+        // JBWEB building positions (blocks)
+//        Blocks.draw();
 
 //        if (AGame.everyNthGameFrame(100)) {
 //            for (Block block : Blocks.getBlocks()) {

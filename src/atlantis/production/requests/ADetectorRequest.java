@@ -44,7 +44,7 @@ public class ADetectorRequest {
 //        }
 //
 //        if (where == null) {
-//            where = MissionDefend.getInstance().focusPoint().translatePercentTowards(AMap.getNaturalBaseLocation(), 32);
+//            where = MissionDefend.getInstance().focusPoint().translatePercentTowards(AMap.getNaturalLocation(), 32);
 //        }
 //
 //        int numberOfDetectors = AConstructionManager.countExistingAndPlannedConstructionsInRadius(

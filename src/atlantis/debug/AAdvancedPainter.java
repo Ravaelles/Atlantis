@@ -1162,7 +1162,7 @@ public class AAdvancedPainter extends APainter {
         APainter.setTextSizeMedium();
 
         // Natural base
-        APosition natural = BaseLocations.naturalBase();
+        APosition natural = BaseLocations.natural();
         paintBase(natural, "Our natural", Color.Grey);
 
         // Enemy base
@@ -1170,11 +1170,11 @@ public class AAdvancedPainter extends APainter {
         paintBase(enemyBase, "Enemy natural", Color.Orange);
 
         // Our main choke
-        AChoke mainChoke = MapChokes.mainBaseChoke();
+        AChoke mainChoke = MapChokes.mainChoke();
         paintChoke(mainChoke, Color.Green, "Main choke");
 
         // Our natural choke
-        AChoke naturalChoke = MapChokes.chokeForNaturalBase(BaseLocations.naturalBase());
+        AChoke naturalChoke = MapChokes.chokeForNatural(BaseLocations.natural());
         paintChoke(naturalChoke, Color.Green, "Natural choke");
 
         // Enemy natural choke

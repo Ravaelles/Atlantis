@@ -220,7 +220,7 @@ public class AScoutManager {
         // TERRAN + PROTOSS
 
         else if (scouts.isEmpty()) {
-            AUnit scout = Select.ourWorkers().nearestTo(MapChokes.chokeForNaturalBase());
+            AUnit scout = Select.ourWorkers().nearestTo(MapChokes.chokeForNatural());
             if (!scout.isBuilder()) {
                 scouts.add(scout);
                 return;

@@ -67,7 +67,7 @@ public class AExpansionManager {
 
             // ZERG case
             if (AGame.isPlayingAsZerg()) {
-                AddToQueue.addWithHighPriority(AtlantisConfig.BASE, Select.naturalBaseOrMain().position());
+                AddToQueue.addWithHighPriority(AtlantisConfig.BASE, Select.naturalOrMain().position());
             }
             
             // TERRAN + PROTOSS

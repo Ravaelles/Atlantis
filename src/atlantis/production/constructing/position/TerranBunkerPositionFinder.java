@@ -56,24 +56,24 @@ public class TerranBunkerPositionFinder {
 
         // Bunker at MAIN CHOKEPOINT
         if (locationModifier.equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
-            AChoke chokepointForNaturalBase = MapChokes.mainBaseChoke();
-            if (chokepointForNaturalBase != null) {
-                return APosition.create(chokepointForNaturalBase.getCenter())
+            AChoke chokepointForNatural = MapChokes.mainChoke();
+            if (chokepointForNatural != null) {
+                return APosition.create(chokepointForNatural.getCenter())
                         .translatePercentTowards(mainBase.position(), 5);
             }
         }
 
         // Bunker at NATURAL CHOKEPOINT
         else {
-            AChoke chokepointForNaturalBase = MapChokes.chokeForNaturalBase(mainBase.position());
-            if (chokepointForNaturalBase != null && mainBase != null) {
-                ABaseLocation naturalBase = BaseLocations.naturalBase(Select.mainBase().position());
-                return APosition.create(chokepointForNaturalBase.getCenter())
-                        .translatePercentTowards(naturalBase, 25);
+            AChoke chokepointForNatural = MapChokes.chokeForNatural(mainBase.position());
+            if (chokepointForNatural != null && mainBase != null) {
+                ABaseLocation natural = BaseLocations.natural(Select.mainBase().position());
+                return APosition.create(chokepointForNatural.getCenter())
+                        .translatePercentTowards(natural, 25);
 
 //                    System.out.println();
 //                    System.err.println(nearTo);
-//                    System.err.println("DIST TO CHOKE = " + nearTo.distanceTo(chokepointForNaturalBase.getCenter()));
+//                    System.err.println("DIST TO CHOKE = " + nearTo.distanceTo(chokepointForNatural.getCenter()));
 //                    System.err.println("DIST TO REGION = " + nearTo.distanceTo(nearTo.getRegion().getCenter()));
             }
         }

@@ -25,16 +25,9 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     return null;
                 }
 
-                // === Natural choke ================
-
-                AChoke naturalChoke = MapChokes.enemyNaturalChoke();
-                if (naturalChoke != null) {
-                    return naturalChoke.getCenter();
-                }
-
                 // === Main choke ================
 
-                AChoke mainChoke = MapChokes.enemyMainChoke();
+                AChoke mainChoke = MapChokes.mainChoke();
                 if (mainChoke != null) {
                     return mainChoke.getCenter();
                 }
@@ -65,9 +58,9 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Return position near the choke point ================
 
-//                AChoke chokepointForNaturalBase = AMap.getChokeForNaturalBase(mainBase.position());
-//                if (chokepointForNaturalBase != null) {
-//                    return APosition.create(chokepointForNaturalBase.getCenter());
+//                AChoke chokepointForNatural = AMap.getChokeForNatural(mainBase.position());
+//                if (chokepointForNatural != null) {
+//                    return APosition.create(chokepointForNatural.getCenter());
 //                }
 
                 // === Return position near the first building ================
