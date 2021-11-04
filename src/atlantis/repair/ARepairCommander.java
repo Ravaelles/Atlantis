@@ -112,7 +112,7 @@ public class ARepairCommander {
     }
     
     protected static void assignUnitsProtectorsIfNeeded() {
-        if (!Missions.isGlobalMissionAttack()) {
+        if (!Missions.isGlobalMissionAttack() && !Missions.isGlobalMissionContain()) {
             return;
         }
 

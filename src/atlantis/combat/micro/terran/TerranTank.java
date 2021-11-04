@@ -78,17 +78,23 @@ public class TerranTank {
             tank.setTooltip("Considers unsiege");
 
             if (AGame.isUms()) {
-                tank.setTooltip("Unsiege");
-                return true;
-            }
-
-            if (tank.squad().isMissionAttack() && A.chance(2)) {
                 tank.unsiege();
                 tank.setTooltip("Unsiege");
                 return true;
             }
 
-            if (tank.squad().isMissionContain()) {
+            if (tank.mission() == null) {
+                System.err.println("Mission NULL for " + tank);
+                return false;
+            }
+
+            if (tank.mission().isMissionAttack() && A.chance(2)) {
+                tank.unsiege();
+                tank.setTooltip("Unsiege");
+                return true;
+            }
+
+            if (tank.mission().isMissionContain()) {
                 APosition focusPoint = Missions.globalMission().focusPoint();
                 if (focusPoint != null && tank.distTo(focusPoint) >= 13 && A.chance(2)) {
                     tank.unsiege();

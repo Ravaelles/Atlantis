@@ -166,7 +166,9 @@ public class AEnemyUnits {
      */
     private static void updateEnemyUnitPosition(AUnit enemyUnit) {
 //        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
-        enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
+        if (enemyUnitsDiscovered.containsKey(enemyUnit)) {
+            enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
+        }
     }
 
     // =========================================================

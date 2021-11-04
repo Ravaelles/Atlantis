@@ -75,7 +75,7 @@ public class MapChokes {
     public static AChoke chokeForNatural() {
         return (AChoke) cache.get(
                 "chokeForNatural",
-                -1,
+                100,
                 () -> AChoke.create(JBWEB.getNaturalChoke())
         );
 //        return chokeForNatural(AMap.natural());
