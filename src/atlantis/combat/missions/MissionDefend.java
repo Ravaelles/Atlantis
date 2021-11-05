@@ -52,9 +52,9 @@ public class MissionDefend extends Mission {
         if (unit.distTo(focusPoint) > expectedDist) {
             return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "MoveToDefend");
         }
-        else if (unit.distTo(focusPoint) <= expectedDist - 0.1) {
-            return unit.moveAwayFrom(focusPoint, 0.2, "Uhm");
-        }
+//        else if (unit.distTo(focusPoint) <= expectedDist - 0.1) {
+//            return unit.moveAwayFrom(focusPoint, 0.2, "Uhm");
+//        }
         else {
             if (unit.isMoving()) {
                 unit.holdPosition("DefendHere");

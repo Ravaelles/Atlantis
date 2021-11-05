@@ -30,11 +30,11 @@ public class ProtossHighTemplar {
 
         if (AGame.everyNthGameFrame(3)) {
             if (handlePsionic(highTemplar)) {
-                System.err.println(
-                        "On " + A.now() + " " +
-                        highTemplar.idWithHash() + " casts PSIONIC at " + highTemplar.lastTechPosition()
-                        + " " + A.dist(highTemplar, highTemplar.lastTechPosition())
-                );
+//                System.err.println(
+//                        "On " + A.now() + " " +
+//                        highTemplar.idWithHash() + " casts PSIONIC at " + highTemplar.lastTechPosition()
+//                        + " " + A.dist(highTemplar, highTemplar.lastTechPosition())
+//                );
                 return true;
             }
         }

@@ -95,7 +95,7 @@ public class Atlantis implements BWEventListener {
 //        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
 //        game.setGUI(false);                           // Turn off GUI - will speed up game considerably
         game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
-        game.enableFlag(Flag.CompleteMapInformation);   // See entire map - must be disabled for real games
+//        game.enableFlag(Flag.CompleteMapInformation);   // See entire map - must be disabled for real games
     }
 
     /**
@@ -181,7 +181,7 @@ public class Atlantis implements BWEventListener {
             // Our unit
             if (unit.isOur()) {
                 ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-                ASquadManager.battleUnitDestroyed(unit);
+                ASquadManager.unitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
                 if (!unit.type().isGasBuilding()) {
                     LOST++;
@@ -262,7 +262,7 @@ public class Atlantis implements BWEventListener {
         // Forget unit
         if (unit != null) {
             if (unit.isOur()) {
-                ASquadManager.battleUnitDestroyed(unit);
+                ASquadManager.unitDestroyed(unit);
             } if (unit.isEnemy()) {
                 AEnemyUnits.unitDestroyed(unit);
             }

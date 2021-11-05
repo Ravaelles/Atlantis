@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.combat.missions.Missions;
 import bwapi.Game;
 
 import java.util.concurrent.TimeUnit;
@@ -25,7 +26,7 @@ public class GameSpeed {
 //    private static final int NORMAL_GAME_SPEED = 30;
 //    private static final int NORMAL_FRAME_SKIP = 0;
     private static final int NORMAL_GAME_SPEED = 0;
-    private static final int NORMAL_FRAME_SKIP = 10;
+    private static final int NORMAL_FRAME_SKIP = 90;
 //    private static final int NORMAL_FRAME_SKIP = 2;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
@@ -101,12 +102,13 @@ public class GameSpeed {
 
         if (speed < 0) {
             speed = 0;
+            changeFrameSkipTo(frameSkip - 5);
         }
         if (speed > 0) {
             changeFrameSkipTo(0);
         }
 
-        GameSpeed.pauseGame();
+//        GameSpeed.pauseGame();
 
 //        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
 
@@ -122,11 +124,11 @@ public class GameSpeed {
 //        } catch (InterruptedException ex) {
 //            // Ignore
 //        }
-        game().setLocalSpeed(gameSpeed);
 //        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
         AGame.sendMessage("/speed " + gameSpeed);
+        game().setLocalSpeed(gameSpeed);
 
-        GameSpeed.unpauseGame();
+//        GameSpeed.unpauseGame();
 //        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
 //        sendMessage("Game speed: " + speedString);
     }
@@ -210,4 +212,16 @@ public class GameSpeed {
         return isPaused;
     }
 
+    public static void checkIfNeedToSlowDown() {
+        if (!oneTimeSlowdownUsed && frameSkip >= 40 && Missions.isGlobalMissionContain()) {
+            oneTimeSlowdownUsed = true;
+            System.out.println("Slow down to " + currentSpeedAndFrameSkip());
+            changeSpeedTo(0);
+            changeFrameSkipTo(2);
+        }
+    }
+
+    private static String currentSpeedAndFrameSkip() {
+        return "speed = " + gameSpeed + ", frame skip = " + frameSkip;
+    }
 }

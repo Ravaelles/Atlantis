@@ -16,66 +16,52 @@ public class BaseSelect<T extends AUnit> {
 
     protected static List<AUnit> ourUnits() {
         return cacheList.get(
-                "ourUnits",
-                0,
-                () -> {
-                    List<AUnit> data = new ArrayList<>();
+            "ourUnits",
+            0,
+            () -> {
+                List<AUnit> data = new ArrayList<>();
 
-                    for (Unit u : AGame.getPlayerUs().getUnits()) {
-                        data.add(AUnit.createFrom(u));
-                    }
-
-                    //                    System.out.println("------------");
-                    //                    for (AUnit unit : data) {
-                    //                        System.out.println(unit);
-                    //                    }
-
-                    return data;
+                for (Unit u : AGame.getPlayerUs().getUnits()) {
+                    data.add(AUnit.createFrom(u));
                 }
+
+                return data;
+            }
         );
     }
 
     protected static List<AUnit> enemyUnits() {
         return cacheList.get(
-                "enemyUnits",
-                0,
-                () -> {
-                    List<AUnit> data = new ArrayList<>();
+            "enemyUnits",
+            0,
+            () -> {
+                List<AUnit> data = new ArrayList<>();
 
-                    // === Handle UMS ==========================================
+                // === Handle UMS ==========================================
 
-                    if (AGame.isUms()) {
-                        Player playerUs = AGame.getPlayerUs();
-                        for (Player player : AGame.getPlayers()) {
-                            if (player.isEnemy(playerUs)) {
-                                for (Unit u : player.getUnits()) {
-                                    AUnit unit = AUnit.createFrom(u);
-//                                    if (unit.isAlive()) {
-                                        data.add(unit);
-//                                    }
-                                    //                                    else {
-                                    //                                        System.err.println("Enemy unit not alive? Seems a terrible problem.");
-                                    //                                        System.err.println(unit);
-                                    //                                        System.err.println(unit.hp() + " // " + unit.isVisibleOnMap() + " // " + unit.effVisible());
-                                    //                                    }
-                                }
+                if (AGame.isUms()) {
+                    Player playerUs = AGame.getPlayerUs();
+                    for (Player player : AGame.getPlayers()) {
+                        if (player.isEnemy(playerUs)) {
+                            for (Unit u : player.getUnits()) {
+                                AUnit unit = AUnit.createFrom(u);
+                                data.add(unit);
                             }
                         }
                     }
-
-                    // =========================================================
-
-                    else {
-                        for (Unit u : AGame.getEnemy().getUnits()) {
-                            AUnit unit = AUnit.createFrom(u);
-//                            if (unit.isAlive()) {
-                                data.add(unit);
-//                            }
-                        }
-                    }
-
-                    return data;
                 }
+
+                // =========================================================
+
+                else {
+                    for (Unit u : AGame.getEnemy().getUnits()) {
+                        AUnit unit = AUnit.createFrom(u);
+                        data.add(unit);
+                    }
+                }
+
+                return data;
+            }
         );
     }
 
@@ -88,9 +74,7 @@ public class BaseSelect<T extends AUnit> {
 
                     for (Unit u : Atlantis.game().neutral().getUnits()) {
                         AUnit unit = AUnit.createFrom(u);
-//                        if (unit.isAlive()) {
-                            data.add(unit);
-//                        }
+                        data.add(unit);
                     }
 
                     return data;
@@ -107,9 +91,7 @@ public class BaseSelect<T extends AUnit> {
 
                     for (Unit u : Atlantis.game().getAllUnits()) {
                         AUnit unit = AUnit.createFrom(u);
-//                        if (unit.isAlive()) {
-                            data.add(unit);
-//                        }
+                        data.add(unit);
                     }
 
                     return data;

@@ -34,7 +34,7 @@ public class Evaluate {
      * strength) or our own evaluation (we're likely to overestimate our strength).
      */
     protected static double evaluateUnitsAgainstUnit(Collection<AUnit> units, AUnit againstUnit, boolean isEnemyEval) {
-        double strength = 0;
+        double strength = 0.0;
         boolean enemyDefensiveBuildingFound = false;
         boolean enemyDefensiveBuildingInRange = false;
 
@@ -106,7 +106,7 @@ public class Evaluate {
 
     private static double evaluateUnitHPandDamage(AUnitType type, int hp, AUnit againstUnit) {
         if (type.isMine() || type.isNeutralType() || type.isInvincible()) {
-            return 0;
+            return 0.0;
         }
 
         // === Special types =======================================
@@ -135,10 +135,10 @@ public class Evaluate {
 
     private static double customEvaluation(AUnitType type, AUnit againstUnit) {
         if (type.is(AUnitType.Terran_Medic)) {
-            return 7;
+            return 7.0;
         }
 
-        return -1;
+        return -1.0;
     }
 
 }

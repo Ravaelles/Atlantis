@@ -70,7 +70,8 @@ public class AScoutManager {
     }
     
     private static boolean update(AUnit scout) {
-        if (!scout.isAlive() || AEnemyUnits.enemyBase() != null) {
+//        if (!scout.isAlive() || AEnemyUnits.enemyBase() != null) {
+        if (!scout.isAlive()) {
             scouts.remove(scout);
             return true;
         }
@@ -89,12 +90,26 @@ public class AScoutManager {
         }
         
         // Roam around enemy base
-        else {
+        else if (Count.ourCombatUnits() <= 1) {
             return handleScoutEnemyBase(scout);
+        }
+
+        // Scout other bases
+        else {
+            return handleScoutFreeBases(scout);
         }
     }
 
     // =========================================================
+
+    private static boolean handleScoutFreeBases(AUnit scout) {
+        APosition invisibleStartingLocation = BaseLocations.randomInvisibleStartingLocation();
+        if (invisibleStartingLocation != null && scout.distToMoreThan(invisibleStartingLocation, 6)) {
+            return scout.move(invisibleStartingLocation, UnitActions.SCOUT, "ScoutBases");
+        }
+
+        return false;
+    }
 
     /**
      * We don't know any enemy building, scout nearest starting location.

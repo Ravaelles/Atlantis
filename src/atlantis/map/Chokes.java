@@ -9,7 +9,7 @@ import jbweb.JBWEB;
 
 import java.util.*;
 
-public class MapChokes {
+public class Chokes {
 
     private static Cache<Object> cache = new Cache<>();
 //    private static HashMap<APosition, AChoke> cached_basesToChokes = new HashMap<>();
@@ -72,22 +72,22 @@ public class MapChokes {
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */
-    public static AChoke chokeForNatural() {
+    public static AChoke natural() {
         return (AChoke) cache.get(
-                "chokeForNatural",
-                100,
+                "natural",
+                -1,
                 () -> AChoke.create(JBWEB.getNaturalChoke())
         );
 //        return chokeForNatural(AMap.natural());
     }
 
-    public static AChoke chokeForNatural(APosition relativeTo) {
+    public static AChoke natural(APosition relativeTo) {
         if (relativeTo == null) {
             return null;
         }
 
         return (AChoke) cache.get(
-                "chokeForNatural:" + relativeTo.toStringPixels(),
+                "natural:" + relativeTo.toStringPixels(),
                 400,
                 () -> {
                     ARegion naturalRegion = Regions.getRegion(BaseLocations.natural(relativeTo.position()));
@@ -174,7 +174,7 @@ public class MapChokes {
         return (AChoke) cache.get(
                 "enemyNaturalChoke",
                 100,
-                () -> chokeForNatural(enemyNatural)
+                () -> natural(enemyNatural)
         );
     }
 

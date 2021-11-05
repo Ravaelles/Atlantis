@@ -44,7 +44,7 @@ public class AEnemyUnits {
      *
      */
     public static APosition getLastPositionOfEnemyUnit(AUnit enemyUnit) {
-        return enemyUnitsDiscovered.get(enemyUnit).position();
+        return enemyUnitsDiscovered.containsKey(enemyUnit) ? enemyUnitsDiscovered.get(enemyUnit).position() : null;
     }
     
     /**

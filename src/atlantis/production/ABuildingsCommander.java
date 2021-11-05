@@ -2,9 +2,12 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.buildings.managers.ASupplyManager;
+import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.production.dynamic.ADynamicProductionCommander;
+import atlantis.repair.ARepairCommander;
 import atlantis.util.CodeProfiler;
+import atlantis.util.Us;
 
 /**
  * Manages construction of new buildings.
@@ -34,6 +37,11 @@ public class ABuildingsCommander {
 
         // When it can be applied and makes sense, automatically produce units like workers, factories.
         ADynamicProductionCommander.update();
+
+        if (Us.isTerran()) {
+            TerranFlyingBuildingManager.update();
+            ARepairCommander.update();
+        }
     }
 
 }

@@ -3,7 +3,7 @@ package atlantis.repair;
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
 import atlantis.map.AChoke;
-import atlantis.map.MapChokes;
+import atlantis.map.Chokes;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -14,6 +14,8 @@ import java.util.*;
 
 
 public class ARepairCommander {
+
+    private static final int MAX_PROTECTORS = 3;
 
     public static void update() {
         if (AGame.everyNthGameFrame(20)) {
@@ -66,15 +68,13 @@ public class ARepairCommander {
         }
 
         else {
-            
             // Release all bunker protectors
             for (AUnit bunkerProtector : ARepairAssignments.getProtectors()) {
                 ARepairAssignments.removeRepairerOrProtector(bunkerProtector);
             }
-            
-            assignUnitsProtectorsIfNeeded();
         }
 
+        assignUnitsProtectorsIfNeeded();
     }
     
     protected static void assignBunkerProtectorsIfNeeded() {
@@ -92,7 +92,7 @@ public class ARepairCommander {
         // Assign two repairers to a bunker if it's not surrounded by many of our combat units
 //        if (bunkersCounter == 1) {
 //        for (AUnit bunker : bunkers.list()) {
-        AChoke chokepointForNatural = MapChokes.chokeForNatural(mainBase.position());
+        AChoke chokepointForNatural = Chokes.natural(mainBase.position());
         if (chokepointForNatural != null) {
             AUnit bunker = bunkers.nearestTo(chokepointForNatural.getCenter());
             if (bunker == null) {
@@ -111,36 +111,63 @@ public class ARepairCommander {
 //        }
     }
     
-    protected static void assignUnitsProtectorsIfNeeded() {
-        if (!Missions.isGlobalMissionAttack() && !Missions.isGlobalMissionContain()) {
-            return;
+    protected static boolean assignUnitsProtectorsIfNeeded() {
+        if (removeProtectorsIfNeeded()) {
+            return true;
         }
 
-        // === Protect Vulture =================================
-        
-        int vultures = Select.countOurOfType(AUnitType.Terran_Vulture);
-        if (vultures >= 2) {
-            AUnit firstVulture = Select.ourOfType(AUnitType.Terran_Vulture).first();
-            int protectors = ARepairAssignments.countProtectorsFor(firstVulture);
-            int lackingProtectors = 2 - protectors;
-            if (lackingProtectors > 0) {
-                assignProtectorsFor(firstVulture, lackingProtectors);
-                return;
-            }
+        List<AUnit> tanks = Select.ourTanks().list();
+        if (tanks.isEmpty()) {
+            return false;
         }
-        
-        // === Protect Tank ====================================
-        
-        int tanks = Select.ourTanks().count();
-        if (tanks >= 2) {
-            AUnit firstTank = Select.ourTanks().first();
-            int protectors = ARepairAssignments.countProtectorsFor(firstTank);
-            int lackingProtectors = 2 - protectors;
-            if (lackingProtectors > 0) {
-                assignProtectorsFor(firstTank, lackingProtectors);
-                return;
-            }
+
+        int totalNow = ARepairAssignments.countTotalProtectors();
+        for (int i = 0; i < MAX_PROTECTORS - totalNow; i++) {
+            assignProtectorsFor(tanks.get(i % tanks.size()), 1);
         }
+
+//        if (!Missions.isGlobalMissionAttack() && !Missions.isGlobalMissionContain()) {
+//            return;
+//        }
+//
+//        // === Protect Vulture =================================
+//
+//        int vultures = Select.countOurOfType(AUnitType.Terran_Vulture);
+//        if (vultures >= 2) {
+//            AUnit firstVulture = Select.ourOfType(AUnitType.Terran_Vulture).first();
+//            int protectors = ARepairAssignments.countProtectorsFor(firstVulture);
+//            int lackingProtectors = 2 - protectors;
+//            if (lackingProtectors > 0) {
+//                assignProtectorsFor(firstVulture, lackingProtectors);
+//                return;
+//            }
+//        }
+//
+//        // === Protect Tank ====================================
+//
+//        int tanks = Select.ourTanks().count();
+//        if (tanks >= 2) {
+//            AUnit firstTank = Select.ourTanks().first();
+//            int protectors = ARepairAssignments.countProtectorsFor(firstTank);
+//            int lackingProtectors = 2 - protectors;
+//            if (lackingProtectors > 0) {
+//                assignProtectorsFor(firstTank, lackingProtectors);
+//                return;
+//            }
+//        }
+        return false;
+    }
+
+    private static boolean removeProtectorsIfNeeded() {
+        if (ARepairAssignments.countTotalProtectors() >= MAX_PROTECTORS) {
+            for (int i = 0; i < ARepairAssignments.countTotalProtectors() - MAX_PROTECTORS; i++) {
+                ARepairAssignments.removeRepairerOrProtector(
+                        ARepairAssignments.getProtectors().get(ARepairAssignments.getProtectors().size() - 1)
+                );
+            }
+            return true;
+        }
+        return false;
     }
 
     // =========================================================

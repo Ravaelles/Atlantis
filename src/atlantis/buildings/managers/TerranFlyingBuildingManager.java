@@ -8,7 +8,10 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.Us;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class TerranFlyingBuildingManager {
@@ -18,16 +21,18 @@ public class TerranFlyingBuildingManager {
     // =========================================================
     
     public static void update() {
-        if (AGame.isPlayingAsTerran() && !AGame.isUms()) {
-            if (shouldHaveAFlyingBuilding()) {
-                liftABuildingAndFlyAmongStars();
-            }
+        if (AGame.isUms()) {
+            return;
+        }
 
-            updateIfBuildingNeedsToBeLifted();
-            
-            for (AUnit flyingBuilding : flyingBuildings) {
-                updateFlyingBuilding(flyingBuilding);
-            }
+        if (shouldHaveAFlyingBuilding()) {
+            liftABuildingAndFlyAmongStars();
+        }
+
+        updateIfBuildingNeedsToBeLifted();
+
+        for (Iterator<AUnit> it = flyingBuildings.iterator(); it.hasNext(); ) {
+            updateFlyingBuilding(it.next());
         }
     }
 
@@ -42,6 +47,11 @@ public class TerranFlyingBuildingManager {
     }
 
     private static boolean updateFlyingBuilding(AUnit flyingBuilding) {
+        if (!flyingBuilding.isAlive()) {
+            flyingBuildings.remove(flyingBuilding);
+            return true;
+        }
+
         APosition focusPoint = flyingBuildingFocusPoint();
         
         // Move towards focus point if needed
@@ -65,7 +75,8 @@ public class TerranFlyingBuildingManager {
             return containFocusPoint.translateTilesTowards(attackFocusPoint, 4);
         }
 
-        return Select.ourTanks().first().position();
+        return containFocusPoint;
+//        return Select.ourTanks().first().position();
     }
 
     // =========================================================
@@ -75,11 +86,12 @@ public class TerranFlyingBuildingManager {
             return false;
         }
 
-        return Select.ourTanks().atLeast(1) || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5;
+        return Select.ourOfTypeIncludingUnfinished(AUnitType.Terran_Machine_Shop).atLeast(1)
+                || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5;
     }
 
     private static void liftABuildingAndFlyAmongStars() {
-        AUnit flying = Select.ourOfType(AUnitType.Terran_Barracks, AUnitType.Terran_Engineering_Bay).idle().first();
+        AUnit flying = Select.ourOfType(AUnitType.Terran_Barracks, AUnitType.Terran_Engineering_Bay).free().first();
         if (flying != null) {
             flying.lift();
             flyingBuildings.add(flying);

@@ -17,9 +17,6 @@ public class MissionChanger {
      * Takes care of current strategy.
      */
     public static void evaluateGlobalMission() {
-        if (Missions.currentGlobalMission == null) {
-            Missions.currentGlobalMission = Missions.getInitialMission();
-        }
 
         // === Handle UMS ==========================================
 
@@ -29,18 +26,13 @@ public class MissionChanger {
 
         // =========================================================
 
-        if (Missions.currentGlobalMission == Missions.ATTACK) {
+        if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.changeMissionIfNeeded();
-        } else if (Missions.currentGlobalMission == Missions.CONTAIN) {
+        } else if (Missions.isGlobalMissionContain()) {
             MissionChangerWhenContain.changeMissionIfNeeded();
-        } else if (Missions.currentGlobalMission == Missions.DEFEND) {
+        } else if (Missions.isGlobalMissionDefend()) {
             MissionChangerWhenDefend.changeMissionIfNeeded();
         }
-
-//        if (Missions.currentGlobalMission != Missions.ATTACK) {
-//        } else if (shouldChangeMissionToContain()) {
-//            Missions.currentGlobalMission = Missions.CONTAIN;
-//        }
     }
 
 
@@ -53,7 +45,7 @@ public class MissionChanger {
     // =========================================================
 
     protected static void changeMissionTo(Mission newMission) {
-        Missions.currentGlobalMission = newMission;
+        Missions.setGlobalMissionTo(newMission);
         missionHistory.add(newMission);
     }
 
@@ -66,11 +58,11 @@ public class MissionChanger {
     }
 
     public static void forceMissionAttack() {
-        Missions.currentGlobalMission = Missions.ATTACK;
+        Missions.setGlobalMissionAttack();
     }
 
     public static void forceMissionContain() {
-        Missions.currentGlobalMission = Missions.CONTAIN;
+        Missions.setGlobalMissionContain();
     }
 
     public static boolean isFirstMission() {

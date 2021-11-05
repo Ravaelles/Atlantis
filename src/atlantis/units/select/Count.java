@@ -26,18 +26,22 @@ public class Count {
      * need to count sunkens as well.
      */
     public static int existingOrInProduction(AUnitType type) {
-        return countExisting(type) + countInProduction(type);
+        return existing(type) + inProduction(type);
     }
 
     public static int existingOrInProductionOrInQueue(AUnitType type) {
-        return countExisting(type) + countInProduction(type) + countInQueue(type, 8);
+        return existing(type) + inProductionOrInQueue(type);
     }
 
-    private static int countInQueue(AUnitType type, int amongNTop) {
+    public static int inProductionOrInQueue(AUnitType type) {
+        return inProduction(type) + inQueue(type, 8);
+    }
+
+    private static int inQueue(AUnitType type, int amongNTop) {
         return ProductionQueue.countInQueue(type, amongNTop);
     }
 
-    public static int countInProduction(AUnitType type) {
+    public static int inProduction(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
             return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
                     + Select.ourUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
@@ -71,7 +75,7 @@ public class Count {
         }
     }
 
-    public static int countExisting(AUnitType type) {
+    public static int existing(AUnitType type) {
 //        if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
 //            return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony);
 ////            return Select.countOurOfType(AUnitType.Zerg_Creep_Colony)
@@ -115,5 +119,18 @@ public class Count {
 
     public static int bases() {
         return Select.ourBases().count();
+    }
+
+    public static int basesWithUnfinished() {
+        return Select.ourIncludingUnfinished().bases().count();
+    }
+
+    public static int tanks() {
+        return Select.countOurOfType(AUnitType.Terran_Siege_Tank_Siege_Mode)
+                + Select.countOurOfType(AUnitType.Terran_Siege_Tank_Tank_Mode);
+    }
+
+    public static int vultures() {
+        return Select.countOurOfType(AUnitType.Terran_Vulture);
     }
 }

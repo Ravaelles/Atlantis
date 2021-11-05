@@ -31,16 +31,15 @@ public class SquadScout {
             return false;
         }
 
-        if (A.everyNthGameFrame(20)) {
-            if (enemyBase.distTo(unit) > 4) {
-                unit.move(enemyBase.position(), UnitActions.SCOUT, "Pioneer");
-                return true;
+//        if (A.everyNthGameFrame(20)) {
+            if (enemyBase.distTo(unit) > 2) {
+                return unit.move(enemyBase.position(), UnitActions.SCOUT, "Pioneer");
             }
             else if (unit.isMoving()) {
                 unit.holdPosition("Scouted!");
                 return true;
             }
-        }
+//        }
 //        }
 
         return false;

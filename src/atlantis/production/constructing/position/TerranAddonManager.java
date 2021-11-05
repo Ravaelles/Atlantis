@@ -9,7 +9,7 @@ import atlantis.units.select.Select;
 public class TerranAddonManager {
 
     public static void buildNewAddon(AUnitType addon, ProductionOrder order) {
-        AUnit parentBuilding = Select.ourBuildings().ofType(addon.getWhatBuildsIt()).idle().first();
+        AUnit parentBuilding = Select.ourBuildings().ofType(addon.getWhatBuildsIt()).free().first();
         if (parentBuilding != null) {
             parentBuilding.buildAddon(addon);
         }

@@ -2,12 +2,8 @@ package atlantis.repair;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ARepairAssignments {
 
@@ -22,7 +18,7 @@ public class ARepairAssignments {
 
     // =========================================================
 
-    public static boolean isBunkerProtector(AUnit repairer) {
+    public static boolean isProtector(AUnit repairer) {
         return repairersToModes.containsKey(repairer) && repairersToModes.get(repairer) == MODE_PROTECT;
     }
 
@@ -85,7 +81,7 @@ public class ARepairAssignments {
 
         int protectors = 0;
         for (AUnit repairer : unitsToRepairers.get(unit)) {
-            if (isBunkerProtector(repairer)) {
+            if (isProtector(repairer)) {
                 protectors++;
             }
         }
@@ -112,19 +108,23 @@ public class ARepairAssignments {
         return repairersToUnit.containsKey(worker);
     }
 
-    public static Collection<AUnit> getProtectors() {
+    public static List<AUnit> getProtectors() {
         ArrayList<AUnit> result = new ArrayList<>();
         for (AUnit repairer : repairersToUnit.keySet()) {
-            if (isBunkerProtector(repairer)) {
+            if (isProtector(repairer)) {
                 result.add(repairer);
             }
         }
         return result;
     }
 
-    public static Collection<AUnit> getRepairers() {
+    public static List<AUnit> getRepairers() {
         ArrayList<AUnit> result = new ArrayList<>();
         result.addAll(repairersToUnit.keySet());
         return result;
+    }
+
+    public static int countTotalRepairers() {
+        return repairersToUnit.keySet().size();
     }
 }

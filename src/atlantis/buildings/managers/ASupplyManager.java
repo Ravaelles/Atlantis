@@ -73,11 +73,13 @@ public class ASupplyManager {
 
     private static int requestedConstructionsOfSupply() {
         if (Us.isZerg()) {
-            return Count.ourOfTypeIncludingUnfinished(AUnitType.Zerg_Overlord);
+//            return Count.ourOfTypeIncludingUnfinished(AUnitType.Zerg_Overlord);
+            return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 
-        return AConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
+        return Count.inProductionOrInQueue(AtlantisConfig.SUPPLY);
 
+//        return AConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
 //
 //        // =========================================================
 //        // Terran + Protoss

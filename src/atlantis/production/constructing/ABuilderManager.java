@@ -13,29 +13,29 @@ import bwapi.TilePosition;
 
 public class ABuilderManager {
 
-    public static void update(AUnit builder) {
-        if (builder == null) {
-            System.err.println("builder null in ABM.update()");
-            return;
-        }
+    public static boolean update(AUnit builder) {
 
         // Don't disturb builder that are already constructing
         if (builder.isConstructing() || builder.isMorphing()) {
-            return;
+            return true;
         }
 
-        handleConstruction(builder);
+        if (handleConstruction(builder)) {
+            return true;
+        }
+
+        return false;
     }
 
     // =========================================================
     
-    private static void handleConstruction(AUnit builder) {
+    private static boolean handleConstruction(AUnit builder) {
         ConstructionOrder constructionOrder = AConstructionRequests.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
-                travelToConstruct(builder, constructionOrder);
+                return travelToConstruct(builder, constructionOrder);
             } else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
                 // Do nothing - construction is pending
             } else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
@@ -43,10 +43,12 @@ public class ABuilderManager {
             }
         } else {
             System.err.println("constructionOrder null for " + builder);
+            return false;
         }
+        return false;
     }
 
-    private static void travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
+    private static boolean travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
         APosition buildPosition = constructionOrder.getPositionToBuild();
         APosition buildPositionCenter = constructionOrder.getPositionToBuildCenter();
         AUnitType buildingType = constructionOrder.getBuildingType();
@@ -57,7 +59,7 @@ public class ABuilderManager {
         if (buildPosition == null) {
             System.err.println("buildPosition is null (travelToConstruct " + buildingType + ")");
             constructionOrder.cancel();
-            return;
+            return false;
         }
 
         // =========================================================
@@ -72,19 +74,19 @@ public class ABuilderManager {
         if (distance > minDistanceToIssueBuildOrder) {
             if (shouldNotTravelYet(buildingType, distance)) {
                 builder.setTooltip("Wait to build " + buildingType.shortName() + distString);
-                return;
+                return false;
             }
 
-            if (AGame.everyNthGameFrame(3)) {
-                if (!builder.isMoving()) {
+            if (!builder.isMoving()) {
 //                    GameSpeed.changeSpeedTo(60);
-                    builder.move(
-                        constructionOrder.getPositionToBuildCenter(),
-                        UnitActions.MOVE_TO_BUILD,
-                        "Build " + buildingType.shortName() + distString
-                    );
-                }
+                builder.move(
+                    constructionOrder.getPositionToBuildCenter(),
+                    UnitActions.MOVE_TO_BUILD,
+                    "Build " + buildingType.shortName() + distString
+                );
             }
+
+            return true;
         }
 
         // =========================================================
@@ -102,7 +104,7 @@ public class ABuilderManager {
                     constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
                     constructionOrder.setBuilder(null);
                     builder.stop("Finished!");
-                    return;
+                    return false;
                 }
             }
 
@@ -118,9 +120,12 @@ public class ABuilderManager {
                     if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
                             AGame.getTimeFrames() % 30 == 0)) {
                         builder.build(buildingType, buildTilePosition);
+                        return true;
                     }
                 }
             }
+
+            return true;
         }
     }
 

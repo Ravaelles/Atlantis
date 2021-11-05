@@ -14,7 +14,7 @@ public class Missions {
      * This is the mission for main battle squad forces. E.g. initially it will be DEFEND, then it should be
      * PREPARE (go near enemy) and then ATTACK.
      */
-    protected static Mission currentGlobalMission;
+    private static Mission currentGlobalMission = null;
 
     public static final Mission ATTACK = new MissionAttack();
     public static final Mission CONTAIN = new MissionContain();
@@ -29,7 +29,7 @@ public class Missions {
      */
     public static Mission globalMission() {
         if (currentGlobalMission == null) {
-            currentGlobalMission = getInitialMission();
+            setGlobalMissionTo(getInitialMission());
         }
 
         return currentGlobalMission;
@@ -52,15 +52,15 @@ public class Missions {
     }
 
     public static void setGlobalMissionAttack() {
-        currentGlobalMission = ATTACK;
+        setGlobalMissionTo(ATTACK);
     }
 
     public static void setGlobalMissionDefend() {
-        currentGlobalMission = DEFEND;
+        setGlobalMissionTo(DEFEND);
     }
 
     public static void setGlobalMissionContain() {
-        currentGlobalMission = CONTAIN;
+        setGlobalMissionTo(CONTAIN);
     }
 
     public static Mission getInitialMission() {
@@ -95,6 +95,7 @@ public class Missions {
     }
 
     public static void setGlobalMissionTo(Mission mission) {
+        MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         currentGlobalMission = mission;
     }
 }

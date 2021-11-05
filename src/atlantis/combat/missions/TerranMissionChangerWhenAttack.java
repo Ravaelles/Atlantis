@@ -16,7 +16,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
     private static boolean shouldChangeMissionToContain() {
         int ourCount = Select.ourCombatUnits().count();
 
-        return ourCount <= 20 || Select.enemyRealUnits().count() >= ourCount + 2;
+        return ourCount <= 15 || Select.enemyRealUnits().count() >= ourCount + 2;
     }
 
 }

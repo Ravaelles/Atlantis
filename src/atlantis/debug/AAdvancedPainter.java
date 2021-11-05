@@ -152,7 +152,7 @@ public class AAdvancedPainter extends APainter {
             // === Combat Evaluation Strength
             // =========================================================
 
-            paintCombatEval(unit, false);
+            paintCombatEval(unit);
 
 ////            if (combatEval < 10) {
 //            double eval = ACombatEvaluator.evaluateSituation(unit, true, false);
@@ -198,7 +198,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintEnemyCombatUnits() {
         for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
-            paintCombatEval(enemy, true);
+            paintCombatEval(enemy);
             paintLifeBar(enemy);
             paintEnemyTargets(enemy);
             paintTextCentered(enemy, enemy.idWithHash(), Color.Grey, 0, 1);
@@ -261,11 +261,10 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
     }
 
-    private static void paintCombatEval(AUnit unit, boolean isEnemy) {
+    private static void paintCombatEval(AUnit unit) {
         APosition unitPosition = unit.position();
-        double eval = (int) ACombatEvaluator.evaluateSituation(unit, true, isEnemy);
-        String combatStrength = ColorUtil.getColorString(Color.Red)
-                + ACombatEvaluator.getEvalString(unit, eval);
+        double eval = ACombatEvaluator.evaluateSituation(unit);
+        String combatStrength = ColorUtil.getColorString(Color.Red) + ACombatEvaluator.getEvalString(unit, eval);
         paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
     }
 
@@ -806,7 +805,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             // Display name of unit
-            String name = unit.getBuildType().shortName();
+            String name = (unit.getBuildType() != null ? unit.getBuildType().shortName() : "-BUG_NULL");
 
             // Paint building name
             paintTextCentered(new APosition(unit.position().getX(), unit.position().getY() - 7),
@@ -1149,7 +1148,7 @@ public class AAdvancedPainter extends APainter {
     protected static void paintChokepoints() {
 
         // All chokes
-        List<AChoke> chokePoints = MapChokes.chokes();
+        List<AChoke> chokePoints = Chokes.chokes();
         for (AChoke choke : chokePoints) {
             paintChoke(choke, Color.Brown, "");
         }
@@ -1171,15 +1170,15 @@ public class AAdvancedPainter extends APainter {
         paintBase(enemyBase, "Enemy natural", Color.Orange);
 
         // Our main choke
-        AChoke mainChoke = MapChokes.mainChoke();
+        AChoke mainChoke = Chokes.mainChoke();
         paintChoke(mainChoke, Color.Green, "Main choke");
 
         // Our natural choke
-        AChoke naturalChoke = MapChokes.chokeForNatural(BaseLocations.natural());
+        AChoke naturalChoke = Chokes.natural(BaseLocations.natural());
         paintChoke(naturalChoke, Color.Green, "Natural choke");
 
         // Enemy natural choke
-        AChoke enemyNaturalChoke = MapChokes.enemyNaturalChoke();
+        AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
         // Next defensive building position

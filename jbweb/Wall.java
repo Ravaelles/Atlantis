@@ -38,8 +38,9 @@ public class Wall {
 
         // Create Wall layout and find basic features
         initialize();
+        currentLayout = bestLayout; // CHANGE
         addPieces();
-        currentLayout = bestLayout;
+//        currentLayout = bestLayout;
         centroid = findCentroid();
         opening = findOpening();
 
@@ -646,6 +647,8 @@ public class Wall {
         Path jpsPath = new Path();
         initializePathPoints();
         checkPathPoints();
+        System.out.println("pathStart = " + pathStart);
+        System.out.println("pathEnd = " + pathEnd);
         jpsPath.createUnitPath(new Position(pathStart), new Position(pathEnd), this);
         jpsDist = jpsPath.getDistance();
 

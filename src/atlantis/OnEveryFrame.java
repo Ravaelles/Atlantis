@@ -1,16 +1,18 @@
 package atlantis;
 
-import atlantis.enemy.AEnemyUnits;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import jbweb.Block;
+import atlantis.map.Chokes;
 import jbweb.Blocks;
+import jbweb.Stations;
+import jbweb.Wall;
+import jbweb.Walls;
 
 public class OnEveryFrame {
 
 //    private static CappedList<Integer> frames = new CappedList<>(4);
 
     public static void update() {
+        GameSpeed.checkIfNeedToSlowDown();
+
 //        for (AUnit unit : Select.ourCombatUnits().list()) {
 //            if (unit.isUnderAttack(2) && unit.hpPercent() < 48) {
 //                GameSpeed.changeSpeedTo(30);
@@ -24,6 +26,15 @@ public class OnEveryFrame {
 
         // JBWEB building positions (blocks)
 //        Blocks.draw();
+        Stations.draw();
+        Walls.draw();
+
+//        if (AGame.now() >= 5) {
+//            Wall wall = Walls.createTWall();
+//            Wall wall = Walls.getWall(Chokes.mainChoke().rawChoke());
+//            Wall wall = Walls.createTWall();
+//            System.out.println("wall = " + wall);
+//        }
 
 //        if (AGame.everyNthGameFrame(100)) {
 //            for (Block block : Blocks.getBlocks()) {

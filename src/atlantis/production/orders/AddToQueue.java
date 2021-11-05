@@ -27,6 +27,14 @@ public class AddToQueue {
         addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.HIGH));
     }
 
+    public static void addWithStandardPriority(AUnitType type) {
+        addWithStandardPriority(type, null);
+    }
+
+    public static void addWithStandardPriority(AUnitType type, HasPosition position) {
+        addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.STANDARD));
+    }
+
     // =========================================================
 
     private static void addToQueue(AUnitType type, APosition position, int index) {

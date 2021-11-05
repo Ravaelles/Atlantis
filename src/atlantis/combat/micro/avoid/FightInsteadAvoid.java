@@ -198,7 +198,7 @@ public class FightInsteadAvoid {
         int unitsNearby = Select.all().exclude(unit).inRadius(0.3, unit).count();
         int ourNearby = Select.our().exclude(unit).inRadius(0.3, unit).count();
 
-        if (unit.mission().isMissionAttack()) {
+        if (unit.mission() != null && unit.mission().isMissionAttack()) {
             return ourNearby >= 3 || unitsNearby >= 5;
         }
 

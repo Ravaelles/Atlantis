@@ -31,22 +31,16 @@ public class ASquadManager {
 //        System.err.println("Squad size: " + squad.size());
     }
 
-    public static void battleUnitDestroyed(AUnit unit) {
-        if (shouldSkipUnit(unit)) {
-            return;
-        }
-
+    public static void unitDestroyed(AUnit unit) {
         Squad squad = unit.squad();
         if (squad != null) {
-            squad.removeUnit(unit);
             unit.setSquad(null);
+            squad.removeUnit(unit);
         }
     }
 
     /**
      * Skips buildings, workers and Zerg Larva
-     * @param unit
-     * @return
      */
     private static boolean shouldSkipUnit(AUnit unit) {
         return unit.isNotRealUnit() || unit.isWorker() || unit.type().isMine();

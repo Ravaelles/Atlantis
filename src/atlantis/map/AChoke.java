@@ -19,11 +19,17 @@ public class AChoke implements HasPosition {
     private double width;
 
     public static AChoke create(ChokePoint chokepoint) {
+        if (chokepoint == null) {
+            return null;
+        }
+
+//        assert chokepoint != null;
+
         AChoke wrapper = new AChoke();
         wrapper.choke = chokepoint;
-        wrapper.sides = calculateSides(wrapper);
-        wrapper.center = calculateCenter(wrapper);
-        wrapper.width = calculateWidth(wrapper);
+        wrapper.sides = wrapper.calculateSides();
+        wrapper.center = wrapper.calculateCenter();
+        wrapper.width = wrapper.calculateWidth();
 
         return wrapper;
     }
@@ -61,19 +67,22 @@ public class AChoke implements HasPosition {
     // =========================================================
     // BWTA consistent methods missing from BWEM
 
-    private static double calculateWidth(AChoke wrapper) {
-        return wrapper.sides[0].getDistance(wrapper.sides[1]);
+    private double calculateWidth() {
+        return sides[0].getDistance(sides[1]);
     }
 
-    private static APosition calculateCenter(AChoke wrapper) {
+    private APosition calculateCenter() {
         return new APosition(
-                (wrapper.sides[0].x + wrapper.sides[1].x) / 2,
-                (wrapper.sides[0].y + wrapper.sides[1].y) / 2
+                (sides[0].x + sides[1].x) / 2,
+                (sides[0].y + sides[1].y) / 2
         );
     }
 
-    private static Position[] calculateSides(AChoke wrapper) {
-        List<WalkPosition> wp = wrapper.choke.getGeometry();
+    private Position[] calculateSides() {
+        assert choke != null;
+        assert choke.getGeometry() != null;
+
+        List<WalkPosition> wp = choke.getGeometry();
         WalkPosition p1 = wp.get(0);
         WalkPosition p2 = wp.get(0);
         double d_max = -1.0D;
@@ -126,5 +135,9 @@ public class AChoke implements HasPosition {
                 "width=" + width +
                 ", chokepoint=" + center +
                 '}';
+    }
+
+    public ChokePoint rawChoke() {
+        return choke;
     }
 }

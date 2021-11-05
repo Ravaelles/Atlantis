@@ -24,7 +24,7 @@ public class RetreatManager {
         }
 
         boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
-        boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit, isNewFight);
+        boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
 
         // If situation is unfavorable, retreat
         if (!isSituationFavorable) {

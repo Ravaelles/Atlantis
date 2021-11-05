@@ -20,13 +20,11 @@ import atlantis.units.actions.UnitActions;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
 import atlantis.util.*;
+import atlantis.util.Vector;
 import atlantis.wrappers.ATech;
 import bwapi.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Wrapper for bwapi Unit class that makes units much easier to use.<br /><br />
@@ -181,13 +179,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this;
     }
 
-    private static AUnit getBWMirrorUnit(Unit u) {
-        for (AUnit unit : instances.values()) {
-            if (unit.u.equals(u)) {
-                return unit;
-            }
-        }
-        return null;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AUnit aUnit = (AUnit) o;
+        return id() == aUnit.id();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id());
     }
 
     // =========================================================
@@ -258,12 +260,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     @Override
-    public int hashCode() {
-//        return super.hashCode();
-        return getID();
-    }
-
-    @Override
     public int compareTo(AUnit otherUnit) {
         return Integer.compare(this.hashCode(), otherUnit.hashCode());
     }
@@ -278,26 +274,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //
 //        return Integer.compare(this.hashCode(), compare);
 //    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (obj instanceof AUnit) {
-            AUnit other = (AUnit) obj;
-            return getID() == other.getID();
-        }
-        else if (obj instanceof Unit) {
-            Unit other = (Unit) obj;
-            return u().getID() == other.getID();
-        }
-
-        return false;
-    }
 
     // =========================================================
     // Compare type methods

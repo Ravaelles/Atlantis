@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position;
 
+import atlantis.AGame;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -16,47 +17,28 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      *
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo,
-            double maxDistance) {
+                                                    double maxDistance) {
         _CONDITION_THAT_FAILED = null;
 
-        // =========================================================
-//        int searchRadius = building.equals(AUnitType.Terran_Supply_Depot) ? 0 : 0;
-        int searchRadius = 0;
-
+        int searchRadius = building.isBase() ? 0 : 5;
         while (searchRadius < maxDistance) {
-            int xCounter = 0;
-            int yCounter = 0;
-            int doubleRadius = searchRadius * 2;
-
-            // Search horizontally
-            int minTileX = Math.max(0, nearTo.getTileX() - searchRadius);
-            int maxTileX = Math.min(nearTo.getTileX() + searchRadius, AMap.getMapWidthInTiles() - 1);
-            for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
-                
-                // Search veritcally
-                int minTileY = Math.max(0, nearTo.getTileY() - searchRadius);
-                int maxTileY = Math.min(nearTo.getTileY() + searchRadius, AMap.getMapHeightInTiles() - 1);
-                for (int tileY = minTileY; tileY <= maxTileY; tileY++) {
-                    if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
-//                        System.out.println(tileX + " / " + tileY);
+            int xMin = nearTo.getTileX() - searchRadius;
+            int xMax = nearTo.getTileX() + searchRadius;
+            int yMin = nearTo.getTileY() - searchRadius;
+            int yMax = nearTo.getTileY() + searchRadius;
+            for (int tileX = xMin; tileX <= xMax; tileX++) {
+                for (int tileY = yMin; tileY <= yMax; tileY++) {
+                    if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
-                        
-                        // Check if position is buildable etc
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
                         }
                     }
-
-                    yCounter++;
                 }
-                xCounter++;
             }
 
             searchRadius++;
         }
-        
-        System.err.println("Finished at search radius: " + searchRadius + " from " + nearTo);
-        System.err.println("   (Last error: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
 
         return null;
     }

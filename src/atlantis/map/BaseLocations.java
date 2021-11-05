@@ -45,6 +45,24 @@ public class BaseLocations {
         return null;
     }
 
+    public static APosition randomInvisibleStartingLocation() {
+
+//        // Get list of all starting locations
+//        Positions<ABaseLocation> startingLocations = new Positions<>();
+//        startingLocations.addPositions(startingLocations(true));
+//
+//        // Sort them all by closest to given nearestTo position
+//        startingLocations.sortByDistanceTo(nearestTo, true);
+
+        // For every location...
+        for (ABaseLocation baseLocation : nonStartingLocations()) {
+            if (!baseLocation.position().isVisible()) {
+                return baseLocation.position();
+            }
+        }
+        return null;
+    }
+
     public static ABaseLocation getStartingLocationBasedOnIndex(int index) {
         ArrayList<ABaseLocation> baseLocations = new ArrayList<>();
         baseLocations.addAll(startingLocations(true));
@@ -155,6 +173,18 @@ public class BaseLocations {
                         .getBases()
                         .stream()
                         .map(base -> ABaseLocation.create(base))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public static List<ABaseLocation> nonStartingLocations(){
+        return (List<ABaseLocation>) cache.get(
+                "nonStartingLocations",
+                10,
+                () -> AMap.getMap()
+                        .getStartingLocations()
+                        .stream()
+                        .map(tilePosition -> ABaseLocation.create(tilePosition))
                         .collect(Collectors.toList())
         );
     }

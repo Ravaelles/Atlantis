@@ -14,8 +14,11 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
+        if (isFirstMission() && Select.ourCombatUnits().atLeast(3)) {
+            return true;
+        }
+
         return Select.ourCombatUnits().atLeast(10);
     }
-
 
 }

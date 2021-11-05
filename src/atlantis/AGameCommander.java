@@ -5,10 +5,8 @@ import atlantis.enemy.AEnemyUnits;
 import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
-import atlantis.protoss.ProtossSpecificBuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
-import atlantis.terran.TerranSpecificBuildingsCommander;
 import atlantis.util.CodeProfiler;
 import atlantis.workers.AWorkerCommander;
 

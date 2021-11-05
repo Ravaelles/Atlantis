@@ -1,7 +1,9 @@
 package atlantis.workers;
 
 import atlantis.AGame;
+import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.Units;
@@ -17,7 +19,7 @@ public class AWorkerTransferManager {
     public static void transferWorkersBetweenBasesIfNeeded() {
 
         // Don't run every frame
-        if (!AGame.everyNthGameFrame(30)) {
+        if (!AGame.everyNthGameFrame(10)) {
             return;
         }
 
@@ -34,7 +36,7 @@ public class AWorkerTransferManager {
             int numOfWorkersNearBase = AWorkerManager.getHowManyWorkersWorkingNear(base, false);
             int numOfMineralsNearBase = Select.minerals().inRadius(10, base).count();
             double workersToMineralsRatio = (double) numOfWorkersNearBase / (numOfMineralsNearBase + 0.1);
-            baseWorkersRatios.setValueFor(base, workersToMineralsRatio);
+            baseWorkersRatios.addUnitWithValue(base, workersToMineralsRatio);
         }
 
         // Take the base with lowest and highest worker ratio
@@ -42,8 +44,8 @@ public class AWorkerTransferManager {
         AUnit baseWithMostWorkers = baseWorkersRatios.unitWithHighestValue();
 
         if (baseWithFewestWorkers == null || baseWithMostWorkers == null) {
-//            System.err.println("baseWithFewestWorkers = " + baseWithFewestWorkers);
-//            System.err.println("baseWithMostWorkers = " + baseWithMostWorkers);
+            System.err.println("baseWithFewestWorkers = " + baseWithFewestWorkers);
+            System.err.println("baseWithMostWorkers = " + baseWithMostWorkers);
             return;
         }
 
@@ -55,7 +57,7 @@ public class AWorkerTransferManager {
 //        System.out.println("Most: " + baseWithMostWorkers + " / " + mostWorkersRatio);
 //        System.out.println();
 
-        if (mostWorkersRatio < 1.7 || workerRatioDiff < 0.6 || baseWithMostWorkers.distTo(baseWithFewestWorkers) < 10) {
+        if (mostWorkersRatio < 1.7 || workerRatioDiff < 0.5 || baseWithMostWorkers.distTo(baseWithFewestWorkers) < 8) {
             return;
         }
 
@@ -64,6 +66,7 @@ public class AWorkerTransferManager {
         AUnit worker = Select.ourWorkersThatGather(true)
                 .inRadius(20, baseWithMostWorkers)
                 .nearestTo(baseWithFewestWorkers);
+        System.out.println("transfer worker = " + worker);
         if (worker != null) {
             transferWorkerTo(worker, baseWithFewestWorkers);
         }

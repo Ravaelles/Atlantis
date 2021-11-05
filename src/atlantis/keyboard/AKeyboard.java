@@ -74,13 +74,13 @@ public class AKeyboard implements NativeKeyListener {
 
             // Keys "-" and NumPad "-" and "["
             case 12: case 3658: case 26:
-                GameSpeed.changeSpeedBy(+120);
+                GameSpeed.changeSpeedBy(+40);
                 System.out.println("Notice: SPEED SLOWER (" + GameSpeed.gameSpeed + ")");
                 break;
 
             // Keys "+" and NumPad "+" and "]"
             case 13: case 3662: case 27:
-                GameSpeed.changeSpeedBy(-120);
+                GameSpeed.changeSpeedBy(-40);
                 System.out.println("Notice: SPEED FASTER (" + GameSpeed.gameSpeed + ")");
                 break;
 
@@ -91,17 +91,17 @@ public class AKeyboard implements NativeKeyListener {
 
             // Key "2"
             case 3:
-                GameSpeed.changeFrameSkipTo(10);
+                GameSpeed.changeFrameSkipTo(5);
                 break;
 
             // Key "3"
             case 4:
-                GameSpeed.changeFrameSkipTo(20);
+                GameSpeed.changeFrameSkipTo(10);
                 break;
 
             // Key "4"
             case 5:
-                GameSpeed.changeFrameSkipTo(30);
+                GameSpeed.changeFrameSkipTo(20);
                 break;
 
             // Key "5"
@@ -111,22 +111,22 @@ public class AKeyboard implements NativeKeyListener {
 
             // Key "6"
             case 7:
-                GameSpeed.changeFrameSkipTo(50);
+                GameSpeed.changeFrameSkipTo(80);
                 break;
 
             // Key "7"
             case 8:
-                GameSpeed.changeFrameSkipTo(60);
+                GameSpeed.changeFrameSkipTo(150);
                 break;
 
             // Key "8"
             case 9:
-                GameSpeed.changeFrameSkipTo(70);
+                GameSpeed.changeFrameSkipTo(250);
                 break;
 
             // Key "9"
             case 10:
-                GameSpeed.changeFrameSkipTo(150);
+                GameSpeed.changeFrameSkipTo(500);
                 break;
 
             // Key "0"

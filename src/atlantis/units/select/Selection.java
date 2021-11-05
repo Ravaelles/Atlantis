@@ -187,14 +187,6 @@ public class Selection {
     }
 
     /**
-     * Selects only those units which are idle. Idle is unit's class flag so be careful with that.
-     */
-    public Selection idle() {
-        data.removeIf(unit -> !unit.isIdle());
-        return this;
-    }
-
-    /**
      * Selects units that are gathering minerals.
      */
     public Selection gatheringMinerals(boolean onlyNotCarryingMinerals) {

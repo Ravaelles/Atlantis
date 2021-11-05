@@ -156,6 +156,9 @@ public class Units {
         if (value == null) {
             throw new IllegalArgumentException("Units value shouldn't be null");
         }
+        if (!units.contains(unit)) {
+            throw new RuntimeException("Unit isn't in the list. Use addUnitWithValue");
+        }
 
         extraValues.put(unit, value);
     }
@@ -195,31 +198,17 @@ public class Units {
         assert !units.isEmpty();
         AUnit bestUnit = null;
         
-        // We're interested in MIN
-        if (returnLowest) {
-            double bestValue = Integer.MAX_VALUE;
-            for (AUnit unit : units) {
+        double bestValue = returnLowest ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        for (AUnit unit : units) {
 //                System.out.println("######################");
 //                System.out.println(extraValues);
 //                for (AUnit u : extraValues.keySet()) {
 //                    System.out.println(u + " // " + (extraValues.containsKey(u) ? extraValues.get(u) : "NO"));
 //                }
 //                System.out.println("######################");
-                if (bestUnit == null || valueFor(unit) < bestValue) {
-                    bestValue = valueFor(unit);
-                    bestUnit = unit;
-                }
-            }
-        }
-        
-        // We're interested in MAX
-        else {
-            double bestValue = Integer.MIN_VALUE;
-            for (AUnit unit : units) {
-                if (bestUnit == null || valueFor(unit) > bestValue) {
-                    bestValue = valueFor(unit);
-                    bestUnit = unit;
-                }
+            if (bestUnit == null || (returnLowest ? (valueFor(unit) < bestValue) : (valueFor(unit) > bestValue))) {
+                bestValue = valueFor(unit);
+                bestUnit = unit;
             }
         }
 

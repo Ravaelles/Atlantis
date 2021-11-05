@@ -2,10 +2,11 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.map.AChoke;
-import atlantis.map.MapChokes;
+import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 
@@ -25,9 +26,18 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     return null;
                 }
 
+                // === Natural choke if second base ================
+
+                if (Count.basesWithUnfinished() >= 2) {
+                    AChoke natural = Chokes.natural();
+                    if (natural != null) {
+                        return natural;
+                    }
+                }
+
                 // === Main choke ================
 
-                AChoke mainChoke = MapChokes.mainChoke();
+                AChoke mainChoke = Chokes.mainChoke();
                 if (mainChoke != null) {
                     return mainChoke.getCenter();
                 }
@@ -67,7 +77,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit building = Select.ourBuildings().first();
                 if (building != null) {
-                    return APosition.create(MapChokes.nearestChoke(building.position()).getCenter());
+                    return APosition.create(Chokes.nearestChoke(building.position()).getCenter());
                 }
 
                 return null;

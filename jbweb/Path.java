@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import bwem.Area;
 import jps.main.java.jps.Graph;
 import jps.main.java.jps.JPS;
 import jps.main.java.jps.Tile;
@@ -128,7 +129,10 @@ public class Path {
 
         // If not reachable based on previous paths to this area
         if (target.isValid(JBWEB.game) && JBWEB.mapBWEM.getMap().getArea(target) != null && wall.wallWalkable(new TilePosition(source.x, source.y))) {
-            int checkReachable = unitPathCache.notReachableThisFrame.get(JBWEB.mapBWEM.getMap().getArea(target));
+            Area area = JBWEB.mapBWEM.getMap().getArea(target);
+//            int checkReachable = unitPathCache.notReachableThisFrame.get(JBWEB.mapBWEM.getMap().getArea(target));
+            int checkReachable = unitPathCache.notReachableThisFrame.containsKey(area) 
+                    ? unitPathCache.notReachableThisFrame.get(area) : JBWEB.game.getFrameCount();
             if (checkReachable >= JBWEB.game.getFrameCount() && JBWEB.game.getFrameCount() > 0) {
                 reachable = false;
                 dist = Double.MAX_VALUE;
@@ -147,7 +151,7 @@ public class Path {
             e.printStackTrace();
         }
 
-        if (!path.isEmpty()) {
+        if (path != null && !path.isEmpty()) {
             Position current = s;
             for (Tile jpsTile : path) {
                 TilePosition tile = new TilePosition(jpsTile.getX(), jpsTile.getY());
@@ -203,7 +207,7 @@ public class Path {
 
                 if (next.isValid(JBWEB.game)) {
                     // If next has a parent or is a collision, continue
-                    if (!parentGrid[next.x][next.y].equals(new TilePosition(0, 0)) || !wall.wallWalkable(next))
+                    if (!new TilePosition(0, 0).equals(parentGrid[next.x][next.y]) || !wall.wallWalkable(next))
                         continue;
 
                     // Check diagonal collisions where necessary

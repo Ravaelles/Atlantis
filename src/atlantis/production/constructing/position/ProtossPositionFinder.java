@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.debug.APainter;
 import atlantis.map.AChoke;
-import atlantis.map.MapChokes;
+import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -140,7 +140,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
     private static APosition positionForFirstPylon() {
         AUnit base = Select.mainBase();
-        AChoke mainChoke = MapChokes.mainChoke();
+        AChoke mainChoke = Chokes.mainChoke();
         if (base == null || mainChoke == null) {
             return Select.our().first().position();
         }

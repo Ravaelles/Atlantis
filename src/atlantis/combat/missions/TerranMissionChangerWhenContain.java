@@ -7,19 +7,27 @@ import atlantis.units.select.Selection;
 public class TerranMissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToAttack()) {
-            Missions.currentGlobalMission = Missions.ATTACK;
+        if (shouldChangeMissionToDefend()) {
+            Missions.setGlobalMissionDefend();
+        }
+
+        else if (shouldChangeMissionToAttack()) {
+            Missions.setGlobalMissionAttack();
         }
     }
 
     // =========================================================
+
+    private static boolean shouldChangeMissionToDefend() {
+        return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 10;
+    }
 
     private static boolean shouldChangeMissionToAttack() {
         if (killsBalanceSaysSo()) {
             return true;
         }
 
-        return Select.ourTanks().count() > 4 || Select.ourCombatUnits().count() > 30;
+        return Select.ourTanks().count() >= 2 || Select.ourCombatUnits().count() >= 25;
     }
 
     private static boolean killsBalanceSaysSo() {

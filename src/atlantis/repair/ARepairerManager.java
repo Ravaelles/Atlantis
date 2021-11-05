@@ -6,8 +6,8 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Missions;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,6 +18,7 @@ public class ARepairerManager {
     private static final int MAX_REPAIRERS = 7;
 
     public static boolean updateRepairer(AUnit repairer) {
+        repairer.setTooltip("Repairer");
         if (handleRepairerSafety(repairer)) {
             return true;
         }
@@ -28,7 +29,8 @@ public class ARepairerManager {
     // =========================================================
 
     private static boolean handleRepairerSafety(AUnit repairer) {
-        if (repairer.hpPercent() <= 50 && AAvoidUnits.avoidEnemiesIfNeeded(repairer)) {
+        if ((!repairer.isRepairing() || repairer.hpPercent() <= 30) && AAvoidUnits.avoidEnemiesIfNeeded(repairer)) {
+            repairer.setTooltip("Aaa!");
             return true;
         }
 
@@ -52,15 +54,25 @@ public class ARepairerManager {
 
         // Target is wounded
         if (!repairer.isRepairing()) {
-            if (target.isAlive() && repairer.isAlive()) {
+            if (target.isWounded()) {
                 repairer.repair(
                         target,
                         "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
                 );
                 return true;
-            } else {
-                ARepairAssignments.removeRepairerOrProtector(repairer);
             }
+            else {
+                if (!ARepairAssignments.isProtector(repairer)) {
+                    ARepairAssignments.removeRepairerOrProtector(repairer);
+                }
+                return false;
+            }
+        }
+
+        // Move to closest tank
+        AUnit nearestTank = Select.ourTanks().nearestTo(repairer);
+        if (nearestTank != null) {
+            return repairer.move(nearestTank, UnitActions.MOVE, "CoverHim");
         }
 
         return false;
@@ -150,7 +162,7 @@ public class ARepairerManager {
 
     protected static void assignRepairersToWoundedUnits() {
 //        if (ARepairAssignments.repairersToUnit.keySet().size() >= Count.workers() * MAX_REPAIRERS)
-        if (ARepairAssignments.repairersToUnit.keySet().size() >= MAX_REPAIRERS) {
+        if (removeExcessiveRepairersIfNeeded()) {
             return;
         }
 
@@ -183,5 +195,18 @@ public class ARepairerManager {
                 assignRepairersToWoundedUnits(woundedUnit, 2 - numberOfRepairers);
             }
         }
+    }
+
+    private static boolean removeExcessiveRepairersIfNeeded() {
+        if (ARepairAssignments.countTotalRepairers() >= MAX_REPAIRERS) {
+            for (int i = 0; i < ARepairAssignments.countTotalRepairers() - MAX_REPAIRERS; i++) {
+                ARepairAssignments.removeRepairerOrProtector(
+                        ARepairAssignments.getRepairers().get(ARepairAssignments.getRepairers().size() - 1)
+                );
+            }
+            return true;
+        }
+
+        return false;
     }
 }

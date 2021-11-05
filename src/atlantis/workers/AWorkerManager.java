@@ -15,7 +15,11 @@ public class AWorkerManager {
      * Executed for every worker unit.
      */
     public static boolean update(AUnit worker) {
-        worker.removeTooltip();
+        if (workerManagerForbiddenFor(worker)) {
+            return false;
+        }
+
+        worker.setTooltip(":)");
 
         if (AWorkerDefenceManager.handleDefenceIfNeeded(worker)) {
             return true;
@@ -25,25 +29,19 @@ public class AWorkerManager {
             return true;
         }
 
-        if (worker.lastActionLessThanAgo(20, UnitActions.RETURN_CARGO)) {
-            return true;
-        }
-
-        if (workerManagerForbiddenFor(worker)) {
-            return false;
-        }
+//        if (worker.lastActionLessThanAgo(20, UnitActions.RETURN_CARGO)) {
+//            return true;
+//        }
 
         // Act as BUILDER
         if (AConstructionManager.isBuilder(worker)) {
-            ABuilderManager.update(worker);
-            if (worker.getTooltip() == null) {
-                worker.setTooltip("Builder");
-            }
-            return true;
-        } 
+            worker.setTooltip("Builder");
+            return ABuilderManager.update(worker);
+        }
 
         // Ordinary WORKER
         else {
+            worker.setTooltip("Gather");
             return handleGatherMineralsOrGas(worker);
         }
     }
@@ -52,10 +50,16 @@ public class AWorkerManager {
 
     private static boolean workerManagerForbiddenFor(AUnit worker) {
         if (AScoutManager.isScout(worker)) {
+            worker.setTooltip("Scout");
             return true;
         }
 
-        return ARepairAssignments.isRepairerOfAnyKind(worker);
+        if (ARepairAssignments.isRepairerOfAnyKind(worker)) {
+            worker.setTooltip("Repairer");
+            return true;
+        }
+
+        return false;
     }
 
     // =========================================================
@@ -64,7 +68,6 @@ public class AWorkerManager {
      * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather minerals.
      */
     private static boolean handleGatherMineralsOrGas(AUnit worker) {
-        worker.setTooltip("Gather");
 
         // Don't react if already gathering
         if (worker.isGatheringGas() || worker.isGatheringMinerals()) {
@@ -78,7 +81,13 @@ public class AWorkerManager {
 //            return true;
 //        }
 
-        if (worker.isMoving() || worker.getTarget() != null) {
+//        if (worker.isMoving()) {
+//            worker.setTooltip("OnTheRoadAgain");
+//            return true;
+//        }
+
+        if (worker.getTarget() != null && !worker.getTarget().type().isMineralField()) {
+            worker.setTooltip("--> " + worker.getTarget().shortName());
             return true;
         }
 

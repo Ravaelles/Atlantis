@@ -3,6 +3,7 @@ package atlantis.combat.eval;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.Cache;
 import atlantis.util.ColorUtil;
 import atlantis.util.WeaponUtil;
 import bwapi.Color;
@@ -16,22 +17,23 @@ public class ACombatEvaluator {
     /**
      * Maximum allowed value as a result of evaluation.
      */
-    private static final int MAX_VALUE = 999;
+    private static final double MAX_VALUE = 999.9;
 
     /**
      * Stores the instances of AtlantisCombatInformation for each unit
      */
     private static final Map<AUnit, ACombatInformation> combatInfo = new HashMap<>();
 
+    private static Cache<Object> cache = new Cache<>();
+
     // =========================================================
     /**
      * Returns <b>TRUE</b> if our <b>unit</b> should engage in combat with nearby units or
      * <b>FALSE</b> if enemy is too strong and we should pull back.
-     * @param isPendingFight if true then it will check if unit should continue fighting 
      * (retreat otherwise). If false then it means we would engage in new fight, so make sure you've got
      * some safe margin. This feature avoids fighting and immediately running away and fighting again.
      */
-    public static boolean isSituationFavorable(AUnit unit, boolean isPendingFight) {
+    public static boolean isSituationFavorable(AUnit unit) {
         AUnit nearestEnemy = Select.enemy().nearestTo(unit);
         if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
             return true;
@@ -81,7 +83,11 @@ public class ACombatEvaluator {
      * (like 3564, more equals higher combat strength).
      */
     public static double evaluateSituation(AUnit unit, boolean returnAbsoluteValue, boolean calculateForEnemy) {
-        checkCombatInfo(unit);
+        return (double) cache.get(
+            "evaluateSituation:" + unit.id() + "," + returnAbsoluteValue + "," + calculateForEnemy,
+            5,
+            () -> {
+                checkCombatInfo(unit);
 
 //        // Try using cached value
 //        double combatEvalCachedValueIfNotExpired = combatInfo.get(unit).getCombatEvalCachedValueIfNotExpired();
@@ -89,36 +95,37 @@ public class ACombatEvaluator {
 //            return updateCombatEval(unit, combatEvalCachedValueIfNotExpired);
 //        }
 
-        // =========================================================
-        // Define nearby enemy and our units
-        Collection<AUnit> enemyUnits = Select.enemy().combatUnits().inRadius(12, unit).listUnits();
-        if (enemyUnits.isEmpty()) {
-            return MAX_VALUE;
-        }
-        Collection<AUnit> ourUnits = Select.our().combatUnits().inRadius(8.5, unit).listUnits();
+                // =========================================================
+                // Define nearby enemy and our units
+                Collection<AUnit> enemyUnits = Select.enemy().combatUnits().inRadius(12, unit).listUnits();
+                if (enemyUnits.isEmpty()) {
+                    return MAX_VALUE;
+                }
+                Collection<AUnit> ourUnits = Select.our().combatUnits().inRadius(8.5, unit).listUnits();
 
-        // =========================================================
-        // Evaluate our and enemy strength
-        double enemyEvaluation = Evaluate.evaluateUnitsAgainstUnit(enemyUnits, unit, true);
-        double ourEvaluation = Evaluate.evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
+                // =========================================================
+                // Evaluate our and enemy strength
+                double enemyEvaluation = Evaluate.evaluateUnitsAgainstUnit(enemyUnits, unit, true);
+                double ourEvaluation = Evaluate.evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
 
-        // Return non-relative absolute value
-        if (returnAbsoluteValue) {
-            if (calculateForEnemy) {
-                return enemyEvaluation;
+                // Return non-relative absolute value
+                if (returnAbsoluteValue) {
+                    if (calculateForEnemy) {
+                        return enemyEvaluation;
+                    } else {
+                        return ourEvaluation;
+                    }
+                }
+
+                // Return relative value compared to local enemy strength
+                else {
+                    double lowHealthPenalty = (100 - unit.hpPercent()) / 80;
+                    double combatEval = ourEvaluation / enemyEvaluation - 1 - lowHealthPenalty;
+
+                    return updateCombatEval(unit, combatEval);
+                }
             }
-            else {
-                return ourEvaluation;
-            }
-        }
-        
-        // Return relative value compared to local enemy strength
-        else {
-            double lowHealthPenalty = (100 - unit.hpPercent()) / 80;
-            double combatEval = ourEvaluation / enemyEvaluation - 1 - lowHealthPenalty;
-
-            return updateCombatEval(unit, combatEval);
-        }
+        );
     }
 
     // =========================================================

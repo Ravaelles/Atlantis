@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.units.AUnit;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
@@ -11,9 +12,20 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 + transportBonus(defender)
                 + ourUnitsNearbyBonus(defender)
                 + ourMovementBonus(defender)
-                + enemyMovementBonus(defender, attacker);
+                + enemyMovementBonus(defender, attacker)
+                + combatEvalBonus(defender, attacker);
 
         return attacker.distTo(defender) - criticalDist;
+    }
+
+    // =========================================================
+
+    private static double combatEvalBonus(AUnit defender, AUnit attacker) {
+        if (!ACombatEvaluator.isSituationFavorable(defender)) {
+            return -2;
+        }
+
+        return 0.3;
     }
 
 }

@@ -7,7 +7,7 @@ public class ZergMissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToAttack()) {
-            Missions.currentGlobalMission = Missions.ATTACK;
+            Missions.setGlobalMissionAttack();
         }
     }
 

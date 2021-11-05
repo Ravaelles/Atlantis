@@ -8,8 +8,7 @@ import atlantis.util.Cache;
 import bwapi.TilePosition;
 import bwem.BWEM;
 import bwem.BWMap;
-import jbweb.Blocks;
-import jbweb.JBWEB;
+import jbweb.*;
 
 /**
  * This class provides information about high-abstraction level map operations like returning place for the
@@ -49,6 +48,10 @@ public class AMap {
         // Init JBWEB
         JBWEB.onStart(Atlantis.game(), bwem);
         Blocks.findBlocks();
+        Stations.findStations();
+        Wall wall = Walls.createTWall();
+        System.out.println("Walls.getWalls() = " + Walls.getWalls());
+        System.out.println("Wall = " + wall);
 
         System.out.println("OK.");
     }
@@ -186,7 +189,7 @@ public class AMap {
 //        for (AChoke choke : chokes) {
 //            if (baseRegion.chokes().contains(choke)) {
 //                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
-//                MapChokes.disabledChokes.add(choke);    //choke.setDisabled(true);
+//                Chokes.disabledChokes.add(choke);    //choke.setDisabled(true);
 //            }
 //        }
 //

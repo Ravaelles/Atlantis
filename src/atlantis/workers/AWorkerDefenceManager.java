@@ -29,9 +29,14 @@ public class AWorkerDefenceManager {
             return false;
         }
 
+        if (Select.our().inRadius(4, worker).atMost(2)) {
+            return false;
+        }
+
         // FIGHT against ZEARGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).listUnits()) {
             if (worker.hp() <= 21 && runToFarthestMineral(worker, enemy)) {
+                worker.setTooltip("Aaargh!");
                 return true;
             }
             worker.attackUnit(enemy);

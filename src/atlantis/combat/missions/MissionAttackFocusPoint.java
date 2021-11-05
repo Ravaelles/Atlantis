@@ -2,7 +2,9 @@ package atlantis.combat.missions;
 
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
+import atlantis.map.AChoke;
 import atlantis.map.BaseLocations;
+import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -45,10 +47,6 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (anyEnemyUnit != null) {
 //            System.out.println("3 = " + anyEnemyUnit);
             return anyEnemyUnit.position();
-        }
-
-        if (Select.mainBase() == null) {
-            return null;
         }
 
         // Try to go to some starting location, hoping to find enemy there.
