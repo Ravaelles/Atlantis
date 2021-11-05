@@ -55,7 +55,6 @@ public class AWorkerManager {
         }
 
         if (ARepairAssignments.isRepairerOfAnyKind(worker)) {
-            worker.setTooltip("RepairerA");
             return true;
         }
 

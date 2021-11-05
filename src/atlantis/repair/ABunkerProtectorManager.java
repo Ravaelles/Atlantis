@@ -9,8 +9,8 @@ public class ABunkerProtectorManager {
         AUnit unit = ARepairAssignments.getUnitToProtectFor(protector);
         if (unit != null && unit.isAlive()) {
 
-            // Bunker WOUNDED
-            if (unit.hpPercent() < 100) {
+            // WOUNDED
+            if (unit.woundPercent() >= 1) {
                 protector.repair(unit, "Protect " + unit.shortName());
                 return true;
             }

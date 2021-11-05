@@ -43,7 +43,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Try going to any known enemy unit
-        AUnit anyEnemyUnit = Select.enemy().first();
+        AUnit anyEnemyUnit = Select.enemy().combatUnits().groundUnits().first();
         if (anyEnemyUnit != null) {
 //            System.out.println("3 = " + anyEnemyUnit);
             return anyEnemyUnit.position();

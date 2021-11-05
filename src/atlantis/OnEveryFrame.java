@@ -28,8 +28,8 @@ public class OnEveryFrame {
 
         // JBWEB building positions (blocks)
 //        Blocks.draw();
-        Stations.draw();
-        Walls.draw();
+//        Stations.draw();
+//        Walls.draw();
 
 //        if (AGame.now() >= 5) {
 //            Wall wall = Walls.createTWall();

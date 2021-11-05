@@ -20,7 +20,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                                                     double maxDistance) {
         _CONDITION_THAT_FAILED = null;
 
-        int searchRadius = building.isBase() ? 0 : 5;
+        int searchRadius = building.isBase() ? 0 : 3;
         while (searchRadius < maxDistance) {
             int xMin = nearTo.getTileX() - searchRadius;
             int xMax = nearTo.getTileX() + searchRadius;
@@ -77,6 +77,11 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
         // Can't be too close to minerals or to geyser, because would slow down production
         if (isTooCloseToMineralsOrGeyser(building, position)) {
+            return false;
+        }
+
+        // Overlapping a choke point can make it impossible to pass
+        if (isTooCloseToChoke(building, position)) {
             return false;
         }
 

@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
+import atlantis.Atlantis;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -19,7 +20,11 @@ public class TerranMissionChangerWhenContain {
     // =========================================================
 
     private static boolean shouldChangeMissionToDefend() {
-        return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 10;
+        if (Atlantis.LOST_RESOURCES <= 150) {
+            return false;
+        }
+
+        return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 9;
     }
 
     private static boolean shouldChangeMissionToAttack() {

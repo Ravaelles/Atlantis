@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 public class ARepairerManager {
 
-    private static final int MAX_REPAIRERS = 3;
+    private static final int MAX_REPAIRERS = 5;
 
     public static boolean updateRepairer(AUnit repairer) {
         repairer.setTooltip("Repairer");
@@ -42,7 +42,7 @@ public class ARepairerManager {
         if (target == null || !target.isAlive()) {
             repairer.setTooltip("Null unit2repair");
             ARepairAssignments.removeRepairerOrProtector(repairer);
-            return true;
+            return false;
         }
 
         // Target is totally healthy
@@ -61,21 +61,20 @@ public class ARepairerManager {
                 );
                 return true;
             }
-            else {
-                if (!ARepairAssignments.isProtector(repairer)) {
-                    ARepairAssignments.removeRepairerOrProtector(repairer);
-                }
-                return false;
-            }
         }
 
-        // Move to closest tank
-        AUnit nearestTank = Select.ourTanks().nearestTo(repairer);
-        if (nearestTank != null) {
-            return repairer.move(nearestTank, UnitActions.MOVE, "CoverHim");
+        if (!ARepairAssignments.isProtector(repairer)) {
+            ARepairAssignments.removeRepairerOrProtector(repairer);
         }
-
         return false;
+
+//        // Move to closest tank
+//        AUnit nearestTank = Select.ourTanks().nearestTo(repairer);
+//        if (nearestTank != null) {
+//            return repairer.move(nearestTank, UnitActions.MOVE, "CoverHim");
+//        }
+//
+//        return false;
     }
 
     // =========================================================
@@ -104,7 +103,7 @@ public class ARepairerManager {
         ARepairAssignments.removeRepairerOrProtector(repairer);
 
         if (!hasMoreRepairersThanAllowed()) {
-            AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(10, repairer).first();
+            AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(13, repairer).first();
             if (closestUnitNeedingRepair != null) {
                 ARepairAssignments.addRepairer(closestUnitNeedingRepair, closestUnitNeedingRepair);
                 repairer.repair(closestUnitNeedingRepair, "Extra repair");
@@ -120,15 +119,15 @@ public class ARepairerManager {
     }
 
     protected static boolean handleIdleRepairer(AUnit repairer) {
-        if (repairer.isMoving() || !repairer.isRepairing() || repairer.isIdle()) {
-            int maxAllowedDistToRoam = Missions.globalMission().isMissionDefend() ? 4 : 13;
-            
+//        if (repairer.isMoving() || !repairer.isRepairing() || repairer.isIdle()) {
+        if (!repairer.isUnitActionRepair() || !repairer.isRepairing() || repairer.isIdle()) {
+//            int maxAllowedDistToRoam = Missions.globalMission().isMissionDefend() ? 4 : 13;
+            int maxAllowedDistToRoam = 13;
+
             // Try finding any repairable and wounded unit nearby
-            AUnit nearestWoundedUnit = Select.our().repairable(true)
-                    .inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
+            AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null) {
                 repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.shortName());
-//                repairer.setTooltip();
                 return true;
             }
         }

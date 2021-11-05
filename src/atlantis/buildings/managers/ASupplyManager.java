@@ -37,15 +37,15 @@ public class ASupplyManager {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 40) {
-                if (supplyFree <= 7 && noSuppliesBeingBuilt) {
+                if (supplyFree <= 8 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 100) {
-                if (supplyFree <= 10 && noSuppliesBeingBuilt) {
+                if (supplyFree <= 14 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 200) {
-                if (supplyFree <= 14 && suppliesBeingBuilt <= 1) {
+                if (supplyFree <= 25 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
             }

@@ -40,7 +40,6 @@ public class ABuildingsCommander {
 
         if (Us.isTerran()) {
             TerranFlyingBuildingManager.update();
-            ARepairCommander.update();
         }
     }
 

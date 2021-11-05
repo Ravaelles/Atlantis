@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.AGame;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 import atlantis.util.Enemy;
 
 /**
@@ -15,6 +16,7 @@ public class Missions {
      * PREPARE (go near enemy) and then ATTACK.
      */
     private static Mission currentGlobalMission = null;
+    private static int lastMissionChanged = 0;
 
     public static final Mission ATTACK = new MissionAttack();
     public static final Mission CONTAIN = new MissionContain();
@@ -96,6 +98,15 @@ public class Missions {
 
     public static void setGlobalMissionTo(Mission mission) {
         MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
+        lastMissionChanged = A.now();
         currentGlobalMission = mission;
+    }
+
+    public static int lastMissionChangedAgo() {
+        return A.ago(lastMissionChanged);
+    }
+
+    public static boolean recentlyChangedMission() {
+        return lastMissionChangedAgo() <= 30 * 15;
     }
 }

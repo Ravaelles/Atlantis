@@ -68,7 +68,7 @@ public class AChoke implements HasPosition {
     // BWTA consistent methods missing from BWEM
 
     private double calculateWidth() {
-        return sides[0].getDistance(sides[1]);
+        return sides[0].getDistance(sides[1]) / 32;
     }
 
     private APosition calculateCenter() {

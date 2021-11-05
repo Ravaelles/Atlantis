@@ -18,7 +18,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
             return true;
         }
 
-        return Select.ourCombatUnits().atLeast(10);
+        return Select.ourCombatUnits().atLeast(13);
     }
 
 }

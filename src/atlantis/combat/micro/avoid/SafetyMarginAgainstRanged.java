@@ -22,10 +22,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
     private static double combatEvalBonus(AUnit defender, AUnit attacker) {
         if (!ACombatEvaluator.isSituationFavorable(defender)) {
-            return -2;
+            return -3;
         }
 
-        return 0.3;
+        return 0;
     }
 
 }

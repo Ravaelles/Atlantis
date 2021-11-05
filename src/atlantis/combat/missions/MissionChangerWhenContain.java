@@ -5,6 +5,10 @@ import atlantis.AGame;
 public abstract class MissionChangerWhenContain extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
+        if (Missions.recentlyChangedMission()) {
+            return;
+        }
+
         if (AGame.isPlayingAsTerran()) {
             TerranMissionChangerWhenContain.changeMissionIfNeeded();
             return;

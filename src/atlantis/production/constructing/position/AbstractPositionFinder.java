@@ -2,7 +2,9 @@ package atlantis.production.constructing.position;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.map.AChoke;
 import atlantis.map.BaseLocations;
+import atlantis.map.Chokes;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
@@ -12,6 +14,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
+import atlantis.util.Us;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
@@ -35,8 +38,8 @@ public abstract class AbstractPositionFinder {
 
         // Leave entire vertical (same tileX) corridor free for units
         if (
-                position.getTileX() % 8 == 1
-                || (position.getTileX() + building.getDimensionRight() / 32) % 8 <= 1
+                position.getTileX() % 7 <= 1
+                || (position.getTileX() + building.getDimensionRight() / 32) % 7 <= 1
         ) {
 //        System.out.println(building.shortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
 //                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
@@ -47,7 +50,7 @@ public abstract class AbstractPositionFinder {
 
         // Leave entire horizontal (same tileY) corridor free for units
         if (
-                position.getTileY() % 7 <= 0
+                position.getTileY() % 7 <= 1
                 || (position.getTileY() + building.getDimensionDown() / 32) % 7 <= 0
         ) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
@@ -109,8 +112,31 @@ public abstract class AbstractPositionFinder {
         }
 
         for (ABaseLocation base : BaseLocations.baseLocations()) {
-            if (!base.isStartLocation() && base.position().distTo(position) <= 5.6) {
+            if (
+                    !base.isStartLocation()
+                    && base.position().translateByTiles(Us.isTerran() ? 3 : 0, 0).distTo(position) <= 3.5
+            ) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static boolean isTooCloseToChoke(AUnitType building, APosition position) {
+        if (building.isBase() || building.isCombatBuilding()) {
+            return false;
+        }
+
+        for (AChoke choke : Chokes.chokes()) {
+            if (choke.getWidth() >= 7) {
+                continue;
+            }
+
+            double distToChoke = choke.getCenter().distTo(position) - choke.getWidth();
+            if (distToChoke <= 3.3) {
+                _CONDITION_THAT_FAILED = "Overlaps choke (" + distToChoke + ")";
                 return true;
             }
         }
@@ -134,24 +160,24 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
-        double distToBase = nearestBase.distTo(position);
-        if (nearestBase != null && distToBase <= 8) {
-            for (AUnit mineral : Select.minerals().inRadius(8, position).listUnits()) {
-                if (mineral.distTo(position) <= (building.isPylon() ? 5 : 4)) {
+        double distToBase = nearestBase.position().translateByTiles(3, 0).distTo(position);
+        if (nearestBase != null && distToBase <= 4) {
+            for (AUnit mineral : Select.minerals().inRadius(6, position).listUnits()) {
+                if (mineral.distTo(position) <= (building.isPylon() ? 5 : 2.3)) {
                     _CONDITION_THAT_FAILED = "Too close to mineral";
                     return true;
                 }
             }
 
             for (AUnit geyser : Select.geysers().inRadius(8, position).listUnits()) {
-                if (geyser.distTo(position) <= (building.isPylon() ? 7 : 4)) {
+                if (geyser.distTo(position) <= (building.isPylon() ? 7 : 2.3)) {
                     _CONDITION_THAT_FAILED = "Too close to geyser";
                     return true;
                 }
             }
 
             for (AUnit gasBuilding : Select.geyserBuildings().inRadius(8, position).listUnits()) {
-                if (gasBuilding.distTo(position) <= 2 && distToBase <= 4) {
+                if (gasBuilding.distTo(position) <= 2 && distToBase <= 3) {
                     _CONDITION_THAT_FAILED = "Too close to gas building";
                     return true;
                 }

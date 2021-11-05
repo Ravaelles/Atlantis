@@ -217,7 +217,7 @@ public class GameSpeed {
             oneTimeSlowdownUsed = true;
             System.out.println("Slow down to " + currentSpeedAndFrameSkip());
             changeSpeedTo(0);
-            changeFrameSkipTo(2);
+            changeFrameSkipTo(0);
         }
     }
 

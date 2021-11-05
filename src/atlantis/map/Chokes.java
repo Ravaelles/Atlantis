@@ -76,9 +76,15 @@ public class Chokes {
         return (AChoke) cache.get(
                 "natural",
                 -1,
-                () -> AChoke.create(JBWEB.getNaturalChoke())
+                () -> {
+                    AChoke choke = AChoke.create(JBWEB.getNaturalChoke());
+                    if (choke != null) {
+                        return choke;
+                    }
+
+                    return nearestChoke(BaseLocations.natural());
+                }
         );
-//        return chokeForNatural(AMap.natural());
     }
 
     public static AChoke natural(APosition relativeTo) {
@@ -118,6 +124,10 @@ public class Chokes {
                 "nearestChoke:" + position.toStringPixels(),
                 -1,
             () -> {
+                if (position == null) {
+                    return null;
+                }
+
                 double nearestDist = 99999;
                 AChoke nearest = null;
 

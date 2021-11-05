@@ -144,6 +144,11 @@ public class TerranSiegeTank {
      * Not sieged
      */
     private static boolean updateWhenUnsieged(AUnit unit) {
+        if (handleNearEnemyCombatBuilding(unit)) {
+            return true;
+        }
+
+        // =========================================================
 
         // Mission is CONTAIN
         if (Missions.isGlobalMissionContain() || Missions.isGlobalMissionDefend()) {
@@ -166,11 +171,6 @@ public class TerranSiegeTank {
 //            return true;
 //        }
 
-        AUnit nearEnemyCombatBuilding = Select.enemy().combatBuildings().inRadius(11.9, unit).first();
-        if (nearEnemyCombatBuilding != null) {
-            return handleNearEnemyCombatBuilding(unit, nearEnemyCombatBuilding);
-        }
-        
         if (nearestEnemyUnit != null) {
             return nearestEnemyIsUnit(unit, nearestEnemyUnit, nearestEnemyUnitDist);
         }
@@ -186,10 +186,10 @@ public class TerranSiegeTank {
         return Select.ourCombatUnits().inRadius(6, tank).atMost(4);
     }
 
-    private static boolean handleNearEnemyCombatBuilding(AUnit tank, AUnit combatBuilding) {
-        double distanceToEnemy = tank.distTo(combatBuilding);
-        
-        if (distanceToEnemy <= 11.9 && canSiegeHere(tank)) {
+    private static boolean handleNearEnemyCombatBuilding(AUnit tank) {
+        AUnit building = Select.enemy().combatBuildings().inRadius(11.9, tank).first();
+
+        if (building != null && tank.distToLessThan(building, 11.9) && canSiegeHere(tank, false)) {
             tank.siege();
             tank.setTooltip("Siege - building");
             return true;
@@ -229,7 +229,11 @@ public class TerranSiegeTank {
     // =========================================================
     
     private static boolean canSiegeHere(AUnit tank) {
-        if (tooLonely(tank)) {
+        return canSiegeHere(tank, true);
+    }
+
+    private static boolean canSiegeHere(AUnit tank, boolean checkTooLonely) {
+        if (checkTooLonely && tooLonely(tank)) {
             return false;
         }
 
@@ -238,7 +242,7 @@ public class TerranSiegeTank {
             return true;
         }
         else {
-            return tank.distTo(choke.getCenter()) > 4 || (choke.getWidth() > 3);
+            return (tank.distTo(choke.getCenter()) - choke.getWidth()) >= 1.5 || (choke.getWidth() >= 4);
         }
     }
 

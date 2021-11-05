@@ -95,6 +95,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
+        // Overlapping a choke point can make it impossible to pass
+        if (isTooCloseToChoke(building, position)) {
+            return false;
+        }
+
+        // Let's spread pylons a bit initially so they power more space
         if (building.isPylon() && isTooCloseToOtherPylons(position)) {
             return false;
         }

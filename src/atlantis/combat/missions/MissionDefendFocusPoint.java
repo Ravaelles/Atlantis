@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
+import atlantis.debug.APainter;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
@@ -9,6 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
+import bwapi.Color;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
 
@@ -31,7 +33,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (Count.basesWithUnfinished() >= 2) {
                     AChoke natural = Chokes.natural();
                     if (natural != null) {
-                        return natural;
+                        APainter.paintCircleFilled(natural.position(), 30, Color.White);
+                        return natural.getCenter();
                     }
                 }
 

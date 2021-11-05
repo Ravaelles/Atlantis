@@ -3,6 +3,7 @@ package atlantis.workers;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class AWorkerDefenceManager {
@@ -29,6 +30,26 @@ public class AWorkerDefenceManager {
             return false;
         }
 
+        // DESTROY ENEMY BUILDINGS that are being built close to main base.
+        if (Select.ourBases().inRadius(20, worker).count() > 0) {
+            for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).listUnits()) {
+                worker.attackUnit(enemyBuilding);
+                worker.setTooltip("Cheesy!");
+                return true;
+            }
+        }
+
+        // FIGHT against enemy WORKERS
+        for (AUnit enemy : Select.enemy().workers().inRadius(2, worker).listUnits()) {
+            worker.setTooltip("NastyFuckers!");
+            worker.attackUnit(enemy);
+            return true;
+        }
+
+        if (Count.workers() <= 12) {
+            return false;
+        }
+
         if (Select.our().inRadius(4, worker).atMost(2)) {
             return false;
         }
@@ -42,24 +63,6 @@ public class AWorkerDefenceManager {
             worker.attackUnit(enemy);
             worker.setTooltip("ForMotherland!");
             return true;
-        }
-
-        // DESTROY ENEMY BUILDINGS that are being built close to main base.
-        if (Select.ourBases().inRadius(20, worker).count() > 0) {
-            for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).listUnits()) {
-                worker.attackUnit(enemyBuilding);
-                worker.setTooltip("Cheesy!");
-                return true;
-            }
-        }
-
-        // FIGHT against enemy WORKERS
-        for (AUnit enemy : Select.enemy().inRadius(2, worker).listUnits()) {
-            if (enemy.isWorker() && worker.hp() >= 11) {
-                worker.setTooltip("NastyFuckers!");
-                worker.attackUnit(enemy);
-                return true;
-            }
         }
 
         // FIGHT against COMBAT UNITS
