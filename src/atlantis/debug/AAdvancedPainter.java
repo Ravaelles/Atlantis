@@ -24,6 +24,7 @@ import atlantis.production.orders.CurrentProductionOrders;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ProductionQueueMode;
 import atlantis.production.requests.AAntiLandBuildingRequests;
+import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
@@ -33,6 +34,7 @@ import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
+import atlantis.util.Us;
 import atlantis.workers.AWorkerManager;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
@@ -249,7 +251,13 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
 
         // =========================================================
+
         paintSideMessage("Combat squad size: " + Squad.getAlphaSquad().size(), Color.Yellow, 0);
+
+        if (Us.isTerran()) {
+            paintSideMessage("Repairers: " + ARepairAssignments.countTotalRepairers(), Color.White, 0);
+            paintSideMessage("Protectors: " + ARepairAssignments.countTotalProtectors(), Color.White, 0);
+        }
 
         // =========================================================
         // Gas workers

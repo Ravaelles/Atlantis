@@ -119,9 +119,7 @@ public class ARepairAssignments {
     }
 
     public static List<AUnit> getRepairers() {
-        ArrayList<AUnit> result = new ArrayList<>();
-        result.addAll(repairersToUnit.keySet());
-        return result;
+        return new ArrayList<>(repairersToUnit.keySet());
     }
 
     public static int countTotalRepairers() {

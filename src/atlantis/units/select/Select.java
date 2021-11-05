@@ -70,6 +70,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     for (AUnit unit : enemyUnits()) {
 //                        if (unit.isAlive()) {
                         data.add(unit);
+//                        System.err.println(unit);
 //                        }
                     }
 

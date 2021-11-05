@@ -60,6 +60,7 @@ public class AEnemyTargeting {
                 .canBeAttackedBy(unit, 13);
         enemyUnits = Select.enemyRealUnits(false)
                 .effVisible()
+                .excludeTypes(AUnitType.Zerg_Egg, AUnitType.Zerg_Larva)
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 13);
 

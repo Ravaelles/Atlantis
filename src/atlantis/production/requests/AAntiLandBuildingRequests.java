@@ -6,6 +6,7 @@ import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.production.Requirements;
 import atlantis.production.orders.AddToQueue;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.strategy.AStrategyInformations;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.AUnit;
@@ -76,6 +77,16 @@ public class AAntiLandBuildingRequests {
         }
 
         if (nearTo != null) {
+            AUnitType required = building().getWhatIsRequired();
+            if (
+                    required != null
+                            && !Requirements.hasRequirements(building())
+                            && !ProductionQueue.isAtTheTopOfQueue(required, 6)
+            ) {
+                AddToQueue.addWithTopPriority(required);
+                return true;
+            }
+
             AddToQueue.addWithTopPriority(building(), nearTo);
             return true;
         }

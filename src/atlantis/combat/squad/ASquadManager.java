@@ -21,9 +21,11 @@ public class ASquadManager {
         }
 
         Squad squad = Squad.getAlphaSquad();
-        squad.addUnit(unit);
-        unit.setSquad(squad);
-        
+        if (!squad.list().contains(unit)) {
+            squad.addUnit(unit);
+            unit.setSquad(squad);
+        }
+
 //        AGame.sendMessage("Assign " + unit + " to squad " + squad);
 //        System.err.println("Assign " + unit + " to squad " + squad);
         

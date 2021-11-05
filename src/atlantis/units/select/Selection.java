@@ -52,7 +52,10 @@ public class Selection {
      */
     private boolean typeMatches(AUnit unit, AUnitType... haystack) {
         for (AUnitType type : haystack) {
-            if (type != null && unit.is(type) || (unit.is(AUnitType.Zerg_Egg) && unit.getBuildType().equals(type))) {
+            if (
+                    type != null && unit.is(type)
+                    || (unit != null && type != null && unit.is(AUnitType.Zerg_Egg) && type.equals(unit.getBuildType()))
+            ) {
                 return true;
             }
         }
@@ -114,7 +117,7 @@ public class Selection {
         for (AUnit unit : data) {
             boolean typeMatches = false;
             for (AUnitType type : types) {
-                if (unit.is(type) || (unit.is(AUnitType.Zerg_Egg) && unit.getBuildType().equals(type))) {
+                if (unit.is(type) || (unit.is(AUnitType.Zerg_Egg) && type.equals(unit.getBuildType()))) {
                     typeMatches = true;
                     break;
                 }

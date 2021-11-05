@@ -43,18 +43,22 @@ public class MissionDefend extends Mission {
 
         // =========================================================
 
+        // Let workers pass
+        int workerBonus = Select.enemy().inRadius(5, unit).isEmpty()
+                && Select.ourWorkers().inRadius(6, unit).atLeast(1)
+                ? 3 : 0;
         int alliesNear = Select.our().inRadius(2, unit).count();
         double expectedDist = 0.1
+                + workerBonus
                 + (unit.isRanged() ? 3 : 0)
-//                + (alliesNear >= 2 ? alliesNear / 20.0 : 0);
                 + (alliesNear / 20.0);
 
         if (unit.distTo(focusPoint) > expectedDist) {
             return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "MoveToDefend");
         }
-//        else if (unit.distTo(focusPoint) <= expectedDist - 0.1) {
-//            return unit.moveAwayFrom(focusPoint, 0.2, "Uhm");
-//        }
+        else if (unit.distTo(focusPoint) <= expectedDist - 0.5) {
+            return unit.moveAwayFrom(focusPoint, 0.2, "TooClose");
+        }
         else {
             if (unit.isMoving()) {
                 unit.holdPosition("DefendHere");

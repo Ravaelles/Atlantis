@@ -159,6 +159,8 @@ public class ARepairCommander {
     }
 
     private static boolean removeProtectorsIfNeeded() {
+//        System.out.println("PROT = " + ARepairAssignments.countTotalProtectors() + " // " + MAX_PROTECTORS);
+
         if (ARepairAssignments.countTotalProtectors() >= MAX_PROTECTORS) {
             for (int i = 0; i < ARepairAssignments.countTotalProtectors() - MAX_PROTECTORS; i++) {
                 ARepairAssignments.removeRepairerOrProtector(

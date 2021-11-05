@@ -63,7 +63,7 @@ public class ASpecialUnitManager {
         }
 
         if (unit.type().isTank()) {
-            return TerranTank.update(unit);
+            return TerranSiegeTank.update(unit);
         } else if (unit.type().isVulture()) {
             return TerranVulture.update(unit);
         } else if (unit.type().isTerranInfantry()) {

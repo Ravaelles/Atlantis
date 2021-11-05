@@ -43,9 +43,9 @@ public class AEnemyUnits {
     /**
      *
      */
-    public static APosition getLastPositionOfEnemyUnit(AUnit enemyUnit) {
-        return enemyUnitsDiscovered.containsKey(enemyUnit) ? enemyUnitsDiscovered.get(enemyUnit).position() : null;
-    }
+//    public static APosition getLastPositionOfEnemyUnit(AUnit enemyUnit) {
+//        return enemyUnitsDiscovered.containsKey(enemyUnit) ? enemyUnitsDiscovered.get(enemyUnit).position() : null;
+//    }
     
     /**
      * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
@@ -94,7 +94,8 @@ public class AEnemyUnits {
     public static APosition enemyBase() {
         for (AFoggedUnit enemyUnit : enemyUnitsDiscovered.values()) {
             if (enemyUnit.isBase()) {
-                return getLastPositionOfEnemyUnit(enemyUnit);
+//                return getLastPositionOfEnemyUnit(enemyUnit);
+                return enemyUnit.position();
             }
         }
         return null;

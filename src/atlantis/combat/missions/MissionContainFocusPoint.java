@@ -1,45 +1,55 @@
 package atlantis.combat.missions;
 
 import atlantis.CameraManager;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AFoggedUnit;
 import atlantis.map.*;
 import atlantis.position.APosition;
+import atlantis.util.Cache;
 
 public class MissionContainFocusPoint extends MissionFocusPoint {
 
+    private Cache<APosition> cache = new Cache<>();
     private APosition containEnemyAtPoint = null;
 
     @Override
     public APosition focusPoint() {
-        if (containEnemyAtPoint != null) {
-            return containEnemyAtPoint;
-        }
+        return cache.get(
+                "focusPoint",
+                100,
+                () -> {
+                    if (containEnemyAtPoint != null) {
+                        return containEnemyAtPoint;
+                    }
 
-        AChoke naturalChoke = Chokes.enemyNaturalChoke();
-        if (naturalChoke != null) {
-            containEnemyAtPoint = naturalChoke.position();
-        }
+                    AChoke naturalChoke = Chokes.enemyNaturalChoke();
+                    if (naturalChoke != null) {
+                        containEnemyAtPoint = naturalChoke.position();
+                    }
 
-        AChoke mainChoke = Chokes.enemyMainChoke();
-        if (mainChoke != null) {
-            containEnemyAtPoint = mainChoke.position();
-        }
+                    AChoke mainChoke = Chokes.enemyMainChoke();
+                    if (mainChoke != null) {
+                        containEnemyAtPoint = mainChoke.position();
+                    }
 
 //        APosition enemyBase = AEnemyUnits.enemyBase();
 //        if (enemyBase != null) {
 //            return containEnemyAtPoint = containPointIfEnemyBaseIsKnown(enemyBase);
 //        }
-//
-//        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-//        if (enemyBuilding != null) {
-//            return containEnemyAtPoint = enemyBuilding.position();
-//        }
-//
+
+                    AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+                    if (enemyBuilding != null) {
+                        return containEnemyAtPoint = enemyBuilding.position();
+                    }
+////
 //        AUnit nearestEnemy = Select.enemy().nearestTo(Select.our().first());
 //        if (nearestEnemy != null) {
 //            return containEnemyAtPoint = nearestEnemy.position();
 //        }
 
-        return containEnemyAtPoint;
+                    return containEnemyAtPoint;
+                }
+        );
     }
 
     // =========================================================

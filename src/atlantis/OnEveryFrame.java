@@ -1,6 +1,8 @@
 package atlantis;
 
+import atlantis.combat.squad.Squad;
 import atlantis.map.Chokes;
+import atlantis.units.AUnit;
 import jbweb.Blocks;
 import jbweb.Stations;
 import jbweb.Wall;
@@ -40,6 +42,11 @@ public class OnEveryFrame {
 //            for (Block block : Blocks.getBlocks()) {
 //                System.out.println(block.isDefensive());
 //            }
+//        }
+
+//        System.out.println("----- " + Squad.getAlphaSquad().size() );
+//        for (AUnit unit : Squad.getAlphaSquad().list()) {
+//            System.out.println(unit + " // " + unit.isAlive() + " // " + unit.hp());
 //        }
     }
 

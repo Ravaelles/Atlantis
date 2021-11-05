@@ -11,7 +11,7 @@ import atlantis.units.select.Select;
 import atlantis.util.A;
 
 
-public class TerranTank {
+public class TerranSiegeTank {
     private static AUnit nearestEnemyUnit;
     private static double nearestEnemyUnitDist;
     private static AUnit nearestEnemyBuilding;
@@ -59,9 +59,8 @@ public class TerranTank {
     /**
      * Sieged
      */
-    private static boolean updateWhenSieged(AUnit tank) {
-
-        if (handleShootingAtInvisibleUnits(tank)) {
+    private static boolean updateWhenSieged(AUnit unit) {
+        if (handleShootingAtInvisibleUnits(unit)) {
             return true;
         }
 
@@ -74,39 +73,48 @@ public class TerranTank {
 
         // =========================================================
 
-        if (tank.lastActionLessThanAgo(30 * 5, UnitActions.SIEGE)) {
+        if (unit.lastActionLessThanAgo(30 * 5, UnitActions.SIEGE)) {
             return false;
         }
 
         // =========================================================
+        // Should siege?
 
-        if ((nearestEnemyUnit == null && nearestEnemyBuilding == null)
-                || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 12.2)) {
-            tank.setTooltip("Considers unsiege");
+        if (tooLonely(unit)) {
+            unit.unsiege();
+            unit.setTooltip("TooLonely");
+            return true;
+        }
+
+        if (
+                (nearestEnemyUnit == null && nearestEnemyBuilding == null)
+                || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 12.2)
+        ) {
+            unit.setTooltip("Considers unsiege");
 
             if (AGame.isUms()) {
-                tank.unsiege();
-                tank.setTooltip("Unsiege");
+                unit.unsiege();
+                unit.setTooltip("Unsiege");
                 return true;
             }
 
-            if (tank.mission() == null) {
-                System.err.println("Mission NULL for " + tank);
-                System.err.println("Squad: " + tank.squad());
+            if (unit.mission() == null) {
+                System.err.println("Mission NULL for " + unit);
+                System.err.println("Squad: " + unit.squad());
                 return false;
             }
 
-            if (tank.mission().isMissionAttack() && A.chance(2)) {
-                tank.unsiege();
-                tank.setTooltip("Unsiege");
+            if (unit.mission().isMissionAttack() && A.chance(2)) {
+                unit.unsiege();
+                unit.setTooltip("Unsiege");
                 return true;
             }
 
-            if (tank.mission().isMissionContain()) {
+            if (unit.mission().isMissionContain()) {
                 APosition focusPoint = Missions.globalMission().focusPoint();
-                if (focusPoint != null && tank.distTo(focusPoint) >= 12.5 && A.chance(1)) {
-                    tank.unsiege();
-                    tank.setTooltip("Unsiege");
+                if (focusPoint != null && unit.distTo(focusPoint) >= 12.5 && A.chance(1)) {
+                    unit.unsiege();
+                    unit.setTooltip("Unsiege");
                     return true;
                 }
             }
@@ -117,10 +125,13 @@ public class TerranTank {
 
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
 //        if (tank.cooldownRemaining() <= 3) {
-            for (AUnit enemy : Select.enemyRealUnits().effCloaked().inRadius(12, tank).list()) {
+            for (AUnit enemy : Select.enemyRealUnits().effCloaked().groundUnits().inRadius(12, tank).list()) {
                 if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
-                    tank.attackPosition(enemy.position());
-                    tank.setTooltip("Smash invisible!");
+                    if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
+                        tank.setTooltip("SMASH invisible!");
+                        tank.attackPosition(enemy.position());
+                    }
+                    tank.setTooltip("SmashInvisible");
                     return true;
                 }
             }
@@ -132,14 +143,14 @@ public class TerranTank {
     /**
      * Not sieged
      */
-    private static boolean updateWhenUnsieged(AUnit tank) {
+    private static boolean updateWhenUnsieged(AUnit unit) {
 
         // Mission is CONTAIN
         if (Missions.isGlobalMissionContain() || Missions.isGlobalMissionDefend()) {
             APosition focusPoint = Missions.globalMission().focusPoint();
-            if (focusPoint != null && tank.distTo(focusPoint) <= 7.2) {
-                tank.siege();
-                tank.setTooltip("Contain siege!");
+            if (focusPoint != null && unit.distTo(focusPoint) <= 7.2 && canSiegeHere(unit)) {
+                unit.siege();
+                unit.setTooltip("Contain siege!");
                 return true;
             }
 
@@ -155,26 +166,30 @@ public class TerranTank {
 //            return true;
 //        }
 
-        AUnit nearEnemyCombatBuilding = Select.enemy().combatBuildings().inRadius(10.9, tank).first();
+        AUnit nearEnemyCombatBuilding = Select.enemy().combatBuildings().inRadius(11.9, unit).first();
         if (nearEnemyCombatBuilding != null) {
-            return handleNearEnemyCombatBuilding(tank, nearEnemyCombatBuilding);
+            return handleNearEnemyCombatBuilding(unit, nearEnemyCombatBuilding);
         }
         
         if (nearestEnemyUnit != null) {
-            return nearestEnemyIsUnit(tank, nearestEnemyUnit, nearestEnemyUnitDist);
+            return nearestEnemyIsUnit(unit, nearestEnemyUnit, nearestEnemyUnitDist);
         }
         
         // =========================================================
         
         return false;
     }
-    
+
     // =========================================================
-    
+
+    private static boolean tooLonely(AUnit tank) {
+        return Select.ourCombatUnits().inRadius(6, tank).atMost(4);
+    }
+
     private static boolean handleNearEnemyCombatBuilding(AUnit tank, AUnit combatBuilding) {
         double distanceToEnemy = tank.distTo(combatBuilding);
         
-        if (distanceToEnemy <= 9.5) {
+        if (distanceToEnemy <= 11.9 && canSiegeHere(tank)) {
             tank.siege();
             tank.setTooltip("Siege - building");
             return true;
@@ -196,13 +211,13 @@ public class TerranTank {
             return false;
         }
         
-        if (distanceToEnemy < 12.6 && enemy.type().isDangerousGroundUnit() && canSiegeHere(tank)) {
+        if (distanceToEnemy < 13.6 && enemy.type().isDangerousGroundUnit() && canSiegeHere(tank)) {
             tank.siege();
             tank.setTooltip("Better siege");
             return true;
         }
 
-        if (distanceToEnemy <= 12 && canSiegeHere(tank)) {
+        if (distanceToEnemy <= 12 && canSiegeHere(tank) && !tooLonely(tank)) {
             tank.siege();
             tank.setTooltip("Siege!");
             return true;
@@ -214,6 +229,10 @@ public class TerranTank {
     // =========================================================
     
     private static boolean canSiegeHere(AUnit tank) {
+        if (tooLonely(tank)) {
+            return false;
+        }
+
         AChoke choke = Chokes.nearestChoke(tank.position());
         if (choke == null) {
             return true;

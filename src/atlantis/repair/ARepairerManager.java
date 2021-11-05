@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 public class ARepairerManager {
 
-    private static final int MAX_REPAIRERS = 7;
+    private static final int MAX_REPAIRERS = 3;
 
     public static boolean updateRepairer(AUnit repairer) {
         repairer.setTooltip("Repairer");
@@ -54,7 +54,7 @@ public class ARepairerManager {
 
         // Target is wounded
         if (!repairer.isRepairing()) {
-            if (target.isWounded()) {
+            if (target.isWounded() && target.isAlive()) {
                 repairer.repair(
                         target,
                         "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
@@ -101,15 +101,22 @@ public class ARepairerManager {
      * try finding new repairable unit.
      */
     private static boolean handleRepairCompletedTryFindingNewTarget(AUnit repairer) {
-        AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(50, repairer).first();
+        ARepairAssignments.removeRepairerOrProtector(repairer);
 
-        if (closestUnitNeedingRepair != null) {
-            ARepairAssignments.addRepairer(closestUnitNeedingRepair, closestUnitNeedingRepair);
-            repairer.repair(closestUnitNeedingRepair, "Extra repair");
+        if (!hasMoreRepairersThanAllowed()) {
+            AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(10, repairer).first();
+            if (closestUnitNeedingRepair != null) {
+                ARepairAssignments.addRepairer(closestUnitNeedingRepair, closestUnitNeedingRepair);
+                repairer.repair(closestUnitNeedingRepair, "Extra repair");
+            }
             return true;
         }
 
-        return false;
+        return true;
+    }
+
+    private static boolean hasMoreRepairersThanAllowed() {
+        return ARepairAssignments.countTotalRepairers() < MAX_REPAIRERS;
     }
 
     protected static boolean handleIdleRepairer(AUnit repairer) {
@@ -167,12 +174,15 @@ public class ARepairerManager {
         }
 
         for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).listUnits()) {
+            if (removeExcessiveRepairersIfNeeded()) {
+                return;
+            }
 
             // Some units shouldn't be repaired
             if (
                     AScoutManager.isScout(woundedUnit)
                     || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
-                    || (woundedUnit.isRunning() && woundedUnit.lastStartedRunningAgo() > 60)
+                    || (woundedUnit.isRunning() && woundedUnit.lastStartedRunningAgo() > 90)
             ) {
                 continue;
             }
@@ -192,17 +202,18 @@ public class ARepairerManager {
             // === Repair ordinary unit =================================
 
             else {
-                assignRepairersToWoundedUnits(woundedUnit, 2 - numberOfRepairers);
+                assignRepairersToWoundedUnits(woundedUnit, 1 - numberOfRepairers);
             }
         }
     }
 
     private static boolean removeExcessiveRepairersIfNeeded() {
+//        System.out.println("REPR = " + ARepairAssignments.countTotalRepairers() + " // " + MAX_REPAIRERS);
         if (ARepairAssignments.countTotalRepairers() >= MAX_REPAIRERS) {
             for (int i = 0; i < ARepairAssignments.countTotalRepairers() - MAX_REPAIRERS; i++) {
-                ARepairAssignments.removeRepairerOrProtector(
-                        ARepairAssignments.getRepairers().get(ARepairAssignments.getRepairers().size() - 1)
-                );
+                AUnit repairer = ARepairAssignments.getRepairers().get(ARepairAssignments.getRepairers().size() - 1);
+//                System.out.println("Remove repairer " + repairer);
+                ARepairAssignments.removeRepairerOrProtector(repairer);
             }
             return true;
         }
