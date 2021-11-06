@@ -1,7 +1,7 @@
 package atlantis.strategy;
 
 import atlantis.util.Enemy;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 public class OurStrategyManager {
 
@@ -11,9 +11,9 @@ public class OurStrategyManager {
     public static void initialize() {
         AStrategy strategy;
 
-        if (Us.isProtoss()) {
+        if (We.protoss()) {
             strategy = initForProtoss();
-        } else if (Us.isTerran()) {
+        } else if (We.terran()) {
             strategy = initForTerran();
         } else {
             strategy = initForZerg();
@@ -35,7 +35,8 @@ public class OurStrategyManager {
 
     private static AStrategy initForTerran() {
 //        return TerranStrategies.TERRAN_3_Rax_MnM;
-        return TerranStrategies.TERRAN_Nada_2_Fac;
+//        return TerranStrategies.TERRAN_Nada_2_Fac;
+        return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
 //        return TerranStrategies.TERRAN_1_Base_Vultures;
     }
 

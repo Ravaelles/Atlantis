@@ -1,12 +1,10 @@
 package atlantis.workers;
 
 import atlantis.buildings.managers.AGasManager;
-import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.repair.ARepairCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.util.CodeProfiler;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 /**
  * Manages all worker (SCV, Probe, Drone) actions.
@@ -31,7 +29,7 @@ public class AWorkerCommander {
 
         // =========================================================
 
-        if (Us.isTerran()) {
+        if (We.terran()) {
             ARepairCommander.update();
         }
     }

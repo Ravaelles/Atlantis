@@ -5,9 +5,8 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 public class AdvanceUnitsManager extends MissionUnitManager {
 
@@ -37,12 +36,13 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     private static boolean moveToFocusPoint(
             AUnit unit, APosition focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
-        double optimalDist = 6.5;
+//        double optimalDist = 6.5 - unit.lastUnderAttackAgo() / (30 * 25.0);
+        double optimalDist = 6 - unit.hpPercent() / 66.0;
         double distToFocusPoint = unit.distTo(focusPoint);
         double margin = Math.max(1.2, (unit.squadSize() - 6) / 10.0);
         boolean result;
 
-        if (Us.isTerran() && handleTerranAdvance(unit)) {
+        if (We.terran() && handleTerranAdvance(unit)) {
             return true;
         }
 

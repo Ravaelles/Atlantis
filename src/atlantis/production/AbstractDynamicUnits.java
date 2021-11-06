@@ -12,6 +12,20 @@ import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {
 
+    protected static void addToQueue(AUnitType type) {
+        if (AGame.supplyFree() == 0) {
+            return;
+        }
+
+        if (!AGame.canAffordWithReserved(Math.max(80, type.getMineralPrice()), type.getGasPrice())) {
+            return;
+        }
+
+        AddToQueue.addWithHighPriority(type);
+    }
+
+    // =========================================================
+
     protected static boolean trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
         if (noSupply(minSupply)) {
             return false;

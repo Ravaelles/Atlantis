@@ -13,7 +13,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
         factoryIfNeeded();
-        addonIfNeeded();
+//        addonIfNeeded();
     }
     
     // =========================================================

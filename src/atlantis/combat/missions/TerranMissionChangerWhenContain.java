@@ -2,6 +2,8 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.strategy.OurStrategy;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -24,12 +26,20 @@ public class TerranMissionChangerWhenContain {
             return false;
         }
 
+        if (OurStrategy.get().goingBio()) {
+            return Count.ourCombatUnits() <= 8;
+        }
+
         return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 9;
     }
 
     private static boolean shouldChangeMissionToAttack() {
         if (killsBalanceSaysSo()) {
             return true;
+        }
+
+        if (OurStrategy.get().goingBio()) {
+            return Count.ourCombatUnits() >= Math.min(40, 15 + Missions.counter() * 2);
         }
 
         return Select.ourTanks().count() >= 2 || Select.ourCombatUnits().count() >= 25;

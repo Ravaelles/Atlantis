@@ -166,7 +166,7 @@ public class FightInsteadAvoid {
         }
 
         if (defensiveBuilding != null) {
-            return unit.mission().allowsToAttackDefensiveBuildings();
+            return unit.mission().allowsToAttackDefensiveBuildings(defensiveBuilding);
         }
 
         if (unit.isMelee()) {

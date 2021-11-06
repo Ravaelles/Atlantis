@@ -14,7 +14,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
-import atlantis.util.Us;
+import atlantis.util.We;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
@@ -114,7 +114,7 @@ public abstract class AbstractPositionFinder {
         for (ABaseLocation base : BaseLocations.baseLocations()) {
             if (
                     !base.isStartLocation()
-                    && base.position().translateByTiles(Us.isTerran() ? 3 : 0, 0).distTo(position) <= 3.5
+                    && base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5
             ) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";
                 return true;
@@ -161,9 +161,9 @@ public abstract class AbstractPositionFinder {
         }
 
         double distToBase = nearestBase.position().translateByTiles(3, 0).distTo(position);
-        if (nearestBase != null && distToBase <= 4) {
+        if (nearestBase != null && distToBase <= 6) {
             for (AUnit mineral : Select.minerals().inRadius(6, position).listUnits()) {
-                if (mineral.distTo(position) <= (building.isPylon() ? 5 : 2.3)) {
+                if (mineral.distTo(position) <= (building.isSupplyUnit() ? 5 : 4.3) && distToBase <= 4) {
                     _CONDITION_THAT_FAILED = "Too close to mineral";
                     return true;
                 }
@@ -177,7 +177,7 @@ public abstract class AbstractPositionFinder {
             }
 
             for (AUnit gasBuilding : Select.geyserBuildings().inRadius(8, position).listUnits()) {
-                if (gasBuilding.distTo(position) <= 2 && distToBase <= 3) {
+                if (gasBuilding.distTo(position) <= 3 && distToBase <= 4) {
                     _CONDITION_THAT_FAILED = "Too close to gas building";
                     return true;
                 }

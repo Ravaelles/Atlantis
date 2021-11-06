@@ -4,7 +4,6 @@ import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import bwapi.TechType;
 
 public class TerranComsatStation {
@@ -17,10 +16,33 @@ public class TerranComsatStation {
 
         if (comsat.energy() >= 50) {
             scanObservers(comsat);
+            scanLurkers(comsat);
         }
 
         return false;
     }
+
+    // =========================================================
+    // Lurkers
+
+    private static boolean scanLurkers(AUnit comsat) {
+        for (AUnit lurker : Select.enemy().effCloaked().ofType(AUnitType.Zerg_Lurker).listUnits()) {
+//            System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.hp());
+            if (shouldScanThisLurker(lurker, comsat)) {
+                System.out.println("-- SCAN");
+                return scan(comsat, lurker);
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean shouldScanThisLurker(AUnit lurker, AUnit comsat) {
+        return Select.ourRealUnits().canAttack(lurker, 3).atLeast(6) || comsat.energy() >= 180;
+    }
+
+    // =========================================================
+    // Observers
 
     private static boolean scanObservers(AUnit comsat) {
         for (AUnit observer : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Observer).listUnits()) {
@@ -46,6 +68,8 @@ public class TerranComsatStation {
 
         return false;
     }
+
+    // =========================================================
 
     private static boolean scan(AUnit comsat, AUnit unitToScan) {
 //        System.out.println("unitToScan = " + unitToScan.getHP());

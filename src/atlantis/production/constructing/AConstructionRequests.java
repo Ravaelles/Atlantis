@@ -10,7 +10,7 @@ import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,7 +52,7 @@ public class AConstructionRequests {
         }
 
         if (!Requirements.hasRequirements(building)) {
-            if (Us.isProtoss() && AGame.supplyTotal() <= 10) {
+            if (We.protoss() && AGame.supplyTotal() <= 10) {
                 return false;
             }
 

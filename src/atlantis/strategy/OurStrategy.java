@@ -8,7 +8,7 @@ public class OurStrategy {
 
     // =========================================================
 
-    public static AStrategy ourStrategy() {
+    public static AStrategy get() {
         if (ourStrategy == null) {
             throw new RuntimeException("Strategy was not properly initialized.");
         }
@@ -17,10 +17,10 @@ public class OurStrategy {
     }
 
 //    private static AStrategy initWithGeneric() {
-//        if (Us.isProtoss()) {
+//        if (We.isProtoss()) {
 //            return ProtossStrategies.PROTOSS_2_Gate_Range_Expand;
 //        }
-//        if (Us.isTerran()) {
+//        if (We.isTerran()) {
 //            return TerranStrategies.TERRAN_Three_Factory_Vultures;
 //        }
 //        else {

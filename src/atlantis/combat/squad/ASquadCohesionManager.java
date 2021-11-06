@@ -7,7 +7,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 public class ASquadCohesionManager {
 
@@ -49,7 +49,7 @@ public class ASquadCohesionManager {
     }
 
     private static boolean shouldSkipExtremeUnitPositioning(AUnit unit) {
-        if (Us.isProtoss() && Count.ourCombatUnits() <= 4) {
+        if (We.protoss() && Count.ourCombatUnits() <= 4) {
             return true;
         }
 
@@ -180,7 +180,7 @@ public class ASquadCohesionManager {
     }
 
     private static boolean shouldSkipStickCloser(AUnit unit) {
-        if (Us.isTerran()) {
+        if (We.terran()) {
             return false;
         }
 

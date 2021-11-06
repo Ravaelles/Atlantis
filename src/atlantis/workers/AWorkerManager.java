@@ -85,7 +85,10 @@ public class AWorkerManager {
 //            return true;
 //        }
 
-        if (worker.getTarget() != null && !worker.getTarget().type().isMineralField()) {
+        if (
+                (worker.isMoving() || worker.isRepairing() || worker.isMiningOrExtractingGas())
+                && worker.getTarget() != null && !worker.getTarget().type().isMineralField()
+        ) {
             worker.setTooltip("--> " + worker.getTarget().shortName());
             return true;
         }

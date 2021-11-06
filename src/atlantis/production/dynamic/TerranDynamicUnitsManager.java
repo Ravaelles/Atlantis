@@ -1,18 +1,23 @@
 package atlantis.production.dynamic;
 
 import atlantis.AGame;
+import atlantis.information.TerranArmyComposition;
+import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.EnemyStrategy;
+import atlantis.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 
 
-public class TerranDynamicUnitsManager {
+public class TerranDynamicUnitsManager extends AbstractDynamicUnits {
 
     public static void update() {
-        trainMarinesForBunkersIfNeeded();
+        medics();
+        marines();
         handleFactoryProduction();
     }
 
@@ -33,17 +38,55 @@ public class TerranDynamicUnitsManager {
     private static void requestFactoryUnit(AUnit factory) {
         if (EnemyStrategy.get().isAirUnits()) {
             if (AGame.canAffordWithReserved(150, 100)) {
-                AddToQueue.addWithStandardPriority(AUnitType.Terran_Goliath);
+                addToQueue(AUnitType.Terran_Goliath);
                 return;
             }
         }
 
         if (Count.tanks() <= 0.4 * Count.vultures()) {
-            AddToQueue.addWithStandardPriority(AUnitType.Terran_Siege_Tank_Tank_Mode);
+            addToQueue(AUnitType.Terran_Siege_Tank_Tank_Mode);
         }
         else {
-            AddToQueue.addWithStandardPriority(AUnitType.Terran_Vulture);
+            addToQueue(AUnitType.Terran_Vulture);
         }
+    }
+
+    // === Infantry ======================================================
+
+    private static void medics() {
+        if (!OurStrategy.get().goingBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
+            return;
+        }
+
+        if (TerranArmyComposition.medicsToInfantry() <= 0.23) {
+            if (Select.ourOfType(AUnitType.Terran_Barracks).free().isNotEmpty()) {
+                addToQueue(AUnitType.Terran_Medic);
+            }
+        }
+    }
+
+    private static void marines() {
+        if (!AGame.canAffordWithReserved(80, 0)) {
+            return;
+        }
+
+        if (Count.ofType(AUnitType.Terran_Academy) >= 1 && Count.medics() <= 2) {
+            return;
+        }
+
+        if (OurStrategy.get().goingBio()) {
+            if (Count.ofType(AUnitType.Terran_Barracks) == 0) {
+                return;
+            }
+
+//        if (Enemy.zerg() && Count.marines() == 0) {
+            if (Select.ourOfType(AUnitType.Terran_Barracks).free().isNotEmpty()) {
+                addToQueue(AUnitType.Terran_Marine);
+                return;
+            }
+        }
+
+        trainMarinesForBunkersIfNeeded();
     }
 
     private static void trainMarinesForBunkersIfNeeded() {
@@ -57,7 +100,7 @@ public class TerranDynamicUnitsManager {
                 for (int i = 0; i < shouldHaveMarines - marines; i++) {
                     AUnit idleBarrack = Select.ourOneNotTrainingUnits(AUnitType.Terran_Barracks);
                     if (idleBarrack != null) {
-                        AddToQueue.addWithStandardPriority(AUnitType.Terran_Marine);
+                        addToQueue(AUnitType.Terran_Marine);
                     }
                     else {
                         break;
@@ -78,5 +121,7 @@ public class TerranDynamicUnitsManager {
             return 4 * bunkers;
         }
     }
+
+    // =========================================================
 
 }

@@ -3,16 +3,53 @@ package atlantis.combat.micro.terran;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
+import atlantis.wrappers.ATech;
+import bwapi.TechType;
+import bwapi.UpgradeType;
 
 
 public class TerranInfantry {
 
     public static boolean update(AUnit unit) {
-        return tryLoadingInfantryIntoBunkerIfPossible(unit);
+        if (handleStimpack(unit)) {
+            return true;
+        }
+
+        return false;
+//        return tryLoadingInfantryIntoBunkerIfPossible(unit);
     }
-    
+
+    // =========================================================
+
+    private static boolean handleStimpack(AUnit unit) {
+        if (!ATech.isResearched(stim()) || !unit.is(AUnitType.Terran_Marine)) {
+            return false;
+        }
+
+        if (unit.hp() <= 20 || unit.isStimmed()) {
+            return false;
+        }
+
+        Selection enemies = Select.enemyRealUnits().inRadius(8, unit);
+
+        if (
+                enemies.clone().ofType(AUnitType.Zerg_Lurker).atLeast(1)
+                || enemies.clone().atLeast(4)
+        ) {
+            if (unit.lastActionMoreThanAgo(5, UnitActions.USING_TECH)) {
+                unit.useTech(stim());
+            }
+            System.out.println("STIM! " + unit.idWithHash() + " @ " + A.now());
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      *
      */
@@ -60,6 +97,10 @@ public class TerranInfantry {
         }
         
         return null;
+    }
+
+    private static TechType stim() {
+        return TechType.Stim_Packs;
     }
     
 }

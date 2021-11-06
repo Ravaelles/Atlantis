@@ -4,7 +4,7 @@ import atlantis.strategy.response.protoss.ProtossStrategyResponse;
 import atlantis.strategy.response.terran.TerranStrategyResponse;
 import atlantis.strategy.response.zerg.ZergStrategyResponse;
 import atlantis.util.Cache;
-import atlantis.util.Us;
+import atlantis.util.We;
 import bwapi.Race;
 
 
@@ -19,7 +19,7 @@ public class AStrategyResponseFactory {
                 "forOurRace",
                 -1,
                 () -> {
-                    Race race = Us.race();
+                    Race race = We.race();
 
                     if (race == Race.Protoss) {
                         return new ProtossStrategyResponse();

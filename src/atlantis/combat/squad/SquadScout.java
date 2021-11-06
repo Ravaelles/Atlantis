@@ -7,10 +7,15 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
+import atlantis.util.We;
 
 public class SquadScout {
 
     public static boolean handle(AUnit unit) {
+        if (We.terran()) {
+            return false;
+        }
+
         if (unit.equals(unit.squad().getSquadScout())) {
             return handleSquadScout(unit);
         }

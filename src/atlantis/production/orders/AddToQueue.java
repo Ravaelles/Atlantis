@@ -6,8 +6,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.A;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 public class AddToQueue {
 
@@ -40,16 +39,17 @@ public class AddToQueue {
     private static void addToQueue(AUnitType type, APosition position, int index) {
         assert type != null;
 
-        if (Us.isProtoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
+        if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
             System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
             return;
         }
 
-        if (!allowBuildingRequirements(type)) {
+        if (!allowToQueueRequiredBuildings(type)) {
 //            ProductionOrder productionOrder = new ProductionOrder(type, position, A.supplyUsed() - 2);
             int minSupply = 0;
             ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
             ProductionQueue.currentProductionQueue.add(index, productionOrder);
+            System.out.println(productionOrder);
         }
         else {
             if (
@@ -68,7 +68,7 @@ public class AddToQueue {
 
     // =========================================================
 
-    private static boolean allowBuildingRequirements(AUnitType type) {
+    private static boolean allowToQueueRequiredBuildings(AUnitType type) {
         return type.isCombatBuilding();
     }
 

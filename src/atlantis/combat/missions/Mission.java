@@ -34,7 +34,7 @@ public abstract class Mission {
     }
 
     // Template method
-    public boolean allowsToAttackDefensiveBuildings() {
+    public boolean allowsToAttackDefensiveBuildings(AUnit defensiveBuilding) {
         return false;
     }
 

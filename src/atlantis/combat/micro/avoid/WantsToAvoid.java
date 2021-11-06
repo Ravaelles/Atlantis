@@ -32,7 +32,7 @@ public class WantsToAvoid {
 //            return true;
 //        }
 
-//        if (!Us.isTerran() && unit.lastUnderAttackMoreThanAgo(150) && unit.lastStartedAttackLessThanAgo(10)) {
+//        if (!We.isTerran() && unit.lastUnderAttackMoreThanAgo(150) && unit.lastStartedAttackLessThanAgo(10)) {
 //            unit.setTooltip("Kill");
 //            return true;
 //        }

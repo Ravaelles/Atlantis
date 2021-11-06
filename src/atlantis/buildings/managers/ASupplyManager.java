@@ -9,7 +9,7 @@ import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 public class ASupplyManager {
 
@@ -72,7 +72,7 @@ public class ASupplyManager {
     }
 
     private static int requestedConstructionsOfSupply() {
-        if (Us.isZerg()) {
+        if (We.zerg()) {
 //            return Count.ourOfTypeIncludingUnfinished(AUnitType.Zerg_Overlord);
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }

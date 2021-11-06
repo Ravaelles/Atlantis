@@ -19,6 +19,7 @@ public class AStrategy {
     private boolean terran = false;
     private boolean protoss = false;
     private boolean zerg = false;
+    private boolean goingBio = false;
     private boolean goingRush = false;
     private boolean goingCheese = false;
     private boolean goingExpansion = false;
@@ -145,6 +146,15 @@ public class AStrategy {
     public AStrategy setGoingAirUnitsLate() {
         this.goingAirUnitsLate = true;
         return this;
+    }
+
+    public AStrategy setGoingBio() {
+        this.goingBio = true;
+        return this;
+    }
+
+    public boolean goingBio() {
+        return this.goingBio;
     }
 
     public boolean isTerran() {

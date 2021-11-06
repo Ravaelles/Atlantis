@@ -10,6 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
+import atlantis.util.We;
 import bwapi.Color;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
@@ -26,6 +27,15 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             () -> {
                 if (AGame.isUms()) {
                     return null;
+                }
+
+                // === Enemies that breached into base =============
+
+                if (We.haveBase()) {
+                    AUnit enemyInBase = Select.enemy().groundUnits().effVisible().inRadius(10, Select.mainBase()).first();
+                    if (enemyInBase != null) {
+                        return enemyInBase.position();
+                    }
                 }
 
                 // === Natural choke if second base ================

@@ -34,7 +34,7 @@ import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
-import atlantis.util.Us;
+import atlantis.util.We;
 import atlantis.workers.AWorkerManager;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
@@ -143,6 +143,11 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             paintCooldownAndRunBar(unit);
+
+            if (unit.isStimmed()) {
+                paintCircle(unit, 13, Color.Purple);
+                paintCircle(unit, 11, Color.Purple);
+            }
 
             // =========================================================
             // === Paint targets for combat units
@@ -254,7 +259,7 @@ public class AAdvancedPainter extends APainter {
 
         paintSideMessage("Combat squad size: " + Squad.getAlphaSquad().size(), Color.Yellow, 0);
 
-        if (Us.isTerran()) {
+        if (We.terran()) {
             paintSideMessage("Repairers: " + ARepairAssignments.countTotalRepairers(), Color.White, 0);
             paintSideMessage("Protectors: " + ARepairAssignments.countTotalProtectors(), Color.White, 0);
         }

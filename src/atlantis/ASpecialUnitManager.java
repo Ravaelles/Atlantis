@@ -8,7 +8,7 @@ import atlantis.dedicated.protoss.ProtossObserver;
 import atlantis.dedicated.protoss.ProtossReaver;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 public class ASpecialUnitManager {
 
@@ -21,7 +21,7 @@ public class ASpecialUnitManager {
 
         // === Terran ========================================
 
-        if (Us.isTerran() && TerranCloakableManager.update(unit)) {
+        if (We.terran() && TerranCloakableManager.update(unit)) {
             return true;
         }
 
@@ -58,7 +58,7 @@ public class ASpecialUnitManager {
 
         // === Terran ========================================
 
-        if (Us.isTerran() && TerranCloakableManager.update(unit)) {
+        if (We.terran() && TerranCloakableManager.update(unit)) {
             return true;
         }
 

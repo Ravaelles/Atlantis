@@ -115,10 +115,12 @@ public class AAttackEnemyUnit {
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
         if (unit.isSquadScout()) {
-            return Select.our().inRadius(3, unit).atLeast(3);
+            return Select.our().inRadius(4, unit).atLeast(3);
         }
 
-        return unit.mission() == null || unit.mission().allowsToAttackEnemyUnit(unit, enemy);
+        return unit.mission() == null
+                || unit.mission().allowsToAttackEnemyUnit(unit, enemy)
+                || (unit.isRanged() && enemy.isMelee());
     }
 
 }

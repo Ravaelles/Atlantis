@@ -620,6 +620,16 @@ public interface AUnitOrders {
         return u().useTech(tech, target);
     }
 
+    default boolean useTech(TechType tech) {
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().getID());
+        }
+
+        unit().setUnitAction(UnitActions.USING_TECH, tech, unit());
+        unit().setLastUnitOrderNow();
+        return u().useTech(tech);
+    }
+
     default boolean useTech(TechType tech, AUnit target) {
         if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
             System.out.println("TECH_3 @" + A.now() + " / unit#" + unit().getID());

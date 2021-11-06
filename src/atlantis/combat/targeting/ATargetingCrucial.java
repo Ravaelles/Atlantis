@@ -53,7 +53,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         }
 
         // =========================================================
-        // Targetable observers near carriers
+        // Targetable OBSERVERS near CARRIERS
 
         target = enemyUnits.clone()
                 .ofType(AUnitType.Protoss_Observer)
@@ -61,6 +61,18 @@ public class ATargetingCrucial extends AEnemyTargeting {
                 .inRadius(unit.isAirUnit() ? 40 : 11, unit)
                 .mostWounded();
         if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(14, target).atLeast(1)) {
+            return target;
+        }
+
+        // =========================================================
+        // LURKER in range
+
+        target = enemyUnits.clone()
+                .ofType(AUnitType.Zerg_Lurker)
+                .effVisible()
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
+        if (target != null) {
             return target;
         }
 

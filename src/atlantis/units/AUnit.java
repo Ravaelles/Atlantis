@@ -279,7 +279,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // Compare type methods
     public boolean isAlive() {
         if (isOur()) {
-            return hp() > 0;
+            return !UnitsArchive.isDestroyed(id());
         }
 
         return hp() > 0 || !UnitsArchive.isDestroyed(id());
@@ -635,6 +635,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         // Shooting RANGE
         if (checkShootingRange && !this.hasWeaponRange(target, safetyMargin)) {
+            return false;
+        }
+
+        if (isRanged() && target.isUnderDarkSwarm()) {
             return false;
         }
 
@@ -1437,6 +1441,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return A.ago(_lastUnderAttack) >= framesAgo;
     }
 
+    public int lastUnderAttackAgo() {
+        return A.ago(_lastUnderAttack);
+    }
+
     public boolean lastAttackOrderLessThanAgo(int framesAgo) {
         return A.ago(_lastAttackOrder) <= framesAgo;
     }
@@ -1680,6 +1688,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isNotAttackableByRangedDueToSpell() {
         return isUnderDarkSwarm();
+    }
+
+    public boolean isStimmed() {
+        return u.isStimmed();
+    }
+
+    public int stimTimer() {
+        return u.getStimTimer();
     }
 
 //    public boolean isDepleted() {

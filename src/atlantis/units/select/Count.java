@@ -133,4 +133,12 @@ public class Count {
     public static int vultures() {
         return Select.countOurOfType(AUnitType.Terran_Vulture);
     }
+
+    public static int marines() {
+        return Select.countOurOfType(AUnitType.Terran_Marine);
+    }
+
+    public static int medics() {
+        return ofType(AUnitType.Terran_Medic);
+    }
 }

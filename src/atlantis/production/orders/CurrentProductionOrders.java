@@ -2,14 +2,13 @@ package atlantis.production.orders;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.Missions;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.A;
-import atlantis.util.Us;
+import atlantis.util.We;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -52,7 +51,7 @@ public abstract class CurrentProductionOrders {
             // ===  Protoss fix: wait for at least one Pylon ============
 
             if (
-                    Us.isProtoss()
+                    We.protoss()
                     && mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD
                     && (unitOrBuilding != null && !unitOrBuilding.isPylon())
                     && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Pylon) == 0

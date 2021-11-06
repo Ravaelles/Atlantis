@@ -14,7 +14,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 public class AAntiLandBuildingRequests {
 
@@ -54,16 +54,16 @@ public class AAntiLandBuildingRequests {
     }
 
     public static int expectedUnits() {
-        if (Us.isTerran()) {
+        if (We.terran()) {
             return 0;
         }
 
-        if (Us.isProtoss()) {
+        if (We.protoss()) {
             return 0;
         }
 
-        if (Us.isZerg()) {
-            if (!OurStrategy.ourStrategy().isRushOrCheese()) {
+        if (We.zerg()) {
+            if (!OurStrategy.get().isRushOrCheese()) {
                 return 3 * Select.ourBases().count();
             }
         }

@@ -135,7 +135,7 @@ public class Evaluate {
 
     private static double customEvaluation(AUnitType type, AUnit againstUnit) {
         if (type.is(AUnitType.Terran_Medic)) {
-            return 7.0;
+            return 5.5;
         }
 
         return -1.0;

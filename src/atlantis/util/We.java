@@ -1,9 +1,10 @@
 package atlantis.util;
 
 import atlantis.AGame;
+import atlantis.units.select.Count;
 import bwapi.Race;
 
-public class Us {
+public class We {
 
     private static Cache<Object> cache = new Cache<>();
 
@@ -27,16 +28,19 @@ public class Us {
         );
     }
 
-    public static boolean isTerran() {
+    public static boolean terran() {
         return AGame.isPlayingAsTerran();
     }
 
-    public static boolean isProtoss() {
+    public static boolean protoss() {
         return AGame.isPlayingAsProtoss();
     }
 
-    public static boolean isZerg() {
+    public static boolean zerg() {
         return AGame.isPlayingAsZerg();
     }
 
+    public static boolean haveBase() {
+        return Count.bases() >= 1;
+    }
 }

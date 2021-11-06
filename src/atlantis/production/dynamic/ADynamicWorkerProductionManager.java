@@ -25,7 +25,7 @@ public class ADynamicWorkerProductionManager {
     public static boolean shouldTrainWorkers() {
 
         // Check FREE SUPPLY
-        if (AGame.supplyFree() == 0 || !AGame.canAfford(50, 0)) {
+        if (AGame.supplyFree() == 0 || !AGame.canAffordWithReserved(50, 0)) {
             return false;
         }
 

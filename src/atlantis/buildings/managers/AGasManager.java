@@ -7,6 +7,7 @@ import atlantis.production.orders.ProductionQueue;
 import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 import atlantis.workers.AWorkerManager;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class AGasManager {
             }
             
             int numOfWorkersNearby = countWorkersGatheringGasNear(gasBuilding);
-            int optimalNumOfGasWorkers = defineOptimalGasWorkers(gasBuilding);
+            int optimalNumOfGasWorkers = defineOptimalGasWorkers(gasBuilding, numOfWorkersNearby);
 //            System.out.println(optimalNumOfGasWorkers + " // " + numOfWorkersNearby);
 
             // Less workers gathering gas than optimal
@@ -120,7 +121,7 @@ public class AGasManager {
 //        }
     }
 
-    private static int defineOptimalGasWorkers(AUnit gasBuilding) {
+    private static int defineOptimalGasWorkers(AUnit gasBuilding, int numOfWorkersNearby) {
 //        if (AGame.hasGas(800)) {
 //            return 1;
 //        }
@@ -132,6 +133,10 @@ public class AGasManager {
 //        if (Select.ourBases().inRadius(10, gasBuilding).isEmpty()) {
 //            return 0;
 //        }
+
+        if (GamePhase.isEarlyGame() && AGame.canAfford(0, 100)) {
+            return (int) A.inRange(1, numOfWorkersNearby / 4, 3);
+        }
 
         return 3;
         

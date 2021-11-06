@@ -109,4 +109,8 @@ public class Missions {
     public static boolean recentlyChangedMission() {
         return lastMissionChangedAgo() <= 30 * 15;
     }
+
+    public static int counter() {
+        return MissionChanger.missionHistory.size();
+    }
 }

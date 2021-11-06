@@ -6,6 +6,7 @@ import atlantis.information.AFoggedUnit;
 import atlantis.map.*;
 import atlantis.position.APosition;
 import atlantis.util.Cache;
+import atlantis.util.We;
 
 public class MissionContainFocusPoint extends MissionFocusPoint {
 
@@ -22,13 +23,20 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                         return containEnemyAtPoint;
                     }
 
+                    if (We.terran()) {
+                        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+                        if (enemyBuilding != null) {
+                            return containEnemyAtPoint = enemyBuilding.position();
+                        }
+                    }
+
                     AChoke naturalChoke = Chokes.enemyNaturalChoke();
-                    if (naturalChoke != null) {
+                    if (naturalChoke != null && naturalChoke.getWidth() <= 4) {
                         containEnemyAtPoint = naturalChoke.position();
                     }
 
                     AChoke mainChoke = Chokes.enemyMainChoke();
-                    if (mainChoke != null) {
+                    if (mainChoke != null && mainChoke.getWidth() <= 4) {
                         containEnemyAtPoint = mainChoke.position();
                     }
 
@@ -47,6 +55,9 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //            return containEnemyAtPoint = nearestEnemy.position();
 //        }
 
+                    if (mainChoke != null) {
+                        containEnemyAtPoint = mainChoke.position();
+                    }
                     return containEnemyAtPoint;
                 }
         );

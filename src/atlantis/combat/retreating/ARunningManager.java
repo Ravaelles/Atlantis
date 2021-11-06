@@ -427,8 +427,9 @@ public class ARunningManager {
                             && position.translateByTiles(-1, 0).isWalkable()
                     )
                 )
-                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
-                && Select.neutral().inRadius(0.6, position).isEmpty()
+//                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
+                && Select.our().exclude(this.unit).inRadius(0.5, position).count() <= 0
+                && Select.neutral().inRadius(0.3, position).isEmpty()
                 && unitPosition.hasPathTo(position)
                 && unitPosition.groundDistanceTo(position) <= 18
 //                && Select.neutral().inRadius(1.2, position).count() == 0

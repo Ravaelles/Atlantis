@@ -1073,8 +1073,8 @@ public class AUnitType implements Comparable<AUnitType> {
     private boolean isLarvaOrEgg() {
         return (boolean) cache.get(
                 "isLarvaOrEgg",
-                -1,
-                () -> is(Zerg_Larva, Zerg_Egg)
+                5,
+                () -> is(Zerg_Larva, Zerg_Egg, Zerg_Lurker_Egg)
         );
     }
 

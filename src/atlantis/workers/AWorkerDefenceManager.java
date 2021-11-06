@@ -1,10 +1,12 @@
 package atlantis.workers;
 
+import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class AWorkerDefenceManager {
 
@@ -16,11 +18,31 @@ public class AWorkerDefenceManager {
             return true;
         }
 
+        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNearby(worker)) {
+            return true;
+        }
+
         return false;
 //        return handleRunFromEnemyIfNeeded(worker);
     }
-    
+
     // =========================================================
+
+    private static boolean handleRepairNearby(AUnit worker) {
+        if (worker.id() % 4 != 0) {
+            return false;
+        }
+
+        AUnit wounded = Select.ourWorkers().wounded().inRadius(2, worker).nearestTo(worker);
+
+        if (wounded != null) {
+            wounded.stop("BeRepaired");
+            worker.repair(wounded, "Buddy!");
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Sometimes workers need to fight.

@@ -1,9 +1,10 @@
 package atlantis.combat.missions;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
-import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 
 /**
  * This is the mission object that is used by battle squads and it indicates that we should attack 
@@ -54,4 +55,11 @@ public class MissionAttack extends Mission {
         return focusPointManager.focusPoint();
     }
 
+    @Override
+    public boolean allowsToAttackDefensiveBuildings(AUnit defensiveBuilding) {
+        return Select.ourRealUnits()
+                .inRadius(13, defensiveBuilding)
+                .excludeTypes(AUnitType.Terran_Medic)
+                .atLeast(11);
+    }
 }

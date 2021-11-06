@@ -65,9 +65,9 @@ public class ABarracksManager {
 //        }
 //    }
 
-    private static AUnitType defineUnitToBuild(AUnit barracks) {
-        return AUnitType.Terran_Marine;
-    }
+//    private static AUnitType defineUnitToBuild(AUnit barracks) {
+//        return AUnitType.Terran_Marine;
+//    }
 
 //    private static boolean hasEmptySlot(AUnit barracks) {
 //        if (AGame.isPlayingAsZerg()) {

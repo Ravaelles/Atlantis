@@ -8,7 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
-import atlantis.util.Us;
+import atlantis.util.We;
 import bwapi.TilePosition;
 
 public class ABuilderManager {
@@ -96,7 +96,7 @@ public class ABuilderManager {
         // be immediate as unit is standing just right there
 
         else {
-            if (Us.isProtoss()) {
+            if (We.protoss()) {
                 AUnit newBuilding = Select.ourUnfinished()
                         .ofType(constructionOrder.getBuildingType())
                         .inRadius(1.1, builder).first();

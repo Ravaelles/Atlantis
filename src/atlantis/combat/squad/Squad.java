@@ -5,7 +5,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.util.Us;
+import atlantis.util.We;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -202,7 +202,7 @@ public class Squad extends Units {
     }
 
     public AUnit getSquadScout() {
-        if (Us.isTerran() && size() <= 2) {
+        if (We.terran() && size() <= 2) {
             return null;
         }
 
