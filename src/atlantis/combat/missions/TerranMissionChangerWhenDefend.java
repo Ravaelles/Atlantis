@@ -2,8 +2,6 @@ package atlantis.combat.missions;
 
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.A;
 
 public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
@@ -17,7 +15,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        if (isFirstMission()) {
+        if (Missions.isFirstMission()) {
             if (OurStrategy.get().isRush()) {
                 return Count.ourCombatUnits() >= 12 || A.resourcesBalance() >= 350;
             }

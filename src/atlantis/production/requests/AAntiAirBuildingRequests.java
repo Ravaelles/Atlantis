@@ -5,7 +5,7 @@ import atlantis.production.Requirements;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.position.APosition;
 import atlantis.production.orders.AddToQueue;
-import atlantis.strategy.AStrategyInformations;
+import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -29,7 +29,7 @@ public class AAntiAirBuildingRequests {
         }
 
         int defBuildingAntiLand = Count.existingOrInProductionOrInQueue(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
-        return defBuildingAntiLand < AStrategyInformations.antiLandBuildingsNeeded();
+        return defBuildingAntiLand < OurStrategicBuildings.antiLandBuildingsNeeded();
     }
 
     public static int expectedUnits() {
@@ -46,13 +46,13 @@ public class AAntiAirBuildingRequests {
                 );
 
                 for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-                    AddToQueue.addWithTopPriority(building, base.position());
+                    AddToQueue.withTopPriority(building, base.position());
                 }
             }
         }
 
         if (nearTo != null) {
-            AddToQueue.addWithTopPriority(building, nearTo);
+            AddToQueue.withTopPriority(building, nearTo);
             return true;
         }
 
@@ -70,7 +70,7 @@ public class AAntiAirBuildingRequests {
 
         int requiredParents = AConstructionRequests.countExistingAndNotFinished(building.getWhatIsRequired());
         if (requiredParents == 0) {
-            AddToQueue.addWithHighPriority(building.getWhatIsRequired());
+            AddToQueue.withHighPriority(building.getWhatIsRequired());
             return;
         }
 
@@ -82,7 +82,7 @@ public class AAntiAirBuildingRequests {
             );
 
             for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-                AddToQueue.addWithTopPriority(building, base.position());
+                AddToQueue.withTopPriority(building, base.position());
             }
         }
     }

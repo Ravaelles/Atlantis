@@ -960,11 +960,19 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public int weaponRangeAgainst(AUnit anotherUnit) {
-        if (isCannon()) {
+        if (isCannon() || isSunken()) {
             return 7;
         }
 
         return weaponAgainst(anotherUnit.type()).maxRange() / 32;
+    }
+
+    private boolean isSunken() {
+        return (boolean) cache.get(
+                "isSunken",
+                -1,
+                () -> is(Zerg_Sunken_Colony)
+        );
     }
 
     public WeaponType weaponAgainst(AUnitType target) {

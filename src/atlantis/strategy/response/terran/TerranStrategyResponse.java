@@ -2,7 +2,7 @@ package atlantis.strategy.response.terran;
 
 import atlantis.combat.missions.Missions;
 import atlantis.strategy.AStrategy;
-import atlantis.strategy.AStrategyInformations;
+import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.strategy.GamePhase;
 import atlantis.strategy.response.AStrategyResponse;
 
@@ -17,7 +17,7 @@ public class TerranStrategyResponse extends AStrategyResponse {
             return false;
         }
 
-        AStrategyInformations.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
+        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
         return true;
     }
 

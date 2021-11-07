@@ -46,7 +46,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
             && AConstructionRequests.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0
             && hasABaseWithFreeGeyser()
         ) {
-            AddToQueue.addWithTopPriority(AtlantisConfig.GAS_BUILDING);
+            AddToQueue.withTopPriority(AtlantisConfig.GAS_BUILDING);
         }
     }
 
@@ -106,7 +106,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
             return;
         }
 
-        AddToQueue.addWithTopPriority(type);
+        AddToQueue.withTopPriority(type);
     }
 
     // =========================================================

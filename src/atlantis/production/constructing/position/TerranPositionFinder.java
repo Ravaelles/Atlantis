@@ -75,6 +75,10 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
+        if (isOverlappingBaseLocation(building, position)) {
+            return false;
+        }
+
         // Can't be too close to minerals or to geyser, because would slow down production
         if (isTooCloseToMineralsOrGeyser(building, position)) {
             return false;

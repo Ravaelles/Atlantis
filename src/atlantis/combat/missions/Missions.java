@@ -113,4 +113,16 @@ public class Missions {
     public static int counter() {
         return MissionChanger.missionHistory.size();
     }
+
+    public static Mission prevMission() {
+        if (MissionChanger.missionHistory.size() >= 2) {
+            return MissionChanger.missionHistory.get(MissionChanger.missionHistory.size() - 2);
+        } else {
+            return null;
+        }
+    }
+
+    public static boolean isFirstMission() {
+        return MissionChanger.missionHistory.size() == 1;
+    }
 }

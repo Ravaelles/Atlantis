@@ -63,7 +63,7 @@ public class ASupplyManager {
 
         // Terran + Protoss
         else {
-            AddToQueue.addWithHighPriority(AtlantisConfig.SUPPLY);
+            AddToQueue.withHighPriority(AtlantisConfig.SUPPLY);
         }
     }
 

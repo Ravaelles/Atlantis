@@ -3,6 +3,8 @@ package atlantis.strategy;
 import atlantis.AGame;
 import atlantis.strategy.response.AStrategyResponse;
 import atlantis.strategy.response.AStrategyResponseFactory;
+import atlantis.util.A;
+import atlantis.util.Enemy;
 
 public class AStrategyCommander {
     
@@ -16,14 +18,14 @@ public class AStrategyCommander {
     public static void update() {
 
         // If we don't know enemy strategy, try to guess it based on enemy buildings/units we know
-        if (AGame.timeSeconds() < 500 && AGame.getTimeFrames() % 12 == 0) {
-            if (AGame.isEnemyProtoss()) {
+        if (GamePhase.isEarlyGame() && A.everyNthGameFrame(12)) {
+            if (Enemy.protoss()) {
                 guessEnemyStrategyWhenEnemyIsProtoss();
             }
-            else if (AGame.isEnemyTerran()) {
+            else if (Enemy.terran()) {
                 guessEnemyStrategyWhenEnemyIsTerran();
             }
-            else if (AGame.isEnemyZerg()) {
+            else if (Enemy.zerg()) {
                 guessEnemyStrategyWhenEnemyIsZerg();
             }
         }

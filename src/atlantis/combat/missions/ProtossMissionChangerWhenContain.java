@@ -36,7 +36,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     private static boolean shouldChangeMissionToDefend() {
-        if (isFirstMission()) {
+        if (Missions.isFirstMission()) {
             return false;
         }
 

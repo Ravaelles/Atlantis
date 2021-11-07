@@ -302,6 +302,10 @@ public class AGame {
         );
     }
 
+    public static boolean canAffordWithReserved(AUnitType type) {
+        return canAffordWithReserved(type.getMineralPrice(), type.getGasPrice());
+    }
+
     public static int killsLossesResourceBalance() {
         return Atlantis.KILLED_RESOURCES - Atlantis.LOST_RESOURCES;
     }

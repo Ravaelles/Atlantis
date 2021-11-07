@@ -7,7 +7,9 @@ import atlantis.combat.missions.Missions;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.orders.*;
 import atlantis.tech.ATechRequests;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
@@ -106,7 +108,18 @@ public class AProductionManager {
     private static void produceBuilding(AUnitType type, ProductionOrder order) {
         assert type.isBuilding();
 
-        AConstructionRequests.requestConstructionOf(order);
+        if (type.isAddon()) {
+            produceAddon(type);
+        } else {
+            AConstructionRequests.requestConstructionOf(order);
+        }
     }
-    
+
+    private static void produceAddon(AUnitType addon) {
+        for (AUnit building : Select.ourOfType(addon.getWhatBuildsIt()).free().list()) {
+            building.buildAddon(addon);
+            return;
+        }
+    }
+
 }

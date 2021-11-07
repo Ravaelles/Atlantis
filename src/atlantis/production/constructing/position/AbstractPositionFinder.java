@@ -160,17 +160,17 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
-        double distToBase = nearestBase.position().translateByTiles(3, 0).distTo(position);
+        double distToBase = nearestBase.position().translateByTiles(2, 0).distTo(position);
         if (nearestBase != null && distToBase <= 6) {
             for (AUnit mineral : Select.minerals().inRadius(6, position).listUnits()) {
-                if (mineral.distTo(position) <= (building.isSupplyUnit() ? 5 : 4.3) && distToBase <= 4) {
+                if (mineral.distTo(position) <= 5 && distToBase <= 4.5) {
                     _CONDITION_THAT_FAILED = "Too close to mineral";
                     return true;
                 }
             }
 
             for (AUnit geyser : Select.geysers().inRadius(8, position).listUnits()) {
-                if (geyser.distTo(position) <= (building.isPylon() ? 7 : 2.3)) {
+                if (geyser.distTo(position) <= (building.isPylon() ? 7 : 2.6)) {
                     _CONDITION_THAT_FAILED = "Too close to geyser";
                     return true;
                 }

@@ -6,7 +6,6 @@ import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Helpers;
 
@@ -21,7 +20,7 @@ public class AbstractDynamicUnits extends Helpers {
             return;
         }
 
-        AddToQueue.addWithHighPriority(type);
+        AddToQueue.withHighPriority(type);
     }
 
     // =========================================================
@@ -87,11 +86,11 @@ public class AbstractDynamicUnits extends Helpers {
     }
     
     protected static void trainNow(AUnitType type) {
-        AddToQueue.addWithTopPriority(type);
+        AddToQueue.withTopPriority(type);
     }
 
     protected static void trainNow(AUnitType type, boolean onlyOneAtTime) {
-        AddToQueue.addWithTopPriority(type);
+        AddToQueue.withTopPriority(type);
     }
 
 }

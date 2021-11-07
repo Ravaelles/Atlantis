@@ -2,7 +2,7 @@ package atlantis.strategy.response.protoss;
 
 import atlantis.combat.missions.Missions;
 import atlantis.strategy.AStrategy;
-import atlantis.strategy.AStrategyInformations;
+import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.strategy.response.AStrategyResponse;
 
 public class ProtossStrategyResponse extends AStrategyResponse {
@@ -17,7 +17,7 @@ public class ProtossStrategyResponse extends AStrategyResponse {
             return false;
         }
 
-        AStrategyInformations.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
+        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
         return true;
     }
 
@@ -31,7 +31,7 @@ public class ProtossStrategyResponse extends AStrategyResponse {
 
     @Override
     protected void handleAirUnitsDefence() {
-        AStrategyInformations.setAntiAirBuildingsNeeded(1);
+        OurStrategicBuildings.setAntiAirBuildingsNeeded(1);
     }
 
 }

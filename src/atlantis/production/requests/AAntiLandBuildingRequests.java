@@ -7,7 +7,7 @@ import atlantis.position.APosition;
 import atlantis.production.Requirements;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
-import atlantis.strategy.AStrategyInformations;
+import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -45,12 +45,12 @@ public class AAntiLandBuildingRequests {
 //                + " // "
 //                + defBuildingAntiLand
 //                + " < "
-//                + Math.max(expectedUnits(), AStrategyInformations.antiLandBuildingsNeeded())
+//                + Math.max(expectedUnits(), OurStrategicBuildings.antiLandBuildingsNeeded())
 //                + " //// " +
 //                + ProductionQueue.countInQueue(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND, 8)
 //
 //        );
-        return defBuildingAntiLand < Math.max(expectedUnits(), AStrategyInformations.antiLandBuildingsNeeded());
+        return defBuildingAntiLand < Math.max(expectedUnits(), OurStrategicBuildings.antiLandBuildingsNeeded());
     }
 
     public static int expectedUnits() {
@@ -83,11 +83,11 @@ public class AAntiLandBuildingRequests {
                             && !Requirements.hasRequirements(building())
                             && !ProductionQueue.isAtTheTopOfQueue(required, 6)
             ) {
-                AddToQueue.addWithTopPriority(required);
+                AddToQueue.withTopPriority(required);
                 return true;
             }
 
-            AddToQueue.addWithTopPriority(building(), nearTo);
+            AddToQueue.withTopPriority(building(), nearTo);
             return true;
         }
 

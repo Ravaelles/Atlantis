@@ -141,4 +141,8 @@ public class Count {
     public static int medics() {
         return ofType(AUnitType.Terran_Medic);
     }
+
+    public static int factories() {
+        return ofType(AUnitType.Terran_Factory);
+    }
 }

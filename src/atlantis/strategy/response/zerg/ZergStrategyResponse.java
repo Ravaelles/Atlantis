@@ -1,7 +1,6 @@
 package atlantis.strategy.response.zerg;
 
 import atlantis.strategy.AStrategy;
-import atlantis.strategy.AStrategyInformations;
 import atlantis.strategy.response.AStrategyResponse;
 
 public class ZergStrategyResponse extends AStrategyResponse {

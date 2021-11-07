@@ -1,4 +1,4 @@
-package atlantis.production.dynamic;
+package atlantis.production.dynamic.protoss;
 
 public class ZergDynamicBuildingsManager {
 

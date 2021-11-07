@@ -238,7 +238,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitHide(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.createFrom(u);
+        if (unit.isEnemy()) {
+            AEnemyUnits.updateEnemyUnitPosition(unit);
+        }
     }
 
     /**

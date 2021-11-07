@@ -10,27 +10,27 @@ import atlantis.util.We;
 
 public class AddToQueue {
 
-    public static void addWithTopPriority(AUnitType type) {
-        addWithTopPriority(type, null);
+    public static void withTopPriority(AUnitType type) {
+        withTopPriority(type, null);
     }
 
-    public static void addWithTopPriority(AUnitType type, APosition position) {
+    public static void withTopPriority(AUnitType type, APosition position) {
         addToQueue(type, position, indexForPriority(ProductionOrderPriority.TOP));
     }
 
-    public static void addWithHighPriority(AUnitType type) {
-        addWithHighPriority(type, null);
+    public static void withHighPriority(AUnitType type) {
+        withHighPriority(type, null);
     }
 
-    public static void addWithHighPriority(AUnitType type, HasPosition position) {
+    public static void withHighPriority(AUnitType type, HasPosition position) {
         addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.HIGH));
     }
 
-    public static void addWithStandardPriority(AUnitType type) {
-        addWithStandardPriority(type, null);
+    public static void withStandardPriority(AUnitType type) {
+        withStandardPriority(type, null);
     }
 
-    public static void addWithStandardPriority(AUnitType type, HasPosition position) {
+    public static void withStandardPriority(AUnitType type, HasPosition position) {
         addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.STANDARD));
     }
 
@@ -45,11 +45,9 @@ public class AddToQueue {
         }
 
         if (!allowToQueueRequiredBuildings(type)) {
-//            ProductionOrder productionOrder = new ProductionOrder(type, position, A.supplyUsed() - 2);
             int minSupply = 0;
             ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
             ProductionQueue.currentProductionQueue.add(index, productionOrder);
-            System.out.println(productionOrder);
         }
         else {
             if (

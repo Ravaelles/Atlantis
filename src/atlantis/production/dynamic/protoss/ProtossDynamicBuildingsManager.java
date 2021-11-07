@@ -1,4 +1,4 @@
-package atlantis.production.dynamic;
+package atlantis.production.dynamic.protoss;
 
 import atlantis.AGame;
 import atlantis.production.dynamic.ADynamicBuildingsManager;

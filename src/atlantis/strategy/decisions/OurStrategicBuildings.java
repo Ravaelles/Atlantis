@@ -1,8 +1,8 @@
-package atlantis.strategy;
+package atlantis.strategy.decisions;
 
 
-public class AStrategyInformations {
-    
+public class OurStrategicBuildings {
+
     private static int antiLandBuildingsNeeded = 0;
     private static int antiAirBuildingsNeeded = 0;
     private static int detectorsNeeded = 0;
@@ -40,4 +40,5 @@ public class AStrategyInformations {
     public static int detectorsNeeded() {
         return detectorsNeeded;
     }
+
 }

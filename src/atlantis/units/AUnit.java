@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.AGame;
+import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.Squad;
@@ -900,7 +901,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isEnemy() {
         return (boolean) cache.get(
                 "isEnemy",
-                60,
+                300,
                 () -> getPlayer().isEnemy(AGame.getPlayerUs())
         );
     }
@@ -1696,6 +1697,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int stimTimer() {
         return u.getStimTimer();
+    }
+
+    public double combatEval(boolean relativeToEnemy) {
+        return ACombatEvaluator.evaluateSituation(this, relativeToEnemy);
     }
 
 //    public boolean isDepleted() {

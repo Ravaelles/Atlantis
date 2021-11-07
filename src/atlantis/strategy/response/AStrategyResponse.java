@@ -2,17 +2,12 @@ package atlantis.strategy.response;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
-import atlantis.map.Chokes;
 import atlantis.production.requests.AAntiAirBuildingRequests;
 import atlantis.production.requests.AAntiLandBuildingRequests;
-import atlantis.production.requests.ARequests;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.strategy.AStrategy;
-import atlantis.strategy.AStrategyInformations;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
+import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.util.Enemy;
 
 public abstract class AStrategyResponse {
@@ -34,6 +29,10 @@ public abstract class AStrategyResponse {
 
         return false;
     }
+
+    public static AStrategyResponse get() {
+        return AStrategyResponseFactory.forOurRace();
+    }
     
     // =========================================================
 
@@ -41,7 +40,7 @@ public abstract class AStrategyResponse {
         AStrategy enemyStrategy = EnemyStrategy.get();
 
         // === Rush ========================================
-        
+
         if (enemyStrategy.isRushOrCheese()) {
             rushDefence(enemyStrategy);
         }
@@ -59,7 +58,7 @@ public abstract class AStrategyResponse {
                 Missions.setGlobalMissionDefend();
             }
 
-            AStrategyInformations.setAntiLandBuildingsNeeded(1);
+            OurStrategicBuildings.setAntiLandBuildingsNeeded(1);
 //            ADetectorRequest.requestDetectorImmediately(null);
         }
 
@@ -74,24 +73,6 @@ public abstract class AStrategyResponse {
 
     // =========================================================
 
-    public void updateHiddenUnitDetected(AUnit enemyUnit) {
-        if (enemyUnit.effVisible()) {
-            return;
-        }
-
-        if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
-            AStrategyInformations.setDetectorsNeeded(1);
-            ARequests.getInstance().requestDetectorQuick(
-                    Chokes.mainChoke().getCenter()
-            );
-            ARequests.getInstance().requestDetectorQuick(
-                    Chokes.natural(Select.mainBase().position()).getCenter()
-            );
-        }
-    }
-
-    // =========================================================
-
     protected boolean rushDefence(AStrategy enemyStrategy) {
         System.out.println("GENERIC RUSH - shouldn't be called");
         Missions.setGlobalMissionDefend();
@@ -100,7 +81,7 @@ public abstract class AStrategyResponse {
             return false;
         }
         
-        AStrategyInformations.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
+        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
         return true;
     }
 
@@ -109,7 +90,7 @@ public abstract class AStrategyResponse {
     }
 
     protected void handleAirUnitsDefence() {
-        AStrategyInformations.setAntiAirBuildingsNeeded(5);
+        OurStrategicBuildings.setAntiAirBuildingsNeeded(5);
         AAntiAirBuildingRequests.requestAntiAirQuick(null);
     }
 
@@ -128,5 +109,5 @@ public abstract class AStrategyResponse {
 
         return !enemyStrategy.isRush() && !enemyStrategy.isGoingCheese();
     }
-    
+
 }

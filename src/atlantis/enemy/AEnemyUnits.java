@@ -4,7 +4,7 @@ import atlantis.information.AFoggedUnit;
 import atlantis.map.ABaseLocation;
 import atlantis.map.BaseLocations;
 import atlantis.position.APosition;
-import atlantis.strategy.response.AStrategyResponseFactory;
+import atlantis.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -134,9 +134,7 @@ public class AEnemyUnits {
     public static void discoveredEnemyUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.put(enemyUnit, new AFoggedUnit(enemyUnit));
 
-        if (enemyUnit.effCloaked()) {
-            AStrategyResponseFactory.forOurRace().updateHiddenUnitDetected(enemyUnit);
-        }
+        EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
     }
 
     /**
@@ -165,10 +163,13 @@ public class AEnemyUnits {
     /**
      * Updates last known position of the enemy unit.
      */
-    private static void updateEnemyUnitPosition(AUnit enemyUnit) {
+    public static void updateEnemyUnitPosition(AUnit enemyUnit) {
 //        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
         if (enemyUnitsDiscovered.containsKey(enemyUnit)) {
             enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
+        }
+        else {
+            System.err.println("No fogged unit previously: " + enemyUnit);
         }
     }
 

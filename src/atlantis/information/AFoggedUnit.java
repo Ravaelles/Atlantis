@@ -86,7 +86,7 @@ public class AFoggedUnit extends AUnit {
         updateType(unit);
     }
 
-    protected void updatePosition(AUnit unit) {
+    public void updatePosition(AUnit unit) {
         if (unit.position() != null) {
 //            System.out.println("Update " + unit.shortName() + " to " + unit.getPosition());
             _position = new APosition(unit.x(), unit.y());

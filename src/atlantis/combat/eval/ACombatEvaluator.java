@@ -71,7 +71,7 @@ public class ACombatEvaluator {
      * <b>NEGATIVE</b> when enemy is too strong and we should pull back.
      */
     public static double evaluateSituation(AUnit unit) {
-        return evaluateSituation(unit, false, unit.isEnemy());
+        return evaluateSituation(unit, false);
     }
 
     /**
@@ -82,9 +82,9 @@ public class ACombatEvaluator {
      * When absolute value is true, it returns the evaluation value 
      * (like 3564, more equals higher combat strength).
      */
-    public static double evaluateSituation(AUnit unit, boolean returnAbsoluteValue, boolean calculateForEnemy) {
+    public static double evaluateSituation(AUnit unit, boolean relativeToEnemy) {
         return (double) cache.get(
-            "evaluateSituation:" + unit.id() + "," + returnAbsoluteValue + "," + calculateForEnemy,
+            "evaluateSituation:" + unit.id() + "," + relativeToEnemy,
             5,
             () -> {
                 checkCombatInfo(unit);
@@ -109,8 +109,8 @@ public class ACombatEvaluator {
                 double ourEvaluation = Evaluate.evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
 
                 // Return non-relative absolute value
-                if (returnAbsoluteValue) {
-                    if (calculateForEnemy) {
+                if (!relativeToEnemy) {
+                    if (unit.isEnemy()) {
                         return enemyEvaluation;
                     } else {
                         return ourEvaluation;

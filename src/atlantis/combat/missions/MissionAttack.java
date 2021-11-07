@@ -57,9 +57,11 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean allowsToAttackDefensiveBuildings(AUnit defensiveBuilding) {
+        int buildings = Select.enemy().combatBuildings().inRadius(7, defensiveBuilding).count();
+
         return Select.ourRealUnits()
                 .inRadius(13, defensiveBuilding)
                 .excludeTypes(AUnitType.Terran_Medic)
-                .atLeast(11);
+                .atLeast(9 * buildings);
     }
 }

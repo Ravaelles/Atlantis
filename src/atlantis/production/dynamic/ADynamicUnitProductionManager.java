@@ -1,6 +1,12 @@
 package atlantis.production.dynamic;
 
 import atlantis.AGame;
+import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsManager;
+import atlantis.production.dynamic.protoss.ProtossDynamicUnitsManager;
+import atlantis.production.dynamic.protoss.ZergDynamicBuildingsManager;
+import atlantis.production.dynamic.protoss.ZergDynamicUnitsManager;
+import atlantis.production.dynamic.terran.TerranDynamicBuildingsManager;
+import atlantis.production.dynamic.terran.TerranDynamicUnitsManager;
 
 
 public class ADynamicUnitProductionManager {
