@@ -1,8 +1,11 @@
 package atlantis.strategy.decisions;
 
 import atlantis.enemy.EnemyInformation;
+import atlantis.production.orders.CurrentProductionQueue;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.strategy.GamePhase;
 import atlantis.strategy.OurStrategy;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
@@ -23,11 +26,18 @@ public class OurDecisions {
         );
     }
 
-    public static boolean beAbleToProduceTanks() {
+    public static boolean wantsToBeAbleToProduceTanksSoon() {
         return cache.get(
                 "beAbleToProduceTanks",
                 100,
                 () -> {
+                    if (
+                            !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Siege_Tank_Tank_Mode, 5)
+                            && !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Machine_Shop, 5)
+                    ) {
+                        return false;
+                    }
+
                     return EnemyInformation.enemyStartedWithDefensiveBuilding && OurStrategy.get().goingBio();
                 }
         );
@@ -46,11 +56,11 @@ public class OurDecisions {
         return cache.get(
                 "dontProduceVultures",
                 100,
-                () -> focusOnTanksOnly() || Select.ourTerranInfantry().atLeast(4)
+                () -> focusOnTanks() || shouldBuildBio() || Select.ourTerranInfantry().atLeast(4)
         );
     }
 
-    private static boolean focusOnTanksOnly() {
+    private static boolean focusOnTanks() {
         return cache.get(
                 "focusOnTanksOnly",
                 100,

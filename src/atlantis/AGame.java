@@ -3,13 +3,9 @@ package atlantis;
 import static atlantis.Atlantis.game;
 
 import atlantis.combat.missions.MissionChanger;
-import atlantis.production.Requirements;
-import atlantis.production.constructing.AConstructionRequests;
-import atlantis.production.orders.CurrentProductionOrders;
-import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.util.A;
-import atlantis.wrappers.ATech;
 import bwapi.*;
 
 import java.util.List;
@@ -296,7 +292,7 @@ public class AGame {
      */
     public static boolean canAffordWithReserved(int minerals, int gas) {
 //        int[] reservedConstructions = AConstructionRequests.resourcesNeededForNotStartedConstructions();
-        int[] reservedInQueue = CurrentProductionOrders.resourcesReserved();
+        int[] reservedInQueue = CurrentProductionQueue.resourcesReserved();
 
         return canAfford(
                 minerals + reservedInQueue[0],

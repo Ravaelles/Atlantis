@@ -4,6 +4,8 @@ import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.wrappers.ATech;
+import bwapi.TechType;
 
 public class TerranCloakableManager {
 
@@ -12,7 +14,7 @@ public class TerranCloakableManager {
             return false;
         }
 
-        if (unit.canCloak()) {
+        if (unit.canCloak() && ATech.isResearched(TechType.Cloaking_Field)) {
             boolean enemiesNearby = Select.enemyRealUnits()
                     .inRadius(11, unit)
                     .canAttack(unit, true, true, 3)

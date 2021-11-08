@@ -58,11 +58,19 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean allowsToAttackDefensiveBuildings(AUnit unit, AUnit defensiveBuilding) {
+
+        // Tanks always allowed
         if (unit.isTank()) {
             return true;
         }
 
-        if (Count.ourCombatUnits() <= 27 || unit.lastStoppedRunningLessThanAgo(30 * 10)) {
+        // Air units
+        if (unit.isAirUnit() && defensiveBuilding.isSunken()) {
+            return true;
+        }
+
+        // Standard infantry attack
+        if (Count.ourCombatUnits() <= 40 || unit.lastStoppedRunningLessThanAgo(30 * 10)) {
             return false;
         }
 

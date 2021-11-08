@@ -56,7 +56,9 @@ public class BaseSelect<T extends AUnit> {
                 else {
                     for (Unit u : AGame.getEnemy().getUnits()) {
                         AUnit unit = AUnit.createFrom(u);
-                        data.add(unit);
+                        if (!unit.isLarvaOrEgg()) {
+                            data.add(unit);
+                        }
                     }
                 }
 

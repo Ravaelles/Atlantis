@@ -23,7 +23,7 @@ public class TerranMissionChangerWhenContain {
 
     // =========================================================
 
-    private static boolean shouldChangeMissionToDefend() {
+    protected static boolean shouldChangeMissionToDefend() {
 //        if (Atlantis.LOST_RESOURCES <= 150) {
 //            return false;
 //        }
@@ -33,7 +33,7 @@ public class TerranMissionChangerWhenContain {
         }
 
         if (OurStrategy.get().goingBio()) {
-            if (A.resourcesBalance() <= 100 && Count.tanks() <= 1) {
+            if (Count.tanks() <= 1) {
                 return Count.ourCombatUnits() <= 6;
             }
         }
@@ -42,7 +42,7 @@ public class TerranMissionChangerWhenContain {
 //        return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 9;
     }
 
-    private static boolean shouldChangeMissionToAttack() {
+    protected static boolean shouldChangeMissionToAttack() {
         if (Select.mainBase() != null) {
             if (Select.enemy().inRadius(14, Select.mainBase()).atLeast(2)) {
                 return false;
@@ -60,7 +60,7 @@ public class TerranMissionChangerWhenContain {
         return Select.ourTanks().count() >= 2 || Select.ourCombatUnits().count() >= 40;
     }
 
-    private static boolean killsBalanceSaysSo() {
+    protected static boolean killsBalanceSaysSo() {
         if (AGame.timeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 900) {
             return true;
         }
@@ -71,11 +71,11 @@ public class TerranMissionChangerWhenContain {
     /**
      * Defines how many military units we should have before pushing forward towards the enemy.
      */
-//    private static int defineMinUnitsToStrategicallyAttack() {
+//    protected static int defineMinUnitsToStrategicallyAttack() {
 //        return 18;
 //    }
 //
-//    private static boolean shouldChangeMissionToContain() {
+//    protected static boolean shouldChangeMissionToContain() {
 //        int ourCombatUnits = Select.ourCombatUnits().count();
 //
 //        return ourCombatUnits <= 13;

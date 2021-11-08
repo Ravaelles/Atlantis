@@ -10,7 +10,6 @@ import atlantis.strategy.decisions.OurDecisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -45,7 +44,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 //        }
         if (
                 OurStrategy.get().goingBio()
-                        && OurDecisions.beAbleToProduceTanks()
+                        && OurDecisions.wantsToBeAbleToProduceTanksSoon()
                         && Count.includingPlanned(AUnitType.Terran_Factory) == 0
         ) {
 //            System.err.println("Change from BIO to TANKS (" + Count.includingPlanned(AUnitType.Terran_Factory) + ")");
@@ -61,8 +60,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      * If all factories are busy (training units) request new ones.
      */
     private static boolean factory() {
-
-        if (AGame.canAffordWithReserved(250, 100)) {
+        if (AGame.canAffordWithReserved(280, 180)) {
             Selection factories = Select.ourOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
@@ -90,7 +88,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      * If there are buildings without addons, build them.
      */
     private static void addonIfNeeded() {
-        if (OurDecisions.beAbleToProduceTanks()) {
+        if (OurDecisions.wantsToBeAbleToProduceTanksSoon() || AGame.canAffordWithReserved(150, 150)) {
 
             for (AUnit building : Select.ourBuildings().list()) {
                 if (building.type().isFactory() && !building.hasAddon()) {

@@ -15,11 +15,9 @@ public class CameraManager {
     // =========================================================
 
     public static void update() {
-        if (AGame.isUms()) {
-            AUnit cameraUnit = centerCameraOnUnit();
-            if (AGame.timeSeconds() <= 1 || CameraManager.isFocusCameraOnUnit()) {
-                CameraManager.centerCameraOn(cameraUnit);
-            }
+        AUnit cameraUnit = centerCameraOnUnit();
+        if (AGame.timeSeconds() <= 1 || CameraManager.isFocusCameraOnUnit()) {
+            CameraManager.centerCameraOn(cameraUnit);
         }
     }
 
@@ -29,11 +27,16 @@ public class CameraManager {
 //        return null;
         AUnit cameraUnit;
 
-        cameraUnit = Select.ourOfType(AUnitType.Protoss_High_Templar).groundUnits().first();
+//        cameraUnit = Select.ourOfType(AUnitType.Protoss_High_Templar).groundUnits().first();
+//        if (cameraUnit != null) {
+////            if (GameSpeed.gameSpeed <= 0 && GameSpeed.frameSkip >= 1) {
+////                GameSpeed.changeSpeedTo(2);
+////            }
+//            return cameraUnit;
+//        }
+
+        cameraUnit = Select.ourOfType(AUnitType.Terran_Wraith).first();
         if (cameraUnit != null) {
-//            if (GameSpeed.gameSpeed <= 0 && GameSpeed.frameSkip >= 1) {
-//                GameSpeed.changeSpeedTo(2);
-//            }
             return cameraUnit;
         }
 
@@ -52,6 +55,8 @@ public class CameraManager {
 
     public static void toggleFocusCameraOnFirstCombatUnit() {
         focusCameraOnFirstCombatUnit = !focusCameraOnFirstCombatUnit;
+
+        System.out.println("Toggle camera on units: " + focusCameraOnFirstCombatUnit);
     }
 
     public static boolean isFocusCameraOnUnit() {

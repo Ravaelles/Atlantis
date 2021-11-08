@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * Current production queue
  */
-public abstract class CurrentProductionOrders {
+public abstract class CurrentProductionQueue {
 
     /**
      * Returns list of orders (units and upgrades) that we should produce now.

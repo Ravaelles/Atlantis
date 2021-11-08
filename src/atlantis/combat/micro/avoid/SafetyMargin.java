@@ -68,7 +68,12 @@ public class SafetyMargin {
     }
 
     protected static double woundedBonus(AUnit defender) {
-        return (defender.woundPercent() * (defender.isTank() ? 1.6 : 1)) / 32.0;
+        if (defender.isAirUnit()) {
+            return defender.woundPercent() / 10;
+        }
+
+        boolean applyExtraModifier = defender.isTank();
+        return (defender.woundPercent() * (applyExtraModifier ? 2 : 1)) / 32.0;
     }
 
     protected static double transportBonus(AUnit defender) {

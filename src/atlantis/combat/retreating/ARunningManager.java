@@ -158,7 +158,7 @@ public class ARunningManager {
 
         if (
                 runTo != null && runTo.distTo(unit) <= 0.3
-                && isPossibleAndReasonablePosition(unit.position(), runTo.position(), true)
+                && isPossibleAndReasonablePosition(unit, unit.position(), runTo.position(), true)
         ) {
             System.err.println("Invalid run position, dist = " + runTo.distTo(unit));
             APainter.paintLine(unit, runTo, Color.Purple);
@@ -268,7 +268,7 @@ public class ARunningManager {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (isPossibleAndReasonablePosition(unit.position(), runTo, true, "O", "X")) {
+        if (isPossibleAndReasonablePosition(unit, unit.position(), runTo, true, "O", "X")) {
             APainter.paintLine(unit.position(), runTo, Color.Purple);
             APainter.paintLine(unit.position().translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
@@ -337,7 +337,7 @@ public class ARunningManager {
 
                 // If has path to given point, add it to the list of potential points
                 APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
-                if (isPossibleAndReasonablePosition(unitPosition, potentialPosition, true, "v", "x")) {
+                if (isPossibleAndReasonablePosition(unit, unitPosition, potentialPosition, true, "v", "x")) {
                     potentialPositionsList.add(potentialPosition);
                 }
             }
@@ -407,14 +407,17 @@ public class ARunningManager {
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
     public boolean isPossibleAndReasonablePosition(
-            APosition unitPosition, APosition position, boolean includeUnitCheck
+            AUnit unit, APosition unitPosition, APosition position, boolean includeUnitCheck
     ) {
-        return isPossibleAndReasonablePosition(unitPosition, position, includeUnitCheck, "#", "*");
+        return isPossibleAndReasonablePosition(unit, unitPosition, position, includeUnitCheck, "#", "*");
     }
 
     public boolean isPossibleAndReasonablePosition(
-            APosition unitPosition, APosition position, boolean includeUnitCheck, String charForIsOk, String charForNotOk
+            AUnit unit, APosition unitPosition, APosition position, boolean includeUnitCheck, String charForIsOk, String charForNotOk
     ) {
+        if (unit.isAirUnit()) {
+            return true;
+        }
 
         boolean isOkay = position.isWalkable()
                 && (

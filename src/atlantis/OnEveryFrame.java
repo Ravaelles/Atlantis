@@ -6,6 +6,8 @@ import atlantis.information.AFoggedUnit;
 import atlantis.map.Chokes;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import jbweb.Blocks;
 import jbweb.Stations;
 import jbweb.Wall;
@@ -57,9 +59,20 @@ public class OnEveryFrame {
 //            CameraManager.centerCameraOn(scout);
 //        }
 
+//        AUnit wraith = Select.ourOfType(AUnitType.Terran_Wraith).first();
+//        if (wraith != null) {
+//            CameraManager.centerCameraOn(wraith);
+//        }
+
 //        for (AFoggedUnit unit : AEnemyUnits.discoveredAndAliveUnits()) {
 //            System.out.println(unit.shortName() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //        }
+
+//        for (AUnit unit : Select.ourOfType(AUnitType.Terran_Marine).list()) {
+//            System.out.println("marine = " + unit.canAttackAirUnits() + " // " + unit.getAirWeapon().damageAmount());
+//        }
+
+
     }
 
 }

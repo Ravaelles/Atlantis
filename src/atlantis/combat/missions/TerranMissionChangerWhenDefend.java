@@ -15,6 +15,10 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
+//        if (TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
+//            return false;
+//        }
+
         if (Missions.isFirstMission()) {
             if (OurStrategy.get().isRush()) {
                 return Count.ourCombatUnits() >= 12 || A.resourcesBalance() >= 350;

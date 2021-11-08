@@ -982,7 +982,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return weaponAgainst(anotherUnit.type()).maxRange() / 32;
     }
 
-    private boolean isSunken() {
+    public boolean isSunken() {
         return (boolean) cache.get(
                 "isSunken",
                 -1,

@@ -176,9 +176,9 @@ public class AEnemyUnits {
         if (enemyUnitsDiscovered.containsKey(enemyUnit)) {
             enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
         }
-        else {
-            System.err.println("No fogged unit previously: " + enemyUnit);
-        }
+//        else {
+//            System.err.println("No fogged unit previously: " + enemyUnit);
+//        }
     }
 
     public static List<AFoggedUnit> foggedUnits() {

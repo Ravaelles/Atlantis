@@ -19,7 +19,7 @@ import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.CurrentProductionOrders;
+import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ProductionQueueMode;
 import atlantis.production.requests.AAntiLandBuildingRequests;
@@ -276,7 +276,8 @@ public class AAdvancedPainter extends APainter {
     private static void paintCombatEval(AUnit unit) {
         APosition unitPosition = unit.position();
         double combatEval = unit.combatEval(true);
-        String combatStrength = ColorUtil.getColorString(Color.Red) + combatEval;
+        String combatStrength = ColorUtil.getColorString(Color.Red) +
+                (combatEval >= 999 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
         paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
     }
 
@@ -463,8 +464,8 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units that should be produced right now or any time ==================
 
-        ArrayList<ProductionOrder> produceNow = CurrentProductionOrders.thingsToProduce(ProductionQueueMode.ENTIRE_QUEUE);
-//        ArrayList<ProductionOrder> produceNow = CurrentProductionOrders.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
+        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ENTIRE_QUEUE);
+//        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         int counter = 1;
         for (ProductionOrder order : produceNow) {
             paintSideMessage(

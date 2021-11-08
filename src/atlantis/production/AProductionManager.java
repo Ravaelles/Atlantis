@@ -21,7 +21,7 @@ public class AProductionManager {
     protected static void update() {
 
         // Get sequence of units (Production Orders) based on current build order
-        ArrayList<ProductionOrder> queue = CurrentProductionOrders.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
+        ArrayList<ProductionOrder> queue = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         for (ProductionOrder order : queue) {
             handleProductionOrder(order);
         }

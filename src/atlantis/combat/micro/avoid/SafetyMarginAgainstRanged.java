@@ -10,6 +10,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         double criticalDist = enemyWeaponRangeBonus(defender, attacker)
                 + quicknessBonus(defender, attacker)
                 + lurkerBonus(defender, attacker)
+                + buildingBonus(defender, attacker)
                 + woundedBonus(defender)
                 + transportBonus(defender)
                 + ourUnitsNearbyBonus(defender)
@@ -18,10 +19,27 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 + scoutBonus(defender, attacker)
                 + combatEvalBonus(defender, attacker);
 
+        if (defender.isAirUnit()) {
+            criticalDist = applyAirUnitTweaks(defender, attacker, criticalDist);
+        }
+
         return attacker.distTo(defender) - criticalDist;
     }
 
     // =========================================================
+
+    private static double applyAirUnitTweaks(AUnit defender, AUnit attacker, double currentCriticalDist) {
+        double attackerRangeWithMargin = attacker.airWeaponRange() + 3.3;
+        if (currentCriticalDist <= attackerRangeWithMargin) {
+            return attackerRangeWithMargin;
+        }
+
+        return currentCriticalDist;
+    }
+
+    private static double buildingBonus(AUnit defender, AUnit attacker) {
+        return attacker.type().isCombatBuilding() ? 3 : 0;
+    }
 
     private static double lurkerBonus(AUnit defender, AUnit attacker) {
         if (attacker.is(AUnitType.Zerg_Lurker) && attacker.effCloaked()) {
@@ -36,9 +54,9 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     }
 
     private static double combatEvalBonus(AUnit defender, AUnit attacker) {
-        if (!ACombatEvaluator.isSituationFavorable(defender)) {
-            return -3;
-        }
+//        if (!ACombatEvaluator.isSituationFavorable(defender)) {
+//            return -3;
+//        }
 
         return 0;
     }

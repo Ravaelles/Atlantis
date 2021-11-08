@@ -49,7 +49,7 @@ public class AEnemyTargeting {
         if (Select.enemyRealUnits(true)
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 3)
+                .canBeAttackedBy(unit, 8)
                 .count() == 0) {
             return null;
         }

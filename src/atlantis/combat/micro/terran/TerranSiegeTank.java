@@ -197,7 +197,7 @@ public class TerranSiegeTank {
         if (nearestEnemyCombatBuilding != null) {
             if (
                     (tank.distToLessThan(nearestEnemyCombatBuilding, 10.5) && canSiegeHere(tank, false))
-                    || tank.distToLessThan(nearestEnemyCombatBuilding, 8)
+                    || tank.distToLessThan(nearestEnemyCombatBuilding, 9.3)
             ) {
 //                tank.setTooltip("Buildz:" + Select.enemy().combatBuildings().count() + "," + A.digit(tank.distTo(nearestEnemyCombatBuilding)));
                 tank.siege();

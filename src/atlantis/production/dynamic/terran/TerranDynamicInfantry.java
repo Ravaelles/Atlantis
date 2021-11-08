@@ -9,11 +9,26 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 
 public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
+    protected static boolean dontProduceBio() {
+        if (!A.hasMinerals(250)) {
+            if (Count.inQueue(AUnitType.Terran_Factory, 1) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected static void medics() {
         if (!OurDecisions.shouldBuildBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
+            return;
+        }
+
+        if (dontProduceBio()) {
             return;
         }
 
@@ -28,6 +43,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
     protected static void marines() {
         if (!OurDecisions.shouldBuildBio()) {
+            return;
+        }
+
+        if (dontProduceBio()) {
             return;
         }
 

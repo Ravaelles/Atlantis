@@ -35,6 +35,19 @@ public class ATargetingImportant extends AEnemyTargeting {
         AUnit target;
 
         // =========================================================
+        // Overlords
+
+        target = Select.enemy()
+                .ofType(AUnitType.Zerg_Overlord)
+                .canBeAttackedBy(unit, 1)
+                .nearestTo(unit);
+        if (target != null) {
+            System.err.println(unit.shortName() + " --> " + target.shortName());
+            if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
+            return target;
+        }
+
+        // =========================================================
         // Target AIR UNITS INRANGE
 
         target = enemyUnits.clone()

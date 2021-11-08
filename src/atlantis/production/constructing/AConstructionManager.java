@@ -44,7 +44,6 @@ public class AConstructionManager {
             if (
                     (builder == null || !builder.exists() || !builder.isAlive())
             ) {
-                System.err.println("assignOptimalBuilder for " + constructionOrder.getConstruction());
                 constructionOrder.assignOptimalBuilder();
 
                 builder = constructionOrder.getBuilder();

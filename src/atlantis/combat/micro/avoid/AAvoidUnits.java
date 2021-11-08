@@ -71,8 +71,8 @@ public abstract class AAvoidUnits {
 
     protected static List<? extends AUnit> searchProblematicEnemyUnits(AUnit unit) {
         return Select.enemyRealUnits(true, true, true)
-                .canAttack(unit, true, true, 3)
-                .inRadius(13, unit)
+                .canAttack(unit, true, true, 6)
+                .inRadius(14, unit)
                 .list();
     }
 

@@ -8,6 +8,8 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
+import java.util.List;
+
 public class AWorkerDefenceManager {
 
     /**
@@ -79,7 +81,7 @@ public class AWorkerDefenceManager {
             return false;
         }
 
-        // FIGHT against ZEARGLINGS
+        // FIGHT against ZERGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).listUnits()) {
             if (worker.hp() <= 21 && runToFarthestMineral(worker, enemy)) {
                 worker.setTooltip("Aaargh!");
@@ -91,7 +93,9 @@ public class AWorkerDefenceManager {
         }
 
         // FIGHT against COMBAT UNITS
-        for (AUnit enemy : Select.enemy().combatUnits().inRadius(1, worker).listUnits()) {
+        List<AUnit> enemies = Select.enemy().combatUnits().excludeTypes(AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver)
+                .inRadius(1, worker).listUnits();
+        for (AUnit enemy : enemies) {
             worker.attackUnit(enemy);
             worker.setTooltip("ForMotherland!");
             return true;

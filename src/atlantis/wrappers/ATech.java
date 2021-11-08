@@ -3,6 +3,7 @@ package atlantis.wrappers;
 import atlantis.AGame;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.Cache;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
@@ -13,19 +14,26 @@ public class ATech {
     
     private static final ArrayList<TechType> currentlyResearching = new ArrayList<>();
     private static final ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
-    
+    private static final Cache<Boolean> cache = new Cache<>();
+
     // =========================================================
 
     public static boolean isResearched(Object techOrUpgrade) {
-        if (techOrUpgrade instanceof TechType) {
-            TechType tech = (TechType) techOrUpgrade;
-            return isResearchedTech(tech);
-        } else if (techOrUpgrade instanceof UpgradeType) {
-            return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
-        } else {
-            AGame.exit("Neither a tech, nor an upgrade.");
-            return false;
-        }
+        return cache.get(
+                "isResearched:" + techOrUpgrade,
+                100,
+                () -> {
+                    if (techOrUpgrade instanceof TechType) {
+                        TechType tech = (TechType) techOrUpgrade;
+                        return isResearchedTech(tech);
+                    } else if (techOrUpgrade instanceof UpgradeType) {
+                        return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
+                    } else {
+                        AGame.exit("Neither a tech, nor an upgrade.");
+                        return false;
+                    }
+                }
+        );
     }
 
     public static boolean isResearched(Object techOrUpgrade, ProductionOrder order) {

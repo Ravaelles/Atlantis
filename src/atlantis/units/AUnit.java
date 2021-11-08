@@ -233,7 +233,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                this, newPosition, -1, 9999, true
 //        ) && move(newPosition, UnitActions.MOVE)) {
         if (
-                runningManager().isPossibleAndReasonablePosition(this.position(), newPosition, false)
+                runningManager().isPossibleAndReasonablePosition(this, this.position(), newPosition, false)
                 && move(newPosition, UnitActions.MOVE, "Move away")
         ) {
             this.setTooltip(tooltip);
@@ -1713,6 +1713,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean hpLessThan(int min) {
         return hp() < min;
+    }
+
+    public boolean isSunken() {
+        return type().isSunken();
     }
 
 //    public boolean isDepleted() {
