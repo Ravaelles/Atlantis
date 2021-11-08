@@ -120,14 +120,14 @@ public class Chokes {
     }
 
     public static AChoke nearestChoke(APosition position) {
+        if (position == null) {
+            return null;
+        }
+
         return (AChoke) cache.get(
                 "nearestChoke:" + position.toStringPixels(),
                 -1,
             () -> {
-                if (position == null) {
-                    return null;
-                }
-
                 double nearestDist = 99999;
                 AChoke nearest = null;
 

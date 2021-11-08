@@ -61,7 +61,7 @@ public class ZergOverlordManager {
      */
     private static boolean actWhenDontKnowEnemyLocation(AUnit unit) {
         unit.setTooltip("Find enemy");
-        return AScoutManager.tryFindingEnemyBase(unit);
+        return AScoutManager.tryFindingEnemyBuilding(unit);
     }
 
 }

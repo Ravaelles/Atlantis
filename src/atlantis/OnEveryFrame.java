@@ -2,6 +2,7 @@ package atlantis;
 
 import atlantis.combat.squad.Squad;
 import atlantis.map.Chokes;
+import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import jbweb.Blocks;
 import jbweb.Stations;
@@ -47,6 +48,11 @@ public class OnEveryFrame {
 //        System.out.println("----- " + Squad.getAlphaSquad().size() );
 //        for (AUnit unit : Squad.getAlphaSquad().list()) {
 //            System.out.println(unit + " // " + unit.isAlive() + " // " + unit.hp());
+//        }
+
+//        AUnit scout = AScoutManager.firstScout();
+//        if (scout != null) {
+//            CameraManager.centerCameraOn(scout);
 //        }
     }
 

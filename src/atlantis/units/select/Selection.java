@@ -1,6 +1,5 @@
 package atlantis.units.select;
 
-import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionUtil;
 import atlantis.repair.ARepairAssignments;
@@ -202,6 +201,11 @@ public class Selection {
         return this;
     }
 
+    public Selection notGatheringGas() {
+        data.removeIf(unit -> unit.isGatheringGas());
+        return this;
+    }
+
     /**
      * Selects units being infantry.
      */
@@ -274,7 +278,7 @@ public class Selection {
      * Selects military buildings like Photon Cannon, Bunker, Spore Colony, Sunken Colony
      */
     public Selection combatBuildings() {
-        data.removeIf(unit -> !unit.isBuilding() || !unit.type().isCombatBuilding());
+        data.removeIf(unit -> !unit.type().isCombatBuilding());
         return this;
     }
 
@@ -328,7 +332,7 @@ public class Selection {
     }
 
     public Selection free() {
-        data.removeIf(AUnit::isBusy);
+        data.removeIf(u -> u.isBusy() || u.isLifted());
         return this;
     }
 
@@ -434,6 +438,7 @@ public class Selection {
 
     /**
      * From all units currently in selection, returns closest unit to given <b>position</b>.
+     * @return
      */
     public AUnit nearestTo(HasPosition position) {
         if (data.isEmpty() || position == null) {

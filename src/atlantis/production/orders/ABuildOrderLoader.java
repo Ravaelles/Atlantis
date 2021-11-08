@@ -70,8 +70,8 @@ public class ABuildOrderLoader {
                 productionOrders.add(productionOrder);
 
                 currentSupply = productionOrder.minSupply();
-                if (productionOrder.unit() != null) {
-                    currentSupply += productionOrder.unit().supplyNeeded();
+                if (productionOrder.unitType() != null) {
+                    currentSupply += productionOrder.unitType().supplyNeeded();
                 }
             }
         }

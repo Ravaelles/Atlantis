@@ -9,6 +9,7 @@ import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
@@ -32,7 +33,7 @@ public class AConstructionRequests {
     }
 
     public static boolean requestConstructionOf(ProductionOrder order) {
-        return requestConstructionOf(order.unit(), order.getPosition(), order);
+        return requestConstructionOf(order.unitType(), order.getPosition(), order);
     }
 
     /**
@@ -76,7 +77,7 @@ public class AConstructionRequests {
         newConstructionOrder.assignRandomBuilderForNow();
 
         if (newConstructionOrder.getBuilder() == null) {
-            if (AGame.supplyUsed() >= 7 && Select.mainBase() != null) {
+            if (AGame.supplyUsed() >= 7 && Count.bases() > 0 && Count.workers() > 0) {
                 System.err.println("Builder is null, got damn it!");
             }
             return false;

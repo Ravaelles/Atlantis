@@ -14,11 +14,12 @@ public class TerranStrategies {
 
     // Cheese
     public static final AStrategy TERRAN_BBS = new AStrategy();
-    
+
     // Expansion
     public static final AStrategy TERRAN_1_Rax_FE = new AStrategy();
-    
+
     // Tech
+    public static final AStrategy TERRAN_Mech = new AStrategy();
     public static final AStrategy TERRAN_Nada_2_Fac = new AStrategy();
     public static final AStrategy TERRAN_Three_Factory_Vultures = new AStrategy();
 
@@ -55,10 +56,12 @@ public class TerranStrategies {
 
         // === Tech ==========================================
 
+        TERRAN_Mech.setTerran().setName("Mech")
+                .setGoingTech()
+                .setUrl("Improvised");
         TERRAN_Nada_2_Fac.setTerran().setName("Nada 2 Fac")
                 .setGoingTech()
                 .setUrl("https://liquipedia.net/starcraft/Nada_2_Fac");
-
         TERRAN_Three_Factory_Vultures.setTerran().setName("Three Factory Vultures")
                 .setGoingTech()
                 .setUrl("http://wiki.teamliquid.net/starcraft/Three_Factory_Vultures");

@@ -890,20 +890,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if this unit belongs to the enemy.
      */
-    public boolean isEnemyUnit() {
-//        return getPlayer().isEnemy(AGame.getPlayerUs());
-        return getPlayer().isEnemy(AGame.getPlayerUs());
-    }
-
-    /**
-     * Returns true if this unit belongs to the enemy.
-     */
     public boolean isEnemy() {
-        return (boolean) cache.get(
-                "isEnemy",
-                300,
-                () -> getPlayer().isEnemy(AGame.getPlayerUs())
-        );
+        return AGame.getPlayerUs().isEnemy(getPlayer());
+//        return (boolean) cache.get(
+//                "isEnemy",
+//                300,
+////                () -> getPlayer().isEnemy(AGame.getPlayerUs())
+////                () -> getPlayer().isEnemy(AGame.getPlayerUs())
+////                () -> AGame.getPlayerUs().isEnemy(getPlayer()) || (A.notUms() && !isNeutral() && !AGame.getPlayerUs().equals(getPlayer()))
+//                () -> AGame.getPlayerUs().isEnemy(getPlayer())
+//        );
     }
 
     /**
@@ -1701,6 +1697,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double combatEval(boolean relativeToEnemy) {
         return ACombatEvaluator.evaluateSituation(this, relativeToEnemy);
+    }
+
+    public boolean isMedic() {
+        return type().isMedic();
+    }
+
+    public boolean isTerranInfantry() {
+        return type().isTerranInfantry();
     }
 
 //    public boolean isDepleted() {

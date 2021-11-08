@@ -10,65 +10,68 @@ import atlantis.util.We;
 
 public class AddToQueue {
 
-    public static void withTopPriority(AUnitType type) {
-        withTopPriority(type, null);
+    public static boolean withTopPriority(AUnitType type) {
+        return withTopPriority(type, null);
     }
 
-    public static void withTopPriority(AUnitType type, APosition position) {
-        addToQueue(type, position, indexForPriority(ProductionOrderPriority.TOP));
+    public static boolean withTopPriority(AUnitType type, APosition position) {
+        return addToQueue(type, position, indexForPriority(ProductionOrderPriority.TOP));
     }
 
-    public static void withHighPriority(AUnitType type) {
-        withHighPriority(type, null);
+    public static boolean withHighPriority(AUnitType type) {
+        return withHighPriority(type, null);
     }
 
-    public static void withHighPriority(AUnitType type, HasPosition position) {
-        addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.HIGH));
+    public static boolean withHighPriority(AUnitType type, HasPosition position) {
+        return addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.HIGH));
     }
 
-    public static void withStandardPriority(AUnitType type) {
-        withStandardPriority(type, null);
+    public static boolean withStandardPriority(AUnitType type) {
+        return withStandardPriority(type, null);
     }
 
-    public static void withStandardPriority(AUnitType type, HasPosition position) {
-        addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.STANDARD));
+    public static boolean withStandardPriority(AUnitType type, HasPosition position) {
+        return addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.STANDARD));
     }
 
     // =========================================================
 
-    private static void addToQueue(AUnitType type, APosition position, int index) {
+    private static boolean addToQueue(AUnitType type, APosition position, int index) {
         assert type != null;
 
         if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
             System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
-            return;
+            return false;
         }
 
-        if (!allowToQueueRequiredBuildings(type)) {
-            int minSupply = 0;
-            ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
-            ProductionQueue.currentProductionQueue.add(index, productionOrder);
-        }
-        else {
-            if (
-                    type.getWhatIsRequired() != null
-                            && !type.getWhatIsRequired().isPylon()
-                            && !type.getWhatIsRequired().isPrimaryBase()
-                            && !Requirements.hasRequirements(type)
-            ) {
-                if (!ProductionQueue.isAtTheTopOfQueue(type, 6)) {
-                    System.out.println("FIRST ADD REQUIREMENT = " + type.getWhatIsRequired() + " // " + type.getWhatBuildsIt() + " (for " + type + ")");
-                    addToQueue(type.getWhatIsRequired(), null, 0);
-                }
-            }
-        }
+//        if (!allowToQueueRequiredBuildings(type)) {
+        int minSupply = 0;
+        ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
+        ProductionQueue.currentProductionQueue.add(index, productionOrder);
+        return true;
+//        }
+//        else {
+//            if (
+//                    type.getWhatIsRequired() != null
+//                            && !type.getWhatIsRequired().isPylon()
+//                            && !type.getWhatIsRequired().isPrimaryBase()
+//                            && !Requirements.hasRequirements(type)
+//            ) {
+//                if (!ProductionQueue.isAtTheTopOfQueue(type, 6)) {
+//                    System.out.println("FIRST ADD REQUIREMENT = " + type.getWhatIsRequired() + " // " + type.getWhatBuildsIt() + " (for " + type + ")");
+//                    addToQueue(type.getWhatIsRequired(), null, 0);
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
     }
 
     // =========================================================
 
-    private static boolean allowToQueueRequiredBuildings(AUnitType type) {
-        return type.isCombatBuilding();
-    }
+//    private static boolean allowToQueueRequiredBuildings(AUnitType type) {
+//        return type.isCombatBuilding();
+//    }
 
     private static int indexForPriority(ProductionOrderPriority priority) {
         return ProductionQueue.countOrdersWithPriorityAtLeast(priority);

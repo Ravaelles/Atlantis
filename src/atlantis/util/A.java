@@ -1144,4 +1144,16 @@ public class A {
     public static boolean hasFreeSupply(int supplyNeeded) {
         return AGame.supplyFree() >= supplyNeeded;
     }
+
+    public static AUnit firstElement(List<AUnit> coll) {
+        return coll.isEmpty() ? null : coll.get(0);
+    }
+
+    public static boolean hasMinerals(int minerals) {
+        return AGame.canAfford(minerals, 0);
+    }
+
+    public static boolean hasGas(int gas) {
+        return AGame.canAfford(0, gas);
+    }
 }

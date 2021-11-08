@@ -87,7 +87,7 @@ public class AFoggedUnit extends AUnit {
     }
 
     public void updatePosition(AUnit unit) {
-        if (unit.position() != null) {
+        if (unit.position() != null && unit.isVisible()) {
 //            System.out.println("Update " + unit.shortName() + " to " + unit.getPosition());
             _position = new APosition(unit.x(), unit.y());
             cacheInt.set("lastPositionUpdated", -1, A.now());
@@ -116,6 +116,10 @@ public class AFoggedUnit extends AUnit {
 
     public int lastPositionUpdatedAgo() {
         return A.ago(cacheInt.get("lastPositionUpdated"));
+    }
+
+    public boolean isAccessible() {
+        return !AUnitType.Unknown.equals(super.type());
     }
 
 //    public AFoggedUnit update(AUnit updated) {

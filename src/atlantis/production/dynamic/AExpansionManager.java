@@ -15,12 +15,12 @@ public class AExpansionManager {
         int minMinerals = 100 + (AGame.isPlayingAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AGame.hasMinerals(minMinerals)) {
+        if (!AGame.canAffordWithReserved(minMinerals, 0)) {
             return;
         }
 
         // If we have lenty of minerals, then every new base is a hazard
-        if (AGame.hasMinerals(1200)) {
+        if (!AGame.canAffordWithReserved(minMinerals, 1200)) {
             return;
         }
 

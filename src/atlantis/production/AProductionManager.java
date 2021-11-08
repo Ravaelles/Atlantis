@@ -2,7 +2,6 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.orders.*;
@@ -31,8 +30,8 @@ public class AProductionManager {
     private static void handleProductionOrder(ProductionOrder order) {
 
         // Produce UNIT
-        if (order.unit() != null) {
-            AUnitType unitType = order.unit();
+        if (order.unitType() != null) {
+            AUnitType unitType = order.unitType();
             if (unitType.isBuilding()) {
                 produceBuilding(unitType, order);
             } else {
@@ -97,11 +96,11 @@ public class AProductionManager {
         // =========================================================
         // Non-worker
 
-        else if (AGame.canAffordWithReserved(type.getMineralPrice(), type.getGasPrice())) {
+        else if (AGame.canAfford(type.getMineralPrice(), type.getGasPrice())) {
             return CurrentBuildOrder.get().produceUnit(type);
         }
 
-        System.err.println("Can't afford " + type);
+//        System.err.println("Can't afford " + type);
         return false;
     }
 

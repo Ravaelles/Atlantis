@@ -6,6 +6,7 @@ import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 
 public class TerranMissionChangerWhenContain {
 
@@ -27,10 +28,13 @@ public class TerranMissionChangerWhenContain {
         }
 
         if (OurStrategy.get().goingBio()) {
-            return Count.ourCombatUnits() <= 8;
+            if (A.resourcesBalance() <= 100 && Count.tanks() <= 1) {
+                return Count.ourCombatUnits() <= 6;
+            }
         }
 
-        return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 9;
+        return Count.tanks() <= 1 && Count.ourCombatUnits() <= 5;
+//        return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 9;
     }
 
     private static boolean shouldChangeMissionToAttack() {
@@ -38,11 +42,11 @@ public class TerranMissionChangerWhenContain {
             return true;
         }
 
-        if (OurStrategy.get().goingBio()) {
+        if (OurStrategy.get().goingBio() && (Count.medics() >= 9 || Count.ourCombatUnits() >= 40)) {
             return Count.ourCombatUnits() >= Math.min(40, 15 + Missions.counter() * 2);
         }
 
-        return Select.ourTanks().count() >= 2 || Select.ourCombatUnits().count() >= 25;
+        return Select.ourTanks().count() >= 2 || Select.ourCombatUnits().count() >= 40;
     }
 
     private static boolean killsBalanceSaysSo() {

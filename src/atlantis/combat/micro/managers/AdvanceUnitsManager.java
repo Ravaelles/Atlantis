@@ -36,15 +36,14 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     private static boolean moveToFocusPoint(
             AUnit unit, APosition focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
-//        double optimalDist = 6.5 - unit.lastUnderAttackAgo() / (30 * 25.0);
-        double optimalDist = 6 - unit.hpPercent() / 66.0;
+        double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);
-        double margin = Math.max(1.2, (unit.squadSize() - 6) / 10.0);
+        double margin = Math.max(2.5, (unit.squadSize() - 6) / 8.0);
         boolean result;
 
-        if (We.terran() && handleTerranAdvance(unit)) {
-            return true;
-        }
+//        if (We.terran() && handleTerranAdvance(unit)) {
+//            return true;
+//        }
 
         // Too close
         if (
@@ -71,30 +70,37 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         return false;
     }
 
+    private static double optimalDistFromFocusPoint(AUnit unit, APosition focusPoint) {
+        return 6
+                - unit.hpPercent() / 66.0
+                + (unit.isTank() ? 2 : 0)
+                + (unit.isMedic() ? -1.2 : 0);
+    }
+
     // =========================================================
 
-    private static boolean handleTerranAdvance(AUnit unit) {
-        if (Select.our().tanks().isEmpty()) {
-            return false;
-        }
-
-        if (unit.isTank()) {
-            return false;
-        }
-
-        double maxRadiusFromTank = 4 + Math.sqrt(Count.ourCombatUnits());
-        int tanksNearby = Select.our().tanks().inRadius(maxRadiusFromTank, unit).count();
-
-        if (tanksNearby >= 1) {
-            return false;
-        }
-
-        unit.move(
-                unit.position().translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
-                UnitActions.MOVE_TO_FOCUS,
-                "ToTank"
-        );
-        return true;
-    }
+//    private static boolean handleTerranAdvance(AUnit unit) {
+//        if (Select.our().tanks().isEmpty()) {
+//            return false;
+//        }
+//
+//        if (unit.isTank()) {
+//            return false;
+//        }
+//
+////        double maxRadiusFromTank = 4 + Math.sqrt(Count.ourCombatUnits());
+//        AUnit nearestTank = Select.our().tanks().nearestTo(unit);
+//
+//        if (nearestTank >= 1) {
+//            return false;
+//        }
+//
+//        unit.move(
+//                unit.position().translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
+//                UnitActions.MOVE_TO_FOCUS,
+//                "ToTank"
+//        );
+//        return true;
+//    }
 
 }

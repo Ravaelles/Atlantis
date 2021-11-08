@@ -2,6 +2,7 @@ package atlantis.combat.micro.terran;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
+import atlantis.debug.APainter;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
@@ -9,56 +10,92 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.util.A;
+import bwapi.Color;
 
 
 public class TerranSiegeTank {
     private static AUnit nearestEnemyUnit;
     private static double nearestEnemyUnitDist;
-    private static AUnit nearestEnemyBuilding;
-    private static double nearestEnemyBuildingDist;
+    private static AUnit nearestEnemyCombatBuilding;
+    private static double nearestEnemyCombatBuildingDist;
 
     public static boolean update(AUnit tank) {
-        if (!tank.isInterruptible()) {
+        if (shouldNotDisturb(tank)) {
             tank.setTooltip("Can't interrupt");
             return true;
         }
         
-        // =========================================================
-        
-        nearestEnemyUnit = Select.enemyRealUnits().combatUnits().groundUnits().nearestTo(tank);
-        nearestEnemyUnitDist = nearestEnemyUnit != null ? tank.distTo(nearestEnemyUnit) : 999;
+        initCache(tank);
 
-        nearestEnemyBuilding = Select.enemy().buildings().nearestTo(tank);
-        nearestEnemyBuildingDist = nearestEnemyBuilding != null ? tank.distTo(nearestEnemyBuilding) : 999;
-
-//        String string = (enemy != null ? enemy.shortName() : "NULL");
-//        if (enemy != null) {
-//             string += " (" + enemy.distanceTo(tank) + ")";
-//        }
-//        AtlantisPainter.paintTextCentered(tank.getPosition().translateByPixels(0, 16), 
-//                string, 
-//                Color.Red);
-
-        // =========================================================
-        
-        if (tank.isSieged()) {
-            return updateWhenSieged(tank);
-        }
-        else {
-            return updateWhenUnsieged(tank);
-        }
-        
-//        // =========================================================
-//        
-//        tank.setTooltip("Ta-ta-ta!");
-//        return false;
+        return tank.isSieged() ? updateWhenSieged(tank) : updateWhenNotSieged(tank);
     }
 
     // =========================================================
-    
-    /**
-     * Sieged
-     */
+
+
+    private static boolean updateWhenNotSieged(AUnit unit) {
+        if (unit.lastActionLessThanAgo(30 * 5, UnitActions.UNSIEGE)) {
+            return false;
+        }
+
+        if (handleNearEnemyCombatBuilding(unit)) {
+            return true;
+        }
+
+        // =========================================================
+
+        boolean longNotMoved = !unit.isMoving() && unit.lastActionMoreThanAgo(60, UnitActions.MOVE);
+
+//        if (Missions.isGlobalMissionContain() || Missions.isGlobalMissionDefend()) {
+        APosition focusPoint = Missions.globalMission().focusPoint();
+        if (
+                focusPoint != null
+                        && (unit.distTo(focusPoint) <= 9)
+                        && (canSiegeHere(unit) || longNotMoved)
+        ) {
+            unit.siege();
+            unit.setTooltip("Contain siege!");
+            return true;
+        }
+
+//        return false;
+//        }
+
+        // =========================================================
+
+        // If tank is holding position, siege
+//        if (Missions.getGlobalMission().isMissionDefend() && canSiegeHere(tank)) {
+//            tank.siege();
+//            tank.setTooltip("Hold & siege");
+//            return true;
+//        }
+
+        if (nearestEnemyUnit != null) {
+            return nearestEnemyIsUnit(unit, nearestEnemyUnit, nearestEnemyUnitDist);
+        }
+
+        // =========================================================
+
+        return false;
+    }
+
+    private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
+//        if (tank.cooldownRemaining() <= 3) {
+        for (AUnit enemy : Select.enemyFoggedUnits().effCloaked().groundUnits().inRadius(12, tank).list()) {
+            if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
+                if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
+                    tank.setTooltip("SMASH invisible!");
+                    tank.attackPosition(enemy.position());
+                }
+                tank.setTooltip("SmashInvisible");
+                return true;
+            }
+        }
+//        }
+
+        return false;
+    }
+
     private static boolean updateWhenSieged(AUnit unit) {
         if (handleShootingAtInvisibleUnits(unit)) {
             return true;
@@ -87,8 +124,8 @@ public class TerranSiegeTank {
         }
 
         if (
-                (nearestEnemyUnit == null && nearestEnemyBuilding == null)
-                || (nearestEnemyUnitDist >= 16 && nearestEnemyBuildingDist > 12.2)
+                (nearestEnemyUnit == null && nearestEnemyCombatBuilding == null)
+                || (nearestEnemyUnitDist > 11.9 && nearestEnemyCombatBuildingDist > 11.9)
         ) {
             unit.setTooltip("Considers unsiege");
 
@@ -104,7 +141,7 @@ public class TerranSiegeTank {
                 return false;
             }
 
-            if (unit.mission().isMissionAttack() && A.chance(2)) {
+            if (unit.mission().isMissionAttack() && A.chance(1.5)) {
                 unit.unsiege();
                 unit.setTooltip("Unsiege");
                 return true;
@@ -123,61 +160,22 @@ public class TerranSiegeTank {
         return false;
     }
 
-    private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
-//        if (tank.cooldownRemaining() <= 3) {
-            for (AUnit enemy : Select.enemyRealUnits().effCloaked().groundUnits().inRadius(12, tank).list()) {
-                if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
-                    if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
-                        tank.setTooltip("SMASH invisible!");
-                        tank.attackPosition(enemy.position());
-                    }
-                    tank.setTooltip("SmashInvisible");
-                    return true;
-                }
-            }
-//        }
-
-        return false;
+    private static boolean shouldNotDisturb(AUnit tank) {
+        return tank.lastActionLessThanAgo(15, UnitActions.SIEGE)
+                || tank.lastActionLessThanAgo(15, UnitActions.UNSIEGE);
     }
 
-    /**
-     * Not sieged
-     */
-    private static boolean updateWhenUnsieged(AUnit unit) {
-        if (handleNearEnemyCombatBuilding(unit)) {
-            return true;
+    private static void initCache(AUnit tank) {
+        nearestEnemyUnit = Select.enemyRealUnits().combatUnits().groundUnits().nearestTo(tank);
+        nearestEnemyUnitDist = nearestEnemyUnit != null ? tank.distTo(nearestEnemyUnit) : 999;
+
+        nearestEnemyCombatBuilding = Select.enemy().buildings().nearestTo(tank);
+        nearestEnemyCombatBuildingDist = nearestEnemyCombatBuilding != null ? tank.distTo(nearestEnemyCombatBuilding) : 999;
+
+        if (nearestEnemyCombatBuilding != null) {
+            APainter.paintCircleFilled(nearestEnemyCombatBuilding, 20, Color.Orange);
+            APainter.paintTextCentered(nearestEnemyCombatBuilding, A.digit(nearestEnemyCombatBuildingDist), Color.Yellow);
         }
-
-        // =========================================================
-
-        // Mission is CONTAIN
-        if (Missions.isGlobalMissionContain() || Missions.isGlobalMissionDefend()) {
-            APosition focusPoint = Missions.globalMission().focusPoint();
-            if (focusPoint != null && unit.distTo(focusPoint) <= 7.2 && canSiegeHere(unit)) {
-                unit.siege();
-                unit.setTooltip("Contain siege!");
-                return true;
-            }
-
-            return false;
-        }
-
-        // =========================================================
-
-        // If tank is holding position, siege
-//        if (Missions.getGlobalMission().isMissionDefend() && canSiegeHere(tank)) {
-//            tank.siege();
-//            tank.setTooltip("Hold & siege");
-//            return true;
-//        }
-
-        if (nearestEnemyUnit != null) {
-            return nearestEnemyIsUnit(unit, nearestEnemyUnit, nearestEnemyUnitDist);
-        }
-        
-        // =========================================================
-        
-        return false;
     }
 
     // =========================================================
@@ -187,12 +185,19 @@ public class TerranSiegeTank {
     }
 
     private static boolean handleNearEnemyCombatBuilding(AUnit tank) {
-        AUnit building = Select.enemy().combatBuildings().inRadius(11.9, tank).first();
+//        AUnit building = Select.enemy().combatBuildings().inRadius(12.5, tank).nearestTo(tank);
+//        tank.setTooltip("Buildz:" + Select.enemy().combatBuildings().count());
 
-        if (building != null && tank.distToLessThan(building, 11.9) && canSiegeHere(tank, false)) {
-            tank.siege();
-            tank.setTooltip("Siege - building");
-            return true;
+        if (nearestEnemyCombatBuilding != null) {
+            if (
+                    (tank.distToLessThan(nearestEnemyCombatBuilding, 10.5) && canSiegeHere(tank, false))
+                    || tank.distToLessThan(nearestEnemyCombatBuilding, 8)
+            ) {
+//                tank.setTooltip("Buildz:" + Select.enemy().combatBuildings().count() + "," + A.digit(tank.distTo(nearestEnemyCombatBuilding)));
+                tank.siege();
+                tank.setTooltip("SiegeBuilding" + A.dist(tank, nearestEnemyCombatBuilding));
+                return true;
+            }
         }
 
         return false;
@@ -241,9 +246,8 @@ public class TerranSiegeTank {
         if (choke == null) {
             return true;
         }
-        else {
-            return (tank.distTo(choke.getCenter()) - choke.getWidth()) >= 1.5 || (choke.getWidth() >= 4);
-        }
+
+        return (tank.distTo(choke.getCenter()) - choke.getWidth()) >= 1.3 || (choke.getWidth() >= 3.5);
     }
 
 }

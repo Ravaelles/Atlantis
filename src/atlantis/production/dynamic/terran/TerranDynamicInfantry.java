@@ -3,23 +3,25 @@ package atlantis.production.dynamic.terran;
 import atlantis.AGame;
 import atlantis.information.TerranArmyComposition;
 import atlantis.production.AbstractDynamicUnits;
-import atlantis.strategy.OurStrategy;
 import atlantis.strategy.decisions.OurDecisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
     protected static void medics() {
-        if (!OurStrategy.get().goingBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
+        if (!OurDecisions.shouldBuildBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
             return;
         }
 
         if (TerranArmyComposition.medicsToInfantry() <= 0.23) {
-            if (Select.ourOfType(AUnitType.Terran_Barracks).free().isNotEmpty()) {
-                AbstractDynamicUnits.addToQueue(AUnitType.Terran_Medic);
+            Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
+            if (barracks.isNotEmpty()) {
+                produceUnit(barracks.first(), AUnitType.Terran_Medic);
+//                AbstractDynamicUnits.addToQueue(AUnitType.Terran_Medic);
             }
         }
     }
@@ -29,24 +31,26 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return;
         }
 
-        if (!AGame.canAffordWithReserved(80, 0)) {
+        if (Count.ofType(AUnitType.Terran_Barracks) == 0) {
             return;
         }
 
-        if (Count.ofType(AUnitType.Terran_Academy) >= 1 && Count.medics() <= 2) {
-            return;
-        }
-
-        if (OurStrategy.get().goingBio()) {
-            if (Count.ofType(AUnitType.Terran_Barracks) == 0) {
+        if (Count.ourCombatUnits() > 25) {
+            if (!AGame.canAffordWithReserved(80, 0)) {
                 return;
             }
+        }
+
+        if (Count.ofType(AUnitType.Terran_Academy) >= 1 && Count.marines() >= 4 && Count.medics() <= 2) {
+            return;
+        }
 
 //        if (Enemy.zerg() && Count.marines() == 0) {
-            if (Select.ourOfType(AUnitType.Terran_Barracks).free().isNotEmpty()) {
-                AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
-                return;
-            }
+        Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
+        if (barracks.isNotEmpty()) {
+            produceUnit(barracks.first(), AUnitType.Terran_Marine);
+//            AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
+//            return;
         }
 
         trainMarinesForBunkersIfNeeded();
@@ -83,5 +87,11 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         else {
             return 4 * bunkers;
         }
+    }
+
+    // =========================================================
+
+    private static void produceUnit(AUnit building, AUnitType type) {
+        building.train(type);
     }
 }

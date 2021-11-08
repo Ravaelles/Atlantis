@@ -17,7 +17,7 @@ public class ACombatCommander {
      * Acts with all battle units.
      */
     public static void update() {
-        if (AGame.everyNthGameFrame(40)) {
+        if (AGame.everyNthGameFrame(90)) {
             MissionChanger.evaluateGlobalMission();
         }
         

@@ -85,14 +85,14 @@ public class AScoutManager {
         // =========================================================
         
         // We don't know any enemy building, scout nearest starting location.
-        if (!AEnemyUnits.hasDiscoveredMainEnemyBase()) {
-            return tryFindingEnemyBase(scout);
+        if (!AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+            return tryFindingEnemyBuilding(scout);
         }
         
         // Roam around enemy base
-        else if (Count.ourCombatUnits() <= 1) {
-            return handleScoutEnemyBase(scout);
-        }
+//        else if (Count.ourCombatUnits() <= 1) {
+//            return handleScoutEnemyBase(scout);
+//        }
 
         // Scout other bases
         else {
@@ -114,7 +114,7 @@ public class AScoutManager {
     /**
      * We don't know any enemy building, scout nearest starting location.
      */
-    public static boolean tryFindingEnemyBase(AUnit scout) {
+    public static boolean tryFindingEnemyBuilding(AUnit scout) {
         if (scout == null) {
             return true;
         }
@@ -368,5 +368,9 @@ public class AScoutManager {
 
     public static ArrayList<AUnit> getScouts() {
         return (ArrayList<AUnit>) scouts.clone();
+    }
+
+    public static AUnit firstScout() {
+        return A.firstElement(scouts);
     }
 }

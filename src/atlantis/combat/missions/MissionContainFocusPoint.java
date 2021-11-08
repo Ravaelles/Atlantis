@@ -26,15 +26,23 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                         }
                     }
 
+                    AChoke mainChoke = Chokes.enemyMainChoke();
+                    APosition enemyNatural = BaseLocations.enemyNatural();
+                    if (enemyNatural != null) {
+                        if (mainChoke != null) {
+                            return enemyNatural.translatePercentTowards(mainChoke, 40);
+                        }
+                        return enemyNatural;
+                    }
+
                     AChoke naturalChoke = Chokes.enemyNaturalChoke();
                     if (naturalChoke != null && naturalChoke.getWidth() <= 4) {
                         return naturalChoke.position();
                     }
 
-                    AChoke mainChoke = Chokes.enemyMainChoke();
-                    if (mainChoke != null && mainChoke.getWidth() <= 4) {
-                        return mainChoke.position();
-                    }
+//                    if (mainChoke != null && mainChoke.getWidth() <= 4) {
+//                        return mainChoke.position();
+//                    }
 
                     AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
                     if (enemyBuilding != null) {
@@ -51,10 +59,16 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                         return containPointIfEnemyBaseIsKnown(enemyBase);
                     }
 
+//                    AChoke mainChoke = Chokes.enemyMainChoke();
+                    if (mainChoke != null) {
+                        return mainChoke.position();
+                    }
+
                     // Try to go to some starting location, hoping to find enemy there.
-                    return Chokes.nearestChoke(
+                    AChoke choke = Chokes.nearestChoke(
                             BaseLocations.getNearestUnexploredStartingLocation(Select.mainBase().position())
                     );
+                    return choke != null ? choke.getCenter() : null;
                 }
         );
     }

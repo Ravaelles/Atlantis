@@ -13,7 +13,7 @@ public class UnitsArchive {
     public static void markUnitAsDestroyed(int unitId, AUnit unit) {
         destroyedUnitIds.put(unitId, unit);
 
-        if (unit.isEnemyUnit()) {
+        if (unit.isEnemy()) {
             AEnemyUnits.unitDestroyed(unit);
         }
         else if (unit.isOur()) {

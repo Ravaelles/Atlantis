@@ -1,0 +1,73 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=9
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=27
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_WORKERS=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=55
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+https://liquipedia.net/starcraft/%2B1_Speedzealot_(vs_Zerg)
+8 - Pylon at Natural Expansion[1]
+10 - Forge[2]
+14 - Nexus[3]
+14 - Photon Cannon[4]
+16 - Gateway at Natural Expansion
+16 - Assimilator at Main Base
+@100% Nexus: Zealot[5][6]
+@100% Assimilator - gather Vespene Gas
+21 - Cybernetics Core
+@100 Gas - +1 Ground Weapon Upgrade in Forge
+24 - Pylon in Main Base[7]
+27 - Citadel of Adun
+two more Gateways[8]
+@100% Citadel - Speedupgrade
+second Assimilator at Natural Expansion[9]
+Constant Zealot production[10]
+@100% Legspeed - Attack[11]
+Templar Archive
+
+--- Footnotes ---
+1) Probe is sent to scout
+2) Building placement should be done carefully. More information is available in the Protoss Fast Expand Forge Walling article
+3) The Nexus can be build at 13 Supply on some maps like Longinus
+4) Number of Cannons depends on the scouted behaviour of Zerg. More Zerglings mean a second Cannon, build order following needs to be changed in this scenario
+5) Zealots will be trained constantly from the first Gateway
+6) One single Dragoon can be built first to kill a scouting Overlord. This is optional
+7) Pylon needs space, as Gateways will be built around it
+8) A third Gateway can be added to train more Zealots. To do so, the Probe production must be stopped from here on and resumed when the attack starts
+9) Resume Probe production if you built a third Gateway after the Citadel
+10) Pylons must be added to avoid supply blocks
+11) Speedupgrade and +1 Weapons should finish at the same time, 8 - 12 Zealots should be ready
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+8 - Pylon - @NATURAL
+10 - Forge - @NATURAL
+14 - Nexus
+14 - Photon Cannon - @NATURAL
+16 - Photon Cannon - @NATURAL
+16 - Gateway - @NATURAL
+16 - Assimilator - @MAIN
+18 - Zealot
+21 - Cybernetics Core
+24 - Protoss Ground Weapons
+24 - Pylon - @MAIN
+27 - Citadel of Adun - @MAIN
+Gateway
+Gateway
+Leg enhancements
+Assimilator - @NATURAL
+//..Constant Zealot production[10]
+MISSION=ATTACK
+//Templar Archive

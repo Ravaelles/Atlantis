@@ -19,21 +19,22 @@ public class ATargetingStandard extends AEnemyTargeting {
         AUnit target;
 
         // =========================================================
-        // Target real units
+        // WORKERS IN RANGE
 
         target = enemyUnits.clone()
-                .inRadius(13, unit)
+                .workers()
+                .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
         }
 
         // =========================================================
-        // WORKERS IN RANGE
+        // OVERLORDS IN RANGE
 
         target = enemyUnits.clone()
-                .workers()
-                .inShootRangeOf(unit)
+                .ofType(AUnitType.Zerg_Overlord)
+                .inShootRangeOf(2, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -46,6 +47,14 @@ public class ATargetingStandard extends AEnemyTargeting {
                 .workers()
                 .effVisible()
                 .inRadius(8, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // Target real units
+        target = enemyUnits.clone()
+                .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

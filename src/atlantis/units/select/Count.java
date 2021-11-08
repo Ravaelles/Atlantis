@@ -17,6 +17,10 @@ public class Count {
         return Select.countOurOfType(type);
     }
 
+    public static int includingPlanned(AUnitType type) {
+        return existingOrInProductionOrInQueue(type);
+    }
+
     public static int ofTypeFree(AUnitType type) {
         return Select.ourOfType(type).free().count();
     }
@@ -34,10 +38,10 @@ public class Count {
     }
 
     public static int inProductionOrInQueue(AUnitType type) {
-        return inProduction(type) + inQueue(type, 8);
+        return inProduction(type) + inQueue(type, 5);
     }
 
-    private static int inQueue(AUnitType type, int amongNTop) {
+    public static int inQueue(AUnitType type, int amongNTop) {
         return ProductionQueue.countInQueue(type, amongNTop);
     }
 
@@ -126,8 +130,8 @@ public class Count {
     }
 
     public static int tanks() {
-        return Select.countOurOfType(AUnitType.Terran_Siege_Tank_Siege_Mode)
-                + Select.countOurOfType(AUnitType.Terran_Siege_Tank_Tank_Mode);
+        return ofType(AUnitType.Terran_Siege_Tank_Siege_Mode)
+                + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode);
     }
 
     public static int vultures() {
@@ -135,7 +139,7 @@ public class Count {
     }
 
     public static int marines() {
-        return Select.countOurOfType(AUnitType.Terran_Marine);
+        return ofType(AUnitType.Terran_Marine);
     }
 
     public static int medics() {
@@ -145,4 +149,5 @@ public class Count {
     public static int factories() {
         return ofType(AUnitType.Terran_Factory);
     }
+
 }

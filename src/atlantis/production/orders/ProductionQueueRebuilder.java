@@ -37,7 +37,7 @@ public class ProductionQueueRebuilder {
 
             // === Unit
 
-            if (order.unit() != null) {
+            if (order.unitType() != null) {
                 isOkayToAdd = addUnitOrBuildingIfDontHaveIt(order, virtualCounter);
             }
 
@@ -72,7 +72,7 @@ public class ProductionQueueRebuilder {
 
     private static boolean addUnitOrBuildingIfDontHaveIt(ProductionOrder order, MappingCounter<AUnitType> counterFromBO) {
 //    private static boolean addUnitOrBuildingIfDontHaveIt(ProductionOrder order) {
-        AUnitType type = order.unit();
+        AUnitType type = order.unitType();
         counterFromBO.incrementValueFor(type);
 
         int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0)

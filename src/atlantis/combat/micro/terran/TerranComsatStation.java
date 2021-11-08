@@ -29,7 +29,6 @@ public class TerranComsatStation {
         for (AUnit lurker : Select.enemy().effCloaked().ofType(AUnitType.Zerg_Lurker).listUnits()) {
 //            System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.hp());
             if (shouldScanThisLurker(lurker, comsat)) {
-                System.out.println("-- SCAN");
                 return scan(comsat, lurker);
             }
         }

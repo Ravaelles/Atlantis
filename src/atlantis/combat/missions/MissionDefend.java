@@ -44,19 +44,12 @@ public class MissionDefend extends Mission {
         // =========================================================
 
         // Let workers pass
-        int workerBonus = Select.enemy().inRadius(5, unit).isEmpty()
-                && Select.ourWorkers().inRadius(6, unit).atLeast(1)
-                ? 3 : 0;
-        int alliesNear = Select.our().inRadius(2, unit).count();
-        double expectedDist = 0.1
-                + workerBonus
-                + (unit.isRanged() ? 3 : 0)
-                + (alliesNear / 20.0);
+        double optimalDist = optimalDist(unit, focusPoint);
 
-        if (unit.distTo(focusPoint) > expectedDist) {
+        if (unit.distTo(focusPoint) > optimalDist) {
             return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "MoveToDefend");
         }
-        else if (unit.distTo(focusPoint) <= expectedDist - 0.5) {
+        else if (unit.distTo(focusPoint) <= optimalDist - 0.5) {
             return unit.moveAwayFrom(focusPoint, 0.2, "TooClose");
         }
         else {
@@ -67,6 +60,18 @@ public class MissionDefend extends Mission {
 //            return true;
             return false;
         }
+    }
+
+    private double optimalDist(AUnit unit, APosition focusPoint) {
+        int workerBonus = Select.enemy().inRadius(5, unit).isEmpty()
+                && Select.ourWorkers().inRadius(6, unit).atLeast(1)
+                ? 3 : 0;
+        int alliesNear = Select.our().inRadius(2, unit).count();
+        return 0.1
+                + (unit.isTank() ? 3 : 0)
+                + workerBonus
+                + (unit.isRanged() ? 3 : 0)
+                + (alliesNear / 20.0);
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {

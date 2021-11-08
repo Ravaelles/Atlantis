@@ -2,6 +2,7 @@ package atlantis.units.select;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
+import atlantis.enemy.AEnemyUnits;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
@@ -73,6 +74,20 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 //                        System.err.println(unit);
 //                        }
                     }
+
+                    return new Selection(data, cachePath);
+                }
+        );
+    }
+
+    public static Selection enemyFoggedUnits() {
+        String cachePath;
+        return cache.get(
+                cachePath = "enemyFoggedUnits",
+                0,
+                () -> {
+                    List<AUnit> data = new ArrayList<>();
+                    data.addAll(AEnemyUnits.discoveredAndAliveUnits());
 
                     return new Selection(data, cachePath);
                 }
@@ -240,7 +255,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static int countOurOfType(AUnitType type) {
         return cacheInt.get(
                 "countOurOfType:" + type.shortName(),
-                microCacheForFrames,
+                type.isBuilding() ? 0 : 30,
                 () -> {
                     int total = 0;
 
@@ -475,7 +490,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "minerals",
-                5,
+                30,
                 () -> neutral().ofType(
                             AUnitType.Resource_Mineral_Field,
                             AUnitType.Resource_Mineral_Field_Type_2,
@@ -491,8 +506,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "geysers",
-                10,
-                () -> neutral().ofType(AUnitType.Resource_Vespene_Geyser)
+                50,
+                () -> all().ofType(AUnitType.Resource_Vespene_Geyser)
         );
     }
 
@@ -500,8 +515,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "geyserBuildings",
-                10,
-                () -> neutral().ofType(
+                30,
+                () -> all().ofType(
                         AUnitType.Resource_Vespene_Geyser,
                         AUnitType.Protoss_Assimilator,
                         AUnitType.Terran_Refinery,
@@ -677,7 +692,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      */
     public static AUnit ourOneNotTrainingUnits(AUnitType type) {
         for (AUnit unit : ourUnits()) {
-            if (unit.isCompleted() && !unit.isTrainingAnyUnit() && unit.is(type)) {
+            if (unit.isCompleted() && !unit.isTrainingAnyUnit() && unit.is(type) && !unit.isLifted()) {
                 return unit;
             }
         }

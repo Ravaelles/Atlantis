@@ -6,6 +6,7 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.We;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ public class AConstructionManager {
         for (Iterator<ConstructionOrder> iterator = AConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
             ConstructionOrder constructionOrder =  iterator.next();
             checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
-            checkForBuilderStatusChange(constructionOrder, constructionOrder.getBuilder());
+            checkForBuilderStatusChange(constructionOrder);
             handleConstructionUnderAttack(constructionOrder);
             handleConstructionThatLooksBugged(constructionOrder);
         }
@@ -33,13 +34,27 @@ public class AConstructionManager {
     /**
      * If builder has died when constructing, replace him with new one.
      */
-    private static void checkForBuilderStatusChange(ConstructionOrder constructionOrder, AUnit builder) {
+    private static void checkForBuilderStatusChange(ConstructionOrder constructionOrder) {
 
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
-        if (AGame.isPlayingAsTerran()) {
-            if (builder == null || !builder.exists() || !builder.isAlive()) {
+        if (We.terran()) {
+            AUnit builder = constructionOrder.getBuilder();
+
+            if (
+                    (builder == null || !builder.exists() || !builder.isAlive())
+            ) {
+                System.err.println("assignOptimalBuilder for " + constructionOrder.getConstruction());
                 constructionOrder.assignOptimalBuilder();
+
+                builder = constructionOrder.getBuilder();
+                if (
+                        builder != null && constructionOrder.getConstruction() != null
+                                && constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
+                ) {
+                    builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(constructionOrder.getConstruction());
+                    builder.setTooltip("Resume");
+                }
             }
         }
     }

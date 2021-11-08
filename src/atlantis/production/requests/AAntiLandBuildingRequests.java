@@ -22,7 +22,7 @@ public class AAntiLandBuildingRequests {
 
     public static boolean handle() {
         if (shouldBuildNew()) {
-            System.out.println("ENQUEUE NEW ANTI LAND");
+//            System.out.println("ENQUEUE NEW ANTI LAND");
             return requestDefensiveBuildingAntiLand(null);
         }
 

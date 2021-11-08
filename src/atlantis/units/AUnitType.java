@@ -309,7 +309,7 @@ public class AUnitType implements Comparable<AUnitType> {
     public static final AUnitType AllUnits = new AUnitType(UnitType.AllUnits);
     public static final AUnitType Men = new AUnitType(UnitType.Men);
     public static final AUnitType Buildings = new AUnitType(UnitType.Buildings);
-    public static final AUnitType Factories = new AUnitType(UnitType.Factories);
+//    public static final AUnitType Factories = new AUnitType(UnitType.Factories);
     public static final AUnitType Unknown = new AUnitType(UnitType.Unknown);
 
     // =========================================================
@@ -786,11 +786,26 @@ public class AUnitType implements Comparable<AUnitType> {
     public boolean isCombatBuilding() {
         return (boolean) cache.get(
                 "isCombatBuilding",
-                -1,
+                60,
                 () -> is(
                         AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret,
                         AUnitType.Protoss_Photon_Cannon,
+                        AUnitType.Zerg_Sunken_Colony,
+                        AUnitType.Zerg_Spore_Colony
+                )
+        );
+    }
+
+    public boolean isCombatBuildingOrCreepColony() {
+        return (boolean) cache.get(
+                "isCombatBuildingOrCreepColony",
+                60,
+                () -> is(
+                        AUnitType.Terran_Bunker,
+                        AUnitType.Terran_Missile_Turret,
+                        AUnitType.Protoss_Photon_Cannon,
+                        AUnitType.Zerg_Creep_Colony,
                         AUnitType.Zerg_Sunken_Colony,
                         AUnitType.Zerg_Spore_Colony
                 )
@@ -1172,6 +1187,14 @@ public class AUnitType implements Comparable<AUnitType> {
                 "supplyNeeded",
                 -1,
                 ut::supplyRequired
+        );
+    }
+
+    public boolean isGasBuildingOrGeyser() {
+        return (boolean) cache.get(
+                "isGasBuildingOrGeyser",
+                -1,
+                () -> isGeyser() || isGasBuilding()
         );
     }
 }

@@ -75,6 +75,10 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
+        if (isTooCloseToMainBase(building, position)) {
+            return false;
+        }
+
         if (isOverlappingBaseLocation(building, position)) {
             return false;
         }

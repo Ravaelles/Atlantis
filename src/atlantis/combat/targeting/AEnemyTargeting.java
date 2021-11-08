@@ -1,5 +1,6 @@
 package atlantis.combat.targeting;
 
+import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -26,10 +27,13 @@ public class AEnemyTargeting {
             return null;
         }
 
-        if (!enemy.isEnemy() || !enemy.isVisibleOnMap()) {
-            System.err.println(enemy + ", enemy:" + enemy.isEnemy() + ", alive:" + enemy.isAlive() + ", visible:" + enemy.isVisibleOnMap());
-            throw new RuntimeException("This is crazy, it should never happen, but with wrong logic it can happen.");
-        }
+//        if (!enemy.isEnemy() || !enemy.isVisibleOnMap()) {
+//            System.err.println(enemy + ", enemy:" + enemy.isEnemy() + ", alive:" + enemy.isAlive() + ", visible:" + enemy.isVisibleOnMap());
+//            System.err.println("Enemy player: " + enemy.getPlayer() + ", isEnemy: " + enemy.getPlayer().isEnemy(unit.getPlayer()) + " // " + enemy.isEnemy());
+//            System.err.println("Our player  : " + unit.getPlayer() + ", isEnemy: " + unit.getPlayer().isEnemy(enemy.getPlayer()) + " // " + unit.isEnemy());
+//            System.err.println("AGame.getPlayerUs() : " + AGame.getPlayerUs() + ", isEnemy: " + AGame.getPlayerUs().isEnemy(enemy.getPlayer()));
+//            throw new RuntimeException("This is crazy, it should never happen, but with some bugs it can happen.");
+//        }
 
         return selectWeakestEnemyInRangeOfType(enemy.type(), enemy, unit);
     }

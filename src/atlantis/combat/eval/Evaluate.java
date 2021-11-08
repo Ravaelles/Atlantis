@@ -81,7 +81,7 @@ public class Evaluate {
                 strength += 10;
             }
             if (enemyDefensiveBuildingInRange) {
-                strength += 30;
+                strength += 10;
             }
         }
 

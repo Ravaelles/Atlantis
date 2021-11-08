@@ -1,17 +1,14 @@
 package atlantis.enemy;
 
 import atlantis.information.AFoggedUnit;
-import atlantis.map.ABaseLocation;
-import atlantis.map.BaseLocations;
 import atlantis.position.APosition;
 import atlantis.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AEnemyUnits {
 
@@ -62,7 +59,7 @@ public class AEnemyUnits {
     /**
      * Returns true if we've discovered the main base of enemy (natural base doesn't count).
      */
-    public static boolean hasDiscoveredMainEnemyBase() {
+    public static boolean hasDiscoveredEnemyBuilding() {
         
         // We don't know any enemy building
         if (!AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
@@ -70,21 +67,22 @@ public class AEnemyUnits {
         }
         
 //        System.out.println("-------");
-        for (AFoggedUnit enemyUnitData : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
+        for (AFoggedUnit enemyUnitData : AEnemyUnits.discoveredAndAliveUnits()) {
 //            System.out.println(enemyUnitData.getType());
-            if (enemyUnitData.type().isBase()) {
-//                boolean isBaseAtStartingLocation = false;
-                APosition discoveredBase = enemyUnitData.position();
-                
-                for (ABaseLocation startingLocation : BaseLocations.startingLocations(false)) {
-                    if (discoveredBase.distTo(startingLocation.position()) <= 7) {
-//                        System.out.println("Discovered main enemy base");
-                        return true;
-                    }
-//                    else {
-//                        System.out.println("Ha! This ain't main enemy base!");
+            if (enemyUnitData.type().isBuilding()) {
+                return true;
+////                boolean isBaseAtStartingLocation = false;
+//                APosition building = enemyUnitData.position();
+//
+//                for (ABaseLocation startingLocation : BaseLocations.startingLocations(false)) {
+//                    if (building.distTo(startingLocation.position()) <= 7) {
+////                        System.out.println("Discovered main enemy base");
+//                        return true;
 //                    }
-                }
+////                    else {
+////                        System.out.println("Ha! This ain't main enemy base!");
+////                    }
+//                }
             }
         }
         
@@ -108,8 +106,8 @@ public class AEnemyUnits {
             double minDist = 999999;
             
             for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
-                if (enemy.type().isBuilding()) {
-                    double dist = enemy.position().distTo(ourMainBase);
+                if (enemy.type().isBuilding() && enemy.position() != null) {
+                    double dist = ourMainBase.distTo(enemy.position());
                     if (minDist > dist) {
                         minDist = dist;
                         best = null;
@@ -121,7 +119,7 @@ public class AEnemyUnits {
         return best; // Can be null
     }
     
-    public static Collection<AFoggedUnit> getEnemyDiscoveredAndAliveUnits() {
+    public static Collection<AFoggedUnit> discoveredAndAliveUnits() {
         return enemyUnitsDiscovered.values();
     }
     
@@ -168,9 +166,22 @@ public class AEnemyUnits {
         if (enemyUnitsDiscovered.containsKey(enemyUnit)) {
             enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
         }
-        else {
+        else if (!enemyUnit.type().isGasBuildingOrGeyser()) {
             System.err.println("No fogged unit previously: " + enemyUnit);
         }
+    }
+
+    public static List<AFoggedUnit> foggedUnits() {
+//        ArrayList<AFoggedUnit> foggedUnits = new ArrayList<>();
+//
+//        for (AFoggedUnit unit : enemyUnitsDiscovered.values()) {
+//
+//        }
+
+        return (new ArrayList<>(enemyUnitsDiscovered.values()))
+                .stream()
+                .filter(u -> u.isAccessible())
+                .collect(Collectors.toList());
     }
 
     // =========================================================

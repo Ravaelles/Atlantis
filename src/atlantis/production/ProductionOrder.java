@@ -207,7 +207,7 @@ public class ProductionOrder {
      * If this production order concerns unit to be build (or building, AUnit class), it will return non-null
      * value being unit type.
      */
-    public AUnitType unit() {
+    public AUnitType unitType() {
         return unitOrBuilding;
     }
 

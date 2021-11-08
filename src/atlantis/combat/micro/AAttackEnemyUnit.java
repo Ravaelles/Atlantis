@@ -10,7 +10,7 @@ import atlantis.util.A;
 public class AAttackEnemyUnit {
 
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit) {
-        return handleAttackNearbyEnemyUnits(unit, 999999);
+        return handleAttackNearbyEnemyUnits(unit, 40);
     }
 
     /**

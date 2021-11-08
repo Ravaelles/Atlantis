@@ -2,9 +2,11 @@ package atlantis.buildings.managers;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.UnitAction;
 import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 
@@ -30,7 +32,9 @@ public class TerranFlyingBuildingManager {
         updateIfBuildingNeedsToBeLifted();
 
         for (Iterator<AUnit> it = flyingBuildings.iterator(); it.hasNext(); ) {
-            updateFlyingBuilding(it.next());
+            if (updateFlyingBuilding(it.next())) {
+                return;
+            }
         }
     }
 
@@ -48,6 +52,14 @@ public class TerranFlyingBuildingManager {
         if (!flyingBuilding.isAlive()) {
             flyingBuildings.remove(flyingBuilding);
             return true;
+        }
+
+        if (flyingBuilding.lastUnderAttackLessThanAgo(60)) {
+            APosition median = Squad.getAlphaSquad().median();
+            if (median != null) {
+                flyingBuilding.move(median, UnitActions.RUN, "BackOff");
+                return true;
+            }
         }
 
         APosition focusPoint = flyingBuildingFocusPoint();

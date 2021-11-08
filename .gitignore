@@ -22,7 +22,6 @@ manifest.mf
 nbbuild.xml
 .idea/
 Atlantis.iml
-bwapi-data/
 out/
 Chaos launcher.lnk
 IntelliJ IDEA Community Edition 2020.3.3.lnk

@@ -106,9 +106,23 @@ public abstract class AbstractPositionFinder {
         return false;
     }
 
+    protected static boolean isTooCloseToMainBase(AUnitType building, APosition position) {
+        AUnit base = Select.mainBase();
+
+        if (base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 6) {
+            _CONDITION_THAT_FAILED = "Too close to main base";
+            return true;
+        }
+
+        return false;
+    }
+
     protected static boolean isOverlappingBaseLocation(AUnitType building, APosition position) {
         if (building.isBase()) {
-            return false;
+            if (Select.ourBuildingsIncludingUnfinished().bases().inRadius(10, position).isNotEmpty()) {
+                _CONDITION_THAT_FAILED = "Base already exists here";
+                return true;
+            }
         }
 
         for (ABaseLocation base : BaseLocations.baseLocations()) {
@@ -161,26 +175,25 @@ public abstract class AbstractPositionFinder {
         }
 
         double distToBase = nearestBase.position().translateByTiles(2, 0).distTo(position);
-        if (nearestBase != null && distToBase <= 6) {
-            for (AUnit mineral : Select.minerals().inRadius(6, position).listUnits()) {
-                if (mineral.distTo(position) <= 5 && distToBase <= 4.5) {
-                    _CONDITION_THAT_FAILED = "Too close to mineral";
-                    return true;
-                }
+        if (distToBase <= 6) {
+            AUnit mineral = Select.minerals().nearestTo(position);
+            if (mineral != null && position.distTo(mineral) <= 6 && distToBase <= 5.5) {
+                _CONDITION_THAT_FAILED = "Too close to mineral";
+                return true;
             }
 
-            for (AUnit geyser : Select.geysers().inRadius(8, position).listUnits()) {
-                if (geyser.distTo(position) <= (building.isPylon() ? 7 : 2.6)) {
-                    _CONDITION_THAT_FAILED = "Too close to geyser";
-                    return true;
-                }
+            AUnit geyser = Select.geysers().nearestTo(position);
+//            System.out.println("Select.geysers() = " + Select.geysers().count());
+            if (geyser != null && geyser.distTo(position) <= (building.isPylon() ? 7 : (building.isSupplyUnit() ? 8 : 6))) {
+                _CONDITION_THAT_FAILED = "Too close to geyser";
+                return true;
             }
 
-            for (AUnit gasBuilding : Select.geyserBuildings().inRadius(8, position).listUnits()) {
-                if (gasBuilding.distTo(position) <= 3 && distToBase <= 4) {
-                    _CONDITION_THAT_FAILED = "Too close to gas building";
-                    return true;
-                }
+            AUnit gasBuilding = Select.geyserBuildings().nearestTo(position);
+//            System.out.println("Select.geyserBuildings() = " + Select.geyserBuildings().count());
+            if (gasBuilding != null && gasBuilding.distTo(position) <= 7 && distToBase <= 5.5) {
+                _CONDITION_THAT_FAILED = "Too close to gas building";
+                return true;
             }
         }
 

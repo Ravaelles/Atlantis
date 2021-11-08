@@ -25,7 +25,9 @@ public class ASpecialUnitManager {
             return true;
         }
 
-        if (unit.isType(AUnitType.Terran_Medic)) {
+        if (unit.isTank()) {
+            return TerranSiegeTank.update(unit);
+        } else if (unit.isType(AUnitType.Terran_Medic)) {
             return TerranMedic.update(unit);
         }
 
@@ -62,11 +64,9 @@ public class ASpecialUnitManager {
             return true;
         }
 
-        if (unit.type().isTank()) {
-            return TerranSiegeTank.update(unit);
-        } else if (unit.type().isVulture()) {
+        if (unit.isVulture()) {
             return TerranVulture.update(unit);
-        } else if (unit.type().isTerranInfantry()) {
+        } else if (unit.isTerranInfantry()) {
             return TerranInfantry.update(unit);
         }
 

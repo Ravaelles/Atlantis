@@ -3,7 +3,6 @@ package atlantis.debug;
 import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.buildings.managers.AGasManager;
-import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionAttack;
@@ -240,7 +239,7 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
                 ? EnemyStrategy.get().toString() : "Unknown"),
                 EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
-        paintSideMessage("Mission: " + mission.name(), Color.White);
+        paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", Color.White);
         paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
         paintSideMessage("Enemy base: " + AEnemyUnits.enemyBase(), Color.White);
 
@@ -276,7 +275,7 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintCombatEval(AUnit unit) {
         APosition unitPosition = unit.position();
-        double combatEval = unit.combatEval(false);
+        double combatEval = unit.combatEval(true);
         String combatStrength = ColorUtil.getColorString(Color.Red) + combatEval;
         paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
     }
@@ -1002,7 +1001,7 @@ public class AAdvancedPainter extends APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     static void paintFoggedUnitsThatIsEnemiesDiscovered() {
-        for (AFoggedUnit foggedEnemy : AEnemyUnits.getEnemyDiscoveredAndAliveUnits()) {
+        for (AFoggedUnit foggedEnemy : AEnemyUnits.discoveredAndAliveUnits()) {
             if (!foggedEnemy.hasKnownPosition()) {
                 continue;
             }

@@ -159,6 +159,7 @@ public class ARepairerManager {
             return Select.ourWorkers()
                     .notCarrying()
                     .notRepairing()
+                    .notGatheringGas()
                     .notConstructing()
                     .notScout()
                     .exclude(unitToRepair)

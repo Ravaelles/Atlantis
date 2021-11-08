@@ -11,16 +11,16 @@ import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {
 
-    protected static void addToQueue(AUnitType type) {
+    protected static boolean addToQueue(AUnitType type) {
         if (AGame.supplyFree() == 0) {
-            return;
+            return false;
         }
 
         if (!AGame.canAffordWithReserved(Math.max(80, type.getMineralPrice()), type.getGasPrice())) {
-            return;
+            return false;
         }
 
-        AddToQueue.withHighPriority(type);
+        return AddToQueue.withHighPriority(type);
     }
 
     // =========================================================

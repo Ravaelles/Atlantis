@@ -22,7 +22,8 @@ public class TerranStrategyResponse extends AStrategyResponse {
     }
 
     protected int rushDefenseDefensiveBuildingsNeeded(AStrategy enemyStrategy) {
-        return 1;
+        return 0;
+//        return 1;
 //        return enemyStrategy.isGoingCheese() ? 2 : 1;
     }
 

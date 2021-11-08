@@ -10,8 +10,8 @@ import bwapi.UpgradeType;
 public class Requirements {
 
     public static boolean hasRequirements(ProductionOrder order) {
-        if (order.unit() != null) {
-            return !order.unit().hasRequiredUnit() || hasRequirements(order.unit());
+        if (order.unitType() != null) {
+            return !order.unitType().hasRequiredUnit() || hasRequirements(order.unitType());
         }
         else if (order.tech() != null) {
             return hasRequirements(order.tech());
@@ -35,6 +35,12 @@ public class Requirements {
             return false;
         }
 
+        if (type.getGasPrice() > 0) {
+            if (!A.hasGas((int) (type.getGasPrice() * 0.7))) {
+                return false;
+            }
+        }
+
         TechType techType = type.getRequiredTech();
         return techType == null || techType == TechType.None || ATech.isResearched(techType);
     }
@@ -42,6 +48,12 @@ public class Requirements {
     // =========================================================
 
     private static boolean hasRequirements(TechType tech) {
+        if (tech.gasPrice() > 0) {
+            if (!A.hasGas((int) (tech.gasPrice() * 0.4))) {
+                return false;
+            }
+        }
+
         AUnitType required = AUnitType.createFrom(tech.requiredUnit());
         if (required != null && Count.ofType(AUnitType.createFrom(tech.requiredUnit())) == 0) {
             return false;
@@ -50,6 +62,12 @@ public class Requirements {
     }
 
     private static boolean hasRequirements(UpgradeType upgrade) {
+        if (upgrade.gasPrice() > 0) {
+            if (!A.hasGas((int) (upgrade.gasPrice() * 0.4))) {
+                return false;
+            }
+        }
+
         AUnitType required = AUnitType.createFrom(upgrade.whatsRequired());
         if (required != null && Count.ofType(required) == 0) {
             return false;

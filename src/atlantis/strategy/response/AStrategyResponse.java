@@ -90,8 +90,8 @@ public abstract class AStrategyResponse {
     }
 
     protected void handleAirUnitsDefence() {
-        OurStrategicBuildings.setAntiAirBuildingsNeeded(5);
-        AAntiAirBuildingRequests.requestAntiAirQuick(null);
+//        OurStrategicBuildings.setAntiAirBuildingsNeeded(5);
+//        AAntiAirBuildingRequests.requestAntiAirQuick(null);
     }
 
     // =========================================================

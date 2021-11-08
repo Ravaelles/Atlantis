@@ -20,11 +20,11 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
                 return Count.ourCombatUnits() >= 12 || A.resourcesBalance() >= 350;
             }
 
-            return Count.ourCombatUnits() >= 5;
+            return Count.ourCombatUnits() >= 5 || Count.tanks() >= 1;
         }
 
 //        return Count.ourCombatUnits() >= Math.max(24, 12 + Missions.counter());
-        return Count.ourCombatUnits() >= 15;
+        return Count.ourCombatUnits() >= 15 || Count.tanks() >= 2;
     }
 
 }

@@ -23,11 +23,11 @@ public class TerranBuildOrder extends ABuildOrder {
     // =========================================================
 
     @Override
-    public boolean produceUnit(AUnitType unitType) {
-        AUnitType whatBuildsIt = unitType.getWhatBuildsIt();
-        AUnit unitThatWillProduce = Select.ourOneNotTrainingUnits(whatBuildsIt);
+    public boolean produceUnit(AUnitType type) {
+        AUnitType whatBuildsIt = type.getWhatBuildsIt();
+        AUnit unitThatWillProduce = Select.ourOfType(whatBuildsIt).free().first();
         if (unitThatWillProduce != null) {
-            return unitThatWillProduce.train(unitType);
+            return unitThatWillProduce.train(type);
         }
 //        else {
 //            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);

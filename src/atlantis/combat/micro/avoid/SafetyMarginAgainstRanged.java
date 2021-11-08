@@ -15,6 +15,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 + ourUnitsNearbyBonus(defender)
                 + ourMovementBonus(defender)
                 + enemyMovementBonus(defender, attacker)
+                + scoutBonus(defender, attacker)
                 + combatEvalBonus(defender, attacker);
 
         return attacker.distTo(defender) - criticalDist;
@@ -28,6 +29,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         }
 
         return 0;
+    }
+
+    private static double scoutBonus(AUnit defender, AUnit attacker) {
+        return defender.isScout() ? (5 + defender.woundPercent() / 33) : 0;
     }
 
     private static double combatEvalBonus(AUnit defender, AUnit attacker) {

@@ -7,6 +7,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.We;
 import atlantis.wrappers.ATech;
@@ -42,8 +43,8 @@ public abstract class CurrentProductionOrders {
 
         int countCanNotAfford = 0;
         for (ProductionOrder order : ProductionQueue.currentProductionQueue) {
-            boolean hasWhatRequired = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
-            AUnitType unitOrBuilding = order.unit();
+            boolean hasRequirements = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
+            AUnitType unitOrBuilding = order.unitType();
             UpgradeType upgrade = order.upgrade();
             TechType tech = order.tech();
             Mission mission = order.mission();
@@ -62,13 +63,16 @@ public abstract class CurrentProductionOrders {
             // === Define order type: UNIT/BUILDING or UPGRADE or TECH ==
 
             // UNIT/BUILDING
-            if (unitOrBuilding != null && A.supplyAtLeast(order.minSupply())) {
-                ProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
-                ProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
+            if (unitOrBuilding != null && A.supplyAtLeast(order.minSupply()) && hasRequirements) {
+//                System.out.println(unitOrBuilding + " // req:" + hasRequirements);
+                if (hasFreeBuildingFor(unitOrBuilding) && (unitOrBuilding.isBuilding() || !hasUnitInQueue(unitOrBuilding, queue))) {
+                    ProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
+                    ProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
+                }
             }
 
             // UPGRADE
-            else if (upgrade != null && A.supplyAtLeast(order.minSupply())) {
+            else if (upgrade != null && A.supplyAtLeast(order.minSupply()) && hasRequirements) {
 //                System.out.println("====== WE'RE AT " + upgrade.name() + " --> " + hasWhatRequired);
 //                System.out.println("lvl = " + ATech.getUpgradeLevel(upgrade));
 //                System.out.println(upgrade.mineralPrice() + " // " + upgrade.gasPrice());
@@ -77,7 +81,7 @@ public abstract class CurrentProductionOrders {
             }
 
             // TECH
-            else if (tech != null && A.supplyAtLeast(order.minSupply())) {
+            else if (tech != null && A.supplyAtLeast(order.minSupply()) && hasRequirements) {
                 ProductionQueue.mineralsNeeded += tech.mineralPrice();
                 ProductionQueue.gasNeeded += tech.gasPrice();
             }
@@ -92,7 +96,7 @@ public abstract class CurrentProductionOrders {
 
             boolean canAfford = AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded);
             order.setCanAffordNow(canAfford);
-            order.setHasWhatRequired(hasWhatRequired);
+            order.setHasWhatRequired(hasRequirements);
 
 //            if (AGame.supplyUsed() >= 11 && unitOrBuilding != null && unitOrBuilding.isPylon()) {
 //                System.out.println(order.shortName() + " // aff=" + canAfford + " // req=" + hasWhatRequired);
@@ -100,7 +104,7 @@ public abstract class CurrentProductionOrders {
 //            System.out.println(order.shortName() + " has requirements = " + hasWhatRequired);
 
             if (
-                    mode == ProductionQueueMode.ENTIRE_QUEUE || (canAfford && hasWhatRequired)
+                    mode == ProductionQueueMode.ENTIRE_QUEUE || (canAfford && hasRequirements)
             ) {
                 if (unitOrBuilding != null && !A.hasFreeSupply(unitOrBuilding.supplyNeeded())) {
                     continue;
@@ -130,19 +134,37 @@ public abstract class CurrentProductionOrders {
         return queue;
     }
 
+    private static boolean hasUnitInQueue(AUnitType type, ArrayList<ProductionOrder> queue) {
+        for (ProductionOrder order : queue) {
+            if (order.unitType() != null && order.unitType().equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasFreeBuildingFor(AUnitType unit) {
+        AUnitType building = unit.getWhatBuildsIt();
+        if (building != null) {
+            return Select.ourOfType(building).free().isNotEmpty();
+        }
+
+        return false;
+    }
+
     // =========================================================
 
-//    private static void addOrApplyOrder(ProductionOrder order, ArrayList<ProductionOrder> queue) {
-//        if (order.mission() != null) {
-//            applySpecialOrder(order);
-//        }
-//        else {
-//            queue.add(order);
-//        }
-//    }
+    public static int[] resourcesReserved() {
+//        int reservedMinerals = 0;
+//        int reservedGas = 0;
 //
-//    private static void applySpecialOrder(ProductionOrder order) {
-//        Missions.setGlobalMissionTo(order.mission());
-//    }
+//        for (int i = 0; i <= 1; i++) {
+//
+//        }
+
+//        thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
+
+        return new int[] { ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded };
+    }
 
 }

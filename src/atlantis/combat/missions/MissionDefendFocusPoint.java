@@ -43,7 +43,6 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (Count.basesWithUnfinished() >= 2) {
                     AChoke natural = Chokes.natural();
                     if (natural != null) {
-                        APainter.paintCircleFilled(natural.position(), 30, Color.White);
                         return natural.getCenter();
                     }
                 }

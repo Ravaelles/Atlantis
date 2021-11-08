@@ -57,7 +57,7 @@ public class AWorkerTransferManager {
 //        System.out.println("Most: " + baseWithMostWorkers + " / " + mostWorkersRatio);
 //        System.out.println();
 
-        if (mostWorkersRatio < 1.7 || workerRatioDiff < 1.3 || baseWithMostWorkers.distTo(baseWithFewestWorkers) < 8) {
+        if (mostWorkersRatio < 1.9 || workerRatioDiff < 1.3 || baseWithMostWorkers.distTo(baseWithFewestWorkers) < 8) {
             return;
         }
 
@@ -66,7 +66,7 @@ public class AWorkerTransferManager {
         AUnit worker = Select.ourWorkersThatGather(true)
                 .inRadius(20, baseWithMostWorkers)
                 .nearestTo(baseWithFewestWorkers);
-        System.out.println("transfer worker = " + worker);
+//        System.out.println("transfer worker = " + worker);
         if (worker != null) {
             transferWorkerTo(worker, baseWithFewestWorkers);
         }
