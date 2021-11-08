@@ -21,7 +21,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 () -> {
                     if (We.terran()) {
                         AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-                        if (enemyBuilding != null) {
+                        if (enemyBuilding != null && enemyBuilding.position() != null) {
                             return enemyBuilding.position();
                         }
                     }
@@ -44,10 +44,10 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //                        return mainChoke.position();
 //                    }
 
-                    AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-                    if (enemyBuilding != null) {
-                        return enemyBuilding.position();
-                    }
+//                    AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+//                    if (enemyBuilding != null) {
+//                        return enemyBuilding.position();
+//                    }
 ////
 //        AUnit nearestEnemy = Select.enemy().nearestTo(Select.our().first());
 //        if (nearestEnemy != null) {
@@ -55,7 +55,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //        }
 
                     APosition enemyBase = AEnemyUnits.enemyBase();
-                    if (enemyBase != null) {
+                    if (enemyBase != null && enemyBase.position() != null) {
                         return containPointIfEnemyBaseIsKnown(enemyBase);
                     }
 

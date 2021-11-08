@@ -21,18 +21,18 @@ public class AEnemyUnits {
             AEnemyUnits.updateEnemyUnitPosition(enemy);
         }
 
-        for (AFoggedUnit fogged : enemyUnitsDiscovered.values()) {
-//            System.err.println(fogged + " // " + fogged.isBuilding() + " // " + fogged.getPosition().isVisible() + " // " +fogged.isVisibleOnMap());
-            if (
-                    !fogged.isBuilding()
-                            && fogged.hasKnownPosition()
-                            && fogged.position().isVisible()
-                            && !fogged.isVisibleOnMap()
-            ) {
-                fogged.positionUnknown();
-//                System.out.println("      " + fogged + " position now  unknown");
-            }
-        }
+//        for (AFoggedUnit fogged : enemyUnitsDiscovered.values()) {
+////            System.err.println(fogged + " // " + fogged.isBuilding() + " // " + fogged.getPosition().isVisible() + " // " +fogged.isVisibleOnMap());
+//            if (
+//                    !fogged.isBuilding()
+//                            && fogged.hasKnownPosition()
+//                            && fogged.position().isVisible()
+//                            && !fogged.isVisibleOnMap()
+//            ) {
+//                fogged.positionUnknown();
+////                System.out.println("      " + fogged + " position now  unknown");
+//            }
+//        }
     }
 
     // =========================================================
@@ -162,11 +162,21 @@ public class AEnemyUnits {
      * Updates last known position of the enemy unit.
      */
     public static void updateEnemyUnitPosition(AUnit enemyUnit) {
+        if (!enemyUnit.type().isGasBuildingOrGeyser()) {
+            return;
+        }
+
+        if (enemyUnit.isLurker()) {
+            System.out.println(enemyUnit);
+            System.out.println(enemyUnit.x() + " // " + enemyUnit._lastX);
+            System.out.println(enemyUnit.y() + " // " + enemyUnit._lastY);
+        }
+
 //        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
         if (enemyUnitsDiscovered.containsKey(enemyUnit)) {
             enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
         }
-        else if (!enemyUnit.type().isGasBuildingOrGeyser()) {
+        else {
             System.err.println("No fogged unit previously: " + enemyUnit);
         }
     }

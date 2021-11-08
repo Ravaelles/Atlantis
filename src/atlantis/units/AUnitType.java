@@ -1197,4 +1197,12 @@ public class AUnitType implements Comparable<AUnitType> {
                 () -> isGeyser() || isGasBuilding()
         );
     }
+
+    public boolean isLurker() {
+        return (boolean) cache.get(
+                "isLurker",
+                50,
+                () -> is(Zerg_Lurker)
+        );
+    }
 }

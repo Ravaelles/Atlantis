@@ -56,9 +56,8 @@ public class AFoggedUnit extends AUnit {
     @Override
     public String toString() {
         return "AFoggedUnit{" +
-                "unit=" + aUnit +
-                ", _position=" + _position +
-                ", _lastCachedType=" + _lastCachedType +
+                "_position=" + _position +
+                ",_Type=" + _lastCachedType +
                 '}';
     }
 
@@ -87,11 +86,17 @@ public class AFoggedUnit extends AUnit {
     }
 
     public void updatePosition(AUnit unit) {
-        if (unit.position() != null && unit.isVisible()) {
+//        if (unit.isBuilding()) {
+//            System.out.println(unit.shortName() + " // " + unit.x() + "," + unit.y());
+//        }
+
+//        if (unit.isVisible()) {
 //            System.out.println("Update " + unit.shortName() + " to " + unit.getPosition());
-            _position = new APosition(unit.x(), unit.y());
-            cacheInt.set("lastPositionUpdated", -1, A.now());
-        }
+            if (unit.x() > 0 && unit.y() > 0) {
+                _position = new APosition(unit.x(), unit.y());
+                cacheInt.set("lastPositionUpdated", -1, A.now());
+            }
+//        }
     }
 
     protected void updateType(AUnit unit) {
@@ -115,6 +120,10 @@ public class AFoggedUnit extends AUnit {
     }
 
     public int lastPositionUpdatedAgo() {
+        if (cacheInt.get("lastPositionUpdated") == null) {
+            return -1;
+        }
+
         return A.ago(cacheInt.get("lastPositionUpdated"));
     }
 

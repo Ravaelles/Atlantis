@@ -117,7 +117,7 @@ public class TerranSiegeTank {
         // =========================================================
         // Should siege?
 
-        if (tooLonely(unit)) {
+        if (tooLonely(unit) && hasJustSiegedRecently(unit)) {
             unit.unsiege();
             unit.setTooltip("TooLonely");
             return true;
@@ -141,23 +141,29 @@ public class TerranSiegeTank {
                 return false;
             }
 
-            if (unit.mission().isMissionAttack() && A.chance(1.5)) {
-                unit.unsiege();
-                unit.setTooltip("Unsiege");
-                return true;
-            }
-
-            if (unit.mission().isMissionContain()) {
-                APosition focusPoint = Missions.globalMission().focusPoint();
-                if (focusPoint != null && unit.distTo(focusPoint) >= 12.5 && A.chance(1)) {
+            if (!hasJustSiegedRecently(unit)) {
+                if (unit.mission().isMissionAttack() && A.chance(1.5)) {
                     unit.unsiege();
                     unit.setTooltip("Unsiege");
                     return true;
+                }
+
+                if (unit.mission().isMissionContain()) {
+                    APosition focusPoint = Missions.globalMission().focusPoint();
+                    if (focusPoint != null && unit.distTo(focusPoint) >= 12.5 && A.chance(1)) {
+                        unit.unsiege();
+                        unit.setTooltip("Unsiege");
+                        return true;
+                    }
                 }
             }
         }
         
         return false;
+    }
+
+    private static boolean hasJustSiegedRecently(AUnit unit) {
+        return unit.lastActionLessThanAgo(30 * 9, UnitActions.SIEGE);
     }
 
     private static boolean shouldNotDisturb(AUnit tank) {

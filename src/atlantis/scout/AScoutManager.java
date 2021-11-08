@@ -42,6 +42,7 @@ public class AScoutManager {
     private static APosition scoutingAroundBaseLastPolygonPoint = null;
     private static boolean scoutingAroundBaseWasInterrupted = false;
     private static boolean scoutingAroundBaseDirectionClockwise = true;
+    private static APosition nextPositionToScout = null;
 
     // =========================================================
     
@@ -79,6 +80,7 @@ public class AScoutManager {
         // === Avoid military buildings ============================
 
         if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
+            nextPositionToScout = null;
             return true;
         }
         
@@ -103,11 +105,11 @@ public class AScoutManager {
     // =========================================================
 
     private static boolean handleScoutFreeBases(AUnit scout) {
-        APosition invisibleStartingLocation = BaseLocations.randomInvisibleStartingLocation();
-        if (invisibleStartingLocation != null && scout.distToMoreThan(invisibleStartingLocation, 6)) {
-            return scout.move(invisibleStartingLocation, UnitActions.SCOUT, "ScoutBases");
+        if (nextPositionToScout != null && !nextPositionToScout.isVisible()) {
+            return scout.move(nextPositionToScout, UnitActions.SCOUT, "ScoutBases");
         }
 
+        nextPositionToScout = BaseLocations.randomInvisibleStartingLocation();
         return false;
     }
 

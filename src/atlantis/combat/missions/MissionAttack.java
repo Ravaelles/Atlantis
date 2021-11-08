@@ -4,6 +4,7 @@ import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 /**
@@ -56,11 +57,19 @@ public class MissionAttack extends Mission {
     }
 
     @Override
-    public boolean allowsToAttackDefensiveBuildings(AUnit defensiveBuilding) {
+    public boolean allowsToAttackDefensiveBuildings(AUnit unit, AUnit defensiveBuilding) {
+        if (unit.isTank()) {
+            return true;
+        }
+
+        if (Count.ourCombatUnits() <= 27 || unit.lastStoppedRunningLessThanAgo(30 * 10)) {
+            return false;
+        }
+
         int buildings = Select.enemy().combatBuildings().inRadius(7, defensiveBuilding).count();
 
         return Select.ourRealUnits()
-                .inRadius(13, defensiveBuilding)
+                .inRadius(6, unit)
                 .excludeTypes(AUnitType.Terran_Medic)
                 .atLeast(9 * buildings);
     }

@@ -563,7 +563,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cacheUnit.get(
                 cachePath = "mainBase",
-                0,
+                30,
                 () -> {
                     List<AUnit> bases = ourBases().list();
                     return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);

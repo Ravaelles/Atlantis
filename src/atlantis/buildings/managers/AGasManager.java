@@ -6,6 +6,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.workers.AWorkerManager;
@@ -122,6 +123,12 @@ public class AGasManager {
     }
 
     private static int defineOptimalGasWorkers(AUnit gasBuilding, int numOfWorkersNearby) {
+
+        // Too much gas, too little minerals
+        if (GamePhase.isEarlyGame() && (Count.workers() <= 12 || (!A.hasMinerals(160) && A.hasGas(150)))) {
+            return 1;
+        }
+
 //        if (AGame.hasGas(800)) {
 //            return 1;
 //        }

@@ -41,9 +41,9 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 33 - Barracks
 35 - Comsat Station
 //36 - U 238 Shells
-40 - Barracks
+//40 - Barracks
 44 - Factory
 50 - Tank
 52 - Tank Siege Mode
-54 - Barracks
+//54 - Barracks
 60 - Tank

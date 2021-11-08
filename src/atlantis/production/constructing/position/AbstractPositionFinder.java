@@ -2,6 +2,7 @@ package atlantis.production.constructing.position;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.debug.APainter;
 import atlantis.map.AChoke;
 import atlantis.map.BaseLocations;
 import atlantis.map.Chokes;
@@ -15,6 +16,7 @@ import atlantis.units.AUnitType;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import bwapi.Color;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
@@ -107,9 +109,15 @@ public abstract class AbstractPositionFinder {
     }
 
     protected static boolean isTooCloseToMainBase(AUnitType building, APosition position) {
+        if (building.isCombatBuilding()) {
+            return false;
+        }
+
         AUnit base = Select.mainBase();
 
-        if (base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 6) {
+        APainter.paintCircle(position, 10, Color.Green);
+        if (base != null && base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 4) {
+            APainter.paintCircle(position, 10, Color.Red);
             _CONDITION_THAT_FAILED = "Too close to main base";
             return true;
         }
@@ -175,23 +183,23 @@ public abstract class AbstractPositionFinder {
         }
 
         double distToBase = nearestBase.position().translateByTiles(2, 0).distTo(position);
-        if (distToBase <= 6) {
+        if (distToBase <= 10) {
             AUnit mineral = Select.minerals().nearestTo(position);
-            if (mineral != null && position.distTo(mineral) <= 6 && distToBase <= 5.5) {
+            if (mineral != null && position.distTo(mineral) <= 4 && distToBase <= 7.5) {
                 _CONDITION_THAT_FAILED = "Too close to mineral";
                 return true;
             }
 
             AUnit geyser = Select.geysers().nearestTo(position);
 //            System.out.println("Select.geysers() = " + Select.geysers().count());
-            if (geyser != null && geyser.distTo(position) <= (building.isPylon() ? 7 : (building.isSupplyUnit() ? 8 : 6))) {
+            if (geyser != null && geyser.distTo(position) <= (building.isPylon() ? 7 : (building.isSupplyUnit() ? 10 : 6))) {
                 _CONDITION_THAT_FAILED = "Too close to geyser";
                 return true;
             }
 
             AUnit gasBuilding = Select.geyserBuildings().nearestTo(position);
 //            System.out.println("Select.geyserBuildings() = " + Select.geyserBuildings().count());
-            if (gasBuilding != null && gasBuilding.distTo(position) <= 7 && distToBase <= 5.5) {
+            if (gasBuilding != null && gasBuilding.distTo(position) <= 4 && distToBase <= 7.5) {
                 _CONDITION_THAT_FAILED = "Too close to gas building";
                 return true;
             }

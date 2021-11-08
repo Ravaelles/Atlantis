@@ -9,6 +9,10 @@ import atlantis.units.Units;
 public class WantsToAvoid {
 
     public static boolean units(AUnit unit, Units enemies) {
+        if (shouldAvoid(unit, enemies)) {
+            return false;
+        }
+
         if (shouldNotAvoid(unit, enemies)) {
             return false;
         }
@@ -26,6 +30,10 @@ public class WantsToAvoid {
     }
 
     // =========================================================
+
+    private static boolean shouldAvoid(AUnit unit, Units enemies) {
+        return unit.isWorker() && unit.isScout();
+    }
 
     private static boolean shouldNotAvoid(AUnit unit, Units enemies) {
 //        if (unit.isJustShooting()) {

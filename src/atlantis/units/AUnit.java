@@ -1707,6 +1707,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isTerranInfantry();
     }
 
+    public boolean isLurker() {
+        return type().isLurker();
+    }
+
+    public boolean hpLessThan(int min) {
+        return hp() < min;
+    }
+
 //    public boolean isDepleted() {
 //        return u.getAcidSporeCount();
 //    }

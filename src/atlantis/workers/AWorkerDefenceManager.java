@@ -29,15 +29,18 @@ public class AWorkerDefenceManager {
     // =========================================================
 
     private static boolean handleRepairNearby(AUnit worker) {
-        if (worker.id() % 4 != 0) {
+        if (worker.hpLessThan(20) || worker.id() % 5 != 0) {
             return false;
         }
 
         AUnit wounded = Select.ourWorkers().wounded().inRadius(2, worker).nearestTo(worker);
 
         if (wounded != null) {
-            wounded.stop("BeRepaired");
             worker.repair(wounded, "Buddy!");
+
+            if (wounded.distToLessThan(worker, 0.8)) {
+                wounded.stop("BeRepaired");
+            }
             return true;
         }
 
@@ -48,7 +51,7 @@ public class AWorkerDefenceManager {
      * Sometimes workers need to fight.
      */
     private static boolean handleFightEnemyIfNeeded(AUnit worker) {
-        if (worker.hp() <= 6) {
+        if (worker.hp() <= 18) {
             return false;
         }
 

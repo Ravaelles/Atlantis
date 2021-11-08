@@ -1,6 +1,8 @@
 package atlantis;
 
 import atlantis.combat.squad.Squad;
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AFoggedUnit;
 import atlantis.map.Chokes;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
@@ -53,6 +55,10 @@ public class OnEveryFrame {
 //        AUnit scout = AScoutManager.firstScout();
 //        if (scout != null) {
 //            CameraManager.centerCameraOn(scout);
+//        }
+
+//        for (AFoggedUnit unit : AEnemyUnits.discoveredAndAliveUnits()) {
+//            System.out.println(unit.shortName() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //        }
     }
 

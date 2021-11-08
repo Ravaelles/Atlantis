@@ -7,6 +7,7 @@ import atlantis.map.BaseLocations;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
@@ -37,7 +38,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try going near any enemy building
         AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-        if (enemyBuilding != null) {
+        if (enemyBuilding != null && enemyBuilding.position() != null) {
 //            System.out.println("2 = " + enemyBuilding);
             return enemyBuilding.position();
         }
@@ -47,6 +48,13 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (anyEnemyUnit != null) {
 //            System.out.println("3 = " + anyEnemyUnit);
             return anyEnemyUnit.position();
+        }
+
+        if (Count.ourCombatUnits() <= 40) {
+            AChoke mainChoke = Chokes.enemyMainChoke();
+            if (mainChoke != null) {
+                return mainChoke.position();
+            }
         }
 
         // Try to go to some starting location, hoping to find enemy there.

@@ -37,6 +37,8 @@ public class ATargetingStandard extends AEnemyTargeting {
                 .inShootRangeOf(2, unit)
                 .nearestTo(unit);
         if (target != null) {
+            System.out.println("OVERLORD target = " + target + " // ");
+            System.out.println("dist = " + target.distTo(unit));
             return target;
         }
 
@@ -45,16 +47,28 @@ public class ATargetingStandard extends AEnemyTargeting {
 
         target = enemyUnits.clone()
                 .workers()
-                .effVisible()
                 .inRadius(8, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
         }
 
+        // =========================================================
         // Target real units
+
         target = enemyUnits.clone()
                 .inShootRangeOf(unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // A bit further WORKERS
+
+        target = enemyUnits.clone()
+                .workers()
+                .inRadius(10, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

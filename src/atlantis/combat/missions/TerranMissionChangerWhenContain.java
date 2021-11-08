@@ -2,6 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.strategy.GamePhase;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -23,8 +24,12 @@ public class TerranMissionChangerWhenContain {
     // =========================================================
 
     private static boolean shouldChangeMissionToDefend() {
-        if (Atlantis.LOST_RESOURCES <= 150) {
-            return false;
+//        if (Atlantis.LOST_RESOURCES <= 150) {
+//            return false;
+//        }
+
+        if (Missions.counter() >= 3 && Count.ourCombatUnits() <= 18) {
+            return true;
         }
 
         if (OurStrategy.get().goingBio()) {
@@ -38,6 +43,12 @@ public class TerranMissionChangerWhenContain {
     }
 
     private static boolean shouldChangeMissionToAttack() {
+        if (Select.mainBase() != null) {
+            if (Select.enemy().inRadius(14, Select.mainBase()).atLeast(2)) {
+                return false;
+            }
+        }
+
         if (killsBalanceSaysSo()) {
             return true;
         }

@@ -41,12 +41,17 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             }
         }
 
-        if (Count.ofType(AUnitType.Terran_Academy) >= 1 && Count.marines() >= 4 && Count.medics() <= 2) {
+        Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
+        if (
+                Count.ofType(AUnitType.Terran_Academy) >= 1
+                        && Count.marines() >= 4
+                        && Count.medics() <= 2
+                        && barracks.isNotEmpty()
+        ) {
             return;
         }
 
 //        if (Enemy.zerg() && Count.marines() == 0) {
-        Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
             produceUnit(barracks.first(), AUnitType.Terran_Marine);
 //            AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
