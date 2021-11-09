@@ -761,8 +761,10 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintConstructionProgress() {
         setTextSizeMedium();
-        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-            if (unit.isCompleted()) {
+//        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
+        for (ConstructionOrder order : AConstructionRequests.getAllConstructionOrders()) {
+            AUnit building = order.getConstruction();
+            if (building == null || building.isCompleted()) {
                 continue;
             }
 
@@ -770,10 +772,10 @@ public class AAdvancedPainter extends APainter {
 
             int labelMaxWidth = 60;
             int labelHeight = 14;
-            int labelLeft = unit.position().getX() - labelMaxWidth / 2;
-            int labelTop = unit.position().getY() + 8;
+            int labelLeft = building.position().getX() - labelMaxWidth / 2;
+            int labelTop = building.position().getY() + 8;
 
-            double progress = (double) unit.hp() / unit.maxHp();
+            double progress = (double) building.hp() / building.maxHp();
             int labelProgress = (int) (1 + 99 * progress);
 
             // Paint box
@@ -818,11 +820,17 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             // Display name of unit
-            String name = (unit.getBuildType() != null ? unit.getBuildType().shortName() : "-BUG_NULL");
+            String name = (building.getBuildType() != null ? building.getBuildType().shortName() : "-BUG_NULL");
 
             // Paint building name
-            paintTextCentered(new APosition(unit.position().getX(), unit.position().getY() - 7),
+            paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 7),
                     name, Color.White);
+
+            // Builder status
+            AUnit builder = order.getBuilder();
+            boolean builderProblem = builder == null || !builder.isAlive();
+            paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 15),
+                    builderProblem ? "NO BUILDER" : "", builderProblem ? Color.Red : Color.Green);
         }
 
         setTextSizeSmall();

@@ -1,5 +1,6 @@
 package atlantis.map;
 
+import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
@@ -46,12 +47,16 @@ public class AMap {
         bwem.getMap().assignStartingLocationsToSuitableBases();
 
         // Init JBWEB
-        JBWEB.onStart(Atlantis.game(), bwem);
-        Blocks.findBlocks();
-        Stations.findStations();
-        Wall wall = Walls.createTWall();
-        System.out.println("Walls.getWalls() = " + Walls.getWalls());
-        System.out.println("Wall = " + wall);
+        try {
+            JBWEB.onStart(Atlantis.game(), bwem);
+            Blocks.findBlocks();
+            Stations.findStations();
+            Wall wall = Walls.createTWall();
+            System.out.println("Walls.getWalls() = " + Walls.getWalls());
+            System.out.println("Wall = " + wall);
+        } catch (Exception e) {
+            AGame.setUmsMode(true);
+        }
 
         System.out.println("OK.");
     }

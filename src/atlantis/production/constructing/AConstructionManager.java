@@ -235,4 +235,15 @@ public class AConstructionManager {
         }
     }
 
+    public static ArrayList<AUnit> builders() {
+        ArrayList<AUnit> units = new ArrayList<>();
+
+        for (ConstructionOrder order : AConstructionRequests.constructionOrders) {
+            if (order.getBuilder() != null && order.getBuilder().isAlive()) {
+                units.add(order.getBuilder());
+            }
+        }
+
+        return units;
+    }
 }

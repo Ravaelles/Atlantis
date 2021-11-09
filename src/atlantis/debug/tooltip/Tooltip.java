@@ -25,13 +25,13 @@ public class Tooltip {
     }
 
     public String getTooltip() {
-        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
-            String tooltipToReturn = this.tooltip;
-            this.removeTooltip();
-            return tooltipToReturn;
-        } else {
-            return tooltip;
-        }
+//        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
+//            String tooltipToReturn = this.tooltip;
+//            this.removeTooltip();
+//            return tooltipToReturn;
+//        } else {
+        return tooltip;
+//        }
     }
 
     public void removeTooltip() {

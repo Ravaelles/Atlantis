@@ -25,7 +25,7 @@ public class Main {
         // Listen for keyboard events
         AKeyboard.listenForKeyEvents();
         
-        // IMPORTANT: Make sure "Chaoslauncher -> Settings -> Run Starcraft on Startup" is checked
+        // IMPORTANT: Make sure Chaoslauncher -> Settings -> "Run Starcraft on Startup" is checked
         ProcessHelper.startChaosLauncherProcess();
         
         // =============================================================

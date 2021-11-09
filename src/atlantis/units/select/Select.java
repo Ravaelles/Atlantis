@@ -706,8 +706,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static Selection ourWorkersFreeToBuildOrRepair() {
         Selection selectedUnits = Select.ourWorkers();
         selectedUnits.list().removeIf(unit ->
-                unit.isConstructing() || unit.isRepairing() || AConstructionManager.isBuilder(unit)
-                        || AScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()
+                unit.isConstructing() || unit.isRepairing()
+                        || AConstructionManager.isBuilder(unit) || AScoutManager.isScout(unit)
+                        || unit.isRepairerOfAnyKind()
         );
 
         return selectedUnits;

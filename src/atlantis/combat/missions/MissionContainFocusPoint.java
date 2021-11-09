@@ -65,10 +65,14 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                     }
 
                     // Try to go to some starting location, hoping to find enemy there.
-                    AChoke choke = Chokes.nearestChoke(
-                            BaseLocations.getNearestUnexploredStartingLocation(Select.mainBase().position())
-                    );
-                    return choke != null ? choke.getCenter() : null;
+                    if (Select.mainBase() != null) {
+                        AChoke choke = Chokes.nearestChoke(
+                                BaseLocations.getNearestUnexploredStartingLocation(Select.mainBase().position())
+                        );
+                        return choke != null ? choke.getCenter() : null;
+                    }
+
+                    return null;
                 }
         );
     }

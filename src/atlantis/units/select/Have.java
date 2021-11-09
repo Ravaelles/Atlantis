@@ -8,4 +8,7 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Armory) > 0;
     }
 
+    public static boolean base() {
+        return Select.mainBase() != null;
+    }
 }

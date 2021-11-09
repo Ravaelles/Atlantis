@@ -56,13 +56,13 @@ public abstract class Mission {
         if (temporaryTarget == null || temporaryTarget.isExplored()) {
             temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
             if (temporaryTarget != null) {
-                System.out.println("Go to unexplored " + temporaryTarget);
+//                System.out.println("Go to unexplored " + temporaryTarget);
             }
         }
         if (temporaryTarget == null || temporaryTarget.isVisible()) {
             temporaryTarget = AMap.getRandomInvisiblePosition(unit.position());
             if (temporaryTarget != null) {
-                System.out.println("Go to invisible " + temporaryTarget);
+//                System.out.println("Go to invisible " + temporaryTarget);
             }
         }
 

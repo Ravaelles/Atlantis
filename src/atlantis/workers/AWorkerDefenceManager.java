@@ -1,11 +1,13 @@
 package atlantis.workers;
 
 import atlantis.AGame;
+import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 import java.util.List;
@@ -16,32 +18,105 @@ public class AWorkerDefenceManager {
      * Attack other workers, run from enemies etc.
      */
     public static boolean handleDefenceIfNeeded(AUnit worker) {
+        if (shouldNotFight(worker)) {
+            return false;
+        }
+
         if (handleFightEnemyIfNeeded(worker)) {
             return true;
         }
 
+        // Dynamic nearby CSV repairing
         if (We.terran() && AGame.canAfford(20, 0) && handleRepairNearby(worker)) {
             return true;
         }
 
         return false;
-//        return handleRunFromEnemyIfNeeded(worker);
     }
 
     // =========================================================
 
+    /**
+     * Sometimes workers need to fight.
+     */
+    private static boolean handleFightEnemyIfNeeded(AUnit worker) {
+
+        // DESTROY ENEMY BUILDINGS that are being built close to main base.
+        if (handleEnemyBuildingsOffensive(worker)) {
+            return true;
+        }
+
+        // FIGHT against enemy WORKERS, worker rushes etc
+        if (handleEnemyWorkersNearby(worker)) {
+            return true;
+        }
+
+        if (We.terran() && handleProtectScvBusyConstructing(worker)) {
+            return true;
+        }
+
+        // Fight against ZERGLINGS
+        if (handleFightEnemyCombatUnits(worker)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean handleProtectScvBusyConstructing(AUnit worker) {
+        if (Count.ourCombatUnits() >= 1) {
+            return false;
+        }
+
+        if (worker.id() % 6 != 0 || worker.hp() <= 13) {
+            return false;
+        }
+
+        for (AUnit builder : AConstructionManager.builders()) {
+            if (builder.hp() < 40 && builder.lastUnderAttackLessThanAgo(30 * 10)) {
+                AUnit nearestPeskyEnemyWorker = Select.enemy().workers().inRadius(3, builder).nearestTo(worker);
+                if (nearestPeskyEnemyWorker != null) {
+                    worker.setTooltip("ProtectBuilder");
+                    return worker.attackUnit(nearestPeskyEnemyWorker);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean shouldNotFight(AUnit worker) {
+        if (worker.isBuilder() || worker.isConstructing()) {
+            return true;
+        }
+
+        if (worker.hp() <= 18) {
+            return true;
+        }
+
+        boolean isNearBase = Select.ourBases().inRadius(20, worker).atLeast(1);
+        if (!isNearBase) {
+            return true;
+        }
+
+        return false;
+    }
+
     private static boolean handleRepairNearby(AUnit worker) {
-        if (worker.hpLessThan(20) || worker.id() % 5 != 0) {
+        if (worker.isWounded() || worker.id() % 5 != 0) {
             return false;
         }
 
         AUnit wounded = Select.ourWorkers().wounded().inRadius(2, worker).nearestTo(worker);
 
-        if (wounded != null) {
-            worker.repair(wounded, "Buddy!");
-
-            if (wounded.distToLessThan(worker, 0.8)) {
-                wounded.stop("BeRepaired");
+        if (wounded != null && wounded.isWounded() && wounded.isAlive() && !wounded.isBuilder()) {
+            if (!worker.isRepairing()) {
+                worker.repair(wounded, "Buddy!");
+            }
+            if (wounded.distToLessThan(worker, 0.6)) {
+                if (!wounded.isBuilder() && !wounded.isRepairing() || wounded.isMoving()) {
+                    wounded.stop("BeRepaired");
+                }
             }
             return true;
         }
@@ -49,35 +124,8 @@ public class AWorkerDefenceManager {
         return false;
     }
 
-    /**
-     * Sometimes workers need to fight.
-     */
-    private static boolean handleFightEnemyIfNeeded(AUnit worker) {
-        if (worker.hp() <= 18) {
-            return false;
-        }
-
-        // DESTROY ENEMY BUILDINGS that are being built close to main base.
-        if (Select.ourBases().inRadius(20, worker).count() > 0) {
-            for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).listUnits()) {
-                worker.attackUnit(enemyBuilding);
-                worker.setTooltip("Cheesy!");
-                return true;
-            }
-        }
-
-        // FIGHT against enemy WORKERS
-        for (AUnit enemy : Select.enemy().workers().inRadius(2, worker).listUnits()) {
-            worker.setTooltip("NastyFuckers!");
-            worker.attackUnit(enemy);
-            return true;
-        }
-
-        if (Count.workers() <= 12) {
-            return false;
-        }
-
-        if (Select.our().inRadius(4, worker).atMost(2)) {
+    private static boolean handleFightEnemyCombatUnits(AUnit worker) {
+        if (Count.workers() <= 12 || Select.our().inRadius(4, worker).atMost(2)) {
             return false;
         }
 
@@ -93,11 +141,35 @@ public class AWorkerDefenceManager {
         }
 
         // FIGHT against COMBAT UNITS
-        List<AUnit> enemies = Select.enemy().combatUnits().excludeTypes(AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver)
+        List<AUnit> enemies = Select.enemy().combatUnits()
+                .excludeTypes(
+                        AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver, AUnitType.Protoss_Zealot
+                )
                 .inRadius(1, worker).listUnits();
         for (AUnit enemy : enemies) {
             worker.attackUnit(enemy);
             worker.setTooltip("ForMotherland!");
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean handleEnemyWorkersNearby(AUnit worker) {
+        Selection enemyWorkers = Select.enemy().workers().inRadius(1.3, worker);
+        for (AUnit enemy : enemyWorkers.listUnits()) {
+            worker.setTooltip("NastyFuckers!");
+            worker.attackUnit(enemy);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean handleEnemyBuildingsOffensive(AUnit worker) {
+        for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).listUnits()) {
+            worker.attackUnit(enemyBuilding);
+            worker.setTooltip("Cheesy!");
             return true;
         }
 

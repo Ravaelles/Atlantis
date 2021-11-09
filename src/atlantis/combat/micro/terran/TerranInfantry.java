@@ -7,6 +7,7 @@ import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.A;
+import atlantis.util.Enemy;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -26,7 +27,7 @@ public class TerranInfantry {
     // =========================================================
 
     private static boolean handleStimpack(AUnit unit) {
-        if (!ATech.isResearched(stim()) || !unit.is(AUnitType.Terran_Marine)) {
+        if (!ATech.isResearched(stim()) || !unit.isMarine()) {
             return false;
         }
 
@@ -34,16 +35,15 @@ public class TerranInfantry {
             return false;
         }
 
-        Selection enemies = Select.enemyRealUnits().inRadius(8, unit);
+        Selection enemies = Select.enemyRealUnits().inRadius(9, unit);
 
         if (
-                enemies.clone().ofType(AUnitType.Zerg_Lurker).atLeast(1)
-                || enemies.clone().atLeast(4)
+                enemies.atLeast(Enemy.zerg() ? 2 : 1)
         ) {
             if (unit.lastActionMoreThanAgo(5, UnitActions.USING_TECH)) {
                 unit.useTech(stim());
+//                System.out.println("------------ STIM! " + unit.idWithHash() + " @ " + A.now());
             }
-            System.out.println("STIM! " + unit.idWithHash() + " @ " + A.now());
             return true;
         }
 

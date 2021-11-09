@@ -29,7 +29,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     // =========================================================
 
     private static double applyAirUnitTweaks(AUnit defender, AUnit attacker, double currentCriticalDist) {
-        double attackerRangeWithMargin = attacker.airWeaponRange() + 3.3;
+        double attackerRangeWithMargin = attacker.airWeaponRange() + 3.8;
         if (currentCriticalDist <= attackerRangeWithMargin) {
             return attackerRangeWithMargin;
         }

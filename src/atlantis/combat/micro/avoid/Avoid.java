@@ -15,7 +15,7 @@ public class Avoid {
     public static boolean unit(AUnit unit, AUnit enemy) {
         APainter.paintCircle(enemy, 16, Color.Orange);
 
-        if (unit.runningManager().runFrom(enemy, getRunDistance(unit, enemy))) {
+        if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit))) {
             unit.setTooltip(getTooltip(unit, enemy));
             return true;
         }
@@ -33,7 +33,7 @@ public class Avoid {
         APainter.paintCircle(enemiesCenter, 4, Color.Orange);
         APainter.paintCircle(enemiesCenter, 2, Color.Orange);
 
-        if (unit.runningManager().runFrom(enemiesCenter, getRunDistance(unit, enemiesCenter))) {
+        if (unit.runningManager().runFrom(enemiesCenter, getRunDistance(unit))) {
             unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(enemiesCenter)) + ")");
             return true;
         }
@@ -43,20 +43,20 @@ public class Avoid {
 
     // =========================================================
 
-    protected static double getRunDistance(AUnit unit, HasPosition enemies) {
-        return 1.8;
-    }
+//    protected static double getRunDistance(AUnit unit, HasPosition enemies) {
+//        return 2.7;
+//    }
 
-    protected static double getRunDistance(AUnit unit, AUnit enemy) {
+    protected static double getRunDistance(AUnit unit) {
         if (unit.isVulture()) {
             return 4.5;
         }
 
         if (unit.isInfantry()) {
-            return 2.5;
+            return 2.7;
         }
 
-        return 3;
+        return 3.5;
     }
 
     protected static String getTooltip(AUnit unit, AUnit enemy) {

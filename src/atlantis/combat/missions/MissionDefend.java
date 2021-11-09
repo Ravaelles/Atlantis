@@ -69,6 +69,8 @@ public class MissionDefend extends Mission {
         int alliesNear = Select.our().inRadius(2, unit).count();
         return 0.1
                 + (unit.isTank() ? 3 : 0)
+                + (unit.isMedic() ? -2.5 : 0)
+                + (unit.isMarine() ? 2 : 0)
                 + workerBonus
                 + (unit.isRanged() ? 3 : 0)
                 + (alliesNear / 20.0);
@@ -87,7 +89,7 @@ public class MissionDefend extends Mission {
             return true;
         }
 
-        if (Select.enemy().inRadius(14, Select.mainBase()).atLeast(2)) {
+        if (Select.enemy().inRadius(18, Select.mainBase()).atLeast(1)) {
             return true;
         }
 

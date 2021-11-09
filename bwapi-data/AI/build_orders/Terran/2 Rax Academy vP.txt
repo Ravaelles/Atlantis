@@ -36,22 +36,14 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 14 - Supply Depot
 24 - Supply Depot
 27 - Academy
-//28 - Stim Packs
+28 - Stim Packs
 28 - Refinery
-33 - Barracks
 35 - Comsat Station
-//36 - U 238 Shells
+36 - U 238 Shells
+38 - Barracks
 //40 - Barracks
-38 - Factory
-//42 - Tank
-//46 - Tank
-42 - Starport
-45 - Wraith
-47 - Wraith
-49 - Wraith
-51 - Wraith
-53 - Tank Siege Mode
-53 - Wraith
-55 - Wraith
-57 - Wraith
-59 - Wraith
+45 - Factory
+49 - Tank
+52 - Tank
+55 - Tank
+56 - Tank Siege Mode

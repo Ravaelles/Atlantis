@@ -15,15 +15,16 @@ public class TerranComsatStation {
 //        System.out.println(Select.enemy().ofType(AUnitType.Protoss_Observer).count());
 
         if (comsat.energy() >= 50) {
-            scanObservers(comsat);
-            scanLurkers(comsat);
+            return scanDarkTemplars(comsat)
+                    || scanObservers(comsat)
+                    || scanLurkers(comsat);
         }
 
         return false;
     }
 
     // =========================================================
-    // Lurkers
+    // Zerg
 
     private static boolean scanLurkers(AUnit comsat) {
         for (AUnit lurker : Select.enemy().effCloaked().ofType(AUnitType.Zerg_Lurker).listUnits()) {
@@ -41,9 +42,23 @@ public class TerranComsatStation {
     }
 
     // =========================================================
-    // Observers
+    // Protoss
+
+    private static boolean scanDarkTemplars(AUnit comsat) {
+        for (AUnit dt : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Dark_Templar).listUnits()) {
+            if (Select.ourCombatUnits().inRadius(6, dt).atLeast(comsat.energy() >= 150 ? 3 : 5)) {
+                return scan(comsat, dt);
+            }
+        }
+
+        return false;
+    }
 
     private static boolean scanObservers(AUnit comsat) {
+        if (comsat.energy() <= 200) {
+            return false;
+        }
+
         for (AUnit observer : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Observer).listUnits()) {
             if (shouldScanThisObserver(observer, comsat)) {
                 return scan(comsat, observer);

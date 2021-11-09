@@ -78,15 +78,15 @@ public class Selection {
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
-    public Selection inRadius(double maxDist, Position position) {
+    public Selection inRadius(double maxDist, HasPosition unitOrPosition) {
         return Select.cache.get(
-                addToCachePath("inRadius:" + maxDist + ":" + position),
+                addToCachePath("inRadius:" + maxDist + ":" + unitOrPosition),
                 1,
                 () -> {
                     Iterator unitsIterator = data.iterator();// units.iterator();
                     while (unitsIterator.hasNext()) {
                         AUnit unit = (AUnit) unitsIterator.next();
-                        if (unit.distTo(position) > maxDist) {
+                        if (unit.distTo(unitOrPosition) > maxDist) {
                             unitsIterator.remove();
                         }
                     }

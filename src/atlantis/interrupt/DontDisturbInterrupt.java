@@ -9,6 +9,11 @@ public class DontDisturbInterrupt {
 
     public static boolean dontInterruptImportantActions(AUnit unit) {
 
+        // Allow to use tech
+        if (unit.lastActionLessThanAgo(3, UnitActions.USING_TECH)) {
+            return true;
+        }
+
         // "Patrol" is used only for user manual actions and unit will not be interrupted
         if (unit.isPatrolling()) {
             unit.setTooltip("Manual control");

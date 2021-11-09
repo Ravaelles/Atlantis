@@ -144,16 +144,16 @@ public class ProductionOrder {
     @Override
     public String toString() {
         if (unitOrBuilding != null) {
-            return "Order at " + minSupply + " " + shortName();
+            return "At " + minSupply + " " + shortName();
         }
         else if (upgrade != null) {
-            return "Order at " + minSupply + " " + shortName();
+            return "At " + minSupply + " " + shortName();
         }
         else if (tech != null) {
-            return "Order at " + minSupply + " " + shortName();
+            return "At " + minSupply + " " + shortName();
         }
         else if (mission != null) {
-            return "Order at " + minSupply + " " + mission.name();
+            return "At " + minSupply + " " + mission.name();
         }
         else {
             return "InvalidEmptyOrder";

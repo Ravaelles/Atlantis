@@ -1,6 +1,7 @@
 package atlantis.repair;
 
 import atlantis.AGame;
+import atlantis.AtlantisConfig;
 import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Missions;
@@ -55,11 +56,10 @@ public class ARepairerManager {
         // Target is wounded
         if (!repairer.isRepairing()) {
             if (target.isWounded() && target.isAlive()) {
-                repairer.repair(
+                return repairer.repair(
                         target,
                         "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
                 );
-                return true;
             }
         }
 
@@ -173,7 +173,7 @@ public class ARepairerManager {
             return;
         }
 
-        for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).listUnits()) {
+        for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).excludeTypes(AtlantisConfig.WORKER).listUnits()) {
             if (removeExcessiveRepairersIfNeeded()) {
                 return;
             }

@@ -5,9 +5,11 @@ import atlantis.Atlantis;
 import atlantis.strategy.GamePhase;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.A;
+import atlantis.util.Enemy;
 
 public class TerranMissionChangerWhenContain {
 
@@ -28,17 +30,27 @@ public class TerranMissionChangerWhenContain {
 //            return false;
 //        }
 
-        if (Missions.counter() >= 3 && Count.ourCombatUnits() <= 18) {
+        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.mainBase()).atLeast(3)) {
             return true;
         }
 
-        if (OurStrategy.get().goingBio()) {
+        if (Missions.counter() >= 3) {
+            if (Enemy.zerg()) {
+                return true;
+            }
+        }
+
+        if (OurStrategy.get().goingBio() && !Missions.isFirstMission()) {
             if (Count.tanks() <= 1) {
                 return Count.ourCombatUnits() <= 6;
             }
         }
 
-        return Count.tanks() <= 1 && Count.ourCombatUnits() <= 5;
+        if (Enemy.protoss()) {
+            return Count.ourCombatUnits() <= 12;
+        }
+
+        return Count.tanks() <= 1 && Count.ourCombatUnits() <= 12;
 //        return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 9;
     }
 

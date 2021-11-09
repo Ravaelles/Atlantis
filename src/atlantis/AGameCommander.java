@@ -58,10 +58,12 @@ public class AGameCommander {
 
         // =========================================================
 
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_OTHER);
         AEnemyUnits.updateFoggedUnits();
         UmsSpecialActionsManager.update();
         AUnitStateManager.update();
         CameraManager.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_OTHER);
     }
 
 }

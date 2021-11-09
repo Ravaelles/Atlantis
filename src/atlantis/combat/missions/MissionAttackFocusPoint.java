@@ -58,8 +58,12 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Try to go to some starting location, hoping to find enemy there.
-        APosition startLocation = BaseLocations.getNearestUnexploredStartingLocation(Select.mainBase().position());
-        return startLocation;
+        if (Select.mainBase() != null) {
+            APosition startLocation = BaseLocations.getNearestUnexploredStartingLocation(Select.mainBase().position());
+            return startLocation;
+        }
+
+        return null;
     }
 
 }

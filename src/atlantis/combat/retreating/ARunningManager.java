@@ -25,6 +25,7 @@ public class ARunningManager {
     // =========================================================
     
     private final AUnit unit;
+    private static APosition _lastPosition;
 //    private APosition runAwayFrom = null;
     private APosition runTo;
     private Units closeEnemies;
@@ -78,11 +79,11 @@ public class ARunningManager {
         // === Define run to position ==============================
 
 //        if (A.notUms() && A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30)) {
-        if (A.notUms() && (Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30))) {
-            runTo = Select.mainBase().position();
-        } else {
-            runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
-        }
+//        if (A.notUms() && A.seconds() <= 350 && (Count.ourCombatUnits() <= 4 && unit.distToMoreThan(Select.mainBase(), 13))) {
+//            runTo = Select.mainBase().position();
+//        } else {
+        runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
+//        }
 
         // === Run to base as a fallback ===========================
 
@@ -90,13 +91,29 @@ public class ARunningManager {
             runTo = handleRunToMainAsAFallback(unit, runAwayFrom);
         }
 
+        // === Still nothing, try to run anywhere ==================
+
+        if (runTo == null) {
+            runTo = findRunPositionAtAnyDirection(unit, runAwayFrom);
+        }
+
         // === Actual run order ====================================
 
-        if (runTo != null && runTo.distTo(unit) >= 0.2) {
+        if (runTo != null && runTo.distTo(unit) >= 0.02) {
             dist = runTo.distTo(unit);
             unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")");
             return makeUnitRun();
         }
+
+        System.err.println("====================");
+        System.err.println(unit.position());
+        System.err.println(runTo);
+        System.err.println(_lastPosition);
+        System.err.println(Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
+        System.err.println(Select.neutral().inRadius(unit.size(), unit).count());
+        System.err.println();
+//                && unit.position().groundDistanceTo(position) <= 18
+
 
         unit.setTooltip("Cant run");
         return false;
@@ -158,7 +175,7 @@ public class ARunningManager {
 
         if (
                 runTo != null && runTo.distTo(unit) <= 0.3
-                && isPossibleAndReasonablePosition(unit, unit.position(), runTo.position(), true)
+                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
             System.err.println("Invalid run position, dist = " + runTo.distTo(unit));
             APainter.paintLine(unit, runTo, Color.Purple);
@@ -268,7 +285,7 @@ public class ARunningManager {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (isPossibleAndReasonablePosition(unit, unit.position(), runTo, true, "O", "X")) {
+        if (isPossibleAndReasonablePosition(unit, runTo, true, "O", "X")) {
             APainter.paintLine(unit.position(), runTo, Color.Purple);
             APainter.paintLine(unit.position().translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
@@ -337,7 +354,7 @@ public class ARunningManager {
 
                 // If has path to given point, add it to the list of potential points
                 APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
-                if (isPossibleAndReasonablePosition(unit, unitPosition, potentialPosition, true, "v", "x")) {
+                if (isPossibleAndReasonablePosition(unit, potentialPosition, true, "v", "x")) {
                     potentialPositionsList.add(potentialPosition);
                 }
             }
@@ -407,34 +424,38 @@ public class ARunningManager {
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
     public boolean isPossibleAndReasonablePosition(
-            AUnit unit, APosition unitPosition, APosition position, boolean includeUnitCheck
+            AUnit unit, APosition position, boolean includeUnitCheck
     ) {
-        return isPossibleAndReasonablePosition(unit, unitPosition, position, includeUnitCheck, "#", "*");
+        return isPossibleAndReasonablePosition(unit, position, includeUnitCheck, "#", "%");
     }
 
     public boolean isPossibleAndReasonablePosition(
-            AUnit unit, APosition unitPosition, APosition position, boolean includeUnitCheck, String charForIsOk, String charForNotOk
+            AUnit unit, APosition position, boolean includeUnitCheck, String charForIsOk, String charForNotOk
     ) {
         if (unit.isAirUnit()) {
             return true;
         }
 
+        _lastPosition = position;
+
         boolean isOkay = position.isWalkable()
                 && (
                     (
-                            position.translateByTiles(1, 0).isWalkable()
-                            && position.translateByTiles(0, -1).isWalkable()
+                            position.translateByTiles(-1, -1).isWalkable()
+                            && position.translateByTiles(1, 1).isWalkable()
+                            && position.translateByTiles(1, -1).isWalkable()
+                            && position.translateByTiles(-1, -1).isWalkable()
                     )
-                    || (
-                            position.translateByTiles(0, 1).isWalkable()
-                            && position.translateByTiles(-1, 0).isWalkable()
-                    )
+//                    || (
+//                            position.translateByTiles(0, 1).isWalkable()
+//                            && position.translateByTiles(-1, 0).isWalkable()
+//                    )
                 )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
-                && Select.our().exclude(this.unit).inRadius(0.5, position).count() <= 0
-                && Select.neutral().inRadius(0.3, position).isEmpty()
-                && unitPosition.hasPathTo(position)
-                && unitPosition.groundDistanceTo(position) <= 18
+                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
+                && Select.neutral().inRadius(unit.size(), position).isEmpty()
+                && unit.hasPathTo(position)
+                && unit.position().groundDistanceTo(position) <= 18
 //                && Select.neutral().inRadius(1.2, position).count() == 0
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0

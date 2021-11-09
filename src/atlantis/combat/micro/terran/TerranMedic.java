@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -26,6 +27,10 @@ public class TerranMedic {
 
     public static boolean update(AUnit medic) {
         if (handleHealWoundedUnit(medic)) {
+            return true;
+        }
+
+        if (medic.hp() <= 15 && AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
             return true;
         }
 

@@ -36,7 +36,15 @@ public class OurStrategyManager {
     private static AStrategy initForTerran() {
 //        return TerranStrategies.TERRAN_3_Rax_MnM;
 //        return TerranStrategies.TERRAN_Nada_2_Fac;
-        return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
+        if (Enemy.protoss()) {
+            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
+        }
+        else if (Enemy.terran()) {
+            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
+        }
+        else {
+            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
+        }
 //        return TerranStrategies.TERRAN_1_Base_Vultures;
     }
 

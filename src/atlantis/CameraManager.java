@@ -40,7 +40,15 @@ public class CameraManager {
             return cameraUnit;
         }
 
+//        return null;
         return Select.ourCombatUnits().groundUnits().first();
+    }
+
+    public static void centerCameraNowOnFirstCombatUnit() {
+        AUnit unit = Select.ourCombatUnits().groundUnits().first();
+        if (unit != null) {
+            centerCameraOn(unit);
+        }
     }
 
     public static void centerCameraOn(HasPosition position) {
@@ -62,4 +70,5 @@ public class CameraManager {
     public static boolean isFocusCameraOnUnit() {
         return focusCameraOnFirstCombatUnit;
     }
+
 }

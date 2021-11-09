@@ -80,7 +80,6 @@ public class TerranSiegeTank {
     }
 
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
-//        if (tank.cooldownRemaining() <= 3) {
         for (AUnit enemy : Select.enemyFoggedUnits().effCloaked().groundUnits().inRadius(12, tank).list()) {
             if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
                 if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
@@ -91,7 +90,17 @@ public class TerranSiegeTank {
                 return true;
             }
         }
-//        }
+
+        for (AUnit enemy : Select.enemy().effCloaked().groundUnits().inRadius(12, tank).list()) {
+            if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
+                if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
+                    tank.setTooltip("SMASH invisible!");
+                    tank.attackPosition(enemy.position());
+                }
+                tank.setTooltip("SmashInvisible");
+                return true;
+            }
+        }
 
         return false;
     }

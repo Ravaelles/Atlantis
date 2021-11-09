@@ -1,9 +1,7 @@
 package atlantis;
 
-import atlantis.combat.missions.Missions;
+import atlantis.units.select.Select;
 import bwapi.Game;
-
-import java.util.concurrent.TimeUnit;
 
 import static atlantis.Atlantis.game;
 
@@ -23,10 +21,9 @@ public class GameSpeed {
      */
     public static int frameSkip;
 
-//    private static final int NORMAL_GAME_SPEED = 30;
-//    private static final int NORMAL_FRAME_SKIP = 0;
     private static final int NORMAL_GAME_SPEED = 0;
-    private static final int NORMAL_FRAME_SKIP = 90;
+//    private static final int NORMAL_FRAME_SKIP = 1;
+    private static final int NORMAL_FRAME_SKIP = 150;
 //    private static final int NORMAL_FRAME_SKIP = 2;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
@@ -47,6 +44,28 @@ public class GameSpeed {
 
         Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
+    }
+
+    public static void checkIfNeedToSlowDown() {
+        if (true) { return; }
+
+//        if (!oneTimeSlowdownUsed && frameSkip >= 40 && Missions.isGlobalMissionContain()) {
+        if (
+                !oneTimeSlowdownUsed
+                        && AGame.now() > 60
+                        && gameSpeed == 0
+//                        && frameSkip >= 40
+                        && Select.enemy().count() > 0
+//                        && Missions.isGlobalMissionContain()
+        ) {
+            oneTimeSlowdownUsed = true;
+            System.out.println("Slow down to " + currentSpeedAndFrameSkip());
+            pauseGame();
+            changeSpeedTo(1);
+            changeFrameSkipTo(0);
+            CameraManager.centerCameraNowOnFirstCombatUnit();
+            unpauseGame();
+        }
     }
 
     /**
@@ -210,15 +229,6 @@ public class GameSpeed {
      */
     public static boolean isPaused() {
         return isPaused;
-    }
-
-    public static void checkIfNeedToSlowDown() {
-        if (!oneTimeSlowdownUsed && frameSkip >= 40 && Missions.isGlobalMissionContain()) {
-            oneTimeSlowdownUsed = true;
-            System.out.println("Slow down to " + currentSpeedAndFrameSkip());
-            changeSpeedTo(0);
-            changeFrameSkipTo(0);
-        }
     }
 
     private static String currentSpeedAndFrameSkip() {

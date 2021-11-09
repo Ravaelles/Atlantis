@@ -233,7 +233,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                this, newPosition, -1, 9999, true
 //        ) && move(newPosition, UnitActions.MOVE)) {
         if (
-                runningManager().isPossibleAndReasonablePosition(this, this.position(), newPosition, false)
+                runningManager().isPossibleAndReasonablePosition(this, newPosition, false)
                 && move(newPosition, UnitActions.MOVE, "Move away")
         ) {
             this.setTooltip(tooltip);
@@ -1365,7 +1365,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        }
 
         if (time == null) {
-            return 999 + A.now();
+            return A.now();
         }
         return A.now() - time;
     }
@@ -1717,6 +1717,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isSunken() {
         return type().isSunken();
+    }
+
+    // Approximate unit width (in tiles).
+    public double size() {
+        return (type().getDimensionLeft() + type().getDimensionRight() + 2) / 64.0;
+    }
+
+    public boolean isMarine() {
+        return type().isMarine();
     }
 
 //    public boolean isDepleted() {
