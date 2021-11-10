@@ -110,14 +110,18 @@ public class AWorkerDefenceManager {
         AUnit wounded = Select.ourWorkers().wounded().inRadius(3, worker).nearestTo(worker);
 
         if (wounded != null && wounded.isWounded() && wounded.isAlive() && !wounded.isBuilder()) {
-            if (!worker.isRepairing()) {
-                worker.repair(wounded, "Buddy!");
-            }
-            if (wounded.distToLessThan(worker, 0.6)) {
-                if (!wounded.isBuilder() && !wounded.isRepairing() || wounded.isMoving()) {
-                    wounded.stop("BeRepaired");
-                }
-            }
+            worker.repair(wounded, "BuddyRepair!");
+            wounded.repair(worker, "BuddyRepair!");
+//            if (!worker.isRepairing()) {
+//            }
+//            if (!wounded.isRepairing()) {
+//            }
+//            if (wounded.distToLessThan(worker, 0.6)) {
+//                if (!wounded.isBuilder() && !wounded.isRepairing() || wounded.isMoving()) {
+//                    wounded.stop("BeRepaired");
+//                }
+//                wounded.setTooltip("BeRepaired");
+//            }
             return true;
         }
 

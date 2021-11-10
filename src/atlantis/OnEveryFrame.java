@@ -1,18 +1,5 @@
 package atlantis;
 
-import atlantis.combat.squad.Squad;
-import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AFoggedUnit;
-import atlantis.map.Chokes;
-import atlantis.scout.AScoutManager;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
-import jbweb.Blocks;
-import jbweb.Stations;
-import jbweb.Wall;
-import jbweb.Walls;
-
 public class OnEveryFrame {
 
 //    private static CappedList<Integer> frames = new CappedList<>(4);
@@ -72,7 +59,7 @@ public class OnEveryFrame {
 //            System.out.println("marine = " + unit.canAttackAirUnits() + " // " + unit.getAirWeapon().damageAmount());
 //        }
 
-
+//        System.out.println(AGame.gas() + " // " + AGame.minerals());
     }
 
 }

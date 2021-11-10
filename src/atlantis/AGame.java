@@ -101,14 +101,14 @@ public class AGame {
     /**
      * Number of minerals.
      */
-    public static int getMinerals() {
+    public static int minerals() {
         return Atlantis.game().self().minerals();
     }
 
     /**
      * Number of gas.
      */
-    public static int getGas() {
+    public static int gas() {
         return Atlantis.game().self().gas();
     }
 
@@ -254,14 +254,14 @@ public class AGame {
      * Returns true if we can afford given amount of minerals.
      */
     public static boolean hasMinerals(int mineralsToAfford) {
-        return getMinerals() >= mineralsToAfford;
+        return minerals() >= mineralsToAfford;
     }
 
     /**
      * Returns true if we can afford given amount of gas.
      */
     public static boolean hasGas(int gasToAfford) {
-        return getGas() >= gasToAfford;
+        return gas() >= gasToAfford;
     }
 
     /**
