@@ -20,7 +20,7 @@ public class ASquadManager {
             return;
         }
 
-        Squad squad = Squad.getAlphaSquad();
+        Squad squad = Squad.alpha();
         if (!squad.list().contains(unit)) {
             squad.addUnit(unit);
             unit.setSquad(squad);

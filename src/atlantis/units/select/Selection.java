@@ -154,7 +154,7 @@ public class Selection {
     }
 
     public Selection cloakedButEffVisible() {
-        data.removeIf(unit -> !unit.effCloaked());
+        data.removeIf(unit -> !unit.isCloaked() && !unit.isBurrowed() && !unit.effCloaked());
         return this;
     }
 

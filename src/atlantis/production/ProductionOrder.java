@@ -270,7 +270,7 @@ public class ProductionOrder {
         return hasWhatRequired;
     }
 
-    public APosition getPosition() {
+    public APosition atPosition() {
         return position;
     }
 

@@ -89,8 +89,8 @@ public abstract class AbstractPositionFinder {
         for (ConstructionOrder constructionOrder : AConstructionRequests.getAllConstructionOrders()) {
             if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.getStatus())
                     && !builder.equals(constructionOrder.getBuilder())) {
-                if (constructionOrder.getPositionToBuild() != null) {
-                    double distance = PositionUtil.distanceTo(constructionOrder.getPositionToBuild(), position);
+                if (constructionOrder.positionToBuild() != null) {
+                    double distance = PositionUtil.distanceTo(constructionOrder.positionToBuild(), position);
                     boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AGame.isPlayingAsZerg()
                             && building.isBase() && constructionOrder.getBuildingType().isBase());
                     
@@ -113,7 +113,7 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
-        AUnit base = Select.mainBase();
+        AUnit base = Select.main();
 
         APainter.paintCircle(position, 10, Color.Green);
         if (base != null && base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 4) {
@@ -171,7 +171,7 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
-        if (Select.mainBase() == null) {
+        if (Select.main() == null) {
             return false;
         }
 

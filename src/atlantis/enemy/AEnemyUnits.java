@@ -100,7 +100,7 @@ public class AEnemyUnits {
     }
     
     public static AFoggedUnit nearestEnemyBuilding() {
-        AUnit ourMainBase = Select.mainBase();
+        AUnit ourMainBase = Select.main();
         AFoggedUnit best = null;
         if (ourMainBase != null) {
             double minDist = 999999;

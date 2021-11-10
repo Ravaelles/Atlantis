@@ -89,7 +89,7 @@ public class MissionDefend extends Mission {
             return true;
         }
 
-        if (Select.enemy().inRadius(18, Select.mainBase()).atLeast(1)) {
+        if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
             return true;
         }
 

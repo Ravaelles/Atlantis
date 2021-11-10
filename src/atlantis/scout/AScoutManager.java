@@ -128,7 +128,7 @@ public class AScoutManager {
 //            return;
 //        }
         // Define center point for our searches
-        AUnit ourMainBase = Select.mainBase();
+        AUnit ourMainBase = Select.main();
         if (ourMainBase == null && A.notUms()) {
             return false;
         }

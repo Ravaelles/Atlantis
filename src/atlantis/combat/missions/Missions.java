@@ -2,7 +2,6 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.A;
 import atlantis.util.Enemy;
 
@@ -69,7 +68,7 @@ public class Missions {
 
         // === Handle UMS ==========================================
 
-        if (AGame.isUms() || Select.mainBase() == null) {
+        if (AGame.isUms() || Select.main() == null) {
 //            return Missions.UMS;
             return Missions.ATTACK;
         }

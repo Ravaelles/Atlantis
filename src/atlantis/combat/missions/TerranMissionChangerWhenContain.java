@@ -1,14 +1,10 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.Atlantis;
-import atlantis.strategy.GamePhase;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 
 public class TerranMissionChangerWhenContain {
@@ -30,7 +26,7 @@ public class TerranMissionChangerWhenContain {
 //            return false;
 //        }
 
-        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.mainBase()).atLeast(3)) {
+        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.main()).atLeast(3)) {
             return true;
         }
 
@@ -55,8 +51,8 @@ public class TerranMissionChangerWhenContain {
     }
 
     protected static boolean shouldChangeMissionToAttack() {
-        if (Select.mainBase() != null) {
-            if (Select.enemy().inRadius(14, Select.mainBase()).atLeast(2)) {
+        if (Select.main() != null) {
+            if (Select.enemy().inRadius(14, Select.main()).atLeast(2)) {
                 return false;
             }
         }

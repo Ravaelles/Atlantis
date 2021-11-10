@@ -1,7 +1,6 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
-import atlantis.debug.APainter;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
@@ -11,7 +10,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 import atlantis.util.We;
-import bwapi.Color;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
 
@@ -31,8 +29,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Enemies that breached into base =============
 
-                if (We.haveBase()) {
-                    AUnit enemyInBase = Select.enemy().groundUnits().effVisible().inRadius(10, Select.mainBase()).first();
+                if (Select.haveMain()) {
+                    AUnit enemyInBase = Select.enemy().groundUnits().effVisible().inRadius(10, Select.main()).first();
                     if (enemyInBase != null) {
                         return enemyInBase.position();
                     }
@@ -56,7 +54,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Focus enemy attacking the main base =================
 
-                AUnit mainBase = Select.mainBase();
+                AUnit mainBase = Select.main();
                 if (mainBase == null) {
                     return null;
                 }

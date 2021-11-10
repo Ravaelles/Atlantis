@@ -55,7 +55,7 @@ public class ABuilderManager {
     }
 
     private static boolean travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
-        APosition buildPosition = constructionOrder.getPositionToBuild();
+        APosition buildPosition = constructionOrder.positionToBuild();
         APosition buildPositionCenter = constructionOrder.getPositionToBuildCenter();
         AUnitType buildingType = constructionOrder.getBuildingType();
 

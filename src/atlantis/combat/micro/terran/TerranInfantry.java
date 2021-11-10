@@ -6,11 +6,9 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
-import bwapi.UpgradeType;
 
 
 public class TerranInfantry {
@@ -81,7 +79,7 @@ public class TerranInfantry {
                 .inRadius(15, unit).havingSpaceFree(unit.spaceRequired());
         AUnit bunker = bunkers.nearestTo(unit);
         if (bunker != null) {
-            AUnit mainBase = Select.mainBase();
+            AUnit mainBase = Select.main();
             
             // Select the most distance (according to main base) bunker
             if (Missions.isGlobalMissionDefend() && mainBase != null) {

@@ -71,7 +71,7 @@ public class Squad extends Units {
     /**
      * Get first, main squad of units.
      */
-    public static Squad getAlphaSquad() {
+    public static Squad alpha() {
 
         // If no squad exists, create main squad
         if (ASquadManager.squads.isEmpty()) {
@@ -90,6 +90,10 @@ public class Squad extends Units {
 
     public static void setSquads(ArrayList<Squad> squads) {
         ASquadManager.squads = squads;
+    }
+
+    public static APosition alphaCenter() {
+        return alpha() != null ? alpha().center() : null;
     }
 
 //    public APosition getMedianUnitPosition() {

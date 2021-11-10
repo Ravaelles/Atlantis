@@ -50,7 +50,7 @@ public class AProductionManager {
         // =========================================================
         // Produce TECH
 
-        else if (order.tech()!= null) {
+        else if (order.tech() != null) {
             TechType tech = order.tech();
             ATechRequests.researchTech(tech);
         }

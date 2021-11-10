@@ -3,6 +3,7 @@ package atlantis.map;
 import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
 import atlantis.util.A;
 import atlantis.util.Cache;
@@ -106,7 +107,7 @@ public class AMap {
         return null;
     }
 
-    public static APosition getRandomUnexploredPosition(APosition startPoint) {
+    public static APosition getRandomUnexploredPosition(HasPosition startPoint) {
         APosition position = null;
         for (int attempts = 0; attempts < 50; attempts++) {
             int mapDimension = Math.max(Atlantis.game().mapWidth(), Atlantis.game().mapHeight());
@@ -114,7 +115,7 @@ public class AMap {
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValidFarFromBounds();
-            if (position.isWalkable() && !position.isExplored() && startPoint.hasPathTo(position)) {
+            if (position.isWalkable() && !position.isExplored() && startPoint.position().hasPathTo(position)) {
                 return getMostWalkablePositionNear(position, 2);
             }
         }

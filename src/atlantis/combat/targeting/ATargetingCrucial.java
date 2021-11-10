@@ -65,7 +65,16 @@ public class ATargetingCrucial extends AEnemyTargeting {
         }
 
         // =========================================================
-        // LURKER in range
+        // DEFILER / LURKER in range
+
+        target = enemyUnits.clone()
+                .ofType(AUnitType.Zerg_Defiler)
+                .effVisible()
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
 
         target = enemyUnits.clone()
                 .ofType(AUnitType.Zerg_Lurker)
@@ -101,8 +110,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
             target = enemyUnits.clone()
                     .ofType(
                             AUnitType.Protoss_Observer,
-                            AUnitType.Terran_Siege_Tank_Siege_Mode,
-                            AUnitType.Zerg_Defiler
+                            AUnitType.Terran_Siege_Tank_Siege_Mode
                     )
     //                .inShootRangeOf(unit)
                     .inRadius(5, unit)

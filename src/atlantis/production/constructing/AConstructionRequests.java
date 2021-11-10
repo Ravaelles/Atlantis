@@ -33,7 +33,7 @@ public class AConstructionRequests {
     }
 
     public static boolean requestConstructionOf(ProductionOrder order) {
-        return requestConstructionOf(order.unitType(), order.getPosition(), order);
+        return requestConstructionOf(order.unitType(), order.atPosition(), order);
     }
 
     /**
@@ -306,5 +306,14 @@ public class AConstructionRequests {
                 constructionOrder.cancel();
             }
         }
+    }
+
+    public static boolean hasNotStartedConstructionNear(AUnitType building, APosition point, double inRadius) {
+        for (ConstructionOrder order : getNotStartedConstructionsOfType(building)) {
+            if (order.positionToBuild() != null && point.distToLessThan(point, inRadius)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

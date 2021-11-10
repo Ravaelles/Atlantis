@@ -152,7 +152,7 @@ public interface AUnitOrders {
 //        if (!unit().isMoving() || A.now() % 4 != 0) {
 //        if (!unit().isUnitActionMove() || A.now() % 5 == 0) {
         
-        APosition currentTarget = unit().getTargetPosition();
+        APosition currentTarget = unit().targetPosition();
 
         if (currentTarget == null || (!currentTarget.equals(target) || unit().isLastOrderFramesAgo(6))) {
 //            if (unit().isFirstCombatUnit()) {

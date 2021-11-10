@@ -2,16 +2,13 @@ package atlantis.combat.retreating;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
-import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
-import atlantis.units.select.Selection;
 import atlantis.util.A;
 import bwapi.Color;
 
@@ -120,9 +117,9 @@ public class ARunningManager {
     }
 
     private APosition handleRunToMainAsAFallback(AUnit unit, HasPosition runAwayFrom) {
-        if (Select.mainBase() != null && Select.mainBase().distToMoreThan(runAwayFrom, 15)) {
+        if (Select.main() != null && Select.main().distToMoreThan(runAwayFrom, 15)) {
             if (Select.our().inRadius(0.7, unit).exclude(unit).atMost(2)) {
-                return Select.mainBase().position();
+                return Select.main().position();
             }
         }
 

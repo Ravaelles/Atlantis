@@ -9,10 +9,8 @@ import atlantis.tech.SpellCoordinator;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
 import bwapi.TechType;
 
 import java.util.List;
@@ -190,7 +188,7 @@ public class ProtossHighTemplar {
             return false;
         }
 
-        APosition center = Squad.getAlphaSquad().center();
+        APosition center = Squad.alpha().center();
         if (center != null) {
             if (Select.our().inRadius(0.3, highTemplar).atLeast(3)) {
                 return highTemplar.moveAwayFrom(

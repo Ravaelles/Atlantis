@@ -131,7 +131,7 @@ public class AConstructionManager {
             }
         } // Building doesn't exist yet, means builder is travelling to the construction place
         else if (builder != null && !builder.isMoving()) {
-            if (constructionOrder.getPositionToBuild() == null) {
+            if (constructionOrder.positionToBuild() == null) {
                 APosition positionToBuild = APositionFinder.getPositionForNew(
                         constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
                 );
@@ -225,8 +225,8 @@ public class AConstructionManager {
         }
 
         int timeout = 30 * (
-                (order.getBuildingType().isBase() ? 40 : 15)
-                + (int) (1.6 * order.getPositionToBuild().distTo(order.getBuilder())
+                (order.getBuildingType().isBase() || order.getBuildingType().isCombatBuilding() ? 40 : 15)
+                + (int) (1.7 * order.positionToBuild().distTo(order.getBuilder())
         ));
 
         if (AGame.getTimeFrames() - order.getFrameOrdered() > timeout) {

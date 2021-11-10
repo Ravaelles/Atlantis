@@ -143,7 +143,11 @@ public class AWorkerDefenceManager {
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = Select.enemy().combatUnits()
                 .excludeTypes(
-                        AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver, AUnitType.Protoss_Zealot
+                        AUnitType.Zerg_Lurker,
+                        AUnitType.Zerg_Ultralisk,
+                        AUnitType.Protoss_Archon,
+                        AUnitType.Protoss_Reaver,
+                        AUnitType.Protoss_Zealot
                 )
                 .inRadius(1, worker).listUnits();
         for (AUnit enemy : enemies) {

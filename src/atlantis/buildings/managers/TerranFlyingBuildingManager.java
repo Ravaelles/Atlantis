@@ -6,7 +6,6 @@ import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitAction;
 import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 
@@ -55,7 +54,7 @@ public class TerranFlyingBuildingManager {
         }
 
         if (flyingBuilding.lastUnderAttackLessThanAgo(60)) {
-            APosition median = Squad.getAlphaSquad().median();
+            APosition median = Squad.alpha().median();
             if (median != null) {
                 flyingBuilding.move(median, UnitActions.RUN, "BackOff");
                 return true;

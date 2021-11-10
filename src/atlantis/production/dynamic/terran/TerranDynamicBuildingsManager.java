@@ -1,15 +1,18 @@
 package atlantis.production.dynamic.terran;
 
 import atlantis.AGame;
+import atlantis.combat.micro.terran.TerranMissileTurret;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.AddToQueue;
+import atlantis.production.requests.AAntiAirBuildingRequests;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.strategy.OurStrategy;
 import atlantis.strategy.decisions.OurDecisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -17,6 +20,9 @@ import atlantis.units.select.Selection;
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
+        offensiveBunkers();
+        offensiveMissileTurrets();
+
         factoryIfBioOnly();
 
         armory();
@@ -24,7 +30,14 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         addonIfNeeded();
     }
 
+    private static void offensiveBunkers() {
+    }
+
     // =========================================================
+
+    private static boolean offensiveMissileTurrets() {
+        return TerranMissileTurret.handleOffensiveMissileTurrets();
+    }
 
     private static boolean armory() {
         if (Count.includingPlanned(AUnitType.Terran_Armory) == 0) {

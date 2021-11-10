@@ -54,6 +54,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return;
         }
 
+        if (A.supplyUsed() >= 40 && !AGame.canAffordWithReserved(80, 0)) {
+            return;
+        }
+
         if (Count.ourCombatUnits() > 25) {
             if (!AGame.canAffordWithReserved(80, 0)) {
                 return;

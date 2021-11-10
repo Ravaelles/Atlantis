@@ -40,7 +40,7 @@ public class ACombatEvaluatorExtraConditions {
 //        }
         
         // If you're near the main base, force the fight
-        AUnit mainBase = Select.mainBase();
+        AUnit mainBase = Select.main();
         if (mainBase != null) {
             // Force to fight units that aren't close to being dead
             //                if (unit.getHitPoints() >= 11) {

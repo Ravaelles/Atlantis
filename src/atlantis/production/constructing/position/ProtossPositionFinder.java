@@ -145,7 +145,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     }
 
     private static APosition positionForFirstPylon() {
-        AUnit base = Select.mainBase();
+        AUnit base = Select.main();
         AChoke mainChoke = Chokes.mainChoke();
         if (base == null || mainChoke == null) {
             return Select.our().first().position();

@@ -2,7 +2,7 @@ package atlantis.workers;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +18,7 @@ public class AMineralGathering {
      * Assign all 4 workers to optimal (closest) minerals fields.
      */
     public static void initialAssignWorkersToMinerals() {
-        AUnit mainBase = Select.mainBase();
+        AUnit mainBase = Select.main();
         if (mainBase == null) {
             return;
         }

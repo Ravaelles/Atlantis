@@ -49,7 +49,7 @@ public class ProtossObserver {
             return false;
         }
 
-        AUnit scout = Squad.getAlphaSquad().getSquadScout();
+        AUnit scout = Squad.alpha().getSquadScout();
         if (scout != null) {
             observerForSquadScout = observer;
             if (scout.distTo(observer) > 1) {
@@ -66,7 +66,7 @@ public class ProtossObserver {
             return false;
         }
 
-        APosition goTo = Squad.getAlphaSquad().center();
+        APosition goTo = Squad.alpha().center();
         if (goTo != null) {
             observerForArmy = observer;
             if (goTo.distTo(observer) > 1) {
@@ -79,7 +79,7 @@ public class ProtossObserver {
     }
 
     private static boolean detectInvisibleUnitsClosestToBase(AUnit observer) {
-        if (Select.mainBase() == null) {
+        if (Select.main() == null) {
             return false;
         }
 
@@ -104,24 +104,24 @@ public class ProtossObserver {
     }
 
     private static AUnit enemyDangerousHiddenUnit() {
-        AUnit invisibleUnit = Select.enemy().effCloaked().combatUnits().nearestTo(Select.mainBase());
+        AUnit invisibleUnit = Select.enemy().effCloaked().combatUnits().nearestTo(Select.main());
         if (invisibleUnit != null) {
             return invisibleUnit;
         }
 
-        AUnit lurker = Select.enemy().ofType(AUnitType.Zerg_Lurker).nearestTo(Select.mainBase());
+        AUnit lurker = Select.enemy().ofType(AUnitType.Zerg_Lurker).nearestTo(Select.main());
         if (lurker != null) {
             return lurker;
         }
 
-        AUnit terranCloaked = Select.enemy().effCloaked().ofType(AUnitType.Terran_Wraith, AUnitType.Terran_Ghost).nearestTo(Select.mainBase());
+        AUnit terranCloaked = Select.enemy().effCloaked().ofType(AUnitType.Terran_Wraith, AUnitType.Terran_Ghost).nearestTo(Select.main());
         if (terranCloaked != null) {
             return terranCloaked;
         }
 
         return Select.enemy().effCloaked().ofType(
             AUnitType.Protoss_Dark_Templar
-        ).nearestTo(Select.mainBase());
+        ).nearestTo(Select.main());
     }
 
 }

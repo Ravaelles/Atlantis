@@ -134,8 +134,8 @@ public class PositionHelper {
     /**
      * Returns a <b>new</b> Position that represents the effect of moving this position by [deltaX, deltaY].
      */
-    public static APosition translateByPixels(APosition position, int deltaPixelX, int deltaPixelY) {
-        return new APosition(position.getX() + deltaPixelX, position.getY() + deltaPixelY);
+    public static APosition translateByPixels(HasPosition position, int deltaPixelX, int deltaPixelY) {
+        return new APosition(position.x() + deltaPixelX, position.y() + deltaPixelY);
     }
     
     // === Other method ==================================

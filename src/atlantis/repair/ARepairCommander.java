@@ -80,7 +80,7 @@ public class ARepairCommander {
     protected static void assignBunkerProtectorsIfNeeded() {
 //        if (Missions.isGlobalMissionAttack()) {
 //        }
-        AUnit mainBase = Select.mainBase();
+        AUnit mainBase = Select.main();
         if (mainBase == null) {
             return;
         }

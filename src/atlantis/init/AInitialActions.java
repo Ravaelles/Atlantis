@@ -1,9 +1,7 @@
 package atlantis.init;
 
 import atlantis.AGame;
-import atlantis.map.AMap;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.workers.AMineralGathering;
 
 public class AInitialActions {
@@ -13,7 +11,7 @@ public class AInitialActions {
      * one-time only actions like initial assignment of workers to minerals etc.
      */
     public static void executeInitialActions() {
-        if (Select.mainBase() == null) {
+        if (Select.main() == null) {
             AGame.setUmsMode(true);
         }
 

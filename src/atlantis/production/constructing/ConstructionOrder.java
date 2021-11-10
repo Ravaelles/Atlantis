@@ -115,7 +115,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     // =========================================================
     
     public APosition getPositionToBuildCenter() {
-        APosition positionToBuild = getPositionToBuild();
+        APosition positionToBuild = positionToBuild();
         if (positionToBuild != null) {
             return positionToBuild.translateByPixels(
                     getBuildingType().getDimensionLeft(), getBuildingType().getDimensionUp()
@@ -150,7 +150,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.status = status;
     }
 
-    public APosition getPositionToBuild() {
+    public APosition positionToBuild() {
         return positionToBuild;
     }
 

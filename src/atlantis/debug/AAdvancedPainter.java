@@ -212,12 +212,12 @@ public class AAdvancedPainter extends APainter {
 
         setTextSizeMedium();
         for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
-            paintCircleFilled(enemy, 18, Color.Orange);
-            paintTextCentered(enemy, "Cloaked,HP=" + enemy.hp(), Color.Orange);
+            paintCircleFilled(enemy, 8, Color.Orange);
+            paintTextCentered(enemy, "Cloaked,HP=" + enemy.hp(), Color.Red);
         }
         for (AUnit enemy : Select.enemy().cloakedButEffVisible().listUnits()) {
-            paintCircleFilled(enemy, 18, Color.Green);
-            paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.Green);
+            paintCircleFilled(enemy, 8, Color.Green);
+            paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.White);
         }
     }
 
@@ -225,7 +225,7 @@ public class AAdvancedPainter extends APainter {
      * Paint focus point for global attack mission etc.
      */
     static void paintSidebarInfo() {
-        Mission mission = Squad.getAlphaSquad().mission();
+        Mission mission = Squad.alpha().mission();
 
         // Time
         if (AGame.isUms()) {
@@ -247,7 +247,7 @@ public class AAdvancedPainter extends APainter {
         // Focus point
 
         APosition focusPoint = MissionAttack.getInstance().focusPoint();
-        AUnit mainBase = Select.mainBase();
+        AUnit mainBase = Select.main();
         String desc = "";
         if (focusPoint != null && mainBase != null) {
             desc = "(" + ((int) mainBase.distTo(focusPoint)) + " tiles)";
@@ -256,7 +256,7 @@ public class AAdvancedPainter extends APainter {
 
         // =========================================================
 
-        paintSideMessage("Combat squad size: " + Squad.getAlphaSquad().size(), Color.Yellow, 0);
+        paintSideMessage("Combat squad size: " + Squad.alpha().size(), Color.Yellow, 0);
 
         if (We.terran()) {
             paintSideMessage("Repairers: " + ARepairAssignments.countTotalRepairers(), Color.White, 0);
@@ -570,7 +570,7 @@ public class AAdvancedPainter extends APainter {
         for (ConstructionOrder order : AConstructionRequests.getAllConstructionOrders()) {
             if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
-                APosition positionToBuild = order.getPositionToBuild();
+                APosition positionToBuild = order.positionToBuild();
                 AUnitType buildingType = order.getBuildingType();
                 if (positionToBuild == null || buildingType == null) {
                     continue;
@@ -583,7 +583,7 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintConstructionPlace(APosition positionToBuild, AUnitType buildingType, String text, Color color) {
         if (positionToBuild == null) {
-            if (Select.mainBase() != null) {
+            if (Select.main() != null) {
                 System.err.println(buildingType + " has no position to build");
                 throw new RuntimeException("That's unacceptable, lad!");
             } else {
@@ -626,7 +626,7 @@ public class AAdvancedPainter extends APainter {
             }
 
             APosition unitPosition = unit.position();
-            APosition targetPosition = unit.getTargetPosition();
+            APosition targetPosition = unit.targetPosition();
             int unitRadius = unit.type().getDimensionLeft();
 
             // STARTING ATTACK
@@ -665,9 +665,9 @@ public class AAdvancedPainter extends APainter {
                 paintCircle(unit, unitRadius - 4, Color.Blue);
                 paintCircle(unit, unitRadius - 3, Color.Blue);
                 paintCircle(unit, unitRadius - 2, Color.Blue);
-                if (unit.getTargetPosition()!= null) {
-                    paintCircleFilled(unit.getTargetPosition(), 4, Color.Blue);
-                    paintLine(unit.position(), unit.getTargetPosition(), Color.Blue);
+                if (unit.targetPosition() != null) {
+                    paintCircleFilled(unit.targetPosition(), 4, Color.Blue);
+                    paintLine(unit.position(), unit.targetPosition(), Color.Blue);
                 }
             }
 //            // CONSTRUCTING
@@ -746,7 +746,7 @@ public class AAdvancedPainter extends APainter {
         int flagHeight = 8;
         int dy = 12;
 
-        paintLine(unit, unit.getTargetPosition(), Color.Blue); // Where unit is running to
+        paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
 
         paintRectangleFilled(unit.position().translateByPixels(0, -flagHeight - dy),
                 flagWidth, flagHeight, Color.White); // White flag
@@ -1210,7 +1210,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintMineralDistance() {
-        AUnit mainBase = Select.mainBase();
+        AUnit mainBase = Select.main();
         if (mainBase == null) {
             return;
         }
@@ -1232,7 +1232,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintSquads() {
-        Squad alphaSquad = Squad.getAlphaSquad();
+        Squad alphaSquad = Squad.alpha();
         if (alphaSquad == null) {
             return;
         }

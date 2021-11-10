@@ -7,7 +7,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.Units;
-import atlantis.units.select.Selection;
 
 public class FightInsteadAvoid {
 
@@ -210,7 +209,7 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        return unit.hpPercent() > 75 && unit.distToLessThan(Select.mainBase(), 12);
+        return unit.hpPercent() > 75 && unit.distToLessThan(Select.main(), 12);
     }
 
 }

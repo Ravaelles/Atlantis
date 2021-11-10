@@ -3,7 +3,6 @@ package atlantis.combat.micro.transport;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
@@ -64,7 +63,7 @@ public class TransportUnits {
         AUnit nearEnemy = Select.enemyCombatUnits().canAttack(baby, 5).nearestTo(transport);
         if (nearEnemy != null) {
             transport.moveAwayFrom(nearEnemy, 8, "ToSafety");
-            APainter.paintLine(transport, transport.getTargetPosition(), Color.White);
+            APainter.paintLine(transport, transport.targetPosition(), Color.White);
             return true;
         }
 

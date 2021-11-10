@@ -76,7 +76,7 @@ public class APositionFinder {
             if (nearTo == null) {
                 if (AGame.isPlayingAsZerg()) {
 //                    nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
-                    nearTo = Select.mainBase().position();
+                    nearTo = Select.main().position();
                 }
                 else {
 //                    nearTo = Select.mainBase().getPosition();

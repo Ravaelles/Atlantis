@@ -3,7 +3,6 @@ package atlantis.combat.micro;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
@@ -55,7 +54,7 @@ public class Unfreezer {
 //        GameSpeed.changeSpeedTo(70);
 //        GameSpeed.pauseGame();
 
-        if (Select.mainBase() != null && unit.move(Select.mainBase(), UnitActions.MOVE, "Unfreeze")) {
+        if (Select.main() != null && unit.move(Select.main(), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
 

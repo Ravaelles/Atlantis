@@ -1,7 +1,7 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=24
+#SCOUT_IS_NTH_WORKER=11
 
 // When supply is bigger than N, then start auto-producing supply units
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=25
@@ -44,6 +44,9 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 //40 - Barracks
 45 - Factory
 49 - Tank
+50 - Engineering Bay
 52 - Tank
+54 - Missile Turret
 55 - Tank
 56 - Tank Siege Mode
+56 - Missile Turret

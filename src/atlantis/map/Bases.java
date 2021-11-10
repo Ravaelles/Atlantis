@@ -2,6 +2,7 @@ package atlantis.map;
 
 import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.position.Positions;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
@@ -24,7 +25,7 @@ public class BaseLocations {
      * Returns starting location that's nearest to given position and is not yet explored (black space, not
      * fog of war).
      */
-    public static APosition getNearestUnexploredStartingLocation(APosition nearestTo) {
+    public static APosition getNearestUnexploredStartingLocation(HasPosition nearestTo) {
         if (nearestTo == null) {
             return null;
         }
@@ -77,7 +78,7 @@ public class BaseLocations {
     /**
      * Returns nearest free base location where we don't have base built yet.
      */
-    public static ABaseLocation getExpansionFreeBaseLocationNearestTo(Position nearestTo) {
+    public static ABaseLocation getExpansionFreeBaseLocationNearestTo(HasPosition nearestTo) {
 
         // Get list of all base locations
         Positions<ABaseLocation> baseLocations = new Positions<>();
@@ -130,11 +131,11 @@ public class BaseLocations {
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
     public static APosition natural() {
-        if (Select.mainBase() == null) {
+        if (Select.main() == null) {
             return null;
         }
 
-        ABaseLocation naturalLocation = natural(Select.mainBase().position());
+        ABaseLocation naturalLocation = natural(Select.main().position());
         if (naturalLocation != null) {
             return naturalLocation.position();
         }
@@ -195,7 +196,7 @@ public class BaseLocations {
      * there), but still obviously you don't see him.
      */
     public static List<ABaseLocation> startingLocations(boolean excludeOurStartLocation) {
-        AUnit mainBase = Select.mainBase();
+        AUnit mainBase = Select.main();
 
         return (List<ABaseLocation>) cache.get(
                 "startingLocations:" + excludeOurStartLocation,

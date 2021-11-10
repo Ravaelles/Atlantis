@@ -559,7 +559,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Returns first unit being base. For your units this is most likely your main base, for enemy it will be
      * first discovered base.
      */
-    public static AUnit mainBase() {
+    public static AUnit main() {
         String cachePath;
         return cacheUnit.get(
                 cachePath = "mainBase",
@@ -569,6 +569,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);
                 }
         );
+    }
+
+    public static boolean haveMain() {
+        return main() != null;
     }
 
     /**

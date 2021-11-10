@@ -19,7 +19,7 @@ public class MissionChanger {
 
         // === Handle UMS ==========================================
 
-        if (AGame.isUms() || Select.mainBase() == null) {
+        if (AGame.isUms() || Select.main() == null) {
             return;
         }
 

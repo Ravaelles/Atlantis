@@ -1024,7 +1024,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        return hp() == 0;
+//        System.out.println(type() + " // " + isCloaked() + " // " + hp());
+
+        return !unit().isDetected();
 //        if (isOur()) {
 //            return ;
 //        }
@@ -1038,6 +1040,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                        && ! matchups.enemies.exists(_.orderTarget.contains(this))
 //                        && ! With.bullets.all.exists(_.targetUnit.contains(this)))
 //        else ! detected))
+    }
+
+    private boolean isDetected() {
+        return u().isDetected();
     }
 
     public boolean notVisible() {
@@ -1154,7 +1160,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return getOrderTarget();
     }
 
-    public APosition getTargetPosition() {
+    public APosition targetPosition() {
         return APosition.create(u.getTargetPosition());
     }
 

@@ -45,7 +45,7 @@ public class ZergOverlordManager {
 //            unit.move(goTo, false);
 //        }
 
-        APosition medianUnitPosition = Squad.getAlphaSquad().center();
+        APosition medianUnitPosition = Squad.alpha().center();
         if (medianUnitPosition != null) {
             if (overlord.distTo(medianUnitPosition) > 2.5) {
                 overlord.move(medianUnitPosition, UnitActions.MOVE, "Follow army");

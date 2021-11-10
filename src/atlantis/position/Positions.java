@@ -88,11 +88,11 @@ public class Positions<T extends HasPosition> {
      * Sorts all positions according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first position will be the one closest to given position.
      */
-    public Positions<T> sortByDistanceTo(final Position position, final boolean nearestFirst) {
+    public Positions<T> sortByDistanceTo(final HasPosition position, final boolean nearestFirst) {
         Collections.sort(positions, new Comparator<T>() {
             @Override
             public int compare(T u1, T u2) {
-                return position.getDistance(u1.position()) < position.getDistance(u2.position())
+                return position.distTo(u1.position()) < position.distTo(u2.position())
                         ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
         });
