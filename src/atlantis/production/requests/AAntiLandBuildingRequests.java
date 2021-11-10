@@ -4,6 +4,7 @@ import atlantis.AtlantisConfig;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.production.Requirements;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
@@ -71,7 +72,7 @@ public class AAntiLandBuildingRequests {
         return 0;
     }
 
-    public static boolean requestDefensiveBuildingAntiLand(APosition nearTo) {
+    public static boolean requestDefensiveBuildingAntiLand(HasPosition nearTo) {
         if (nearTo == null) {
             nearTo = positionForNextBuilding();
         }

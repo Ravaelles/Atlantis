@@ -2,6 +2,7 @@ package atlantis.production;
 
 import atlantis.combat.missions.Mission;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.production.orders.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
@@ -34,7 +35,7 @@ public class ProductionOrder {
     /**
      * Makes sense only for buildings.
      */
-    private APosition position = null;
+    private HasPosition position = null;
 
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
@@ -107,11 +108,11 @@ public class ProductionOrder {
         setMission(mission);
     }
 
-    public ProductionOrder(AUnitType unitOrBuilding, APosition position, int minSupply) {
+    public ProductionOrder(AUnitType unitOrBuilding, HasPosition position, int minSupply) {
         this(unitOrBuilding, position, null, null, minSupply);
     }
 
-    public ProductionOrder(AUnitType unitOrBuilding, APosition position, TechType tech, UpgradeType upgrade, int minSupply) {
+    public ProductionOrder(AUnitType unitOrBuilding, HasPosition position, TechType tech, UpgradeType upgrade, int minSupply) {
         assert unitOrBuilding != null || tech != null || upgrade != null;
 
         this.id = firstFreeId++;
@@ -266,11 +267,11 @@ public class ProductionOrder {
         this.hasWhatRequired = hasWhatRequired;
     }
 
-    public boolean canHasWhatRequired() {
+    public boolean hasWhatRequired() {
         return hasWhatRequired;
     }
 
-    public APosition atPosition() {
+    public HasPosition atPosition() {
         return position;
     }
 

@@ -32,21 +32,32 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 @ - Name - Modifier
 9 - Supply Depot
 11 - Barracks
-13 - Barracks
 14 - Supply Depot
+14 - Barracks
 24 - Supply Depot
-27 - Academy
-28 - Stim Packs
+26 - Academy
 28 - Refinery
-35 - Comsat Station
-36 - U 238 Shells
-38 - Barracks
-//40 - Barracks
-45 - Factory
-49 - Tank
-50 - Engineering Bay
-52 - Tank
-54 - Missile Turret
-55 - Tank
-56 - Tank Siege Mode
-56 - Missile Turret
+29 - Barracks
+35 - Barracks
+37 - Comsat Station
+38 - Stim Packs
+40 - U 238 Shells
+42 - Engineering Bay
+45 - Barracks
+//47 - Factory
+//49 - Tank
+//52 - Tank
+//54 - Missile Turret
+55 - Command Center
+//55 - Tank
+//56 - Tank Siege Mode
+62 - Starport
+65 - Wraith
+67 - Wraith
+69 - Wraith
+71 - Wraith
+73 - Tank Siege Mode
+73 - Wraith
+75 - Wraith
+77 - Wraith
+79 - Wraith

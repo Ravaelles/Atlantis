@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran;
 
 import atlantis.AGame;
+import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurret;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
@@ -31,6 +32,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void offensiveBunkers() {
+        TerranBunker.handleOffensiveBunkers();
     }
 
     // =========================================================

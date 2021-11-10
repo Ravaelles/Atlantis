@@ -47,7 +47,8 @@ public class OurDecisions {
         return cache.get(
                 "buildBio",
                 100,
-                () -> (OurStrategy.get().goingBio() || Count.ourCombatUnits() <= 30)
+                () -> OurStrategy.get().goingBio()
+//                () -> (OurStrategy.get().goingBio() || Count.ourCombatUnits() <= 30)
 //                        (!EnemyInformation.enemyStartedWithDefensiveBuilding || Select.ourTerranInfantry().atMost(13))
         );
     }

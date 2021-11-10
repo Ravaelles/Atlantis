@@ -38,7 +38,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     ) {
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);
-        double margin = Math.max(2.5, (unit.squadSize() - 6) / 8.0);
+        double margin = Math.max(2.5, unit.squadSize() / 7.0);
         boolean result;
 
 //        if (We.terran() && handleTerranAdvance(unit)) {
@@ -71,7 +71,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     }
 
     private static double optimalDistFromFocusPoint(AUnit unit, APosition focusPoint) {
-        return 6
+        return 8
                 - unit.hpPercent() / 66.0
                 + (unit.isTank() ? 2 : 0)
                 + (unit.isMedic() ? -1.2 : 0);

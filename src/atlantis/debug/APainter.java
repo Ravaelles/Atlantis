@@ -96,13 +96,13 @@ public class APainter {
         paintCircle(unit.position(), radius, color);
     }
 
-    public static void paintCircle(Position position, int radius, Color color) {
+    public static void paintCircle(APosition position, int radius, Color color) {
         if (isDisabled()) { return; }
 
         if (position == null) {
             return;
         }
-        bwapi.drawCircleMap(position, radius, color, false);
+        bwapi.drawCircleMap(position.position(), radius, color, false);
     }
 
     public static void paintCircleFilled(Position position, int radius, Color color) {
@@ -205,7 +205,7 @@ public class APainter {
         bwapi.setTextSize(Text.Size.Large);
     }
 
-    protected static void paintChoke(AChoke choke, Color color, String extraText) {
+    public static void paintChoke(AChoke choke, Color color, String extraText) {
         if (choke == null || isDisabled()) {
             return;
         }

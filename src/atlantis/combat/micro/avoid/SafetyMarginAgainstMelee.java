@@ -11,7 +11,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         double criticalDist;
 
         if (defender.isInfantry()) {
-            criticalDist = 1.8 + defender.woundPercent() / 27
+            criticalDist = 2.1 + defender.woundPercent() / 26
                     + ourMovementBonus(defender) / 2
                     + enemyMovementBonus(defender, attacker) / 2;
         }

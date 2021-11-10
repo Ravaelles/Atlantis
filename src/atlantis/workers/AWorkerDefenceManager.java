@@ -103,11 +103,11 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean handleRepairNearby(AUnit worker) {
-        if (worker.isWounded() || worker.id() % 5 != 0) {
+        if (!worker.isWounded() || worker.id() % 5 != 0) {
             return false;
         }
 
-        AUnit wounded = Select.ourWorkers().wounded().inRadius(2, worker).nearestTo(worker);
+        AUnit wounded = Select.ourWorkers().wounded().inRadius(3, worker).nearestTo(worker);
 
         if (wounded != null && wounded.isWounded() && wounded.isAlive() && !wounded.isBuilder()) {
             if (!worker.isRepairing()) {
@@ -143,6 +143,8 @@ public class AWorkerDefenceManager {
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = Select.enemy().combatUnits()
                 .excludeTypes(
+                        AUnitType.Terran_Siege_Tank_Siege_Mode,
+                        AUnitType.Terran_Siege_Tank_Tank_Mode,
                         AUnitType.Zerg_Lurker,
                         AUnitType.Zerg_Ultralisk,
                         AUnitType.Protoss_Archon,

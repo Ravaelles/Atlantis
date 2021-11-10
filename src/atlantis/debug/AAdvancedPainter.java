@@ -470,7 +470,7 @@ public class AAdvancedPainter extends APainter {
         for (ProductionOrder order : produceNow) {
             paintSideMessage(
                     String.format("%02d", order.minSupply()) + " - " + order.shortName(),
-                    order.canHasWhatRequired() ? (order.currentlyInProduction() ? Color.Green : Color.Yellow) : Color.Red
+                    order.hasWhatRequired() ? (order.currentlyInProduction() ? Color.Green : Color.Yellow) : Color.Red
             );
             if (++counter >= 10) {
                 break;
@@ -1183,11 +1183,11 @@ public class AAdvancedPainter extends APainter {
         APainter.setTextSizeMedium();
 
         // Natural base
-        APosition natural = BaseLocations.natural();
+        APosition natural = Bases.natural();
         paintBase(natural, "Our natural", Color.Grey);
 
         // Enemy base
-        APosition enemyBase = BaseLocations.enemyNatural();
+        APosition enemyBase = Bases.enemyNatural();
         paintBase(enemyBase, "Enemy natural", Color.Orange);
 
         // Our main choke
@@ -1195,7 +1195,7 @@ public class AAdvancedPainter extends APainter {
         paintChoke(mainChoke, Color.Green, "Main choke");
 
         // Our natural choke
-        AChoke naturalChoke = Chokes.natural(BaseLocations.natural());
+        AChoke naturalChoke = Chokes.natural(Bases.natural());
         paintChoke(naturalChoke, Color.Green, "Natural choke");
 
         // Enemy natural choke

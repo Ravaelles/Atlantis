@@ -13,9 +13,10 @@ import atlantis.util.A;
 
 public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
-    protected static boolean dontProduceBio() {
+    protected static boolean saveForFactory() {
         if (!A.hasMinerals(250)) {
             if (Count.inQueue(AUnitType.Terran_Factory, 1) > 0) {
+                System.out.println("Save for Factory");
                 return true;
             }
         }
@@ -23,30 +24,36 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         return false;
     }
 
-    protected static void medics() {
+    protected static void medicsOrFirebats() {
         if (!OurDecisions.shouldBuildBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
             return;
         }
 
-        if (dontProduceBio()) {
+        if (saveForFactory()) {
             return;
         }
 
-        if (TerranArmyComposition.medicsToInfantry() <= 0.23) {
-            Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
-            if (barracks.isNotEmpty()) {
+        Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
+        if (barracks.isNotEmpty()) {
+            if (Count.medics() >= 4 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) == 0) {
+                produceUnit(barracks.first(), AUnitType.Terran_Firebat);
+                return;
+            }
+
+            if (TerranArmyComposition.medicsToInfantryRatioTooLow()) {
                 produceUnit(barracks.first(), AUnitType.Terran_Medic);
-//                AbstractDynamicUnits.addToQueue(AUnitType.Terran_Medic);
             }
         }
     }
 
     protected static void marines() {
         if (!OurDecisions.shouldBuildBio()) {
+//            System.out.println("Marines - A");
             return;
         }
 
-        if (dontProduceBio()) {
+        if (saveForFactory()) {
+//            System.out.println("Marines - B");
             return;
         }
 
@@ -55,26 +62,34 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         }
 
         if (A.supplyUsed() >= 40 && !AGame.canAffordWithReserved(80, 0)) {
+//            System.out.println("Marines - D");
             return;
         }
 
         if (Count.ourCombatUnits() > 25) {
             if (!AGame.canAffordWithReserved(80, 0)) {
+//                System.out.println("Marines - E");
                 return;
             }
         }
 
-        Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
-        if (
-                Count.ofType(AUnitType.Terran_Academy) >= 1
-                        && Count.marines() >= 4
-                        && Count.medics() <= 2
-                        && barracks.isNotEmpty()
-        ) {
-            return;
-        }
+//        if (
+//                A.hasGas(30)
+//                        && Count.ofType(AUnitType.Terran_Academy) >= 1
+//                        && Count.marines() >= 4
+//                        && Count.medics() <= 2
+//        ) {
+////            System.out.println("Marines - F, gas = " + AGame.gas() + " // " + A.hasGas(30));
+////            System.out.println(Atlantis.game().self().getRace() + " // " + Atlantis.game().self().getName());
+////            System.out.println(Atlantis.game().self().minerals() + " // " + Atlantis.game().self().gatheredMinerals()+ " // " + Atlantis.game().self().gatheredGas() + " / " + Atlantis.game().self().gatheredGas());
+////            System.out.println("-------------------");
+////            System.out.println(Atlantis.game().enemy().getRace() + " // " + Atlantis.game().enemy().getName());
+////            System.out.println(Atlantis.game().enemy().minerals() + " // " + Atlantis.game().enemy().gatheredGas());
+//            return;
+//        }
 
 //        if (Enemy.zerg() && Count.marines() == 0) {
+        Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
             produceUnit(barracks.first(), AUnitType.Terran_Marine);
 //            AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);

@@ -15,7 +15,7 @@ public abstract class ProductionQueue {
      * Ordered list of next units we should build.
      * It gets rebuild whenever new unit is created.
      */
-    protected static ArrayList<ProductionOrder> currentProductionQueue = new ArrayList<>();
+    protected static ArrayList<ProductionOrder> nextInQueue = new ArrayList<>();
 
     /**
      * Number of minerals reserved to produce some units/buildings.
@@ -30,18 +30,27 @@ public abstract class ProductionQueue {
     // =========================================================
 
     public static boolean isAtTheTopOfQueue(AUnitType type, int amongNTop) {
-        for (int i = 0; i < amongNTop && i < currentProductionQueue.size(); i++) {
-            if (type.equals(currentProductionQueue.get(i).unitType())) {
+        for (int i = 0; i < amongNTop && i < nextInQueue.size(); i++) {
+            if (type.equals(nextInQueue.get(i).unitType())) {
                 return true;
             }
         }
         return false;
     }
 
+    public static ProductionOrder nextOrderFor(AUnitType type, int amongNTop) {
+        for (int i = 0; i < amongNTop && i < nextInQueue.size(); i++) {
+            if (type.equals(nextInQueue.get(i).unitType())) {
+                return nextInQueue.get(i);
+            }
+        }
+        return null;
+    }
+
     public static int countInQueue(AUnitType type, int amongNTop) {
         int count = 0;
-        for (int i = 0; i < amongNTop && i < currentProductionQueue.size(); i++) {
-            if (type.equals(currentProductionQueue.get(i).unitType())) {
+        for (int i = 0; i < amongNTop && i < nextInQueue.size(); i++) {
+            if (type.equals(nextInQueue.get(i).unitType())) {
                 count++;
             }
         }
@@ -73,7 +82,7 @@ public abstract class ProductionQueue {
 
     public static int countOrdersWithPriorityAtLeast(ProductionOrderPriority priority) {
         int total = 0;
-        for (ProductionOrder order : currentProductionQueue) {
+        for (ProductionOrder order : nextInQueue) {
 //            if (type.equals(order.getUnitOrBuilding())) {
             if (order.priority().compareTo(priority) >= 0) {
                 total++;

@@ -27,7 +27,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                     }
 
                     AChoke mainChoke = Chokes.enemyMainChoke();
-                    APosition enemyNatural = BaseLocations.enemyNatural();
+                    APosition enemyNatural = Bases.enemyNatural();
                     if (enemyNatural != null) {
                         if (mainChoke != null) {
                             return enemyNatural.translatePercentTowards(mainChoke, 40);
@@ -67,7 +67,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                     // Try to go to some starting location, hoping to find enemy there.
                     if (Select.main() != null) {
                         AChoke choke = Chokes.nearestChoke(
-                                BaseLocations.getNearestUnexploredStartingLocation(Select.main().position())
+                                Bases.getNearestUnexploredStartingLocation(Select.main().position())
                         );
                         return choke != null ? choke.getCenter() : null;
                     }
@@ -86,7 +86,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             return chokepoint.getCenter();
         }
 
-        ABaseLocation natural = BaseLocations.natural(enemyBase.position());
+        ABaseLocation natural = Bases.natural(enemyBase.position());
         if (natural != null) {
             CameraManager.centerCameraOn(natural);
             return natural.position();

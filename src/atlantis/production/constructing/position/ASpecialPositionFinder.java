@@ -1,6 +1,6 @@
 package atlantis.production.constructing.position;
 
-import atlantis.map.BaseLocations;
+import atlantis.map.Bases;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.map.ABaseLocation;
 import atlantis.position.APosition;
@@ -85,10 +85,10 @@ public class ASpecialPositionFinder {
         if (ourBasesCount <= 2) {
             AUnit mainBase = Select.main();
 
-            baseLocationToExpand = BaseLocations.getExpansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
+            baseLocationToExpand = Bases.getExpansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
         }
         else {
-            baseLocationToExpand = BaseLocations.getExpansionBaseLocationMostDistantToEnemy();
+            baseLocationToExpand = Bases.getExpansionBaseLocationMostDistantToEnemy();
         }
         
         if (baseLocationToExpand == null) {
@@ -123,9 +123,9 @@ public class ASpecialPositionFinder {
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
         APosition near = APosition.create(
-                BaseLocations.getExpansionFreeBaseLocationNearestTo(Select.main().position())
+                Bases.getExpansionFreeBaseLocationNearestTo(Select.main().position())
         ).translateByPixels(0, 0);
-//        APosition near = APosition.create(BaseLocations.getExpansionFreeBaseLocationNearestTo(Select.mainBase().position()).position());
+//        APosition near = APosition.create(Bases.getExpansionFreeBaseLocationNearestTo(Select.mainBase().position()).position());
 
         constructionOrder.setNearTo(near);
         constructionOrder.setMaxDistance(4);

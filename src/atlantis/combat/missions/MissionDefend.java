@@ -35,14 +35,6 @@ public class MissionDefend extends Mission {
 
     private boolean moveToDefendFocusPoint(AUnit unit, APosition focusPoint) {
 
-        // === Load infantry into bunkers ==========================
-
-        if (AGame.isPlayingAsTerran() && TerranInfantry.tryLoadingInfantryIntoBunkerIfPossible(unit)) {
-            return true;
-        }
-
-        // =========================================================
-
         // Let workers pass
         double optimalDist = optimalDist(unit, focusPoint);
 

@@ -2,7 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.squad.SquadScout;
-import atlantis.map.BaseLocations;
+import atlantis.map.Bases;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.util.A;
@@ -54,7 +54,7 @@ public class MissionContain extends Mission {
         }
 
         // Allow to defend base
-        APosition natural = BaseLocations.natural();
+        APosition natural = Bases.natural();
         if (natural != null && enemy.distTo(natural) <= 35) {
             return true;
         }

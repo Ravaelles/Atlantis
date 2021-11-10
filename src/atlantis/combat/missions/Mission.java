@@ -55,15 +55,15 @@ public abstract class Mission {
     protected boolean handleWeDontKnowWhereTheEnemyIs(AUnit unit) {
         if (temporaryTarget == null || temporaryTarget.isExplored()) {
             temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
-            if (temporaryTarget != null) {
+//            if (temporaryTarget != null) {
 //                System.out.println("Go to unexplored " + temporaryTarget);
-            }
+//            }
         }
         if (temporaryTarget == null || temporaryTarget.isVisible()) {
             temporaryTarget = AMap.getRandomInvisiblePosition(unit.position());
-            if (temporaryTarget != null) {
+//            if (temporaryTarget != null) {
 //                System.out.println("Go to invisible " + temporaryTarget);
-            }
+//            }
         }
 
         if (temporaryTarget != null) {

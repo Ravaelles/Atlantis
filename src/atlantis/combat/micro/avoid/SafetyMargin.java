@@ -24,7 +24,7 @@ public class SafetyMargin {
             throw new RuntimeException("Attacker is null");
         }
 
-        double base = defender.isOur() && defender.isSquadScout() ? 2 : 0;
+        double base = baseMargin(defender, attacker);
 
         if (attacker.isMelee()) {
             return base + SafetyMarginAgainstMelee.calculate(attacker, defender);
@@ -35,6 +35,14 @@ public class SafetyMargin {
     }
 
     // =========================================================
+
+    private static double baseMargin(AUnit defender, AUnit attacker) {
+        if (defender.isTank()) {
+            return 2.7;
+        }
+
+        return defender.isOur() && defender.isSquadScout() ? 2 : 0;
+    }
 
     protected static double enemyWeaponRangeBonus(AUnit defender, AUnit attacker) {
         return attacker.getWeaponRangeAgainst(defender) - (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);

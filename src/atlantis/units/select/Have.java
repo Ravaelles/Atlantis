@@ -1,7 +1,9 @@
 package atlantis.units.select;
 
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnitType;
 
 public class Have {
@@ -22,13 +24,31 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Barracks) > 0;
     }
 
-    public static boolean existingOrPlanned(AUnitType building, APosition point, double inRadius) {
+    public static boolean existingOrPlanned(AUnitType building, HasPosition position, double inRadius) {
         assert building.isBuilding();
 
-        if (AConstructionRequests.hasNotStartedConstructionNear(building, point, inRadius)) {
+        if (AConstructionRequests.hasNotStartedConstructionNear(building, position, inRadius)) {
             return true;
         }
 
-        return Select.ourOfTypeIncludingUnfinished(building).inRadius(inRadius, point).atLeast(1);
+        return Select.ourOfTypeIncludingUnfinished(building).inRadius(inRadius, position).atLeast(1);
+    }
+
+    public static boolean existingOrPlannedOrInQueue(AUnitType building, HasPosition position, double inRadius) {
+        assert building.isBuilding();
+
+        if (ProductionQueue.isAtTheTopOfQueue(building, 2)) {
+            return true;
+        }
+
+        if (AConstructionRequests.hasNotStartedConstructionNear(building, position, inRadius)) {
+            return true;
+        }
+
+        return Select.ourOfTypeIncludingUnfinished(building).inRadius(inRadius, position).atLeast(1);
+    }
+
+    public static boolean main() {
+        return base();
     }
 }

@@ -3,6 +3,7 @@ package atlantis.production.constructing.position;
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Position;
@@ -16,7 +17,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      *
      */
-    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, APosition nearTo, 
+    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo,
             double maxDistance) {
         _CONDITION_THAT_FAILED = null;
 //        building = building;

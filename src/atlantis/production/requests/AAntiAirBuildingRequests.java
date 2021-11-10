@@ -1,6 +1,7 @@
 package atlantis.production.requests;
 
 import atlantis.AtlantisConfig;
+import atlantis.position.HasPosition;
 import atlantis.production.Requirements;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.position.APosition;
@@ -36,7 +37,7 @@ public class AAntiAirBuildingRequests {
         return 3 * Select.ourBases().count();
     }
 
-    public static boolean requestDefensiveBuildingAntiAir(APosition nearTo) {
+    public static boolean requestDefensiveBuildingAntiAir(HasPosition nearTo) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
 
         if (nearTo == null) {

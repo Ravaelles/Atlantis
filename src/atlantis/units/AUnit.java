@@ -279,9 +279,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
     // Compare type methods
     public boolean isAlive() {
-        if (isOur()) {
-            return !UnitsArchive.isDestroyed(id());
-        }
+//        if (isOur()) {
+//            return !UnitsArchive.isDestroyed(id());
+//        }
 
         return hp() > 0 || !UnitsArchive.isDestroyed(id());
 
@@ -1732,6 +1732,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isMarine() {
         return type().isMarine();
+    }
+
+    public boolean isFirebat() {
+        return type().isFirebat();
+    }
+
+    public boolean isRepairable() {
+        return (boolean) cache.get(
+                "isRepairable",
+                -1,
+                () -> type().isMechanical() || isBuilding()
+        );
     }
 
 //    public boolean isDepleted() {

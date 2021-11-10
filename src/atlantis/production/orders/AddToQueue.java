@@ -1,9 +1,7 @@
 package atlantis.production.orders;
 
-import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.production.ProductionOrder;
-import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
@@ -14,7 +12,7 @@ public class AddToQueue {
         return withTopPriority(type, null);
     }
 
-    public static boolean withTopPriority(AUnitType type, APosition position) {
+    public static boolean withTopPriority(AUnitType type, HasPosition position) {
         return addToQueue(type, position, indexForPriority(ProductionOrderPriority.TOP));
     }
 
@@ -36,7 +34,7 @@ public class AddToQueue {
 
     // =========================================================
 
-    private static boolean addToQueue(AUnitType type, APosition position, int index) {
+    private static boolean addToQueue(AUnitType type, HasPosition position, int index) {
         assert type != null;
 
         if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
@@ -47,7 +45,7 @@ public class AddToQueue {
 //        if (!allowToQueueRequiredBuildings(type)) {
         int minSupply = 0;
         ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
-        ProductionQueue.currentProductionQueue.add(index, productionOrder);
+        ProductionQueue.nextInQueue.add(index, productionOrder);
         return true;
 //        }
 //        else {

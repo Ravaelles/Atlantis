@@ -1,12 +1,14 @@
 package atlantis.production.constructing;
 
 import atlantis.AGame;
+import atlantis.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -15,12 +17,13 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     private static int _firstFreeId = 1;
     private final int ID = _firstFreeId++;
-    private final int frameOrdered;
+    private final int timeOrdered;
+    private int timeBecameInProgress;
     private AUnitType buildingType;
     private AUnit construction;
     private AUnit builder;
     private APosition positionToBuild;
-    private APosition near;
+    private HasPosition near;
     private double maxDistance;
     private ProductionOrder productionOrder;
     private ConstructionOrderStatus status;
@@ -31,7 +34,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.buildingType = buildingType;
 
         status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
-        frameOrdered = AGame.getTimeFrames();
+        timeOrdered = AGame.getTimeFrames();
     }
 
     // =========================================================
@@ -148,6 +151,10 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     public void setStatus(ConstructionOrderStatus status) {
         this.status = status;
+
+        if (status.equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)) {
+            timeBecameInProgress = A.now();
+        }
     }
 
     public APosition positionToBuild() {
@@ -178,11 +185,11 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.productionOrder = productionOrder;
     }
 
-    public APosition getNearTo() {
+    public HasPosition getNearTo() {
         return near;
     }
 
-    public void setNearTo(APosition near) {
+    public void setNearTo(HasPosition near) {
         this.near = near;
     }
 
@@ -194,8 +201,12 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.maxDistance = maxDistance;
     }
 
-    public int getFrameOrdered() {
-        return frameOrdered;
+    public int timeOrdered() {
+        return timeOrdered;
+    }
+
+    public int startedAgo() {
+        return A.ago(timeBecameInProgress);
     }
 
     public boolean hasStarted() {

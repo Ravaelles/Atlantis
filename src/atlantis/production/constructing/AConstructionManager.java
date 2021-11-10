@@ -6,6 +6,7 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.A;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -61,14 +62,23 @@ public class AConstructionManager {
     /**
      * If building is completed, mark construction as finished and remove it.
      */
-    private static void checkForConstructionStatusChange(ConstructionOrder constructionOrder, AUnit building) {
+    private static void checkForConstructionStatusChange(ConstructionOrder order, AUnit building) {
 //        System.out.println("==============");
 //        System.out.println(constructionOrder.getBuildingType());
 //        System.out.println(constructionOrder.getStatus());
 //        System.out.println(constructionOrder.getBuilder());
 
+        if (
+                order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                && order.startedAgo() >= 30
+                && (building == null || !building.isAlive())
+        ) {
+            order.cancel();
+            return;
+        }
+
         // =========================================================
-        AUnit builder = constructionOrder.getBuilder();
+        AUnit builder = order.getBuilder();
 
         // ...change builder into building (it just happens, yeah, weird stuff)
         if (building == null || !building.exists()) {
@@ -80,7 +90,7 @@ public class AConstructionManager {
                     // Happens for Extractor
                     if (builder.getBuildType() == null || builder.getBuildType().equals(AUnitType.None)) {
                         building = builder;
-                        constructionOrder.setConstruction(builder);
+                        order.setConstruction(builder);
                     }
                 }
 
@@ -96,7 +106,7 @@ public class AConstructionManager {
                     AUnit buildUnit = builder.getBuildUnit();
                     if (buildUnit != null) {
                         building = buildUnit;
-                        constructionOrder.setConstruction(buildUnit);
+                        order.setConstruction(buildUnit);
                     }
                 }
             }
@@ -107,42 +117,33 @@ public class AConstructionManager {
             handleZergConstructionsWhichBecameBuildings();
         }
 
-        // =========================================================
-//        if (building != null) {
-//            System.out.println("==============");
-//            System.out.println(constructionOrder.getPositionToBuild());
-//            System.out.println(building.type());
-//            System.out.println(building);
-//            System.out.println(building.isExists());
-//            System.out.println(constructionOrder.getStatus());
-//            System.out.println();
-//            System.out.println();
-//        }
         // If building exists
         if (building != null) {
 
             // Finished: building is completed, remove the construction order object
             if (building.isCompleted()) {
-                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
-                AConstructionRequests.removeOrder(constructionOrder);
+                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
+                AConstructionRequests.removeOrder(order);
             } // In progress
-            else if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
-                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+            else if (order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
-        } // Building doesn't exist yet, means builder is travelling to the construction place
+        }
+
+        // Building doesn't exist yet, means builder is travelling to the construction place
         else if (builder != null && !builder.isMoving()) {
-            if (constructionOrder.positionToBuild() == null) {
+            if (order.positionToBuild() == null) {
                 APosition positionToBuild = APositionFinder.getPositionForNew(
-                        constructionOrder.getBuilder(), constructionOrder.getBuildingType(), constructionOrder
+                        order.getBuilder(), order.getBuildingType(), order
                 );
-                constructionOrder.setPositionToBuild(positionToBuild);
+                order.setPositionToBuild(positionToBuild);
             }
         }
 
         // =========================================================
         // Check if both building and builder are destroyed
-        if (constructionOrder.getBuilder() == null && constructionOrder.getConstruction() == null) {
-            constructionOrder.cancel();
+        if (order.getBuilder() == null && order.getConstruction() == null) {
+            order.cancel();
         }
     }
 
@@ -201,13 +202,13 @@ public class AConstructionManager {
         AUnit building = order.getConstruction();
         
         // If unfinished building is under attack
-        if (building != null && !building.isCompleted() && building.isUnderAttack()) {
+        if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
             
             // If it has less than 71HP or less than 60% and is close to being finished
             if (building.hp() <= 70
                     || (building.getRemainingBuildTime() <= 2 && building.hpPercent() < 60)
-                    || (building.getRemainingBuildTime() <= 3 && building.type().isMilitaryBuilding() 
-                        && building.hpPercent() < 60)) {
+                    || (building.getRemainingBuildTime() <= 3 && building.hpPercent() < 60)
+            ) {
                 order.cancel();
             }
         }
@@ -229,7 +230,7 @@ public class AConstructionManager {
                 + (int) (1.7 * order.positionToBuild().distTo(order.getBuilder())
         ));
 
-        if (AGame.getTimeFrames() - order.getFrameOrdered() > timeout) {
+        if (AGame.getTimeFrames() - order.timeOrdered() > timeout) {
             System.out.println("Cancel construction of " + order.getBuildingType());
             order.cancel();
         }

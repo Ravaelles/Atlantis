@@ -109,7 +109,7 @@ public class AScoutManager {
             return scout.move(nextPositionToScout, UnitActions.SCOUT, "ScoutBases");
         }
 
-        nextPositionToScout = BaseLocations.randomInvisibleStartingLocation();
+        nextPositionToScout = Bases.randomInvisibleStartingLocation();
         return false;
     }
 
@@ -144,11 +144,11 @@ public class AScoutManager {
 //        APosition startingLocation;
         HasPosition startingLocation;
         if (scout.isType(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
-            startingLocation = BaseLocations.getStartingLocationBasedOnIndex(
+            startingLocation = Bases.getStartingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {
-            startingLocation = BaseLocations.getNearestUnexploredStartingLocation(scout.position());
+            startingLocation = Bases.getNearestUnexploredStartingLocation(scout.position());
         }
 
         // =========================================================
@@ -237,7 +237,7 @@ public class AScoutManager {
         // TERRAN + PROTOSS
 
         else if (scouts.isEmpty()) {
-            AUnit scout = Select.ourWorkers().nearestTo(BaseLocations.natural());
+            AUnit scout = Select.ourWorkers().nearestTo(Bases.natural());
             if (!scout.isBuilder()) {
                 scouts.add(scout);
                 return;
@@ -256,7 +256,7 @@ public class AScoutManager {
     }
 
     private static void scoutForTheNextBase(AUnit scout) {
-        APosition baseLocation = BaseLocations.getNearestUnexploredStartingLocation(scout.position());
+        APosition baseLocation = Bases.getNearestUnexploredStartingLocation(scout.position());
         if (baseLocation != null) {
             scout.move(baseLocation.position(), UnitActions.EXPLORE, "Explore next base");
         }

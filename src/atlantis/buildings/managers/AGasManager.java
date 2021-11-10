@@ -125,7 +125,7 @@ public class AGasManager {
     private static int defineOptimalGasWorkers(AUnit gasBuilding, int numOfWorkersNearby) {
 
         // Too much gas, too little minerals
-        if (GamePhase.isEarlyGame() && (Count.workers() <= 12 || (!A.hasMinerals(160) && A.hasGas(150)))) {
+        if ((Count.workers() <= 16 || (!A.hasMinerals(160) && A.hasGas(150)))) {
             return 1;
         }
 

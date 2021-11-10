@@ -29,6 +29,8 @@ public class ASpecialUnitManager {
             return TerranSiegeTank.update(unit);
         } else if (unit.isType(AUnitType.Terran_Medic)) {
             return TerranMedic.update(unit);
+        } else if (unit.isType(AUnitType.Terran_Science_Vessel)) {
+            return TerranMedic.update(unit);
         }
 
         // === Protoss ========================================

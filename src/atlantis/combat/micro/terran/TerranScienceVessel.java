@@ -1,17 +1,22 @@
-package atlantis.dedicated.protoss;
 
+package atlantis.combat.micro.terran;
+
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.squad.Squad;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.actions.UnitActions;
+import bwapi.TechType;
 
-public class ProtossObserver extends MobileDetector {
+import java.util.HashMap;
 
-    protected static AUnitType type = AUnitType.Protoss_Observer;
+public class TerranScienceVessel extends MobileDetector {
+
+    protected static AUnitType type = AUnitType.Terran_Science_Vessel;
 
     // =========================================================
 

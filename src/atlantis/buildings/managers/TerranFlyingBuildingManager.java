@@ -40,9 +40,18 @@ public class TerranFlyingBuildingManager {
     // =========================================================
 
     private static void updateIfBuildingNeedsToBeLifted() {
-        for (AUnit building : Select.ourBuildings().listUnits()) {
+        for (AUnit building : Select.ourBuildings().list()) {
             if (!building.isLifted() && building.isUnderAttack(1) && !building.isLifted() && building.hpPercent() <= 34) {
                 building.lift();
+                return;
+            }
+
+            if (building.lastUnderAttackLessThanAgo(30 * 4)) {
+                APosition median = Squad.alpha().median();
+                if (median != null) {
+                    building.move(median, UnitActions.RUN, "BackOff");
+                    return;
+                }
             }
         }
     }

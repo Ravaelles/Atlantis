@@ -16,7 +16,7 @@ import java.util.Iterator;
 
 public class ARepairerManager {
 
-    private static final int MAX_REPAIRERS = 5;
+    private static final int MAX_REPAIRERS = 6;
 
     public static boolean updateRepairer(AUnit repairer) {
         repairer.setTooltip("Repairer");
@@ -174,6 +174,10 @@ public class ARepairerManager {
         }
 
         for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).excludeTypes(AtlantisConfig.WORKER).listUnits()) {
+            if (!woundedUnit.isRepairable()) {
+                continue;
+            }
+
             if (removeExcessiveRepairersIfNeeded()) {
                 return;
             }
@@ -182,27 +186,28 @@ public class ARepairerManager {
             if (
                     AScoutManager.isScout(woundedUnit)
                     || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
-                    || (woundedUnit.isRunning() && woundedUnit.lastStartedRunningAgo() > 90)
+                    || (woundedUnit.isRunning() && woundedUnit.lastStoppedRunningLessThanAgo(30 * 5))
             ) {
                 continue;
             }
 
             // =========================================================
 
-            int numberOfRepairers = ARepairAssignments.countRepairersForUnit(woundedUnit)
-                    + ARepairAssignments.countProtectorsFor(woundedUnit);
+            int assignThisManyRepairers = ARepairAssignments.countRepairersForUnit(woundedUnit)
+                    + ARepairAssignments.countProtectorsFor(woundedUnit) - 1;
 
             // === Repair bunker ========================================
 
             if (woundedUnit.type().isBunker()) {
                 int shouldHaveThisManyRepairers = ARepairCommander.defineOptimalRepairersForBunker(woundedUnit);
-                ARepairCommander.assignProtectorsFor(woundedUnit, shouldHaveThisManyRepairers - numberOfRepairers);
+                woundedUnit.setTooltip(shouldHaveThisManyRepairers + "RepNeed");
+                ARepairCommander.assignProtectorsFor(woundedUnit, shouldHaveThisManyRepairers - assignThisManyRepairers);
             }
 
             // === Repair ordinary unit =================================
 
-            else {
-                assignRepairersToWoundedUnits(woundedUnit, 1 - numberOfRepairers);
+            else if (assignThisManyRepairers >= 1) {
+                assignRepairersToWoundedUnits(woundedUnit, 1 - assignThisManyRepairers);
             }
         }
     }

@@ -1213,4 +1213,12 @@ public class AUnitType implements Comparable<AUnitType> {
                 () -> is(Terran_Marine)
         );
     }
+
+    public boolean isFirebat() {
+        return (boolean) cache.get(
+                "isFirebat",
+                -1,
+                () -> is(Terran_Firebat)
+        );
+    }
 }

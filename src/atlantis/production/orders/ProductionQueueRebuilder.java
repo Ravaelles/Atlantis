@@ -22,7 +22,7 @@ public class ProductionQueueRebuilder {
     public static void rebuildProductionQueueToExcludeProducedOrders() {
 
         // Clear old production queue.
-        ProductionQueue.currentProductionQueue.clear();
+        ProductionQueue.nextInQueue.clear();
 //        ProductionQueue.currentProductionQueue.addAll(CurrentBuildOrder.get().productionOrders());
 
         // It will store [UnitType->(int)howMany] mapping as we gonna process initial
@@ -56,8 +56,8 @@ public class ProductionQueueRebuilder {
             // =========================================================
 
             if (isOkayToAdd) {
-                ProductionQueue.currentProductionQueue.add(order);
-                if (ProductionQueue.currentProductionQueue.size() >= 12) {
+                ProductionQueue.nextInQueue.add(order);
+                if (ProductionQueue.nextInQueue.size() >= 12) {
                     break;
                 }
             }
@@ -65,7 +65,7 @@ public class ProductionQueueRebuilder {
 
         // It may happen that due to invalid build order sequence the supply order is not maintained
         // Make sure to sort by supply needed for the order.
-        ProductionQueue.currentProductionQueue.sort(Comparator.comparingInt(ProductionOrder::minSupply));
+        ProductionQueue.nextInQueue.sort(Comparator.comparingInt(ProductionOrder::minSupply));
     }
 
     // =========================================================

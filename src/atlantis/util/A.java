@@ -1150,10 +1150,10 @@ public class A {
     }
 
     public static boolean hasMinerals(int minerals) {
-        return AGame.canAfford(minerals, 0);
+        return AGame.hasMinerals(minerals);
     }
 
     public static boolean hasGas(int gas) {
-        return AGame.canAfford(0, gas);
+        return AGame.hasGas(gas);
     }
 }

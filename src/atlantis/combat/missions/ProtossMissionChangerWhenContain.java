@@ -2,6 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.units.select.Count;
+import atlantis.util.A;
 
 public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain {
 
@@ -20,17 +21,16 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
             return false;
         }
 
-        int ourCombatUnits = Count.ourCombatUnits();
-
-        if (ourCombatUnits >= 35) {
+        if (A.supplyUsed() >= 90 || Count.ourCombatUnits() >= 35) {
             return true;
         }
 
-        if (AGame.timeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 900) {
-            return true;
-        }
-
-        return AGame.timeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
+        return false;
+//        if (AGame.timeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 900) {
+//            return true;
+//        }
+//
+//        return AGame.timeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
     }
 
     // === DEFEND ==============================================

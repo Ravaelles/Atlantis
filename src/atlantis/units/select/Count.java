@@ -150,4 +150,11 @@ public class Count {
         return ofType(AUnitType.Terran_Factory);
     }
 
+    public static int firebats() {
+        return ofType(AUnitType.Terran_Firebat);
+    }
+
+//    public static int () {
+//        return ofType(AUnitType.);
+//    }
 }

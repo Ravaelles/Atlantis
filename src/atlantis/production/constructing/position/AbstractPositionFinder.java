@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.debug.APainter;
 import atlantis.map.AChoke;
-import atlantis.map.BaseLocations;
+import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
@@ -133,7 +133,7 @@ public abstract class AbstractPositionFinder {
             }
         }
 
-        for (ABaseLocation base : BaseLocations.baseLocations()) {
+        for (ABaseLocation base : Bases.baseLocations()) {
             if (
                     !base.isStartLocation()
                     && base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5

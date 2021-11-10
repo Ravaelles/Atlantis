@@ -281,10 +281,6 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return "(" + getTileX() + ", " + getTileY() + ")";
     }
 
-    public String toStringPixels() {
-        return "(" + x + ", " + y + ")";
-    }
-
     @Override
     public int hashCode() {
         int hash = 3;

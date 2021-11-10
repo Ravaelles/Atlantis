@@ -1,5 +1,6 @@
 package atlantis.combat.missions;
 
+import atlantis.Atlantis;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
 import atlantis.util.A;
@@ -22,6 +23,11 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
         // === Protoss ===================================================
 
         if (Enemy.protoss()) {
+//            if (Missions.isFirstMission()) {
+            if (Atlantis.LOST <= 5) {
+                return Count.ourCombatUnits() >= 4;
+            }
+
             return Count.ourCombatUnits() >= 15 || Count.tanks() >= 2;
         }
 

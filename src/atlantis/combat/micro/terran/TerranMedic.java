@@ -15,7 +15,7 @@ public class TerranMedic {
      * Maximum allowed distance for a medic to heal wounded units that are not their assignment.
      * The idea is to disallow them to move away too much.
      */
-    private static final int HEAL_OTHER_UNITS_MAX_DISTANCE = 6;
+    private static final int HEAL_OTHER_UNITS_MAX_DISTANCE = 10;
 
     /**
      * Specific units that medics should follow in order to heal them as fast as possible 

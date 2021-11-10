@@ -23,6 +23,9 @@ public interface HasPosition {
      * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
      */
     default APosition translatePercentTowards(HasPosition towards, int percentTowards) {
+        return translatePercentTowards(percentTowards, towards);
+    }
+    default APosition translatePercentTowards(int percentTowards, HasPosition towards) {
         return PositionHelper.getPositionMovedPercentTowards(
                 this, towards, percentTowards
         );
@@ -32,6 +35,9 @@ public interface HasPosition {
      * Returns new position which is moved e.g. 0.5 tiles towards <b>towards</b>.
      */
     default APosition translateTilesTowards(HasPosition towards, double tiles) {
+        return translateTilesTowards(tiles, towards);
+    }
+    default APosition translateTilesTowards(double tiles, HasPosition towards) {
         return PositionHelper.getPositionMovedTilesTowards(
                 this, towards, tiles
         );
@@ -80,6 +86,10 @@ public interface HasPosition {
     }
 
     // =========================================================
+
+    default String toStringPixels() {
+        return "(" + x() + ", " + y() + ")";
+    }
 
     /**
      * Returns X coordinate in tiles, 1 tile = 32 pixels.

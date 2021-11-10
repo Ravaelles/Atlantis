@@ -3,6 +3,7 @@ package atlantis.map;
 import atlantis.AGame;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.util.Cache;
 import bwem.ChokePoint;
 import jbweb.JBWEB;
@@ -82,7 +83,7 @@ public class Chokes {
                         return choke;
                     }
 
-                    return nearestChoke(BaseLocations.natural());
+                    return nearestChoke(Bases.natural());
                 }
         );
     }
@@ -96,7 +97,7 @@ public class Chokes {
                 "natural:" + relativeTo.toStringPixels(),
                 400,
                 () -> {
-                    ARegion naturalRegion = Regions.getRegion(BaseLocations.natural(relativeTo.position()));
+                    ARegion naturalRegion = Regions.getRegion(Bases.natural(relativeTo.position()));
                     if (naturalRegion == null) {
                         System.err.println("Can't find region for natural base");
                         AGame.setUmsMode(true);
@@ -119,7 +120,7 @@ public class Chokes {
         );
     }
 
-    public static AChoke nearestChoke(APosition position) {
+    public static AChoke nearestChoke(HasPosition position) {
         if (position == null) {
             return null;
         }
@@ -132,7 +133,7 @@ public class Chokes {
                 AChoke nearest = null;
 
                 for (AChoke chokePoint : chokes()) {
-                    double dist = position.groundDistanceTo(chokePoint.getCenter()) - (chokePoint.getWidth() / 64.0);
+                    double dist = position.position().groundDistanceTo(chokePoint.getCenter()) - (chokePoint.getWidth() / 64.0);
                     if (dist < nearestDist) {
                         nearestDist = dist;
                         nearest = chokePoint;
@@ -176,7 +177,7 @@ public class Chokes {
     }
 
     public static AChoke enemyNaturalChoke() {
-        APosition enemyNatural = BaseLocations.enemyNatural();
+        APosition enemyNatural = Bases.enemyNatural();
         if (enemyNatural == null) {
             return null;
         }

@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import bwapi.Game;
 
@@ -55,13 +56,14 @@ public class GameSpeed {
                         && AGame.now() > 60
                         && gameSpeed == 0
 //                        && frameSkip >= 40
-                        && Select.enemy().count() > 0
+                        && Count.ourCombatUnits() >= 5
+                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Missions.isGlobalMissionContain()
         ) {
             oneTimeSlowdownUsed = true;
             System.out.println("Slow down to " + currentSpeedAndFrameSkip());
             pauseGame();
-            changeSpeedTo(1);
+            changeSpeedTo(10);
             changeFrameSkipTo(0);
             CameraManager.centerCameraNowOnFirstCombatUnit();
             unpauseGame();

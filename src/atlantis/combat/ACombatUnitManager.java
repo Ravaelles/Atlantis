@@ -15,6 +15,11 @@ import atlantis.units.select.Select;
 public class ACombatUnitManager {
 
     protected static boolean update(AUnit unit) {
+        if (unit.isWorker()) {
+            System.err.println("Worker being ACUM");
+            return false;
+        }
+
         preActions(unit);
 
         // =========================================================
@@ -36,20 +41,20 @@ public class ACombatUnitManager {
         }
 
         // =========================================================
-        // === MEDIUM priority - TACTICAL level ====================
-        // =========================================================
-
-        if (handledMediumPriority(unit)) {
-            return true;
-        }
-
-        // =========================================================
         // === SPECIAL units =======================================
         // =========================================================
 
         // Terran infantry has own managers, but these allow higher
         // level managers to take control.
         if (ASpecialUnitManager.handledUsingSpecialUnitManager(unit)) {
+            return true;
+        }
+
+        // =========================================================
+        // === MEDIUM priority - TACTICAL level ====================
+        // =========================================================
+
+        if (handledMediumPriority(unit)) {
             return true;
         }
 

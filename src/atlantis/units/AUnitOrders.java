@@ -129,12 +129,12 @@ public interface AUnitOrders {
         
         // === Handle LOADED/SIEGED units ========================================
         
-        if (unit().isLoaded()) {
-            unit().unload(unit());
-            unit().setLastUnitOrderNow();
-            return true;
-        }
-        else if (unit().isSieged() && unit().lastActionMoreThanAgo(30 * 9, UnitActions.SIEGE)) {
+//        if (unit().isLoaded()) {
+//            unit().unload(unit());
+//            unit().setLastUnitOrderNow();
+//            return true;
+//        }
+        if (unit().isSieged() && unit().lastActionMoreThanAgo(30 * 9, UnitActions.SIEGE)) {
             unit().unsiege();
             unit().setLastUnitOrderNow();
             return true;

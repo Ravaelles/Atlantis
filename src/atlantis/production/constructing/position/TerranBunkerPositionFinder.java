@@ -2,6 +2,7 @@ package atlantis.production.constructing.position;
 
 import atlantis.combat.missions.MissionDefend;
 import atlantis.map.*;
+import atlantis.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -12,7 +13,7 @@ import atlantis.units.select.Select;
 public class TerranBunkerPositionFinder {
 
     public static APosition findPosition(AUnitType building, AUnit builder, ConstructionOrder order) {
-        APosition nearTo = null;
+        HasPosition nearTo = null;
         
         if (order != null && order.getProductionOrder() != null && order.getProductionOrder().getModifier() != null) {
             String locationModifier = order.getProductionOrder().getModifier();
@@ -67,7 +68,7 @@ public class TerranBunkerPositionFinder {
         else {
             AChoke chokepointForNatural = Chokes.natural(mainBase.position());
             if (chokepointForNatural != null && mainBase != null) {
-                ABaseLocation natural = BaseLocations.natural(Select.main().position());
+                ABaseLocation natural = Bases.natural(Select.main().position());
                 return APosition.create(chokepointForNatural.getCenter())
                         .translatePercentTowards(natural, 25);
 

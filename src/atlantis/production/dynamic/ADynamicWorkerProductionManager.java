@@ -2,9 +2,14 @@ package atlantis.production.dynamic;
 
 import atlantis.AGame;
 import atlantis.production.AProductionManager;
+import atlantis.production.ProductionOrder;
 import atlantis.production.orders.BuildOrderSettings;
+import atlantis.production.orders.ProductionQueue;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.A;
+import atlantis.util.We;
 
 
 public class ADynamicWorkerProductionManager {
@@ -27,6 +32,13 @@ public class ADynamicWorkerProductionManager {
         // Check FREE SUPPLY
         if (AGame.supplyFree() == 0 || !AGame.canAffordWithReserved(50, 0)) {
             return false;
+        }
+
+        if (We.terran()) {
+            ProductionOrder order = ProductionQueue.nextOrderFor(AUnitType.Terran_Comsat_Station, 1);
+            if (order != null && order.hasWhatRequired() && !A.hasMinerals(100)) {
+                return false;
+            }
         }
 
         // Check if not TOO MANY WORKERS

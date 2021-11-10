@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BaseLocations {
+public class Bases {
 
     private static Cache<Object> cache = new Cache<>();
 

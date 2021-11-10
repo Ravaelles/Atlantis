@@ -14,6 +14,10 @@ public abstract class AAvoidUnits {
     // =========================================================
 
     public static boolean avoidEnemiesIfNeeded(AUnit unit) {
+        if (shouldSkip(unit)) {
+            return false;
+        }
+
         Units enemiesDangerouslyClose = getUnitsToAvoid(unit);
         if (enemiesDangerouslyClose.isEmpty()) {
             return false;
@@ -23,6 +27,10 @@ public abstract class AAvoidUnits {
     }
 
     // =========================================================
+
+    private static boolean shouldSkip(AUnit unit) {
+        return unit.isLoaded();
+    }
 
     public static Units getUnitsToAvoid(AUnit unit) {
         return getUnitsToAvoid(unit, true);

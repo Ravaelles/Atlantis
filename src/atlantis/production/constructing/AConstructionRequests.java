@@ -1,6 +1,7 @@
 package atlantis.production.constructing;
 
 import atlantis.AGame;
+import atlantis.position.HasPosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
@@ -41,7 +42,7 @@ public class AConstructionRequests {
      *
      * WARNING: passed order parameter can later override nearTo parameter.
      */
-    public static boolean requestConstructionOf(AUnitType building, APosition near, ProductionOrder order) {
+    public static boolean requestConstructionOf(AUnitType building, HasPosition near, ProductionOrder order) {
 
         // Validate
         if (!building.isBuilding()) {
@@ -308,9 +309,9 @@ public class AConstructionRequests {
         }
     }
 
-    public static boolean hasNotStartedConstructionNear(AUnitType building, APosition point, double inRadius) {
+    public static boolean hasNotStartedConstructionNear(AUnitType building, HasPosition position, double inRadius) {
         for (ConstructionOrder order : getNotStartedConstructionsOfType(building)) {
-            if (order.positionToBuild() != null && point.distToLessThan(point, inRadius)) {
+            if (order.positionToBuild() != null && position.distToLessThan(position, inRadius)) {
                 return true;
             }
         }

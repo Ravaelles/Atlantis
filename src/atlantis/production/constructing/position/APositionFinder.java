@@ -2,6 +2,7 @@ package atlantis.production.constructing.position;
 
 import atlantis.AGame;
 import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -22,7 +23,7 @@ public class APositionFinder {
      * Returns build position for next building of given type.
      */
     public static APosition getPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
-        APosition near = constructionOrder != null ? constructionOrder.getNearTo() : null;
+        HasPosition near = constructionOrder != null ? constructionOrder.getNearTo() : null;
         double maxDistance = constructionOrder != null ? constructionOrder.getMaxDistance() : 35;
         return getPositionForNew(builder, building, constructionOrder, near, maxDistance);
     }
@@ -35,7 +36,7 @@ public class APositionFinder {
     public static APosition getPositionForNew(
             AUnit builder, AUnitType building,
             ConstructionOrder constructionOrder,
-            APosition nearTo, double maxDistance
+            HasPosition nearTo, double maxDistance
     ) {
         totalRequests++;
         constructionOrder.setMaxDistance(maxDistance);
@@ -111,7 +112,7 @@ public class APositionFinder {
     /**
      * Returns standard build position for building near given position.
      */
-    public static APosition findStandardPosition(AUnit builder, AUnitType building, APosition nearTo, double maxDistance) {
+    public static APosition findStandardPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         
         // ===========================================================
         // = Handle standard building position according to the race =
