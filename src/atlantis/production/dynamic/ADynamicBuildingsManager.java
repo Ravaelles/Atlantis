@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.Helpers;
 
 
@@ -16,7 +17,9 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     public static void update() {
         
         // Check if we should automatically build new base, because we have shitload of minerals.
-        AExpansionManager.requestNewBaseIfNeeded();
+        if (AExpansionManager.shouldBuildNewBase()) {
+            AExpansionManager.requestNewBase();
+        }
         
         // If number of bases is bigger than gas buildings, it usually makes sense to build new gas extractor
         gasBuildingIfNeeded();
@@ -51,6 +54,17 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     }
 
     // =========================================================
+
+    protected static boolean requestMoreIfAllBusy(AUnitType building, int freeMinerals, int freeGas) {
+        if (AGame.canAffordWithReserved(freeMinerals, freeGas)) {
+            Selection buildings = Select.ourOfType(building);
+
+            if (buildings.areAllBusy()) {
+                return AddToQueue.withStandardPriority(building);
+            }
+        }
+        return false;
+    }
 
     protected static void buildToHaveOne(int minSupply, AUnitType type) {
         if (AGame.supplyUsed() >= minSupply) {

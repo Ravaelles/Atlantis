@@ -138,7 +138,7 @@ public class AEnemyUnits {
     /**
      * Saves information about given unit being destroyed, so counting units works properly.
      */
-    public static void unitDestroyed(AUnit enemyUnit) {
+    public static void removeDiscoveredUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.remove(enemyUnit);
 //        enemyUnitsDestroyed.put(enemyUnit.id(), enemyUnit);
     }

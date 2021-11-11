@@ -102,7 +102,9 @@ public class ABuildOrderLoader {
         //   - SCV
         //   - SCV
         //   - Supply Depot
-        buildOrder.print();
+        if (A.notUms()) {
+            buildOrder.print();
+        }
 
 //        buildOrder.overrideProductionOrders(BuildOrderNotationConverter.convertNotation(buildOrder));
 //

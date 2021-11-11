@@ -8,6 +8,8 @@ import atlantis.production.constructing.*;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.repair.ARepairAssignments;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
+import atlantis.util.A;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 
@@ -173,6 +175,12 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitDestroy(Unit u) {
+
+        // Some ums maps have funky stuff happening at the start
+        if (A.now() <= 20) {
+            return;
+        }
+
         AUnit unit = AUnit.createFrom(u);
 //        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 
@@ -223,6 +231,12 @@ public class Atlantis implements BWEventListener {
                 }
             }
         }
+
+        if (A.isUms() && A.supplyUsed() == 0 && Select.ourCombatUnits().isEmpty()) {
+            System.out.println("### ROUND END ###");
+            UnitsArchive.paintLostUnits();
+            UnitsArchive.paintKilledUnits();
+        }
     }
 
     /**
@@ -270,7 +284,7 @@ public class Atlantis implements BWEventListener {
             if (unit.isOur()) {
                 ASquadManager.unitDestroyed(unit);
             } if (unit.isEnemy()) {
-                AEnemyUnits.unitDestroyed(unit);
+                AEnemyUnits.removeDiscoveredUnit(unit);
             }
             unit = AUnit.createFrom(u);
         }
@@ -423,6 +437,11 @@ public class Atlantis implements BWEventListener {
                 "### Killed: " + Atlantis.KILLED + ", Lost: " + Atlantis.LOST + " ###\t\n" +
                 "### Resource killed/lost balance: " + AGame.killsLossesResourceBalance() + " ###"
         );
+
+        if (A.isUms()) {
+            UnitsArchive.paintLostUnits();
+            UnitsArchive.paintKilledUnits();
+        }
     }
 
     /**

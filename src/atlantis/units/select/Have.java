@@ -51,4 +51,12 @@ public class Have {
     public static boolean main() {
         return base();
     }
+
+    public static boolean factory() {
+        return Count.ofType(AUnitType.Terran_Factory) > 0;
+    }
+
+    public static boolean no(AUnitType type) {
+        return Count.includingPlanned(type) == 0;
+    }
 }

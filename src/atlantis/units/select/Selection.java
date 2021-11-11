@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionUtil;
 import atlantis.repair.ARepairAssignments;
@@ -785,4 +786,7 @@ public class Selection {
         return new Selection(this.data, currentCachePath);
     }
 
+    public APosition center() {
+        return units().average();
+    }
 }

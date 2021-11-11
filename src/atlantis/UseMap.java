@@ -16,14 +16,16 @@ public class UseMap {
 //        return "ums/";
 //        return "ums/";
 //        return "ums/";
+
 //        return "ums/7th.scx"; // vs. AI Protoss player, that can kill CSVs constructing
-        return "ums/exp_skilltest.scx"; // vs. AI Protoss player
+//        return "ums/exp_skilltest.scx"; // vs. AI Protoss player
 //        return "ums/vsGosuComputer.scx"; // vs. AI Zerg Player - cheating as fuck
+        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
+
 //        return "ums/member_test.scx"; // vs. AI 2x Protoss players, massive Zealot rush
 //        return "ums/micro challenge.scx"; // Even more minigames
 //        return "ums/ConTrol2.scx"; // More minigames
 //        return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones vs. 2 drones, lings vs. goons etc
-//        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
 //        return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships vs. Dragoons
 //        return "ums/trainzvreaver.scm"; // Zerglings & Hydras vs. 2 Reavers & Shuttle
 //        return "ums/training-PvT.scx"; // Dragoons & Zealots vs. Vultures & Tanks + slowly Hi-Templars & Archons

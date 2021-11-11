@@ -286,7 +286,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return hp() > 0 || !UnitsArchive.isDestroyed(id());
 
 //        if (isOur()) {
-//            return hp() > 0 && !AOurUnitsExtraInfo.hasOurUnitBeenDestroyed(this);
+//            return hp() > 0 && !OurUnitsArchive.hasOurUnitBeenDestroyed(this);
 //        }
 //
 //        return !AEnemyUnits.isEnemyUnitDestroyed(this);
@@ -1539,6 +1539,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int energy() {
         return u.getEnergy();
+    }
+
+    public boolean energy(int min) {
+        return u.getEnergy() >= min;
     }
 
     /**

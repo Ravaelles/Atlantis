@@ -48,14 +48,12 @@ public class GameSpeed {
     }
 
     public static void checkIfNeedToSlowDown() {
-        if (true) { return; }
+//        if (true) { return; }
 
-//        if (!oneTimeSlowdownUsed && frameSkip >= 40 && Missions.isGlobalMissionContain()) {
         if (
                 !oneTimeSlowdownUsed
                         && AGame.now() > 60
                         && gameSpeed == 0
-//                        && frameSkip >= 40
                         && Count.ourCombatUnits() >= 5
                         && Select.enemyCombatUnits().atLeast(2)
 //                        && Missions.isGlobalMissionContain()

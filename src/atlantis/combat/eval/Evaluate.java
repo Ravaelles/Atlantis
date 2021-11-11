@@ -3,6 +3,7 @@ package atlantis.combat.eval;
 import atlantis.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.util.WeaponUtil;
 
 import java.util.Collection;
@@ -51,6 +52,7 @@ public class Evaluate {
 
             // =========================================================
             // BUILDING
+
             else if (unit.type().isBuilding() && unit.isCompleted()) {
                 boolean antiGround = (againstUnit == null || !againstUnit.isAirUnit());
                 boolean antiAir = (againstUnit == null || againstUnit.isAirUnit());
@@ -66,8 +68,17 @@ public class Evaluate {
                         enemyDefensiveBuildingInRange = true;
                     }
                 }
-            } // =========================================================
+            }
+
+            // === Infantry ============================================
+            
+            else if (unit.isMarine()) {
+                strength = marineTweak(unit, strength); 
+            }
+
+            // =========================================================
             // Ordinary MILITARY UNIT
+            
             else {
                 strength += unitStrengthEval;
             }
@@ -139,6 +150,14 @@ public class Evaluate {
         }
 
         return -1.0;
+    }
+
+    private static double marineTweak(AUnit unit, double strength) {
+        if (Select.ourOfType(AUnitType.Terran_Medic).inRadius(3, unit).isEmpty()) {
+            return strength / 3;
+        }
+
+        return strength;
     }
 
 }

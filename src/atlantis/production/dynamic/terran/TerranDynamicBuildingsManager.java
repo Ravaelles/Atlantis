@@ -12,8 +12,10 @@ import atlantis.strategy.decisions.OurDecisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 
 
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
@@ -26,23 +28,26 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
         armory();
         factory();
+        starport();
 
         comsat();
         machineShop();
+
+        barracks();
     }
+
+    // =========================================================
 
     private static void offensiveBunkers() {
         TerranBunker.handleOffensiveBunkers();
     }
-
-    // =========================================================
 
     private static boolean offensiveMissileTurrets() {
         return TerranMissileTurret.handleOffensiveMissileTurrets();
     }
 
     private static boolean armory() {
-        if (Count.includingPlanned(AUnitType.Terran_Armory) == 0) {
+        if (Have.no(AUnitType.Terran_Armory)) {
             return false;
         }
 
@@ -53,14 +58,22 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         return false;
     }
 
+    private static void starport() {
+        if (A.supplyUsed() >= 90 && Have.factory() && Have.no(AUnitType.Terran_Starport)) {
+            AddToQueue.withStandardPriority(AUnitType.Terran_Starport);
+        }
+    }
+
     private static boolean factoryIfBioOnly() {
 //        if (OurDecisions.haveFactories() && Count.factories() < 2) {
 //            AddToQueue.withHighPriority(AUnitType.Terran_Factory);
 //        }
         if (
                 OurStrategy.get().goingBio()
-                        && OurDecisions.wantsToBeAbleToProduceTanksSoon()
-                        && Count.includingPlanned(AUnitType.Terran_Factory) == 0
+                && (
+                        (OurDecisions.wantsToBeAbleToProduceTanksSoon() && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
+                        || (A.supplyUsed() >= 80 && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
+                )
         ) {
 //            System.err.println("Change from BIO to TANKS (" + Count.includingPlanned(AUnitType.Terran_Factory) + ")");
 //            System.err.println("A = " + Count.inProduction(AUnitType.Terran_Factory));
@@ -127,5 +140,8 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
     }
 
-    
+    private static boolean barracks() {
+        return requestMoreIfAllBusy(AUnitType.Terran_Barracks, 200, 0);
+    }
+
 }
