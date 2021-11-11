@@ -17,10 +17,10 @@ public class UseMap {
 //        return "ums/";
 //        return "ums/";
 
-//        return "ums/7th.scx"; // vs. AI Protoss player, that can kill CSVs constructing
+        return "ums/7th.scx"; // vs. AI Protoss player, that can kill CSVs constructing
 //        return "ums/exp_skilltest.scx"; // vs. AI Protoss player
 //        return "ums/vsGosuComputer.scx"; // vs. AI Zerg Player - cheating as fuck
-        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
+//        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
 
 //        return "ums/member_test.scx"; // vs. AI 2x Protoss players, massive Zealot rush
 //        return "ums/micro challenge.scx"; // Even more minigames

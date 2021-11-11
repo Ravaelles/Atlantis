@@ -5,6 +5,7 @@ import atlantis.CameraManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AFoggedUnit;
 import atlantis.map.*;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
@@ -109,6 +110,13 @@ public class AScoutManager {
             return scout.move(nextPositionToScout, UnitActions.SCOUT, "ScoutBases");
         }
 
+        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+        APosition position = enemyBuilding != null ? enemyBuilding.position() : scout.position();
+        nextPositionToScout = Bases.nearestUnexploredStartingLocation(position);
+        if (nextPositionToScout != null) {
+            return false;
+        }
+
         nextPositionToScout = Bases.randomInvisibleStartingLocation();
         return false;
     }
@@ -148,7 +156,7 @@ public class AScoutManager {
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {
-            startingLocation = Bases.getNearestUnexploredStartingLocation(scout.position());
+            startingLocation = Bases.nearestUnexploredStartingLocation(scout.position());
         }
 
         // =========================================================
@@ -256,7 +264,7 @@ public class AScoutManager {
     }
 
     private static void scoutForTheNextBase(AUnit scout) {
-        APosition baseLocation = Bases.getNearestUnexploredStartingLocation(scout.position());
+        APosition baseLocation = Bases.nearestUnexploredStartingLocation(scout.position());
         if (baseLocation != null) {
             scout.move(baseLocation.position(), UnitActions.EXPLORE, "Explore next base");
         }
@@ -312,7 +320,7 @@ public class AScoutManager {
     }
     
     private static void initializeEnemyRegionPolygonPoints(AUnit scout, ARegion enemyBaseRegion) {
-        Position centerOfRegion = enemyBaseRegion.getCenter();
+        Position centerOfRegion = enemyBaseRegion.center();
 
         scoutingAroundBasePoints.addPosition(APosition.create(centerOfRegion));
 
@@ -353,7 +361,7 @@ public class AScoutManager {
 
     public static APosition getUmsFocusPoint(APosition startPosition) {
         ARegion nearestUnexploredRegion = Regions.getNearestUnexploredRegion(startPosition);
-        return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.getCenter()) : null;
+        return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.center()) : null;
     }
 
     // =========================================================

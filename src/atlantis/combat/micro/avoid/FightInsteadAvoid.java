@@ -179,7 +179,7 @@ public class FightInsteadAvoid {
 
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()
-                && (!unit.isFirebat() || unit.hp() >= 30)
+                && (!unit.isFirebat() || unit.hp() >= 33)
                 && Select.enemyRealUnits()
                     .canBeAttackedBy(unit, 3)
                     .inRadius(3, unit)

@@ -19,26 +19,36 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 "focusPoint",
                 100,
                 () -> {
-                    if (We.terran()) {
-                        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-                        if (enemyBuilding != null && enemyBuilding.position() != null) {
-                            return enemyBuilding.position();
-                        }
+                    APosition basePoint = basePoint();
+                    if (basePoint != null) {
+                        basePoint = basePoint.translateTilesTowards(4, basePoint.region().center());
                     }
+                    return basePoint;
+                }
+        );
+    }
 
-                    AChoke mainChoke = Chokes.enemyMainChoke();
-                    APosition enemyNatural = Bases.enemyNatural();
-                    if (enemyNatural != null) {
-                        if (mainChoke != null) {
-                            return enemyNatural.translatePercentTowards(mainChoke, 40);
-                        }
-                        return enemyNatural;
-                    }
+    private APosition basePoint() {
+        if (We.terran()) {
+            AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+            if (enemyBuilding != null && enemyBuilding.position() != null) {
+                return enemyBuilding.position();
+            }
+        }
 
-                    AChoke naturalChoke = Chokes.enemyNaturalChoke();
-                    if (naturalChoke != null && naturalChoke.getWidth() <= 4) {
-                        return naturalChoke.position();
-                    }
+        AChoke mainChoke = Chokes.enemyMainChoke();
+        APosition enemyNatural = Bases.enemyNatural();
+        if (enemyNatural != null) {
+            if (mainChoke != null) {
+                return enemyNatural.translatePercentTowards(mainChoke, 40);
+            }
+            return enemyNatural;
+        }
+
+        AChoke naturalChoke = Chokes.enemyNaturalChoke();
+        if (naturalChoke != null && naturalChoke.getWidth() <= 4) {
+            return naturalChoke.position();
+        }
 
 //                    if (mainChoke != null && mainChoke.getWidth() <= 4) {
 //                        return mainChoke.position();
@@ -54,27 +64,25 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //            return nearestEnemy.position();
 //        }
 
-                    APosition enemyBase = AEnemyUnits.enemyBase();
-                    if (enemyBase != null && enemyBase.position() != null) {
-                        return containPointIfEnemyBaseIsKnown(enemyBase);
-                    }
+        APosition enemyBase = AEnemyUnits.enemyBase();
+        if (enemyBase != null && enemyBase.position() != null) {
+            return containPointIfEnemyBaseIsKnown(enemyBase);
+        }
 
 //                    AChoke mainChoke = Chokes.enemyMainChoke();
-                    if (mainChoke != null) {
-                        return mainChoke.position();
-                    }
+        if (mainChoke != null) {
+            return mainChoke.position();
+        }
 
-                    // Try to go to some starting location, hoping to find enemy there.
-                    if (Select.main() != null) {
-                        AChoke choke = Chokes.nearestChoke(
-                                Bases.getNearestUnexploredStartingLocation(Select.main().position())
-                        );
-                        return choke != null ? choke.getCenter() : null;
-                    }
+        // Try to go to some starting location, hoping to find enemy there.
+        if (Select.main() != null) {
+            AChoke choke = Chokes.nearestChoke(
+                    Bases.nearestUnexploredStartingLocation(Select.main().position())
+            );
+            return choke != null ? choke.getCenter() : null;
+        }
 
-                    return null;
-                }
-        );
+        return null;
     }
 
     // =========================================================

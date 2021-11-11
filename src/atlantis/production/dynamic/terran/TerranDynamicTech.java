@@ -18,6 +18,7 @@ public class TerranDynamicTech extends ADynamicTech {
         if (OurStrategy.get().goingBio()) {
             handleUpgrade(UpgradeType.Terran_Infantry_Weapons);
             handleUpgrade(UpgradeType.Terran_Infantry_Armor);
+            handleUpgrade(UpgradeType.Caduceus_Reactor);
         }
 
         if (OurDecisions.wantsToBeAbleToProduceTanksSoon()) {

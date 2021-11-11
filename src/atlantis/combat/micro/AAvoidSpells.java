@@ -14,7 +14,7 @@ import bwapi.Color;
 import java.util.List;
 
 
-public class ABadWeather {
+public class AAvoidSpells {
 
     public static boolean avoidSpellsAndMines(AUnit unit) {
 
@@ -97,7 +97,7 @@ public class ABadWeather {
 
     private static boolean handleMoveAwayIfCloserThan(AUnit unit, APosition avoidCenter, double minDist) {
         if (unit.distTo(avoidCenter) < minDist) {
-            unit.moveAwayFrom(avoidCenter, 3, "Avoid effect");
+            unit.moveAwayFrom(avoidCenter, 3, "AvoidSpell");
             return true;
         }
         else {

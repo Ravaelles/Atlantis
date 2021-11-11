@@ -46,7 +46,7 @@ public class TerranInfantry {
             return false;
         }
 
-        AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).nearestTo(unit);
+        AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(30).nearestTo(unit);
         if (medic != null) {
             return unit.move(medic, UnitActions.MOVE, "BeHealed");
         }

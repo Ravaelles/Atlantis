@@ -344,9 +344,9 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     }    
 
     /**
-     * Return BWTA region for this position.
+     * Return region object for this position.
      */
-    public ARegion getRegion() {
+    public ARegion region() {
         return Regions.getRegion(this);
     }
 

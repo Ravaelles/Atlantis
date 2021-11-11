@@ -1153,13 +1153,13 @@ public class AAdvancedPainter extends APainter {
         List<ARegion> regions = Regions.regions();
         for (ARegion region : regions) {
             APainter.paintRectangle(
-                    region.getCenter().translateByTiles(-3, -3),
+                    region.center().translateByTiles(-3, -3),
                     6,
                     6,
                     Color.Brown
             );
             APainter.paintTextCentered(
-                    region.getCenter(),
+                    region.center(),
                     region.toString(),
                     Color.Brown
             );

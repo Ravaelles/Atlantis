@@ -153,8 +153,8 @@ public class Evaluate {
     }
 
     private static double marineTweak(AUnit unit, double strength) {
-        if (Select.ourOfType(AUnitType.Terran_Medic).inRadius(3, unit).isEmpty()) {
-            return strength / 3;
+        if (unit.isWounded() && Select.ourOfType(AUnitType.Terran_Medic).inRadius(3, unit).isEmpty()) {
+            return strength / 4;
         }
 
         return strength;

@@ -27,7 +27,7 @@ public class Regions {
         ARegion regionToVisit = null;
 
         for (ARegion reachableRegion : region.getReachableRegions()) {
-            if (!reachableRegion.getCenter().isExplored()) {
+            if (!reachableRegion.center().isExplored()) {
                 regionToVisit = reachableRegion;
 //                return APosition.createFrom(regionToVisit.getCenter());
                 return regionToVisit;
@@ -115,7 +115,7 @@ public class Regions {
         if (param instanceof Position) {
             position = (Position) param;
         } else if (param instanceof ARegion) {
-            position = ((ARegion) param).getCenter();
+            position = ((ARegion) param).center();
         } else if (param instanceof HasPosition) {
             position = ((HasPosition) param).position();
         } else {

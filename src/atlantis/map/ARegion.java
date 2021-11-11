@@ -33,7 +33,7 @@ public class ARegion implements HasPosition {
 
     @Override
     public APosition position() {
-        return APosition.create(getCenter());
+        return APosition.create(center());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ARegion implements HasPosition {
 
     // =========================================================
 
-    public APosition getCenter() {
+    public APosition center() {
         if (center == null) {
             center = new APosition(
                     area.getTopLeft().x + area.getBottomRight().x / 2,

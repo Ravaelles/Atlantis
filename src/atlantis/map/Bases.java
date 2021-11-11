@@ -25,7 +25,7 @@ public class Bases {
      * Returns starting location that's nearest to given position and is not yet explored (black space, not
      * fog of war).
      */
-    public static APosition getNearestUnexploredStartingLocation(HasPosition nearestTo) {
+    public static APosition nearestUnexploredStartingLocation(HasPosition nearestTo) {
         if (nearestTo == null) {
             return null;
         }

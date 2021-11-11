@@ -117,7 +117,7 @@ public class ACombatUnitManager {
         // Avoid bad weather like:
         // - raining Psionic Storm,
         // - spider mines hail
-        return ABadWeather.avoidSpellsAndMines(unit);
+        return AAvoidSpells.avoidSpellsAndMines(unit);
     }
 
     private static boolean handledMediumPriority(AUnit unit) {

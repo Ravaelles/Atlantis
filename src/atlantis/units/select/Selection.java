@@ -324,6 +324,11 @@ public class Selection {
         return this;
     }
 
+    public Selection havingEnergy(int minEnergy) {
+        data.removeIf(unit -> !unit.energy(minEnergy));
+        return this;
+    }
+
     /**
      * Selects these units (makes sense only for workers) who aren't assigned to construct anything.
      */
