@@ -82,7 +82,7 @@ public class AUnitTypesHelper {
     public static void paintUnitsAndRequirements() {
         System.out.println("=== All unit types ===");
         for (AUnitType type : AUnitType.getAllUnitTypes()) {
-            System.out.println(type.shortName() + ", required:" + type.getWhatIsRequired() + ", buildsIt:" + type.getWhatBuildsIt());
+            System.out.println(type.shortName() + ", required:" + type.getWhatIsRequired() + ", buildsIt:" + type.whatBuildsIt());
         }
         System.out.println("=== END OF All unit types ===");
     }

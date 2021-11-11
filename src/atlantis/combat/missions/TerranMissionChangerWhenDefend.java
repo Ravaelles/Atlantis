@@ -3,10 +3,12 @@ package atlantis.combat.missions;
 import atlantis.Atlantis;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Enemy;
 
-public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
+public class TerranMissionChangerWhenDefend extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToContain()) {
@@ -17,6 +19,10 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
+        if (shouldDefendMainBase()) {
+            return false;
+        }
+
 //        if (TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
 //            return false;
 //        }

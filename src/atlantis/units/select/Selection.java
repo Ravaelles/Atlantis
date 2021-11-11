@@ -8,7 +8,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.util.A;
-import bwapi.Position;
 
 import java.util.*;
 
@@ -54,7 +53,7 @@ public class Selection {
         for (AUnitType type : haystack) {
             if (
                     type != null && unit.is(type)
-                    || (unit != null && type != null && unit.is(AUnitType.Zerg_Egg) && type.equals(unit.getBuildType()))
+                    || (unit != null && type != null && unit.is(AUnitType.Zerg_Egg) && type.equals(unit.buildType()))
             ) {
                 return true;
             }
@@ -117,7 +116,7 @@ public class Selection {
         for (AUnit unit : data) {
             boolean typeMatches = false;
             for (AUnitType type : types) {
-                if (unit.is(type) || (unit.is(AUnitType.Zerg_Egg) && type.equals(unit.getBuildType()))) {
+                if (unit.is(type) || (unit.is(AUnitType.Zerg_Egg) && type.equals(unit.buildType()))) {
                     typeMatches = true;
                     break;
                 }
@@ -360,6 +359,11 @@ public class Selection {
 
     public Selection excludeTypes(AUnitType ...types) {
         data.removeIf(unit -> unit.is(types));
+        return this;
+    }
+
+    public Selection hasPathFrom(HasPosition fromPosition) {
+        data.removeIf(unit -> !unit.hasPathTo(fromPosition));
         return this;
     }
 
@@ -742,7 +746,7 @@ public class Selection {
         return data;
     }
 
-    public List sortDataByDistanceTo(final AUnit unit, final boolean nearestFirst) {
+    public List<AUnit> sortDataByDistanceTo(final AUnit unit, final boolean nearestFirst) {
         Collections.sort(data, new Comparator<AUnit>() {
             @Override
             public int compare(AUnit p1, AUnit p2) {
@@ -794,4 +798,5 @@ public class Selection {
     public APosition center() {
         return units().average();
     }
+
 }

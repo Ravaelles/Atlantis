@@ -46,8 +46,11 @@ public class TerranComsatStation {
 
     private static boolean scanDarkTemplars(AUnit comsat) {
         for (AUnit dt : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Dark_Templar).listUnits()) {
-            if (Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).inRadius(6, dt).atLeast(comsat.energy() >= 150 ? 4 : 7)) {
-                return scan(comsat, dt);
+            if (Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
+                    .atLeast(comsat.energy(150) ? (comsat.energy(190) ? 2 : 4) : 7)) {
+                if (Select.ourCombatUnits().nearestTo(dt).distToLessThan(dt, 6)) {
+                    return scan(comsat, dt);
+                }
             }
         }
 

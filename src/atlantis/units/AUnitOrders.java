@@ -40,7 +40,7 @@ public interface AUnitOrders {
         }
 
         // Do NOT issue double orders
-        if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().getTarget())) {
+        if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
 //            System.out.println("         ** DOUBLE ORDER");
             return true;
         }

@@ -24,7 +24,7 @@ public class CameraManager {
     // =========================================================
 
     private static AUnit centerCameraOnUnit() {
-//        return null;
+//        return null;atlantis.combat.missions.Missions.globalMission
         AUnit cameraUnit;
 
 //        cameraUnit = Select.ourOfType(AUnitType.Protoss_High_Templar).groundUnits().first();
@@ -46,7 +46,7 @@ public class CameraManager {
         }
 
 //        return null;
-        return Select.ourCombatUnits().groundUnits().first();
+        return Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).groundUnits().first();
     }
 
     public static void centerCameraNowOnFirstCombatUnit() {

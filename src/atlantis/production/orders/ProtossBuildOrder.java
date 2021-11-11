@@ -1,11 +1,8 @@
 package atlantis.production.orders;
 
-import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-
-import java.util.ArrayList;
 
 public class ProtossBuildOrder extends ABuildOrder {
 
@@ -26,7 +23,7 @@ public class ProtossBuildOrder extends ABuildOrder {
 
     @Override
     public boolean produceUnit(AUnitType unitType) {
-        AUnitType whatBuildsIt = unitType.getWhatBuildsIt();
+        AUnitType whatBuildsIt = unitType.whatBuildsIt();
         if (whatBuildsIt == null) {
             System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
         }

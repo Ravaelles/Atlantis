@@ -145,7 +145,7 @@ public abstract class CurrentProductionQueue {
     }
 
     private static boolean hasFreeBuildingFor(AUnitType unit) {
-        AUnitType building = unit.getWhatBuildsIt();
+        AUnitType building = unit.whatBuildsIt();
         if (building != null) {
             return Select.ourOfType(building).free().isNotEmpty();
         }

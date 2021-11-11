@@ -1,11 +1,8 @@
 package atlantis.production.orders;
 
-import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-
-import java.util.ArrayList;
 
 public class TerranBuildOrder extends ABuildOrder {
 
@@ -24,7 +21,7 @@ public class TerranBuildOrder extends ABuildOrder {
 
     @Override
     public boolean produceUnit(AUnitType type) {
-        AUnitType whatBuildsIt = type.getWhatBuildsIt();
+        AUnitType whatBuildsIt = type.whatBuildsIt();
         AUnit unitThatWillProduce = Select.ourOfType(whatBuildsIt).free().first();
         if (unitThatWillProduce != null) {
             return unitThatWillProduce.train(type);

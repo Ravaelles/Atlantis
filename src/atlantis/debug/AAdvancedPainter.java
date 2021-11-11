@@ -179,7 +179,7 @@ public class AAdvancedPainter extends APainter {
 //                }
 //            }
             String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
-                    + "(" + unit.getLastOrderFramesAgo() + ")";
+                    + "(" + unit.getLastOrderFramesAgo() + ")" + unit.shortName();
             paintTextCentered(new APosition(position.getX(), position.getY() + 8), order, Color.Grey);
         }
     }
@@ -187,7 +187,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintOurCombatUnitTargets(AUnit unit) {
 //        if (unit.isAttacking()) {
 //            paintLine(unit, unit.getTargetPosition(), (unit.isAttackingOrMovingToAttack() ? Color.Teal : Color.Grey));
-            paintLine(unit, unit.getTarget(), (unit.isAttackingOrMovingToAttack() ? Color.Green : Color.Yellow));
+            paintLine(unit, unit.target(), (unit.isAttackingOrMovingToAttack() ? Color.Green : Color.Yellow));
 //        }
 //        if (!paintLine(unit, unit.getTarget(), (unit.isAttacking() ? Color.Green : Color.Yellow))) {
 //            paintLine(unit, unit.getTargetPosition(), (unit.isAttacking() ? Color.Orange : Color.Yellow));
@@ -195,7 +195,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintEnemyTargets(AUnit enemy) {
-        paintLine(enemy, enemy.getTarget(), Color.Red);
+        paintLine(enemy, enemy.target(), Color.Red);
 //        paintLine(enemy, enemy.getTargetPosition(), Color.Orange);
     }
 
@@ -212,11 +212,13 @@ public class AAdvancedPainter extends APainter {
 
         setTextSizeMedium();
         for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
-            paintCircleFilled(enemy, 8, Color.Orange);
+            paintCircle(enemy, 16, Color.Orange);
+            paintCircle(enemy, 15, Color.Orange);
             paintTextCentered(enemy, "Cloaked,HP=" + enemy.hp(), Color.Red);
         }
         for (AUnit enemy : Select.enemy().cloakedButEffVisible().listUnits()) {
-            paintCircleFilled(enemy, 8, Color.Green);
+            paintCircle(enemy, 16, Color.Green);
+            paintCircle(enemy, 15, Color.Green);
             paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.White);
         }
     }
@@ -275,7 +277,8 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintCombatEval(AUnit unit) {
         APosition unitPosition = unit.position();
-        double combatEval = unit.combatEval(true);
+//        double combatEval = unit.combatEval(true);
+        double combatEval = unit.combatEval(false);
         String combatStrength = ColorUtil.getColorString(Color.Red) +
                 (combatEval >= 999 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
         paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
@@ -513,7 +516,7 @@ public class AAdvancedPainter extends APainter {
         for (AUnit unit : Select.ourUnfinished().list()) {
             AUnitType type = unit.type();
             if (type.equals(AUnitType.Zerg_Egg)) {
-                type = unit.getBuildType();
+                type = unit.buildType();
             }
             paintSideMessage(type.shortName(), Color.Green);
         }
@@ -612,7 +615,7 @@ public class AAdvancedPainter extends APainter {
 
         // Draw text
         paintTextCentered(
-                positionToBuild.translateByPixels(buildingType.getDimensionLeft(), 69), text, color
+                positionToBuild.translateByPixels(buildingType.dimensionLeft(), 69), text, color
         );
     }
 
@@ -627,7 +630,7 @@ public class AAdvancedPainter extends APainter {
 
             APosition unitPosition = unit.position();
             APosition targetPosition = unit.targetPosition();
-            int unitRadius = unit.type().getDimensionLeft();
+            int unitRadius = unit.type().dimensionLeft();
 
             // STARTING ATTACK
             if (unit.isStartingAttack()) {
@@ -820,7 +823,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             // Display name of unit
-            String name = (building.getBuildType() != null ? building.getBuildType().shortName() : "-BUG_NULL");
+            String name = (building.buildType() != null ? building.buildType().shortName() : "-BUG_NULL");
 
             // Paint building name
             paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 7),
@@ -919,7 +922,7 @@ public class AAdvancedPainter extends APainter {
             int labelTop = building.position().getY();
 
             int operationProgress = 1;
-            AUnitType unit = building.getTrainingQueue().get(0);
+            AUnitType unit = building.trainingQueue().get(0);
             String trainedUnitString = "";
             if (unit != null) {
                 operationProgress = 100 * (unit.getTotalTrainTime() - building.getRemainingTrainTime()) / unit.getTotalTrainTime();
@@ -1017,8 +1020,8 @@ public class AAdvancedPainter extends APainter {
 
             APosition topLeft;
             topLeft = foggedEnemy.position().translateByPixels(
-                    -foggedEnemy.type().getDimensionLeft(),
-                    -foggedEnemy.type().getDimensionUp()
+                    -foggedEnemy.type().dimensionLeft(),
+                    -foggedEnemy.type().dimensionUp()
             );
 //            paintRectangle(
 //                    topLeft,
@@ -1028,8 +1031,8 @@ public class AAdvancedPainter extends APainter {
 //            );
             paintRectangle(
                     foggedEnemy.position(),
-                    foggedEnemy.type().getDimensionRight() / 32,
-                    foggedEnemy.type().getDimensionDown() / 32,
+                    foggedEnemy.type().dimensionRight() / 32,
+                    foggedEnemy.type().dimensionDown() / 32,
                     Color.Grey
             );
             paintText(topLeft, foggedEnemy.type().shortName() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
@@ -1224,8 +1227,8 @@ public class AAdvancedPainter extends APainter {
 
         if (A.now() <= 100) {
             for (AUnit worker : Select.ourWorkers().list()) {
-                if (worker.getTarget() != null) {
-                    paintLine(worker, worker.getTarget(), Color.Grey);
+                if (worker.target() != null) {
+                    paintLine(worker, worker.target(), Color.Grey);
                 }
             }
         }

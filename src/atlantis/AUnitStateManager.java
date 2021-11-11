@@ -2,7 +2,6 @@ package atlantis;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class AUnitStateManager {
 
@@ -56,8 +55,8 @@ public class AUnitStateManager {
         }
 
         AUnit _oldLastTargetToAttack = unit._lastTargetToAttack;
-        unit._lastTargetToAttack = unit.isAttackingOrMovingToAttack() ? unit.getTarget() : null;
-        if (unit.getTarget() != null && !unit.getTarget().equals(_oldLastTargetToAttack)) {
+        unit._lastTargetToAttack = unit.isAttackingOrMovingToAttack() ? unit.target() : null;
+        if (unit.target() != null && !unit.target().equals(_oldLastTargetToAttack)) {
             unit._lastTargetToAttackAcquired = now;
         }
 

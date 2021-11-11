@@ -41,7 +41,7 @@ public abstract class AbstractPositionFinder {
         // Leave entire vertical (same tileX) corridor free for units
         if (
                 position.getTileX() % 7 <= 1
-                || (position.getTileX() + building.getDimensionRight() / 32) % 7 <= 1
+                || (position.getTileX() + building.dimensionRight() / 32) % 7 <= 1
         ) {
 //        System.out.println(building.shortName() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
 //                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
@@ -53,7 +53,7 @@ public abstract class AbstractPositionFinder {
         // Leave entire horizontal (same tileY) corridor free for units
         if (
                 position.getTileY() % 7 <= 1
-                || (position.getTileY() + building.getDimensionDown() / 32) % 7 <= 0
+                || (position.getTileY() + building.dimensionDown() / 32) % 7 <= 0
         ) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;

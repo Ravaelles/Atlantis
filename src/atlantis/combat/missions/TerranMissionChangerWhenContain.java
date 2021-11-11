@@ -9,7 +9,7 @@ import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Enemy;
 
-public class TerranMissionChangerWhenContain {
+public class TerranMissionChangerWhenContain extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
@@ -24,7 +24,7 @@ public class TerranMissionChangerWhenContain {
     // =========================================================
 
     protected static boolean shouldChangeMissionToDefend() {
-        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.main()).atLeast(3)) {
+        if (shouldDefendMainBase()) {
             return true;
         }
 
@@ -57,6 +57,10 @@ public class TerranMissionChangerWhenContain {
     }
 
     protected static boolean shouldChangeMissionToAttack() {
+        if (A.seconds() >= 600) {
+            return A.supplyUsed() >= 150 || Count.ourCombatUnits() >= 50;
+        }
+
         if (Select.main() != null) {
             if (Select.enemy().inRadius(14, Select.main()).atLeast(2)) {
                 return false;

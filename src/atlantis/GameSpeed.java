@@ -23,8 +23,8 @@ public class GameSpeed {
     public static int frameSkip;
 
     private static final int NORMAL_GAME_SPEED = 0;
-//    private static final int NORMAL_FRAME_SKIP = 1;
-    private static final int NORMAL_FRAME_SKIP = 150;
+    private static final int NORMAL_FRAME_SKIP = 1;
+//    private static final int NORMAL_FRAME_SKIP = 150;
 //    private static final int NORMAL_FRAME_SKIP = 2;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;

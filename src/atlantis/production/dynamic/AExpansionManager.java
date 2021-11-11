@@ -16,7 +16,6 @@ public class AExpansionManager {
         if (
                 A.seconds() >= 600
                 && Count.includingPlanned(AtlantisConfig.BASE) <= 1
-                && AGame.canAffordWithReserved(350, 0)
         ) {
             return true;
         }

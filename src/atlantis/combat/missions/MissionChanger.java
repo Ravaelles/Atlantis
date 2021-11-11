@@ -2,6 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.units.AUnit;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 import java.util.ArrayList;
@@ -19,11 +20,16 @@ public class MissionChanger {
 
         // === Handle UMS ==========================================
 
-        if (AGame.isUms() || Select.main() == null) {
+        if (AGame.isUms()) {
+            forceMissionAttack();
             return;
         }
 
         // =========================================================
+
+        if (!Have.main()) {
+            return;
+        }
 
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.changeMissionIfNeeded();
@@ -34,6 +40,15 @@ public class MissionChanger {
         }
     }
 
+    // =========================================================
+
+    protected static boolean shouldDefendMainBase() {
+        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.main()).atLeast(3)) {
+            return true;
+        }
+
+        return false;
+    }
 
     public static void notifyThatUnitRetreated(AUnit unit) {
         if (Missions.isFirstMission() && Missions.isGlobalMissionAttack()) {

@@ -6,7 +6,6 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.A;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -88,7 +87,7 @@ public class AConstructionManager {
                 if (!builder.is(AtlantisConfig.WORKER)) {
 
                     // Happens for Extractor
-                    if (builder.getBuildType() == null || builder.getBuildType().equals(AUnitType.None)) {
+                    if (builder.buildType() == null || builder.buildType().equals(AUnitType.None)) {
                         building = builder;
                         order.setConstruction(builder);
                     }
@@ -103,7 +102,7 @@ public class AConstructionManager {
 //                    System.out.println("Constr = " + constructionOrder.getConstruction());
 //                    System.out.println("Exists = " + constructionOrder.getBuilder().exists());
 //                    System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
-                    AUnit buildUnit = builder.getBuildUnit();
+                    AUnit buildUnit = builder.buildUnit();
                     if (buildUnit != null) {
                         building = buildUnit;
                         order.setConstruction(buildUnit);

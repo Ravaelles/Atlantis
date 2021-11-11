@@ -1,5 +1,6 @@
 package atlantis.wrappers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -27,7 +28,7 @@ public class MappingCounter<K> {
 
     public void changeValueBy(K key, int deltaValue) {
         if (mapping.containsKey(key)) {
-            mapping.put(key, Math.max(0, mapping.get(key) + deltaValue));
+            mapping.put(key, mapping.get(key) + deltaValue);
         } else {
             mapping.put(key, deltaValue);
         }
@@ -62,5 +63,17 @@ public class MappingCounter<K> {
         for (K key : mapping.keySet()) {
             System.out.println(key + ": " + mapping.get(key));
         }
+    }
+
+    public boolean isEmpty() {
+        return mapping.isEmpty();
+    }
+
+    public int size() {
+        return mapping.size();
+    }
+
+    public K first() {
+        return (new ArrayList<K>(mapping.keySet())).get(0);
     }
 }

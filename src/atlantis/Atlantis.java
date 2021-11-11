@@ -137,6 +137,11 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitCreate(Unit u) {
+        if (u == null) {
+            System.err.println("onUnitCreate got null");
+            return;
+        }
+
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
             unit.removeTooltip();
@@ -442,6 +447,7 @@ public class Atlantis implements BWEventListener {
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();
         }
+        UnitsArchive.paintKillLossResources();
     }
 
     /**

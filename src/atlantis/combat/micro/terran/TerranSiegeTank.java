@@ -20,10 +20,10 @@ public class TerranSiegeTank {
     private static double nearestEnemyCombatBuildingDist;
 
     public static boolean update(AUnit tank) {
-        if (shouldNotDisturb(tank)) {
-            tank.setTooltip("Can't interrupt");
-            return true;
-        }
+//        if (shouldNotDisturb(tank)) {
+//            tank.setTooltip("Can't interrupt");
+//            return true;
+//        }
         
         initCache(tank);
 

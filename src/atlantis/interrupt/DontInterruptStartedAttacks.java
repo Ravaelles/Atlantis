@@ -1,11 +1,7 @@
 package atlantis.interrupt;
 
-import atlantis.debug.APainter;
-import atlantis.enemy.NearestEnemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.A;
-import bwapi.Color;
 
 public class DontInterruptStartedAttacks {
 
@@ -99,7 +95,7 @@ public class DontInterruptStartedAttacks {
     }
 
     private static boolean attackingCrucialUnit(AUnit unit) {
-        AUnit target = unit.getTarget();
+        AUnit target = unit.target();
         if (target == null) {
             return false;
         }

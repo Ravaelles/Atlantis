@@ -75,13 +75,13 @@ public class AKeyboard implements NativeKeyListener {
             // Keys "-" and NumPad "-" and "["
             case 12: case 3658: case 26:
                 GameSpeed.changeSpeedBy(+40);
-                System.out.println("Notice: SPEED SLOWER (" + GameSpeed.gameSpeed + ")");
+//                System.out.println("Notice: SPEED SLOWER (" + GameSpeed.gameSpeed + ")");
                 break;
 
             // Keys "+" and NumPad "+" and "]"
             case 13: case 3662: case 27:
                 GameSpeed.changeSpeedBy(-40);
-                System.out.println("Notice: SPEED FASTER (" + GameSpeed.gameSpeed + ")");
+//                System.out.println("Notice: SPEED FASTER (" + GameSpeed.gameSpeed + ")");
                 break;
 
             // Key "1"

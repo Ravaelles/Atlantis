@@ -66,7 +66,7 @@ public class TerranInfantry {
         Selection enemies = Select.enemyRealUnits().inRadius(9, unit);
 
         if (
-                enemies.atLeast(Enemy.zerg() ? 2 : 1)
+                enemies.atLeast(Enemy.zerg() ? 3 : 2)
         ) {
             if (unit.lastActionMoreThanAgo(5, UnitActions.USING_TECH)) {
                 unit.useTech(stim());

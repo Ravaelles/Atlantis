@@ -115,7 +115,7 @@ public class AProductionManager {
     }
 
     private static void produceAddon(AUnitType addon) {
-        for (AUnit building : Select.ourOfType(addon.getWhatBuildsIt()).free().list()) {
+        for (AUnit building : Select.ourOfType(addon.whatBuildsIt()).free().list()) {
             building.buildAddon(addon);
             return;
         }

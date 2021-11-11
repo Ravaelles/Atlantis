@@ -2,6 +2,7 @@ package atlantis.enemy;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.wrappers.MappingCounter;
 
 import java.util.HashMap;
@@ -9,8 +10,10 @@ import java.util.HashMap;
 public class UnitsArchive {
 
     protected static HashMap<Integer, AUnit> destroyedUnitIds = new HashMap<>();
-    protected static MappingCounter<AUnitType> enemyDestroyedTypes = new MappingCounter<>();
-    protected static MappingCounter<AUnitType> ourDestroyedTypes = new MappingCounter<>();
+    protected static MappingCounter<AUnitType> enemyLostTypes = new MappingCounter<>();
+    protected static MappingCounter<AUnitType> ourLostTypes = new MappingCounter<>();
+    protected static MappingCounter<AUnitType> ourKillLossResourcesPerUnitTypes = new MappingCounter<>();
+    protected static MappingCounter<AUnitType> ourKillCountersPerUnitTypes = new MappingCounter<>();
 
     // =========================================================
 
@@ -22,21 +25,43 @@ public class UnitsArchive {
             enemyUnitDestroyed(unit);
         }
         else if (unit.isOur()) {
-//            OurUnitsArchive.unitDestroyed(unit);
             ourUnitDestroyed(unit);
         }
     }
 
+    private static AUnit ourUnitThatKilledEnemy(AUnit enemy) {
+        for (AUnit our : Select.our().list()) {
+            if (enemy.equals(our.target())) {
+                return our;
+            }
+        }
+        return null;
+    }
+
     // =========================================================
+
+    public static void paintKillLossResources() {
+        System.out.println("--- Unit kill/loss in resources ---");
+        for (AUnitType type : ourKillLossResourcesPerUnitTypes.map().keySet()) {
+            if (type.isNotRealUnit() || type.isUnitUnableToDoAnyDamage()) {
+                continue;
+            }
+            System.out.println(
+                    type + ": " + ourKillLossResourcesPerUnitTypes.getValueFor(type)
+                    + " (kills: " + ourKillCountersPerUnitTypes.getValueFor(type) + ", lost: "
+                    + ourLostTypes.getValueFor(type) + ")"
+            );
+        }
+    }
 
     public static void paintLostUnits() {
         System.out.println("--- Lost ---");
-        paint(ourDestroyedTypes);
+        paint(ourLostTypes);
     }
 
     public static void paintKilledUnits() {
         System.out.println("--- Killed ---");
-        paint(enemyDestroyedTypes);
+        paint(enemyLostTypes);
     }
 
     private static void paint(MappingCounter<AUnitType> types) {
@@ -44,18 +69,26 @@ public class UnitsArchive {
             if (type.isNotRealUnit()) {
                 continue;
             }
-            System.out.println(type + " - " + types.getValueFor(type));
+            System.out.println(type + ":  " + types.getValueFor(type));
         }
     }
 
     // =========================================================
 
     public static void ourUnitDestroyed(AUnit unit) {
-        ourDestroyedTypes.incrementValueFor(unit.type());
+        ourLostTypes.incrementValueFor(unit.type());
+        ourKillLossResourcesPerUnitTypes.changeValueBy(unit.type(), -unit.totalCost());
     }
 
-    public static void enemyUnitDestroyed(AUnit unit) {
-        enemyDestroyedTypes.incrementValueFor(unit.type());
+    public static void enemyUnitDestroyed(AUnit enemy) {
+        enemyLostTypes.incrementValueFor(enemy.type());
+
+        AUnit ourKiller = ourUnitThatKilledEnemy(enemy);
+        if (ourKiller != null) {
+            System.out.println(ourKiller.shortName() + " killed " + enemy.shortName() + " (worth " + enemy.totalCost() + ")");
+            ourKillLossResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
+            ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());
+        }
     }
 
     public static boolean isDestroyed(int unitId) {

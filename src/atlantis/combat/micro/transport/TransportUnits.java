@@ -29,10 +29,26 @@ public class TransportUnits {
         return false;
     }
 
+    public static boolean unloadFromTransport(AUnit unit) {
+//        System.out.println("unit.isLoaded() = " + unit.isLoaded());
+//        System.out.println("isBabyInDanger(unit, true) = " + isBabyInDanger(unit, true));
+        if (unit.isLoaded() && !isBabyInDanger(unit, true)) {
+            unit.loadedInto().unload(unit);
+            unit.setTooltip("Disembark");
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean loadRunningUnitsIntoTransport(AUnit unit) {
 //        if (unit.cooldownRemaining() == 0) {
 //            return false;
 //        }
+
+        if (!unit.isRunning()) {
+            return false;
+        }
 
         if (unit.lastActionMoreThanAgo(8, UnitActions.LOAD)) {
             AUnit transport = Select.our().transports(true).inRadius(3, unit).nearestTo(unit);
@@ -48,7 +64,7 @@ public class TransportUnits {
                 if (anotherTransport.hasFreeSpaceFor(unit)) {
                     unit.load(anotherTransport);
                     anotherTransport.load(unit);
-                    unit.setTooltip("Embark!");
+                    unit.setTooltip("Eeembark!");
                     return true;
                 }
             }
@@ -116,6 +132,13 @@ public class TransportUnits {
     }
 
     private static boolean shouldDropTheBaby(AUnit transport, AUnit baby) {
+        System.out.println("----");
+        System.out.println("baby.isLoaded() = " + baby.isLoaded());
+        System.out.println("transport.hasCargo() = " + transport.hasCargo());
+        System.out.println("transport.lastActionMoreThanAgo(25, UnitActions.LOAD) = " + transport.lastActionMoreThanAgo(25, UnitActions.LOAD));
+        System.out.println("isTransportInDanger(transport) = " + isTransportInDanger(transport));
+        System.out.println("!isBabyInDanger(baby, false) = " + !isBabyInDanger(baby, false));
+        System.out.println("transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD) = " + transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD));
         return baby.isLoaded()
                 && transport.hasCargo()
 //                && baby.cooldownRemaining() <= 8
@@ -123,7 +146,7 @@ public class TransportUnits {
                 && (
                         isTransportInDanger(transport)
                         || transport.woundPercent() >= 87
-                        || !isBabyInDanger(baby, false)
+                        || !isBabyInDanger(baby, true)
                         || transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD)
                 );
     }

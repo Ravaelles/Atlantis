@@ -14,15 +14,23 @@ public class UseMap {
 //        return "ums/";
 //        return "ums/";
 //        return "ums/";
-//        return "ums/";
-//        return "ums/";
+        return "ums/gol_v_zeals.scx";
+//        return "ums/aaa (1).scx";
+//        return "ums/aaa (2).scx";
+//        return "ums/aaa (3).scx";
 
-        return "ums/7th.scx"; // vs. AI Protoss player, that can kill CSVs constructing
+//        return "ums/marines/m (5).scx"; // Nice map to test different terran infantry in rounds
+//        return "ums/marines/m (8).scx"; // Hmm
+
+        // ### Gosu bots ###
+//        return "ums/7th.scx"; // vs. AI Protoss player, that can kill CSVs constructing
 //        return "ums/exp_skilltest.scx"; // vs. AI Protoss player
 //        return "ums/vsGosuComputer.scx"; // vs. AI Zerg Player - cheating as fuck
 //        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
-
+//        return "ums/lt-terran1j.scm"; // Zerg vs. Terran
 //        return "ums/member_test.scx"; // vs. AI 2x Protoss players, massive Zealot rush
+//        return "ums/LostTemple.scm"; // vs. 2x Protoss players, again Zealot rush
+
 //        return "ums/micro challenge.scx"; // Even more minigames
 //        return "ums/ConTrol2.scx"; // More minigames
 //        return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones vs. 2 drones, lings vs. goons etc

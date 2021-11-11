@@ -11,8 +11,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         double criticalDist;
 
         if (defender.isInfantry()) {
-            criticalDist = 2.1 + defender.woundPercent() / 22
-                    + ourMovementBonus(defender) / 2
+            criticalDist = 2.1 + defender.woundPercent() / 19
+                    + ourMovementBonus(defender) / 3
                     + enemyMovementBonus(defender, attacker) / 3;
         }
         else {
@@ -26,7 +26,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     + enemyMovementBonus(defender, attacker);
         }
 
-        criticalDist = Math.min(criticalDist, 3.7);
+        criticalDist = Math.min(criticalDist, 3.85);
 //        System.out.println("criticalDist = " + criticalDist + " // " + ourUnitsNearbyBonus(defender));
 
         return attacker.distTo(defender) - criticalDist;

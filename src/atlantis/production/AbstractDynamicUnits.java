@@ -50,7 +50,7 @@ public class AbstractDynamicUnits extends Helpers {
             return false;
         }
 
-        AUnitType building = type.getWhatBuildsIt();
+        AUnitType building = type.whatBuildsIt();
         for (AUnit buildingProducing : Select.ourOfType(building).listUnits()) {
             if (!buildingProducing.isTrainingAnyUnit()) {
                 trainNow(type);

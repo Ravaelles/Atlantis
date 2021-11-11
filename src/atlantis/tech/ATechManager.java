@@ -38,7 +38,7 @@ public class ATechManager extends Helpers {
         } else if (techUpgradeOrUnit instanceof UpgradeType) {
             return AUnitType.create(((UpgradeType) techUpgradeOrUnit).whatUpgrades());
         } else if (techUpgradeOrUnit instanceof AUnitType) {
-            return ((AUnitType) techUpgradeOrUnit).getWhatBuildsIt();
+            return ((AUnitType) techUpgradeOrUnit).whatBuildsIt();
         } else {
             AGame.exit("Neither a tech, nor an upgrade.");
             return null;

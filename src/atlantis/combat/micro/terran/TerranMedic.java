@@ -3,7 +3,6 @@ package atlantis.combat.micro.terran;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import bwapi.TechType;
 
@@ -41,7 +40,7 @@ public class TerranMedic {
     // =========================================================
 
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
-        if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.getTarget())) {
+        if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.target())) {
             medic.useTech(TechType.Healing, unitToHeal);
             medic.setTooltip("Heal");
         }
@@ -72,7 +71,7 @@ public class TerranMedic {
     private static boolean handleStickToAssignments(AUnit medic) {
         AUnit assignment = medicAssignment(medic);
 
-        if (assignment != null) {
+        if (assignment != null && assignment.isAlive()) {
             double dist = assignment.distTo(medic);
 
             if (dist > 1.9) {

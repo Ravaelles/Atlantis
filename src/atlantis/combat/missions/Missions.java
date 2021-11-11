@@ -29,6 +29,10 @@ public class Missions {
      * always correspond to the mission of our main Alpha battle squad.
      */
     public static Mission globalMission() {
+        if (A.isUms()) {
+            return ATTACK;
+        }
+
         if (currentGlobalMission == null) {
             setGlobalMissionTo(getInitialMission());
         }

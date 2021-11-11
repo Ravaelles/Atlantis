@@ -20,7 +20,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 100,
                 () -> {
                     APosition basePoint = basePoint();
-                    if (basePoint != null) {
+                    if (basePoint != null && basePoint.region() != null && basePoint.region().center() != null) {
                         basePoint = basePoint.translateTilesTowards(4, basePoint.region().center());
                     }
                     return basePoint;
@@ -36,14 +36,14 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             }
         }
 
-        AChoke mainChoke = Chokes.enemyMainChoke();
-        APosition enemyNatural = Bases.enemyNatural();
-        if (enemyNatural != null) {
-            if (mainChoke != null) {
-                return enemyNatural.translatePercentTowards(mainChoke, 40);
-            }
-            return enemyNatural;
-        }
+//        AChoke mainChoke = Chokes.enemyMainChoke();
+//        APosition enemyNatural = Bases.enemyNatural();
+//        if (enemyNatural != null) {
+//            if (mainChoke != null) {
+//                return enemyNatural.translatePercentTowards(mainChoke, 40);
+//            }
+//            return enemyNatural;
+//        }
 
         AChoke naturalChoke = Chokes.enemyNaturalChoke();
         if (naturalChoke != null && naturalChoke.getWidth() <= 4) {
@@ -70,9 +70,9 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
         }
 
 //                    AChoke mainChoke = Chokes.enemyMainChoke();
-        if (mainChoke != null) {
-            return mainChoke.position();
-        }
+//        if (mainChoke != null) {
+//            return mainChoke.position();
+//        }
 
         // Try to go to some starting location, hoping to find enemy there.
         if (Select.main() != null) {
@@ -90,13 +90,13 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
         AChoke chokepoint = Chokes.natural(enemyBase);
         if (chokepoint != null) {
-            CameraManager.centerCameraOn(chokepoint.getCenter());
+//            CameraManager.centerCameraOn(chokepoint.getCenter());
             return chokepoint.getCenter();
         }
 
         ABaseLocation natural = Bases.natural(enemyBase.position());
         if (natural != null) {
-            CameraManager.centerCameraOn(natural);
+//            CameraManager.centerCameraOn(natural);
             return natural.position();
         }
 

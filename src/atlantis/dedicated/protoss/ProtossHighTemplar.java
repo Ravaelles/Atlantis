@@ -61,7 +61,7 @@ public class ProtossHighTemplar {
 
         // Is target of Archon Warp
         for (AUnit otherHT : Select.ourOfType(AUnitType.Protoss_High_Templar).inRadius(3, highTemplar).list()) {
-            if (highTemplar.equals(otherHT.getTarget()) && highTemplar.lastTechUsedAgo() <= 90) {
+            if (highTemplar.equals(otherHT.target()) && highTemplar.lastTechUsedAgo() <= 90) {
                 highTemplar.setTooltip("Lets get it on");
                 return true;
             }

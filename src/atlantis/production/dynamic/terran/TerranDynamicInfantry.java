@@ -35,7 +35,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
-            if (Count.medics() >= 4 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) == 0) {
+            if (Count.medics() >= 5 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) == 0) {
                 produceUnit(barracks.first(), AUnitType.Terran_Firebat);
                 return;
             }

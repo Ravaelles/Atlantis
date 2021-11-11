@@ -68,8 +68,8 @@ public class AAttackEnemyUnit {
         }
 
         // Prevent units from switching attack of the same unit, to another unit of the same type
-        if (unit.isAttackingOrMovingToAttack() && unit.getTarget() != null && unit.getTarget().isTank()) {
-            if (unit.distToLessThan(unit.getTarget(), 3)) {
+        if (unit.isAttackingOrMovingToAttack() && unit.target() != null && unit.target().isTank()) {
+            if (unit.distToLessThan(unit.target(), 3)) {
                 return false;
             }
         }

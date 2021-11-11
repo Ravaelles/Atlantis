@@ -62,7 +62,7 @@ public class ARegion implements HasPosition {
     // =========================================================
 
     public APosition center() {
-        if (center == null) {
+        if (center == null && area != null) {
             center = new APosition(
                     area.getTopLeft().x + area.getBottomRight().x / 2,
                     area.getTopLeft().y + area.getBottomRight().y / 2

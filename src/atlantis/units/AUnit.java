@@ -906,6 +906,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to us.
      */
     public boolean isOur() {
+        if (getPlayer() == null) {
+            return false;
+        }
         return getPlayer().equals(AGame.getPlayerUs());
     }
 
@@ -1140,7 +1143,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return isUnderAttack(1);
     }
 
-    public List<AUnitType> getTrainingQueue() {
+    public List<AUnitType> trainingQueue() {
         return (List<AUnitType>) AUnitType.convertToAUnitTypesCollection(u.getTrainingQueue());
     }
 
@@ -1152,27 +1155,27 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (List<AUnit>) convertToAUnitCollection(u.getLarva());
     }
 
-    public AUnit getTarget() {
+    public AUnit target() {
         if (u.getTarget() != null) {
             return AUnit.createFrom(u.getTarget());
         }
 
-        return getOrderTarget();
+        return orderTarget();
     }
 
     public APosition targetPosition() {
         return APosition.create(u.getTargetPosition());
     }
 
-    public AUnit getOrderTarget() {
+    public AUnit orderTarget() {
         return u.getOrderTarget() != null ? AUnit.createFrom(u.getOrderTarget()) : null;
     }
 
-    public AUnit getBuildUnit() {
+    public AUnit buildUnit() {
         return u.getBuildUnit() != null ? AUnit.createFrom(u.getBuildUnit()) : null;
     }
 
-    public AUnitType getBuildType() {
+    public AUnitType buildType() {
         return u.getBuildType() != null ? AUnitType.create(u.getBuildType()) : null;
     }
 
@@ -1210,7 +1213,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isAttackingOrMovingToAttack() {
         return u.isAttacking() || (
-            getUnitAction() != null && getUnitAction().isAttacking() && getTarget() != null && getTarget().isAlive()
+            getUnitAction() != null && getUnitAction().isAttacking() && target() != null && target().isAlive()
         );
     }
 
@@ -1263,8 +1266,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given position has land connection to given point.
      */
-    public boolean hasPathTo(APosition point) {
-        return u.hasPath(point);
+    public boolean hasPathTo(HasPosition point) {
+        return u.hasPath(point.position());
     }
 
     public boolean hasPathTo(AUnit unit) {
@@ -1597,7 +1600,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasNothingInQueue() {
-        return getTrainingQueue().size() <= 1;
+        return trainingQueue().size() <= 1;
     }
 
     public boolean canCloak() {
@@ -1609,7 +1612,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isTargettedBy(AUnit attacker) {
-        return this.equals(attacker.getTarget());
+        return this.equals(attacker.target());
     }
 
 //    public boolean inActOfShooting() {
@@ -1661,7 +1664,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean recentlyAcquiredTargetToAttack() {
-        if (getTarget() == null) {
+        if (target() == null) {
             return false;
         }
 
@@ -1674,7 +1677,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        int targetAcquiredAgo = A.atMostFramesAgo(_lastTargetToAttackAcquired, (int) (cooldownAbsolute() / 1.3));
         int targetAcquiredAgo = lastTargetToAttackAcquiredAgo();
 
-        return getTarget().isAlive()
+        return target().isAlive()
                 && (
                     (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
                     || targetAcquiredAgo <= cooldownAbsolute() / 1.1
@@ -1731,7 +1734,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // Approximate unit width (in tiles).
     public double size() {
-        return (type().getDimensionLeft() + type().getDimensionRight() + 2) / 64.0;
+        return (type().dimensionLeft() + type().dimensionRight() + 2) / 64.0;
     }
 
     public boolean isMarine() {
@@ -1747,6 +1750,37 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 "isRepairable",
                 -1,
                 () -> type().isMechanical() || isBuilding()
+        );
+    }
+
+    public int totalCost() {
+        return type().totalCost();
+    }
+
+    public AUnit loadedInto() {
+        return (AUnit) cache.get(
+                "loadedInto",
+                10,
+                () -> {
+                    if (!isLoaded()) {
+                        return null;
+                    }
+
+                    for (AUnit transport : Select.ourOfType(
+                            AUnitType.Terran_Bunker,
+                            AUnitType.Terran_Dropship,
+                            AUnitType.Protoss_Shuttle,
+                            AUnitType.Zerg_Overlord
+                    ).list()) {
+                        if (transport.hasCargo()) {
+                            if (transport.loadedUnits().contains(this)) {
+                                return transport;
+                            }
+                        }
+                    }
+
+                    throw new RuntimeException("Cant find loaded into");
+                }
         );
     }
 

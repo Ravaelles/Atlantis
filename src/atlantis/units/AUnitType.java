@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.util.Cache;
+import atlantis.wrappers.MappingCounter;
 import bwapi.*;
 
 import java.lang.reflect.Field;
@@ -482,13 +483,15 @@ public class AUnitType implements Comparable<AUnitType> {
      */
     protected static Object convertToAUnitTypesCollection(Object collection) {
         if (collection instanceof Map) {
-            Map<AUnitType, Integer> result = new HashMap<>();
+//            Map<AUnitType, Integer> result = new HashMap<>();
+            MappingCounter<AUnitType> units = new MappingCounter<>();
             for (Object key : ((Map) collection).keySet()) {
                 UnitType ut = (UnitType) key;
                 AUnitType unitType = create(ut);
-                result.put(unitType, (Integer) ((Map) collection).get(ut));
+//                result.put(unitType, (Integer) ((Map) collection).get(ut));
+                units.setValueFor(unitType, (Integer) ((Map) collection).get(ut));
             }
-            return result;
+            return units;
         } else if (collection instanceof List) {
             List<AUnitType> result = new ArrayList<>();
             for (Object key : (List) collection) {
@@ -812,38 +815,38 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
-    public Map<AUnitType, Integer> getRequiredUnits() {
-        return (Map<AUnitType, Integer>) cache.get(
+    public MappingCounter<AUnitType> requiredUnits() {
+        return (MappingCounter<AUnitType>) cache.get(
                 "getRequiredUnits",
                 -1,
-                () -> (Map<AUnitType, Integer>) convertToAUnitTypesCollection(ut.requiredUnits())
+                () -> convertToAUnitTypesCollection(ut.requiredUnits())
         );
     }
 
     /**
      * Returns building type (or parent type for units like Archon, Lurker) that produces this unit type.
      */
-    public AUnitType getWhatBuildsIt() {
+    public AUnitType whatBuildsIt() {
         return (AUnitType) cache.get(
-                "getWhatBuildsIt",
+                "whatBuildsIt",
                 -1,
                 () -> create(ut.whatBuilds().getFirst())
         );
     }
 
-    public int getDimensionLeft() {
+    public int dimensionLeft() {
         return ut.dimensionLeft();
     }
 
-    public int getDimensionRight() {
+    public int dimensionRight() {
         return ut.dimensionRight();
     }
 
-    public int getDimensionUp() {
+    public int dimensionUp() {
         return ut.dimensionUp();
     }
 
-    public int getDimensionDown() {
+    public int dimensionDown() {
         return ut.dimensionDown();
     }
 
@@ -957,7 +960,7 @@ public class AUnitType implements Comparable<AUnitType> {
                 -1,
                 () -> {
                     if (isBuilding()) {
-                        for (AUnitType requiredUnit : getRequiredUnits().keySet()) {
+                        for (AUnitType requiredUnit : requiredUnits().map().keySet()) {
                             if (requiredUnit.isBuilding() && !requiredUnit.isInitialBase()) {
                                 return requiredUnit;
                             }
@@ -968,7 +971,7 @@ public class AUnitType implements Comparable<AUnitType> {
 //                        }
                         return null;
                     } else {
-                        return getWhatBuildsIt();
+                        return whatBuildsIt();
                     }
                 }
         );
@@ -1075,6 +1078,7 @@ public class AUnitType implements Comparable<AUnitType> {
                 -1,
                 () -> ut.isFlagBeacon() || is(
                         AUnitType.Powerup_Flag,
+                        AUnitType.Special_Map_Revealer,
                         AUnitType.Special_Terran_Beacon,
                         AUnitType.Special_Terran_Flag_Beacon,
                         AUnitType.Special_Protoss_Beacon,
@@ -1219,6 +1223,27 @@ public class AUnitType implements Comparable<AUnitType> {
                 "isFirebat",
                 -1,
                 () -> is(Terran_Firebat)
+        );
+    }
+
+    public int totalCost() {
+        return (int) cache.get(
+                "totalCost",
+                -1,
+                () -> {
+                    if (is(Zerg_Zergling)) {
+                        return 25;
+                    }
+
+                    int baseCost = 0;
+
+                    if (!requiredUnits().isEmpty() && (isBuilding() || !requiredUnits().first().isBuilding())) {
+                        System.out.println(shortName() + " // " + requiredUnits().toString() + " // " + requiredUnits().first().shortName());
+                        baseCost += requiredUnits().size() * requiredUnits().first().totalCost();
+                    }
+
+                    return baseCost + getMineralPrice() + getGasPrice();
+                }
         );
     }
 }

@@ -76,7 +76,7 @@ public class AMineralGathering {
             Collection<AUnit> ourWorkersInRange = Select.ourWorkers().inRadius(12, base).list();
             for (AUnit mineral : minerals) {
                 for (AUnit ourWorker : ourWorkersInRange) {
-                    AUnit mineralMinedByWorker = ourWorker.getTarget();
+                    AUnit mineralMinedByWorker = ourWorker.target();
                     if (ourWorker.isGatheringMinerals() && mineral.equals(mineralMinedByWorker)) {
                         workersPerMineral.put(mineralMinedByWorker, (workersPerMineral.containsKey(mineral) ? 
                                 workersPerMineral.get(mineralMinedByWorker) : 0) + 1);

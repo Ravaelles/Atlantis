@@ -110,6 +110,7 @@ public class AEnemyTargeting {
         Selection targets = Select.enemy()
                 .ofType(enemyType)
                 .effVisible()
+                .hasPathFrom(ourUnit)
                 .canBeAttackedBy(ourUnit, 0);
 
 //        System.err.println(Select.enemy().size() + " // " + Select.enemy().ofType(enemyType).size());

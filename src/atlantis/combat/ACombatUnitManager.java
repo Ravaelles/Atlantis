@@ -10,17 +10,15 @@ import atlantis.combat.retreating.ARunningManager;
 import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 
 public class ACombatUnitManager {
 
     protected static boolean update(AUnit unit) {
-        if (unit.isWorker()) {
-            System.err.println("Worker being ACUM");
-            return false;
+        if (preActions(unit)) {
+            return true;
         }
-
-        preActions(unit);
 
         // =========================================================
         // === SPECIAL units =======================================
@@ -68,7 +66,7 @@ public class ACombatUnitManager {
 //        return false;
     }
 
-    private static void preActions(AUnit unit) {
+    private static boolean preActions(AUnit unit) {
 //        if (
 //                A.seconds() >= 1
 //                && GameSpeed.isDynamicSlowdownAllowed()
@@ -83,7 +81,22 @@ public class ACombatUnitManager {
 //            GameSpeed.oneTimeSlowdownUsed = true;
 //        }
 
+        if (unit.isNotRealUnit()) {
+            return true;
+        }
+
+        if (unit.isWorker()) {
+            System.err.println("Worker being ACUM");
+            return false;
+        }
+
+        if (unit.lastActionLessThanAgo(90, UnitActions.PATROL) || unit.isPatrolling()) {
+            unit.setTooltip("#Manual");
+            return true;
+        }
+
         unit.setTooltip(unit.getTooltip() + ".");
+        return false;
     }
 
     // =========================================================
@@ -94,6 +107,10 @@ public class ACombatUnitManager {
         }
 
         if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
+            return true;
+        }
+
+        if (unit.isLoaded() && TransportUnits.unloadFromTransport(unit)) {
             return true;
         }
 

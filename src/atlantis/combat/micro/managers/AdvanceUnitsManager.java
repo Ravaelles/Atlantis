@@ -64,7 +64,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // Too far
         else if (distToFocusPoint > optimalDist + margin) {
-            return unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")");
+            return unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")");
         }
 
         return false;

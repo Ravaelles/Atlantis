@@ -87,7 +87,7 @@ public class FightInsteadAvoid {
     protected boolean fightInImportantCases() {
 
         // Attacking critically important unit
-        if (ATargetingCrucial.isCrucialUnit(unit.getTarget())) {
+        if (ATargetingCrucial.isCrucialUnit(unit.target())) {
             unit.setTooltip("Crucial!");
             return true;
         }
@@ -152,7 +152,7 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightAsCombatUnit() {
-        if (wayTooManyUnitsNearby(unit)) {
+        if (fightBecauseWayTooManyUnitsNearby(unit)) {
             return true;
         }
 
@@ -194,12 +194,12 @@ public class FightInsteadAvoid {
                 .isNotEmpty();
     }
 
-    protected boolean wayTooManyUnitsNearby(AUnit unit) {
+    protected boolean fightBecauseWayTooManyUnitsNearby(AUnit unit) {
         int unitsNearby = Select.all().exclude(unit).inRadius(0.3, unit).count();
         int ourNearby = Select.our().exclude(unit).inRadius(0.3, unit).count();
 
         if (unit.mission() != null && unit.mission().isMissionAttack()) {
-            return ourNearby >= 3 || unitsNearby >= 5;
+            return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4);
         }
 
         return ourNearby >= 5 || unitsNearby >= 6;

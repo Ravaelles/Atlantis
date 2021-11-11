@@ -7,7 +7,6 @@ import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
 
 public class AWorkerManager {
 
@@ -87,9 +86,9 @@ public class AWorkerManager {
 
         if (
                 (worker.isMoving() || worker.isRepairing() || worker.isMiningOrExtractingGas())
-                && worker.getTarget() != null && !worker.getTarget().type().isMineralField()
+                && worker.target() != null && !worker.target().type().isMineralField()
         ) {
-            worker.setTooltip("--> " + worker.getTarget().shortName());
+            worker.setTooltip("--> " + worker.target().shortName());
             return true;
         }
 
@@ -148,9 +147,9 @@ public class AWorkerManager {
     }
     
     public static boolean isWorkerAssignedToBuilding(AUnit worker, AUnit building) {
-        if (building.equals(worker.getTarget()) || building.equals(worker.getOrderTarget())) {
+        if (building.equals(worker.target()) || building.equals(worker.orderTarget())) {
             return true;
-        } else if (building.equals(worker.getBuildUnit())) {
+        } else if (building.equals(worker.buildUnit())) {
             return true;
         } 
         else if (building.type().isGasBuilding()) {
@@ -159,7 +158,7 @@ public class AWorkerManager {
         else if (building.isBase()) {
             if (worker.isGatheringMinerals() || worker.isCarryingMinerals()) {
                 return true;
-            } else return worker.getTarget() != null && worker.getTarget().type().isMineralField();
+            } else return worker.target() != null && worker.target().type().isMineralField();
         }
         
         return false;
@@ -168,7 +167,7 @@ public class AWorkerManager {
     public static int countWorkersAssignedTo(AUnit unit) {
         int count = 0;
         for (AUnit worker : Select.ourWorkers().list()) {
-            if (unit.equals(worker.getTarget())) {
+            if (unit.equals(worker.target())) {
                 count++;
             }
         }

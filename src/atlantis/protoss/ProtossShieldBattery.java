@@ -2,7 +2,6 @@ package atlantis.protoss;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.A;
 
 public class ProtossShieldBattery {
@@ -19,7 +18,7 @@ public class ProtossShieldBattery {
                     if (shieldBattery.groundDistance(unit) > 15) {
                         return false;
                     }
-                    if (!shieldBattery.equals(unit.getTarget()) || A.chance(2)) {
+                    if (!shieldBattery.equals(unit.target()) || A.chance(2)) {
                         unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
                     }
                     shieldBattery.setTooltip("RECHARGE " + unit.shortName());

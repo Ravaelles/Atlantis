@@ -133,6 +133,18 @@ public class AWorkerDefenceManager {
             return false;
         }
 
+        if (Select.enemyCombatUnits().ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode,
+                AUnitType.Terran_Siege_Tank_Tank_Mode,
+                AUnitType.Zerg_Lurker,
+                AUnitType.Zerg_Ultralisk,
+                AUnitType.Protoss_Archon,
+                AUnitType.Protoss_Reaver,
+                AUnitType.Protoss_Zealot
+        ).inRadius(8, worker).isNotEmpty()) {
+            return false;
+        }
+
         // FIGHT against ZERGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).listUnits()) {
             if (worker.hp() <= 21 && runToFarthestMineral(worker, enemy)) {
@@ -146,15 +158,6 @@ public class AWorkerDefenceManager {
 
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = Select.enemy().combatUnits()
-                .excludeTypes(
-                        AUnitType.Terran_Siege_Tank_Siege_Mode,
-                        AUnitType.Terran_Siege_Tank_Tank_Mode,
-                        AUnitType.Zerg_Lurker,
-                        AUnitType.Zerg_Ultralisk,
-                        AUnitType.Protoss_Archon,
-                        AUnitType.Protoss_Reaver,
-                        AUnitType.Protoss_Zealot
-                )
                 .inRadius(1, worker).listUnits();
         for (AUnit enemy : enemies) {
             worker.attackUnit(enemy);
