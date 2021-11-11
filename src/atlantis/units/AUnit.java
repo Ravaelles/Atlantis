@@ -987,7 +987,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                         System.err.println(this);
                     }
 
-                    return hp;
+                    return hp > 0 ? hp : 1;
                 }
         );
     }

@@ -211,7 +211,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static Selection enemies(AUnitType type) {
         String cachePath;
         return cache.get(
-                cachePath = "enemies",
+                cachePath = "enemies:" + type.id(),
                 microCacheForFrames,
                 () -> {
                     List<AUnit> data = new ArrayList<>();

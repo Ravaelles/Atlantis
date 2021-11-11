@@ -3,6 +3,8 @@ package atlantis.combat.micro.managers;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.actions.UnitAction;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
@@ -41,9 +43,9 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         double margin = Math.max(2.5, unit.squadSize() / 7.0);
         boolean result;
 
-//        if (We.terran() && handleTerranAdvance(unit)) {
-//            return true;
-//        }
+        if (We.terran() && handleTerranAdvance(unit)) {
+            return true;
+        }
 
         // Too close
         if (
@@ -79,7 +81,16 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
     // =========================================================
 
-//    private static boolean handleTerranAdvance(AUnit unit) {
+    private static boolean handleTerranAdvance(AUnit unit) {
+        if (unit.isInfantry() && Count.medics() >= 3) {
+            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
+            if (medic != null && medic.distToMoreThan(unit, 4)) {
+                return unit.move(medic, UnitActions.MOVE, "ToMedic");
+            }
+        }
+
+        return false;
+
 //        if (Select.our().tanks().isEmpty()) {
 //            return false;
 //        }
@@ -101,6 +112,6 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 //                "ToTank"
 //        );
 //        return true;
-//    }
+    }
 
 }

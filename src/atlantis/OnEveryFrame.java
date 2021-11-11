@@ -1,11 +1,17 @@
 package atlantis;
 
+import atlantis.units.select.Select;
+
 public class OnEveryFrame {
 
 //    private static CappedList<Integer> frames = new CappedList<>(4);
 
     public static void update() {
         GameSpeed.checkIfNeedToSlowDown();
+
+        if (Select.our().count() == 0) {
+            GameSpeed.changeFrameSkipTo(100);
+        }
 
 //        for (AUnit unit : Select.ourCombatUnits().list()) {
 //            if (unit.isUnderAttack(2) && unit.hpPercent() < 48) {

@@ -11,12 +11,14 @@ import atlantis.units.actions.UnitActions;
 
 public class ProtossObserver extends MobileDetector {
 
-    protected static AUnitType type = AUnitType.Protoss_Observer;
+    public static AUnitType type() {
+        return AUnitType.Protoss_Observer;
+    }
 
     // =========================================================
 
-    public static boolean update(AUnit scienceVessel) {
-        return MobileDetector.update(scienceVessel);
+    public static boolean update(AUnit observer) {
+        return MobileDetector.update(observer);
     }
 
 }

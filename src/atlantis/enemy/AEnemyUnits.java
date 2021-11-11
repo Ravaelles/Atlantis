@@ -166,11 +166,11 @@ public class AEnemyUnits {
             return;
         }
 
-        if (enemyUnit.isLurker()) {
-            System.out.println(enemyUnit);
-            System.out.println(enemyUnit.x() + " // " + enemyUnit._lastX);
-            System.out.println(enemyUnit.y() + " // " + enemyUnit._lastY);
-        }
+//        if (enemyUnit.isLurker()) {
+//            System.out.println(enemyUnit);
+//            System.out.println(enemyUnit.x() + " // " + enemyUnit._lastX);
+//            System.out.println(enemyUnit.y() + " // " + enemyUnit._lastY);
+//        }
 
 //        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
         if (enemyUnitsDiscovered.containsKey(enemyUnit)) {

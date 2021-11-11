@@ -237,7 +237,7 @@ public class Atlantis implements BWEventListener {
             }
         }
 
-        if (A.isUms() && A.supplyUsed() == 0 && Select.ourCombatUnits().isEmpty()) {
+        if (A.now() >= 50 && A.isUms() && A.supplyUsed() == 0 && Select.ourCombatUnits().isEmpty()) {
             System.out.println("### ROUND END ###");
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();

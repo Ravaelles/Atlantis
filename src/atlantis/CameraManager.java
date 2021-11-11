@@ -40,10 +40,10 @@ public class CameraManager {
             return cameraUnit;
         }
 
-        cameraUnit = Select.ourOfType(AUnitType.Terran_Bunker).first();
-        if (cameraUnit != null) {
-            return cameraUnit;
-        }
+//        cameraUnit = Select.ourOfType(AUnitType.Terran_Bunker).first();
+//        if (cameraUnit != null) {
+//            return cameraUnit;
+//        }
 
 //        return null;
         return Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).groundUnits().first();

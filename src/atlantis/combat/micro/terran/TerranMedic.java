@@ -1,9 +1,12 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
+import bwapi.Color;
 import bwapi.TechType;
 
 import java.util.HashMap;
@@ -65,13 +68,15 @@ public class TerranMedic {
         }
 
         // If here, then it means no alive infantry left, stick to medics
-        return Select.ourTerranInfantry().exclude(medic).randomWithSeed(medic.id());
+        return Select.ourTerranInfantry().excludeTypes(AUnitType.Terran_Medic).randomWithSeed(medic.id());
     }
 
     private static boolean handleStickToAssignments(AUnit medic) {
         AUnit assignment = medicAssignment(medic);
 
         if (assignment != null && assignment.isAlive()) {
+            APainter.paintLine(medic, assignment, Color.White);
+
             double dist = assignment.distTo(medic);
 
             if (dist > 1.9) {

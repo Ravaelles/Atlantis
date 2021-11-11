@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import bwapi.Game;
@@ -55,6 +56,7 @@ public class GameSpeed {
                         && AGame.now() > 60
                         && gameSpeed == 0
                         && Count.ourCombatUnits() >= 5
+                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
                         && Select.enemyCombatUnits().atLeast(2)
 //                        && Missions.isGlobalMissionContain()
         ) {

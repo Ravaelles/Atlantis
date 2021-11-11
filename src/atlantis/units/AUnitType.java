@@ -1238,7 +1238,6 @@ public class AUnitType implements Comparable<AUnitType> {
                     int baseCost = 0;
 
                     if (!requiredUnits().isEmpty() && (isBuilding() || !requiredUnits().first().isBuilding())) {
-                        System.out.println(shortName() + " // " + requiredUnits().toString() + " // " + requiredUnits().first().shortName());
                         baseCost += requiredUnits().size() * requiredUnits().first().totalCost();
                     }
 

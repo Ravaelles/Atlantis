@@ -10,8 +10,6 @@ import atlantis.units.select.Selection;
 
 public class MobileDetector {
 
-    protected static AUnitType type; // NEED TO BE ASSIGNED IN CHILD CLASS
-
     protected static AUnit unitForArmy = null;
     protected static AUnit unitForSquadScout = null;
     protected static AUnit unitForBase = null;
@@ -37,7 +35,7 @@ public class MobileDetector {
     // =========================================================
 
     protected static boolean handleSpreadOut(AUnit unit) {
-        Selection units = Select.ourOfType(type)
+        Selection units = Select.ourOfType(unit.type())
                 .inRadius(17, unit).exclude(unit);
         if (units.count() > 0) {
             AUnit otherunit = units.nearestTo(unit);
@@ -87,7 +85,7 @@ public class MobileDetector {
             return false;
         }
 
-        if (!unit.equals(Select.ourOfType(type).first())) {
+        if (!unit.equals(Select.ourOfType(unit.type()).first())) {
             return false;
         }
 

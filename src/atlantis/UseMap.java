@@ -3,7 +3,7 @@ package atlantis;
 public class UseMap {
 
     public static String activeMap() {
-//        return "sscai/(2)Destination.scx";
+        return "sscai/(2)Destination.scx";
 //        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
@@ -14,10 +14,13 @@ public class UseMap {
 //        return "ums/";
 //        return "ums/";
 //        return "ums/";
-        return "ums/gol_v_zeals.scx";
-//        return "ums/aaa (1).scx";
+//        return "ums/gol_v_zeals.scx";
+//        return "ums/aaa (1).scx"; // Nice mini maps for terran
 //        return "ums/aaa (2).scx";
 //        return "ums/aaa (3).scx";
+//        return "ums/aaa (4).scx";
+//        return "ums/aaa (5).scx";
+//        return "ums/aaa (6).scx";
 
 //        return "ums/marines/m (5).scx"; // Nice map to test different terran infantry in rounds
 //        return "ums/marines/m (8).scx"; // Hmm

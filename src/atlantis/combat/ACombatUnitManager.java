@@ -26,7 +26,7 @@ public class ACombatUnitManager {
 
         // Medics are using dedicated managers.
         // These are stopping standard top priority managers
-        if (ASpecialUnitManager.handledUsingDedicatedUnitManager(unit)) {
+        if (ASpecialUnitManager.updateAndOverrideAllOtherManagers(unit)) {
             return true;
         }
 
@@ -44,7 +44,7 @@ public class ACombatUnitManager {
 
         // Terran infantry has own managers, but these allow higher
         // level managers to take control.
-        if (ASpecialUnitManager.handledUsingSpecialUnitManager(unit)) {
+        if (ASpecialUnitManager.updateAndAllowTopManagers(unit)) {
             return true;
         }
 

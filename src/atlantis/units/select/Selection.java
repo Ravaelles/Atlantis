@@ -81,7 +81,7 @@ public class Selection {
     public Selection inRadius(double maxDist, HasPosition unitOrPosition) {
         return Select.cache.get(
                 addToCachePath("inRadius:" + maxDist + ":" + unitOrPosition),
-                1,
+                0,
                 () -> {
                     Iterator unitsIterator = data.iterator();// units.iterator();
                     while (unitsIterator.hasNext()) {

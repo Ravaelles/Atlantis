@@ -10,11 +10,12 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.A;
+import atlantis.util.Enemy;
 
 public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
     protected static boolean saveForFactory() {
-        if (!A.hasMinerals(250)) {
+        if (!A.hasMinerals(200)) {
             if (Count.inQueue(AUnitType.Terran_Factory, 1) > 0) {
                 System.out.println("Save for Factory");
                 return true;
@@ -35,7 +36,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
-            if (Count.medics() >= 5 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) == 0) {
+            if (Count.medics() >= 4 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
                 produceUnit(barracks.first(), AUnitType.Terran_Firebat);
                 return;
             }
@@ -44,6 +45,18 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
                 produceUnit(barracks.first(), AUnitType.Terran_Medic);
             }
         }
+    }
+
+    private static int minFirebats() {
+        if (Enemy.terran()) {
+            return 0;
+        }
+        if (Enemy.protoss()) {
+            return Math.max(1, Count.medics() / 5);
+        }
+
+        // Zerg
+        return (int) Math.max(2, Count.medics() / 4);
     }
 
     protected static void marines() {

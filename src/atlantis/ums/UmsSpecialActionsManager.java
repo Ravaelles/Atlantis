@@ -54,8 +54,10 @@ public class UmsSpecialActionsManager {
         for (AUnit beacon : beacons.clone().list()) {
             AUnit unit = ours.clone().inRadius(9, beacon).nearestTo(beacon);
             AUnit nearestBeacon = beacons.clone().nearestTo(unit);
-            unit.move(nearestBeacon, UnitActions.MOVE, "To beacon");
-            APainter.paintLine(unit, nearestBeacon, Color.White);
+            if (unit != null && beacon != null) {
+                unit.move(nearestBeacon, UnitActions.MOVE, "To beacon");
+                APainter.paintLine(unit, nearestBeacon, Color.White);
+            }
             return true;
         }
         return false;

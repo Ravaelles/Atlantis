@@ -62,6 +62,8 @@ public interface AUnitOrders {
     default boolean attackPosition(APosition target) {
         if (u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
             u().attack(target);
+            unit().setLastUnitOrderNow();
+            unit().setUnitAction(UnitActions.ATTACK_POSITION);
             return true;
         }
 
