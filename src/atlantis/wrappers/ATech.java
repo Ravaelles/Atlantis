@@ -81,10 +81,12 @@ public class ATech {
 
     public static void markAsBeingResearched(TechType tech) {
         currentlyResearching.add(tech);
+        cache.forgetAll();
     }
 
     public static void markAsBeingUpgraded(UpgradeType upgrade) {
         currentlyUpgrading.add(upgrade);
+        cache.forgetAll();
     }
     
     // =========================================================

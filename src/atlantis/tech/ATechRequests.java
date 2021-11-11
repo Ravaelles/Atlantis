@@ -4,7 +4,6 @@ import atlantis.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -22,7 +21,7 @@ public class ATechRequests {
     }
 
     public static boolean researchTech(TechType tech) {
-        AUnitType buildingType = AUnitType.createFrom(tech.whatResearches());
+        AUnitType buildingType = AUnitType.create(tech.whatResearches());
         if (buildingType != null) {
             AUnit building = Select.ourBuildings().ofType(buildingType).free().first();
             if (building != null && !building.isBusy()) {
@@ -34,7 +33,7 @@ public class ATechRequests {
     }
 
     public static boolean researchUpgrade(UpgradeType upgrade) {
-        AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades());
+        AUnitType buildingType = AUnitType.create(upgrade.whatUpgrades());
         if (buildingType != null) {
             AUnit building = Select.ourBuildings().ofType(buildingType).free().first();
             if (building != null && !building.isBusy()) {

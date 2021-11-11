@@ -26,7 +26,7 @@ public class AUnitType implements Comparable<AUnitType> {
     public static Collection<AUnitType> getAllUnitTypes() {
         if (instances.size() < 30) {
             for (UnitType type : UnitType.values()) {
-                createFrom(type);
+                create(type);
             }
         }
 
@@ -51,7 +51,7 @@ public class AUnitType implements Comparable<AUnitType> {
      * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you
      * can create missing method here and you can reference original UnitType class via ut() method.
      */
-    public static AUnitType createFrom(UnitType ut) {
+    public static AUnitType create(UnitType ut) {
         if (ut == null) {
             throw new RuntimeException("AUnitType constructor: type is null");
         }
@@ -485,7 +485,7 @@ public class AUnitType implements Comparable<AUnitType> {
             Map<AUnitType, Integer> result = new HashMap<>();
             for (Object key : ((Map) collection).keySet()) {
                 UnitType ut = (UnitType) key;
-                AUnitType unitType = createFrom(ut);
+                AUnitType unitType = create(ut);
                 result.put(unitType, (Integer) ((Map) collection).get(ut));
             }
             return result;
@@ -493,7 +493,7 @@ public class AUnitType implements Comparable<AUnitType> {
             List<AUnitType> result = new ArrayList<>();
             for (Object key : (List) collection) {
                 UnitType ut = (UnitType) key;
-                AUnitType unitType = createFrom(ut);
+                AUnitType unitType = create(ut);
                 result.add(unitType);
             }
             return result;
@@ -827,7 +827,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (AUnitType) cache.get(
                 "getWhatBuildsIt",
                 -1,
-                () -> createFrom(ut.whatBuilds().getFirst())
+                () -> create(ut.whatBuilds().getFirst())
         );
     }
 

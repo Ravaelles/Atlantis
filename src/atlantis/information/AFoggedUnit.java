@@ -101,7 +101,7 @@ public class AFoggedUnit extends AUnit {
 
     protected void updateType(AUnit unit) {
         if (_lastCachedType == null || (unit.type() != null && !_lastCachedType.equals(unit.type()))) {
-            _lastCachedType = AUnitType.createFrom(unit.u().getType());
+            _lastCachedType = AUnitType.create(unit.u().getType());
 //            _lastCachedType = unit.type();
         }
     }

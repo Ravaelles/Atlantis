@@ -12,7 +12,7 @@ public class Helpers {
     }
 
     public static boolean has(UnitType type) {
-        return Count.ofType(AUnitType.createFrom(type)) > 0;
+        return Count.ofType(AUnitType.create(type)) > 0;
     }
 
     public static boolean hasFree(AUnitType type) {

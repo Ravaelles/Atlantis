@@ -54,8 +54,8 @@ public class Requirements {
             }
         }
 
-        AUnitType required = AUnitType.createFrom(tech.requiredUnit());
-        if (required != null && Count.ofType(AUnitType.createFrom(tech.requiredUnit())) == 0) {
+        AUnitType required = AUnitType.create(tech.requiredUnit());
+        if (required != null && Count.ofType(AUnitType.create(tech.requiredUnit())) == 0) {
             return false;
         }
         return true;
@@ -68,7 +68,7 @@ public class Requirements {
             }
         }
 
-        AUnitType required = AUnitType.createFrom(upgrade.whatsRequired());
+        AUnitType required = AUnitType.create(upgrade.whatsRequired());
         if (required != null && Count.ofType(required) == 0) {
             return false;
         }

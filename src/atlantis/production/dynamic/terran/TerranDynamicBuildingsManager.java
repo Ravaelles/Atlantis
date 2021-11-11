@@ -6,14 +6,12 @@ import atlantis.combat.micro.terran.TerranMissileTurret;
 import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.AddToQueue;
-import atlantis.production.requests.AAntiAirBuildingRequests;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.strategy.OurStrategy;
 import atlantis.strategy.decisions.OurDecisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -28,7 +26,9 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
         armory();
         factory();
-        addonIfNeeded();
+
+        comsat();
+        machineShop();
     }
 
     private static void offensiveBunkers() {
@@ -99,10 +99,16 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         return false;
     }
 
+    private static void comsat() {
+        if (Count.bases() > Count.includingPlanned(AUnitType.Terran_Comsat_Station)) {
+            AddToQueue.withStandardPriority(AUnitType.Terran_Comsat_Station);
+        }
+    }
+
     /**
      * If there are buildings without addons, build them.
      */
-    private static void addonIfNeeded() {
+    private static void machineShop() {
         if (OurDecisions.wantsToBeAbleToProduceTanksSoon() || AGame.canAffordWithReserved(150, 150)) {
 
             for (AUnit building : Select.ourBuildings().list()) {

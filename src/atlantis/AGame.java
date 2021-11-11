@@ -92,7 +92,7 @@ public class AGame {
     }
 
     /**
-     * Returns true once per n game frames.
+     * Returns false once per n game frames.
      */
     public static boolean notNthGameFrame(int n) {
         return Atlantis.game().getFrameCount() % n != 0;
@@ -302,6 +302,14 @@ public class AGame {
 
     public static boolean canAffordWithReserved(AUnitType type) {
         return canAffordWithReserved(type.getMineralPrice(), type.getGasPrice());
+    }
+
+    public static boolean canAffordWithReserved(TechType type) {
+        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
+    }
+
+    public static boolean canAffordWithReserved(UpgradeType type) {
+        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
     }
 
     public static int killsLossesResourceBalance() {

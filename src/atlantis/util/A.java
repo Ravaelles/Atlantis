@@ -1156,4 +1156,11 @@ public class A {
     public static boolean hasGas(int gas) {
         return AGame.hasGas(gas);
     }
+
+    /**
+     * Returns false once per n game frames.
+     */
+    public static boolean notNthGameFrame(int n) {
+        return Atlantis.game().getFrameCount() % n != 0;
+    }
 }

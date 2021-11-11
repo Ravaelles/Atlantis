@@ -135,7 +135,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 "type",
                 isOur() ? -1 : 3,
                 () -> {
-                    AUnitType type = AUnitType.createFrom(u.getType());
+                    AUnitType type = AUnitType.create(u.getType());
                     if (type.isUnknown()) {
                         if (this.isOur()) {
                             System.err.println("Our unit (" + u.getType() + ") returned Unknown type");
@@ -1173,7 +1173,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnitType getBuildType() {
-        return u.getBuildType() != null ? AUnitType.createFrom(u.getBuildType()) : null;
+        return u.getBuildType() != null ? AUnitType.create(u.getBuildType()) : null;
     }
 
     public boolean isVulture() {
