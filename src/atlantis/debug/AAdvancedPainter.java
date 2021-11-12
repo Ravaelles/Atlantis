@@ -179,7 +179,7 @@ public class AAdvancedPainter extends APainter {
 //                }
 //            }
             String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
-                    + "(" + unit.getLastOrderFramesAgo() + ")" + unit.shortName();
+                    + "(" + unit.getLastOrderFramesAgo() + ")";
             paintTextCentered(new APosition(position.getX(), position.getY() + 8), order, Color.Grey);
         }
     }

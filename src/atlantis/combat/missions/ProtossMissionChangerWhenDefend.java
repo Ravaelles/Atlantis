@@ -15,7 +15,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        return Select.ourCombatUnits().atLeast(20) || A.resourcesBalance() >= 450;
+        return Select.ourCombatUnits().atLeast(12) || A.resourcesBalance() >= 450;
     }
 
 }

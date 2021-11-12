@@ -8,6 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.Units;
+import atlantis.util.We;
 
 public class FightInsteadAvoid {
 
@@ -203,8 +204,18 @@ public class FightInsteadAvoid {
         int ourNearby = Select.our().exclude(unit).inRadius(0.3, unit).count();
 
         if (unit.mission() != null && unit.mission().isMissionAttack()) {
-            return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
-                    || Select.ourCombatUnits().inRadius(10, unit).atLeast(25);
+            if (We.terran()) {
+                return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
+                        || Select.ourCombatUnits().inRadius(10, unit).atLeast(25);
+            }
+            if (We.protoss()) {
+                return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
+                        || Select.ourCombatUnits().inRadius(10, unit).atLeast(10);
+            }
+            if (We.zerg()) {
+                return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
+                        || Select.ourCombatUnits().inRadius(10, unit).atLeast(20);
+            }
         }
 
         return ourNearby >= 5 || unitsNearby >= 6;

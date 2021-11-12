@@ -62,7 +62,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
     private static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
-        APainter.paintCircle(position, 5, Color.Red);
+        _CONDITION_THAT_FAILED = null;
+//        APainter.paintCircle(position, 5, Color.Red);
 
         // Check for POWER
         if (!isPowerConditionFulfilled(building, position)) {

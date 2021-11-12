@@ -7,6 +7,8 @@ import atlantis.strategy.GamePhase;
 import atlantis.tech.ATechRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
+import atlantis.util.A;
 import bwapi.TechType;
 
 public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
@@ -16,13 +18,54 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        gateways();
-        forge();
-        stargate();
         arbiterTribunal();
+        stargate();
+        observatory();
+        roboticsSupportBay();
+        roboticsFacility();
+        forge();
+        gateways();
     }
 
     // =========================================================
+
+    private static void roboticsSupportBay() {
+        if (!A.supplyUsed(60)) {
+            return;
+        }
+
+        if (Have.no(AUnitType.Protoss_Robotics_Facility) || Have.a(AUnitType.Protoss_Robotics_Support_Bay)) {
+            return;
+        }
+
+        if (Have.notEvenInPlans(AUnitType.Protoss_Robotics_Support_Bay)) {
+            buildNow(AUnitType.Protoss_Robotics_Support_Bay);
+        }
+    }
+
+    private static void observatory() {
+        if (!A.supplyUsed(40)) {
+            return;
+        }
+
+        if (Have.no(AUnitType.Protoss_Robotics_Facility) || Have.a(AUnitType.Protoss_Observatory)) {
+            return;
+        }
+
+        if (Count.includingPlanned(AUnitType.Protoss_Observatory) == 0) {
+            buildNow(AUnitType.Protoss_Observatory);
+        }
+    }
+
+    private static void roboticsFacility() {
+        if (!A.supplyUsed(40)) {
+            return;
+        }
+
+        if (Count.includingPlanned(AUnitType.Protoss_Robotics_Facility) == 0) {
+            buildNow(AUnitType.Protoss_Robotics_Facility);
+        }
+    }
 
     private static void gateways() {
         if (

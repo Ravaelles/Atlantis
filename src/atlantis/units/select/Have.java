@@ -12,20 +12,16 @@ public class Have {
         return Count.ofType(type) > 0;
     }
 
-    public static boolean armory() {
-        return Count.ofType(AUnitType.Terran_Armory) > 0;
+    public static boolean a(AUnitType type) {
+        return Count.includingPlanned(type) > 0;
     }
 
-    public static boolean base() {
-        return Select.main() != null;
+    public static boolean no(AUnitType type) {
+        return Count.includingPlanned(type) == 0;
     }
 
-    public static boolean engBay() {
-        return Count.ofType(AUnitType.Terran_Engineering_Bay) > 0;
-    }
-
-    public static boolean barracks() {
-        return Count.ofType(AUnitType.Terran_Barracks) > 0;
+    public static boolean notEvenInPlans(AUnitType type) {
+        return Count.includingPlanned(type) == 0;
     }
 
     public static boolean existingOrPlanned(AUnitType building, HasPosition position, double inRadius) {
@@ -52,6 +48,24 @@ public class Have {
         return Select.ourOfTypeIncludingUnfinished(building).inRadius(inRadius, position).atLeast(1);
     }
 
+    // =========================================================
+
+    public static boolean armory() {
+        return Count.ofType(AUnitType.Terran_Armory) > 0;
+    }
+
+    public static boolean base() {
+        return Select.main() != null;
+    }
+
+    public static boolean engBay() {
+        return Count.ofType(AUnitType.Terran_Engineering_Bay) > 0;
+    }
+
+    public static boolean barracks() {
+        return Count.ofType(AUnitType.Terran_Barracks) > 0;
+    }
+
     public static boolean main() {
         return base();
     }
@@ -60,12 +74,7 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Factory) > 0;
     }
 
-    public static boolean no(AUnitType type) {
-        return Count.includingPlanned(type) == 0;
-    }
-
     public static boolean machineShop() {
         return have(AUnitType.Terran_Factory);
     }
-
 }

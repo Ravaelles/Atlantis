@@ -14,6 +14,22 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
         }
     }
 
+    // === DEFEND ==============================================
+
+    private static boolean shouldChangeMissionToDefend() {
+        if (shouldDefendMainBase()) {
+            return true;
+        }
+
+        if (Missions.isFirstMission()) {
+            return false;
+        }
+
+        int ourCombatUnits = Count.ourCombatUnits();
+
+        return ourCombatUnits <= 6 || AGame.killsLossesResourceBalance() <= 200;
+    }
+
     // === ATTACK ==============================================
 
     private static boolean shouldChangeMissionToAttack() {
@@ -31,18 +47,6 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 //        }
 //
 //        return AGame.timeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
-    }
-
-    // === DEFEND ==============================================
-
-    private static boolean shouldChangeMissionToDefend() {
-        if (Missions.isFirstMission()) {
-            return false;
-        }
-
-        int ourCombatUnits = Count.ourCombatUnits();
-
-        return ourCombatUnits <= 6 || AGame.killsLossesResourceBalance() <= 200;
     }
 
 }

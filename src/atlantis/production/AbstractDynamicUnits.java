@@ -6,6 +6,7 @@ import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Helpers;
 
@@ -20,10 +21,16 @@ public class AbstractDynamicUnits extends Helpers {
             return false;
         }
 
-        return AddToQueue.withHighPriority(type);
+        return AddToQueue.withStandardPriority(type);
     }
 
     // =========================================================
+
+    protected static void buildToHave(AUnitType type, int haveN) {
+        if (Count.includingPlanned(type) < haveN) {
+            addToQueue(type);
+        }
+    }
 
     protected static boolean trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
         if (noSupply(minSupply)) {
@@ -53,7 +60,8 @@ public class AbstractDynamicUnits extends Helpers {
         AUnitType building = type.whatBuildsIt();
         for (AUnit buildingProducing : Select.ourOfType(building).listUnits()) {
             if (!buildingProducing.isTrainingAnyUnit()) {
-                trainNow(type);
+//                trainNow(type);
+                addToQueue(AUnitType.Protoss_Zealot);
                 return true;
             }
         }

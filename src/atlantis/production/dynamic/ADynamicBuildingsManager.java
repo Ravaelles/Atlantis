@@ -110,6 +110,10 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         buildNow(type, onlyOneAtTime);
     }
 
+    protected static void buildNow(AUnitType type) {
+        buildNow(type, false);
+    }
+
     protected static void buildNow(AUnitType type, boolean onlyOneAtTime) {
         if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(type)) {
             return;
