@@ -6,6 +6,7 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -68,11 +69,13 @@ public class AConstructionManager {
 //        System.out.println(constructionOrder.getBuilder());
 
         if (
-                order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                !We.zerg()
+                && order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
                 && order.startedAgo() >= 30
                 && (building == null || !building.isAlive())
         ) {
             order.cancel();
+            System.out.println("No building - cancel");
             return;
         }
 
@@ -208,6 +211,7 @@ public class AConstructionManager {
                     || (building.getRemainingBuildTime() <= 2 && building.hpPercent() < 60)
                     || (building.getRemainingBuildTime() <= 3 && building.hpPercent() < 60)
             ) {
+//                System.out.println("Construction under attack - cancel! " + building.lastUnderAttackLessThanAgo(20));
                 order.cancel();
             }
         }
@@ -219,7 +223,9 @@ public class AConstructionManager {
         }
 
         if (order.getBuilder() == null) {
-            System.out.println("Weird case, " + order.getBuildingType() + " has no builder. Cancel.");
+            if (Count.workers() > 1) {
+                System.out.println("Weird case, " + order.getBuildingType() + " has no builder. Cancel.");
+            }
             order.cancel();
             return;
         }

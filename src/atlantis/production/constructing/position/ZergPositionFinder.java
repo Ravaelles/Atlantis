@@ -25,45 +25,26 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 //        AtlantisPositionFinder.maxDistance = maxDistance;
 
         // =========================================================
-        int searchRadius = 6;
-        if (building.equals(AtlantisConfig.BASE)) {
-            searchRadius = 0;
-        }
-        if (building.equals(AtlantisConfig.SUPPLY)) {
-            searchRadius = 8;
-        }
-        if (maxDistance < searchRadius) {
-            maxDistance = searchRadius;
-        }
 
+        int searchRadius = 2;
         while (searchRadius < maxDistance) {
-            int xCounter = 0;
-            int yCounter = 0;
-            int doubleRadius = searchRadius * 2;
-            
-            for (int tileX = nearTo.getTileX() - searchRadius; tileX <= nearTo.getTileX() + searchRadius; tileX++) {
-                for (int tileY = nearTo.getTileY() - searchRadius; tileY <= nearTo.getTileY() + searchRadius; tileY++) {
-                    if (xCounter == 0 || yCounter == 0 || xCounter == doubleRadius || yCounter == doubleRadius) {
+            int xMin = nearTo.getTileX() - searchRadius;
+            int xMax = nearTo.getTileX() + searchRadius;
+            int yMin = nearTo.getTileY() - searchRadius;
+            int yMax = nearTo.getTileY() + searchRadius;
+            for (int tileX = xMin; tileX <= xMax; tileX++) {
+                for (int tileY = yMin; tileY <= yMax; tileY++) {
+                    if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
-                        if (doesPositionFulfillAllConditions(builder,building, constructionPosition)) {
-//                            AtlantisPainter.paintRectangle(constructionPosition, 32, 32, Color.Green);
+                        if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
                             return constructionPosition;
                         }
-//                        else {
-//                            AtlantisPainter.paintRectangle(constructionPosition, 32, 32, Color.Red);
-//                        }
                     }
-
-                    yCounter++;
                 }
-                xCounter++;
             }
 
             searchRadius++;
         }
-//        System.out.println("##### No success with searchRadius = " + searchRadius);
-//        System.err.println("##### Last condition that failed = `" + _CONDITION_THAT_FAILED + "` for " 
-//              + building + " with searchRadius = " + searchRadius);
 
         return null;
     }

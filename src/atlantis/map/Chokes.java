@@ -100,7 +100,7 @@ public class Chokes {
                     ARegion naturalRegion = Regions.getRegion(Bases.natural(relativeTo.position()));
                     if (naturalRegion == null) {
                         System.err.println("Can't find region for natural base");
-                        AGame.setUmsMode(true);
+                        AGame.setUmsMode();
                         return null;
                     }
 

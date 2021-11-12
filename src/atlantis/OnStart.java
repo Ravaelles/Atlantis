@@ -44,7 +44,7 @@ public class OnStart {
         } catch (Exception e) {
             System.err.println("### Early exception ###");
             System.err.println("This probably means your playing special UMS map.");
-            AGame.setUmsMode(true);
+            AGame.setUmsMode();
         }
 
         System.out.println("### Atlantis is working! ###");
@@ -54,7 +54,7 @@ public class OnStart {
 
     private static void handleCheckIfUmsMap() {
         if (Atlantis.game().mapPathName().contains("/ums/")) {
-            AGame.setUmsMode(true);
+            AGame.setUmsMode();
         }
     }
 

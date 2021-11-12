@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.util.Cache;
+import atlantis.util.We;
 
 import java.util.*;
 
@@ -126,7 +127,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 cachePath = "ourBases",
                 20,
                 () -> {
-                    if (AGame.isPlayingAsZerg()) {
+                    if (We.zerg()) {
                         return ourBuildings().ofType(
                                 AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
                                 AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center

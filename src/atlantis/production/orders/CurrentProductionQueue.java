@@ -31,7 +31,6 @@ public abstract class CurrentProductionQueue {
      */
     public static ArrayList<ProductionOrder> thingsToProduce(ProductionQueueMode mode) {
         ArrayList<ProductionOrder> queue = new ArrayList<>();
-//        boolean hasGas
         int[] resourcesNeededForNotStartedBuildings = AConstructionRequests.resourcesNeededForNotStartedConstructions();
         ProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         ProductionQueue.gasNeeded = resourcesNeededForNotStartedBuildings[1];
@@ -44,6 +43,9 @@ public abstract class CurrentProductionQueue {
         int countCanNotAfford = 0;
         for (ProductionOrder order : ProductionQueue.nextInQueue) {
             boolean hasRequirements = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
+            boolean canAfford = AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded);
+//            System.out.println("order = " + order + " // " + hasRequirements + " // " + canAfford);
+            order.setCanAffordNow(canAfford);
             AUnitType unitOrBuilding = order.unitType();
             UpgradeType upgrade = order.upgrade();
             TechType tech = order.tech();
@@ -94,19 +96,13 @@ public abstract class CurrentProductionQueue {
             // =========================================================
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
 
-            boolean canAfford = AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded);
-            order.setCanAffordNow(canAfford);
-
-//            if (AGame.supplyUsed() >= 11 && unitOrBuilding != null && unitOrBuilding.isPylon()) {
-//                System.out.println(order.shortName() + " // aff=" + canAfford + " // req=" + hasWhatRequired);
-//            }
-//            System.out.println(order.shortName() + " has requirements = " + hasWhatRequired);
-
             if (
-//                    mode == ProductionQueueMode.ENTIRE_QUEUE || (canAfford && hasRequirements)
                     mode == ProductionQueueMode.ENTIRE_QUEUE || hasRequirements
             ) {
                 if (unitOrBuilding != null && !A.hasFreeSupply(unitOrBuilding.supplyNeeded())) {
+//                    System.out.println("unitOrBuilding = " + unitOrBuilding);
+//                    System.out.println("A.hasFreeSupply(unitOrBuilding.supplyNeeded()) = " + A.hasFreeSupply(unitOrBuilding.supplyNeeded()));
+//                    System.out.println("unitOrBuilding.supplyNeeded() = " + unitOrBuilding.supplyNeeded());
                     continue;
                 }
 
@@ -126,7 +122,7 @@ public abstract class CurrentProductionQueue {
         // adding production orders dynamically.
 
 //        if (mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD && queue.size() > 0) {
-//            System.out.println("----- " + queue.size());
+//            System.out.println("-- QUEUE SIZE --- " + queue.size());
 //            for (ProductionOrder order : queue) {
 //                System.out.println(order);
 //            }
@@ -145,6 +141,10 @@ public abstract class CurrentProductionQueue {
     }
 
     private static boolean hasFreeBuildingFor(AUnitType unit) {
+        if (We.zerg()) {
+            return Count.ofType(AUnitType.Zerg_Larva) > 0;
+        }
+
         AUnitType building = unit.whatBuildsIt();
         if (building != null) {
             return Select.ourOfType(building).free().isNotEmpty();

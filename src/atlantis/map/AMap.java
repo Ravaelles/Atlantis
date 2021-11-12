@@ -56,7 +56,8 @@ public class AMap {
             System.out.println("Walls.getWalls() = " + Walls.getWalls());
             System.out.println("Wall = " + wall);
         } catch (Exception e) {
-            AGame.setUmsMode(true);
+            System.err.println("JBWEB exception: " + e.getMessage());
+//            AGame.setUmsMode();
         }
 
         System.out.println("OK.");

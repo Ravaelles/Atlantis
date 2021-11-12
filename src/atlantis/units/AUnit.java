@@ -155,7 +155,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     
     public void refreshType() {
         cache.forgetAll();
-        _isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
+        _isWorker = !isBuilding() && isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
     }
 
     @Override
@@ -1791,6 +1791,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isCombatBuilding() {
         return type().isCombatBuilding();
+    }
+
+    public boolean isMutalisk() {
+        return type().isMutalisk();
     }
 
 //    public boolean isDepleted() {

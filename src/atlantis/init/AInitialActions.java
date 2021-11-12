@@ -12,12 +12,11 @@ public class AInitialActions {
      */
     public static void executeInitialActions() {
         if (Select.main() == null) {
-            AGame.setUmsMode(true);
+            AGame.setUmsMode();
         }
 
-//        if (!AMap.disableSomeOfTheChokes() || Select.ourWorkers().count() != 4) {
         if (Select.ourWorkers().count() != 4) {
-            AGame.setUmsMode(true);
+            AGame.setUmsMode();
         }
 
 //        try {

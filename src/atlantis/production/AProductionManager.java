@@ -9,6 +9,7 @@ import atlantis.tech.ATechRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class AProductionManager {
         // Produce UNIT
         if (order.unitType() != null) {
             AUnitType unitType = order.unitType();
+//            System.out.println("PRODUCE NOW unitType = " + unitType);
             if (unitType.isBuilding()) {
                 produceBuilding(unitType, order);
             } else {
@@ -100,12 +102,16 @@ public class AProductionManager {
             return CurrentBuildOrder.get().produceUnit(type);
         }
 
-//        System.err.println("Can't afford " + type);
         return false;
     }
 
     private static void produceBuilding(AUnitType type, ProductionOrder order) {
         assert type.isBuilding();
+
+        if (type.isZerg()) {
+            ZergBuildOrder.produceZergBuilding(type, order);
+            return;
+        }
 
         if (type.isAddon()) {
             produceAddon(type);

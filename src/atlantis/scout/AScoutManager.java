@@ -60,7 +60,8 @@ public class AScoutManager {
         }
 
         // === Act with every scout ================================
-        
+
+        removeOverlordsAsScouts();
         assignScoutIfNeeded();
 
         try {
@@ -70,7 +71,13 @@ public class AScoutManager {
         }
         catch (ConcurrentModificationException ignore) { }
     }
-    
+
+    private static void removeOverlordsAsScouts() {
+        if (AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+            scouts.clear();
+        }
+    }
+
     private static boolean update(AUnit scout) {
 //        if (!scout.isAlive() || AEnemyUnits.enemyBase() != null) {
         if (!scout.isAlive()) {

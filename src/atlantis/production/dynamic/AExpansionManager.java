@@ -9,6 +9,7 @@ import atlantis.production.orders.ProductionQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.A;
+import atlantis.util.We;
 
 public class AExpansionManager {
 
@@ -17,6 +18,10 @@ public class AExpansionManager {
                 A.seconds() >= 600
                 && Count.includingPlanned(AtlantisConfig.BASE) <= 1
         ) {
+            return true;
+        }
+
+        if (handleNoZergLarvas()) {
             return true;
         }
 
@@ -64,6 +69,14 @@ public class AExpansionManager {
                 && numberOfUnfinishedBases <= 1;
 
         return haveEnoughMinerals && !haveEnoughBases && (noBaseToConstruct || allowExtraExpansion);
+    }
+
+    private static boolean handleNoZergLarvas() {
+        if (!We.zerg() || Count.larvas() > 0) {
+            return false;
+        }
+
+        return AGame.canAffordWithReserved(270, 0);
     }
 
     public static void requestNewBase() {

@@ -993,6 +993,38 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
+    public boolean isSporeColony() {
+        return (boolean) cache.get(
+                "isSporeColony",
+                -1,
+                () -> is(Zerg_Spore_Colony)
+        );
+    }
+
+    public boolean isLair() {
+        return (boolean) cache.get(
+                "isLair",
+                -1,
+                () -> is(Zerg_Lair)
+        );
+    }
+
+    public boolean isHive() {
+        return (boolean) cache.get(
+                "isHive",
+                -1,
+                () -> is(Zerg_Hive)
+        );
+    }
+
+    public boolean isGreaterSpire() {
+        return (boolean) cache.get(
+                "isGreaterSpire",
+                -1,
+                () -> is(Zerg_Greater_Spire)
+        );
+    }
+
     public WeaponType weaponAgainst(AUnitType target) {
         if (target.isGroundUnit()) {
             return getGroundWeapon();
@@ -1264,5 +1296,21 @@ public class AUnitType implements Comparable<AUnitType> {
         }
 
         return true;
+    }
+
+    public boolean isZerg() {
+        return (boolean) cache.get(
+                "isZerg",
+                -1,
+                () -> ut.getRace().equals(Race.Zerg)
+        );
+    }
+
+    public boolean isMutalisk() {
+        return (boolean) cache.get(
+                "isMutalisk",
+                -1,
+                () -> is(Zerg_Mutalisk)
+        );
     }
 }

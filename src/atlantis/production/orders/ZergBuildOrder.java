@@ -2,11 +2,10 @@ package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.production.ProductionOrder;
+import atlantis.production.constructing.AConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-
-import java.util.ArrayList;
 
 public class ZergBuildOrder extends ABuildOrder {
     
@@ -26,22 +25,55 @@ public class ZergBuildOrder extends ABuildOrder {
     }
 
     @Override
-    public boolean produceUnit(AUnitType unitType) {
-        return produceZergUnit(unitType);
+    public boolean produceUnit(AUnitType type) {
+        return produceZergUnit(type);
     }
 
     // =========================================================
-    
+
     /**
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
-    public boolean produceZergUnit(AUnitType unitType) {
+    public boolean produceZergUnit(AUnitType type) {
         for (AUnit base : Select.ourBases().listUnits()) {
             for (AUnit larva : base.getLarva()) {
-                return base.train(unitType);
+                try {
+                    base.train(type);
+                } catch (Exception e) {
+                    System.err.println("Exception in produceZergUnit: " + type + " // " + base);
+                }
+                return true;
             }
         }
+        return false;
+    }
 
+    public static boolean produceZergBuilding(AUnitType type, ProductionOrder order) {
+        if (type.isSunken()) {
+            return morphBuildingInto(AUnitType.Zerg_Creep_Colony, type);
+        }
+        else if (type.isSporeColony()) {
+            return morphBuildingInto(AUnitType.Zerg_Creep_Colony, type);
+        }
+        else if (type.isLair()) {
+            return morphBuildingInto(AUnitType.Zerg_Hatchery, type);
+        }
+        else if (type.isHive()) {
+            return morphBuildingInto(AUnitType.Zerg_Lair, type);
+        }
+        else if (type.isGreaterSpire()) {
+            return morphBuildingInto(AUnitType.Zerg_Spire, type);
+        }
+
+        return AConstructionRequests.requestConstructionOf(order);
+    }
+
+    private static boolean morphBuildingInto(AUnitType from, AUnitType into) {
+        AUnit fromUnit = Select.ourOfType(from).last();
+        if (fromUnit != null) {
+            return fromUnit.morph(into);
+        }
+        
         return false;
     }
 

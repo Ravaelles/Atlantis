@@ -188,9 +188,9 @@ public class AGame {
     /**
      * UMS maps are custom made maps, which may be used to test micro-management.
      */
-    public static void setUmsMode(boolean umsMode) {
-        if (AGame.umsMode != umsMode) {
-            AGame.umsMode = umsMode;
+    public static void setUmsMode() {
+        if (!AGame.umsMode) {
+            AGame.umsMode = true;
             System.out.println();
             System.out.println("### UMS mode enabled! ###");
             System.out.println();

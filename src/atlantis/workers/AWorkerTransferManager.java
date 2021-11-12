@@ -33,6 +33,13 @@ public class AWorkerTransferManager {
         // Count ratios of workers / minerals for every base
         Units baseWorkersRatios = new Units();
         for (AUnit base : ourBases) {
+            if (
+                    base.lastUnderAttackLessThanAgo(30 * 30)
+                    || Select.enemyCombatUnits().inRadius(14, base).isNotEmpty()
+            ) {
+                continue;
+            }
+
             int numOfWorkersNearBase = AWorkerManager.getHowManyWorkersWorkingNear(base, false);
             int numOfMineralsNearBase = Select.minerals().inRadius(10, base).count();
             double workersToMineralsRatio = (double) numOfWorkersNearBase / (numOfMineralsNearBase + 0.1);

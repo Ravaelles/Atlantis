@@ -30,6 +30,11 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
     private static double applyAirUnitTweaks(AUnit defender, AUnit attacker, double currentCriticalDist) {
         double attackerRangeWithMargin = attacker.airWeaponRange() + 3.8;
+
+        if (defender.isMutalisk() && defender.hp() >= 50) {
+            currentCriticalDist -= 2;
+        }
+
         if (currentCriticalDist <= attackerRangeWithMargin) {
             return attackerRangeWithMargin;
         }

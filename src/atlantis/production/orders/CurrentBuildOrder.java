@@ -17,6 +17,10 @@ public class CurrentBuildOrder {
 
     public static void set(ABuildOrder buildOrder) {
         currentBuildOrder = buildOrder;
+
+        if (currentBuildOrder.productionOrders().isEmpty()) {
+            System.err.println("Invalid Build Order: no production orders. Fix the file.");
+        }
     }
 
 }

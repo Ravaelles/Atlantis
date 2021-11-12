@@ -161,6 +161,10 @@ public class Count {
         return ofType(AUnitType.Terran_Firebat);
     }
 
+    public static int larvas() {
+        return ofType(AUnitType.Zerg_Larva);
+    }
+
 //    public static int () {
 //        return ofType(AUnitType.);
 //    }

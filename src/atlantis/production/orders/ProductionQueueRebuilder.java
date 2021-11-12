@@ -4,6 +4,7 @@ import atlantis.production.constructing.AConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import atlantis.wrappers.MappingCounter;
 
@@ -23,7 +24,6 @@ public class ProductionQueueRebuilder {
 
         // Clear old production queue.
         ProductionQueue.nextInQueue.clear();
-//        ProductionQueue.currentProductionQueue.addAll(CurrentBuildOrder.get().productionOrders());
 
         // It will store [UnitType->(int)howMany] mapping as we gonna process initial
         // production queue and check if we currently have units needed
@@ -31,7 +31,6 @@ public class ProductionQueueRebuilder {
 
         // =========================================================
 
-//        System.out.println(A.now() + " #####################################");
         for (ProductionOrder order : CurrentBuildOrder.get().productionOrders()) {
             boolean isOkayToAdd = false;
 

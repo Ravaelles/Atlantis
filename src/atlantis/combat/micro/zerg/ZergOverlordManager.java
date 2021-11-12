@@ -1,5 +1,6 @@
 package atlantis.combat.micro.zerg;
 
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.stack.StackedUnitsManager;
 import atlantis.combat.squad.Squad;
 import atlantis.enemy.AEnemyUnits;
@@ -7,13 +8,19 @@ import atlantis.position.APosition;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
+import atlantis.units.select.Select;
 
 public class ZergOverlordManager {
 
     public static boolean update(AUnit unit) {
 
+        if (AAvoidUnits.avoidEnemiesIfNeeded(unit)) {
+            unit.setTooltip("Uaaa!");
+            return true;
+        }
+
         // Dont cluster Overlords too much
-        if (StackedUnitsManager.dontStackTooMuch(unit, 2.5, true)) {
+        if (StackedUnitsManager.dontStackTooMuch(unit, 1.5, true)) {
             return true;
         }
 
@@ -45,6 +52,23 @@ public class ZergOverlordManager {
 //            unit.move(goTo, false);
 //        }
 
+        if (overlord.id() % 5 == 0) {
+            return followArmy(overlord);
+        } else {
+            return stayInHome(overlord);
+        }
+    }
+
+    private static boolean stayInHome(AUnit overlord) {
+        AUnit main = Select.main();
+        if (main != null && overlord.distToMoreThan(main, 8)) {
+            return overlord.move(main, UnitActions.MOVE, "Home");
+        }
+
+        return false;
+    }
+
+    private static boolean followArmy(AUnit overlord) {
         APosition medianUnitPosition = Squad.alpha().center();
         if (medianUnitPosition != null) {
             if (overlord.distTo(medianUnitPosition) > 2.5) {

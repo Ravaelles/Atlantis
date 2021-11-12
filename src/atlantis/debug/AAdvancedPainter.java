@@ -588,7 +588,8 @@ public class AAdvancedPainter extends APainter {
         if (positionToBuild == null) {
             if (Select.main() != null) {
                 System.err.println(buildingType + " has no position to build");
-                throw new RuntimeException("That's unacceptable, lad!");
+//                throw new Exception("That's unacceptable, lad!");
+                return;
             } else {
                 return;
             }

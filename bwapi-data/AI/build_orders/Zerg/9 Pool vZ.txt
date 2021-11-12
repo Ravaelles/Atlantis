@@ -7,10 +7,10 @@
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=15
 
 // If have empty slot for a worker, force to build new workers
-#AUTO_PRODUCE_WORKERS_MIN_WORKERS=16
+#AUTO_PRODUCE_WORKERS_MIN_WORKERS=11
 
 // Max number of workers for workers auto-production to remain active
-#AUTO_PRODUCE_WORKERS_MAX_WORKERS=11
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=40
 
 // === Raw build order used - taken from Liquipedia or so =============
 
@@ -47,7 +47,9 @@ Zergling - x3
 Metabolic Boost
 Drone
 Zergling - x3
+Drone
 Lair
 Spire
 Mutalisk - x3
+Drone
 Zergling - x3

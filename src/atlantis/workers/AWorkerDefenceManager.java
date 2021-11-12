@@ -147,7 +147,7 @@ public class AWorkerDefenceManager {
 
         // FIGHT against ZERGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).listUnits()) {
-            if (worker.hp() <= 21 && runToFarthestMineral(worker, enemy)) {
+            if ((worker.hp() <= 24 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
                 worker.setTooltip("Aaargh!");
                 return true;
             }
