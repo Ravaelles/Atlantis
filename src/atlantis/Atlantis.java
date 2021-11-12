@@ -423,7 +423,7 @@ public class Atlantis implements BWEventListener {
     }
 
     private void killProcesses() {
-        System.out.print("Killing StarCraft process... ");
+        System.out.println("Killing StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 
         System.out.print("Killing Chaoslauncher process... ");
@@ -437,10 +437,12 @@ public class Atlantis implements BWEventListener {
         if (Atlantis.game() == null) {
             return;
         }
+
+        int resourcesBalance = AGame.killsLossesResourceBalance();
         System.out.println(
                 "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
                 "### Killed: " + Atlantis.KILLED + ", Lost: " + Atlantis.LOST + " ###\t\n" +
-                "### Resource killed/lost balance: " + AGame.killsLossesResourceBalance() + " ###"
+                "### Resource killed/lost: " + (resourcesBalance > 0 ? "+" + resourcesBalance : resourcesBalance) + " ###"
         );
 
         if (A.isUms()) {

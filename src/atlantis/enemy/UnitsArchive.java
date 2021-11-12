@@ -50,10 +50,8 @@ public class UnitsArchive {
             int balance = ourKilledResourcesPerUnitTypes.getValueFor(type)
                     - ourLostResourcesPerUnitTypes.getValueFor(type);
             String balancePercent = ourLostResourcesPerUnitTypes.getValueFor(type) == 0 ?
-                    "NaN%"
-                    : (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / (
-                        ourKilledResourcesPerUnitTypes.getValueFor(type) + ourLostResourcesPerUnitTypes.getValueFor(type)
-                    ) + "%");
+                    "+++%"
+                    : (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / ourLostResourcesPerUnitTypes.getValueFor(type)) + "%";
 
             System.out.println(
                     type + ": " + balance + ", " + balancePercent
