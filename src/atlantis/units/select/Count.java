@@ -84,12 +84,11 @@ public class Count {
     }
 
     public static int existing(AUnitType type) {
-//        if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
-//            return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony);
-////            return Select.countOurOfType(AUnitType.Zerg_Creep_Colony)
-////                    + Select.countOurOfType(AUnitType.Zerg_Sunken_Colony);
-//        }
-        if (type.isPrimaryBase()) {
+        if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
+            return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony)
+                    + Select.countOurOfType(AUnitType.Zerg_Creep_Colony);
+        }
+        else if (type.isPrimaryBase()) {
             return Select.ourOfType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive).count();
         }
         else if (type.isBase() && !type.isPrimaryBase()) {

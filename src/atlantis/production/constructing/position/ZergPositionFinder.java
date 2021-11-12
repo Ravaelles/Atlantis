@@ -2,10 +2,12 @@ package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisConfig;
+import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import bwapi.Color;
 import bwapi.Position;
 
 public class ZergPositionFinder extends AbstractPositionFinder {
@@ -26,7 +28,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
 
-        int searchRadius = 2;
+        int searchRadius = 4;
+        if (building.isBase()) {
+            maxDistance = 15;
+        }
         while (searchRadius < maxDistance) {
             int xMin = nearTo.getTileX() - searchRadius;
             int xMax = nearTo.getTileX() + searchRadius;
@@ -56,6 +61,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
+        APainter.paintCircle(position, 10, Color.Red);
 
         // Check for CREEP
         if (!isCreepConditionFulfilled(building, position)) {
@@ -73,7 +79,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // If other buildings too close
         if (isOtherConstructionTooClose(builder, building, position)) {
-//            _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
+            _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
             return false;
         }
 

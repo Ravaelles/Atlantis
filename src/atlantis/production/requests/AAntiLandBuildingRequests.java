@@ -63,11 +63,11 @@ public class AAntiLandBuildingRequests {
             return 0;
         }
 
-        if (We.zerg()) {
-            if (!OurStrategy.get().isRushOrCheese()) {
-                return 3 * Select.ourBases().count();
-            }
-        }
+//        if (We.zerg()) {
+//            if (!OurStrategy.get().isRushOrCheese()) {
+//                return 3 * Select.ourBases().count();
+//            }
+//        }
 
         return 0;
     }

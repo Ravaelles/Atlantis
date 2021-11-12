@@ -14,6 +14,10 @@ import atlantis.util.We;
 public class AExpansionManager {
 
     public static boolean shouldBuildNewBase() {
+        if (Count.inQueue(AtlantisConfig.BASE, 3) >= 2) {
+            return false;
+        }
+
         if (
                 A.seconds() >= 600
                 && Count.includingPlanned(AtlantisConfig.BASE) <= 1

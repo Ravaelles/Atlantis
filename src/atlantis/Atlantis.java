@@ -275,6 +275,7 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitMorph(Unit u) {
         AUnit unit = AUnit.createFrom(u);
+        unit.refreshType();
 //        System.out.println("MORPH u = " + u);
 //        System.out.println("MORPH = " + unit);
 //        System.out.println(unit.isEnemy());

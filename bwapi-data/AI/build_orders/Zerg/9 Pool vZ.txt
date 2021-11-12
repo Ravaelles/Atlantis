@@ -39,7 +39,7 @@ https://liquipedia.net/starcraft/9_Pool_(vs._Zerg)
 9 - Drone
 9 - Spawning Pool
 9 - Drone
-9 - Extractor
+//9 - Extractor
 8 - Overlord
 8 - Drone
 9 - Drone
@@ -48,8 +48,8 @@ Metabolic Boost
 Drone
 Zergling - x3
 Drone
-Lair
-Spire
-Mutalisk - x3
+//Lair
+//Spire
+//Mutalisk - x3
 Drone
 Zergling - x3

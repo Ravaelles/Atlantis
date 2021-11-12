@@ -7,7 +7,9 @@ import atlantis.production.constructing.ConstructionOrder;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class APositionFinder {
 
@@ -52,6 +54,12 @@ public class APositionFinder {
         // BASE
 
         else if (building.isBase()) {
+            if (We.zerg()) {
+                if (Count.bases() >= 3) {
+                    return findStandardPosition(builder, building, nearTo, 30);
+                }
+            }
+
             return ASpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
         }
 

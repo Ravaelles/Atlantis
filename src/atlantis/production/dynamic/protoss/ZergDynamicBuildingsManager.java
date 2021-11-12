@@ -6,6 +6,7 @@ import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 
 public class ZergDynamicBuildingsManager {
 
@@ -18,12 +19,13 @@ public class ZergDynamicBuildingsManager {
     // =========================================================
 
     private static void sunkens() {
-        if (OurStrategicBuildings.antiLandBuildingsNeeded() > 0) {
-            if (OurStrategicBuildings.antiLandBuildingsNeeded() > Count.ofType(AUnitType.Zerg_Sunken_Colony)) {
-                ZergBuildOrder.produceZergBuilding(AUnitType.Zerg_Sunken_Colony, null);
-                return;
-            }
+//        if (OurStrategicBuildings.antiLandBuildingsNeeded() > 0) {
+//            if (OurStrategicBuildings.antiLandBuildingsNeeded() > Count.ofType(AUnitType.Zerg_Sunken_Colony)) {
+        if (Count.ofType(AUnitType.Zerg_Creep_Colony) > 0 && A.hasMinerals(75)) {
+            ZergBuildOrder.produceZergBuilding(AUnitType.Zerg_Sunken_Colony, null);
+            return;
         }
+//        }
     }
 
 //    private static void buildingsIfNeeded() {
