@@ -2,6 +2,7 @@ package atlantis.production;
 
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import bwapi.TechType;
@@ -52,6 +53,10 @@ public class Requirements {
             if (!A.hasGas((int) (tech.gasPrice() * 0.4))) {
                 return false;
             }
+        }
+
+        if (TechType.Tank_Siege_Mode.equals(tech)) {
+            return Have.machineShop();
         }
 
         AUnitType required = AUnitType.create(tech.requiredUnit());

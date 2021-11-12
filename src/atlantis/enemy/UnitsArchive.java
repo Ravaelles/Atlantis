@@ -12,7 +12,8 @@ public class UnitsArchive {
     protected static HashMap<Integer, AUnit> destroyedUnitIds = new HashMap<>();
     protected static MappingCounter<AUnitType> enemyLostTypes = new MappingCounter<>();
     protected static MappingCounter<AUnitType> ourLostTypes = new MappingCounter<>();
-    protected static MappingCounter<AUnitType> ourKillLossResourcesPerUnitTypes = new MappingCounter<>();
+    protected static MappingCounter<AUnitType> ourKilledResourcesPerUnitTypes = new MappingCounter<>();
+    protected static MappingCounter<AUnitType> ourLostResourcesPerUnitTypes = new MappingCounter<>();
     protected static MappingCounter<AUnitType> ourKillCountersPerUnitTypes = new MappingCounter<>();
 
     // =========================================================
@@ -42,13 +43,21 @@ public class UnitsArchive {
 
     public static void paintKillLossResources() {
         System.out.println("--- Unit kill/loss in resources ---");
-        for (AUnitType type : ourKillLossResourcesPerUnitTypes.map().keySet()) {
+        for (AUnitType type : ourKilledResourcesPerUnitTypes.map().keySet()) {
             if (type.isNotRealUnit() || type.isUnitUnableToDoAnyDamage()) {
                 continue;
             }
+            int balance = ourKilledResourcesPerUnitTypes.getValueFor(type)
+                    - ourLostResourcesPerUnitTypes.getValueFor(type);
+            String balancePercent = ourLostResourcesPerUnitTypes.getValueFor(type) == 0 ?
+                    "NaN%"
+                    : (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / (
+                        ourKilledResourcesPerUnitTypes.getValueFor(type) + ourLostResourcesPerUnitTypes.getValueFor(type)
+                    ) + "%");
+
             System.out.println(
-                    type + ": " + ourKillLossResourcesPerUnitTypes.getValueFor(type)
-                    + " (kills: " + ourKillCountersPerUnitTypes.getValueFor(type) + ", lost: "
+                    type + ": " + balance + ", " + balancePercent
+                    + "  (kills: " + ourKillCountersPerUnitTypes.getValueFor(type) + ", lost: "
                     + ourLostTypes.getValueFor(type) + ")"
             );
         }
@@ -79,7 +88,7 @@ public class UnitsArchive {
         ourLostTypes.incrementValueFor(unit.type());
 
         if (!unit.isBuilding()) {
-            ourKillLossResourcesPerUnitTypes.changeValueBy(unit.type(), -unit.totalCost());
+            ourLostResourcesPerUnitTypes.changeValueBy(unit.type(), unit.totalCost());
         }
     }
 
@@ -89,8 +98,8 @@ public class UnitsArchive {
         AUnit ourKiller = ourUnitThatKilledEnemy(enemy);
         if (ourKiller != null && !enemy.isBuilding()) {
             System.out.println(ourKiller.shortName() + " killed " + enemy.shortName() + " (worth " + enemy.totalCost() + ")");
-            ourKillLossResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
             ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());
+            ourKilledResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
         }
     }
 

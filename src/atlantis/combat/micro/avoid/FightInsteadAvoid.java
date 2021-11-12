@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.micro.terran.TerranFirebat;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.units.AUnit;
@@ -182,7 +183,7 @@ public class FightInsteadAvoid {
 
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()
-                && (!unit.isFirebat() || unit.hp() >= 33)
+                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
                 && Select.enemyRealUnits()
                     .canBeAttackedBy(unit, 3)
                     .inRadius(3, unit)

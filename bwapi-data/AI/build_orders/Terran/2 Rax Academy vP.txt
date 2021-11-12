@@ -41,8 +41,8 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 35 - Barracks
 37 - Comsat Station
 38 - Stim Packs
-40 - U 238 Shells
-42 - Engineering Bay
+40 - Engineering Bay
+43 - U 238 Shells
 45 - Barracks
 //47 - Factory
 //49 - Tank

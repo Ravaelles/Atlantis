@@ -32,6 +32,12 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                     return enemyBuilding.position();
                 }
 
+                // Try going near any enemy building
+                AUnit anEnemyBuilding = Select.enemy().buildings().last();
+                if (anEnemyBuilding != null) {
+                    return anEnemyBuilding.position();
+                }
+
                 // Try going to any known enemy unit
                 AUnit anyEnemyUnit = Select.enemy().combatUnits().groundUnits().first();
                 if (anyEnemyUnit != null) {

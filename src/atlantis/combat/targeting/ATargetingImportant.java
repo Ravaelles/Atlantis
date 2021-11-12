@@ -68,31 +68,23 @@ public class ATargetingImportant extends AEnemyTargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Zerg_Sunken_Colony
                 )
-                .inShootRangeOf(1, unit)
+                .canBeAttackedBy(unit, 1)
                 .nearestTo(unit);
         if (target != null) {
-
-            // Target repairers
-            AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, target)
-                    .canBeAttackedBy(unit, 1).nearestTo(unit);
-            if (repairer != null) {
-                return repairer;
-            }
-
-            return target;
+            return defensiveBuildingOrScvRepairingIt(unit);
         }
 
-//        target = enemyBuildings.clone()
-//                .ofType(
-//                        AUnitType.Protoss_Photon_Cannon,
-//                        AUnitType.Zerg_Sunken_Colony
-//                )
-//                .inShootRangeOf(unit)
-//                .nearestTo(unit);
-//        if (target != null) {
-//            if (AEnemyTargeting.DEBUG) System.out.println("C2 = " + target);
-//            return target;
-//        }
+        target = Select.enemy()
+                .ofType(
+                        AUnitType.Protoss_Photon_Cannon,
+                        AUnitType.Terran_Bunker,
+                        AUnitType.Zerg_Sunken_Colony
+                )
+                .inRadius(11, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return defensiveBuildingOrScvRepairingIt(unit);
+        }
 
         // =========================================================
         // Target COMBAT UNITS IN RANGE
@@ -119,6 +111,21 @@ public class ATargetingImportant extends AEnemyTargeting {
         }
 
         return null;
+    }
+
+    private static AUnit defensiveBuildingOrScvRepairingIt(AUnit unit) {
+        if (!unit.isBunker()) {
+            return unit;
+        }
+
+        // Target repairers
+        AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, unit)
+                .canBeAttackedBy(unit, 1.7).nearestTo(unit);
+        if (repairer != null) {
+            return repairer;
+        }
+
+        return unit;
     }
 
     private static AUnit targetOutsideShootingRange(AUnit unit) {

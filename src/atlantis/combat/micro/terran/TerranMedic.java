@@ -28,6 +28,10 @@ public class TerranMedic {
     // =========================================================
 
     public static boolean update(AUnit medic) {
+        if (tooFarFromNearestInfantry(medic)) {
+            return true;
+        }
+
         if (handleHealWoundedUnit(medic)) {
             return true;
         }
@@ -41,6 +45,15 @@ public class TerranMedic {
     }
 
     // =========================================================
+
+    private static boolean tooFarFromNearestInfantry(AUnit medic) {
+        AUnit infantry = Select.ourTerranInfantryWithoutMedics().nearestTo(medic);
+        if (infantry != null && infantry.distToMoreThan(medic, 4)) {
+            return medic.move(infantry, UnitActions.MOVE, "Protect");
+        }
+
+        return false;
+    }
 
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
         if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.target())) {

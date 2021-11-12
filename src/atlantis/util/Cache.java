@@ -79,7 +79,7 @@ public class Cache<V> {
     // =========================================================
 
     protected boolean isCacheStillValid(String cacheKey) {
-        return !cachedUntil.containsKey(cacheKey) || cachedUntil.get(cacheKey) >= A.now();
+        return !cachedUntil.containsKey(cacheKey) || cachedUntil.get(cacheKey) == -1 || cachedUntil.get(cacheKey) >= A.now();
     }
 
     protected void addCachedUntilEntry(String cacheKey, int cacheForFrames) {

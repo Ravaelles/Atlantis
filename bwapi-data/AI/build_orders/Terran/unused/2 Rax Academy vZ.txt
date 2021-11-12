@@ -1,7 +1,7 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=10
+#SCOUT_IS_NTH_WORKER=24
 
 // When supply is bigger than N, then start auto-producing supply units
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=25
@@ -32,36 +32,26 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 @ - Name - Modifier
 9 - Supply Depot
 11 - Barracks
+13 - Barracks
 14 - Supply Depot
-14 - Barracks
 24 - Supply Depot
-26 - Academy
+27 - Academy
+//28 - Stim Packs
 28 - Refinery
-29 - Barracks
-35 - Barracks
-37 - Comsat Station
-38 - Stim Packs
-40 - U 238 Shells
-42 - Engineering Bay
-45 - Barracks
-//47 - Factory
-//49 - Tank
-//52 - Tank
-//54 - Missile Turret
-//55 - Command Center
-//55 - Tank
-//56 - Tank Siege Mode
-62 - Starport
-65 - Wraith
-66 - Science Facility
-68 - Factory
-69 - Physics Lab
-69 - Wraith
-72 - Control Tower
-//73 - Tank Siege Mode
-73 - Science Vessel
-75 - Wraith
-78 - Science Vessel
-82 - Irradiate
-84 - Science Vessel
-86 - Wraith
+33 - Barracks
+35 - Comsat Station
+//36 - U 238 Shells
+//40 - Barracks
+38 - Factory
+//42 - Tank
+//46 - Tank
+42 - Starport
+45 - Wraith
+47 - Wraith
+49 - Wraith
+51 - Wraith
+53 - Tank Siege Mode
+53 - Wraith
+55 - Wraith
+57 - Wraith
+59 - Wraith

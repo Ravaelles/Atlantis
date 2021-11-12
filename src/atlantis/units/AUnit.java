@@ -376,6 +376,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return 100 * hp() / maxHp();
     }
 
+    public boolean hpPercent(int minPercent) {
+        return hpPercent() >= minPercent;
+    }
+
     public double woundPercent() {
         return 100 - 100.0 * hp() / maxHp();
     }
@@ -1783,6 +1787,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                     throw new RuntimeException("Cant find loaded into");
                 }
         );
+    }
+
+    public boolean isCombatBuilding() {
+        return type().isCombatBuilding();
     }
 
 //    public boolean isDepleted() {

@@ -8,6 +8,10 @@ import atlantis.units.AUnitType;
 
 public class Have {
 
+    protected static boolean have(AUnitType type) {
+        return Count.ofType(type) > 0;
+    }
+
     public static boolean armory() {
         return Count.ofType(AUnitType.Terran_Armory) > 0;
     }
@@ -59,4 +63,9 @@ public class Have {
     public static boolean no(AUnitType type) {
         return Count.includingPlanned(type) == 0;
     }
+
+    public static boolean machineShop() {
+        return have(AUnitType.Terran_Factory);
+    }
+
 }

@@ -194,7 +194,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : enemyUnits()) {
-                        if (!unit.isWorker() && unit.isRealUnit()) {
+                        if (!unit.isWorker() && unit.isRealUnit() || unit.isCombatBuilding()) {
                             data.add(unit);
                         }
                     }
