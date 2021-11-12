@@ -1016,7 +1016,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean effVisible() {
-        return !effCloaked();
+        return unit().isDetected() || !effCloaked();
     }
 
     /**
@@ -1030,6 +1030,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        System.out.println(type() + " // " + isCloaked() + " // " + hp());
 
         return !unit().isDetected();
+//        return !unit().isDetected();
 //        if (isOur()) {
 //            return ;
 //        }

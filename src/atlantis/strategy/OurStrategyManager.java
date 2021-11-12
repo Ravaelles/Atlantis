@@ -43,7 +43,8 @@ public class OurStrategyManager {
             return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
         }
         else {
-            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
+            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
         }
 //        return TerranStrategies.TERRAN_1_Base_Vultures;
     }

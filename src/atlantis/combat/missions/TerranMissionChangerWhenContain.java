@@ -32,17 +32,20 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
             return false;
         }
 
-        if (Missions.counter() >= 3) {
-            if (Enemy.zerg()) {
-                return true;
+        // === Zerg ======================================================
+
+        if (Enemy.zerg()) {
+            if (Missions.counter() >= 3) {
+                    return true;
             }
         }
 
-        if (OurStrategy.get().goingBio() && !Missions.isFirstMission()) {
-            if (Count.tanks() <= 1) {
-                return Count.ourCombatUnits() <= 6;
-            }
-        }
+//        if (OurStrategy.get().goingBio() && !Missions.isFirstMission()) {
+//            if (Count.tanks() <= 1) {
+//                return Count.ourCombatUnits() <= 6;
+//            }
+//        }
+        // === Protoss ======================================================
 
         if (Enemy.protoss()) {
             if (A.resourcesBalance() <= -200 && Count.ourCombatUnits() <= 20) {
@@ -52,13 +55,15 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
             return Count.ourCombatUnits() <= 14;
         }
 
+        // =========================================================
+
         return Count.tanks() <= 1 && Count.ourCombatUnits() <= 12;
 //        return Select.ourTanks().count() == 0 || Select.ourCombatUnits().count() <= 9;
     }
 
     protected static boolean shouldChangeMissionToAttack() {
-        if (A.seconds() >= 600) {
-            return A.supplyUsed() >= 150 || Count.ourCombatUnits() >= 50;
+        if (A.seconds() >= 600 && (A.supplyUsed() >= 150 || Count.ourCombatUnits() >= 35)) {
+            return true;
         }
 
         if (Select.main() != null) {

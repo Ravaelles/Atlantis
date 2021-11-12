@@ -113,7 +113,10 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void comsat() {
-        if (Count.bases() > Count.includingPlanned(AUnitType.Terran_Comsat_Station)) {
+        if (
+                Count.bases() > Count.includingPlanned(AUnitType.Terran_Comsat_Station)
+                && Count.inQueueOrUnfinished(AUnitType.Terran_Comsat_Station, 5) <= 1
+        ) {
             AddToQueue.withStandardPriority(AUnitType.Terran_Comsat_Station);
         }
     }
@@ -122,14 +125,18 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      * If there are buildings without addons, build them.
      */
     private static void machineShop() {
-        if (OurDecisions.wantsToBeAbleToProduceTanksSoon() || AGame.canAffordWithReserved(150, 150)) {
+        if (
+                OurDecisions.wantsToBeAbleToProduceTanksSoon()
+                        || AGame.canAffordWithReserved(150, 150)
+                        || A.supplyUsed(70)
+        ) {
 
             for (AUnit building : Select.ourBuildings().list()) {
                 if (building.type().isFactory() && !building.hasAddon()) {
                     AUnitType addonType = building.type().getRelatedAddon();
                     if (addonType != null) {
 
-                        if (AGame.canAfford(addonType)) {
+                        if (AGame.canAfford(addonType) && Count.inQueueOrUnfinished(addonType, 3) <= 1) {
 //                            AddToQueue.withHighPriority(addonType);
                             building.buildAddon(addonType);
                             return;

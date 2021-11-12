@@ -36,14 +36,14 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             }
         }
 
-//        AChoke mainChoke = Chokes.enemyMainChoke();
-//        APosition enemyNatural = Bases.enemyNatural();
-//        if (enemyNatural != null) {
-//            if (mainChoke != null) {
-//                return enemyNatural.translatePercentTowards(mainChoke, 40);
-//            }
-//            return enemyNatural;
-//        }
+        AChoke mainChoke = Chokes.enemyMainChoke();
+        APosition enemyNatural = Bases.enemyNatural();
+        if (enemyNatural != null) {
+            if (mainChoke != null) {
+                return enemyNatural.translatePercentTowards(mainChoke, 40);
+            }
+            return enemyNatural;
+        }
 
         AChoke naturalChoke = Chokes.enemyNaturalChoke();
         if (naturalChoke != null && naturalChoke.getWidth() <= 4) {

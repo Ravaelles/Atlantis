@@ -1133,6 +1133,10 @@ public class A {
         return AGame.supplyUsed();
     }
 
+    public static boolean supplyUsed(int min) {
+        return AGame.supplyUsed() >= min;
+    }
+
     public static boolean supplyAtLeast(int minSupply) {
         return AGame.supplyUsed() >= minSupply;
     }

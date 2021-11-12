@@ -1237,12 +1237,32 @@ public class AUnitType implements Comparable<AUnitType> {
 
                     int baseCost = 0;
 
-                    if (!requiredUnits().isEmpty() && (isBuilding() || !requiredUnits().first().isBuilding())) {
+                    if (!requiredUnits().isEmpty() && isValidUnitRequirement(requiredUnits().first(), this)) {
                         baseCost += requiredUnits().size() * requiredUnits().first().totalCost();
                     }
 
                     return baseCost + getMineralPrice() + getGasPrice();
                 }
         );
+    }
+
+    private boolean isValidUnitRequirement(AUnitType requirement, AUnitType unit) {
+        if (requirement.isPylon()) {
+            return false;
+        }
+
+        if (!unit.isBuilding() && requirement.isBuilding()) {
+            return false;
+        }
+
+        if (isBuilding() && (requirement.isBuilding() && requirement.isBase())) {
+            return false;
+        }
+
+        if (isBuilding() && requirement.isWorker()) {
+            return false;
+        }
+
+        return true;
     }
 }

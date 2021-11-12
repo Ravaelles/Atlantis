@@ -85,6 +85,9 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightInImportantCases() {
+        if (!unit.isWorker() && defensiveBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
+            return true;
+        }
 
         // Attacking critically important unit
         if (ATargetingCrucial.isCrucialUnit(unit.target())) {
@@ -199,7 +202,8 @@ public class FightInsteadAvoid {
         int ourNearby = Select.our().exclude(unit).inRadius(0.3, unit).count();
 
         if (unit.mission() != null && unit.mission().isMissionAttack()) {
-            return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4);
+            return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
+                    || Select.ourCombatUnits().inRadius(10, unit).atLeast(25);
         }
 
         return ourNearby >= 5 || unitsNearby >= 6;

@@ -30,8 +30,8 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
         if (Enemy.protoss()) {
 //            if (Missions.isFirstMission()) {
-            if (Atlantis.LOST <= 5) {
-                return Count.ourCombatUnits() >= 4;
+            if (Atlantis.LOST <= 5 && Count.ourCombatUnits() >= 4) {
+                return true;
             }
 
             return Count.ourCombatUnits() >= 15 || Count.tanks() >= 2;

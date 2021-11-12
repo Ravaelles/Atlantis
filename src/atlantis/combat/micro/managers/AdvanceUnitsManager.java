@@ -82,10 +82,12 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     // =========================================================
 
     private static boolean handleTerranAdvance(AUnit unit) {
-        if (unit.isInfantry() && Count.medics() >= 3) {
+        if (unit.isInfantry() && !unit.isMedic() && Count.medics() >= 4) {
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
-            if (medic != null && medic.distToMoreThan(unit, 4)) {
-                return unit.move(medic, UnitActions.MOVE, "ToMedic");
+            if (medic != null && medic.distToMoreThan(unit, 6)) {
+                if (Select.ourCombatUnits().inRadius(5, unit).atMost(3)) {
+                    return unit.move(medic, UnitActions.MOVE, "ToMedic");
+                }
             }
         }
 

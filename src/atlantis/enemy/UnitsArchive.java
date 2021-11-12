@@ -77,14 +77,17 @@ public class UnitsArchive {
 
     public static void ourUnitDestroyed(AUnit unit) {
         ourLostTypes.incrementValueFor(unit.type());
-        ourKillLossResourcesPerUnitTypes.changeValueBy(unit.type(), -unit.totalCost());
+
+        if (!unit.isBuilding()) {
+            ourKillLossResourcesPerUnitTypes.changeValueBy(unit.type(), -unit.totalCost());
+        }
     }
 
     public static void enemyUnitDestroyed(AUnit enemy) {
         enemyLostTypes.incrementValueFor(enemy.type());
 
         AUnit ourKiller = ourUnitThatKilledEnemy(enemy);
-        if (ourKiller != null) {
+        if (ourKiller != null && !enemy.isBuilding()) {
             System.out.println(ourKiller.shortName() + " killed " + enemy.shortName() + " (worth " + enemy.totalCost() + ")");
             ourKillLossResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
             ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());

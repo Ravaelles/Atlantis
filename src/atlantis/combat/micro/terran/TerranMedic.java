@@ -77,13 +77,20 @@ public class TerranMedic {
         if (assignment != null && assignment.isAlive()) {
             APainter.paintLine(medic, assignment, Color.White);
 
+            if (assignment.isMedic()) {
+                System.err.println("Aaaaa " + " // " + assignment + " // " + medic);
+            }
+
             double dist = assignment.distTo(medic);
 
             if (dist > 1.9) {
                 return medic.move(assignment.position(), UnitActions.MOVE, "Stick");
             }
+            else if (dist > 1.4 && medic.isMoving()) {
+                return medic.holdPosition("Ok");
+            }
             else if (dist <= 1.4) {
-                return medic.moveAwayFrom(assignment.position(), 0.4, "Spread");
+                return medic.moveAwayFrom(assignment.position(), 0.4, "TooClose");
             }
         }
         

@@ -45,6 +45,10 @@ public class Count {
         return ProductionQueue.countInQueue(type, amongNTop);
     }
 
+    public static int inQueueOrUnfinished(AUnitType type, int amongNTop) {
+        return inQueue(type, amongNTop) + ourOfTypeUnfinished(type);
+    }
+
     public static int inProduction(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
             return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
@@ -100,9 +104,12 @@ public class Count {
 //        return Select.ourOfType(type).count() + ProductionQueue.countInQueue(type, 6);
 //    }
 
-
     public static int ourOfTypeIncludingUnfinished(AUnitType type) {
         return Select.countOurOfTypeIncludingUnfinished(type);
+    }
+
+    public static int ourOfTypeUnfinished(AUnitType type) {
+        return Select.ourUnfinished().ofType(type).count();
     }
 
     public static int workers() {
