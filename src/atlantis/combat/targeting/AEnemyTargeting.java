@@ -1,11 +1,11 @@
 package atlantis.combat.targeting;
 
-import atlantis.AGame;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.select.Selection;
+import bwapi.Color;
 
 public class AEnemyTargeting {
 
@@ -20,10 +20,22 @@ public class AEnemyTargeting {
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
     public static AUnit defineBestEnemyToAttackFor(AUnit unit, double maxDistFromEnemy) {
+//        AUnit enemy = selectEnemyFirstByTypeThenByBestOfTypeInRange(unit, maxDistFromEnemy);
+        AUnit enemy = Select.enemy().nearestTo(unit);
+
+        if (enemy != null) {
+            APainter.paintTextCentered(unit.position().translateByPixels(0, 25), enemy.shortName(), Color.Green);
+        }
+
+        return enemy;
+    }
+
+    private static AUnit selectEnemyFirstByTypeThenByBestOfTypeInRange(AUnit unit, double maxDistFromEnemy) {
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
 
 //        System.out.println("enemy = " + enemy + A.dist(enemy, unit));
         if (enemy == null) {
+            APainter.paintTextCentered(unit.position().translateByPixels(0, 25), ":-(", Color.Orange);
             return null;
         }
 
@@ -35,7 +47,13 @@ public class AEnemyTargeting {
 //            throw new RuntimeException("This is crazy, it should never happen, but with some bugs it can happen.");
 //        }
 
-        return selectWeakestEnemyInRangeOfType(enemy.type(), enemy, unit);
+        enemy = selectWeakestEnemyOfType(enemy.type(), enemy, unit);
+
+        return enemy;
+    }
+
+    public static boolean debug(AUnit unit) {
+        return DEBUG && unit.isFirstCombatUnit();
     }
 
     // =========================================================
@@ -51,6 +69,19 @@ public class AEnemyTargeting {
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 8)
                 .count() == 0) {
+            if (debug(unit)) {
+                System.out.println("PreA quit");
+//                System.out.println(Select.enemyRealUnits(true).count());
+//                System.out.println(Select.enemyRealUnits(true)
+//                        .effVisible().count());
+//                System.out.println(Select.enemyRealUnits(true)
+//                        .effVisible()
+//                        .inRadius(maxDistFromEnemy, unit).count());
+//                System.out.println(Select.enemyRealUnits(true)
+//                        .effVisible()
+//                        .inRadius(maxDistFromEnemy, unit)
+//                        .canBeAttackedBy(unit, 8).count());
+            }
             return null;
         }
 
@@ -71,7 +102,7 @@ public class AEnemyTargeting {
         // =========================================================
 
         if ((target = ATargetingForSpecificUnits.target(unit)) != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("A = "+ target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("A = "+ target);
             return target;
         }
 
@@ -81,21 +112,21 @@ public class AEnemyTargeting {
 //            if (!target.type().isCarrier()) {
 //                System.out.println(A.now() + "  #" + unit.getID() + " " + unit.shortName() + " > " + target.shortName());
 //            }
-            if (AEnemyTargeting.DEBUG) System.out.println("B = "+ target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
         if ((target = ATargetingImportant.target(unit)) != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("C = "+ target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
         if ((target = ATargetingStandard.target(unit)) != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("D = "+ target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("D = "+ target);
             return target;
         }
 
@@ -106,28 +137,40 @@ public class AEnemyTargeting {
 
     // =========================================================
 
-    private static AUnit selectWeakestEnemyInRangeOfType(AUnitType enemyType, AUnit enemy, AUnit ourUnit) {
+    private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit enemy, AUnit ourUnit) {
+        if (ourUnit.hasWeaponRange(enemy, 0)) {
+            return selectWeakestEnemyOfTypeInRange(enemyType, ourUnit);
+        }
+
+        return selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit);
+    }
+
+    private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType enemyType, AUnit ourUnit) {
         Selection targets = Select.enemy()
                 .ofType(enemyType)
                 .effVisible()
-                .hasPathFrom(ourUnit)
                 .canBeAttackedBy(ourUnit, 0);
 
-//        System.err.println(Select.enemy().size() + " // " + Select.enemy().ofType(enemyType).size());
-//        System.err.println(targets.size() + " // " + targets.clone() + " // " + targets.clone().mostWounded());
         AUnit mostWounded = targets.clone().mostWounded();
         if (mostWounded != null && mostWounded.isWounded()) {
             return mostWounded;
         }
 
-        AUnit nearest = targets.clone().nearestTo(ourUnit);
-        if (nearest != null) {
-            return nearest;
+        return targets.clone().nearestTo(ourUnit);
+    }
+
+    private static AUnit selectWeakestEnemyOfTypeOutsideOfWeaponRange(AUnitType enemyType, AUnit ourUnit) {
+        Selection targets = Select.enemy()
+                .ofType(enemyType)
+                .effVisible()
+                .hasPathFrom(ourUnit);
+
+        AUnit mostWounded = targets.clone().mostWounded();
+        if (mostWounded != null && mostWounded.isWounded()) {
+            return mostWounded;
         }
 
-//        System.err.println("Shouldnt reach here, return default enemy");
-
-        return enemy;
+        return targets.clone().nearestTo(ourUnit);
     }
-    
+
 }

@@ -19,12 +19,12 @@ public class Evaluate {
     /**
      * Multiplier for hit points factor when evaluating unit's combat value.
      */
-    private static final double EVAL_HIT_POINTS_FACTOR = 0.3;
+    private static final double EVAL_HIT_POINTS_FACTOR = 0.2;
 
     /**
      * Multiplier for damage factor when evaluating unit's combat value.
      */
-    private static final double EVAL_DAMAGE_FACTOR = 1.0;
+    private static final double EVAL_DAMAGE_FACTOR = 0.8;
 
     // =========================================================
 
@@ -35,7 +35,7 @@ public class Evaluate {
      * strength) or our own evaluation (we're likely to overestimate our strength).
      */
     protected static double evaluateUnitsAgainstUnit(Collection<AUnit> units, AUnit againstUnit, boolean isEnemyEval) {
-        double strength = 0.0;
+        double totalStrength = 0;
         boolean enemyDefensiveBuildingFound = false;
         boolean enemyDefensiveBuildingInRange = false;
 
@@ -47,40 +47,29 @@ public class Evaluate {
             // WORKER
 
             if (unit.isWorker()) {
-                strength += 0.15 * unitStrengthEval;
+                totalStrength += 0.5 * unitStrengthEval;
             }
 
             // =========================================================
             // BUILDING
 
-            else if (unit.type().isBuilding() && unit.isCompleted()) {
-                boolean antiGround = (againstUnit == null || !againstUnit.isAirUnit());
-                boolean antiAir = (againstUnit == null || againstUnit.isAirUnit());
-                if (unit.type().isMilitaryBuilding(antiGround, antiAir)) {
-                    enemyDefensiveBuildingFound = true;
-                    if (unit.is(AUnitType.Terran_Bunker)) {
-                        strength += 7 * evaluateUnitHPandDamage(AUnitType.Terran_Marine, againstUnit);
-                    } else {
-                        strength += 1.3 * unitStrengthEval;
-                    }
-
-                    if (PositionUtil.distanceTo(unit, againstUnit) <= 8.5) {
-                        enemyDefensiveBuildingInRange = true;
-                    }
-                }
+            else if (unit.isCombatBuilding() && unit.canAttackTarget(againstUnit)) {
+                totalStrength += evaluateBuilding(unit, againstUnit, unitStrengthEval);
+                enemyDefensiveBuildingFound = true;
+                enemyDefensiveBuildingInRange = unit.hasWeaponRange(againstUnit, 2.5);
             }
 
             // === Infantry ============================================
             
-            else if (unit.isMarine()) {
-                strength = marineTweak(unit, strength); 
+            else if (unit.isTerranInfantry()) {
+                totalStrength += terranInfantryTweak(unit, unitStrengthEval);
             }
 
             // =========================================================
             // Ordinary MILITARY UNIT
             
             else {
-                strength += unitStrengthEval;
+                totalStrength += unitStrengthEval;
             }
         }
 
@@ -89,17 +78,33 @@ public class Evaluate {
 
         if (!isEnemyEval) {
             if (enemyDefensiveBuildingFound) {
-                strength += 10;
+                totalStrength += 10;
             }
             if (enemyDefensiveBuildingInRange) {
-                strength += 10;
+                totalStrength += 10;
             }
         }
 
-        return strength;
+        return totalStrength;
     }
 
     // =========================================================
+
+    private static double evaluateBuilding(AUnit unit, AUnit againstUnit, double unitStrengthEval) {
+        double eval = 0;
+        boolean antiGround = (againstUnit == null || !againstUnit.isAirUnit());
+        boolean antiAir = (againstUnit == null || againstUnit.isAirUnit());
+        if (unit.type().isMilitaryBuilding(antiGround, antiAir)) {
+
+            if (unit.is(AUnitType.Terran_Bunker)) {
+                eval += 7 * unitStrengthEval;
+            } else {
+                eval += 1.3 * unitStrengthEval;
+            }
+        }
+
+        return eval;
+    }
 
     private static double evaluateUnitHPandDamage(AUnitType evaluate, AUnit againstUnit) {
 //        return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);
@@ -123,20 +128,21 @@ public class Evaluate {
         // === Special types =======================================
 
         double customEval;
-        if ((customEval = customEvaluation(type, againstUnit)) >= 0) {
+        if ((customEval = customEvaluation(type, hp, againstUnit)) >= 0) {
             return customEval;
         }
 
         // =========================================================
 
-        double hpValue = (double) hp / type.getMaxHitPoints();
+        double hpFactor = hpFactor(type, hp);
+        double damageFactor = damageFactor(type, againstUnit);
+        double total = hpFactor + damageFactor;
 
-        int damage = againstUnit.isAirUnit()
-                ? WeaponUtil.damageNormalized(type.getAirWeapon())
-                : WeaponUtil.damageNormalized(type.getGroundWeapon());
-
-        double total = hpValue * EVAL_HIT_POINTS_FACTOR
-                + (damage * WeaponUtil.damageModifier(type, againstUnit.type())) * EVAL_DAMAGE_FACTOR;
+//        System.out.println(type + " against " + againstUnit.shortName() + " // "
+//                + total + " // "
+//                + damageFactor + " // "
+//                + hpFactor * EVAL_HIT_POINTS_FACTOR + " // "
+//                + (damageFactor * WeaponUtil.damageModifier(type, againstUnit.type())) * EVAL_DAMAGE_FACTOR);
 
         // =========================================================
         // Diminish role of NON-SHOOTING units
@@ -144,17 +150,32 @@ public class Evaluate {
         return total;
     }
 
-    private static double customEvaluation(AUnitType type, AUnit againstUnit) {
+    private static double damageFactor(AUnitType type, AUnit againstUnit) {
+        int damageNormalized = againstUnit.isAirUnit()
+                ? WeaponUtil.damageNormalized(type.getAirWeapon())
+                : WeaponUtil.damageNormalized(type.getGroundWeapon());
+        return (damageNormalized * WeaponUtil.damageModifier(type, againstUnit.type())) * EVAL_DAMAGE_FACTOR;
+    }
+
+    private static double hpFactor(AUnitType type, int hp) {
+        return hp * EVAL_HIT_POINTS_FACTOR;
+    }
+
+    private static double customEvaluation(AUnitType type, int hp, AUnit againstUnit) {
         if (type.is(AUnitType.Terran_Medic)) {
-            return 5.5;
+            return hpFactor(type, hp) * 3;
         }
 
         return -1.0;
     }
 
-    private static double marineTweak(AUnit unit, double strength) {
-        if (unit.isWounded() && Select.ourOfType(AUnitType.Terran_Medic).inRadius(3, unit).isEmpty()) {
-            return strength / 4;
+    private static double terranInfantryTweak(AUnit unit, double strength) {
+        int medics = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(5).inRadius(3, unit).count();
+
+        if (unit.isWounded() && medics == 0) {
+            strength = strength * unit.hpPercent() / 100;
+        } else {
+            strength = strength * (1 + medics / 2.0);
         }
 
         return strength;

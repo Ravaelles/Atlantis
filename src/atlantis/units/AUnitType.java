@@ -1263,7 +1263,10 @@ public class AUnitType implements Comparable<AUnitType> {
                 "totalCost",
                 -1,
                 () -> {
-                    if (is(Zerg_Zergling)) {
+                    if (isWorker()) {
+                        return 50;
+                    }
+                    else if (is(Zerg_Zergling)) {
                         return 25;
                     }
 

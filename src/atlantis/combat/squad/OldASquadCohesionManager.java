@@ -3,32 +3,32 @@ package atlantis.combat.squad;
 import atlantis.AGame;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.actions.UnitActions;
 import atlantis.util.We;
 
-public class ASquadCohesionManager {
+public class OldASquadCohesionManager {
 
     public static boolean handle(AUnit unit) {
         if (shouldSkip(unit)) {
             return false;
         }
 
-//        if (handleExtremeUnitPositioningInSquad(unit)) {
-//            return true;
-//        }
+        if (handleExtremeUnitPositioningInSquad(unit)) {
+            return true;
+        }
 
         if (handleShouldSpreadOut(unit)) {
             return true;
         }
 
-        return false;
+        return handleShouldStickCloser(unit);
     }
 
     private static boolean shouldSkip(AUnit unit) {
-        return unit.mission() != null && (unit.mission().isMissionAttack() || unit.mission().isMissionDefend());
+        return unit.squad().mission().isMissionAttack();
     }
 
     public static boolean handleExtremeUnitPositioningInSquad(AUnit unit) {
@@ -75,15 +75,26 @@ public class ASquadCohesionManager {
     // =========================================================
 
     private static boolean handleShouldSpreadOut(AUnit unit) {
-        if (unit.squad().size() <= 1 || unit.isMoving()) {
+        if (unit.squad().size() <= 1) {
             return false;
         }
 
-        Selection ourCombatUnits = Select.ourCombatUnits().inRadius(5, unit);
-        AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
+        Selection ourCombatUnits = Select.ourCombatUnits();
 
-        if (nearestBuddy != null && nearestBuddy.distToLessThan(unit, 0.3)) {
-            return unit.moveAwayFrom(nearestBuddy, 0.5, "Spread out");
+        if (AGame.timeSeconds() < 350 && ourCombatUnits.clone().inRadius(1.3, unit).count() >= 2) {
+            return true;
+        }
+
+        if (
+                ourCombatUnits.clone().inRadius(4.5, unit).atLeast(25)
+                || ourCombatUnits.clone().inRadius(2.7, unit).atLeast(12)
+                || ourCombatUnits.clone().inRadius(0.6, unit).atLeast(4)
+        ) {
+            return unit.moveAwayFrom(
+                    squadCenter(unit),
+                    1.5,
+                    "Spread out"
+            );
         }
 
         return false;

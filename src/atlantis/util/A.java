@@ -1168,7 +1168,7 @@ public class A {
         return Atlantis.game().getFrameCount() % n != 0;
     }
 
-    public static void printList(List<?> list) {
+    public static void printList(Collection<?> list) {
         for (Object o : list) {
             System.out.println("- " + o);
         }

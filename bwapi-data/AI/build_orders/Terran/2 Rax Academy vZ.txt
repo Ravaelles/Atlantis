@@ -51,17 +51,16 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 //55 - Command Center
 //55 - Tank
 //56 - Tank Siege Mode
+//48 - Command Center
 62 - Starport
 65 - Wraith
 66 - Science Facility
 68 - Factory
 69 - Physics Lab
-69 - Wraith
 72 - Control Tower
 //73 - Tank Siege Mode
 73 - Science Vessel
-75 - Wraith
 78 - Science Vessel
 82 - Irradiate
+81 - Wraith
 84 - Science Vessel
-86 - Wraith

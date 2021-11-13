@@ -42,7 +42,7 @@ public class TerranInfantry {
             return false;
         }
 
-        if (Select.enemyCombatUnits().inRadius(13, unit).canAttack(unit, 2).isNotEmpty()) {
+        if (Select.enemyCombatUnits().inRadius(13, unit).canAttack(unit, 4).isNotEmpty()) {
             return false;
         }
 

@@ -12,9 +12,9 @@ import atlantis.util.We;
 public class SquadScout {
 
     public static boolean handle(AUnit unit) {
-        if (We.terran()) {
-            return false;
-        }
+//        if (We.terran()) {
+//            return false;
+//        }
 
         if (unit.equals(unit.squad().getSquadScout())) {
             return handleSquadScout(unit);

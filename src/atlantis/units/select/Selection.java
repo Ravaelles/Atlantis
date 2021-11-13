@@ -153,11 +153,6 @@ public class Selection {
         return this;
     }
 
-    public Selection cloakedButEffVisible() {
-        data.removeIf(unit -> !unit.isCloaked() && !unit.isBurrowed() && !unit.effCloaked());
-        return this;
-    }
-
     public Selection detectors() {
         data.removeIf(unit -> !unit.isType(
                 AUnitType.Protoss_Photon_Cannon,

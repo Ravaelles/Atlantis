@@ -1020,20 +1020,23 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean effVisible() {
-        return unit().isDetected() || !effCloaked();
+        return isVisibleOnMap() && (isDetected() || !effCloaked());
     }
 
     /**
      * Unit is effectvely cloaked and we can't attack it. Need to detect it first.
      */
     public boolean effCloaked() {
-        if ((!isCloaked() && !isBurrowed()) || ensnared() || plagued()) {
-            return false;
-        }
+        return !isDetected() && hp() > 0;
+
+//        if ((!isCloaked() && !isBurrowed()) || ensnared() || plagued()) {
+//            return false;
+//        }
 
 //        System.out.println(type() + " // " + isCloaked() + " // " + hp());
 
-        return !unit().isDetected();
+//        return true;
+//        return hp() == 0;
 //        return !unit().isDetected();
 //        if (isOur()) {
 //            return ;

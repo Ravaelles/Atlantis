@@ -19,7 +19,10 @@ public class AExpansionManager {
         }
 
         if (
-                A.seconds() >= 600
+                (
+                        (A.seconds() >= 500 && Count.ourCombatUnits() >= 25)
+                        || (A.seconds() >= 700 && Count.ourCombatUnits() >= 20)
+                )
                 && Count.includingPlanned(AtlantisConfig.BASE) <= 1
         ) {
             return true;

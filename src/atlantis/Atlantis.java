@@ -424,6 +424,7 @@ public class Atlantis implements BWEventListener {
     }
 
     private void killProcesses() {
+        System.out.println("");
         System.out.println("Killing StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 

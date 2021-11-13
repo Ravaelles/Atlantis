@@ -96,7 +96,7 @@ public class ARepairCommander {
 //        for (AUnit bunker : bunkers.list()) {
         AChoke chokepointForNatural = Chokes.natural(mainBase.position());
         if (chokepointForNatural != null) {
-            AUnit bunker = bunkers.nearestTo(chokepointForNatural.getCenter());
+            AUnit bunker = bunkers.nearestTo(chokepointForNatural.center());
             if (bunker == null) {
                 return;
             }

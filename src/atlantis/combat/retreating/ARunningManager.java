@@ -413,7 +413,8 @@ public class ARunningManager {
     }
 
     private boolean canBeNotifiedToMakeSpace(AUnit unit) {
-        return !unit.isRunning() && !unit.type().isReaver() && unit.lastStartedRunningMoreThanAgo(3);
+//        return !unit.isRunning() && !unit.type().isReaver() && unit.lastStartedRunningMoreThanAgo(3);
+        return !unit.isRunning() && !unit.type().isReaver();
     }
 
     // =========================================================

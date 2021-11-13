@@ -1,6 +1,5 @@
 package atlantis.combat.missions;
 
-import atlantis.CameraManager;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.*;
@@ -46,7 +45,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
         }
 
         AChoke naturalChoke = Chokes.enemyNaturalChoke();
-        if (naturalChoke != null && naturalChoke.getWidth() <= 4) {
+        if (naturalChoke != null && naturalChoke.width() <= 4) {
             return naturalChoke.position();
         }
 
@@ -79,7 +78,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             AChoke choke = Chokes.nearestChoke(
                     Bases.nearestUnexploredStartingLocation(Select.main().position())
             );
-            return choke != null ? choke.getCenter() : null;
+            return choke != null ? choke.center() : null;
         }
 
         return null;
@@ -91,7 +90,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
         AChoke chokepoint = Chokes.natural(enemyBase);
         if (chokepoint != null) {
 //            CameraManager.centerCameraOn(chokepoint.getCenter());
-            return chokepoint.getCenter();
+            return chokepoint.center();
         }
 
         ABaseLocation natural = Bases.natural(enemyBase.position());

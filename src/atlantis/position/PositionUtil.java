@@ -41,7 +41,7 @@ public class PositionUtil {
             fromPosition = (Position) object1;
         }
         else if (object1 instanceof AChoke) {
-            fromPosition = ((AChoke) object1).getCenter();
+            fromPosition = ((AChoke) object1).center();
         }
         else if (object1 instanceof ABaseLocation) {
             fromPosition = ((ABaseLocation) object1).position();
@@ -69,7 +69,7 @@ public class PositionUtil {
             toPosition = (Position) object2;
         }
         else if (object2 instanceof AChoke) {
-            toPosition = ((AChoke) object2).getCenter();
+            toPosition = ((AChoke) object2).center();
         }
         else if (object2 instanceof ABaseLocation) {
             toPosition = ((ABaseLocation) object2).position();

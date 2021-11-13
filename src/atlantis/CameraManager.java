@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.combat.squad.Squad;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -76,4 +77,7 @@ public class CameraManager {
         return focusCameraOnFirstCombatUnit;
     }
 
+    public static void centerCameraNowOnSquadCenter() {
+        centerCameraOn(Squad.alphaCenter());
+    }
 }

@@ -29,24 +29,18 @@ public class AAttackEnemyUnit {
 //        }
 
         AUnit enemy = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
-//        System.out.println("enemy2 = " + enemy);
-//        System.out.println(Select.enemy());
         if (enemy == null) {
-//            System.out.println(A.now() + " empty...");
             return false;
         }
 
-//        System.out.println("enemy = " + enemy + " // alive:" + enemy.isAlive());
-//        System.out.println("----------------------------");
+//        System.out.println("enemy = " + enemy + " // effVisible:" + enemy.effVisible());
 
-        if (enemy != null && isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
-            unit.setTooltip("->" + enemy.shortName() + "(" + unit.cooldownRemaining() + ")");
+        if (!isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
+            return false;
+        }
+//            unit.setTooltip("->" + enemy.shortName() + "(" + unit.cooldownRemaining() + ")");
 //            APainter.paintLine(unit, enemy, Color.Red);
-            processAttackUnit(unit, enemy);
-            return true;
-        } 
-        
-        return false;
+        return processAttackUnit(unit, enemy);
     }
 
     public static boolean shouldNotAttack(AUnit unit) {
@@ -72,7 +66,7 @@ public class AAttackEnemyUnit {
         }
 
         // Prevent units from switching attack of the same unit, to another unit of the same type
-        if (unit.isAttackingOrMovingToAttack() && unit.target() != null && unit.target().isTank()) {
+        if (unit.target() != null && unit.isAttackingOrMovingToAttack() && unit.target().isTank()) {
             if (unit.distToLessThan(unit.target(), 3)) {
                 return false;
             }

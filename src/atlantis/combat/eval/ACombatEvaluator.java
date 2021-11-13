@@ -3,6 +3,7 @@ package atlantis.combat.eval;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 import atlantis.util.Cache;
 import atlantis.util.ColorUtil;
 import atlantis.util.WeaponUtil;
@@ -85,28 +86,35 @@ public class ACombatEvaluator {
     public static double evaluateSituation(AUnit unit, boolean relativeToEnemy) {
         return (double) cache.get(
             "evaluateSituation:" + unit.id() + "," + relativeToEnemy,
-            5,
+            3,
             () -> {
-                checkCombatInfo(unit);
-
-//        // Try using cached value
-//        double combatEvalCachedValueIfNotExpired = combatInfo.get(unit).getCombatEvalCachedValueIfNotExpired();
-//        if (combatEvalCachedValueIfNotExpired > -12345) {
-//            return updateCombatEval(unit, combatEvalCachedValueIfNotExpired);
-//        }
 
                 // =========================================================
                 // Define nearby enemy and our units
-                Collection<AUnit> enemyUnits = Select.enemy().combatUnits().inRadius(12, unit).listUnits();
+
+                Collection<AUnit> enemyUnits = Select.enemyCombatUnits().ranged().inRadius(13, unit).listUnits();
+                enemyUnits.addAll(Select.enemyCombatUnits().melee().inRadius(4.5, unit).listUnits());
                 if (enemyUnits.isEmpty()) {
                     return MAX_VALUE;
                 }
-                Collection<AUnit> ourUnits = Select.our().combatUnits().inRadius(8.5, unit).listUnits();
+
+                Collection<AUnit> ourUnits = Select.ourCombatUnits().ranged().inRadius(13, unit).listUnits();
+                ourUnits.addAll(Select.ourCombatUnits().melee().inRadius(4.5, unit).listUnits());
+
+//                System.out.println("---- ENEMY (" + enemyUnits.size() + ")");
+//                A.printList(enemyUnits);
+//                System.out.println("---- OUR (" + ourUnits.size() + ")");
+//                A.printList(ourUnits);
 
                 // =========================================================
                 // Evaluate our and enemy strength
+
                 double enemyEvaluation = Evaluate.evaluateUnitsAgainstUnit(enemyUnits, unit, true);
                 double ourEvaluation = Evaluate.evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
+//                System.out.println("enemyEvaluation = " + enemyEvaluation);
+//                System.out.println("ourEvaluation = " + ourEvaluation);
+
+                // =========================================================
 
                 // Return non-relative absolute value
                 if (!relativeToEnemy) {
@@ -119,10 +127,11 @@ public class ACombatEvaluator {
 
                 // Return relative value compared to local enemy strength
                 else {
-                    double lowHealthPenalty = unit.woundPercent() / 80;
-                    double combatEval = ourEvaluation / enemyEvaluation - 1 - lowHealthPenalty;
-
-                    return updateCombatEval(unit, combatEval);
+                    if (unit.isEnemy()) {
+                        return enemyEvaluation / ourEvaluation - 1;
+                    } else {
+                        return ourEvaluation / enemyEvaluation - 1;
+                    }
                 }
             }
         );
@@ -142,51 +151,51 @@ public class ACombatEvaluator {
     /**
      * Auxiliary string with colors.
      */
-    public static String getEvalString(AUnit unit, double forceValue) {
-        double eval = forceValue != 0 ? forceValue : evaluateSituation(unit);
-        if (eval >= MAX_VALUE) {
-            return "+";
-        } else {
-            String string = (eval < 0 ? "" : "+");
-            
-            if (eval < 5) {
-                string += String.format("%.1f", eval);
-            }
-            else {
-                string += (int) eval;
-            }
-
-            if (eval < -0.05) {
-                string = ColorUtil.getColorString(Color.Red) + string;
-            } else if (eval < 0.05) {
-                string = ColorUtil.getColorString(Color.Yellow) + string;
-            } else {
-                string = ColorUtil.getColorString(Color.Green) + string;
-            }
-
-            return string;
-        }
-    }
+//    public static String getEvalString(AUnit unit, double forceValue) {
+//        double eval = forceValue != 0 ? forceValue : evaluateSituation(unit);
+//        if (eval >= MAX_VALUE) {
+//            return "+";
+//        } else {
+//            String string = (eval < 0 ? "" : "+");
+//
+//            if (eval < 5) {
+//                string += String.format("%.1f", eval);
+//            }
+//            else {
+//                string += (int) eval;
+//            }
+//
+//            if (eval < -0.05) {
+//                string = ColorUtil.getColorString(Color.Red) + string;
+//            } else if (eval < 0.05) {
+//                string = ColorUtil.getColorString(Color.Yellow) + string;
+//            } else {
+//                string = ColorUtil.getColorString(Color.Green) + string;
+//            }
+//
+//            return string;
+//        }
+//    }
 
     /**
      * Returns combat eval and caches it for the time of several frames.
      */
-    private static double updateCombatEval(AUnit unit, double combatEval) {
-        checkCombatInfo(unit);
-        combatInfo.get(unit).updateCombatEval(combatEval);
-        //unit.updateCombatEval(combatEval);
-        return combatEval;
-    }
+//    private static double updateCombatEval(AUnit unit, double combatEval) {
+//        checkCombatInfo(unit);
+//        combatInfo.get(unit).updateCombatEval(combatEval);
+//        //unit.updateCombatEval(combatEval);
+//        return combatEval;
+//    }
 
     /**
      * Checks whether AtlantisCombatInformation exists for a given unit, creating an instance if necessary
      *
      * @param unit
      */
-    private static void checkCombatInfo(AUnit unit) {
-        if (!combatInfo.containsKey(unit)) {
-            combatInfo.put(unit, new ACombatInformation(unit));
-        }
-    }
+//    private static void checkCombatInfo(AUnit unit) {
+//        if (!combatInfo.containsKey(unit)) {
+//            combatInfo.put(unit, new ACombatInformation(unit));
+//        }
+//    }
 
 }

@@ -1,5 +1,7 @@
 package atlantis;
 
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class OnEveryFrame {
@@ -66,6 +68,14 @@ public class OnEveryFrame {
 //        }
 
 //        System.out.println(AGame.gas() + " // " + AGame.minerals());
+
+        for (AUnit unit : Select.enemies(AUnitType.Zerg_Lurker).list()) {
+            System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloaked=" + unit.effCloaked());
+        }
+//        for (AUnit unit : Select.enemies(AUnitType.Zerg_Hydralisk).list()) {
+//            System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloaked=" + unit.effCloaked());
+//            break;
+//        }
     }
 
 }

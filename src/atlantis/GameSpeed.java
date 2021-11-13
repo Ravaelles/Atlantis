@@ -23,9 +23,9 @@ public class GameSpeed {
      */
     public static int frameSkip;
 
-    private static final int NORMAL_GAME_SPEED = 0;
-//    private static final int NORMAL_FRAME_SKIP = 1;
-    private static final int NORMAL_FRAME_SKIP = 300;
+    private static final int NORMAL_GAME_SPEED = 20;
+    private static final int NORMAL_FRAME_SKIP = 0;
+//    private static final int NORMAL_FRAME_SKIP = 500;
 //    private static final int NORMAL_FRAME_SKIP = 2;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
@@ -51,13 +51,17 @@ public class GameSpeed {
     public static void checkIfNeedToSlowDown() {
 //        if (true) { return; }
 
+        if (!oneTimeSlowdownUsed && AGame.now() <= 1) {
+            Atlantis.game().setGUI(frameSkip <= 30);
+        }
+
         if (
                 !oneTimeSlowdownUsed
                         && AGame.now() > 60
                         && gameSpeed == 0
                         && Count.ourCombatUnits() >= 5
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
-                        && Select.enemyCombatUnits().atLeast(4)
+                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Missions.isGlobalMissionContain()
         ) {
             oneTimeSlowdownUsed = true;
@@ -65,7 +69,7 @@ public class GameSpeed {
             pauseGame();
             changeSpeedTo(10);
             changeFrameSkipTo(0);
-            CameraManager.centerCameraNowOnFirstCombatUnit();
+            CameraManager.centerCameraNowOnSquadCenter();
             unpauseGame();
         }
     }
@@ -148,6 +152,9 @@ public class GameSpeed {
 //        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
         AGame.sendMessage("/speed " + gameSpeed);
         game().setLocalSpeed(gameSpeed);
+
+        // Turn off GUI for huge game speeds to make it even quicker
+        game().setGUI(frameSkip <= 150);
 
 //        GameSpeed.unpauseGame();
 //        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");

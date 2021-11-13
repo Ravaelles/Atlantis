@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
+import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.SquadScout;
 import atlantis.map.Bases;
 import atlantis.position.APosition;
@@ -29,9 +30,9 @@ public class MissionContain extends Mission {
             return true;
         }
 
-//        if (ASquadCohesionManager.handle(unit)) {
-//            return true;
-//        }
+        if (ASquadCohesionManager.handle(unit)) {
+            return true;
+        }
 
         // Focus point is well known
         return focusPoint != null && AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint);

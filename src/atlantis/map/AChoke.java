@@ -103,11 +103,11 @@ public class AChoke implements HasPosition {
 
     // =========================================================
 
-    public APosition getCenter() {
+    public APosition center() {
         return center;
     }
 
-    public int getWidth() {
+    public int width() {
         return (int) width;
     }
 
@@ -140,4 +140,5 @@ public class AChoke implements HasPosition {
     public ChokePoint rawChoke() {
         return choke;
     }
+
 }

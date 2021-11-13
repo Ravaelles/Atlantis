@@ -63,6 +63,7 @@ public class AGameCommander {
         UmsSpecialActionsManager.update();
         AUnitStateManager.update();
         CameraManager.update();
+        UseMap.updateMapSpecific();
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_OTHER);
     }
 

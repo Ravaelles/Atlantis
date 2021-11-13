@@ -152,11 +152,11 @@ public abstract class AbstractPositionFinder {
         }
 
         for (AChoke choke : Chokes.chokes()) {
-            if (choke.getWidth() >= 7) {
+            if (choke.width() >= 7) {
                 continue;
             }
 
-            double distToChoke = choke.getCenter().distTo(position) - choke.getWidth();
+            double distToChoke = choke.center().distTo(position) - choke.width();
             if (distToChoke <= 3.3) {
                 _CONDITION_THAT_FAILED = "Overlaps choke (" + distToChoke + ")";
                 return true;

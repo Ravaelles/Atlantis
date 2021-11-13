@@ -9,7 +9,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
-import atlantis.util.We;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
 
@@ -41,7 +40,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (Count.basesWithUnfinished() >= 2) {
                     AChoke natural = Chokes.natural();
                     if (natural != null) {
-                        return natural.getCenter();
+                        return natural.center();
                     }
                 }
 
@@ -49,7 +48,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AChoke mainChoke = Chokes.mainChoke();
                 if (mainChoke != null) {
-                    return mainChoke.getCenter();
+                    return mainChoke.center();
                 }
 
                 // === Focus enemy attacking the main base =================
@@ -87,7 +86,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit building = Select.ourBuildings().first();
                 if (building != null) {
-                    return APosition.create(Chokes.nearestChoke(building.position()).getCenter());
+                    return APosition.create(Chokes.nearestChoke(building.position()).center());
                 }
 
                 return null;

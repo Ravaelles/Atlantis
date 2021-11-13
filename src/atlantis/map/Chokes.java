@@ -110,7 +110,7 @@ public class Chokes {
                     }
 
                     for (AChoke choke : naturalRegion.chokes()) {
-                        if (choke.getCenter().distTo(chokeForMainBase) > 1) {
+                        if (choke.center().distTo(chokeForMainBase) > 1) {
                             return choke;
                         }
                     }
@@ -133,7 +133,7 @@ public class Chokes {
                 AChoke nearest = null;
 
                 for (AChoke chokePoint : chokes()) {
-                    double dist = position.position().groundDistanceTo(chokePoint.getCenter()) - (chokePoint.getWidth() / 64.0);
+                    double dist = position.position().groundDistanceTo(chokePoint.center()) - (chokePoint.width() / 64.0);
                     if (dist < nearestDist) {
                         nearestDist = dist;
                         nearest = chokePoint;
@@ -155,12 +155,19 @@ public class Chokes {
                 -1,
                 () -> {
                     List<AChoke> chokes = new ArrayList<>();
-                    for (ChokePoint choke : AMap.getMap().chokes()) {
-                        chokes.add(AChoke.create(choke));
+                    for (ChokePoint chokePoint : AMap.getMap().chokes()) {
+                        AChoke choke = AChoke.create(chokePoint);
+                        if (isOk(choke)) {
+                            chokes.add(choke);
+                        }
                     }
                     return chokes;
                 }
         );
+    }
+
+    private static boolean isOk(AChoke choke) {
+        return choke.width() >= 1;
     }
 
     public static AChoke enemyMainChoke() {

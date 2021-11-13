@@ -48,16 +48,18 @@ public class AMap {
         bwem.getMap().assignStartingLocationsToSuitableBases();
 
         // Init JBWEB
-        try {
-            JBWEB.onStart(Atlantis.game(), bwem);
-            Blocks.findBlocks();
-            Stations.findStations();
-            Wall wall = Walls.createTWall();
-            System.out.println("Walls.getWalls() = " + Walls.getWalls());
-            System.out.println("Wall = " + wall);
-        } catch (Exception e) {
-            System.err.println("JBWEB exception: " + e.getMessage());
-//            AGame.setUmsMode();
+        if (!A.isUms()) {
+            try {
+                JBWEB.onStart(Atlantis.game(), bwem);
+                Blocks.findBlocks();
+                Stations.findStations();
+                Wall wall = Walls.createTWall();
+                System.out.println("Walls.getWalls() = " + Walls.getWalls());
+                System.out.println("Wall = " + wall);
+            } catch (Exception e) {
+                System.err.println("JBWEB exception: " + e.getMessage());
+    //            AGame.setUmsMode();
+            }
         }
 
         System.out.println("OK.");

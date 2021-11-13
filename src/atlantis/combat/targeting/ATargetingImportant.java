@@ -43,7 +43,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .nearestTo(unit);
         if (target != null) {
             System.err.println(unit.shortName() + " --> " + target.shortName());
-            if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("C1 = " + target);
             return target;
         }
 
@@ -55,7 +55,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("C1 = " + target);
             return target;
         }
 
@@ -96,7 +96,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("C1 = " + target);
             return target;
         }
 
@@ -106,7 +106,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("C1 = " + target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("C1 = " + target);
             return target;
         }
 
@@ -135,7 +135,7 @@ public class ATargetingImportant extends AEnemyTargeting {
         // Special case - SHUTTLE
 
         if ((target = ATransportTargeting.target(unit)) != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("C3 = " + target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("C3 = " + target);
             return target;
         }
 
@@ -147,7 +147,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (AEnemyTargeting.DEBUG) System.out.println("C4 = " + target);
+            if (AEnemyTargeting.debug(unit)) System.out.println("C4 = " + target);
             return target;
         }
 
@@ -167,7 +167,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .canBeAttackedBy(unit, 4)
                 .nearestTo(unit);
 
-//        if (AEnemyTargeting.DEBUG) System.out.println("C5 = " + target);
+//        if (AEnemyTargeting.debug(unit)) System.out.println("C5 = " + target);
         return target;
     }
 

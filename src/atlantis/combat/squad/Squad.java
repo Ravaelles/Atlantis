@@ -5,6 +5,9 @@ import atlantis.combat.missions.Missions;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -179,6 +182,9 @@ public class Squad extends Units {
 //        }
 //        this.microManager = microManager;
 //    }
+    public boolean isMainSquad() {
+        return name.equals("Alpha");
+    }
 
     /**
      * Returns ID for this battle squad (1, 2, 3, 4 etc).
@@ -206,10 +212,16 @@ public class Squad extends Units {
     }
 
     public AUnit getSquadScout() {
-        if (We.terran() && size() <= 2) {
+        if (!isMainSquad() || Count.ourCombatUnits() < 3) {
             return null;
         }
 
-        return first();
+        Selection groundUnits = Select.from(this).groundUnits();
+        AUnit ranged = groundUnits.ranged().first();
+        if (ranged != null) {
+            return ranged;
+        }
+
+        return groundUnits.melee().first();
     }
 }

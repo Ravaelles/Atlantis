@@ -18,9 +18,9 @@ public class APainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
-//    public static int paintingMode = MODE_NO_PAINTING;
 //    public static int paintingMode = MODE_PARTIAL_PAINTING;
     public static int paintingMode = MODE_FULL_PAINTING;
+//    public static int paintingMode = MODE_NO_PAINTING;
 
     protected static Game bwapi;
 
@@ -211,12 +211,12 @@ public class APainter {
         }
 
         if ("".equals(extraText)) {
-            extraText = choke.getWidth() + " wide choke";
+            extraText = choke.width() + " wide choke";
         }
 
-        APainter.paintCircle(choke.getCenter(), choke.getWidth() * 32, color);
+        APainter.paintCircle(choke.center(), choke.width() * 32, color);
         APainter.paintTextCentered(
-                choke.getCenter().translateByTiles(0, choke.getWidth()),
+                choke.center().translateByTiles(0, choke.width()),
                 extraText,
                 color
         );

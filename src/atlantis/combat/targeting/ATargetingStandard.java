@@ -89,6 +89,7 @@ public class ATargetingStandard extends AEnemyTargeting {
                         AUnitType.Zerg_Spire,
                         AUnitType.Zerg_Greater_Spire
                 )
+                .inRadius(11, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

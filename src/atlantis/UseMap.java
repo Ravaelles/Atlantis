@@ -1,9 +1,12 @@
 package atlantis;
 
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
+
 public class UseMap {
 
     public static String activeMap() {
-        return "sscai/(2)Destination.scx";
+//        return "sscai/(2)Destination.scx";
 //        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
@@ -29,13 +32,15 @@ public class UseMap {
 //        return "ums/7th.scx"; // vs. AI Protoss player, that can kill CSVs constructing
 //        return "ums/exp_skilltest.scx"; // vs. AI Protoss player
 //        return "ums/vsGosuComputer.scx"; // vs. AI Zerg Player - cheating as fuck
-//        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
 //        return "ums/lt-terran1j.scm"; // Zerg vs. Terran
 //        return "ums/member_test.scx"; // vs. AI 2x Protoss players, massive Zealot rush
 //        return "ums/LostTemple.scm"; // vs. 2x Protoss players, again Zealot rush
 
-//        return "ums/micro challenge.scx"; // Even more minigames
+        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
+//        return "ums/marines_vs_zerglings.scm"; // 12 marines vs. 24 zerglings
+//        return "ums/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
 //        return "ums/ConTrol2.scx"; // More minigames
+//        return "ums/micro challenge.scx"; //8 Even more minigames
 //        return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones vs. 2 drones, lings vs. goons etc
 //        return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships vs. Dragoons
 //        return "ums/trainzvreaver.scm"; // Zerglings & Hydras vs. 2 Reavers & Shuttle
@@ -45,9 +50,7 @@ public class UseMap {
 //        return "ums/micro3.scx";
 //        return "ums/wraiths_vs_carriers_obs.scx"; // Wraiths & Valkyries vs. Carriers & Observers
 //        return "ums/(1)micro3_007.scx";
-//        return "ums/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
 //        return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons vs. mines
-//        return "ums/marines_vs_zerglings.scm"; // 12 marines vs. 24 zerglings
 //        return "ums/vulture_control.scx"; // Vulture vs. Broodlings
 //        return "ums/MultiTask PvT.scx"; // Weird - ums but starts with bases
 //        return "ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines vs. Zerg
@@ -60,4 +63,35 @@ public class UseMap {
         return "maps/BroodWar/" + activeMap();
     }
 
+    // =========================================================
+
+    public static void updateMapSpecific() {
+        if (activeMap().equals("ums/marines_vs_zerglings.scm")) {
+            if (Atlantis.KILLED >= 32) {
+                Atlantis.getInstance().onEnd(true);
+            }
+        }
+
+        if (activeMap().equals("ums/mar_vs_zea.scx")) {
+            if (Select.enemyCombatUnits().isEmpty()) {
+                GameSpeed.changeSpeedTo(0);
+                GameSpeed.changeFrameSkipTo(50);
+            }
+
+            if (
+                    AGame.now() > 60
+                    && GameSpeed.frameSkip >= 30
+                    && Count.ourCombatUnits() >= 5
+//                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
+                    && Select.enemyCombatUnits().atLeast(2)
+//                        && Missions.isGlobalMissionContain()
+            ) {
+                GameSpeed.pauseGame();
+                GameSpeed.changeSpeedTo(10);
+                GameSpeed.changeFrameSkipTo(0);
+                CameraManager.centerCameraNowOnSquadCenter();
+                GameSpeed.unpauseGame();
+            }
+        }
+    }
 }
