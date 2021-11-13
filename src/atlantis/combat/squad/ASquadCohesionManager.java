@@ -82,7 +82,7 @@ public class ASquadCohesionManager {
         Selection ourCombatUnits = Select.ourCombatUnits().inRadius(5, unit);
         AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
 
-        if (nearestBuddy != null && nearestBuddy.distToLessThan(unit, 0.3)) {
+        if (nearestBuddy != null && nearestBuddy.distToLessThan(unit, 0.5)) {
             return unit.moveAwayFrom(nearestBuddy, 0.5, "Spread out");
         }
 

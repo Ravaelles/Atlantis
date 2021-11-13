@@ -1,5 +1,6 @@
 package atlantis.combat.micro.managers;
 
+import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -47,6 +48,14 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             return true;
         }
 
+        // =========================================================
+
+        if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit)) {
+            return true;
+        }
+
+        // =========================================================
+
         // Too close
         if (
                 allowTooClose
@@ -83,6 +92,10 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
     private static boolean handleTerranAdvance(AUnit unit) {
         if (unit.isInfantry() && !unit.isMedic() && Count.medics() >= 4) {
+            if (Select.enemyCombatUnits().inRadius(6, unit).isNotEmpty()) {
+                return false;
+            }
+
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
             if (medic != null && medic.distToMoreThan(unit, 6)) {
                 if (Select.ourCombatUnits().inRadius(5, unit).atMost(3)) {

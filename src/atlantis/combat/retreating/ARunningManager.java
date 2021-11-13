@@ -17,10 +17,6 @@ import java.util.ArrayList;
 
 public class ARunningManager {
 
-    private static final int RUN_ANY_DIRECTION_GRID_BORDER = 5;
-    
-    // =========================================================
-    
     private final AUnit unit;
     private static APosition _lastPosition;
 //    private APosition runAwayFrom = null;
@@ -41,7 +37,8 @@ public class ARunningManager {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
         if (
                 unit.isRunning()
-                && unit.lastStartedRunningMoreThanAgo(3)
+                && unit.lastStartedRunningMoreThanAgo(5)
+                && !unit.lastStoppedRunningLessThanAgo(10)
                 && !unit.isUnderAttack(20)
                 && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
@@ -91,7 +88,7 @@ public class ARunningManager {
         // === Still nothing, try to run anywhere ==================
 
         if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, runAwayFrom);
+            runTo = findPositionToRunInAnyDirection(unit, runAwayFrom);
         }
 
         // === Actual run order ====================================
@@ -165,7 +162,7 @@ public class ARunningManager {
         // === Get run to position - as far from enemy as possible =====================
 
         if (runTo == null) {
-            runTo = findRunPositionAtAnyDirection(unit, runAwayFrom);
+            runTo = findPositionToRunInAnyDirection(unit, runAwayFrom);
         }
         
         // =============================================================================
@@ -296,7 +293,7 @@ public class ARunningManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
      * to given runAwayFrom position.
      */
-    private APosition findRunPositionAtAnyDirection(AUnit unit, HasPosition runAwayFrom) {
+    private APosition findPositionToRunInAnyDirection(AUnit unit, HasPosition runAwayFrom) {
 
         // === Define run from ====================================================
 //        Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
@@ -314,11 +311,10 @@ public class ARunningManager {
         
         APosition unitPosition = unit.position();
         int radius = runDistanceForAnyDirection(unit);
-        int maxRadius = 12;
         APosition bestPosition = null;
-        while (bestPosition == null && radius <= maxRadius) {
+        while (bestPosition == null && radius >= 0.5) {
             bestPosition = findRunPositionInRadius(unitPosition, runAwayFrom, radius);
-            radius += 3;
+            radius -= 1;
         }
         
         // =========================================================
@@ -380,10 +376,10 @@ public class ARunningManager {
         }
 
         if (unit.isInfantry()) {
-            return 3;
+            return 4;
         }
 
-        return RUN_ANY_DIRECTION_GRID_BORDER;
+        return 4;
     }
 
     /**
@@ -439,10 +435,10 @@ public class ARunningManager {
         boolean isOkay = position.isWalkable()
                 && (
                     (
-                            position.translateByTiles(-1, -1).isWalkable()
-                            && position.translateByTiles(1, 1).isWalkable()
-                            && position.translateByTiles(1, -1).isWalkable()
-                            && position.translateByTiles(-1, -1).isWalkable()
+                            position.translateByPixels(-48, -48).isWalkable()
+                            && position.translateByPixels(48, 48).isWalkable()
+                            && position.translateByPixels(48, -48).isWalkable()
+                            && position.translateByPixels(-48, -48).isWalkable()
                     )
 //                    || (
 //                            position.translateByTiles(0, 1).isWalkable()

@@ -124,6 +124,7 @@ public class ACombatUnitManager {
             return true;
         }
 
+//        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
         if (unit.isRunning()) {
 //            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
             return true;

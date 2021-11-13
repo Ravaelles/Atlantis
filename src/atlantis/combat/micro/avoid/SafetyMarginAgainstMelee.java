@@ -36,7 +36,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     // =========================================================
 
     private static double baseForMelee(AUnit defender, AUnit attacker) {
-        return 0.1;
+//        return 0.1;
+        return attacker.isZealot() ? 0.5 : 0.7;
     }
 
     protected static double beastBonus(AUnit defender) {

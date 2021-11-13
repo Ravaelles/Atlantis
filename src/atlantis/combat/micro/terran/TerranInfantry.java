@@ -42,11 +42,11 @@ public class TerranInfantry {
             return false;
         }
 
-        if (Select.enemyCombatUnits().inRadius(13, unit).canAttack(unit, 4).isNotEmpty()) {
+        if (Select.enemyCombatUnits().inRadius(13, unit).canAttack(unit, 9).isNotEmpty()) {
             return false;
         }
 
-        AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(30).nearestTo(unit);
+        AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(30).randomWithSeed(unit.id());
         if (medic != null) {
             return unit.move(medic, UnitActions.MOVE, "BeHealed");
         }

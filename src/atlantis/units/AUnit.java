@@ -229,9 +229,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         APosition newPosition = new APosition(x() - dx, y() - dy).makeValid();
 
-//        if (AtlantisRunManager.isPossibleAndReasonablePosition(
-//                this, newPosition, -1, 9999, true
-//        ) && move(newPosition, UnitActions.MOVE)) {
         if (
                 runningManager().isPossibleAndReasonablePosition(this, newPosition, false)
                 && move(newPosition, UnitActions.MOVE, "Move away")
@@ -240,23 +237,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return true;
         }
 
-//        else {
-//            System.out.println("CANT = " + position.distanceTo(newPosition));
-            APainter.paintLine(position.position(), newPosition.position(), Color.Teal);
-            this.setTooltip("Cant move away");
-            return move(newPosition, UnitActions.MOVE, "Force move");
-//            return false;
-//        }
+        APainter.paintLine(position.position(), newPosition.position(), Color.Teal);
+        this.setTooltip("Cant move away");
+        return move(newPosition, UnitActions.MOVE, "Force move");
     }
     
     // =========================================================
+
     @Override
     public String toString() {
-//        Position position = this.getPosition();
-//        String toString = type().shortName();
-//        toString += " #" + getID() + " at [" + position.toTilePosition() + "]";
-//        return toString;
-//        return "AUnit(" + u.getType().toString() + ")";
         return "AUnit(" + type().shortName()+ " #" + getID() + ") at " + position().toString();
     }
 
@@ -264,32 +253,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int compareTo(AUnit otherUnit) {
         return Integer.compare(this.hashCode(), otherUnit.hashCode());
     }
-//    public int compareTo(Object o) {
-//        int compare;
-//
-//        if (o instanceof AUnit) {
-//            compare = ((AUnit) o).getID();
-//        } else {
-//            compare = o.hashCode();
-//        }
-//
-//        return Integer.compare(this.hashCode(), compare);
-//    }
 
     // =========================================================
     // Compare type methods
+
     public boolean isAlive() {
-//        if (isOur()) {
-//            return !UnitsArchive.isDestroyed(id());
-//        }
-
         return hp() > 0 || !UnitsArchive.isDestroyed(id());
-
-//        if (isOur()) {
-//            return hp() > 0 && !OurUnitsArchive.hasOurUnitBeenDestroyed(this);
-//        }
-//
-//        return !AEnemyUnits.isEnemyUnitDestroyed(this);
     }
 
     public boolean canBeHealed() {
@@ -1499,6 +1468,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return A.ago(_lastStartedRunning) >= framesAgo;
     }
 
+    public boolean lastStartedRunningLessThanAgo(int framesAgo) {
+        return A.ago(_lastStartedRunning) <= framesAgo;
+    }
+
     public boolean lastStoppedRunningLessThanAgo(int framesAgo) {
         return A.ago(_lastStoppedRunning) <= framesAgo;
     }
@@ -1798,6 +1771,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isMutalisk() {
         return type().isMutalisk();
+    }
+
+    public boolean isZealot() {
+        return type().isZealot();
     }
 
 //    public boolean isDepleted() {

@@ -20,8 +20,10 @@ public class AEnemyTargeting {
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
     public static AUnit defineBestEnemyToAttackFor(AUnit unit, double maxDistFromEnemy) {
-//        AUnit enemy = selectEnemyFirstByTypeThenByBestOfTypeInRange(unit, maxDistFromEnemy);
-        AUnit enemy = Select.enemy().nearestTo(unit);
+//        if (true) return null;
+
+        AUnit enemy = selectEnemyFirstByTypeThenByBestOfTypeInRange(unit, maxDistFromEnemy);
+//        AUnit enemy = Select.enemy().nearestTo(unit);
 
         if (enemy != null) {
             APainter.paintTextCentered(unit.position().translateByPixels(0, 25), enemy.shortName(), Color.Green);

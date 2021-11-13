@@ -5,6 +5,8 @@ import atlantis.Atlantis;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Cache;
 import bwapi.TilePosition;
@@ -47,20 +49,20 @@ public class AMap {
         bwem.initialize();
         bwem.getMap().assignStartingLocationsToSuitableBases();
 
-        // Init JBWEB
-        if (!A.isUms()) {
-            try {
-                JBWEB.onStart(Atlantis.game(), bwem);
-                Blocks.findBlocks();
-                Stations.findStations();
-                Wall wall = Walls.createTWall();
-                System.out.println("Walls.getWalls() = " + Walls.getWalls());
-                System.out.println("Wall = " + wall);
-            } catch (Exception e) {
-                System.err.println("JBWEB exception: " + e.getMessage());
-    //            AGame.setUmsMode();
-            }
+        // Init JBWEB - needed for calculating ground distance
+//        if (!A.isUms() && Select.main() != null && Count.workers() == 4) {
+        try {
+            JBWEB.onStart(Atlantis.game(), bwem);
+            Blocks.findBlocks();
+            Stations.findStations();
+            Wall wall = Walls.createTWall();
+            System.out.println("Walls.getWalls() = " + Walls.getWalls());
+            System.out.println("Wall = " + wall);
+        } catch (Exception e) {
+            System.err.println("JBWEB exception: " + e.getMessage());
+//            AGame.setUmsMode();
         }
+//        }
 
         System.out.println("OK.");
     }

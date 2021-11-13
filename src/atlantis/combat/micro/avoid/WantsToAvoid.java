@@ -1,27 +1,31 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.Units;
+import bwapi.Color;
 
 public class WantsToAvoid {
 
     public static boolean units(AUnit unit, Units enemies) {
-        if (shouldAvoid(unit, enemies)) {
-            return false;
-        }
-
         if (shouldNotAvoid(unit, enemies)) {
             return false;
         }
 
-        if ((new FightInsteadAvoid(unit, enemies)).shouldFight() && !AAttackEnemyUnit.shouldNotAttack(unit)) {
-            return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        // =========================================================
+
+        if (!shouldAvoid(unit, enemies)) {
+            if ((new FightInsteadAvoid(unit, enemies)).shouldFight() && !AAttackEnemyUnit.shouldNotAttack(unit)) {
+                return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+            }
         }
 
-        else if (enemies.size() == 1) {
+        // =========================================================
+
+        if (enemies.size() == 1) {
             return Avoid.unit(unit, enemies.first());
         }
         else {
@@ -32,7 +36,7 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldAvoid(AUnit unit, Units enemies) {
-        return unit.isWorker() && unit.isScout();
+        return unit.isWorker() || unit.isScout() || unit.isSquadScout();
     }
 
     private static boolean shouldNotAvoid(AUnit unit, Units enemies) {
@@ -51,6 +55,8 @@ public class WantsToAvoid {
 
         // Running is not viable - so many other units nearby, would get stuck
         if (Select.all().inRadius(0.4, unit).count() >= 6) {
+//            APainter.paintCircleFilled(unit, 8, Color.Black);
+//            System.err.println("Dont avoid " + Select.all().inRadius(0.4, unit).count());
             return true;
         }
 

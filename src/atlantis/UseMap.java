@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.debug.APainter;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
@@ -75,7 +76,7 @@ public class UseMap {
         if (activeMap().equals("ums/mar_vs_zea.scx")) {
             if (Select.enemyCombatUnits().isEmpty()) {
                 GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(50);
+                GameSpeed.changeFrameSkipTo(70);
             }
 
             if (
@@ -84,13 +85,13 @@ public class UseMap {
                     && Count.ourCombatUnits() >= 5
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
                     && Select.enemyCombatUnits().atLeast(2)
-//                        && Missions.isGlobalMissionContain()
             ) {
-                GameSpeed.pauseGame();
-                GameSpeed.changeSpeedTo(10);
-                GameSpeed.changeFrameSkipTo(0);
+//                GameSpeed.pauseGame();
+                APainter.disablePainting();
+                GameSpeed.changeSpeedTo(0);
+                GameSpeed.changeFrameSkipTo(60);
                 CameraManager.centerCameraNowOnSquadCenter();
-                GameSpeed.unpauseGame();
+//                GameSpeed.unpauseGame();
             }
         }
     }

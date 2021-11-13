@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.Units;
+import atlantis.util.Cache;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 public abstract class AAvoidUnits {
 
     protected static AUnit unit;
+    private static Cache<Units> cache = new Cache<>();
 
     // =========================================================
 
@@ -37,25 +39,30 @@ public abstract class AAvoidUnits {
     }
 
     public static Units getUnitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
-        Units enemies = new Units();
-        for (AUnit enemy : searchProblematicEnemyUnits(unit)) {
-            enemies.addUnitWithValue(enemy, SafetyMargin.calculate(enemy, unit));
-        }
+        return cache.get(
+            "getUnitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
+            0,
+            () -> {
+                Units enemies = new Units();
+                for (AUnit enemy : searchProblematicEnemyUnits(unit)) {
+                    enemies.addUnitWithValue(enemy, SafetyMargin.calculate(enemy, unit));
+                }
 
-        if (enemies.isEmpty()) {
-            return new Units();
-        }
+                if (enemies.isEmpty()) {
+                    return new Units();
+                }
 
-        if (onlyDangerouslyClose) {
-            return enemies.replaceUnitsWith(
-                    enemies.stream()
-                            .filter(e -> enemies.valueFor(e) < 0)
-                            .collect(Collectors.toList())
-            );
-        }
-        else {
-            return enemies;
-        }
+                if (onlyDangerouslyClose) {
+                    return enemies.replaceUnitsWith(
+                            enemies.stream()
+                                    .filter(e -> enemies.valueFor(e) < 0)
+                                    .collect(Collectors.toList())
+                    );
+                } else {
+                    return enemies;
+                }
+            }
+        );
     }
 
     public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {

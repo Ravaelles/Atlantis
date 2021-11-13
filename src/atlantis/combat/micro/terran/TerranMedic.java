@@ -72,6 +72,12 @@ public class TerranMedic {
             return medic.move(infantry, UnitActions.MOVE, "Protect");
         }
 
+        if (infantry == null) {
+            if (AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
+                return true;
+            }
+        }
+
         return false;
     }
 

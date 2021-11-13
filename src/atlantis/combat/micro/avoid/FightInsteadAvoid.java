@@ -67,6 +67,7 @@ public class FightInsteadAvoid {
         // Combat units
         else {
             if (fightInImportantCases()) {
+//                System.err.println("Important case");
                 return true;
             }
 
@@ -158,6 +159,7 @@ public class FightInsteadAvoid {
 
     protected boolean fightAsCombatUnit() {
         if (fightBecauseWayTooManyUnitsNearby(unit)) {
+//            System.err.println("Kamikaze! " + unit.hp());
             return true;
         }
 

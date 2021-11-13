@@ -59,6 +59,7 @@ public class GameSpeed {
                 !oneTimeSlowdownUsed
                         && AGame.now() > 60
                         && gameSpeed == 0
+                        && frameSkip >= 30
                         && Count.ourCombatUnits() >= 5
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
                         && Select.enemyCombatUnits().atLeast(2)

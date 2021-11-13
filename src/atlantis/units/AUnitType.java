@@ -1316,4 +1316,12 @@ public class AUnitType implements Comparable<AUnitType> {
                 () -> is(Zerg_Mutalisk)
         );
     }
+
+    public boolean isZealot() {
+        return (boolean) cache.get(
+                "isZealot",
+                -1,
+                () -> is(Protoss_Zealot)
+        );
+    }
 }

@@ -1,5 +1,6 @@
 package atlantis.combat.micro;
 
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.targeting.AEnemyTargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -44,6 +45,10 @@ public class AAttackEnemyUnit {
     }
 
     public static boolean shouldNotAttack(AUnit unit) {
+        if (AAvoidUnits.shouldAvoidAnyUnit(unit)) {
+            return false;
+        }
+
         return unit.isUnitUnableToDoAnyDamage()
 
                 // =========================================================
