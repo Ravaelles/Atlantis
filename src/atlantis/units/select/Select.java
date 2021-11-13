@@ -711,7 +711,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         Selection selectedUnits = Select.ourWorkers();
         selectedUnits.list().removeIf(unit ->
                 unit.isConstructing() || unit.isRepairing()
-                        || AConstructionManager.isBuilder(unit) || AScoutManager.isScout(unit)
+                        || AConstructionManager.isBuilder(unit) || unit.isScout()
                         || unit.isRepairerOfAnyKind()
         );
 

@@ -136,6 +136,8 @@ public abstract class AbstractPositionFinder {
                 _CONDITION_THAT_FAILED = "Base already exists here";
                 return true;
             }
+
+            return false;
         }
 
         for (ABaseLocation base : Bases.baseLocations()) {

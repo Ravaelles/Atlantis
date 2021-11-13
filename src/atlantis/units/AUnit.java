@@ -237,7 +237,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return true;
         }
 
-        APainter.paintLine(position.position(), newPosition.position(), Color.Teal);
+        APainter.paintLine(position, newPosition, Color.Teal);
         this.setTooltip("Cant move away");
         return move(newPosition, UnitActions.MOVE, "Force move");
     }
@@ -526,7 +526,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
-    public double groundDistance(AUnit otherUnit) {
+    public double groundDistance(HasPosition otherUnit) {
         return PositionUtil.groundDistanceTo(this.position(), otherUnit.position());
     }
 

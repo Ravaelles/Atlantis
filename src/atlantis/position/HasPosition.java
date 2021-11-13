@@ -2,6 +2,7 @@ package atlantis.position;
 
 import atlantis.Atlantis;
 import atlantis.map.AMap;
+import atlantis.util.Vector;
 import bwapi.Point;
 import bwapi.Position;
 
@@ -41,6 +42,10 @@ public interface HasPosition {
         return PositionHelper.getPositionMovedTilesTowards(
                 this, towards, tiles
         );
+    }
+
+    default APosition translateByVector(Vector vector) {
+        return new APosition((int) (x() + vector.x), (int) (y() + vector.y));
     }
 
     // =========================================================

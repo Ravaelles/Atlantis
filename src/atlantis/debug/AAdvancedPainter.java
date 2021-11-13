@@ -2,6 +2,8 @@ package atlantis.debug;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.CameraManager;
+import atlantis.GameSpeed;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.Mission;
@@ -67,6 +69,10 @@ public class AAdvancedPainter extends APainter {
             return;
         }
 
+        if (A.now() < 1) {
+            return;
+        }
+
         sideMessageTopCounter = 0;
         sideMessageBottomCounter = 0;
 
@@ -90,16 +96,14 @@ public class AAdvancedPainter extends APainter {
 
 //        setTextSizeSmall();
 
-        paintCodeProfiler();
-//        paintMineralDistance();
         paintRegions();
+//        paintMineralDistance();
         paintChokepoints();
         paintImportantPlaces();
         paintStrategicLocations();
 //        paintTestSupplyDepotLocationsNearMain();
         paintConstructionProgress();
 //        paintEnemyRegionDetails();
-        paintSquads();
 //        paintColoredCirclesAroundUnits();
         paintBuildingHealth();
         paintWorkersAssignedToBuildings();
@@ -109,6 +113,8 @@ public class AAdvancedPainter extends APainter {
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
+        paintCodeProfiler();
+        paintSquads();
 
         setTextSizeMedium();
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
@@ -1171,20 +1177,56 @@ public class AAdvancedPainter extends APainter {
     }
 
     protected static void paintRegions() {
-        List<ARegion> regions = Regions.regions();
-        for (ARegion region : regions) {
-            APainter.paintRectangle(
-                    region.center().translateByTiles(-3, -3),
-                    6,
-                    6,
-                    Color.Brown
-            );
-            APainter.paintTextCentered(
-                    region.center(),
-                    region.toString(),
-                    Color.Brown
-            );
+        AUnit main = Select.main();
+        if (main == null) {
+            return;
         }
+
+        ARegion mainRegion = main.position().region();
+        if (mainRegion == null) {
+            return;
+        }
+
+        paintRegionBoundaries(mainRegion);
+
+//        List<ARegion> regions = Regions.regions();
+//        for (ARegion region : regions) {
+//            APainter.paintRectangle(
+//                    region.center().translateByTiles(-3, -3),
+//                    6,
+//                    6,
+//                    Color.Brown
+//            );
+//            APainter.paintTextCentered(
+//                    region.center(),
+//                    region.toString(),
+//                    Color.Brown
+//            );
+//        }
+    }
+
+    protected static void paintRegionBoundaries(ARegion region) {
+        APainter.paintCircle(region.center(), 6, Color.Brown);
+        APainter.paintCircle(region.center(), 5, Color.Brown);
+
+//        if (A.now() <= 1) {
+//            CameraManager.centerCameraOn(region.center());
+//        }
+
+        ArrayList<ARegionBoundary> boundaries = region.bounds();
+        for (ARegionBoundary boundary : boundaries) {
+            APosition position = boundary.position();
+//            if (A.now() == 1) {
+//                System.out.println("boundary.position() = " + boundary.position().toStringPixels());
+//            }
+            Color color = position.isWalkable() ? Color.Green : Color.Orange;
+            paintCircle(position, 4, color);
+            paintCircle(position, 3, color);
+//            if (A.now() <= 1) {
+//                CameraManager.centerCameraOn(boundary.position());
+//            }
+        }
+
     }
 
     protected static void paintChokepoints() {

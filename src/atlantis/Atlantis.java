@@ -210,6 +210,14 @@ public class Atlantis implements BWEventListener {
 
 //        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.shortName());
         UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
+
+        // =========================================================
+
+        if (A.now() >= 50 && A.isUms() && A.supplyUsed() == 0 && Select.ourCombatUnits().isEmpty()) {
+            System.out.println("### ROUND END ###");
+            UnitsArchive.paintLostUnits();
+            UnitsArchive.paintKilledUnits();
+        }
     }
 
     /**
@@ -235,12 +243,6 @@ public class Atlantis implements BWEventListener {
                     UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
                 }
             }
-        }
-
-        if (A.now() >= 50 && A.isUms() && A.supplyUsed() == 0 && Select.ourCombatUnits().isEmpty()) {
-            System.out.println("### ROUND END ###");
-            UnitsArchive.paintLostUnits();
-            UnitsArchive.paintKilledUnits();
         }
     }
 

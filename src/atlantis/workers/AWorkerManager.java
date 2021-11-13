@@ -1,14 +1,15 @@
 package atlantis.workers;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.debug.APainter;
 import atlantis.production.constructing.ABuilderManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
-import bwapi.Color;
+import atlantis.units.select.Selection;
+import atlantis.util.A;
 
 public class AWorkerManager {
 
@@ -16,6 +17,8 @@ public class AWorkerManager {
      * Executed for every worker unit.
      */
     public static boolean update(AUnit worker) {
+//        if (AScoutManager.testRoamingAroundBase(worker)) return true;
+
         if (workerManagerForbiddenFor(worker)) {
             return false;
         }
@@ -50,7 +53,7 @@ public class AWorkerManager {
     // =========================================================
 
     private static boolean workerManagerForbiddenFor(AUnit worker) {
-        if (AScoutManager.isScout(worker)) {
+        if (worker.isScout()) {
             worker.setTooltip("Scout");
             return true;
         }

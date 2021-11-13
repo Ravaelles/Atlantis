@@ -16,9 +16,10 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
+import atlantis.units.select.Selection;
 import atlantis.util.A;
+import atlantis.util.We;
 import bwapi.Color;
-import bwapi.Position;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -26,8 +27,8 @@ import java.util.Iterator;
 
 public class AScoutManager {
 
-//    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = true;
-    public static boolean MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE = false;
+//    public static boolean MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE = true;
+    public static boolean MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE = false;
     
     // =========================================================
     
@@ -40,19 +41,46 @@ public class AScoutManager {
     
     public static Positions scoutingAroundBasePoints = new Positions();
     private static int scoutingAroundBaseNextPolygonIndex = -1;
-    private static APosition scoutingAroundBaseLastPolygonPoint = null;
+    private static HasPosition scoutingAroundBaseLastPolygonPoint = null;
     private static boolean scoutingAroundBaseWasInterrupted = false;
     private static boolean scoutingAroundBaseDirectionClockwise = true;
     private static APosition nextPositionToScout = null;
 
     // =========================================================
-    
+
+    private static boolean update(AUnit scout) {
+        scout.setTooltip("Scout...");
+
+        if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
+            nextPositionToScout = null;
+            return handleScoutFreeBases(scout);
+        }
+
+        // =========================================================
+
+        // We don't know any enemy building, scout nearest starting location.
+        if (!AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+            return tryFindingEnemyBuilding(scout);
+        }
+
+        // Roam around enemy base
+//        else if (Count.ourCombatUnits() <= 1) {
+//            return handleScoutEnemyBase(scout);
+//        }
+
+        // Scout other bases
+        else {
+            return roamAroundEnemyBase(scout);
+//            return handleScoutFreeBases(scout);
+        }
+    }
+
     /**
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
     public static void update() {
-        if (true) return;
+//        if (true) return;
 
         // === Handle UMS ==========================================
         
@@ -62,8 +90,7 @@ public class AScoutManager {
 
         // === Act with every scout ================================
 
-        removeOverlordsAsScouts();
-        assignScoutIfNeeded();
+        manageScoutAssigned();
 
         try {
             for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
@@ -74,42 +101,10 @@ public class AScoutManager {
     }
 
     private static void removeOverlordsAsScouts() {
-        if (AEnemyUnits.hasDiscoveredEnemyBuilding()) {
-            scouts.clear();
-        }
-    }
-
-    private static boolean update(AUnit scout) {
-        scout.setTooltip("Scout...");
-
-//        if (!scout.isAlive() || AEnemyUnits.enemyBase() != null) {
-        if (!scout.isAlive()) {
-            scouts.remove(scout);
-            return true;
-        }
-        
-        // === Avoid military buildings ============================
-
-        if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
-            nextPositionToScout = null;
-            return true;
-        }
-        
-        // =========================================================
-        
-        // We don't know any enemy building, scout nearest starting location.
-        if (!AEnemyUnits.hasDiscoveredEnemyBuilding()) {
-            return tryFindingEnemyBuilding(scout);
-        }
-        
-        // Roam around enemy base
-//        else if (Count.ourCombatUnits() <= 1) {
-//            return handleScoutEnemyBase(scout);
-//        }
-
-        // Scout other bases
-        else {
-            return handleScoutFreeBases(scout);
+        if (We.zerg()) {
+            if (AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+                scouts.clear();
+            }
         }
     }
 
@@ -188,13 +183,21 @@ public class AScoutManager {
     /**
      * Roam around enemy base to get information about build order for as long as possible.
      */
-    private static boolean handleScoutEnemyBase(AUnit scout) {
+    public static boolean roamAroundEnemyBase(AUnit scout) {
 
         // === Remain at the enemy base if it's known ==============
 
-        APosition enemyBase = AEnemyUnits.enemyBase();
-        if (enemyBase != null) {
-            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
+        APosition enemy = AEnemyUnits.enemyBase();
+        if (enemy == null) {
+            AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+            if (enemyBuilding != null) {
+                enemy = enemyBuilding.position();
+            }
+        }
+//        APosition enemyBase = Select.main().position();
+
+        if (enemy != null) {
+            ARegion enemyBaseRegion = enemy.region();
 
             if (scoutingAroundBasePoints.isEmpty()) {
                 initializeEnemyRegionPolygonPoints(scout, enemyBaseRegion);
@@ -217,49 +220,60 @@ public class AScoutManager {
     /**
      * If we have no scout unit assigned, make one of our units a scout.
      */
-    private static void assignScoutIfNeeded() {
+    private static void manageScoutAssigned() {
+        removeDeadScouts();
+        removeOverlordsAsScouts();
+        removeExcessiveScouts();
 
         // Build order defines which worker should be a scout
         if (Count.workers() < BuildOrderSettings.scoutIsNthWorker()) {
             return;
         }
-        
-        // === Remove dead scouts ========================================
-        
-        removeDeadScouts();
-        
+
         // === Zerg =================================================
 
-        if (AGame.isPlayingAsZerg()) {
+        if (We.zerg()) {
 
-            // We know enemy building
-            if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-                if (AGame.timeSeconds() < 350) {
-                    if (scouts.isEmpty()) {
-                        for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
-                            if (!worker.isBuilder()) {
-                                scouts.add(worker);
-                                break;
-                            }
-                        }
-                    }
-                }
-            } // Haven't discovered any enemy building
-            else {
-                scouts.clear();
-                scouts.addAll(Select.ourCombatUnits().listUnits());
-            }
+//            // We know enemy building
+//            if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
+//                if (AGame.timeSeconds() < 350) {
+//                    if (scouts.isEmpty()) {
+//                        for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
+//                            if (!worker.isBuilder()) {
+//                                scouts.add(worker);
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//            } // Haven't discovered any enemy building
+//            else {
+//                scouts.clear();
+//                scouts.addAll(Select.ourCombatUnits().listUnits());
+//            }
         }
 
         // =========================================================
         // TERRAN + PROTOSS
 
         else if (scouts.isEmpty()) {
-            AUnit scout = Select.ourWorkers().nearestTo(Bases.natural());
-            if (!scout.isBuilder()) {
-                scouts.add(scout);
-                return;
+            for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
+                if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
+                    if (scouts.isEmpty()) {
+                        System.out.println("Add scout " + scout);
+                        scouts.add(scout);
+                        return;
+                    }
+                }
             }
+        }
+    }
+
+    private static void removeExcessiveScouts() {
+        if (scouts.size() > 1) {
+            AUnit leaveThisScout = scouts.get(scouts.size() - 1);
+            scouts.clear();
+            scouts.add(leaveThisScout);
         }
     }
 
@@ -267,6 +281,7 @@ public class AScoutManager {
         for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
             AUnit scout = iterator.next();
             if (!scout.isAlive()) {
+                System.out.println("Remove dead scout " + scout);
                 iterator.remove();
                 anyScoutBeenKilled = true;
             }
@@ -281,7 +296,11 @@ public class AScoutManager {
     }
 
     private static void defineNextPolygonPointForEnemyBaseRoamingUnit(ARegion region, AUnit scout) {
-        
+        if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
+            scout.setTooltip("ChangeOfPlans");
+            return;
+        }
+
         // Change roaming direction if we were forced to run from enemy units
         if (scoutingAroundBaseWasInterrupted) {
             scoutingAroundBaseDirectionClockwise = !scoutingAroundBaseDirectionClockwise;
@@ -292,20 +311,20 @@ public class AScoutManager {
         
         // =========================================================
         
-        APosition goTo = scoutingAroundBaseLastPolygonPoint != null
+        HasPosition goTo = scoutingAroundBaseLastPolygonPoint != null
                 ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
 
         if (goTo == null || scoutingAroundBaseWasInterrupted) {
             goTo = useNearestPolygonPoint(region, scout);
         } else {
-            if (scout.distTo(goTo) <= 3) {
+            if (scout.distTo(goTo) <= 1.8) {
                 scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + deltaIndex)
                         % scoutingAroundBasePoints.size();
                 if (scoutingAroundBaseNextPolygonIndex < 0) {
                     scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.size() - 1;
                 }
                 
-                goTo = (APosition) scoutingAroundBasePoints.get(scoutingAroundBaseNextPolygonIndex);
+                goTo = scoutingAroundBasePoints.get(scoutingAroundBaseNextPolygonIndex);
             }
         }
 
@@ -324,43 +343,48 @@ public class AScoutManager {
             );
         }
 
-        if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
+        if (MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE) {
             CameraManager.centerCameraOn(scout.position());
         }
     }
     
-    private static void initializeEnemyRegionPolygonPoints(AUnit scout, ARegion enemyBaseRegion) {
-        Position centerOfRegion = enemyBaseRegion.center();
+    private static void initializeEnemyRegionPolygonPoints(AUnit scout, ARegion regionToRoam) {
+//        Position centerOfRegion = enemyBaseRegion.center();
 
-        scoutingAroundBasePoints.addPosition(APosition.create(centerOfRegion));
+//        scoutingAroundBasePoints.addPosition(APosition.create(centerOfRegion));
+//
+//        return;
 
-        return;
-
-//        for (Position point : enemyBaseRegion.getPolygon().getPoints()) {
+        for (HasPosition position : regionToRoam.bounds()) {
 //            APosition position = APosition.create(point);
-//
-//            // Calculate actual ground distance to this position
+
+            // Calculate actual ground distance to this position
 //            double groundDistance = AMap.getGroundDistance(scout, position);
-//
-//            // Fix problem with some points being unwalkable despite isWalkable being true
+            double groundDistance = scout.groundDistance(position);
+
+            // Fix problem with some points being unwalkable despite isWalkable being true
 //            if (groundDistance < 2) {
 //                continue;
 //            }
-//            position = PositionOperationsWrapper.getPositionMovedPercentTowards(point, centerOfRegion, 3.5);
-//
-//            // If positions is walkable, not in different region and has path to it, it should be ok
-//            if (position.isWalkable() && enemyBaseRegion.getPolygon().isInside(position)
+//            position = PositionOperationsWrapper.getPositionMovedPercentTowards(position, centerOfRegion, 3.5);
+
+            // If positions is walkable, not in different region and has path to it, it should be ok
+//            if (position.isWalkable() && regionToRoam.getPolygon().isInside(position)
+            if (
+                    position.isWalkable()
 //                    && scout.hasPathTo(position) && groundDistance >= 4
-//                    && groundDistance <= 1.7 * scout.distanceTo(position)) {
-//                scoutingAroundBasePoints.addPosition(position);
-//            }
-//        }
-//
-//        if (MAKE_VIEWPORT_FOLLOW_SCOUT_AROUND_BASE) {
+                    && groundDistance >= 2
+//                    && groundDistance <= 1.7 * scout.distanceTo(position)
+            ) {
+                scoutingAroundBasePoints.addPosition(position);
+            }
+        }
+
+        if (MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE) {
 //            AGame.changeSpeedTo(1);
 //            AGame.changeSpeedTo(1);
 //            APainter.paintingMode = APainter.MODE_FULL_PAINTING;
-//        }
+        }
     }
 
     private static APosition useNearestPolygonPoint(ARegion region, AUnit scout) {
@@ -392,5 +416,26 @@ public class AScoutManager {
 
     public static AUnit firstScout() {
         return A.firstElement(scouts);
+    }
+
+    // =========================================================
+
+    public static boolean testRoamingAroundBase(AUnit worker) {
+        Selection workers = Select.ourWorkers();
+        AUnit horse = workers.last();
+        if (horse.equals(worker)) {
+            AScoutManager.roamAroundEnemyBase(worker);
+            worker.setTooltip("Patataj");
+            return true;
+        }
+        else {
+            worker.setTooltip("Dajesz kurwa!");
+            if (A.now() % 50 >= 25) {
+                worker.move(horse, UnitActions.MOVE, "");
+                worker.setTooltip("Ciśniesz!");
+            }
+        }
+
+        return true;
     }
 }

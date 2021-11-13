@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.debug.APainter;
+import atlantis.enemy.AEnemyUnits;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.A;
@@ -68,6 +69,19 @@ public class UseMap {
     // =========================================================
 
     public static void updateMapSpecific() {
+
+        // =========================================================
+        // vs. ZERG
+
+        if (activeMap().equals("ums/vsGosuComputer.scx")) {
+            if (!AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+                GameSpeed.changeSpeedTo(0);
+                GameSpeed.changeFrameSkipTo(50);
+            } else if (GameSpeed.frameSkip >= 40) {
+                GameSpeed.changeSpeedTo(1);
+                GameSpeed.changeFrameSkipTo(0);
+            }
+        }
 
         // =========================================================
         // Marines vs. ZERGLINGS

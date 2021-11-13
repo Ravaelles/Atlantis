@@ -4,8 +4,16 @@ import javax.vecmath.Vector2d;
 
 public class Vector extends Vector2d {
 
+    public Vector(int x, int y) {
+        super(x, y);
+    }
+
     public Vector(double x, double y) {
         super(x, y);
+    }
+
+    public Vector(Vector v) {
+        super(v.x, v.y);
     }
 
     public double toAngle() {
@@ -26,4 +34,22 @@ public class Vector extends Vector2d {
         return (Math.abs(this.angle(otherVector)) % 3.14) <= Angle.degreesToRadians(degreeMargin);
     }
 
+    public Vector rotate(double angle) {
+        double x1 = (double) (x * Math.cos(angle) - y * Math.sin(angle));
+        double y1 = (double) (x * Math.sin(angle) + y * Math.cos(angle)) ;
+
+        return new Vector(x1, y1);
+    }
+
+    public Vector addToLength(int extraLength) {
+        double length = length();
+
+        Vector vector = new Vector(this);
+        vector.normalize();
+        vector.scale(length + extraLength);
+
+        return vector;
+
+//        return new Vector(x + extraLength * x * x / length, y);
+    }
 }

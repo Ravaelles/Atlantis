@@ -124,12 +124,12 @@ public class APainter {
         bwapi.drawLineMap(start.position(), PositionHelper.translateByPixels(start.position(), dx, dy), color);
     }
 
-    public static void paintLine(Position start, Position end, Color color) {
-        if (start == null || end == null || isDisabled()) {
-            return;
-        }
-        bwapi.drawLineMap(start, end, color);
-    }
+//    public static void paintLine(Position start, Position end, Color color) {
+//        if (start == null || end == null || isDisabled()) {
+//            return;
+//        }
+//        bwapi.drawLineMap(start, end, color);
+//    }
 
     public static boolean paintLine(AUnit unit, AUnit end, Color color) {
         if (unit == null || end == null || isDisabled()) {
@@ -139,11 +139,11 @@ public class APainter {
         return true;
     }
 
-    public static void paintLine(AUnit unit, Position end, Color color) {
+    public static void paintLine(HasPosition unit, HasPosition end, Color color) {
         if (unit == null || end == null || isDisabled()) {
             return;
         }
-        bwapi.drawLineMap(unit.position(), end, color);
+        bwapi.drawLineMap(unit.position(), end.position(), color);
     }
 
     public static void paintTextCentered(AUnit unit, String text, Color color) {

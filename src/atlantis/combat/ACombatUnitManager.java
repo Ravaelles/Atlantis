@@ -12,6 +12,7 @@ import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 
 public class ACombatUnitManager {
 
@@ -92,8 +93,10 @@ public class ACombatUnitManager {
         }
 
         if (unit.lastActionLessThanAgo(90, UnitActions.PATROL) || unit.isPatrolling()) {
-            unit.setTooltip("#Manual");
-            return true;
+            if (A.now() > 90) {
+                unit.setTooltip("#Manual");
+                return true;
+            }
         }
 
         unit.setTooltip(unit.getTooltip() + ".");

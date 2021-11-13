@@ -2,13 +2,19 @@ package atlantis.map;
 
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
+import atlantis.util.Cache;
 import bwem.Area;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ARegion implements HasPosition {
+
+    private static HashMap<Area, ARegion> instances = new HashMap<>();
+    private Cache<ArrayList<ARegionBoundary>> cachePolygons = new Cache<>();
 
 //    private Region region;
 //
@@ -23,8 +29,13 @@ public class ARegion implements HasPosition {
     private APosition center;
 
     public static ARegion create(Area area) {
+        if (instances.containsKey(area)) {
+            return instances.get(area);
+        }
+
         ARegion region = new ARegion();
         region.area = area;
+        instances.put(area, region);
 
         return region;
     }
@@ -59,13 +70,28 @@ public class ARegion implements HasPosition {
         return Objects.hash(area);
     }
 
+    @Override
+    public String toString() {
+        return "ARegion{" +
+                "center=" + center() +
+                '}';
+    }
+
     // =========================================================
+
+    public ArrayList<ARegionBoundary> bounds() {
+        return cachePolygons.get(
+                "bounds",
+                -1,
+                () -> ARegionBoundaryCalculator.forRegion(this)
+        );
+    }
 
     public APosition center() {
         if (center == null && area != null) {
-            center = new APosition(
-                    area.getTopLeft().x + area.getBottomRight().x / 2,
-                    area.getTopLeft().y + area.getBottomRight().y / 2
+            center = APosition.create(
+                (area.getTopLeft().x + area.getBottomRight().x) / 2,
+                (area.getTopLeft().y + area.getBottomRight().y) / 2
             );
         }
 
