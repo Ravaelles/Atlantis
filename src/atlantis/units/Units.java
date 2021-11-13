@@ -141,6 +141,10 @@ public class Units {
 
     // === Value mapping methods ===============================
     
+    public void incrementValue(AUnit unit) {
+        changeValueBy(unit, 1);
+    }
+
     public void changeValueBy(AUnit unit, double deltaValue) {
         if (has(unit)) {
             extraValues.put(unit, extraValues.get(unit) + deltaValue);

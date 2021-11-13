@@ -145,7 +145,7 @@ public class ProductionOrder {
     @Override
     public String toString() {
         if (unitOrBuilding != null) {
-            return "At " + minSupply + " " + shortName();
+            return "At " + minSupply + " " + shortName() + (modifier != null ? " " + modifier : "");
         }
         else if (upgrade != null) {
             return "At " + minSupply + " " + shortName();

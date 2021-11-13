@@ -125,15 +125,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
                 cachePath = "ourBases",
-                20,
+                0,
                 () -> {
                     if (We.zerg()) {
-                        return ourBuildings().ofType(
+                        return ourOfType(
                                 AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
                                 AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
                         );
                     } else {
-                        return our().ofType(AtlantisConfig.BASE);
+                        return ourOfType(AtlantisConfig.BASE);
                     }
                 }
         );
@@ -408,7 +408,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-
                         if (!unit.isCompleted() && unit.isRealUnit()) {
                             data.add(unit);
                         }
@@ -584,7 +583,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
         return cacheUnit.get(
                 cachePath = "naturalOrMainIfNoSecond",
-                10,
+                0,
                 () -> {
                     List<? extends AUnit> bases = Select.ourBases().list();
 

@@ -11,11 +11,13 @@ public class DontDisturbInterrupt {
 
         // Allow to use tech
         if (unit.lastActionLessThanAgo(3, UnitActions.USING_TECH)) {
+            unit.setTooltip("UsingTech");
             return true;
         }
 
         // Don't INTERRUPT shooting units
         if (DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
+            unit.setTooltip("Shoot");
 //            System.out.println(A.now() + " SHOOT");
             APainter.paintRectangle(unit.position().translateByPixels(-5, 0), 10, 3, Color.Red);
             return true;
@@ -23,12 +25,14 @@ public class DontDisturbInterrupt {
 
         // Allow unit to load to shuttle
         if (allowUnitToLoadToTransport(unit)) {
+            unit.setTooltip("Load");
             APainter.paintRectangle(unit.position().translateByPixels(-5, 0), 10, 3, Color.Blue);
 //            System.out.println(A.now() + " TRANSP");
             return true;
         }
 
         if (allowUnitToContinueRareRightClickActions(unit)) {
+            unit.setTooltip("RightClick");
             return true;
         }
 

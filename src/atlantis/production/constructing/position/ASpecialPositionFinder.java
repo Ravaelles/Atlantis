@@ -61,15 +61,24 @@ public class ASpecialPositionFinder {
         String modifier = constructionOrder.getProductionOrder() != null ? 
                 constructionOrder.getProductionOrder().getModifier() : null;
         
-//        System.err.println("");
-//        System.err.println(constructionOrder.getProductionOrder());
-//        System.err.println(constructionOrder.getMaxDistance());
-//        System.err.println("=== modifier /" + modifier + "/ ===");
+        System.err.println("");
+        System.err.println(constructionOrder.getProductionOrder());
+        System.err.println(constructionOrder.getMaxDistance());
+        System.err.println("=== modifier /" + modifier + "/ ===");
         if (modifier != null) {
             if (modifier.equals(NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
+                System.err.println("A");
+                if (constructionOrder.getMaxDistance() < 0) {
+                    constructionOrder.setMaxDistance(40);
+                }
                 return findPositionForBase_nearMainBase(building, builder, constructionOrder);
             }
             else if (modifier.equals(AT_NATURAL)) {
+                System.err.println("B");
+
+                if (constructionOrder.getMaxDistance() < 0) {
+                    constructionOrder.setMaxDistance(0);
+                }
                 return findPositionForBase_natural(building, builder, constructionOrder);
             }
         }

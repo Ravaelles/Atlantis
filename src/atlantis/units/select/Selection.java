@@ -708,14 +708,7 @@ public class Selection {
         return data.size();
     }
 
-    /**
-     * Sorts data list by distance to a given position
-     *
-     * @param position
-     * @param nearestFirst
-     * @return
-     */
-    public List sortDataByDistanceTo(final HasPosition position, final boolean nearestFirst) {
+    public List<AUnit> sortDataByDistanceTo(final HasPosition position, final boolean nearestFirst) {
 //        if (position == null) {
 //            return null;
 //        }
@@ -729,17 +722,9 @@ public class Selection {
                 if (!(p2 instanceof HasPosition)) {
                     throw new RuntimeException("Invalid comparison: " + p2);
                 }
-//                AFoggedUnit data1 = dataFrom(p1);
-//                AFoggedUnit data2 = dataFrom(p2);
-//                double distance1 = PositionUtil.distanceTo(position, data1.getPosition());
-//                double distance2 = PositionUtil.distanceTo(position, data2.getPosition());
                 double distance1 = PositionUtil.distanceTo(position, p1);
                 double distance2 = PositionUtil.distanceTo(position, p2);
-                if (distance1 == distance2) {
-                    return 0;
-                } else {
-                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
-                }
+                return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
             }
         });
 
@@ -756,17 +741,10 @@ public class Selection {
                 if (!(p2 instanceof HasPosition)) {
                     throw new RuntimeException("Invalid comparison: " + p2);
                 }
-//                AFoggedUnit data1 = dataFrom(p1);
-//                AFoggedUnit data2 = dataFrom(p2);
-//                double distance1 = PositionUtil.distanceTo(position, data1.getPosition());
-//                double distance2 = PositionUtil.distanceTo(position, data2.getPosition());
                 double distance1 = PositionUtil.distanceTo(unit, p1);
                 double distance2 = PositionUtil.distanceTo(unit, p2);
-                if (distance1 == distance2) {
-                    return 0;
-                } else {
-                    return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
-                }
+
+                return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
             }
         });
 
@@ -779,14 +757,6 @@ public class Selection {
         }
 
         Collections.sort(data, Comparator.comparingDouble(u -> ((AUnit) u).hpPercent()));
-
-//        if (data.size() > 1) {
-//            System.out.println("data = ");
-//            for (T unit :
-//                    data) {
-//                System.out.println(((AUnit) unit).shortName() + " - " + ((AUnit) unit).getHPPercent());
-//            }
-//        }
 
         return data;
     }

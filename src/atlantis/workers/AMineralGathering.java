@@ -1,7 +1,12 @@
 package atlantis.workers;
 
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
+import atlantis.units.Units;
 import atlantis.units.select.Select;
+import atlantis.util.A;
+import atlantis.wrappers.MappingCounter;
+import bwapi.Color;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,41 +72,34 @@ public class AMineralGathering {
 
         // Get minerals near to our main base and sort them from closest to most distant one
         List<AUnit> minerals = Select.minerals().inRadius(12, base).listUnits();
-//        System.out.println(Select.minerals().inRadius(12, base));
+
         if (!minerals.isEmpty()) {
 
             // Count how many other workers gather this mineral
-            Map<AUnit, Integer> workersPerMineral = new HashMap<>();
-
+            Units mineralsToWorkerCount = new Units();
             Collection<AUnit> ourWorkersInRange = Select.ourWorkers().inRadius(12, base).list();
+
             for (AUnit mineral : minerals) {
+                mineralsToWorkerCount.addUnitWithValue(mineral, 0.0);
                 for (AUnit ourWorker : ourWorkersInRange) {
-                    AUnit mineralMinedByWorker = ourWorker.target();
-                    if (ourWorker.isGatheringMinerals() && mineral.equals(mineralMinedByWorker)) {
-                        workersPerMineral.put(mineralMinedByWorker, (workersPerMineral.containsKey(mineral) ? 
-                                workersPerMineral.get(mineralMinedByWorker) : 0) + 1);
-                    }
-                    else {
-                        if (!workersPerMineral.containsKey(mineral)) {
-                            workersPerMineral.put(mineral, 0);
-                        }
+                    if (ourWorker.isGatheringMinerals() && mineral.equals(ourWorker.target())) {
+                        mineralsToWorkerCount.incrementValue(mineral);
                     }
                 }
             }
 
             // Get least gathered mineral
-            AUnit leastGatheredMineral = null;
-            int leastWorkersAtMineral = 99;
-            for (Entry<AUnit, Integer> workersAtMineral : workersPerMineral.entrySet()) {
-                if (workersAtMineral.getValue() < leastWorkersAtMineral) {
-//                    minimumWorkersPerMineral = workersAtMineral.getValue();
-                    leastGatheredMineral = workersAtMineral.getKey();
-                }
-            }
+            AUnit leastGatheredMineral = mineralsToWorkerCount.unitWithLowestValue();
+
+//            if (leastGatheredMineral != null && leastGatheredMineral.distTo(worker) >= 40) {
+//                System.err.println("Fucked up mineral? Dist to worker = " + leastGatheredMineral.distTo(worker));
+//            }
 
             // This is our optimal mineral to gather near given unit
             return leastGatheredMineral;
-        } // If no minerals found, return nearest mineral
+        }
+
+        // If no minerals found, return nearest mineral
         else {
             return Select.minerals().nearestTo(base);
         }

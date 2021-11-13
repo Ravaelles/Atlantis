@@ -88,9 +88,9 @@ public class APositionFinder {
                     nearTo = Select.main().position();
                 }
                 else {
-//                    nearTo = Select.mainBase().getPosition();
-                    AUnit randomBase = Select.ourBases().random();
-                    nearTo = randomBase != null ? randomBase.position() : Select.our().first().position();
+                    nearTo = Select.main().position();
+//                    AUnit randomBase = Select.ourBases().random();
+//                    nearTo = randomBase != null ? randomBase.position() : Select.our().first().position();
                 }
             }
 

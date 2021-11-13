@@ -24,6 +24,10 @@ public class AAttackEnemyUnit {
             return false;
         }
 
+//        if (unit.isWorker()) {
+//            throw new RuntimeException("aa");
+//        }
+
         AUnit enemy = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
 //        System.out.println("enemy2 = " + enemy);
 //        System.out.println(Select.enemy());

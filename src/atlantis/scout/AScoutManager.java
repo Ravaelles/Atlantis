@@ -52,6 +52,7 @@ public class AScoutManager {
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
     public static void update() {
+        if (true) return;
 
         // === Handle UMS ==========================================
         
@@ -79,6 +80,8 @@ public class AScoutManager {
     }
 
     private static boolean update(AUnit scout) {
+        scout.setTooltip("Scout...");
+
 //        if (!scout.isAlive() || AEnemyUnits.enemyBase() != null) {
         if (!scout.isAlive()) {
             scouts.remove(scout);

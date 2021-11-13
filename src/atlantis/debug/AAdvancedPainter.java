@@ -227,6 +227,7 @@ public class AAdvancedPainter extends APainter {
      * Paint focus point for global attack mission etc.
      */
     static void paintSidebarInfo() {
+        Color color;
         Mission mission = Squad.alpha().mission();
 
         // Time
@@ -241,7 +242,16 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
                 ? EnemyStrategy.get().toString() : "Unknown"),
                 EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
-        paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", Color.White);
+
+        if (mission.isMissionDefend()) {
+            color = Color.White;
+        } else if (mission.isMissionContain()) {
+            color = Color.Teal;
+        } else {
+            color = Color.Orange;
+        }
+        paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", color);
+
         paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
         paintSideMessage("Enemy base: " + AEnemyUnits.enemyBase(), Color.White);
 
@@ -259,6 +269,10 @@ public class AAdvancedPainter extends APainter {
         // =========================================================
 
         paintSideMessage("Combat squad size: " + Squad.alpha().size(), Color.Yellow, 0);
+
+        int scouts = AScoutManager.getScouts().size();
+        color = scouts == 0 ? Color.Grey : (scouts == 1 ? Color.Yellow : Color.Red);
+        paintSideMessage("Scouts: " + scouts, color, 0);
 
         if (We.terran()) {
             paintSideMessage("Repairers: " + ARepairAssignments.countTotalRepairers(), Color.White, 0);

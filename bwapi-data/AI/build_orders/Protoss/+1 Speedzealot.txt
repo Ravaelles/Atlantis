@@ -1,7 +1,7 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=9
+#SCOUT_IS_NTH_WORKER=10
 
 // When supply is bigger than N, then start auto-producing supply units
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=27
@@ -47,14 +47,11 @@ Templar Archive
 9) Resume Probe production if you built a third Gateway after the Citadel
 10) Pylons must be added to avoid supply blocks
 11) Speedupgrade and +1 Weapons should finish at the same time, 8 - 12 Zealots should be ready
-*/
-
-// === Build order for Atlantis =======================================
 
 @ - Name - Modifier
 8 - Pylon - @NATURAL
 10 - Forge - @NATURAL
-14 - Nexus
+14 - Nexus - @NATURAL
 14 - Photon Cannon - @NATURAL
 16 - Photon Cannon - @NATURAL
 16 - Gateway - @NATURAL
@@ -71,3 +68,14 @@ Assimilator - @NATURAL
 //..Constant Zealot production[10]
 MISSION=ATTACK
 //Templar Archive
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+8 - Pylon - @NATURAL
+14 - Nexus - @NATURAL
+16 - Forge - @NATURAL
+17 - Photon Cannon - @NATURAL
+18 - Photon Cannon - @NATURAL
+16 - Gateway - @NATURAL

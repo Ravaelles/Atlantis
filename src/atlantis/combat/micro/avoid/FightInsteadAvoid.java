@@ -59,10 +59,6 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        if (fightInImportantCases()) {
-            return true;
-        }
-
         // Workers
         if (unit.isWorker()) {
             return fightAsWorker(unit, enemies);
@@ -70,6 +66,10 @@ public class FightInsteadAvoid {
 
         // Combat units
         else {
+            if (fightInImportantCases()) {
+                return true;
+            }
+
             return fightAsCombatUnit();
         }
     }

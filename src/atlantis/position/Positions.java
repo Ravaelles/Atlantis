@@ -92,8 +92,11 @@ public class Positions<T extends HasPosition> {
         Collections.sort(positions, new Comparator<T>() {
             @Override
             public int compare(T u1, T u2) {
-                return position.distTo(u1.position()) < position.distTo(u2.position())
-                        ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
+                double distance1 = PositionUtil.distanceTo(position, u1);
+                double distance2 = PositionUtil.distanceTo(position, u2);
+                return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
+//                return position.distTo(u1.position()) < position.distTo(u2.position())
+//                        ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
         });
 

@@ -30,6 +30,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         corsairs();
         shuttles();
         reavers();
+
         dragoons();
         zealots();
     }
@@ -101,12 +102,12 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         }
 
         if (BuildOrderSettings.autoProduceZealots()) {
-            addToQueue(AUnitType.Protoss_Zealot);
+            trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }
 
         if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
-            addToQueue(AUnitType.Protoss_Zealot);
+            trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }
 
@@ -115,12 +116,12 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
                         && EnemyStrategy.get().isRushOrCheese()
                         && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Zealot) <= minZealotsInRush()
         ) {
-            addToQueue(AUnitType.Protoss_Zealot);
+            trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }
 
         if (AGame.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) {
-            addToQueue(AUnitType.Protoss_Zealot);
+            trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }
     }

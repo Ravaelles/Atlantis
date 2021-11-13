@@ -22,7 +22,8 @@ public class ZergStrategyResponse extends AStrategyResponse {
     }
 
     protected int rushDefenseDefensiveBuildingsNeeded(AStrategy enemyStrategy) {
-        return enemyStrategy.isGoingCheese() ? 2 : 1;
+        return 0;
+//        return enemyStrategy.isGoingCheese() ? 2 : 1;
     }
 
 }

@@ -1167,4 +1167,10 @@ public class A {
     public static boolean notNthGameFrame(int n) {
         return Atlantis.game().getFrameCount() % n != 0;
     }
+
+    public static void printList(List<?> list) {
+        for (Object o : list) {
+            System.out.println("- " + o);
+        }
+    }
 }

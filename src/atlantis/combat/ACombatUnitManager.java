@@ -82,12 +82,13 @@ public class ACombatUnitManager {
 //        }
 
         if (unit.isNotRealUnit()) {
+            System.err.println("Not real unit: " + unit.shortName());
             return true;
         }
 
         if (unit.isWorker()) {
             System.err.println("Worker being ACUM");
-            return false;
+            return true;
         }
 
         if (unit.lastActionLessThanAgo(90, UnitActions.PATROL) || unit.isPatrolling()) {

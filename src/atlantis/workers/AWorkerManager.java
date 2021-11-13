@@ -1,12 +1,14 @@
 package atlantis.workers;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.debug.APainter;
 import atlantis.production.constructing.ABuilderManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import bwapi.Color;
 
 public class AWorkerManager {
 
@@ -66,10 +68,13 @@ public class AWorkerManager {
      * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather minerals.
      */
     private static boolean handleGatherMineralsOrGas(AUnit worker) {
+//        if (worker.target() != null) {
+//            APainter.paintLine(worker, worker.target(), Color.Green);
+//        }
 
         // Don't react if already gathering
-        if (worker.isGatheringGas() || worker.isGatheringMinerals()) {
-            worker.setTooltip("Gathering");
+        if (worker.isMiningOrExtractingGas()) {
+            worker.setTooltip("Miner");
             return true;
         }
 
@@ -84,13 +89,21 @@ public class AWorkerManager {
 //            return true;
 //        }
 
-        if (
-                (worker.isMoving() || worker.isRepairing() || worker.isMiningOrExtractingGas())
-                && worker.target() != null && !worker.target().type().isMineralField()
-        ) {
-            worker.setTooltip("--> " + worker.target().shortName());
+        if (worker.isRepairing()) {
+            worker.setTooltip("Repair");
             return true;
         }
+
+//        if (
+//                (worker.isMoving() || worker.isRepairing() || worker.isMiningOrExtractingGas())
+//                && worker.target() != null && !worker.target().type().isMineralField()
+//        ) {
+//            worker.setTooltip("--> " + worker.target().shortName());
+//            return true;
+//        }
+//        else {
+//            worker.setTooltip("Worker");
+//        }
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).

@@ -47,18 +47,28 @@ public class UnitsArchive {
             if (type.isNotRealUnit() || type.isUnitUnableToDoAnyDamage()) {
                 continue;
             }
-            int balance = ourKilledResourcesPerUnitTypes.getValueFor(type)
-                    - ourLostResourcesPerUnitTypes.getValueFor(type);
-            String balancePercent = ourLostResourcesPerUnitTypes.getValueFor(type) == 0 ?
-                    "+++%"
-                    : (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / ourLostResourcesPerUnitTypes.getValueFor(type)) + "%";
+
+            int balance = ourKilledResourcesPerUnitTypes.getValueFor(type) - ourLostResourcesPerUnitTypes.getValueFor(type);
+            String balancePercent = balancePercentFor(type, balance);
 
             System.out.println(
                     type + ": " + balance + ", " + balancePercent
-                    + "  (kills: " + ourKillCountersPerUnitTypes.getValueFor(type) + ", lost: "
-                    + ourLostTypes.getValueFor(type) + ")"
+                    + "  (kills: " + ourKillCountersPerUnitTypes.getValueFor(type)
+                    + ", lost: " + ourLostTypes.getValueFor(type) + ")"
             );
         }
+    }
+
+    private static String balancePercentFor(AUnitType type, int balance) {
+        if (balance >= 0) {
+            return ourLostResourcesPerUnitTypes.getValueFor(type) == 0
+                    ? "+++%"
+                    : "+" + (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / ourLostResourcesPerUnitTypes.getValueFor(type) - 100) + "%";
+        }
+
+        return ourKilledResourcesPerUnitTypes.getValueFor(type) == 0
+                ? "---%"
+                : (-ourLostResourcesPerUnitTypes.getValueFor(type) * 100 / ourKilledResourcesPerUnitTypes.getValueFor(type) + 100) + "%";
     }
 
     public static void paintLostUnits() {
