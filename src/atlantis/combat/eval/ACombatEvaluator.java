@@ -15,6 +15,8 @@ import java.util.Map;
 
 public class ACombatEvaluator {
 
+    private static final double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT = 12;
+
     /**
      * Maximum allowed value as a result of evaluation.
      */
@@ -49,7 +51,7 @@ public class ACombatEvaluator {
 //        }
 
 //        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight);
-        return evaluateSituation(unit) * 0.8 >= evaluateSituation(nearestEnemy);
+        return (evaluateSituation(unit) * (100 - PERCENT_ADVANTAGE_NEEDED_TO_FIGHT) / 100) >= evaluateSituation(nearestEnemy);
     }
 
     /**

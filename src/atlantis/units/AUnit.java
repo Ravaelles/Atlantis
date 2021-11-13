@@ -996,7 +996,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Unit is effectvely cloaked and we can't attack it. Need to detect it first.
      */
     public boolean effCloaked() {
-        return !isDetected() && hp() > 0;
+        return (!isDetected() || hp() == 0);
 
 //        if ((!isCloaked() && !isBurrowed()) || ensnared() || plagued()) {
 //            return false;
@@ -1022,7 +1022,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        else ! detected))
     }
 
-    private boolean isDetected() {
+    public boolean isDetected() {
         return u().isDetected();
     }
 

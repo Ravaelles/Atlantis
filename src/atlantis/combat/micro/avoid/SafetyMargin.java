@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -78,6 +79,12 @@ public class SafetyMargin {
     }
 
     protected static double woundedBonus(AUnit defender) {
+        if (defender.isTerranInfantry()) {
+            if (Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).inRadius(2, defender).isNotEmpty()) {
+                return 0;
+            }
+        }
+
         if (defender.isAirUnit()) {
             return defender.woundPercent() / 10;
         }

@@ -70,7 +70,9 @@ public class OnEveryFrame {
 //        System.out.println(AGame.gas() + " // " + AGame.minerals());
 
         for (AUnit unit : Select.enemies(AUnitType.Zerg_Lurker).list()) {
-            System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloaked=" + unit.effCloaked());
+            if (!unit.effVisible() || !unit.isDetected()) {
+                System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloa=" + unit.effCloaked() + " // det=" + unit.isDetected());
+            }
         }
 //        for (AUnit unit : Select.enemies(AUnitType.Zerg_Hydralisk).list()) {
 //            System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloaked=" + unit.effCloaked());

@@ -75,6 +75,11 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
+        if (!We.zerg() && Atlantis.game().hasCreep(position.toTilePosition())) {
+            _CONDITION_THAT_FAILED = "Ugly creep on it";
+            return false;
+        }
+
         return Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
     }
 

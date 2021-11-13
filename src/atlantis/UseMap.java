@@ -3,6 +3,7 @@ package atlantis;
 import atlantis.debug.APainter;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 
 public class UseMap {
 
@@ -32,12 +33,12 @@ public class UseMap {
         // ### Gosu bots ###
 //        return "ums/7th.scx"; // vs. AI Protoss player, that can kill CSVs constructing
 //        return "ums/exp_skilltest.scx"; // vs. AI Protoss player
-//        return "ums/vsGosuComputer.scx"; // vs. AI Zerg Player - cheating as fuck
+        return "ums/vsGosuComputer.scx"; // vs. AI Zerg Player - cheating as fuck
 //        return "ums/lt-terran1j.scm"; // Zerg vs. Terran
 //        return "ums/member_test.scx"; // vs. AI 2x Protoss players, massive Zealot rush
 //        return "ums/LostTemple.scm"; // vs. 2x Protoss players, again Zealot rush
 
-        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
+//        return "ums/mar_vs_zea.scx"; // Marines & Medics vs. Zealots on quite small map
 //        return "ums/marines_vs_zerglings.scm"; // 12 marines vs. 24 zerglings
 //        return "ums/dragoons_vs_map.scx"; // 4 Dragoons attacking Zealots
 //        return "ums/ConTrol2.scx"; // More minigames
@@ -67,11 +68,22 @@ public class UseMap {
     // =========================================================
 
     public static void updateMapSpecific() {
+
+        // =========================================================
+        // Marines vs. ZERGLINGS
+
         if (activeMap().equals("ums/marines_vs_zerglings.scm")) {
+            if (A.now() == 0) {
+                GameSpeed.changeSpeedTo(0);
+                GameSpeed.changeFrameSkipTo(40);
+            }
             if (Atlantis.KILLED >= 32) {
                 Atlantis.getInstance().onEnd(true);
             }
         }
+
+        // =========================================================
+        // Marines vs. ZEALOTS
 
         if (activeMap().equals("ums/mar_vs_zea.scx")) {
             if (Select.enemyCombatUnits().isEmpty()) {
@@ -80,7 +92,7 @@ public class UseMap {
             }
 
             if (
-                    AGame.now() > 60
+                    A.now() > 60
                     && GameSpeed.frameSkip >= 30
                     && Count.ourCombatUnits() >= 5
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)

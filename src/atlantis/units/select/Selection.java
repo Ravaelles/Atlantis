@@ -141,7 +141,7 @@ public class Selection {
      * Selects only those units which are visible and not cloaked.
      */
     public Selection effVisible() {
-        data.removeIf(unit -> unit.effCloaked() || !unit.isVisibleOnMap());
+        data.removeIf(unit -> !unit.isDetected() && unit.effCloaked());
         return this;
     }
 
