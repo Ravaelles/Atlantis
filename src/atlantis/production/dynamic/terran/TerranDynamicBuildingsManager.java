@@ -45,7 +45,8 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
 
         if (EnemyStrategy.get().isAirUnits()) {
-            return AddToQueue.withTopPriority(AUnitType.Terran_Armory);
+            AddToQueue.withTopPriority(AUnitType.Terran_Armory);
+            return true;
         }
 
         return false;
@@ -71,7 +72,8 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 //            System.err.println("Change from BIO to TANKS (" + Count.includingPlanned(AUnitType.Terran_Factory) + ")");
 //            System.err.println("A = " + Count.inProduction(AUnitType.Terran_Factory));
 //            System.err.println("B = " + Count.inQueue(AUnitType.Terran_Factory, 5));
-            return AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+            AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+            return true;
         }
 
         return false;
@@ -92,12 +94,14 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             if (numberOfFactories >= 1 && factories.areAllBusy()) {
                 
                 if (unfinishedFactories == 0) {
-                    return AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+                    AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+                    return true;
                 }
                 else if (unfinishedFactories >= 1 && AGame.canAfford(
                         100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
                 )) {
-                    return AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+                    AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+                    return true;
                 }
             }
         }

@@ -32,10 +32,10 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 @ - Name - Modifier
 9 - Supply Depot
 11 - Barracks
+14 - Engineering Bay
 14 - Supply Depot
-14 - Barracks
+//14 - Barracks
 24 - Supply Depot
-//25 - Engineering Bay
 26 - Academy
 28 - Refinery
 29 - Barracks

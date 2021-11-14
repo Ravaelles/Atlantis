@@ -73,7 +73,7 @@ public class APositionFinder {
         // =========================================================
         // Creep colony
 
-        else if (building.equals(AUnitType.Zerg_Creep_Colony)) {
+        else if (building.is(AUnitType.Zerg_Creep_Colony)) {
             return ZergCreepColony.findPosition(building, builder, constructionOrder);
         } 
 
@@ -84,13 +84,14 @@ public class APositionFinder {
             // If we didn't specify location where to build, build somewhere near the main base
             if (nearTo == null) {
                 if (AGame.isPlayingAsZerg()) {
-//                    nearTo = Select.secondBaseOrMainIfNoSecond().getPosition();
                     nearTo = Select.main().position();
                 }
                 else {
-                    nearTo = Select.main().position();
-//                    AUnit randomBase = Select.ourBases().random();
-//                    nearTo = randomBase != null ? randomBase.position() : Select.our().first().position();
+                    if (Count.bases() >= 3) {
+                        nearTo = Select.ourBases().random();
+                    } else {
+                        nearTo = Select.main().position();
+                    }
                 }
             }
 

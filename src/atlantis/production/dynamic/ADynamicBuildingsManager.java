@@ -60,7 +60,8 @@ public abstract class ADynamicBuildingsManager extends Helpers {
             Selection buildings = Select.ourOfType(building);
 
             if (buildings.areAllBusy()) {
-                return AddToQueue.withStandardPriority(building);
+                AddToQueue.withStandardPriority(building);
+                return true;
             }
         }
         return false;

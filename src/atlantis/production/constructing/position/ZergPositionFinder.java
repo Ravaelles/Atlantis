@@ -28,7 +28,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
 
-        int searchRadius = 4;
+        int searchRadius = building.isCombatBuilding() ? 0 : 4;
         if (building.isBase()) {
             maxDistance = 15;
         }

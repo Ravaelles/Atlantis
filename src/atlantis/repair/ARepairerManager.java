@@ -1,13 +1,8 @@
 package atlantis.repair;
 
 import atlantis.AGame;
-import atlantis.AtlantisConfig;
-import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.combat.missions.Missions;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 
 import java.util.Collection;
@@ -15,8 +10,6 @@ import java.util.Iterator;
 
 
 public class ARepairerManager {
-
-    private static final int MAX_REPAIRERS = 6;
 
     public static boolean updateRepairer(AUnit repairer) {
         repairer.setTooltip("Repairer");
@@ -102,7 +95,7 @@ public class ARepairerManager {
     private static boolean handleRepairCompletedTryFindingNewTarget(AUnit repairer) {
         ARepairAssignments.removeRepairerOrProtector(repairer);
 
-        if (!hasMoreRepairersThanAllowed()) {
+        if (!RepairerAssigner.hasMoreRepairersThanAllowed()) {
             AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(13, repairer).first();
             if (closestUnitNeedingRepair != null) {
                 ARepairAssignments.addRepairer(closestUnitNeedingRepair, closestUnitNeedingRepair);
@@ -112,10 +105,6 @@ public class ARepairerManager {
         }
 
         return true;
-    }
-
-    private static boolean hasMoreRepairersThanAllowed() {
-        return ARepairAssignments.countTotalRepairers() < MAX_REPAIRERS;
     }
 
     protected static boolean handleIdleRepairer(AUnit repairer) {
@@ -167,62 +156,4 @@ public class ARepairerManager {
         }
     }
 
-    protected static void assignRepairersToWoundedUnits() {
-//        if (ARepairAssignments.repairersToUnit.keySet().size() >= Count.workers() * MAX_REPAIRERS)
-        if (removeExcessiveRepairersIfNeeded()) {
-            return;
-        }
-
-        for (AUnit woundedUnit : Select.ourRealUnits().repairable(true).excludeTypes(AtlantisConfig.WORKER).listUnits()) {
-            if (!woundedUnit.isRepairable()) {
-                continue;
-            }
-
-            if (removeExcessiveRepairersIfNeeded()) {
-                return;
-            }
-
-            // Some units shouldn't be repaired
-            if (
-                    AScoutManager.isScout(woundedUnit)
-                    || TerranFlyingBuildingManager.isFlyingBuilding(woundedUnit)
-                    || (woundedUnit.isRunning() && woundedUnit.lastStoppedRunningLessThanAgo(30 * 5))
-            ) {
-                continue;
-            }
-
-            // =========================================================
-
-            int assignThisManyRepairers = ARepairAssignments.countRepairersForUnit(woundedUnit)
-                    + ARepairAssignments.countProtectorsFor(woundedUnit) - 1;
-
-            // === Repair bunker ========================================
-
-            if (woundedUnit.type().isBunker()) {
-                int shouldHaveThisManyRepairers = ARepairCommander.defineOptimalRepairersForBunker(woundedUnit);
-                woundedUnit.setTooltip(shouldHaveThisManyRepairers + "RepNeed");
-                ARepairCommander.assignProtectorsFor(woundedUnit, shouldHaveThisManyRepairers - assignThisManyRepairers);
-            }
-
-            // === Repair ordinary unit =================================
-
-            else if (assignThisManyRepairers >= 1) {
-                assignRepairersToWoundedUnits(woundedUnit, 1 - assignThisManyRepairers);
-            }
-        }
-    }
-
-    private static boolean removeExcessiveRepairersIfNeeded() {
-//        System.out.println("REPR = " + ARepairAssignments.countTotalRepairers() + " // " + MAX_REPAIRERS);
-        if (ARepairAssignments.countTotalRepairers() >= MAX_REPAIRERS) {
-            for (int i = 0; i < ARepairAssignments.countTotalRepairers() - MAX_REPAIRERS; i++) {
-                AUnit repairer = ARepairAssignments.getRepairers().get(ARepairAssignments.getRepairers().size() - 1);
-//                System.out.println("Remove repairer " + repairer);
-                ARepairAssignments.removeRepairerOrProtector(repairer);
-            }
-            return true;
-        }
-
-        return false;
-    }
 }

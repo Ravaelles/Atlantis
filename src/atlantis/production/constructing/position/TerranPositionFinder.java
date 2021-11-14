@@ -21,7 +21,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                                                     double maxDistance) {
         _CONDITION_THAT_FAILED = null;
 
-        int searchRadius = building.isBase() ? 0 : 3;
+        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 3;
         maxDistance = limitMaxDistanceForImportantBuildings(maxDistance, building);
 
         while (searchRadius < maxDistance) {

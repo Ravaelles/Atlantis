@@ -580,7 +580,8 @@ public class AAdvancedPainter extends APainter {
                 }
 
                 String status = constructionOrder.status().toString().replace("CONSTRUCTION_", "");
-                String builder = (constructionOrder.builder() + "").replace("AUnit(", "");
+                String builderDist = A.dist(constructionOrder.builder(), constructionOrder.positionToBuild());
+                String builder = (constructionOrder.builder().idWithHash() + " " + builderDist);
                 paintSideMessage(constructionOrder.buildingType().shortName()
                         + ", " + status + ", " + builder, color, yOffset);
             }

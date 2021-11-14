@@ -54,19 +54,7 @@ public class ConstructionRequests {
         }
 
         if (!Requirements.hasRequirements(building)) {
-            if (We.protoss() && AGame.supplyTotal() <= 10) {
-                return false;
-            }
-
-            AUnitType requiredBuilding = building.getWhatIsRequired();
-            if (countExistingAndNotFinished(requiredBuilding) == 0) {
-                ConstructionRequests.requestConstructionOf(requiredBuilding);
-                return true;
-            }
-
-            System.err.println("Uhmmm... shouldn't reach here.");
-            System.err.println(building + " // " + requiredBuilding);
-            return false;
+            return handleNoRequirementsFullfilledFor(building);
         }
 
         // =========================================================
@@ -75,7 +63,7 @@ public class ConstructionRequests {
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
         newConstructionOrder.setProductionOrder(order);
         newConstructionOrder.setNearTo(near);
-        newConstructionOrder.setMaxDistance(order.maximumDistance());
+        newConstructionOrder.setMaxDistance(order != null ? order.maximumDistance() : -1);
         newConstructionOrder.assignRandomBuilderForNow();
 
         if (newConstructionOrder.builder() == null) {
@@ -112,17 +100,33 @@ public class ConstructionRequests {
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
-            System.err.print("Construction place failed for `" + building + "`  ");
+            System.err.print("Can't find place for `" + building + "` ");
             if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                 System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             } else {
-                System.err.print("(reason was not properly defined)");
+                System.err.print("(reason not defined - bug)");
             }
             System.err.println();
 
             newConstructionOrder.cancel();
             return false;
         }
+    }
+
+    private static boolean handleNoRequirementsFullfilledFor(AUnitType building) {
+        if (We.protoss() && AGame.supplyTotal() <= 10) {
+            return false;
+        }
+
+        AUnitType requiredBuilding = building.getWhatIsRequired();
+        if (countExistingAndNotFinished(requiredBuilding) == 0) {
+            ConstructionRequests.requestConstructionOf(requiredBuilding);
+            return true;
+        }
+
+        System.err.println("Uhmmm... shouldn't reach here.");
+        System.err.println(building + " // " + requiredBuilding);
+        return false;
     }
 
     /**

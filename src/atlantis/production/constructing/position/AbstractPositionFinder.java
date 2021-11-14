@@ -78,6 +78,7 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
+        _CONDITION_THAT_FAILED = "Can't physically build here";
         return Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
     }
 

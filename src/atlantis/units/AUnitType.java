@@ -551,7 +551,11 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     public boolean isBunker() {
-        return is(Terran_Bunker);
+        return (boolean) cache.get(
+                "isBunker",
+                -1,
+                () -> is(Terran_Bunker)
+        );
     }
 
     public boolean isPylon() {

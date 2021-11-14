@@ -6,7 +6,6 @@ import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
 import atlantis.position.APosition;
 import atlantis.position.Positions;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -15,8 +14,6 @@ import atlantis.util.A;
 import atlantis.util.Cache;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class TerranMissileTurretsForMain extends TerranMissileTurret {
@@ -24,6 +21,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     private static final double DIST_BETWEEN_BORDER_TURRETS = 8;
     private static final int MIN_TURRETS_FOR_BORDER = 3;
     private static final int MAX_TURRETS_FOR_BORDER_OVER_TIME = 7;
+    private static final int TILES_MARGIN = 3;
     private static Cache<ArrayList<APosition>> cache = new Cache<>();
 
     public static boolean buildIfNeeded() {
@@ -54,14 +52,15 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         ArrayList<APosition> turretsProtectingMainBorders = positionsForTurretsNearMainBorder();
 
         for (int i = 0; i < turretsProtectingMainBorders.size(); i++) {
-            APosition placeForTurret = turretsProtectingMainBorders.get(i);
+            APosition place = turretsProtectingMainBorders.get(i);
             if (
-                    placeForTurret != null
+                    place != null
 //                    && Count.inQueueOrUnfinished(turret, MIN_TURRETS_FOR_BORDER + 2) < MIN_TURRETS_FOR_BORDER
 //                    && ConstructionRequests.countNotStartedOfType(turret) < Math.max(1, MIN_TURRETS_FOR_BORDER - 2)
-                    && Count.existingOrInProduction(turret) < Math.max(1, MIN_TURRETS_FOR_BORDER - 2)
+                    && Count.inQueueOrUnfinished(turret, 8) <= 4
+                    && Count.existingOrPlannedBuildingsNear(turret, TILES_MARGIN, place) == 0
             ) {
-                AddToQueue.withHighPriority(turret, placeForTurret).setMaximumDistance(1);
+                AddToQueue.withHighPriority(turret, place).setMaximumDistance(TILES_MARGIN);
             }
         }
 

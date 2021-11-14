@@ -22,7 +22,7 @@ public class ARepairCommander {
             assignProtectors();
         }
         if (AGame.everyNthGameFrame(15)) {
-            ARepairerManager.assignRepairersToWoundedUnits();
+            RepairerAssigner.assignRepairersToWoundedUnits();
         }
 
         // === Handle bunker protectors =================================

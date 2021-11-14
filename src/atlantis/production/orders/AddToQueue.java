@@ -39,7 +39,7 @@ public class AddToQueue {
 
         if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
             System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
-            return false;
+            return null;
         }
 
 //        if (!allowToQueueRequiredBuildings(type)) {

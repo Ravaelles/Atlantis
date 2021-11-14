@@ -9,7 +9,6 @@ public class ARepairAssignments {
 
     public static final int MODE_REPAIR_ONLY = 1;
     public static final int MODE_PROTECT = 2;
-    public static final int MAX_REPAIRERS = 6;
 
     // Unit repairers
     protected static Map<AUnit, AUnit> repairersToUnit = new HashMap<>();
@@ -31,7 +30,10 @@ public class ARepairAssignments {
     }
 
     public static AUnit getClosestRepairerAssignedTo(AUnit wounded) {
-        if (unitsToRepairers.size() > MAX_REPAIRERS || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())) {
+        if (
+                unitsToRepairers.size() > RepairerAssigner.MAX_REPAIRERS_AT_ONCE
+                || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())
+        ) {
             return null;
         }
 

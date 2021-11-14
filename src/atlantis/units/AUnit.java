@@ -1785,6 +1785,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isZealot();
     }
 
+    public boolean isMissileTurret() {
+        return type().isMissileTurret();
+    }
+
 //    public boolean isDepleted() {
 //        return u.getAcidSporeCount();
 //    }

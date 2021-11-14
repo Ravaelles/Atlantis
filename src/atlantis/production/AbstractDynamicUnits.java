@@ -21,7 +21,8 @@ public class AbstractDynamicUnits extends Helpers {
             return false;
         }
 
-        return AddToQueue.withStandardPriority(type);
+        AddToQueue.withStandardPriority(type);
+        return true;
     }
 
     // =========================================================

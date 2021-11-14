@@ -44,12 +44,18 @@ public abstract class CurrentProductionQueue {
         for (ProductionOrder order : ProductionQueue.nextInQueue) {
             boolean hasRequirements = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
             boolean canAfford = AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded);
+
 //            System.out.println("order = " + order + " // " + hasRequirements + " // " + canAfford);
             order.setCanAffordNow(canAfford);
             AUnitType unitOrBuilding = order.unitType();
             UpgradeType upgrade = order.upgrade();
             TechType tech = order.tech();
             Mission mission = order.mission();
+
+//            if (unitOrBuilding != null && unitOrBuilding.isMissileTurret()) {
+//                canAfford = true;
+//                hasRequirements = true;
+//            }
 
             // ===  Protoss fix: wait for at least one Pylon ============
 
