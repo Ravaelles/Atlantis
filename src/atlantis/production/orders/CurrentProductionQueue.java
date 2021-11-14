@@ -52,11 +52,6 @@ public abstract class CurrentProductionQueue {
             TechType tech = order.tech();
             Mission mission = order.mission();
 
-//            if (unitOrBuilding != null && unitOrBuilding.isMissileTurret()) {
-//                canAfford = true;
-//                hasRequirements = true;
-//            }
-
             // ===  Protoss fix: wait for at least one Pylon ============
 
             if (
@@ -106,9 +101,6 @@ public abstract class CurrentProductionQueue {
                     mode == ProductionQueueMode.ENTIRE_QUEUE || hasRequirements
             ) {
                 if (unitOrBuilding != null && !A.hasFreeSupply(unitOrBuilding.supplyNeeded())) {
-//                    System.out.println("unitOrBuilding = " + unitOrBuilding);
-//                    System.out.println("A.hasFreeSupply(unitOrBuilding.supplyNeeded()) = " + A.hasFreeSupply(unitOrBuilding.supplyNeeded()));
-//                    System.out.println("unitOrBuilding.supplyNeeded() = " + unitOrBuilding.supplyNeeded());
                     continue;
                 }
 
@@ -159,18 +151,7 @@ public abstract class CurrentProductionQueue {
         return false;
     }
 
-    // =========================================================
-
     public static int[] resourcesReserved() {
-//        int reservedMinerals = 0;
-//        int reservedGas = 0;
-//
-//        for (int i = 0; i <= 1; i++) {
-//
-//        }
-
-//        thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
-
         return new int[] { ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded };
     }
 

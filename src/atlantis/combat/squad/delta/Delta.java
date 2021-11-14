@@ -34,4 +34,8 @@ public class Delta extends Squad {
                 Math.min(5, Count.ourCombatUnits() / 8)
         );
     }
+
+    public static int count() {
+        return get().size();
+    }
 }

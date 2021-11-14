@@ -1144,11 +1144,28 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintSquadsInfo(int x, int y) {
-        y += 2;
-        paintMessage("Squads: ", Color.Grey, x + 4, y, true);
-//            APainter.setTextSizeMedium();
+        y += 4;
+
+        if (Alpha.get().isNotEmpty()) {
+            paintMessage("Squads: ", Color.Grey, x + 4, y, true);
+            for (Squad squad : ASquadManager.allSquads()) {
+                paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y++, true);
+            }
+        }
+    }
+
+    private static void paintSquads() {
         for (Squad squad : ASquadManager.allSquads()) {
-            paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y++, true);
+            APosition median = squad.center();
+            if (median != null) {
+                int maxDist = (int) (ASquadCohesionManager.preferredDistToSquadCenter(squad.size()) * 32);
+
+                APainter.paintCircle(median, maxDist + 1, Color.Cyan);
+                APainter.paintCircle(median, maxDist, Color.Cyan);
+
+                //            APainter.setTextSizeMedium();
+                //            APainter.paintTextCentered(median, "Median (" + maxDist + ")", Color.Cyan, 0, 0.5);
+            }
         }
     }
 
@@ -1232,8 +1249,8 @@ public class AAdvancedPainter extends APainter {
         ArrayList<ARegionBoundary> boundaries = region.bounds();
         for (ARegionBoundary boundary : boundaries) {
             APosition position = boundary.position();
-//            Color color = Color.Grey;
-            Color color = Color.Green;
+            Color color = Color.Grey;
+//            Color color = Color.Green;
             paintCircle(position, 4, color);
             paintCircle(position, 3, color);
         }
@@ -1317,21 +1334,6 @@ public class AAdvancedPainter extends APainter {
                 if (worker.target() != null) {
                     paintLine(worker, worker.target(), Color.Grey);
                 }
-            }
-        }
-    }
-
-    private static void paintSquads() {
-        for (Squad squad : ASquadManager.allSquads()) {
-            APosition median = squad.center();
-            if (median != null) {
-                int maxDist = (int) (ASquadCohesionManager.preferredDistToSquadCenter(squad.size()) * 32);
-
-                APainter.paintCircle(median, maxDist + 1, Color.Cyan);
-                APainter.paintCircle(median, maxDist, Color.Cyan);
-
-    //            APainter.setTextSizeMedium();
-    //            APainter.paintTextCentered(median, "Median (" + maxDist + ")", Color.Cyan, 0, 0.5);
             }
         }
     }

@@ -358,7 +358,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 cachePath = "ourIncludingUnfinishedOfType:" + type.id(),
                 microCacheForFrames,
                 () -> {
-                    return new Selection(ourOfType(type).list(), cachePath);
+                    List<AUnit> data = new ArrayList<>();
+
+                    for (AUnit unit : ourIncludingUnfinishedUnits()) {
+                        if (unit.is(type)) {
+                            data.add(unit);
+                        }
+                    }
+
+                    return new Selection(data, cachePath);
                 }
         );
     }

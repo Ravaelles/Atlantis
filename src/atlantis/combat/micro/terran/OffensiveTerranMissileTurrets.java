@@ -2,6 +2,7 @@ package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.select.Have;
@@ -34,6 +35,10 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
     protected static boolean handleReinforceMissionContain() {
         APosition focusPoint = Missions.globalMission().focusPoint();
         if (focusPoint == null || !Have.main()) {
+            return false;
+        }
+
+        if (Alpha.count() <= 12) {
             return false;
         }
 

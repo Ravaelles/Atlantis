@@ -33,4 +33,8 @@ public class Alpha extends Squad {
         return 0;
     }
 
+    public static int count() {
+        return get().size();
+    }
+
 }

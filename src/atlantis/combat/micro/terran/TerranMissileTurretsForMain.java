@@ -1,5 +1,7 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.GameSpeed;
+import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.ARegion;
@@ -12,6 +14,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Cache;
+import bwapi.Color;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -55,10 +58,8 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
             APosition place = turretsProtectingMainBorders.get(i);
             if (
                     place != null
-//                    && Count.inQueueOrUnfinished(turret, MIN_TURRETS_FOR_BORDER + 2) < MIN_TURRETS_FOR_BORDER
-//                    && ConstructionRequests.countNotStartedOfType(turret) < Math.max(1, MIN_TURRETS_FOR_BORDER - 2)
                     && Count.inQueueOrUnfinished(turret, 8) <= 4
-                    && Count.existingOrPlannedBuildingsNear(turret, TILES_MARGIN, place) == 0
+                    && Count.existingOrPlannedBuildingsNear(turret, TILES_MARGIN + 1.1, place) == 0
             ) {
                 AddToQueue.withHighPriority(turret, place).setMaximumDistance(TILES_MARGIN);
             }

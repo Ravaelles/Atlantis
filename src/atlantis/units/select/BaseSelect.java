@@ -30,6 +30,22 @@ public class BaseSelect<T extends AUnit> {
         );
     }
 
+    protected static List<AUnit> ourIncludingUnfinishedUnits() {
+        return cacheList.get(
+            "ourIncludingUnfinishedUnits",
+            0,
+            () -> {
+                List<AUnit> data = new ArrayList<>();
+
+                for (Unit u : AGame.getPlayerUs().getUnits()) {
+                    data.add(AUnit.createFrom(u));
+                }
+
+                return data;
+            }
+        );
+    }
+
     protected static List<AUnit> enemyUnits() {
         return cacheList.get(
             "enemyUnits",
