@@ -69,8 +69,9 @@ public class TerranInfantry {
                 enemies.atLeast(Enemy.zerg() ? 3 : 2)
         ) {
             if (unit.lastActionMoreThanAgo(5, UnitActions.USING_TECH)) {
-                unit.useTech(stim());
-//                System.out.println("------------ STIM! " + unit.idWithHash() + " @ " + A.now());
+                if (Select.ourOfType(AUnitType.Terran_Medic).inRadius(5, unit).havingEnergy(40).atLeast(2)) {
+                    unit.useTech(stim());
+                }
             }
             return true;
         }

@@ -4,12 +4,11 @@ import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.Positions;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
-import bwapi.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -249,8 +248,8 @@ public class Bases {
         }
 
         // Check for planned constructions
-        for (ConstructionOrder constructionOrder : AConstructionRequests.getAllConstructionOrders()) {
-            APosition constructionPlace = constructionOrder.getPositionToBuildCenter();
+        for (ConstructionOrder constructionOrder : ConstructionRequests.getAllConstructionOrders()) {
+            APosition constructionPlace = constructionOrder.positionToBuildCenter();
             if (constructionPlace != null && constructionPlace.distTo(baseLocation.position()) < 8) {
                 return false;
             }

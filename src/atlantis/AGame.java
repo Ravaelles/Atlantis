@@ -291,7 +291,7 @@ public class AGame {
      * Takes into account planned constructions and orders.
      */
     public static boolean canAffordWithReserved(int minerals, int gas) {
-//        int[] reservedConstructions = AConstructionRequests.resourcesNeededForNotStartedConstructions();
+//        int[] reservedConstructions = ConstructionRequests.resourcesNeededForNotStartedConstructions();
         int[] reservedInQueue = CurrentProductionQueue.resourcesReserved();
 
         return canAfford(

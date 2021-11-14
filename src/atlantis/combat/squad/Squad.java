@@ -2,13 +2,13 @@ package atlantis.combat.squad;
 
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import java.util.Collections;
 /**
  * Represents battle squad (unit squad) that contains multiple battle units (could be one unit as well).
  */
-public class Squad extends Units {
+public abstract class Squad extends Units {
 
     private static int firstFreeID = 1;
     private final int ID = firstFreeID++;
@@ -31,36 +31,13 @@ public class Squad extends Units {
      */
     private Mission mission;
 
-    /**
-     * Manager that handles microing of units.
-     */
-//    private AbstractMicroManager microManager;
-    
     // =========================================================
     
-    private Squad(String name, Mission mission) {
+    public Squad(String name, Mission mission) {
         super();
         this.name = name;
         this.setMission(mission);
-//        this.setMicroManager(new AMicroManager());
-    }
-
-    // =========================================================
-    
-    /**
-     * Creates new squad, designated by the given name. If <b>name</b> is null, default numeration "Alpha",
-     * "Bravo", "Charlie", "Delta" will be used.
-     */
-    public static Squad createNewSquad(String name, Mission mission) {
-
-        // Name is null, use autonaming
-        if (name == null) {
-            String[] names = new String[]{"Alpha", "Bravo", "Charlie", "Delta", "Echo"};
-            name = names[ASquadManager.squads.size()];
-        }
-
-        Squad squad = new Squad(name, mission);
-        return squad;
+        ASquadManager.squads.add(this);
     }
 
     // =========================================================
@@ -70,20 +47,6 @@ public class Squad extends Units {
      * don't affect the end result so badly.
      */
     private APosition _getMedianUnitPosition = null;
-
-    /**
-     * Get first, main squad of units.
-     */
-    public static Squad alpha() {
-
-        // If no squad exists, create main squad
-        if (ASquadManager.squads.isEmpty()) {
-            Squad squad = createNewSquad(null, Missions.getInitialMission());
-            ASquadManager.squads.add(squad);
-        }
-
-        return ASquadManager.squads.get(0);
-    }
 
     // === Getters =============================================
 
@@ -96,7 +59,7 @@ public class Squad extends Units {
     }
 
     public static APosition alphaCenter() {
-        return alpha() != null ? alpha().center() : null;
+        return Alpha.get() != null ? Alpha.get().center() : null;
     }
 
 //    public APosition getMedianUnitPosition() {
@@ -134,11 +97,13 @@ public class Squad extends Units {
     }
 
     // =========================================================
-    
+
+    public abstract int expectedUnits();
+
     /**
      * Convenience name for the squad e.g. "Alpha", "Bravo", "Charlie", "Delta".
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -224,4 +189,13 @@ public class Squad extends Units {
 
         return groundUnits.melee().first();
     }
+
+    public boolean lessThanUnits(int units) {
+        return size() < units;
+    }
+
+    public int wantsMoreUnits() {
+        return expectedUnits() - size();
+    }
+
 }

@@ -8,33 +8,33 @@ import atlantis.util.We;
 
 public class AddToQueue {
 
-    public static boolean withTopPriority(AUnitType type) {
+    public static ProductionOrder withTopPriority(AUnitType type) {
         return withTopPriority(type, null);
     }
 
-    public static boolean withTopPriority(AUnitType type, HasPosition position) {
+    public static ProductionOrder withTopPriority(AUnitType type, HasPosition position) {
         return addToQueue(type, position, indexForPriority(ProductionOrderPriority.TOP));
     }
 
-    public static boolean withHighPriority(AUnitType type) {
+    public static ProductionOrder withHighPriority(AUnitType type) {
         return withHighPriority(type, null);
     }
 
-    public static boolean withHighPriority(AUnitType type, HasPosition position) {
+    public static ProductionOrder withHighPriority(AUnitType type, HasPosition position) {
         return addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.HIGH));
     }
 
-    public static boolean withStandardPriority(AUnitType type) {
+    public static ProductionOrder withStandardPriority(AUnitType type) {
         return withStandardPriority(type, null);
     }
 
-    public static boolean withStandardPriority(AUnitType type, HasPosition position) {
+    public static ProductionOrder withStandardPriority(AUnitType type, HasPosition position) {
         return addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.STANDARD));
     }
 
     // =========================================================
 
-    private static boolean addToQueue(AUnitType type, HasPosition position, int index) {
+    private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         assert type != null;
 
         if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
@@ -46,7 +46,7 @@ public class AddToQueue {
         int minSupply = 0;
         ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
         ProductionQueue.nextInQueue.add(index, productionOrder);
-        return true;
+        return productionOrder;
 //        }
 //        else {
 //            if (

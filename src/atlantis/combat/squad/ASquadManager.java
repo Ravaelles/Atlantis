@@ -1,6 +1,10 @@
 package atlantis.combat.squad;
 
+import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.beta.Beta;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
+
 import java.util.ArrayList;
 
 /**
@@ -8,47 +12,50 @@ import java.util.ArrayList;
  */
 public class ASquadManager {
 
-    /**
-     * List of all unit squads.
-     */
+    /** All squads. "Alpha" - main army. After some time "Beta" - always defend main + natural. */
     protected static ArrayList<Squad> squads = new ArrayList<>();
-
-    // =========================================================
-    
-    public static void possibleCombatUnitCreated(AUnit unit) {
-        if (shouldSkipUnit(unit)) {
-            return;
-        }
-
-        Squad squad = Squad.alpha();
-        if (!squad.list().contains(unit)) {
-            squad.addUnit(unit);
-            unit.setSquad(squad);
-        }
-
-//        AGame.sendMessage("Assign " + unit + " to squad " + squad);
-//        System.err.println("Assign " + unit + " to squad " + squad);
-        
-//        AGame.sendMessage("Squad size: " + squad.size());
-//        System.err.println("Squad size: " + squad.size());
-    }
-
-    public static void unitDestroyed(AUnit unit) {
-        Squad squad = unit.squad();
-        if (squad != null) {
-            unit.setSquad(null);
-            squad.removeUnit(unit);
-        }
-    }
-
-    /**
-     * Skips buildings, workers and Zerg Larva
-     */
-    private static boolean shouldSkipUnit(AUnit unit) {
-        return unit.isNotRealUnit() || unit.isWorker() || unit.type().isMine();
-    }
 
     // =========================================================
     // Manage squads
 
+    public static boolean updateSquadTransfers() {
+        if (shouldHaveBeta()) {
+            handleReinforcements(Beta.get());
+        }
+
+        return false;
+    }
+
+    // =========================================================
+    // Beta
+
+    private static boolean shouldHaveBeta() {
+        return Count.ourCombatUnits() >= 8;
+    }
+
+    private static void handleReinforcements(Squad squad) {
+        int wantsMoreUnits = squad.wantsMoreUnits();
+
+        if (wantsMoreUnits > 0) {
+            transferFromAlphaTo(squad, wantsMoreUnits);
+        }
+    }
+
+    // =========================================================
+
+    private static void transferFromAlphaTo(Squad toSquad, int assignThisManyFromAlpha) {
+        Alpha alpha = Alpha.get();
+        alpha.sortByDistanceTo(toSquad.center(), true);
+        assignThisManyFromAlpha = Math.min(assignThisManyFromAlpha, alpha.size());
+
+        for (int i = 0; i < assignThisManyFromAlpha; i++) {
+            AUnit transfer = alpha.get(0);
+            alpha.removeUnit(transfer);
+            toSquad.addUnit(transfer);
+        }
+    }
+
+    public static ArrayList<Squad> allSquads() {
+        return (ArrayList<Squad>) squads.clone();
+    }
 }

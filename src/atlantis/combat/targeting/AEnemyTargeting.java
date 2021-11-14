@@ -140,7 +140,9 @@ public class AEnemyTargeting {
     // =========================================================
 
     private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit enemy, AUnit ourUnit) {
-        if (ourUnit.hasWeaponRange(enemy, 0)) {
+//        if (ourUnit.hasWeaponRange(enemy, 0)) {
+        AUnit enemyInShootRange = Select.enemies(enemyType).inShootRangeOf(ourUnit).nearestTo(ourUnit);
+        if (enemyInShootRange != null) {
             return selectWeakestEnemyOfTypeInRange(enemyType, ourUnit);
         }
 

@@ -36,15 +36,15 @@ public class ABuilderManager {
     // =========================================================
     
     private static boolean handleConstruction(AUnit builder) {
-        ConstructionOrder constructionOrder = AConstructionRequests.getConstructionOrderFor(builder);
+        ConstructionOrder constructionOrder = ConstructionRequests.getConstructionOrderFor(builder);
         if (constructionOrder != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
-            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 return travelToConstruct(builder, constructionOrder);
-            } else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
+            } else if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
                 // Do nothing - construction is pending
-            } else if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
+            } else if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 // Do nothing - construction is finished
             }
         } else {
@@ -56,8 +56,8 @@ public class ABuilderManager {
 
     private static boolean travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
         APosition buildPosition = constructionOrder.positionToBuild();
-        APosition buildPositionCenter = constructionOrder.getPositionToBuildCenter();
-        AUnitType buildingType = constructionOrder.getBuildingType();
+        APosition buildPositionCenter = constructionOrder.positionToBuildCenter();
+        AUnitType buildingType = constructionOrder.buildingType();
 
         if (builder == null) {
             throw new RuntimeException("Builder empty");
@@ -86,7 +86,7 @@ public class ABuilderManager {
             if (!builder.isMoving()) {
 //                    GameSpeed.changeSpeedTo(60);
                 builder.move(
-                    constructionOrder.getPositionToBuildCenter(),
+                    constructionOrder.positionToBuildCenter(),
                     UnitActions.MOVE_TO_BUILD,
                     "Build " + buildingType.shortName() + distString
                 );
@@ -104,7 +104,7 @@ public class ABuilderManager {
         else {
             if (We.protoss()) {
                 AUnit newBuilding = Select.ourUnfinished()
-                        .ofType(constructionOrder.getBuildingType())
+                        .ofType(constructionOrder.buildingType())
                         .inRadius(1.1, builder).first();
                 if (newBuilding != null) {
                     constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);

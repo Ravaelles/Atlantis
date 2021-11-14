@@ -2,7 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.position.APosition;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
@@ -30,7 +30,7 @@ public class ADetectorRequest {
 
         // =========================================================
 
-        AConstructionRequests.removeAllNotStarted();
+        ConstructionRequests.removeAllNotStarted();
         requestDetectorConstruction(detectorBuilding);
 
         // === Protect choke point =========================================
@@ -57,12 +57,12 @@ public class ADetectorRequest {
     }
 
     private static void requestDetectorConstruction(AUnitType detectorBuilding) {
-        int detectors = AConstructionRequests.countExistingAndNotFinished(detectorBuilding);
+        int detectors = ConstructionRequests.countExistingAndNotFinished(detectorBuilding);
 //        System.out.println("detectors = " + detectors);
 
         // === Ensure parent exists ========================================
 
-        int requiredParents = AConstructionRequests.countExistingAndNotFinished(detectorBuilding.getWhatIsRequired());
+        int requiredParents = ConstructionRequests.countExistingAndNotFinished(detectorBuilding.getWhatIsRequired());
         if (requiredParents == 0) {
 //            System.out.println("Detector dependency requested: " + detectorBuilding.getWhatIsRequired().shortName());
             AddToQueue.withTopPriority(detectorBuilding.getWhatIsRequired());
@@ -72,7 +72,7 @@ public class ADetectorRequest {
         // === Protect every base ==========================================
 //
         for (AUnit base : Select.ourBases().listUnits()) {
-            int numberOfDetectorsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
+            int numberOfDetectorsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
                     detectorBuilding, 15, base.position()
             );
 

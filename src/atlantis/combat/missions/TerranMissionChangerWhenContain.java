@@ -36,7 +36,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
 
         if (Enemy.zerg()) {
             if (Missions.counter() >= 3) {
-                    return true;
+                return Count.ourCombatUnits() <= 30;
             }
         }
 

@@ -13,16 +13,16 @@ public class ProtossConstructionManager {
      */
     public static void handleWarpingNewBuilding(AUnit newBuilding) {
         ArrayList<ConstructionOrder> notStartedConstructions = 
-                AConstructionRequests.getNotStartedConstructionsOfType(newBuilding.type());
+                ConstructionRequests.getNotStartedOfType(newBuilding.type());
         
         // Find a Probe-builder closest to the constructions of given type and cancel this construction
         Units closestBuilders = new Units();
         for (ConstructionOrder order : notStartedConstructions) {
-            if (order.getBuilder() == null || order.positionToBuild() == null) {
+            if (order.builder() == null || order.positionToBuild() == null) {
                 continue;
             }
-            int distBuilderToConstruction = (int) (order.getBuilder().distTo(order.positionToBuild())) * 10;
-            closestBuilders.changeValueBy(order.getBuilder(), distBuilderToConstruction);
+            int distBuilderToConstruction = (int) (order.builder().distTo(order.positionToBuild())) * 10;
+            closestBuilders.changeValueBy(order.builder(), distBuilderToConstruction);
         }
         
         // =========================================================
@@ -32,7 +32,7 @@ public class ProtossConstructionManager {
             
             // Assume that closest builder is the one that has just constructed a building.
             if (closestBuilder != null) {
-                ConstructionOrder order = AConstructionRequests.getConstructionOrderFor(closestBuilder);
+                ConstructionOrder order = ConstructionRequests.getConstructionOrderFor(closestBuilder);
                 if (order != null) {
                     order.cancel();
                 }

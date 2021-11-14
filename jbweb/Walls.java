@@ -158,6 +158,9 @@ public class Walls {
         buildings.add(UnitType.Terran_Barracks);
         List<UnitType> defenses = new ArrayList<>();
         UnitType type = JBWEB.game.enemy() != null && JBWEB.game.enemy().getRace() == Race.Protoss ? UnitType.Protoss_Zealot : UnitType.Zerg_Zergling;
+        System.out.println("type = " + type);
+        System.out.println("JBWEB.getMainArea() = " + JBWEB.getMainArea());
+        System.out.println("JBWEB.getMainChoke() = " + JBWEB.getMainChoke());
 
         return createWall(buildings, JBWEB.getMainArea(), JBWEB.getMainChoke(), type, defenses, false, true);
     }

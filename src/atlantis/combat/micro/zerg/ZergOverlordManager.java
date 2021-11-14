@@ -2,7 +2,7 @@ package atlantis.combat.micro.zerg;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.stack.StackedUnitsManager;
-import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.position.APosition;
 import atlantis.scout.AScoutManager;
@@ -69,7 +69,7 @@ public class ZergOverlordManager {
     }
 
     private static boolean followArmy(AUnit overlord) {
-        APosition medianUnitPosition = Squad.alpha().center();
+        APosition medianUnitPosition = Alpha.get().center();
         if (medianUnitPosition != null) {
             if (overlord.distTo(medianUnitPosition) > 2.5) {
                 overlord.move(medianUnitPosition, UnitActions.MOVE, "Follow army");

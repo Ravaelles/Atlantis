@@ -15,8 +15,8 @@ public class TerranBunkerPositionFinder {
     public static APosition findPosition(AUnitType building, AUnit builder, ConstructionOrder order) {
         HasPosition nearTo = null;
         
-        if (order != null && order.getProductionOrder() != null && order.getProductionOrder().getModifier() != null) {
-            String locationModifier = order.getProductionOrder().getModifier();
+        if (order != null && order.productionOrder() != null && order.productionOrder().getModifier() != null) {
+            String locationModifier = order.productionOrder().getModifier();
             nearTo = defineBunkerPosition(locationModifier);
         }
         else {

@@ -9,7 +9,8 @@ import bwapi.TechType;
 public class TerranComsatStation {
 
     public static boolean update(AUnit comsat) {
-        if (AGame.notNthGameFrame(5 + ((250 - comsat.energy()) / 3))) {
+//        if (AGame.notNthGameFrame(5 + ((250 - comsat.energy()) / 3))) {
+        if (AGame.notNthGameFrame(30)) {
             return false;
         }
 //        System.out.println(Select.enemy().ofType(AUnitType.Protoss_Observer).count());
@@ -28,7 +29,7 @@ public class TerranComsatStation {
 
     private static boolean scanLurkers(AUnit comsat) {
         for (AUnit lurker : Select.enemy().effCloaked().ofType(AUnitType.Zerg_Lurker).listUnits()) {
-            System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.hp());
+            System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.isDetected() + " // " + lurker.hp());
             if (shouldScanThisLurker(lurker, comsat)) {
                 return scan(comsat, lurker);
             }
@@ -38,7 +39,16 @@ public class TerranComsatStation {
     }
 
     private static boolean shouldScanThisLurker(AUnit lurker, AUnit comsat) {
-        return Select.ourRealUnits().canAttack(lurker, 3).atLeast(6) || comsat.energy() >= 180;
+        if (lurker.isDetected()) {
+            return false;
+        }
+
+        int minUnitsNearby = (comsat.energy(180) ? 3 : (comsat.energy(130) ? 4 : 6));
+
+        return Select.ourCombatUnits()
+                .excludeTypes(AUnitType.Terran_Medic)
+                .inRadius(12, lurker)
+                .atLeast(minUnitsNearby);
     }
 
     // =========================================================
@@ -89,8 +99,8 @@ public class TerranComsatStation {
     // =========================================================
 
     private static boolean scan(AUnit comsat, AUnit unitToScan) {
-//        System.out.println("unitToScan = " + unitToScan.getHP());
-        if (unitToScan.effVisible()) {
+        if (!unitToScan.effCloaked()) {
+            System.err.println("unitToScan is not effectively cloaked = " + unitToScan.hp());
             return false;
         }
 

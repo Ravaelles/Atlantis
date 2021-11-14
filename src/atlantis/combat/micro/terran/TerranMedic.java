@@ -99,15 +99,30 @@ public class TerranMedic {
     }
 
     private static AUnit createMedicAssignment(AUnit medic) {
-        AUnit assignment = Select.ourTerranInfantryWithoutMedics().randomWithSeed(medic.id());
+        AUnit assignment;
+
+        assignment = Select.ourOfType(AUnitType.Terran_Firebat).randomWithSeed(medic.id());
         if (assignment != null) {
             medicsAssignments.put(medic, assignment);
             medic.setTooltip("NewAssignment");
             return assignment;
         }
 
-        // If here, then it means no alive infantry left, stick to medics
-        return Select.ourTerranInfantry().excludeTypes(AUnitType.Terran_Medic).randomWithSeed(medic.id());
+//        assignment = Select.ourTerranInfantryWithoutMedics().randomWithSeed(medic.id());
+//        if (assignment != null) {
+//            medicsAssignments.put(medic, assignment);
+//            medic.setTooltip("NewAssignment");
+//            return assignment;
+//        }
+
+        assignment = Select.ourTerranInfantryWithoutMedics().randomWithSeed(medic.id());
+        if (assignment != null) {
+            medicsAssignments.put(medic, assignment);
+            medic.setTooltip("NewAssignment");
+            return assignment;
+        }
+
+        return null;
     }
 
     private static boolean handleStickToAssignments(AUnit medic) {

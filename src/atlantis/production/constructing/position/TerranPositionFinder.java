@@ -22,6 +22,8 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         _CONDITION_THAT_FAILED = null;
 
         int searchRadius = building.isBase() ? 0 : 3;
+        maxDistance = limitMaxDistanceForImportantBuildings(maxDistance, building);
+
         while (searchRadius < maxDistance) {
             int xMin = nearTo.getTileX() - searchRadius;
             int xMax = nearTo.getTileX() + searchRadius;
@@ -32,6 +34,12 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
+
+                            // Turret fix - make sure to build in the same region
+                            if (building.isCombatBuilding() && constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
+                                continue;
+                            }
+
                             return constructionPosition;
                         }
                     }
@@ -76,6 +84,10 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
+        if (building.isMissileTurret()) {
+            return true;
+        }
+
         if (isTooCloseToMainBase(building, position)) {
             return false;
         }
@@ -102,23 +114,15 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Low-level
-    
-//    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
-//
-//        // We have problem only if building is both close to base and to minerals or to geyser
-//        AUnit nearestBase = Select.ourBases().nearestTo(position);
-//        if (nearestBase != null && nearestBase.distTo(position) <= 3) {
-//            Collection<AUnit> mineralsInRange
-//                    = Select.minerals().inRadius(3, position).listUnits();
-//            for (AUnit mineral : mineralsInRange) {
-//                if (mineral.distTo(position) <= (1 + building.getDimensionRight() / 32)) {
-//                    _CONDITION_THAT_FAILED = "MINERAL TOO CLOSE";
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+
+
+    private static double limitMaxDistanceForImportantBuildings(double maxDistance, AUnitType building) {
+        if (building.is(AUnitType.Terran_Academy)) {
+            return 10;
+        }
+
+        return maxDistance;
+    }
 
     private static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
         boolean canThisBuildingHaveAddon = building.canHaveAddon();

@@ -1,7 +1,6 @@
 package atlantis.production;
 
 import atlantis.combat.missions.Mission;
-import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.production.orders.ProductionOrderPriority;
 import atlantis.units.AUnitType;
@@ -36,6 +35,7 @@ public class ProductionOrder {
      * Makes sense only for buildings.
      */
     private HasPosition position = null;
+    private int maximumDistance = -1;
 
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
@@ -309,5 +309,14 @@ public class ProductionOrder {
 
     public void setMission(Mission mission) {
         this.mission = mission;
+    }
+
+    public int maximumDistance() {
+        return maximumDistance;
+    }
+
+    public ProductionOrder setMaximumDistance(int maximumDistance) {
+        this.maximumDistance = maximumDistance;
+        return this;
     }
 }

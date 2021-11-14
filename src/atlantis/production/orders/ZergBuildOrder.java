@@ -2,7 +2,7 @@ package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
 import atlantis.production.ProductionOrder;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -65,7 +65,7 @@ public class ZergBuildOrder extends ABuildOrder {
             return morphBuildingInto(AUnitType.Zerg_Spire, type);
         }
 
-        return AConstructionRequests.requestConstructionOf(order);
+        return ConstructionRequests.requestConstructionOf(order);
     }
 
     private static boolean morphBuildingInto(AUnitType from, AUnitType into) {

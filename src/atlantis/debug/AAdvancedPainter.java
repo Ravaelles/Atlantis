@@ -2,17 +2,18 @@ package atlantis.debug;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.CameraManager;
-import atlantis.GameSpeed;
 import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionAttack;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.*;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.position.TerranPositionFinder;
@@ -24,13 +25,11 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ProductionQueueMode;
-import atlantis.production.requests.AAntiLandBuildingRequests;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
@@ -237,7 +236,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintSidebarInfo() {
         Color color;
-        Mission mission = Squad.alpha().mission();
+        Mission mission = Alpha.get().mission();
 
         // Time
         if (AGame.isUms()) {
@@ -277,7 +276,7 @@ public class AAdvancedPainter extends APainter {
 
         // =========================================================
 
-        paintSideMessage("Combat squad size: " + Squad.alpha().size(), Color.Yellow, 0);
+        paintSideMessage("Combat squad size: " + Alpha.get().size(), Color.Yellow, 0);
 
         int scouts = AScoutManager.getScouts().size();
         color = scouts == 0 ? Color.Grey : (scouts == 1 ? Color.Yellow : Color.Red);
@@ -486,7 +485,7 @@ public class AAdvancedPainter extends APainter {
         // === Display units currently in production ========================================
 
 //        paintCurrentlyInProduction();
-        paintNotStartedConstructions();
+//        paintNotStartedConstructions();
 
         // === Display units that should be produced right now or any time ==================
 
@@ -528,8 +527,8 @@ public class AAdvancedPainter extends APainter {
     private static void paintNotStartedConstructions() {
 
         // Constructions already planned
-        for (ConstructionOrder order : AConstructionRequests.getNotStartedConstructions()) {
-            AUnitType type = order.getBuildingType();
+        for (ConstructionOrder order : ConstructionRequests.getNotStarted()) {
+            AUnitType type = order.buildingType();
             paintSideMessage(type.shortName(), Color.Cyan);
         }
     }
@@ -560,12 +559,12 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintSidebarConstructionsPending() {
         int yOffset = 220;
-        ArrayList<ConstructionOrder> allOrders = AConstructionRequests.getAllConstructionOrders();
+        ArrayList<ConstructionOrder> allOrders = ConstructionRequests.getAllConstructionOrders();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
                 Color color = null;
-                switch (constructionOrder.getStatus()) {
+                switch (constructionOrder.status()) {
                     case CONSTRUCTION_NOT_STARTED:
                         color = Color.Red;
                         break;
@@ -580,9 +579,9 @@ public class AAdvancedPainter extends APainter {
                         break;
                 }
 
-                String status = constructionOrder.getStatus().toString().replace("CONSTRUCTION_", "");
-                String builder = (constructionOrder.getBuilder() + "").replace("AUnit(", "");
-                paintSideMessage(constructionOrder.getBuildingType().shortName()
+                String status = constructionOrder.status().toString().replace("CONSTRUCTION_", "");
+                String builder = (constructionOrder.builder() + "").replace("AUnit(", "");
+                paintSideMessage(constructionOrder.buildingType().shortName()
                         + ", " + status + ", " + builder, color, yOffset);
             }
         }
@@ -593,11 +592,11 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintConstructionPlaces() {
         Color color = Color.Grey;
-        for (ConstructionOrder order : AConstructionRequests.getAllConstructionOrders()) {
-            if (order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+        for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+            if (order.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 APosition positionToBuild = order.positionToBuild();
-                AUnitType buildingType = order.getBuildingType();
+                AUnitType buildingType = order.buildingType();
                 if (positionToBuild == null || buildingType == null) {
                     continue;
                 }
@@ -789,8 +788,8 @@ public class AAdvancedPainter extends APainter {
     static void paintConstructionProgress() {
         setTextSizeMedium();
 //        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-        for (ConstructionOrder order : AConstructionRequests.getAllConstructionOrders()) {
-            AUnit building = order.getConstruction();
+        for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+            AUnit building = order.construction();
             if (building == null || building.isCompleted()) {
                 continue;
             }
@@ -854,7 +853,7 @@ public class AAdvancedPainter extends APainter {
                     name, Color.White);
 
             // Builder status
-            AUnit builder = order.getBuilder();
+            AUnit builder = order.builder();
             boolean builderProblem = builder == null || !builder.isAlive();
             paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 15),
                     builderProblem ? "NO BUILDER" : "", builderProblem ? Color.Red : Color.Green);
@@ -1139,6 +1138,17 @@ public class AAdvancedPainter extends APainter {
         int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++ + 3;
         int frameLength = (int) CodeProfiler.getTotalFrameLength();
         paintMessage("Length: " + frameLength, Color.White, x + 4, y + 1, true);
+
+        paintSquadsInfo(x, y);
+    }
+
+    private static void paintSquadsInfo(int x, int y) {
+        y += 2;
+        paintMessage("Squads: ", Color.Grey, x + 4, y, true);
+//            APainter.setTextSizeMedium();
+        for (Squad squad : ASquadManager.allSquads()) {
+            paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y++, true);
+        }
     }
 
     private static void paintCooldownAndRunBar(AUnit unit) {
@@ -1189,6 +1199,11 @@ public class AAdvancedPainter extends APainter {
 
         paintRegionBoundaries(mainRegion);
 
+        APosition enemyBase = AEnemyUnits.enemyBase();
+        if (enemyBase != null) {
+            paintRegionBoundaries(enemyBase.region());
+        }
+
 //        List<ARegion> regions = Regions.regions();
 //        for (ARegion region : regions) {
 //            APainter.paintRectangle(
@@ -1206,25 +1221,20 @@ public class AAdvancedPainter extends APainter {
     }
 
     protected static void paintRegionBoundaries(ARegion region) {
+        if (region == null) {
+            return;
+        }
+
         APainter.paintCircle(region.center(), 6, Color.Brown);
         APainter.paintCircle(region.center(), 5, Color.Brown);
-
-//        if (A.now() <= 1) {
-//            CameraManager.centerCameraOn(region.center());
-//        }
 
         ArrayList<ARegionBoundary> boundaries = region.bounds();
         for (ARegionBoundary boundary : boundaries) {
             APosition position = boundary.position();
-//            if (A.now() == 1) {
-//                System.out.println("boundary.position() = " + boundary.position().toStringPixels());
-//            }
-            Color color = position.isWalkable() ? Color.Green : Color.Orange;
+//            Color color = Color.Grey;
+            Color color = Color.Green;
             paintCircle(position, 4, color);
             paintCircle(position, 3, color);
-//            if (A.now() <= 1) {
-//                CameraManager.centerCameraOn(boundary.position());
-//            }
         }
 
     }
@@ -1266,9 +1276,25 @@ public class AAdvancedPainter extends APainter {
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
         // Next defensive building position
-        if (Count.bases() > 0) {
-            AUnitType building = AAntiLandBuildingRequests.building();
-            paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.shortName(), Color.Brown);
+//        if (Count.bases() > 0) {
+//            AUnitType building = AAntiLandBuildingRequests.building();
+//            paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.shortName(), Color.Brown);
+//        }
+
+        // Turrets in main
+        paintTurretsInMain();
+    }
+
+    private static void paintTurretsInMain() {
+        ArrayList<APosition> turrets = TerranMissileTurretsForMain.positionsForTurretsNearMainBorder();
+//        System.out.println("turrets = " + turrets.size());
+        for (APosition turret : turrets) {
+//            System.out.println("turret = " + turret);
+            paintRectangle(turret, 34, 34, Color.Purple);
+            paintRectangle(turret.translateByPixels(1, 1), 32, 32, Color.Purple);
+            paintTextCentered(turret.translateByPixels(17, 12), "Turret", Color.Purple);
+
+//            CameraManager.centerCameraOn(turret);
         }
     }
 
@@ -1295,20 +1321,17 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintSquads() {
-        Squad alphaSquad = Squad.alpha();
-        if (alphaSquad == null) {
-            return;
-        }
+        for (Squad squad : ASquadManager.allSquads()) {
+            APosition median = squad.center();
+            if (median != null) {
+                int maxDist = (int) (ASquadCohesionManager.preferredDistToSquadCenter(squad.size()) * 32);
 
-        APosition median = alphaSquad.center();
-        if (median != null) {
-            int maxDist = (int) (ASquadCohesionManager.preferredDistToSquadCenter(alphaSquad.size()) * 32);
+                APainter.paintCircle(median, maxDist + 1, Color.Cyan);
+                APainter.paintCircle(median, maxDist, Color.Cyan);
 
-            APainter.paintCircle(median, maxDist + 1, Color.Cyan);
-            APainter.paintCircle(median, maxDist, Color.Cyan);
-
-//            APainter.setTextSizeMedium();
-//            APainter.paintTextCentered(median, "Median (" + maxDist + ")", Color.Cyan, 0, 0.5);
+    //            APainter.setTextSizeMedium();
+    //            APainter.paintTextCentered(median, "Median (" + maxDist + ")", Color.Cyan, 0, 0.5);
+            }
         }
     }
 

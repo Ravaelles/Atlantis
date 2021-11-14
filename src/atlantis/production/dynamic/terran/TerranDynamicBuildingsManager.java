@@ -1,9 +1,8 @@
 package atlantis.production.dynamic.terran;
 
 import atlantis.AGame;
-import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.combat.micro.terran.TerranMissileTurret;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.combat.micro.terran.*;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.EnemyStrategy;
@@ -21,8 +20,10 @@ import atlantis.util.A;
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
-        offensiveBunkers();
-        offensiveMissileTurrets();
+        TerranMissileTurretsForMain.buildIfNeeded();
+        TerranMissileTurretsForNonMain.buildIfNeeded();
+        OffensiveTerranMissileTurrets.buildIfNeeded();
+        TerranBunker.handleOffensiveBunkers();
 
         factoryIfBioOnly();
 
@@ -37,14 +38,6 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     // =========================================================
-
-    private static void offensiveBunkers() {
-        TerranBunker.handleOffensiveBunkers();
-    }
-
-    private static boolean offensiveMissileTurrets() {
-        return TerranMissileTurret.handleOffensiveMissileTurrets();
-    }
 
     private static boolean armory() {
         if (Have.no(AUnitType.Terran_Armory)) {
@@ -92,7 +85,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             Selection factories = Select.ourOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
-                    AConstructionRequests.countNotFinishedConstructionsOfType(AUnitType.Terran_Factory);
+                    ConstructionRequests.countNotFinishedOfType(AUnitType.Terran_Factory);
             int numberOfFactories = factories.size() + unfinishedFactories;
             
             // Proceed only if all factories are busy

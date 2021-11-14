@@ -1,15 +1,12 @@
 package atlantis.combat;
 
-import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.A;
-import atlantis.util.CodeProfiler;
 
 public class ACombatCommander {
     
@@ -17,12 +14,8 @@ public class ACombatCommander {
      * Acts with all battle units.
      */
     public static void update() {
-        if (AGame.everyNthGameFrame(90)) {
-            MissionChanger.evaluateGlobalMission();
-        }
-        
-        // === Handle all squads ===================================
-        
+        ASquadManager.updateSquadTransfers();
+
         for (Squad squad : Squad.getSquads()) {
             handleSquad(squad);
         }

@@ -6,7 +6,7 @@ import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.Squad;
 import atlantis.production.constructing.AConstructionManager;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.enemy.UnitsArchive;
@@ -857,7 +857,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * construction.
      */
     public ConstructionOrder getConstructionOrder() {
-        return AConstructionRequests.getConstructionOrderFor(this);
+        return ConstructionRequests.getConstructionOrderFor(this);
     }
 
     /**
@@ -1422,6 +1422,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean lastUnderAttackMoreThanAgo(int framesAgo) {
         return A.ago(_lastUnderAttack) >= framesAgo;
+    }
+
+    public boolean lastAttackFrameMoreThanAgo(int framesAgo) {
+        return A.ago(_lastAttackFrame) >= framesAgo;
+    }
+
+    public boolean lastAttackFrameLessThanAgo(int framesAgo) {
+        return A.ago(_lastAttackFrame) <= framesAgo;
     }
 
     public int lastUnderAttackAgo() {

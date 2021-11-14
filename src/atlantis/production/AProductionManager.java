@@ -3,13 +3,12 @@ package atlantis.production;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.combat.missions.Missions;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.*;
 import atlantis.tech.ATechRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.We;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
@@ -116,7 +115,7 @@ public class AProductionManager {
         if (type.isAddon()) {
             produceAddon(type);
         } else {
-            AConstructionRequests.requestConstructionOf(order);
+            ConstructionRequests.requestConstructionOf(order);
         }
     }
 

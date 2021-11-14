@@ -38,7 +38,7 @@ public class AAntiLandBuildingRequests {
         }
 
         int defBuildingAntiLand = Count.existingOrInProductionOrInQueue(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND);
-//        int defBuildingAntiLand = AConstructionRequests.countExistingAndExpectedInNearFuture(
+//        int defBuildingAntiLand = ConstructionRequests.countExistingAndExpectedInNearFuture(
 //                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND, 8
 //        );
 //        System.out.println(

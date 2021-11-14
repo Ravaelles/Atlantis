@@ -2,11 +2,10 @@ package atlantis.production.constructing.position;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.debug.APainter;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.map.ABaseLocation;
@@ -16,7 +15,6 @@ import atlantis.units.AUnitType;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import bwapi.Color;
 import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
@@ -91,18 +89,18 @@ public abstract class AbstractPositionFinder {
     protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, Position position) {
         
         // Compare against planned construction places
-        for (ConstructionOrder constructionOrder : AConstructionRequests.getAllConstructionOrders()) {
-            if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.getStatus())
-                    && !builder.equals(constructionOrder.getBuilder())) {
+        for (ConstructionOrder constructionOrder : ConstructionRequests.getAllConstructionOrders()) {
+            if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.status())
+                    && !builder.equals(constructionOrder.builder())) {
                 if (constructionOrder.positionToBuild() != null) {
                     double distance = PositionUtil.distanceTo(constructionOrder.positionToBuild(), position);
                     boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AGame.isPlayingAsZerg()
-                            && building.isBase() && constructionOrder.getBuildingType().isBase());
+                            && building.isBase() && constructionOrder.buildingType().isBase());
                     
                     // Look for two bases that would be built too close one to another
                     if (distance <= 4 || areBasesTooCloseOneToAnother) {
                         _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
-                                + constructionOrder.getBuildingType() + ", DIST: " + distance + ")";
+                                + constructionOrder.buildingType() + ", DIST: " + distance + ")";
                         return true;
                     }
                 }
@@ -120,9 +118,9 @@ public abstract class AbstractPositionFinder {
 
         AUnit base = Select.main();
 
-        APainter.paintCircle(position, 10, Color.Green);
-        if (base != null && base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 4) {
-            APainter.paintCircle(position, 10, Color.Red);
+//        APainter.paintCircle(position, 10, Color.Green);
+        if (base != null && base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5) {
+//            APainter.paintCircle(position, 10, Color.Red);
             _CONDITION_THAT_FAILED = "Too close to main base";
             return true;
         }

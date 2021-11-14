@@ -3,7 +3,7 @@ package atlantis.production.dynamic;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.map.Bases;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.select.Count;
@@ -66,7 +66,7 @@ public class AExpansionManager {
             return false;
         }
 
-        int numberOfUnfinishedBases = AConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.BASE);
+        int numberOfUnfinishedBases = ConstructionRequests.countNotFinishedOfType(AtlantisConfig.BASE);
 
         boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
         boolean haveEnoughBases = numberOfBases >= 4

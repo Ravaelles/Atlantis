@@ -21,7 +21,7 @@ public class FightInsteadAvoid {
     protected final AUnit defensiveBuilding;
     protected final AUnit invisibleDT;
     protected final AUnit invisibleCombatUnit;
-    protected final AUnit lurkerOrReaver;
+    protected final AUnit lurker;
     protected final AUnit tankSieged;
     protected final AUnit tanks;
     protected final AUnit reaver;
@@ -38,7 +38,7 @@ public class FightInsteadAvoid {
         Selection selector = Select.from(enemies);
         invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effCloaked().first();
         invisibleCombatUnit = selector.clone().effCloaked().combatUnits().first();
-        lurkerOrReaver = selector.clone().ofType(AUnitType.Zerg_Lurker, AUnitType.Protoss_Reaver).first();
+        lurker = selector.clone().ofType(AUnitType.Zerg_Lurker).first();
         tankSieged = selector.clone().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
         tanks = selector.clone().tanks().first();
         vulture = selector.clone().ofType(AUnitType.Terran_Vulture).first();
@@ -57,6 +57,10 @@ public class FightInsteadAvoid {
 
         if (dontFightInImportantCases()) {
             return false;
+        }
+
+        if (unit.mission().forcesUnitToFight(unit, enemies)) {
+            return true;
         }
 
         // Workers
@@ -88,7 +92,11 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightInImportantCases() {
-        if (!unit.isWorker() && defensiveBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
+        if (unit.isWorker()) {
+            System.err.println("Worker in fightInImportantCases");
+        }
+
+        if (defensiveBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
             return true;
         }
 
@@ -167,6 +175,10 @@ public class FightInsteadAvoid {
 //            return Select.our().inRadius(3, unit).atLeast(3);
 //        }
 
+        if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
+            return true;
+        }
+
         if (tankSieged != null || tanks != null) {
             return true;
         }
@@ -224,7 +236,7 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightAsWorker(AUnit unit, Units enemies) {
-        if (defensiveBuilding != null || lurkerOrReaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {
+        if (defensiveBuilding != null || lurker != null || reaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {
             return false;
         }
 

@@ -1,9 +1,9 @@
 package atlantis;
 
+import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.enemy.UnitsArchive;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.ums.UmsSpecialActionsManager;
-import atlantis.combat.squad.ASquadManager;
 import atlantis.production.constructing.*;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.repair.ARepairAssignments;
@@ -194,7 +194,7 @@ public class Atlantis implements BWEventListener {
             // Our unit
             if (unit.isOur()) {
                 ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-                ASquadManager.unitDestroyed(unit);
+                NewUnitsToSquadsAssigner.unitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
                 if (!unit.type().isGasBuilding()) {
                     LOST++;
@@ -290,7 +290,7 @@ public class Atlantis implements BWEventListener {
         // Forget unit
         if (unit != null) {
             if (unit.isOur()) {
-                ASquadManager.unitDestroyed(unit);
+                NewUnitsToSquadsAssigner.unitDestroyed(unit);
             } if (unit.isEnemy()) {
                 AEnemyUnits.removeDiscoveredUnit(unit);
             }
@@ -308,9 +308,9 @@ public class Atlantis implements BWEventListener {
                 // === Fix for Zerg Extractor ========================================
                 // Detect morphed gas building meaning construction has just started
                 if (unit.type().isGasBuilding()) {
-                    for (ConstructionOrder order : AConstructionRequests.getAllConstructionOrders()) {
-                        if (order.getBuildingType().equals(AtlantisConfig.GAS_BUILDING)
-                                && order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                    for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+                        if (order.buildingType().equals(AtlantisConfig.GAS_BUILDING)
+                                && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                             order.setConstruction(unit);
                             break;
                         }
@@ -322,7 +322,7 @@ public class Atlantis implements BWEventListener {
 
                 // Add to combat squad if it's military unit
                 if (unit.isRealUnit()) {
-                    ASquadManager.possibleCombatUnitCreated(unit);
+                    NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
                 }
             }
 
@@ -379,7 +379,7 @@ public class Atlantis implements BWEventListener {
 
         // Our unit
         if (unit.isOur()) {
-            ASquadManager.possibleCombatUnitCreated(unit);
+            NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
         }
     }
 

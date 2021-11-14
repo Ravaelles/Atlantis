@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.combat.micro.terran.TerranInfantry;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 
@@ -69,29 +70,34 @@ public class MissionDefend extends Mission {
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (unit.isRanged() || enemy.isRanged()) {
+//        if (unit.isRanged() || enemy.isRanged()) {
+        if (unit.isRanged()) {
             return true;
         }
 
-        if (unit.hasWeaponRange(enemy, 1.2)) {
+        if (unit.hasWeaponRange(enemy, 1)) {
             return true;
         }
 
-        if (unit.distToLessThan(focusPoint(), 1.5)) {
+        if (unit.distToLessThan(focusPoint(), 0.5)) {
             return true;
         }
 
+//        if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
         if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
             return true;
         }
 
-//        if (unit.isInWeaponRangeByGame(enemy)) {
+        if (Select.enemy().inRadius(18, Select.naturalOrMain()).atLeast(1)) {
+            return true;
+        }
 
-//        if () {
-//            return true;
-//        }
 
         return false;
     }
 
+    @Override
+    public boolean forcesUnitToFight(AUnit unit, Units enemies) {
+        return unit.hp() >= 18;
+    }
 }

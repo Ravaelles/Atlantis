@@ -30,7 +30,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
         if (Enemy.protoss()) {
 //            if (Missions.isFirstMission()) {
-            if (Atlantis.LOST <= 5 && Count.ourCombatUnits() >= 4) {
+            if (Atlantis.LOST <= 3 && Count.ourCombatUnits() >= 4) {
                 return true;
             }
 
@@ -40,14 +40,20 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         // === Zerg ======================================================
 
         else if (Enemy.zerg()) {
-            if (Missions.isFirstMission()) {
-                if (OurStrategy.get().isRush()) {
-                    return Count.ourCombatUnits() >= 12 || A.resourcesBalance() >= 350;
-                }
-            }
+//            if (Atlantis.LOST <= 3) {
+//                return true;
+//            }
 
-    //        return Count.ourCombatUnits() >= Math.max(24, 12 + Missions.counter());
-            return Count.ourCombatUnits() >= 15 || Count.tanks() >= 2;
+            return A.supplyUsed(140);
+
+//            if (Missions.counter() <= 2) {
+//                if (OurStrategy.get().isRush()) {
+//                    return Count.ourCombatUnits() >= 12 || A.resourcesBalance() >= 350;
+//                }
+//            }
+//
+//    //        return Count.ourCombatUnits() >= Math.max(24, 12 + Missions.counter());
+//            return Count.ourCombatUnits() >= 25 || Count.tanks() >= 3;
         }
 
         // =========================================================

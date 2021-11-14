@@ -114,4 +114,7 @@ public interface HasPosition {
         return new LargeTile(this);
     }
 
+    default boolean nearMapEdge(double maxTilesAwayFromMapEdges) {
+        return !position().makeValidFarFromBounds((int) (maxTilesAwayFromMapEdges * 32)).equals(position());
+    }
 }

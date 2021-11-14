@@ -2,7 +2,7 @@ package atlantis.buildings.managers;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -41,13 +41,17 @@ public class TerranFlyingBuildingManager {
 
     private static void updateIfBuildingNeedsToBeLifted() {
         for (AUnit building : Select.ourBuildings().list()) {
+            if (!building.u().canLift()) {
+                continue;
+            }
+
             if (!building.isLifted() && building.isUnderAttack(1) && !building.isLifted() && building.hpPercent() <= 34) {
                 building.lift();
                 return;
             }
 
             if (building.lastUnderAttackLessThanAgo(30 * 4)) {
-                APosition median = Squad.alpha().median();
+                APosition median = Alpha.get().median();
                 if (median != null) {
                     building.move(median, UnitActions.RUN, "BackOff");
                     return;
@@ -63,7 +67,7 @@ public class TerranFlyingBuildingManager {
         }
 
         if (flyingBuilding.lastUnderAttackLessThanAgo(60)) {
-            APosition median = Squad.alpha().median();
+            APosition median = Alpha.get().median();
             if (median != null) {
                 flyingBuilding.move(median, UnitActions.RUN, "BackOff");
                 return true;

@@ -1,6 +1,6 @@
 package atlantis.combat.micro.generic;
 
-import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -51,7 +51,7 @@ public class MobileDetector {
             return false;
         }
 
-        AUnit scout = Squad.alpha().getSquadScout();
+        AUnit scout = Alpha.get().getSquadScout();
         if (scout != null) {
             unitForSquadScout = unit;
             if (scout.distTo(unit) > 1) {
@@ -68,7 +68,7 @@ public class MobileDetector {
             return false;
         }
 
-        APosition goTo = Squad.alpha().center();
+        APosition goTo = Alpha.get().center();
         if (goTo != null) {
             unitForArmy = unit;
             if (goTo.distTo(unit) > 1) {

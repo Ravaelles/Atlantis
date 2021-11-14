@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class AConstructionRequests {
+public class ConstructionRequests {
 
     /**
      * List of all unfinished (started or pending) constructions.
@@ -60,7 +60,7 @@ public class AConstructionRequests {
 
             AUnitType requiredBuilding = building.getWhatIsRequired();
             if (countExistingAndNotFinished(requiredBuilding) == 0) {
-                AConstructionRequests.requestConstructionOf(requiredBuilding);
+                ConstructionRequests.requestConstructionOf(requiredBuilding);
                 return true;
             }
 
@@ -75,9 +75,10 @@ public class AConstructionRequests {
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
         newConstructionOrder.setProductionOrder(order);
         newConstructionOrder.setNearTo(near);
+        newConstructionOrder.setMaxDistance(order.maximumDistance());
         newConstructionOrder.assignRandomBuilderForNow();
 
-        if (newConstructionOrder.getBuilder() == null) {
+        if (newConstructionOrder.builder() == null) {
             if (AGame.supplyUsed() >= 7 && Count.bases() > 0 && Count.workers() > 0) {
                 System.err.println("Builder is null, got damn it!");
             }
@@ -87,7 +88,6 @@ public class AConstructionRequests {
         // =========================================================
         // Find place for new building
 
-        newConstructionOrder.setMaxDistance(-1);
         APosition positionToBuild = newConstructionOrder.findPositionForNewBuilding();
 
         // =========================================================
@@ -130,7 +130,7 @@ public class AConstructionRequests {
      */
     public static ConstructionOrder getConstructionOrderFor(AUnit builder) {
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (builder.equals(constructionOrder.getBuilder())) {
+            if (builder.equals(constructionOrder.builder())) {
                 return constructionOrder;
             }
         }
@@ -139,7 +139,7 @@ public class AConstructionRequests {
     }
 
     public static boolean hasRequestedConstructionOf(AUnitType type) {
-        return countNotFinishedConstructionsOfType(type) > 0;
+        return countNotFinishedOfType(type) > 0;
     }
 
     /**
@@ -147,11 +147,11 @@ public class AConstructionRequests {
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
      * then, we can e.g. "count unstarted barracks constructions".
      */
-    public static int countNotStartedConstructionsOfType(AUnitType type) {
+    public static int countNotStartedOfType(AUnitType type) {
         int total = 0;
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                    && constructionOrder.getBuildingType().equals(type)) {
+            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                    && constructionOrder.buildingType().equals(type)) {
                 total++;
             }
         }
@@ -165,12 +165,12 @@ public class AConstructionRequests {
         return total;
     }
 
-    public static int countNotStartedConstructionsOfTypeInRadius(AUnitType type, double radius, APosition position) {
+    public static int countNotStartedOfTypeInRadius(AUnitType type, double radius, APosition position) {
         int total = 0;
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                    && constructionOrder.getBuildingType().equals(type)
-                    && position.distTo(constructionOrder.getPositionToBuildCenter()) <= radius) {
+            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                    && constructionOrder.buildingType().equals(type)
+                    && position.distTo(constructionOrder.positionToBuildCenter()) <= radius) {
                 total++;
             }
         }
@@ -184,25 +184,25 @@ public class AConstructionRequests {
         return total;
     }
 
-    public static int countNotFinishedConstructionsOfType(AUnitType type) {
+    public static int countNotFinishedOfType(AUnitType type) {
         return Select.ourUnfinished().ofType(type).count()
-                + countNotStartedConstructionsOfType(type);
+                + countNotStartedOfType(type);
     }
 
-    public static int countNotFinishedConstructionsOfTypeInRadius(AUnitType type, double radius, APosition position) {
+    public static int countNotFinishedOfTypeInRadius(AUnitType type, double radius, APosition position) {
         return Select.ourUnfinished().ofType(type).inRadius(radius, position).count()
-                + countNotStartedConstructionsOfTypeInRadius(type, radius, position);
+                + countNotStartedOfTypeInRadius(type, radius, position);
     }
 
     /**
      * Returns how many buildings (or Overlords) of given type are currently being produced (started, but not
      * finished).
      */
-    public static int countPendingConstructionsOfType(AUnitType type) {
+    public static int countPendingOfType(AUnitType type) {
         int total = 0;
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                    && constructionOrder.getBuildingType().equals(type)) {
+            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                    && constructionOrder.buildingType().equals(type)) {
                 total++;
             }
         }
@@ -231,16 +231,16 @@ public class AConstructionRequests {
         }
 
         return Select.ourOfTypeIncludingUnfinished(type).count()
-                + countNotFinishedConstructionsOfType(type);
+                + countNotFinishedOfType(type);
     }
 
-    public static int countExistingAndPlannedConstructionsInRadius(AUnitType type, double radius, APosition position) {
+    public static int countExistingAndPlannedInRadius(AUnitType type, double radius, APosition position) {
         if (!type.isBuilding()) {
             throw new RuntimeException("Can only use it for buildings: " + type);
         }
 
         return Select.ourOfTypeIncludingUnfinished(type).inRadius(radius, position).count()
-                + countNotFinishedConstructionsOfTypeInRadius(type, radius, position);
+                + countNotFinishedOfTypeInRadius(type, radius, position);
     }
 
     /**
@@ -248,21 +248,21 @@ public class AConstructionRequests {
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
      * then, we can e.g. "get not started Terran Barracks constructions".
      */
-    public static ArrayList<ConstructionOrder> getNotStartedConstructionsOfType(AUnitType type) {
+    public static ArrayList<ConstructionOrder> getNotStartedOfType(AUnitType type) {
         ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                    && (type == null || constructionOrder.getBuildingType().equals(type))) {
+            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                    && (type == null || constructionOrder.buildingType().equals(type))) {
                 notStarted.add(constructionOrder);
             }
         }
         return notStarted;
     }
 
-    public static ArrayList<ConstructionOrder> getNotStartedConstructions() {
+    public static ArrayList<ConstructionOrder> getNotStarted() {
         ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
         for (ConstructionOrder constructionOrder : constructionOrders) {
-            if (constructionOrder.getStatus() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 notStarted.add(constructionOrder);
             }
         }
@@ -282,12 +282,12 @@ public class AConstructionRequests {
     /**
      * @return first int is number minerals, second int is number of gas required.
      */
-    public static int[] resourcesNeededForNotStartedConstructions() {
+    public static int[] resourcesNeededForNotStarted() {
         int mineralsNeeded = 0;
         int gasNeeded = 0;
-        for (ConstructionOrder constructionOrder : getNotStartedConstructionsOfType(null)) {
-            mineralsNeeded += constructionOrder.getBuildingType().getMineralPrice();
-            gasNeeded += constructionOrder.getBuildingType().getGasPrice();
+        for (ConstructionOrder constructionOrder : getNotStartedOfType(null)) {
+            mineralsNeeded += constructionOrder.buildingType().getMineralPrice();
+            gasNeeded += constructionOrder.buildingType().getGasPrice();
         }
         int[] result = {mineralsNeeded, gasNeeded};
         return result;
@@ -301,7 +301,7 @@ public class AConstructionRequests {
      * Top-priority request.
      */
     public static void removeAllNotStarted() {
-        for (Iterator<ConstructionOrder> iterator = AConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
+        for (Iterator<ConstructionOrder> iterator = ConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
             ConstructionOrder constructionOrder =  iterator.next();
             if (!constructionOrder.hasStarted()) {
                 constructionOrder.cancel();
@@ -309,8 +309,8 @@ public class AConstructionRequests {
         }
     }
 
-    public static boolean hasNotStartedConstructionNear(AUnitType building, HasPosition position, double inRadius) {
-        for (ConstructionOrder order : getNotStartedConstructionsOfType(building)) {
+    public static boolean hasNotStartedNear(AUnitType building, HasPosition position, double inRadius) {
+        for (ConstructionOrder order : getNotStartedOfType(building)) {
             if (order.positionToBuild() != null && position.distToLessThan(position, inRadius)) {
                 return true;
             }

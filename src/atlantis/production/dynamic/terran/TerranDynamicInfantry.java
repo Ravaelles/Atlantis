@@ -34,6 +34,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return;
         }
 
+        if (!AGame.canAffordWithReserved(60, 30)) {
+            return;
+        }
+
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
             if (Count.medics() >= 4 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
@@ -79,12 +83,12 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return;
         }
 
-        if (Count.ourCombatUnits() > 25) {
+//        if (Count.ourCombatUnits() > 25) {
             if (!AGame.canAffordWithReserved(80, 0)) {
 //                System.out.println("Marines - E");
                 return;
             }
-        }
+//        }
 
 //        if (
 //                A.hasGas(30)

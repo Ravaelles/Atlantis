@@ -20,7 +20,7 @@ import jbweb.*;
  */
 public class AMap {
 
-    private static BWEM bwem = null;
+    protected static BWEM bwem = null;
 //    private static final BWTA bwta = null;
 
     private static Cache<Object> cache = new Cache<>();
@@ -50,19 +50,7 @@ public class AMap {
         bwem.getMap().assignStartingLocationsToSuitableBases();
 
         // Init JBWEB - needed for calculating ground distance
-//        if (!A.isUms() && Select.main() != null && Count.workers() == 4) {
-        try {
-            JBWEB.onStart(Atlantis.game(), bwem);
-            Blocks.findBlocks();
-            Stations.findStations();
-            Wall wall = Walls.createTWall();
-            System.out.println("Walls.getWalls() = " + Walls.getWalls());
-            System.out.println("Wall = " + wall);
-        } catch (Exception e) {
-            System.err.println("JBWEB exception: " + e.getMessage());
-//            AGame.setUmsMode();
-        }
-//        }
+        InitJBWEB.init();
 
         System.out.println("OK.");
     }

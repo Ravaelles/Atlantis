@@ -85,6 +85,15 @@ public class ATargetingCrucial extends AEnemyTargeting {
             return target;
         }
 
+        target = enemyUnits.clone()
+                .ofType(AUnitType.Zerg_Lurker)
+                .effVisible()
+                .inShootRangeOf(1.4, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
         // =========================================================
         // MELEE should attack CLOSE targets if too clustered
 

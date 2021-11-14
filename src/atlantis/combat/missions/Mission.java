@@ -5,6 +5,7 @@ import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
@@ -35,6 +36,10 @@ public abstract class Mission {
 
     // Template method
     public boolean allowsToAttackDefensiveBuildings(AUnit unit, AUnit defensiveBuilding) {
+        return false;
+    }
+
+    public boolean forcesUnitToFight(AUnit unit, Units enemies) {
         return false;
     }
 

@@ -1303,25 +1303,33 @@ public class AUnitType implements Comparable<AUnitType> {
 
     public boolean isZerg() {
         return (boolean) cache.get(
-                "isZerg",
-                -1,
-                () -> ut.getRace().equals(Race.Zerg)
+            "isZerg",
+            -1,
+            () -> ut.getRace().equals(Race.Zerg)
         );
     }
 
     public boolean isMutalisk() {
         return (boolean) cache.get(
-                "isMutalisk",
-                -1,
-                () -> is(Zerg_Mutalisk)
+            "isMutalisk",
+            -1,
+            () -> is(Zerg_Mutalisk)
         );
     }
 
     public boolean isZealot() {
         return (boolean) cache.get(
-                "isZealot",
-                -1,
-                () -> is(Protoss_Zealot)
+            "isZealot",
+            -1,
+            () -> is(Protoss_Zealot)
+        );
+    }
+
+    public boolean isMissileTurret() {
+        return (boolean) cache.get(
+            "isMissileTurret",
+            -1,
+            () -> is(Terran_Missile_Turret)
         );
     }
 }

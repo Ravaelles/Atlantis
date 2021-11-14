@@ -2,7 +2,7 @@ package atlantis.production.orders;
 
 import atlantis.AGame;
 import atlantis.combat.missions.Mission;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.units.AUnitType;
@@ -31,7 +31,7 @@ public abstract class CurrentProductionQueue {
      */
     public static ArrayList<ProductionOrder> thingsToProduce(ProductionQueueMode mode) {
         ArrayList<ProductionOrder> queue = new ArrayList<>();
-        int[] resourcesNeededForNotStartedBuildings = AConstructionRequests.resourcesNeededForNotStartedConstructions();
+        int[] resourcesNeededForNotStartedBuildings = ConstructionRequests.resourcesNeededForNotStarted();
         ProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         ProductionQueue.gasNeeded = resourcesNeededForNotStartedBuildings[1];
 

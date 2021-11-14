@@ -49,7 +49,7 @@ public class GameSpeed {
     }
 
     public static void checkIfNeedToSlowDown() {
-//        if (true) { return; }
+        if (true) { return; }
 
         if (!oneTimeSlowdownUsed && AGame.now() <= 1) {
             Atlantis.game().setGUI(frameSkip <= 30);

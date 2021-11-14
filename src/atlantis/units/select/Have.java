@@ -1,8 +1,7 @@
 package atlantis.units.select;
 
-import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnitType;
 
@@ -27,7 +26,7 @@ public class Have {
     public static boolean existingOrPlanned(AUnitType building, HasPosition position, double inRadius) {
         assert building.isBuilding();
 
-        if (AConstructionRequests.hasNotStartedConstructionNear(building, position, inRadius)) {
+        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) {
             return true;
         }
 
@@ -41,7 +40,7 @@ public class Have {
             return true;
         }
 
-        if (AConstructionRequests.hasNotStartedConstructionNear(building, position, inRadius)) {
+        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) {
             return true;
         }
 

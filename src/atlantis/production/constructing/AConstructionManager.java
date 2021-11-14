@@ -21,9 +21,9 @@ public class AConstructionManager {
      * finished objects etc.
      */
     public static void update() {
-        for (Iterator<ConstructionOrder> iterator = AConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
+        for (Iterator<ConstructionOrder> iterator = ConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
             ConstructionOrder constructionOrder =  iterator.next();
-            checkForConstructionStatusChange(constructionOrder, constructionOrder.getConstruction());
+            checkForConstructionStatusChange(constructionOrder, constructionOrder.construction());
             checkForBuilderStatusChange(constructionOrder);
             handleConstructionUnderAttack(constructionOrder);
             handleConstructionThatLooksBugged(constructionOrder);
@@ -40,19 +40,19 @@ public class AConstructionManager {
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
         if (We.terran()) {
-            AUnit builder = constructionOrder.getBuilder();
+            AUnit builder = constructionOrder.builder();
 
             if (
                     (builder == null || !builder.exists() || !builder.isAlive())
             ) {
                 constructionOrder.assignOptimalBuilder();
 
-                builder = constructionOrder.getBuilder();
+                builder = constructionOrder.builder();
                 if (
-                        builder != null && constructionOrder.getConstruction() != null
-                                && constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
+                        builder != null && constructionOrder.construction() != null
+                                && constructionOrder.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
                 ) {
-                    builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(constructionOrder.getConstruction());
+                    builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(constructionOrder.construction());
                     builder.setTooltip("Resume");
                 }
             }
@@ -70,7 +70,7 @@ public class AConstructionManager {
 
         if (
                 !We.zerg()
-                && order.getStatus() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                && order.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
                 && order.startedAgo() >= 30
                 && (building == null || !building.isAlive())
         ) {
@@ -80,7 +80,7 @@ public class AConstructionManager {
         }
 
         // =========================================================
-        AUnit builder = order.getBuilder();
+        AUnit builder = order.builder();
 
         // ...change builder into building (it just happens, yeah, weird stuff)
         if (building == null || !building.exists()) {
@@ -125,9 +125,9 @@ public class AConstructionManager {
             // Finished: building is completed, remove the construction order object
             if (building.isCompleted()) {
                 order.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
-                AConstructionRequests.removeOrder(order);
+                ConstructionRequests.removeOrder(order);
             } // In progress
-            else if (order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+            else if (order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                 order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
         }
@@ -136,7 +136,7 @@ public class AConstructionManager {
         else if (builder != null && !builder.isMoving()) {
             if (order.positionToBuild() == null) {
                 APosition positionToBuild = APositionFinder.getPositionForNew(
-                        order.getBuilder(), order.getBuildingType(), order
+                        order.builder(), order.buildingType(), order
                 );
                 order.setPositionToBuild(positionToBuild);
             }
@@ -144,7 +144,7 @@ public class AConstructionManager {
 
         // =========================================================
         // Check if both building and builder are destroyed
-        if (order.getBuilder() == null && order.getConstruction() == null) {
+        if (order.builder() == null && order.construction() == null) {
             order.cancel();
         }
     }
@@ -158,17 +158,17 @@ public class AConstructionManager {
      */
     public static boolean isBuilder(AUnit worker) {
         if (worker.isConstructing() || 
-                (!AGame.isPlayingAsProtoss() && AConstructionRequests.getConstructionOrderFor(worker) != null)) {
+                (!AGame.isPlayingAsProtoss() && ConstructionRequests.getConstructionOrderFor(worker) != null)) {
             return true;
         }
 
-        for (ConstructionOrder constructionOrder : AConstructionRequests.constructionOrders) {
-            if (worker.equals(constructionOrder.getBuilder())) {
+        for (ConstructionOrder constructionOrder : ConstructionRequests.constructionOrders) {
+            if (worker.equals(constructionOrder.builder())) {
                 
                 // Pending Protoss buildings allow builder to go away
                 // Terran and Zerg need to use the worker until construction is finished
                 return !AGame.isPlayingAsProtoss() || !ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                        .equals(constructionOrder.getStatus());
+                        .equals(constructionOrder.status());
             }
         }
 
@@ -184,13 +184,13 @@ public class AConstructionManager {
      */
     private static void handleZergConstructionsWhichBecameBuildings() {
         if (AGame.isPlayingAsZerg()) {
-            ArrayList<ConstructionOrder> allOrders = AConstructionRequests.getAllConstructionOrders();
+            ArrayList<ConstructionOrder> allOrders = ConstructionRequests.getAllConstructionOrders();
             if (!allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {
-                    AUnit builder = constructionOrder.getBuilder();
-                    if (constructionOrder.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                    AUnit builder = constructionOrder.builder();
+                    if (constructionOrder.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         if (builder != null) {
-                            if (builder.is(constructionOrder.getBuildingType())) {
+                            if (builder.is(constructionOrder.buildingType())) {
                                 constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
                             }
                         }
@@ -201,7 +201,7 @@ public class AConstructionManager {
     }
 
     private static void handleConstructionUnderAttack(ConstructionOrder order) {
-        AUnit building = order.getConstruction();
+        AUnit building = order.construction();
         
         // If unfinished building is under attack
         if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
@@ -218,25 +218,25 @@ public class AConstructionManager {
     }
 
     private static void handleConstructionThatLooksBugged(ConstructionOrder order) {
-        if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+        if (order.status() != ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
             return;
         }
 
-        if (order.getBuilder() == null) {
+        if (order.builder() == null) {
             if (Count.workers() > 1) {
-                System.out.println("Weird case, " + order.getBuildingType() + " has no builder. Cancel.");
+                System.out.println("Weird case, " + order.buildingType() + " has no builder. Cancel.");
             }
             order.cancel();
             return;
         }
 
         int timeout = 30 * (
-                (order.getBuildingType().isBase() || order.getBuildingType().isCombatBuilding() ? 40 : 15)
-                + (int) (1.7 * order.positionToBuild().distTo(order.getBuilder())
+                (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 40 : 15)
+                + (int) (1.7 * order.positionToBuild().distTo(order.builder())
         ));
 
         if (AGame.getTimeFrames() - order.timeOrdered() > timeout) {
-            System.out.println("Cancel construction of " + order.getBuildingType());
+            System.out.println("Cancel construction of " + order.buildingType());
             order.cancel();
         }
     }
@@ -244,9 +244,9 @@ public class AConstructionManager {
     public static ArrayList<AUnit> builders() {
         ArrayList<AUnit> units = new ArrayList<>();
 
-        for (ConstructionOrder order : AConstructionRequests.constructionOrders) {
-            if (order.getBuilder() != null && order.getBuilder().isAlive()) {
-                units.add(order.getBuilder());
+        for (ConstructionOrder order : ConstructionRequests.constructionOrders) {
+            if (order.builder() != null && order.builder().isAlive()) {
+                units.add(order.builder());
             }
         }
 

@@ -26,7 +26,12 @@ public class Positions<T extends HasPosition> {
     private HashMap<T, Double> positionValues;
 
     // =====================================================================
+
     public Positions() { }
+
+    public Positions(Collection<T> positionsToAdd) {
+        addPositions(positionsToAdd);
+    }
 
     // =====================================================================
     // Basic functionality methods

@@ -25,8 +25,8 @@ public class APositionFinder {
      * Returns build position for next building of given type.
      */
     public static APosition getPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
-        HasPosition near = constructionOrder != null ? constructionOrder.getNearTo() : null;
-        double maxDistance = constructionOrder != null ? constructionOrder.getMaxDistance() : 35;
+        HasPosition near = constructionOrder != null ? constructionOrder.nearTo() : null;
+        double maxDistance = constructionOrder != null ? constructionOrder.maxDistance() : 35;
         return getPositionForNew(builder, building, constructionOrder, near, maxDistance);
     }
 

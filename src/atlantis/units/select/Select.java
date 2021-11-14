@@ -352,6 +352,37 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
+    public static Selection ourIncludingUnfinishedOfType(AUnitType type) {
+        String cachePath;
+        return cache.get(
+                cachePath = "ourIncludingUnfinishedOfType:" + type.id(),
+                microCacheForFrames,
+                () -> {
+                    return new Selection(ourOfType(type).list(), cachePath);
+                }
+        );
+    }
+
+    /**
+     * Returns all:
+     * - finished units,
+     * - unfinished units,
+     * - nont started constructions
+     */
+//    public static Selection ourOfTypeIncludingPlanned(AUnitType type) {
+//        String cachePath;
+//        return cache.get(
+//                cachePath = "ourOfTypeIncludingPlanned:" + type.id(),
+//                microCacheForFrames,
+//                () -> {
+//                    List<AUnit> data = new ArrayList<>(ourUnits());
+//                    data.addA
+//
+//                    return new Selection(data, cachePath);
+//                }
+//        );
+//    }
+
     /**
      * Selects our unfinished units.
      */

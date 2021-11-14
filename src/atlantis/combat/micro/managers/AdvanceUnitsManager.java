@@ -92,13 +92,13 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
     private static boolean handleTerranAdvance(AUnit unit) {
         if (unit.isInfantry() && !unit.isMedic() && Count.medics() >= 4) {
-            if (Select.enemyCombatUnits().inRadius(6, unit).isNotEmpty()) {
-                return false;
-            }
+//            if (Select.enemyCombatUnits().inRadius(7, unit).isEmpty()) {
+//                return false;
+//            }
 
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
-            if (medic != null && medic.distToMoreThan(unit, 6)) {
-                if (Select.ourCombatUnits().inRadius(5, unit).atMost(3)) {
+            if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
+                if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
                     return unit.move(medic, UnitActions.MOVE, "ToMedic");
                 }
             }
@@ -127,6 +127,17 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 //                "ToTank"
 //        );
 //        return true;
+    }
+
+    private static double maxDistToMedic(AUnit unit) {
+        if (unit.isMarine()) {
+            return 8;
+        }
+        else if (unit.isFirebat()) {
+            return 2.6;
+        }
+
+        return 8;
     }
 
 }

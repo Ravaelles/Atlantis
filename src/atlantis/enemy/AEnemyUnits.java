@@ -6,6 +6,7 @@ import atlantis.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.Cache;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 public class AEnemyUnits {
 
     protected static Map<AUnit, AFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
+    private static Cache<Object> cache = new Cache<>();
 
     // =========================================================
 
@@ -100,23 +102,32 @@ public class AEnemyUnits {
     }
     
     public static AFoggedUnit nearestEnemyBuilding() {
-        AUnit ourMainBase = Select.main();
-        AFoggedUnit best = null;
-        if (ourMainBase != null) {
-            double minDist = 999999;
-            
-            for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
-                if (enemy.type().isBuilding() && enemy.position() != null) {
-                    double dist = ourMainBase.distTo(enemy.position());
-                    if (dist < minDist) {
-                        minDist = dist;
-                        best = null;
+        return (AFoggedUnit) cache.get(
+            "nearestEnemyBuilding",
+            50,
+            () -> {
+                AUnit ourMainBase = Select.main();
+                AFoggedUnit best = null;
+                if (ourMainBase != null) {
+                    double minDist = 999999;
+
+                    for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
+//                System.out.println("enemy = " + enemy);
+//                System.out.println("enemy.position() = " + enemy.position());
+//                System.out.println("ourMainBase.groundDistance(enemy.position() = " + ourMainBase.groundDistance(enemy.position()));
+                        if (enemy.type().isBuilding() && enemy.position() != null) {
+                            double dist = ourMainBase.groundDistance(enemy.position());
+                            if (dist < minDist) {
+                                minDist = dist;
+                                best = enemy;
+                            }
+                        }
                     }
                 }
+
+                return best; // Can be null
             }
-        }
-        
-        return best; // Can be null
+        );
     }
     
     public static Collection<AFoggedUnit> discoveredAndAliveUnits() {

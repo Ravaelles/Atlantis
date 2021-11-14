@@ -216,53 +216,37 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         }
     }
 
+    public APosition makeValidFarFromBounds() {
+        return makeValidFarFromBounds(PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
+    }
+
     /**
      * Ensures that position's [x,y] are valid map coordinates and are "quite" far from map boundaries.
      */
-    public APosition makeValidFarFromBounds() {
+    public APosition makeValidFarFromBounds(int maxPixelsAwayFromEdges) {
         boolean somethingChanged = false;
         int px = p.getX();
         int py = p.getY();
 
         // =========================================================
 
-        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
-            px = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
+        if (px < maxPixelsAwayFromEdges) {
+            px = maxPixelsAwayFromEdges;
             somethingChanged = true;
         }
-        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            px = 32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
-            somethingChanged = true;
-        }
-
-        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
-            py = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
-            somethingChanged = true;
-        }
-        else if (py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            py = 32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
+        else if (px > (32 * AMap.getMapWidthInTiles() - maxPixelsAwayFromEdges)) {
+            px = 32 * AMap.getMapWidthInTiles() - maxPixelsAwayFromEdges;
             somethingChanged = true;
         }
 
-//        APainter.paintCircle(new HasPosition(
-//                32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
-//                32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
-//        ), 32, Color.Yellow);
-//
-//        APainter.paintCircle(new HasPosition(
-//                32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
-//                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
-//        ), 32, Color.Yellow);
-//
-//        APainter.paintCircle(new HasPosition(
-//                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
-//                32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
-//        ), 32, Color.Yellow);
-//
-//        APainter.paintCircle(new HasPosition(
-//                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE,
-//                PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE
-//        ), 32, Color.Yellow);
+        if (py < maxPixelsAwayFromEdges) {
+            py = maxPixelsAwayFromEdges;
+            somethingChanged = true;
+        }
+        else if (py > (32 * AMap.getMapHeightInTiles() - maxPixelsAwayFromEdges)) {
+            py = 32 * AMap.getMapHeightInTiles() - maxPixelsAwayFromEdges;
+            somethingChanged = true;
+        }
 
         // =========================================================
 
@@ -309,13 +293,12 @@ public class APosition extends Position implements HasPosition, Comparable<Point
 //        if (!(obj instanceof APosition) && !(obj instanceof Position)) {
 //            return false;
 //        }
-        if (!(obj instanceof Point)) {
+        if (!(obj instanceof HasPosition)) {
             return false;
         }
         
-        int otherX = ((Point) obj).getX();
-        int otherY = ((Point) obj).getY();
-        final Position other = (Position) obj;
+        int otherX = ((HasPosition) obj).x();
+        int otherY = ((HasPosition) obj).y();
         return this.getX() == otherX && this.getY() == otherY;
     }
     

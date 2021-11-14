@@ -2,7 +2,7 @@ package atlantis.production.dynamic;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -46,7 +46,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         if (
             numberOfBases >= 2
             && numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350)
-            && AConstructionRequests.countNotStartedConstructionsOfType(AtlantisConfig.GAS_BUILDING) == 0
+            && ConstructionRequests.countNotStartedOfType(AtlantisConfig.GAS_BUILDING) == 0
             && hasABaseWithFreeGeyser()
         ) {
             AddToQueue.withTopPriority(AtlantisConfig.GAS_BUILDING);
@@ -115,7 +115,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     }
 
     protected static void buildNow(AUnitType type, boolean onlyOneAtTime) {
-        if (onlyOneAtTime && AConstructionRequests.hasRequestedConstructionOf(type)) {
+        if (onlyOneAtTime && ConstructionRequests.hasRequestedConstructionOf(type)) {
             return;
         }
 

@@ -3,7 +3,7 @@ package atlantis.production.requests;
 import atlantis.AtlantisConfig;
 import atlantis.position.HasPosition;
 import atlantis.production.Requirements;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.position.APosition;
 import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.decisions.OurStrategicBuildings;
@@ -42,7 +42,7 @@ public class AAntiAirBuildingRequests {
 
         if (nearTo == null) {
             for (AUnit base : Select.ourBases().listUnits()) {
-                int numberOfAntiAirBuildingsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
+                int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
                         building, 8, base.position()
                 );
 
@@ -65,11 +65,11 @@ public class AAntiAirBuildingRequests {
      */
     public static void requestAntiAirQuick(APosition where) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
-//        int antiAirBuildings = AConstructionRequests.countExistingAndPlannedConstructions(building);
+//        int antiAirBuildings = ConstructionRequests.countExistingAndPlannedConstructions(building);
 
         // === Ensure we have required units ========================================
 
-        int requiredParents = AConstructionRequests.countExistingAndNotFinished(building.getWhatIsRequired());
+        int requiredParents = ConstructionRequests.countExistingAndNotFinished(building.getWhatIsRequired());
         if (requiredParents == 0) {
             AddToQueue.withHighPriority(building.getWhatIsRequired());
             return;
@@ -78,7 +78,7 @@ public class AAntiAirBuildingRequests {
         // === Protect every base ==========================================
 
         for (AUnit base : Select.ourBases().listUnits()) {
-            int numberOfAntiAirBuildingsNearBase = AConstructionRequests.countExistingAndPlannedConstructionsInRadius(
+            int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
                     building, 8, base.position()
             );
 

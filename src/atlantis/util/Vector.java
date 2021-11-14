@@ -41,12 +41,12 @@ public class Vector extends Vector2d {
         return new Vector(x1, y1);
     }
 
-    public Vector addToLength(int extraLength) {
+    public Vector addLength(int deltaLength) {
         double length = length();
 
         Vector vector = new Vector(this);
         vector.normalize();
-        vector.scale(length + extraLength);
+        vector.scale(length + deltaLength);
 
         return vector;
 

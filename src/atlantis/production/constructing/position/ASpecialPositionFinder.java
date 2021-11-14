@@ -58,17 +58,17 @@ public class ASpecialPositionFinder {
      * built.
      */
     public static APosition findPositionForBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        String modifier = constructionOrder.getProductionOrder() != null ? 
-                constructionOrder.getProductionOrder().getModifier() : null;
+        String modifier = constructionOrder.productionOrder() != null ?
+                constructionOrder.productionOrder().getModifier() : null;
         
         System.err.println("");
-        System.err.println(constructionOrder.getProductionOrder());
-        System.err.println(constructionOrder.getMaxDistance());
+        System.err.println(constructionOrder.productionOrder());
+        System.err.println(constructionOrder.maxDistance());
         System.err.println("=== modifier /" + modifier + "/ ===");
         if (modifier != null) {
             if (modifier.equals(NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
                 System.err.println("A");
-                if (constructionOrder.getMaxDistance() < 0) {
+                if (constructionOrder.maxDistance() < 0) {
                     constructionOrder.setMaxDistance(40);
                 }
                 return findPositionForBase_nearMainBase(building, builder, constructionOrder);
@@ -76,7 +76,7 @@ public class ASpecialPositionFinder {
             else if (modifier.equals(AT_NATURAL)) {
                 System.err.println("B");
 
-                if (constructionOrder.getMaxDistance() < 0) {
+                if (constructionOrder.maxDistance() < 0) {
                     constructionOrder.setMaxDistance(0);
                 }
                 return findPositionForBase_natural(building, builder, constructionOrder);
@@ -116,7 +116,7 @@ public class ASpecialPositionFinder {
 //        System.out.println(builder + " / " + building + " / " +  APosition.createFrom(baseLocationToExpand.getPosition()));
 
         return APositionFinder.findStandardPosition(
-                builder, building, near, constructionOrder.getMaxDistance()
+                builder, building, near, constructionOrder.maxDistance()
         );
     }
 
@@ -127,7 +127,7 @@ public class ASpecialPositionFinder {
         constructionOrder.setNearTo(near);
         constructionOrder.setMaxDistance(40);
         
-        return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
+        return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.maxDistance());
     }
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
@@ -139,7 +139,7 @@ public class ASpecialPositionFinder {
         constructionOrder.setNearTo(near);
         constructionOrder.setMaxDistance(4);
         
-        return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.getMaxDistance());
+        return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.maxDistance());
     }
 
 }

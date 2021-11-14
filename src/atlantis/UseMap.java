@@ -74,13 +74,18 @@ public class UseMap {
         // vs. ZERG
 
         if (activeMap().equals("ums/vsGosuComputer.scx")) {
-            if (!AEnemyUnits.hasDiscoveredEnemyBuilding()) {
-                GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(50);
-            } else if (GameSpeed.frameSkip >= 40) {
-                GameSpeed.changeSpeedTo(1);
-                GameSpeed.changeFrameSkipTo(0);
-            }
+//            boolean canBeFast = Count.turrets() < 3;
+//            int frameSkipFast = 90;
+////            GameSpeed.changeSpeedTo(1);
+//            if (A.seconds() <= 300) {
+//                if (canBeFast && GameSpeed.frameSkip < frameSkipFast) {
+//                    GameSpeed.changeSpeedTo(0);
+//                    GameSpeed.changeFrameSkipTo(frameSkipFast);
+//                } else if (!canBeFast && GameSpeed.frameSkip >= frameSkipFast) {
+//                    GameSpeed.changeSpeedTo(0);
+//                    GameSpeed.changeFrameSkipTo(0);
+//                }
+//            }
         }
 
         // =========================================================

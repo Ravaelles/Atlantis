@@ -128,6 +128,10 @@ public class ARepairCommander {
             assignProtectorsFor(tanks.get(i % tanks.size()), 1);
         }
 
+        if (ARepairAssignments.countTotalProtectors() == 0) {
+            assignProtectorsFor(Select.ourOfType(AUnitType.Terran_Medic).last(), 1);
+        }
+
 //        if (!Missions.isGlobalMissionAttack() && !Missions.isGlobalMissionContain()) {
 //            return;
 //        }
@@ -177,6 +181,10 @@ public class ARepairCommander {
     // =========================================================
     
     protected static void assignProtectorsFor(AUnit unitToProtect, int numberOfProtectorsToAssign) {
+        if (unitToProtect == null) {
+            return;
+        }
+
         for (int i = 0; i < numberOfProtectorsToAssign; i++) {
             AUnit worker = ARepairerManager.defineBestRepairerFor(unitToProtect, false);
             if (worker != null) {

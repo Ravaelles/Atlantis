@@ -1,24 +1,23 @@
 package atlantis.map;
 
-import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.util.Vector;
-import bwapi.Color;
 
 import java.util.ArrayList;
 
 public class ARegionBoundaryCalculator {
 
+    private static final double MIN_DIST_BETWEEN_POINTS = 1.8;
+    private static APosition lastAdded = null;
+
     public static ArrayList<ARegionBoundary> forRegion(ARegion region) {
         ArrayList<ARegionBoundary> boundaries = new ArrayList<>();
         APosition center = region.center();
-
-        Vector vector = new Vector(96, 0);
-        ARegionBoundary boundary;
+        Vector initVector = new Vector(96, 0);
 
         double angle = 0;
         while (angle < 2 * 3.14) {
-            Vector rotated = vector.rotate(angle);
+            Vector rotated = initVector.rotate(angle);
             createBoundaryFromVector(region, center, rotated, boundaries);
 
             angle += 0.14;
@@ -30,7 +29,6 @@ public class ARegionBoundaryCalculator {
     private static void createBoundaryFromVector(ARegion region, APosition center, Vector vector, ArrayList<ARegionBoundary> boundaries) {
         APosition position;
         APosition lastBuildable = null;
-//        APainter.paintCircleFilled(position, 4, Color.White);
 
         do {
             position = center.translateByVector(vector).makeValidFarFromBounds();
@@ -39,20 +37,19 @@ public class ARegionBoundaryCalculator {
                 lastBuildable = position;
             }
 
-            vector = vector.addToLength(48);
+            vector = vector.addLength(48);
         } while (position.isWalkable());
 
         if (lastBuildable != null) {
-            boundaries.add(toBoundary(region, lastBuildable));
+            if (lastAdded == null || lastAdded.distToMoreThan(lastBuildable, MIN_DIST_BETWEEN_POINTS)) {
+                boundaries.add(toBoundary(region, lastBuildable));
+                lastAdded = lastBuildable;
+            }
         }
     }
 
     private static ARegionBoundary toBoundary(ARegion region, APosition position) {
         return ARegionBoundary.create(region, position);
     }
-
-//    private static void paintVector(Vector vector, APosition position) {
-//        APainter.paintLine(position, (int) vector.x, (int) vector.y, Color.Teal);
-//    }
 
 }

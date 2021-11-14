@@ -3,7 +3,7 @@ package atlantis.dedicated.protoss;
 
 import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.position.APosition;
 import atlantis.tech.SpellCoordinator;
 import atlantis.units.AUnit;
@@ -188,7 +188,7 @@ public class ProtossHighTemplar {
             return false;
         }
 
-        APosition center = Squad.alpha().center();
+        APosition center = Alpha.get().center();
         if (center != null) {
             if (Select.our().inRadius(0.3, highTemplar).atLeast(3)) {
                 return highTemplar.moveAwayFrom(

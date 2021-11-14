@@ -1,7 +1,7 @@
 package atlantis.production;
 
 import atlantis.AGame;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.units.AUnit;
@@ -55,7 +55,7 @@ public class AbstractDynamicUnits extends Helpers {
         }
 
         if (onlyOneAtTime) {
-            if (type.isBuilding() && AConstructionRequests.hasRequestedConstructionOf(type)) {
+            if (type.isBuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) {
                 return false;
             }
         }

@@ -2,7 +2,7 @@ package atlantis.buildings.managers;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.production.constructing.AConstructionRequests;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.BuildOrderSettings;
 import atlantis.production.orders.CurrentBuildOrder;
@@ -68,7 +68,7 @@ public class ASupplyManager {
     }
 
     private static boolean requestedConstructionOfSupply() {
-        return AConstructionRequests.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY) > 0;
+        return ConstructionRequests.countNotStartedOfType(AtlantisConfig.SUPPLY) > 0;
     }
 
     private static int requestedConstructionsOfSupply() {
@@ -79,7 +79,7 @@ public class ASupplyManager {
 
         return Count.inProductionOrInQueue(AtlantisConfig.SUPPLY);
 
-//        return AConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
+//        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
 //
 //        // =========================================================
 //        // Terran + Protoss

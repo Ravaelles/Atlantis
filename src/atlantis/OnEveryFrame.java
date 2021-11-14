@@ -1,8 +1,13 @@
 package atlantis;
 
+import atlantis.enemy.AEnemyUnits;
+import atlantis.information.AFoggedUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import jbweb.Blocks;
+import jbweb.Stations;
+import jbweb.Walls;
 
 public class OnEveryFrame {
 
@@ -29,7 +34,7 @@ public class OnEveryFrame {
         // JBWEB building positions (blocks)
 //        Blocks.draw();
 //        Stations.draw();
-//        Walls.draw();
+        Walls.draw();
 
 //        if (AGame.now() >= 5) {
 //            Wall wall = Walls.createTWall();
@@ -60,6 +65,11 @@ public class OnEveryFrame {
 //        }
 
 //        for (AFoggedUnit unit : AEnemyUnits.discoveredAndAliveUnits()) {
+//            if (unit.isBuilding()) {
+//                System.out.println(unit.shortName() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
+//            }
+//        }
+//        for (AFoggedUnit unit : AEnemyUnits.()) {
 //            System.out.println(unit.shortName() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //        }
 
@@ -69,11 +79,11 @@ public class OnEveryFrame {
 
 //        System.out.println(AGame.gas() + " // " + AGame.minerals());
 
-        for (AUnit unit : Select.enemies(AUnitType.Zerg_Lurker).list()) {
-            if (!unit.effVisible() || !unit.isDetected()) {
-                System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloa=" + unit.effCloaked() + " // det=" + unit.isDetected());
-            }
-        }
+//        for (AUnit unit : Select.enemies(AUnitType.Zerg_Lurker).list()) {
+//            if (!unit.effVisible() || !unit.isDetected()) {
+//                System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloa=" + unit.effCloaked() + " // det=" + unit.isDetected());
+//            }
+//        }
 //        for (AUnit unit : Select.enemies(AUnitType.Zerg_Hydralisk).list()) {
 //            System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloaked=" + unit.effCloaked());
 //            break;

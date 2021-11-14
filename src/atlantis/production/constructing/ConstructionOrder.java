@@ -78,7 +78,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
             builder = null;
         }
         
-        AConstructionRequests.removeOrder(this);
+        ConstructionRequests.removeOrder(this);
     }
     
     // =========================================================
@@ -117,11 +117,11 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     
     // =========================================================
     
-    public APosition getPositionToBuildCenter() {
+    public APosition positionToBuildCenter() {
         APosition positionToBuild = positionToBuild();
         if (positionToBuild != null) {
             return positionToBuild.translateByPixels(
-                    getBuildingType().dimensionLeft(), getBuildingType().dimensionUp()
+                    buildingType().dimensionLeft(), buildingType().dimensionUp()
             );
         }
         else {
@@ -129,7 +129,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         }
     }
     
-    public AUnitType getBuildingType() {
+    public AUnitType buildingType() {
         return buildingType;
     }
 
@@ -137,7 +137,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.buildingType = buildingType;
     }
 
-    public AUnit getBuilder() {
+    public AUnit builder() {
         return builder;
     }
 
@@ -145,7 +145,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.builder = builder;
     }
 
-    public ConstructionOrderStatus getStatus() {
+    public ConstructionOrderStatus status() {
         return status;
     }
 
@@ -165,7 +165,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.positionToBuild = positionToBuild;
     }
 
-    public AUnit getConstruction() {
+    public AUnit construction() {
         return construction;
     }
 
@@ -173,11 +173,11 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.construction = construction;
     }
 
-    public int getID() {
+    public int id() {
         return ID;
     }
 
-    public ProductionOrder getProductionOrder() {
+    public ProductionOrder productionOrder() {
         return productionOrder;
     }
 
@@ -185,7 +185,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.productionOrder = productionOrder;
     }
 
-    public HasPosition getNearTo() {
+    public HasPosition nearTo() {
         return near;
     }
 
@@ -193,7 +193,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.near = near;
     }
 
-    public double getMaxDistance() {
+    public double maxDistance() {
         return maxDistance;
     }
 
@@ -210,6 +210,6 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     }
 
     public boolean hasStarted() {
-        return !getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED);
+        return !status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED);
     }
 }
