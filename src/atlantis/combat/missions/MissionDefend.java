@@ -71,14 +71,7 @@ public class MissionDefend extends Mission {
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-
-
-//        if (unit.isRanged() || enemy.isRanged()) {
-//        if (unit.isRanged()) {
-//            return true;
-//        }
-
-        if (unit.hasWeaponRange(enemy, 1)) {
+        if (unit.hasWeaponRange(enemy, 1.6)) {
             return true;
         }
 

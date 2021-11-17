@@ -34,7 +34,8 @@ public class AWorkerTransferManager {
         Units baseWorkersRatios = new Units();
         for (AUnit base : ourBases) {
             if (
-                    base.lastUnderAttackLessThanAgo(30 * 30)
+                    base.isLifted()
+                    || base.lastUnderAttackLessThanAgo(30 * 30)
                     || Select.enemyCombatUnits().inRadius(14, base).isNotEmpty()
             ) {
                 continue;
