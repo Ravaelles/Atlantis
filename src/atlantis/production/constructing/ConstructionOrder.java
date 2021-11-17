@@ -212,4 +212,8 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
     public boolean hasStarted() {
         return !status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED);
     }
+
+    public boolean notStarted() {
+        return ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(status);
+    }
 }

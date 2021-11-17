@@ -42,7 +42,7 @@ public class MissionContain extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        APosition focusPoint = focusPoint();
+//        APosition focusPoint = focusPoint();
 
         if (enemy.hasWeaponRange(unit, 0.8) || unit.hasWeaponRange(enemy, 0.8)) {
 //        if (enemy.distTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
@@ -54,12 +54,12 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        // Allow to defend base
-        APosition natural = Bases.natural();
-        if (natural != null && enemy.distTo(natural) <= 35) {
+        // Allow to defend bases
+        if (enemyIsNearBase(enemy)) {
             return true;
         }
 
         return false;
     }
+
 }

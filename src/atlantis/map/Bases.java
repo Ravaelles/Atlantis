@@ -63,7 +63,7 @@ public class Bases {
         return null;
     }
 
-    public static ABaseLocation getStartingLocationBasedOnIndex(int index) {
+    public static ABaseLocation startingLocationBasedOnIndex(int index) {
         ArrayList<ABaseLocation> baseLocations = new ArrayList<>();
         baseLocations.addAll(startingLocations(true));
 
@@ -77,7 +77,7 @@ public class Bases {
     /**
      * Returns nearest free base location where we don't have base built yet.
      */
-    public static ABaseLocation getExpansionFreeBaseLocationNearestTo(HasPosition nearestTo) {
+    public static ABaseLocation expansionFreeBaseLocationNearestTo(HasPosition nearestTo) {
 
         // Get list of all base locations
         Positions<ABaseLocation> baseLocations = new Positions<>();
@@ -100,10 +100,10 @@ public class Bases {
     /**
      * Returns free base location which is as far from enemy starting location as possible.
      */
-    public static ABaseLocation getExpansionBaseLocationMostDistantToEnemy() {
+    public static ABaseLocation expansionBaseLocationMostDistantToEnemy() {
         APosition farthestTo = AEnemyUnits.enemyBase();
         if (farthestTo == null) {
-            return getExpansionFreeBaseLocationNearestTo(Select.ourBases().first().position());
+            return expansionFreeBaseLocationNearestTo(Select.ourBases().first().position());
         }
 
         // =========================================================

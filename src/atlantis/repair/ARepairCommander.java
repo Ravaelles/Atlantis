@@ -18,7 +18,7 @@ public class ARepairCommander {
     private static final int MAX_PROTECTORS = 3;
 
     public static void update() {
-        if (AGame.everyNthGameFrame(20)) {
+        if (AGame.everyNthGameFrame(21)) {
             assignProtectors();
         }
         if (AGame.everyNthGameFrame(15)) {
@@ -40,8 +40,10 @@ public class ARepairCommander {
         for (Iterator<AUnit> iterator = ARepairAssignments.getRepairers().iterator(); iterator.hasNext();) {
             AUnit repairer = iterator.next();
             if (!repairer.isAlive()) {
+                System.err.println("Dead repairer " + repairer.shortName() + " // " + repairer.hp());
                 ARepairAssignments.removeRepairerOrProtector(repairer);
                 iterator.remove();
+                continue;
             }
             ARepairerManager.updateRepairer(repairer);
         }
@@ -186,7 +188,7 @@ public class ARepairCommander {
         }
 
         for (int i = 0; i < numberOfProtectorsToAssign; i++) {
-            AUnit worker = ARepairerManager.defineBestRepairerFor(unitToProtect, false);
+            AUnit worker = ARepairerManager.repairerFor(unitToProtect, false);
             if (worker != null) {
                 ARepairAssignments.addProtector(worker, unitToProtect);
             }

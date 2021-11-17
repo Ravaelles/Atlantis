@@ -37,7 +37,7 @@ public class TerranCommandCenter {
         Selection bases = Select.ourBuildingsIncludingUnfinished().ofType(AUnitType.Terran_Command_Center);
         for (AUnit mineral : minerals) {
             if (bases.clone().inRadius(10, mineral).isEmpty()) {
-                ABaseLocation baseLocation = Bases.getExpansionFreeBaseLocationNearestTo(mineral);
+                ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(mineral);
                 if (baseLocation != null) {
                     if (!building.isLifted()) {
                         building.lift();

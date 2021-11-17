@@ -112,7 +112,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     private static void comsat() {
         if (
                 Count.bases() > Count.includingPlanned(AUnitType.Terran_Comsat_Station)
-                && Count.inQueueOrUnfinished(AUnitType.Terran_Comsat_Station, 5) <= 1
+                && Count.inQueueOrUnfinished(AUnitType.Terran_Comsat_Station, 5) <= 0
         ) {
             AddToQueue.withStandardPriority(AUnitType.Terran_Comsat_Station);
         }

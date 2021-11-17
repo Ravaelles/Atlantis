@@ -193,9 +193,9 @@ public class Atlantis implements BWEventListener {
 
             // Our unit
             if (unit.isOur()) {
-                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
                 NewUnitsToSquadsAssigner.unitDestroyed(unit);
                 ARepairAssignments.removeRepairerOrProtector(unit);
+                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
                 if (!unit.type().isGasBuilding()) {
                     LOST++;
                     LOST_RESOURCES += unit.type().getTotalResources();

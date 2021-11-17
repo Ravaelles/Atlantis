@@ -42,14 +42,6 @@ public class MissionChanger {
 
     // =========================================================
 
-    protected static boolean shouldDefendMainBase() {
-        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.main()).atLeast(3)) {
-            return true;
-        }
-
-        return false;
-    }
-
     public static void notifyThatUnitRetreated(AUnit unit) {
         if (Missions.isFirstMission() && Missions.isGlobalMissionAttack()) {
             forceMissionContain();

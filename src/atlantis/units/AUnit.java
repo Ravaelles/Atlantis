@@ -258,7 +258,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // Compare type methods
 
     public boolean isAlive() {
-        return hp() > 0 || !UnitsArchive.isDestroyed(id());
+        return exists() && (hp() > 0 || !UnitsArchive.isDestroyed(id()));
     }
 
     public boolean canBeHealed() {
@@ -351,6 +351,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double woundPercent() {
         return 100 - 100.0 * hp() / maxHp();
+    }
+
+    public boolean woundPercent(int minWoundPercent) {
+        return woundPercent() >= minWoundPercent;
     }
 
     public boolean isWounded() {
@@ -590,7 +594,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             boolean checkShootingRange,
             boolean checkVisibility,
             boolean includeCooldown,
-            double safetyMargin
+            double extraMargin
     ) {
         // Target CLOAKED
         if (checkVisibility && target.effCloaked()) {
@@ -608,7 +612,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         // Shooting RANGE
-        if (checkShootingRange && !this.hasWeaponRange(target, safetyMargin)) {
+        if (checkShootingRange && !this.hasWeaponRange(target, extraMargin)) {
             return false;
         }
 
@@ -639,24 +643,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this.u.isInWeaponRange(targetUnit.u);
     }
 
-    public boolean hasWeaponRange(AUnit targetUnit, double safetyMargin) {
+    public boolean hasWeaponRange(AUnit targetUnit, double extraMargin) {
         WeaponType weaponAgainstThisUnit = getWeaponAgainst(targetUnit);
         if (weaponAgainstThisUnit == WeaponType.None) {
             return false;
         }
 
         double dist = this.position().distTo(targetUnit);
-        return (weaponAgainstThisUnit.minRange() / 32) <= dist && dist <= (weaponAgainstThisUnit.maxRange() / 32 + safetyMargin);
+        return (weaponAgainstThisUnit.minRange() / 32) <= dist && dist <= (weaponAgainstThisUnit.maxRange() / 32 + extraMargin);
     }
 
-    public boolean hasGroundWeaponRange(APosition position, double safetyMargin) {
+    public boolean hasGroundWeaponRange(APosition position, double extraMargin) {
         double weaponRange = groundWeaponRange();
         if (weaponRange <= 0) {
             return false;
         }
 
         double dist = this.position().distTo(position);
-        return dist <= (weaponRange + safetyMargin);
+        return dist <= (weaponRange + extraMargin);
     }
 
     /**
@@ -1335,11 +1339,29 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public boolean lastActionMoreThanAgo(int framesAgo) {
+//        if
+
+        return lastActionAgo(unitAction) >= framesAgo;
+    }
+
+    public boolean lastActionLessThanAgo(int framesAgo) {
+        return lastActionAgo(unitAction) <= framesAgo;
+    }
+
     public boolean lastActionMoreThanAgo(int framesAgo, UnitAction unitAction) {
+        if (unitAction == null) {
+            return true;
+        }
+
         return lastActionAgo(unitAction) >= framesAgo;
     }
 
     public boolean lastActionLessThanAgo(int framesAgo, UnitAction unitAction) {
+        if (unitAction == null) {
+            return false;
+        }
+
         return lastActionAgo(unitAction) <= framesAgo;
     }
 
@@ -1787,6 +1809,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isMissileTurret() {
         return type().isMissileTurret();
+    }
+
+    public boolean isScv() {
+        return type().isScv();
     }
 
 //    public boolean isDepleted() {

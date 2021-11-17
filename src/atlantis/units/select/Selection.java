@@ -389,9 +389,9 @@ public class Selection {
 //        return this;
 //    }
 
-    public Selection canBeAttackedBy(AUnit attacker, double safetyMargin) {
+    public Selection canBeAttackedBy(AUnit attacker, double extraMargin) {
         data.removeIf(target -> !attacker.canAttackTarget(
-                target, true, true, false, safetyMargin
+                target, true, true, false, extraMargin
         ));
         return this;
     }

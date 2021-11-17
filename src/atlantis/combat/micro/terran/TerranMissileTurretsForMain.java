@@ -1,75 +1,124 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.GameSpeed;
-import atlantis.debug.APainter;
 import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AFoggedUnit;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
+import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.position.Positions;
 import atlantis.production.orders.AddToQueue;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Cache;
-import bwapi.Color;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
-    private static final double DIST_BETWEEN_BORDER_TURRETS = 8;
-    private static final int MIN_TURRETS_FOR_BORDER = 3;
-    private static final int MAX_TURRETS_FOR_BORDER_OVER_TIME = 7;
-    private static final int TILES_MARGIN = 3;
-    private static Cache<ArrayList<APosition>> cache = new Cache<>();
+    private static final int BORDER_TURRETS_MIN_COUNT = 4;
+    private static final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
+    private static final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
+    private static final int BORDER_TURRETS_ALLOW_MARGIN = 3;
+    private static final int MAIN_BASE_TURRETS = 2;
+
+    private static Cache<ArrayList<APosition>> cacheList = new Cache<>();
+    private static Cache<APosition> cachePosition = new Cache<>();
+
+    // =========================================================
 
     public static boolean buildIfNeeded() {
-        if (!Have.engBay()) {
+        if (!Have.engBay() || !Have.base()) {
             return false;
         }
 
-        if (turretsForMain()) {
-            System.out.println("Requested TURRET for MAIN");
+        if (turretForMainChoke()) {
+            System.out.println("Requested TURRET for MAIN CHOKE");
             return true;
         }
 
-//        if (handleReinforcePosition(turretForNatural(), 7)) {
-//            System.out.println("Requested TURRET for NATURAL");
-//            return true;
-//        }
+        if (turretsForMainRegionBorders()) {
+            System.out.println("Requested TURRET for BORDERS");
+            return true;
+        }
+
+        if (turretsForMainBase()) {
+            System.out.println("Requested TURRET for MAIN BASE");
+            return true;
+        }
 
         return false;
     }
 
     // =========================================================
 
-    private static boolean turretsForMain() {
-        if (!Have.main()) {
-            return false;
+    private static boolean turretsForMainBase() {
+        APosition forMainBase = positionForMainBaseTurret();
+
+        if (
+                forMainBase != null
+                && Count.existingOrPlannedBuildingsNear(turret, 6, forMainBase) < MAIN_BASE_TURRETS
+        ) {
+            AddToQueue.withHighPriority(turret, forMainBase).setMaximumDistance(4);
+            return true;
         }
 
-        ArrayList<APosition> turretsProtectingMainBorders = positionsForTurretsNearMainBorder();
+        return false;
+    }
 
-        for (int i = 0; i < turretsProtectingMainBorders.size(); i++) {
-            APosition place = turretsProtectingMainBorders.get(i);
-            if (
-                    place != null
-                    && Count.inQueueOrUnfinished(turret, 8) <= 4
-                    && Count.existingOrPlannedBuildingsNear(turret, TILES_MARGIN + 1.1, place) == 0
-            ) {
-                AddToQueue.withHighPriority(turret, place).setMaximumDistance(TILES_MARGIN);
+    private static boolean turretForMainChoke() {
+        APosition place = Chokes.mainChoke().translateTilesTowards(5, Select.main());
+        if (place != null) {
+            if (Count.existingOrPlannedBuildingsNear(turret, 5, place) == 0) {
+                AddToQueue.withHighPriority(turret, place).setMaximumDistance(4);
+                return true;
             }
         }
 
         return false;
     }
 
+    private static boolean turretsForMainRegionBorders() {
+        ArrayList<APosition> turretsProtectingMainBorders = positionsForTurretsNearMainBorder();
+
+        for (int i = 0; i < turretsProtectingMainBorders.size(); i++) {
+            APosition place = turretsProtectingMainBorders.get(i);
+            if (
+                    place != null
+                    && Count.inQueueOrUnfinished(turret, 8) <= BORDER_TURRETS_MIN_COUNT
+                    && Count.existingOrPlannedBuildingsNear(turret, BORDER_TURRETS_ALLOW_MARGIN + 1.1, place) == 0
+            ) {
+                AddToQueue.withHighPriority(turret, place).setMaximumDistance(BORDER_TURRETS_ALLOW_MARGIN);
+            }
+        }
+
+        return false;
+    }
+
+    // =========================================================
+
+    private static APosition positionForMainBaseTurret() {
+        return cachePosition.get(
+                "positionForMainBaseTurret",
+                30,
+                () -> {
+                    APosition enemyLocation = AEnemyUnits.enemyLocationOrGuess();
+                    AUnit mineralNearestToEnemy = Select.minerals().inRadius(12, Select.main()).nearestTo(enemyLocation);
+
+                    if (mineralNearestToEnemy != null) {
+                        return mineralNearestToEnemy.position().translateTilesTowards(6, enemyLocation);
+                    }
+
+                    return null;
+                }
+        );
+    }
+
     public static ArrayList<APosition> positionsForTurretsNearMainBorder() {
-        return cache.get(
+        return cacheList.get(
             "positionsForTurretsNearMainBorder",
             30,
             () -> {
@@ -84,10 +133,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                     return places;
                 }
 
-                AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-                if (enemyBuilding == null) {
-                    return places;
-                }
+                APosition enemyLocation = AEnemyUnits.enemyLocationOrGuess();
 
                 Positions<ARegionBoundary> boundaries = new Positions<>();
                 boundaries.addPositions(region.bounds());
@@ -95,8 +141,10 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                 // =========================================================
 
                 // Protect the place nearest to map edge - here a lot of invasions happen
-                APosition placeForMapEdgeTurret = placeForMapEdgeTurret(boundaries, enemyBuilding.position());
+                APosition placeForMapEdgeTurret = placeForMapEdgeTurret(boundaries, enemyLocation);
                 if (placeForMapEdgeTurret != null) {
+                    placeForMapEdgeTurret = modifyAgainstZerg(placeForMapEdgeTurret);
+
                     places.add(placeForMapEdgeTurret);
                 }
 
@@ -104,7 +152,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                 // place (TOTAL_TURRETS_FOR_BORDER -1) turrets along the border, each about
                 // TOTAL_TURRETS_FOR_BORDER tiles away.
                 for (int i = 0; i < totalTurretsForMainBorder() - 1; i++) {
-                    APosition placeForTurret = placeForNextMainTurret(boundaries, enemyBuilding.position(), places);
+                    APosition placeForTurret = placeForNextMainTurret(boundaries, enemyLocation, places);
                     if (placeForTurret != null) {
                         places.add(placeForTurret);
                     }
@@ -115,11 +163,20 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         );
     }
 
+    /**
+     * Zerg's Mutalisks can bypass initial defences and storm the main, whereas Protoss Shuttle can be guarded
+     * by protecting against the land invasion. Therefore against Zerg back the turrets towards the base, so
+     * they defend both border and the main at the same time.
+     */
+    private static APosition modifyAgainstZerg(APosition placeForMapEdgeTurret) {
+        return placeForMapEdgeTurret.translateTilesTowards(Select.main(), 5);
+    }
+
     private static int totalTurretsForMainBorder() {
         int haveMaxAmountAtGameSeconds = 600;
         return Math.max(
-                MIN_TURRETS_FOR_BORDER,
-                MAX_TURRETS_FOR_BORDER_OVER_TIME * Math.min(1, A.seconds() / haveMaxAmountAtGameSeconds)
+                BORDER_TURRETS_MIN_COUNT,
+                BORDER_TURRETS_TOTAL_OVER_TIME * Math.min(1, A.seconds() / haveMaxAmountAtGameSeconds)
         );
     }
 
@@ -163,15 +220,15 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         APosition centralPoint = boundaries.nearestTo(nearestEnemyBuilding); // Region boundary nearest to enemy
         APosition potentialPlace = centralPoint;
         while (true) {
-            if (!places.contains(potentialPlace)) {
-                int turretsNear = Count.existingOrPlannedBuildingsNear(turret, DIST_BETWEEN_BORDER_TURRETS, potentialPlace);
+            if (potentialPlace != null && !places.contains(potentialPlace)) {
+                int turretsNear = Count.existingOrPlannedBuildingsNear(turret, BORDER_TURRETS_MAX_DIST_BETWEEN, potentialPlace);
                 if (turretsNear == 0) {
                     return potentialPlace;
                 }
             }
 
             // Look for other boundary points in certain distance since the last one
-            potentialPlace = findBoundaryPointInDistOf(DIST_BETWEEN_BORDER_TURRETS, centralPoint, boundaries, places);
+            potentialPlace = findBoundaryPointInDistOf(BORDER_TURRETS_MAX_DIST_BETWEEN, centralPoint, boundaries, places);
 
             if (counter++ >= 10) {
                 return null;
@@ -185,7 +242,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         double currentSearchDist = baseDist;
         while (currentSearchDist <= 3.2 * baseDist) {
             for (ARegionBoundary boundary : boundaries.list()) {
-                if (!places.contains(boundary.position())) {
+                if (boundary.position() != null && !places.contains(boundary.position())) {
                     double dist = boundary.position().distTo(position);
                     if (currentSearchDist - 0.9 <= dist && dist <= currentSearchDist + 1.9) {
                         return boundary.position();

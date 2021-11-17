@@ -50,10 +50,10 @@ public class TerranFlyingBuildingManager {
                 return;
             }
 
-            if (building.lastUnderAttackLessThanAgo(30 * 4)) {
+            if (building.isLifted() && building.lastUnderAttackLessThanAgo(30 * 4)) {
                 APosition median = Alpha.get().median();
                 if (median != null) {
-                    building.move(median, UnitActions.RUN, "BackOff");
+                    building.move(median, UnitActions.RUN, "AwayFromAlpha");
                     return;
                 }
             }

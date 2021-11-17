@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
+import atlantis.enemy.EnemyInformation;
 import atlantis.units.select.Count;
 import atlantis.util.A;
 
@@ -17,7 +18,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     private static boolean shouldChangeMissionToDefend() {
-        if (shouldDefendMainBase()) {
+        if (EnemyInformation.isEnemyNearAnyOurBuilding()) {
             return true;
         }
 

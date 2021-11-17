@@ -2,9 +2,9 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.enemy.EnemyInformation;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Enemy;
@@ -24,7 +24,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
     // =========================================================
 
     protected static boolean shouldChangeMissionToDefend() {
-        if (shouldDefendMainBase()) {
+        if (EnemyInformation.isEnemyNearAnyOurBuilding()) {
             return true;
         }
 

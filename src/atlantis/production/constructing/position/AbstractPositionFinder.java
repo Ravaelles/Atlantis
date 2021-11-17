@@ -90,20 +90,21 @@ public abstract class AbstractPositionFinder {
     protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, Position position) {
         
         // Compare against planned construction places
-        for (ConstructionOrder constructionOrder : ConstructionRequests.getAllConstructionOrders()) {
-            if (ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(constructionOrder.status())
-                    && !builder.equals(constructionOrder.builder())) {
-                if (constructionOrder.positionToBuild() != null) {
-                    double distance = PositionUtil.distanceTo(constructionOrder.positionToBuild(), position);
-                    boolean areBasesTooCloseOneToAnother = (distance <= 8 && !AGame.isPlayingAsZerg()
-                            && building.isBase() && constructionOrder.buildingType().isBase());
-                    
-                    // Look for two bases that would be built too close one to another
-                    if (distance <= 4 || areBasesTooCloseOneToAnother) {
-                        _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" 
-                                + constructionOrder.buildingType() + ", DIST: " + distance + ")";
-                        return true;
-                    }
+        for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+            if (
+                    order.notStarted()
+                    && !builder.equals(order.builder())
+                    && order.positionToBuild() != null
+            ) {
+                double distance = PositionUtil.distanceTo(order.positionToBuild(), position);
+                boolean areBasesTooCloseOneToAnother = (distance <= 5 && !AGame.isPlayingAsZerg()
+                        && building.isBase() && order.buildingType().isBase());
+
+                // Look for two bases that would be built too close one to another
+                if (distance <= 4 || areBasesTooCloseOneToAnother) {
+                    _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE ("
+                            + order.buildingType() + ", DIST: " + distance + ")";
+                    return true;
                 }
             }
         }

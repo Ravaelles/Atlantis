@@ -10,7 +10,7 @@ public class TerranComsatStation {
 
     public static boolean update(AUnit comsat) {
 //        if (AGame.notNthGameFrame(5 + ((250 - comsat.energy()) / 3))) {
-        if (AGame.notNthGameFrame(30)) {
+        if (AGame.notNthGameFrame(20)) {
             return false;
         }
 //        System.out.println(Select.enemy().ofType(AUnitType.Protoss_Observer).count());
@@ -41,6 +41,10 @@ public class TerranComsatStation {
     private static boolean shouldScanThisLurker(AUnit lurker, AUnit comsat) {
         if (lurker.isDetected()) {
             return false;
+        }
+
+        if (comsat.energy(195)) {
+            return true;
         }
 
         int minUnitsNearby = (comsat.energy(180) ? 3 : (comsat.energy(130) ? 4 : 6));

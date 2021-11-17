@@ -2,6 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.combat.micro.terran.TerranInfantry;
+import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
@@ -70,20 +71,17 @@ public class MissionDefend extends Mission {
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+
+
 //        if (unit.isRanged() || enemy.isRanged()) {
-        if (unit.isRanged()) {
-            return true;
-        }
+//        if (unit.isRanged()) {
+//            return true;
+//        }
 
         if (unit.hasWeaponRange(enemy, 1)) {
             return true;
         }
 
-        if (unit.distToLessThan(focusPoint(), 0.5)) {
-            return true;
-        }
-
-//        if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
         if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
             return true;
         }
@@ -92,6 +90,10 @@ public class MissionDefend extends Mission {
             return true;
         }
 
+        double unitDistToFocusPoint = unit.distTo(focusPoint());
+        if (unitDistToFocusPoint >= 8 || unitDistToFocusPoint > unit.distTo(enemy)) {
+            return true;
+        }
 
         return false;
     }

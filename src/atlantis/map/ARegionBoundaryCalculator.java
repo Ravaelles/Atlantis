@@ -27,6 +27,12 @@ public class ARegionBoundaryCalculator {
     }
 
     private static void createBoundaryFromVector(ARegion region, APosition center, Vector vector, ArrayList<ARegionBoundary> boundaries) {
+        if (center == null) {
+            System.err.println("Invalid region center NULL");
+            System.err.println(region);
+            return;
+        }
+
         APosition position;
         APosition lastBuildable = null;
 

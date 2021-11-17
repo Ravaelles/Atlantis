@@ -61,9 +61,9 @@ public class AEnemyTargeting {
     // =========================================================
 
     private static AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
-        if (maxDistFromEnemy > 1000) {
-            maxDistFromEnemy = 15;
-        }
+//        if (maxDistFromEnemy > 1000) {
+//            maxDistFromEnemy = 15;
+//        }
 
         // Quit early if no target at all
         if (Select.enemyRealUnits(true)

@@ -2,6 +2,7 @@ package atlantis.combat.missions;
 
 import atlantis.AGame;
 import atlantis.debug.APainter;
+import atlantis.enemy.EnemyInformation;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -43,6 +44,10 @@ public abstract class Mission {
         return false;
     }
 
+    protected boolean enemyIsNearBase(AUnit enemy) {
+        return EnemyInformation.isEnemyNearAnyOurBuilding();
+    }
+
     // =========================================================
 
 //    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
@@ -65,7 +70,7 @@ public abstract class Mission {
 //            }
         }
         if (temporaryTarget == null || temporaryTarget.isVisible()) {
-            temporaryTarget = AMap.getRandomInvisiblePosition(unit.position());
+            temporaryTarget = AMap.randomInvisiblePosition(unit.position());
 //            if (temporaryTarget != null) {
 //                System.out.println("Go to invisible " + temporaryTarget);
 //            }

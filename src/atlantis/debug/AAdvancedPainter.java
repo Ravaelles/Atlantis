@@ -219,7 +219,7 @@ public class AAdvancedPainter extends APainter {
         for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
             paintCircle(enemy, 16, Color.Orange);
             paintCircle(enemy, 15, Color.Orange);
-            paintTextCentered(enemy, "Cloaked,HP=" + enemy.hp(), Color.Red);
+            paintTextCentered(enemy, "Cloaked," + enemy.shortName() + ",HP=" + enemy.hp(), Color.Red);
         }
         for (AUnit enemy : Select.enemy().effVisible().listUnits()) {
             if (enemy.isCloaked() || enemy.isBurrowed()) {

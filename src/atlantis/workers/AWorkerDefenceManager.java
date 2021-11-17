@@ -103,7 +103,7 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean handleRepairNearby(AUnit worker) {
-        if (!worker.isWounded() || worker.id() % 5 != 0) {
+        if (!worker.isWounded() || (worker.id() % 5 != 0 && !worker.isRepairing())) {
             return false;
         }
 
@@ -157,11 +157,13 @@ public class AWorkerDefenceManager {
         }
 
         // FIGHT against COMBAT UNITS
-        List<AUnit> enemies = Select.enemy().combatUnits()
-                .inRadius(1, worker).listUnits();
+        List<AUnit> enemies = Select.enemyCombatUnits()
+                .inRadius(1, worker)
+                .canBeAttackedBy(worker, 1)
+                .listUnits();
         for (AUnit enemy : enemies) {
             worker.attackUnit(enemy);
-            worker.setTooltip("ForMotherland!");
+            worker.setTooltip("FurMotherland!");
             return true;
         }
 

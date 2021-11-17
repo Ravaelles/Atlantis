@@ -94,10 +94,10 @@ public class ASpecialPositionFinder {
         if (ourBasesCount <= 2) {
             AUnit mainBase = Select.main();
 
-            baseLocationToExpand = Bases.getExpansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
+            baseLocationToExpand = Bases.expansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
         }
         else {
-            baseLocationToExpand = Bases.getExpansionBaseLocationMostDistantToEnemy();
+            baseLocationToExpand = Bases.expansionBaseLocationMostDistantToEnemy();
         }
         
         if (baseLocationToExpand == null) {
@@ -132,7 +132,7 @@ public class ASpecialPositionFinder {
 
     private static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
         APosition near = APosition.create(
-                Bases.getExpansionFreeBaseLocationNearestTo(Select.main().position())
+                Bases.expansionFreeBaseLocationNearestTo(Select.main().position())
         ).translateByPixels(0, 0);
 //        APosition near = APosition.create(Bases.getExpansionFreeBaseLocationNearestTo(Select.mainBase().position()).position());
 

@@ -428,9 +428,10 @@ public class AUnitType implements Comparable<AUnitType> {
                             .replace("_Tank_Mode", "").replace("_", "")
                             .trim();
 
-//                    if (name.equals("Unknown")) {
-//                        System.err.println("Unknown? What? ");
-//                    }
+                    if (name.contains(" ")) {
+                        String[] split = name.split("\\s+");
+                        name = split[0] + split[1].charAt(0);
+                    }
 
                     return name;
                 }
@@ -1334,6 +1335,14 @@ public class AUnitType implements Comparable<AUnitType> {
             "isMissileTurret",
             -1,
             () -> is(Terran_Missile_Turret)
+        );
+    }
+
+    public boolean isScv() {
+        return (boolean) cache.get(
+            "isScv",
+            -1,
+            () -> is(Terran_SCV)
         );
     }
 }

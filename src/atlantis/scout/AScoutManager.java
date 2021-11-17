@@ -157,7 +157,7 @@ public class AScoutManager {
 //        APosition startingLocation;
         HasPosition startingLocation;
         if (scout.isType(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
-            startingLocation = Bases.getStartingLocationBasedOnIndex(
+            startingLocation = Bases.startingLocationBasedOnIndex(
                     scout.getUnitIndexInBwapi()// UnitUtil.getUnitIndex(scout)
             );
         } else {

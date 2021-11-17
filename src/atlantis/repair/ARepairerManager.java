@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,7 +13,12 @@ import java.util.Iterator;
 public class ARepairerManager {
 
     public static boolean updateRepairer(AUnit repairer) {
+        if (!repairer.isScv()) {
+            throw new RuntimeException(repairer + " is not SCV!");
+        }
+
         repairer.setTooltip("Repairer");
+
         if (handleRepairerSafety(repairer)) {
             return true;
         }
@@ -22,52 +28,61 @@ public class ARepairerManager {
 
     // =========================================================
 
-    private static boolean handleRepairerSafety(AUnit repairer) {
-        if ((!repairer.isRepairing() || repairer.hpPercent() <= 30) && AAvoidUnits.avoidEnemiesIfNeeded(repairer)) {
-            repairer.setTooltip("Aaa!");
-            return true;
-        }
-
-        return false;
-    }
-
     private static boolean handleRepairs(AUnit repairer) {
         AUnit target = ARepairAssignments.getUnitToRepairFor(repairer);
+
         if (target == null || !target.isAlive()) {
             repairer.setTooltip("Null unit2repair");
+            System.err.println("Invalid repair target: " + target);
             ARepairAssignments.removeRepairerOrProtector(repairer);
             return false;
         }
 
         // Target is totally healthy
         if (!target.isWounded()) {
+            System.err.println("Repair target no longer wounded: " + target.shortName() + " // " + target.hp());
             repairer.setTooltip("Repaired!");
             ARepairAssignments.removeRepairerOrProtector(repairer);
             return handleRepairCompletedTryFindingNewTarget(repairer);
         }
 
         // Target is wounded
-        if (!repairer.isRepairing()) {
-            if (target.isWounded() && target.isAlive()) {
-                return repairer.repair(
-                        target,
-                        "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
-                );
+        if (!repairer.isRepairing() && target.isWounded() && target.isAlive()) {
+            if (repairer.lastActionMoreThanAgo(30 * 3)) {
+                ARepairAssignments.removeRepairerOrProtector(repairer);
+                repairer.setTooltip("IdleGTFO");
+                return false;
             }
+
+            return repairer.repair(
+                    target,
+                    "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
+            );
         }
 
-        if (!ARepairAssignments.isProtector(repairer)) {
+        if (!ARepairAssignments.isProtector(repairer) && repairer.lastActionMoreThanAgo(30 * 2)) {
+            System.err.println("Idle repairer, remove. Target was = " + target + " // " + target.hp() + " // " + target.isAlive());
             ARepairAssignments.removeRepairerOrProtector(repairer);
+            repairer.setTooltip("GoHome");
         }
         return false;
+    }
 
-//        // Move to closest tank
-//        AUnit nearestTank = Select.ourTanks().nearestTo(repairer);
-//        if (nearestTank != null) {
-//            return repairer.move(nearestTank, UnitActions.MOVE, "CoverHim");
-//        }
-//
-//        return false;
+    private static boolean handleRepairerSafety(AUnit repairer) {
+        if ((!repairer.isRepairing() || repairer.hpPercent() <= 30) && AAvoidUnits.avoidEnemiesIfNeeded(repairer)) {
+            repairer.setTooltip("FuckThisJob");
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean itIsForbiddenToRepairThisUnitNow(AUnit target) {
+        if (!target.isBuilding() || target.isCombatBuilding()) {
+            return false;
+        }
+
+        return Select.enemyCombatUnits().inRadius(12, target).atLeast(1);
     }
 
     // =========================================================
@@ -75,7 +90,7 @@ public class ARepairerManager {
     protected static boolean assignRepairersToWoundedUnits(AUnit unitToRepair, int numberOfRepairersToAssign) {
         for (int i = 0; i < numberOfRepairersToAssign; i++) {
             boolean isCriticallyImportant = unitToRepair.isTank() || unitToRepair.isBunker();
-            AUnit worker = defineBestRepairerFor(unitToRepair, isCriticallyImportant);
+            AUnit worker = repairerFor(unitToRepair, isCriticallyImportant);
             if (worker != null) {
                 if (AGame.isUms() && worker.distTo(unitToRepair) > 10 && !worker.hasPathTo(unitToRepair)) {
                     return false;
@@ -95,22 +110,18 @@ public class ARepairerManager {
     private static boolean handleRepairCompletedTryFindingNewTarget(AUnit repairer) {
         ARepairAssignments.removeRepairerOrProtector(repairer);
 
-        if (!RepairerAssigner.hasMoreRepairersThanAllowed()) {
-            AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(13, repairer).first();
-            if (closestUnitNeedingRepair != null) {
-                ARepairAssignments.addRepairer(closestUnitNeedingRepair, closestUnitNeedingRepair);
-                repairer.repair(closestUnitNeedingRepair, "Extra repair");
-            }
+        AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(15, repairer).first();
+        if (closestUnitNeedingRepair != null) {
+            ARepairAssignments.addRepairer(repairer, closestUnitNeedingRepair);
+            repairer.repair(closestUnitNeedingRepair, "Extra repair");
             return true;
         }
 
-        return true;
+        return false;
     }
 
     protected static boolean handleIdleRepairer(AUnit repairer) {
-//        if (repairer.isMoving() || !repairer.isRepairing() || repairer.isIdle()) {
         if (!repairer.isUnitActionRepair() || !repairer.isRepairing() || repairer.isIdle()) {
-//            int maxAllowedDistToRoam = Missions.globalMission().isMissionDefend() ? 4 : 13;
             int maxAllowedDistToRoam = 13;
 
             // Try finding any repairable and wounded unit nearby
@@ -124,7 +135,7 @@ public class ARepairerManager {
         return false;
     }
 
-    protected static AUnit defineBestRepairerFor(AUnit unitToRepair, boolean criticallyImportant) {
+    protected static AUnit repairerFor(AUnit unitToRepair, boolean criticallyImportant) {
         if (criticallyImportant) {
             return Select.ourWorkers().notRepairing().notConstructing().notScout()
                     .exclude(unitToRepair).nearestTo(unitToRepair);

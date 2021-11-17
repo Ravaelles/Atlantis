@@ -184,6 +184,7 @@ public abstract class Squad extends Units {
         Selection groundUnits = Select.from(this).groundUnits();
         AUnit ranged = groundUnits.ranged().first();
         if (ranged != null) {
+//            System.out.println("ranged = " + ranged);
             return ranged;
         }
 

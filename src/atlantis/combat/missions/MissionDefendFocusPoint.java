@@ -1,12 +1,14 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
+import atlantis.enemy.EnemyInformation;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 
@@ -28,10 +30,11 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Enemies that breached into base =============
 
-                if (Select.haveMain()) {
-                    AUnit enemyInBase = Select.enemy().groundUnits().effVisible().inRadius(10, Select.main()).first();
-                    if (enemyInBase != null) {
-                        return enemyInBase.position();
+                if (Have.base()) {
+                    AUnit enemyNear = EnemyInformation.enemyNearAnyOurBuilding();
+//                    AUnit enemyInBase = Select.enemy().combatUnits().effVisible().inRadius(10, Select.main()).first();
+                    if (enemyNear != null) {
+                        return enemyNear.position();
                     }
                 }
 

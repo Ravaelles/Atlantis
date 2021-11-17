@@ -64,9 +64,12 @@ public class AConstructionManager {
      */
     private static void checkForConstructionStatusChange(ConstructionOrder order, AUnit building) {
 //        System.out.println("==============");
-//        System.out.println(constructionOrder.getBuildingType());
-//        System.out.println(constructionOrder.getStatus());
-//        System.out.println(constructionOrder.getBuilder());
+//        System.out.println(order.buildingType());
+//        System.out.println(order.status());
+//        System.out.println(order.builder());
+//        if (building != null) {
+//            System.out.println(building + " // " + building.hp() + " // " + building.isAlive() + " // " + building.exists());
+//        }
 
         if (
                 !We.zerg()
@@ -75,7 +78,7 @@ public class AConstructionManager {
                 && (building == null || !building.isAlive())
         ) {
             order.cancel();
-            System.out.println("No building - cancel");
+            System.out.println("Building destroyed - cancel construction");
             return;
         }
 
@@ -207,9 +210,8 @@ public class AConstructionManager {
         if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
             
             // If it has less than 71HP or less than 60% and is close to being finished
-            if (building.hp() <= 70
-                    || (building.getRemainingBuildTime() <= 2 && building.hpPercent() < 60)
-                    || (building.getRemainingBuildTime() <= 3 && building.hpPercent() < 60)
+            if (building.woundPercent(95)
+                    || (building.getRemainingBuildTime() <= 30 && building.woundPercent(85))
             ) {
 //                System.out.println("Construction under attack - cancel! " + building.lastUnderAttackLessThanAgo(20));
                 order.cancel();

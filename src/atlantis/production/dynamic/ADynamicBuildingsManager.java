@@ -9,6 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 import atlantis.util.Helpers;
 
 
@@ -19,6 +20,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         // Check if we should automatically build new base, because we have shitload of minerals.
         if (AExpansionManager.shouldBuildNewBase()) {
             AExpansionManager.requestNewBase();
+            System.err.println("New base requested at " + A.now());
         }
         
         // If number of bases is bigger than gas buildings, it usually makes sense to build new gas extractor

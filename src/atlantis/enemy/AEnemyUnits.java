@@ -1,6 +1,10 @@
 package atlantis.enemy;
 
 import atlantis.information.AFoggedUnit;
+import atlantis.map.AChoke;
+import atlantis.map.AMap;
+import atlantis.map.Bases;
+import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
@@ -9,7 +13,6 @@ import atlantis.units.select.Select;
 import atlantis.util.Cache;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AEnemyUnits {
 
@@ -45,7 +48,7 @@ public class AEnemyUnits {
 //    public static APosition getLastPositionOfEnemyUnit(AUnit enemyUnit) {
 //        return enemyUnitsDiscovered.containsKey(enemyUnit) ? enemyUnitsDiscovered.get(enemyUnit).position() : null;
 //    }
-    
+
     /**
      * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */
@@ -57,17 +60,17 @@ public class AEnemyUnits {
         }
         return false;
     }
-    
+
     /**
      * Returns true if we've discovered the main base of enemy (natural base doesn't count).
      */
     public static boolean hasDiscoveredEnemyBuilding() {
-        
+
         // We don't know any enemy building
         if (!AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
             return false;
         }
-        
+
 //        System.out.println("-------");
         for (AFoggedUnit enemyUnitData : AEnemyUnits.discoveredAndAliveUnits()) {
 //            System.out.println(enemyUnitData.getType());
@@ -87,10 +90,10 @@ public class AEnemyUnits {
 //                }
             }
         }
-        
+
         return false;
     }
-    
+
     public static APosition enemyBase() {
         for (AFoggedUnit enemyUnit : enemyUnitsDiscovered.values()) {
             if (enemyUnit.isBase()) {
@@ -100,40 +103,40 @@ public class AEnemyUnits {
         }
         return null;
     }
-    
+
     public static AFoggedUnit nearestEnemyBuilding() {
         return (AFoggedUnit) cache.get(
-            "nearestEnemyBuilding",
-            50,
-            () -> {
-                AUnit ourMainBase = Select.main();
-                AFoggedUnit best = null;
-                if (ourMainBase != null) {
-                    double minDist = 999999;
+                "nearestEnemyBuilding",
+                50,
+                () -> {
+                    AUnit ourMainBase = Select.main();
+                    AFoggedUnit best = null;
+                    if (ourMainBase != null) {
+                        double minDist = 999999;
 
-                    for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
+                        for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
 //                System.out.println("enemy = " + enemy);
 //                System.out.println("enemy.position() = " + enemy.position());
 //                System.out.println("ourMainBase.groundDistance(enemy.position() = " + ourMainBase.groundDistance(enemy.position()));
-                        if (enemy.type().isBuilding() && enemy.position() != null) {
-                            double dist = ourMainBase.groundDistance(enemy.position());
-                            if (dist < minDist) {
-                                minDist = dist;
-                                best = enemy;
+                            if (enemy.type().isBuilding() && enemy.position() != null) {
+                                double dist = ourMainBase.groundDistance(enemy.position());
+                                if (dist < minDist) {
+                                    minDist = dist;
+                                    best = enemy;
+                                }
                             }
                         }
                     }
-                }
 
-                return best; // Can be null
-            }
+                    return best; // Can be null
+                }
         );
     }
-    
+
     public static Collection<AFoggedUnit> discoveredAndAliveUnits() {
         return enemyUnitsDiscovered.values();
     }
-    
+
     // =========================================================
     // Number of units changed
 
@@ -153,14 +156,14 @@ public class AEnemyUnits {
         enemyUnitsDiscovered.remove(enemyUnit);
 //        enemyUnitsDestroyed.put(enemyUnit.id(), enemyUnit);
     }
-    
+
     /**
      * Returns <b>true</b> if enemy unit has been destroyed and we know it.
      */
     public static boolean isEnemyUnitDestroyed(AUnit enemyUnit) {
         return UnitsArchive.isDestroyed(enemyUnit.id());
     }
-    
+
     /**
      * Forgets and refreshes info about given unit
      */
@@ -168,7 +171,7 @@ public class AEnemyUnits {
         enemyUnitsDiscovered.remove(enemyUnit);
         discoveredEnemyUnit(enemyUnit);
     }
-    
+
     /**
      * Updates last known position of the enemy unit.
      */
@@ -192,22 +195,22 @@ public class AEnemyUnits {
 //        }
     }
 
-    public static List<AFoggedUnit> foggedUnits() {
-//        ArrayList<AFoggedUnit> foggedUnits = new ArrayList<>();
+//    public static List<AFoggedUnit> foggedUnits() {
+////        ArrayList<AFoggedUnit> foggedUnits = new ArrayList<>();
+////
+////        for (AFoggedUnit unit : enemyUnitsDiscovered.values()) {
+////
+////        }
 //
-//        for (AFoggedUnit unit : enemyUnitsDiscovered.values()) {
-//
-//        }
-
-        return (new ArrayList<>(enemyUnitsDiscovered.values()))
-                .stream()
-                .filter(u -> u.isAccessible())
-                .collect(Collectors.toList());
-    }
+//        return (new ArrayList<>(enemyUnitsDiscovered.values()))
+//                .stream()
+//                .filter(u -> u.isAccessible())
+//                .collect(Collectors.toList());
+//    }
 
     // =========================================================
     // COUNT
-    
+
     /**
      * Returns number of discovered and alive enemy units of given type. Some of them (maybe even all of them)
      * may not be visible right now.
@@ -237,4 +240,33 @@ public class AEnemyUnits {
         }
     }
 
+    public static APosition enemyLocationOrGuess() {
+        return (APosition) cache.get(
+                "enemyLocationOrGuess",
+                50,
+                () -> {
+                    APosition enemyBase = enemyBase();
+                    if (enemyBase != null) {
+                        return enemyBase.position();
+                    }
+
+                    AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+                    if (enemyBuilding != null) {
+                        return enemyBuilding.position();
+                    }
+
+                    AChoke enemyChoke = Chokes.enemyMainChoke();
+                    if (enemyChoke != null) {
+                        return enemyChoke.position();
+                    }
+
+                    APosition position = Bases.nearestUnexploredStartingLocation(Select.our().first());
+                    if (position != null) {
+                        return position;
+                    }
+
+                    return AMap.randomInvisiblePosition(Select.our().first().position());
+                }
+        );
+    }
 }

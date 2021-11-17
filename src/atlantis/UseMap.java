@@ -74,6 +74,11 @@ public class UseMap {
         // vs. ZERG
 
         if (activeMap().equals("ums/vsGosuComputer.scx")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedTo(0);
+                GameSpeed.changeFrameSkipTo(90);
+            }
+
 //            boolean canBeFast = Count.turrets() < 3;
 //            int frameSkipFast = 90;
 ////            GameSpeed.changeSpeedTo(1);

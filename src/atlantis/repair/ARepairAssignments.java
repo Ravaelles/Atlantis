@@ -68,6 +68,10 @@ public class ARepairAssignments {
     }
 
     public static void addRepairer(AUnit repairer, AUnit unitToRepair) {
+        if (!repairer.isScv()) {
+            throw new RuntimeException(repairer + "is not SCV in addRepairer!");
+        }
+
         repairersToUnit.put(repairer, unitToRepair);
         repairersToModes.put(repairer, MODE_REPAIR_ONLY);
         if (!unitsToRepairers.containsKey(unitToRepair)) {
