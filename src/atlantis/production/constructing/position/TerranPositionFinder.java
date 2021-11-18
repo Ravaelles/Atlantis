@@ -1,12 +1,14 @@
 package atlantis.production.constructing.position;
 
 import atlantis.AGame;
+import atlantis.debug.APainter;
 import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import bwapi.Color;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
 
@@ -59,6 +61,8 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
+        APainter.paintCircle(position, 6, Color.Red);
+
         if (builder == null) {
             _CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
             return false;

@@ -6,6 +6,7 @@ import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
+import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
@@ -100,7 +101,7 @@ public class ConstructionRequests {
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
-            System.err.print("Can't find place for `" + building + "` ");
+//            System.err.print("Can't find place for `" + building + "` ");
             if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                 System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             } else {
@@ -109,7 +110,9 @@ public class ConstructionRequests {
             System.err.println();
 
             newConstructionOrder.cancel();
-            return false;
+            System.err.println(order);
+            throw new RuntimeException("Can't find place for `" + building + "` ");
+//            return false;
         }
     }
 

@@ -146,7 +146,7 @@ public class AAdvancedPainter extends APainter {
             // === Paint if enemy units is dangerously close
             // =========================================================
 
-            paintCooldownAndRunBar(unit);
+//            paintCooldown(unit);
 
             if (unit.isStimmed()) {
                 paintCircle(unit, 13, Color.Purple);
@@ -1144,12 +1144,12 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintSquadsInfo(int x, int y) {
-        y += 4;
+        y += 26;
 
         if (Alpha.get().isNotEmpty()) {
-            paintMessage("Squads: ", Color.Grey, x + 4, y, true);
+            paintMessage("Squads: ", Color.White, x + 4, y, true);
             for (Squad squad : ASquadManager.allSquads()) {
-                paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y++, true);
+                paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y += 12, true);
             }
         }
     }
@@ -1169,7 +1169,7 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    private static void paintCooldownAndRunBar(AUnit unit) {
+    private static void paintCooldown(AUnit unit) {
         boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
@@ -1177,9 +1177,11 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintLifeBar(AUnit unit) {
+        Color color = unit.isOur() ? Color.Green : Color.Yellow;
+
 //        if (unit.isWounded()) {
         paintUnitProgressBar(unit, 17, 100, Color.Red);
-        paintUnitProgressBar(unit, 17, unit.hpPercent(), unit.isOur() ? Color.Green : Color.Yellow);
+        paintUnitProgressBar(unit, 17, unit.hpPercent(), color);
 //        }
     }
 

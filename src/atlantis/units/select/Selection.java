@@ -23,7 +23,7 @@ public class Selection {
 
     // =========================================================
 
-    protected Selection(Collection<AUnit> unitsData, String initCachePath) {
+    protected Selection(Collection<? extends AUnit> unitsData, String initCachePath) {
         this.data = new ArrayList<>(unitsData);
         this.currentCachePath = initCachePath;
     }

@@ -279,6 +279,10 @@ public class AGame {
         return hasMinerals(upgrade.mineralPrice()) && hasGas(upgrade.gasPrice());
     }
 
+    public static boolean canAfford(TechType tech) {
+        return hasMinerals(tech.mineralPrice()) && hasGas(tech.gasPrice());
+    }
+
     /**
      * Returns true if we can afford both so many minerals and gas at the same time.
      */

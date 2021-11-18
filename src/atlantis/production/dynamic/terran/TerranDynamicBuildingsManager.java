@@ -20,10 +20,12 @@ import atlantis.util.A;
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
-        TerranMissileTurretsForMain.buildIfNeeded();
-        TerranMissileTurretsForNonMain.buildIfNeeded();
-        OffensiveTerranMissileTurrets.buildIfNeeded();
-        TerranBunker.handleOffensiveBunkers();
+        if (A.everyNthGameFrame(60)) {
+            TerranMissileTurretsForMain.buildIfNeeded();
+            TerranMissileTurretsForNonMain.buildIfNeeded();
+            OffensiveTerranMissileTurrets.buildIfNeeded();
+//            TerranBunker.handleOffensiveBunkers();
+        }
 
         factoryIfBioOnly();
 

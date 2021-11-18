@@ -10,16 +10,18 @@ import bwapi.UpgradeType;
 
 public class ADynamicTech {
 
-    protected static boolean handleUpgrade(TechType tech) {
+    protected static boolean handleTech(TechType tech) {
         if (ATech.isResearched(tech)) {
             return false;
         }
 
-        if (!canAffordWithMargin(tech)) {
+//        if (!canAffordWithMargin(tech)) {
+        if (!AGame.canAfford(tech)) {
             return false;
         }
 
         AUnit building = Select.ourOfType(AUnitType.create(tech.whatResearches())).free().first();
+        System.out.println("building to research = " + building + " // " + tech.name());
         if (building != null) {
             return building.research(tech);
         }
@@ -45,12 +47,12 @@ public class ADynamicTech {
     }
 
     protected static boolean canAffordWithMargin(TechType tech) {
-        int margin = 150;
+        int margin = 100;
         return AGame.canAffordWithReserved(tech.mineralPrice() + margin, tech.gasPrice() + margin);
     }
 
     protected static boolean canAffordWithMargin(UpgradeType upgrade) {
-        int margin = 200;
+        int margin = 150;
         return AGame.canAffordWithReserved(upgrade.mineralPrice() + margin, upgrade.gasPrice() + margin);
     }
 

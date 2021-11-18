@@ -10,7 +10,7 @@ public class UseMap {
 
     public static String activeMap() {
 //        return "sscai/(2)Destination.scx";
-//        return "sscai/(2)Heartbreak Ridge.scx";
+        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
@@ -34,7 +34,7 @@ public class UseMap {
         // ### Gosu bots ###
 //        return "ums/7th.scx"; // vs. AI Protoss player, that can kill CSVs constructing
 //        return "ums/exp_skilltest.scx"; // vs. AI Protoss player
-        return "ums/vsGosuComputer.scx"; // vs. AI Zerg Player - cheating as fuck
+//        return "ums/vsGosuComputer.scx"; // vs. AI Zerg Player - cheating as fuck
 //        return "ums/lt-terran1j.scm"; // Zerg vs. Terran
 //        return "ums/member_test.scx"; // vs. AI 2x Protoss players, massive Zealot rush
 //        return "ums/LostTemple.scm"; // vs. 2x Protoss players, again Zealot rush

@@ -10,6 +10,7 @@ import atlantis.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
 import java.util.*;
@@ -41,6 +42,10 @@ public class AEnemyUnits {
     }
 
     // =========================================================
+
+    public static Selection selectFoggedUnits() {
+        return Select.from(discoveredAndAliveUnits());
+    }
 
     /**
      *
@@ -267,6 +272,17 @@ public class AEnemyUnits {
 
                     return AMap.randomInvisiblePosition(Select.our().first().position());
                 }
+        );
+    }
+
+    public static boolean hasDefensiveLandBuilding() {
+        return (boolean) cache.get(
+                "hasDefensiveLandBuilding",
+                50,
+                () -> selectFoggedUnits()
+                        .combatBuildings()
+                        .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony)
+                        .atLeast(1)
         );
     }
 }

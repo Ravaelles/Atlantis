@@ -1,6 +1,7 @@
 package atlantis.map;
 
 import atlantis.position.APosition;
+import atlantis.util.A;
 import atlantis.util.Vector;
 
 import java.util.ArrayList;
@@ -11,7 +12,11 @@ public class ARegionBoundaryCalculator {
     private static APosition lastAdded = null;
 
     public static ArrayList<ARegionBoundary> forRegion(ARegion region) {
+        System.out.print("Calculating region boundaries... ");
         ArrayList<ARegionBoundary> boundaries = new ArrayList<>();
+        if (A.isUms()) {
+            return boundaries;
+        }
         APosition center = region.center();
         Vector initVector = new Vector(96, 0);
 
@@ -23,6 +28,7 @@ public class ARegionBoundaryCalculator {
             angle += 0.14;
         }
 
+        System.out.println(boundaries.size() + " points added.");
         return boundaries;
     }
 

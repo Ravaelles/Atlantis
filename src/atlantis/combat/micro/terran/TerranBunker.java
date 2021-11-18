@@ -25,13 +25,13 @@ public class TerranBunker {
             return false;
         }
 
-        if (handleMainBunker()) {
-            return true;
-        }
-
-        if (handleMissionContain()) {
-            return true;
-        }
+//        if (handleMainBunker()) {
+//            return true;
+//        }
+//
+//        if (handleMissionContain()) {
+//            return true;
+//        }
 
 //        if (handleReinforceMissionAttack()) {
 //            return true;

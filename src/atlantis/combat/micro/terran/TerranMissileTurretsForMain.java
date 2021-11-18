@@ -22,7 +22,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     private static final int BORDER_TURRETS_MIN_COUNT = 4;
     private static final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
     private static final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
-    private static final int BORDER_TURRETS_ALLOW_MARGIN = 3;
+    private static final int BORDER_TURRETS_ALLOW_MARGIN = 4;
     private static final int MAIN_BASE_TURRETS = 2;
 
     private static Cache<ArrayList<APosition>> cacheList = new Cache<>();
@@ -62,7 +62,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                 forMainBase != null
                 && Count.existingOrPlannedBuildingsNear(turret, 6, forMainBase) < MAIN_BASE_TURRETS
         ) {
-            AddToQueue.withHighPriority(turret, forMainBase).setMaximumDistance(4);
+            AddToQueue.withHighPriority(turret, forMainBase).setMaximumDistance(12);
             return true;
         }
 
@@ -73,7 +73,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         APosition place = Chokes.mainChoke().translateTilesTowards(5, Select.main());
         if (place != null) {
             if (Count.existingOrPlannedBuildingsNear(turret, 5, place) == 0) {
-                AddToQueue.withHighPriority(turret, place).setMaximumDistance(4);
+                AddToQueue.withHighPriority(turret, place).setMaximumDistance(12);
                 return true;
             }
         }
@@ -183,6 +183,10 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     private static APosition placeForMapEdgeTurret(
             Positions<ARegionBoundary> boundaries, APosition nearestTo
     ) {
+        if (nearestTo == null) {
+            return null;
+        }
+
         Positions<ARegionBoundary> nearMapEdge = new Positions<>(
                 boundaries.list()
                 .stream().filter(b -> b.position().nearMapEdge(3.8))

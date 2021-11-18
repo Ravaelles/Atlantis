@@ -20,18 +20,26 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 () -> {
                     APosition basePoint = basePoint();
                     if (basePoint != null && basePoint.region() != null && basePoint.region().center() != null) {
-                        basePoint = basePoint.translateTilesTowards(4, basePoint.region().center());
+                        basePoint = basePoint.translateTilesTowards(3, basePoint.region().center());
                     }
                     return basePoint;
                 }
         );
     }
 
+    @Override
+    public APosition focusPointDirection() {
+        APosition focusPoint = focusPoint();
+        return focusPoint;
+    }
+
     private APosition basePoint() {
         if (We.terran()) {
-            AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-            if (enemyBuilding != null && enemyBuilding.position() != null) {
-                return enemyBuilding.position();
+            if (!AEnemyUnits.hasDefensiveLandBuilding()) {
+                AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+                if (enemyBuilding != null && enemyBuilding.position() != null) {
+                    return enemyBuilding.position();
+                }
             }
         }
 

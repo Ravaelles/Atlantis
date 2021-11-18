@@ -567,7 +567,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Create initial search-pool of units from given collection of units.
      */
-    public static Selection from(Collection<AUnit> units) {
+    public static Selection from(Collection<? extends AUnit> units) {
         return new Selection(units, null);
     }
 

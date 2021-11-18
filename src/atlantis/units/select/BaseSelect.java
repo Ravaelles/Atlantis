@@ -22,7 +22,10 @@ public class BaseSelect<T extends AUnit> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (Unit u : AGame.getPlayerUs().getUnits()) {
-                    data.add(AUnit.createFrom(u));
+                    AUnit unit = AUnit.createFrom(u);
+                    if (unit.isAlive()) {
+                        data.add(unit);
+                    }
                 }
 
                 return data;

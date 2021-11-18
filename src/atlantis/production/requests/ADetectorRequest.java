@@ -8,6 +8,7 @@ import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class ADetectorRequest {
 
@@ -17,13 +18,13 @@ public class ADetectorRequest {
      */
     public static void requestDetectorImmediately(APosition where) {
         AUnitType detectorBuilding = null;
-        if (AGame.isPlayingAsTerran()) {
+        if (We.terran()) {
             detectorBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
         }
-        else if (AGame.isPlayingAsProtoss()) {
+        else if (We.protoss()) {
             detectorBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
         }
-        else if (AGame.isPlayingAsZerg()) {
+        else {
             // Zerg has Overlords, they should be handling this situation
             return;
         }

@@ -28,7 +28,7 @@ public class TerranMissileTurret {
         }
 
         if (!Have.existingOrPlannedOrInQueue(turret, position, inRadius)) {
-            AddToQueue.withTopPriority(turret, position);
+            AddToQueue.withTopPriority(turret, position) .setMaximumDistance(8);
 //            AAntiAirBuildingRequests.requestDefensiveBuildingAntiAir(position);
             return true;
         }

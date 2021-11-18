@@ -43,7 +43,7 @@ public class OnStart {
             AInitialActions.executeInitialActions();
         } catch (Exception e) {
             System.err.println("### Early exception ###");
-            System.err.println("This probably means your playing special UMS map.");
+            System.err.println("This probably means you are playing UMS map.");
             AGame.setUmsMode();
         }
 

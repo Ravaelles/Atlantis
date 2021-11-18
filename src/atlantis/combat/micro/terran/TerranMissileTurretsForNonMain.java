@@ -48,7 +48,8 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
             if (existing < MIN_TURRETS_PER_BASE) {
                 APosition minerals = Select.minerals().inRadius(12, base).center();
                 if (minerals != null) {
-                    AddToQueue.withHighPriority(turret, base.translateTilesTowards(7, minerals));
+                    AddToQueue.withHighPriority(turret, base.translateTilesTowards(4, minerals))
+                            .setMaximumDistance(12);
                     return true;
                 }
             }

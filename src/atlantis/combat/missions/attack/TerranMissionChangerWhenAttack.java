@@ -5,6 +5,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
@@ -30,6 +31,10 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
     }
 
     private static boolean shouldChangeMissionToDefend() {
+        if (A.supplyUsed(120)) {
+            return false;
+        }
+
         if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.main()).atLeast(3)) {
             return true;
         }

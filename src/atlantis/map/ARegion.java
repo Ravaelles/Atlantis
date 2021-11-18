@@ -98,6 +98,10 @@ public class ARegion implements HasPosition {
         return center;
     }
 
+    public double apprxWidth() {
+        return (area.getTopLeft().x + area.getBottomRight().x) / 64.0;
+    }
+
     public List<AChoke> chokes() {
         return area.getChokePoints().stream().map(AChoke::create).collect(Collectors.toList());
     }

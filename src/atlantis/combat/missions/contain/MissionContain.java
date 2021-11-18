@@ -30,9 +30,9 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        if (ASquadCohesionManager.handle(unit)) {
-            return true;
-        }
+//        if (ASquadCohesionManager.handle(unit)) {
+//            return true;
+//        }
 
         // Focus point is well known
         return focusPoint != null && AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint);
@@ -44,18 +44,26 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
 //        APosition focusPoint = focusPoint();
 
-        if (enemy.hasWeaponRange(unit, 0.8) || unit.hasWeaponRange(enemy, 0.8)) {
+        if (unit.isStimmed()) {
+            return true;
+        }
+
+        if (enemy.hasWeaponRange(unit, 1.5) || unit.hasWeaponRange(enemy, 1.5)) {
 //        if (enemy.distTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
             return true;
         }
 
-        // Only attack enemies near squad center
+        // Attack enemies near squad center
         if (enemy.distTo(unit.squad().median()) <= 8) {
             return true;
         }
 
         // Allow to defend bases
         if (enemyIsNearBase(enemy)) {
+            return true;
+        }
+
+        if (!unit.isWounded() || unit.lastStartedAttackMoreThanAgo(30 * 5)) {
             return true;
         }
 
