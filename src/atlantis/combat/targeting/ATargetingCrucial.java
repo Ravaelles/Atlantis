@@ -192,7 +192,6 @@ public class ATargetingCrucial extends AEnemyTargeting {
                 .ofType(
                         AUnitType.Protoss_Archon,
                         AUnitType.Protoss_Observer,
-                        AUnitType.Zerg_Lurker,
                         AUnitType.Zerg_Ultralisk
                 )
                 .inRadius(groundRange + 0.7, unit)

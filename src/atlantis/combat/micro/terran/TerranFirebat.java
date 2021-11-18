@@ -12,7 +12,7 @@ public class TerranFirebat {
             return true;
         }
 
-        int medics = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).inRadius(3, unit).count();
+        int medics = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).inRadius(2.2, unit).count();
 
         if (medics >= 2) {
             return true;

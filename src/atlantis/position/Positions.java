@@ -224,21 +224,22 @@ public class Positions<T extends HasPosition> {
 
     private static int _lastIndex = 0;
     
-    public APosition nearestTo(APosition position) {
+    public T nearestTo(HasPosition position) {
         double closestDist = 9999999;
-        APosition closestPosition = null;
+        T closest = null;
         
         int index = 0;
-        for (T otherPosition : positions) {
-            if (otherPosition.position().getDistance(position) < closestDist) {
-                closestDist = otherPosition.position().getDistance(position);
-                closestPosition = APosition.create(otherPosition.x() / 32, otherPosition.y() / 32);
+        for (T t : positions) {
+            if (t.position().distTo(position) < closestDist) {
+                closestDist = t.position().distTo(position);
+//                closest = APosition.create(otherPosition.x() / 32, otherPosition.y() / 32);
+                closest = t;
                 _lastIndex = index;
             }
             index++;
         }
         
-        return closestPosition;
+        return closest;
     }
 
     public int getLastIndex() {

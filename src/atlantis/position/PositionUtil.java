@@ -2,6 +2,7 @@ package atlantis.position;
 
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
+import atlantis.map.ARegionBoundary;
 import atlantis.units.AUnit;
 import bwapi.Position;
 import bwapi.Unit;
@@ -46,6 +47,9 @@ public class PositionUtil {
         else if (object1 instanceof ABaseLocation) {
             fromPosition = ((ABaseLocation) object1).position();
         }
+        else if (object1 instanceof ARegionBoundary) {
+            fromPosition = ((ARegionBoundary) object1).position();
+        }
 
         if (fromPosition == null && fromUnit == null) {
             throw new RuntimeException("Invalid class for argument `from`: " + object1);
@@ -73,6 +77,9 @@ public class PositionUtil {
         }
         else if (object2 instanceof ABaseLocation) {
             toPosition = ((ABaseLocation) object2).position();
+        }
+        else if (object2 instanceof ARegionBoundary) {
+            toPosition = ((ARegionBoundary) object2).position();
         }
 
         if (toPosition == null && toUnit == null) {

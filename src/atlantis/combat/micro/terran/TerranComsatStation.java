@@ -16,9 +16,9 @@ public class TerranComsatStation {
 //        System.out.println(Select.enemy().ofType(AUnitType.Protoss_Observer).count());
 
         if (comsat.energy() >= 50) {
-            return scanDarkTemplars(comsat)
-                    || scanObservers(comsat)
-                    || scanLurkers(comsat);
+            return scanLurkers(comsat)
+                    || scanDarkTemplars(comsat)
+                    || scanObservers(comsat);
         }
 
         return false;
@@ -28,7 +28,12 @@ public class TerranComsatStation {
     // Zerg
 
     private static boolean scanLurkers(AUnit comsat) {
-        for (AUnit lurker : Select.enemy().effCloaked().ofType(AUnitType.Zerg_Lurker).listUnits()) {
+        if (Select.enemies(AUnitType.Zerg_Lurker).count() > 0) {
+            System.out.println("lurker count = " + Select.enemies(AUnitType.Zerg_Lurker).count());
+            System.out.println("lurker count CLOAKED = " + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count());
+        }
+
+        for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effCloaked().listUnits()) {
             System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.isDetected() + " // " + lurker.hp());
             if (shouldScanThisLurker(lurker, comsat)) {
                 return scan(comsat, lurker);
@@ -39,15 +44,15 @@ public class TerranComsatStation {
     }
 
     private static boolean shouldScanThisLurker(AUnit lurker, AUnit comsat) {
-        if (lurker.isDetected()) {
-            return false;
-        }
-
-        if (comsat.energy(195)) {
+        if (comsat.energy(190)) {
             return true;
         }
 
-        int minUnitsNearby = (comsat.energy(180) ? 3 : (comsat.energy(130) ? 4 : 6));
+        int minUnitsNearby = (comsat.energy(160) ? 3 : (comsat.energy(100) ? 4 : 6));
+
+        if (Select.ourBuildingsIncludingUnfinished().inRadius(9, lurker).isNotEmpty()) {
+            return true;
+        }
 
         return Select.ourCombatUnits()
                 .excludeTypes(AUnitType.Terran_Medic)

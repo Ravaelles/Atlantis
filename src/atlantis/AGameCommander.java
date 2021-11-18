@@ -2,7 +2,7 @@ package atlantis;
 
 import atlantis.combat.ACombatCommander;
 import atlantis.combat.missions.AMissionManager;
-import atlantis.enemy.AEnemyUnits;
+import atlantis.enemy.EnemyUnits;
 import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
@@ -61,7 +61,7 @@ public class AGameCommander {
 
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_OTHER);
         AMissionManager.updateGlobalMission();
-        AEnemyUnits.updateFoggedUnits();
+        EnemyUnits.updateFoggedUnits();
         UmsSpecialActionsManager.update();
         AUnitStateManager.update();
         CameraManager.update();

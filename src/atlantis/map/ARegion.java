@@ -2,6 +2,7 @@ package atlantis.map;
 
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
+import atlantis.position.Positions;
 import atlantis.util.Cache;
 import bwem.Area;
 
@@ -79,7 +80,12 @@ public class ARegion implements HasPosition {
 
     // =========================================================
 
-    public ArrayList<ARegionBoundary> bounds() {
+    public ARegionBoundary nearestBoundary(HasPosition nearestTo) {
+        Positions<ARegionBoundary> boundaries = new Positions<>(boundaries());
+        return boundaries.nearestTo(nearestTo);
+    }
+
+    public ArrayList<ARegionBoundary> boundaries() {
         return cachePolygons.get(
                 "bounds",
                 -1,

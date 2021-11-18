@@ -37,7 +37,6 @@ public class AEnemyTargeting {
 
 //        System.out.println("enemy = " + enemy + A.dist(enemy, unit));
         if (enemy == null) {
-            APainter.paintTextCentered(unit.position().translateByPixels(0, 25), ":-(", Color.Orange);
             return null;
         }
 
@@ -91,7 +90,6 @@ public class AEnemyTargeting {
 
         AUnit target;
         enemyBuildings = Select.enemy()
-                .effVisible()
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 13);
@@ -150,8 +148,7 @@ public class AEnemyTargeting {
     }
 
     private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType enemyType, AUnit ourUnit) {
-        Selection targets = Select.enemy()
-                .ofType(enemyType)
+        Selection targets = Select.enemies(enemyType)
                 .effVisible()
                 .canBeAttackedBy(ourUnit, 0);
 
@@ -163,9 +160,8 @@ public class AEnemyTargeting {
         return targets.clone().nearestTo(ourUnit);
     }
 
-    private static AUnit selectWeakestEnemyOfTypeOutsideOfWeaponRange(AUnitType enemyType, AUnit ourUnit) {
-        Selection targets = Select.enemy()
-                .ofType(enemyType)
+    private static AUnit selectWeakestEnemyOfTypeOutsideOfWeaponRange(AUnitType type, AUnit ourUnit) {
+        Selection targets = Select.enemies(type)
                 .effVisible()
                 .hasPathFrom(ourUnit);
 

@@ -105,13 +105,13 @@ public class APainter {
         bwapi.drawCircleMap(position.position(), radius, color, false);
     }
 
-    public static void paintCircleFilled(Position position, int radius, Color color) {
+    public static void paintCircleFilled(HasPosition position, int radius, Color color) {
         if (isDisabled()) { return; }
 
         if (position == null) {
             return;
         }
-        bwapi.drawCircleMap(position, radius, color, true);
+        bwapi.drawCircleMap(position.position(), radius, color, true);
     }
 
     public static void paintCircleFilled(AUnit unit, int radius, Color color) {

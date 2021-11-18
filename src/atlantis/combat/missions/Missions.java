@@ -103,6 +103,10 @@ public class Missions {
     }
 
     public static void setGlobalMissionTo(Mission mission) {
+        if (mission.equals(currentGlobalMission)) {
+            return;
+        }
+
         MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         lastMissionChanged = A.now();
         currentGlobalMission = mission;

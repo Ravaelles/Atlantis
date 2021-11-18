@@ -2,11 +2,11 @@ package atlantis;
 
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
+import atlantis.enemy.EnemyUnits;
 import atlantis.enemy.UnitsArchive;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.production.constructing.*;
-import atlantis.enemy.AEnemyUnits;
 import atlantis.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -169,7 +169,7 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
             unit.refreshType();
             if (unit.isOur()) {
-                System.out.println("Our new unit " + unit);
+//                System.out.println("Our new unit " + unit);
                 ourNewUnit(unit);
             }
         }
@@ -193,7 +193,6 @@ public class Atlantis implements BWEventListener {
 //        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 
 //        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.shortName());
-        UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
 
         // Our unit
         if (unit.isOur()) {
@@ -205,11 +204,15 @@ public class Atlantis implements BWEventListener {
                 LOST_RESOURCES += unit.type().getTotalResources();
             }
         } else {
+            EnemyUnits.removeDiscoveredUnit(unit);
             if (!unit.type().isGeyser()) {
                 KILLED++;
                 KILLED_RESOURCES += unit.type().getTotalResources();
             }
         }
+
+        // Needs to be at the end, otherwise unit is reported as dead too early
+        UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
 
         // =========================================================
 
@@ -239,8 +242,10 @@ public class Atlantis implements BWEventListener {
 
             else {
                 if (!unit.isNotRealUnit()) {
-                    System.out.println("Neutral unit discovered! " + unit.shortName());
-                    UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+//                    System.out.println("Neutral unit discovered! " + unit.shortName());
+                    if (A.isUms()) {
+                        UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+                    }
                 }
             }
         }
@@ -253,7 +258,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitEvade(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit.isEnemy()) {
-            AEnemyUnits.updateEnemyUnitPosition(unit);
+            EnemyUnits.updateEnemyUnitPosition(unit);
         }
     }
 
@@ -264,7 +269,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitHide(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit.isEnemy()) {
-            AEnemyUnits.updateEnemyUnitPosition(unit);
+            EnemyUnits.updateEnemyUnitPosition(unit);
         }
     }
 
@@ -292,7 +297,7 @@ public class Atlantis implements BWEventListener {
             if (unit.isOur()) {
                 ASquadManager.unitDestroyed(unit);
             } if (unit.isEnemy()) {
-                AEnemyUnits.removeDiscoveredUnit(unit);
+                EnemyUnits.removeDiscoveredUnit(unit);
             }
             unit = AUnit.createFrom(u);
         }
@@ -328,7 +333,7 @@ public class Atlantis implements BWEventListener {
 
             // Enemy unit
             else {
-                AEnemyUnits.refreshEnemyUnit(unit);
+                EnemyUnits.refreshEnemyUnit(unit);
             }
         }
     }
@@ -340,7 +345,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitShow(Unit u) {
         AUnit unit = AUnit.createFrom(u);
 //        if (unit.isEnemy()) {
-//            AEnemyUnits.updateEnemyUnitPosition(unit);
+//            EnemyUnits.updateEnemyUnitPosition(unit);
 //        }
     }
 
@@ -352,7 +357,7 @@ public class Atlantis implements BWEventListener {
         onUnitDestroy(u);
         AUnit.forgetUnitEntirely(u);
         AUnit newUnit = AUnit.createFrom(u);
-        if (newUnit.type().isGasBuilding() || newUnit.type().isGeyser()) {
+        if (newUnit.type().isGasBuilding() || newUnit.type().isGeyser() || newUnit.isLarvaOrEgg()) {
             return;
         }
 
@@ -371,7 +376,7 @@ public class Atlantis implements BWEventListener {
     }
 
     private void enemyNewUnit(AUnit unit) {
-        AEnemyUnits.discoveredEnemyUnit(unit);
+        EnemyUnits.weDiscoveredEnemyUnit(unit);
     }
 
     private void ourNewUnit(AUnit unit) {

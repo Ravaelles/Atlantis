@@ -13,18 +13,21 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AEnemyUnits {
+public class EnemyUnits {
 
     protected static Map<AUnit, AFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
     private static Cache<Object> cache = new Cache<>();
+    private static Cache<Boolean> cacheBoolean = new Cache<>();
 
     // =========================================================
 
     public static void updateFoggedUnits() {
         for (AUnit enemy : Select.enemy().list()) {
-            AEnemyUnits.updateEnemyUnitPosition(enemy);
+            EnemyUnits.updateEnemyUnitPosition(enemy);
         }
 
 //        for (AFoggedUnit fogged : enemyUnitsDiscovered.values()) {
@@ -57,56 +60,52 @@ public class AEnemyUnits {
     /**
      * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */
-    public static boolean hasDiscoveredAnyEnemyBuilding() {
-        for (AUnit enemyUnit : enemyUnitsDiscovered.values()) {
-            if (enemyUnit.isBuilding()) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean hasDiscoveredAnyBuilding() {
+        return cacheBoolean.get(
+                "hasDiscoveredAnyBuilding",
+                50,
+                () -> {
+                    for (AUnit enemyUnit : enemyUnitsDiscovered.values()) {
+                        if (enemyUnit.isBuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+        );
     }
 
     /**
-     * Returns true if we've discovered the main base of enemy (natural base doesn't count).
+     * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */
-    public static boolean hasDiscoveredEnemyBuilding() {
-
-        // We don't know any enemy building
-        if (!AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-            return false;
-        }
-
-//        System.out.println("-------");
-        for (AFoggedUnit enemyUnitData : AEnemyUnits.discoveredAndAliveUnits()) {
-//            System.out.println(enemyUnitData.getType());
-            if (enemyUnitData.type().isBuilding()) {
-                return true;
-////                boolean isBaseAtStartingLocation = false;
-//                APosition building = enemyUnitData.position();
-//
-//                for (ABaseLocation startingLocation : Bases.startingLocations(false)) {
-//                    if (building.distTo(startingLocation.position()) <= 7) {
-////                        System.out.println("Discovered main enemy base");
-//                        return true;
-//                    }
-////                    else {
-////                        System.out.println("Ha! This ain't main enemy base!");
-////                    }
-//                }
-            }
-        }
-
-        return false;
+    public static boolean hasDiscoveredAnyCombatUnit() {
+        return cacheBoolean.get(
+                "hasDiscoveredAnyCombatUnit",
+                30,
+                () -> {
+                    for (AUnit enemyUnit : enemyUnitsDiscovered.values()) {
+                        if (enemyUnit.isCombatUnit() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+        );
     }
 
     public static APosition enemyBase() {
-        for (AFoggedUnit enemyUnit : enemyUnitsDiscovered.values()) {
-            if (enemyUnit.isBase()) {
-//                return getLastPositionOfEnemyUnit(enemyUnit);
-                return enemyUnit.position();
-            }
-        }
-        return null;
+        return (APosition) cache.get(
+                "enemyBase",
+                30,
+                () -> {
+                    for (AFoggedUnit enemyUnit : enemyUnitsDiscovered.values()) {
+                        if (enemyUnit.isBase()) {
+                            return enemyUnit.position();
+                        }
+                    }
+                    return null;
+                }
+        );
     }
 
     public static AFoggedUnit nearestEnemyBuilding() {
@@ -120,9 +119,6 @@ public class AEnemyUnits {
                         double minDist = 999999;
 
                         for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
-//                System.out.println("enemy = " + enemy);
-//                System.out.println("enemy.position() = " + enemy.position());
-//                System.out.println("ourMainBase.groundDistance(enemy.position() = " + ourMainBase.groundDistance(enemy.position()));
                             if (enemy.type().isBuilding() && enemy.position() != null) {
                                 double dist = ourMainBase.groundDistance(enemy.position());
                                 if (dist < minDist) {
@@ -148,7 +144,7 @@ public class AEnemyUnits {
     /**
      * Saves information about enemy unit that we see for the first time.
      */
-    public static void discoveredEnemyUnit(AUnit enemyUnit) {
+    public static void weDiscoveredEnemyUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.put(enemyUnit, new AFoggedUnit(enemyUnit));
 
         EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
@@ -159,14 +155,6 @@ public class AEnemyUnits {
      */
     public static void removeDiscoveredUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.remove(enemyUnit);
-//        enemyUnitsDestroyed.put(enemyUnit.id(), enemyUnit);
-    }
-
-    /**
-     * Returns <b>true</b> if enemy unit has been destroyed and we know it.
-     */
-    public static boolean isEnemyUnitDestroyed(AUnit enemyUnit) {
-        return UnitsArchive.isDestroyed(enemyUnit.id());
     }
 
     /**
@@ -174,7 +162,7 @@ public class AEnemyUnits {
      */
     public static void refreshEnemyUnit(AUnit enemyUnit) {
         enemyUnitsDiscovered.remove(enemyUnit);
-        discoveredEnemyUnit(enemyUnit);
+        weDiscoveredEnemyUnit(enemyUnit);
     }
 
     /**
@@ -185,33 +173,10 @@ public class AEnemyUnits {
             return;
         }
 
-//        if (enemyUnit.isLurker()) {
-//            System.out.println(enemyUnit);
-//            System.out.println(enemyUnit.x() + " // " + enemyUnit._lastX);
-//            System.out.println(enemyUnit.y() + " // " + enemyUnit._lastY);
-//        }
-
-//        enemyUnitsDiscovered.get(enemyUnit).updatePosition(enemyUnit.getPosition());
         if (enemyUnitsDiscovered.containsKey(enemyUnit)) {
             enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
         }
-//        else {
-//            System.err.println("No fogged unit previously: " + enemyUnit);
-//        }
     }
-
-//    public static List<AFoggedUnit> foggedUnits() {
-////        ArrayList<AFoggedUnit> foggedUnits = new ArrayList<>();
-////
-////        for (AFoggedUnit unit : enemyUnitsDiscovered.values()) {
-////
-////        }
-//
-//        return (new ArrayList<>(enemyUnitsDiscovered.values()))
-//                .stream()
-//                .filter(u -> u.isAccessible())
-//                .collect(Collectors.toList());
-//    }
 
     // =========================================================
     // COUNT
@@ -255,7 +220,7 @@ public class AEnemyUnits {
                         return enemyBase.position();
                     }
 
-                    AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+                    AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
                     if (enemyBuilding != null) {
                         return enemyBuilding.position();
                     }
@@ -276,9 +241,9 @@ public class AEnemyUnits {
     }
 
     public static boolean hasDefensiveLandBuilding() {
-        return (boolean) cache.get(
+        return cacheBoolean.get(
                 "hasDefensiveLandBuilding",
-                50,
+                30,
                 () -> selectFoggedUnits()
                         .combatBuildings()
                         .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony)

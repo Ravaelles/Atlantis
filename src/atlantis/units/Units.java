@@ -167,6 +167,10 @@ public class Units {
         extraValues.put(unit, value);
     }
 
+    public boolean hasValueFor(AUnit unit) {
+        return extraValues.containsKey(unit);
+    }
+
     public double valueFor(AUnit unit) {
         assert !units.isEmpty();
         assert unit != null;
@@ -337,7 +341,7 @@ public class Units {
 
         for (AUnit unit : units) {
             string.append("   - ").append(unit.type()).append(" (ID:").append(unit.getID()).append(") ")
-                    .append(valueForOrNull(unit))
+                    .append(hasValueFor(unit) ? valueForOrNull(unit) : "")
                     .append("\n");
         }
 

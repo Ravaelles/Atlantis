@@ -4,7 +4,7 @@ import atlantis.AGame;
 import atlantis.CameraManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
-import atlantis.enemy.AEnemyUnits;
+import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.*;
 import atlantis.position.APosition;
@@ -39,7 +39,7 @@ public class AScoutManager {
 
     private static boolean anyScoutBeenKilled = false;
     
-    public static Positions scoutingAroundBasePoints = new Positions();
+    public static Positions<ARegionBoundary> scoutingAroundBasePoints = new Positions<>();
     private static int scoutingAroundBaseNextPolygonIndex = -1;
     private static HasPosition scoutingAroundBaseLastPolygonPoint = null;
     private static boolean scoutingAroundBaseWasInterrupted = false;
@@ -59,7 +59,7 @@ public class AScoutManager {
         // =========================================================
 
         // We don't know any enemy building, scout nearest starting location.
-        if (!AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+        if (!EnemyUnits.hasDiscoveredAnyBuilding()) {
             return tryFindingEnemyBuilding(scout);
         }
 
@@ -102,7 +102,7 @@ public class AScoutManager {
 
     private static void removeOverlordsAsScouts() {
         if (We.zerg()) {
-            if (AEnemyUnits.hasDiscoveredEnemyBuilding()) {
+            if (EnemyUnits.hasDiscoveredAnyBuilding()) {
                 scouts.clear();
             }
         }
@@ -115,7 +115,7 @@ public class AScoutManager {
             return scout.move(nextPositionToScout, UnitActions.SCOUT, "ScoutBases");
         }
 
-        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+        AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
         APosition position = enemyBuilding != null ? enemyBuilding.position() : scout.position();
         nextPositionToScout = Bases.nearestUnexploredStartingLocation(position);
         if (nextPositionToScout != null) {
@@ -187,9 +187,9 @@ public class AScoutManager {
 
         // === Remain at the enemy base if it's known ==============
 
-        APosition enemy = AEnemyUnits.enemyBase();
+        APosition enemy = EnemyUnits.enemyBase();
         if (enemy == null) {
-            AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+            AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
             if (enemyBuilding != null) {
                 enemy = enemyBuilding.position();
             }
@@ -235,7 +235,7 @@ public class AScoutManager {
         if (We.zerg()) {
 
 //            // We know enemy building
-//            if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
+//            if (EnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
 //                if (AGame.timeSeconds() < 350) {
 //                    if (scouts.isEmpty()) {
 //                        for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
@@ -315,7 +315,7 @@ public class AScoutManager {
                 ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
 
         if (goTo == null || scoutingAroundBaseWasInterrupted) {
-            goTo = useNearestPolygonPoint(region, scout);
+            goTo = useNearestBoundaryPoint(region, scout);
         } else {
             if (scout.distTo(goTo) <= 1.8) {
                 scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + deltaIndex)
@@ -355,7 +355,7 @@ public class AScoutManager {
 //
 //        return;
 
-        for (HasPosition position : regionToRoam.bounds()) {
+        for (ARegionBoundary position : regionToRoam.boundaries()) {
 //            APosition position = APosition.create(point);
 
             // Calculate actual ground distance to this position
@@ -387,8 +387,8 @@ public class AScoutManager {
         }
     }
 
-    private static APosition useNearestPolygonPoint(ARegion region, AUnit scout) {
-        APosition nearest = scoutingAroundBasePoints.nearestTo(scout.position());
+    private static ARegionBoundary useNearestBoundaryPoint(ARegion region, AUnit scout) {
+        ARegionBoundary nearest = scoutingAroundBasePoints.nearestTo(scout.position());
         scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.getLastIndex();
         return nearest;
     }

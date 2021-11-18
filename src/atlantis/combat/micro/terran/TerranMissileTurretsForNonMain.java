@@ -1,12 +1,8 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.AGame;
-import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AFoggedUnit;
 import atlantis.map.*;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import atlantis.position.Positions;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;

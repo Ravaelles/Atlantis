@@ -80,12 +80,16 @@ public class AAttackEnemyUnit {
         return true;
     }
 
-    private static boolean processAttackUnit(AUnit unit, AUnit enemy) {
-        if (handleMoveNextToTanksWhenAttackingThem(unit, enemy)) {
+    private static boolean processAttackUnit(AUnit unit, AUnit target) {
+        if (handleMoveNextToTanksWhenAttackingThem(unit, target)) {
             return true;
         }
 
-        unit.attackUnit(enemy);
+        if (target.isBase() && unit.distToMoreThan(target, 4)) {
+            return unit.move(target, UnitActions.MOVE_TO_ENGAGE, "BaseAttack");
+        }
+
+        unit.attackUnit(target);
         return true;
     }
 
@@ -117,9 +121,9 @@ public class AAttackEnemyUnit {
     }
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
-        if (unit.isSquadScout()) {
-            return Select.our().inRadius(4, unit).atLeast(3);
-        }
+//        if (unit.isSquadScout()) {
+//            return Select.our().inRadius(4, unit).atLeast(3);
+//        }
 
         return unit.mission() == null
                 || unit.mission().allowsToAttackEnemyUnit(unit, enemy)

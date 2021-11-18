@@ -40,14 +40,13 @@ public class ARepairerManager {
 
         // Target is totally healthy
         if (!target.isWounded()) {
-            System.err.println("Repair target no longer wounded: " + target.shortName() + " // " + target.hp());
             repairer.setTooltip("Repaired!");
             ARepairAssignments.removeRepairerOrProtector(repairer);
             return handleRepairCompletedTryFindingNewTarget(repairer);
         }
 
         // Target is wounded
-        if (!repairer.isRepairing() && target.isWounded() && target.isAlive()) {
+        if (!repairer.isRepairing() && target.isAlive()) {
             if (repairer.lastActionMoreThanAgo(30 * 3)) {
                 ARepairAssignments.removeRepairerOrProtector(repairer);
                 repairer.setTooltip("IdleGTFO");
@@ -58,6 +57,11 @@ public class ARepairerManager {
                     target,
                     "Repair " + target.shortNamePlusId() + "(" + repairer.getLastOrderFramesAgo() + ")"
             );
+        }
+
+        if (repairer.isRepairing()) {
+            repairer.setTooltip("::repair::");
+            return true;
         }
 
         if (!ARepairAssignments.isProtector(repairer) && repairer.lastActionMoreThanAgo(30 * 2)) {

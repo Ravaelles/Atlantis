@@ -22,7 +22,7 @@ public class UnitsArchive {
         destroyedUnitIds.put(unitId, unit);
 
         if (unit.isEnemy()) {
-            AEnemyUnits.removeDiscoveredUnit(unit);
+            EnemyUnits.removeDiscoveredUnit(unit);
             enemyUnitDestroyed(unit);
         }
         else if (unit.isOur()) {
@@ -109,6 +109,10 @@ public class UnitsArchive {
             ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());
             ourKilledResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
         }
+    }
+
+    public static boolean isDestroyed(AUnit unit) {
+        return destroyedUnitIds.containsKey(unit.id());
     }
 
     public static boolean isDestroyed(int unitId) {

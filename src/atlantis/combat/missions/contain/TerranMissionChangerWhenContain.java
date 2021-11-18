@@ -26,17 +26,17 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
     // =========================================================
 
     protected static boolean shouldChangeMissionToDefend() {
-        if (A.supplyUsed(150)) {
+        if (
+                A.supplyUsed(150)
+                || Atlantis.LOST <= 3
+                || A.resourcesBalance() >= 400
+        ) {
             return false;
         }
 
 //        if (EnemyInformation.isEnemyNearAnyOurBuilding()) {
 //            return true;
 //        }
-
-        if (Atlantis.LOST <= 5) {
-            return false;
-        }
 
         // === Zerg ======================================================
 

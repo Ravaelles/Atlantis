@@ -692,7 +692,15 @@ public class Selection {
         return data.size() == 0;
     }
 
+    public boolean empty() {
+        return data.size() == 0;
+    }
+
     public boolean isNotEmpty() {
+        return data.size() > 0;
+    }
+
+    public boolean notEmpty() {
         return data.size() > 0;
     }
 

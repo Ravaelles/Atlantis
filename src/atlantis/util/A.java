@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -1186,5 +1187,9 @@ public class A {
 
     public static void printStack() {
         Thread.dumpStack();
+    }
+
+    public static long realSecondsNow() {
+        return Instant.now().getEpochSecond();
     }
 }

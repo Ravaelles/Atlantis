@@ -30,7 +30,7 @@ public class ATargetingStandard extends AEnemyTargeting {
         }
 
         // =========================================================
-        // OVERLORDS IN RANGE
+        // OVERLORDS
 
         target = enemyUnits.clone()
                 .ofType(AUnitType.Zerg_Overlord)
@@ -108,7 +108,7 @@ public class ATargetingStandard extends AEnemyTargeting {
         // =========================================================
         // Okay, try targeting any-fuckin-thing
 
-        return Select.enemy()
+        return Select.enemyRealUnits()
                 .effVisible()
                 .canBeAttackedBy(unit, 5)
                 .nearestTo(unit);

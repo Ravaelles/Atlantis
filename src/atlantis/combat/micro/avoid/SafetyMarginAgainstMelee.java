@@ -3,7 +3,6 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
@@ -18,14 +17,21 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         double criticalDist;
 
-        if (defender.isInfantry()) {
+        // Terran INFANTRY
+        if (defender.isTerranInfantry()) {
             criticalDist = 2.1 + defender.woundPercent() / 19
                     + ourMovementBonus(defender) / 3
                     + enemyMovementBonus(defender, attacker) / 3;
         }
+        // VULTURE
+        if (defender.isVulture()) {
+            criticalDist = 3.6;
+        }
+
+        // Standard unit
         else {
             criticalDist = baseForMelee(defender, attacker)
-                    + enemyWeaponRangeBonus(defender, attacker)
+                    + enemyWeaponRange(defender, attacker)
                     + woundedAgainstMeleeBonus(defender)
                     + beastBonus(defender)
                     + ourUnitsNearbyBonus(defender)
@@ -35,6 +41,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     + enemyMovementBonus(defender, attacker);
         }
 
+        // 3.85 tiles (base width) should be enough as a minimum versus melee unit
         criticalDist = Math.min(criticalDist, 3.85);
 //        System.out.println("criticalDist = " + criticalDist + " // " + ourUnitsNearbyBonus(defender));
 

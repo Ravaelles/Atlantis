@@ -1,7 +1,7 @@
 package atlantis.map;
 
 import atlantis.AGame;
-import atlantis.enemy.AEnemyUnits;
+import atlantis.enemy.EnemyUnits;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.util.Cache;
@@ -171,7 +171,7 @@ public class Chokes {
     }
 
     public static AChoke enemyMainChoke() {
-        APosition enemyMain = AEnemyUnits.enemyBase();
+        APosition enemyMain = EnemyUnits.enemyBase();
         if (enemyMain == null) {
             return null;
         }

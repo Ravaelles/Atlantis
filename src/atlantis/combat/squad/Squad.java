@@ -157,6 +157,10 @@ public abstract class Squad extends Units {
     public int getID() {
         return ID;
     }
+
+    public String letter() {
+        return name.charAt(0) + "";
+    }
     
     // =========================================================
 

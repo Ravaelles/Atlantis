@@ -47,7 +47,7 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
 
     protected static HasPosition containReinforcePoint(APosition focusPoint) {
         APosition point = focusPoint;
-//        AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+//        AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
 
         APosition alphaCenter = Squad.alphaCenter();
         if (alphaCenter != null) {

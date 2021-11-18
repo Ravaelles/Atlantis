@@ -1,12 +1,6 @@
 package atlantis;
 
-import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AFoggedUnit;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import jbweb.Blocks;
-import jbweb.Stations;
 import jbweb.Walls;
 
 public class OnEveryFrame {
@@ -26,8 +20,8 @@ public class OnEveryFrame {
 //            }
 //        }
 
-//        AEnemyUnits.printEnemyFoggedUnits();
-//        System.out.println("ENEMY BASE = " + AEnemyUnits.enemyBase());
+//        EnemyUnits.printEnemyFoggedUnits();
+//        System.out.println("ENEMY BASE = " + EnemyUnits.enemyBase());
 
 //        Select.printCache();
 
@@ -64,12 +58,12 @@ public class OnEveryFrame {
 //            CameraManager.centerCameraOn(wraith);
 //        }
 
-//        for (AFoggedUnit unit : AEnemyUnits.discoveredAndAliveUnits()) {
+//        for (AFoggedUnit unit : EnemyUnits.discoveredAndAliveUnits()) {
 //            if (unit.isBuilding()) {
 //                System.out.println(unit.shortName() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //            }
 //        }
-//        for (AFoggedUnit unit : AEnemyUnits.()) {
+//        for (AFoggedUnit unit : EnemyUnits.()) {
 //            System.out.println(unit.shortName() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //        }
 

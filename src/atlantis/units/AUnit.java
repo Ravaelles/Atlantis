@@ -49,7 +49,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private final Unit u;
     private Cache<Object> cache = new Cache<>();
     private Cache<Integer> cacheInt = new Cache<>();
-//    private AUnitType _lastCachedType;
+    private AUnitType _lastType = null;
     private UnitAction unitAction = UnitActions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
@@ -131,31 +131,38 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns unit type from bridge OR if type is Unknown (behind fog of war) it will return last cached type.
      */
     public AUnitType type() {
-        return (AUnitType) cache.get(
-                "type",
-                isOur() ? -1 : 3,
-                () -> {
-                    AUnitType type = AUnitType.create(u.getType());
-                    if (type.isUnknown()) {
-                        if (this.isOur()) {
-                            System.err.println("Our unit (" + u.getType() + ") returned Unknown type");
-                        }
-                        // This is expected - invisible units return Unknown type
-                        else {
-//                            System.err.println("Enemy unit type is Unknown...");
-//                            System.err.println(u.getType());
-//                            System.err.println(u.getHitPoints());
-                        }
-                    }
-//                    System.out.println(this.u + " // " + type.ut().name());
-                    return type;
-                }
-        );
+        if (_lastType == null) {
+            _lastType = AUnitType.create(u.getType());
+        }
+
+        return _lastType;
+
+//        return (AUnitType) cache.get(
+//                "type",
+//                isOur() ? -1 : 3,
+//                () -> {
+//                    AUnitType type = AUnitType.create(u.getType());
+//                    if (type.isUnknown()) {
+//                        if (this.isOur()) {
+//                            System.err.println("Our unit (" + u.getType() + ") returned Unknown type");
+//                        }
+//                        // This is expected - invisible units return Unknown type
+//                        else {
+////                            System.err.println("Enemy unit type is Unknown...");
+////                            System.err.println(u.getType());
+////                            System.err.println(u.getHitPoints());
+//                        }
+//                    }
+////                    System.out.println(this.u + " // " + type.ut().name());
+//                    return type;
+//                }
+//        );
     }
     
     public void refreshType() {
+        _lastType = null;
         cache.forgetAll();
-        _isWorker = !isBuilding() && isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
+        cacheInt.forgetAll();
     }
 
     @Override
@@ -205,7 +212,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private boolean _healable = false;
     private boolean _isMilitaryBuildingAntiGround = false;
     private boolean _isMilitaryBuildingAntiAir = false;
-    private boolean _isWorker;
     private double _lastCombatEval;
     private int _lastTimeCombatEval = 0;
 
@@ -281,7 +287,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isWorker() {
-        return _isWorker;
+        return type().isWorker();
     }
 
     public boolean isBunker() {
@@ -289,8 +295,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isBase() {
-        return isType(AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus, AUnitType.Zerg_Hatchery,
-                AUnitType.Zerg_Lair, AUnitType.Zerg_Hive);
+        return isType(
+                AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus,
+                AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive
+        );
     }
 
     public boolean isInfantry() {
@@ -707,10 +715,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null && !isWorker()) {
-            System.err.println("Null squad for unit: " + this);
+        if (squad == null && !isBuilding() && !isWorker() && isAlive()) {
+            System.err.println("Null squad for unit: " + this + " // alive:" + isAlive() + " // hp:" + hp());
         }
-//            System.err.println("still squad in unit was fuckin null");
 //            squad = AtlantisSquadManager.getAlphaSquad();
         return squad;
     }
@@ -1818,6 +1825,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isScv() {
         return type().isScv();
+    }
+
+    public boolean isCombatUnit() {
+        return type().isCombatUnit();
     }
 
 //    public boolean isDepleted() {

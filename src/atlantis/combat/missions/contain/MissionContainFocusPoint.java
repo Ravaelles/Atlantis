@@ -2,9 +2,8 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
-import atlantis.enemy.AEnemyUnits;
+import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
-import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
@@ -24,8 +23,8 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 1,
                 () -> {
                     if (We.terran()) {
-                        if (!AEnemyUnits.hasDefensiveLandBuilding()) {
-                            AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+                        if (!EnemyUnits.hasDefensiveLandBuilding()) {
+                            AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
                             if (enemyBuilding != null && enemyBuilding.position() != null) {
                                 return new AFocusPoint(
                                         enemyBuilding,
@@ -62,7 +61,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //                        return mainChoke.position();
 //                    }
 
-//                    AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+//                    AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
 //                    if (enemyBuilding != null) {
 //                        return enemyBuilding.position();
 //                    }
@@ -72,7 +71,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //            return nearestEnemy.position();
 //        }
 
-                    APosition enemyBase = AEnemyUnits.enemyBase();
+                    APosition enemyBase = EnemyUnits.enemyBase();
                     if (enemyBase != null && enemyBase.position() != null) {
                         return new AFocusPoint(
                                 enemyBase,

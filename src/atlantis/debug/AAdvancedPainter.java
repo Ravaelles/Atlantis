@@ -12,12 +12,14 @@ import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.enemy.EnemyUnits;
+import atlantis.log.ALog;
+import atlantis.log.LogMessage;
 import atlantis.map.*;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.position.TerranPositionFinder;
-import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
 import atlantis.position.PositionHelper;
@@ -30,6 +32,7 @@ import atlantis.scout.AScoutManager;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.CodeProfiler;
@@ -52,6 +55,8 @@ public class AAdvancedPainter extends APainter {
     protected static int sideMessageMiddleCounter = 0;
     protected static int sideMessageBottomCounter = 0;
     protected static int prevTotalFindBuildPlace = 0;
+    private static final int rightSideMessageLeftOffset = 572;
+    private static final int rightSideMessageTopOffset = 470;
     private static final int timeConsumptionLeftOffset = 572;
     private static final int timeConsumptionTopOffset = 65;
     private static final int timeConsumptionBarMaxWidth = 50;
@@ -83,6 +88,7 @@ public class AAdvancedPainter extends APainter {
         paintKilledAndLost();
         paintProductionQueue();
         paintSidebarConstructionsPending();
+        paintLog();
         paintConstructionPlaces();
         //        paintUnitCounters();
 
@@ -176,6 +182,12 @@ public class AAdvancedPainter extends APainter {
 ////                }
 
             // =========================================================
+            // === Other stuff =========================================
+
+            String squadLetter = unit.squad() == null ? "NO_SQUAD" : unit.squad().letter();
+            paintTextCentered(unit.position().translateByPixels(0, 22), squadLetter, Color.Purple);
+
+            // =========================================================
             // === Paint circle around units with zero ground weapon
             // === cooldown equal to 0 - meaning they can shoot now
             // =========================================================
@@ -201,7 +213,6 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintEnemyTargets(AUnit enemy) {
         paintLine(enemy, enemy.target(), Color.Red);
-//        paintLine(enemy, enemy.getTargetPosition(), Color.Orange);
     }
 
     /**
@@ -211,7 +222,7 @@ public class AAdvancedPainter extends APainter {
         for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
             paintCombatEval(enemy);
             paintLifeBar(enemy);
-            paintEnemyTargets(enemy);
+//            paintEnemyTargets(enemy);
             paintTextCentered(enemy, enemy.idWithHash(), Color.Grey, 0, 1);
         }
 
@@ -261,7 +272,7 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", color);
 
         paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
-        paintSideMessage("Enemy base: " + AEnemyUnits.enemyBase(), Color.White);
+        paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.White);
 
         // =========================================================
         // Focus point
@@ -292,6 +303,7 @@ public class AAdvancedPainter extends APainter {
 //        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
+        paintSideMessage("Workers: " + Count.workers(), Color.White);
         paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ProductionQueue.mineralsReserved(), Color.Grey);
         paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
@@ -1037,7 +1049,7 @@ public class AAdvancedPainter extends APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     static void paintFoggedUnitsThatIsEnemiesDiscovered() {
-        for (AFoggedUnit foggedEnemy : AEnemyUnits.discoveredAndAliveUnits()) {
+        for (AFoggedUnit foggedEnemy : EnemyUnits.discoveredAndAliveUnits()) {
             if (!foggedEnemy.hasKnownPosition()) {
                 continue;
             }
@@ -1092,12 +1104,12 @@ public class AAdvancedPainter extends APainter {
      * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
      */
     private static void paintEnemyRegionDetails() {
-        APosition enemyBase = AEnemyUnits.enemyBase();
+        APosition enemyBase = EnemyUnits.enemyBase();
         if (enemyBase != null) {
             ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
-            for (APosition point : (ArrayList<APosition>) AScoutManager.scoutingAroundBasePoints.arrayList()) {
+            for (ARegionBoundary point : AScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.Yellow);
             }
         }
@@ -1169,6 +1181,16 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
+    private static void paintLog() {
+        int x = rightSideMessageLeftOffset - 100;
+        int y = rightSideMessageTopOffset;
+
+        int counter = 0;
+        for (LogMessage log : ALog.messages()) {
+            paintMessage(log.message(), log.color(), x, y - 12 * counter++, true);
+        }
+    }
+
     private static void paintCooldown(AUnit unit) {
         boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);
 
@@ -1219,7 +1241,7 @@ public class AAdvancedPainter extends APainter {
 
         paintRegionBoundaries(mainRegion);
 
-        APosition enemyBase = AEnemyUnits.enemyBase();
+        APosition enemyBase = EnemyUnits.enemyBase();
         if (enemyBase != null) {
             paintRegionBoundaries(enemyBase.region());
         }
@@ -1248,7 +1270,7 @@ public class AAdvancedPainter extends APainter {
         APainter.paintCircle(region.center(), 6, Color.Brown);
         APainter.paintCircle(region.center(), 5, Color.Brown);
 
-        ArrayList<ARegionBoundary> boundaries = region.bounds();
+        ArrayList<ARegionBoundary> boundaries = region.boundaries();
         for (ARegionBoundary boundary : boundaries) {
             APosition position = boundary.position();
             Color color = Color.Grey;

@@ -18,10 +18,15 @@ public abstract class MoveToFocusPoint {
 
     // =========================================================
 
+    /**
+     * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
+     */
     protected static boolean tooFar() {
         if (fromSide != null) {
-            if ((distUnitToFocus + distUnitToFromSide) > distFocusToFromSide * 1.15) {
-                return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "Withdraw");
+            if ((distUnitToFocus + distUnitToFromSide) > distFocusToFromSide * 1.1) {
+                if (distUnitToFromSide > distUnitToFocus) {
+                    return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "Withdraw");
+                }
             }
         }
 
@@ -32,9 +37,13 @@ public abstract class MoveToFocusPoint {
         return false;
     }
 
+    /**
+     * Unit is too close to its focus point.
+     */
     protected static boolean tooClose() {
         if (distUnitToFocus <= (optimalDist - MARGIN)) {
-            return unit.moveAwayFrom(focusPoint, 0.2, "TooClose");
+            return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "TooClose");
+//            return unit.moveAwayFrom(focusPoint, 0.2, "TooClose");
         }
 
         return false;

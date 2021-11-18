@@ -1,10 +1,11 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.enemy.AEnemyUnits;
+import atlantis.enemy.EnemyUnits;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.position.Positions;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
@@ -105,7 +106,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                 "positionForMainBaseTurret",
                 30,
                 () -> {
-                    APosition enemyLocation = AEnemyUnits.enemyLocationOrGuess();
+                    APosition enemyLocation = EnemyUnits.enemyLocationOrGuess();
                     AUnit mineralNearestToEnemy = Select.minerals().inRadius(12, Select.main()).nearestTo(enemyLocation);
 
                     if (mineralNearestToEnemy != null) {
@@ -133,19 +134,19 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                     return places;
                 }
 
-                APosition enemyLocation = AEnemyUnits.enemyLocationOrGuess();
+                APosition enemyLocation = EnemyUnits.enemyLocationOrGuess();
 
                 Positions<ARegionBoundary> boundaries = new Positions<>();
-                boundaries.addPositions(region.bounds());
+                boundaries.addPositions(region.boundaries());
 
                 // =========================================================
 
                 // Protect the place nearest to map edge - here a lot of invasions happen
-                APosition placeForMapEdgeTurret = placeForMapEdgeTurret(boundaries, enemyLocation);
+                HasPosition placeForMapEdgeTurret = placeForMapEdgeTurret(boundaries, enemyLocation);
                 if (placeForMapEdgeTurret != null) {
                     placeForMapEdgeTurret = modifyAgainstZerg(placeForMapEdgeTurret);
 
-                    places.add(placeForMapEdgeTurret);
+                    places.add(placeForMapEdgeTurret.position());
                 }
 
                 // Protect cliffs around the main base region, looking from nearest side to enemy
@@ -168,7 +169,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
      * by protecting against the land invasion. Therefore against Zerg back the turrets towards the base, so
      * they defend both border and the main at the same time.
      */
-    private static APosition modifyAgainstZerg(APosition placeForMapEdgeTurret) {
+    private static APosition modifyAgainstZerg(HasPosition placeForMapEdgeTurret) {
         return placeForMapEdgeTurret.translateTilesTowards(Select.main(), 5);
     }
 
@@ -180,7 +181,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         );
     }
 
-    private static APosition placeForMapEdgeTurret(
+    private static HasPosition placeForMapEdgeTurret(
             Positions<ARegionBoundary> boundaries, APosition nearestTo
     ) {
         if (nearestTo == null) {
@@ -221,8 +222,8 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
             Positions<ARegionBoundary> boundaries, APosition nearestEnemyBuilding, ArrayList<APosition> places
     ) {
         int counter = 0;
-        APosition centralPoint = boundaries.nearestTo(nearestEnemyBuilding); // Region boundary nearest to enemy
-        APosition potentialPlace = centralPoint;
+        ARegionBoundary centralPoint = boundaries.nearestTo(nearestEnemyBuilding); // Region boundary nearest to enemy
+        APosition potentialPlace = centralPoint.position();
         while (true) {
             if (potentialPlace != null && !places.contains(potentialPlace)) {
                 int turretsNear = Count.existingOrPlannedBuildingsNear(turret, BORDER_TURRETS_MAX_DIST_BETWEEN, potentialPlace);
@@ -241,7 +242,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     }
 
     private static APosition findBoundaryPointInDistOf(
-            double baseDist, APosition position, Positions<ARegionBoundary> boundaries, ArrayList<APosition> places
+            double baseDist, HasPosition position, Positions<ARegionBoundary> boundaries, ArrayList<APosition> places
     ) {
         double currentSearchDist = baseDist;
         while (currentSearchDist <= 3.2 * baseDist) {

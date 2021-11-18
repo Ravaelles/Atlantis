@@ -32,9 +32,8 @@ public class AUnitBeingReparedManager {
 
         // =========================================================
 
-
         // Go to repairer if he's close
-        if (distanceToRepairer > 2) {
+        if (distanceToRepairer > 1) {
             unitBeingRepared.move(repairer.position(), UnitActions.MOVE_TO_REPAIR, "To repairer");
             return true;
         }

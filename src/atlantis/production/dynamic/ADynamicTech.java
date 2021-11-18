@@ -21,8 +21,9 @@ public class ADynamicTech {
         }
 
         AUnit building = Select.ourOfType(AUnitType.create(tech.whatResearches())).free().first();
-        System.out.println("building to research = " + building + " // " + tech.name());
+        System.out.println("building to research " + tech.name() + " = " + building + " // " + tech.name());
         if (building != null) {
+            System.out.println("### Research now " + tech.name());
             return building.research(tech);
         }
 

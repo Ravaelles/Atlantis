@@ -312,12 +312,13 @@ public interface AUnitOrders {
 
         unit().setTooltip(tooltip);
 
-        if (!unit().isCommand(UnitCommandType.Repair) && !target.u().equals(u().getTarget())) {
-//        if (unit().getTarget() == null) {
-            unit().setUnitAction(UnitActions.REPAIR);
-            unit().setLastUnitOrderNow();
-            u().repair(target.u());
+        if (unit().isCommand(UnitCommandType.Repair) && !target.u().equals(u().getTarget())) {
+            return true;
         }
+
+        unit().setUnitAction(UnitActions.REPAIR);
+        unit().setLastUnitOrderNow();
+        u().repair(target.u());
 
         return true;
 

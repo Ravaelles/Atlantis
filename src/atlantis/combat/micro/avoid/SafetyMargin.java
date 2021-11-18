@@ -45,8 +45,9 @@ public class SafetyMargin {
         return defender.isOur() && defender.isSquadScout() ? 2 : 0;
     }
 
-    protected static double enemyWeaponRangeBonus(AUnit defender, AUnit attacker) {
-        return attacker.getWeaponRangeAgainst(defender) - (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
+    protected static double enemyWeaponRange(AUnit defender, AUnit attacker) {
+//        return attacker.getWeaponRangeAgainst(defender) - (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
+        return attacker.getWeaponRangeAgainst(defender) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
     protected static double enemyMovementBonus(AUnit attacker, AUnit defender) {

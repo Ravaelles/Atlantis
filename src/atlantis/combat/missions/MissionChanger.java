@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.combat.missions.attack.MissionChangerWhenAttack;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Have;
 
@@ -45,7 +46,11 @@ public class MissionChanger {
     // =========================================================
 
     public static void notifyThatUnitRetreated(AUnit unit) {
-        if (Missions.isFirstMission() && Missions.isGlobalMissionAttack()) {
+        if (
+                Missions.isFirstMission()
+                    && Missions.isGlobalMissionAttack()
+                    && RetreatManager.GLOBAL_RETREAT_COUNTER >= 4
+        ) {
             forceMissionContain();
         }
     }

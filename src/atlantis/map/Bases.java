@@ -1,6 +1,6 @@
 package atlantis.map;
 
-import atlantis.enemy.AEnemyUnits;
+import atlantis.enemy.EnemyUnits;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.Positions;
@@ -101,7 +101,7 @@ public class Bases {
      * Returns free base location which is as far from enemy starting location as possible.
      */
     public static ABaseLocation expansionBaseLocationMostDistantToEnemy() {
-        APosition farthestTo = AEnemyUnits.enemyBase();
+        APosition farthestTo = EnemyUnits.enemyBase();
         if (farthestTo == null) {
             return expansionFreeBaseLocationNearestTo(Select.ourBases().first().position());
         }
@@ -264,7 +264,7 @@ public class Bases {
                 "enemyNatural",
                 60,
                 () -> {
-                    APosition enemyBase = AEnemyUnits.enemyBase();
+                    APosition enemyBase = EnemyUnits.enemyBase();
                     if (enemyBase == null) {
                         return null;
                     }

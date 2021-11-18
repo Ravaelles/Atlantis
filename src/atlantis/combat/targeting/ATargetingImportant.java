@@ -35,19 +35,6 @@ public class ATargetingImportant extends AEnemyTargeting {
         AUnit target;
 
         // =========================================================
-        // Overlords
-
-        target = Select.enemy()
-                .ofType(AUnitType.Zerg_Overlord)
-                .canBeAttackedBy(unit, 1)
-                .nearestTo(unit);
-        if (target != null) {
-            System.err.println(unit.shortName() + " --> " + target.shortName());
-            if (AEnemyTargeting.debug(unit)) System.out.println("C1 = " + target);
-            return target;
-        }
-
-        // =========================================================
         // Target AIR UNITS INRANGE
 
         target = enemyUnits.clone()
@@ -56,6 +43,14 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .nearestTo(unit);
         if (target != null) {
             if (AEnemyTargeting.debug(unit)) System.out.println("C1 = " + target);
+            return target;
+        }
+
+        // =========================================================
+        // Special case - SHUTTLE
+
+        if ((target = ATransportTargeting.target(unit)) != null) {
+            if (AEnemyTargeting.debug(unit)) System.out.println("C3 = " + target);
             return target;
         }
 
@@ -130,14 +125,6 @@ public class ATargetingImportant extends AEnemyTargeting {
 
     private static AUnit targetOutsideShootingRange(AUnit unit) {
         AUnit target;
-
-        // =========================================================
-        // Special case - SHUTTLE
-
-        if ((target = ATransportTargeting.target(unit)) != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C3 = " + target);
-            return target;
-        }
 
         // =========================================================
         // Target COMBAT UNITS IN RANGE

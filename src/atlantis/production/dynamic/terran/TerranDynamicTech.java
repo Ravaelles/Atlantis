@@ -26,7 +26,6 @@ public class TerranDynamicTech extends ADynamicTech {
                 OurDecisions.wantsToBeAbleToProduceTanksSoon()
                 || (A.supplyUsed(70) && !ATech.isResearched(TechType.Tank_Siege_Mode))
         ) {
-            System.out.println("Handle tech");
             handleTech(TechType.Tank_Siege_Mode);
         }
     }

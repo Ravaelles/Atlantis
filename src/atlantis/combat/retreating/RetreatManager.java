@@ -11,6 +11,8 @@ import java.util.Objects;
 
 public class RetreatManager {
 
+    public static int GLOBAL_RETREAT_COUNTER = 0;
+
     public static boolean shouldNotRetreat(AUnit unit, Units enemies) {
         return shouldRetreat(unit, enemies);
     }
@@ -29,6 +31,7 @@ public class RetreatManager {
         // If situation is unfavorable, retreat
         if (!isSituationFavorable) {
             unit._lastRetreat = AGame.now();
+            GLOBAL_RETREAT_COUNTER++;
             unit.setTooltip("Retreat");
             MissionChanger.notifyThatUnitRetreated(unit);
             return unit.runningManager().runFrom(enemies.average(), 3.5);

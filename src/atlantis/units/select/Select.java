@@ -1,10 +1,8 @@
 package atlantis.units.select;
 
-import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.enemy.AEnemyUnits;
+import atlantis.enemy.EnemyUnits;
 import atlantis.production.constructing.AConstructionManager;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -70,10 +68,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : enemyUnits()) {
-//                        if (unit.isAlive()) {
-                        data.add(unit);
+                        if (unit.isAlive()) {
+                            data.add(unit);
+                        }
 //                        System.err.println(unit);
-//                        }
                     }
 
                     return new Selection(data, cachePath);
@@ -88,7 +86,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 0,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
-                    data.addAll(AEnemyUnits.discoveredAndAliveUnits());
+                    data.addAll(EnemyUnits.discoveredAndAliveUnits());
 
                     return new Selection(data, cachePath);
                 }
