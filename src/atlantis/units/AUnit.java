@@ -707,10 +707,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-//        if (squad == null) {
+        if (squad == null && !isWorker()) {
+            System.err.println("Null squad for unit: " + this);
+        }
 //            System.err.println("still squad in unit was fuckin null");
 //            squad = AtlantisSquadManager.getAlphaSquad();
-//        }
         return squad;
     }
 

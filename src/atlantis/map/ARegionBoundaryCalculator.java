@@ -12,13 +12,13 @@ public class ARegionBoundaryCalculator {
     private static APosition lastAdded = null;
 
     public static ArrayList<ARegionBoundary> forRegion(ARegion region) {
-        System.out.print("Calculating region boundaries... ");
         ArrayList<ARegionBoundary> boundaries = new ArrayList<>();
         if (A.isUms()) {
             return boundaries;
         }
+        System.out.print("Calculating region boundaries... ");
         APosition center = region.center();
-        Vector initVector = new Vector(96, 0);
+        Vector initVector = new Vector(64, 0);
 
         double angle = 0;
         while (angle < 2 * 3.14) {
@@ -28,7 +28,7 @@ public class ARegionBoundaryCalculator {
             angle += 0.14;
         }
 
-        System.out.println(boundaries.size() + " points added.");
+        System.out.println(boundaries.size() + " border points added.");
         return boundaries;
     }
 
@@ -50,7 +50,7 @@ public class ARegionBoundaryCalculator {
             }
 
             vector = vector.addLength(48);
-        } while (position.isWalkable());
+        } while (position.isWalkable() && vector.length() <= 30 * 32);
 
         if (lastBuildable != null) {
             if (lastAdded == null || lastAdded.distToMoreThan(lastBuildable, MIN_DIST_BETWEEN_POINTS)) {

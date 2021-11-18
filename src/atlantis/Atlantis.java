@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.enemy.UnitsArchive;
 import atlantis.production.orders.ProductionQueueRebuilder;
@@ -167,8 +168,10 @@ public class Atlantis implements BWEventListener {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
             unit.refreshType();
-
-            ourNewUnit(unit);
+            if (unit.isOur()) {
+                System.out.println("Our new unit " + unit);
+                ourNewUnit(unit);
+            }
         }
         else {
             System.err.println("onUnitComplete null for " + u);
@@ -189,27 +192,24 @@ public class Atlantis implements BWEventListener {
         AUnit unit = AUnit.createFrom(u);
 //        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 
-        if (unit != null) {
-
-            // Our unit
-            if (unit.isOur()) {
-                NewUnitsToSquadsAssigner.unitDestroyed(unit);
-                ARepairAssignments.removeRepairerOrProtector(unit);
-                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-                if (!unit.type().isGasBuilding()) {
-                    LOST++;
-                    LOST_RESOURCES += unit.type().getTotalResources();
-                }
-            } else {
-                if (!unit.type().isGeyser()) {
-                    KILLED++;
-                    KILLED_RESOURCES += unit.type().getTotalResources();
-                }
-            }
-        }
-
 //        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.shortName());
         UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
+
+        // Our unit
+        if (unit.isOur()) {
+            ASquadManager.unitDestroyed(unit);
+            ARepairAssignments.removeRepairerOrProtector(unit);
+            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+            if (!unit.type().isGasBuilding()) {
+                LOST++;
+                LOST_RESOURCES += unit.type().getTotalResources();
+            }
+        } else {
+            if (!unit.type().isGeyser()) {
+                KILLED++;
+                KILLED_RESOURCES += unit.type().getTotalResources();
+            }
+        }
 
         // =========================================================
 
@@ -290,7 +290,7 @@ public class Atlantis implements BWEventListener {
         // Forget unit
         if (unit != null) {
             if (unit.isOur()) {
-                NewUnitsToSquadsAssigner.unitDestroyed(unit);
+                ASquadManager.unitDestroyed(unit);
             } if (unit.isEnemy()) {
                 AEnemyUnits.removeDiscoveredUnit(unit);
             }
@@ -376,11 +376,7 @@ public class Atlantis implements BWEventListener {
 
     private void ourNewUnit(AUnit unit) {
         ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-
-        // Our unit
-        if (unit.isOur()) {
-            NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
-        }
+        NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
     }
 
     /**

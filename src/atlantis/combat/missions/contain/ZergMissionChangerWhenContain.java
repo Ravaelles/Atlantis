@@ -1,5 +1,6 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.contain;
 
+import atlantis.combat.missions.Missions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 

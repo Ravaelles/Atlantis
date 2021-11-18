@@ -1,6 +1,6 @@
 package atlantis.production.constructing.position;
 
-import atlantis.combat.missions.MissionDefend;
+import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.map.*;
 import atlantis.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;

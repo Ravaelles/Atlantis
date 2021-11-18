@@ -1,23 +1,23 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.contain;
 
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
-import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.SquadScout;
-import atlantis.map.Bases;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.util.A;
 
 public class MissionContain extends Mission {
 
-    protected MissionContain() {
+    public MissionContain() {
         super("Contain");
         focusPointManager = new MissionContainFocusPoint();
     }
 
     @Override
     public boolean update(AUnit unit) {
-        APosition focusPoint = focusPoint();
+        AFocusPoint focusPoint = focusPoint();
         unit.setTooltip("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
 
         // =========================================================

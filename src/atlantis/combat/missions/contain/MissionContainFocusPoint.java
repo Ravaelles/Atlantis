@@ -1,8 +1,13 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.contain;
 
+import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.MissionFocusPoint;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
-import atlantis.map.*;
+import atlantis.map.ABaseLocation;
+import atlantis.map.AChoke;
+import atlantis.map.Bases;
+import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
@@ -10,52 +15,48 @@ import atlantis.util.We;
 
 public class MissionContainFocusPoint extends MissionFocusPoint {
 
-    private Cache<APosition> cache = new Cache<>();
+    private Cache<AFocusPoint> cache = new Cache<>();
 
     @Override
-    public APosition focusPoint() {
+    public AFocusPoint focusPoint() {
         return cache.get(
                 "focusPoint",
-                100,
+                1,
                 () -> {
-                    APosition basePoint = basePoint();
-                    if (basePoint != null && basePoint.region() != null && basePoint.region().center() != null) {
-                        basePoint = basePoint.translateTilesTowards(3, basePoint.region().center());
+                    if (We.terran()) {
+                        if (!AEnemyUnits.hasDefensiveLandBuilding()) {
+                            AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
+                            if (enemyBuilding != null && enemyBuilding.position() != null) {
+                                return new AFocusPoint(
+                                        enemyBuilding,
+                                        Select.main()
+                                );
+                            }
+                        }
                     }
-                    return basePoint;
-                }
-        );
-    }
 
-    @Override
-    public APosition focusPointDirection() {
-        APosition focusPoint = focusPoint();
-        return focusPoint;
-    }
+                    AChoke mainChoke = Chokes.enemyMainChoke();
+                    APosition enemyNatural = Bases.enemyNatural();
+                    if (enemyNatural != null) {
+                        if (mainChoke != null) {
+                            return new AFocusPoint(
+                                    enemyNatural.translatePercentTowards(mainChoke, 40),
+                                    enemyNatural
+                            );
+                        }
+                        return new AFocusPoint(
+                                enemyNatural,
+                                Select.main()
+                        );
+                    }
 
-    private APosition basePoint() {
-        if (We.terran()) {
-            if (!AEnemyUnits.hasDefensiveLandBuilding()) {
-                AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
-                if (enemyBuilding != null && enemyBuilding.position() != null) {
-                    return enemyBuilding.position();
-                }
-            }
-        }
-
-        AChoke mainChoke = Chokes.enemyMainChoke();
-        APosition enemyNatural = Bases.enemyNatural();
-        if (enemyNatural != null) {
-            if (mainChoke != null) {
-                return enemyNatural.translatePercentTowards(mainChoke, 40);
-            }
-            return enemyNatural;
-        }
-
-        AChoke naturalChoke = Chokes.enemyNaturalChoke();
-        if (naturalChoke != null && naturalChoke.width() <= 4) {
-            return naturalChoke.position();
-        }
+                    AChoke naturalChoke = Chokes.enemyNaturalChoke();
+                    if (naturalChoke != null && naturalChoke.width() <= 4) {
+                        return new AFocusPoint(
+                                naturalChoke,
+                                Select.main()
+                        );
+                    }
 
 //                    if (mainChoke != null && mainChoke.getWidth() <= 4) {
 //                        return mainChoke.position();
@@ -71,45 +72,59 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //            return nearestEnemy.position();
 //        }
 
-        APosition enemyBase = AEnemyUnits.enemyBase();
-        if (enemyBase != null && enemyBase.position() != null) {
-            return containPointIfEnemyBaseIsKnown(enemyBase);
-        }
+                    APosition enemyBase = AEnemyUnits.enemyBase();
+                    if (enemyBase != null && enemyBase.position() != null) {
+                        return new AFocusPoint(
+                                enemyBase,
+                                Select.main()
+                        );
+//                        return containPointIfEnemyBaseIsKnown(enemyBase);
+                    }
 
 //                    AChoke mainChoke = Chokes.enemyMainChoke();
 //        if (mainChoke != null) {
 //            return mainChoke.position();
 //        }
 
-        // Try to go to some starting location, hoping to find enemy there.
-        if (Select.main() != null) {
-            AChoke choke = Chokes.nearestChoke(
-                    Bases.nearestUnexploredStartingLocation(Select.main().position())
-            );
-            return choke != null ? choke.center() : null;
-        }
+                    // Try to go to some starting location, hoping to find enemy there.
+                    if (Select.main() != null) {
+                        AChoke choke = Chokes.nearestChoke(
+                                Bases.nearestUnexploredStartingLocation(Select.main().position())
+                        );
 
-        return null;
+                        if (choke == null) {
+                            return null;
+                        }
+
+                        return new AFocusPoint(
+                                choke,
+                                Select.main()
+                        );
+                    }
+
+                    return null;
+                }
+        );
     }
 
     // =========================================================
 
-    private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
-        AChoke chokepoint = Chokes.natural(enemyBase);
-        if (chokepoint != null) {
-//            CameraManager.centerCameraOn(chokepoint.getCenter());
-            return chokepoint.center();
-        }
-
-        ABaseLocation natural = Bases.natural(enemyBase.position());
-        if (natural != null) {
-//            CameraManager.centerCameraOn(natural);
-            return natural.position();
-        }
-
-        System.err.println("Shouldnt be here mate?");
-        return null;
-    }
+//    private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
+//        AChoke chokepoint = Chokes.natural(enemyBase);
+//        if (chokepoint != null) {
+////            CameraManager.centerCameraOn(chokepoint.getCenter());
+//            return chokepoint.center();
+//        }
+//
+//        ABaseLocation natural = Bases.natural(enemyBase.position());
+//        if (natural != null) {
+////            CameraManager.centerCameraOn(natural);
+//            return natural.position();
+//        }
+//
+//        System.err.println("Shouldnt be here mate?");
+//        return null;
+//    }
 
 //    private APosition containPointIfEnemyBaseNotKnown() {
 //        AUnit nearestEnemy = Select.enemy().nearestTo(Select.our().first());

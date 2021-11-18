@@ -1183,4 +1183,8 @@ public class A {
             System.out.println("- " + o);
         }
     }
+
+    public static void printStack() {
+        Thread.dumpStack();
+    }
 }

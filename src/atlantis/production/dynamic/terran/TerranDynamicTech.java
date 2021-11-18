@@ -22,10 +22,6 @@ public class TerranDynamicTech extends ADynamicTech {
             handleUpgrade(UpgradeType.Caduceus_Reactor);
         }
 
-        if (A.supplyUsed(70)) {
-            System.out.println("ATech.isResearched(TechType.Tank_Siege_Mode) = " + ATech.isResearched(TechType.Tank_Siege_Mode));
-        }
-        
         if (
                 OurDecisions.wantsToBeAbleToProduceTanksSoon()
                 || (A.supplyUsed(70) && !ATech.isResearched(TechType.Tank_Siege_Mode))

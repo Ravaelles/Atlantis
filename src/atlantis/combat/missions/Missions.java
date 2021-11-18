@@ -1,6 +1,9 @@
 package atlantis.combat.missions;
 
 import atlantis.AGame;
+import atlantis.combat.missions.attack.MissionAttack;
+import atlantis.combat.missions.contain.MissionContain;
+import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Enemy;

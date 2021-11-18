@@ -3,7 +3,7 @@ package atlantis.production.orders;
 import atlantis.AGame;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.MissionsFromBuildOrder;
+import atlantis.combat.missions.DynamicMissionsFromBuildOrder;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.A;
@@ -270,7 +270,7 @@ public class BuildOrderRowParser {
         System.out.println("supply = " + supply);
         System.out.println("mission = " + mission);
 
-        MissionsFromBuildOrder.addDynamicMission(mission, supply);
+        DynamicMissionsFromBuildOrder.addDynamicMission(mission, supply);
     }
 
     /**

@@ -1,7 +1,8 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.defend;
 
+import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.A;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {

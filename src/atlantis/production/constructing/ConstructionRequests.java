@@ -101,7 +101,7 @@ public class ConstructionRequests {
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
-//            System.err.print("Can't find place for `" + building + "` ");
+            System.err.print("Can't find place for `" + building + "`, " + order);
             if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                 System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             } else {
@@ -110,9 +110,8 @@ public class ConstructionRequests {
             System.err.println();
 
             newConstructionOrder.cancel();
-            System.err.println(order);
-            throw new RuntimeException("Can't find place for `" + building + "` ");
-//            return false;
+//            throw new RuntimeException("Can't find place for `" + building + "` ");
+            return false;
         }
     }
 

@@ -55,7 +55,19 @@ public class ASquadManager {
         }
     }
 
+    public static void unitDestroyed(AUnit unit) {
+        Squad squad = unit.squad();
+        System.out.println("unit destroyed " + unit + " // " + squad);
+        if (squad != null) {
+            System.out.println("Squad size = " + squad.size());
+            unit.setSquad(null);
+            squad.removeUnit(unit);
+            System.out.println("Squad size now = " + squad.size());
+        }
+    }
+
     public static ArrayList<Squad> allSquads() {
         return (ArrayList<Squad>) squads.clone();
     }
+
 }

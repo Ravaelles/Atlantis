@@ -1,6 +1,8 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.defend;
 
 import atlantis.Atlantis;
+import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.missions.Missions;
 import atlantis.enemy.EnemyInformation;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;

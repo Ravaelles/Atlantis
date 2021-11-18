@@ -1,6 +1,8 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.contain;
 
 import atlantis.AGame;
+import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.missions.Missions;
 import atlantis.enemy.EnemyInformation;
 import atlantis.units.select.Count;
 import atlantis.util.A;
@@ -9,9 +11,9 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.DEFEND);
+            MissionChanger.changeMissionTo(Missions.DEFEND);
         } else if (shouldChangeMissionToAttack()) {
-            changeMissionTo(Missions.ATTACK);
+            MissionChanger.changeMissionTo(Missions.ATTACK);
         }
     }
 

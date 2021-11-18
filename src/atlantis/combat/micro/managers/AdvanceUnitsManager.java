@@ -1,6 +1,7 @@
 package atlantis.combat.micro.managers;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -26,18 +27,18 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 //        return false;
 //    }
 
-    public static boolean attackMoveToFocusPoint(AUnit unit, APosition focusPoint) {
+    public static boolean attackMoveToFocusPoint(AUnit unit, AFocusPoint focusPoint) {
         return moveToFocusPoint(unit, focusPoint, false, false);
     }
 
-    public static boolean moveToFocusPoint(AUnit unit, APosition focusPoint) {
+    public static boolean moveToFocusPoint(AUnit unit, AFocusPoint focusPoint) {
         return moveToFocusPoint(unit, focusPoint, true, true);
     }
 
     // =========================================================
 
     private static boolean moveToFocusPoint(
-            AUnit unit, APosition focusPoint, boolean allowTooClose, boolean allowCloseEnough
+            AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);

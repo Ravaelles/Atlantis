@@ -1,17 +1,15 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.defend;
 
 import atlantis.AGame;
-import atlantis.combat.micro.terran.TerranInfantry;
-import atlantis.map.AMap;
-import atlantis.position.APosition;
+import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.Mission;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 
 public class MissionDefend extends Mission {
 
-    protected MissionDefend() {
+    public MissionDefend() {
         super("Defend");
         focusPointManager = new MissionDefendFocusPoint();
     }
@@ -24,51 +22,17 @@ public class MissionDefend extends Mission {
 
         // =========================================================
 
-        APosition focusPoint = focusPoint();
+        AFocusPoint focusPoint = focusPoint();
         if (focusPoint == null) {
             System.err.println("Couldn't define choke point.");
             throw new RuntimeException("Couldn't define choke point.");
         }
 
-        return moveToDefendFocusPoint(unit, focusPoint);
+        return MoveToDefendFocusPoint.move(unit, focusPoint);
     }
 
     // =========================================================
 
-    private boolean moveToDefendFocusPoint(AUnit unit, APosition focusPoint) {
-
-        // Let workers pass
-        double optimalDist = optimalDist(unit, focusPoint);
-
-        if (unit.distTo(focusPoint) > optimalDist) {
-            return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "MoveToDefend");
-        }
-        else if (unit.distTo(focusPoint) <= optimalDist - 0.5) {
-            return unit.moveAwayFrom(focusPoint, 0.2, "TooClose");
-        }
-        else {
-            if (unit.isMoving()) {
-                unit.holdPosition("DefendHere");
-                return true;
-            }
-//            return true;
-            return false;
-        }
-    }
-
-    private double optimalDist(AUnit unit, APosition focusPoint) {
-        int workerBonus = Select.enemy().inRadius(5, unit).isEmpty()
-                && Select.ourWorkers().inRadius(6, unit).atLeast(1)
-                ? 3 : 0;
-        int alliesNear = Select.our().inRadius(2, unit).count();
-        return 0.1
-                + (unit.isTank() ? 3 : 0)
-                + (unit.isMedic() ? -2.5 : 0)
-                + (unit.isMarine() ? 2 : 0)
-                + workerBonus
-                + (unit.isRanged() ? 3 : 0)
-                + (alliesNear / 20.0);
-    }
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         if (unit.hasWeaponRange(enemy, 1.6)) {

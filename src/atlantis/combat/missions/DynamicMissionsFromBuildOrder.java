@@ -3,7 +3,7 @@ package atlantis.combat.missions;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MissionsFromBuildOrder {
+public class DynamicMissionsFromBuildOrder {
 
     private static final Map<Integer, Mission> supplyToMissions = new HashMap<>();
 

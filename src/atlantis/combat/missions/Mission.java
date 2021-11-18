@@ -28,7 +28,15 @@ public abstract class Mission {
         instance = this;
     }
 
+    // =========================================================
+
     public abstract boolean update(AUnit unit);
+
+    // =========================================================
+
+    public AFocusPoint focusPoint() {
+        return focusPointManager.focusPoint();
+    }
 
     // Template method
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
@@ -40,15 +48,16 @@ public abstract class Mission {
         return false;
     }
 
+    // Template method
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
         return false;
     }
 
+    // =========================================================
+
     protected boolean enemyIsNearBase(AUnit enemy) {
         return EnemyInformation.isEnemyNearAnyOurBuilding();
     }
-
-    // =========================================================
 
 //    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
 //        if (AAvoidEnemyDefensiveBuildings.avoidCloseBuildings(unit, false)) {
@@ -108,10 +117,6 @@ public abstract class Mission {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public APosition focusPoint() {
-        return focusPointManager.focusPoint();
     }
 
     public boolean isMissionContain() {

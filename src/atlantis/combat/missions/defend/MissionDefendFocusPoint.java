@@ -1,6 +1,8 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.defend;
 
 import atlantis.AGame;
+import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.MissionFocusPoint;
 import atlantis.enemy.EnemyInformation;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
@@ -14,12 +16,12 @@ import atlantis.util.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
 
-    private Cache<APosition> cache = new Cache<>();
+    private Cache<AFocusPoint> cache = new Cache<>();
 
     // =========================================================
 
     @Override
-    public APosition focusPoint() {
+    public AFocusPoint focusPoint() {
         return cache.get(
             "focusPoint",
             30,
@@ -28,13 +30,22 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     return null;
                 }
 
+                // If NO BASE exists, return any building
+                AUnit mainBase = Select.main();
+                if (mainBase == null) {
+                    return new AFocusPoint(Select.ourBuildings().first());
+                }
+
                 // === Enemies that breached into base =============
 
                 if (Have.base()) {
                     AUnit enemyNear = EnemyInformation.enemyNearAnyOurBuilding();
 //                    AUnit enemyInBase = Select.enemy().combatUnits().effVisible().inRadius(10, Select.main()).first();
                     if (enemyNear != null) {
-                        return enemyNear.position();
+                        return new AFocusPoint(
+                                enemyNear,
+                                Select.ourBuildings().nearestTo(enemyNear)
+                        );
                     }
                 }
 
@@ -43,7 +54,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (Count.basesWithUnfinished() >= 2) {
                     AChoke natural = Chokes.natural();
                     if (natural != null) {
-                        return natural.center();
+                        return new AFocusPoint(
+                                natural.center(),
+                                Select.main()
+                        );
                     }
                 }
 
@@ -51,15 +65,13 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AChoke mainChoke = Chokes.mainChoke();
                 if (mainChoke != null) {
-                    return mainChoke.center();
+                    return new AFocusPoint(
+                            mainChoke.center(),
+                            Select.main()
+                    );
                 }
 
                 // === Focus enemy attacking the main base =================
-
-                AUnit mainBase = Select.main();
-                if (mainBase == null) {
-                    return null;
-                }
 
                 AUnit nearEnemy = Select.enemy()
                         .combatUnits()
@@ -68,7 +80,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                         .inRadius(12, mainBase)
                         .nearestTo(mainBase);
                 if (nearEnemy != null) {
-                    return nearEnemy.position();
+                    return new AFocusPoint(
+                            nearEnemy,
+                            Select.main()
+                    );
                 }
 //
 //                // === Gather around defensive buildings ===================
@@ -89,7 +104,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit building = Select.ourBuildings().first();
                 if (building != null) {
-                    return APosition.create(Chokes.nearestChoke(building.position()).center());
+                    return new AFocusPoint(
+                            Chokes.nearestChoke(building.position()).center(),
+                            building
+                    );
                 }
 
                 return null;

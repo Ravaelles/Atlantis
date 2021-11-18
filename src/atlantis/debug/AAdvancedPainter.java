@@ -6,7 +6,7 @@ import atlantis.buildings.managers.AGasManager;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.MissionAttack;
+import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.ASquadManager;

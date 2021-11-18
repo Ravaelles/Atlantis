@@ -1,5 +1,7 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.attack;
 
+import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.MissionFocusPoint;
 import atlantis.enemy.AEnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.AChoke;
@@ -13,9 +15,9 @@ import atlantis.util.Cache;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
 
-    private Cache<APosition> cache = new Cache<>();
+    private Cache<AFocusPoint> cache = new Cache<>();
 
-    public APosition focusPoint() {
+    public AFocusPoint focusPoint() {
         return cache.get(
             "focusPoint",
             60,
@@ -23,31 +25,46 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 // Try going near enemy base
                 APosition enemyBase = AEnemyUnits.enemyBase();
                 if (enemyBase != null) {
-                    return enemyBase;
+                    return new AFocusPoint(
+                            enemyBase,
+                            Select.main()
+                    );
                 }
 
                 // Try going near any enemy building
                 AFoggedUnit enemyBuilding = AEnemyUnits.nearestEnemyBuilding();
                 if (enemyBuilding != null && enemyBuilding.position() != null) {
-                    return enemyBuilding.position();
+                    return new AFocusPoint(
+                            enemyBuilding,
+                            Select.main()
+                    );
                 }
 
                 // Try going near any enemy building
-                AUnit anEnemyBuilding = Select.enemy().buildings().last();
-                if (anEnemyBuilding != null) {
-                    return anEnemyBuilding.position();
+                AUnit visibleEnemyBuilding = Select.enemy().buildings().last();
+                if (visibleEnemyBuilding != null) {
+                    return new AFocusPoint(
+                            visibleEnemyBuilding,
+                            Select.main()
+                    );
                 }
 
                 // Try going to any known enemy unit
                 AUnit anyEnemyUnit = Select.enemy().combatUnits().groundUnits().first();
                 if (anyEnemyUnit != null) {
-                    return anyEnemyUnit.position();
+                    return new AFocusPoint(
+                            anyEnemyUnit,
+                            Select.main()
+                    );
                 }
 
                 if (Count.ourCombatUnits() <= 40) {
                     AChoke mainChoke = Chokes.enemyMainChoke();
                     if (mainChoke != null) {
-                        return mainChoke.position();
+                        return new AFocusPoint(
+                                mainChoke,
+                                Select.main()
+                        );
                     }
                 }
 
@@ -56,7 +73,10 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                     APosition startLocation = Bases.nearestUnexploredStartingLocation(Select.main());
 
                     if (startLocation != null) {
-                        return startLocation;
+                        return new AFocusPoint(
+                                startLocation,
+                                Select.main()
+                        );
                     }
                 }
 
