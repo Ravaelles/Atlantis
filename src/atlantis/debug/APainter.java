@@ -74,13 +74,13 @@ public class APainter {
         }
     }
 
-    public static void paintRectangle(APosition position, int width, int height, Color color) {
+    public static void paintRectangle(HasPosition position, int width, int height, Color color) {
         if (isDisabled()) { return; }
 
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionHelper.translateByPixels(position, width, height), color, false);
+        bwapi.drawBoxMap(position.position(), position.translateByPixels(width, height), color, false);
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
@@ -89,7 +89,7 @@ public class APainter {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, PositionHelper.translateByPixels(position, width, height), color, true);
+        bwapi.drawBoxMap(position, position.translateByPixels(width, height), color, true);
     }
 
     public static void paintCircle(AUnit unit, int radius, Color color) {
@@ -121,7 +121,7 @@ public class APainter {
     public static void paintLine(HasPosition start, int dx, int dy, Color color) {
         if (isDisabled()) { return; }
 
-        bwapi.drawLineMap(start.position(), PositionHelper.translateByPixels(start.position(), dx, dy), color);
+        bwapi.drawLineMap(start.position(), start.translateByPixels(dx, dy), color);
     }
 
 //    public static void paintLine(Position start, Position end, Color color) {
@@ -155,7 +155,7 @@ public class APainter {
     }
 
     public static void paintTextCentered(HasPosition position, String text, Color color, double tileDX, double tileDY) {
-        paintTextCentered(position.position().translateByPixels(
+        paintTextCentered(position.translateByPixels(
                 (int) tileDX * 32, (int) tileDY * 32),
                 text, color, false
         );
@@ -175,11 +175,11 @@ public class APainter {
         }
 
         if (screenCoords) {
-            bwapi.drawTextScreen(PositionHelper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
+            bwapi.drawTextScreen(position.translateByPixels((int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         } else {
-            bwapi.drawTextMap(PositionHelper.translateByPixels(position, (int) (-2.7 * text.length()), -2),
+            bwapi.drawTextMap(position.translateByPixels((int) (-2.7 * text.length()), -2),
                     ColorUtil.getColorString(color) + text
             );
         }

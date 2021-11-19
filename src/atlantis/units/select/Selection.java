@@ -256,6 +256,11 @@ public class Selection {
         return this;
     }
 
+    public Selection terranInfantryWithoutMedics() {
+        data.removeIf(unit -> !unit.isTerranInfantryWithoutMedics());
+        return this;
+    }
+
     /**
      * Selects only buildings.
      */

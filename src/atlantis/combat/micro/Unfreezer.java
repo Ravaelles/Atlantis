@@ -59,16 +59,16 @@ public class Unfreezer {
         }
 
 //        if (unit.isHoldingPosition()) {
-        if (unit.move(unit.position().translateByPixels(8, 0), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.move(unit.translateByPixels(8, 0), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.position().translateByPixels(-8, 0), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.move(unit.translateByPixels(-8, 0), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.position().translateByPixels(0, 8), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.move(unit.translateByPixels(0, 8), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.position().translateByPixels(0, -8), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.move(unit.translateByPixels(0, -8), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
 //        } else {

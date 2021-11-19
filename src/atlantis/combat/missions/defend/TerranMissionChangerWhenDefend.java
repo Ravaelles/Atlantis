@@ -47,14 +47,18 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
 //            return A.supplyUsed(140);
 
+            if (A.resourcesBalance() >= 250) {
+                return true;
+            }
+
             if (Missions.counter() <= 2) {
                 if (OurStrategy.get().isRush()) {
-                    return Count.ourCombatUnits() >= 4 || A.resourcesBalance() >= 350;
+                    return Count.ourCombatUnits() >= 4;
                 }
             }
 //
 //            return Count.ourCombatUnits() >= Math.max(24, 12 + Missions.counter());
-            return Count.ourCombatUnits() >= 28 || Count.tanks() >= 3;
+            return Count.ourCombatUnits() >= 15 || Count.tanks() >= 3;
         }
 
         // =========================================================

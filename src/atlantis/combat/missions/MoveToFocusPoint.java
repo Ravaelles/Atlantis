@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 
 public abstract class MoveToFocusPoint {
 
@@ -25,13 +26,15 @@ public abstract class MoveToFocusPoint {
         if (fromSide != null) {
             if ((distUnitToFocus + distUnitToFromSide) > distFocusToFromSide * 1.1) {
                 if (distUnitToFromSide > distUnitToFocus) {
-                    return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "Withdraw");
+                    String dist = A.dist(distUnitToFocus);
+                    return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "Withdraw" + dist);
                 }
             }
         }
 
         if (distUnitToFocus > (optimalDist + MARGIN)) {
-            return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "TooFar");
+            String dist = A.dist(distUnitToFocus);
+            return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "TooFar" + dist);
         }
 
         return false;
@@ -42,8 +45,12 @@ public abstract class MoveToFocusPoint {
      */
     protected static boolean tooClose() {
         if (distUnitToFocus <= (optimalDist - MARGIN)) {
-            return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "TooClose");
-//            return unit.moveAwayFrom(focusPoint, 0.2, "TooClose");
+            String dist = A.dist(distUnitToFocus);
+
+            if (distUnitToFromSide > 2) {
+                return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "TooClose" + dist);
+            }
+            return unit.moveAwayFrom(focusPoint, 0.5, "TooClose" + dist);
         }
 
         return false;

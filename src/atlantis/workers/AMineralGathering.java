@@ -45,6 +45,7 @@ public class AMineralGathering {
         for (AUnit worker : workers) {
             AUnit mineral = minerals.get(counter);
             worker.gather(mineral);
+            worker.setTooltip("Mandatum!");
 
             counter++;
         }
@@ -57,6 +58,7 @@ public class AMineralGathering {
         AUnit mineralField = getMineralFieldToGather(unit);
         if (mineralField != null) {
             unit.gather(mineralField);
+            unit.setTooltip("Gatherer!");
         }
     }
 

@@ -3,6 +3,7 @@ package atlantis.units.select;
 import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.units.AUnit;
+import atlantis.util.A;
 import atlantis.util.Cache;
 import bwapi.Player;
 import bwapi.Unit;
@@ -22,10 +23,10 @@ public class BaseSelect<T extends AUnit> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (Unit u : AGame.getPlayerUs().getUnits()) {
-                    AUnit unit = AUnit.createFrom(u);
-                    if (unit.isAlive()) {
-                        data.add(unit);
-                    }
+                    AUnit unit = AUnit.getById(u);
+                    data.add(unit);
+//                    if (unit.isAlive()) {
+//                    }
                 }
 
                 return data;
@@ -41,7 +42,10 @@ public class BaseSelect<T extends AUnit> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (Unit u : AGame.getPlayerUs().getUnits()) {
-                    data.add(AUnit.createFrom(u));
+                    AUnit unit = AUnit.getById(u);
+                    if (unit.isAlive()) {
+                        data.add(unit);
+                    }
                 }
 
                 return data;
@@ -63,7 +67,7 @@ public class BaseSelect<T extends AUnit> {
                     for (Player player : AGame.getPlayers()) {
                         if (player.isEnemy(playerUs)) {
                             for (Unit u : player.getUnits()) {
-                                AUnit unit = AUnit.createFrom(u);
+                                AUnit unit = AUnit.getById(u);
                                 data.add(unit);
                             }
                         }
@@ -74,7 +78,7 @@ public class BaseSelect<T extends AUnit> {
 
                 else {
                     for (Unit u : AGame.getEnemy().getUnits()) {
-                        AUnit unit = AUnit.createFrom(u);
+                        AUnit unit = AUnit.getById(u);
                         if (!unit.isLarvaOrEgg()) {
                             data.add(unit);
                         }
@@ -94,7 +98,7 @@ public class BaseSelect<T extends AUnit> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (Unit u : Atlantis.game().neutral().getUnits()) {
-                        AUnit unit = AUnit.createFrom(u);
+                        AUnit unit = AUnit.getById(u);
                         data.add(unit);
                     }
 
@@ -111,7 +115,7 @@ public class BaseSelect<T extends AUnit> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (Unit u : Atlantis.game().getAllUnits()) {
-                        AUnit unit = AUnit.createFrom(u);
+                        AUnit unit = AUnit.getById(u);
                         data.add(unit);
                     }
 

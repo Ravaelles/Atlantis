@@ -13,7 +13,6 @@ public class Alpha extends Squad {
 
     private Alpha() {
         super("Alpha", Missions.getInitialMission());
-        alpha = this;
     }
 
     /**

@@ -112,7 +112,7 @@ public class AAdvancedPainter extends APainter {
 //        paintColoredCirclesAroundUnits();
         paintBuildingHealth();
         paintWorkersAssignedToBuildings();
-        paintUnitsBeingTrainedInBuildings();
+        paintBuildingsTrainingUnitsAndResearching();
         paintBarsUnderUnits();
         paintFoggedUnitsThatIsEnemiesDiscovered();
         paintCombatUnits();
@@ -185,7 +185,7 @@ public class AAdvancedPainter extends APainter {
             // === Other stuff =========================================
 
             String squadLetter = unit.squad() == null ? "NO_SQUAD" : unit.squad().letter();
-            paintTextCentered(unit.position().translateByPixels(0, 22), squadLetter, Color.Purple);
+            paintTextCentered(unit.translateByPixels(0, 22), squadLetter, Color.Purple);
 
             // =========================================================
             // === Paint circle around units with zero ground weapon
@@ -639,8 +639,8 @@ public class AAdvancedPainter extends APainter {
 
         // Draw X
         paintLine(
-                PositionHelper.translateByPixels(positionToBuild, buildingType.getTileWidth() * 32, 0),
-                PositionHelper.translateByPixels(positionToBuild, 0, buildingType.getTileHeight() * 32),
+                positionToBuild.translateByPixels(buildingType.getTileWidth() * 32, 0),
+                positionToBuild.translateByPixels(0, buildingType.getTileHeight() * 32),
                 color
         );
         paintLine(positionToBuild,
@@ -678,7 +678,7 @@ public class AAdvancedPainter extends APainter {
             }
             // ATTACK FRAME
             if (unit.isAttackFrame()) {
-                paintRectangleFilled(unit.position().translateByPixels(-5, -10), 10, 20, Color.Red);
+                paintRectangleFilled(unit.translateByPixels(-5, -10), 10, 20, Color.Red);
 //                paintCircle(unit, 2, Color.Red);
 //                paintCircle(unit, 4, Color.Red);
 //                paintCircle(unit, 5, Color.Red);
@@ -718,7 +718,7 @@ public class AAdvancedPainter extends APainter {
             // RUN
             if (unit.isRunning()) {
                 paintLine(unit.position(), unit.runningManager().getRunToPosition(), Color.Yellow);
-                paintLine(unit.position().translateByPixels(1, 1), unit.runningManager().getRunToPosition(), Color.Yellow);
+                paintLine(unit.translateByPixels(1, 1), unit.runningManager().getRunToPosition(), Color.Yellow);
 
                 if (unit.runningManager().getRunToPosition() != null) {
                     paintCircleFilled(unit.runningManager().getRunToPosition(), 10, Color.Yellow);
@@ -728,7 +728,7 @@ public class AAdvancedPainter extends APainter {
             }
 
             // Paint #ID
-            paintTextCentered(unit.position().translateByTiles(0, 1),
+            paintTextCentered(unit.translateByTiles(0, 1),
                     "#" + unit.getID() + " " + unit.getUnitAction(), Color.Cyan);
 
             // BUILDER
@@ -787,11 +787,11 @@ public class AAdvancedPainter extends APainter {
 
         paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
 
-        paintRectangleFilled(unit.position().translateByPixels(0, -flagHeight - dy),
+        paintRectangleFilled(unit.translateByPixels(0, -flagHeight - dy),
                 flagWidth, flagHeight, Color.White); // White flag
-        paintRectangle(unit.position().translateByPixels(0, -flagHeight - dy),
+        paintRectangle(unit.translateByPixels(0, -flagHeight - dy),
                 flagWidth, flagHeight, Color.Grey); // Flag border
-        paintRectangleFilled(unit.position().translateByPixels(-1, flagHeight - dy),
+        paintRectangleFilled(unit.translateByPixels(-1, flagHeight - dy),
                 2, flagHeight, Color.Grey); // Flag stick
     }
 
@@ -906,7 +906,6 @@ public class AAdvancedPainter extends APainter {
                     color,
                     true
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight), color, true, false);
 
             // Paint box borders
             bwapi.drawBoxMap(
@@ -915,7 +914,6 @@ public class AAdvancedPainter extends APainter {
                     Color.Black,
                     false
             );
-            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.Black, false, false);
         }
     }
 
@@ -933,10 +931,7 @@ public class AAdvancedPainter extends APainter {
             int workers = AWorkerManager.getHowManyWorkersWorkingNear(building, false);
             if (workers > 0) {
                 String workersAssigned = workers + "";
-                paintTextCentered(
-                        PositionHelper.translateByPixels(building.position(), -5, -36),
-                        workersAssigned, Color.Grey
-                );
+                paintTextCentered(building.translateByPixels(-5, -36), workersAssigned, Color.Grey);
             }
         }
         setTextSizeSmall();
@@ -945,50 +940,71 @@ public class AAdvancedPainter extends APainter {
     /**
      * If buildings are training units, it paints what unit is trained and the progress.
      */
-    static void paintUnitsBeingTrainedInBuildings() {
+    static void paintBuildingsTrainingUnitsAndResearching() {
         setTextSizeMedium();
-        for (AUnit building : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-            if (!building.isBuilding() || !building.isTrainingAnyUnit()) {
+        for (AUnit building : Select.ourBuildings().listUnits()) {
+            if (!building.isBusy()) {
                 continue;
             }
 
-            int labelMaxWidth = 90;
-            int labelHeight = 14;
-            int labelLeft = building.position().getX() - labelMaxWidth / 2;
-            int labelTop = building.position().getY();
-
-            int operationProgress = 1;
-            AUnitType unit = building.trainingQueue().get(0);
-            String trainedUnitString = "";
-            if (unit != null) {
-                operationProgress = 100 * (unit.getTotalTrainTime() - building.getRemainingTrainTime()) / unit.getTotalTrainTime();
-                trainedUnitString = unit.shortName();
+            // UNITS PRODUCED
+            if (building.isTrainingAnyUnit()) {
+                AUnitType unitType = building.trainingQueue().get(0);
+                paintBuildingActionProgress(
+                        building,
+                        unitType.shortName(),
+                        building.remainingTrainTime(),
+                        unitType.totalTrainTime()
+                );
             }
 
-            // Paint box
-            bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth * operationProgress / 100, labelTop + labelHeight),
-                    Color.Grey,
-                    true
-            );
+            // RESEARCHING
+            else if (building.isResearching()) {
+                TechType techType = building.whatIsResearching();
+                paintBuildingActionProgress(
+                        building,
+                        techType.name(),
+                        building.remainingResearchTime(),
+                        techType.researchTime()
+                );
+            }
 
-            // Paint box borders
-            bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight),
-                    Color.Black,
-                    false
-            );
-
-            // =========================================================
-            // Display label
-            paintTextCentered(
-                    new APosition(labelLeft + labelMaxWidth / 2, labelTop + 2),
-                    trainedUnitString, Color.White
-            );
+            // UPGRADING
+            else if (building.isResearching()) {
+                UpgradeType upgradeType = building.whatIsUpgrading();
+                paintBuildingActionProgress(
+                        building,
+                        upgradeType.name(),
+                        building.remainingUpgradeTime(),
+                        upgradeType.upgradeTime()
+                );
+            }
         }
         setTextSizeSmall();
+    }
+
+    public static void paintBuildingActionProgress(AUnit building, String text, int remaining, int max) {
+        int labelMaxWidth = 90;
+        int labelHeight = 14;
+        int labelLeft = building.position().getX() - labelMaxWidth / 2;
+        int labelTop = building.position().getY();
+
+        double operationProgress = (max - remaining) / (max + 1.0);
+
+        // Paint box
+        paintRectangleFilled(
+                new APosition(labelLeft, labelTop), (int) (labelMaxWidth * operationProgress), labelHeight, Color.Grey
+        );
+
+        // Paint box borders
+        paintRectangle(
+                new APosition(labelLeft, labelTop), labelMaxWidth, labelHeight, Color.Black
+        );
+
+        // Display label
+        paintTextCentered(
+                new APosition(labelLeft + labelMaxWidth / 2, labelTop + 2), text, Color.White
+        );
     }
 
     /**
@@ -1055,7 +1071,7 @@ public class AAdvancedPainter extends APainter {
             }
 
             APosition topLeft;
-            topLeft = foggedEnemy.position().translateByPixels(
+            topLeft = foggedEnemy.translateByPixels(
                     -foggedEnemy.type().dimensionLeft(),
                     -foggedEnemy.type().dimensionUp()
             );

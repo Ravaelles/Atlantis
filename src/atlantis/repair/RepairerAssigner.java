@@ -35,6 +35,7 @@ public class RepairerAssigner {
 
     private static boolean shouldNotRepairUnit(AUnit target) {
         return !target.isRepairable()
+                || (target.isAirUnit() && target.hp() >= 51)
                 || AScoutManager.isScout(target)
                 || (target.isRunning() && target.lastStoppedRunningLessThanAgo(30 * 5))
                 || (target.isBuilding() && TerranFlyingBuildingManager.isFlyingBuilding(target) && target.lastUnderAttackLessThanAgo(30 * 15))

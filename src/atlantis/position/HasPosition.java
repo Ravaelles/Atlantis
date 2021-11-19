@@ -44,6 +44,20 @@ public interface HasPosition {
         );
     }
 
+    /**
+     * Returns new position object that is translated in [x,y] pixels.
+     */
+    default APosition translateByPixels(int pixelDX, int pixelDY) {
+        return new APosition(x() + pixelDX, y() + pixelDY);
+    }
+
+    /**
+     * Returns new position object that is translated in [x,y] tiles.
+     */
+    default APosition translateByTiles(int tileDX, int tileDY) {
+        return new APosition(x() + tileDX * 32, y() + tileDY * 32);
+    }
+
     default APosition translateByVector(Vector vector) {
         return new APosition((int) (x() + vector.x), (int) (y() + vector.y));
     }

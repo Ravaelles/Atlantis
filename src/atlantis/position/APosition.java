@@ -147,21 +147,6 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return PositionUtil.distanceTo(p, unit);
     }
 
-
-    /**
-     * Returns new position object that is translated in [x,y] pixels.
-     */
-    public APosition translateByPixels(int pixelDX, int pixelDY) {
-        return new APosition(getX() + pixelDX, getY() + pixelDY);
-    }
-
-    /**
-     * Returns new position object that is translated in [x,y] tiles.
-     */
-    public APosition translateByTiles(int tileDX, int tileDY) {
-        return new APosition(getX() + tileDX * 32, getY() + tileDY * 32);
-    }
-
     /**
      * Paint it on screen for testing.
      */

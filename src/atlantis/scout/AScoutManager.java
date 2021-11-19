@@ -53,6 +53,7 @@ public class AScoutManager {
 
         if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
             nextPositionToScout = null;
+            scoutingAroundBaseWasInterrupted = true;
             return handleScoutFreeBases(scout);
         }
 
@@ -63,15 +64,14 @@ public class AScoutManager {
             return tryFindingEnemyBuilding(scout);
         }
 
-        // Roam around enemy base
-//        else if (Count.ourCombatUnits() <= 1) {
-//            return handleScoutEnemyBase(scout);
-//        }
-
         // Scout other bases
-        else {
+        else if (!anyScoutBeenKilled) {
             return roamAroundEnemyBase(scout);
-//            return handleScoutFreeBases(scout);
+        }
+
+        // Map roaming
+        else {
+            return handleScoutFreeBases(scout);
         }
     }
 
@@ -184,6 +184,7 @@ public class AScoutManager {
      * Roam around enemy base to get information about build order for as long as possible.
      */
     public static boolean roamAroundEnemyBase(AUnit scout) {
+        scoutingAroundBaseWasInterrupted = false;
 
         // === Remain at the enemy base if it's known ==============
 

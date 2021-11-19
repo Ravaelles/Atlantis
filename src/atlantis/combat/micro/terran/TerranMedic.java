@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
+import atlantis.units.select.Selection;
 import bwapi.Color;
 import bwapi.TechType;
 
@@ -34,11 +35,11 @@ public class TerranMedic {
             return true;
         }
 
-        if (tooFarFromNearestInfantry(medic)) {
+        if (handleHealWoundedUnit(medic)) {
             return true;
         }
 
-        if (handleHealWoundedUnit(medic)) {
+        if (tooFarFromNearestInfantry(medic)) {
             return true;
         }
 
@@ -69,7 +70,7 @@ public class TerranMedic {
     private static boolean tooFarFromNearestInfantry(AUnit medic) {
         AUnit infantry = Select.ourTerranInfantryWithoutMedics().nearestTo(medic);
         if (infantry != null && infantry.distToMoreThan(medic, 4)) {
-            return medic.move(infantry, UnitActions.MOVE, "Protect");
+            return medic.move(infantry, UnitActions.MOVE, "SemperFi");
         }
 
         if (infantry == null) {
@@ -101,7 +102,10 @@ public class TerranMedic {
     private static AUnit createMedicAssignment(AUnit medic) {
         AUnit assignment;
 
-        assignment = Select.ourOfType(AUnitType.Terran_Firebat).randomWithSeed(medic.id());
+        Selection medicSquadSelector = Select.from(medic.squad());
+
+//        assignment = Select.ourOfType(AUnitType.Terran_Firebat).randomWithSeed(medic.id());
+        assignment = medicSquadSelector.clone().ofType(AUnitType.Terran_Firebat).randomWithSeed(medic.id());
         if (assignment != null) {
             medicsAssignments.put(medic, assignment);
             medic.setTooltip("NewAssignment");
@@ -115,7 +119,8 @@ public class TerranMedic {
 //            return assignment;
 //        }
 
-        assignment = Select.ourTerranInfantryWithoutMedics().randomWithSeed(medic.id());
+//        assignment = Select.ourTerranInfantryWithoutMedics().randomWithSeed(medic.id());
+        assignment = medicSquadSelector.clone().terranInfantryWithoutMedics().randomWithSeed(medic.id());
         if (assignment != null) {
             medicsAssignments.put(medic, assignment);
             medic.setTooltip("NewAssignment");

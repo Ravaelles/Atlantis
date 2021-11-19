@@ -31,9 +31,9 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         return moveToFocusPoint(unit, focusPoint, false, false);
     }
 
-    public static boolean moveToFocusPoint(AUnit unit, AFocusPoint focusPoint) {
-        return moveToFocusPoint(unit, focusPoint, true, true);
-    }
+//    public static boolean moveToFocusPoint(AUnit unit, AFocusPoint focusPoint) {
+//        return moveToFocusPoint(unit, focusPoint, true, true);
+//    }
 
     // =========================================================
 
@@ -123,7 +123,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 //        }
 //
 //        unit.move(
-//                unit.position().translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
+//                unit.translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
 //                UnitActions.MOVE_TO_FOCUS,
 //                "ToTank"
 //        );

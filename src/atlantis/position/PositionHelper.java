@@ -127,16 +127,16 @@ public class PositionHelper {
      * Returns a <b>new</b> Position that represents the effect of moving this position by 
      * [deltaTileX, deltaTileY].
      */
-    public static APosition translateByTiles(APosition position, int deltaTileX, int deltaTileY) {
-        return new APosition(position.getX() + deltaTileX * 32, position.getY() + deltaTileY * 32);
-    }
-    
-    /**
-     * Returns a <b>new</b> Position that represents the effect of moving this position by [deltaX, deltaY].
-     */
-    public static APosition translateByPixels(HasPosition position, int deltaPixelX, int deltaPixelY) {
-        return new APosition(position.x() + deltaPixelX, position.y() + deltaPixelY);
-    }
+//    public static APosition translateByTiles(APosition position, int deltaTileX, int deltaTileY) {
+//        return new APosition(position.getX() + deltaTileX * 32, position.getY() + deltaTileY * 32);
+//    }
+//
+//    /**
+//     * Returns a <b>new</b> Position that represents the effect of moving this position by [deltaX, deltaY].
+//     */
+//    public static APosition translateByPixels(HasPosition position, int deltaPixelX, int deltaPixelY) {
+//        return new APosition(position.x() + deltaPixelX, position.y() + deltaPixelY);
+//    }
     
     // === Other method ==================================
 

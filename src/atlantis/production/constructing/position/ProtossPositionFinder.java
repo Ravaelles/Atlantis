@@ -163,6 +163,6 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             return Select.our().first().position();
         }
 
-        return base.position().translateTilesTowards(mainChoke, 8);
+        return base.translateTilesTowards(mainChoke, 8);
     }
 }

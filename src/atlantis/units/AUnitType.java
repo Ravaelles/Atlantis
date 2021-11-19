@@ -592,6 +592,14 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
+    public boolean isTerranInfantryWithoutMedics() {
+        return (boolean) cache.get(
+                "isTerranInfantryWithoutMedics",
+                -1,
+                () -> is(AUnitType.Terran_Marine, AUnitType.Terran_Firebat, AUnitType.Terran_Ghost)
+        );
+    }
+
     public boolean isTankSieged() {
         return (boolean) cache.get(
                 "isTankSieged",
@@ -1046,7 +1054,7 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
-    public int getTotalTrainTime() {
+    public int totalTrainTime() {
         return ut.buildTime();
     }
 

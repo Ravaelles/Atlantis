@@ -92,7 +92,7 @@ public class AMap {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
-            position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValidFarFromBounds();
+            position = startPoint.translateByPixels(dx, dy).makeValidFarFromBounds();
             if (position.isWalkable() && !position.isVisible() && startPoint.hasPathTo(position)) {
                 return position;
             }
@@ -107,7 +107,7 @@ public class AMap {
             int maxRadius = mapDimension * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
-            position = PositionHelper.translateByPixels(startPoint, dx, dy).makeValidFarFromBounds();
+            position = startPoint.translateByPixels(dx, dy).makeValidFarFromBounds();
             if (position.isWalkable() && !position.isExplored() && startPoint.position().hasPathTo(position)) {
                 return getMostWalkablePositionNear(position, 2);
             }

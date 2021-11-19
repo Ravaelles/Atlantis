@@ -39,7 +39,7 @@ public class ARunningManager {
                 unit.isRunning()
                 && unit.lastStartedRunningMoreThanAgo(5)
                 && !unit.lastStoppedRunningLessThanAgo(10)
-                && !unit.isUnderAttack(20)
+                && !unit.isUnderAttack(unit.isAirUnit() ? 220 : 20)
                 && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.runningManager().stopRunning();
@@ -174,7 +174,7 @@ public class ARunningManager {
             System.err.println("Invalid run position, dist = " + runTo.distTo(unit));
             APainter.paintLine(unit, runTo, Color.Purple);
             APainter.paintLine(
-                    unit.position().translateByPixels(0, 1),
+                    unit.translateByPixels(0, 1),
                     runTo.translateByPixels(0, 1),
                     Color.Purple
             );
@@ -281,7 +281,7 @@ public class ARunningManager {
         // If run distance is acceptably long and it's connected, it's ok.
         if (isPossibleAndReasonablePosition(unit, runTo, true, "O", "X")) {
             APainter.paintLine(unit.position(), runTo, Color.Purple);
-            APainter.paintLine(unit.position().translateByPixels(-1, -1), runTo, Color.Purple);
+            APainter.paintLine(unit.translateByPixels(-1, -1), runTo, Color.Purple);
 //            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
             return runTo;
         } else {

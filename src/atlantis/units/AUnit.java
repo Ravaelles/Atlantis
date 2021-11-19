@@ -73,9 +73,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
 
     /**
-     * Atlantis uses wrapper for BWAPI classes which aren't extended.<br />
+     * Atlantis uses wrapper for BWAPI classes.
+     *
      * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
      * create missing method here and you can reference original Unit class via u() method.
+     *
+     * The idea why we don't use inner Unit class is because if you change game bridge (JBWAPI, JNIBWAPI, BWMirror etc)
+     * you need to change half of your codebase. I've done it 3 times already ;__:
      */
     public static AUnit createFrom(Unit u) {
         if (u == null) {
@@ -88,11 +92,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             if (unit != null && unit.isAlive()) {
                 return unit;
             }
-            instances.remove(u.getID());
+//            instances.remove(u.getID());
         }
         
         unit = new AUnit(u);
         instances.put(u.getID(), unit);
+        return unit;
+    }
+
+    public static AUnit getById(Unit u) {
+        AUnit unit = instances.get(u.getID());
+
+        if (unit == null) {
+            return createFrom(u);
+        }
+
         return unit;
     }
 
@@ -196,15 +210,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     @Override
+//    public int hashCode() {
+//        return Objects.hash(id());
+//    }
     public int hashCode() {
-        return Objects.hash(id());
+        return id();
     }
 
     // =========================================================
     // =========================================================
     // =========================================================
 
-    private Squad squad = null;
+    private Squad squad;
     private final ARunningManager runningManager = new ARunningManager(this);
     private int lastUnitOrder = 0;
 
@@ -715,10 +732,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null && !isBuilding() && !isWorker() && isAlive()) {
+        if (squad == null && isOur() && !isBuilding() && !isWorker() && isAlive()) {
             System.err.println("Null squad for unit: " + this + " // alive:" + isAlive() + " // hp:" + hp());
         }
-//            squad = AtlantisSquadManager.getAlphaSquad();
         return squad;
     }
 
@@ -977,6 +993,22 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public boolean isResearching() {
+        return u.isResearching();
+    }
+
+    public boolean isUpgradingSomething() {
+        return u.isUpgrading();
+    }
+
+    public TechType whatIsResearching() {
+        return u.getLastCommand().getTechType();
+    }
+
+    public UpgradeType whatIsUpgrading() {
+        return u.getLastCommand().getUpgradeType();
+    }
+
     public boolean isIdle() {
         return u.isIdle() || (u.getLastCommand() == null || u.getLastCommand().getType().equals(UnitCommandType.None));
     }
@@ -1146,7 +1178,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public AUnit target() {
         if (u.getTarget() != null) {
-            return AUnit.createFrom(u.getTarget());
+            return AUnit.getById(u.getTarget());
         }
 
         return orderTarget();
@@ -1157,11 +1189,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit orderTarget() {
-        return u.getOrderTarget() != null ? AUnit.createFrom(u.getOrderTarget()) : null;
+        return u.getOrderTarget() != null ? AUnit.getById(u.getOrderTarget()) : null;
     }
 
     public AUnit buildUnit() {
-        return u.getBuildUnit() != null ? AUnit.createFrom(u.getBuildUnit()) : null;
+        return u.getBuildUnit() != null ? AUnit.getById(u.getBuildUnit()) : null;
     }
 
     public AUnitType buildType() {
@@ -1236,19 +1268,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u().getRemainingBuildTime();
     }
     
-    public int getRemainingResearchTime() {
+    public int remainingResearchTime() {
         return u().getRemainingResearchTime();
     }
     
-    public int getRemainingTrainTime() {
+    public int remainingTrainTime() {
         return u().getRemainingTrainTime();
     }
 
     public int getTotalTrainTime() {
-        return type().getTotalTrainTime();
+        return type().totalTrainTime();
     }
 
-    public int getRemainingUpgradeTime() {
+    public int remainingUpgradeTime() {
         return u().getRemainingUpgradeTime();
     }
 
@@ -1653,7 +1685,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public List<AUnit> loadedUnits() {
         List<AUnit> loaded = new ArrayList<>();
         for (Unit unit : u.getLoadedUnits()) {
-            loaded.add(AUnit.createFrom(unit));
+            loaded.add(AUnit.getById(unit));
         }
         return loaded;
     }
@@ -1741,6 +1773,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isTerranInfantry() {
         return type().isTerranInfantry();
+    }
+
+    public boolean isTerranInfantryWithoutMedics() {
+        return type().isTerranInfantryWithoutMedics();
     }
 
     public boolean isLurker() {

@@ -354,7 +354,7 @@ public class Units {
     public void print() {
         System.out.println("Units in list:");
         for (AUnit unit : list()) {
-            System.out.println(unit + ", extra value: " + valueFor(unit));
+            System.out.println(unit + ", extra value: " + (hasValueFor(unit) ? valueFor(unit) : "null"));
         }
         System.out.println();
     }

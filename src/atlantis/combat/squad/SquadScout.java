@@ -40,8 +40,8 @@ public class SquadScout {
 
         if (positionToEngage != null) {
             APainter.paintCircle(positionToEngage, 25, Color.Orange);
-            APainter.paintTextCentered(positionToEngage, "Squad Scout", Color.Orange);
             String dist = A.dist(squadScout, positionToEngage);
+            APainter.paintTextCentered(positionToEngage, "SquadScout" + dist, Color.Orange);
 
             if (positionToEngage.distTo(squadScout) > 2.2) {
                 return squadScout.move(positionToEngage, UnitActions.MOVE_TO_ENGAGE, "Pioneer" + dist);
@@ -49,6 +49,12 @@ public class SquadScout {
             else {
                 engageWorkersNow(squadScout);
                 return true;
+            }
+        }
+        else {
+            squadScout.setTooltip("NoEngagePosition");
+            if (EnemyUnits.hasDiscoveredAnyBuilding()) {
+                System.err.println("positionToEngage null, base = " + EnemyUnits.enemyBase());
             }
         }
 

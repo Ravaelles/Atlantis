@@ -161,7 +161,14 @@ public abstract class Squad extends Units {
     public String letter() {
         return name.charAt(0) + "";
     }
-    
+
+    // =========================================================
+
+    @Override
+    public String toString() {
+        return "Squad " + name + " (" + size() + " units)";
+    }
+
     // =========================================================
 
     public boolean isMissionContain() {

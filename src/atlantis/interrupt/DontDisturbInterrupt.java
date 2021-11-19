@@ -19,14 +19,14 @@ public class DontDisturbInterrupt {
         if (DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
             unit.setTooltip("Shoot");
 //            System.out.println(A.now() + " SHOOT");
-            APainter.paintRectangle(unit.position().translateByPixels(-5, 0), 10, 3, Color.Red);
+            APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Red);
             return true;
         }
 
         // Allow unit to load to shuttle
         if (allowUnitToLoadToTransport(unit)) {
             unit.setTooltip("Load");
-            APainter.paintRectangle(unit.position().translateByPixels(-5, 0), 10, 3, Color.Blue);
+            APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Blue);
 //            System.out.println(A.now() + " TRANSP");
             return true;
         }

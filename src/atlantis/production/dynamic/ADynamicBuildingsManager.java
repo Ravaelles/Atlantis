@@ -20,7 +20,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         // Check if we should automatically build new base, because we have shitload of minerals.
         if (AExpansionManager.shouldBuildNewBase()) {
             AExpansionManager.requestNewBase();
-            System.err.println("New base requested at " + A.now());
+            System.err.println("New base requested at " + A.seconds());
         }
         
         // If number of bases is bigger than gas buildings, it usually makes sense to build new gas extractor

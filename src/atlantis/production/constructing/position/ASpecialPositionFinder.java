@@ -44,7 +44,7 @@ public class ASpecialPositionFinder {
             AUnit geyser = Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
             if (geyser != null && geyser.distTo(base) < 12) {
-                APosition position = geyser.position().translateByPixels(-64, -32);
+                APosition position = geyser.translateByPixels(-64, -32);
                 return position;
             }
         }
@@ -121,7 +121,7 @@ public class ASpecialPositionFinder {
     }
 
     private static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        APosition near = Select.main().position().translateByPixels(-64, -64);
+        APosition near = Select.main().translateByPixels(-64, -64);
 //        APosition near = Select.mainBase().position();
 
         constructionOrder.setNearTo(near);

@@ -125,7 +125,7 @@ public class ASquadCohesionManager {
                         && (unit.squadSize() >= 12 && closeFriends.clone().inRadius(5, unit).count() <= 1)
         ) {
             unit.move(
-                    unit.position().translatePercentTowards(nearestFriend, 20),
+                    unit.translatePercentTowards(nearestFriend, 20),
                     UnitActions.MOVE,
                     "Together(" + (int) nearestFriend.distTo(unit) + ")"
             );
@@ -143,7 +143,7 @@ public class ASquadCohesionManager {
                         && unit.distTo(nearestFriend) > 3
         ) {
             unit.move(
-                    unit.position().translatePercentTowards(center, 20),
+                    unit.translatePercentTowards(center, 20),
                     UnitActions.MOVE,
                     "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
             );

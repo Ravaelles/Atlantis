@@ -59,7 +59,7 @@ public abstract class ABuildOrder {
         // If we're here it means all bases are busy. Try queue request
         for (AUnit base : Select.ourBases().reverse().list()) {
             if (
-                    base.getRemainingTrainTime() <= 4
+                    base.remainingTrainTime() <= 4
                             && base.hasNothingInQueue()
                             && AGame.supplyFree() >= 2
             ) {

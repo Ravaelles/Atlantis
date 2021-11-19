@@ -93,6 +93,14 @@ public class EnemyUnits {
         );
     }
 
+    public static boolean discoveredEnemyBase() {
+        return cacheBoolean.get(
+                "discoveredEnemyBase",
+                60,
+                () -> enemyBase() != null
+        );
+    }
+
     public static APosition enemyBase() {
         return (APosition) cache.get(
                 "enemyBase",

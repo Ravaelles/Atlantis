@@ -7,6 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 
 public class MobileDetector {
 
@@ -35,8 +36,10 @@ public class MobileDetector {
     // =========================================================
 
     protected static boolean handleSpreadOut(AUnit unit) {
+        int minDistBetween = We.protoss() ? 15 : 3;
+
         Selection units = Select.ourOfType(unit.type())
-                .inRadius(17, unit).exclude(unit);
+                .inRadius(minDistBetween, unit).exclude(unit);
         if (units.count() > 0) {
             AUnit otherunit = units.nearestTo(unit);
             unit.moveAwayFrom(otherunit.position(), 5, "SpreadVessels");

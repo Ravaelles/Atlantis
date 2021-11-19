@@ -29,7 +29,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         if (
                 A.supplyUsed(150)
                 || Atlantis.LOST <= 3
-                || A.resourcesBalance() >= 400
+                || (A.notUms() && A.resourcesBalance() >= 250)
         ) {
             return false;
         }
@@ -42,7 +42,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
 
         if (Enemy.zerg()) {
             if (Missions.counter() >= 3) {
-                return A.resourcesBalance() <= 300 && Count.ourCombatUnits() <= 30;
+                return A.resourcesBalance() < 150 || Count.ourCombatUnits() <= 15;
             }
         }
 

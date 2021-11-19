@@ -26,7 +26,7 @@ public class AEnemyTargeting {
 //        AUnit enemy = Select.enemy().nearestTo(unit);
 
         if (enemy != null) {
-            APainter.paintTextCentered(unit.position().translateByPixels(0, 25), enemy.shortName(), Color.Green);
+            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.shortName(), Color.Green);
         }
 
         return enemy;
@@ -144,6 +144,7 @@ public class AEnemyTargeting {
             return selectWeakestEnemyOfTypeInRange(enemyType, ourUnit);
         }
 
+//        return Select.enemyRealUnits().canBeAttackedBy(ourUnit, 2).nearestTo(ourUnit);
         return selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit);
     }
 
@@ -170,7 +171,7 @@ public class AEnemyTargeting {
             return mostWounded;
         }
 
-        return targets.clone().nearestTo(ourUnit);
+        return targets.clone().inShootRangeOf(1.1, ourUnit).nearestTo(ourUnit);
     }
 
 }

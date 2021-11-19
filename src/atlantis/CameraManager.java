@@ -63,7 +63,7 @@ public class CameraManager {
         }
 
         Atlantis.game().setScreenPosition(
-                position.position().translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7)
+                position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7)
         );
     }
 

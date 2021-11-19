@@ -96,7 +96,7 @@ public class Atlantis implements BWEventListener {
     private void setBwapiFlags() {
 //        game.setLocalSpeed(AtlantisConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
 //        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
-//        game.setGUI(false);                           // Turn off GUI - will speed up game considerably
+        game.setGUI(false);                             // Turn off GUI - will speed up game considerably
         game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
 //        game.enableFlag(Flag.CompleteMapInformation);   // See entire map - must be disabled for real games
     }
@@ -144,17 +144,14 @@ public class Atlantis implements BWEventListener {
         }
 
         AUnit unit = AUnit.createFrom(u);
-        if (unit != null) {
-            unit.removeTooltip();
 
-            // Our unit
-            if (unit.isOur()) {
-                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+        // Our unit
+        if (unit.isOur() && A.now() >= 2) {
+            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
 
-                // Apply construction fix: detect new Protoss buildings and remove them from queue.
-                if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
-                    ProtossConstructionManager.handleWarpingNewBuilding(unit);
-                }
+            // Apply construction fix: detect new Protoss buildings and remove them from queue.
+            if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
+                ProtossConstructionManager.handleWarpingNewBuilding(unit);
             }
         }
     }
@@ -165,7 +162,11 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
+        if (A.now() <= 1) {
+            return;
+        }
+
+        AUnit unit = AUnit.getById(u);
         if (unit != null) {
             unit.refreshType();
             if (unit.isOur()) {
@@ -189,14 +190,14 @@ public class Atlantis implements BWEventListener {
             return;
         }
 
-        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.getById(u);
+        ASquadManager.unitDestroyed(unit);
 //        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 
 //        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.shortName());
 
         // Our unit
         if (unit.isOur()) {
-            ASquadManager.unitDestroyed(unit);
             ARepairAssignments.removeRepairerOrProtector(unit);
             ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
             if (!unit.type().isGasBuilding()) {
@@ -212,7 +213,7 @@ public class Atlantis implements BWEventListener {
         }
 
         // Needs to be at the end, otherwise unit is reported as dead too early
-        UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
+        UnitsArchive.markUnitAsDestroyed(unit);
 
         // =========================================================
 
@@ -256,7 +257,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitEvade(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
             EnemyUnits.updateEnemyUnitPosition(unit);
         }
@@ -267,7 +268,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitHide(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
             EnemyUnits.updateEnemyUnitPosition(unit);
         }
@@ -281,26 +282,26 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitMorph(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.getById(u);
         unit.refreshType();
 //        System.out.println("MORPH u = " + u);
 //        System.out.println("MORPH = " + unit);
 //        System.out.println(unit.isEnemy());
 //        System.out.println(unit.isNeutral());
 //        System.out.println(unit.isOur());
-        UnitsArchive.markUnitAsDestroyed(unit.id(), unit);
+//        UnitsArchive.markUnitAsDestroyed(unit);
 
         // A bit of safe approach: forget the unit and remember it again.
         // =========================================================
         // Forget unit
-        if (unit != null) {
-            if (unit.isOur()) {
-                ASquadManager.unitDestroyed(unit);
-            } if (unit.isEnemy()) {
-                EnemyUnits.removeDiscoveredUnit(unit);
-            }
-            unit = AUnit.createFrom(u);
-        }
+//        if (unit != null) {
+//            if (unit.isOur()) {
+//                ASquadManager.unitDestroyed(unit);
+//            } if (unit.isEnemy()) {
+//                EnemyUnits.removeDiscoveredUnit(unit);
+//            }
+//            unit = AUnit.getById(u);
+//        }
 
         // =========================================================
         // Remember the unit
@@ -343,7 +344,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitShow(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.getById(u);
 //        if (unit.isEnemy()) {
 //            EnemyUnits.updateEnemyUnitPosition(unit);
 //        }

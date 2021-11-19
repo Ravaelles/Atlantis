@@ -13,9 +13,16 @@ public class NewUnitsToSquadsAssigner {
         }
 
         Squad squad = chooseSquadFor(unit);
+//        System.out.println("squad = " + squad);
+//        System.out.println("squad.contains(unit) = " + squad.contains(unit) + " // " + unit.shortName());
         if (!squad.contains(unit)) {
             squad.addUnit(unit);
             unit.setSquad(squad);
+//            System.err.println(unit + " assigned, now unit.squad = " + unit.squad());
+        }
+        else {
+            System.err.println("Uhmmmm possibleCombatUnitCreated: " + unit.shortName());
+            squad.print();
         }
     }
 

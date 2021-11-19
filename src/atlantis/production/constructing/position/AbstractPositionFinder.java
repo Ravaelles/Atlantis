@@ -121,7 +121,7 @@ public abstract class AbstractPositionFinder {
         AUnit base = Select.main();
 
 //        APainter.paintCircle(position, 10, Color.Green);
-        if (base != null && base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5) {
+        if (base != null && base.translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5) {
 //            APainter.paintCircle(position, 10, Color.Red);
             _CONDITION_THAT_FAILED = "Too close to main base";
             return true;
@@ -143,7 +143,7 @@ public abstract class AbstractPositionFinder {
         for (ABaseLocation base : Bases.baseLocations()) {
             if (
                     !base.isStartLocation()
-                    && base.position().translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5
+                    && base.translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5
             ) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";
                 return true;
@@ -189,7 +189,7 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
-        double distToBase = nearestBase.position().translateByTiles(2, 0).distTo(position);
+        double distToBase = nearestBase.translateByTiles(2, 0).distTo(position);
         if (distToBase <= 10) {
             AUnit mineral = Select.minerals().nearestTo(position);
             if (mineral != null && position.distTo(mineral) <= 4 && distToBase <= 7.5) {

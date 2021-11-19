@@ -1,5 +1,7 @@
 package atlantis;
 
+import atlantis.combat.squad.alpha.Alpha;
+import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -24,7 +26,7 @@ public class GameSpeed {
     public static int frameSkip;
 
     private static final int NORMAL_GAME_SPEED = 0;
-    private static final int NORMAL_FRAME_SKIP = 200;
+    private static final int NORMAL_FRAME_SKIP = 500;
 //    private static final int NORMAL_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
@@ -48,7 +50,7 @@ public class GameSpeed {
     }
 
     public static void checkIfNeedToSlowDown() {
-        if (true) { return; }
+//        if (true) { return; }
 
         if (!oneTimeSlowdownUsed && AGame.now() <= 1) {
             Atlantis.game().setGUI(frameSkip <= 30);
@@ -59,15 +61,18 @@ public class GameSpeed {
                         && AGame.now() > 60
                         && gameSpeed == 0
                         && frameSkip >= 30
-                        && Count.ourCombatUnits() >= 5
+//                        && Count.ourCombatUnits() >= 5
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
-                        && Select.enemyCombatUnits().atLeast(2)
+//                        && Select.enemyCombatUnits().atLeast(2)
+//                        && Select.enemyCombatUnits().atLeast(2)
+                        && EnemyUnits.discoveredEnemyBase()
+                        && Alpha.get().getSquadScout() != null
 //                        && Missions.isGlobalMissionContain()
         ) {
             oneTimeSlowdownUsed = true;
             System.out.println("Slow down to " + currentSpeedAndFrameSkip());
             pauseGame();
-            changeSpeedTo(10);
+            changeSpeedTo(0);
             changeFrameSkipTo(0);
             CameraManager.centerCameraNowOnSquadCenter();
             unpauseGame();

@@ -18,8 +18,8 @@ public class UnitsArchive {
 
     // =========================================================
 
-    public static void markUnitAsDestroyed(int unitId, AUnit unit) {
-        destroyedUnitIds.put(unitId, unit);
+    public static void markUnitAsDestroyed(AUnit unit) {
+        destroyedUnitIds.put(unit.id(), unit);
 
         if (unit.isEnemy()) {
             EnemyUnits.removeDiscoveredUnit(unit);

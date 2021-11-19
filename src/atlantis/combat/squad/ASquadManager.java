@@ -30,7 +30,7 @@ public class ASquadManager {
     // Beta
 
     private static boolean shouldHaveBeta() {
-        return Count.ourCombatUnits() >= 8;
+        return Count.ourCombatUnits() >= 18;
     }
 
     private static void handleReinforcements(Squad squad) {
@@ -50,19 +50,28 @@ public class ASquadManager {
 
         for (int i = 0; i < assignThisManyFromAlpha; i++) {
             AUnit transfer = alpha.get(0);
-            alpha.removeUnit(transfer);
-            toSquad.addUnit(transfer);
+            transferUnitToSquad(transfer, toSquad);
         }
+    }
+
+    private static void transferUnitToSquad(AUnit unit, Squad toSquad) {
+        if (unit.squad() != null) {
+            unit.squad().removeUnit(unit);
+        }
+
+        toSquad.addUnit(unit);
+        unit.setSquad(toSquad);
     }
 
     public static void unitDestroyed(AUnit unit) {
         Squad squad = unit.squad();
-//        System.out.println("unit destroyed " + unit + " // " + squad);
+
+//        if (unit.isOur() && unit.isCombatUnit()) {
+//            System.out.println("unit destroyed " + unit + " // " + (squad != null ? squad.name() : null));
+//        }
         if (squad != null) {
-//            System.out.println("Squad size = " + squad.size());
-            unit.setSquad(null);
             squad.removeUnit(unit);
-//            System.out.println("Squad size now = " + squad.size());
+            unit.setSquad(null);
         }
     }
 

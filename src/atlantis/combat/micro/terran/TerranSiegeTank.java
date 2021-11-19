@@ -188,7 +188,9 @@ public class TerranSiegeTank {
         nearestEnemyCombatBuildingDist = nearestEnemyCombatBuilding != null ? tank.distTo(nearestEnemyCombatBuilding) : 999;
 
         if (nearestEnemyCombatBuilding != null) {
-            APainter.paintCircleFilled(nearestEnemyCombatBuilding, 20, Color.Orange);
+            APainter.paintCircle(nearestEnemyCombatBuilding, 22, Color.Orange);
+            APainter.paintCircle(nearestEnemyCombatBuilding, 20, Color.Orange);
+            APainter.paintCircle(nearestEnemyCombatBuilding, 18, Color.Orange);
             APainter.paintTextCentered(nearestEnemyCombatBuilding, A.digit(nearestEnemyCombatBuildingDist), Color.Yellow);
         }
     }

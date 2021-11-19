@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import jbweb.Walls;
 
@@ -28,7 +29,7 @@ public class OnEveryFrame {
         // JBWEB building positions (blocks)
 //        Blocks.draw();
 //        Stations.draw();
-        Walls.draw();
+//        Walls.draw();
 
 //        if (AGame.now() >= 5) {
 //            Wall wall = Walls.createTWall();
@@ -81,6 +82,14 @@ public class OnEveryFrame {
 //        for (AUnit unit : Select.enemies(AUnitType.Zerg_Hydralisk).list()) {
 //            System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloaked=" + unit.effCloaked());
 //            break;
+//        }
+
+//        AUnit unit1 = Select.ourCombatUnits().first();
+//        AUnit unit2 = Select.ourCombatUnits().last();
+//
+//        if (unit1 != null && (unit1.squad() == null || unit1.squad() == null)) {
+//            System.out.println("unit1 = " + unit1.idWithHash() + unit1.shortName() + " // " + unit1.squad());
+//            System.out.println("unit2 = " + unit2.idWithHash() + unit2.shortName() + " // " + unit2.squad());
 //        }
     }
 

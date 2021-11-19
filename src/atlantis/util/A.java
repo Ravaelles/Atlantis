@@ -1136,6 +1136,10 @@ public class A {
     /**
      * Returns string like "(0.4)"
      */
+    public static String dist(double dist) {
+        return "(" + A.digit(dist) + ")";
+    }
+
     public static String dist(AUnit unit1, HasPosition unit2) {
         return "(" + (unit1 != null && unit2 != null ? A.digit(unit1.distTo(unit2)) : "-") + ")";
     }

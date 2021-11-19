@@ -110,7 +110,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                     AUnit mineralNearestToEnemy = Select.minerals().inRadius(12, Select.main()).nearestTo(enemyLocation);
 
                     if (mineralNearestToEnemy != null) {
-                        return mineralNearestToEnemy.position().translateTilesTowards(6, enemyLocation);
+                        return mineralNearestToEnemy.translateTilesTowards(6, enemyLocation);
                     }
 
                     return null;
