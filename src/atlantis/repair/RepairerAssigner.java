@@ -76,7 +76,7 @@ public class RepairerAssigner {
         if (hasMoreRepairersThanAllowed()) {
             for (int i = 0; i < ARepairAssignments.countTotalRepairers() - allowedRepairers; i++) {
                 AUnit repairer = ARepairAssignments.getRepairers().get(ARepairAssignments.getRepairers().size() - 1);
-                System.err.println("Remove excessive repairer " + repairer);
+//                System.err.println("Remove excessive repairer " + repairer);
                 ARepairAssignments.removeRepairerOrProtector(repairer);
             }
             return true;

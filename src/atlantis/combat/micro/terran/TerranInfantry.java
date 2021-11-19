@@ -3,7 +3,6 @@ package atlantis.combat.micro.terran;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -38,16 +37,16 @@ public class TerranInfantry {
     // =========================================================
 
     private static boolean goToNearMedic(AUnit unit) {
-        if (!unit.isWounded()) {
+        if (unit.cooldownRemaining() <= 3 || unit.hp() >= 26) {
             return false;
         }
 
-        if (Select.enemyCombatUnits().inRadius(13, unit).canAttack(unit, 9).isNotEmpty()) {
-            return false;
-        }
+//        if (unit.enemiesNearby().canAttack(unit, 9).isNotEmpty()) {
+//            return false;
+//        }
 
-        AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(30).randomWithSeed(unit.id());
-        if (medic != null) {
+        AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(30).nearestTo(unit);
+        if (medic != null && medic.distToMoreThan(unit, 2)) {
             return unit.move(medic, UnitActions.MOVE, "BeHealed");
         }
 
@@ -63,7 +62,7 @@ public class TerranInfantry {
             return false;
         }
 
-        Selection enemies = Select.enemyRealUnits().inRadius(9, unit);
+        Selection enemies = unit.enemiesNearby().inRadius(9, unit);
 
         if (
                 enemies.atLeast(Enemy.zerg() ? 3 : 2)
@@ -87,7 +86,7 @@ public class TerranInfantry {
 //        if (Select.enemyRealUnits().inRadius(6, unit).isEmpty()) {
         if (
                 unit.lastActionLessThanAgo(1, UnitActions.MOVE)
-                && Select.enemyRealUnits().inRadius(6, unit).isEmpty()
+                && unit.enemiesNearby().isEmpty()
         ) {
             Select.ourOfType(AUnitType.Terran_Bunker).inRadius(0.5, unit).first().unloadAll();
             unit.setTooltip("Unload");
@@ -101,6 +100,11 @@ public class TerranInfantry {
         
         // Only Terran infantry get inside
         if (unit.isLoaded() || !unit.isMarine()) {
+            return false;
+        }
+
+        // Without enemies around, don't do anything
+        if (unit.enemiesNearby().empty()) {
             return false;
         }
         

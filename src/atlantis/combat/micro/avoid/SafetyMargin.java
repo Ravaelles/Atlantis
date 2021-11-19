@@ -20,7 +20,7 @@ public class SafetyMargin {
      * Defending Dragoon is 5.5 tiles away from attacking Zealot (MELEE unit, range 1).
      * Margin =  5.5 - 1 = 4.5  tiles
      */
-    public static double calculate(AUnit attacker, AUnit defender) {
+    public static double calculate(AUnit defender, AUnit attacker) {
         if (attacker == null) {
             throw new RuntimeException("Attacker is null");
         }
@@ -28,10 +28,10 @@ public class SafetyMargin {
         double base = baseMargin(defender, attacker);
 
         if (attacker.isMelee()) {
-            return base + SafetyMarginAgainstMelee.calculate(attacker, defender);
+            return base + SafetyMarginAgainstMelee.calculate(defender, attacker);
         }
         else {
-            return base + SafetyMarginAgainstRanged.calculate(attacker, defender);
+            return base + SafetyMarginAgainstRanged.calculate(defender, attacker);
         }
     }
 
@@ -50,7 +50,7 @@ public class SafetyMargin {
         return attacker.getWeaponRangeAgainst(defender) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
-    protected static double enemyMovementBonus(AUnit attacker, AUnit defender) {
+    protected static double enemyMovementBonus(AUnit defender, AUnit attacker) {
 //         || defender.isOtherUnitFacingThisUnit(attacker)
 
         if (attacker.isMoving()) {
@@ -79,7 +79,7 @@ public class SafetyMargin {
         return Select.ourRealUnits().inRadius(0.5, defender).count() / 1.5;
     }
 
-    protected static double woundedBonus(AUnit defender) {
+    protected static double woundedBonus(AUnit defender, AUnit attacker) {
         if (defender.isTerranInfantry()) {
             if (Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).inRadius(2, defender).isNotEmpty()) {
                 return 0;
@@ -98,7 +98,7 @@ public class SafetyMargin {
         return defender.type().isTransport() ? 4 : 0;
     }
 
-    protected static double quicknessBonus(AUnit attacker, AUnit defender) {
+    protected static double quicknessBonus(AUnit defender, AUnit attacker) {
 
         // If unit is much slower than enemy, don't run at all. It's better to shoot instead.
         double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();

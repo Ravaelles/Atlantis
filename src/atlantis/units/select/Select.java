@@ -1,7 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.AtlantisConfig;
-import atlantis.enemy.EnemyUnits;
+import atlantis.enemy.EnemyInformation;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -26,7 +26,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     protected static Cache<Integer> cacheInt = new Cache<>();
     protected static Cache<AUnit> cacheUnit = new Cache<>();
 
-    protected static int microCacheForFrames = 0;
+    protected static int microCacheForFrames = 1;
 
     // =====================================================================
 
@@ -86,7 +86,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 0,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
-                    data.addAll(EnemyUnits.discoveredAndAliveUnits());
+                    data.addAll(EnemyInformation.discoveredAndAliveUnits());
 
                     return new Selection(data, cachePath);
                 }

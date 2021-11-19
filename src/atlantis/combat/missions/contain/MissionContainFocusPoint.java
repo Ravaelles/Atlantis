@@ -2,6 +2,7 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
+import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.AChoke;
@@ -23,7 +24,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 1,
                 () -> {
                     if (We.terran()) {
-                        if (!EnemyUnits.hasDefensiveLandBuilding()) {
+                        if (!EnemyInformation.hasDefensiveLandBuilding()) {
                             AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
                             if (enemyBuilding != null && enemyBuilding.position() != null) {
                                 return new AFocusPoint(

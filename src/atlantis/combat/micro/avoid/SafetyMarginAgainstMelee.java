@@ -6,7 +6,7 @@ import atlantis.units.select.Select;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-    public static double calculate(AUnit attacker, AUnit defender) {
+    public static double calculate(AUnit defender, AUnit attacker) {
 
 //        if (defender.isInfantry()) {
 //            criticalDist = enemyWeaponRangeBonus(defender, attacker)
@@ -32,7 +32,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         else {
             criticalDist = baseForMelee(defender, attacker)
                     + enemyWeaponRange(defender, attacker)
-                    + woundedAgainstMeleeBonus(defender)
+                    + woundedAgainstMeleeBonus(defender, attacker)
                     + beastBonus(defender)
                     + ourUnitsNearbyBonus(defender)
                     + workerBonus(defender, attacker)
@@ -68,7 +68,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return beastNearby > 0 ? 1.6 : 0;
     }
 
-    protected static double woundedAgainstMeleeBonus(AUnit defender) {
+    protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {
         if (defender.isAirUnit()) {
             return defender.woundPercent() / 10;
         }

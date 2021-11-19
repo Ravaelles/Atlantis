@@ -12,6 +12,7 @@ import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.log.ALog;
 import atlantis.log.LogMessage;
@@ -22,7 +23,6 @@ import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.position.TerranPositionFinder;
 import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
-import atlantis.position.PositionHelper;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.production.orders.ProductionQueue;
@@ -1065,7 +1065,7 @@ public class AAdvancedPainter extends APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     static void paintFoggedUnitsThatIsEnemiesDiscovered() {
-        for (AFoggedUnit foggedEnemy : EnemyUnits.discoveredAndAliveUnits()) {
+        for (AFoggedUnit foggedEnemy : EnemyInformation.discoveredAndAliveUnits()) {
             if (!foggedEnemy.hasKnownPosition()) {
                 continue;
             }

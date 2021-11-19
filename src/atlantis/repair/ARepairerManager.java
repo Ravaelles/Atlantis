@@ -32,8 +32,8 @@ public class ARepairerManager {
         AUnit target = ARepairAssignments.getUnitToRepairFor(repairer);
 
         if (target == null || !target.isAlive()) {
-            repairer.setTooltip("Null unit2repair");
-            System.err.println("Invalid repair target: " + target);
+            repairer.setTooltip("TargetRIP");
+//            System.err.println("Invalid repair target: " + target + ", alive:" + (target != null ? target.isAlive() : "-"));
             ARepairAssignments.removeRepairerOrProtector(repairer);
             return false;
         }

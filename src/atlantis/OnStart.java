@@ -2,6 +2,7 @@ package atlantis;
 
 import atlantis.debug.APainter;
 import atlantis.init.AInitialActions;
+import atlantis.keyboard.AClicks;
 import atlantis.map.AMap;
 import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.strategy.OurStrategyManager;
@@ -48,6 +49,8 @@ public class OnStart {
         }
 
         System.out.println("### Atlantis is working! ###");
+
+        AClicks.clickAltF9();
 
 //        AUnitTypesHelper.paintUnitsAndRequirements();
     }

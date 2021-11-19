@@ -48,7 +48,7 @@ public class RetreatManager {
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
         if (unit.type().isReaver()) {
-            return Select.enemyRealUnits().inRadius(14, unit).isEmpty() && unit.cooldownRemaining() <= 7;
+            return unit.enemiesNearby().isEmpty() && unit.cooldownRemaining() <= 7;
         }
 
         return false;

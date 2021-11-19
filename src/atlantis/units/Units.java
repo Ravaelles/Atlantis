@@ -21,6 +21,7 @@ public class Units {
      * we can easily store info how many workers are gathering each mineral field thanks to this mapping.
      */
     private ArrayList<AUnit> units = new ArrayList<>();
+    private TreeSet<Integer> unitIds = new TreeSet<>();
     private final Map<AUnit, Double> extraValues = new HashMap<>();
 
     // =====================================================================
@@ -41,6 +42,7 @@ public class Units {
 
     public Units addUnit(AUnit unitToAdd) {
         units.add(unitToAdd);
+        unitIds.add(unitToAdd.id());
         extraValues.put(unitToAdd, null);
         return this;
     }
@@ -59,14 +61,14 @@ public class Units {
 
     public Units removeUnits(Collection<AUnit> unitsToRemove) {
         for (AUnit unit : unitsToRemove) {
-            units.remove(unit);
-            extraValues.remove(unit);
+            removeUnit(unit);
         }
         return this;
     }
 
     public Units removeUnit(AUnit unitToRemove) {
         units.remove(unitToRemove);
+        unitIds.remove(unitToRemove.id());
         extraValues.remove(unitToRemove);
         return this;
     }
@@ -121,7 +123,7 @@ public class Units {
     }
 
     public boolean contains(AUnit unit) {
-        return units.contains(unit);
+        return unitIds.contains(unit.id());
     }
 
     // === Special methods =====================================
@@ -172,9 +174,18 @@ public class Units {
     }
 
     public double valueFor(AUnit unit) {
-        assert !units.isEmpty();
-        assert unit != null;
-        assert has(unit);
+//        assert !units.isEmpty();
+//        assert unit != null;
+//        assert has(unit);
+
+        if (unit == null) {
+            System.err.println("Invalid unit: NULL. Return -1 as fallback.");
+            return -1;
+        }
+        if (!hasValueFor(unit)) {
+            System.err.println("No unit value for " + unit.shortName() + ". Return -1 as fallback.");
+            return -1;
+        }
 
         return extraValues.get(unit);
     }

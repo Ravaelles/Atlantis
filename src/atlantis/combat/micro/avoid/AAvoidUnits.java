@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.units.Units;
 import atlantis.util.Cache;
 
@@ -20,7 +20,7 @@ public abstract class AAvoidUnits {
             return false;
         }
 
-        Units enemiesDangerouslyClose = getUnitsToAvoid(unit);
+        Units enemiesDangerouslyClose = unitsToAvoid(unit);
         if (enemiesDangerouslyClose.isEmpty()) {
             return false;
         }
@@ -34,18 +34,18 @@ public abstract class AAvoidUnits {
         return unit.isLoaded();
     }
 
-    public static Units getUnitsToAvoid(AUnit unit) {
-        return getUnitsToAvoid(unit, true);
+    public static Units unitsToAvoid(AUnit unit) {
+        return unitsToAvoid(unit, true);
     }
 
-    public static Units getUnitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
+    public static Units unitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
         return cache.get(
             "getUnitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
             0,
             () -> {
                 Units enemies = new Units();
-                for (AUnit enemy : searchProblematicEnemyUnits(unit)) {
-                    enemies.addUnitWithValue(enemy, SafetyMargin.calculate(enemy, unit));
+                for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
+                    enemies.addUnitWithValue(enemy, SafetyMargin.calculate(unit, enemy));
                 }
 
                 if (enemies.isEmpty()) {
@@ -66,7 +66,7 @@ public abstract class AAvoidUnits {
     }
 
     public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {
-        Units enemies = getUnitsToAvoid(unit, false);
+        Units enemies = unitsToAvoid(unit, false);
         if (enemies.isNotEmpty()) {
             return enemies.lowestValue();
         }
@@ -75,7 +75,7 @@ public abstract class AAvoidUnits {
     }
 
     public static boolean shouldAvoidAnyUnit(AUnit unit) {
-        return getUnitsToAvoid(unit).isNotEmpty();
+        return unitsToAvoid(unit).isNotEmpty();
     }
 
     public static boolean shouldNotAvoidAnyUnit(AUnit unit) {
@@ -84,10 +84,10 @@ public abstract class AAvoidUnits {
 
     // =========================================================
 
-    protected static List<? extends AUnit> searchProblematicEnemyUnits(AUnit unit) {
-        return Select.enemyRealUnits(true, true, true)
+    protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
+        return unit.enemiesNearby()
+                .add(EnemyUnits.combatBuildings())
                 .canAttack(unit, true, true, 6)
-                .inRadius(14, unit)
                 .list();
     }
 

@@ -20,6 +20,7 @@ import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.*;
 import atlantis.util.Vector;
 import atlantis.wrappers.ATech;
@@ -425,22 +426,34 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double groundWeaponRange() {
-        return type().getGroundWeapon().maxRange() / 32;
+    public int groundWeaponRange() {
+        return cacheInt.get(
+                "groundWeaponRange",
+                60,
+                () -> type().getGroundWeapon().maxRange() / 32
+        );
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
     public double getGroundWeaponMinRange() {
-        return type().getGroundWeapon().minRange() / 32;
+        return cacheInt.get(
+                "getGroundWeaponMinRange",
+                60,
+                () -> type().getGroundWeapon().minRange() / 32
+        );
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
     public double airWeaponRange() {
-        return type().getAirWeapon().maxRange() / 32;
+        return cacheInt.get(
+                "airWeaponRange",
+                60,
+                () -> type().getAirWeapon().maxRange() / 32
+        );
     }
 
     /**
@@ -1662,6 +1675,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isCloakable() && !isCloaked();
     }
 
+    public boolean is(AUnitType type) {
+        return type().is(type);
+    }
+
     public boolean is(AUnitType ...types) {
         return type().is(types);
     }
@@ -1669,10 +1686,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isTargettedBy(AUnit attacker) {
         return this.equals(attacker.target());
     }
-
-//    public boolean inActOfShooting() {
-//        return lastStartedAttackLessThanAgo(8);
-//    }
 
     public boolean isArchon() {
         return is(AUnitType.Protoss_Archon);
@@ -1867,11 +1880,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isCombatUnit();
     }
 
-//    public boolean isDepleted() {
-//        return u.getAcidSporeCount();
-//    }
-
-    //    public boolean isFacingTheSameDirection(AUnit otherUnit) {
-//        return Math.abs(getAngle() - otherUnit.getAngle()) <= 0.3;
-//    }
+    public Selection enemiesNearby() {
+        return ((Selection) cache.get(
+                "allEnemiesNearby",
+                3,
+                () -> Select.enemyRealUnits(true, true, true).inRadius(14, this)
+        )).clone();
+    }
 }

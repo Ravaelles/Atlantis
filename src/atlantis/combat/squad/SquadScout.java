@@ -5,6 +5,7 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.debug.APainter;
+import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.log.ALog;
@@ -53,7 +54,7 @@ public class SquadScout {
         }
         else {
             squadScout.setTooltip("NoEngagePosition");
-            if (EnemyUnits.hasDiscoveredAnyBuilding()) {
+            if (EnemyInformation.hasDiscoveredAnyBuilding()) {
                 System.err.println("positionToEngage null, base = " + EnemyUnits.enemyBase());
             }
         }

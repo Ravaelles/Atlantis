@@ -61,6 +61,11 @@ public class Selection {
         return false;
     }
 
+    public Selection add(Selection otherSelection) {
+        data.addAll(otherSelection.data);
+        return this;
+    }
+
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>otherUnit</b>.
      */

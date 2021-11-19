@@ -3,7 +3,6 @@ package atlantis.combat.targeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class ATargetingImportant extends AEnemyTargeting {
 
@@ -17,6 +16,10 @@ public class ATargetingImportant extends AEnemyTargeting {
         // =========================================================
 
         AUnit target;
+
+        if (unit.isAirUnit() && (target = ATargetingForAir.targetForAirUnits(unit)) != null) {
+            return target;
+        }
 
         if ((target = targetInShootingRange(unit)) != null) {
             return target;
@@ -43,14 +46,6 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .nearestTo(unit);
         if (target != null) {
             if (AEnemyTargeting.debug(unit)) System.out.println("C1 = " + target);
-            return target;
-        }
-
-        // =========================================================
-        // Special case - SHUTTLE
-
-        if ((target = ATransportTargeting.target(unit)) != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C3 = " + target);
             return target;
         }
 

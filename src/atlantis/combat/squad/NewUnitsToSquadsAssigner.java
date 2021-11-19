@@ -20,10 +20,6 @@ public class NewUnitsToSquadsAssigner {
             unit.setSquad(squad);
 //            System.err.println(unit + " assigned, now unit.squad = " + unit.squad());
         }
-        else {
-            System.err.println("Uhmmmm possibleCombatUnitCreated: " + unit.shortName());
-            squad.print();
-        }
     }
 
     // =========================================================

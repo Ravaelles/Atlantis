@@ -47,9 +47,9 @@ public class TerranVulture {
         }
         
         // If enemies are too close don't do it
-        if (Select.enemyRealUnits().inRadius(6, unit).count() > 0) {
-            return false;
-        }
+//        if (Select.enemyRealUnits().inRadius(6, unit).count() > 0) {
+//            return false;
+//        }
         
         // If too many our units around, don't mine
         if (Select.ourCombatUnits().inRadius(7, unit).count() >= 4) {

@@ -1,10 +1,7 @@
 package atlantis;
 
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.enemy.EnemyUnits;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
+import atlantis.enemy.EnemyInformation;
 import bwapi.Game;
 
 import static atlantis.Atlantis.game;
@@ -65,7 +62,7 @@ public class GameSpeed {
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
 //                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Select.enemyCombatUnits().atLeast(2)
-                        && EnemyUnits.discoveredEnemyBase()
+                        && EnemyInformation.discoveredEnemyBase()
                         && Alpha.get().getSquadScout() != null
 //                        && Missions.isGlobalMissionContain()
         ) {

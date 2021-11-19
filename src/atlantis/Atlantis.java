@@ -2,7 +2,7 @@ package atlantis;
 
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.enemy.EnemyUnits;
+import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.UnitsArchive;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.ums.UmsSpecialActionsManager;
@@ -191,7 +191,7 @@ public class Atlantis implements BWEventListener {
         }
 
         AUnit unit = AUnit.getById(u);
-        ASquadManager.unitDestroyed(unit);
+        ASquadManager.removeUnitFromSquads(unit);
 //        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 
 //        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.shortName());
@@ -205,7 +205,7 @@ public class Atlantis implements BWEventListener {
                 LOST_RESOURCES += unit.type().getTotalResources();
             }
         } else {
-            EnemyUnits.removeDiscoveredUnit(unit);
+            EnemyInformation.removeDiscoveredUnit(unit);
             if (!unit.type().isGeyser()) {
                 KILLED++;
                 KILLED_RESOURCES += unit.type().getTotalResources();
@@ -259,7 +259,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitEvade(Unit u) {
         AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
-            EnemyUnits.updateEnemyUnitPosition(unit);
+            EnemyInformation.updateEnemyUnitPosition(unit);
         }
     }
 
@@ -270,7 +270,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitHide(Unit u) {
         AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
-            EnemyUnits.updateEnemyUnitPosition(unit);
+            EnemyInformation.updateEnemyUnitPosition(unit);
         }
     }
 
@@ -324,17 +324,19 @@ public class Atlantis implements BWEventListener {
                 }
 
                 // =========================================================
+
                 ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
 
                 // Add to combat squad if it's military unit
                 if (unit.isRealUnit()) {
+                    ASquadManager.removeUnitFromSquads(unit);
                     NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
                 }
             }
 
             // Enemy unit
             else {
-                EnemyUnits.refreshEnemyUnit(unit);
+                EnemyInformation.refreshEnemyUnit(unit);
             }
         }
     }
@@ -377,7 +379,7 @@ public class Atlantis implements BWEventListener {
     }
 
     private void enemyNewUnit(AUnit unit) {
-        EnemyUnits.weDiscoveredEnemyUnit(unit);
+        EnemyInformation.weDiscoveredEnemyUnit(unit);
     }
 
     private void ourNewUnit(AUnit unit) {

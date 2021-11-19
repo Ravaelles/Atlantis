@@ -63,7 +63,7 @@ public class ASquadManager {
         unit.setSquad(toSquad);
     }
 
-    public static void unitDestroyed(AUnit unit) {
+    public static void removeUnitFromSquads(AUnit unit) {
         Squad squad = unit.squad();
 
 //        if (unit.isOur() && unit.isCombatUnit()) {

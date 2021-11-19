@@ -223,7 +223,7 @@ public class ARepairCommander {
                 // === We don't know enemy strategy ==================================
                 else {
                     int enemyRaceBonus = !AGame.isEnemyTerran() && AGame.timeSeconds() > 175 ? 1 : 0;
-                    return 1 + (AGame.timeSeconds() > 230 ? 1 : 0) + enemyRaceBonus;
+                    return 1 + (AGame.timeSeconds() > 280 ? 1 : 0) + enemyRaceBonus;
                 }
             } 
 

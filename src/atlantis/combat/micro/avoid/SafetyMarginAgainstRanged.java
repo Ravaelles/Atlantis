@@ -1,32 +1,34 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import bwapi.Color;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
 
-    public static double calculate(AUnit attacker, AUnit defender) {
+    public static double calculate(AUnit defender, AUnit attacker) {
         double criticalDist;
 
         // GROUND unit
         if (defender.isGroundUnit()) {
-            criticalDist = forGroundUnit(attacker, defender);
+            criticalDist = forGroundUnit(defender, attacker);
         }
 
         // AIR unit
         else {
-            criticalDist = forAirUnit(attacker, defender);
+            criticalDist = forAirUnit(defender, attacker);
         }
 
         return attacker.distTo(defender) - criticalDist;
     }
 
-    private static double forGroundUnit(AUnit attacker, AUnit defender) {
+    private static double forGroundUnit(AUnit defender, AUnit attacker) {
         return enemyWeaponRange(defender, attacker)
                 + quicknessBonus(defender, attacker)
                 + lurkerBonus(defender, attacker)
                 + buildingBonus(defender, attacker)
-                + woundedBonus(defender)
+                + woundedBonus(defender, attacker)
                 + ourUnitsNearbyBonus(defender)
                 + ourMovementBonus(defender)
                 + enemyMovementBonus(defender, attacker)
@@ -34,10 +36,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 + combatEvalBonus(defender, attacker);
     }
 
-    private static double forAirUnit(AUnit attacker, AUnit defender) {
+    private static double forAirUnit(AUnit defender, AUnit attacker) {
         return 3
                 + enemyWeaponRange(defender, attacker)
-                + woundedBonus(defender)
+                + woundedBonus(defender, attacker)
                 + transportBonus(defender)
                 + ourMovementBonus(defender)
                 + enemyMovementBonus(defender, attacker);
@@ -46,22 +48,22 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
     // =========================================================
 
-//    private static double applyAirUnitTweaks(AUnit defender, AUnit attacker) {
-//        double attackerRangeWithMargin = attacker.airWeaponRange() + 3.8;
-//
-//        if (defender.isMutalisk() && defender.hp() >= 50) {
-//            currentCriticalDist -= 2;
-//        }
-//
-//        if (currentCriticalDist <= attackerRangeWithMargin) {
-//            return attackerRangeWithMargin;
-//        }
-//
-//        return currentCriticalDist;
-//    }
+    protected static double woundedBonus(AUnit defender, AUnit attacker) {
+
+        // Don't apply wound bonus against units with bigger or equal range
+        if (attacker.groundWeaponRange() >= defender.groundWeaponRange()) {
+            return 0;
+        }
+
+        return SafetyMargin.woundedBonus(defender, attacker);
+    }
 
     private static double buildingBonus(AUnit defender, AUnit attacker) {
-        return attacker.type().isCombatBuilding() ? 3 : 0;
+        APainter.paintCircle(attacker, 5, Color.Red);
+        APainter.paintCircle(attacker, 7, Color.Red);
+        APainter.paintCircle(attacker, 9, Color.Red);
+        APainter.paintCircle(attacker, 11, Color.Red);
+        return attacker.isCombatBuilding() ? 3 : 0;
     }
 
     private static double lurkerBonus(AUnit defender, AUnit attacker) {

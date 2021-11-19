@@ -186,6 +186,14 @@ public class ATargetingCrucial extends AEnemyTargeting {
         }
 
         // =========================================================
+        // Special case - SHUTTLE
+
+        if ((target = ATransportTargeting.target(unit)) != null) {
+            if (AEnemyTargeting.debug(unit)) System.out.println("C3 = " + target);
+            return target;
+        }
+
+        // =========================================================
         // DEADLY but attack in last order
 
         target = enemyUnits.clone()
@@ -196,6 +204,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
                 )
                 .inRadius(groundRange + 0.7, unit)
                 .nearestTo(unit);
+
         return target;
     }
 

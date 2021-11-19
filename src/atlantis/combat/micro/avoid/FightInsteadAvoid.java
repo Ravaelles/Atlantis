@@ -199,7 +199,7 @@ public class FightInsteadAvoid {
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()
                 && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
-                && Select.enemyRealUnits()
+                && unit.enemiesNearby()
                     .canBeAttackedBy(unit, 3)
                     .inRadius(3, unit)
                     .isNotEmpty();
@@ -207,9 +207,8 @@ public class FightInsteadAvoid {
 
     protected boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
         return unit.isAirUnitAntiAir()
-                && Select.enemyRealUnits()
+                && unit.enemiesNearby()
                 .canBeAttackedBy(unit, 3)
-                .inRadius(6, unit)
                 .isNotEmpty();
     }
 

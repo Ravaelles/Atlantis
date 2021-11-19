@@ -9,12 +9,19 @@ import bwapi.TechType;
 public class TerranComsatStation {
 
     public static boolean update(AUnit comsat) {
+        comsat.setTooltip(
+                "Lurkers:"
+                + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count()
+                + "/" + Select.enemies(AUnitType.Zerg_Lurker).count()
+        );
+
 //        if (AGame.notNthGameFrame(5 + ((250 - comsat.energy()) / 3))) {
         if (AGame.notNthGameFrame(20)) {
             return false;
         }
 //        System.out.println(Select.enemy().ofType(AUnitType.Protoss_Observer).count());
 
+        System.out.println("comsat.energy() = " + comsat.energy());
         if (comsat.energy() >= 50) {
             return scanLurkers(comsat)
                     || scanDarkTemplars(comsat)
