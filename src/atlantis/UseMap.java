@@ -16,10 +16,7 @@ public class UseMap {
 
         // === UMS maps - great for bot development ============
 
-//        return "ums/rav/6mar_2med_vs_4z.scx";
-//        return "ums/rav/Rav_MM_Zea.scx";
         return "ums/rav/R1.scx";
-//        return "ums/rav/mar_vs_zer.scx";
 
 //        return "ums/";
 //        return "ums/";

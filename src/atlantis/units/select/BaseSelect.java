@@ -24,6 +24,9 @@ public class BaseSelect<T extends AUnit> {
 
                 for (Unit u : AGame.getPlayerUs().getUnits()) {
                     AUnit unit = AUnit.getById(u);
+//                    if (A.seconds() >= 200) {
+//                        System.out.println(u.getType().name() + " // " + u.getType().isBuilding());
+//                    }
                     data.add(unit);
 //                    if (unit.isAlive()) {
 //                    }
