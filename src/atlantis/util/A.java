@@ -541,14 +541,10 @@ public class A {
         return null;
     }
 
-    public static void writeToFileWithHeader(String filePath, String content, String[] headers, boolean append) {
+    public static void writeToFileWithHeader(String filePath, String content, String[] headers) {
         try {
             if (!fileExists(filePath)) {
                 content = String.join(";", headers) + "\n" + content;
-            }
-            if (!append && fileExists(filePath)) {
-                File file = new File(filePath);
-                file.delete();
             }
             FileWriter fw = new FileWriter(filePath,true);
             fw.write(content + "\n");
@@ -1219,5 +1215,12 @@ public class A {
     public static boolean fileExists(String file) {
         File f = new File(file);
         return f.exists() && !f.isDirectory();
+    }
+
+    public static void removeFile(String filePath) {
+        if (fileExists(filePath)) {
+            File file = new File(filePath);
+            file.delete();
+        }
     }
 }

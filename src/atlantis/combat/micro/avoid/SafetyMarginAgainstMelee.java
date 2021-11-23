@@ -6,9 +6,8 @@ import atlantis.units.select.Select;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-    public static double INFANTRY_BASE = 0.62;
-    public static int INFANTRY_WOUND = 21;
-//    public static double ENEMIES_NEARBY_FACTOR = 0.1;
+    public static double INFANTRY_BASE = 0.64;
+    public static int INFANTRY_WOUND = 20;
 
     public static double calculate(AUnit defender, AUnit attacker) {
 

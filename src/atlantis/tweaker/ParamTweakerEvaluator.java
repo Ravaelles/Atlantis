@@ -22,7 +22,12 @@ public class ParamTweakerEvaluator {
 
     private static void saveScoreToFile(boolean winner) {
         String file = "param_tweaker/" + dateString() + ".csv";
-        A.writeToFileWithHeader(file, resultString(winner), fileHeader(), Env.isFirstRun());
+
+        if (Env.isFirstRun()) {
+            A.removeFile(file);
+        }
+
+        A.writeToFileWithHeader(file, resultString(winner), fileHeader());
     }
 
     private static String[] fileHeader() {

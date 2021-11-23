@@ -12,19 +12,14 @@ public class ParamTweakerFactory extends ParamTweaker {
         tweaker = new ParamTweaker();
 
 //        tweaker.addParam(new Param(
-//                "MIN_DIST_TO_REGION_BOUNDARY",
-//                () -> ARunningManager.MIN_DIST_TO_REGION_BOUNDARY,
-//                () -> ARunningManager.MIN_DIST_TO_REGION_BOUNDARY = A.rand(21, 45) / 10.0
-//        ));
-//        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBase",
 //                () -> SafetyMarginAgainstMelee.INFANTRY_BASE,
-//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE = A.rand(55, 65) / 100.0
+//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE = A.rand(60, 64) / 100.0
 //        ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryWound",
 //                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND,
-//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND = A.rand(21, 24)
+//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND = A.rand(19, 21)
 //        ));
 //        tweaker.addParam(new Param(
 //                "RunAnyDirectionRadiusInfantry",
@@ -36,11 +31,11 @@ public class ParamTweakerFactory extends ParamTweaker {
 //                () -> ARunningManager.NOTIFY_UNITS_IN_RADIUS_BASE,
 //                () -> ARunningManager.NOTIFY_UNITS_IN_RADIUS_BASE = A.rand(70, 95) / 100.0
 //        ));
-        tweaker.addParam(new Param(
-                "NearbyUnitMakeSpace",
-                () -> ARunningManager.NEARBY_UNIT_MAKE_SPACE,
-                () -> ARunningManager.NEARBY_UNIT_MAKE_SPACE = A.rand(30, 80) / 100.0
-        ));
+//        tweaker.addParam(new Param(
+//                "NearbyUnitMakeSpace",
+//                () -> ARunningManager.NEARBY_UNIT_MAKE_SPACE,
+//                () -> ARunningManager.NEARBY_UNIT_MAKE_SPACE = A.rand(60, 90) / 100.0
+//        ));
 //        tweaker.addParam(new Param(
 //                "STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO",
 //                () -> ARunningManager.STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO,

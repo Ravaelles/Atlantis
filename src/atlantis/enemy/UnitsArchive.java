@@ -50,11 +50,11 @@ public class UnitsArchive {
             }
 
             int balance = ourKilledResourcesPerUnitTypes.getValueFor(type) - ourLostResourcesPerUnitTypes.getValueFor(type);
+            String balanceString = balance > 0 ? ("+" + balance) : ("" + balance);
             String balancePercent = balancePercentFor(type, balance);
-            int value = ourKillCountersPerUnitTypes.getValueFor(type);
 
             System.out.println(
-                    type + ": " + balance + ", " + balancePercent
+                    type + ": " + balanceString + ", " + balancePercent
                     + "  (kills: " + ourKillCountersPerUnitTypes.getValueFor(type)
                     + ", lost: " + ourLostTypes.getValueFor(type) + ")"
             );

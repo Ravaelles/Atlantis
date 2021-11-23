@@ -41,7 +41,7 @@ public class TerranInfantry {
             return false;
         }
 
-        if (unit.enemiesNearby().canAttack(unit, 4).isNotEmpty()) {
+        if (unit.enemiesNearby().canAttack(unit, 7).isNotEmpty()) {
             return false;
         }
 

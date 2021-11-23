@@ -18,7 +18,7 @@ public class ARunningManager {
 
 //    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 6;
-    public static double NEARBY_UNIT_MAKE_SPACE = 0.4;
+    public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
     public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
 
