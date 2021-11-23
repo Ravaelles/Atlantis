@@ -33,7 +33,7 @@ public class OurStrategy {
      */
     public static void setTo(AStrategy strategy) {
         ourStrategy = strategy;
-        System.out.println("### Use strategy `" + strategy + "` ###");
+//        System.out.println("### Use strategy `" + strategy + "` ###");
 
 //        System.out.println("--------------");
 //        for (ProductionOrder po : ourStrategy.buildOrder().getProductionOrders()) {

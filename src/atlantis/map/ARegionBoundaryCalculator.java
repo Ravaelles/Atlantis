@@ -13,9 +13,9 @@ public class ARegionBoundaryCalculator {
 
     public static ArrayList<ARegionBoundary> forRegion(ARegion region) {
         ArrayList<ARegionBoundary> boundaries = new ArrayList<>();
-        if (A.isUms()) {
-            return boundaries;
-        }
+//        if (A.isUms()) {
+//            return boundaries;
+//        }
         System.out.print("Calculating region boundaries... ");
         APosition center = region.center();
         Vector initVector = new Vector(64, 0);

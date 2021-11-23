@@ -527,9 +527,6 @@ public class A {
     public static PrintWriter saveToFile(String filePath, String stringToWrite, boolean closeTheStream) {
         try {
             File file = new File(filePath);
-//            if (!fileExists(filePath)) {
-//                file.createNewFile();
-//            }
             PrintWriter out = new PrintWriter(file);
             out.print(stringToWrite);
             if (closeTheStream) {
@@ -544,13 +541,17 @@ public class A {
         return null;
     }
 
-    public static void writeToFileAppending(String filePath, String stringToWrite, String[] headers) {
+    public static void writeToFileWithHeader(String filePath, String content, String[] headers, boolean append) {
         try {
             if (!fileExists(filePath)) {
-                stringToWrite = String.join(";", headers) + "\n" + stringToWrite;
+                content = String.join(";", headers) + "\n" + content;
+            }
+            if (!append && fileExists(filePath)) {
+                File file = new File(filePath);
+                file.delete();
             }
             FileWriter fw = new FileWriter(filePath,true);
-            fw.write(stringToWrite + "\n");
+            fw.write(content + "\n");
             fw.close();
         } catch(IOException exception) {
             System.err.println("IOException: " + exception.getMessage());

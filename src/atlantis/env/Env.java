@@ -7,6 +7,7 @@ public class Env {
     private static final String FILE = "ENV";
 
     private static boolean isLocal = false;
+    private static boolean firstRun = true;
     private static boolean paramTweaker = false;
 
     // =========================================================
@@ -23,10 +24,20 @@ public class Env {
                 case "local": isLocal = trueFalse(value);
             }
         }
+
+        System.out.println("------- main args");
+        for (String arg : mainArgs) {
+            System.out.println("arg = " + arg);
+        }
         
         if (mainArgsContains("--param-tweaker", mainArgs)) {
             paramTweaker = true;
         }
+        if (mainArgsContains("--counter", mainArgs) && !mainArgsContains("--counter=1", mainArgs)) {
+            firstRun = false;
+        }
+
+        System.out.println("------------------------ firstRun = " + firstRun);
     }
 
     // =========================================================
@@ -56,5 +67,9 @@ public class Env {
      */
     public static boolean isParamTweaker() {
         return paramTweaker;
+    }
+
+    public static boolean isFirstRun() {
+        return firstRun;
     }
 }

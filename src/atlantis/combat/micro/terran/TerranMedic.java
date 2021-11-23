@@ -16,6 +16,8 @@ import java.util.HashMap;
 
 public class TerranMedic {
     
+    public static double MIN_DIST_TO_ASSIGNMENT = 1.75;
+
     /**
      * Maximum allowed distance for a medic to heal wounded units that are not their assignment.
      * The idea is to disallow them to move away too much.
@@ -23,7 +25,7 @@ public class TerranMedic {
     private static final int HEAL_OTHER_UNITS_MAX_DISTANCE = 10;
 
     /**
-     * Specific units that medics should follow in order to heal them as fast as possible 
+     * Specific units that medics should follow in order to heal them as fast as possible
      * when they get wounded.
      */
     private static final HashMap<AUnit, AUnit> medicsToAssignments = new HashMap<>();
@@ -166,10 +168,10 @@ public class TerranMedic {
             if (dist > 1.9) {
                 return medic.move(assignment.position(), UnitActions.MOVE, "Stick");
             }
-            else if (dist > 1.75 && medic.isMoving()) {
+            else if (dist > MIN_DIST_TO_ASSIGNMENT && medic.isMoving()) {
                 return medic.holdPosition("Ok");
             }
-            else if (dist <= 1.75) {
+            else if (dist <= MIN_DIST_TO_ASSIGNMENT) {
                 return medic.moveAwayFrom(assignment.position(), 0.18, "TooClose");
             }
         }
@@ -186,6 +188,7 @@ public class TerranMedic {
                 .organic()
                 .wounded()
                 .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
+                .exclude(medic)
                 .nearestTo(medic);
 
 //        System.out.println(nearestWoundedInfantry + " // " + nearestWoundedInfantry.hp() + " // " + nearestWoundedInfantry.maxHp());

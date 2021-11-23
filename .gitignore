@@ -13,9 +13,9 @@ desktop.ini
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-/nbproject/private/
 /build/
 /dist/
+/bwapi-data/BWTA2/*
 nbproject/
 build.xml
 manifest.mf

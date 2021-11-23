@@ -6,8 +6,9 @@ import atlantis.units.select.Select;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-    public static double INFANTRY_BASE = 0.55;
-    public static int INFANTRY_WOUND = 23;
+    public static double INFANTRY_BASE = 0.62;
+    public static int INFANTRY_WOUND = 21;
+//    public static double ENEMIES_NEARBY_FACTOR = 0.1;
 
     public static double calculate(AUnit defender, AUnit attacker) {
 
@@ -15,9 +16,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // Terran INFANTRY
         if (defender.isTerranInfantry()) {
-            criticalDist = INFANTRY_BASE + woundedAgainstMeleeBonus(defender, attacker);
+            criticalDist = INFANTRY_BASE
+                    + woundedAgainstMeleeBonus(defender, attacker);
 //            +ourMovementBonus(defender) / 3
 //                    + enemyMovementBonus(defender, attacker) / 3;
+
+//            criticalDist += enemyUnitsNearbyBonus(defender, criticalDist) * ENEMIES_NEARBY_FACTOR;
         }
 
         // VULTURE
@@ -38,9 +42,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     + enemyMovementBonus(defender, attacker);
         }
 
-        // 3.85 tiles (base width) should be enough as a minimum versus melee unit
-        criticalDist = Math.min(criticalDist, 3.85);
-//        System.out.println("criticalDist = " + criticalDist + " // " + ourUnitsNearbyBonus(defender));
+        // 3.9 tiles (almost base width) should be enough as a minimum versus melee unit
+        criticalDist = Math.min(criticalDist, 3.9);
 
         return attacker.distTo(defender) - criticalDist;
     }
@@ -48,9 +51,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     // =========================================================
 
     private static double baseForMelee(AUnit defender, AUnit attacker) {
-//        return 0.1;
         return attacker.isZealot() ? 0.5 : 0.7;
     }
+
+//    private static double enemyUnitsNearbyBonus(AUnit defender, double radius) {
+//        return Select.enemyCombatUnits().inRadius(radius, defender).count();
+//    }
 
     protected static double beastBonus(AUnit defender) {
         int beastNearby = Select.enemy()

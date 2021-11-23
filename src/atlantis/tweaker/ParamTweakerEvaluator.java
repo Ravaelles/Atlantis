@@ -1,6 +1,7 @@
 package atlantis.tweaker;
 
 import atlantis.Atlantis;
+import atlantis.env.Env;
 import atlantis.util.A;
 
 import java.text.SimpleDateFormat;
@@ -21,17 +22,16 @@ public class ParamTweakerEvaluator {
 
     private static void saveScoreToFile(boolean winner) {
         String file = "param_tweaker/" + dateString() + ".csv";
-        A.writeToFileAppending(file, resultString(winner), fileHeaders());
+        A.writeToFileWithHeader(file, resultString(winner), fileHeader(), Env.isFirstRun());
     }
 
-    private static String[] fileHeaders() {
+    private static String[] fileHeader() {
         String[] base = {
                 "Date",
                 "W/L",
                 "Seconds",
                 "Score"
         };
-
         return Stream.concat(Arrays.stream(base), Arrays.stream(paramNames())).toArray(String[]::new);
     }
 

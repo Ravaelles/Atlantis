@@ -248,7 +248,7 @@ public class Units {
      * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first unit will be the one closest to given position.
      */
-    public Units sortByDistanceTo(final Position position, final boolean nearestFirst) {
+    public Units sortByDistanceTo(final HasPosition position, final boolean nearestFirst) {
         if (position == null) {
             return null;
         }

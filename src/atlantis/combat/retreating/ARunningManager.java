@@ -1,6 +1,5 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
@@ -17,11 +16,11 @@ import java.util.ArrayList;
 
 public class ARunningManager {
 
-    public static int STOP_RUNNING_IF_STARTED_MORE_THAN_AGO = 5;
-    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 10;
+//    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
+    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 6;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.4;
-    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 2;
-    public static double NOTIFY_UNITS_IN_RADIUS_BASE = 0.80;
+    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
+    public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
 
     private final AUnit unit;
     private static APosition _lastPosition;
@@ -43,10 +42,9 @@ public class ARunningManager {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
         if (
                 unit.isRunning()
-                && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_MORE_THAN_AGO)
                 && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
                 && !unit.isUnderAttack(unit.isAirUnit() ? 220 : 20)
-                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
+//                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.runningManager().stopRunning();
             unit.setTooltip("StopRun");
@@ -151,7 +149,7 @@ public class ARunningManager {
     // =========================================================
     
     /**
-     * Running behavior which will make unit run <b>NOT</b> toward main base, but <b>away from the enemy</b>.
+     * Running behavior which will make unit run straight away from the enemy.
      */
     private APosition findBestPositionToRun(AUnit unit, HasPosition runAwayFrom, double dist) {
         APosition runTo = null;
@@ -159,8 +157,16 @@ public class ARunningManager {
         // === Run directly away from the enemy ========================================
         
         if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
-            if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() == 1) {
-                runAwayFrom = closeEnemies.first().position();
+//            if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() == 1) {
+//                runAwayFrom = closeEnemies.first();
+//            }
+//            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
+            if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() <= 2) {
+                if (closeEnemies.size() == 1) {
+                    runAwayFrom = closeEnemies.first();
+                } else {
+                    runAwayFrom = Select.from(closeEnemies).center();
+                }
             }
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
         }
@@ -174,8 +180,9 @@ public class ARunningManager {
         // =============================================================================
 
         if (
-                runTo != null && runTo.distTo(unit) <= 0.3
-                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
+                runTo != null
+                && runTo.distTo(unit) < 0.002
+//                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
             System.err.println("Invalid run position, dist = " + runTo.distTo(unit));
             APainter.paintLine(unit, runTo, Color.Purple);
@@ -397,7 +404,9 @@ public class ARunningManager {
         }
 
         Selection friendsTooClose = Select.ourRealUnits()
-                .exclude(unit).groundUnits().inRadius(NOTIFY_UNITS_IN_RADIUS_BASE, unit);
+                .exclude(unit)
+                .groundUnits()
+                .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
 
         if (friendsTooClose.count() <= 1) {
             return false;
@@ -405,7 +414,12 @@ public class ARunningManager {
 
         for (AUnit otherUnit : friendsTooClose.list()) {
             if (canBeNotifiedToMakeSpace(otherUnit)) {
-                otherUnit.runningManager().runFrom(unit, NEARBY_UNIT_MAKE_SPACE);
+                AUnit runFrom = Select.enemyCombatUnits().inRadius(10, unit).nearestTo(otherUnit);
+                if (runFrom == null) {
+                    continue;
+                }
+
+                otherUnit.runningManager().runFrom(runFrom, NEARBY_UNIT_MAKE_SPACE);
                 APainter.paintCircleFilled(unit, 10, Color.Yellow);
                 APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
                 otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit));
@@ -454,6 +468,7 @@ public class ARunningManager {
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
                 && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
                 && Select.neutral().inRadius(unit.size(), position).isEmpty()
+//                && distToNearestRegionBoundaryIsOkay(position)
                 && unit.hasPathTo(position)
                 && unit.position().groundDistanceTo(position) <= 18
 //                && Select.neutral().inRadius(1.2, position).count() == 0
@@ -465,17 +480,23 @@ public class ARunningManager {
             APainter.paintTextCentered(position, isOkay ? charForIsOk : charForNotOk, isOkay ? Color.Green : Color.Red);
         }
 
-//        System.err.println(unit + " @" + (int) AtlantisMap.getGroundDistance(unit, position));
-
-//        if (isOkay && !allowCornerPointsEtc) {
-////        if (isOkay && !allowCornerPointsEtc && AMap.getDistanceToAnyRegionPolygonPoint(unitPosition) < 1) {
-////            isOkay = AMap.getDistanceToAnyRegionPolygonPoint(unitPosition);
-//            isOkay = false;
-//        }
-
         return isOkay;
     }
 
+//    private boolean distToNearestRegionBoundaryIsOkay(APosition position) {
+//        ARegion region = position.region();
+//        if (region != null) {
+//            return true;
+//        }
+//
+//        for (ARegionBoundary boundary : region.boundaries()) {
+//            if (boundary.distToLessThan(unit, MIN_DIST_TO_REGION_BOUNDARY)) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
 
     private boolean makeUnitRun() {
         if (unit == null) {
@@ -520,7 +541,7 @@ public class ARunningManager {
     }
 
     public boolean isRunning() {
-        if (runTo != null && unit.distTo(runTo) >= 0.3) {
+        if (runTo != null && unit.distTo(runTo) >= 0.002) {
             return true;
 //            if (unit.lastStartedRunningAgo(3)) {
 //                return true;

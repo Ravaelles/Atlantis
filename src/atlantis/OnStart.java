@@ -1,10 +1,9 @@
 package atlantis;
 
 import atlantis.debug.APainter;
-import atlantis.debug.AUnitTypesHelper;
 import atlantis.env.Env;
 import atlantis.init.AInitialActions;
-import atlantis.keyboard.AClicks;
+import atlantis.keyboard.AForcedClicks;
 import atlantis.map.AMap;
 import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.strategy.OurStrategyManager;
@@ -16,9 +15,9 @@ import atlantis.tweaker.ParamTweakerFactory;
 public class OnStart {
 
     public static void execute() {
-        if (Env.isLocal()) {
-            AClicks.clickAltF9(); // Make ChaosLauncher double size
-        }
+//        if (Env.isLocal() && Env.isFirstRun()) {
+//            AForcedClicks.clickAltF9(); // Make ChaosLauncher double size
+//        }
 
         System.out.println("\n############### Starting Atlantis... #############################################");
 
@@ -87,7 +86,7 @@ public class OnStart {
             OurStrategyManager.initialize();
 
             if (CurrentBuildOrder.get() != null) {
-                System.out.println("Use build order: `" + CurrentBuildOrder.get().getName() + "`");
+//                System.out.println("Use build order: `" + CurrentBuildOrder.get().getName() + "`");
             }
             else {
                 System.err.println("Invalid (empty) build order in AtlantisConfig!");

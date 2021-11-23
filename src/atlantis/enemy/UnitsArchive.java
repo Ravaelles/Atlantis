@@ -51,6 +51,7 @@ public class UnitsArchive {
 
             int balance = ourKilledResourcesPerUnitTypes.getValueFor(type) - ourLostResourcesPerUnitTypes.getValueFor(type);
             String balancePercent = balancePercentFor(type, balance);
+            int value = ourKillCountersPerUnitTypes.getValueFor(type);
 
             System.out.println(
                     type + ": " + balance + ", " + balancePercent
@@ -64,7 +65,7 @@ public class UnitsArchive {
         if (balance >= 0) {
             return ourLostResourcesPerUnitTypes.getValueFor(type) == 0
                     ? "+++%"
-                    : "+" + (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / ourLostResourcesPerUnitTypes.getValueFor(type) - 100) + "%";
+                    : ("+" + (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / ourLostResourcesPerUnitTypes.getValueFor(type) - 100) + "%");
         }
 
         return ourKilledResourcesPerUnitTypes.getValueFor(type) == 0
@@ -74,15 +75,15 @@ public class UnitsArchive {
 
     public static void paintLostUnits() {
         System.out.println("--- Lost ---");
-        paint(ourLostTypes);
+        print(ourLostTypes);
     }
 
     public static void paintKilledUnits() {
         System.out.println("--- Killed ---");
-        paint(enemyLostTypes);
+        print(enemyLostTypes);
     }
 
-    private static void paint(MappingCounter<AUnitType> types) {
+    private static void print(MappingCounter<AUnitType> types) {
         for (AUnitType type : types.map().keySet()) {
             if (type.isNotRealUnit()) {
                 continue;
