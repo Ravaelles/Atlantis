@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-public class AClicks {
+public class AForcedClicks {
 
     public static void clickAltF9() {
         Robot robot = null;
