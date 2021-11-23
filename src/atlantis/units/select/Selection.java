@@ -31,7 +31,9 @@ public class Selection {
     // === Cache ===============================================
 
     protected String addToCachePath(String method) {
-        currentCachePath += (currentCachePath.length() > 0 ? "." : "") + method;
+        if (currentCachePath != null) {
+            currentCachePath += (currentCachePath.length() > 0 ? "." : "") + method;
+        }
 //        System.out.println("path = " + currentCachePath);
         return currentCachePath;
     }
@@ -159,7 +161,7 @@ public class Selection {
     }
 
     public Selection detectors() {
-        data.removeIf(unit -> !unit.isType(
+        data.removeIf(unit -> !unit.is(
                 AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Protoss_Observer,
                 AUnitType.Terran_Missile_Turret,
@@ -171,12 +173,12 @@ public class Selection {
     }
 
     public Selection tanksSieged() {
-        data.removeIf(unit -> !unit.isType(AUnitType.Terran_Siege_Tank_Siege_Mode));
+        data.removeIf(unit -> !unit.is(AUnitType.Terran_Siege_Tank_Siege_Mode));
         return this;
     }
 
     public Selection tanks() {
-        data.removeIf(unit -> !unit.isType(
+        data.removeIf(unit -> !unit.is(
                 AUnitType.Terran_Siege_Tank_Siege_Mode,
                 AUnitType.Terran_Siege_Tank_Tank_Mode
         ));

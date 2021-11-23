@@ -1,6 +1,8 @@
 package atlantis;
 
 import atlantis.debug.APainter;
+import atlantis.debug.AUnitTypesHelper;
+import atlantis.env.Env;
 import atlantis.init.AInitialActions;
 import atlantis.keyboard.AClicks;
 import atlantis.map.AMap;
@@ -9,11 +11,16 @@ import atlantis.strategy.OurStrategyManager;
 import atlantis.strategy.ProtossStrategies;
 import atlantis.strategy.TerranStrategies;
 import atlantis.strategy.ZergStrategies;
+import atlantis.tweaker.ParamTweakerFactory;
 
 public class OnStart {
 
     public static void execute() {
-        System.out.println("### Starting Atlantis... ###");
+        if (Env.isLocal()) {
+            AClicks.clickAltF9(); // Make ChaosLauncher double size
+        }
+
+        System.out.println("\n### Starting Atlantis... ###");
 
         // Uncomment this line to see list of units -> damage.
 //        AUnitTypesHelper.displayUnitTypesDamage();
@@ -26,10 +33,15 @@ public class OnStart {
         AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();
 
         // Validate AtlantisConfig and exit if it's invalid
-        AtlantisConfig.validate();
+        if (Env.isLocal()) {
+            AtlantisConfig.validate();
+        }
 
         // Game speed mode that starts fast, slows down when units are attacking
         GameSpeed.init();
+
+        // Enable/disable painting
+        APainter.init();
 
         // One time map analysis for every map
         AMap.initMapAnalysis();
@@ -48,11 +60,14 @@ public class OnStart {
             AGame.setUmsMode();
         }
 
-        System.out.println("### Atlantis is working! ###");
+        System.out.println("### Atlantis is working! ###\n");
 
-        AClicks.clickAltF9();
+//        AUnitTypesHelper.printUnitsAndRequirements();
 
-//        AUnitTypesHelper.paintUnitsAndRequirements();
+        // Special mode - enable if want to adjust parameter values
+        if (Env.isParamTweaker()) {
+            ParamTweakerFactory.init();
+        }
     }
 
     private static void handleCheckIfUmsMap() {
@@ -68,14 +83,6 @@ public class OnStart {
     }
 
     private static void initStrategyAndBuildOrder() {
-//        APosition p1 = new APosition(100, 100);
-//        APosition p2 = new APosition(200, 110);
-//
-//        System.out.println(p1.translateTilesTowards(p2, 1).toStringPixels());
-//        System.out.println(p1.translateTilesTowards(p2, 2).toStringPixels());
-//        System.out.println(p1.translatePercentTowards(p2, 10).toStringPixels());
-//        System.out.println(p1.translatePercentTowards(p2, 99).toStringPixels());
-
         try {
             OurStrategyManager.initialize();
 

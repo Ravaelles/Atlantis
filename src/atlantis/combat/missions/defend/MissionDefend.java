@@ -5,6 +5,7 @@ import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 public class MissionDefend extends Mission {
@@ -39,17 +40,21 @@ public class MissionDefend extends Mission {
             return true;
         }
 
-        if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
-            return true;
+        if (Have.main()) {
+            if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
+                return true;
+            }
+
+            if (Select.enemy().inRadius(18, Select.naturalOrMain()).atLeast(1)) {
+                return true;
+            }
         }
 
-        if (Select.enemy().inRadius(18, Select.naturalOrMain()).atLeast(1)) {
-            return true;
-        }
-
-        double unitDistToFocusPoint = unit.distTo(focusPoint());
-        if (unitDistToFocusPoint >= 8 || unitDistToFocusPoint > unit.distTo(enemy)) {
-            return true;
+        if (focusPoint() != null) {
+            double unitDistToFocusPoint = unit.distTo(focusPoint());
+            if (unitDistToFocusPoint >= 8 || unitDistToFocusPoint > unit.distTo(enemy)) {
+                return true;
+            }
         }
 
         return false;

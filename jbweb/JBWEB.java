@@ -352,9 +352,9 @@ public class JBWEB {
             }
         }
 
-        Walls.draw();
-        Blocks.draw();
-        Stations.draw();
+//        Walls.draw();
+//        Blocks.draw();
+//        Stations.draw();
     }
 
     /// Called on game start to initialize JBWEB

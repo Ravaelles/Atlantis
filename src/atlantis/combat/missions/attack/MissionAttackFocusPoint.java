@@ -10,7 +10,9 @@ import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 import atlantis.util.Cache;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
@@ -22,6 +24,20 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             "focusPoint",
             60,
             () -> {
+//                if (A.notUms() && (A.supplyUsed() <= 1 || !Have.main())) {
+                if (A.supplyUsed() <= 1 || !Have.main()) {
+                    AUnit enemy = Select.enemy().first();
+                    AUnit our = Select.our().first();
+                    if (enemy == null || our == null) {
+                        return null;
+                    }
+
+                    return new AFocusPoint(
+                            enemy,
+                            our
+                    );
+                }
+
                 // Try going near enemy base
                 APosition enemyBase = EnemyUnits.enemyBase();
                 if (enemyBase != null) {

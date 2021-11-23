@@ -17,6 +17,9 @@ import java.util.ArrayList;
 
 public class ARunningManager {
 
+    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 2;
+    public static double NOTIFY_UNITS_IN_RADIUS_BASE = 0.52;
+
     private final AUnit unit;
     private static APosition _lastPosition;
 //    private APosition runAwayFrom = null;
@@ -310,9 +313,9 @@ public class ARunningManager {
         // ========================================================================
         
         APosition unitPosition = unit.position();
-        int radius = runDistanceForAnyDirection(unit);
+        int radius = runAnyDirectionInitialRadius(unit);
         APosition bestPosition = null;
-        while (bestPosition == null && radius >= 0.5) {
+        while (bestPosition == null && radius >= 0.3) {
             bestPosition = findRunPositionInRadius(unitPosition, runAwayFrom, radius);
             radius -= 1;
         }
@@ -370,13 +373,13 @@ public class ARunningManager {
         return bestPosition;
     }
 
-    private int runDistanceForAnyDirection(AUnit unit) {
+    private int runAnyDirectionInitialRadius(AUnit unit) {
         if (unit.isVulture()){
             return 5;
         }
 
         if (unit.isInfantry()) {
-            return 4;
+            return ANY_DIRECTION_INIT_RADIUS_INFANTRY;
         }
 
         return 4;
@@ -391,7 +394,8 @@ public class ARunningManager {
         }
 
         Selection friendsTooClose = Select.ourRealUnits()
-                .exclude(unit).groundUnits().inRadius(0.17 + unit.woundPercent() / 300.0, unit);
+//                .exclude(unit).groundUnits().inRadius(NOTIFY_UNITS_IN_RADIUS_BASE + unit.woundPercent() / 300.0, unit);
+                .exclude(unit).groundUnits().inRadius(NOTIFY_UNITS_IN_RADIUS_BASE, unit);
 
         if (friendsTooClose.count() <= 1) {
             return false;

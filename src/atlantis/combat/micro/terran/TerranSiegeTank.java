@@ -264,7 +264,7 @@ public class TerranSiegeTank {
             return true;
         }
 
-        return (tank.distTo(choke.center()) - choke.width()) >= 1.3 || (choke.width() >= 3.5);
+        return (tank.distTo(choke.center()) - choke.width()) >= 1.6 || (choke.width() >= 3.5);
     }
 
 }

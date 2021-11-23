@@ -2,6 +2,7 @@ package main;
 
 import atlantis.Atlantis;
 import atlantis.AtlantisIgniter;
+import atlantis.env.Env;
 import atlantis.keyboard.AKeyboard;
 import atlantis.util.ProcessHelper;
 
@@ -11,23 +12,32 @@ import atlantis.util.ProcessHelper;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
+
     /**
      * Sets up Atlantis config and runs the bot.
      */
     public static void main(String[] args) {
-        ProcessHelper.killStarcraftProcess();
-        ProcessHelper.killChaosLauncherProcess();
-        
-        // Dynamically modify bwapi.ini file, change race and enemy race.
-        // If you want to change your/enemy race, edit AtlantisConfig constants.
-        AtlantisIgniter.modifyBwapiFileIfNeeded();
+        Env.readEnvFile(args);
 
-        // Listen for keyboard events
-        AKeyboard.listenForKeyEvents();
-        
-        // IMPORTANT: Make sure Chaoslauncher -> Settings -> "Run Starcraft on Startup" is checked
-        ProcessHelper.startChaosLauncherProcess();
-        
+        // If run locally (not in tournament) auto-start Starcraft.exe and do other stuff
+        if (Env.isLocal()) {
+            ProcessHelper.killStarcraftProcess();
+            ProcessHelper.killChaosLauncherProcess();
+
+            if (Env.isLocal()) {
+
+                // Dynamically modify bwapi.ini file, change race and enemy race.
+                // If you want to change your/enemy race, edit AtlantisConfig constants.
+                AtlantisIgniter.modifyBwapiFileIfNeeded();
+            }
+
+            // Listen for keyboard events
+            AKeyboard.listenForKeyEvents();
+
+            // IMPORTANT: Make sure Chaoslauncher -> Settings -> "Run Starcraft on Startup" is checked
+            ProcessHelper.startChaosLauncherProcess();
+        }
+
         // =============================================================
         // =============================================================
         // ==== See AtlantisConfig class to customize execution ========

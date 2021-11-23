@@ -18,9 +18,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -529,7 +527,9 @@ public class A {
     public static PrintWriter saveToFile(String filePath, String stringToWrite, boolean closeTheStream) {
         try {
             File file = new File(filePath);
-            file.createNewFile();
+//            if (!fileExists(filePath)) {
+//                file.createNewFile();
+//            }
             PrintWriter out = new PrintWriter(file);
             out.print(stringToWrite);
             if (closeTheStream) {
@@ -538,11 +538,25 @@ public class A {
                 return out;
             }
         } catch (Exception e) {
-            A.displayException(e, "Błąd", "Błąd przy zapisywaniu do pliku\n" + "saveToFile(\"" + filePath
+            A.displayException(e, "Error", "Error while saving to file\n" + "Path(\"" + filePath
                     + "\", \"" + stringToWrite + "\")");
         }
         return null;
     }
+
+    public static void writeToFileAppending(String filePath, String stringToWrite, String[] headers) {
+        try {
+            if (!fileExists(filePath)) {
+                stringToWrite = String.join(";", headers) + "\n" + stringToWrite;
+            }
+            FileWriter fw = new FileWriter(filePath,true);
+            fw.write(stringToWrite + "\n");
+            fw.close();
+        } catch(IOException exception) {
+            System.err.println("IOException: " + exception.getMessage());
+        }
+    }
+
 
     /**
      * @return number of all files (directory is not a file) in all these directory and all its
@@ -1016,7 +1030,11 @@ public class A {
     /**
      * Loads .csv file or file formatted on csv base i.e. value1 delimiter value2 delimiter value3.
      */
-    public static String[][] loadCsv(String path, int numberOfFields) {
+    public static String[][] loadFile(String path, int numberOfFields, String delimiter) {
+        if (delimiter == null) {
+            delimiter = ";";
+        }
+
         ArrayList<String[]> listOfArrays = new ArrayList<>();
         Scanner inputStream;
         try {
@@ -1024,9 +1042,9 @@ public class A {
 
             while (inputStream.hasNextLine()) {
                 String line = inputStream.nextLine();
-                line = line.replace("—", "-"); // Replace em dashes with hyphens - omfg, that's funny
+                line = line.replace("—", "-"); // Replace em dashes with hyphens - omfg, that hurt
 
-                String[] fields = line.split(";");
+                String[] fields = line.split(delimiter);
                 
                 if (fields.length == 1 && line.contains(" - ")) {
                     fields = line.split(" - ");
@@ -1195,5 +1213,10 @@ public class A {
 
     public static long realSecondsNow() {
         return Instant.now().getEpochSecond();
+    }
+
+    public static boolean fileExists(String file) {
+        File f = new File(file);
+        return f.exists() && !f.isDirectory();
     }
 }

@@ -647,8 +647,8 @@ public class Wall {
         Path jpsPath = new Path();
         initializePathPoints();
         checkPathPoints();
-        System.out.println("pathStart = " + pathStart);
-        System.out.println("pathEnd = " + pathEnd);
+//        System.out.println("pathStart = " + pathStart);
+//        System.out.println("pathEnd = " + pathEnd);
         jpsPath.createUnitPath(new Position(pathStart), new Position(pathEnd), this);
         jpsDist = jpsPath.getDistance();
 

@@ -11,9 +11,9 @@ public class InitJBWEB {
             JBWEB.onStart(Atlantis.game(), AMap.bwem);
             Blocks.findBlocks();
             Stations.findStations();
-            Wall wall = Walls.createTWall();
-            System.out.println("Walls.getWalls() = " + Walls.getWalls());
-            System.out.println("Wall = " + wall);
+//            Wall wall = Walls.createTWall();
+//            System.out.println("Walls.getWalls() = " + Walls.getWalls());
+//            System.out.println("Wall = " + wall);
 
 //            wall = Walls.getWall(Chokes.mainChoke().rawChoke());
 //            System.out.println("Walls.getWalls() = " + Walls.getWalls());

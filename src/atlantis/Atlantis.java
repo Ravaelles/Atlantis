@@ -4,6 +4,7 @@ import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.UnitsArchive;
+import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.production.constructing.*;
@@ -127,6 +128,10 @@ public class Atlantis implements BWEventListener {
             e.printStackTrace();
         }
 
+        if (A.notUms() && A.now() == 1) {
+            CurrentBuildOrder.get().print();
+        }
+
         OnEveryFrame.update();
     }
 
@@ -162,7 +167,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        if (A.now() <= 1) {
+        if (A.now() <= 1 && !A.isUms()) {
             return;
         }
 
@@ -416,10 +421,16 @@ public class Atlantis implements BWEventListener {
     public void onEnd(boolean winner) {
         System.out.println();
         if (winner) {
-            System.out.println("You were VICTORIOUS!");
+            System.out.println("#####################################");
+            System.out.println("############ VICTORY! ###############");
+            System.out.println("#####################################");
         } else {
-            System.out.println("DEFEAT...");
+            System.out.println("#####################################");
+            System.out.println("############ Defeat... ##############");
+            System.out.println("#####################################");
         }
+
+        OnEnd.execute(winner);
 
         exitGame();
     }
@@ -447,6 +458,7 @@ public class Atlantis implements BWEventListener {
         }
 
         int resourcesBalance = AGame.killsLossesResourceBalance();
+        System.out.println();
         System.out.println(
                 "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
                 "### Killed: " + Atlantis.KILLED + ", Lost: " + Atlantis.LOST + " ###\t\n" +
@@ -454,6 +466,7 @@ public class Atlantis implements BWEventListener {
         );
 
         if (A.isUms()) {
+            System.out.println();
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();
         }

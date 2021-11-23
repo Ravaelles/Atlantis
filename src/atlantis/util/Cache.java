@@ -30,18 +30,25 @@ public class Cache<V> {
      * Get cached value or initialize it with given callback, cached for cacheForFrames.
      */
     public V get(String cacheKey, int cacheForFrames, Callback callback) {
+        if (cacheKey == null) {
+            return (V) callback.run();
+        }
+
         if (data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
             return data.get(cacheKey);
         }
         else if (callback != null) {
             set(cacheKey, cacheForFrames, callback);
         }
-//        set(cacheKey, cacheForFrames, callback);
 
         return data.get(cacheKey);
     }
 
     public void set(String cacheKey, int cacheForFrames, Callback callback) {
+        if (cacheKey == null || cacheKey.length() <= 2) {
+            throw new RuntimeException("Invalid cacheKey = /" + cacheKey + "/");
+        }
+
         data.put(cacheKey, (V) callback.run());
         addCachedUntilEntry(cacheKey, cacheForFrames);
     }

@@ -27,7 +27,7 @@ public class ASpecialUnitManager {
 
         if (unit.isTank()) {
             return TerranSiegeTank.update(unit);
-        } else if (unit.isType(AUnitType.Terran_Medic)) {
+        } else if (unit.is(AUnitType.Terran_Medic)) {
             return TerranMedic.update(unit);
         }
 
@@ -58,7 +58,7 @@ public class ASpecialUnitManager {
 
         if (unit.isVulture()) {
             return TerranVulture.update(unit);
-        } else if (unit.isType(AUnitType.Terran_Science_Vessel)) {
+        } else if (unit.is(AUnitType.Terran_Science_Vessel)) {
             return TerranScienceVessel.update(unit);
         }
 

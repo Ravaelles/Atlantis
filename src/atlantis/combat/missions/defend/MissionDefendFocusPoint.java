@@ -12,6 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
@@ -33,7 +34,12 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // If NO BASE exists, return any building
                 AUnit mainBase = Select.main();
                 if (mainBase == null) {
-                    return new AFocusPoint(Select.ourBuildings().first());
+                    Selection selection = Select.ourBuildings();
+                    if (selection == null) {
+                        return null;
+                    }
+
+                    return new AFocusPoint(selection.first());
                 }
 
                 // === Enemies that breached into base =============

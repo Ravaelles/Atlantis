@@ -171,7 +171,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : allUnits()) {
-                        if (unit.isCompleted() && unit.isType(type)) {
+                        if (unit.isCompleted() && unit.is(type)) {
                             data.add(unit);
                         }
                     }
@@ -238,7 +238,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isCompleted() && unit.isType(types)) {
+                        if (unit.isCompleted() && unit.is(types)) {
                             data.add(unit);
                         }
                     }
@@ -259,7 +259,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     int total = 0;
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isCompleted() && unit.isType(type)) {
+                        if (unit.isCompleted() && unit.is(type)) {
                             total++;
                         }
                     }
@@ -280,7 +280,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     int total = 0;
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isType(type)) {
+                        if (unit.is(type)) {
                             total++;
                         }
                     }
@@ -302,7 +302,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isType(type)) {
+                        if (unit.is(type)) {
                             data.add(unit);
                         }
                     }
@@ -575,13 +575,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static Selection from(Units units) {
         return new Selection(units.list(), null);
     }
-
-    /**
-     * Create initial search-pool of units from given collection of units.
-     */
-//    public static Selection<AFoggedUnit> fromData(Collection<AFoggedUnit> units) {
-//        return new Selection<AFoggedUnit>(units);
-//    }
 
     // === Aux ======================================================
 

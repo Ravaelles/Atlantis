@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.debug.APainter;
+import atlantis.env.Env;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.A;
@@ -9,11 +10,16 @@ public class UseMap {
 
     public static String activeMap() {
 //        return "sscai/(2)Destination.scx";
-        return "sscai/(2)Heartbreak Ridge.scx";
+//        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === UMS maps - great for bot development ============
+
+//        return "ums/rav/6mar_2med_vs_4z.scx";
+//        return "ums/rav/Rav_MM_Zea.scx";
+        return "ums/rav/R1.scx";
+//        return "ums/rav/mar_vs_zer.scx";
 
 //        return "ums/";
 //        return "ums/";
@@ -68,11 +74,25 @@ public class UseMap {
     // =========================================================
 
     public static void updateMapSpecific() {
+        if (Env.isParamTweaker() || !Env.isLocal()) {
+            return;
+        }
+
+        // =========================================================
+        // Marines & Medics vs. Zealots
+
+//        else if (activeMap().equals("ums/rav/Rav_MM_Zea.scx")) {
+        if (activeMap().startsWith("ums/rav/R")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedTo(1);
+                GameSpeed.changeFrameSkipTo(0);
+            }
+        }
 
         // =========================================================
         // vs. ZERG
 
-        if (activeMap().equals("ums/vsGosuComputer.scx")) {
+        else if (activeMap().equals("ums/vsGosuComputer.scx")) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(90);
@@ -95,8 +115,8 @@ public class UseMap {
         // =========================================================
         // Marines vs. ZERGLINGS
 
-        if (activeMap().equals("ums/marines_vs_zerglings.scm")) {
-            if (A.now() == 0) {
+        else if (activeMap().equals("ums/marines_vs_zerglings.scm")) {
+            if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(40);
             }
@@ -108,7 +128,7 @@ public class UseMap {
         // =========================================================
         // Marines vs. ZEALOTS
 
-        if (activeMap().equals("ums/mar_vs_zea.scx")) {
+        else if (activeMap().equals("ums/mar_vs_zea.scx")) {
             if (Select.enemyCombatUnits().isEmpty()) {
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(70);

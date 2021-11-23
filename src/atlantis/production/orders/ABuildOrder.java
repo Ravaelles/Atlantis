@@ -89,7 +89,6 @@ public abstract class ABuildOrder {
         return name;
     }
 
-
     public void print() {
         System.out.println("--- Full production order list ---");
         for (ProductionOrder productionOrder : productionOrders()) {

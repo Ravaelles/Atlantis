@@ -1,6 +1,7 @@
 package atlantis.debug;
 
 import atlantis.Atlantis;
+import atlantis.env.Env;
 import atlantis.map.AChoke;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
@@ -18,13 +19,23 @@ public class APainter {
     public static final int MODE_PARTIAL_PAINTING = 2;
     public static final int MODE_FULL_PAINTING = 3;
 
+    public static int paintingMode;
 //    public static int paintingMode = MODE_PARTIAL_PAINTING;
-    public static int paintingMode = MODE_FULL_PAINTING;
+//    public static int paintingMode = MODE_FULL_PAINTING;
 //    public static int paintingMode = MODE_NO_PAINTING;
 
     protected static Game bwapi;
 
     // =========================================================
+
+    public static void init() {
+        if (Env.isLocal() && !Env.isParamTweaker()) {
+            paintingMode = MODE_FULL_PAINTING;
+        }
+        else {
+            paintingMode = MODE_NO_PAINTING;
+        }
+    }
 
     public static boolean isDisabled() {
         return paintingMode == MODE_NO_PAINTING;
@@ -237,4 +248,5 @@ public class APainter {
     public static void assignBwapiInstance() {
         bwapi = Atlantis.game();
     }
+
 }

@@ -2,6 +2,7 @@ package atlantis;
 
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.enemy.EnemyInformation;
+import atlantis.env.Env;
 import bwapi.Game;
 
 import static atlantis.Atlantis.game;
@@ -22,9 +23,11 @@ public class GameSpeed {
      */
     public static int frameSkip;
 
-    private static final int NORMAL_GAME_SPEED = 0;
-    private static final int NORMAL_FRAME_SKIP = 500;
-//    private static final int NORMAL_FRAME_SKIP = 0;
+    private static final int NORMAL_GAME_SPEED = 10;
+    private static final int NORMAL_FRAME_SKIP = 0;
+//    private static final int NORMAL_GAME_SPEED = 0;
+//    private static final int NORMAL_FRAME_SKIP = 500;
+
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
 
@@ -40,8 +43,13 @@ public class GameSpeed {
     // =========================================================
 
     public static void init() {
-        GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
+        if (Env.isParamTweaker()) {
+            Atlantis.game().setLocalSpeed(0);
+            Atlantis.game().setFrameSkip(300);
+            return;
+        }
 
+        GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
         Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
     }

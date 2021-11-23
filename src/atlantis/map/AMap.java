@@ -93,7 +93,12 @@ public class AMap {
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = startPoint.translateByPixels(dx, dy).makeValidFarFromBounds();
-            if (position.isWalkable() && !position.isVisible() && startPoint.hasPathTo(position)) {
+            if (
+                    position.isWalkable()
+                            && !position.isVisible()
+                            && startPoint.hasPathTo(position)
+                            && startPoint.groundDistanceTo(position) <= 100
+            ) {
                 return position;
             }
         }
@@ -108,7 +113,12 @@ public class AMap {
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = startPoint.translateByPixels(dx, dy).makeValidFarFromBounds();
-            if (position.isWalkable() && !position.isExplored() && startPoint.position().hasPathTo(position)) {
+            if (
+                    position.isWalkable()
+                            && !position.isExplored()
+                            && startPoint.position().hasPathTo(position)
+                            && startPoint.position().groundDistanceTo(position) <= 100
+            ) {
                 return getMostWalkablePositionNear(position, 2);
             }
         }

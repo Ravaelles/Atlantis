@@ -22,7 +22,7 @@ public class ABuildOrderLoader {
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
 //        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
         String filePath = BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
-        System.out.println("\r\nUse build order from file: `" + strategy.name() + ".txt`");
+//        System.out.println("\r\nUse build order from file: `" + strategy.name() + ".txt`");
 
         File f = new File(filePath);
         if (!f.exists()) {
@@ -49,12 +49,9 @@ public class ABuildOrderLoader {
 
         // Read file into 2D String array
         String buildOrdersFile = filePath;
-        System.out.println(
-                "\r\nUsing `" + filePath.replace(ABuildOrderLoader.BUILD_ORDERS_PATH, "") + "` build orders file."
-        );
 
         // Parse CSV
-        String[][] loadedFile = A.loadCsv(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE);
+        String[][] loadedFile = A.loadFile(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE, ";");
 
         // We can display file here, if we want to
         //displayLoadedFile(loadedFile);
@@ -102,9 +99,9 @@ public class ABuildOrderLoader {
         //   - SCV
         //   - SCV
         //   - Supply Depot
-        if (A.notUms()) {
-            buildOrder.print();
-        }
+//        if (A.notUms()) {
+//            buildOrder.print();
+//        }
 
 //        buildOrder.overrideProductionOrders(BuildOrderNotationConverter.convertNotation(buildOrder));
 //

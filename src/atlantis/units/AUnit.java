@@ -131,10 +131,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         this._healable = isInfantry() || isWorker();
 
         // Military building
-        this._isMilitaryBuildingAntiGround = isType(
+        this._isMilitaryBuildingAntiGround = is(
                 AUnitType.Terran_Bunker, AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony
         );
-        this._isMilitaryBuildingAntiAir = isType(
+        this._isMilitaryBuildingAntiAir = is(
                 AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
                 AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
         );
@@ -313,7 +313,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isBase() {
-        return isType(
+        return is(
                 AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus,
                 AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive
         );
@@ -357,10 +357,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // Auxiliary methods
     public boolean ofType(AUnitType type) {
         return type().equals(type);
-    }
-
-    public boolean isType(AUnitType... types) {
-        return type().is(types);
     }
 
     public boolean isFullyHealthy() {
@@ -745,7 +741,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null && isOur() && !isBuilding() && !isWorker() && isAlive()) {
+        if (squad == null && A.notUms() && isOur() && !isBuilding() && !isWorker() && isAlive()) {
             System.err.println("Null squad for unit: " + this + " // alive:" + isAlive() + " // hp:" + hp());
         }
         return squad;

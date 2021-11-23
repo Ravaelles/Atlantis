@@ -136,7 +136,7 @@ public class EnemyInformation {
     public static int countEnemyKnownUnitsOfType(AUnitType type) {
         int total = 0;
         for (AUnit enemyUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
-            if (enemyUnit.isType(type)) {
+            if (enemyUnit.is(type)) {
                 total++;
             }
         }

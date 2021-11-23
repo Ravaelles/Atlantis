@@ -3,13 +3,9 @@ package atlantis.strategy;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.enemy.EnemyInformation;
-import atlantis.map.Chokes;
-import atlantis.production.orders.CurrentBuildOrder;
-import atlantis.production.requests.ARequests;
 import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 
 public class EnemyUnitDiscoveredResponse {
 
@@ -40,7 +36,7 @@ public class EnemyUnitDiscoveredResponse {
         }
 
 //        if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
-        if (enemyUnit.isType(AUnitType.Protoss_Dark_Templar)) {
+        if (enemyUnit.is(AUnitType.Protoss_Dark_Templar)) {
             OurStrategicBuildings.setDetectorsNeeded(1);
 //            ARequests.getInstance().requestDetectorQuick(
 //                    Chokes.mainChoke().getCenter()

@@ -26,7 +26,8 @@ public class TerranMedic {
      * Specific units that medics should follow in order to heal them as fast as possible 
      * when they get wounded.
      */
-    private static final HashMap<AUnit, AUnit> medicsAssignments = new HashMap<>();
+    private static final HashMap<AUnit, AUnit> medicsToAssignments = new HashMap<>();
+    private static final HashMap<AUnit, AUnit> assignmentsToMedics = new HashMap<>();
 
     // =========================================================
 
@@ -43,7 +44,7 @@ public class TerranMedic {
             return true;
         }
 
-        if (medic.hp() <= 15 && AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
+        if (medic.hp() <= 17 && AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
             return true;
         }
 
@@ -90,9 +91,14 @@ public class TerranMedic {
     }
 
     private static AUnit medicAssignment(AUnit medic) {
-        AUnit assignment = medicsAssignments.get(medic);
+        AUnit assignment = medicsToAssignments.get(medic);
 
-        if (assignment == null || !assignment.isAlive()) {
+        if (assignment != null && !assignment.isAlive()) {
+            removeAssignment(medic, assignment);
+            assignment = null;
+        }
+
+        if (assignment == null) {
             assignment = createMedicAssignment(medic);
         }
 
@@ -101,33 +107,52 @@ public class TerranMedic {
 
     private static AUnit createMedicAssignment(AUnit medic) {
         AUnit assignment;
+        Selection inSquadSelector = Select.from(medic.squad()).inRadius(20, medic);
 
-        Selection medicSquadSelector = Select.from(medic.squad());
+        // =========================================================
+        // Firebats
 
-//        assignment = Select.ourOfType(AUnitType.Terran_Firebat).randomWithSeed(medic.id());
-        assignment = medicSquadSelector.clone().ofType(AUnitType.Terran_Firebat).randomWithSeed(medic.id());
+        assignment = inSquadSelector.clone().ofType(AUnitType.Terran_Firebat).randomWithSeed(medic.id());
         if (assignment != null) {
-            medicsAssignments.put(medic, assignment);
-            medic.setTooltip("NewAssignment");
+            addMedicAssignment(medic, assignment);
             return assignment;
         }
 
-//        assignment = Select.ourTerranInfantryWithoutMedics().randomWithSeed(medic.id());
-//        if (assignment != null) {
-//            medicsAssignments.put(medic, assignment);
-//            medic.setTooltip("NewAssignment");
-//            return assignment;
-//        }
+        // =========================================================
+        // Infantry without any medics assigned
 
-//        assignment = Select.ourTerranInfantryWithoutMedics().randomWithSeed(medic.id());
-        assignment = medicSquadSelector.clone().terranInfantryWithoutMedics().randomWithSeed(medic.id());
+        assignment = inSquadSelector.clone()
+                .terranInfantryWithoutMedics()
+                .exclude(assignmentsToMedics.keySet())
+                .randomWithSeed(medic.id());
         if (assignment != null) {
-            medicsAssignments.put(medic, assignment);
-            medic.setTooltip("NewAssignment");
+            addMedicAssignment(medic, assignment);
+            return assignment;
+        }
+
+        // =========================================================
+        // Infantry even if already a medic is assigned
+
+        assignment = inSquadSelector.clone()
+                .terranInfantryWithoutMedics()
+                .randomWithSeed(medic.id());
+        if (assignment != null) {
+            addMedicAssignment(medic, assignment);
             return assignment;
         }
 
         return null;
+    }
+
+    private static void addMedicAssignment(AUnit medic, AUnit assignment) {
+        medicsToAssignments.put(medic, assignment);
+        assignmentsToMedics.put(assignment, medic);
+        medic.setTooltip("NewAssignment");
+    }
+
+    private static void removeAssignment(AUnit medic, AUnit assignment) {
+        medicsToAssignments.remove(medic);
+        assignmentsToMedics.remove(assignment);
     }
 
     private static boolean handleStickToAssignments(AUnit medic) {

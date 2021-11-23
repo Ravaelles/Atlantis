@@ -37,8 +37,8 @@ public class AtlantisConfig {
      * Single player enemy race.
      */
 //    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Protoss";
-    public static final String ENEMY_RACE = "Zerg";
+    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Zerg";
     
     /**
      * Will modify bwapi.ini to use this map.
@@ -105,7 +105,6 @@ public class AtlantisConfig {
 //        validate("You have to define default build order\n-> AtlantisConfig.DEFAULT_BUILD_ORDER", DEFAULT_BUILD_ORDER);
 
         System.out.println("Atlantis config is valid.");
-        System.out.println();
     }
 
     // =========================================================

@@ -42,6 +42,7 @@ public class UnitsArchive {
     // =========================================================
 
     public static void paintKillLossResources() {
+        System.out.println();
         System.out.println("--- Unit kill/loss in resources ---");
         for (AUnitType type : ourKilledResourcesPerUnitTypes.map().keySet()) {
             if (type.isNotRealUnit() || type.isUnitUnableToDoAnyDamage()) {

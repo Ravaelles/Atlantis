@@ -6,6 +6,9 @@ import atlantis.units.select.Select;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
+    public static double INFANTRY_BASE = 0.62;
+    public static int INFANTRY_WOUND = 16;
+
     public static double calculate(AUnit defender, AUnit attacker) {
 
 //        if (defender.isInfantry()) {
@@ -19,12 +22,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // Terran INFANTRY
         if (defender.isTerranInfantry()) {
-            criticalDist = 2.1 + defender.woundPercent() / 19
-                    + ourMovementBonus(defender) / 3
-                    + enemyMovementBonus(defender, attacker) / 3;
+            criticalDist = INFANTRY_BASE + woundedAgainstMeleeBonus(defender, attacker);
+//            +ourMovementBonus(defender) / 3
+//                    + enemyMovementBonus(defender, attacker) / 3;
         }
+
         // VULTURE
-        if (defender.isVulture()) {
+        else if (defender.isVulture()) {
             criticalDist = 3.6;
         }
 
@@ -69,6 +73,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {
+        if (defender.isTerranInfantry()) {
+            return defender.woundPercent() / INFANTRY_WOUND;
+        }
+
         if (defender.isAirUnit()) {
             return defender.woundPercent() / 10;
         }
