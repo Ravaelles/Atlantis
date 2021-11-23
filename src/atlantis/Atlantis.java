@@ -420,15 +420,15 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onEnd(boolean winner) {
         System.out.println();
+        System.out.println("#####################################");
         if (winner) {
-            System.out.println("#####################################");
             System.out.println("############ VICTORY! ###############");
-            System.out.println("#####################################");
         } else {
-            System.out.println("#####################################");
             System.out.println("############ Defeat... ##############");
-            System.out.println("#####################################");
         }
+        System.out.println("############ Lost: " + Atlantis.LOST + " ################");
+        System.out.println("########## Killed: " + Atlantis.KILLED + " ################");
+        System.out.println("#####################################");
 
         OnEnd.execute(winner);
 
@@ -461,7 +461,6 @@ public class Atlantis implements BWEventListener {
         System.out.println();
         System.out.println(
                 "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
-                "### Killed: " + Atlantis.KILLED + ", Lost: " + Atlantis.LOST + " ###\t\n" +
                 "### Resource killed/lost: " + (resourcesBalance > 0 ? "+" + resourcesBalance : resourcesBalance) + " ###"
         );
 

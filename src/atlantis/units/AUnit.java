@@ -1559,6 +1559,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return A.ago(_lastStoppedRunning) <= framesAgo;
     }
 
+    public boolean lastStoppedRunningMoreThanAgo(int framesAgo) {
+        return A.ago(_lastStoppedRunning) >= framesAgo;
+    }
+
     public boolean hasNotMovedInAWhile() {
         return x() == _lastX && y() == _lastY;
     }

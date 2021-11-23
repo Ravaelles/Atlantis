@@ -17,8 +17,11 @@ import java.util.ArrayList;
 
 public class ARunningManager {
 
+    public static int STOP_RUNNING_IF_STARTED_MORE_THAN_AGO = 5;
+    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 10;
+    public static double NEARBY_UNIT_MAKE_SPACE = 0.4;
     public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 2;
-    public static double NOTIFY_UNITS_IN_RADIUS_BASE = 0.52;
+    public static double NOTIFY_UNITS_IN_RADIUS_BASE = 0.80;
 
     private final AUnit unit;
     private static APosition _lastPosition;
@@ -40,8 +43,8 @@ public class ARunningManager {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
         if (
                 unit.isRunning()
-                && unit.lastStartedRunningMoreThanAgo(5)
-                && !unit.lastStoppedRunningLessThanAgo(10)
+                && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_MORE_THAN_AGO)
+                && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
                 && !unit.isUnderAttack(unit.isAirUnit() ? 220 : 20)
                 && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
@@ -96,7 +99,7 @@ public class ARunningManager {
 
         // === Actual run order ====================================
 
-        if (runTo != null && runTo.distTo(unit) >= 0.02) {
+        if (runTo != null && runTo.distTo(unit) >= 0.001) {
             dist = runTo.distTo(unit);
             unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")");
             return makeUnitRun();
@@ -394,7 +397,6 @@ public class ARunningManager {
         }
 
         Selection friendsTooClose = Select.ourRealUnits()
-//                .exclude(unit).groundUnits().inRadius(NOTIFY_UNITS_IN_RADIUS_BASE + unit.woundPercent() / 300.0, unit);
                 .exclude(unit).groundUnits().inRadius(NOTIFY_UNITS_IN_RADIUS_BASE, unit);
 
         if (friendsTooClose.count() <= 1) {
@@ -403,7 +405,7 @@ public class ARunningManager {
 
         for (AUnit otherUnit : friendsTooClose.list()) {
             if (canBeNotifiedToMakeSpace(otherUnit)) {
-                otherUnit.runningManager().runFrom(unit, 0.6);
+                otherUnit.runningManager().runFrom(unit, NEARBY_UNIT_MAKE_SPACE);
                 APainter.paintCircleFilled(unit, 10, Color.Yellow);
                 APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
                 otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit));

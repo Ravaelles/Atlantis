@@ -11,16 +11,16 @@ public class ParamTweakerFactory extends ParamTweaker {
 
         tweaker = new ParamTweaker();
 
-        tweaker.addParam(new Param(
-                "SafetyMeleeInfantryBase",
-                () -> SafetyMarginAgainstMelee.INFANTRY_BASE,
-                () -> SafetyMarginAgainstMelee.INFANTRY_BASE = A.rand(46, 87) / 100.0
-        ));
-        tweaker.addParam(new Param(
-                "SafetyMeleeInfantryWound",
-                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND,
-                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND = A.rand(13, 30)
-        ));
+//        tweaker.addParam(new Param(
+//                "SafetyMeleeInfantryBase",
+//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE,
+//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE = A.rand(54, 58) / 100.0
+//        ));
+//        tweaker.addParam(new Param(
+//                "SafetyMeleeInfantryWound",
+//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND,
+//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND = A.rand(21, 24)
+//        ));
 //        tweaker.addParam(new Param(
 //                "RunAnyDirectionRadiusInfantry",
 //                () -> ARunningManager.ANY_DIRECTION_INIT_RADIUS_INFANTRY,
@@ -29,8 +29,23 @@ public class ParamTweakerFactory extends ParamTweaker {
 //        tweaker.addParam(new Param(
 //                "RunNotifyUnitsInRadiusBase",
 //                () -> ARunningManager.NOTIFY_UNITS_IN_RADIUS_BASE,
-//                () -> ARunningManager.NOTIFY_UNITS_IN_RADIUS_BASE = A.rand(0, 70) / 100.0
+//                () -> ARunningManager.NOTIFY_UNITS_IN_RADIUS_BASE = A.rand(70, 95) / 100.0
 //        ));
+//        tweaker.addParam(new Param(
+//                "NearbyUnitMakeSpace",
+//                () -> ARunningManager.NEARBY_UNIT_MAKE_SPACE,
+//                () -> ARunningManager.NEARBY_UNIT_MAKE_SPACE = A.rand(20, 130) / 100.0
+//        ));
+        tweaker.addParam(new Param(
+                "STOP_RUNNING_IF_STARTED_MORE_THAN_AGO",
+                () -> ARunningManager.STOP_RUNNING_IF_STARTED_MORE_THAN_AGO,
+                () -> ARunningManager.STOP_RUNNING_IF_STARTED_MORE_THAN_AGO = A.rand(0, 5)
+        ));
+        tweaker.addParam(new Param(
+                "STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO",
+                () -> ARunningManager.STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO,
+                () -> ARunningManager.STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = A.rand(0, 10)
+        ));
 
         tweaker.initParamValues();
     }

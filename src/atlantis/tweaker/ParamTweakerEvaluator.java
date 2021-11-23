@@ -4,7 +4,10 @@ import atlantis.Atlantis;
 import atlantis.util.A;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.stream.Stream;
 
 public class ParamTweakerEvaluator {
 
@@ -22,29 +25,38 @@ public class ParamTweakerEvaluator {
     }
 
     private static String[] fileHeaders() {
-        return new String[] {
+        String[] base = {
                 "Date",
                 "W/L",
                 "Seconds",
-                "Score",
-                "Params",
+                "Score"
         };
+
+        return Stream.concat(Arrays.stream(base), Arrays.stream(paramNames())).toArray(String[]::new);
+    }
+
+    private static String[] paramNames() {
+        ArrayList<String> list = new ArrayList<>();
+        ParamTweaker tweaker = ParamTweaker.get();
+        for (Param param : tweaker.params()) {
+            list.add(param.name());
+        }
+
+        String[] stringArray = list.toArray(new String[0]);
+        return stringArray;
     }
 
     private static String paramsString() {
         StringBuilder string = new StringBuilder();
-        string.append("\"{\n");
 
         ParamTweaker tweaker = ParamTweaker.get();
         for (Param param : tweaker.params()) {
-            string.append("    ")
-                    .append(param.name())
-                    .append(": ")
-                    .append(param.getterValue())
-                    .append(",\n");
+            if (string.length() > 0) {
+                string.append(DELIMITER);
+            }
+            string.append(param.getterValue());
         }
 
-        string.append("}\"");
         return string.toString();
     }
 

@@ -6,17 +6,10 @@ import atlantis.units.select.Select;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-    public static double INFANTRY_BASE = 0.62;
-    public static int INFANTRY_WOUND = 16;
+    public static double INFANTRY_BASE = 0.55;
+    public static int INFANTRY_WOUND = 23;
 
     public static double calculate(AUnit defender, AUnit attacker) {
-
-//        if (defender.isInfantry()) {
-//            criticalDist = enemyWeaponRangeBonus(defender, attacker)
-//                    + defender.woundPercent() / 19
-//                    + ourMovementBonus(defender)
-//                    + enemyMovementBonus(defender, attacker);
-//        }
 
         double criticalDist;
 
