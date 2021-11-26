@@ -21,9 +21,12 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit, double maxDistFromEnemy) {
-        if (shouldNotAttack(unit)) {
+        if (unit.isUnitUnableToDoAnyDamage()) {
             return false;
         }
+//        if (shouldNotAttack(unit)) {
+//            return false;
+//        }
 
 //        if (unit.isWorker()) {
 //            throw new RuntimeException("aa");
@@ -44,20 +47,20 @@ public class AAttackEnemyUnit {
         return processAttackUnit(unit, enemy);
     }
 
-    public static boolean shouldNotAttack(AUnit unit) {
-        if (AAvoidUnits.shouldAvoidAnyUnit(unit)) {
-            return false;
-        }
-
-        return unit.isUnitUnableToDoAnyDamage()
-
-                // =========================================================
-                // =========================================================
-                // THESE SHOULDNT BE USED! RESPECT DECISIONS OF TOP SUPERIOR MANAGER!!!
-//                || unit.lastActionLessThanAgo(4, UnitActions.ATTACK_UNIT)
-//                || (unit.isTankUnsieged() && (!unit.isMoving() && unit.woundPercent() > 15));
-        ;
-    }
+//    public static boolean shouldNotAttack(AUnit unit) {
+////        if (AAvoidUnits.shouldAvoidAnyUnit(unit)) {
+////            return false;
+////        }
+//
+//        return unit.isUnitUnableToDoAnyDamage()
+//
+//                // =========================================================
+//                // =========================================================
+//                // THESE SHOULDNT BE USED! RESPECT DECISIONS OF TOP SUPERIOR MANAGER!!!
+////                || unit.lastActionLessThanAgo(4, UnitActions.ATTACK_UNIT)
+////                || (unit.isTankUnsieged() && (!unit.isMoving() && unit.woundPercent() > 15));
+//        ;
+//    }
 
     private static boolean isValidTargetAndAllowedToAttackUnit(AUnit unit, AUnit target) {
         if (!missionAllowsToAttack(unit, target)) {

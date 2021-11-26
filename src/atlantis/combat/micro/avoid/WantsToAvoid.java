@@ -21,7 +21,8 @@ public class WantsToAvoid {
 
         if (
                 (new FightInsteadAvoid(unit, enemies)).shouldFight()
-                        && !AAttackEnemyUnit.shouldNotAttack(unit)
+                        && !unit.isUnitUnableToDoAnyDamage()
+//                        && !AAttackEnemyUnit.shouldNotAttack(unit)
         ) {
             return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         }

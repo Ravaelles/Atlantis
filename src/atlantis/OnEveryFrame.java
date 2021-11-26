@@ -3,6 +3,7 @@ package atlantis;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 import bwapi.Color;
 import jbweb.Walls;
 
@@ -81,9 +82,10 @@ public class OnEveryFrame {
 //                System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloa=" + unit.effCloaked() + " // det=" + unit.isDetected());
 //            }
 //        }
-//        for (AUnit unit : Select.enemies(AUnitType.Zerg_Hydralisk).list()) {
-//            System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloaked=" + unit.effCloaked());
-//            break;
+
+//        System.out.println("---------------- " + A.now() + " --------------------");
+//        for (AUnit unit : Select.enemy().list()) {
+//            System.out.println(unit + " // " + unit.isAlive());
 //        }
 
 //        AUnit unit1 = Select.ourCombatUnits().first();

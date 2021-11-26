@@ -27,8 +27,8 @@ public class ARunningManager {
     private static APosition _lastPosition;
 //    private APosition runAwayFrom = null;
     private APosition runTo;
-    private Units closeEnemies;
-    private APosition enemyMedian = null;
+//    private Units closeEnemies;
+//    private APosition enemyMedian = null;
 
     // =========================================================
     
@@ -160,17 +160,16 @@ public class ARunningManager {
         
 //        if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
         if (!unit.position().isCloseToMapBounds()) {
-//            if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() == 1) {
-//                runAwayFrom = closeEnemies.first();
-//            }
-//            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
+            Selection closeEnemies = unit.enemiesNearby().canAttack(unit, 1.5);
+
             if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() <= 2) {
                 if (closeEnemies.size() == 1) {
                     runAwayFrom = closeEnemies.first();
                 } else {
-                    runAwayFrom = Select.from(closeEnemies).center();
+                    runAwayFrom = closeEnemies.center();
                 }
             }
+            
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
         }
         
@@ -404,6 +403,10 @@ public class ARunningManager {
      */
     private boolean notifyNearbyUnitsToMakeSpace(AUnit unit) {
         if (unit.isAirUnit() || unit.isLoaded()) {
+            return false;
+        }
+
+        if (unit.enemiesNearby().melee().inRadius(3, unit).empty()) {
             return false;
         }
 

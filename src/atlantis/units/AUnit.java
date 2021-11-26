@@ -272,7 +272,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     @Override
     public String toString() {
-        return "AUnit(" + type().shortName()+ " #" + getID() + ") at " + position().toString();
+        return idWithHash() + " " + type().shortName();
     }
 
     @Override
@@ -656,7 +656,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        if (isProtoss() && !isPowered()) {
+        if (isBuilding() && isProtoss() && !isPowered()) {
             return false;
         }
 
@@ -1895,7 +1895,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 "allEnemiesNearby",
                 3,
                 () -> Select.enemyRealUnits(true, true, true).inRadius(14, this)
-        )).clone();
+        ));
     }
 
     public boolean hasMedicInRange() {

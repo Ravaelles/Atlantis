@@ -27,7 +27,7 @@ public class Units {
     // =====================================================================
 
     public Units(List<? extends AUnit> units) {
-        units = new ArrayList<>(units);
+        this.units = new ArrayList<>(units);
     }
 
 //    public Units(Collection<AUnit> units) {
@@ -377,7 +377,12 @@ public class Units {
     public void print() {
         System.out.println("Units in list:");
         for (AUnit unit : list()) {
-            System.out.println(unit + ", extra value: " + (hasValueFor(unit) ? valueFor(unit) : "null"));
+            System.out.print(unit);
+            if (hasValueFor(unit)) {
+                System.out.println(", extra value: " + valueFor(unit));
+            } else {
+                System.out.println();
+            }
         }
         System.out.println();
     }

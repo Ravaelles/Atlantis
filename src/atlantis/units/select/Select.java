@@ -488,15 +488,12 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 cachePath = "enemyRealUnits" + (includeGroundUnits ? "T" : "F") + (includeAirUnits ? "T" : "F") + (includeBuildings ? "T" : "F"),
                 0,
                 () -> {
-                    List<AUnit> data = new ArrayList<>();
-
-                    for (AUnit unit : enemyUnits()) {
-                        if ((includeBuildings || !unit.isBuilding()) || unit.isRealUnit()) {
-                            if ((includeGroundUnits && unit.isGroundUnit()) || (includeAirUnits && unit.isAirUnit())) {
-                                data.add(unit);
-                            }
-                        }
-                    }
+                    List<AUnit> data = new ArrayList<>(enemyUnits());
+                    data.removeIf(u -> (
+                            ((!includeBuildings && u.isBuilding()) && !u.isRealUnit())
+                            || (!includeGroundUnits && u.isGroundUnit())
+                            || (!includeAirUnits && u.isAirUnit())
+                    ));
 
                     return new Selection(data, cachePath);
                 }

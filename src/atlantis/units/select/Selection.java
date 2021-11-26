@@ -677,9 +677,7 @@ public class Selection {
      * units.
      */
     public Units units() {
-        Units units = new Units(this.data);
-//        units.addUnits((Collection) this.data);
-        return units;
+        return new Units(this.data);
     }
 
     /**

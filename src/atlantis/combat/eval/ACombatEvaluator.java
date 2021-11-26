@@ -21,7 +21,7 @@ public class ACombatEvaluator {
     /**
      * Maximum allowed value as a result of evaluation.
      */
-    private static final double MAX_VALUE = 999.9;
+    private static final double MAX_VALUE = 9999;
 
     /**
      * Stores the instances of AtlantisCombatInformation for each unit
@@ -95,9 +95,48 @@ public class ACombatEvaluator {
                 // =========================================================
                 // Define nearby enemy and our units
 
-                Units enemyUnits = Select.enemyCombatUnits().ranged().inRadius(13, unit).units();
-                enemyUnits.addAll(Select.enemyCombatUnits().melee().inRadius(4.5, unit).listUnits());
-                if (enemyUnits.isEmpty()) {
+                Units enemyUnits = unit.enemiesNearby()
+                        .ranged()
+                        .inRadius(13, unit)
+                        .canAttack(unit, 4)
+                        .units();
+//                if (unit.isOur()) {
+//                    System.out.println("--- AAA");
+//                    System.out.println(Select.enemyRealUnits().count());
+//                    System.out.println(Select.enemyRealUnits().inRadius(14, unit).count());
+//                    System.out.println(Select.enemyRealUnits().inRadius(14, unit).units().size());
+//                    Select.enemyRealUnits().inRadius(14, unit).units().print();
+//                    System.out.println("--- A");
+//                    unit.enemiesNearby().units().print();
+//                    System.out.println("--- B");
+//                    enemyUnits.print();
+//                }
+//                if (unit.isOur()) {
+////                    System.out.print(unit.enemiesNearby().count() + " // " + enemyUnits.size());
+//                    System.out.println(
+//                            unit.enemiesNearby().count()
+//                                    + " // " + unit.enemiesNearby()
+//                                    .ranged().size()
+//                                    + " // " + unit.enemiesNearby()
+//                                    .ranged().inRadius(13, unit).size()
+//                                    + " // " + unit.enemiesNearby()
+//                                    .ranged().inRadius(13, unit).canAttack(unit, 4).size()
+//                    );
+//                }
+//                enemyUnits.addAll(
+//                        unit.enemiesNearby()
+//                                .melee()
+//                                .inRadius(4, unit)
+//                                .canAttack(unit, 4)
+//                                .listUnits()
+//                );
+//                if (unit.isOur()) {
+//                    System.out.println(" // " + enemyUnits.size());
+//                }
+
+                if (unit.isOur() && enemyUnits.isEmpty()) {
+//                    enemyUnits.print();
+//                    System.out.println("@ " + A.now() + " unit " + unit + " maxxxxxxxxxxxxxxx");
                     return MAX_VALUE;
                 }
 
@@ -113,9 +152,12 @@ public class ACombatEvaluator {
                 // Evaluate our and enemy strength
 
                 double enemyEvaluation = Evaluate.evaluateUnitsAgainstUnit(enemyUnits, unit, true);
-                double ourEvaluation = Evaluate.evaluateUnitsAgainstUnit(ourUnits, enemyUnits.iterator().next(), false);
-//                System.out.println("enemyEvaluation = " + enemyEvaluation);
-//                System.out.println("ourEvaluation = " + ourEvaluation);
+                double ourEvaluation = Evaluate.evaluateUnitsAgainstUnit(ourUnits, enemyUnits.first(), false);
+
+//                if (unit.isOur()) {
+//                    System.out.println("enemyEvaluation = " + enemyEvaluation);
+//                    System.out.println("ourEvaluation = " + unit + " // " + + ourEvaluation);
+//                }
 
                 // =========================================================
 
