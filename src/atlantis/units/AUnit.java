@@ -256,7 +256,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         APosition newPosition = new APosition(x() - dx, y() - dy).makeValid();
 
         if (
-                runningManager().isPossibleAndReasonablePosition(this, newPosition, false)
+                runningManager().isPossibleAndReasonablePosition(this, newPosition)
                 && move(newPosition, UnitActions.MOVE, "Move away")
         ) {
             this.setTooltip(tooltip);
@@ -1892,10 +1892,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public Selection enemiesNearby() {
         return ((Selection) cache.get(
-                "allEnemiesNearby",
+                "enemiesNearby",
                 3,
-                () -> Select.enemyRealUnits(true, true, true).inRadius(14, this)
-        ));
+                () -> Select.enemyRealUnits(true, true, true)
+                        .inRadius(14, this)
+        )).clone();
     }
 
     public boolean hasMedicInRange() {

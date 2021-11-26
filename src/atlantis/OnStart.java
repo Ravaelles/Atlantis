@@ -19,7 +19,7 @@ public class OnStart {
 //            AForcedClicks.clickAltF9(); // Make ChaosLauncher double size
 //        }
 
-        System.out.println("\n############### Starting Atlantis... #############################################");
+        System.out.println("\n############### Starting Atlantis... ####################################");
 
         // Uncomment this line to see list of units -> damage.
 //        AUnitTypesHelper.displayUnitTypesDamage();

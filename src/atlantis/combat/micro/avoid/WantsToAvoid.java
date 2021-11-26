@@ -2,9 +2,11 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.Units;
+import bwapi.Color;
 
 public class WantsToAvoid {
 
@@ -24,6 +26,7 @@ public class WantsToAvoid {
                         && !unit.isUnitUnableToDoAnyDamage()
 //                        && !AAttackEnemyUnit.shouldNotAttack(unit)
         ) {
+            System.out.println("FIGHT INSTEAD AVOID " + unit + " // " + unit.hp());
             return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         }
 
@@ -51,8 +54,8 @@ public class WantsToAvoid {
 
         // Running is not viable - so many other units nearby, we would get stuck, better fight
         if (Select.all().inRadius(0.4, unit).count() >= 6) {
-//            APainter.paintCircleFilled(unit, 8, Color.Black);
-//            System.err.println("Dont avoid " + Select.all().inRadius(0.4, unit).count());
+            APainter.paintCircleFilled(unit, 8, Color.Black);
+            System.err.println(unit + " fight cause clustered " + Select.all().inRadius(0.4, unit).count());
             return true;
         }
 

@@ -53,7 +53,7 @@ public class ACombatCommander {
             }
 
             double margin = AAvoidUnits.lowestSafetyMarginForAnyEnemy(unit);
-            unit.setTooltip( (margin < 9999 ? A.digit(margin) : "-") + " / " + unit.getTooltip()
+            unit.setTooltip( (margin < 9876 ? A.digit(margin) : "-") + " / " + unit.getTooltip()
 //                    A.digit(nearestEnemy.distanceTo(unit)) + " \\ "
 //                            + A.digit(AAvoidUnits.lowestSafetyMarginForAnyEnemy(unit)) + " / "
             );

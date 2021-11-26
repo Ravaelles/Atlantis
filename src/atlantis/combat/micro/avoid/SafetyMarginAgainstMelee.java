@@ -6,10 +6,15 @@ import atlantis.units.select.Select;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
-    public static int INFANTRY_WOUND_IF_MEDIC = 20;
+//    public static double ENEMIES_NEARBY_FACTOR = 5.9;
+    public static double ENEMIES_NEARBY_FACTOR = 0.3;
+    public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
+    public static double INFANTRY_BASE_IF_MEDIC = 1.60;
+    public static int INFANTRY_WOUND_IF_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 1.95;
     public static int INFANTRY_WOUND_IF_NO_MEDIC = 75;
+//    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
+//    public static int INFANTRY_WOUND_IF_MEDIC = 20;
 //    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.02;
 //    public static int INFANTRY_WOUND_IF_NO_MEDIC = 85;
 
@@ -29,7 +34,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //            +ourMovementBonus(defender) / 3
 //                    + enemyMovementBonus(defender, attacker) / 3;
 
-//            criticalDist += enemyUnitsNearbyBonus(defender, criticalDist) * ENEMIES_NEARBY_FACTOR;
+            criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
         }
 
         // VULTURE
@@ -62,9 +67,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return attacker.isZealot() ? 0.5 : 0.7;
     }
 
-//    private static double enemyUnitsNearbyBonus(AUnit defender, double radius) {
-//        return Select.enemyCombatUnits().inRadius(radius, defender).count();
-//    }
+    private static double enemyUnitsNearbyBonus(AUnit defender) {
+        return Select.enemyCombatUnits().inRadius(ENEMIES_NEARBY_MAX_DIST, defender).count();
+    }
 
     protected static double beastBonus(AUnit defender) {
         int beastNearby = Select.enemy()

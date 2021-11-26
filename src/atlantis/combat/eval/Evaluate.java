@@ -168,7 +168,7 @@ public class Evaluate {
 
     private static double customEvaluation(AUnitType type, int hp, AUnit againstUnit) {
         if (type.is(AUnitType.Terran_Medic)) {
-            return hpFactor(type, hp) * 3;
+            return hpFactor(type, hp) * 2;
         }
 
         return -1.0;

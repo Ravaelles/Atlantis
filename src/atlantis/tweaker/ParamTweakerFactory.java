@@ -11,26 +11,38 @@ public class ParamTweakerFactory extends ParamTweaker {
         System.out.println("###### INIT ParamTweaker ######");
         tweaker = new ParamTweaker();
 
-        tweaker.addParam(new Param(
-                "SafetyMeleeInfantryBaseNoMedic",
-                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC,
-                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC = A.rand(185, 225) / 100.0
-        ));
-        tweaker.addParam(new Param(
-                "SafetyMeleeInfantryWoundNoMedic",
-                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_NO_MEDIC,
-                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_NO_MEDIC = A.rand(70, 85)
-        ));
 //        tweaker.addParam(new Param(
-//                "SafetyMeleeInfantryBaseIfMedic",
-//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC,
-//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC = A.rand(60, 64) / 100.0
+//                "ENEMIES_NEARBY_FACTOR",
+//                () -> SafetyMarginAgainstMelee.ENEMIES_NEARBY_FACTOR,
+//                () -> SafetyMarginAgainstMelee.ENEMIES_NEARBY_FACTOR = A.rand(0, 200) / 100.0
 //        ));
 //        tweaker.addParam(new Param(
-//                "SafetyMeleeInfantryWoundIfMedic",
-//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_MEDIC,
-//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_MEDIC = A.rand(19, 21)
+//                "ENEMIES_NEARBY_MAX_DIST",
+//                () -> SafetyMarginAgainstMelee.ENEMIES_NEARBY_MAX_DIST,
+//                () -> SafetyMarginAgainstMelee.ENEMIES_NEARBY_MAX_DIST = A.rand(120, 260) / 100.0
 //        ));
+//        tweaker.addParam(new Param(
+//                "SafetyMeleeInfantryBaseNoMedic",
+//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC,
+//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC = A.rand(185, 225) / 100.0
+//        ));
+//        tweaker.addParam(new Param(
+//                "SafetyMeleeInfantryWoundNoMedic",
+//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_NO_MEDIC,
+//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_NO_MEDIC = A.rand(70, 85)
+//        ));
+        tweaker.addParam(new Param(
+                "SafetyMeleeInfantryBaseIfMedic",
+                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC,
+                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC = A.rand(60, 164) / 100.0
+//                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC = A.rand(175, 255) / 100.0
+        ));
+        tweaker.addParam(new Param(
+                "SafetyMeleeInfantryWoundIfMedic",
+                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_MEDIC,
+                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_MEDIC = A.rand(19, 23)
+//                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_MEDIC = A.rand(30, 99)
+        ));
 //        tweaker.addParam(new Param(
 //                "RunAnyDirectionRadiusInfantry",
 //                () -> ARunningManager.ANY_DIRECTION_INIT_RADIUS_INFANTRY,

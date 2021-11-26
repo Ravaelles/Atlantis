@@ -35,6 +35,8 @@ public class ParamTweakerEvaluator {
                 "Date",
                 "W/L",
                 "Seconds",
+                "Killed",
+                "Lost",
                 "Score"
         };
         return Stream.concat(Arrays.stream(base), Arrays.stream(paramNames())).toArray(String[]::new);
@@ -69,6 +71,8 @@ public class ParamTweakerEvaluator {
         return timeString() + DELIMITER
                 + (winner ? "W" : "L") + DELIMITER
                 + A.seconds() + DELIMITER
+                + Atlantis.KILLED + DELIMITER
+                + Atlantis.LOST + DELIMITER
                 + score(winner) + DELIMITER
                 + paramsString();
     }

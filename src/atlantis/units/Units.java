@@ -344,9 +344,9 @@ public class Units {
     }
 
     public boolean onlyRanged() {
-        ArrayList<AUnit> list = new ArrayList<>(this.units);
-        list.removeIf(u -> !u.isRanged());
-        return list.isEmpty();
+        ArrayList<AUnit> onlyRanged = new ArrayList<>(this.units);
+        onlyRanged.removeIf(u -> !u.isRanged());
+        return onlyRanged.size() == this.units.size();
     }
 
     public boolean onlyAir() {

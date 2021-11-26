@@ -72,7 +72,7 @@ public class FightInsteadAvoid {
         // Combat units
         else {
             if (fightInImportantCases()) {
-//                System.err.println("Important case");
+                System.err.println("Important case");
                 return true;
             }
 
@@ -129,27 +129,17 @@ public class FightInsteadAvoid {
         }
 
         if (ranged != null) {
-
-            if (unit.isTank() && unit.lastUnderAttackLessThanAgo(30 * 3)) {
-                return false;
+            if (unit.isTank() && !unit.isSieged() && unit.lastAttackFrameMoreThanAgo(30 * 4)) {
+                return true;
             }
 
             // Dragoon faster than Marines, can outrun them
             if (unit.isQuickerOrSameSpeedAs(enemies) && unit.hasBiggerRangeThan(enemies)) {
-
-                // If needs to wait before next attack
-//                return unit.cooldownRemaining() <= 3 || unit.isJustShooting() || unit.lastUnderAttackMoreThanAgo(200);
                 return unit.woundPercent() <= 40 && unit.lastUnderAttackMoreThanAgo(30 * 8);
             }
 
             // Dragoon slower than Vultures, cannot outrun them
             else {
-//                AUnit main = Select.mainBase();
-//                if (main != null && main.distToLessThan(unit, 9)) {
-//                    return true;
-//                }
-
-//                return unit.hpPercent() > 50 && unit.getCooldownCurrent() <= 2 && unit.hasWeaponRange(ranged, 0);
                 return false;
             }
         }
@@ -174,10 +164,6 @@ public class FightInsteadAvoid {
         if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
             return true;
         }
-
-//        if (unit.isSquadScout()) {
-//            return Select.our().inRadius(3, unit).atLeast(3);
-//        }
 
         if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
             return true;

@@ -6,7 +6,6 @@ import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
 import bwapi.Color;
@@ -20,7 +19,7 @@ public class ARunningManager {
 //    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 6;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
-    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 4;
+    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 2;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
 
     private final AUnit unit;
@@ -169,7 +168,7 @@ public class ARunningManager {
                     runAwayFrom = closeEnemies.center();
                 }
             }
-            
+
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
         }
         
@@ -329,7 +328,7 @@ public class ARunningManager {
         int radius = runAnyDirectionInitialRadius(unit);
         APosition bestPosition = null;
         while (bestPosition == null && radius >= 0.3) {
-            bestPosition = findRunPositionInRadius(unitPosition, runAwayFrom, radius);
+            bestPosition = findRunPositionInAnyDirection(unitPosition, runAwayFrom, radius);
             radius -= 1;
         }
         
@@ -346,7 +345,7 @@ public class ARunningManager {
         return bestPosition;
     }
 
-    private APosition findRunPositionInRadius(APosition unitPosition, HasPosition runAwayFrom, int radius) {
+    private APosition findRunPositionInAnyDirection(APosition unitPosition, HasPosition runAwayFrom, int radius) {
 
         // Build list of possible run positions, basically around the clock
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
@@ -363,7 +362,7 @@ public class ARunningManager {
 
                 // If has path to given point, add it to the list of potential points
                 APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
-                if (isPossibleAndReasonablePosition(unit, potentialPosition, true, "v", "x")) {
+                if (isPossibleAndReasonablePosition(unit, potentialPosition, false, "v", "x")) {
                     potentialPositionsList.add(potentialPosition);
                 }
             }
@@ -406,7 +405,7 @@ public class ARunningManager {
             return false;
         }
 
-        if (unit.enemiesNearby().melee().inRadius(3, unit).empty()) {
+        if (unit.enemiesNearby().melee().inRadius(4, unit).empty()) {
             return false;
         }
 
@@ -445,13 +444,13 @@ public class ARunningManager {
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
     public boolean isPossibleAndReasonablePosition(
-            AUnit unit, APosition position, boolean includeUnitCheck
+            AUnit unit, APosition position
     ) {
-        return isPossibleAndReasonablePosition(unit, position, includeUnitCheck, "#", "%");
+        return isPossibleAndReasonablePosition(unit, position, true, "#", "%");
     }
 
     public boolean isPossibleAndReasonablePosition(
-            AUnit unit, APosition position, boolean includeUnitCheck, String charForIsOk, String charForNotOk
+            AUnit unit, APosition position, boolean includeNearbyWalkability, String charForIsOk, String charForNotOk
     ) {
         if (unit.isAirUnit()) {
             return true;
@@ -461,16 +460,13 @@ public class ARunningManager {
 
         boolean isOkay = position.isWalkable()
                 && (
-                    (
-                            position.translateByPixels(-48, -48).isWalkable()
-                            && position.translateByPixels(48, 48).isWalkable()
-                            && position.translateByPixels(48, -48).isWalkable()
-                            && position.translateByPixels(-48, -48).isWalkable()
+                    !includeNearbyWalkability
+                    || (
+                        position.translateByPixels(-48, -48).isWalkable()
+                        && position.translateByPixels(48, 48).isWalkable()
+                        && position.translateByPixels(48, -48).isWalkable()
+                        && position.translateByPixels(-48, -48).isWalkable()
                     )
-//                    || (
-//                            position.translateByTiles(0, 1).isWalkable()
-//                            && position.translateByTiles(-1, 0).isWalkable()
-//                    )
                 )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
 //                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0

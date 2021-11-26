@@ -74,7 +74,7 @@ public class AAttackEnemyUnit {
         }
 
         // Prevent units from switching attack of the same unit, to another unit of the same type
-        if (unit.target() != null && unit.isAttackingOrMovingToAttack() && unit.target().isTank()) {
+        if (unit.target() != null && unit.target().isTank() && unit.isAttackingOrMovingToAttack()) {
             if (unit.distToLessThan(unit.target(), 3)) {
                 return false;
             }
@@ -92,15 +92,17 @@ public class AAttackEnemyUnit {
             return unit.move(target, UnitActions.MOVE_TO_ENGAGE, "BaseAttack");
         }
 
-        unit.attackUnit(target);
-        return true;
+        return unit.attackUnit(target);
     }
 
     private static boolean handleMoveNextToTanksWhenAttackingThem(AUnit unit, AUnit enemy) {
+        if (!enemy.isTank()) {
+            return false;
+        }
+
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
-                enemy.isTank()
-                        && !unit.isAirUnit()
+                !unit.isAirUnit()
                         && !unit.is(
                                 AUnitType.Terran_Siege_Tank_Siege_Mode,
                                 AUnitType.Terran_Siege_Tank_Tank_Mode,

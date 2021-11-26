@@ -17,10 +17,10 @@ public class UseMap {
         // === UMS maps - great for bot development ============
 
 //        return "ums/rav/Wraiths_v_Probes.scm";
-        return "ums/rav/M&M_v_Dragoons.scx";
+//        return "ums/rav/M&M_v_Dragoons.scx";
 //        return "ums/rav/M_v_Zealots.scx";
 
-//        return "ums/rav/minimaps/M_vs_Zealots.scx";
+        return "ums/rav/minimaps/M_vs_Zealots.scx";
 //        return "ums/rav/minimaps/M&M_vs_Zealots.scx";
 
 //        return "ums/";
@@ -83,26 +83,20 @@ public class UseMap {
         // =========================================================
         // Marines & Medics vs. Zealots
 
-//        else if (activeMap().equals("ums/rav/Rav_MM_Zea.scx")) {
-        if (activeMap().startsWith("ums/rav/M_v_Zealots.scx")) {
-            int FAST = 90;
-
+        if (
+                activeMap().startsWith("ums/rav/")
+                || activeMap().startsWith("ums/rav/minimaps/")
+        ) {
             if (A.now() <= 1) {
-                GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(FAST);
-            }
-
-            if (A.everyNthGameFrame(50)) {
-                if (GameSpeed.frameSkip == FAST && Select.enemyCombatUnits().atLeast(3)) {
-                    GameSpeed.changeFrameSkipTo(0);
-                }
+                GameSpeed.changeSpeedTo(30);
+                GameSpeed.changeFrameSkipTo(0);
             }
         }
 
         // =========================================================
         // vs. ZERG / PROTOSS / Gosu maps
 
-        else if (
+        if (
                 activeMap().equals("ums/vsGosuComputer.scx")
                 || activeMap().equals("ums/exp_skilltest.scx")
         ) {
