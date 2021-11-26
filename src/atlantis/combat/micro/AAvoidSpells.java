@@ -79,7 +79,7 @@ public class AAvoidSpells {
 
     private static boolean handleEnemyMineAsMeleeUnit(AUnit unit, AUnit mine) {
         unit.moveAwayFrom(mine.position(), 1, "Avoid mine!");
-        APainter.paintLine(unit, mine, Color.Yellow);
+//        APainter.paintLine(unit, mine, Color.Yellow);
         return true;
     }
 

@@ -20,6 +20,12 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             criticalDist = forAirUnit(defender, attacker);
         }
 
+        // === For all ==================================
+
+        criticalDist += buildingBonus(defender, attacker);
+
+        // ==============================================
+
         return attacker.distTo(defender) - criticalDist;
     }
 
@@ -27,7 +33,6 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return enemyWeaponRange(defender, attacker)
                 + quicknessBonus(defender, attacker)
                 + lurkerBonus(defender, attacker)
-                + buildingBonus(defender, attacker)
                 + woundedBonus(defender, attacker)
                 + ourUnitsNearbyBonus(defender)
                 + ourMovementBonus(defender)
@@ -59,11 +64,20 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     }
 
     private static double buildingBonus(AUnit defender, AUnit attacker) {
-        APainter.paintCircle(attacker, 5, Color.Red);
-        APainter.paintCircle(attacker, 7, Color.Red);
-        APainter.paintCircle(attacker, 9, Color.Red);
-        APainter.paintCircle(attacker, 11, Color.Red);
-        return attacker.isCombatBuilding() ? 3 : 0;
+        if (attacker.isCombatBuilding()) {
+            APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
+        }
+        return attacker.isCombatBuilding() ? extraMarginAgainstCombatBuilding(defender, attacker) : 0;
+    }
+
+    private static double extraMarginAgainstCombatBuilding(AUnit defender, AUnit attacker) {
+        if (defender.isVulture()) {
+            return 6.4;
+        } else if (defender.is(AUnitType.Terran_Wraith)) {
+            return 7.1;
+        }
+
+        return (defender.isAirUnit() ? 5.5 : 3);
     }
 
     private static double lurkerBonus(AUnit defender, AUnit attacker) {

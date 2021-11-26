@@ -3,10 +3,12 @@ package atlantis.combat.eval;
 import atlantis.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.util.WeaponUtil;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 public class Evaluate {
 
@@ -34,13 +36,16 @@ public class Evaluate {
      * Also it makes sense to distguish before enemy evaluation (we will almost always understimate enemy
      * strength) or our own evaluation (we're likely to overestimate our strength).
      */
-    protected static double evaluateUnitsAgainstUnit(Collection<AUnit> units, AUnit againstUnit, boolean isEnemyEval) {
+    protected static double evaluateUnitsAgainstUnit(Units units, AUnit againstUnit, boolean isEnemyEval) {
         double totalStrength = 0;
         boolean enemyDefensiveBuildingFound = false;
         boolean enemyDefensiveBuildingInRange = false;
 
         // =========================================================
-        for (AUnit unit : units) {
+//        for (AUnit unit : units.list()) {
+//        for (AUnit unit : units.iterator())
+        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext(); ) {
+            AUnit unit = iterator.next();
             double unitStrengthEval = evaluateUnitHPandDamage(unit, againstUnit);
 
             // =========================================================
@@ -78,10 +83,10 @@ public class Evaluate {
 
         if (!isEnemyEval) {
             if (enemyDefensiveBuildingFound) {
-                totalStrength += 10;
+                totalStrength += units.onlyAir() ? 30 : 10;
             }
             if (enemyDefensiveBuildingInRange) {
-                totalStrength += 10;
+                totalStrength += units.onlyAir() ? 30 : 10;
             }
         }
 

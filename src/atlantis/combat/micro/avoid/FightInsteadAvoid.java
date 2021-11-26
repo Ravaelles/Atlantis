@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.micro.terran.TerranFirebat;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
@@ -162,12 +163,15 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        return RetreatManager.shouldNotRetreat(unit, enemies);
+        return !RetreatManager.shouldRetreat(unit, enemies);
     }
 
     protected boolean fightAsCombatUnit() {
         if (fightBecauseWayTooManyUnitsNearby(unit)) {
-//            System.err.println("Kamikaze! " + unit.hp());
+            return true;
+        }
+
+        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
             return true;
         }
 

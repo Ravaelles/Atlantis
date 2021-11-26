@@ -1314,14 +1314,6 @@ public class AUnitType implements Comparable<AUnitType> {
         return true;
     }
 
-    public boolean isZerg() {
-        return (boolean) cache.get(
-            "isZerg",
-            -1,
-            () -> ut.getRace().equals(Race.Zerg)
-        );
-    }
-
     public boolean isMutalisk() {
         return (boolean) cache.get(
             "isMutalisk",
@@ -1351,6 +1343,30 @@ public class AUnitType implements Comparable<AUnitType> {
             "isScv",
             -1,
             () -> is(Terran_SCV)
+        );
+    }
+
+    public boolean isProtoss() {
+        return (boolean) cache.get(
+                "isProtoss",
+                -1,
+                () -> ut.getRace().equals(Race.Protoss)
+        );
+    }
+
+    public boolean isZerg() {
+        return (boolean) cache.get(
+                "isZerg",
+                -1,
+                () -> ut.getRace().equals(Race.Zerg)
+        );
+    }
+
+    public boolean isTerran() {
+        return (boolean) cache.get(
+                "isTerran",
+                -1,
+                () -> ut.getRace().equals(Race.Terran)
         );
     }
 }

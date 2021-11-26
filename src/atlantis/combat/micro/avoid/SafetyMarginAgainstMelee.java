@@ -6,8 +6,12 @@ import atlantis.units.select.Select;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-    public static double INFANTRY_BASE = 0.64;
-    public static int INFANTRY_WOUND = 20;
+    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
+    public static int INFANTRY_WOUND_IF_MEDIC = 20;
+    public static double INFANTRY_BASE_IF_NO_MEDIC = 1.95;
+    public static int INFANTRY_WOUND_IF_NO_MEDIC = 75;
+//    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.02;
+//    public static int INFANTRY_WOUND_IF_NO_MEDIC = 85;
 
     public static double calculate(AUnit defender, AUnit attacker) {
 
@@ -15,8 +19,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // Terran INFANTRY
         if (defender.isTerranInfantry()) {
-            criticalDist = INFANTRY_BASE
-                    + woundedAgainstMeleeBonus(defender, attacker);
+            if (defender.hasMedicInRange()) {
+                criticalDist = INFANTRY_BASE_IF_MEDIC
+                        + woundedAgainstMeleeBonus(defender, attacker);
+            } else {
+                criticalDist = INFANTRY_BASE_IF_NO_MEDIC
+                        + woundedAgainstMeleeBonus(defender, attacker);
+            }
 //            +ourMovementBonus(defender) / 3
 //                    + enemyMovementBonus(defender, attacker) / 3;
 
@@ -72,7 +81,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {
         if (defender.isTerranInfantry()) {
-            return defender.woundPercent() / INFANTRY_WOUND;
+            if (defender.hasMedicInRange()) {
+                return defender.woundPercent() / INFANTRY_WOUND_IF_MEDIC;
+            } else {
+                return defender.woundPercent() / INFANTRY_WOUND_IF_NO_MEDIC;
+            }
         }
 
         if (defender.isAirUnit()) {

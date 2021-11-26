@@ -2,6 +2,7 @@ package atlantis.combat.eval;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Cache;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 public class ACombatEvaluator {
 
-    private static final double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT = 12;
+    private static final double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT = 7;
 
     /**
      * Maximum allowed value as a result of evaluation.
@@ -37,7 +38,7 @@ public class ACombatEvaluator {
      * some safe margin. This feature avoids fighting and immediately running away and fighting again.
      */
     public static boolean isSituationFavorable(AUnit unit) {
-        AUnit nearestEnemy = Select.enemy().nearestTo(unit);
+        AUnit nearestEnemy = unit.enemiesNearby().nearestTo(unit);
         if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
             return true;
         }
@@ -94,13 +95,13 @@ public class ACombatEvaluator {
                 // =========================================================
                 // Define nearby enemy and our units
 
-                Collection<AUnit> enemyUnits = Select.enemyCombatUnits().ranged().inRadius(13, unit).listUnits();
+                Units enemyUnits = Select.enemyCombatUnits().ranged().inRadius(13, unit).units();
                 enemyUnits.addAll(Select.enemyCombatUnits().melee().inRadius(4.5, unit).listUnits());
                 if (enemyUnits.isEmpty()) {
                     return MAX_VALUE;
                 }
 
-                Collection<AUnit> ourUnits = Select.ourCombatUnits().ranged().inRadius(13, unit).listUnits();
+                Units ourUnits = Select.ourCombatUnits().ranged().inRadius(13, unit).units();
                 ourUnits.addAll(Select.ourCombatUnits().melee().inRadius(4.5, unit).listUnits());
 
 //                System.out.println("---- ENEMY (" + enemyUnits.size() + ")");

@@ -4,6 +4,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.beta.Beta;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,8 @@ public class ASquadManager {
     public static boolean updateSquadTransfers() {
         if (shouldHaveBeta()) {
             handleReinforcements(Beta.get());
+        } else {
+            removeBeta();
         }
 
         return false;
@@ -30,7 +33,7 @@ public class ASquadManager {
     // Beta
 
     private static boolean shouldHaveBeta() {
-        return Count.ourCombatUnits() >= 18;
+        return Count.ourCombatUnits() >= 18 && Have.main();
     }
 
     private static void handleReinforcements(Squad squad) {
@@ -38,6 +41,16 @@ public class ASquadManager {
 
         if (wantsMoreUnits > 0) {
             transferFromAlphaTo(squad, wantsMoreUnits);
+        }
+    }
+
+    private static void removeBeta() {
+        Alpha alpha = Alpha.get();
+        Beta beta = Beta.get();
+
+        for (int i = 0; i < beta.size(); i++) {
+            AUnit transfer = beta.get(0);
+            transferUnitToSquad(transfer, alpha);
         }
     }
 

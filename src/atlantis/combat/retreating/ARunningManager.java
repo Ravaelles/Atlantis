@@ -17,9 +17,10 @@ import java.util.ArrayList;
 public class ARunningManager {
 
 //    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
-    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 6;
+//    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 6;
+    public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
-    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
+    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 4;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
 
     private final AUnit unit;
@@ -42,7 +43,8 @@ public class ARunningManager {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
         if (
                 unit.isRunning()
-                && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
+//                && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
+                && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
                 && !unit.isUnderAttack(unit.isAirUnit() ? 220 : 20)
 //                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
@@ -156,7 +158,8 @@ public class ARunningManager {
 
         // === Run directly away from the enemy ========================================
         
-        if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
+//        if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
+        if (!unit.position().isCloseToMapBounds()) {
 //            if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() == 1) {
 //                runAwayFrom = closeEnemies.first();
 //            }
@@ -248,15 +251,16 @@ public class ARunningManager {
 
             // Also check if can run further (avoid corner shitholes)
             if (runTo != null) {
+                return runTo;
 //                double distBonus = unit.isVulture() ? 2 : 1;
-                APosition doubleRunTo = canRunByShowingBackToEnemyTo(
-                        unit, runAwayFrom, currentDist
-                );
-
-                // If is okay as well, return it
-                if (doubleRunTo != null) {
-                    return runTo;
-                }
+//                APosition doubleRunTo = canRunByShowingBackToEnemyTo(
+//                        unit, runAwayFrom, currentDist
+//                );
+//
+//                // If is okay as well, return it
+//                if (doubleRunTo != null) {
+//                    return runTo;
+//                }
             }
 
             currentDist -= 0.9;
@@ -466,8 +470,8 @@ public class ARunningManager {
 //                    )
                 )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
-                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
-                && Select.neutral().inRadius(unit.size(), position).isEmpty()
+//                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
+                && Select.all().inRadius(unit.size() * 2, position).exclude(unit).isEmpty()
 //                && distToNearestRegionBoundaryIsOkay(position)
                 && unit.hasPathTo(position)
                 && unit.position().groundDistanceTo(position) <= 18

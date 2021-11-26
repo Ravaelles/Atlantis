@@ -1,7 +1,9 @@
 package atlantis;
 
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import bwapi.Color;
 import jbweb.Walls;
 
 public class OnEveryFrame {
@@ -90,6 +92,10 @@ public class OnEveryFrame {
 //        if (unit1 != null && (unit1.squad() == null || unit1.squad() == null)) {
 //            System.out.println("unit1 = " + unit1.idWithHash() + unit1.shortName() + " // " + unit1.squad());
 //            System.out.println("unit2 = " + unit2.idWithHash() + unit2.shortName() + " // " + unit2.squad());
+//        }
+
+//        for (AUnit unit : Select.all().list()) {
+//            APainter.paintCircle(unit, 16, Color.Grey);
 //        }
     }
 

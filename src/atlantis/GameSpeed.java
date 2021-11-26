@@ -45,7 +45,7 @@ public class GameSpeed {
     public static void init() {
         if (Env.isParamTweaker()) {
             Atlantis.game().setLocalSpeed(0);
-            Atlantis.game().setFrameSkip(300);
+            Atlantis.game().setFrameSkip(500);
             return;
         }
 

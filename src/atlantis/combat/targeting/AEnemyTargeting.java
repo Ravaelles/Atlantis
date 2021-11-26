@@ -32,29 +32,67 @@ public class AEnemyTargeting {
         return enemy;
     }
 
+    public static boolean debug(AUnit unit) {
+        return DEBUG && unit.isFirstCombatUnit();
+    }
+
+    // =========================================================
+
     private static AUnit selectEnemyFirstByTypeThenByBestOfTypeInRange(AUnit unit, double maxDistFromEnemy) {
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
-
-//        System.out.println("enemy = " + enemy + A.dist(enemy, unit));
         if (enemy == null) {
             return null;
         }
 
-//        if (!enemy.isEnemy() || !enemy.isVisibleOnMap()) {
-//            System.err.println(enemy + ", enemy:" + enemy.isEnemy() + ", alive:" + enemy.isAlive() + ", visible:" + enemy.isVisibleOnMap());
-//            System.err.println("Enemy player: " + enemy.getPlayer() + ", isEnemy: " + enemy.getPlayer().isEnemy(unit.getPlayer()) + " // " + enemy.isEnemy());
-//            System.err.println("Our player  : " + unit.getPlayer() + ", isEnemy: " + unit.getPlayer().isEnemy(enemy.getPlayer()) + " // " + unit.isEnemy());
-//            System.err.println("AGame.getPlayerUs() : " + AGame.getPlayerUs() + ", isEnemy: " + AGame.getPlayerUs().isEnemy(enemy.getPlayer()));
-//            throw new RuntimeException("This is crazy, it should never happen, but with some bugs it can happen.");
-//        }
-
-        enemy = selectWeakestEnemyOfType(enemy.type(), enemy, unit);
-
-        return enemy;
+        return selectWeakestEnemyOfType(enemy.type(), unit);
     }
 
-    public static boolean debug(AUnit unit) {
-        return DEBUG && unit.isFirstCombatUnit();
+    // =========================================================
+
+    private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit ourUnit) {
+//        if (ourUnit.hasWeaponRange(enemy, 0)) {
+        AUnit enemyInShootRange = Select.enemies(enemyType).inShootRangeOf(ourUnit).nearestTo(ourUnit);
+        if (enemyInShootRange != null) {
+            return selectWeakestEnemyOfTypeInRange(enemyType, ourUnit);
+        }
+
+        AUnit enemy = selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit, 0);
+        if (enemy != null) {
+            return enemy;
+        }
+
+        enemy = selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit, 2.6);
+        if (enemy != null) {
+            return enemy;
+        }
+
+        return selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit, 16);
+    }
+
+    private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType enemyType, AUnit ourUnit) {
+        Selection targets = Select.enemies(enemyType)
+                .effVisible()
+                .canBeAttackedBy(ourUnit, 0);
+
+        AUnit mostWounded = targets.clone().mostWounded();
+        if (mostWounded != null && mostWounded.isWounded()) {
+            return mostWounded;
+        }
+
+        return targets.clone().nearestTo(ourUnit);
+    }
+
+    private static AUnit selectWeakestEnemyOfTypeOutsideOfWeaponRange(AUnitType type, AUnit ourUnit, double extraRange) {
+        Selection targets = Select.enemies(type)
+                .effVisible()
+                .hasPathFrom(ourUnit);
+
+        AUnit mostWounded = targets.clone().mostWounded();
+        if (mostWounded != null && mostWounded.isWounded()) {
+            return mostWounded;
+        }
+
+        return targets.clone().inShootRangeOf(extraRange, ourUnit).nearestTo(ourUnit);
     }
 
     // =========================================================
@@ -133,45 +171,6 @@ public class AEnemyTargeting {
         // =====
 
         return target;
-    }
-
-    // =========================================================
-
-    private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit enemy, AUnit ourUnit) {
-//        if (ourUnit.hasWeaponRange(enemy, 0)) {
-        AUnit enemyInShootRange = Select.enemies(enemyType).inShootRangeOf(ourUnit).nearestTo(ourUnit);
-        if (enemyInShootRange != null) {
-            return selectWeakestEnemyOfTypeInRange(enemyType, ourUnit);
-        }
-
-//        return Select.enemyRealUnits().canBeAttackedBy(ourUnit, 2).nearestTo(ourUnit);
-        return selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit);
-    }
-
-    private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType enemyType, AUnit ourUnit) {
-        Selection targets = Select.enemies(enemyType)
-                .effVisible()
-                .canBeAttackedBy(ourUnit, 0);
-
-        AUnit mostWounded = targets.clone().mostWounded();
-        if (mostWounded != null && mostWounded.isWounded()) {
-            return mostWounded;
-        }
-
-        return targets.clone().nearestTo(ourUnit);
-    }
-
-    private static AUnit selectWeakestEnemyOfTypeOutsideOfWeaponRange(AUnitType type, AUnit ourUnit) {
-        Selection targets = Select.enemies(type)
-                .effVisible()
-                .hasPathFrom(ourUnit);
-
-        AUnit mostWounded = targets.clone().mostWounded();
-        if (mostWounded != null && mostWounded.isWounded()) {
-            return mostWounded;
-        }
-
-        return targets.clone().inShootRangeOf(1.1, ourUnit).nearestTo(ourUnit);
     }
 
 }

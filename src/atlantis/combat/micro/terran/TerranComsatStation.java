@@ -9,11 +9,11 @@ import bwapi.TechType;
 public class TerranComsatStation {
 
     public static boolean update(AUnit comsat) {
-        comsat.setTooltip(
-                "Lurkers:"
-                + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count()
-                + "/" + Select.enemies(AUnitType.Zerg_Lurker).count()
-        );
+//        comsat.setTooltip(
+//                "Lurkers:"
+//                + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count()
+//                + "/" + Select.enemies(AUnitType.Zerg_Lurker).count()
+//        );
 
 //        if (AGame.notNthGameFrame(5 + ((250 - comsat.energy()) / 3))) {
         if (AGame.notNthGameFrame(20)) {
@@ -21,7 +21,6 @@ public class TerranComsatStation {
         }
 //        System.out.println(Select.enemy().ofType(AUnitType.Protoss_Observer).count());
 
-        System.out.println("comsat.energy() = " + comsat.energy());
         if (comsat.energy() >= 50) {
             return scanLurkers(comsat)
                     || scanDarkTemplars(comsat)
@@ -35,13 +34,13 @@ public class TerranComsatStation {
     // Zerg
 
     private static boolean scanLurkers(AUnit comsat) {
-        if (Select.enemies(AUnitType.Zerg_Lurker).count() > 0) {
-            System.out.println("lurker count = " + Select.enemies(AUnitType.Zerg_Lurker).count());
-            System.out.println("lurker count CLOAKED = " + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count());
-        }
+//        if (Select.enemies(AUnitType.Zerg_Lurker).count() > 0) {
+//            System.out.println("lurker count = " + Select.enemies(AUnitType.Zerg_Lurker).count());
+//            System.out.println("lurker count CLOAKED = " + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count());
+//        }
 
         for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effCloaked().listUnits()) {
-            System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.isDetected() + " // " + lurker.hp());
+//            System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.isDetected() + " // " + lurker.hp());
             if (shouldScanThisLurker(lurker, comsat)) {
                 return scan(comsat, lurker);
             }

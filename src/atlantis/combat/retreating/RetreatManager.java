@@ -13,9 +13,9 @@ public class RetreatManager {
 
     public static int GLOBAL_RETREAT_COUNTER = 0;
 
-    public static boolean shouldNotRetreat(AUnit unit, Units enemies) {
-        return shouldRetreat(unit, enemies);
-    }
+//    public static boolean shouldNotRetreat(AUnit unit, Units enemies) {
+//        return shouldRetreat(unit, enemies);
+//    }
 
     /**
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
@@ -25,7 +25,7 @@ public class RetreatManager {
             return false;
         }
 
-        boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
+//        boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
 
         // If situation is unfavorable, retreat

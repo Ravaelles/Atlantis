@@ -50,6 +50,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private final Unit u;
     private Cache<Object> cache = new Cache<>();
     private Cache<Integer> cacheInt = new Cache<>();
+    private Cache<Boolean> cacheBoolean = new Cache<>();
     private AUnitType _lastType = null;
     private UnitAction unitAction = UnitActions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
@@ -177,6 +178,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public void refreshType() {
         _lastType = null;
         cache.forgetAll();
+        cacheBoolean.forgetAll();
         cacheInt.forgetAll();
     }
 
@@ -651,6 +653,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         if (isRanged() && target.isUnderDarkSwarm()) {
+            return false;
+        }
+
+        if (isProtoss() && !isPowered()) {
             return false;
         }
 
@@ -1676,7 +1682,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean is(AUnitType type) {
-        return type().is(type);
+        return cacheBoolean.get(
+                "is" + type.id(),
+                -1,
+                () -> type().is(type)
+        );
     }
 
     public boolean is(AUnitType ...types) {
@@ -1887,4 +1897,29 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 () -> Select.enemyRealUnits(true, true, true).inRadius(14, this)
         )).clone();
     }
+
+    public boolean hasMedicInRange() {
+        return cacheBoolean.get(
+                "hasMedicInRange",
+                2,
+                () -> Select.ourOfType(AUnitType.Terran_Medic).inRadius(2.1, this).notEmpty()
+        );
+    }
+
+    public boolean isProtoss() {
+        return type().isProtoss();
+    }
+
+    public boolean isTerran() {
+        return type().isTerran();
+    }
+
+    public boolean isZerg() {
+        return type().isZerg();
+    }
+
+    public boolean isPowered() {
+        return u.isPowered();
+    }
+
 }

@@ -342,6 +342,18 @@ public class Units {
         
         return PositionHelper.getPositionAverageDistanceWeightedTo(unit, this, power);
     }
+
+    public boolean onlyRanged() {
+        ArrayList<AUnit> list = new ArrayList<>(this.units);
+        list.removeIf(u -> !u.isRanged());
+        return list.isEmpty();
+    }
+
+    public boolean onlyAir() {
+        ArrayList<AUnit> list = new ArrayList<>(this.units);
+        list.removeIf(u -> !u.isAirUnit());
+        return list.isEmpty();
+    }
     
     // =========================================================
     // Override methods
@@ -387,4 +399,9 @@ public class Units {
         return units.iterator();
     }
 
+    public void addAll(List<AUnit> newUnits) {
+        for (AUnit unit : newUnits) {
+            addUnit(unit);
+        }
+    }
 }
