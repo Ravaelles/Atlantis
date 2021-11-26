@@ -20,7 +20,7 @@ public class UseMap {
 //        return "ums/rav/M&M_v_Dragoons.scx";
 //        return "ums/rav/M_v_Zealots.scx";
 
-        return "ums/rav/minimaps/M_vs_Zealots.scx";
+//        return "ums/rav/minimaps/M_vs_Zealots.scx";
 //        return "ums/rav/minimaps/M&M_vs_Zealots.scx";
 
 //        return "ums/";

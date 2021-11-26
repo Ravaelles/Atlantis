@@ -26,7 +26,7 @@ public class WantsToAvoid {
                         && !unit.isUnitUnableToDoAnyDamage()
 //                        && !AAttackEnemyUnit.shouldNotAttack(unit)
         ) {
-            System.out.println("FIGHT INSTEAD AVOID " + unit + " // " + unit.hp());
+//            System.out.println("FIGHT INSTEAD AVOID " + unit + " // " + unit.hp());
             return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         }
 
@@ -55,7 +55,7 @@ public class WantsToAvoid {
         // Running is not viable - so many other units nearby, we would get stuck, better fight
         if (Select.all().inRadius(0.4, unit).count() >= 6) {
             APainter.paintCircleFilled(unit, 8, Color.Black);
-            System.err.println(unit + " fight cause clustered " + Select.all().inRadius(0.4, unit).count());
+//            System.err.println(unit + " fight cause clustered " + Select.all().inRadius(0.4, unit).count());
             return true;
         }
 

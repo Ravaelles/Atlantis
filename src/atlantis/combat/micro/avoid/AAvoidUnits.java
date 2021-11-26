@@ -29,6 +29,7 @@ public abstract class AAvoidUnits {
 //            APainter.paintLine(enemy, unit, Color.Orange);
 //            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
 //        }
+//        APainter.paintTextCentered(unit.position().translateByTiles(0, -1), enemiesDangerouslyClose.size() + "", Color.Teal);
 
         if (enemiesDangerouslyClose.isEmpty()) {
             return false;
@@ -49,8 +50,8 @@ public abstract class AAvoidUnits {
 
     public static Units unitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
         return cache.get(
-            "getUnitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
-            0,
+            "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
+            1,
             () -> {
                 Units enemies = new Units();
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
@@ -72,7 +73,7 @@ public abstract class AAvoidUnits {
                     return enemies;
                 }
             }
-        );
+        ).clone();
     }
 
     public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {

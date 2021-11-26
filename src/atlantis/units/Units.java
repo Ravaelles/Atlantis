@@ -22,9 +22,15 @@ public class Units {
      */
     private ArrayList<AUnit> units = new ArrayList<>();
     private TreeSet<Integer> unitIds = new TreeSet<>();
-    private final Map<AUnit, Double> extraValues = new HashMap<>();
+    private Map<AUnit, Double> extraValues = new HashMap<>();
 
     // =====================================================================
+
+    public Units(Units otherUnits) {
+        this.units = new ArrayList<>(otherUnits.units);
+        this.unitIds = new TreeSet<>(otherUnits.unitIds);
+        this.extraValues = new HashMap<>(otherUnits.extraValues);
+    }
 
     public Units(List<? extends AUnit> units) {
         this.units = new ArrayList<>(units);
@@ -394,6 +400,10 @@ public class Units {
      */
     public Collection<AUnit> list() {
         return (Collection<AUnit>) units.clone();
+    }
+
+    public Units clone() {
+        return new Units(this);
     }
 
     /**
