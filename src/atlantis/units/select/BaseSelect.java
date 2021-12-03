@@ -5,6 +5,7 @@ import atlantis.Atlantis;
 import atlantis.units.AUnit;
 import atlantis.util.A;
 import atlantis.util.Cache;
+import atlantis.util.Enemy;
 import bwapi.Player;
 import bwapi.Unit;
 
@@ -63,28 +64,10 @@ public class BaseSelect<T extends AUnit> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                // === Handle UMS ==========================================
-
-                if (AGame.isUms()) {
-                    Player playerUs = AGame.getPlayerUs();
-                    for (Player player : AGame.getPlayers()) {
-                        if (player.isEnemy(playerUs)) {
-                            for (Unit u : player.getUnits()) {
-                                AUnit unit = AUnit.getById(u);
-                                data.add(unit);
-                            }
-                        }
-                    }
-                }
-
-                // =========================================================
-
-                else {
-                    for (Unit u : AGame.getEnemy().getUnits()) {
+                for (Player player : Enemy.players()) {
+                    for (Unit u : player.getUnits()) {
                         AUnit unit = AUnit.getById(u);
-                        if (!unit.isLarvaOrEgg()) {
-                            data.add(unit);
-                        }
+                        data.add(unit);
                     }
                 }
 

@@ -7,6 +7,8 @@ import bwapi.Color;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
 
+    private static final double MIN_DIST_TO_COMBAT_BUILDING = 8.2;
+
     public static double calculate(AUnit defender, AUnit attacker) {
         double criticalDist;
 
@@ -22,7 +24,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
         // === For all ==================================
 
-        criticalDist += buildingBonus(defender, attacker);
+        criticalDist += addBuildingBonus(defender, attacker, criticalDist);
+//        if (attacker.isCombatBuilding()) {
+//            System.out.println(defender + ", CRIT_DIST = " + criticalDist + " // " + addBuildingBonus(defender, attacker, criticalDist));
+//        }
 
         // ==============================================
 
@@ -63,11 +68,22 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return SafetyMargin.woundedBonus(defender, attacker);
     }
 
-    private static double buildingBonus(AUnit defender, AUnit attacker) {
+    private static double addBuildingBonus(AUnit defender, AUnit attacker, double criticalDist) {
+        if (!attacker.isCombatBuilding()) {
+            return 0;
+        }
+
         if (attacker.isCombatBuilding()) {
             APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
         }
-        return attacker.isCombatBuilding() ? extraMarginAgainstCombatBuilding(defender, attacker) : 0;
+
+        criticalDist += extraMarginAgainstCombatBuilding(defender, attacker);
+
+        if (criticalDist <= MIN_DIST_TO_COMBAT_BUILDING) {
+            criticalDist = MIN_DIST_TO_COMBAT_BUILDING;
+        }
+
+        return criticalDist;
     }
 
     private static double extraMarginAgainstCombatBuilding(AUnit defender, AUnit attacker) {

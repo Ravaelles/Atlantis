@@ -1,6 +1,5 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.AGame;
 import atlantis.combat.missions.Missions;
 import atlantis.debug.APainter;
 import atlantis.map.AChoke;
@@ -10,7 +9,9 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.util.A;
+import atlantis.wrappers.ATech;
 import bwapi.Color;
+import bwapi.TechType;
 
 
 public class TerranSiegeTank {
@@ -24,7 +25,7 @@ public class TerranSiegeTank {
 //            tank.setTooltip("Can't interrupt");
 //            return true;
 //        }
-        
+
         initCache(tank);
 
         return tank.isSieged() ? updateWhenSieged(tank) : updateWhenNotSieged(tank);
@@ -50,6 +51,7 @@ public class TerranSiegeTank {
         APosition focusPoint = Missions.globalMission().focusPoint();
         if (
                 focusPoint != null
+                        && siegeResearched()
                         && (unit.distTo(focusPoint) <= 9)
                         && (canSiegeHere(unit) || longNotMoved)
         ) {
@@ -119,14 +121,14 @@ public class TerranSiegeTank {
 
         // =========================================================
 
-        if (unit.lastActionLessThanAgo(30 * 5, UnitActions.SIEGE)) {
-            return false;
+        if (unit.lastActionLessThanAgo(30 * 8, UnitActions.SIEGE)) {
+            return true;
         }
 
         // =========================================================
         // Should siege?
 
-        if (tooLonely(unit) && hasJustSiegedRecently(unit)) {
+        if (tooLonely(unit) && !hasJustSiegedRecently(unit)) {
             unit.unsiege();
             unit.setTooltip("TooLonely");
             return true;
@@ -134,15 +136,15 @@ public class TerranSiegeTank {
 
         if (
                 (nearestEnemyUnit == null && nearestEnemyCombatBuilding == null)
-                || (nearestEnemyUnitDist > 11.9 && nearestEnemyCombatBuildingDist > 11.9)
+                        || (nearestEnemyUnitDist > 11.9 && nearestEnemyCombatBuildingDist > 11.9)
         ) {
             unit.setTooltip("Considers unsiege");
 
-            if (AGame.isUms()) {
-                unit.unsiege();
-                unit.setTooltip("Unsiege");
-                return true;
-            }
+//            if (AGame.isUms()) {
+//                unit.unsiege();
+//                unit.setTooltip("Unsiege");
+//                return true;
+//            }
 
             if (unit.mission() == null) {
                 System.err.println("Mission NULL for " + unit);
@@ -167,7 +169,7 @@ public class TerranSiegeTank {
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -205,10 +207,10 @@ public class TerranSiegeTank {
 //        AUnit building = Select.enemy().combatBuildings().inRadius(12.5, tank).nearestTo(tank);
 //        tank.setTooltip("Buildz:" + Select.enemy().combatBuildings().count());
 
-        if (nearestEnemyCombatBuilding != null) {
+        if (siegeResearched() && nearestEnemyCombatBuilding != null) {
             if (
                     (tank.distToLessThan(nearestEnemyCombatBuilding, 10.5) && canSiegeHere(tank, false))
-                    || tank.distToLessThan(nearestEnemyCombatBuilding, 9.3)
+                            || tank.distToLessThan(nearestEnemyCombatBuilding, 9.3)
             ) {
 //                tank.setTooltip("Buildz:" + Select.enemy().combatBuildings().count() + "," + A.digit(tank.distTo(nearestEnemyCombatBuilding)));
                 tank.siege();
@@ -220,36 +222,42 @@ public class TerranSiegeTank {
         return false;
     }
 
+    private static boolean siegeResearched() {
+        return ATech.isResearched(TechType.Tank_Siege_Mode);
+    }
+
     private static boolean nearestEnemyIsUnit(AUnit tank, AUnit enemy, double distanceToEnemy) {
         int supportUnitsNearby = Select.ourCombatUnits().inRadius(10, tank).count();
 
         if (supportUnitsNearby <= 5) {
             return false;
         }
-        
+
         // Don't siege when enemy is too close
         if (distanceToEnemy < 10 && !enemy.isRanged()) {
             tank.setTooltip("Dont siege");
             return false;
         }
-        
-        if (distanceToEnemy < 13.6 && enemy.type().isDangerousGroundUnit() && canSiegeHere(tank)) {
-            tank.siege();
-            tank.setTooltip("Better siege");
-            return true;
-        }
 
-        if (distanceToEnemy <= 12 && canSiegeHere(tank) && !tooLonely(tank)) {
-            tank.siege();
-            tank.setTooltip("Siege!");
-            return true;
+        if (siegeResearched()) {
+            if (distanceToEnemy < 13.6 && enemy.type().isDangerousGroundUnit() && canSiegeHere(tank)) {
+                tank.siege();
+                tank.setTooltip("Better siege");
+                return true;
+            }
+
+            if (distanceToEnemy <= 12 && canSiegeHere(tank) && !tooLonely(tank)) {
+                tank.siege();
+                tank.setTooltip("Siege!");
+                return true;
+            }
         }
 
         return false;
     }
-    
+
     // =========================================================
-    
+
     private static boolean canSiegeHere(AUnit tank) {
         return canSiegeHere(tank, true);
     }

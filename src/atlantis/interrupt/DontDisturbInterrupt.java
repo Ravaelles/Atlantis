@@ -16,7 +16,11 @@ public class DontDisturbInterrupt {
         }
 
         // Don't INTERRUPT shooting units
-        if (DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
+//        if (unit.hp() >= 17 && DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
+        if (
+                (unit.hp() >= 17 || unit.lastUnderAttackMoreThanAgo(10))
+                && DontInterruptStartedAttacks.shouldNotInterrupt(unit)
+        ) {
             unit.setTooltip("Shoot");
 //            System.out.println(A.now() + " SHOOT");
             APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Red);

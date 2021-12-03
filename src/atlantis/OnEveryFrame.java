@@ -96,8 +96,8 @@ public class OnEveryFrame {
 //            System.out.println("unit2 = " + unit2.idWithHash() + unit2.shortName() + " // " + unit2.squad());
 //        }
 
-//        for (AUnit unit : Select.all().list()) {
-//            APainter.paintCircle(unit, 16, Color.Grey);
+//        for (AUnit unit : Select.ourCombatUnits().list()) {
+//            APainter.paintCircle(unit, 16, Color.Green);
 //        }
     }
 

@@ -16,12 +16,17 @@ public class UseMap {
 
         // === UMS maps - great for bot development ============
 
+        return "ums/rav/T_vs_Sunkens.scx";
 //        return "ums/rav/Wraiths_v_Probes.scm";
-//        return "ums/rav/M&M_v_Dragoons.scx";
+//        return "ums/rav/Wraiths_v_Cannons.scm";
+//        return "ums/rav/M&M_v_Dragoons_A.scx";
+//        return "ums/rav/M&M_v_Dragoons_B.scx";
 //        return "ums/rav/M_v_Zealots.scx";
 
 //        return "ums/rav/minimaps/M_vs_Zealots.scx";
 //        return "ums/rav/minimaps/M&M_vs_Zealots.scx";
+//        return "ums/rav/minimaps/3M_vs_2Zealots.scx";
+//        return "ums/rav/minimaps/4M_vs_2Zealots.scx";
 
 //        return "ums/";
 //        return "ums/";

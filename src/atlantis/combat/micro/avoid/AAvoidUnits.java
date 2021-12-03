@@ -25,15 +25,18 @@ public abstract class AAvoidUnits {
 
         Units enemiesDangerouslyClose = unitsToAvoid(unit);
 
+        if (enemiesDangerouslyClose.isEmpty()) {
+            return false;
+        }
+
+//        System.out.println(unit.idWithHash() + " (" + unit.hp() + "hp) has " + enemiesDangerouslyClose.size() + " enemies around");
 //        for (AUnit enemy : enemiesDangerouslyClose.list()) {
 //            APainter.paintLine(enemy, unit, Color.Orange);
 //            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
 //        }
-//        APainter.paintTextCentered(unit.position().translateByTiles(0, -1), enemiesDangerouslyClose.size() + "", Color.Teal);
-
-        if (enemiesDangerouslyClose.isEmpty()) {
-            return false;
-        }
+//        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
+//                "CLOSE=" + enemiesDangerouslyClose.size() + "",
+//                Color.Teal);
 
         return WantsToAvoid.units(unit, enemiesDangerouslyClose);
     }
@@ -51,7 +54,7 @@ public abstract class AAvoidUnits {
     public static Units unitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
         return cache.get(
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
-            1,
+            3,
             () -> {
                 Units enemies = new Units();
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
@@ -62,6 +65,11 @@ public abstract class AAvoidUnits {
                 if (enemies.isEmpty()) {
                     return new Units();
                 }
+
+//                System.out.println(unit + " enemies near = " + enemyUnitsToPotentiallyAvoid(unit).size());
+//                for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
+//                    System.out.println(enemy + " which is " + A.dist(enemy, unit) + " away from " + unit);
+//                }
 
                 if (onlyDangerouslyClose) {
                     return enemies.replaceUnitsWith(
@@ -98,7 +106,8 @@ public abstract class AAvoidUnits {
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
         return unit.enemiesNearby()
                 .add(EnemyUnits.combatBuildings())
-                .canAttack(unit, true, true, 6)
+                .filterOutDuplicates()
+                .canAttack(unit, true, true, 5)
                 .list();
     }
 

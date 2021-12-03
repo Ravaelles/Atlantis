@@ -6,18 +6,20 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 
 public class CameraManager {
     
     protected static int SCREEN_WIDTH = 640;
     protected static int SCREEN_HEIGHT = 480;
-    protected static boolean focusCameraOnFirstCombatUnit = true;
+//    protected static boolean focusCameraOnFirstCombatUnit = true;
+    protected static boolean focusCameraOnFirstCombatUnit = false;
 
     // =========================================================
 
     public static void update() {
         AUnit cameraUnit = centerCameraOnUnit();
-        if (AGame.timeSeconds() <= 1 || CameraManager.isFocusCameraOnUnit()) {
+        if (A.now() <= 1 || CameraManager.isFocusCameraOnUnit()) {
             CameraManager.centerCameraOn(cameraUnit);
         }
     }

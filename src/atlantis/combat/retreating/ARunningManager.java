@@ -1,5 +1,6 @@
 package atlantis.combat.retreating;
 
+import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
@@ -19,7 +20,7 @@ public class ARunningManager {
 //    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 6;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
-    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 2;
+    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
 
     private final AUnit unit;
@@ -44,8 +45,8 @@ public class ARunningManager {
                 unit.isRunning()
 //                && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
                 && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
-                && !unit.isUnderAttack(unit.isAirUnit() ? 220 : 20)
-//                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
+                && !unit.isUnderAttack(unit.isAirUnit() ? 220 : 5)
+                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.runningManager().stopRunning();
             unit.setTooltip("StopRun");
@@ -159,7 +160,7 @@ public class ARunningManager {
         
 //        if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
         if (!unit.position().isCloseToMapBounds()) {
-            Selection closeEnemies = unit.enemiesNearby().canAttack(unit, 1.5);
+            Selection closeEnemies = unit.enemiesNearby().canAttack(unit, 1.9);
 
             if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() <= 2) {
                 if (closeEnemies.size() == 1) {
@@ -245,7 +246,7 @@ public class ARunningManager {
         while (currentDist >= minTiles) {
 
             // Check if this is good position
-            APosition runTo = canRunByShowingBackToEnemyTo(unit, runAwayFrom, currentDist);
+            APosition runTo = showBackToEnemyIfPossible(unit, runAwayFrom, currentDist);
 
             // Also check if can run further (avoid corner shitholes)
             if (runTo != null) {
@@ -267,9 +268,11 @@ public class ARunningManager {
         return null;
     }
 
-    private APosition canRunByShowingBackToEnemyTo(AUnit unit, HasPosition runAwayFrom, double dist) {
+    private APosition showBackToEnemyIfPossible(AUnit unit, HasPosition runAwayFrom, double dist) {
         APosition runTo;
+        runAwayFrom = runAwayFrom.position();
         double vectorLength = unit.position().distTo(runAwayFrom);
+//        System.out.println(unit.idWithHash() + " // " + vectorLength);
 
         double vectorX = runAwayFrom.x() - unit.position().getX();
         double vectorY = runAwayFrom.y() - unit.position().getY();
@@ -459,15 +462,15 @@ public class ARunningManager {
         _lastPosition = position;
 
         boolean isOkay = position.isWalkable()
-                && (
-                    !includeNearbyWalkability
-                    || (
-                        position.translateByPixels(-48, -48).isWalkable()
-                        && position.translateByPixels(48, 48).isWalkable()
-                        && position.translateByPixels(48, -48).isWalkable()
-                        && position.translateByPixels(-48, -48).isWalkable()
-                    )
-                )
+//                && (
+//                    !includeNearbyWalkability
+//                    || (
+//                        position.translateByPixels(-48, -48).isWalkable()
+//                        && position.translateByPixels(48, 48).isWalkable()
+//                        && position.translateByPixels(48, -48).isWalkable()
+//                        && position.translateByPixels(-48, -48).isWalkable()
+//                    )
+//                )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
 //                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
                 && Select.all().inRadius(unit.size() * 2, position).exclude(unit).isEmpty()

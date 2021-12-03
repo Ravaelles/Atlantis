@@ -130,7 +130,7 @@ public class ACombatUnitManager {
 //        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
         if (unit.isRunning()) {
 //            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
-            return true;
+            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
         }
 
         // Useful for testing and debugging of shooting/running

@@ -136,11 +136,16 @@ public interface AUnitOrders {
 //            unit().setLastUnitOrderNow();
 //            return true;
 //        }
-        if (unit().isSieged() && unit().lastActionMoreThanAgo(30 * 9, UnitActions.SIEGE)) {
-            unit().unsiege();
-            unit().setLastUnitOrderNow();
-            return true;
-        }
+
+//        if (unit().isSieged()) {
+//            if (unit().lastActionMoreThanAgo(30 * 12, UnitActions.SIEGE) && A.chance(2)) {
+//                unit().unsiege();
+//                unit().setLastUnitOrderNow();
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        }
             
         // =========================================================
 

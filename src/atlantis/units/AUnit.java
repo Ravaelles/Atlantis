@@ -632,6 +632,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             boolean includeCooldown,
             double extraMargin
     ) {
+        if (this.isUnitUnableToDoAnyDamage()) {
+            return false;
+        }
+
         // Target CLOAKED
         if (checkVisibility && target.effCloaked()) {
             return false;

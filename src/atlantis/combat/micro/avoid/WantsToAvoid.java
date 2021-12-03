@@ -15,19 +15,17 @@ public class WantsToAvoid {
             return false;
         }
 
-        if (shouldAlwaysAvoid(unit, enemies)) {
-            return true;
-        }
-
         // =========================================================
 
-        if (
-                (new FightInsteadAvoid(unit, enemies)).shouldFight()
-                        && !unit.isUnitUnableToDoAnyDamage()
-//                        && !AAttackEnemyUnit.shouldNotAttack(unit)
-        ) {
-//            System.out.println("FIGHT INSTEAD AVOID " + unit + " // " + unit.hp());
-            return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        if (!shouldAlwaysAvoid(unit, enemies)) {
+            if (
+                    (new FightInsteadAvoid(unit, enemies)).shouldFight()
+                            && !unit.isUnitUnableToDoAnyDamage()
+    //                        && !AAttackEnemyUnit.shouldNotAttack(unit)
+            ) {
+    //            System.out.println("FIGHT INSTEAD AVOID " + unit + " // " + unit.hp());
+                return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+            }
         }
 
         // =========================================================
@@ -43,7 +41,7 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
-        if (unit.isWorker() || unit.isScout() || unit.isSquadScout()) {
+        if (unit.isWorker() || unit.isScout() || unit.isSquadScout() || unit.hpLessThan(17)) {
             return true;
         }
 
@@ -51,6 +49,9 @@ public class WantsToAvoid {
     }
 
     private static boolean shouldNeverAvoidIf(AUnit unit, Units enemies) {
+        if (unit.isAirUnit()) {
+            return false;
+        }
 
         // Running is not viable - so many other units nearby, we would get stuck, better fight
         if (Select.all().inRadius(0.4, unit).count() >= 6) {

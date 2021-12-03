@@ -271,7 +271,7 @@ public class Bases {
 
                     ABaseLocation baseLocation = natural(enemyBase);
                     if (baseLocation != null) {
-                        return baseLocation.position();
+                        return baseLocation.position().translateByTiles(2, 0);
                     }
 
                     return null;

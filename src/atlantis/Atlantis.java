@@ -167,9 +167,9 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        if (A.now() <= 1 && !A.isUms()) {
-            return;
-        }
+//        if (A.now() <= 1 && !A.isUms()) {
+//            return;
+//        }
 
         AUnit unit = AUnit.getById(u);
         if (unit != null) {

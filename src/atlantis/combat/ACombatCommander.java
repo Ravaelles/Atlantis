@@ -38,7 +38,7 @@ public class ACombatCommander {
         for (AUnit unit : squad.list()) {
             ACombatUnitManager.update(unit);
 
-            addInfoAboutNearestEnemyToTooltip(unit);
+//            addInfoAboutNearestEnemyToTooltip(unit);
         }
     }
 

@@ -38,14 +38,14 @@ public class ACombatEvaluator {
      * some safe margin. This feature avoids fighting and immediately running away and fighting again.
      */
     public static boolean isSituationFavorable(AUnit unit) {
-        AUnit nearestEnemy = unit.enemiesNearby().nearestTo(unit);
+        AUnit nearestEnemy = unit.enemiesNearby().canAttack(unit, 4).nearestTo(unit);
         if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
             return true;
         }
 
-        if (ACombatEvaluatorExtraConditions.shouldAlwaysFight(unit, nearestEnemy)) {
-            return true;
-        }
+//        if (ACombatEvaluatorExtraConditions.shouldAlwaysFight(unit, nearestEnemy)) {
+//            return true;
+//        }
 
 //        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
 //            return false;
@@ -108,7 +108,8 @@ public class ACombatEvaluator {
                                 .listUnits()
                 );
 
-//                if (unit.isOur()) {
+//                System.out.println("# EVAL for " + unit + " // enemiesNearby = " + unit.enemiesNearby().count());
+//                if (unit.isOur() && unit.enemiesNearby().isNotEmpty()) {
 //                    System.out.println("--- AAA");
 //                    System.out.println(Select.enemyRealUnits().count());
 //                    System.out.println(Select.enemyRealUnits().inRadius(14, unit).count());
@@ -131,9 +132,6 @@ public class ACombatEvaluator {
 //                                    .ranged().inRadius(13, unit).canAttack(unit, 4).size()
 //                    );
 //                }
-//                if (unit.isOur()) {
-//                    System.out.println(" // " + enemyUnits.size());
-//                }
 
                 if (againstUnits.isEmpty()) {
 //                    if (unit.isOur()) {
@@ -141,6 +139,13 @@ public class ACombatEvaluator {
 //                    }
                     return MAX_VALUE;
                 }
+
+//                if (unit.isOur() && againstUnits.isNotEmpty()) {
+//                    System.out.println(" // " + againstUnits.size());
+//                    for (AUnit against : againstUnits.list()) {
+//                        System.out.println("   " + against);
+//                    }
+//                }
 
                 Units ourUnits = Select.ourCombatUnits().ranged().inRadius(13, unit).units();
                 ourUnits.addAll(Select.ourCombatUnits().melee().inRadius(4.5, unit).listUnits());

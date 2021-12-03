@@ -1179,6 +1179,9 @@ public class AAdvancedPainter extends APainter {
         if (Alpha.get().isNotEmpty()) {
             paintMessage("Squads: ", Color.White, x + 4, y, true);
             for (Squad squad : ASquadManager.allSquads()) {
+                if (squad.size() == 0) {
+                    continue;
+                }
                 paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y += 12, true);
             }
         }

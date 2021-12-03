@@ -6,6 +6,8 @@ import atlantis.units.AUnitType;
 import atlantis.util.A;
 import atlantis.util.Cache;
 
+import java.util.Objects;
+
 /**
  * Stores information about units in order to retrieve them when they are out of sight
  *
@@ -16,6 +18,7 @@ import atlantis.util.Cache;
 public class AFoggedUnit extends AUnit {
 
     private final AUnit aUnit;
+    private int _id;
     private APosition _position;
     private AUnitType _lastCachedType;
     private Cache<Integer> cacheInt = new Cache<>();
@@ -26,6 +29,7 @@ public class AFoggedUnit extends AUnit {
         super(unit.u());
 
         this.aUnit = unit;
+        this._id = unit.id();
         update(unit);
     }
 
@@ -59,6 +63,20 @@ public class AFoggedUnit extends AUnit {
                 "_position=" + _position +
                 ",_Type=" + _lastCachedType +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        AUnit that = (AUnit) o;
+//        return _position.distToLessThan(that.position(), 0.05);
+        return _id == that.id();
+    }
+
+    @Override
+    public int hashCode() {
+        return _id;
     }
 
     // =========================================================

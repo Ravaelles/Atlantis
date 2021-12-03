@@ -58,7 +58,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Zerg_Sunken_Colony
                 )
-                .canBeAttackedBy(unit, 1)
+                .canBeAttackedBy(unit, 1.5)
                 .nearestTo(unit);
         if (target != null) {
             return defensiveBuildingOrScvRepairingIt(unit);

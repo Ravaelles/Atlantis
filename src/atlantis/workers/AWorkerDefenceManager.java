@@ -8,6 +8,7 @@ import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 import atlantis.util.We;
 
 import java.util.List;
@@ -109,7 +110,7 @@ public class AWorkerDefenceManager {
 
         AUnit wounded = Select.ourWorkers().wounded().inRadius(3, worker).nearestTo(worker);
 
-        if (wounded != null && wounded.isWounded() && wounded.isAlive() && !wounded.isBuilder()) {
+        if (wounded != null && A.hasMinerals(5) && wounded.isWounded() && wounded.isAlive() && !wounded.isBuilder()) {
             worker.repair(wounded, "BuddyRepair!");
             wounded.repair(worker, "BuddyRepair!");
 //            if (!worker.isRepairing()) {

@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.util.A;
+import bwapi.Unit;
 
 import java.util.*;
 
@@ -764,7 +765,7 @@ public class Selection {
         return data;
     }
 
-    public List sortByHealth() {
+    public List<AUnit> sortByHealth() {
         if (data.isEmpty()) {
             return null;
         }
@@ -782,4 +783,27 @@ public class Selection {
         return units().average();
     }
 
+    public Selection filterOutDuplicates() {
+        ArrayList<Integer> indexesToRemove = new ArrayList<>();
+        for (int i = 0; i < data.size(); i++) {
+            for (int j = 0; j < data.size(); j++) {
+                if (i < j && data.get(j).equals(data.get(i))) {
+                    indexesToRemove.add(j);
+                }
+            }
+        }
+
+        if (indexesToRemove.isEmpty()) {
+            return this;
+        }
+
+        ArrayList<AUnit> filteredUnits = new ArrayList<>();
+        for (int i = 0; i < data.size(); i++) {
+            if (!indexesToRemove.contains(i)) {
+                filteredUnits.add(data.get(i));
+            }
+        }
+
+        return new Selection(filteredUnits, this.currentCachePath);
+    }
 }

@@ -46,7 +46,7 @@ public class ARepairerManager {
         }
 
         // Target is wounded
-        if (!repairer.isRepairing() && target.isAlive()) {
+        if (!repairer.isRepairing() && target.isAlive() && A.hasMinerals(5)) {
             if (repairer.lastActionMoreThanAgo(30 * 3)) {
                 ARepairAssignments.removeRepairerOrProtector(repairer);
                 repairer.setTooltip("IdleGTFO");
@@ -115,7 +115,7 @@ public class ARepairerManager {
         ARepairAssignments.removeRepairerOrProtector(repairer);
 
         AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(15, repairer).first();
-        if (closestUnitNeedingRepair != null) {
+        if (closestUnitNeedingRepair != null && A.hasMinerals(5)) {
             ARepairAssignments.addRepairer(repairer, closestUnitNeedingRepair);
             repairer.repair(closestUnitNeedingRepair, "Extra repair");
             return true;
@@ -130,7 +130,7 @@ public class ARepairerManager {
 
             // Try finding any repairable and wounded unit nearby
             AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
-            if (nearestWoundedUnit != null) {
+            if (nearestWoundedUnit != null && A.hasMinerals(5)) {
                 repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.shortName());
                 return true;
             }

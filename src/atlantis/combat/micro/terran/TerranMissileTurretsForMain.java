@@ -20,8 +20,10 @@ import java.util.stream.Collectors;
 
 public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
-    private static final int BORDER_TURRETS_MIN_COUNT = 4;
-    private static final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
+    private static final int BORDER_TURRETS_MIN_COUNT = 0;
+    private static final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
+//    private static final int BORDER_TURRETS_MIN_COUNT = 4;
+//    private static final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
     private static final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
     private static final int BORDER_TURRETS_ALLOW_MARGIN = 4;
     private static final int MAIN_BASE_TURRETS = 2;
@@ -83,6 +85,10 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     }
 
     private static boolean turretsForMainRegionBorders() {
+        if (true) {
+            return false;
+        }
+
         ArrayList<APosition> turretsProtectingMainBorders = positionsForTurretsNearMainBorder();
 
         for (int i = 0; i < turretsProtectingMainBorders.size(); i++) {

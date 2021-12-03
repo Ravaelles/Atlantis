@@ -70,8 +70,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     for (AUnit unit : enemyUnits()) {
                         if (unit.isAlive()) {
                             data.add(unit);
+                        } else {
+                            System.err.println("Enemy unit but no alive = " + unit);
                         }
-//                        System.err.println(unit);
                     }
 
                     return new Selection(data, cachePath);
@@ -320,7 +321,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     List<AUnit> data = new ArrayList<>();
 
                     for (AUnit unit : ourUnits()) {
-                        if (unit.isCompleted() && unit.isRealUnit() && !unit.isWorker()) {
+                        if (unit.isCompleted() && unit.isCombatUnit()) {
                             data.add(unit);
                         }
                     }

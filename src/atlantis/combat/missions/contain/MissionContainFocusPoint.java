@@ -21,18 +21,18 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     public AFocusPoint focusPoint() {
         return cache.get(
                 "focusPoint",
-                1,
+                30,
                 () -> {
                     if (We.terran()) {
-                        if (!EnemyInformation.hasDefensiveLandBuilding()) {
-                            AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-                            if (enemyBuilding != null && enemyBuilding.position() != null) {
-                                return new AFocusPoint(
-                                        enemyBuilding,
-                                        Select.main()
-                                );
-                            }
+//                        if (!EnemyInformation.hasDefensiveLandBuilding()) {
+                        AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+                        if (enemyBuilding != null && enemyBuilding.position() != null) {
+                            return new AFocusPoint(
+                                    enemyBuilding,
+                                    Select.main()
+                            );
                         }
+//                        }
                     }
 
                     AChoke mainChoke = Chokes.enemyMainChoke();

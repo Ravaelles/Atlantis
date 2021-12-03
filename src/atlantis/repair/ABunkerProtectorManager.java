@@ -2,6 +2,7 @@ package atlantis.repair;
 
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 
 public class ABunkerProtectorManager {
 
@@ -10,7 +11,7 @@ public class ABunkerProtectorManager {
         if (unit != null && unit.isAlive()) {
 
             // WOUNDED
-            if (unit.woundPercent() >= 1) {
+            if (unit.woundPercent() >= 1 && A.hasMinerals(5)) {
                 protector.repair(unit, "Protect " + unit.shortName());
                 return true;
             }
