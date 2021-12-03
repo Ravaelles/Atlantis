@@ -42,7 +42,7 @@ public class SafetyMargin {
             return 2.7;
         }
 
-        return defender.isOur() && defender.isSquadScout() ? 2 : 0;
+        return defender.isOur() && defender.isSquadScout() ? 2.7 : 0;
     }
 
     protected static double enemyWeaponRange(AUnit defender, AUnit attacker) {

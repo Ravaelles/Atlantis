@@ -59,7 +59,6 @@ public class TerranScienceVessel extends MobileDetector {
     // =========================================================
 
     private static boolean irradiate(AUnit scienceVessel) {
-
         Selection enemies = Select.enemyCombatUnits().inRadius(10, scienceVessel);
         if (enemies.count() >= 5 || (enemies.count() >= 3 && scienceVessel.energy(181))) {
             APosition center = enemies.center();
@@ -68,7 +67,12 @@ public class TerranScienceVessel extends MobileDetector {
             } else {
                 center = enemies.random().position();
             }
-            return scienceVessel.useTech(TechType.Irradiate, center);
+
+            if (center != null) {
+                return scienceVessel.useTech(TechType.Irradiate, center);
+            } else {
+                System.err.println("Irradiate center is NULL / " + enemies.count());
+            }
         }
 
         // Crucial enemies

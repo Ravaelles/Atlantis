@@ -490,11 +490,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 0,
                 () -> {
                     List<AUnit> data = new ArrayList<>(enemyUnits());
-                    data.removeIf(u -> (
-                            ((!includeBuildings && u.isBuilding()) && !u.isRealUnit())
-                            || (!includeGroundUnits && u.isGroundUnit())
-                            || (!includeAirUnits && u.isAirUnit())
-                    ));
+                    data.removeIf(
+                            u -> !u.isRealUnit() || (
+                                (!includeBuildings && u.isBuilding())
+                                || (!includeGroundUnits && u.isGroundUnit())
+                                || (!includeAirUnits && u.isAirUnit())
+                            )
+                    );
 
                     return new Selection(data, cachePath);
                 }

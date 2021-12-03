@@ -751,7 +751,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null && A.notUms() && isOur() && !isBuilding() && !isWorker() && isAlive()) {
+        if (squad == null && A.notUms() && isOur() && !isSpell() && !isBuilding() && !isWorker() && isAlive()) {
             System.err.println("Null squad for unit: " + this + " // alive:" + isAlive() + " // hp:" + hp());
         }
         return squad;
@@ -1925,6 +1925,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isPowered() {
         return u.isPowered();
+    }
+
+    private boolean isSpell() {
+        return type().isSpell();
     }
 
 }
