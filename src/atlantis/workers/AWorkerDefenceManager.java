@@ -183,6 +183,10 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean handleEnemyBuildingsOffensive(AUnit worker) {
+        if (A.seconds() <= 40) {
+            return false;
+        }
+
         for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).listUnits()) {
             worker.attackUnit(enemyBuilding);
             worker.setTooltip("Cheesy!");

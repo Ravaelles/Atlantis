@@ -370,7 +370,8 @@ public class AUnitType implements Comparable<AUnitType> {
     public boolean isMeleeUnit() {
         if (!_checkedIfIsMelee) {
             _checkedIfIsMelee = true;
-            _isMelee = getGroundWeapon().maxRange() <= 64;
+            System.err.println(this + " // " + groundWeapon().maxRange() + " // " + airWeapon().maxRange());
+            _isMelee = groundWeapon().maxRange() <= 64 && airWeapon().maxRange() <= 64;
         }
         return _isMelee;
     }
@@ -668,11 +669,11 @@ public class AUnitType implements Comparable<AUnitType> {
         return !ut.isFlyer();
     }
 
-    public WeaponType getGroundWeapon() {
+    public WeaponType groundWeapon() {
         return ut.groundWeapon();
     }
 
-    public WeaponType getAirWeapon() {
+    public WeaponType airWeapon() {
         return ut.airWeapon();
     }
 
@@ -1040,9 +1041,9 @@ public class AUnitType implements Comparable<AUnitType> {
 
     public WeaponType weaponAgainst(AUnitType target) {
         if (target.isGroundUnit()) {
-            return getGroundWeapon();
+            return groundWeapon();
         } else {
-            return getAirWeapon();
+            return airWeapon();
         }
     }
 

@@ -7,7 +7,7 @@ import atlantis.util.A;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ALog {
+public class Log {
 
     private static ArrayList<LogMessage> messages = new ArrayList<>();
 

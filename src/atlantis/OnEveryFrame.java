@@ -83,9 +83,12 @@ public class OnEveryFrame {
 //            }
 //        }
 
-//        System.out.println("---------------- " + A.now() + " --------------------");
-//        for (AUnit unit : Select.enemy().list()) {
-//            System.out.println(unit + " // " + unit.isAlive());
+//        if (A.everyNthGameFrame(100)) {
+//            System.out.println("---------------- " + A.now() + " --------------------");
+//            for (AUnit enemy : Select.enemy().combatBuildings().list()) {
+//                System.out.println(enemy + " // r:" + enemy.isRanged() + " m:" + enemy.isMelee()
+//                        + " // gr:" + enemy.groundWeaponRange() + " // ar:" + enemy.airWeaponRange());
+//            }
 //        }
 
 //        AUnit unit1 = Select.ourCombatUnits().first();

@@ -9,6 +9,7 @@ import atlantis.position.APosition;
 import atlantis.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.UnitInterface;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
@@ -96,7 +97,7 @@ public class EnemyInformation {
      * Saves information about enemy unit that we see for the first time.
      */
     public static void weDiscoveredEnemyUnit(AUnit enemyUnit) {
-        EnemyUnits.enemyUnitsDiscovered.put(enemyUnit, new AFoggedUnit(enemyUnit));
+        EnemyUnits.enemyUnitsDiscovered.put(enemyUnit, AFoggedUnit.from(enemyUnit));
 
         EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
     }
@@ -135,7 +136,7 @@ public class EnemyInformation {
      */
     public static int countEnemyKnownUnitsOfType(AUnitType type) {
         int total = 0;
-        for (AUnit enemyUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
+        for (UnitInterface enemyUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
             if (enemyUnit.is(type)) {
                 total++;
             }

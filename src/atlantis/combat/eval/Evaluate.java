@@ -1,13 +1,11 @@
 package atlantis.combat.eval;
 
-import atlantis.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.util.WeaponUtil;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 public class Evaluate {
@@ -157,8 +155,8 @@ public class Evaluate {
 
     private static double damageFactor(AUnitType type, AUnit againstUnit) {
         int damageNormalized = againstUnit.isAirUnit()
-                ? WeaponUtil.damageNormalized(type.getAirWeapon())
-                : WeaponUtil.damageNormalized(type.getGroundWeapon());
+                ? WeaponUtil.damageNormalized(type.airWeapon())
+                : WeaponUtil.damageNormalized(type.groundWeapon());
         return (damageNormalized * WeaponUtil.damageModifier(type, againstUnit.type())) * EVAL_DAMAGE_FACTOR;
     }
 

@@ -133,6 +133,25 @@ public class ACombatEvaluator {
 //                    );
 //                }
 
+                if (unit.isOur() && unit.isAirUnit()) {
+                    System.out.println(" // " + againstUnits.size() + " of " + unit.enemiesNearby().size());
+                    System.out.println("A = " + unit.enemiesNearby().ranged()
+                            .canAttack(unit, 4)
+                            .units().size());
+                    System.out.println("B = " + unit.enemiesNearby()
+                            .units().size());
+                    System.out.println("C = " + unit.enemiesNearby().ranged()
+                            .units().size());
+                    System.out.println("D = " + unit.enemiesNearby()
+                            .units().size());
+                    System.out.println("E = " + unit.enemiesNearby()
+                            .canAttack(unit, 4)
+                            .units().size());
+                    for (AUnit against : againstUnits.list()) {
+                        System.out.println("   " + against);
+                    }
+                }
+
                 if (againstUnits.isEmpty()) {
 //                    if (unit.isOur()) {
 //                        System.out.println(unit + " MAX");

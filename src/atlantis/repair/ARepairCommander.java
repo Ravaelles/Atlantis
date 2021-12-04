@@ -7,6 +7,7 @@ import atlantis.map.Chokes;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -185,6 +186,10 @@ public class ARepairCommander {
     
     protected static void assignProtectorsFor(AUnit unitToProtect, int numberOfProtectorsToAssign) {
         if (unitToProtect == null) {
+            return;
+        }
+
+        if (Count.workers() <= 15) {
             return;
         }
 

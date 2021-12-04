@@ -14,7 +14,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
-import atlantis.log.ALog;
+import atlantis.log.Log;
 import atlantis.log.LogMessage;
 import atlantis.map.*;
 import atlantis.production.constructing.ConstructionRequests;
@@ -1207,7 +1207,7 @@ public class AAdvancedPainter extends APainter {
         int y = rightSideMessageTopOffset;
 
         int counter = 0;
-        for (LogMessage log : ALog.messages()) {
+        for (LogMessage log : Log.messages()) {
             paintMessage(log.message(), log.color(), x, y - 12 * counter++, true);
         }
     }

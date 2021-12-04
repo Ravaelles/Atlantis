@@ -8,7 +8,7 @@ import atlantis.debug.APainter;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
-import atlantis.log.ALog;
+import atlantis.log.Log;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
@@ -67,7 +67,7 @@ public class SquadScout {
         squadScout.setTooltip("MadeContact");
 
         if (Select.enemyCombatUnits().atMost(2)) {
-            ALog.addMessage("Squad scout forced GLOBAL ATTACK");
+            Log.addMessage("Squad scout forced GLOBAL ATTACK");
             if (!Missions.isGlobalMissionAttack()) {
                 MissionChanger.forceMissionAttack();
             }

@@ -26,8 +26,8 @@ public class AUnitTypesHelper {
                 continue;
             }
             
-            double dmgGround = WeaponUtil.damageNormalized(type.getGroundWeapon());
-            double dmgAir = WeaponUtil.damageNormalized(type.getAirWeapon());
+            double dmgGround = WeaponUtil.damageNormalized(type.groundWeapon());
+            double dmgAir = WeaponUtil.damageNormalized(type.airWeapon());
             double unitPrice = type.getMineralPrice() + type.getGasPrice() * 1.5;
             
             if (dmgGround > 0) {
@@ -54,15 +54,15 @@ public class AUnitTypesHelper {
         
         System.out.println("===== Best ground damage =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
-            System.out.println(unitType.shortName() + " (" + unitType.getGroundWeapon() + ", range "
-                    + (unitType.getGroundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
+            System.out.println(unitType.shortName() + " (" + unitType.groundWeapon() + ", range "
+                    + (unitType.groundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
         }
         System.out.println();
         
         System.out.println("===== Best air damage =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
-            System.out.println(unitType.shortName() + "(" + unitType.getGroundWeapon() + ", range "
-                    + (unitType.getAirWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
+            System.out.println(unitType.shortName() + "(" + unitType.groundWeapon() + ", range "
+                    + (unitType.airWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
         }
         System.out.println();
         

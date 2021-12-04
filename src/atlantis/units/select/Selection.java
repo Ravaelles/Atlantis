@@ -260,7 +260,16 @@ public class Selection {
      * Selects only units that do not currently have max hit points.
      */
     public Selection ranged() {
+        if (!data.isEmpty() && data.get(0).isEnemy()) {
+            System.out.println("PRE = " + data.size());
+            for (AUnit unit : data) {
+                System.out.println(unit + " // r:" + unit.isRanged());
+            }
+        }
         data.removeIf(unit -> !unit.isRanged());
+        if (!data.isEmpty() && data.get(0).isEnemy()) {
+            System.out.println("POST = " + data.size());
+        }
         return this;
     }
 

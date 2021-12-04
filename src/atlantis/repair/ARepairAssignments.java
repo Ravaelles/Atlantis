@@ -1,5 +1,6 @@
 package atlantis.repair;
 
+import atlantis.log.Log;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
@@ -9,6 +10,8 @@ public class ARepairAssignments {
 
     public static final int MODE_REPAIR_ONLY = 1;
     public static final int MODE_PROTECT = 2;
+
+    private static final boolean addLogs = true;
 
     // Unit repairers
     protected static Map<AUnit, AUnit> repairersToUnit = new HashMap<>();
@@ -57,12 +60,15 @@ public class ARepairAssignments {
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.get(unitToRepair).remove(repairer);
             repairer.stop("No longer repairer");
+            if (addLogs) { Log.addMessage("No longer repairer of " + unitToRepair); }
         }
         repairersToUnit.remove(repairer);
         repairersToModes.remove(repairer);
     }
 
     public static void addProtector(AUnit protector, AUnit unit) {
+        if (addLogs) { Log.addMessage("Added PROTECTOR of " + unit); }
+
         addRepairer(protector, unit);
         repairersToModes.put(protector, MODE_PROTECT);
     }
@@ -71,6 +77,8 @@ public class ARepairAssignments {
         if (!repairer.isScv()) {
             throw new RuntimeException(repairer + "is not SCV in addRepairer!");
         }
+
+        if (addLogs) { Log.addMessage("Added Repairer of " + unitToRepair); }
 
         repairersToUnit.put(repairer, unitToRepair);
         repairersToModes.put(repairer, MODE_REPAIR_ONLY);
