@@ -9,6 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.Units;
+import atlantis.util.A;
 import atlantis.util.We;
 
 public class FightInsteadAvoid {
@@ -61,6 +62,7 @@ public class FightInsteadAvoid {
         }
 
         if (unit.mission().forcesUnitToFight(unit, enemies)) {
+            System.err.println("Mission forced to fight!");
             return true;
         }
 
@@ -95,10 +97,6 @@ public class FightInsteadAvoid {
     protected boolean fightInImportantCases() {
         if (unit.isWorker()) {
             System.err.println("Worker in fightInImportantCases");
-        }
-
-        if (defensiveBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
-            return true;
         }
 
         // Attacking critically important unit
@@ -161,17 +159,22 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
-            return true;
-        }
+//        if (defensiveBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
+//            return true;
+//        }
+
+//        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
+//        if (enemies.onlyMelee() && ACombatEvaluator.isSituationFavorable(unit)) {
+//            return true;
+//        }
 
         if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
             return true;
         }
 
-        if (tankSieged != null || tanks != null) {
-            return true;
-        }
+//        if (tankSieged != null || tanks != null) {
+//            return true;
+//        }
 
         if (defensiveBuilding != null) {
             return unit.mission().allowsToAttackDefensiveBuildings(unit, defensiveBuilding);
@@ -219,6 +222,13 @@ public class FightInsteadAvoid {
                 return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
                         || Select.ourCombatUnits().inRadius(10, unit).atLeast(20);
             }
+        }
+
+        if (defensiveBuilding != null) {
+            return unit.mission().isMissionAttack()
+                    && Select.ourCombatUnits().inRadius(6, unit).atLeast(10)
+                    && ACombatEvaluator.advantagePercent(unit, 50)
+                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.shortNamePlusId());
         }
 
         return ourNearby >= 5 || unitsNearby >= 6;

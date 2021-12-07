@@ -5,8 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.A;
 import atlantis.util.Cache;
-
-import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * Stores information about units in order to retrieve them when they are out of sight
@@ -16,22 +15,47 @@ import java.util.Objects;
  */
 //public class AFoggedUnit implements HasPosition {
 public class AFoggedUnit extends AUnit {
+//public class AFoggedUnit implements UnitInterface, HasPosition, Comparable<AUnit> {
 
-    private final AUnit aUnit;
+    private final static TreeMap<Integer, AFoggedUnit> all = new TreeMap<>();
+
+    private static AUnit _lastAUnit = null;
+    private AUnit aUnit;
     private int _id;
     private APosition _position;
-    private AUnitType _lastCachedType;
+    private AUnitType _lastType;
     private Cache<Integer> cacheInt = new Cache<>();
 
     // =========================================================
 
-    public AFoggedUnit(AUnit unit) {
+    public static AFoggedUnit from(AUnit unit) {
+        _lastAUnit = unit;
+
+        AFoggedUnit foggedUnit = all.get(unit.id());
+        if (foggedUnit != null) {
+            return foggedUnit;
+        }
+
+        return new AFoggedUnit(unit);
+    }
+
+    private AFoggedUnit(AUnit unit) {
         super(unit.u());
 
-        this.aUnit = unit;
         this._id = unit.id();
-        update(unit);
+        this.aUnit = unit;
+        this.update(unit);
+
+        all.put(unit.id(), this);
     }
+
+//    public AFoggedUnit(AUnit unit) {
+//        super(unit.u());
+//
+//        this.aUnit = unit;
+//        this._id = unit.id();
+//        update(unit);
+//    }
 
     // =========================================================
     
@@ -61,7 +85,7 @@ public class AFoggedUnit extends AUnit {
     public String toString() {
         return "AFoggedUnit{" +
                 "_position=" + _position +
-                ",_Type=" + _lastCachedType +
+                ",_Type=" + _lastType +
                 '}';
     }
 
@@ -79,6 +103,15 @@ public class AFoggedUnit extends AUnit {
         return _id;
     }
 
+    @Override
+    public int compareTo(AUnit o) {
+        if (o == null) {
+            return 1;
+        }
+
+        return o.compareTo(aUnit);
+    }
+
     // =========================================================
     
     /**
@@ -87,11 +120,14 @@ public class AFoggedUnit extends AUnit {
      */
     @Override
     public AUnitType type() {
-        if (_lastCachedType == null) {
-            _lastCachedType = super.type();
+        if (_lastType == null) {
+            if (aUnit == null) {
+                aUnit = _lastAUnit;
+            }
+            _lastType = aUnit.type();
         }
 
-        return _lastCachedType;
+        return _lastType;
     }
 
     public AUnit getUnit() {
@@ -118,9 +154,8 @@ public class AFoggedUnit extends AUnit {
     }
 
     protected void updateType(AUnit unit) {
-        if (_lastCachedType == null || (unit.type() != null && !_lastCachedType.equals(unit.type()))) {
-            _lastCachedType = AUnitType.create(unit.u().getType());
-//            _lastCachedType = unit.type();
+        if (_lastType == null || (unit.type() != null && !_lastType.equals(unit.type()))) {
+            _lastType = aUnit.type();
         }
     }
 
@@ -146,8 +181,9 @@ public class AFoggedUnit extends AUnit {
     }
 
     public boolean isAccessible() {
-        return !AUnitType.Unknown.equals(super.type());
+        return !AUnitType.Unknown.equals(aUnit.type());
     }
+
 
 //    public AFoggedUnit update(AUnit updated) {
 //        if (updated.getID() != unit.getID()) {

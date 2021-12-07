@@ -30,15 +30,24 @@ public abstract class AAvoidUnits {
         }
 
 //        System.out.println(unit.idWithHash() + " (" + unit.hp() + "hp) has " + enemiesDangerouslyClose.size() + " enemies around");
-//        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-//            APainter.paintLine(enemy, unit, Color.Orange);
-//            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
-//        }
-//        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-//                "CLOSE=" + enemiesDangerouslyClose.size() + "",
-//                Color.Teal);
+        AUnit first = enemiesDangerouslyClose.first();
+        int firstValue = (int) enemiesDangerouslyClose.valueFor(first);
 
-        return WantsToAvoid.units(unit, enemiesDangerouslyClose);
+        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+        for (AUnit enemy : enemiesDangerouslyClose.list()) {
+            APainter.paintLine(enemy, unit, Color.Orange);
+            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
+        }
+        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
+                "C=" + enemiesDangerouslyClose.size() + "(" + first.shortName() + ":" + firstValue + ")",
+                Color.Teal);
+
+        if (WantsToAvoid.units(unit, enemiesDangerouslyClose)) {
+            return true;
+        }
+
+        System.err.println("WantsToAvoid false for " + unit.shortNamePlusId());
+        return false;
     }
 
     // =========================================================
@@ -105,7 +114,7 @@ public abstract class AAvoidUnits {
 
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
         return unit.enemiesNearby()
-                .add(EnemyUnits.combatBuildings())
+                .add(EnemyUnits.combatBuildings(false))
                 .filterOutDuplicates()
                 .canAttack(unit, true, true, 5)
                 .list();

@@ -37,6 +37,7 @@ import java.util.*;
  * Also you can always reference original Unit class via u() method, but please avoid it as code will be very
  * hard to migrate to another bridge. I've already used 3 of them in my career so far.
  */
+//public class AUnit implements UnitInterface, Comparable<AUnit>, HasPosition, AUnitOrders {
 public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
@@ -47,7 +48,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // Cached distances to other units - reduces time on calculating unit1.distanceTo(unit2)
 //    public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
 
-    private final Unit u;
+    private Unit u;
     private Cache<Object> cache = new Cache<>();
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
@@ -112,10 +113,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return unit;
     }
 
-    public static void forgetUnitEntirely(Unit u) {
-        instances.remove(u.getID());
-    }
-
     protected AUnit(Unit u) {
         if (u == null) {
             throw new RuntimeException("AUnit constructor: unit is null");
@@ -123,7 +120,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         this.u = u;
 //        this.innerID = firstFreeID++;
-        
+
         // Cached type helpers
         refreshType();
 
@@ -142,6 +139,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     // =========================================================
+
+    public static void forgetUnitEntirely(Unit u) {
+        instances.remove(u.getID());
+    }
 
     /**
      * Returns unit type from bridge OR if type is Unknown (behind fog of war) it will return last cached type.
@@ -382,30 +383,26 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isWounded() {
-        return hp() < getMaxHP();
+        return hp() < maxHP();
     }
 
     public boolean isExists() {
         return u().exists();
     }
 
-    public int getShields() {
+    public int shields() {
         return u().getShields();
     }
 
-    public int getMaxShields() {
+    public int maxShields() {
         return type().ut().maxShields();
     }
 
-    public int getMaxHP() {
-        return maxHp() + getMaxShields();
+    public int maxHP() {
+        return maxHp() + maxShields();
     }
 
-    public int getMinesCount() {
-        return u().getSpiderMineCount();
-    }
-
-    public int getSpiderMinesCount() {
+    public int minesCount() {
         return u().getSpiderMineCount();
     }
 
@@ -428,18 +425,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return cacheInt.get(
                 "groundWeaponRange",
                 60,
-                () -> type().getGroundWeapon().maxRange() / 32
+                () -> type().groundWeapon().maxRange() / 32
         );
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double getGroundWeaponMinRange() {
+    public double groundWeaponMinRange() {
         return cacheInt.get(
                 "getGroundWeaponMinRange",
                 60,
-                () -> type().getGroundWeapon().minRange() / 32
+                () -> type().groundWeapon().minRange() / 32
         );
     }
 
@@ -450,14 +447,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return cacheInt.get(
                 "airWeaponRange",
                 60,
-                () -> type().getAirWeapon().maxRange() / 32
+                () -> type().airWeapon().maxRange() / 32
         );
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against given <b>opponentUnit</b>.
      */
-    public int getWeaponRangeAgainst(AUnit opponentUnit) {
+    public int weaponRangeAgainst(AUnit opponentUnit) {
         return opponentUnit.type().weaponRangeAgainst(this);
     }
 
@@ -688,7 +685,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasWeaponRange(AUnit targetUnit, double extraMargin) {
-        WeaponType weaponAgainstThisUnit = getWeaponAgainst(targetUnit);
+        WeaponType weaponAgainstThisUnit = weaponAgainst(targetUnit);
         if (weaponAgainstThisUnit == WeaponType.None) {
             return false;
         }
@@ -711,11 +708,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns weapon that would be used to attack given target. If no such weapon, then WeaponTypes.None will
      * be returned.
      */
-    public WeaponType getWeaponAgainst(AUnit target) {
+    public WeaponType weaponAgainst(AUnit target) {
         if (target.isGroundUnit()) {
-            return getGroundWeapon();
+            return groundWeapon();
         } else {
-            return getAirWeapon();
+            return airWeapon();
         }
     }
 
@@ -782,14 +779,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns the frames counter (time) when the unit had been issued any command.
      */
-    public int getLastUnitOrderTime() {
+    public int lastUnitOrderTime() {
         return lastUnitOrder;
     }
 
     /**
      * Returns the frames counter (time) since the unit had been issued any command.
      */
-    public int getLastOrderFramesAgo() {
+    public int lastOrderFramesAgo() {
         return AGame.getTimeFrames() - lastUnitOrder;
     }
 
@@ -809,7 +806,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
                 "canAttackGroundUnits",
                 -1,
-                () -> type().getGroundWeapon() != WeaponType.None && type().getGroundWeapon().damageAmount() > 0
+                () -> type().groundWeapon() != WeaponType.None && type().groundWeapon().damageAmount() > 0
                         || type().isReaver()
         );
     }
@@ -821,32 +818,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
                 "canAttackAirUnits",
                 -1,
-                () -> type().getAirWeapon() != WeaponType.None && type().getAirWeapon().damageAmount() > 0
+                () -> type().airWeapon() != WeaponType.None && type().airWeapon().damageAmount() > 0
         );
     }
 
-    /**
-     * Caches combat eval of this unit for the time of one frame.
-     */
-//    public void updateCombatEval(double eval) {
-//        _lastTimeCombatEval = AGame.getTimeFrames();
-//        _lastCombatEval = eval;
-//    }
-
-//    public double getCombatEvalCachedValueIfNotExpired() {
-//        if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
-//            return _lastCombatEval;
-//        } else {
-//            return -123456;
-//        }
-//    }
-
-    public WeaponType getAirWeapon() {
-        return type().getAirWeapon();
+    public WeaponType airWeapon() {
+        return type().airWeapon();
     }
 
-    public WeaponType getGroundWeapon() {
-        return type().getGroundWeapon();
+    public WeaponType groundWeapon() {
+        return type().groundWeapon();
     }
 
     /**
@@ -855,10 +836,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public int cooldownAbsolute() {
         if (canAttackGroundUnits()) {
-            return getGroundWeapon().damageCooldown();
+            return groundWeapon().damageCooldown();
         }
         if (canAttackAirUnits()) {
-            return getAirWeapon().damageCooldown();
+            return airWeapon().damageCooldown();
         }
         return 0;
     }
@@ -903,7 +884,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * If this unit is supposed to build something it will return ConstructionOrder object assigned to the
      * construction.
      */
-    public ConstructionOrder getConstructionOrder() {
+    public ConstructionOrder constructionOrder() {
         return ConstructionRequests.getConstructionOrderFor(this);
     }
 
@@ -911,7 +892,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemy() {
-        return AGame.getPlayerUs().isEnemy(getPlayer());
+        return AGame.getPlayerUs().isEnemy(player());
 //        return (boolean) cache.get(
 //                "isEnemy",
 //                300,
@@ -926,17 +907,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to us.
      */
     public boolean isOur() {
-        if (getPlayer() == null) {
+        if (player() == null) {
             return false;
         }
-        return getPlayer().equals(AGame.getPlayerUs());
+        return player().equals(AGame.getPlayerUs());
     }
 
     /**
      * Returns true if this unit is neutral (minerals, geysers, critters).
      */
     public boolean isNeutral() {
-        return getPlayer().equals(AGame.getNeutralPlayer());
+        return player().equals(AGame.getNeutralPlayer());
     }
 
     /**
@@ -964,7 +945,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // =========================================================
     // Method intermediates between BWMirror and Atlantis
-    public Player getPlayer() {
+    public Player player() {
         return u.getPlayer();
     }
 
@@ -993,7 +974,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
     
     public int hp() {
-        return u.getHitPoints() + getShields();
+        return u.getHitPoints() + shields();
     }
 
     public int maxHp() {
@@ -1001,7 +982,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 "getMaxHitPoints",
                 -1,
                 () -> {
-                    int hp = u.getType().maxHitPoints() + getMaxShields();
+                    int hp = u.getType().maxHitPoints() + maxShields();
                     if (hp == 0) {
                         System.err.println("Max HP = 0 for");
                         System.err.println(this);

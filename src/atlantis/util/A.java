@@ -1223,4 +1223,14 @@ public class A {
             file.delete();
         }
     }
+
+    public static boolean printErrorAndReturnTrue(String text) {
+        System.out.println(text);
+        return true;
+    }
+
+    public static boolean printAndReturnTrue(String text) {
+        System.err.println(text);
+        return true;
+    }
 }

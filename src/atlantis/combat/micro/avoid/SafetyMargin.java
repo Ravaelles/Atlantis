@@ -3,7 +3,6 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class SafetyMargin {
 
@@ -47,7 +46,7 @@ public class SafetyMargin {
 
     protected static double enemyWeaponRange(AUnit defender, AUnit attacker) {
 //        return attacker.getWeaponRangeAgainst(defender) - (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
-        return attacker.getWeaponRangeAgainst(defender) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
+        return attacker.weaponRangeAgainst(defender) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
     protected static double enemyMovementBonus(AUnit defender, AUnit attacker) {

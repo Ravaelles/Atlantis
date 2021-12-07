@@ -83,7 +83,7 @@ public class TerranSiegeTank {
 
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
         for (AUnit enemy : Select.enemyFoggedUnits().effCloaked().groundUnits().inRadius(12, tank).list()) {
-            if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
+            if (enemy.distTo(tank) >= tank.groundWeaponMinRange()) {
                 if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
                     tank.setTooltip("SMASH invisible!");
                     tank.attackPosition(enemy.position());
@@ -94,7 +94,7 @@ public class TerranSiegeTank {
         }
 
         for (AUnit enemy : Select.enemy().effCloaked().groundUnits().inRadius(12, tank).list()) {
-            if (enemy.distTo(tank) >= tank.getGroundWeaponMinRange()) {
+            if (enemy.distTo(tank) >= tank.groundWeaponMinRange()) {
                 if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
                     tank.setTooltip("SMASH invisible!");
                     tank.attackPosition(enemy.position());
@@ -186,7 +186,7 @@ public class TerranSiegeTank {
         nearestEnemyUnit = Select.enemyRealUnits().combatUnits().groundUnits().nearestTo(tank);
         nearestEnemyUnitDist = nearestEnemyUnit != null ? tank.distTo(nearestEnemyUnit) : 999;
 
-        nearestEnemyCombatBuilding = Select.enemy().buildings().nearestTo(tank);
+        nearestEnemyCombatBuilding = Select.enemy().combatBuildings(false).nearestTo(tank);
         nearestEnemyCombatBuildingDist = nearestEnemyCombatBuilding != null ? tank.distTo(nearestEnemyCombatBuilding) : 999;
 
         if (nearestEnemyCombatBuilding != null) {

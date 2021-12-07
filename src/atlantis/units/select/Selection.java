@@ -260,16 +260,16 @@ public class Selection {
      * Selects only units that do not currently have max hit points.
      */
     public Selection ranged() {
-        if (!data.isEmpty() && data.get(0).isEnemy()) {
-            System.out.println("PRE = " + data.size());
-            for (AUnit unit : data) {
-                System.out.println(unit + " // r:" + unit.isRanged());
-            }
-        }
+//        if (!data.isEmpty() && data.get(0).isEnemy()) {
+//            System.out.println("PRE = " + data.size());
+//            for (AUnit unit : data) {
+//                System.out.println(unit + " // r:" + unit.isRanged());
+//            }
+//        }
         data.removeIf(unit -> !unit.isRanged());
-        if (!data.isEmpty() && data.get(0).isEnemy()) {
-            System.out.println("POST = " + data.size());
-        }
+//        if (!data.isEmpty() && data.get(0).isEnemy()) {
+//            System.out.println("POST = " + data.size());
+//        }
         return this;
     }
 
@@ -294,8 +294,8 @@ public class Selection {
     /**
      * Selects military buildings like Photon Cannon, Bunker, Spore Colony, Sunken Colony
      */
-    public Selection combatBuildings() {
-        data.removeIf(unit -> !unit.type().isCombatBuilding());
+    public Selection combatBuildings(boolean includeCreepColonies) {
+        data.removeIf(unit -> includeCreepColonies ? !unit.type().isCombatBuildingOrCreepColony() : !unit.type().isCombatBuilding());
         return this;
     }
 

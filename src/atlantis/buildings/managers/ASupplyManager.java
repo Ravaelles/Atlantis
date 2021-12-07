@@ -9,6 +9,7 @@ import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.A;
 import atlantis.util.We;
 
 public class ASupplyManager {
@@ -20,6 +21,12 @@ public class ASupplyManager {
     
     public static void update() {
         supplyTotal = AGame.supplyTotal();
+
+        // Fix for UMS maps
+        if (A.isUms() && AGame.supplyFree() <= 1 && requestedConstructionsOfSupply() == 0) {
+            requestAdditionalSupply();
+            return;
+        }
 
         // Should use auto supply manager
 //        System.out.println(supplyTotal + " // " + CurrentBuildOrder.settingAutoSupplyManagerWhenSupplyExceeds());

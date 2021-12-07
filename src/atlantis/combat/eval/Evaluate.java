@@ -34,15 +34,26 @@ public class Evaluate {
      * Also it makes sense to distguish before enemy evaluation (we will almost always understimate enemy
      * strength) or our own evaluation (we're likely to overestimate our strength).
      */
-    protected static double evaluateUnitsAgainstUnit(Units units, AUnit againstUnit, boolean isEnemyEval) {
+//    protected static double evaluateUnitsAgainstUnit(Units units, AUnit againstUnit, boolean isEnemyEval) {
+    protected static double evaluateUnitsAgainstUnit(Units theseUnits, Units againstUnits, boolean isEnemyEval) {
         double totalStrength = 0;
         boolean enemyDefensiveBuildingFound = false;
         boolean enemyDefensiveBuildingInRange = false;
+        AUnit againstUnit = againstUnits.first();
+
+        if (againstUnit == null) {
+            System.err.println("againstUnit is NULL");
+            return 0.0;
+        }
+        else if (!againstUnit.isAlive()) {
+            System.err.println("againstUnit is DEAD");
+            return 0.0;
+        }
 
         // =========================================================
 //        for (AUnit unit : units.list()) {
 //        for (AUnit unit : units.iterator())
-        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext(); ) {
+        for (Iterator<AUnit> iterator = theseUnits.iterator(); iterator.hasNext(); ) {
             AUnit unit = iterator.next();
             double unitStrengthEval = evaluateUnitHPandDamage(unit, againstUnit);
 
@@ -79,14 +90,14 @@ public class Evaluate {
         // =========================================================
         // Extra bonus for DEFENSIVE BUILDING PRESENCE
 
-        if (!isEnemyEval) {
-            if (enemyDefensiveBuildingFound) {
-                totalStrength += units.onlyAir() ? 30 : 10;
-            }
-            if (enemyDefensiveBuildingInRange) {
-                totalStrength += units.onlyAir() ? 30 : 10;
-            }
+//        if (!isEnemyEval) {
+        if (enemyDefensiveBuildingFound) {
+            totalStrength += theseUnits.onlyAir() ? 30 : 10;
         }
+        if (enemyDefensiveBuildingInRange) {
+            totalStrength += theseUnits.onlyAir() ? 30 : 10;
+        }
+//        }
 
         return totalStrength;
     }
@@ -109,10 +120,10 @@ public class Evaluate {
         return eval;
     }
 
-    private static double evaluateUnitHPandDamage(AUnitType evaluate, AUnit againstUnit) {
-//        return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);
-        return evaluateUnitHPandDamage(evaluate, evaluate.getMaxHitPoints(), againstUnit);
-    }
+//    private static double evaluateUnitHPandDamage(AUnitType evaluate, AUnit againstUnit) {
+////        return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);
+//        return evaluateUnitHPandDamage(evaluate, evaluate.getMaxHitPoints(), againstUnit);
+//    }
 
     private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
         return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);

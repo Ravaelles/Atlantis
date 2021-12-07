@@ -1,15 +1,10 @@
 package atlantis.combat.eval;
 
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import atlantis.util.Cache;
-import atlantis.util.ColorUtil;
-import atlantis.util.WeaponUtil;
-import bwapi.Color;
-import java.util.Collection;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,18 +90,93 @@ public class ACombatEvaluator {
                 // =========================================================
                 // Define nearby enemy and our units
 
-                // Ranged
-                Units againstUnits = unit.enemiesNearby().ranged()
-                        .canAttack(unit, 4)
-                        .units();
+                Units againstUnits = againstUnits(unit);
 
-                // Melee
-                againstUnits.addAll(
-                        unit.enemiesNearby().melee()
-                                .inRadius(6, unit)
-                                .canAttack(unit, 6)
-                                .listUnits()
-                );
+                if (againstUnits.isEmpty()) {
+                    return MAX_VALUE;
+                }
+
+//                if (unit.isOur() && againstUnits.isNotEmpty()) {
+//                    System.out.println(" // " + againstUnits.size());
+//                    for (AUnit against : againstUnits.list()) {
+//                        System.out.println("   " + against);
+//                    }
+//                }
+
+                Units theseUnits = theseUnits(unit);
+
+//                System.out.println("---- ENEMY (" + enemyUnits.size() + ")");
+//                A.printList(enemyUnits);
+//                System.out.println("---- OUR (" + ourUnits.size() + ")");
+//                A.printList(ourUnits);
+
+                // =========================================================
+                // Evaluate our and enemy strength
+
+                double againstUnitsEvaluation = Evaluate.evaluateUnitsAgainstUnit(againstUnits, theseUnits, true);
+                double theseUnitsEvaluation = Evaluate.evaluateUnitsAgainstUnit(theseUnits, againstUnits, false);
+
+//                if (unit.isOur()) {
+//                    System.out.println("enemyEvaluation = " + enemyEvaluation);
+//                    System.out.println("ourEvaluation = " + unit + " // " + + ourEvaluation);
+//                }
+
+                // =========================================================
+
+                // Return non-relative absolute value
+                if (!relativeToEnemy) {
+                    if (unit.isEnemy()) {
+                        return againstUnitsEvaluation;
+                    } else {
+                        return theseUnitsEvaluation;
+                    }
+                }
+
+                // Return relative value compared to local enemy strength
+                else {
+                    if (unit.isEnemy()) {
+                        return againstUnitsEvaluation / theseUnitsEvaluation - 1;
+                    } else {
+                        return theseUnitsEvaluation / againstUnitsEvaluation - 1;
+                    }
+                }
+            }
+        );
+    }
+
+    private static Units theseUnits(AUnit unit) {
+        Units theseUnits;
+        double rangedRadius = 13;
+        double meleeRadius = 4.5;
+
+        // Our eval
+        if (unit.isOur()) {
+            theseUnits = Select.ourCombatUnits().ranged().inRadius(rangedRadius, unit).units();
+            theseUnits.addAll(Select.ourCombatUnits().melee().inRadius(meleeRadius, unit).list());
+        }
+
+        // Enemy eval
+        else {
+            theseUnits = Select.enemyCombatUnits().ranged().inRadius(rangedRadius, unit).units();
+            theseUnits.addAll(Select.ourCombatUnits().melee().inRadius(meleeRadius, unit).list());
+        }
+
+        return theseUnits;
+    }
+
+    private static Units againstUnits(AUnit unit) {
+        // Ranged
+        Units againstUnits = unit.enemiesNearby().ranged()
+                .canAttack(unit, 4)
+                .units();
+
+        // Melee
+        againstUnits.addAll(
+                unit.enemiesNearby().melee()
+                        .inRadius(6, unit)
+                        .canAttack(unit, 6)
+                        .listUnits()
+        );
 
 //                System.out.println("# EVAL for " + unit + " // enemiesNearby = " + unit.enemiesNearby().count());
 //                if (unit.isOur() && unit.enemiesNearby().isNotEmpty()) {
@@ -133,79 +203,33 @@ public class ACombatEvaluator {
 //                    );
 //                }
 
-                if (unit.isOur() && unit.isAirUnit()) {
-                    System.out.println(" // " + againstUnits.size() + " of " + unit.enemiesNearby().size());
-                    System.out.println("A = " + unit.enemiesNearby().ranged()
-                            .canAttack(unit, 4)
-                            .units().size());
-                    System.out.println("B = " + unit.enemiesNearby()
-                            .units().size());
-                    System.out.println("C = " + unit.enemiesNearby().ranged()
-                            .units().size());
-                    System.out.println("D = " + unit.enemiesNearby()
-                            .units().size());
-                    System.out.println("E = " + unit.enemiesNearby()
-                            .canAttack(unit, 4)
-                            .units().size());
-                    for (AUnit against : againstUnits.list()) {
-                        System.out.println("   " + against);
-                    }
-                }
+//        if (unit.isOur() && unit.isAirUnit()) {
+//            System.out.println(" // " + againstUnits.size() + " of " + unit.enemiesNearby().size());
+//            for (AUnit enemy : againstUnits.list()) {
+//                System.out.println("    " + enemy + " // " + enemy.weaponRangeAgainst(unit) + " <-- " + enemy.distTo(unit));
+//            }
+//            System.out.println("A = " + unit.enemiesNearby().ranged()
+//                    .canAttack(unit, 4)
+//                    .units().size());
+//            System.out.println("B = " + unit.enemiesNearby()
+//                    .units().size());
+//            System.out.println("C = " + unit.enemiesNearby().ranged()
+//                    .units().size());
+//            System.out.println("D = " + unit.enemiesNearby()
+//                    .units().size());
+//            System.out.println("E = " + unit.enemiesNearby()
+//                    .canAttack(unit, 4)
+//                    .units().size());
+//            for (AUnit against : againstUnits.list()) {
+//                System.out.println("   " + against);
+//            }
+//        }
 
-                if (againstUnits.isEmpty()) {
-//                    if (unit.isOur()) {
-//                        System.out.println(unit + " MAX");
-//                    }
-                    return MAX_VALUE;
-                }
+        return againstUnits;
+    }
 
-//                if (unit.isOur() && againstUnits.isNotEmpty()) {
-//                    System.out.println(" // " + againstUnits.size());
-//                    for (AUnit against : againstUnits.list()) {
-//                        System.out.println("   " + against);
-//                    }
-//                }
-
-                Units ourUnits = Select.ourCombatUnits().ranged().inRadius(13, unit).units();
-                ourUnits.addAll(Select.ourCombatUnits().melee().inRadius(4.5, unit).listUnits());
-
-//                System.out.println("---- ENEMY (" + enemyUnits.size() + ")");
-//                A.printList(enemyUnits);
-//                System.out.println("---- OUR (" + ourUnits.size() + ")");
-//                A.printList(ourUnits);
-
-                // =========================================================
-                // Evaluate our and enemy strength
-
-                double enemyEvaluation = Evaluate.evaluateUnitsAgainstUnit(againstUnits, unit, true);
-                double ourEvaluation = Evaluate.evaluateUnitsAgainstUnit(ourUnits, againstUnits.first(), false);
-
-//                if (unit.isOur()) {
-//                    System.out.println("enemyEvaluation = " + enemyEvaluation);
-//                    System.out.println("ourEvaluation = " + unit + " // " + + ourEvaluation);
-//                }
-
-                // =========================================================
-
-                // Return non-relative absolute value
-                if (!relativeToEnemy) {
-                    if (unit.isEnemy()) {
-                        return enemyEvaluation;
-                    } else {
-                        return ourEvaluation;
-                    }
-                }
-
-                // Return relative value compared to local enemy strength
-                else {
-                    if (unit.isEnemy()) {
-                        return enemyEvaluation / ourEvaluation - 1;
-                    } else {
-                        return ourEvaluation / enemyEvaluation - 1;
-                    }
-                }
-            }
-        );
+    public static boolean advantagePercent(AUnit unit, int percentOfAdvantageRelativeToEnemyStrength) {
+        return evaluateSituation(unit, true) >= (1 + percentOfAdvantageRelativeToEnemyStrength / 100.0);
     }
 
     // =========================================================

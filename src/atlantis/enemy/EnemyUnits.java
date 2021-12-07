@@ -5,6 +5,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.A;
 import atlantis.util.Cache;
 
 import java.util.HashMap;
@@ -90,11 +91,11 @@ public class EnemyUnits {
         );
     }
 
-    public static Selection combatBuildings() {
+    public static Selection combatBuildings(boolean includeCreepColonies) {
         return (Selection) cache.get(
-                "combatBuildings",
-                30,
-                () -> selectFoggedUnits().combatBuildings()
+                "combatBuildings:" + A.trueFalse(includeCreepColonies),
+                20,
+                () -> selectFoggedUnits().combatBuildings(includeCreepColonies)
         );
     }
 }

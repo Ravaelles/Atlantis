@@ -183,7 +183,7 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean handleEnemyBuildingsOffensive(AUnit worker) {
-        if (A.seconds() <= 40) {
+        if (A.isUms() || A.seconds() <= 40) {
             return false;
         }
 

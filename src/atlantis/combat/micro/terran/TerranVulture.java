@@ -22,7 +22,7 @@ public class TerranVulture {
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
 //        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
-        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.getLastOrderFramesAgo() > 15) {
+        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.lastOrderFramesAgo() > 15) {
             unit.setUnitAction(UnitActions.STOP);
             unit.setTooltip("Planted!");
             return false;
@@ -35,7 +35,7 @@ public class TerranVulture {
         }
 
         // If out of mines or mines ain't researched, don't do anything.
-        if (unit.getMinesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) {
+        if (unit.minesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) {
             return false;
         }
 
@@ -58,7 +58,7 @@ public class TerranVulture {
         
         // Don't cluster mines too much
         Selection nearbyMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);
-        if ((nearbyMines.count() <= 3 || (unit.getMinesCount() >= 3 && nearbyMines.count() <= 4)) 
+        if ((nearbyMines.count() <= 3 || (unit.minesCount() >= 3 && nearbyMines.count() <= 4))
                 && nearbyMines.inRadius(1, unit).count() == 0) {
             unit.useTech(TechType.Spider_Mines, unit.position());
             unit.setUnitAction(UnitActions.USING_TECH, TechType.Spider_Mines, unit.position());

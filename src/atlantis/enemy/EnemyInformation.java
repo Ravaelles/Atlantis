@@ -9,7 +9,6 @@ import atlantis.position.APosition;
 import atlantis.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.UnitInterface;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
@@ -136,7 +135,7 @@ public class EnemyInformation {
      */
     public static int countEnemyKnownUnitsOfType(AUnitType type) {
         int total = 0;
-        for (UnitInterface enemyUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
+        for (AUnit enemyUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
             if (enemyUnit.is(type)) {
                 total++;
             }
@@ -194,7 +193,7 @@ public class EnemyInformation {
                 "hasDefensiveLandBuilding",
                 30,
                 () -> EnemyUnits.selectFoggedUnits()
-                        .combatBuildings()
+                        .combatBuildings(true)
                         .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony)
                         .atLeast(1)
         );

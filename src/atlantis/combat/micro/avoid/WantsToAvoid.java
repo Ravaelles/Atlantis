@@ -19,11 +19,10 @@ public class WantsToAvoid {
 
         if (!shouldAlwaysAvoid(unit, enemies)) {
             if (
-                    (new FightInsteadAvoid(unit, enemies)).shouldFight()
-                            && !unit.isUnitUnableToDoAnyDamage()
-    //                        && !AAttackEnemyUnit.shouldNotAttack(unit)
+                    !unit.isUnitUnableToDoAnyDamage()
+                    && (new FightInsteadAvoid(unit, enemies)).shouldFight()
             ) {
-    //            System.out.println("FIGHT INSTEAD AVOID " + unit + " // " + unit.hp());
+                System.err.println("FIGHT INSTEAD AVOID " + unit.shortNamePlusId() + " // " + unit.hp());
                 return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
             }
         }

@@ -8,6 +8,7 @@ import bwapi.Color;
 public class DontDisturbInterrupt {
 
     public static boolean dontInterruptImportantActions(AUnit unit) {
+        if (true) return false;
 
         // Allow to use tech
         if (unit.lastActionLessThanAgo(3, UnitActions.USING_TECH)) {

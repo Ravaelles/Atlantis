@@ -56,7 +56,7 @@ public class AAdvancedPainter extends APainter {
     protected static int sideMessageBottomCounter = 0;
     protected static int prevTotalFindBuildPlace = 0;
     private static final int rightSideMessageLeftOffset = 572;
-    private static final int rightSideMessageTopOffset = 470;
+    private static final int rightSideMessageTopOffset = 450;
     private static final int timeConsumptionLeftOffset = 572;
     private static final int timeConsumptionTopOffset = 65;
     private static final int timeConsumptionBarMaxWidth = 50;
@@ -196,7 +196,7 @@ public class AAdvancedPainter extends APainter {
 //                }
 //            }
             String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
-                    + "(" + unit.getLastOrderFramesAgo() + ")";
+                    + "(" + unit.lastOrderFramesAgo() + ")";
             paintTextCentered(new APosition(position.getX(), position.getY() + 8), order, Color.Grey);
         }
     }
@@ -220,6 +220,10 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintEnemyCombatUnits() {
         for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
+            if (!enemy.isAlive()) {
+                continue;
+            }
+
             paintCombatEval(enemy);
             paintLifeBar(enemy);
 //            paintEnemyTargets(enemy);
@@ -1203,10 +1207,11 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintLog() {
-        int x = rightSideMessageLeftOffset - 100;
+        int x = rightSideMessageLeftOffset - 130;
         int y = rightSideMessageTopOffset;
 
         int counter = 0;
+        APainter.setTextSizeSmall();
         for (LogMessage log : Log.messages()) {
             paintMessage(log.message(), log.color(), x, y - 12 * counter++, true);
         }

@@ -355,6 +355,12 @@ public class Units {
         return onlyRanged.size() == this.units.size();
     }
 
+    public boolean onlyMelee() {
+        ArrayList<AUnit> onlyRanged = new ArrayList<>(this.units);
+        onlyRanged.removeIf(u -> !u.isMelee());
+        return onlyRanged.size() == this.units.size();
+    }
+
     public boolean onlyAir() {
         ArrayList<AUnit> list = new ArrayList<>(this.units);
         list.removeIf(u -> !u.isAirUnit());
