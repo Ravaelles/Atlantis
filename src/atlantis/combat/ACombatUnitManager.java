@@ -202,7 +202,7 @@ public class ACombatUnitManager {
      * Can be used for testing.
      */
     private static boolean testUnitBehaviorShootAtOwnUnit(AUnit unit) {
-        if (Select.our().first().getID() != unit.getID()) {
+        if (Select.our().first().id() != unit.id()) {
             unit.attackUnit(Select.our().first());
         }
         return true;

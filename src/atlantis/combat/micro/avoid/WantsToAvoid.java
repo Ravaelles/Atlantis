@@ -22,7 +22,7 @@ public class WantsToAvoid {
                     !unit.isUnitUnableToDoAnyDamage()
                     && (new FightInsteadAvoid(unit, enemies)).shouldFight()
             ) {
-                System.err.println("FIGHT INSTEAD AVOID " + unit.shortNamePlusId() + " // " + unit.hp());
+//                System.err.println("FIGHT INSTEAD AVOID " + unit.shortNamePlusId() + " // " + unit.hp());
                 return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
             }
         }

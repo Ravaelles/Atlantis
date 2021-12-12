@@ -398,12 +398,13 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * Returns name for of unit type like e.g. "Zerg Zergling", "Terran Marine", "Protoss Gateway".
      */
-    public String getName() {
-        return (String) cache.get(
-                "getName",
-                -1,
-                () -> ut.toString()
-        );
+    public String name() {
+        return ut.toString();
+//        return (String) cache.get(
+//                "getName",
+//                -1,
+//                () -> ut.toString()
+//        );
     }
 
     // =========================================================
@@ -416,7 +417,7 @@ public class AUnitType implements Comparable<AUnitType> {
                 "shortName",
                 -1,
                 () -> {
-                    String name = getName()
+                    String name = name()
                             .replace("Terran_", "").replace("Protoss_", "")
                             .replace("Zerg_", "").replace("Hero_", "")
                             .replace("Special_", "").replace("Powerup_", "")
@@ -945,7 +946,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isNeutralType",
                 -1,
-                () -> getName().charAt(0) != 'Z' && getName().charAt(0) != 'T' && getName().charAt(0) != 'P'
+                () -> name().charAt(0) != 'Z' && name().charAt(0) != 'T' && name().charAt(0) != 'P'
         );
     }
 
@@ -957,7 +958,7 @@ public class AUnitType implements Comparable<AUnitType> {
                 "isSpecial",
                 -1,
                 () -> {
-                    String name = getName();
+                    String name = name();
                     return name.startsWith("Powerup") || name.startsWith("Special");
                 }
         );

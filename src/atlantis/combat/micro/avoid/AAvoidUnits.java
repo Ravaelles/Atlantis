@@ -46,7 +46,7 @@ public abstract class AAvoidUnits {
             return true;
         }
 
-        System.err.println("WantsToAvoid false for " + unit.shortNamePlusId());
+//        System.err.println("WantsToAvoid false for " + unit.shortNamePlusId());
         return false;
     }
 
@@ -90,7 +90,7 @@ public abstract class AAvoidUnits {
                     return enemies;
                 }
             }
-        ).clone();
+        );
     }
 
     public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {

@@ -186,9 +186,9 @@ public class AFoggedUnit extends AUnit {
 
 
 //    public AFoggedUnit update(AUnit updated) {
-//        if (updated.getID() != unit.getID()) {
+//        if (updated.getID() != unit.id()) {
 //            throw new RuntimeException(
-//                    String.format("Unexpected unit ID. Expected %d, received %d", unit.getID(), updated.getID())
+//                    String.format("Unexpected unit ID. Expected %d, received %d", unit.id(), updated.getID())
 //            );
 //        }
 //

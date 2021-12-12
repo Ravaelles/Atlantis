@@ -68,7 +68,7 @@ public class AUnitStateManager {
 //            System.out.println(unit.getPosition());
 //            System.out.println(enemy.getPosition());
         }
-//        if (unit.getID() == Select.ourCombatUnits().first().getID()) {
+//        if (unit.id() == Select.ourCombatUnits().first().getID()) {
 //            System.out.println(AGame.getTimeFrames() + " ### "
 //                    + unit._lastAttackOrder + " // " + unit._lastAttackFrame + " // " + unit._lastStartingAttack);
 //        }

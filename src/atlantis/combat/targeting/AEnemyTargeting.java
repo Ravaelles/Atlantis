@@ -169,7 +169,7 @@ public class AEnemyTargeting {
 
         if ((target = ATargetingCrucial.target(unit)) != null) {
 //            if (!target.type().isCarrier()) {
-//                System.out.println(A.now() + "  #" + unit.getID() + " " + unit.shortName() + " > " + target.shortName());
+//                System.out.println(A.now() + "  #" + unit.id() + " " + unit.shortName() + " > " + target.shortName());
 //            }
             if (AEnemyTargeting.debug(unit)) System.out.println("B = "+ target);
             return target;

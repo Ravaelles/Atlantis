@@ -660,7 +660,7 @@ public class Selection {
         StringBuilder string = new StringBuilder("Units (" + data.size() + "):\n");
 
         for (AUnit unit : data) {
-            string.append("   - ").append(unit.type()).append(" (ID:").append(unit.getID()).append(")\n");
+            string.append("   - ").append(unit.type()).append(" (ID:").append(unit.id()).append(")\n");
         }
 
         return string.toString();
@@ -814,5 +814,12 @@ public class Selection {
         }
 
         return new Selection(filteredUnits, this.currentCachePath);
+    }
+
+    public void print() {
+        System.out.println("=== " + currentCachePath + " (" + size() + ") ===");
+        for (AUnit unit : data) {
+            System.out.println(unit);
+        }
     }
 }

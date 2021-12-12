@@ -56,7 +56,7 @@ public class TerranComsatStation {
 
         int minUnitsNearby = (comsat.energy(160) ? 3 : (comsat.energy(100) ? 4 : 6));
 
-        if (Select.ourBuildingsIncludingUnfinished().inRadius(9, lurker).isNotEmpty()) {
+        if (Select.ourBuildingsIncludingUnfinished().inRadius(11, lurker).isNotEmpty()) {
             return true;
         }
 

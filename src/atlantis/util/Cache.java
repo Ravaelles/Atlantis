@@ -1,6 +1,7 @@
 package atlantis.util;
 
 import atlantis.units.AUnit;
+import atlantis.units.select.Selection;
 
 import java.util.TreeMap;
 
@@ -34,14 +35,16 @@ public class Cache<V> {
             return (V) callback.run();
         }
 
-        if (data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
-            return data.get(cacheKey);
-        }
-        else if (callback != null) {
+        if (!data.containsKey(cacheKey) || !isCacheStillValid(cacheKey)) {
             set(cacheKey, cacheForFrames, callback);
         }
 
-        return data.get(cacheKey);
+        V result = data.get(cacheKey);
+        if (result instanceof Selection) {
+            return (V) ((Selection) result).clone();
+        } else {
+            return result;
+        }
     }
 
     public void set(String cacheKey, int cacheForFrames, Callback callback) {
@@ -95,5 +98,9 @@ public class Cache<V> {
         } else {
             cachedUntil.remove(cacheKey);
         }
+    }
+
+    public int size() {
+        return data.size();
     }
 }

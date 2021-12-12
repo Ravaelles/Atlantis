@@ -735,7 +735,7 @@ public class AAdvancedPainter extends APainter {
 
             // Paint #ID
             paintTextCentered(unit.translateByTiles(0, 1),
-                    "#" + unit.getID() + " " + unit.getUnitAction(), Color.Cyan);
+                    "#" + unit.id() + " " + unit.getUnitAction(), Color.Cyan);
 
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {

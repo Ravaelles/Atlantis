@@ -81,7 +81,7 @@ public class Atlantis implements BWEventListener {
     public void onStart() {
 
         // Initialize game object - JBWAPI's representation of game and its state.
-        game = bwClient.getGame();
+        setGame(bwClient.getGame());
 
         // Initialize Game Commander, a class to rule them all
         gameCommander = new AGameCommander();
@@ -211,6 +211,7 @@ public class Atlantis implements BWEventListener {
             }
         } else {
             EnemyInformation.removeDiscoveredUnit(unit);
+//            removeFoggedUnit
             if (!unit.type().isGeyser()) {
                 KILLED++;
                 KILLED_RESOURCES += unit.type().getTotalResources();
@@ -572,6 +573,10 @@ public class Atlantis implements BWEventListener {
      */
     public static Game game() {
         return getInstance().game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     public AGameCommander getGameCommander() {

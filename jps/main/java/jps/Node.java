@@ -4,10 +4,10 @@ package jps.main.java.jps;
  * @author Kevin
  */
 public abstract class Node {
-    int x;
-    int y;
+    public int x;
+    public int y;
 
-    boolean walkable = true;
+    public boolean walkable = true;
 
     public Node(int x, int y) {
         this.x = x;

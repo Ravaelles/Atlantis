@@ -42,7 +42,7 @@ public class Evaluate {
         AUnit againstUnit = againstUnits.first();
 
         if (againstUnit == null) {
-            System.err.println("againstUnit is NULL");
+//            System.err.println("againstUnit is NULL");
             return 0.0;
         }
         else if (!againstUnit.isAlive()) {

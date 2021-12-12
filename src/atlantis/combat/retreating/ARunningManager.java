@@ -39,7 +39,7 @@ public class ARunningManager {
     // =========================================================
 
     public static boolean shouldStopRunning(AUnit unit) {
-//        System.out.println(unit.getID() + " // " + unit.isRunning()
+//        System.out.println(unit.id() + " // " + unit.isRunning()
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
         if (
                 unit.isRunning()

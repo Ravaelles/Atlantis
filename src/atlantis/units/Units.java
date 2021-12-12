@@ -375,7 +375,7 @@ public class Units {
         StringBuilder string = new StringBuilder("Units (" + units.size() + "):\n");
 
         for (AUnit unit : units) {
-            string.append("   - ").append(unit.type()).append(" (ID:").append(unit.getID()).append(") ")
+            string.append("   - ").append(unit.type()).append(" (ID:").append(unit.id()).append(") ")
                     .append(hasValueFor(unit) ? valueForOrNull(unit) : "")
                     .append("\n");
         }

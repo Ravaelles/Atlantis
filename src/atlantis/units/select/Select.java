@@ -22,7 +22,8 @@ import java.util.*;
  */
 public class Select<T extends AUnit> extends BaseSelect<T> {
 
-    protected static SelectUnitsCache cache = new SelectUnitsCache();
+//    protected static SelectUnitsCache cache = new SelectUnitsCache();
+    protected static Cache<Selection> cache = new Cache<>();
     protected static Cache<Integer> cacheInt = new Cache<>();
     protected static Cache<AUnit> cacheUnit = new Cache<>();
 
@@ -541,7 +542,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return cache.get(
                 cachePath = "geysers",
                 50,
-                () -> all().ofType(AUnitType.Resource_Vespene_Geyser)
+                () -> neutral().ofType(AUnitType.Resource_Vespene_Geyser)
         );
     }
 

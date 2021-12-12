@@ -50,7 +50,7 @@ public class ATransportManager {
                 AUnitType.Protoss_Reaver,
                 AUnitType.Terran_Siege_Tank_Tank_Mode,
                 AUnitType.Terran_Siege_Tank_Siege_Mode
-        ).unloaded().inRadius(35, transport).randomWithSeed(transport.getID());
+        ).unloaded().inRadius(35, transport).randomWithSeed(transport.id());
 
         if (crucialBaby != null && !hasTransportAssigned(crucialBaby)) {
             makeAssignment(transport, crucialBaby);

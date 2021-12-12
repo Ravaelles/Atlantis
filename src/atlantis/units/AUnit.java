@@ -52,7 +52,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Cache<Object> cache = new Cache<>();
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
-    private AUnitType _lastType = null;
+    protected AUnitType _lastType = null;
     private UnitAction unitAction = UnitActions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
@@ -95,11 +95,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             if (unit != null && unit.isAlive()) {
                 return unit;
             }
-//            instances.remove(u.getID());
+//            instances.remove(id());
         }
-        
+
         unit = new AUnit(u);
-        instances.put(u.getID(), unit);
+        instances.put(unit.id(), unit);
         return unit;
     }
 
@@ -112,6 +112,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         return unit;
     }
+
+    // Only for tests
+    protected AUnit() { }
 
     protected AUnit(Unit u) {
         if (u == null) {
@@ -175,7 +178,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                }
 //        );
     }
-    
+
     public void refreshType() {
         _lastType = null;
         cache.forgetAll();
@@ -238,7 +241,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // =========================================================
     // Important methods
-    
+
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
@@ -246,7 +249,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (position == null || moveDistance < 0.01) {
             return false;
         }
-        
+
         int dx = position.x() - x();
         int dy = position.y() - y();
         double vectorLength = Math.sqrt(dx * dx + dy * dy);
@@ -268,7 +271,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         this.setTooltip("Cant move away");
         return move(newPosition, UnitActions.MOVE, "Force move");
     }
-    
+
     // =========================================================
 
     @Override
@@ -411,7 +414,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public String shortNamePlusId() {
-        return type().shortName() + " #" + getID();
+        return type().shortName() + " #" + id();
     }
 
     public boolean isInWeaponRangeByGame(AUnit target) {
@@ -465,7 +468,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int getUnitIndexInBwapi() {
         int index = 0;
         for (AUnit otherUnit : Select.our().ofType(type()).listUnits()) {
-            if (otherUnit.getID() < this.getID()) {
+            if (otherUnit.id() < this.id()) {
                 index++;
             }
         }
@@ -473,7 +476,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     // ===  Debugging / Painting methods ========================================
-    
+
     private String tooltip;
 //    private int tooltipStartInFrames;
 
@@ -926,13 +929,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean canHaveAddon() {
         return type().canHaveAddon();
     }
-    
-    public int getID() {
-        return u.getID();
-    }
 
     public String getIDWithHash() {
-        return "#" + u.getID();
+        return "#" + id();
     }
 
     public int id() {
@@ -940,7 +939,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public String idWithHash() {
-        return "#" + u.getID();
+        return "#" + id();
     }
 
     // =========================================================
@@ -972,7 +971,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean hasAddon() {
         return u().getAddon() != null;
     }
-    
+
     public int hp() {
         return u.getHitPoints() + shields();
     }
@@ -1251,27 +1250,27 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isLoaded() {
         return u.isLoaded();
     }
-    
+
     public boolean isUnderDisruptionWeb() {
         return u().isUnderDisruptionWeb();
     }
-    
+
     public boolean isUnderDarkSwarm() {
         return u().isUnderDarkSwarm();
     }
-    
+
     public boolean isUnderStorm() {
         return u().isUnderStorm();
     }
-    
+
     public int getRemainingBuildTime() {
         return u().getRemainingBuildTime();
     }
-    
+
     public int remainingResearchTime() {
         return u().getRemainingResearchTime();
     }
-    
+
     public int remainingTrainTime() {
         return u().getRemainingTrainTime();
     }
@@ -1306,7 +1305,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isInterruptible() {
         return u.isInterruptible();
     }
-    
+
     public UnitCommand getLastCommand() {
         return u.getLastCommand();
     }
@@ -1318,18 +1317,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public UnitAction getUnitAction() {
         return unitAction;
     }
-    
+
     // === Unit actions ========================================
-    
+
     public boolean isUnitAction(UnitAction constant) {
         return unitAction == constant;
     }
-    
+
     public boolean isUnitActionAttack() {
         return unitAction == UnitActions.ATTACK_POSITION || unitAction == UnitActions.ATTACK_UNIT
                  || unitAction == UnitActions.MOVE_TO_ENGAGE;
     }
-    
+
     public boolean isUnitActionMove() {
         return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_ENGAGE
                 || unitAction == UnitActions.MOVE_TO_BUILD || unitAction == UnitActions.MOVE_TO_REPAIR
@@ -1338,11 +1337,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 || unitAction == UnitActions.EXPLORE
                 || unitAction == UnitActions.RUN;
     }
-    
+
     public boolean isUnitActionRepair() {
         return unitAction == UnitActions.REPAIR || unitAction == UnitActions.MOVE_TO_REPAIR;
     }
-    
+
     public AUnit setUnitAction(UnitAction unitAction) {
         this.unitAction = unitAction;
         cacheUnitActionTimestamp(unitAction);
@@ -1441,7 +1440,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean noCooldown() {
         return groundWeaponCooldown() <= 0 || airWeaponCooldown() <= 0;
     }
-    
+
     public int scarabCount() {
         return u().getScarabCount();
     }
@@ -1588,7 +1587,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isFirstCombatUnit() {
-        return getID() == Select.ourCombatUnits().first().getID();
+        return id() == Select.ourCombatUnits().first().id();
     }
 
     public Mission micro() {
@@ -1668,7 +1667,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean is(AUnitType type) {
         return cacheBoolean.get(
-                "is" + type.id(),
+//                "isType:" + type.id(),
+                "isType:" + type.name(),
                 -1,
                 () -> type().is(type)
         );
@@ -1881,7 +1881,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 3,
                 () -> Select.enemyRealUnits(true, true, true)
                         .inRadius(14, this)
-        )).clone();
+        ));
     }
 
     public boolean hasMedicInRange() {

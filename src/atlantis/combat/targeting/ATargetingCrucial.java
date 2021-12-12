@@ -46,7 +46,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
             target = enemyUnits.clone()
                     .ofType(AUnitType.Terran_Vulture_Spider_Mine)
                     .inShootRangeOf(groundRange + 4, unit)
-                    .randomWithSeed(700 + unit.getID());
+                    .randomWithSeed(700 + unit.id());
             if (target != null) {
                 return target;
             }
@@ -136,7 +136,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
                         AUnitType.Terran_Siege_Tank_Siege_Mode
                 )
                 .inRadius(9, unit)
-                .randomWithSeed(unit.getID());
+                .randomWithSeed(unit.id());
         if (target != null) {
             return target;
         }

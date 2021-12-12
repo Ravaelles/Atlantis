@@ -14,7 +14,7 @@ import java.util.List;
 
 public class BaseSelect<T extends AUnit> {
 
-    private static final Cache<List<AUnit>> cacheList = new Cache<>();
+    protected static final Cache<List<AUnit>> cacheList = new Cache<>();
 
     protected static List<AUnit> ourUnits() {
         return cacheList.get(

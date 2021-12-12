@@ -37,7 +37,7 @@ public class Missions {
         }
 
         if (currentGlobalMission == null) {
-            setGlobalMissionTo(getInitialMission());
+            setGlobalMissionTo(initialMission());
         }
 
         return currentGlobalMission;
@@ -71,7 +71,7 @@ public class Missions {
         setGlobalMissionTo(CONTAIN);
     }
 
-    public static Mission getInitialMission() {
+    public static Mission initialMission() {
 
         // === Handle UMS ==========================================
 
@@ -82,9 +82,9 @@ public class Missions {
 
         // =========================================================
 
-        if (Enemy.zerg()) {
-            return Missions.DEFEND;
-        }
+//        if (Enemy.zerg()) {
+//            return Missions.DEFEND;
+//        }
 
 //        return Missions.DEFEND;
         return Missions.ATTACK;

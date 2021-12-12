@@ -21,8 +21,8 @@ public class AUnitTypesHelper {
         HashMap<AUnitType, Double> unitsTopRatioGroundDamage = new HashMap<>();
         
         for (AUnitType type : AUnitType.getAllUnitTypes()) {
-            if (type.getName().startsWith("Hero") || type.getName().startsWith("Special")
-                    || type.getName().startsWith("Powerup") || type.getName().startsWith("Critter")) {
+            if (type.name().startsWith("Hero") || type.name().startsWith("Special")
+                    || type.name().startsWith("Powerup") || type.name().startsWith("Critter")) {
                 continue;
             }
             

@@ -36,17 +36,21 @@ public class MobileDetector {
     // =========================================================
 
     protected static boolean handleSpreadOut(AUnit unit) {
-        int minDistBetween = We.protoss() ? 15 : 3;
+        int minDistBetween = minDistanceBetweenUnits(unit);
 
         Selection units = Select.ourOfType(unit.type())
                 .inRadius(minDistBetween, unit).exclude(unit);
         if (units.count() > 0) {
             AUnit otherunit = units.nearestTo(unit);
-            unit.moveAwayFrom(otherunit.position(), 5, "SpreadVessels");
+            unit.moveAwayFrom(otherunit.position(), minDistBetween, "SpreadDetectors");
             return true;
         }
 
         return false;
+    }
+
+    private static int minDistanceBetweenUnits(AUnit unit) {
+        return We.protoss() ? 15 : 3;
     }
 
     protected static boolean followSquadScout(AUnit unit) {

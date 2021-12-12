@@ -12,7 +12,7 @@ public class Alpha extends Squad {
     protected static Alpha alpha = null;
 
     private Alpha() {
-        super("Alpha", Missions.getInitialMission());
+        super("Alpha", Missions.initialMission());
     }
 
     /**
