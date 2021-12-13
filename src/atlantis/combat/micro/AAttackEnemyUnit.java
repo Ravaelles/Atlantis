@@ -1,6 +1,5 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.targeting.AEnemyTargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -23,7 +22,7 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit, double maxDistFromEnemy) {
-        if (unit.isUnitUnableToDoAnyDamage()) {
+        if (unit.hasNoWeaponAtAll()) {
             return false;
         }
 //        if (shouldNotAttack(unit)) {
@@ -104,7 +103,7 @@ public class AAttackEnemyUnit {
 
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
-                !unit.isAirUnit()
+                !unit.isAir()
                         && !unit.is(
                                 AUnitType.Terran_Siege_Tank_Siege_Mode,
                                 AUnitType.Terran_Siege_Tank_Tank_Mode,

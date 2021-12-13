@@ -344,7 +344,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
                 "isRanged",
                 -1,
-                () -> type().isRangedUnit()
+                () -> type().isRanged()
         );
     }
 
@@ -355,7 +355,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
                 "isMelee",
                 -1,
-                () -> type().isMeleeUnit()
+                () -> type().isMelee()
         );
     }
 
@@ -519,11 +519,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isGroundUnit() {
-        return !type().isAirUnit();
+        return !type().isAir();
     }
 
-    public boolean isAirUnit() {
-        return type().isAirUnit();
+    public boolean isAir() {
+        return type().isAir();
     }
 
     public boolean isMine() {
@@ -632,7 +632,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             boolean includeCooldown,
             double extraMargin
     ) {
-        if (this.isUnitUnableToDoAnyDamage()) {
+        if (this.hasNoWeaponAtAll()) {
             return false;
         }
 
@@ -647,7 +647,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         // Target is AIR unit
-        if (target.isAirUnit() && (!target.canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) {
+        if (target.isAir() && (!target.canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) {
             return false;
         }
 
@@ -1722,8 +1722,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return spaceRemaining() >= passenger.spaceRequired();
     }
 
-    public boolean isUnitUnableToDoAnyDamage() {
-        return type().isUnitUnableToDoAnyDamage() || (type().isReaver() && scarabCount() == 0);
+    public boolean hasNoWeaponAtAll() {
+        return type().hasNoWeaponAtAll() || (type().isReaver() && scarabCount() == 0);
     }
 
     public boolean recentlyAcquiredTargetToAttack() {

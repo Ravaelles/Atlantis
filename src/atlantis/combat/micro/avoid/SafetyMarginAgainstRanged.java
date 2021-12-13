@@ -93,7 +93,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             return 7.1;
         }
 
-        return (defender.isAirUnit() ? 5.8 : 3.5);
+        return (defender.isAir() ? 5.8 : 3.5);
     }
 
     private static double lurkerBonus(AUnit defender, AUnit attacker) {

@@ -1,6 +1,5 @@
 package atlantis.units.select;
 
-import atlantis.tests.AbstractTestWithUnits;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import org.mockito.MockedStatic;

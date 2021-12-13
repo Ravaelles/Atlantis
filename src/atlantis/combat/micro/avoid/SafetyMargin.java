@@ -85,7 +85,7 @@ public class SafetyMargin {
             }
         }
 
-        if (defender.isAirUnit()) {
+        if (defender.isAir()) {
             return defender.woundPercent() / 10;
         }
 

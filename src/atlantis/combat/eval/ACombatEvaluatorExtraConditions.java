@@ -57,7 +57,7 @@ public class ACombatEvaluatorExtraConditions {
     private static boolean shouldRetreatBecauseTooFewOurUnitsAround() {
         
         // Flying units can always attack lonely
-        if (unit.isAirUnit()) {
+        if (unit.isAir()) {
             return false;
         }
         

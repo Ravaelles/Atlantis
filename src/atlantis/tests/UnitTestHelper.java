@@ -20,6 +20,7 @@ public class UnitTestHelper {
     public static int GROUND_UNITS = 5;
     public static int BUILDINGS = 5;
     public static int AIR_UNITS = 5;
+    public static int SPELLS = 2;
 
 //    public static int NEUTRAL_UNITS = 5;
     public static int MINERAL_COUNT = 3;
@@ -29,36 +30,7 @@ public class UnitTestHelper {
     public static AUnit[] enemyUnits;
     public static AUnit[] neutralUnits;
 
-    public static List<AUnit> mockOurUnits() {
-        int ourY = 10;
-
-        ourUnits = generateUnits(true);
-
-        return Arrays.asList(ourUnits);
-    }
-
-    public static List<AUnit> mockEnemyUnits() {
-        int y = 8;
-
-        enemyUnits = generateUnits(false);
-
-        return Arrays.asList(enemyUnits);
-    }
-
-    public static List<AUnit> mockNeutralUnits() {
-        int neutralY = 2;
-
-        neutralUnits = new AUnit[] {
-                new FakeUnit(AUnitType.Resource_Mineral_Field, 10, neutralY).setNeutral(),
-                new FakeUnit(AUnitType.Resource_Mineral_Field_Type_2, 11, neutralY).setNeutral(),
-                new FakeUnit(AUnitType.Resource_Mineral_Field_Type_3, 15, neutralY).setNeutral(),
-
-                new FakeUnit(AUnitType.Resource_Vespene_Geyser, 2, neutralY).setNeutral(),
-                new FakeUnit(AUnitType.Resource_Vespene_Geyser, 18, neutralY).setNeutral(),
-        };
-
-        return Arrays.asList(neutralUnits);
-    }
+    // =========================================================
 
     public static AUnit[] generateUnits(boolean trueIfOurFalseIfEnemy) {
         int y = 10;
@@ -96,6 +68,39 @@ public class UnitTestHelper {
                 new FakeUnit(AUnitType.Spell_Scanner_Sweep, 26, y).setOur(trueIfOurFalseIfEnemy),
                 new FakeUnit(AUnitType.Spell_Dark_Swarm, 26, y).setOur(trueIfOurFalseIfEnemy),
         };
+    }
+
+    // =========================================================
+
+    public static List<AUnit> mockOurUnits() {
+        int ourY = 10;
+
+        ourUnits = generateUnits(true);
+
+        return Arrays.asList(ourUnits);
+    }
+
+    public static List<AUnit> mockEnemyUnits() {
+        int y = 8;
+
+        enemyUnits = generateUnits(false);
+
+        return Arrays.asList(enemyUnits);
+    }
+
+    public static List<AUnit> mockNeutralUnits() {
+        int neutralY = 2;
+
+        neutralUnits = new AUnit[] {
+                new FakeUnit(AUnitType.Resource_Mineral_Field, 10, neutralY).setNeutral(),
+                new FakeUnit(AUnitType.Resource_Mineral_Field_Type_2, 11, neutralY).setNeutral(),
+                new FakeUnit(AUnitType.Resource_Mineral_Field_Type_3, 15, neutralY).setNeutral(),
+
+                new FakeUnit(AUnitType.Resource_Vespene_Geyser, 2, neutralY).setNeutral(),
+                new FakeUnit(AUnitType.Resource_Vespene_Geyser, 18, neutralY).setNeutral(),
+        };
+
+        return Arrays.asList(neutralUnits);
     }
 
     public static List<AUnit> generateUnitsList(boolean trueIfOurFalseIfEnemy) {

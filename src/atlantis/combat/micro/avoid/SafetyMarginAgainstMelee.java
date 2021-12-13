@@ -93,7 +93,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             }
         }
 
-        if (defender.isAirUnit()) {
+        if (defender.isAir()) {
             return defender.woundPercent() / 10;
         }
 

@@ -1,42 +1,39 @@
 package atlantis.units.select;
 
-import atlantis.tests.AbstractTestWithUnits;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 
-public class SelectTestWithUnits extends AbstractTestWithUnits {
+public class SelectTest extends AbstractTestWithUnits {
+
+    // === Our ======================================================
 
     @Test
-    public void enemy() {
-        try (MockedStatic<BaseSelect> utilities = Mockito.mockStatic(BaseSelect.class)) {
-            utilities.when(BaseSelect::enemyUnits).thenReturn(mockEnemyUnits());
-            assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
-        }
+    public void our() {
+        usingMockedOurs(() -> {
+            assertEquals(ourUnits.length, Select.our().size());
+        });
     }
 
     @Test
     public void ourRealUnits() {
-        try (
-                MockedStatic<BaseSelect> baseSelectMock = Mockito.mockStatic(BaseSelect.class)
-        ) {
-            baseSelectMock.when(BaseSelect::ourUnits).thenReturn(mockOurUnits());
+        usingMockedOurs(() -> {
+            assertEquals(GROUND_UNITS + AIR_UNITS, Select.ourRealUnits().size());
+        });
+    }
 
-            assertEquals(ourUnits.length, Select.our().size());
-        }
+    // === Enemy ======================================================
+
+    @Test
+    public void enemy() {
+        usingMockedEnemy(() -> {
+            assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
+        });
     }
 
     @Test
     public void enemyRealUnits() {
-        Selection selection;
-
-        try (
-                MockedStatic<BaseSelect> baseSelectMock = Mockito.mockStatic(BaseSelect.class)
-        ) {
-            baseSelectMock.when(BaseSelect::enemyUnits).thenReturn(mockEnemyUnits());
-
+        usingMockedEnemy(() -> {
             assertEquals(enemyUnits.length, Select.enemyUnits().size());
 
             assertEquals(
@@ -68,18 +65,14 @@ public class SelectTestWithUnits extends AbstractTestWithUnits {
                     REAL_UNITS + BUILDINGS,
                     Select.enemyRealUnits(true, true, true).size()
             );
-        }
+        });
     }
 
     // === Neutral ======================================================
 
     @Test
     public void neutralUnits() {
-        try (
-                MockedStatic<BaseSelect> baseSelectMock = Mockito.mockStatic(BaseSelect.class)
-        ) {
-            baseSelectMock.when(BaseSelect::neutralUnits).thenReturn(mockNeutralUnits());
-
+        usingMockedNeutral(() -> {
             assertEquals(MINERAL_COUNT, Select.minerals().size());
             assertEquals(GEYSER_COUNT, Select.geysers().size());
 
@@ -87,7 +80,7 @@ public class SelectTestWithUnits extends AbstractTestWithUnits {
 
             assertEquals(MINERAL_COUNT, Select.minerals().size());
             assertEquals(GEYSER_COUNT, Select.geysers().size());
-        }
+        });
     }
 
 }

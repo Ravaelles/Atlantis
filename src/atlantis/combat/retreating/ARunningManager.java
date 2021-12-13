@@ -45,7 +45,7 @@ public class ARunningManager {
                 unit.isRunning()
 //                && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
                 && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
-                && !unit.isUnderAttack(unit.isAirUnit() ? 220 : 5)
+                && !unit.isUnderAttack(unit.isAir() ? 220 : 5)
                 && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.runningManager().stopRunning();
@@ -404,7 +404,7 @@ public class ARunningManager {
      * Tell other units that might be blocking our escape route to move.
      */
     private boolean notifyNearbyUnitsToMakeSpace(AUnit unit) {
-        if (unit.isAirUnit() || unit.isLoaded()) {
+        if (unit.isAir() || unit.isLoaded()) {
             return false;
         }
 
@@ -455,7 +455,7 @@ public class ARunningManager {
     public boolean isPossibleAndReasonablePosition(
             AUnit unit, APosition position, boolean includeNearbyWalkability, String charForIsOk, String charForNotOk
     ) {
-        if (unit.isAirUnit()) {
+        if (unit.isAir()) {
             return true;
         }
 

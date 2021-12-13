@@ -1,6 +1,5 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
@@ -19,7 +18,7 @@ public class WantsToAvoid {
 
         if (!shouldAlwaysAvoid(unit, enemies)) {
             if (
-                    !unit.isUnitUnableToDoAnyDamage()
+                    !unit.hasNoWeaponAtAll()
                     && (new FightInsteadAvoid(unit, enemies)).shouldFight()
             ) {
 //                System.err.println("FIGHT INSTEAD AVOID " + unit.shortNamePlusId() + " // " + unit.hp());
@@ -48,7 +47,7 @@ public class WantsToAvoid {
     }
 
     private static boolean shouldNeverAvoidIf(AUnit unit, Units enemies) {
-        if (unit.isAirUnit()) {
+        if (unit.isAir()) {
             return false;
         }
 

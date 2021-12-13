@@ -17,7 +17,7 @@ public class ATargetingImportant extends AEnemyTargeting {
 
         AUnit target;
 
-        if (unit.isAirUnit() && (target = ATargetingForAir.targetForAirUnits(unit)) != null) {
+        if (unit.isAir() && (target = ATargetingForAir.targetForAirUnits(unit)) != null) {
             return target;
         }
 

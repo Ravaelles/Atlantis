@@ -5,7 +5,6 @@ import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
 import atlantis.position.PositionUtil;
 import atlantis.util.A;
-import bwapi.Position;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -363,7 +362,7 @@ public class Units {
 
     public boolean onlyAir() {
         ArrayList<AUnit> list = new ArrayList<>(this.units);
-        list.removeIf(u -> !u.isAirUnit());
+        list.removeIf(u -> !u.isAir());
         return list.isEmpty();
     }
     

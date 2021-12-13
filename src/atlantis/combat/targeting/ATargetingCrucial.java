@@ -5,8 +5,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-import java.util.List;
-
 public class ATargetingCrucial extends AEnemyTargeting {
 
     public static AUnit target(AUnit unit) {
@@ -58,7 +56,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         target = enemyUnits.clone()
                 .ofType(AUnitType.Protoss_Observer)
                 .effVisible()
-                .inRadius(unit.isAirUnit() ? 40 : 11, unit)
+                .inRadius(unit.isAir() ? 40 : 11, unit)
                 .mostWounded();
         if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(14, target).atLeast(1)) {
             return target;

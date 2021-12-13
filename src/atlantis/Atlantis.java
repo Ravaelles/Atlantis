@@ -211,7 +211,6 @@ public class Atlantis implements BWEventListener {
             }
         } else {
             EnemyInformation.removeDiscoveredUnit(unit);
-//            removeFoggedUnit
             if (!unit.type().isGeyser()) {
                 KILLED++;
                 KILLED_RESOURCES += unit.type().getTotalResources();

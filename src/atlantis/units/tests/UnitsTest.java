@@ -1,6 +1,6 @@
 package atlantis.units.tests;
 
-import atlantis.tests.AbstractTestWithUnits;
+import atlantis.units.select.AbstractTestWithUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class UnitsTestWithUnits extends AbstractTestWithUnits {
+public class UnitsTest extends AbstractTestWithUnits {
 
     @Test
     public void testCloneDoesNotModifyOriginal() {

@@ -27,7 +27,7 @@ public class NewUnitsToSquadsAssigner {
     private static Squad chooseSquadFor(AUnit unit) {
         Alpha alpha = Alpha.get();
 
-        if (unit.isAirUnit()) {
+        if (unit.isAir()) {
             if (unit.is(AUnitType.Protoss_Observer)) {
                 return alpha;
             }

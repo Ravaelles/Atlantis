@@ -496,7 +496,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                                 (!u.isBuilding() && !u.isRealUnit())
                                 || (!includeBuildings && u.isBuilding())
                                 || (!includeGroundUnits && u.isGroundUnit())
-                                || (!includeAirUnits && u.isAirUnit())
+                                || (!includeAirUnits && u.isAir())
                             )
                     );
 

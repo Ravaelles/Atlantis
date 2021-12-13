@@ -364,23 +364,24 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * Returns true if given unit is considered to be "melee" unit (not ranged).
      */
-    private boolean _checkedIfIsMelee = false;
-    private boolean _isMelee = false;
-
-    public boolean isMeleeUnit() {
-        if (!_checkedIfIsMelee) {
-            _checkedIfIsMelee = true;
-//            System.err.println(this + " // " + groundWeapon().maxRange() + " // " + airWeapon().maxRange());
-            _isMelee = groundWeapon().maxRange() <= 64 && airWeapon().maxRange() <= 64;
-        }
-        return _isMelee;
+    public boolean isMelee() {
+        return (boolean) cache.get(
+                "isMelee",
+                -1,
+                () -> isRealUnit() && !hasNoWeaponAtAll() && !isCarrier()
+                        && groundWeapon().maxRange() <= 64 && airWeapon().maxRange() <= 64
+        );
     }
 
     /**
      * Returns true if given unit is considered to be "ranged" unit (not melee).
      */
-    public boolean isRangedUnit() {
-        return !isMeleeUnit();
+    public boolean isRanged() {
+        return (boolean) cache.get(
+                "isRanged",
+                -1,
+                () -> !isMelee() && !hasNoWeaponAtAll() && isRealUnit()
+        );
     }
 
     /**
@@ -418,6 +419,7 @@ public class AUnitType implements Comparable<AUnitType> {
                 -1,
                 () -> {
                     String name = name()
+                            .replace("Terran_Vulture_", "")
                             .replace("Terran_", "").replace("Protoss_", "")
                             .replace("Zerg_", "").replace("Hero_", "")
                             .replace("Special_", "").replace("Powerup_", "")
@@ -662,7 +664,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return ut.isAddon();
     }
 
-    public boolean isAirUnit() {
+    public boolean isAir() {
         return ut.isFlyer();
     }
 
@@ -920,9 +922,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isMine",
                 -1,
-                () -> is(
-                        AUnitType.Terran_Vulture_Spider_Mine
-                )
+                () -> is(AUnitType.Terran_Vulture_Spider_Mine)
         );
     }
 
@@ -1097,20 +1097,31 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
-    public boolean isUnitUnableToDoAnyDamage() {
+    public boolean hasNoWeaponAtAll() {
         return (boolean) cache.get(
-                "isUnitUnableToDoAnyDamage",
+                "hasNoWeaponAtAll",
                 -1,
-                () -> is(
-                        Terran_Dropship,
-                        Terran_Medic,
-                        Protoss_Shuttle,
-                        Protoss_High_Templar,
-                        Protoss_Dark_Archon,
-                        Zerg_Overlord,
-                        Zerg_Defiler,
-                        Zerg_Queen
-                )
+                () -> {
+                    if (isCarrier()) {
+                        return false;
+                    }
+
+                    System.out.println(shortName());
+                    if (groundWeapon().damageAmount() == 0) System.out.println("no GROUND");
+                    if (airWeapon().damageAmount() == 0) System.out.println("no AIR");
+                    return groundWeapon().damageAmount() == 0 && airWeapon().damageAmount() == 0;
+                }
+//                () -> groundWeapon().damageAmount() == 0 && airWeapon().damageAmount() == 0
+//                () -> is(
+//                        Terran_Dropship,
+//                        Terran_Medic,
+//                        Protoss_Shuttle,
+//                        Protoss_High_Templar,
+//                        Protoss_Dark_Archon,
+//                        Zerg_Overlord,
+//                        Zerg_Defiler,
+//                        Zerg_Queen
+//                )
         );
     }
 
@@ -1122,9 +1133,13 @@ public class AUnitType implements Comparable<AUnitType> {
         return ID;
     }
 
+    public boolean isRealUnit() {
+        return !isNotRealUnit();
+    }
+
     public boolean isNotRealUnit() {
         return (boolean) cache.get(
-                "isNotActualUnit",
+                "isNotRealUnit",
                 -1,
                 () -> isBuilding() || isNeutral() || isLarvaOrEgg() || isMineralField()
                         || isInvincible() || isGeyser() || isSpell() || isMine() || isFlagOrBeacon()

@@ -8,7 +8,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.util.A;
-import bwapi.Unit;
 
 import java.util.*;
 
@@ -236,7 +235,7 @@ public class Selection {
     }
 
     public Selection air() {
-        data.removeIf(unit -> !unit.isAirUnit());
+        data.removeIf(unit -> !unit.isAir());
         return this;
     }
 
@@ -244,7 +243,15 @@ public class Selection {
      * Selects melee units that is units which have attack range at most 1 tile.
      */
     public Selection melee() {
-        data.removeIf(unit -> !unit.type().isMeleeUnit());
+        data.removeIf(unit -> !unit.isMelee());
+        return this;
+    }
+
+    /**
+     * Selects only units that do not currently have max hit points.
+     */
+    public Selection ranged() {
+        data.removeIf(unit -> !unit.isRanged());
         return this;
     }
 
@@ -253,23 +260,6 @@ public class Selection {
      */
     public Selection wounded() {
         data.removeIf(unit -> !unit.isWounded());
-        return this;
-    }
-
-    /**
-     * Selects only units that do not currently have max hit points.
-     */
-    public Selection ranged() {
-//        if (!data.isEmpty() && data.get(0).isEnemy()) {
-//            System.out.println("PRE = " + data.size());
-//            for (AUnit unit : data) {
-//                System.out.println(unit + " // r:" + unit.isRanged());
-//            }
-//        }
-        data.removeIf(unit -> !unit.isRanged());
-//        if (!data.isEmpty() && data.get(0).isEnemy()) {
-//            System.out.println("POST = " + data.size());
-//        }
         return this;
     }
 
@@ -820,6 +810,7 @@ public class Selection {
         System.out.println("=== " + currentCachePath + " (" + size() + ") ===");
         for (AUnit unit : data) {
             System.out.println(unit);
+//            System.out.println(" - " + unit.hasNoWeaponAtAll());
         }
     }
 }

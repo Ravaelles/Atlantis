@@ -106,8 +106,8 @@ public class Evaluate {
 
     private static double evaluateBuilding(AUnit unit, AUnit againstUnit, double unitStrengthEval) {
         double eval = 0;
-        boolean antiGround = (againstUnit == null || !againstUnit.isAirUnit());
-        boolean antiAir = (againstUnit == null || againstUnit.isAirUnit());
+        boolean antiGround = (againstUnit == null || !againstUnit.isAir());
+        boolean antiAir = (againstUnit == null || againstUnit.isAir());
         if (unit.type().isMilitaryBuilding(antiGround, antiAir)) {
 
             if (unit.is(AUnitType.Terran_Bunker)) {
@@ -165,7 +165,7 @@ public class Evaluate {
     }
 
     private static double damageFactor(AUnitType type, AUnit againstUnit) {
-        int damageNormalized = againstUnit.isAirUnit()
+        int damageNormalized = againstUnit.isAir()
                 ? WeaponUtil.damageNormalized(type.airWeapon())
                 : WeaponUtil.damageNormalized(type.groundWeapon());
         return (damageNormalized * WeaponUtil.damageModifier(type, againstUnit.type())) * EVAL_DAMAGE_FACTOR;

@@ -3,7 +3,6 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -62,7 +61,7 @@ public class MissionAttack extends Mission {
         }
 
         // Air units
-        if (unit.isAirUnit() && defensiveBuilding.isSunken()) {
+        if (unit.isAir() && defensiveBuilding.isSunken()) {
             return true;
         }
 

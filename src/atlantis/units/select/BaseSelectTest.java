@@ -1,13 +1,12 @@
 package atlantis.units.select;
 
-import atlantis.tests.AbstractTestWithUnits;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 
-public class BaseSelectTestWithUnits extends AbstractTestWithUnits {
+public class BaseSelectTest extends AbstractTestWithUnits {
 
     @Test
     public void ourUnits() {
