@@ -62,7 +62,7 @@ public class UnitTestHelper {
                 new FakeUnit(AUnitType.Terran_Dropship, 18, y).setOur(trueIfOurFalseIfEnemy),
                 new FakeUnit(AUnitType.Zerg_Scourge, 15, y).setOur(trueIfOurFalseIfEnemy),
                 new FakeUnit(AUnitType.Zerg_Mutalisk, 15, y).setOur(trueIfOurFalseIfEnemy),
-                new FakeUnit(AUnitType.Zerg_Mutalisk, 15, y).setOur(trueIfOurFalseIfEnemy),
+                new FakeUnit(AUnitType.Zerg_Overlord, 15, y).setOur(trueIfOurFalseIfEnemy),
 
                 // Special
                 new FakeUnit(AUnitType.Spell_Scanner_Sweep, 26, y).setOur(trueIfOurFalseIfEnemy),

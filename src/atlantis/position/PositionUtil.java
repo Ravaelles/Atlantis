@@ -3,6 +3,7 @@ package atlantis.position;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.ARegionBoundary;
+import atlantis.tests.FakeUnit;
 import atlantis.units.AUnit;
 import bwapi.Position;
 import bwapi.Unit;
@@ -29,7 +30,10 @@ public class PositionUtil {
         Position fromPosition = null;
         Unit fromUnit = null;
 
-        if (object1 instanceof AUnit) {
+        if (object1 instanceof FakeUnit) {
+            fromPosition = ((FakeUnit) object1).position();
+        }
+        else if (object1 instanceof AUnit) {
             fromUnit = ((AUnit) object1).u();
         }
         else if (object1 instanceof Unit) {
@@ -60,7 +64,10 @@ public class PositionUtil {
         Position toPosition = null;
         Unit toUnit = null;
         
-        if (object2 instanceof AUnit) {
+        if (object2 instanceof FakeUnit) {
+            toPosition = ((FakeUnit) object2).position();
+        }
+        else if (object2 instanceof AUnit) {
             toUnit = ((AUnit) object2).u();
         }
         else if (object2 instanceof Unit) {

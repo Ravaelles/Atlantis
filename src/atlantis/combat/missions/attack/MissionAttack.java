@@ -56,7 +56,7 @@ public class MissionAttack extends Mission {
     public boolean allowsToAttackDefensiveBuildings(AUnit unit, AUnit defensiveBuilding) {
 
         // Tanks always allowed
-        if (unit.isTank() && unit.distToMoreThan(defensiveBuilding, 8.5)) {
+        if (unit.isTank() && unit.distToMoreThan(defensiveBuilding, 7.6)) {
             return true;
         }
 
@@ -66,7 +66,9 @@ public class MissionAttack extends Mission {
         }
 
         // Standard infantry attack
-        if (Count.ourCombatUnits() <= 40 || unit.lastStoppedRunningLessThanAgo(30 * 10)) {
+//        boolean notStrongEnough = Select.ourCombatUnits().inRadius(6, unit).atMost(8);
+//        if (notStrongEnough || unit.lastStoppedRunningLessThanAgo(30 * 10)) {
+        if (unit.lastStoppedRunningLessThanAgo(30 * 10)) {
             return false;
         }
 

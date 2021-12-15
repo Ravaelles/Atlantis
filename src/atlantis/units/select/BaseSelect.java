@@ -110,4 +110,7 @@ public class BaseSelect<T extends AUnit> {
         );
     }
 
+    public static void clearCache() {
+        cacheList.clear();
+    }
 }

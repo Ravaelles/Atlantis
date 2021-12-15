@@ -54,11 +54,12 @@ public class ATargetingForAir {
         }
 
         // =========================================================
-        // Target OVERLORDS
+        // Target AIR units
 
         if (Enemy.zerg()) {
             target = AEnemyTargeting.enemyUnits.clone()
-                    .ofType(AUnitType.Zerg_Overlord)
+                    .air()
+//                    .ofType(AUnitType.Zerg_Overlord)
                     .inShootRangeOf(unit)
                     .nearestTo(unit);
             if (target != null) {

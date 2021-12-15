@@ -5,6 +5,7 @@ import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
@@ -94,6 +95,10 @@ public class ARunningManager {
         // === Still nothing, try to run anywhere ==================
 
         if (runTo == null) {
+            if (handleOnlyCombatBuildingsAreDangerouslyClose(unit)) {
+                unit.holdPosition("Steady");
+                return true;
+            }
             runTo = findPositionToRunInAnyDirection(unit, runAwayFrom);
         }
 
@@ -487,6 +492,18 @@ public class ARunningManager {
         }
 
         return isOkay;
+    }
+
+    private boolean handleOnlyCombatBuildingsAreDangerouslyClose(AUnit unit) {
+
+        // Check if only combat buildings are dangerously close. If so, don't run in any direction.
+        Units dangerous = AAvoidUnits.unitsToAvoid(unit, true);
+
+        if (dangerous.isEmpty()) {
+            return false;
+        }
+
+        return dangerous.size() == Select.from(dangerous).combatBuildings(false).size();
     }
 
 //    private boolean distToNearestRegionBoundaryIsOkay(APosition position) {

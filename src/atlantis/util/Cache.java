@@ -66,7 +66,7 @@ public class Cache<V> {
         cachedUntil.remove(cacheKey);
     }
 
-    public void forgetAll() {
+    public void clear() {
         data.clear();
         cachedUntil.clear();
     }

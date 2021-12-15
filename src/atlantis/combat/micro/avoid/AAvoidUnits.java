@@ -25,6 +25,10 @@ public abstract class AAvoidUnits {
 
         Units enemiesDangerouslyClose = unitsToAvoid(unit);
 
+//        if (unit.isSquadScout()) {
+//            System.out.println(A.now() + " // " + unit.hp() + " // " + enemiesDangerouslyClose.size());
+//        }
+
         if (enemiesDangerouslyClose.isEmpty()) {
             return false;
         }
@@ -63,7 +67,7 @@ public abstract class AAvoidUnits {
     public static Units unitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
         return cache.get(
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
-            3,
+            2,
             () -> {
                 Units enemies = new Units();
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {

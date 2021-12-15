@@ -1102,26 +1102,15 @@ public class AUnitType implements Comparable<AUnitType> {
                 "hasNoWeaponAtAll",
                 -1,
                 () -> {
-                    if (isCarrier()) {
+                    if (isCarrier() || isReaver()) {
                         return false;
                     }
 
-                    System.out.println(shortName());
-                    if (groundWeapon().damageAmount() == 0) System.out.println("no GROUND");
-                    if (airWeapon().damageAmount() == 0) System.out.println("no AIR");
+//                    System.out.println(shortName());
+//                    if (groundWeapon().damageAmount() == 0) System.out.println("no GROUND");
+//                    if (airWeapon().damageAmount() == 0) System.out.println("no AIR");
                     return groundWeapon().damageAmount() == 0 && airWeapon().damageAmount() == 0;
                 }
-//                () -> groundWeapon().damageAmount() == 0 && airWeapon().damageAmount() == 0
-//                () -> is(
-//                        Terran_Dropship,
-//                        Terran_Medic,
-//                        Protoss_Shuttle,
-//                        Protoss_High_Templar,
-//                        Protoss_Dark_Archon,
-//                        Zerg_Overlord,
-//                        Zerg_Defiler,
-//                        Zerg_Queen
-//                )
         );
     }
 

@@ -181,9 +181,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public void refreshType() {
         _lastType = null;
-        cache.forgetAll();
-        cacheBoolean.forgetAll();
-        cacheInt.forgetAll();
+        cache.clear();
+        cacheBoolean.clear();
+        cacheInt.clear();
     }
 
     @Override
@@ -647,12 +647,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         // Target is AIR unit
-        if (target.isAir() && (!target.canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) {
+        if (target.isAir() && (!canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) {
             return false;
         }
 
         // Shooting RANGE
-        if (checkShootingRange && !this.hasWeaponRange(target, extraMargin)) {
+        if (checkShootingRange && !hasWeaponRange(target, extraMargin)) {
             return false;
         }
 
@@ -693,19 +693,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        double dist = this.position().distTo(targetUnit);
-        return (weaponAgainstThisUnit.minRange() / 32) <= dist && dist <= (weaponAgainstThisUnit.maxRange() / 32 + extraMargin);
+        double dist = distTo(targetUnit);
+        return (weaponAgainstThisUnit.minRange() / 32) <= dist
+                && dist <= (weaponAgainstThisUnit.maxRange() / 32 + extraMargin);
     }
 
-    public boolean hasGroundWeaponRange(APosition position, double extraMargin) {
-        double weaponRange = groundWeaponRange();
-        if (weaponRange <= 0) {
-            return false;
-        }
-
-        double dist = this.position().distTo(position);
-        return dist <= (weaponRange + extraMargin);
-    }
+//    public boolean hasGroundWeaponRange(APosition position, double extraMargin) {
+//        double weaponRange = groundWeaponRange();
+//        if (weaponRange <= 0) {
+//            return false;
+//        }
+//
+//        double dist = distTo(position);
+//        return dist <= (weaponRange + extraMargin);
+//    }
 
     /**
      * Returns weapon that would be used to attack given target. If no such weapon, then WeaponTypes.None will

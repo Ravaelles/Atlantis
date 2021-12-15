@@ -759,4 +759,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return selectedUnits;
     }
 
+    public static void clearCache() {
+        cache.clear();
+        cacheList.clear();
+        cacheInt.clear();
+        cacheUnit.clear();
+    }
 }

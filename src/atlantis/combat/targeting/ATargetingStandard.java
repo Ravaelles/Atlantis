@@ -30,19 +30,6 @@ public class ATargetingStandard extends AEnemyTargeting {
         }
 
         // =========================================================
-        // OVERLORDS
-
-        target = enemyUnits.clone()
-                .ofType(AUnitType.Zerg_Overlord)
-                .inShootRangeOf(2, unit)
-                .nearestTo(unit);
-        if (target != null) {
-            System.out.println("OVERLORD target = " + target + " // ");
-            System.out.println("dist = " + target.distTo(unit));
-            return target;
-        }
-
-        // =========================================================
         // Quite near WORKERS
 
         target = enemyUnits.clone()

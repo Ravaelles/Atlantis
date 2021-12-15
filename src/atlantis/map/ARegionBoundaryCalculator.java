@@ -16,7 +16,8 @@ public class ARegionBoundaryCalculator {
 //        if (A.isUms()) {
 //            return boundaries;
 //        }
-        System.out.print("Calculating region boundaries... ");
+//        System.out.print("Calculating region boundaries... ");
+
         APosition center = region.center();
         Vector initVector = new Vector(64, 0);
 

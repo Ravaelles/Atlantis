@@ -2,12 +2,10 @@ package atlantis.wrappers;
 
 import atlantis.AGame;
 import atlantis.production.ProductionOrder;
-import atlantis.units.AUnitType;
 import atlantis.util.Cache;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
-import java.util.Set;
 
 
 public class ATech {
@@ -81,12 +79,12 @@ public class ATech {
 
     public static void markAsBeingResearched(TechType tech) {
         currentlyResearching.add(tech);
-        cache.forgetAll();
+        cache.clear();
     }
 
     public static void markAsBeingUpgraded(UpgradeType upgrade) {
         currentlyUpgrading.add(upgrade);
-        cache.forgetAll();
+        cache.clear();
     }
     
     // =========================================================

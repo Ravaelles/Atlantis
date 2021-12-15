@@ -735,8 +735,10 @@ public class Selection {
                 if (!(p2 instanceof HasPosition)) {
                     throw new RuntimeException("Invalid comparison: " + p2);
                 }
-                double distance1 = PositionUtil.distanceTo(position, p1);
-                double distance2 = PositionUtil.distanceTo(position, p2);
+
+                double distance1 = position.distTo(p1);
+                double distance2 = position.distTo(p2);
+
                 return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
             }
         });
@@ -754,8 +756,9 @@ public class Selection {
                 if (!(p2 instanceof HasPosition)) {
                     throw new RuntimeException("Invalid comparison: " + p2);
                 }
-                double distance1 = PositionUtil.distanceTo(unit, p1);
-                double distance2 = PositionUtil.distanceTo(unit, p2);
+
+                double distance1 = unit.distTo(p1);
+                double distance2 = unit.distTo(p2);
 
                 return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
             }

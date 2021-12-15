@@ -9,8 +9,8 @@ import bwapi.Color;
 
 public class AEnemyTargeting {
 
-//    protected static final boolean DEBUG = true;
-    protected static final boolean DEBUG = false;
+    protected static final boolean DEBUG = true;
+//    protected static final boolean DEBUG = false;
 
     protected static Selection enemyBuildings;
     protected static Selection enemyUnits;
@@ -30,6 +30,10 @@ public class AEnemyTargeting {
         }
 
         return enemy;
+    }
+
+    public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
+        return defineBestEnemyToAttackFor(unit, 15);
     }
 
     public static boolean debug(AUnit unit) {
@@ -123,6 +127,12 @@ public class AEnemyTargeting {
             maxDistFromEnemy = 30;
         }
 
+//        Select.enemyRealUnits(true)
+//                .effVisible()
+//                .inRadius(maxDistFromEnemy, unit)
+//                .canBeAttackedBy(unit, 8)
+//                .print();
+
         // Quit early if no target at all
         if (Select.enemyRealUnits(true)
                 .effVisible()
@@ -157,6 +167,9 @@ public class AEnemyTargeting {
                 .excludeTypes(AUnitType.Zerg_Egg, AUnitType.Zerg_Larva, AUnitType.Zerg_Lurker_Egg)
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 13);
+
+//        enemyBuildings.print();
+//        enemyUnits.print();
 
         // =========================================================
 

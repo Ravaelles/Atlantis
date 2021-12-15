@@ -1,8 +1,10 @@
 package atlantis.tests;
 
 import atlantis.position.APosition;
+import atlantis.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.A;
 
 public class FakeUnit extends AUnit {
 
@@ -12,6 +14,7 @@ public class FakeUnit extends AUnit {
     public APosition position;
     public boolean enemy = false;
     public boolean neutral = false;
+    public boolean detected = true;
 
     // =========================================================
 
@@ -36,13 +39,56 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public int x() {
+        return position.x;
+    }
+
+    @Override
+    public int y() {
+        return position.y;
+    }
+
+    @Override
     public boolean isNeutral() {
         return neutral;
     }
 
     @Override
+    public boolean isDetected() {
+        return detected;
+    }
+
+    @Override
+    public int hp() {
+        return id * 10;
+    }
+
+    public int maxHp() {
+        return hp() + id * 10;
+    }
+
+    @Override
     public boolean isCompleted() {
         return true;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return true;
+    }
+
+    @Override
+    public boolean isUnderDarkSwarm() {
+        return false;
+    }
+
+    // =========================================================
+
+    @Override
+    public double distTo(AUnit otherUnit) {
+        int dx = otherUnit.x() - position.x();
+        int dy = otherUnit.y() - position.y();
+        return Math.sqrt(dx * dx + dy * dy) / 32.0;
     }
 
     // =========================================================
