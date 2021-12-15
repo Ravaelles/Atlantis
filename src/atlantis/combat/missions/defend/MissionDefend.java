@@ -36,7 +36,7 @@ public class MissionDefend extends Mission {
 
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (unit.hasWeaponRange(enemy, 1.6)) {
+        if (unit.hasWeaponRangeToAttack(enemy, 1.6)) {
             return true;
         }
 

@@ -323,12 +323,10 @@ public class AUnitType implements Comparable<AUnitType> {
     public static AUnitType getByName(String unitName) {
         unitName = unitName.replace(" ", "_").toLowerCase()
                 .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
-//        System.out.println(unitName);
 
         for (Field field : UnitType.class.getFields()) {
             String otherTypeName = field.getName().toLowerCase()
                     .replace("terran_", "").replace("protoss_", "").replace("zerg_", "");
-//            System.out.println(unitName + " // " + otherTypeName +" // " + field.getName());
             if (!otherTypeName.startsWith("Hero") && otherTypeName.equals(unitName)) {
                 try {
                     AUnitType unitType = (AUnitType) AUnitType.class.getField(field.getName()).get(null);
@@ -368,7 +366,8 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isMelee",
                 -1,
-                () -> isRealUnit() && !hasNoWeaponAtAll() && !isCarrier()
+                () -> isRealUnit() && !hasNoWeaponAtAll()
+                        && !isCarrier() && !isBunker() && !isMine() && !isScarab()
                         && groundWeapon().maxRange() <= 64 && airWeapon().maxRange() <= 64
         );
     }
@@ -380,7 +379,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isRanged",
                 -1,
-                () -> !isMelee() && !hasNoWeaponAtAll() && isRealUnit()
+                () -> !isMelee() && !hasNoWeaponAtAll() && (isRealUnit() || isMine() || isScarab() || isCombatBuilding())
         );
     }
 
@@ -926,6 +925,14 @@ public class AUnitType implements Comparable<AUnitType> {
         );
     }
 
+    public boolean isScarab() {
+        return (boolean) cache.get(
+                "isScarab",
+                -1,
+                () -> is(AUnitType.Protoss_Scarab)
+        );
+    }
+
     public boolean isVulture() {
         return (boolean) cache.get(
                 "isVulture",
@@ -1106,9 +1113,6 @@ public class AUnitType implements Comparable<AUnitType> {
                         return false;
                     }
 
-//                    System.out.println(shortName());
-//                    if (groundWeapon().damageAmount() == 0) System.out.println("no GROUND");
-//                    if (airWeapon().damageAmount() == 0) System.out.println("no AIR");
                     return groundWeapon().damageAmount() == 0 && airWeapon().damageAmount() == 0;
                 }
         );
@@ -1165,7 +1169,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isLarvaOrEgg",
                 5,
-                () -> is(Zerg_Larva, Zerg_Egg, Zerg_Lurker_Egg)
+                () -> is(Zerg_Larva, Zerg_Egg, Zerg_Lurker_Egg, Zerg_Cocoon)
         );
     }
 
@@ -1386,6 +1390,22 @@ public class AUnitType implements Comparable<AUnitType> {
                 "isTerran",
                 -1,
                 () -> ut.getRace().equals(Race.Terran)
+        );
+    }
+
+    public boolean canAttackGround() {
+        return (boolean) cache.get(
+                "canAttackGround",
+                -1,
+                () -> groundWeapon().damageAmount() > 0 || isReaver() || isBunker()
+        );
+    }
+
+    public boolean canAttackAir() {
+        return (boolean) cache.get(
+                "canAttackAir",
+                -1,
+                () -> airWeapon().damageAmount() > 0 || isBunker()
         );
     }
 }

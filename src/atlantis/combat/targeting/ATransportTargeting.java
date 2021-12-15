@@ -2,7 +2,6 @@ package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class ATransportTargeting {
 
@@ -34,7 +33,7 @@ public class ATransportTargeting {
         if (nearTransport != null) {
             if (Select.enemyCombatUnits().inRadius(5, nearTransport).atMost(3)) {
                 unit.setTooltip("Invasion!");
-                if (AEnemyTargeting.debug(unit)) System.out.println("TransportTarget = " + nearTransport);
+                if (ATargeting.debug(unit)) System.out.println("TransportTarget = " + nearTransport);
                 return nearTransport;
             }
         }

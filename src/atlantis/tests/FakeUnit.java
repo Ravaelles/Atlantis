@@ -15,6 +15,7 @@ public class FakeUnit extends AUnit {
     public boolean enemy = false;
     public boolean neutral = false;
     public boolean detected = true;
+    public boolean completed = true;
 
     // =========================================================
 
@@ -54,6 +55,16 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public boolean isOur() {
+        return !enemy;
+    }
+
+    @Override
+    public boolean isEnemy() {
+        return enemy;
+    }
+
+    @Override
     public boolean isDetected() {
         return detected;
     }
@@ -69,7 +80,7 @@ public class FakeUnit extends AUnit {
 
     @Override
     public boolean isCompleted() {
-        return true;
+        return completed;
     }
 
     @Override
@@ -78,8 +89,23 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public boolean isPowered() {
+        return true;
+    }
+
+    @Override
+    public boolean isMoving() {
+        return false;
+    }
+
+    @Override
     public boolean isUnderDarkSwarm() {
         return false;
+    }
+
+    @Override
+    public AUnit target() {
+        return null;
     }
 
     // =========================================================
@@ -100,6 +126,11 @@ public class FakeUnit extends AUnit {
 
     public FakeUnit setNeutral() {
         this.neutral = true;
+        return this;
+    }
+
+    public FakeUnit setCompleted(boolean completed) {
+        this.completed = completed;
         return this;
     }
 

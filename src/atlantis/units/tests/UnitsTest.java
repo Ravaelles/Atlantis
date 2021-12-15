@@ -1,6 +1,6 @@
 package atlantis.units.tests;
 
-import atlantis.units.select.AbstractTestWithUnits;
+import atlantis.tests.AbstractTestWithUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import org.junit.Test;

@@ -1,6 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.targeting.AEnemyTargeting;
+import atlantis.combat.targeting.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -33,7 +33,7 @@ public class AAttackEnemyUnit {
 //            throw new RuntimeException("aa");
 //        }
 
-        AUnit enemy = AEnemyTargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
+        AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
         if (enemy == null) {
             return false;
         }

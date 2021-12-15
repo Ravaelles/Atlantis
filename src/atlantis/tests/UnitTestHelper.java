@@ -12,9 +12,9 @@ import static org.mockito.Mockito.when;
 
 public class UnitTestHelper {
 
-    public static int OUR_REAL_UNITS = 3;
-    public static int OUR_GROUND_UNITS = 2;
-    public static int OUR_AIR_UNITS = 2;
+//    public static int OUR_REAL_UNITS = 3;
+//    public static int OUR_GROUND_UNITS = 2;
+//    public static int OUR_AIR_UNITS = 2;
 
     public static int REAL_UNITS = 10;
     public static int GROUND_UNITS = 5;

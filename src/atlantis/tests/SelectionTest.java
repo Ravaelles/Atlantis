@@ -1,5 +1,6 @@
-package atlantis.units.select;
+package atlantis.tests;
 
+import atlantis.units.select.Select;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -10,7 +11,7 @@ public class SelectionTest extends AbstractTestWithUnits {
     public void ranged() {
         usingMockedOurs(() -> {
 //            Select.our().ranged().print();
-            assertEquals(8, Select.our().ranged().size());
+            assertEquals(9, Select.our().ranged().size());
         });
     }
 

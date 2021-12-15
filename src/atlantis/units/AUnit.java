@@ -632,7 +632,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             boolean includeCooldown,
             double extraMargin
     ) {
-        if (this.hasNoWeaponAtAll()) {
+        if (hasNoWeaponAtAll() && !isBunker()) {
             return false;
         }
 
@@ -652,7 +652,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         // Shooting RANGE
-        if (checkShootingRange && !hasWeaponRange(target, extraMargin)) {
+        if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) {
             return false;
         }
 
@@ -687,7 +687,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this.u.isInWeaponRange(targetUnit.u);
     }
 
-    public boolean hasWeaponRange(AUnit targetUnit, double extraMargin) {
+    public boolean hasWeaponRangeToAttack(AUnit targetUnit, double extraMargin) {
+        if (isBunker()) {
+            return distToLessThan(targetUnit, 7);
+        }
+
         WeaponType weaponAgainstThisUnit = weaponAgainst(targetUnit);
         if (weaponAgainstThisUnit == WeaponType.None) {
             return false;
@@ -752,9 +756,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null && A.notUms() && isOur() && !isSpell() && !isBuilding() && !isWorker() && isAlive()) {
-            System.err.println("Null squad for unit: " + this + " // alive:" + isAlive() + " // hp:" + hp());
-        }
+//        if (squad == null && A.notUms() && isOur() && !isSpell() && !isBuilding() && !isWorker() && isAlive()) {
+//            System.err.println("Null squad for unit: " + this + " // alive:" + isAlive() + " // hp:" + hp());
+//        }
         return squad;
     }
 
@@ -796,7 +800,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     /**
      * Indicate that in this frame unit received some command (attack, move etc).
-     * @return
      */
     public AUnit setLastUnitOrderNow() {
         this.lastUnitOrder = AGame.getTimeFrames();
@@ -810,8 +813,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
                 "canAttackGroundUnits",
                 -1,
-                () -> type().groundWeapon() != WeaponType.None && type().groundWeapon().damageAmount() > 0
-                        || type().isReaver()
+                () -> type().canAttackGround()
         );
     }
 
@@ -822,7 +824,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
                 "canAttackAirUnits",
                 -1,
-                () -> type().airWeapon() != WeaponType.None && type().airWeapon().damageAmount() > 0
+                () -> type().canAttackAir()
         );
     }
 
@@ -1679,7 +1681,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().is(types);
     }
 
-    public boolean isTargettedBy(AUnit attacker) {
+    public boolean isTargetedBy(AUnit attacker) {
         return this.equals(attacker.target());
     }
 
@@ -1724,7 +1726,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasNoWeaponAtAll() {
-        return type().hasNoWeaponAtAll() || (type().isReaver() && scarabCount() == 0);
+        if (isBunker()) {
+            return false;
+        }
+
+        if (type().isReaver() && scarabCount() == 0) {
+            return true;
+        }
+
+        return type().hasNoWeaponAtAll();
     }
 
     public boolean recentlyAcquiredTargetToAttack() {

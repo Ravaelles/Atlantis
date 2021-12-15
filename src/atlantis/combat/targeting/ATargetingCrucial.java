@@ -5,7 +5,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-public class ATargetingCrucial extends AEnemyTargeting {
+public class ATargetingCrucial extends ATargeting {
 
     public static AUnit target(AUnit unit) {
 
@@ -187,7 +187,7 @@ public class ATargetingCrucial extends AEnemyTargeting {
         // Special case - SHUTTLE
 
         if ((target = ATransportTargeting.target(unit)) != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C3 = " + target);
+            if (ATargeting.debug(unit)) System.out.println("C3 = " + target);
             return target;
         }
 

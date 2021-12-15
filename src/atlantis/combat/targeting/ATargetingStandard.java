@@ -3,9 +3,8 @@ package atlantis.combat.targeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
-public class ATargetingStandard extends AEnemyTargeting {
+public class ATargetingStandard extends ATargeting {
 
     public static AUnit target(AUnit unit) {
 

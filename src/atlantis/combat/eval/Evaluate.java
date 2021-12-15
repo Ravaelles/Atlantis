@@ -70,7 +70,7 @@ public class Evaluate {
             else if (unit.isCombatBuilding() && unit.canAttackTarget(againstUnit)) {
                 totalStrength += evaluateBuilding(unit, againstUnit, unitStrengthEval);
                 enemyDefensiveBuildingFound = true;
-                enemyDefensiveBuildingInRange = unit.hasWeaponRange(againstUnit, 2.5);
+                enemyDefensiveBuildingInRange = unit.hasWeaponRangeToAttack(againstUnit, 2.5);
             }
 
             // === Infantry ============================================

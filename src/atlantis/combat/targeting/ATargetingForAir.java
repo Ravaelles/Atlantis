@@ -28,7 +28,7 @@ public class ATargetingForAir {
         // =========================================================
         // Target WORKERS
 
-        target = AEnemyTargeting.enemyUnits.clone()
+        target = ATargeting.enemyUnits.clone()
                 .workers()
                 .inShootRangeOf(unit)
                 .mostWounded();
@@ -45,7 +45,7 @@ public class ATargetingForAir {
         // =========================================================
         // Target WORKERS
 
-        target = AEnemyTargeting.enemyUnits.clone()
+        target = ATargeting.enemyUnits.clone()
                 .workers()
                 .inRadius(10, unit)
                 .nearestTo(unit);
@@ -57,7 +57,7 @@ public class ATargetingForAir {
         // Target AIR units
 
         if (Enemy.zerg()) {
-            target = AEnemyTargeting.enemyUnits.clone()
+            target = ATargeting.enemyUnits.clone()
                     .air()
 //                    .ofType(AUnitType.Zerg_Overlord)
                     .inShootRangeOf(unit)
@@ -71,7 +71,7 @@ public class ATargetingForAir {
         // Target DEFENSIVE BUILDINGS
 
         if (Enemy.zerg()) {
-            target = AEnemyTargeting.enemyUnits.clone()
+            target = ATargeting.enemyUnits.clone()
                     .ofType(AUnitType.Zerg_Sunken_Colony)
                     .inRadius(15, unit)
                     .nearestTo(unit);

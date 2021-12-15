@@ -1,6 +1,9 @@
-package atlantis.units.select;
+package atlantis.tests;
 
 import atlantis.units.AUnitType;
+import atlantis.units.select.BaseSelect;
+import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;

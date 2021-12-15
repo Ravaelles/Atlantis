@@ -19,7 +19,6 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //    public static int INFANTRY_WOUND_IF_NO_MEDIC = 85;
 
     public static double calculate(AUnit defender, AUnit attacker) {
-
         double criticalDist;
 
         // Terran INFANTRY
@@ -57,6 +56,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // 3.9 tiles (almost base width) should be enough as a minimum versus melee unit
         criticalDist = Math.min(criticalDist, 3.9);
+
+        if (defender.isRanged() && attacker.isWorker()) {
+            criticalDist = 2.3;
+        }
 
         return attacker.distTo(defender) - criticalDist;
     }

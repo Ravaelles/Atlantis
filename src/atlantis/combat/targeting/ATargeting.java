@@ -7,10 +7,10 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 
-public class AEnemyTargeting {
+public class ATargeting {
 
-    protected static final boolean DEBUG = true;
-//    protected static final boolean DEBUG = false;
+//    protected static final boolean DEBUG = true;
+    protected static final boolean DEBUG = false;
 
     protected static Selection enemyBuildings;
     protected static Selection enemyUnits;
@@ -164,7 +164,6 @@ public class AEnemyTargeting {
                 .canBeAttackedBy(unit, 13);
         enemyUnits = Select.enemyRealUnits(false)
                 .effVisible()
-                .excludeTypes(AUnitType.Zerg_Egg, AUnitType.Zerg_Larva, AUnitType.Zerg_Lurker_Egg)
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 13);
 
@@ -174,7 +173,7 @@ public class AEnemyTargeting {
         // =========================================================
 
         if ((target = ATargetingForSpecificUnits.target(unit)) != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("A = "+ target);
+            if (ATargeting.debug(unit)) System.out.println("A = "+ target);
             return target;
         }
 
@@ -184,21 +183,21 @@ public class AEnemyTargeting {
 //            if (!target.type().isCarrier()) {
 //                System.out.println(A.now() + "  #" + unit.id() + " " + unit.shortName() + " > " + target.shortName());
 //            }
-            if (AEnemyTargeting.debug(unit)) System.out.println("B = "+ target);
+            if (ATargeting.debug(unit)) System.out.println("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
         if ((target = ATargetingImportant.target(unit)) != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C = "+ target);
+            if (ATargeting.debug(unit)) System.out.println("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
         if ((target = ATargetingStandard.target(unit)) != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("D = "+ target);
+            if (ATargeting.debug(unit)) System.out.println("D = "+ target);
             return target;
         }
 

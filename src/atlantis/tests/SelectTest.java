@@ -1,5 +1,7 @@
-package atlantis.units.select;
+package atlantis.tests;
 
+import atlantis.units.select.BaseSelect;
+import atlantis.units.select.Select;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

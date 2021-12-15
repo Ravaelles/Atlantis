@@ -54,12 +54,12 @@ public class SafetyMargin {
 
         if (attacker.isMoving()) {
             boolean doingWell = defender.woundPercent() < 33 && defender.lastUnderAttackMoreThanAgo((int) (30 * (5 + defender.woundPercent())));
-            return defender.isTargettedBy(attacker)
+            return defender.isTargetedBy(attacker)
                     ? (doingWell ? 0.5 : (0.7 + defender.woundPercent() / 100))
                     : (doingWell ? -1.4 : 0.3);
         }
         else {
-            return defender.isTargettedBy(attacker) ? 0.6 : -1.3;
+            return defender.isTargetedBy(attacker) ? 0.6 : -1.3;
         }
 
 //        if (attacker.isMoving()) {

@@ -2,7 +2,7 @@ package atlantis.combat.targeting;
 
 import atlantis.tests.FakeUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.AbstractTestWithUnits;
+import atlantis.tests.AbstractTestWithUnits;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -21,7 +21,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingMockedOurAndEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, AEnemyTargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }
 
@@ -38,7 +38,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingMockedOurAndEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, AEnemyTargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }
 
@@ -54,7 +54,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingMockedOurAndEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, AEnemyTargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }
 

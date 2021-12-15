@@ -16,7 +16,7 @@ public class BaseSelect<T extends AUnit> {
 
     protected static final Cache<List<AUnit>> cacheList = new Cache<>();
 
-    protected static List<AUnit> ourUnits() {
+    public static List<AUnit> ourUnits() {
         return cacheList.get(
             "ourUnits",
             0,
@@ -38,7 +38,7 @@ public class BaseSelect<T extends AUnit> {
         );
     }
 
-    protected static List<AUnit> ourIncludingUnfinishedUnits() {
+    public static List<AUnit> ourIncludingUnfinishedUnits() {
         return cacheList.get(
             "ourIncludingUnfinishedUnits",
             0,
@@ -57,7 +57,7 @@ public class BaseSelect<T extends AUnit> {
         );
     }
 
-    protected static List<AUnit> enemyUnits() {
+    public static List<AUnit> enemyUnits() {
         return cacheList.get(
             "enemyUnits",
             0,
@@ -76,7 +76,7 @@ public class BaseSelect<T extends AUnit> {
         );
     }
 
-    protected static List<AUnit> neutralUnits() {
+    public static List<AUnit> neutralUnits() {
         return cacheList.get(
                 "neutralUnits",
                 0,
@@ -93,7 +93,7 @@ public class BaseSelect<T extends AUnit> {
         );
     }
 
-    protected static List<AUnit> allUnits() {
+    public static List<AUnit> allUnits() {
         return cacheList.get(
                 "allUnits",
                 0,

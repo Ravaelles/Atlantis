@@ -407,6 +407,11 @@ public class Units {
         return (Collection<AUnit>) units.clone();
     }
 
+    public AUnit[] array() {
+        AUnit[] array = new AUnit[units.size()];
+        return units.toArray(array);
+    }
+
     public Units clone() {
         return new Units(this);
     }

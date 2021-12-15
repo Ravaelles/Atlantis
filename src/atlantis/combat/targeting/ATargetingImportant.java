@@ -4,7 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
-public class ATargetingImportant extends AEnemyTargeting {
+public class ATargetingImportant extends ATargeting {
 
     public static AUnit target(AUnit unit) {
 
@@ -18,7 +18,7 @@ public class ATargetingImportant extends AEnemyTargeting {
         AUnit target;
 
         if (unit.isAir() && (target = ATargetingForAir.targetForAirUnits(unit)) != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("CA = " + target);
+            if (ATargeting.debug(unit)) System.out.println("CA = " + target);
             return target;
         }
 
@@ -47,7 +47,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C1a = " + target);
+            if (ATargeting.debug(unit)) System.out.println("C1a = " + target);
             return target;
         }
 
@@ -88,7 +88,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C1b = " + target);
+            if (ATargeting.debug(unit)) System.out.println("C1b = " + target);
             return target;
         }
 
@@ -98,7 +98,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C1c = " + target);
+            if (ATargeting.debug(unit)) System.out.println("C1c = " + target);
             return target;
         }
 
@@ -107,7 +107,7 @@ public class ATargetingImportant extends AEnemyTargeting {
 
     private static AUnit defensiveBuildingOrScvRepairingIt(AUnit unit) {
         if (!unit.isBunker()) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C0c = " + unit);
+            if (ATargeting.debug(unit)) System.out.println("C0c = " + unit);
             return unit;
         }
 
@@ -115,11 +115,11 @@ public class ATargetingImportant extends AEnemyTargeting {
         AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, unit)
                 .canBeAttackedBy(unit, 1.7).nearestTo(unit);
         if (repairer != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C0a = " + repairer);
+            if (ATargeting.debug(unit)) System.out.println("C0a = " + repairer);
             return repairer;
         }
 
-        if (AEnemyTargeting.debug(unit)) System.out.println("C0b = " + unit);
+        if (ATargeting.debug(unit)) System.out.println("C0b = " + unit);
         return unit;
     }
 
@@ -135,7 +135,7 @@ public class ATargetingImportant extends AEnemyTargeting {
 //                .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (AEnemyTargeting.debug(unit)) System.out.println("C4 = " + target);
+            if (ATargeting.debug(unit)) System.out.println("C4 = " + target);
             return target;
         }
 
@@ -155,7 +155,7 @@ public class ATargetingImportant extends AEnemyTargeting {
                 .canBeAttackedBy(unit, 4)
                 .nearestTo(unit);
 
-        if (AEnemyTargeting.debug(unit)) System.out.println("C5 = " + target);
+        if (ATargeting.debug(unit)) System.out.println("C5 = " + target);
         return target;
     }
 

@@ -1,13 +1,16 @@
-package atlantis.units.select;
+package atlantis.tests;
 
 import atlantis.Atlantis;
 import atlantis.debug.APainter;
-import atlantis.tests.FakeUnit;
-import atlantis.tests.UnitTestHelper;
 import atlantis.units.AUnitType;
+import atlantis.units.select.BaseSelect;
+import atlantis.units.select.Select;
 import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -69,6 +72,27 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     protected FakeUnit[] fakeUnits(FakeUnit... fakeUnits) {
         return fakeUnits;
+    }
+
+    // =========================================================
+
+    public void assertContainsAll(Object[] expected, Object[] actual) {
+        boolean containsAll = (Arrays.asList(expected)).containsAll(Arrays.asList(actual));
+        boolean lengthsMatch = expected.length == actual.length;
+
+        if (!containsAll || !lengthsMatch) {
+            System.err.println("\nExpected: (" + expected.length + ")");
+            for (Object o : expected) {
+                System.err.println(o);
+            }
+            System.err.println("\nActual: (" + actual.length + ")");
+            for (Object o : actual ) {
+                System.err.println(o);
+            }
+        }
+
+        assertEquals(expected.length, actual.length);
+        assertTrue(containsAll);
     }
 
 }

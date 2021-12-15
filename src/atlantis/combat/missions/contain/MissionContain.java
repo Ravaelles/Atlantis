@@ -54,7 +54,7 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        if (enemy.hasWeaponRange(unit, 1.5) || unit.hasWeaponRange(enemy, 1.5)) {
+        if (enemy.hasWeaponRangeToAttack(unit, 1.5) || unit.hasWeaponRangeToAttack(enemy, 1.5)) {
 //        if (enemy.distTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
             return true;
         }
