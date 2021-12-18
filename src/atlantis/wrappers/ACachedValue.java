@@ -82,7 +82,7 @@ public class ACachedValue<T> {
      */
     public T getAliveCachedValue(String key) {
         if (cachedValues.containsKey(key)
-                && (cachedAtFrame.get(key) + cacheLifespanInFrames >= AGame.getTimeFrames())) {
+                && (cachedAtFrame.get(key) + cacheLifespanInFrames >= AGame.now())) {
             return cachedValues.get(key);
         } else {
             return null;
@@ -91,14 +91,14 @@ public class ACachedValue<T> {
 
     private Double insertDoubleValueForKey(String key, Double value) {
         cachedValues.put(key, (T) value);
-        cachedAtFrame.put(key, AGame.getTimeFrames());
+        cachedAtFrame.put(key, AGame.now());
 //        System.out.println("Cache between " + key + " at " + AGame.getTimeFrames() + " is " + value);
         return value;
     }
 
     private T insertNewValueForKey(String key, T value) {
         cachedValues.put(key, value);
-        cachedAtFrame.put(key, AGame.getTimeFrames());
+        cachedAtFrame.put(key, AGame.now());
         return value;
     }
 

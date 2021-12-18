@@ -124,7 +124,7 @@ public class ABuilderManager {
                     );
 
                     if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
-                            AGame.getTimeFrames() % 30 == 0)) {
+                            AGame.now() % 30 == 0)) {
                         builder.build(buildingType, buildTilePosition);
                         return true;
                     }

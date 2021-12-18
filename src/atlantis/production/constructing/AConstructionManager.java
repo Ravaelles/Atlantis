@@ -237,7 +237,7 @@ public class AConstructionManager {
                 + (int) (1.7 * order.positionToBuild().distTo(order.builder())
         ));
 
-        if (AGame.getTimeFrames() - order.timeOrdered() > timeout) {
+        if (AGame.now() - order.timeOrdered() > timeout) {
             System.out.println("Cancel construction of " + order.buildingType());
             order.cancel();
         }

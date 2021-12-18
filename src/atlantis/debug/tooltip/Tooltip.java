@@ -21,7 +21,7 @@ public class Tooltip {
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
-        this.tooltipStartInFrames = AGame.getTimeFrames();
+        this.tooltipStartInFrames = AGame.now();
     }
 
     public String getTooltip() {

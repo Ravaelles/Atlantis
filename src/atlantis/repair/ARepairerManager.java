@@ -155,7 +155,7 @@ public class ARepairerManager {
         }
 
         if (!protectors.isEmpty()) {
-            return Select.from(protectors).nearestTo(unitToRepair);
+            return Select.from(protectors, "protectors").nearestTo(unitToRepair);
         }
 
         // If no free protector was found, return normal worker.

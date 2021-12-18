@@ -20,7 +20,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
                 expectedTarget = fake(AUnitType.Zerg_Zergling, 13)
         );
 
-        usingMockedOurAndEnemies(our, enemies, () -> {
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }
@@ -37,7 +37,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
                 expectedTarget = fake(AUnitType.Zerg_Sunken_Colony, 13)
         );
 
-        usingMockedOurAndEnemies(our, enemies, () -> {
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }
@@ -53,7 +53,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Zergling, 16)
         );
 
-        usingMockedOurAndEnemies(our, enemies, () -> {
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }

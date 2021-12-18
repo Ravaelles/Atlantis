@@ -23,12 +23,12 @@ public class ACombatInformation {
      * Caches combat eval of this unit for the time of one frame.
      */
     public void updateCombatEval(double eval) {
-        _lastTimeCombatEval = AGame.getTimeFrames();
+        _lastTimeCombatEval = AGame.now();
         _lastCombatEval = eval;
     }
 
     public double getCombatEvalCachedValueIfNotExpired() {
-        if (AGame.getTimeFrames() <= _lastTimeCombatEval) {
+        if (AGame.now() <= _lastTimeCombatEval) {
             return _lastCombatEval;
         } else {
             return -123456;

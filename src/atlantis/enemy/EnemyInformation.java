@@ -24,6 +24,12 @@ public class EnemyInformation {
 
     // =========================================================
 
+    public static void clearCache() {
+        cache.clear();
+        cacheBoolean.clear();
+        enemyStartedWithDefensiveBuilding = false;
+    }
+
     public static boolean isEnemyNearAnyOurBuilding() {
         return enemyNearAnyOurBuilding() != null;
     }

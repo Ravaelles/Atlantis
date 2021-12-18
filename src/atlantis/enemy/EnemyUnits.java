@@ -3,6 +3,7 @@ package atlantis.enemy;
 import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.A;
@@ -37,10 +38,15 @@ public class EnemyUnits {
 //        }
     }
 
+    public static void clearCache() {
+        cache.clear();
+        enemyUnitsDiscovered.clear();
+    }
+
     // =========================================================
 
     public static Selection selectFoggedUnits() {
-        return Select.from(EnemyInformation.discoveredAndAliveUnits());
+        return Select.from(EnemyInformation.discoveredAndAliveUnits(), "foggedUnits");
     }
 
     /**
@@ -91,11 +97,28 @@ public class EnemyUnits {
         );
     }
 
-    public static Selection combatBuildings(boolean includeCreepColonies) {
+//    public static Selection combatBuildings(boolean includeCreepColonies) {
+//        return (Selection) cache.get(
+//                "combatBuildings:" + A.trueFalse(includeCreepColonies),
+//                40,
+//                () -> selectFoggedUnits().combatBuildings(includeCreepColonies)
+//        );
+//    }
+
+    public static Selection combatUnitsToBetterAvoid() {
         return (Selection) cache.get(
-                "combatBuildings:" + A.trueFalse(includeCreepColonies),
-                20,
-                () -> selectFoggedUnits().combatBuildings(includeCreepColonies)
+                "combatUnitsToBetterAvoid:",
+                40,
+                () -> {
+                    Selection combatUnits = selectFoggedUnits().combatUnits();
+
+                    return combatUnits.clone().combatBuildings(false).add(
+                            combatUnits.clone().ofType(
+                                AUnitType.Terran_Siege_Tank_Siege_Mode,
+                                AUnitType.Zerg_Lurker
+                            )
+                    );
+                }
         );
     }
 }

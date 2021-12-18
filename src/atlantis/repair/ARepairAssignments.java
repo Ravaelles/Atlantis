@@ -42,7 +42,7 @@ public class ARepairAssignments {
 
         if (unitsToRepairers.containsKey(wounded)) {
             ArrayList<AUnit> repairers = unitsToRepairers.get(wounded);
-            return Select.from(repairers).nearestTo(wounded);
+            return Select.from(repairers, "repairers").nearestTo(wounded);
 //            if (repairers.size() >= 1) {
 //                if (repairers.get(0).isAlive()) {
 //                    return repairers.get(0);

@@ -54,6 +54,10 @@ public abstract class AAvoidUnits {
         return false;
     }
 
+    public static void clearCache() {
+        cache.clear();
+    }
+
     // =========================================================
 
     private static boolean shouldSkip(AUnit unit) {
@@ -118,7 +122,7 @@ public abstract class AAvoidUnits {
 
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
         return unit.enemiesNearby()
-                .add(EnemyUnits.combatBuildings(false))
+                .add(EnemyUnits.combatUnitsToBetterAvoid())
                 .filterOutDuplicates()
                 .canAttack(unit, true, true, 5)
                 .list();

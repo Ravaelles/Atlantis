@@ -1,8 +1,18 @@
 package atlantis.tests;
 
+import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.enemy.EnemyInformation;
+import atlantis.information.AFoggedUnit;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.BaseSelect;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
@@ -28,7 +38,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
-        usingMockedOurAndEnemies(our, enemies, () -> {
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
                     AAvoidUnits.unitsToAvoid(our).array()
@@ -57,7 +67,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Spore_Colony, 13).setCompleted(false)
         );
 
-        usingMockedOurAndEnemies(our, enemies, () -> {
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
                     AAvoidUnits.unitsToAvoid(our).array()
@@ -88,7 +98,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Spore_Colony, inRange)
         );
 
-        usingMockedOurAndEnemies(our, enemies, () -> {
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3 },
                     AAvoidUnits.unitsToAvoid(our).array()
@@ -121,12 +131,65 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                 fake(AUnitType.Terran_Bunker, outsideRange)
         );
 
-        usingMockedOurAndEnemies(our, enemies, () -> {
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
                     AAvoidUnits.unitsToAvoid(our).array()
             );
         });
+    }
+
+    @Test
+    public void avoidsFuckedSorryFoggedUnits() {
+        int inRange = 15;
+        int outsideRange = 30;
+        final AUnit enemy1;
+
+        FakeUnit our = fake(AUnitType.Terran_Siege_Tank_Siege_Mode, 10);
+
+        FakeUnit[] enemies = fakeUnits(
+                (FakeUnit) (enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange)),
+                fake(AUnitType.Protoss_Photon_Cannon, outsideRange)
+        );
+
+        // =========================================================
+
+        int framesNow = 1;
+        try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
+            MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class);
+            aGame.when(AGame::now).thenReturn(framesNow);
+
+            AUnit enemy2, enemy3, enemy4, enemy5;
+
+            AFoggedUnit[] fogged = new AFoggedUnit[] {
+                    (AFoggedUnit) (enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange)),
+                    fogged(AUnitType.Protoss_Photon_Cannon, outsideRange),
+                    (AFoggedUnit) (enemy3 = fogged(AUnitType.Zerg_Sunken_Colony, inRange)),
+                    fogged(AUnitType.Zerg_Sunken_Colony, outsideRange),
+                    fogged(AUnitType.Protoss_Zealot, inRange),
+                    fogged(AUnitType.Zerg_Mutalisk, inRange),
+                    (AFoggedUnit) (enemy4 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange)),
+                    fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, outsideRange),
+                    fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, inRange),
+                    fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, outsideRange),
+                    (AFoggedUnit) (enemy5 = fogged(AUnitType.Zerg_Lurker, inRange)),
+                    fogged(AUnitType.Zerg_Lurker, outsideRange)
+            };
+
+            MockedStatic<EnemyInformation> enemyInformation = Mockito.mockStatic(EnemyInformation.class);
+            enemyInformation.when(EnemyInformation::discoveredAndAliveUnits).thenReturn(Arrays.asList(fogged));
+
+            baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
+            baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
+
+            assertContainsAll(
+                    new AUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5 },
+                    AAvoidUnits.unitsToAvoid(our).array()
+            );
+
+            // Clean up
+            enemyInformation.when(EnemyInformation::discoveredAndAliveUnits).thenReturn(Collections.emptyList());
+        }
     }
 
 }

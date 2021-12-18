@@ -58,7 +58,9 @@ public class Cache<V> {
 
     public void set(String cacheKey, int cacheForFrames, V value) {
         data.put(cacheKey, value);
-        addCachedUntilEntry(cacheKey, cacheForFrames);
+        if (cacheForFrames != -1) {
+            addCachedUntilEntry(cacheKey, cacheForFrames);
+        }
     }
 
     public void forget(String cacheKey) {

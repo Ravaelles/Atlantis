@@ -64,24 +64,17 @@ public class AGame {
     }
 
     /**
-     * Returns number of frames elapsed.
-     */
-    public static int getTimeFrames() {
-        return Atlantis.game().getFrameCount();
-    }
-
-    /**
-     * Current timestamp in frames.
+     * Returns number of game frames elapsed.
      */
     public static int now() {
-        return getTimeFrames();
+        return Atlantis.game().getFrameCount();
     }
 
     /**
      * Return how many frames ago this moment was.
      */
     public static int framesAgo(int frame) {
-        return getTimeFrames() - frame;
+        return now() - frame;
     }
 
     /**

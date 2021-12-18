@@ -31,6 +31,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
     // =====================================================================
 
+    public static void clearCache() {
+        cache.clear();
+        cacheList.clear();
+        cacheInt.clear();
+        cacheUnit.clear();
+    }
+
     // Constructor is private, use our(), enemy() or neutral() methods
 
     // =====================================================================
@@ -564,8 +571,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Create initial search-pool of units from given collection of units.
      */
-    public static Selection from(Collection<? extends AUnit> units) {
-        return new Selection(units, null);
+    public static Selection from(Collection<? extends AUnit> units, String initCachePath) {
+        return new Selection(units, initCachePath);
     }
 
     /**
@@ -760,10 +767,4 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return selectedUnits;
     }
 
-    public static void clearCache() {
-        cache.clear();
-        cacheList.clear();
-        cacheInt.clear();
-        cacheUnit.clear();
-    }
 }

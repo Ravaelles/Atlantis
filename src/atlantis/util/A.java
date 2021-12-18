@@ -1097,7 +1097,7 @@ public class A {
     }
 
     public static int now() {
-        return AGame.getTimeFrames();
+        return AGame.now();
     }
 
     public static int seconds() {
@@ -1105,7 +1105,7 @@ public class A {
     }
 
     public static int ago(int frame) {
-        return AGame.getTimeFrames() - frame;
+        return AGame.now() - frame;
     }
 
     public static boolean atMostFramesAgo(int frame, int maxFramesAgo) {

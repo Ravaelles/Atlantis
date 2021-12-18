@@ -9,7 +9,7 @@ public class SelectionTest extends AbstractTestWithUnits {
 
     @Test
     public void ranged() {
-        usingMockedOurs(() -> {
+        usingFakeOurs(() -> {
 //            Select.our().ranged().print();
             assertEquals(9, Select.our().ranged().size());
         });
@@ -17,7 +17,7 @@ public class SelectionTest extends AbstractTestWithUnits {
 
     @Test
     public void melee() {
-        usingMockedOurs(() -> {
+        usingFakeOurs(() -> {
 //            Select.our().melee().print();
             assertEquals(3, Select.our().melee().size());
         });

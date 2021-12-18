@@ -30,6 +30,13 @@ public class FakeUnit extends AUnit {
     // =========================================================
 
     @Override
+    public String toString() {
+        return "Fake " + super.toString();
+    }
+
+    // =========================================================
+
+    @Override
     public int id() {
         return id;
     }

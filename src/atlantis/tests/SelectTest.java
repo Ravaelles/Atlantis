@@ -12,14 +12,14 @@ public class SelectTest extends AbstractTestWithUnits {
 
     @Test
     public void our() {
-        usingMockedOurs(() -> {
+        usingFakeOurs(() -> {
             assertEquals(ourUnits.length, Select.our().size());
         });
     }
 
     @Test
     public void ourRealUnits() {
-        usingMockedOurs(() -> {
+        usingFakeOurs(() -> {
             assertEquals(GROUND_UNITS + AIR_UNITS, Select.ourRealUnits().size());
         });
     }
@@ -28,14 +28,14 @@ public class SelectTest extends AbstractTestWithUnits {
 
     @Test
     public void enemy() {
-        usingMockedEnemy(() -> {
+        usingFakeEnemy(() -> {
             assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
         });
     }
 
     @Test
     public void enemyRealUnits() {
-        usingMockedEnemy(() -> {
+        usingFakeEnemy(() -> {
             assertEquals(enemyUnits.length, Select.enemyUnits().size());
 
             assertEquals(
@@ -74,7 +74,7 @@ public class SelectTest extends AbstractTestWithUnits {
 
     @Test
     public void neutralUnits() {
-        usingMockedNeutral(() -> {
+        usingFakeNeutral(() -> {
             assertEquals(MINERAL_COUNT, Select.minerals().size());
             assertEquals(GEYSER_COUNT, Select.geysers().size());
 

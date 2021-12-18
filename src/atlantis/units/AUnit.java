@@ -16,6 +16,7 @@ import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.tech.SpellCoordinator;
+import atlantis.tests.FakeUnit;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.position.PositionUtil;
@@ -115,9 +116,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // Only for tests
     protected AUnit() { }
+    protected AUnit(FakeUnit unit) { }
 
     protected AUnit(Unit u) {
-        if (u == null) {
+        this(u, false);
+    }
+
+    protected AUnit(Unit u, boolean allowNull) {
+        if (u == null && !allowNull) {
             throw new RuntimeException("AUnit constructor: unit is null");
         }
 
@@ -749,7 +755,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isLastOrderFramesAgo(int minFramesAgo) {
-        return AGame.getTimeFrames() - lastUnitOrder >= minFramesAgo;
+        return AGame.now() - lastUnitOrder >= minFramesAgo;
     }
 
     /**
@@ -795,14 +801,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns the frames counter (time) since the unit had been issued any command.
      */
     public int lastOrderFramesAgo() {
-        return AGame.getTimeFrames() - lastUnitOrder;
+        return AGame.now() - lastUnitOrder;
     }
 
     /**
      * Indicate that in this frame unit received some command (attack, move etc).
      */
     public AUnit setLastUnitOrderNow() {
-        this.lastUnitOrder = AGame.getTimeFrames();
+        this.lastUnitOrder = AGame.now();
         return this;
     }
 

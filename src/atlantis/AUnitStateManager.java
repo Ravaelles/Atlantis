@@ -9,7 +9,7 @@ public class AUnitStateManager {
     private static boolean updatePosition;
 
     public static void update() {
-        now = AGame.getTimeFrames();
+        now = AGame.now();
         updatePosition = AGame.everyNthGameFrame(AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES);
 
         for (AUnit unit : Select.our().listUnits()) {

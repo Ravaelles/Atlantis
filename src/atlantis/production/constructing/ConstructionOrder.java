@@ -34,7 +34,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         this.buildingType = buildingType;
 
         status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
-        timeOrdered = AGame.getTimeFrames();
+        timeOrdered = AGame.now();
     }
 
     // =========================================================
