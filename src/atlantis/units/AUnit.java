@@ -1612,7 +1612,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean energy(int min) {
-        return u.getEnergy() >= min;
+        return energy() >= min;
     }
 
     /**

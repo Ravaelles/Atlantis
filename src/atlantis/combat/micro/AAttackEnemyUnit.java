@@ -34,9 +34,12 @@ public class AAttackEnemyUnit {
 //        }
 
         AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
+        System.out.println("enemy = " + enemy);
         if (enemy == null) {
             return false;
         }
+
+//        atakujemy CHYBA fgged unit, nie ma takiego unitu wiec on odkurwia cos dziwnego
 
 //        System.out.println("enemy = " + enemy + " // effVisible:" + enemy.effVisible());
 

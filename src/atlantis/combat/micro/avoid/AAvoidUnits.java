@@ -123,7 +123,7 @@ public abstract class AAvoidUnits {
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
         return unit.enemiesNearby()
                 .add(EnemyUnits.combatUnitsToBetterAvoid())
-                .filterOutDuplicates()
+                .removeDuplicates()
                 .canAttack(unit, true, true, 5)
                 .list();
     }

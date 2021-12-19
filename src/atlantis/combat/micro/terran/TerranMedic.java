@@ -168,11 +168,11 @@ public class TerranMedic {
             if (dist > 1.9) {
                 return medic.move(assignment.position(), UnitActions.MOVE, "Stick");
             }
-            else if (dist > MIN_DIST_TO_ASSIGNMENT && medic.isMoving()) {
-                return medic.holdPosition("Ok");
-            }
             else if (dist <= MIN_DIST_TO_ASSIGNMENT) {
                 return medic.moveAwayFrom(assignment.position(), 0.18, "TooClose");
+            }
+            else if (medic.isMoving()) {
+                return medic.holdPosition("Ok");
             }
         }
         

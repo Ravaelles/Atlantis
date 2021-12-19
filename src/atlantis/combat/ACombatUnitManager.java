@@ -7,12 +7,14 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
+import atlantis.debug.APainter;
 import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.util.A;
+import bwapi.Color;
 
 public class ACombatUnitManager {
 
@@ -81,6 +83,10 @@ public class ACombatUnitManager {
 //            GameSpeed.changeSpeedTo(30);
 //            GameSpeed.oneTimeSlowdownUsed = true;
 //        }
+
+        if (unit.targetPosition() != null) {
+            APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+        }
 
         if (unit.isNotRealUnit()) {
             System.err.println("Not real unit: " + unit.shortName());

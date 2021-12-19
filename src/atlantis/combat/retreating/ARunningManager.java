@@ -96,6 +96,7 @@ public class ARunningManager {
 
         if (runTo == null) {
             if (handleOnlyCombatBuildingsAreDangerouslyClose(unit)) {
+                System.out.println("handleOnlyCombatBuildingsAreDangerouslyClose");
                 unit.holdPosition("Steady");
                 return true;
             }

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.AGame;
+import atlantis.tests.FakeUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -54,9 +55,13 @@ public class TerranComsatStation {
             return true;
         }
 
-        int minUnitsNearby = (comsat.energy(160) ? 3 : (comsat.energy(100) ? 4 : 6));
+        int minUnitsNearby = (comsat.energy(160) ? 3 : (comsat.energy(60) ? 4 : 6));
+//        System.out.println(comsat.energy() + " energy,  minUnitsNearby = " + minUnitsNearby + ", but there are " + Select.ourCombatUnits()
+//                .excludeTypes(AUnitType.Terran_Medic)
+//                .inRadius(12, lurker).count());
 
-        if (Select.ourBuildingsIncludingUnfinished().inRadius(11, lurker).isNotEmpty()) {
+        if (comsat.energy(100) && Select.ourBuildingsIncludingUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
+            System.err.println("Scan " + lurker + " because buildings are close");
             return true;
         }
 
@@ -124,7 +129,9 @@ public class TerranComsatStation {
 //            return false;
 //        }
 
-        System.err.println("=== COMSAT SCAN on " + unitToScan.shortName() + ", energy = " + comsat.energy() + " ===");
+        if (!(unitToScan instanceof FakeUnit)) {
+            System.err.println("=== COMSAT SCAN on " + unitToScan + ", energy = " + comsat.energy() + " ===");
+        }
         comsat.setTooltip("Scanning " + unitToScan.shortName());
         return comsat.useTech(TechType.Scanner_Sweep, unitToScan);
     }

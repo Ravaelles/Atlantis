@@ -16,7 +16,8 @@ public class UseMap {
 
         // === UMS maps - great for bot development ============
 
-        return "ums/rav/T_vs_Sunkens.scx";
+//        return "ums/rav/T_vs_Sunkens.scx";
+        return "ums/rav/T_vs_Sunkens2.scx";
 //        return "ums/rav/Wraiths_v_Probes.scm";
 //        return "ums/rav/Wraiths_v_Cannons.scm";
 //        return "ums/rav/M&M_v_Dragoons_A.scx";

@@ -198,7 +198,7 @@ public class EnemyInformation {
         return cacheBoolean.get(
                 "hasDefensiveLandBuilding",
                 30,
-                () -> EnemyUnits.selectFoggedUnits()
+                () -> EnemyUnits.foggedUnits()
                         .combatBuildings(true)
                         .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony)
                         .atLeast(1)

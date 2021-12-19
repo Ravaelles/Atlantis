@@ -1,10 +1,9 @@
 package atlantis.tests;
 
 import atlantis.position.APosition;
-import atlantis.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.A;
+import bwapi.TechType;
 
 public class FakeUnit extends AUnit {
 
@@ -16,6 +15,9 @@ public class FakeUnit extends AUnit {
     public boolean neutral = false;
     public boolean detected = true;
     public boolean completed = true;
+    public int energy = 0;
+    public FakeUnit target = null;
+    public TechType lastTechUsed = null;
 
     // =========================================================
 
@@ -81,6 +83,11 @@ public class FakeUnit extends AUnit {
         return id * 10;
     }
 
+    @Override
+    public int energy() {
+        return energy;
+    }
+
     public int maxHp() {
         return hp() + id * 10;
     }
@@ -112,7 +119,7 @@ public class FakeUnit extends AUnit {
 
     @Override
     public AUnit target() {
-        return null;
+        return target;
     }
 
     // =========================================================
@@ -122,6 +129,16 @@ public class FakeUnit extends AUnit {
         int dx = otherUnit.x() - position.x();
         int dy = otherUnit.y() - position.y();
         return Math.sqrt(dx * dx + dy * dy) / 32.0;
+    }
+
+    // =========================================================
+    // Orders
+
+    @Override
+    public boolean useTech(TechType tech, AUnit target) {
+        this.lastTechUsed = tech;
+        this.target = (FakeUnit) target;
+        return true;
     }
 
     // =========================================================
@@ -136,8 +153,18 @@ public class FakeUnit extends AUnit {
         return this;
     }
 
+    public FakeUnit setDetected(boolean detected) {
+        this.detected = detected;
+        return this;
+    }
+
     public FakeUnit setCompleted(boolean completed) {
         this.completed = completed;
+        return this;
+    }
+
+    public FakeUnit setEnergy(int energy) {
+        this.energy = energy;
         return this;
     }
 

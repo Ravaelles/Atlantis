@@ -76,7 +76,6 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits.clone()
                 .ofType(AUnitType.Zerg_Lurker)
-                .effVisible()
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
@@ -85,8 +84,18 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits.clone()
                 .ofType(AUnitType.Zerg_Lurker)
-                .effVisible()
                 .inShootRangeOf(1.4, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // HIGH TEMPLARS
+
+        target = enemyUnits.clone()
+                .ofType(AUnitType.Protoss_High_Templar)
+                .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;

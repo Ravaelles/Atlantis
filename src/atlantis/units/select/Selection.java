@@ -785,7 +785,7 @@ public class Selection {
         return units().average();
     }
 
-    public Selection filterOutDuplicates() {
+    public Selection removeDuplicates() {
         ArrayList<Integer> indexesToRemove = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             for (int j = 0; j < data.size(); j++) {

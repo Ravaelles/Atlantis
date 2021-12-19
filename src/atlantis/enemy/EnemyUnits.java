@@ -6,7 +6,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 import atlantis.util.Cache;
 
 import java.util.HashMap;
@@ -45,7 +44,7 @@ public class EnemyUnits {
 
     // =========================================================
 
-    public static Selection selectFoggedUnits() {
+    public static Selection foggedUnits() {
         return Select.from(EnemyInformation.discoveredAndAliveUnits(), "foggedUnits");
     }
 
@@ -110,7 +109,7 @@ public class EnemyUnits {
                 "combatUnitsToBetterAvoid:",
                 40,
                 () -> {
-                    Selection combatUnits = selectFoggedUnits().combatUnits();
+                    Selection combatUnits = foggedUnits().combatUnits();
 
                     return combatUnits.clone().combatBuildings(false).add(
                             combatUnits.clone().ofType(

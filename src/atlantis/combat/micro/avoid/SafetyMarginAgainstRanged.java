@@ -92,7 +92,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         if (defender.isVulture()) {
             return 6.4;
         } else if (defender.is(AUnitType.Terran_Wraith)) {
-            return 7.1;
+            return 7.3;
         }
 
         return (defender.isAir() ? 5.8 : 1.1);

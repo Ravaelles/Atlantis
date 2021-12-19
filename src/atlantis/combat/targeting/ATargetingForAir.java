@@ -1,5 +1,6 @@
 package atlantis.combat.targeting;
 
+import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.Enemy;
@@ -26,6 +27,39 @@ public class ATargetingForAir {
         AUnit target;
 
         // =========================================================
+        // Target AIR units
+
+        target = ATargeting.enemyUnits.clone()
+                .air()
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Target REAVERS
+
+        target = ATargeting.enemyUnits.clone()
+                .ofType(AUnitType.Protoss_Reaver)
+                .inRadius(10, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Target TRANSPORT
+
+        target = ATargeting.enemyUnits.clone()
+                .transports(true)
+                .inRadius(10, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
         // Target WORKERS
 
         target = ATargeting.enemyUnits.clone()
@@ -43,41 +77,28 @@ public class ATargetingForAir {
         AUnit target;
 
         // =========================================================
-        // Target WORKERS
+        // Target DEFENSIVE BUILDINGS
 
         target = ATargeting.enemyUnits.clone()
-                .workers()
-                .inRadius(10, unit)
+                .add(EnemyUnits.foggedUnits())
+                .ofType(AUnitType.Zerg_Sunken_Colony)
+                .removeDuplicates()
+                .inRadius(50, unit)
                 .nearestTo(unit);
+        System.out.println("target = " + target + " // " + unit);
         if (target != null) {
             return target;
         }
 
         // =========================================================
-        // Target AIR units
+        // Target WORKERS
 
-        if (Enemy.zerg()) {
-            target = ATargeting.enemyUnits.clone()
-                    .air()
-//                    .ofType(AUnitType.Zerg_Overlord)
-                    .inShootRangeOf(unit)
-                    .nearestTo(unit);
-            if (target != null) {
-                return target;
-            }
-        }
-
-        // =========================================================
-        // Target DEFENSIVE BUILDINGS
-
-        if (Enemy.zerg()) {
-            target = ATargeting.enemyUnits.clone()
-                    .ofType(AUnitType.Zerg_Sunken_Colony)
-                    .inRadius(15, unit)
-                    .nearestTo(unit);
-            if (target != null) {
-                return target;
-            }
+        target = ATargeting.enemyUnits.clone()
+                .workers()
+                .inRadius(30, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
         }
 
         return null;
