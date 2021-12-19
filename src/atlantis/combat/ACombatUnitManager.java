@@ -18,7 +18,7 @@ import bwapi.Color;
 
 public class ACombatUnitManager {
 
-    protected static boolean update(AUnit unit) {
+    public static boolean update(AUnit unit) {
         if (preActions(unit)) {
             return true;
         }

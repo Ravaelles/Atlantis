@@ -33,15 +33,15 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         AAvoidUnits.clearCache();
     }
 
-//    protected void usingFakeTime(int framesNow, Runnable runnable) {
-////        Atlantis.getInstance().setGame(gameMock(0));
-//
+    protected void usingFakeTime(int framesNow) {
+        Atlantis.getInstance().setGame(gameMock(framesNow));
+
 //        try (MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class)) {
 //            aGame.when(AGame::now).thenReturn(framesNow);
 //
 //            runnable.run();
 //        }
-//    }
+    }
 
     protected void usingFakeOurs(Runnable runnable) {
         try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
@@ -107,8 +107,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         return new FakeUnit(type, 10, 10);
     }
 
-    protected FakeUnit fake(AUnitType type, int x) {
-        return new FakeUnit(type, x, 10);
+    protected FakeUnit fake(AUnitType type, int y) {
+        return new FakeUnit(type, 10, y);
     }
 
     protected FakeUnit fake(AUnitType type, int x, int y) {

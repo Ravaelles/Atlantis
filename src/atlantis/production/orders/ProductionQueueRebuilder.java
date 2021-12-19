@@ -42,13 +42,13 @@ public class ProductionQueueRebuilder {
             // === Tech
 
             else if (order.tech() != null) {
-                isOkayToAdd = !ATech.isResearched(order.tech(), order);
+                isOkayToAdd = !ATech.isResearchedWithOrder(order.tech(), order);
             }
 
             // === Upgrade
 
             else if (order.upgrade() != null) {
-                isOkayToAdd = !ATech.isResearched(order.upgrade(), order);
+                isOkayToAdd = !ATech.isResearchedWithOrder(order.upgrade(), order);
             }
 
             // =========================================================

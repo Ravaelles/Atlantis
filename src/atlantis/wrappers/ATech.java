@@ -34,7 +34,7 @@ public class ATech {
         );
     }
 
-    public static boolean isResearched(Object techOrUpgrade, ProductionOrder order) {
+    public static boolean isResearchedWithOrder(Object techOrUpgrade, ProductionOrder order) {
         if (techOrUpgrade instanceof TechType) {
             TechType tech = (TechType) techOrUpgrade;
             return isResearchedTech(tech);

@@ -15,8 +15,10 @@ public class FakeUnit extends AUnit {
     public boolean neutral = false;
     public boolean detected = true;
     public boolean completed = true;
+    public boolean loaded = false;
     public int energy = 0;
     public FakeUnit target = null;
+    public APosition targetPosition = null;
     public TechType lastTechUsed = null;
 
     // =========================================================
@@ -79,6 +81,16 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    @Override
+    public boolean isUnderStorm() {
+        return false;
+    }
+
+    @Override
     public int hp() {
         return id * 10;
     }
@@ -120,6 +132,11 @@ public class FakeUnit extends AUnit {
     @Override
     public AUnit target() {
         return target;
+    }
+
+    @Override
+    public APosition targetPosition() {
+        return targetPosition;
     }
 
     // =========================================================
