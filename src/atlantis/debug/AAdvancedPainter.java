@@ -1049,7 +1049,7 @@ public class AAdvancedPainter extends APainter {
                 String string = "";
 
                 if (unit.hasTooltip()) {
-                    string += unit.getTooltip();
+                    string += unit.tooltip();
                 } else {
                     string += "---";
                 }

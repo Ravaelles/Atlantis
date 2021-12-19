@@ -42,6 +42,16 @@ public class FakeUnit extends AUnit {
         return "Fake " + super.toString();
     }
 
+    public String lastCommand() {
+        if (lastCommand.equals("AttackUnit")) {
+            return "Attack:" + target;
+        }
+        else if (lastCommand.equals("Move")) {
+            return "Move:" + targetPosition.toString();
+        }
+        return lastCommand;
+    }
+
     // =========================================================
 
     @Override
@@ -138,6 +148,10 @@ public class FakeUnit extends AUnit {
         return lastCommand.equals("Moving");
     }
 
+    public boolean isAttacking() {
+        return lastCommand.equals("AttackUnit");
+    }
+
     @Override
     public boolean isPatrolling() {
         return lastCommand.equals("Patrolling");
@@ -199,7 +213,11 @@ public class FakeUnit extends AUnit {
     public boolean attackUnit(AUnit target) {
         lastCommand = "AttackUnit";
         this.target = (FakeUnit) target;
-        targetPosition = target.targetPosition();
+//        System.out.println("### ATTACK");
+//        System.out.println("target = " + target);
+//        System.out.println("target.targetPosition() = " + target.position());
+//        System.out.println("### End of ATTACK");
+        targetPosition = target.position();
         return true;
     }
 
@@ -252,4 +270,5 @@ public class FakeUnit extends AUnit {
         }
         return this;
     }
+
 }

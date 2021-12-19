@@ -1,6 +1,7 @@
 package atlantis.combat.targeting;
 
 import atlantis.debug.APainter;
+import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -9,8 +10,8 @@ import bwapi.Color;
 
 public class ATargeting {
 
-    protected static final boolean DEBUG = true;
-//    protected static final boolean DEBUG = false;
+//    protected static final boolean DEBUG = true;
+    protected static final boolean DEBUG = false;
 
     protected static Selection enemyBuildings;
     protected static Selection enemyUnits;
@@ -68,11 +69,17 @@ public class ATargeting {
             return enemy;
         }
 
-        // Most wounded enemy ALMOST IN RANGE
-        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 2.2);
+        // Distant enemies
+        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 40);
         if (enemy != null) {
             return enemy;
         }
+
+//        // Most wounded enemy ALMOST IN RANGE
+//        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 2.2);
+//        if (enemy != null) {
+//            return enemy;
+//        }
 
         // =====================================================================
         // Couldn't find enemy of given type in/near weapon range. Change target
@@ -137,14 +144,14 @@ public class ATargeting {
         Selection targets = Select.enemyRealUnits(true)
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 8);
+                .canBeAttackedBy(unit, 15);
 
         // Quit early if no target at all
         if (
                 Select.enemyRealUnits(true)
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 8)
+                .canBeAttackedBy(unit, 15)
                 .count() == 0
         ) {
             if (debug(unit)) {

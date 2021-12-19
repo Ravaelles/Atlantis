@@ -47,13 +47,13 @@ public class ACombatCommander {
     private static void addInfoAboutNearestEnemyToTooltip(AUnit unit) {
         AUnit nearestEnemy = Select.enemyRealUnits().nearestTo(unit);
         if (nearestEnemy != null) {
-            String tooltip = unit.getTooltip() + "";
+            String tooltip = unit.tooltip() + "";
             if (tooltip.contains(" / ")) {
                 unit.setTooltip("");
             }
 
             double margin = AAvoidUnits.lowestSafetyMarginForAnyEnemy(unit);
-            unit.setTooltip( (margin < 9876 ? A.digit(margin) : "-") + " / " + unit.getTooltip()
+            unit.setTooltip( (margin < 9876 ? A.digit(margin) : "-") + " / " + unit.tooltip()
 //                    A.digit(nearestEnemy.distanceTo(unit)) + " \\ "
 //                            + A.digit(AAvoidUnits.lowestSafetyMarginForAnyEnemy(unit)) + " / "
             );

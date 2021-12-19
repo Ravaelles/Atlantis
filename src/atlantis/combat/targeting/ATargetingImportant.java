@@ -72,7 +72,7 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Zerg_Sunken_Colony
                 )
-                .inRadius(11, unit)
+                .inRadius(16, unit)
                 .nearestTo(unit);
         if (target != null) {
             return combatBuildingOrScvRepairingIt(target);
@@ -151,7 +151,7 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret
                 )
-                .inRadius(12, unit)
+                .inRadius(16, unit)
                 .canBeAttackedBy(unit, 4)
                 .nearestTo(unit);
 

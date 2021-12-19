@@ -34,7 +34,8 @@ public class AAttackEnemyUnit {
 //        }
 
         AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
-        System.out.println("enemy = " + enemy);
+//        System.out.println("enemy = " + enemy);
+
         if (enemy == null) {
             return false;
         }

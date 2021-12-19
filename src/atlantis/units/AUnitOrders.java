@@ -30,7 +30,7 @@ public interface AUnitOrders {
                             "cooldown " + unit().cooldownRemaining()+ " // " +
                             "attackFrame " + unit()._lastAttackFrame + " // " +
                             "StartingAttack " + unit()._lastStartedAttack + " // " +
-                            unit().getTooltip()
+                            unit().tooltip()
             );
         }
 

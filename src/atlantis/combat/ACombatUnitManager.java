@@ -18,8 +18,8 @@ import bwapi.Color;
 
 public class ACombatUnitManager {
 
-//    private static boolean debug = false;
-    private static boolean debug = true;
+    private static boolean debug = false;
+//    private static boolean debug = true;
 
     public static boolean update(AUnit unit) {
         if (preActions(unit)) {
@@ -112,7 +112,7 @@ public class ACombatUnitManager {
             }
         }
 
-        unit.setTooltip(unit.getTooltip() + ".");
+        unit.setTooltip(unit.tooltip() + ".");
         return false;
     }
 

@@ -4,7 +4,6 @@ import atlantis.AGame;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.units.Units;
 
 import java.util.Objects;
@@ -37,7 +36,7 @@ public class RetreatManager {
             return unit.runningManager().runFrom(enemies.average(), 3.5);
         }
 
-        if (Objects.equals(unit.getTooltip(), "Retreat")) {
+        if (Objects.equals(unit.tooltip(), "Retreat")) {
             unit.removeTooltip();
         }
 

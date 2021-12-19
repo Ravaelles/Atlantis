@@ -491,7 +491,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this;
     }
 
-    public String getTooltip() {
+    public String tooltip() {
 //        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
 //            String tooltipToReturn = this.tooltip;
 //            this.tooltip = null;
