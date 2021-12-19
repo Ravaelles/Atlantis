@@ -38,7 +38,7 @@ public class OurDecisions {
                         return false;
                     }
 
-                    return EnemyInformation.enemyStartedWithDefensiveBuilding && OurStrategy.get().goingBio();
+                    return EnemyInformation.enemyStartedWithCombatBuilding && OurStrategy.get().goingBio();
                 }
         );
     }
@@ -49,7 +49,7 @@ public class OurDecisions {
                 100,
                 () -> OurStrategy.get().goingBio()
 //                () -> (OurStrategy.get().goingBio() || Count.ourCombatUnits() <= 30)
-//                        (!EnemyInformation.enemyStartedWithDefensiveBuilding || Select.ourTerranInfantry().atMost(13))
+//                        (!EnemyInformation.enemyStartedWithCombatBuilding || Select.ourTerranInfantry().atMost(13))
         );
     }
 
@@ -65,7 +65,7 @@ public class OurDecisions {
         return cache.get(
                 "focusOnTanksOnly",
                 100,
-                () -> EnemyInformation.enemyStartedWithDefensiveBuilding && GamePhase.isEarlyGame()
+                () -> EnemyInformation.enemyStartedWithCombatBuilding && GamePhase.isEarlyGame()
         );
     }
 }

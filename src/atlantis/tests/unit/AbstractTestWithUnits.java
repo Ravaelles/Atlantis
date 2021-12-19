@@ -1,6 +1,5 @@
-package atlantis.tests;
+package atlantis.tests.unit;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;

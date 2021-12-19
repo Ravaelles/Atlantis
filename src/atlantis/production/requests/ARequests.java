@@ -34,15 +34,15 @@ public abstract class ARequests {
     }
 
     public void requestDefBuildingAntiAir(APosition where) {
-        AAntiAirBuildingRequests.requestDefensiveBuildingAntiAir(where);
+        AAntiAirBuildingRequests.requestCombatBuildingAntiAir(where);
     }
 
-    public void requestDefensiveBuildingAntiAir(APosition where) {
-        requestDefensiveBuildingAntiAir(where);
+    public void requestCombatBuildingAntiAir(APosition where) {
+        requestCombatBuildingAntiAir(where);
     }
     
-    public void requestDefensiveBuildingAntiLand(APosition where) {
-        AAntiLandBuildingRequests.requestDefensiveBuildingAntiLand(where);
+    public void requestCombatBuildingAntiLand(APosition where) {
+        AAntiLandBuildingRequests.requestCombatBuildingAntiLand(where);
     }
 
 }

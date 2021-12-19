@@ -1,4 +1,4 @@
-package atlantis.tests;
+package atlantis.tests.unit;
 
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.units.AUnitType;

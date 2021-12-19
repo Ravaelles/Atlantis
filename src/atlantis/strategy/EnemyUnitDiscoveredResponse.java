@@ -19,7 +19,7 @@ public class EnemyUnitDiscoveredResponse {
         // COMBAT buildings
         if (enemyUnit.type().isCombatBuildingOrCreepColony()) {
             if (GamePhase.isEarlyGame()) {
-                EnemyInformation.enemyStartedWithDefensiveBuilding = true;
+                EnemyInformation.enemyStartedWithCombatBuilding = true;
             }
             if (Missions.isFirstMission()) {
                 MissionChanger.forceMissionContain();

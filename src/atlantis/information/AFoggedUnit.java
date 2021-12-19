@@ -1,7 +1,7 @@
 package atlantis.information;
 
 import atlantis.position.APosition;
-import atlantis.tests.FakeUnit;
+import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.A;

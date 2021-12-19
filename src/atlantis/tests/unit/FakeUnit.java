@@ -1,4 +1,4 @@
-package atlantis.tests;
+package atlantis.tests.unit;
 
 import atlantis.position.APosition;
 import atlantis.units.AUnit;

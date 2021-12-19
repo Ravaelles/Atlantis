@@ -37,8 +37,8 @@ public class Evaluate {
 //    protected static double evaluateUnitsAgainstUnit(Units units, AUnit againstUnit, boolean isEnemyEval) {
     protected static double evaluateUnitsAgainstUnit(Units theseUnits, Units againstUnits, boolean isEnemyEval) {
         double totalStrength = 0;
-        boolean enemyDefensiveBuildingFound = false;
-        boolean enemyDefensiveBuildingInRange = false;
+        boolean enemyCombatBuildingFound = false;
+        boolean enemyCombatBuildingInRange = false;
         AUnit againstUnit = againstUnits.first();
 
         if (againstUnit == null) {
@@ -69,8 +69,8 @@ public class Evaluate {
 
             else if (unit.isCombatBuilding() && unit.canAttackTarget(againstUnit)) {
                 totalStrength += evaluateBuilding(unit, againstUnit, unitStrengthEval);
-                enemyDefensiveBuildingFound = true;
-                enemyDefensiveBuildingInRange = unit.hasWeaponRangeToAttack(againstUnit, 2.5);
+                enemyCombatBuildingFound = true;
+                enemyCombatBuildingInRange = unit.hasWeaponRangeToAttack(againstUnit, 2.5);
             }
 
             // === Infantry ============================================
@@ -91,10 +91,10 @@ public class Evaluate {
         // Extra bonus for DEFENSIVE BUILDING PRESENCE
 
 //        if (!isEnemyEval) {
-        if (enemyDefensiveBuildingFound) {
+        if (enemyCombatBuildingFound) {
             totalStrength += theseUnits.onlyAir() ? 30 : 10;
         }
-        if (enemyDefensiveBuildingInRange) {
+        if (enemyCombatBuildingInRange) {
             totalStrength += theseUnits.onlyAir() ? 30 : 10;
         }
 //        }

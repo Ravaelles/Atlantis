@@ -53,15 +53,15 @@ public class MissionAttack extends Mission {
     }
 
     @Override
-    public boolean allowsToAttackDefensiveBuildings(AUnit unit, AUnit defensiveBuilding) {
+    public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
 
         // Tanks always allowed
-        if (unit.isTank() && unit.distToMoreThan(defensiveBuilding, 7.6)) {
+        if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.6)) {
             return true;
         }
 
         // Air units
-        if (unit.isAir() && defensiveBuilding.isSunken()) {
+        if (unit.isAir() && combatBuilding.isSunken()) {
             return true;
         }
 
@@ -72,7 +72,7 @@ public class MissionAttack extends Mission {
             return false;
         }
 
-        int buildings = Select.enemy().combatBuildings(false).inRadius(7, defensiveBuilding).count();
+        int buildings = Select.enemy().combatBuildings(false).inRadius(7, combatBuilding).count();
 
         return Select.ourRealUnits()
                 .inRadius(6, unit)

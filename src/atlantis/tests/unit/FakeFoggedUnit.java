@@ -1,4 +1,4 @@
-package atlantis.tests;
+package atlantis.tests.unit;
 
 import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;

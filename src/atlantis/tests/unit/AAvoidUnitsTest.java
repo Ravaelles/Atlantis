@@ -1,4 +1,4 @@
-package atlantis.tests;
+package atlantis.tests.unit;
 
 import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;

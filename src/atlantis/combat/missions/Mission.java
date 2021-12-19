@@ -44,7 +44,7 @@ public abstract class Mission {
     }
 
     // Template method
-    public boolean allowsToAttackDefensiveBuildings(AUnit unit, AUnit defensiveBuilding) {
+    public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
         return false;
     }
 
@@ -60,7 +60,7 @@ public abstract class Mission {
     }
 
 //    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
-//        if (AAvoidEnemyDefensiveBuildings.avoidCloseBuildings(unit, false)) {
+//        if (AAvoidEnemyCombatBuildings.avoidCloseBuildings(unit, false)) {
 //            return true;
 //        }
 //

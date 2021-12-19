@@ -77,15 +77,15 @@ public abstract class AStrategyResponse {
         System.out.println("GENERIC RUSH - shouldn't be called");
         Missions.setGlobalMissionDefend();
 
-        if (shouldSkipAntiRushDefensiveBuilding(enemyStrategy)) {
+        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
             return false;
         }
         
-        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
+        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;
     }
 
-    protected int rushDefenseDefensiveBuildingsNeeded(AStrategy enemyStrategy) {
+    protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
         return enemyStrategy.isGoingCheese() ? 3 : 2;
     }
 
@@ -96,7 +96,7 @@ public abstract class AStrategyResponse {
 
     // =========================================================
 
-    protected boolean shouldSkipAntiRushDefensiveBuilding(AStrategy enemyStrategy) {
+    protected boolean shouldSkipAntiRushCombatBuilding(AStrategy enemyStrategy) {
         if (enemyStrategy == null) {
             return false;
         }

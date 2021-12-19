@@ -16,7 +16,7 @@ public class AAntiAirBuildingRequests {
 
     public static boolean handle() {
         if (shouldBuildNew()) {
-            return requestDefensiveBuildingAntiAir(null);
+            return requestCombatBuildingAntiAir(null);
         }
 
         return false;
@@ -37,7 +37,7 @@ public class AAntiAirBuildingRequests {
         return 3 * Select.ourBases().count();
     }
 
-    public static boolean requestDefensiveBuildingAntiAir(HasPosition nearTo) {
+    public static boolean requestCombatBuildingAntiAir(HasPosition nearTo) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
 
         if (nearTo == null) {

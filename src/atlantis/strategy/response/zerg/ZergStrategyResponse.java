@@ -13,15 +13,15 @@ public class ZergStrategyResponse extends AStrategyResponse {
             Missions.setGlobalMissionDefend();
         }
 
-        if (shouldSkipAntiRushDefensiveBuilding(enemyStrategy)) {
+        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
             return false;
         }
 
-        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
+        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;
     }
 
-    protected int rushDefenseDefensiveBuildingsNeeded(AStrategy enemyStrategy) {
+    protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
         return 0;
 //        return enemyStrategy.isGoingCheese() ? 2 : 1;
     }

@@ -24,7 +24,7 @@ public class AAntiLandBuildingRequests {
     public static boolean handle() {
         if (shouldBuildNew()) {
 //            System.out.println("ENQUEUE NEW ANTI LAND");
-            return requestDefensiveBuildingAntiLand(null);
+            return requestCombatBuildingAntiLand(null);
         }
 
         return false;
@@ -72,7 +72,7 @@ public class AAntiLandBuildingRequests {
         return 0;
     }
 
-    public static boolean requestDefensiveBuildingAntiLand(HasPosition nearTo) {
+    public static boolean requestCombatBuildingAntiLand(HasPosition nearTo) {
         if (nearTo == null) {
             nearTo = positionForNextBuilding();
         }

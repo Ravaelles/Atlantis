@@ -20,14 +20,14 @@ public class EnemyInformation {
     private static Cache<Object> cache = new Cache<>();
     private static Cache<Boolean> cacheBoolean = new Cache<>();
 
-    public static boolean enemyStartedWithDefensiveBuilding = false;
+    public static boolean enemyStartedWithCombatBuilding = false;
 
     // =========================================================
 
     public static void clearCache() {
         cache.clear();
         cacheBoolean.clear();
-        enemyStartedWithDefensiveBuilding = false;
+        enemyStartedWithCombatBuilding = false;
     }
 
     public static boolean isEnemyNearAnyOurBuilding() {

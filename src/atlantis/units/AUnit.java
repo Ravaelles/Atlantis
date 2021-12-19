@@ -16,7 +16,7 @@ import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.tech.SpellCoordinator;
-import atlantis.tests.FakeUnit;
+import atlantis.tests.unit.FakeUnit;
 import atlantis.units.actions.UnitAction;
 import atlantis.units.actions.UnitActions;
 import atlantis.position.PositionUtil;

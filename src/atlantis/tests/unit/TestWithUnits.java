@@ -1,4 +1,4 @@
-package atlantis.tests;
+package atlantis.tests.unit;
 
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;

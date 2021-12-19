@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.AGame;
-import atlantis.tests.FakeUnit;
+import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

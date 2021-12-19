@@ -63,7 +63,7 @@ public class ATargetingImportant extends ATargeting {
                 .canBeAttackedBy(unit, 1.5)
                 .nearestTo(unit);
         if (target != null) {
-            return defensiveBuildingOrScvRepairingIt(target);
+            return combatBuildingOrScvRepairingIt(target);
         }
 
         target = Select.enemy()
@@ -75,7 +75,7 @@ public class ATargetingImportant extends ATargeting {
                 .inRadius(11, unit)
                 .nearestTo(unit);
         if (target != null) {
-            return defensiveBuildingOrScvRepairingIt(target);
+            return combatBuildingOrScvRepairingIt(target);
         }
 
         // =========================================================
@@ -105,7 +105,7 @@ public class ATargetingImportant extends ATargeting {
         return null;
     }
 
-    private static AUnit defensiveBuildingOrScvRepairingIt(AUnit unit) {
+    private static AUnit combatBuildingOrScvRepairingIt(AUnit unit) {
         if (!unit.isBunker()) {
             if (ATargeting.debug(unit)) System.out.println("C0c = " + unit);
             return unit;

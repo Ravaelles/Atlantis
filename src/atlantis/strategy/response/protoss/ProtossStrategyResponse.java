@@ -13,16 +13,16 @@ public class ProtossStrategyResponse extends AStrategyResponse {
     protected boolean rushDefence(AStrategy enemyStrategy) {
         Missions.setGlobalMissionDefend();
 
-        if (shouldSkipAntiRushDefensiveBuilding(enemyStrategy)) {
+        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
             return false;
         }
 
-        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseDefensiveBuildingsNeeded(enemyStrategy));
+        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;
     }
 
     @Override
-    protected int rushDefenseDefensiveBuildingsNeeded(AStrategy enemyStrategy) {
+    protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
         return 1;
 //        return enemyStrategy.isGoingCheese() ? 3 : 2;
     }

@@ -20,7 +20,7 @@ public class FightInsteadAvoid {
     /**
      * Enemy units of different types that are dangerously close, extracted as variables for easier access
      */
-    protected final AUnit defensiveBuilding;
+    protected final AUnit combatBuilding;
     protected final AUnit invisibleDT;
     protected final AUnit invisibleCombatUnit;
     protected final AUnit lurker;
@@ -45,7 +45,7 @@ public class FightInsteadAvoid {
         tanks = selector.clone().tanks().first();
         vulture = selector.clone().ofType(AUnitType.Terran_Vulture).first();
         reaver = selector.clone().ofType(AUnitType.Protoss_Reaver).first();
-        defensiveBuilding = selector.clone().buildings().first();
+        combatBuilding = selector.clone().buildings().first();
         ranged = selector.clone().ranged().first();
         melee = selector.clone().melee().first();
     }
@@ -159,7 +159,7 @@ public class FightInsteadAvoid {
             return true;
         }
 
-//        if (defensiveBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
+//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
 //            return true;
 //        }
 
@@ -176,8 +176,8 @@ public class FightInsteadAvoid {
 //            return true;
 //        }
 
-        if (defensiveBuilding != null) {
-            return unit.mission().allowsToAttackDefensiveBuildings(unit, defensiveBuilding);
+        if (combatBuilding != null) {
+            return unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding);
         }
 
         if (unit.isMelee()) {
@@ -224,7 +224,7 @@ public class FightInsteadAvoid {
             }
         }
 
-        if (defensiveBuilding != null) {
+        if (combatBuilding != null) {
             return unit.mission().isMissionAttack()
                     && Select.ourCombatUnits().inRadius(6, unit).atLeast(10)
                     && ACombatEvaluator.advantagePercent(unit, 50)
@@ -235,7 +235,7 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightAsWorker(AUnit unit, Units enemies) {
-        if (defensiveBuilding != null || lurker != null || reaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {
+        if (combatBuilding != null || lurker != null || reaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {
             return false;
         }
 
