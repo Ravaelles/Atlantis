@@ -120,7 +120,7 @@ public class ABuilderManager {
                 if (AGame.canAfford(buildingType)) {
                     buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
                     TilePosition buildTilePosition = new TilePosition(
-                            buildPosition.getTileX(), buildPosition.getTileY()
+                            buildPosition.tx(), buildPosition.ty()
                     );
 
                     if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||

@@ -1,8 +1,6 @@
 package atlantis.production.constructing.position;
 
-import atlantis.AGame;
 import atlantis.debug.APainter;
-import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
@@ -27,10 +25,10 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         maxDistance = limitMaxDistanceForImportantBuildings(maxDistance, building);
 
         while (searchRadius < maxDistance) {
-            int xMin = nearTo.getTileX() - searchRadius;
-            int xMax = nearTo.getTileX() + searchRadius;
-            int yMin = nearTo.getTileY() - searchRadius;
-            int yMax = nearTo.getTileY() + searchRadius;
+            int xMin = nearTo.tx() - searchRadius;
+            int xMax = nearTo.tx() + searchRadius;
+            int yMin = nearTo.ty() - searchRadius;
+            int yMax = nearTo.ty() + searchRadius;
             for (int tileX = xMin; tileX <= xMax; tileX++) {
                 for (int tileY = yMin; tileY <= yMax; tileY++) {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {

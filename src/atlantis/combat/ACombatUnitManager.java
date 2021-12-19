@@ -18,6 +18,9 @@ import bwapi.Color;
 
 public class ACombatUnitManager {
 
+//    private static boolean debug = false;
+    private static boolean debug = true;
+
     public static boolean update(AUnit unit) {
         if (preActions(unit)) {
             return true;
@@ -55,9 +58,13 @@ public class ACombatUnitManager {
         // === MEDIUM priority - TACTICAL level ====================
         // =========================================================
 
+        if (debug) System.out.println("A");
+
         if (handledMediumPriority(unit)) {
             return true;
         }
+
+        if (debug) System.out.println("B");
 
         // =========================================================
         // === LOW priority - STRATEGY level =======================
@@ -93,7 +100,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (unit.isWorker()) {
+        if (unit.isWorker() && unit.squad() == null) {
             System.err.println("Worker being ACUM");
             return true;
         }

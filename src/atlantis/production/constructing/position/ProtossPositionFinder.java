@@ -35,10 +35,10 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         int searchRadius = initSearchRadius;
         while (searchRadius < maxDistance) {
-            int xMin = nearTo.getTileX() - searchRadius;
-            int xMax = nearTo.getTileX() + searchRadius;
-            int yMin = nearTo.getTileY() - searchRadius;
-            int yMax = nearTo.getTileY() + searchRadius;
+            int xMin = nearTo.tx() - searchRadius;
+            int xMax = nearTo.tx() + searchRadius;
+            int yMin = nearTo.ty() - searchRadius;
+            int yMax = nearTo.ty() + searchRadius;
             for (int tileX = xMin; tileX <= xMax; tileX++) {
                 for (int tileY = yMin; tileY <= yMax; tileY++) {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {

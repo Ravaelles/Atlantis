@@ -1,6 +1,5 @@
 package atlantis.position;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
@@ -247,7 +246,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
 
     @Override
     public String toString() {
-        return "(" + getTileX() + ", " + getTileY() + ")";
+        return "(" + tx() + ", " + ty() + ")";
     }
 
     @Override

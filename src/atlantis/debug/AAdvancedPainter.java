@@ -1104,8 +1104,8 @@ public class AAdvancedPainter extends APainter {
     private static void paintTestSupplyDepotLocationsNearMain() {
         AUnit worker = Select.ourWorkers().first();
         AUnit base = Select.ourBases().first();
-        int tileX = base.position().getTileX();
-        int tileY = base.position().getTileY();
+        int tileX = base.position().tx();
+        int tileY = base.position().ty();
         for (int x = tileX - 10; x <= tileX + 10; x++) {
             for (int y = tileY - 10; y <= tileY + 10; y++) {
                 APosition position = APosition.create(x, y);

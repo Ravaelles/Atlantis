@@ -1,8 +1,11 @@
 package atlantis.tests.unit;
 
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.UnitAction;
+import bwapi.CommandType;
 import bwapi.TechType;
 
 public class FakeUnit extends AUnit {
@@ -20,6 +23,7 @@ public class FakeUnit extends AUnit {
     public FakeUnit target = null;
     public APosition targetPosition = null;
     public TechType lastTechUsed = null;
+    public String lastCommand = "None";
 
     // =========================================================
 
@@ -105,6 +109,16 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public int groundWeaponCooldown() {
+        return 0;
+    }
+
+    @Override
+    public int airWeaponCooldown() {
+        return 0;
+    }
+
+    @Override
     public boolean isCompleted() {
         return completed;
     }
@@ -121,8 +135,23 @@ public class FakeUnit extends AUnit {
 
     @Override
     public boolean isMoving() {
-        return false;
+        return lastCommand.equals("Moving");
     }
+
+    @Override
+    public boolean isPatrolling() {
+        return lastCommand.equals("Patrolling");
+    }
+
+    @Override
+    public boolean isHoldingPosition() {
+        return lastCommand.equals("Hold");
+    }
+
+//    @Override
+//    public boolean isAttacking() {
+//        return lastCommand.equals("Attacking");
+//    }
 
     @Override
     public boolean isUnderDarkSwarm() {
@@ -155,6 +184,38 @@ public class FakeUnit extends AUnit {
     public boolean useTech(TechType tech, AUnit target) {
         this.lastTechUsed = tech;
         this.target = (FakeUnit) target;
+        return true;
+    }
+
+    @Override
+    public boolean holdPosition(String tooltip) {
+        lastCommand = "Hold";
+        target = null;
+        targetPosition = null;
+        return true;
+    }
+
+    @Override
+    public boolean attackUnit(AUnit target) {
+        lastCommand = "AttackUnit";
+        this.target = (FakeUnit) target;
+        targetPosition = target.targetPosition();
+        return true;
+    }
+
+    @Override
+    public boolean move(AUnit target, UnitAction unitAction, String tooltip) {
+        lastCommand = "Move";
+        this.target = (FakeUnit) target;
+        targetPosition = target.targetPosition();
+        return true;
+    }
+
+    @Override
+    public boolean move(HasPosition target, UnitAction unitAction, String tooltip) {
+        lastCommand = "Move";
+        this.target = (FakeUnit) target;
+        targetPosition = target.position();
         return true;
     }
 

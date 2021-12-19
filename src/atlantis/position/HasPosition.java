@@ -113,14 +113,14 @@ public interface HasPosition {
     /**
      * Returns X coordinate in tiles, 1 tile = 32 pixels.
      */
-    default int getTileX() {
+    default int tx() {
         return x() / 32;
     }
 
     /**
      * Returns Y coordinate in tiles, 1 tile = 32 pixels.
      */
-    default int getTileY() {
+    default int ty() {
         return y() / 32;
     }
 

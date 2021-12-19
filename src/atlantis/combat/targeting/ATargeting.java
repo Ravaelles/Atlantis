@@ -9,8 +9,8 @@ import bwapi.Color;
 
 public class ATargeting {
 
-//    protected static final boolean DEBUG = true;
-    protected static final boolean DEBUG = false;
+    protected static final boolean DEBUG = true;
+//    protected static final boolean DEBUG = false;
 
     protected static Selection enemyBuildings;
     protected static Selection enemyUnits;
@@ -37,7 +37,8 @@ public class ATargeting {
     }
 
     public static boolean debug(AUnit unit) {
-        return DEBUG && unit.isFirstCombatUnit();
+//        return DEBUG && unit.isFirstCombatUnit();
+        return DEBUG;
     }
 
     // =========================================================
@@ -133,12 +134,19 @@ public class ATargeting {
 //                .canBeAttackedBy(unit, 8)
 //                .print();
 
+        Selection targets = Select.enemyRealUnits(true)
+                .effVisible()
+                .inRadius(maxDistFromEnemy, unit)
+                .canBeAttackedBy(unit, 8);
+
         // Quit early if no target at all
-        if (Select.enemyRealUnits(true)
+        if (
+                Select.enemyRealUnits(true)
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 8)
-                .count() == 0) {
+                .count() == 0
+        ) {
             if (debug(unit)) {
                 System.out.println("PreA quit");
 //                System.out.println(Select.enemyRealUnits(true).count());
