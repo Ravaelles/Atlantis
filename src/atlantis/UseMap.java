@@ -9,8 +9,8 @@ import atlantis.util.A;
 public class UseMap {
 
     public static String activeMap() {
-        return "sscai/(2)Destination.scx";
-//        return "sscai/(2)Heartbreak Ridge.scx";
+//        return "sscai/(2)Destination.scx";
+        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 

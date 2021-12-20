@@ -4,6 +4,8 @@ import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
+import atlantis.combat.missions.defend.TerranMissionChangerWhenDefend;
 import atlantis.enemy.EnemyInformation;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
@@ -14,11 +16,11 @@ import atlantis.util.Enemy;
 public class TerranMissionChangerWhenContain extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend()) {
+        if (shouldChangeMissionToDefend() && !TerranMissionChangerWhenDefend.shouldChangeMissionToContain()) {
             Missions.setGlobalMissionDefend();
         }
 
-        else if (shouldChangeMissionToAttack()) {
+        else if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToContain()) {
             Missions.setGlobalMissionAttack();
         }
     }
@@ -42,7 +44,8 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
 
         if (Enemy.zerg()) {
             if (Missions.counter() >= 3) {
-                return A.resourcesBalance() < 150 || Count.ourCombatUnits() <= 15;
+//                return A.resourcesBalance() < 150 || Count.ourCombatUnits() <= 15;
+                return Count.ourCombatUnits() <= 6;
             }
         }
 

@@ -21,7 +21,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private static boolean shouldChangeMissionToContain() {
+    public static boolean shouldChangeMissionToContain() {
         int ourCount = Select.ourCombatUnits().count();
 
         if (OurStrategy.get().goingBio()) {
@@ -31,7 +31,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
         return ourCount <= 15 || Select.enemyRealUnits().count() >= ourCount + 2;
     }
 
-    private static boolean shouldChangeMissionToDefend() {
+    public static boolean shouldChangeMissionToDefend() {
         if (A.supplyUsed(120)) {
             return false;
         }

@@ -79,8 +79,6 @@ public class ARunningManager {
         // === Define run to position ==============================
 
         if (handleOnlyCombatBuildingsAreDangerouslyClose(unit)) {
-            System.out.println("handleOnlyCombatBuildingsAreDangerouslyClose");
-            unit.holdPosition("Steady");
             return true;
         }
 
@@ -277,9 +275,9 @@ public class ARunningManager {
 
         if (vectorLength < 0.01) {
             System.err.println("Serious issue: run vectorLength = " + vectorLength);
-            System.err.println("unit = " + unit + " // " + unit.position());
-            System.err.println("runAwayFrom = " + runAwayFrom);
-            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
+//            System.err.println("unit = " + unit + " // " + unit.position());
+//            System.err.println("runAwayFrom = " + runAwayFrom);
+//            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
         }
 
         double vectorX = (runAwayFrom.x() - unit.x()) / 32.0;
@@ -510,7 +508,15 @@ public class ARunningManager {
             return false;
         }
 
-        return dangerous.size() == Select.from(dangerous).combatBuildings(false).size();
+        Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
+        if (dangerous.size() == combatBuildings.size()) {
+            if (combatBuildings.nearestTo(unit).distToMoreThan(unit, 7.8)) {
+                unit.holdPosition("Steady");
+                return true;
+            }
+        }
+
+        return false;
     }
 
 //    private boolean distToNearestRegionBoundaryIsOkay(APosition position) {

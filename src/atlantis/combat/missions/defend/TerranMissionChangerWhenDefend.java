@@ -19,7 +19,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
     // === CONTAIN =============================================
 
-    private static boolean shouldChangeMissionToContain() {
+    public static boolean shouldChangeMissionToContain() {
         if (EnemyInformation.isEnemyNearAnyOurBuilding()) {
             return false;
         }
@@ -51,14 +51,14 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
                 return true;
             }
 
-            if (Missions.counter() <= 2) {
+            if (Missions.counter() <= 3) {
                 if (OurStrategy.get().isRush()) {
-                    return Count.ourCombatUnits() >= 4;
+                    return Count.ourCombatUnits() >= 2;
                 }
             }
 //
 //            return Count.ourCombatUnits() >= Math.max(24, 12 + Missions.counter());
-            return Count.ourCombatUnits() >= 15 || Count.tanks() >= 3;
+            return Count.ourCombatUnits() >= 13 || Count.tanks() >= 3;
         }
 
         // =========================================================

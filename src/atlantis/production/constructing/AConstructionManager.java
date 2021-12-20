@@ -210,9 +210,7 @@ public class AConstructionManager {
         if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
             
             // If it has less than 71HP or less than 60% and is close to being finished
-            if (building.woundPercent(95)
-                    || (building.getRemainingBuildTime() <= 30 && building.woundPercent(85))
-            ) {
+            if (building.hp() <= 32 || building.getRemainingBuildTime() <= 30) {
 //                System.out.println("Construction under attack - cancel! " + building.lastUnderAttackLessThanAgo(20));
                 order.cancel();
             }

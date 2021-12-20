@@ -10,12 +10,14 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.Units;
 import atlantis.util.A;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class FightInsteadAvoid {
 
     protected final AUnit unit;
     protected final Units enemies;
+    protected final Selection enemiesSelection;
 
     /**
      * Enemy units of different types that are dangerously close, extracted as variables for easier access
@@ -36,6 +38,7 @@ public class FightInsteadAvoid {
     public FightInsteadAvoid(AUnit unit, Units enemies) {
         this.unit = unit;
         this.enemies = enemies;
+        this.enemiesSelection = Select.from(enemies);
 
         Selection selector = Select.from(enemies);
         invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effCloaked().first();
@@ -159,6 +162,14 @@ public class FightInsteadAvoid {
             return true;
         }
 
+        if (RetreatManager.shouldRetreat(unit)) {
+            return false;
+        }
+
+        if (handleTerranInfantryShouldFight(unit)) {
+            return true;
+        }
+
 //        if (combatBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
 //            return true;
 //        }
@@ -188,6 +199,23 @@ public class FightInsteadAvoid {
     }
 
     // =========================================================
+
+    private boolean handleTerranInfantryShouldFight(AUnit unit) {
+        if (!unit.isTerranInfantry()) {
+            return false;
+        }
+
+        boolean medicNearby = unit.medicNearby();
+
+        if (unit.hp() <= (Enemy.protoss() ? 18 : 11)) {
+            return false;
+        }
+//        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) && enemiesSelection.melee().atLeast((Enemy.protoss() ? 1 : 2))) {
+//            return false;
+//        }
+
+        return medicNearby || (!unit.isWounded() && ranged == null);
+    }
 
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()

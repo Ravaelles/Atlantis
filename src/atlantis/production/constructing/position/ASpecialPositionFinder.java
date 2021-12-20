@@ -77,7 +77,7 @@ public class ASpecialPositionFinder {
                 System.err.println("B");
 
                 if (constructionOrder.maxDistance() < 0) {
-                    constructionOrder.setMaxDistance(0);
+                    constructionOrder.setMaxDistance(30);
                 }
                 return findPositionForBase_natural(building, builder, constructionOrder);
             }

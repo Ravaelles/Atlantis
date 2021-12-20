@@ -9,12 +9,12 @@ import bwapi.UpgradeType;
 
 public class ProductionOrder {
     
-    public static final String BASE_POSITION_NATURAL = "NATURAL";
-    public static final String BASE_POSITION_MAIN = "MAIN";
-
-    private static final int PRIORITY_LOWEST = 1;
-    private static final int PRIORITY_NORMAL = 4;
-    private static final int PRIORITY_HIGHEST = 8;
+//    public static final String BASE_POSITION_NATURAL = "NATURAL";
+//    public static final String BASE_POSITION_MAIN = "MAIN";
+//
+//    private static final int PRIORITY_LOWEST = 1;
+//    private static final int PRIORITY_NORMAL = 4;
+//    private static final int PRIORITY_HIGHEST = 8;
 
     // =========================================================
 
