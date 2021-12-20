@@ -133,7 +133,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         // === Compare against existing buildings ========================================
         
         for (AUnit otherBuilding : Select.ourBuildingsIncludingUnfinished().inRadius(8, position).listUnits()) {
-            double distance = otherBuilding.position().distTo(position);
+            double distance = otherBuilding.distTo(position);
 
             // Check for this building's addon if needed
             if (canThisBuildingHaveAddon && !isBase) {

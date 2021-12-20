@@ -70,7 +70,6 @@ public class ARunningManager {
 
         HasPosition runAwayFrom = (HasPosition) unitOrPosition;
         if (unitOrPosition instanceof AUnit) {
-//            runAwayFrom = ((AUnit) unitOrPosition).getPosition();
             AUnit runAwayFromAsUnit = ((AUnit) unitOrPosition);
             runAwayFrom = runAwayFromAsUnit.position();
         } else if (unitOrPosition instanceof APosition) {
@@ -79,47 +78,35 @@ public class ARunningManager {
 
         // === Define run to position ==============================
 
+        if (handleOnlyCombatBuildingsAreDangerouslyClose(unit)) {
+            System.out.println("handleOnlyCombatBuildingsAreDangerouslyClose");
+            unit.holdPosition("Steady");
+            return true;
+        }
+
 //        if (A.notUms() && A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30)) {
 //        if (A.notUms() && A.seconds() <= 350 && (Count.ourCombatUnits() <= 4 && unit.distToMoreThan(Select.mainBase(), 13))) {
 //            runTo = Select.mainBase().position();
 //        } else {
-        runTo = getPositionAwayFrom(unit, runAwayFrom, dist);
-//        }
 
-        // === Run to base as a fallback ===========================
-
-        if (runTo == null) {
-            runTo = handleRunToMainAsAFallback(unit, runAwayFrom);
-        }
-
-        // === Still nothing, try to run anywhere ==================
-
-        if (runTo == null) {
-            if (handleOnlyCombatBuildingsAreDangerouslyClose(unit)) {
-                System.out.println("handleOnlyCombatBuildingsAreDangerouslyClose");
-                unit.holdPosition("Steady");
-                return true;
-            }
-            runTo = findPositionToRunInAnyDirection(unit, runAwayFrom);
-        }
+        runTo = findBestPositionToRun(unit, runAwayFrom, dist);
 
         // === Actual run order ====================================
 
-        if (runTo != null && runTo.distTo(unit) >= 0.001) {
-            dist = runTo.distTo(unit);
+        if (runTo != null && unit.distTo(runTo) >= 0.001) {
+            dist = unit.distTo(runTo);
             unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")");
             return makeUnitRun();
         }
 
-        System.err.println("====================");
-        System.err.println(unit.position());
-        System.err.println(runTo);
-        System.err.println(_lastPosition);
-        System.err.println(Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
-        System.err.println(Select.neutral().inRadius(unit.size(), unit).count());
+        System.err.println("=== RUN ERROR =================");
+        System.err.println("Unit position = " + unit.position());
+        System.err.println("runTo = " + runTo);
+        System.err.println("_lastPosition = " + _lastPosition);
+        System.err.println("Our count = " + Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
+        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
         System.err.println();
 //                && unit.position().groundDistanceTo(position) <= 18
-
 
         unit.setTooltip("Cant run");
         return false;
@@ -167,6 +154,7 @@ public class ARunningManager {
 //        if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
         if (!unit.position().isCloseToMapBounds()) {
             Selection closeEnemies = unit.enemiesNearby().canAttack(unit, 1.9);
+//            System.err.println("closeEnemies = " + closeEnemies);
 
             if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() <= 2) {
                 if (closeEnemies.size() == 1) {
@@ -177,22 +165,27 @@ public class ARunningManager {
             }
 
             runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
+
+            if (runTo != null && unit.distTo(runTo) < 0.002) {
+                throw new RuntimeException("WTF runTo dist = " + unit.distTo(runTo));
+            }
         }
-        
+
         // === Get run to position - as far from enemy as possible =====================
 
         if (runTo == null) {
             runTo = findPositionToRunInAnyDirection(unit, runAwayFrom);
         }
-        
+
         // =============================================================================
 
+//        System.out.println("runTo = " + runTo + " // " + unit);
         if (
                 runTo != null
-                && runTo.distTo(unit) < 0.002
+                && unit.distTo(runTo) < 0.002
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
-            System.err.println("Invalid run position, dist = " + runTo.distTo(unit));
+            System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
             APainter.paintLine(unit, runTo, Color.Purple);
             APainter.paintLine(
                     unit.translateByPixels(0, 1),
@@ -200,6 +193,18 @@ public class ARunningManager {
                     Color.Purple
             );
             APainter.paintCircleFilled(runTo, 8, Color.Red);
+        }
+
+        // === Run to base as a fallback ===========================
+
+        if (runTo == null) {
+            runTo = handleRunToMainAsAFallback(unit, runAwayFrom);
+        }
+
+        // === Still nothing, try to run anywhere ==================
+
+        if (runTo == null) {
+            runTo = findPositionToRunInAnyDirection(unit, runAwayFrom);
         }
 
         // =============================================================================
@@ -212,17 +217,17 @@ public class ARunningManager {
     /**
      *
      */
-    public APosition getPositionAwayFrom(AUnit unit, HasPosition runAwayFrom, double dist) {
-        if (unit == null || runAwayFrom == null) {
-            return null;
-        }
-
-//        if (AGame.getTimeSeconds() <= 250 && shouldRunTowardsMainBase(unit, runAwayFrom)) {
-//            return Select.mainBase().getPosition();
+//    public APosition simplePositionAwayFrom(AUnit unit, HasPosition runAwayFrom, double dist) {
+//        if (unit == null || runAwayFrom == null) {
+//            return null;
 //        }
-
-        return unit.runningManager().findBestPositionToRun(unit, runAwayFrom, dist);
-    }
+//
+////        if (AGame.getTimeSeconds() <= 250 && shouldRunTowardsMainBase(unit, runAwayFrom)) {
+////            return Select.mainBase().getPosition();
+////        }
+//
+//        return unit.runningManager().findBestPositionToRun(unit, runAwayFrom, dist);
+//    }
 
     // =========================================================
     /**
@@ -255,17 +260,8 @@ public class ARunningManager {
             APosition runTo = showBackToEnemyIfPossible(unit, runAwayFrom, currentDist);
 
             // Also check if can run further (avoid corner shitholes)
-            if (runTo != null) {
+            if (runTo != null && unit.distToMoreThan(runTo, 0.002)) {
                 return runTo;
-//                double distBonus = unit.isVulture() ? 2 : 1;
-//                APosition doubleRunTo = canRunByShowingBackToEnemyTo(
-//                        unit, runAwayFrom, currentDist
-//                );
-//
-//                // If is okay as well, return it
-//                if (doubleRunTo != null) {
-//                    return runTo;
-//                }
             }
 
             currentDist -= 0.9;
@@ -277,36 +273,43 @@ public class ARunningManager {
     private APosition showBackToEnemyIfPossible(AUnit unit, HasPosition runAwayFrom, double dist) {
         APosition runTo;
         runAwayFrom = runAwayFrom.position();
-        double vectorLength = unit.position().distTo(runAwayFrom);
-//        System.out.println(unit.idWithHash() + " // " + vectorLength);
+        double vectorLength = unit.distTo(runAwayFrom);
 
-        double vectorX = runAwayFrom.x() - unit.position().getX();
-        double vectorY = runAwayFrom.y() - unit.position().getY();
-        double ratio = dist / vectorLength;
+        if (vectorLength < 0.01) {
+            System.err.println("Serious issue: run vectorLength = " + vectorLength);
+            System.err.println("unit = " + unit + " // " + unit.position());
+            System.err.println("runAwayFrom = " + runAwayFrom);
+            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
+        }
+
+        double vectorX = (runAwayFrom.x() - unit.x()) / 32.0;
+        double vectorY = (runAwayFrom.y() - unit.y()) / 32.0;
 
         // Apply opposite 2D vector
-        runTo = new APosition((int) (unit.x() - ratio * vectorX), (int) (unit.y() - ratio * vectorY));
+        runTo = new APosition((int) (unit.x() - vectorX), (int) (unit.y() - vectorY));
 
         // === Ensure position is in bounds ========================================
         
         int oldX = runTo.getX();
         int oldY = runTo.getY();
 
-//        runTo = runTo.makeValidFarFromBounds();
         runTo = runTo.makeValidFarFromBounds();
 
         // If vector changed (meaning we almost reached the map boundaries) disallow it
-        if (runTo.getX() != oldX || runTo.getY() != oldY) {
+        if (runTo.getX() != oldX && runTo.getY() != oldY) {
+//            throw new RuntimeException("aaa " + unit + " // " + unit.position() + " // " + runAwayFrom);
             return null;
         }
         
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
+//        System.out.println("unit.position() = " + unit.position());
+//        System.out.println("runTo = " + runTo);
+//        System.out.println("isPossibleAndReasonablePosition = " + isPossibleAndReasonablePosition(unit, runTo, true, "O", "X"));
         if (isPossibleAndReasonablePosition(unit, runTo, true, "O", "X")) {
             APainter.paintLine(unit.position(), runTo, Color.Purple);
             APainter.paintLine(unit.translateByPixels(-1, -1), runTo, Color.Purple);
-//            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), runTo, Color.Purple);
             return runTo;
         } else {
             return null;
@@ -384,7 +387,7 @@ public class ARunningManager {
         double mostDistant = -99;
         APosition bestPosition = null;
         for (APosition position : potentialPositionsList) {
-            double dist = position.distTo(runAwayFrom);
+            double dist = runAwayFrom.distTo(position);
             if (bestPosition == null || dist >= mostDistant) {
                 bestPosition = position;
                 mostDistant = dist;
@@ -467,6 +470,9 @@ public class ARunningManager {
 
         _lastPosition = position;
 
+//        System.out.println("position.isWalkable() = " + position.isWalkable());
+//        System.out.println("unit.hasPathTo(position) = " + unit.hasPathTo(position));
+//        System.out.println("unit.position().groundDistanceTo(position) = " + unit.position().groundDistanceTo(position));
         boolean isOkay = position.isWalkable()
 //                && (
 //                    !includeNearbyWalkability
@@ -526,8 +532,10 @@ public class ARunningManager {
         if (unit == null) {
             return false;
         }
+
         if (runTo == null) {
             stopRunning();
+            System.err.println("RunTo should not be null!");
             unit.setTooltip("Fuck!");
             return true;
         }
@@ -535,8 +543,6 @@ public class ARunningManager {
         // === Valid run position ==============================
 
         else {
-//            System.err.println("Run manager, run dist: " + runTo.distanceTo(unit));
-
             // Update last time run order was issued
             unit._lastStartedRunning = A.now();
             unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distTo(runTo)) + ")");
@@ -544,17 +550,7 @@ public class ARunningManager {
             // Make all other units very close to it run as well
             notifyNearbyUnitsToMakeSpace(unit);
 
-//            if (hasMoved) {
             return true;
-//            } else {
-//                APosition position = unit.getPosition();
-////                APainter.paintLine(position.translateByPixels(-26, -26), position.translateByPixels(25, 25), Color.Red);
-////                APainter.paintLine(position.translateByPixels(-25, -25), position.translateByPixels(26, 26), Color.Red);
-////                APainter.paintLine(position.translateByPixels(-26, 26), position.translateByPixels(25, -25), Color.Red);
-////                APainter.paintLine(position.translateByPixels(-25, 25), position.translateByPixels(26, -26), Color.Red);
-//                stopRunning();
-//                return false;
-//            }
         }
     }
 

@@ -7,6 +7,7 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.debug.APainter;
 import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
@@ -176,7 +177,12 @@ public class ACombatUnitManager {
             return true;
         }
 
-        return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+//        System.out.println("RetreatManager.shouldRetreat(unit) = " + RetreatManager.shouldRetreat(unit));
+        if (!RetreatManager.shouldRetreat(unit)) {
+            return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        }
+
+        return false;
     }
 
 //    private static boolean canHandleLowPriority(AUnit unit) {

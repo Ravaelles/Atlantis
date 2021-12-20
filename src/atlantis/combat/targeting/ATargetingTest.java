@@ -14,7 +14,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
         FakeUnit expectedTarget;
 
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 fake(AUnitType.Zerg_Drone, 11),
                 fake(AUnitType.Zerg_Drone, 12),
                 expectedTarget = fake(AUnitType.Zerg_Zergling, 13)
@@ -30,7 +30,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
         FakeUnit expectedTarget;
 
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 fake(AUnitType.Zerg_Overlord, 11),
                 fake(AUnitType.Zerg_Spawning_Pool, 11),
                 fake(AUnitType.Zerg_Creep_Colony, 12),
@@ -47,7 +47,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
         FakeUnit expectedTarget;
 
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 fake(AUnitType.Zerg_Hatchery, 11),
                 expectedTarget = fake(AUnitType.Zerg_Overlord, 12),
                 fake(AUnitType.Zerg_Zergling, 16)

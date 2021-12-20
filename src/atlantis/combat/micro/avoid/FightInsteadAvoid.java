@@ -151,7 +151,7 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        return !RetreatManager.shouldRetreat(unit, enemies);
+        return !RetreatManager.shouldRetreat(unit);
     }
 
     protected boolean fightAsCombatUnit() {
@@ -228,7 +228,7 @@ public class FightInsteadAvoid {
             return unit.mission().isMissionAttack()
                     && Select.ourCombatUnits().inRadius(6, unit).atLeast(10)
                     && ACombatEvaluator.advantagePercent(unit, 50)
-                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.shortNamePlusId());
+                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.shortNameWithId());
         }
 
         return ourNearby >= 5 || unitsNearby >= 6;

@@ -107,7 +107,7 @@ public class UnitTestHelper {
         return Arrays.asList(generateUnits(trueIfOurFalseIfEnemy));
     }
 
-    public static Game gameMock(int framesNow) {
+    public static Game newGameMock(int framesNow) {
         Game game = Mockito.mock(Game.class);
         when(game.getFrameCount()).thenReturn(framesNow);
         return game;

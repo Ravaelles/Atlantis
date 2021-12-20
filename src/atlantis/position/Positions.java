@@ -230,8 +230,8 @@ public class Positions<T extends HasPosition> {
         
         int index = 0;
         for (T t : positions) {
-            if (t.position().distTo(position) < closestDist) {
-                closestDist = t.position().distTo(position);
+            if (t.distTo(position) < closestDist) {
+                closestDist = t.distTo(position);
 //                closest = APosition.create(otherPosition.x() / 32, otherPosition.y() / 32);
                 closest = t;
                 _lastIndex = index;

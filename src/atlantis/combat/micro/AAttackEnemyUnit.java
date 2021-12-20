@@ -97,6 +97,7 @@ public class AAttackEnemyUnit {
             return unit.move(target, UnitActions.MOVE_TO_ENGAGE, "BaseAttack");
         }
 
+        unit.setTooltip("@" + target.shortName());
         return unit.attackUnit(target);
     }
 

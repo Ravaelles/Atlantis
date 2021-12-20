@@ -419,7 +419,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().shortName();
     }
 
-    public String shortNamePlusId() {
+    public String shortNameWithId() {
         return type().shortName() + " #" + id();
     }
 
@@ -937,10 +937,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public boolean canHaveAddon() {
         return type().canHaveAddon();
-    }
-
-    public String getIDWithHash() {
-        return "#" + id();
     }
 
     public int id() {
@@ -1896,8 +1892,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return ((Selection) cache.get(
                 "enemiesNearby",
                 3,
-                () -> Select.enemyRealUnits(true, true, true)
-                        .inRadius(14, this)
+                () -> {
+                    if (unit().isOur()) {
+                        return Select.enemyRealUnits(true, true, true)
+                                .inRadius(14, this);
+                    }
+                    else if (unit().isEnemy()) {
+                        return Select.ourRealUnits()
+                                .inRadius(14, this);
+                    }
+                    else {
+                        return Select.from(new Units());
+                    }
+                }
         ));
     }
 

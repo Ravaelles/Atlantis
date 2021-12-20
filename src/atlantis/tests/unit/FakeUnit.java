@@ -75,6 +75,11 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public boolean hasPathTo(HasPosition point) {
+        return true;
+    }
+
+    @Override
     public boolean isNeutral() {
         return neutral;
     }
@@ -145,7 +150,7 @@ public class FakeUnit extends AUnit {
 
     @Override
     public boolean isMoving() {
-        return lastCommand.equals("Moving");
+        return lastCommand.equals("Move");
     }
 
     public boolean isAttacking() {
@@ -186,8 +191,20 @@ public class FakeUnit extends AUnit {
 
     @Override
     public double distTo(AUnit otherUnit) {
+//        System.out.println("this = " + this.position + " // " + this);
+//        System.out.println("otherUnit = " + ((FakeUnit) otherUnit).position);
         int dx = otherUnit.x() - position.x();
         int dy = otherUnit.y() - position.y();
+//        System.out.println("X =  " + otherUnit.x() + " // " + position.x() + " // " + dx);
+//        System.out.println("Y =  " + otherUnit.y() + " // " + position.y() + " // " + dy);
+//        System.out.println("Length = " + Math.sqrt(dx * dx + dy * dy) / 32.0);
+        return Math.sqrt(dx * dx + dy * dy) / 32.0;
+    }
+
+    @Override
+    public double distTo(HasPosition otherPosition) {
+        int dx = otherPosition.x() - position.x();
+        int dy = otherPosition.y() - position.y();
         return Math.sqrt(dx * dx + dy * dy) / 32.0;
     }
 
@@ -221,18 +238,26 @@ public class FakeUnit extends AUnit {
         return true;
     }
 
-    @Override
-    public boolean move(AUnit target, UnitAction unitAction, String tooltip) {
-        lastCommand = "Move";
-        this.target = (FakeUnit) target;
-        targetPosition = target.targetPosition();
-        return true;
-    }
+//    @Override
+//    public boolean move(AUnit target, UnitAction unitAction, String tooltip) {
+//        lastCommand = "Move";
+//        this.target = (FakeUnit) target;
+//        targetPosition = target.targetPosition();
+//        return true;
+//    }
 
     @Override
     public boolean move(HasPosition target, UnitAction unitAction, String tooltip) {
+        if (target == null) {
+            throw new RuntimeException("FakeUnit move got null");
+        }
+
         lastCommand = "Move";
-        this.target = (FakeUnit) target;
+        if (target instanceof FakeUnit) {
+            this.target = (FakeUnit) target;
+        } else {
+            this.target = null;
+        }
         targetPosition = target.position();
         return true;
     }

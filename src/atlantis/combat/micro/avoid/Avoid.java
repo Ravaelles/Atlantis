@@ -3,10 +3,8 @@ package atlantis.combat.micro.avoid;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.debug.APainter;
 import atlantis.position.APosition;
-import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.select.Select;
 import atlantis.util.A;
 import bwapi.Color;
 
@@ -74,7 +72,7 @@ public class Avoid {
     }
 
     protected static boolean handleErrorRun(AUnit unit) {
-        System.err.println("ERROR_RUN for " + unit.shortNamePlusId());
+        System.err.println("ERROR_RUN for " + unit.shortNameWithId());
 
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         unit.setTooltip("Cant run, fight");

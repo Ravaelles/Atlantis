@@ -736,8 +736,8 @@ public class Selection {
                     throw new RuntimeException("Invalid comparison: " + p2);
                 }
 
-                double distance1 = position.distTo(p1);
-                double distance2 = position.distTo(p2);
+                double distance1 = p1.distTo(position);
+                double distance2 = p2.distTo(position);
 
                 return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
             }

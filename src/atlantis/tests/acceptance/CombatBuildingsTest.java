@@ -15,11 +15,12 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
             FakeUnit unit = ourFirst;
             boolean result = ACombatUnitManager.update(unit);
 
-            System.out.println(A.now() + " -       \n"
-                    + unit.lastCommand() + ", " + unit.tooltip()
-                    + ",\n ty:" + unit.ty()
-                    + ",\n dist_to_sunken:" + distToNearestCombatBuild(unit)
-                    + ",\n dist_to_target:" + A.dist(unit, unit.target)
+            System.out.println(A.now() + " -       " + unit.tooltip()
+                    + "\n " + unit.lastCommand()
+                    + ",\n tx:" + unit.tx()
+                    + ",\n dist_to_sunken:" + distToNearestEnemy(unit)
+                    + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target))
+                    + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
             );
             System.out.println("_______________________________________");
         });
@@ -28,7 +29,7 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
     // =========================================================
 
     protected FakeUnit[] generateOur() {
-        return fakeUnits(
+        return fakeOurs(
                 fake(AUnitType.Terran_Marine, 10),
                 fake(AUnitType.Terran_Marine, 11),
                 fake(AUnitType.Terran_Marine, 11),
@@ -42,14 +43,10 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 23;
-        return fakeUnits(
+        return fakeEnemies(
                 fake(AUnitType.Zerg_Sunken_Colony, enemyTy),
                 fake(AUnitType.Zerg_Sunken_Colony, enemyTy + 10)
         );
-    }
-
-    private String distToNearestCombatBuild(FakeUnit our) {
-        return A.dist(our, Select.enemyCombatUnits().nearestTo(our));
     }
 
 }

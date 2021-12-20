@@ -16,13 +16,17 @@ public class RetreatManager {
 //        return shouldRetreat(unit, enemies);
 //    }
 
+
     /**
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
-    public static boolean shouldRetreat(AUnit unit, Units enemies) {
+//    public static boolean shouldRetreat(AUnit unit, Units enemies) {
+    public static boolean shouldRetreat(AUnit unit) {
         if (shouldNotConsiderRetreatingNow(unit)) {
             return false;
         }
+
+        Units enemies = enemies(unit);
 
 //        boolean isNewFight = (unit.getUnitAction() != null && !unit.getUnitAction().isRunningOrRetreating());
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
@@ -44,6 +48,10 @@ public class RetreatManager {
     }
 
     // =========================================================
+
+    private static Units enemies(AUnit unit) {
+        return ACombatEvaluator.opposingUnits(unit);
+    }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
         if (unit.type().isReaver()) {

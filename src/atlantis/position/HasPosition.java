@@ -73,7 +73,7 @@ public interface HasPosition {
             return false;
         }
 
-        return position().distTo(otherPosition.position()) <= maxDist;
+        return distTo(otherPosition) <= maxDist;
     }
 
     default boolean distToMoreThan(HasPosition otherPosition, double minDist) {
@@ -81,7 +81,7 @@ public interface HasPosition {
             return false;
         }
 
-        return position().distTo(otherPosition.position()) >= minDist;
+        return distTo(otherPosition) >= minDist;
     }
 
     default boolean isWalkable() {

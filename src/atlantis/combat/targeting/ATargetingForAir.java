@@ -85,7 +85,8 @@ public class ATargetingForAir {
                 .removeDuplicates()
                 .inRadius(50, unit)
                 .nearestTo(unit);
-        System.out.println("target = " + target + " // " + unit);
+        if (ATargeting.debug(unit)) System.out.println("target = " + target + " // " + unit);
+
         if (target != null) {
             return target;
         }

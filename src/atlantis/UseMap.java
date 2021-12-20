@@ -9,7 +9,7 @@ import atlantis.util.A;
 public class UseMap {
 
     public static String activeMap() {
-//        return "sscai/(2)Destination.scx";
+        return "sscai/(2)Destination.scx";
 //        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
@@ -17,12 +17,13 @@ public class UseMap {
         // === UMS maps - great for bot development ============
 
 //        return "ums/rav/T_vs_Sunkens.scx";
-        return "ums/rav/T_vs_Sunkens2.scx";
+//        return "ums/rav/T_vs_Sunkens2.scx";
 //        return "ums/rav/Wraiths_v_Probes.scm";
 //        return "ums/rav/Wraiths_v_Cannons.scm";
 //        return "ums/rav/M&M_v_Dragoons_A.scx";
 //        return "ums/rav/M&M_v_Dragoons_B.scx";
 //        return "ums/rav/M_v_Zealots.scx";
+//        return "ums/rav/M_v_Hydras.scx";
 
 //        return "ums/rav/minimaps/M_vs_Zealots.scx";
 //        return "ums/rav/minimaps/M&M_vs_Zealots.scx";

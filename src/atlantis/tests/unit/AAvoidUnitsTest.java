@@ -21,7 +21,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
         FakeUnit enemy1, enemy2, enemy3, enemy4;
 
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 enemy1 = fake(AUnitType.Zerg_Drone, 12),
                 fake(AUnitType.Zerg_Larva, 11),
                 fake(AUnitType.Zerg_Egg, 11),
@@ -51,7 +51,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         FakeUnit our = fake(AUnitType.Terran_Wraith, 10);
         FakeUnit enemy1, enemy2, enemy3, enemy4;
 
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 enemy1 = fake(AUnitType.Protoss_Photon_Cannon, 12),
                 fake(AUnitType.Protoss_Photon_Cannon, 11).setCompleted(false),
 
@@ -83,7 +83,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         int inRange = 19; // Range is 7, but we need some safety margin which varies depending on the unit
         int outsideRange = 21;
         
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange),
                 fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
 
@@ -114,7 +114,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         int inRange = 19; // Range is 7, but we need some safety margin which varies depending on the unit
         int outsideRange = 24;
 
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange),
                 fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
 
@@ -147,7 +147,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
         FakeUnit our = fake(AUnitType.Terran_Siege_Tank_Siege_Mode, 10);
 
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 (FakeUnit) (enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange)),
                 fake(AUnitType.Protoss_Photon_Cannon, outsideRange)
         );

@@ -191,7 +191,7 @@ public abstract class AbstractPositionFinder {
         double distToBase = nearestBase.translateByTiles(2, 0).distTo(position);
         if (distToBase <= 10) {
             AUnit mineral = Select.minerals().nearestTo(position);
-            if (mineral != null && position.distTo(mineral) <= 4 && distToBase <= 7.5) {
+            if (mineral != null && mineral.distTo(position) <= 4 && distToBase <= 7.5) {
                 _CONDITION_THAT_FAILED = "Too close to mineral";
                 return true;
             }

@@ -267,8 +267,8 @@ public class Units {
                 if (p2 == null) {
                     return 1;
                 }
-                double distance1 = p1.position().distTo(position);
-                double distance2 = p2.position().distTo(position);
+                double distance1 = p1.distTo(position);
+                double distance2 = p2.distTo(position);
                 if (distance1 == distance2) {
                     return 0;
                 } else {
@@ -386,7 +386,12 @@ public class Units {
     // Auxiliary
 
     public void print() {
-        System.out.println("Units in list:");
+        print(null);
+    }
+
+    public void print(String message) {
+//        System.out.println("Units in list:");
+        System.out.println("===" + (message == null ? "" : " " + message + " (" + size() + ") ") + "==========");
         for (AUnit unit : list()) {
             System.out.print(unit);
             if (hasValueFor(unit)) {

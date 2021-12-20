@@ -9,12 +9,14 @@ import atlantis.information.AFoggedUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
+import bwapi.Game;
 import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
@@ -22,7 +24,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     @Before
     public void before() {
-        Atlantis.getInstance().setGame(gameMock(0));
+        useFakeTime(0);
         APainter.disablePainting();
 
         Select.clearCache();
@@ -33,8 +35,12 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         AAvoidUnits.clearCache();
     }
 
-    protected void usingFakeTime(int framesNow) {
-        Atlantis.getInstance().setGame(gameMock(framesNow));
+    protected void useFakeTime(int framesNow) {
+        Game game = Atlantis.game() == null ? newGameMock(framesNow) : Atlantis.game();
+
+        when(game.getFrameCount()).thenReturn(framesNow);
+
+        Atlantis.getInstance().setGame(game);
 
 //        try (MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class)) {
 //            aGame.when(AGame::now).thenReturn(framesNow);
@@ -107,20 +113,27 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         return new FakeUnit(type, 10, 10);
     }
 
-    protected FakeUnit fake(AUnitType type, int y) {
-        return new FakeUnit(type, 10, y);
+    protected FakeUnit fake(AUnitType type, int x) {
+        return new FakeUnit(type, x, 10);
     }
 
     protected FakeUnit fake(AUnitType type, int x, int y) {
         return new FakeUnit(type, x, y);
     }
 
-    protected FakeUnit[] fakeUnits(FakeUnit... fakeUnits) {
+    protected FakeUnit[] fakeOurs(FakeUnit... fakeUnits) {
         return fakeUnits;
     }
 
-    protected AFoggedUnit fogged(AUnitType type, int y) {
-        return FakeFoggedUnit.fromFake(fake(type, y));
+    protected FakeUnit[] fakeEnemies(FakeUnit... fakeUnits) {
+        for (FakeUnit unit : fakeUnits) {
+            unit.setEnemy();
+        }
+        return fakeUnits;
+    }
+
+    protected AFoggedUnit fogged(AUnitType type, int x) {
+        return FakeFoggedUnit.fromFake(fake(type, x));
     }
 
     // =========================================================

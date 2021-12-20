@@ -254,7 +254,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         while (currentSearchDist <= 3.2 * baseDist) {
             for (ARegionBoundary boundary : boundaries.list()) {
                 if (boundary.position() != null && !places.contains(boundary.position())) {
-                    double dist = boundary.position().distTo(position);
+                    double dist = boundary.distTo(position);
                     if (currentSearchDist - 0.9 <= dist && dist <= currentSearchDist + 1.9) {
                         return boundary.position();
                     }

@@ -12,7 +12,7 @@ public class TerranComsatTest extends AbstractTestWithUnits {
     private FakeUnit lurker2 = null;
 
     private void setupEnemyLurkers(FakeUnit[] ours, Runnable runnable) {
-        FakeUnit[] enemies = fakeUnits(
+        FakeUnit[] enemies = fakeEnemies(
                 fake(AUnitType.Zerg_Drone, 12),
                 fake(AUnitType.Zerg_Larva, 11),
                 fake(AUnitType.Zerg_Lurker_Egg, 11),
@@ -39,7 +39,7 @@ public class TerranComsatTest extends AbstractTestWithUnits {
     @Test
     public void lurkerWhenFewUnitsAround() {
         FakeUnit comsat;
-        FakeUnit[] ours = fakeUnits(
+        FakeUnit[] ours = fakeOurs(
                 fake(AUnitType.Terran_Command_Center, 1),
                 comsat = fake(AUnitType.Terran_Comsat_Station, 3),
 //                fake(AUnitType.Terran_Marine, 7),
@@ -70,7 +70,7 @@ public class TerranComsatTest extends AbstractTestWithUnits {
     @Test
     public void lurkerWhenManyUnitsAround() {
         FakeUnit comsat;
-        FakeUnit[] ours = fakeUnits(
+        FakeUnit[] ours = fakeOurs(
                 fake(AUnitType.Terran_Command_Center, 1),
                 comsat = fake(AUnitType.Terran_Comsat_Station, 3),
                 fake(AUnitType.Terran_Marine, 6),
