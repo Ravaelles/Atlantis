@@ -3,6 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -23,19 +24,15 @@ public class MissionAttack extends Mission {
     public boolean update(AUnit unit) {
         unit.setTooltip("#MA");
 
-//        if (ASquadCohesionManager.handle(unit)) {
-//            return true;
-//        }
-
         return handleAdvance(unit);
     }
 
     private boolean handleAdvance(AUnit unit) {
         AFocusPoint focusPoint = focusPoint();
 
-//        if (ASquadCohesionManager.handle(unit)) {
-//            return true;
-//        }
+        if (ASquadCohesionManager.handle(unit)) {
+            return true;
+        }
 
         // Focus point is well known
         if (focusPoint != null) {

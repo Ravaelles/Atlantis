@@ -72,6 +72,7 @@ public class TerranScienceVessel extends MobileDetector {
                 return scienceVessel.useTech(TechType.Irradiate, center);
             } else {
                 System.err.println("Irradiate center is NULL / " + enemies.count());
+                return scienceVessel.useTech(TechType.Irradiate, enemies.first());
             }
         }
 

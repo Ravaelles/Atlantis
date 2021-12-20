@@ -17,7 +17,7 @@ public class TerranComsatStation {
 //        );
 
 //        if (AGame.notNthGameFrame(5 + ((250 - comsat.energy()) / 3))) {
-        if (AGame.notNthGameFrame(20)) {
+        if (AGame.notNthGameFrame(15)) {
             return false;
         }
 //        System.out.println(Select.enemy().ofType(AUnitType.Protoss_Observer).count());
@@ -35,10 +35,10 @@ public class TerranComsatStation {
     // Zerg
 
     private static boolean scanLurkers(AUnit comsat) {
-//        if (Select.enemies(AUnitType.Zerg_Lurker).count() > 0) {
-//            System.out.println("lurker count = " + Select.enemies(AUnitType.Zerg_Lurker).count());
-//            System.out.println("lurker count CLOAKED = " + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count());
-//        }
+        if (Select.enemies(AUnitType.Zerg_Lurker).count() > 0) {
+            System.out.println("lurker count = " + Select.enemies(AUnitType.Zerg_Lurker).count());
+            System.out.println("lurker count EFFCloaked = " + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count());
+        }
 
         for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effCloaked().listUnits()) {
 //            System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.isDetected() + " // " + lurker.hp());

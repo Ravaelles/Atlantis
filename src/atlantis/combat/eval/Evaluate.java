@@ -92,10 +92,10 @@ public class Evaluate {
 
 //        if (!isEnemyEval) {
         if (enemyCombatBuildingFound) {
-            totalStrength += theseUnits.onlyAir() ? 30 : 10;
+            totalStrength += theseUnits.onlyAir() ? 50 : 60;
         }
         if (enemyCombatBuildingInRange) {
-            totalStrength += theseUnits.onlyAir() ? 30 : 10;
+            totalStrength += theseUnits.onlyAir() ? 50 : 60;
         }
 //        }
 

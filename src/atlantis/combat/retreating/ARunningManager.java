@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class ARunningManager {
 
 //    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
-//    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 6;
+    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
     public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
@@ -44,9 +44,9 @@ public class ARunningManager {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
         if (
                 unit.isRunning()
-//                && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
+                && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
                 && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
-                && !unit.isUnderAttack(unit.isAir() ? 220 : 5)
+                && !unit.isUnderAttack(unit.isAir() ? 250 : 5)
                 && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.runningManager().stopRunning();
@@ -509,8 +509,8 @@ public class ARunningManager {
         }
 
         Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
-        if (dangerous.size() == combatBuildings.size()) {
-            if (combatBuildings.nearestTo(unit).distToMoreThan(unit, 7.8)) {
+        if (dangerous.size() == combatBuildings.size() && unit.enemiesNearby().combatUnits().atMost(1)) {
+            if (combatBuildings.nearestTo(unit).distToMoreThan(unit, 7.9)) {
                 unit.holdPosition("Steady");
                 return true;
             }

@@ -16,9 +16,9 @@ public class ASquadCohesionManager {
             return false;
         }
 
-//        if (handleExtremeUnitPositioningInSquad(unit)) {
-//            return true;
-//        }
+        if (handleExtremeUnitPositioningInSquad(unit)) {
+            return true;
+        }
 
         if (handleShouldSpreadOut(unit)) {
             return true;
@@ -38,18 +38,24 @@ public class ASquadCohesionManager {
 
         APosition squadCenter = squadCenter(unit);
         if (!unit.isRunning() && unit.distTo(squadCenter) >= maxDistanceToSquadCenter(unit) && unit.hasPathTo(squadCenter)) {
-            return unit.move(squadCenter(unit), UnitActions.MOVE, "Ran too far!");
+            return unit.move(squadCenter(unit), UnitActions.MOVE, "TooSpread");
         }
 
         return false;
     }
 
     private static double maxDistanceToSquadCenter(AUnit unit) {
-        return Math.max(11, unit.squadSize() / 3);
+        int max = Math.max(2, unit.squadSize() / 4);
+
+        if (unit.equals(unit.squad().getSquadScout())) {
+            max += 3;
+        }
+
+        return max;
     }
 
     private static boolean shouldSkipExtremeUnitPositioning(AUnit unit) {
-        if (We.protoss() && Count.ourCombatUnits() <= 4) {
+        if (Count.ourCombatUnits() <= 4) {
             return true;
         }
 
@@ -57,13 +63,9 @@ public class ASquadCohesionManager {
             return true;
         }
 
-        if (unit.squad().mission().isMissionAttack()) {
-            return false;
-        }
-
-        if (unit.equals(unit.squad().getSquadScout())) {
-            return false;
-        }
+//        if (unit.squad().mission().isMissionAttack()) {
+//            return false;
+//        }
 
         return false;
     }
@@ -89,33 +91,33 @@ public class ASquadCohesionManager {
         return false;
     }
 
-    private static boolean handleShouldStickCloser(AUnit unit) {
-        if (shouldSkipStickCloser(unit)) {
-            return false;
-        }
-
-        Selection closeFriends = Select.ourCombatUnits().exclude(unit);
-        AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
-        APosition center = squadCenter(unit);
-
-        if (nearestFriend == null) {
-            return false;
-        }
-
-        if (isNearestFriendTooFar(unit, nearestFriend, center)) {
-            return true;
-        }
-
-        if (isTooFarFromSquadCenter(unit, nearestFriend, center)) {
-            return true;
-        }
-
-        if (isSquadQuiteNumerousAndUnitTooFarFromCenter(unit, nearestFriend, closeFriends)) {
-            return true;
-        }
-
-        return false;
-    }
+//    private static boolean handleShouldStickCloser(AUnit unit) {
+//        if (shouldSkipStickCloser(unit)) {
+//            return false;
+//        }
+//
+//        Selection closeFriends = Select.ourCombatUnits().exclude(unit);
+//        AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
+//        APosition center = squadCenter(unit);
+//
+//        if (nearestFriend == null) {
+//            return false;
+//        }
+//
+//        if (isNearestFriendTooFar(unit, nearestFriend, center)) {
+//            return true;
+//        }
+//
+//        if (isTooFarFromSquadCenter(unit, nearestFriend, center)) {
+//            return true;
+//        }
+//
+//        if (isSquadQuiteNumerousAndUnitTooFarFromCenter(unit, nearestFriend, closeFriends)) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     // =========================================================
 

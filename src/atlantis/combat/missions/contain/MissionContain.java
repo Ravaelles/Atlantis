@@ -3,6 +3,7 @@ package atlantis.combat.missions.contain;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.SquadScout;
 import atlantis.units.AUnit;
 import atlantis.util.A;
@@ -32,13 +33,13 @@ public class MissionContain extends Mission {
 //            return true;
 //        }
 
-        if (SquadScout.handle(unit)) {
-            return true;
-        }
-
-//        if (ASquadCohesionManager.handle(unit)) {
+//        if (SquadScout.handle(unit)) {
 //            return true;
 //        }
+
+        if (ASquadCohesionManager.handle(unit)) {
+            return true;
+        }
 
         // Focus point is well known
         return MoveToContainFocusPoint.move(unit, focusPoint);

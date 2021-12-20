@@ -30,8 +30,8 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
     protected static boolean shouldChangeMissionToDefend() {
         if (
                 A.supplyUsed(150)
-                || Atlantis.LOST <= 3
-                || (A.notUms() && A.resourcesBalance() >= 250)
+                || Atlantis.LOST <= 4
+//                || (A.notUms() && A.resourcesBalance() >= 250)
         ) {
             return false;
         }
@@ -45,7 +45,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         if (Enemy.zerg()) {
             if (Missions.counter() >= 3) {
 //                return A.resourcesBalance() < 150 || Count.ourCombatUnits() <= 15;
-                return Count.ourCombatUnits() <= 6;
+                return Count.ourCombatUnits() <= 6 && A.resourcesBalance() < -100;
             }
         }
 

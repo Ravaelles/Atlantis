@@ -65,7 +65,7 @@ public class FightInsteadAvoid {
         }
 
         if (unit.mission().forcesUnitToFight(unit, enemies)) {
-            System.err.println("Mission forced to fight!");
+//            System.err.println("Mission forced to fight!");
             return true;
         }
 
@@ -77,7 +77,7 @@ public class FightInsteadAvoid {
         // Combat units
         else {
             if (fightInImportantCases()) {
-                System.err.println("Important case");
+//                System.err.println("Important case");
                 return true;
             }
 

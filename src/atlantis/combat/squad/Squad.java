@@ -62,7 +62,10 @@ public abstract class Squad extends Units {
         return Alpha.get() != null ? Alpha.get().center() : null;
     }
 
-//    public APosition getMedianUnitPosition() {
+    /**
+     * Average
+     */
+//    public APosition center() {
 //        if (size() == 0) {
 //            return null;
 //        }
@@ -70,13 +73,16 @@ public abstract class Squad extends Units {
 //        int totalX = 0;
 //        int totalY = 0;
 //        for (AUnit unit : list()) {
-//            totalX += unit.getPosition().getX();
-//            totalY += unit.getPosition().getY();
+//            totalX += unit.x();
+//            totalY += unit.y();
 //        }
 //
 //        return _getMedianUnitPosition = new APosition(totalX / size(), totalY / size());
 //    }
 
+    /**
+     * Median
+     */
     public APosition center() {
         if (size() <= 0) {
             return null;
@@ -86,14 +92,17 @@ public abstract class Squad extends Units {
         ArrayList<Integer> yCoords = new ArrayList<>();
 
         for (AUnit unit : list()) {
-            xCoords.add(unit.position().getX());
-            yCoords.add(unit.position().getY());
+            xCoords.add(unit.x());
+            yCoords.add(unit.y());
         }
 
         Collections.sort(xCoords);
         Collections.sort(yCoords);
 
-        return _getMedianUnitPosition = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
+        APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
+        AUnit nearestToMedian = Select.ourCombatUnits().nearestTo(median);
+
+        return _getMedianUnitPosition = (nearestToMedian == null ? null : nearestToMedian.position());
     }
 
     // =========================================================
