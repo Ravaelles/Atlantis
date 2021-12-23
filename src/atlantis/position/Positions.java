@@ -1,9 +1,7 @@
 package atlantis.position;
 
-import atlantis.util.AtlantisUtilities;
-import bwapi.AbstractPoint;
+import atlantis.util.A;
 import bwapi.Position;
-import bwta.BWTA;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,9 +13,10 @@ import java.util.HashMap;
  * positions like sorting etc. TODO: check whether using PositionedObject instead of Positions yields correct
  * behavior
  */
-public class Positions<T extends AbstractPoint<Position>> {
+//public class Positions<T extends Point<Position>> {
+public class Positions<T extends HasPosition> {
 
-    private ArrayList<T> positions = new ArrayList<>();
+    private final ArrayList<T> positions = new ArrayList<>();
 
     /**
      * This mapping can be used to store extra values assigned to positions e.g. if positions reprents mineral
@@ -27,27 +26,31 @@ public class Positions<T extends AbstractPoint<Position>> {
     private HashMap<T, Double> positionValues;
 
     // =====================================================================
-    public Positions() {
+
+    public Positions() { }
+
+    public Positions(Collection<T> positionsToAdd) {
+        addPositions(positionsToAdd);
     }
 
     // =====================================================================
     // Basic functionality methods
-    public Positions addPosition(T positionToAdd) {
+    public Positions<T> addPosition(T positionToAdd) {
         positions.add(positionToAdd);
         return this;
     }
 
-    public Positions addPositions(Collection<T> positionsToAdd) {
+    public Positions<T> addPositions(Collection<T> positionsToAdd) {
         positions.addAll(positionsToAdd);
         return this;
     }
 
-    public Positions removePositions(Collection<T> positionsToRemove) {
+    public Positions<T> removePositions(Collection<T> positionsToRemove) {
         positions.removeAll(positionsToRemove);
         return this;
     }
 
-    public Positions removePosition(T positionToRemove) {
+    public Positions<T> removePosition(T positionToRemove) {
         positions.remove(positionToRemove);
         return this;
     }
@@ -70,10 +73,11 @@ public class Positions<T extends AbstractPoint<Position>> {
 
     // =========================================================
     // Special methods
+
     /**
      * Shuffle positions to have random sequence in the list.
      */
-    public Positions shuffle() {
+    public Positions<T> shuffle() {
         Collections.shuffle(positions);
         return this;
     }
@@ -82,19 +86,22 @@ public class Positions<T extends AbstractPoint<Position>> {
      * Returns random positions.
      */
     public Position getRandom() {
-        return (Position) AtlantisUtilities.getRandomListElement(positions);
+        return (Position) A.getRandomListElement(positions);
     }
 
     /**
      * Sorts all positions according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first position will be the one closest to given position.
      */
-    public Positions sortByDistanceTo(final Position position, final boolean nearestFirst) {
+    public Positions<T> sortByDistanceTo(final HasPosition position, final boolean nearestFirst) {
         Collections.sort(positions, new Comparator<T>() {
             @Override
             public int compare(T u1, T u2) {
-                return position.getDistance(u1) < position.getDistance(u2)
-                        ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
+                double distance1 = PositionUtil.distanceTo(position, u1);
+                double distance2 = PositionUtil.distanceTo(position, u2);
+                return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
+//                return position.distTo(u1.position()) < position.distTo(u2.position())
+//                        ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
         });
 
@@ -105,15 +112,15 @@ public class Positions<T extends AbstractPoint<Position>> {
      * Sorts all positions according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first position will be the one closest to given position.
      */
-    public Positions sortByGroundDistanceTo(final Position position, final boolean nearestFirst) {
-        Collections.sort(positions, new Comparator<T>() {
+    public Positions<T> sortByGroundDistanceTo(final HasPosition position, final boolean nearestFirst) {
+        positions.sort(new Comparator<T>() {
             @Override
             public int compare(T u1, T u2) {
-                double distToU1 = BWTA.getGroundDistance(position.toTilePosition(), u1.getPoint().toTilePosition());
+                double distToU1 = position.position().groundDistanceTo(u1);
                 if (distToU1 < 0) {
                     distToU1 = 99999;
                 }
-                double distToU2 = BWTA.getGroundDistance(position.toTilePosition(), u2.getPoint().toTilePosition());
+                double distToU2 = position.position().groundDistanceTo(u2);;
                 return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
         });
@@ -174,6 +181,7 @@ public class Positions<T extends AbstractPoint<Position>> {
 
     // =========================================================
     // Override methods
+
     @Override
     public String toString() {
         String string = "Positions (" + positions.size() + "):\n";
@@ -187,6 +195,7 @@ public class Positions<T extends AbstractPoint<Position>> {
 
     // =========================================================
     // Auxiliary
+
     public void print() {
         System.out.println("Positions in list:");
         for (T position : list()) {
@@ -195,14 +204,13 @@ public class Positions<T extends AbstractPoint<Position>> {
         System.out.println();
     }
 
-    // =========================================================
-    // Getters
+    // === Getters =============================================
+
     /**
      * Returns iterable collection of positions in this object.
      */
     public Collection<T> list() {
-        ArrayList<T> copy = new ArrayList<>();
-        copy.addAll(positions);
+        ArrayList<T> copy = new ArrayList<>(positions);
         return copy;
     }
 
@@ -210,28 +218,28 @@ public class Positions<T extends AbstractPoint<Position>> {
      * Returns iterable ArrayList of positions in this object.
      */
     public ArrayList<T> arrayList() {
-        ArrayList<T> copy = new ArrayList<>();
-        copy.addAll(positions);
+        ArrayList<T> copy = new ArrayList<>(positions);
         return copy;
     }
 
     private static int _lastIndex = 0;
     
-    public APosition nearestTo(APosition position) {
+    public T nearestTo(HasPosition position) {
         double closestDist = 9999999;
-        APosition closestPosition = null;
+        T closest = null;
         
         int index = 0;
-        for (T otherPosition : positions) {
-            if (otherPosition.getDistance(position) < closestDist) {
-                closestDist = otherPosition.getDistance(position);
-                closestPosition = APosition.create(otherPosition.getX() / 32, otherPosition.getY() / 32);
+        for (T t : positions) {
+            if (t.distTo(position) < closestDist) {
+                closestDist = t.distTo(position);
+//                closest = APosition.create(otherPosition.x() / 32, otherPosition.y() / 32);
+                closest = t;
                 _lastIndex = index;
             }
             index++;
         }
         
-        return closestPosition;
+        return closest;
     }
 
     public int getLastIndex() {

@@ -2,10 +2,15 @@ package atlantis.buildings.managers;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionManager;
-import atlantis.production.orders.ABuildOrderManager;
+import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.orders.AddToQueue;
+import atlantis.production.orders.BuildOrderSettings;
+import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
+import atlantis.util.A;
+import atlantis.util.We;
 
 public class ASupplyManager {
 
@@ -15,15 +20,20 @@ public class ASupplyManager {
     // =========================================================
     
     public static void update() {
-        supplyTotal = AGame.getSupplyTotal();
+        supplyTotal = AGame.supplyTotal();
 
-        /**
-         * Check if should use auto supply manager
-         */
-        if (supplyTotal >= AtlantisConfig.USE_AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS) {
-            supplyFree = AGame.getSupplyFree();
+        // Fix for UMS maps
+        if (A.isUms() && AGame.supplyFree() <= 1 && requestedConstructionsOfSupply() == 0) {
+            requestAdditionalSupply();
+            return;
+        }
 
-            int suppliesBeingBuilt = requestedConstructionOfSupplyNumber();
+        // Should use auto supply manager
+//        System.out.println(supplyTotal + " // " + CurrentBuildOrder.settingAutoSupplyManagerWhenSupplyExceeds());
+        if (supplyTotal >= BuildOrderSettings.autoSupplyManagerWhenSupplyExceeds()) {
+            supplyFree = AGame.supplyFree();
+
+            int suppliesBeingBuilt = requestedConstructionsOfSupply();
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
             if (supplyTotal <= 11) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
@@ -34,15 +44,15 @@ public class ASupplyManager {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 40) {
-                if (supplyFree <= 7 && noSuppliesBeingBuilt) {
+                if (supplyFree <= 8 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 100) {
-                if (supplyFree <= 10 && noSuppliesBeingBuilt) {
+                if (supplyFree <= 14 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 200) {
-                if (supplyFree <= 14 && suppliesBeingBuilt <= 1) {
+                if (supplyFree <= 25 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
             }
@@ -54,28 +64,30 @@ public class ASupplyManager {
     private static void requestAdditionalSupply() {
 
         // Zerg handles supply a bit differently
-        if (AGame.playsAsZerg()) {
-            ((ZergBuildOrder) ABuildOrderManager.getCurrentBuildOrder()).produceZergUnit(AUnitType.Zerg_Overlord);
+        if (AGame.isPlayingAsZerg()) {
+            ((ZergBuildOrder) CurrentBuildOrder.get()).produceZergUnit(AUnitType.Zerg_Overlord);
         } 
 
         // Terran + Protoss
         else {
-            AConstructionManager.requestConstructionOf(AtlantisConfig.SUPPLY);
+            AddToQueue.withHighPriority(AtlantisConfig.SUPPLY);
         }
     }
 
     private static boolean requestedConstructionOfSupply() {
-        return AConstructionManager.countNotStartedConstructionsOfType(AtlantisConfig.SUPPLY) > 0;
+        return ConstructionRequests.countNotStartedOfType(AtlantisConfig.SUPPLY) > 0;
     }
 
-    private static int requestedConstructionOfSupplyNumber() {
-        return AConstructionManager.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
-        
-        // Zerg
-//        if (AGame.playsAsZerg()) {
-//            return AtlantisConstructingManager.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
-//        }
-//        
+    private static int requestedConstructionsOfSupply() {
+        if (We.zerg()) {
+//            return Count.ourOfTypeIncludingUnfinished(AUnitType.Zerg_Overlord);
+            return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
+        }
+
+        return Count.inProductionOrInQueue(AtlantisConfig.SUPPLY);
+
+//        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
+//
 //        // =========================================================
 //        // Terran + Protoss
 //        else {

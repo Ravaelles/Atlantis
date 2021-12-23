@@ -1,14 +1,13 @@
 package atlantis;
 
-import static atlantis.Atlantis.getBwapi;
+import static atlantis.Atlantis.game;
+
+import atlantis.combat.missions.MissionChanger;
+import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import atlantis.util.AtlantisUtilities;
-import atlantis.wrappers.ATech;
-import bwapi.Player;
-import bwapi.Race;
-import bwapi.TechType;
-import bwapi.UpgradeType;
+import atlantis.util.A;
+import bwapi.*;
+
 import java.util.List;
 
 /**
@@ -18,62 +17,8 @@ import java.util.List;
  */
 public class AGame {
 
-    private static boolean umtMode = false; // Should be set to `true` on UMT (custom) maps
-    private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
+    private static boolean umsMode = false; // Should be set to `true` on UMS (custom) maps
     private static Player _enemy = null; // Cached enemy player
-
-    // =========================================================
-    /**
-     * Returns object that is responsible for the production queue.
-     */
-//    public static ABuildOrderManager getBuildOrders() {
-//        return AtlantisConfig.getBuildOrders();
-//    }
-
-    /**
-     * Returns true if we have all techs needed for given unit (but we may NOT have some of the buildings!).
-     */
-    public static boolean hasTechToProduce(AUnitType unitType) {
-
-        // Needs to have tech
-        TechType techType = unitType.getRequiredTech();
-        if (techType != null && techType != TechType.None && !ATech.isResearched(techType)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Returns true if we have all buildings needed for given unit.
-     *
-     * @param boolean countUnfinished if true, then if it will require required units to be finished to return
-     * true e.g. to produce Zealot you need at least one finished Gateway
-     */
-    public static boolean hasBuildingsToProduce(AUnitType unitType, boolean countUnfinished) {
-
-        // Need to have every prerequisite building
-        for (AUnitType requiredType : unitType.getRequiredUnits().keySet()) {
-            if (requiredType.equals(AUnitType.Zerg_Larva)) {
-                continue;
-            }
-
-            int requiredAmount = unitType.getRequiredUnits().get(requiredType);
-            int weHaveAmount = requiredType.equals(AUnitType.Zerg_Larva)
-                    ? Select.ourLarva().count() : Select.our().ofType(requiredType).count();
-            if (weHaveAmount < requiredAmount) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Returns true if it's possible to produce unit (or building) of given type.
-     */
-    public static boolean hasTechAndBuildingsToProduce(AUnitType unitType) {
-        return hasTechToProduce(unitType) && hasBuildingsToProduce(unitType, true);
-    }
 
     // =========================================================
     
@@ -83,61 +28,24 @@ public class AGame {
     public static void exit() {
         Atlantis.getInstance().onEnd(false);
     }
-    
-    /**
-     * Enable/disable pause.
-     */
-    public static void pauseModeToggle() {
-        isPaused = !isPaused;
-    }
-    
-    /**
-     * Returns true if game is paused.
-     */
-    public static boolean isPaused() {
-        return isPaused;
-    }
-    
-    /**
-     * Changes game speed. 0 - fastest 1 - very quick 20 - around default
-     */
-    public static void changeSpeedTo(int speed) {
-        if (speed < 0) {
-            speed = 0;
-        }
 
-        AtlantisConfig.GAME_SPEED = speed;
-        
-        try {
-            getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-            Thread.sleep(40);
-            getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-            Thread.sleep(40);
-        } catch (InterruptedException ex) { 
-            // Ignore
-        }
-        getBwapi().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-
-        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
-        sendMessage("Game speed: " + speedString);
+    public static void quit() {
+        exit();
     }
 
     /**
-     * Changes game speed by given ammount of units. Total game speed: 0 - fastest 1 - very quick 20 - around
-     * default
+     * Quits the game gently, killing all processes and cleaning up.
      */
-    public static void changeSpeedBy(int deltaSpeed) {
-        int speed = AtlantisConfig.GAME_SPEED + deltaSpeed;
-        if (speed < 0) {
-            speed = 0;
-        }
+    public static void exit(String message) {
+        System.err.println(message);
+        Atlantis.getInstance().exitGame();
+    }
 
-        if (getBwapi() != null) {
-            AtlantisConfig.GAME_SPEED = speed;
-            changeSpeedTo(AtlantisConfig.GAME_SPEED);
-        }
-        else {
-            System.err.println("Can't change game speed, bwapi is null.");
+    public static void changeDisableUI(boolean disableUI) {
+        AtlantisConfig.DISABLE_GUI = disableUI;
+        Game game = game();
+        if (game != null) {
+            game.setGUI(AtlantisConfig.DISABLE_GUI);
         }
     }
 
@@ -145,70 +53,95 @@ public class AGame {
      * Returns game speed.
      */
     public static int getGameSpeed() {
-        return AtlantisConfig.GAME_SPEED;
+        return GameSpeed.gameSpeed;
     }
 
     /**
      * Returns approximate number of in-game seconds elapsed.
      */
-    public static int getTimeSeconds() {
-        return Atlantis.getBwapi().getFrameCount() / 30;
+    public static int timeSeconds() {
+        return Atlantis.game().getFrameCount() / 30;
     }
 
     /**
-     * Returns number of frames elapsed.
+     * Returns number of game frames elapsed.
      */
-    public static int getTimeFrames() {
-        return Atlantis.getBwapi().getFrameCount();
+    public static int now() {
+        return Atlantis.game().getFrameCount();
+    }
+
+    /**
+     * Return how many frames ago this moment was.
+     */
+    public static int framesAgo(int frame) {
+        return now() - frame;
+    }
+
+    /**
+     * Returns true once per n game frames.
+     */
+    public static boolean everyNthGameFrame(int n) {
+        return Atlantis.game().getFrameCount() % n == 0;
+    }
+
+    /**
+     * Returns false once per n game frames.
+     */
+    public static boolean notNthGameFrame(int n) {
+        return Atlantis.game().getFrameCount() % n != 0;
     }
 
     /**
      * Number of minerals.
      */
-    public static int getMinerals() {
-        return Atlantis.getBwapi().self().minerals();
+    public static int minerals() {
+        return Atlantis.game().self().minerals();
     }
 
     /**
      * Number of gas.
      */
-    public static int getGas() {
-        return Atlantis.getBwapi().self().gas();
+    public static int gas() {
+        return Atlantis.game().self().gas();
     }
 
     /**
      * Number of free supply.
      */
-    public static int getSupplyFree() {
-        return getSupplyTotal() - getSupplyUsed();
+    public static int supplyFree() {
+        return supplyTotal() - supplyUsed();
     }
 
     /**
      * Number of supply used.
      */
-    public static int getSupplyUsed() {
-        return Atlantis.getBwapi().self().supplyUsed() / 2;
+    public static int supplyUsed() {
+        return Atlantis.game().self().supplyUsed() / 2;
+    }
+
+    public static boolean hasSupply(int minSupply) {
+        return supplyUsed() >= minSupply;
     }
 
     /**
      * Number of supply totally available.
      */
-    public static int getSupplyTotal() {
-        return Atlantis.getBwapi().self().supplyTotal() / 2;
+    public static int supplyTotal() {
+        return Atlantis.game().self().supplyTotal() / 2;
     }
 
     /**
      * Returns current player.
      */
     public static Player getPlayerUs() {
-        return Atlantis.getBwapi().self();
+        return Atlantis.game().self();
     }
 
     /**
      * Returns all players.
      */
     public static List<Player> getPlayers() {
-        return Atlantis.getBwapi().getPlayers();
+        return Atlantis.game().getPlayers();
     }
 
     /**
@@ -216,7 +149,7 @@ public class AGame {
      */
     public static Player enemy() {
         if (_enemy == null) {
-            _enemy = Atlantis.getBwapi().enemies().iterator().next();
+            _enemy = Atlantis.game().enemies().iterator().next();
         }
         return _enemy;
     }
@@ -226,7 +159,7 @@ public class AGame {
      */
     public static Player getEnemy() {
         if (_enemy == null) {
-            _enemy = Atlantis.getBwapi().enemies().iterator().next();
+            _enemy = Atlantis.game().enemies().iterator().next();
         }
         return _enemy;
     }
@@ -235,25 +168,25 @@ public class AGame {
      * Returns neutral player (minerals, geysers, critters).
      */
     public static Player getNeutralPlayer() {
-        return Atlantis.getBwapi().neutral();
+        return Atlantis.game().neutral();
     }
 
     /**
-     * UMT maps are custom made maps, which may be used to test micro-management.
+     * UMS maps are custom made maps, which may be used to test micro-management. They can cause a lot of exceptions.
      */
-    public static boolean isUmtMode() {
-        return umtMode;
+    public static boolean isUms() {
+        return umsMode;
     }
 
     /**
-     * UMT maps are custom made maps, which may be used to test micro-management.
+     * UMS maps are custom made maps, which may be used to test micro-management.
      */
-    public static void setUmtMode(boolean umtMode) {
-        AGame.umtMode = umtMode;
-        if (umtMode) {
-            System.out.println();
-            System.out.println("### UMT mode enabled! ###");
-            System.out.println();
+    public static void setUmsMode() {
+        if (!AGame.umsMode) {
+            AGame.umsMode = true;
+            System.out.println("### UMS mode enabled! ###");
+
+            MissionChanger.forceMissionAttack();
         }
     }
     
@@ -263,27 +196,27 @@ public class AGame {
      * Returns random int number from range [min, max], both inclusive.
      */
     public static int rand(int min, int max) {
-        return AtlantisUtilities.rand(min, max);
+        return A.rand(min, max);
     }
 
     /**
      * Returns true if user plays as Terran.
      */
-    public static boolean playsAsTerran() {
+    public static boolean isPlayingAsTerran() {
         return AtlantisConfig.MY_RACE.equals(Race.Terran);
     }
 
     /**
      * Returns true if user plays as Protoss.
      */
-    public static boolean playsAsProtoss() {
+    public static boolean isPlayingAsProtoss() {
         return AtlantisConfig.MY_RACE.equals(Race.Protoss);
     }
 
     /**
      * Returns true if user plays as Zerg.
      */
-    public static boolean playsAsZerg() {
+    public static boolean isPlayingAsZerg() {
         return AtlantisConfig.MY_RACE.equals(Race.Zerg);
     }
 
@@ -312,14 +245,14 @@ public class AGame {
      * Returns true if we can afford given amount of minerals.
      */
     public static boolean hasMinerals(int mineralsToAfford) {
-        return getMinerals() >= mineralsToAfford;
+        return minerals() >= mineralsToAfford;
     }
 
     /**
      * Returns true if we can afford given amount of gas.
      */
     public static boolean hasGas(int gasToAfford) {
-        return getGas() >= gasToAfford;
+        return gas() >= gasToAfford;
     }
 
     /**
@@ -337,11 +270,49 @@ public class AGame {
         return hasMinerals(upgrade.mineralPrice()) && hasGas(upgrade.gasPrice());
     }
 
+    public static boolean canAfford(TechType tech) {
+        return hasMinerals(tech.mineralPrice()) && hasGas(tech.gasPrice());
+    }
+
     /**
      * Returns true if we can afford both so many minerals and gas at the same time.
      */
     public static boolean canAfford(int minerals, int gas) {
         return hasMinerals(minerals) && hasGas(gas);
+    }
+
+    /**
+     * Returns true if we can afford both so many minerals and gas at the same time.
+     * Takes into account planned constructions and orders.
+     */
+    public static boolean canAffordWithReserved(int minerals, int gas) {
+//        int[] reservedConstructions = ConstructionRequests.resourcesNeededForNotStartedConstructions();
+        int[] reservedInQueue = CurrentProductionQueue.resourcesReserved();
+
+        return canAfford(
+                minerals + reservedInQueue[0],
+                gas + reservedInQueue[1]
+        );
+    }
+
+    public static boolean canAffordWithReserved(AUnitType type) {
+        return canAffordWithReserved(type.getMineralPrice(), type.getGasPrice());
+    }
+
+    public static boolean canAffordWithReserved(TechType type) {
+        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
+    }
+
+    public static boolean canAffordWithReserved(UpgradeType type) {
+        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
+    }
+
+    public static int killsLossesResourceBalance() {
+        return Atlantis.KILLED_RESOURCES - Atlantis.LOST_RESOURCES;
+    }
+
+    public static String getMapName() {
+        return Atlantis.game().mapName();
     }
 
     // =========================================================
@@ -350,8 +321,8 @@ public class AGame {
      * Sends in-game message that will be visible by other players.
      */
     public static void sendMessage(String message) {
-        if (getBwapi() != null) {
-            getBwapi().sendText(message);
+        if (game() != null) {
+            game().sendText(message);
         }
     }
 

@@ -1,20 +1,20 @@
 package atlantis.position;
 
-import atlantis.debug.APainter;
-import atlantis.information.AMap;
+import atlantis.Atlantis;
+import atlantis.map.AChoke;
+import atlantis.map.AMap;
+import atlantis.map.ARegion;
+import atlantis.map.Regions;
 import atlantis.units.AUnit;
-import atlantis.util.PositionUtil;
-import bwapi.AbstractPoint;
-import bwapi.Color;
+import bwapi.Point;
 import bwapi.Position;
-import bwta.BWTA;
-import bwta.Region;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * Atlantis uses wrapper for BWMirror native classes which can't extended due to private constructors.
+ * Atlantis uses wrapper for BWAPI  classes which can't extended due to private constructors.
  * <br /><br />
  * I've decided to implement a solution which allows to use the .jar of BWMirror library, because from
  * my experience it turns out, that it's extremely tedious to upgrade Atlantis to use newer version of
@@ -24,23 +24,23 @@ import java.util.Objects;
  * you can create them here or reference original Position class via p() method. 
  * <br /><br />
  * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
  */
-public class APosition extends Position implements Comparable<Position> {
+public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
+
+    private static final Map<Object, APosition> instances = new HashMap<>();
     
-//    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 110;
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 32;
-    
-    private static final Map<Position, APosition> instances = new HashMap<>();
-    
-    private Position p;
+    private final Position p;
     
     // =========================================================
 
     public APosition(APosition position) {
         super(position.getX(), position.getY());
-        this.p = new Position(position.getX(), position.getY());
+        this.p = position.p;
+    }
+
+    private APosition(HasPosition p) {
+        super(p.position().getX(), p.position().getY());
+        this.p = p.position();
     }
 
     public APosition(int pixelX, int pixelY) {
@@ -52,132 +52,128 @@ public class APosition extends Position implements Comparable<Position> {
         super(p.getX(), p.getY());
         this.p = p;
     }
-    
+
     /**
-     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
+     * <b>Notice:</b> whenever possible, use APosition instead of Position.
+     *
+     * Atlantis uses wrapper for bridge native classes.<br />
      * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
-     * you can create them here or reference original Position class via p() method. 
-     * <br /><br />
-     * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
+     * you can create them here or reference original Position class via p() method.
      */
-    public static APosition create(Position p) {
+    public static APosition create(Object p) {
         if (instances.containsKey(p)) {
             return instances.get(p);
         }
         else {
-            APosition position = new APosition(p);
+            APosition position = null;
+
+            if (p instanceof HasPosition) {
+                position = new APosition(((HasPosition) p).position());
+            } else if (p instanceof Position) {
+                position = new APosition((Position) p);
+            } else {
+                throw new RuntimeException("APosition::create invalid param " + p);
+            }
+
             instances.put(p, position);
             return position;
         }
     }
     
     /**
+     * <b>Notice:</b> whenever possible, use APosition instead of Position.
+     *
+     * Atlantis uses wrapper for bridge native classes.<br />
      * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
-     * you can create them here or reference original Position class via p() method. 
-     * <br /><br />
-     * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
-     * <br /><br />
+     * you can create them here or reference original Position class via p() method.
+     *
      * @return APosition object from (build) tile coordinates (32 pixels = 1 tile).
      */
     public static APosition create(int tileX, int tileY) {
         return new APosition(tileX * 32, tileY * 32);
     }
-    
+
+    // =========================================================
+
     /**
-     * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside APosition class.
-     * APosition class should be used always in place of Position when possible.
+     * APosition class should be used always instead of Position when possible.
      */
-    public Position p() {
+    protected Position p() {
         return p;
     }
 
-    // =========================================================
-    
+    public APosition position() {
+        return this;
+    }
+
+    @Override
+    public int x() {
+        return p.x;
+    }
+
+    @Override
+    public int y() {
+        return p.y;
+    }
+
     /**
      * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
      * building dimensions.
      */
-    public double distanceTo(Position position) {
-        return PositionUtil.distanceTo(getPoint(), position);
+    public double distTo(Position position) {
+        return PositionUtil.distanceTo(p, position);
     }
-    
+
+    public double distTo(APosition position) {
+        return PositionUtil.distanceTo(p, position);
+    }
+
+    public double groundDistanceTo(HasPosition position) {
+        return PositionUtil.groundDistanceTo(this, position.position());
+    }
+
+    public double distTo(AChoke choke) {
+        return PositionUtil.distanceTo(p, choke);
+    }
+
     /**
      * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
      * building dimensions.
      */
-    public double distanceTo(AUnit unit) {
-        return PositionUtil.distanceTo(getPoint(), unit);
+    public double distTo(AUnit unit) {
+        return PositionUtil.distanceTo(p, unit);
     }
-    
-    /**
-     * Returns X coordinate in tiles, 1 tile = 32 pixels.
-     */
-    public int getTileX() {
-        return getX() / 32;
-    }
-    
-    /**
-     * Returns Y coordinate in tiles, 1 tile = 32 pixels.
-     */
-    public int getTileY() {
-        return getY() / 32;
-    }
-    
-    /**
-     * Returns new position object that is translated in [x,y] pixels.
-     */
-    public APosition translateByPixels(int pixelDX, int pixelDY) {
-        return new APosition(getX() + pixelDX, getY() + pixelDY);
-    }
-    
-    /**
-     * Returns new position object that is translated in [x,y] tiles.
-     */
-    public APosition translateByTiles(int tileDX, int tileDY) {
-        return new APosition(getX() + tileDX * 32, getY() + tileDY * 32);
-    }
-    
+
     /**
      * Paint it on screen for testing.
      */
-    public void paintIt(int widthTiles, int heightTiles) {
-        paintIt(widthTiles, heightTiles, Color.Red);
-    }
-    
+//    default void paintIt(int widthTiles, int heightTiles) {
+//        paintIt(widthTiles, heightTiles, Color.Red);
+//    }
+
     /**
      * Paint it on screen for testing.
      */
-    public void paintIt(int widthTiles, int heightTiles, Color color) {
-        APainter.paintRectangle(this, widthTiles * 32, heightTiles * 32, color);
-    }
-    
-    // === High-abstraction ========================================
-    
-    /**
-     * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
-     */
-    public APosition translateTowards(AbstractPoint<Position> towards, int percentTowardsCenter) {
-        return PositionOperationsWrapper.getPositionMovedPercentTowards(
-                this, towards, percentTowardsCenter
-        );
-    }
-    
+//    default void paintIt(int widthTiles, int heightTiles, Color color) {
+//        APainter.paintRectangle(this, widthTiles, heightTiles, color);
+//    }
+
     // =========================================================
-    
+
     /**
      * Ensures that position's [x,y] are valid map coordinates.
      */
-    @Override
+//    @Override
     public APosition makeValid() {
 //        p = p.makeValid();
 
         boolean somethingChanged = false;
         int px = p.getX();
         int py = p.getY();
-        
-        if (px < 1) {
+
+        if (px <= 1) {
             px = 1;
             somethingChanged = true;
         }
@@ -185,7 +181,7 @@ public class APosition extends Position implements Comparable<Position> {
             px = 32 * AMap.getMapWidthInTiles() - 1;
             somethingChanged = true;
         }
-        
+
         if (py < 1) {
             py = 1;
             somethingChanged = true;
@@ -194,57 +190,63 @@ public class APosition extends Position implements Comparable<Position> {
             py = 32 * AMap.getMapHeightInTiles() - 1;
             somethingChanged = true;
         }
-        
+
         if (somethingChanged) {
-//            p = new APosition(px, py);
+//            p = new HasPosition(px, py);
             return new APosition(px, py);
         }
         else {
             return this;
         }
     }
-    
+
+    public APosition makeValidFarFromBounds() {
+        return makeValidFarFromBounds(PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
+    }
+
     /**
      * Ensures that position's [x,y] are valid map coordinates and are "quite" far from map boundaries.
      */
-    public APosition makeValidFarFromBounds() {
+    public APosition makeValidFarFromBounds(int maxPixelsAwayFromEdges) {
         boolean somethingChanged = false;
         int px = p.getX();
         int py = p.getY();
-        
-        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
-            px = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
+
+        // =========================================================
+
+        if (px < maxPixelsAwayFromEdges) {
+            px = maxPixelsAwayFromEdges;
             somethingChanged = true;
         }
-        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            px = 32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
+        else if (px > (32 * AMap.getMapWidthInTiles() - maxPixelsAwayFromEdges)) {
+            px = 32 * AMap.getMapWidthInTiles() - maxPixelsAwayFromEdges;
             somethingChanged = true;
         }
-        
-        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
-            py = PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
+
+        if (py < maxPixelsAwayFromEdges) {
+            py = maxPixelsAwayFromEdges;
             somethingChanged = true;
         }
-        else if (py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            py = 32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE;
+        else if (py > (32 * AMap.getMapHeightInTiles() - maxPixelsAwayFromEdges)) {
+            py = 32 * AMap.getMapHeightInTiles() - maxPixelsAwayFromEdges;
             somethingChanged = true;
         }
-        
+
+        // =========================================================
+
         if (somethingChanged) {
-            APosition newPosition = new APosition(px, py);
-//            instances.put(p, newPosition);
-//            p 
-//            instances.put(p, newPosition);
-            return newPosition;
+            return new APosition(px, py);
         }
         else {
             return this;
         }
     }
 
+    // =========================================================
+
     @Override
     public String toString() {
-        return "(" + getTileX() + ", " + getTileY() + ")";
+        return "(" + tx() + ", " + ty() + ")";
     }
 
     @Override
@@ -254,8 +256,9 @@ public class APosition extends Position implements Comparable<Position> {
         return hash;
     }
     
+//    public int compareTo(Position o) {
     @Override
-    public int compareTo(Position o) {
+    public int compareTo(Point o) {
         int compare = Integer.compare(getX(), o.getX());
         if (compare == 0) {
             compare = Integer.compare(getY(), o.getY());
@@ -274,25 +277,20 @@ public class APosition extends Position implements Comparable<Position> {
 //        if (!(obj instanceof APosition) && !(obj instanceof Position)) {
 //            return false;
 //        }
-        if (!(obj instanceof AbstractPoint)) {
+        if (!(obj instanceof HasPosition)) {
             return false;
         }
         
-        int otherX = ((AbstractPoint) obj).getX();
-        int otherY = ((AbstractPoint) obj).getY();
-        final Position other = (Position) obj;
-        if (this.getX() != otherX || this.getY() != otherY) {
-            return false;
-        }
-        
-        return true;
+        int otherX = ((HasPosition) obj).x();
+        int otherY = ((HasPosition) obj).y();
+        return this.getX() == otherX && this.getY() == otherY;
     }
     
     /**
      * Returns true if given position has land connection to given point.
      */
     public boolean hasPathTo(APosition point) {
-        return BWTA.isConnected(this.toTilePosition(), point.toTilePosition());
+        return Atlantis.game().hasPath(this, point);
     }
 
     public boolean isCloseToMapBounds() {
@@ -309,18 +307,14 @@ public class APosition extends Position implements Comparable<Position> {
         if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
             return true;
         }
-        else if (py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            return true;
-        }
-        
-        return false;
+        else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
     }    
 
     /**
-     * Return BWTA region for this position.
+     * Return region object for this position.
      */
-    public Region getRegion() {
-        return AMap.getRegion(this);
+    public ARegion region() {
+        return Regions.getRegion(this);
     }
 
 }

@@ -2,11 +2,13 @@ package atlantis.production;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.constructing.AConstructionManager;
-import atlantis.production.orders.ABuildOrderManager;
+import atlantis.combat.missions.Missions;
+import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.orders.*;
+import atlantis.tech.ATechRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
+import atlantis.units.select.Select;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
@@ -17,112 +19,111 @@ public class AProductionManager {
      * Is responsible for training new units and issuing construction requests for buildings.
      */
     protected static void update() {
-        
-        // === Handle UMT ==========================================
-        
-        if (AGame.isUmtMode()) {
-            return;
+
+        // Get sequence of units (Production Orders) based on current build order
+        ArrayList<ProductionOrder> queue = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
+        for (ProductionOrder order : queue) {
+            handleProductionOrder(order);
         }
-        
+    }
+
+    private static void handleProductionOrder(ProductionOrder order) {
+
+        // Produce UNIT
+        if (order.unitType() != null) {
+            AUnitType unitType = order.unitType();
+//            System.out.println("PRODUCE NOW unitType = " + unitType);
+            if (unitType.isBuilding()) {
+                produceBuilding(unitType, order);
+            } else {
+                produceUnit(unitType);
+            }
+        }
+
         // =========================================================
-        
-        // Get build orders (aka production orders) from the manager
-        ArrayList<ProductionOrder> produceNow = ABuildOrderManager.getThingsToProduceRightNow(
-                ABuildOrderManager.MODE_ALL_ORDERS
-        );
-        for (ProductionOrder order : produceNow) {
+        // Produce UPGRADE
 
-            // =========================================================
-            // Produce UNIT
-            if (order.getUnitOrBuilding() != null) {
-                AUnitType unitType = order.getUnitOrBuilding();
-                if (unitType.isBuilding()) {
-                    produceBuilding(unitType, order);
-                } else {
-                    produceUnit(unitType);
-                }
-            } 
-
-            // =========================================================
-            // Produce UPGRADE
-            else if (order.getUpgrade() != null) {
-                UpgradeType upgrade = order.getUpgrade();
-                researchUpgrade(upgrade);
-            }
-
-            // =========================================================
-            // Produce TECH
-            else if (order.getTech()!= null) {
-                TechType tech = order.getTech();
-                researchTech(tech);
-            }
-            
-            // === Nothing! ============================================
-            else {
-                System.err.println(order + " was not handled at all!");
-            }
+        else if (order.upgrade() != null) {
+            UpgradeType upgrade = order.upgrade();
+            ATechRequests.researchUpgrade(upgrade);
         }
-        
-        // === Fix - refresh entire queue ==============================
-        
-        ABuildOrderManager.getProductionQueueNext(20);
+
+        // =========================================================
+        // Produce TECH
+
+        else if (order.tech() != null) {
+            TechType tech = order.tech();
+            ATechRequests.researchTech(tech);
+        }
+
+        // =========================================================
+        // Mission CHANGE
+
+        else if (order.mission() != null) {
+            Missions.setGlobalMissionTo(order.mission());
+        }
+
+        // === Nothing! ============================================
+
+        else {
+            System.err.println(order + " was not handled at all!");
+        }
     }
 
     // =========================================================
-    // Hi-level produce
-    
-    private static void produceUnit(AUnitType unitType) {
-        
+    // =========================================================
+    // =========================================================
+
+    public static boolean produceWorker() {
+        return CurrentBuildOrder.get().produceWorker();
+    }
+
+    private static boolean produceUnit(AUnitType type) {
+        assert !type.isBuilding();
+
         // Supply: OVERLORD / PYLON / DEPOT
-        if (AGame.getSupplyFree() == 0 && !unitType.isSupplyUnit() && !unitType.isBuilding()) {
-            // Supply production is handled by AtlantisSupplyManager
-            return;
-        }
+//        if (AGame.supplyFree() == 0 && !unitType.isSupplyUnit()) {
+//            // Supply production is handled by AtlantisSupplyManager
+//            return false;
+//        }
 
         // =========================================================
         // Worker
-        if (unitType.equals(AtlantisConfig.WORKER)) {
-            ABuildOrderManager.getCurrentBuildOrder().produceWorker();
+
+        if (type.equals(AtlantisConfig.WORKER)) {
+            return produceWorker();
         } 
 
         // =========================================================
-        // Non-worker so combat units and special units like Scarabs etc.
-        else { 
-            ABuildOrderManager.getCurrentBuildOrder().produceUnit(unitType);
-        } 
+        // Non-worker
+
+        else if (AGame.canAfford(type.getMineralPrice(), type.getGasPrice())) {
+            return CurrentBuildOrder.get().produceUnit(type);
+        }
+
+        return false;
     }
 
-    private static void researchUpgrade(UpgradeType upgrade) {
-        AUnitType buildingType = AUnitType.createFrom(upgrade.whatUpgrades());
-//        System.out.println("Research " + upgrade + " in " + buildingType);
-        if (buildingType != null) {
-            AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
-//            System.out.println(upgrade + " level is " + AGame.getPlayerUs().getUpgradeLevel(upgrade));
-            if (building != null && !building.isBusy()) {
-//                System.out.println("   ISSUE");
-                building.upgrade(upgrade);
-            }
+    private static void produceBuilding(AUnitType type, ProductionOrder order) {
+        assert type.isBuilding();
+
+        if (type.isZerg()) {
+            ZergBuildOrder.produceZergBuilding(type, order);
+            return;
+        }
+
+        if (type.isAddon()) {
+            produceAddon(type);
+        } else {
+            ConstructionRequests.requestConstructionOf(order);
         }
     }
 
-    private static void researchTech(TechType tech) {
-        AUnitType buildingType = AUnitType.createFrom(tech.whatResearches());
-        if (buildingType != null) {
-            AUnit building = (AUnit) Select.ourBuildings().ofType(buildingType).first();
-            if (building != null && !building.isBusy()) {
-                building.research(tech);
-            }
+    private static void produceAddon(AUnitType addon) {
+        for (AUnit building : Select.ourOfType(addon.whatBuildsIt()).free().list()) {
+            building.buildAddon(addon);
+            return;
         }
     }
 
-    // =========================================================
-    // Lo-level produce
-    
-    private static void produceBuilding(AUnitType unitType, ProductionOrder order) {
-        if (!unitType.isBuilding()) {
-            System.err.println("produceBuilding has been given wrong argument: " + unitType);
-        }
-        AConstructionManager.requestConstructionOf(unitType, order, null);
-    }
-    
 }

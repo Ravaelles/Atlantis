@@ -1,6 +1,8 @@
 package atlantis.keyboard;
 
+import atlantis.CameraManager;
 import atlantis.AGame;
+import atlantis.GameSpeed;
 import atlantis.AtlantisConfig;
 import atlantis.debug.APainter;
 import java.util.logging.Level;
@@ -41,48 +43,95 @@ public class AKeyboard implements NativeKeyListener {
     
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-//        System.out.println(e.getKeyCode());
+//        System.out.println("Key pressed code: " + e.getKeyCode());
         
         switch (e.getKeyCode()) {
             
+            // Key "Escape"
+            case 1:
+                System.out.println();
+                System.out.println("Exit requested by the user");
+                AGame.exit();
+                break;
+
+            // Key "c" / "C"
+            case 46:
+                CameraManager.toggleFocusCameraOnFirstCombatUnit();
+                break;
+
+//            // Key "o" / "O"
+//            case 24 : case 42:
+
+            // Key "p" / "P"
+            case 25 : case 41:
+                APainter.togglePainting();
+                break;
+
             // Key "PauseBreak"
             case 3653:
-                AGame.pauseModeToggle();
-                System.out.println("Notice: " + (AGame.isPaused() ? "" : "UN") + "PAUSED");
-                break;
-            
-            // Keys "-" and NumPad "-"
-            case 12: case 3658:
-                AGame.changeSpeedBy(+20);
-                System.out.println("Notice: SPEED SLOWER (" + AtlantisConfig.GAME_SPEED + ")");
+                GameSpeed.pauseModeToggle();
                 break;
 
-            // Keys "+" and NumPad "+"
-            case 13: case 3662: 
-                AGame.changeSpeedBy(-20);
-                System.out.println("Notice: SPEED FASTER (" + AtlantisConfig.GAME_SPEED + ")");
+            // Keys "-" and NumPad "-" and "["
+            case 12: case 3658: case 26:
+                GameSpeed.changeSpeedBy(+40);
+//                System.out.println("Notice: SPEED SLOWER (" + GameSpeed.gameSpeed + ")");
                 break;
 
-            // Key "ESCAPE"
-            case 1: 
-                System.out.println();
-                System.out.println("ESC pressed: exit requested by the user");
-                AGame.exit();
+            // Keys "+" and NumPad "+" and "]"
+            case 13: case 3662: case 27:
+                GameSpeed.changeSpeedBy(-40);
+//                System.out.println("Notice: SPEED FASTER (" + GameSpeed.gameSpeed + ")");
                 break;
 
             // Key "1"
             case 2: 
-                changePaintingMode(APainter.MODE_NO_PAINTING);
+                GameSpeed.changeFrameSkipTo(0);
                 break;
 
             // Key "2"
-            case 3: 
-                changePaintingMode(APainter.MODE_PARTIAL_PAINTING);
+            case 3:
+                GameSpeed.changeFrameSkipTo(5);
                 break;
 
             // Key "3"
-            case 4: 
-                changePaintingMode(APainter.MODE_FULL_PAINTING);
+            case 4:
+                GameSpeed.changeFrameSkipTo(10);
+                break;
+
+            // Key "4"
+            case 5:
+                GameSpeed.changeFrameSkipTo(20);
+                break;
+
+            // Key "5"
+            case 6:
+                GameSpeed.changeFrameSkipTo(40);
+                break;
+
+            // Key "6"
+            case 7:
+                GameSpeed.changeFrameSkipTo(80);
+                break;
+
+            // Key "7"
+            case 8:
+                GameSpeed.changeFrameSkipTo(150);
+                break;
+
+            // Key "8"
+            case 9:
+                GameSpeed.changeFrameSkipTo(250);
+                break;
+
+            // Key "9"
+            case 10:
+                GameSpeed.changeFrameSkipTo(500);
+                break;
+
+            // Key "0"
+            case 11:
+                AGame.changeDisableUI(!AtlantisConfig.DISABLE_GUI);
                 break;
         }
     }

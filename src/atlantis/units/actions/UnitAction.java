@@ -1,8 +1,9 @@
 package atlantis.units.actions;
 
 public class UnitAction {
-    
-    private boolean attack;
+
+    private String name;
+    private final boolean attack;
     private boolean run;
 
     // =========================================================
@@ -24,7 +25,7 @@ public class UnitAction {
 
     @Override
     public String toString() {
-        return "UnitAction{" + "attack=" + attack + ", run=" + run + '}';
+        return name;
     }
     
     // =========================================================
@@ -35,6 +36,15 @@ public class UnitAction {
 
     public boolean isRunningOrRetreating() {
         return run;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public UnitAction setName(String name) {
+        this.name = name;
+        return this;
     }
     
 }

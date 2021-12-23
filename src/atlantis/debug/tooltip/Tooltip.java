@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 
 public class Tooltip {
 
-    private AUnit unit;
+    private final AUnit unit;
     private String tooltip;
     private int tooltipStartInFrames;
 
@@ -21,17 +21,17 @@ public class Tooltip {
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
-        this.tooltipStartInFrames = AGame.getTimeFrames();
+        this.tooltipStartInFrames = AGame.now();
     }
 
     public String getTooltip() {
-        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
-            String tooltipToReturn = this.tooltip;
-            this.removeTooltip();
-            return tooltipToReturn;
-        } else {
-            return tooltip;
-        }
+//        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
+//            String tooltipToReturn = this.tooltip;
+//            this.removeTooltip();
+//            return tooltipToReturn;
+//        } else {
+        return tooltip;
+//        }
     }
 
     public void removeTooltip() {
@@ -44,7 +44,7 @@ public class Tooltip {
 
     @Override
     public int hashCode() {
-        return unit.getID();
+        return unit.id();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class Tooltip {
             return false;
         }
 
-        return unit.getID() == ((Tooltip) other).getUnit().getID();
+        return unit.id() == ((Tooltip) other).getUnit().id();
 
     }
 
@@ -61,9 +61,9 @@ public class Tooltip {
     public String toString() {
         return String.format(
                 "Tooltip for (%d) %s %s: %s. Start @ frame %d",
-                unit.getID(),
-                unit.getType().getShortName(),
-                unit.getPosition().toTilePosition(),
+                unit.id(),
+                unit.type().shortName(),
+                unit.position().toTilePosition(),
                 hasTooltip() ? String.format("'%s'", tooltip) : "null",
                 tooltipStartInFrames
         );

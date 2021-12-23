@@ -1,0 +1,1 @@
+If this file is found in project root then Atlantis will override entries in bwapi.ini (if able to find it) based on settings in AtlantisConfig

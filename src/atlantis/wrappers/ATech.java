@@ -2,26 +2,39 @@ package atlantis.wrappers;
 
 import atlantis.AGame;
 import atlantis.production.ProductionOrder;
+import atlantis.util.Cache;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ATech {
     
-    private static ArrayList<TechType> currentlyResearching = new ArrayList<>();
-    private static ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
-    
+    private static final ArrayList<TechType> currentlyResearching = new ArrayList<>();
+    private static final ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
+    private static final Cache<Boolean> cache = new Cache<>();
+
     // =========================================================
 
-    public static boolean isResearched(TechType tech) {
-        return isResearchedTech(tech);
+    public static boolean isResearched(Object techOrUpgrade) {
+        return cache.get(
+                "isResearched:" + techOrUpgrade,
+                100,
+                () -> {
+                    if (techOrUpgrade instanceof TechType) {
+                        TechType tech = (TechType) techOrUpgrade;
+                        return isResearchedTech(tech);
+                    } else if (techOrUpgrade instanceof UpgradeType) {
+                        return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
+                    } else {
+                        AGame.exit("Neither a tech, nor an upgrade.");
+                        return false;
+                    }
+                }
+        );
     }
 
-    public static boolean isResearched(Object techOrUpgrade, ProductionOrder order) {
+    public static boolean isResearchedWithOrder(Object techOrUpgrade, ProductionOrder order) {
         if (techOrUpgrade instanceof TechType) {
             TechType tech = (TechType) techOrUpgrade;
             return isResearchedTech(tech);
@@ -49,15 +62,29 @@ public class ATech {
     public static int getUpgradeLevel(UpgradeType upgrade) {
         return AGame.getPlayerUs().getUpgradeLevel(upgrade);
     }
-    
+
+    public static Integer[] costOf(Object techOrUpgrade) {
+        if (techOrUpgrade instanceof TechType) {
+            return new Integer[] {
+                    ((TechType) techOrUpgrade).mineralPrice(), ((TechType) techOrUpgrade).gasPrice()
+            };
+        } else {
+            return new Integer[] {
+                    ((UpgradeType) techOrUpgrade).mineralPrice(), ((UpgradeType) techOrUpgrade).gasPrice()
+            };
+        }
+    }
+
     // =========================================================
 
     public static void markAsBeingResearched(TechType tech) {
         currentlyResearching.add(tech);
+        cache.clear();
     }
 
     public static void markAsBeingUpgraded(UpgradeType upgrade) {
         currentlyUpgrading.add(upgrade);
+        cache.clear();
     }
     
     // =========================================================
@@ -78,4 +105,7 @@ public class ATech {
         return currentlyUpgrading;
     }
 
+    public static boolean isOffensiveSpell(TechType tech) {
+        return !tech.name().contains("Warp_") && !tech.name().contains("Meld_");
+    }
 }

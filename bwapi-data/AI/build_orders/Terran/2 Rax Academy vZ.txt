@@ -1,0 +1,69 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=9
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=25
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_WORKERS=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=60
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
+9/10 - Supply Depot
+11/18 - Barracks
+13/18 - Barracks
+14/18 - Supply Depot
+18/26 - Refinery
+19/26 - Academy
+24/26 - Supply Depot
+26/34 - Stim Pack
+28/34 - Comsat Station
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+9 - Supply Depot
+11 - Barracks
+14 - Supply Depot
+14 - Barracks
+24 - Supply Depot
+26 - Academy
+28 - Refinery
+29 - Barracks
+//35 - Barracks
+37 - Comsat Station
+38 - Stim Packs
+40 - Engineering Bay
+42 - U 238 Shells
+50 - Barracks
+//47 - Factory
+//49 - Tank
+//52 - Tank
+//54 - Missile Turret
+//55 - Command Center
+//55 - Tank
+//56 - Tank Siege Mode
+//48 - Command Center
+55 - Factory
+62 - Starport
+64 - Wraith
+66 - Science Facility
+67 - Wraith
+68 - Factory
+69 - Physics Lab
+70 - Wraith
+72 - Control Tower
+//73 - Tank Siege Mode
+73 - Science Vessel
+78 - Science Vessel
+82 - Irradiate
+81 - Wraith
+84 - Science Vessel

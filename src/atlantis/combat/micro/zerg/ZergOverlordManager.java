@@ -1,37 +1,46 @@
 package atlantis.combat.micro.zerg;
 
-import atlantis.combat.squad.ASquadManager;
-import atlantis.enemy.AEnemyUnits;
+import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.stack.StackedUnitsManager;
+import atlantis.combat.squad.alpha.Alpha;
+import atlantis.enemy.EnemyInformation;
 import atlantis.position.APosition;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
+import atlantis.units.select.Select;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
 public class ZergOverlordManager {
 
-    public static void update(AUnit unit) {
+    public static boolean update(AUnit unit) {
+
+        if (AAvoidUnits.avoidEnemiesIfNeeded(unit)) {
+            unit.setTooltip("Uaaa!");
+            return true;
+        }
+
+        // Dont cluster Overlords too much
+        if (StackedUnitsManager.dontStackTooMuch(unit, 1.5, true)) {
+            return true;
+        }
 
         // We know enemy building
-        if (AEnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-            actWhenWeKnowEnemy(unit);
+        if (EnemyInformation.hasDiscoveredAnyBuilding()) {
+            return actWhenWeKnowEnemy(unit);
         } 
 
         // =========================================================
         // We don't know any enemy building
-        else {
-            actWhenDontKnowEnemyLocation(unit);
-        }
+
+        return actWhenDontKnowEnemyLocation(unit);
     }
 
     // =========================================================
     /**
      * We know at least one enemy building location.
+     * @return
      */
-    private static void actWhenWeKnowEnemy(AUnit overlord) {
+    private static boolean actWhenWeKnowEnemy(AUnit overlord) {
 //        Position goTo = AtlantisMap.getMainBaseChokepoint();
 //        if (goTo == null) {
 //            goTo = Select.mainBase();
@@ -43,21 +52,40 @@ public class ZergOverlordManager {
 //            unit.move(goTo, false);
 //        }
 
-        APosition medianUnitPosition = ASquadManager.getAlphaSquad().getMedianUnitPosition();
+        if (overlord.id() % 5 == 0) {
+            return followArmy(overlord);
+        } else {
+            return stayInHome(overlord);
+        }
+    }
+
+    private static boolean stayInHome(AUnit overlord) {
+        AUnit main = Select.main();
+        if (main != null && overlord.distToMoreThan(main, 8)) {
+            return overlord.move(main, UnitActions.MOVE, "Home");
+        }
+
+        return false;
+    }
+
+    private static boolean followArmy(AUnit overlord) {
+        APosition medianUnitPosition = Alpha.get().center();
         if (medianUnitPosition != null) {
-            if (overlord.distanceTo(medianUnitPosition) > 2.5) {
-                overlord.move(medianUnitPosition, UnitActions.MOVE);
+            if (overlord.distTo(medianUnitPosition) > 2.5) {
+                overlord.move(medianUnitPosition, UnitActions.MOVE, "Follow army");
+                return true;
             }
         }
+
+        return false;
     }
 
     /**
      * We don't know at any enemy building location.
      */
-    private static void actWhenDontKnowEnemyLocation(AUnit unit) {
-        AScoutManager.tryFindingEnemyBase(unit);
+    private static boolean actWhenDontKnowEnemyLocation(AUnit unit) {
         unit.setTooltip("Find enemy");
-        //unit.setTooltip("Find enemy");
+        return AScoutManager.tryFindingEnemyBuilding(unit);
     }
 
 }

@@ -1,0 +1,65 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=11
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=30
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_WORKERS=13
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=60
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+This build is modified Nada 2 Fact, only with focus on Vultures
+http://wiki.teamliquid.net/starcraft/Nada_2_Fac
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+//4 - MISSION=RUSH
+5 - SCV
+6 - SCV
+7 - SCV
+8 - SCV
+8 - Barracks
+8 - Barracks
+8 - SCV
+9 - Supply Depot
+10 - SCV
+11 - Marine
+12 - Marine
+13 - Marine
+14 - Marine
+14 - Supply Depot
+15 - SCV
+16 - Marine
+17 - SCV
+18 - Marine
+18 - Barracks
+19 - SCV
+Marines - x5
+23 - Supply Depot
+25 - Marine
+25 - Barracks
+Marines - x5
+30 - Barracks
+Marines - x5
+35 - Barracks
+Marines - x5
+40 - Barracks
+Marines - x5
+45 - Barracks
+//45 - MISSION=RESET
+Marines - x5
+50 - Barracks
+Marines - x5
+55 - Barracks
+Marines - x5
+60 - Barracks
+Marines - x5

@@ -22,8 +22,8 @@ Atlantis wraps everything heavily, so you don't need to write yourself countless
 - advanced and clean code wrappers for selecting units, types etc
 
 And some extras:
-- provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (Esc), painting modes (1,2,3)
-- modifies bwapi.ini so you don't need to do it yourself! Can change your race, enemy race, map played and game type (for UMT maps which are great for micro tweaking)
+- provides handy keyboard shortcuts like: speed faster/slower (+/-), exit (~), painting modes (1,2,3)
+- modifies bwapi.ini so you don't need to do it yourself! Can change your race, enemy race, map played and game type (for UMS maps which are great for micro tweaking)
 
 # What actually is Atlantis?
 It's powerful set of tools that are based on [BWMirror](https://github.com/vjurenka/BWMirror) in version 2.5. The library (BWMirror) is heavily wrapped in numerous helper methods/modules as BWMIrror pretty much doesn't do anything by itself and most people are interested in combat, not searching for nearest free mineral field for harvesting or debugging Extractor construction. Trust me, it can take tens of hours to solve these problems. Prior to Atlantis I've written three bots, so I know how it is ;__:
@@ -43,7 +43,8 @@ Atlantis is actively developed, but it's quite capable already. The latest stabl
 - Run the application and that's it, it will automatically run StarCraft and Chaoslauncher.
 - If you got any error it probably means you've screwed the BWAPI installation.
 - Use keys 1,2,3 to change painting mode level; more painting, slower it runs, but gives more information.
-- Use keys +/- to change the game speed.
+- Use keys +/- to change the game speed, use PauseBreak to stop the game.
+- Tilde (~) makes the bot to exit gently, killing StarCraft and ChaosLauncher processes.
 
 # Code structure
 

@@ -1,177 +1,230 @@
 package atlantis.combat;
 
 import atlantis.AGame;
-import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.AAvoidMeleeUnitsManager;
-import atlantis.combat.micro.ABadWeather;
-import atlantis.combat.micro.AbstractMicroManager;
-import atlantis.combat.micro.terran.TerranMedic;
-import atlantis.combat.micro.terran.TerranSiegeTankManager;
-import atlantis.combat.micro.terran.TerranVultureManager;
-import atlantis.combat.micro.zerg.ZergOverlordManager;
-import atlantis.combat.squad.Squad;
+import atlantis.ASpecialUnitManager;
+import atlantis.combat.micro.*;
+import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.transport.TransportUnits;
+import atlantis.combat.missions.Mission;
+import atlantis.combat.retreating.ARunningManager;
+import atlantis.combat.retreating.RetreatManager;
+import atlantis.debug.APainter;
+import atlantis.interrupt.DontDisturbInterrupt;
+import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
+import atlantis.units.actions.UnitActions;
+import atlantis.units.select.Select;
+import atlantis.util.A;
+import bwapi.Color;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
-public class ACombatUnitManager extends AbstractMicroManager {
+public class ACombatUnitManager {
 
-    protected static boolean update(AUnit unit) {
-        
-        // =========================================================
-        // Don't INTERRUPT shooting units
-        
-        if (shouldNotDisturbUnit(unit)) {
-            unit.setTooltip("#DontDisturb");
+    private static boolean debug = false;
+//    private static boolean debug = true;
+
+    public static boolean update(AUnit unit) {
+        if (preActions(unit)) {
             return true;
         }
 
         // =========================================================
-        // Avoid bad weather like raining Psionic Storm or active spider mines.
-        
-        if (ABadWeather.avoidPsionicStormAndActiveMines(unit)) {
+        // === SPECIAL units =======================================
+        // =========================================================
+
+        // Medics are using dedicated managers.
+        // These are stopping standard top priority managers
+        if (ASpecialUnitManager.updateAndOverrideAllOtherManagers(unit)) {
             return true;
         }
 
         // =========================================================
-        // Handle some units in special way
-        
-        if (handledAsSpecialUnit(unit)) {
-            unit.setTooltip(unit.getShortName());
-            return true;
-        }
-        
+        // === TOP priority ========================================
         // =========================================================
-        // Handle some units in semi-special way
-        
-        if (handledAsSemiSpecialUnit(unit)) {
+
+        if (handledTopPriority(unit)) {
             return true;
         }
 
         // =========================================================
-        // Avoid melee units
-        if (AAvoidMeleeUnitsManager.avoidCloseMeleeUnits(unit)) {
-            return true;
-        }
-        
+        // === SPECIAL units =======================================
         // =========================================================
-        // Early mode - Attack enemy units when in range (and choose the best target)
-        boolean isAllowedToAttackWhenRetreating = isAllowedToAttackWhenRetreating(unit);
-        if (isAllowedToAttackWhenRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
-            return true;
-        }
-        
-        // =========================================================
-        // If we couldn't beat nearby enemies, retreat
-        if (handleUnfavorableOdds(unit)) {
-            return true;
-        }
-        
-        // =========================================================
-        // Normal mode - Attack enemy units when in range (and choose the best target)
-        if (!isAllowedToAttackWhenRetreating && AAttackEnemyUnit.handleAttackEnemyUnits(unit)) {
+
+        // Terran infantry has own managers, but these allow higher
+        // level managers to take control.
+        if (ASpecialUnitManager.updateAndAllowTopManagers(unit)) {
             return true;
         }
 
         // =========================================================
-        // =========================================================
-        // === If we're here, it means mission manager is allowed ==
-        // === to take control over this unit, due to no action   ==
-        // === needed on tactics level (proceed to strategy).     ==
-        // =========================================================
+        // === MEDIUM priority - TACTICAL level ====================
         // =========================================================
 
-        Squad squad = unit.getSquad();
-        
-        if (squad == null) {
-            System.err.println("Unit " + unit + " has no squad assigned.");
-            unit.setTooltip("Empty squad!");
-            return false;
-        }
-        else {
-            unit.setTooltip("Mission:" + squad.getMission().getName());
-            return squad.getMission().update(unit);
-        }
-    }
+        if (debug) System.out.println("A");
 
-    // =========================================================
-    /**
-     *
-     */
-    private static boolean shouldNotDisturbUnit(AUnit unit) {
-        return (unit.isAttackFrame() 
-                || ((!unit.type().isTank() || unit.getGroundWeaponCooldown() <= 0) && unit.isStartingAttack())) 
-                && unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
+        if (handledMediumPriority(unit)) {
+            return true;
+        }
+
+        if (debug) System.out.println("B");
+
+        // =========================================================
+        // === LOW priority - STRATEGY level =======================
+        // =========================================================
+
+        return handleLowPriority(unit);
+//        if (canHandleLowPriority(unit)) {
+//        }
 //        return false;
-//        return (unit.isAttackFrame() || unit.isStartingAttack()) &&
-//                unit.getGroundWeaponCooldown() <= 0 && unit.getAirWeaponCooldown() <= 0;
-//        return unit.isAttackFrame() || (!unit.type().isTank() && unit.isStartingAttack());
-//        return (unit.isAttackFrame());
     }
 
-    /**
-     * There are some units that should have individual micro managers like Zerg Overlord. If unit is special
-     * unit it will run proper micro managers here and return true, meaning no other managers should be used.
-     * False will give command to standard Melee of Micro managers.
-     * 
-     * 
-     */
-    private static boolean handledAsSpecialUnit(AUnit unit) {
-        
-        // === Terran ========================================
-        if (AGame.playsAsTerran()) {
-            
-            // MEDIC
-            if (unit.isType(AUnitType.Terran_Medic)) {
-                unit.setTooltip("Medic");
-                return TerranMedic.update(unit);
+    private static boolean preActions(AUnit unit) {
+//        if (
+//                A.seconds() >= 1
+//                && GameSpeed.isDynamicSlowdownAllowed()
+//                && !GameSpeed.isDynamicSlowdownActive()
+//                && (unit.lastActionLessThanAgo(2, UnitActions.ATTACK_UNIT) || unit.isUnderAttack(3)))
+//        {
+//            GameSpeed.activateDynamicSlowdown();
+//        }
+
+//        if (unit.isUnderAttack(1) && !GameSpeed.oneTimeSlowdownUsed) {
+//            GameSpeed.changeSpeedTo(30);
+//            GameSpeed.oneTimeSlowdownUsed = true;
+//        }
+
+        if (unit.targetPosition() != null) {
+            APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+        }
+
+        if (unit.isNotRealUnit()) {
+            System.err.println("Not real unit: " + unit.shortName());
+            return true;
+        }
+
+        if (unit.isWorker() && unit.squad() == null) {
+            System.err.println("Worker being ACUM");
+            return true;
+        }
+
+        if (unit.lastActionLessThanAgo(90, UnitActions.PATROL) || unit.isPatrolling()) {
+            if (A.now() > 90) {
+                unit.setTooltip("#Manual");
+                return true;
             }
         }
-        
-        // === Zerg ========================================
-        
-        else if (AGame.playsAsZerg()) {
-            
-            // OVERLORD
-            if (unit.getType().equals(AUnitType.Zerg_Overlord)) {
-                ZergOverlordManager.update(unit);
-                return true;
-            } 
-        } 
-        
-        // =========================================================
-        
+
+        unit.setTooltip(unit.tooltip() + ".");
         return false;
     }
 
-    /**
-     * There are some units that should have additional micro manager actions like Siege Tank. If unit is 
-     * semi-special it will run its micro managers after other managers have been executed.
-     */
-    private static boolean handledAsSemiSpecialUnit(AUnit unit) {
-        if (unit.getType().isSiegeTank()) {
-            return TerranSiegeTankManager.update(unit);
-        } 
-        
-        else if (unit.getType().isVulture()) {
-            return TerranVultureManager.update(unit);
-        } 
-        
-        // Not semi-special unit
-        else {
-            return false;
+    // =========================================================
+
+    private static boolean handledTopPriority(AUnit unit) {
+        if (DontDisturbInterrupt.dontInterruptImportantActions(unit)) {
+            return true;
         }
+
+        if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
+            return true;
+        }
+
+        if (unit.isLoaded() && TransportUnits.unloadFromTransport(unit)) {
+            return true;
+        }
+
+        // Handle units getting bugged by Starcraft
+        if (Unfreezer.handleUnfreeze(unit)) {
+            return true;
+        }
+
+        if (ARunningManager.shouldStopRunning(unit)) {
+            return true;
+        }
+
+//        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
+        if (unit.isRunning()) {
+//            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
+            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
+        }
+
+        // Useful for testing and debugging of shooting/running
+//        if (testUnitBehaviorShootAtOwnUnit(unit)) { return true; };
+
+        // Avoid bad weather like:
+        // - raining Psionic Storm,
+        // - spider mines hail
+        return AAvoidSpells.avoidSpellsAndMines(unit);
     }
+
+    private static boolean handledMediumPriority(AUnit unit) {
+
+        // Avoid:
+        // - invisible units (Dark Templars)
+        // - close melee units (Zealots)
+        // - ranged units that can shoot at us (Dragoons)
+        // - defensive buildings (Cannons)
+        if (AAvoidUnits.avoidEnemiesIfNeeded(unit)) {
+            return true;
+        }
+
+        // If nearby enemies would likely defeat us, retreat
+//        if (RetreatManager.shouldRetreat(unit)) {
+//            return true;
+//        }
+
+        // Handle repair of mechanical units
+        if (AGame.isPlayingAsTerran() && AUnitBeingReparedManager.handleUnitBeingRepaired(unit)) {
+            return true;
+        }
+
+//        System.out.println("RetreatManager.shouldRetreat(unit) = " + RetreatManager.shouldRetreat(unit));
+        if (!RetreatManager.shouldRetreat(unit)) {
+            return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        }
+
+        return false;
+    }
+
+//    private static boolean canHandleLowPriority(AUnit unit) {
+//        return unit.isStopped() || unit.isIdle();
+//    }
+
+    /**
+     * If we're here, mission manager is allowed to take control over this unit.
+     * Meaning no action was needed on *tactical* level - stick to *strategic* level.
+     */
+    private static boolean handleLowPriority(AUnit unit) {
+//        if (AvoidEdgesWhenMoving.handle(unit)) {
+//            return true;
+//        }
+
+        Mission mission = unit.mission();
+        if (mission != null) {
+            unit.setTooltip(mission.name());
+            return mission.update(unit);
+        }
+
+        return false;
+    }
+
+    // =========================================================
 
     /**
      * Some units like Reavers should open fire to nearby enemies even when retreating, otherwise they'll
      * just get destroyed without firing even once.
      */
-    private static boolean isAllowedToAttackWhenRetreating(AUnit unit) {
-        return unit.isType(AUnitType.Protoss_Reaver);
+//    private static boolean isAllowedToAttackBeforeRetreating(AUnit unit) {
+//        return unit.isType(AUnitType.Protoss_Reaver, AUnitType.Terran_Vulture) && unit.getHPPercent() > 10;
+//    }
+
+    /**
+     * Can be used for testing.
+     */
+    private static boolean testUnitBehaviorShootAtOwnUnit(AUnit unit) {
+        if (Select.our().first().id() != unit.id()) {
+            unit.attackUnit(Select.our().first());
+        }
+        return true;
     }
 
 }

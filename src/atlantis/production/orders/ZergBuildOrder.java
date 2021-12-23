@@ -1,74 +1,80 @@
 package atlantis.production.orders;
 
 import atlantis.AtlantisConfig;
-import atlantis.production.ADynamicWorkerProductionManager;
+import atlantis.production.ProductionOrder;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Select;
-import java.util.ArrayList;
+import atlantis.units.select.Select;
 
 public class ZergBuildOrder extends ABuildOrder {
     
-    public static final ZergBuildOrder ZERG_13_POOL_MUTA = new ZergBuildOrder("13 Pool Muta");
-    
+//    public static final ZergBuildOrder ZERG_13_POOL_MUTA = new ZergBuildOrder("13 Pool Muta");
+
     // =========================================================
-    
-    private ZergBuildOrder(String relativePath) {
-        super("Zerg/" + relativePath);
+
+    public ZergBuildOrder(String name) {
+        super(name);
     }
 
     // =========================================================
 
     @Override
-    public void produceWorker() {
-        produceZergUnit(AtlantisConfig.WORKER);
+    public boolean produceWorker() {
+        return produceZergUnit(AtlantisConfig.WORKER);
     }
 
     @Override
-    public void produceUnit(AUnitType unitType) {
-        produceZergUnit(unitType);
-    }
-
-    @Override
-    public ArrayList<AUnitType> produceWhenNoProductionOrders() {
-        ArrayList<AUnitType> units = new ArrayList<>();
-        
-        boolean shouldTrainWorkers = ADynamicWorkerProductionManager.shouldTrainWorkers(false);
-        
-        if (shouldTrainWorkers) {
-            units.add(AUnitType.Zerg_Drone);
-        }
-        
-        units.add(AUnitType.Zerg_Hydralisk);
-        units.add(AUnitType.Zerg_Zergling);
-        
-        if (shouldTrainWorkers) {
-            units.add(AUnitType.Zerg_Drone);
-        }
-        
-        units.add(AUnitType.Zerg_Mutalisk);
-        units.add(AUnitType.Zerg_Mutalisk);
-        
-        return units;
+    public boolean produceUnit(AUnitType type) {
+        return produceZergUnit(type);
     }
 
     // =========================================================
-    
+
     /**
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
-    public void produceZergUnit(AUnitType unitType) {
+    public boolean produceZergUnit(AUnitType type) {
         for (AUnit base : Select.ourBases().listUnits()) {
             for (AUnit larva : base.getLarva()) {
-                boolean result = base.train(unitType);
-                return;
+                try {
+                    base.train(type);
+                } catch (Exception e) {
+                    System.err.println("Exception in produceZergUnit: " + type + " // " + base);
+                }
+                return true;
             }
         }
-//        AUnit larva = Select.ourLarva().first();
-//        System.out.println(larva);
-//        if (larva != null) {
-//            larva.train(unitType);
-//        }
+        return false;
+    }
+
+    public static boolean produceZergBuilding(AUnitType type, ProductionOrder order) {
+        if (type.isSunken()) {
+            return morphBuildingInto(AUnitType.Zerg_Creep_Colony, type);
+        }
+        else if (type.isSporeColony()) {
+            return morphBuildingInto(AUnitType.Zerg_Creep_Colony, type);
+        }
+        else if (type.isLair()) {
+            return morphBuildingInto(AUnitType.Zerg_Hatchery, type);
+        }
+        else if (type.isHive()) {
+            return morphBuildingInto(AUnitType.Zerg_Lair, type);
+        }
+        else if (type.isGreaterSpire()) {
+            return morphBuildingInto(AUnitType.Zerg_Spire, type);
+        }
+
+        return ConstructionRequests.requestConstructionOf(order);
+    }
+
+    private static boolean morphBuildingInto(AUnitType from, AUnitType into) {
+        AUnit fromUnit = Select.ourOfType(from).last();
+        if (fromUnit != null) {
+            return fromUnit.morph(into);
+        }
+        
+        return false;
     }
 
 }

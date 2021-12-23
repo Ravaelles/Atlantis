@@ -1,17 +1,14 @@
 package atlantis;
 
-//import atlantis.buildings.AtlantisBuildingsCommander;
-import atlantis.buildings.managers.TerranFlyingBuildingManager;
 import atlantis.combat.ACombatCommander;
-import atlantis.debug.APainter;
-import atlantis.production.AProductionCommander;
-import atlantis.production.orders.ABuildOrderManager;
-import atlantis.production.orders.TerranBuildOrder;
-import atlantis.repair.ARepairCommander;
+import atlantis.combat.missions.AMissionManager;
+import atlantis.enemy.EnemyUnits;
+import atlantis.ums.UmsSpecialActionsManager;
+import atlantis.debug.AAdvancedPainter;
+import atlantis.production.ABuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
-import atlantis.units.AUnit;
-import atlantis.units.Select;
+import atlantis.util.CodeProfiler;
 import atlantis.workers.AWorkerCommander;
 
 /**
@@ -28,31 +25,48 @@ public class AGameCommander {
 
         // === Execute paint methods ========================================
         
-        APainter.paint();
+        AAdvancedPainter.paint();
 
-        // === Execute code of every Commander and Manager ==================
-        
+        // === Strategy =====================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_STRATEGY);
         AStrategyCommander.update();
-        AProductionCommander.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_STRATEGY);
+
+        // === Production ===================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_BUILDINGS);
+        ABuildingsCommander.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_BUILDINGS);
+
+        // === Workers ======================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_WORKERS);
         AWorkerCommander.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_WORKERS);
+
+        // === Combat =======================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
         ACombatCommander.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_COMBAT);
+
+        // === Scout ========================================================
+
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_SCOUTING);
         AScoutManager.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_SCOUTING);
 
-        // === Terran only ==================================================
+        // =========================================================
 
-        if (AGame.playsAsTerran()) {
-            TerranFlyingBuildingManager.update();
-            ARepairCommander.update();
-        }
-
-        // === Handle UMT ===================================================
-        
-        if (AGame.isUmtMode()) {
-            AUnit unit = Select.ourCombatUnits().first();
-            if (unit != null) {
-                AViewport.centerScreenOn(unit);
-            }
-        }
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_OTHER);
+        AMissionManager.updateGlobalMission();
+        EnemyUnits.updateFoggedUnits();
+        UmsSpecialActionsManager.update();
+        AUnitStateManager.update();
+        CameraManager.update();
+        UseMap.updateMapSpecific();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_OTHER);
     }
 
 }

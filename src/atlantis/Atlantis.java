@@ -1,20 +1,19 @@
 package atlantis;
 
 import atlantis.combat.squad.ASquadManager;
-import atlantis.constructing.AConstructionManager;
-import atlantis.constructing.ConstructionOrder;
-import atlantis.constructing.ConstructionOrderStatus;
-import atlantis.constructing.ProtossConstructionManager;
-import atlantis.enemy.AEnemyUnits;
-import atlantis.information.AOurUnitsExtraInfo;
-import atlantis.init.AInitialActions;
-import atlantis.production.orders.ABuildOrderLoader;
-import atlantis.production.orders.ABuildOrderManager;
+import atlantis.combat.squad.NewUnitsToSquadsAssigner;
+import atlantis.enemy.EnemyInformation;
+import atlantis.enemy.UnitsArchive;
+import atlantis.production.orders.CurrentBuildOrder;
+import atlantis.production.orders.ProductionQueueRebuilder;
+import atlantis.ums.UmsSpecialActionsManager;
+import atlantis.production.constructing.*;
+import atlantis.repair.ARepairAssignments;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
+import atlantis.util.A;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
-import bwta.BWTA;
 
 /**
  * Main bridge between the game and your code, ported to BWMirror.
@@ -27,14 +26,19 @@ public class Atlantis implements BWEventListener {
     private static Atlantis instance;
 
     /**
-     * BWMirror core class.
+     * JBWAPI core class.
      */
-    private static Mirror mirror = new Mirror();
+    private static BWClient bwClient;
 
     /**
-     * BWMirror game object, contains lo-level methods.
+     * JBWAPI's game object, contains low-level methods.
      */
-    private Game bwapi;
+    private Game game;
+
+    /**
+     * Class controlling game speed.
+     */
+    private static GameSpeed gameSpeed;
 
     /**
      * Top abstraction-level class that governs all units, buildings etc.
@@ -45,18 +49,7 @@ public class Atlantis implements BWEventListener {
     // Other variables
     private boolean _isStarted = false; // Has game been started
     private boolean _isPaused = false; // Is game currently paused
-    private boolean _initialActionsExecuted = false; // Have executed one-time actions at match start?
-
-    // =========================================================
-    // DYNAMIC SLODOWN game speed adjust - see AtlantisConfig
-    // Should we use speed auto-slowdown when fighting
-    private boolean _dynamicSlowdown_isSlowdownActive = false;
-
-    // Last time unit has died; when unit dies, game slows down
-    private int _dynamicSlowdown_lastTimeUnitDestroyed = 0;
-
-    // Normal game speed, outside autoSlodown mode.
-    private int _dynamicSlowdown_previousSpeed = 0;
+    private final boolean _initialActionsExecuted = false; // Have executed one-time actions at match start?
 
     // =========================================================
     // Counters
@@ -86,80 +79,27 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onStart() {
-        
-        // Initialize bwapi object - BWMirror wrapper of C++ BWAPI.
-        bwapi = mirror.getGame();
-        
+
+        // Initialize game object - JBWAPI's representation of game and its state.
+        setGame(bwClient.getGame());
+
         // Initialize Game Commander, a class to rule them all
         gameCommander = new AGameCommander();
 
-        // Uncomment this line to see list of units -> damage.
-//        AtlantisUnitTypesHelper.displayUnitTypesDamage();
-
-        // #### INITIALIZE CONFIG AND PRODUCTION QUEUE ####
-        // =========================================================
-        // Set up base configuration based on race used.
-        Race racePlayed = bwapi.self().getRace(); //AGame.getPlayerUs().getRace();
-        if (racePlayed.equals(Race.Protoss)) {
-            AtlantisConfig.useConfigForProtoss();
-        } else if (racePlayed.equals(Race.Terran)) {
-            AtlantisConfig.useConfigForTerran();
-        } else if (racePlayed.equals(Race.Zerg)) {
-            AtlantisConfig.useConfigForZerg();
-        }
-
-        System.out.print("Analyzing map... ");
-        BWTA.readMap();
-        BWTA.analyze();
-        System.out.println("Map data ready.");
-        
-        // === Set some BWAPI params ===============================
-        
-        bwapi.setLocalSpeed(AtlantisConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
-//        bwapi.setFrameSkip(2); // Number of GUI frames to skip
-//        bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
-        bwapi.enableFlag(1);	// Enable user input - without it you can't control units with mouse
+        // Allow user input etc
+        setBwapiFlags();
 
         // =========================================================
-        // Set production strategy (build orders) to use. It can be always changed dynamically.
-        
-        try {
-            ABuildOrderManager.switchToBuildOrder(AtlantisConfig.DEFAULT_BUILD_ORDER);
-            
-            System.out.println();
-            if (ABuildOrderManager.getCurrentBuildOrder() != null) {
-                System.out.println("Use build order: " + ABuildOrderManager.getCurrentBuildOrder().getName());
-            }
-            else {
-                System.err.println("Invalid (empty) build order in AtlantisConfig!");
-                AGame.exit();
-            }
-        }
-        catch (Exception e) {
-            System.err.println("Exception when loading build orders file");
-            e.printStackTrace();
-        }
-        
-//        if (AtlantisConfig.buildOrdersManager == null) {
-//            System.err.println("===================================");
-//            System.err.println("It seems there was critical problem");
-//            System.err.println("with build orders file.");
-//            System.err.println("Please check the syntax.");
-//            System.err.println("===================================");
-//            System.exit(-1);
-//        }
-//        else {
-//            System.out.println("Successfully loaded build orders file!");
-//            System.out.println();
-//        }
 
-        // =========================================================
-        // Validate AtlantisConfig and exit if it's invalid
-        AtlantisConfig.validate();
+        OnStart.execute();
+    }
 
-        // Display ok message
-        System.out.println("Atlantis config is valid.");
-        System.out.println();
+    private void setBwapiFlags() {
+//        game.setLocalSpeed(AtlantisConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
+//        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
+        game.setGUI(false);                             // Turn off GUI - will speed up game considerably
+        game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
+//        game.enableFlag(Flag.CompleteMapInformation);   // See entire map - must be disabled for real games
     }
 
     /**
@@ -170,66 +110,53 @@ public class Atlantis implements BWEventListener {
 
         // === Handle PAUSE ================================================
         // If game is paused wait 100ms - pause is handled by PauseBreak button
-        while (AGame.isPaused()) {
+        while (GameSpeed.isPaused()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // No need to handle
-            }
-        } 
+            } catch (InterruptedException e) { }
+        }
 
         // === All game actions that take place every frame ==================================================
         
         try {
-            
-            // Initial actions - those should be executed only once (optimally assign mineral gatherers).
-            if (!_initialActionsExecuted) {
-                
-                System.out.println("### Starting Atlantis... ###");
-                AInitialActions.executeInitialActions();
-                System.out.println("### Atlantis is working! ###");
-                _initialActionsExecuted = true;
-            }
-
-            // =========================================================
-            // If game is running (not paused), proceed with all actions.
-            if (gameCommander != null) {
-                gameCommander.update();
-            }
-            else {
-                System.err.println("Game Commander is null, totally screwed.");
-            }
-            
-            return;
-        } 
+            Atlantis.getInstance().getGameCommander().update();
+        }
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
         catch (Exception e) {
             System.err.println("### AN ERROR HAS OCCURRED ###");
             e.printStackTrace();
         }
+
+        if (A.notUms() && A.now() == 1) {
+            CurrentBuildOrder.get().print();
+        }
+
+        OnEveryFrame.update();
     }
 
     /**
      * This is only valid to our units. We have started training a new unit. It exists in the memory, but its
      * unit.isComplete() is false and issuing orders to it has no effect. It's executed only once per unit.
      *
-     * @see unitCreate()
+     * @see AUnit::unitCreate()
      */
     @Override
     public void onUnitCreate(Unit u) {
+        if (u == null) {
+            System.err.println("onUnitCreate got null");
+            return;
+        }
+
         AUnit unit = AUnit.createFrom(u);
-        if (unit != null) {
-            unit.removeTooltip();
 
-            // Our unit
-            if (unit.isOurUnit()) {
-                ABuildOrderManager.rebuildQueue();
+        // Our unit
+        if (unit.isOur() && A.now() >= 2) {
+            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
 
-                // Apply construction fix: detect new Protoss buildings and remove them from queue.
-                if (AGame.playsAsProtoss() && unit.getType().isBuilding()) {
-                    ProtossConstructionManager.handleWarpingNewBuilding(unit);
-                }
+            // Apply construction fix: detect new Protoss buildings and remove them from queue.
+            if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
+                ProtossConstructionManager.handleWarpingNewBuilding(unit);
             }
         }
     }
@@ -240,15 +167,16 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
+//        if (A.now() <= 1 && !A.isUms()) {
+//            return;
+//        }
+
+        AUnit unit = AUnit.getById(u);
         if (unit != null) {
             unit.refreshType();
-            
-            ABuildOrderManager.rebuildQueue();
-
-            // Our unit
-            if (unit.isOurUnit()) {
-                ASquadManager.possibleCombatUnitCreated(unit);
+            if (unit.isOur()) {
+//                System.out.println("Our new unit " + unit);
+                ourNewUnit(unit);
             }
         }
         else {
@@ -261,28 +189,43 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitDestroy(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
 
-//        Unit theUnit = AtlantisUnitInformationManager.getUnitDataByID(unit.getID()).getUnit();
-        if (unit != null) {
-            if (unit.isEnemyUnit()) {
-                AEnemyUnits.unitDestroyed(unit);
-            }
-            else {
-                AOurUnitsExtraInfo.idsOfOurDestroyedUnits.add(unit.getID());
-//                System.err.println(unit.getID() + " destroyed [*]");
-            }
+        // Some ums maps have funky stuff happening at the start
+        if (A.now() <= 20) {
+            return;
+        }
 
-            // Our unit
-            if (unit.isOurUnit()) {
-                ABuildOrderManager.rebuildQueue();
-                ASquadManager.battleUnitDestroyed(unit);
+        AUnit unit = AUnit.getById(u);
+        ASquadManager.removeUnitFromSquads(unit);
+//        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
+
+//        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.shortName());
+
+        // Our unit
+        if (unit.isOur()) {
+            ARepairAssignments.removeRepairerOrProtector(unit);
+            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+            if (!unit.type().isGasBuilding()) {
                 LOST++;
-                LOST_RESOURCES += unit.getType().getTotalResources();
-            } else {
-                KILLED++;
-                KILLED_RESOURCES += unit.getType().getTotalResources();
+                LOST_RESOURCES += unit.type().getTotalResources();
             }
+        } else {
+            EnemyInformation.removeDiscoveredUnit(unit);
+            if (!unit.type().isGeyser()) {
+                KILLED++;
+                KILLED_RESOURCES += unit.type().getTotalResources();
+            }
+        }
+
+        // Needs to be at the end, otherwise unit is reported as dead too early
+        UnitsArchive.markUnitAsDestroyed(unit);
+
+        // =========================================================
+
+        if (A.now() >= 50 && A.isUms() && A.supplyUsed() == 0 && Select.ourCombatUnits().isEmpty()) {
+            System.out.println("### ROUND END at " + A.seconds() + "s ###");
+            UnitsArchive.paintLostUnits();
+            UnitsArchive.paintKilledUnits();
         }
     }
 
@@ -296,8 +239,20 @@ public class Atlantis implements BWEventListener {
         if (unit != null) {
 
             // Enemy unit
-            if (unit.isEnemyUnit()) {
-                AEnemyUnits.discoveredEnemyUnit(unit);
+            if (unit.isEnemy()) {
+                enemyNewUnit(unit);
+            }
+
+            else if (unit.isOur()) {
+            }
+
+            else {
+                if (!unit.isNotRealUnit()) {
+//                    System.out.println("Neutral unit discovered! " + unit.shortName());
+                    if (A.isUms()) {
+                        UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+                    }
+                }
             }
         }
     }
@@ -307,7 +262,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitEvade(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.getById(u);
+        if (unit.isEnemy()) {
+            EnemyInformation.updateEnemyUnitPosition(unit);
+        }
     }
 
     /**
@@ -315,7 +273,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitHide(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.getById(u);
+        if (unit.isEnemy()) {
+            EnemyInformation.updateEnemyUnitPosition(unit);
+        }
     }
 
     /**
@@ -326,18 +287,26 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitMorph(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = AUnit.getById(u);
+        unit.refreshType();
+//        System.out.println("MORPH u = " + u);
+//        System.out.println("MORPH = " + unit);
+//        System.out.println(unit.isEnemy());
+//        System.out.println(unit.isNeutral());
+//        System.out.println(unit.isOur());
+//        UnitsArchive.markUnitAsDestroyed(unit);
 
         // A bit of safe approach: forget the unit and remember it again.
         // =========================================================
         // Forget unit
-        if (unit != null) {
-            if (unit.isOurUnit()) {
-                ASquadManager.battleUnitDestroyed(unit);
-            } else {
-                AEnemyUnits.unitDestroyed(unit);
-            }
-        }
+//        if (unit != null) {
+//            if (unit.isOur()) {
+//                ASquadManager.unitDestroyed(unit);
+//            } if (unit.isEnemy()) {
+//                EnemyUnits.removeDiscoveredUnit(unit);
+//            }
+//            unit = AUnit.getById(u);
+//        }
 
         // =========================================================
         // Remember the unit
@@ -345,14 +314,14 @@ public class Atlantis implements BWEventListener {
             unit.refreshType();
 
             // Our unit
-            if (unit.isOurUnit()) {
+            if (unit.isOur()) {
 
                 // === Fix for Zerg Extractor ========================================
                 // Detect morphed gas building meaning construction has just started
-                if (unit.getType().isGasBuilding()) {
-                    for (ConstructionOrder order : AConstructionManager.getAllConstructionOrders()) {
-                        if (order.getBuildingType().equals(AtlantisConfig.GAS_BUILDING)
-                                && order.getStatus().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                if (unit.type().isGasBuilding()) {
+                    for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+                        if (order.buildingType().equals(AtlantisConfig.GAS_BUILDING)
+                                && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                             order.setConstruction(unit);
                             break;
                         }
@@ -360,15 +329,19 @@ public class Atlantis implements BWEventListener {
                 }
 
                 // =========================================================
-                ABuildOrderManager.rebuildQueue();
+
+                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
 
                 // Add to combat squad if it's military unit
-                if (unit.isActualUnit()) {
-                    ASquadManager.possibleCombatUnitCreated(unit);
+                if (unit.isRealUnit()) {
+                    ASquadManager.removeUnitFromSquads(unit);
+                    NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
                 }
-            } // Enemy unit
+            }
+
+            // Enemy unit
             else {
-                AEnemyUnits.refreshEnemyUnit(unit);
+                EnemyInformation.refreshEnemyUnit(unit);
             }
         }
     }
@@ -378,10 +351,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitShow(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
-        if (unit.isEnemyUnit()) {
-            AEnemyUnits.updateEnemyUnitPosition(unit);
-        }
+        AUnit unit = AUnit.getById(u);
+//        if (unit.isEnemy()) {
+//            EnemyUnits.updateEnemyUnitPosition(unit);
+//        }
     }
 
     /**
@@ -389,7 +362,34 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitRenegade(Unit u) {
-//        AUnit unit = AUnit.createFrom(u);
+        onUnitDestroy(u);
+        AUnit.forgetUnitEntirely(u);
+        AUnit newUnit = AUnit.createFrom(u);
+        if (newUnit.type().isGasBuilding() || newUnit.type().isGeyser() || newUnit.isLarvaOrEgg()) {
+            return;
+        }
+
+        // New unit taken from us
+        if (u.getPlayer().equals(AGame.getPlayerUs())) {
+            ourNewUnit(newUnit);
+            System.out.println("NEW RENEGADE FOR US " + newUnit.shortName());
+            UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = newUnit;
+        }
+
+        // New unit for us e.g. some UMS maps give units
+        else {
+            enemyNewUnit(newUnit);
+            System.out.println("NEW RENEGADE FOR ENEMY " + newUnit.shortName());
+        }
+    }
+
+    private void enemyNewUnit(AUnit unit) {
+        EnemyInformation.weDiscoveredEnemyUnit(unit);
+    }
+
+    private void ourNewUnit(AUnit unit) {
+        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+        NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
     }
 
     /**
@@ -419,12 +419,57 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onEnd(boolean winner) {
-//        instance = new Atlantis();
-        ProcessHelper.killStarcraftProcess();
-        ProcessHelper.killChaosLauncherProcess();
         System.out.println();
-        System.out.println("Exiting...");
+        System.out.println("#####################################");
+        if (winner) {
+            System.out.println("############ VICTORY! ###############");
+        } else {
+            System.out.println("############ Defeat... ##############");
+        }
+        System.out.println("############ Lost: " + Atlantis.LOST + " ################");
+        System.out.println("########## Killed: " + Atlantis.KILLED + " ################");
+        System.out.println("#####################################");
+
+        OnEnd.execute(winner);
+
+        exitGame();
+    }
+
+    public void exitGame() {
+        gameSummary();
+        killProcesses();
+    }
+
+    private void killProcesses() {
+        System.out.println("");
+        System.out.println("Killing StarCraft process... ");
+        ProcessHelper.killStarcraftProcess();
+
+        System.out.print("Killing Chaoslauncher process... ");
+        ProcessHelper.killChaosLauncherProcess();
+
+        System.out.println("Exit...");
         System.exit(0);
+    }
+
+    private void gameSummary() {
+        if (Atlantis.game() == null) {
+            return;
+        }
+
+        int resourcesBalance = AGame.killsLossesResourceBalance();
+        System.out.println();
+        System.out.println(
+                "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
+                "### Resource killed/lost: " + (resourcesBalance > 0 ? "+" + resourcesBalance : resourcesBalance) + " ###"
+        );
+
+        if (A.isUms()) {
+            System.out.println();
+            UnitsArchive.paintLostUnits();
+            UnitsArchive.paintKilledUnits();
+        }
+        UnitsArchive.paintKillLossResources();
     }
 
     /**
@@ -460,7 +505,6 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onPlayerLeft(Player player) {
-
     }
 
     /**
@@ -508,8 +552,8 @@ public class Atlantis implements BWEventListener {
             _isPaused = false;
             _isStarted = true;
 
-            mirror.getModule().setEventListener(this);
-            mirror.startGame();
+            bwClient = new BWClient(this);
+            bwClient.startGame();
         }
     }
 
@@ -526,8 +570,16 @@ public class Atlantis implements BWEventListener {
      * provides low-level functionality for functions like canBuildHere etc. For more details, see BWMirror
      * project documentation.
      */
-    public static Game getBwapi() {
-        return getInstance().bwapi;
+    public static Game game() {
+        return getInstance().game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public AGameCommander getGameCommander() {
+        return gameCommander;
     }
 
     // =========================================================
@@ -542,13 +594,4 @@ public class Atlantis implements BWEventListener {
         System.out.println(args[args.length - 1]);
     }
 
-    /**
-     * Decreases game speed to the value specified in AtlantisConfig on death of any unit.
-     */
-    private void activateDynamicSlowdownMode() {
-        _dynamicSlowdown_previousSpeed = AtlantisConfig.GAME_SPEED;
-        _dynamicSlowdown_lastTimeUnitDestroyed = AGame.getTimeSeconds();
-        _dynamicSlowdown_isSlowdownActive = true;
-    }
-    
 }

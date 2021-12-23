@@ -1,7 +1,7 @@
 package atlantis.init;
 
 import atlantis.AGame;
-import atlantis.information.AMap;
+import atlantis.units.select.Select;
 import atlantis.workers.AMineralGathering;
 
 public class AInitialActions {
@@ -11,20 +11,19 @@ public class AInitialActions {
      * one-time only actions like initial assignment of workers to minerals etc.
      */
     public static void executeInitialActions() {
-        try {
-            AMineralGathering.initialAssignWorkersToMinerals();
+        if (Select.main() == null) {
+            AGame.setUmsMode();
         }
-        catch (IndexOutOfBoundsException ex) {
-            AGame.setUmtMode(true);
+
+        if (Select.ourWorkers().count() != 4) {
+            AGame.setUmsMode();
         }
-        catch (NullPointerException ex) {
-            AGame.setUmtMode(true);
-        }
-        catch (Exception ex) {
-            AGame.setUmtMode(true);
-        }
-            
-        AMap.disableSomeOfTheChokePoints();
+
+//        try {
+        AMineralGathering.initialAssignWorkersToMinerals();
+//        } catch (Exception ex) {
+//            AGame.setUmsMode(true);
+//        }
     }
 
 }

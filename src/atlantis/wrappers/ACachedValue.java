@@ -5,16 +5,13 @@ import bwapi.Unit;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
+
 public class ACachedValue<T> {
 
-    private int cacheLifespanInFrames;
+    private final int cacheLifespanInFrames;
 
-    private Map<String, T> cachedValues = new HashMap<>();
-    private Map<String, Integer> cachedAtFrame = new HashMap<>();
+    private final Map<String, T> cachedValues = new HashMap<>();
+    private final Map<String, Integer> cachedAtFrame = new HashMap<>();
 
     // =========================================================
     
@@ -85,7 +82,7 @@ public class ACachedValue<T> {
      */
     public T getAliveCachedValue(String key) {
         if (cachedValues.containsKey(key)
-                && (cachedAtFrame.get(key) + cacheLifespanInFrames >= AGame.getTimeFrames())) {
+                && (cachedAtFrame.get(key) + cacheLifespanInFrames >= AGame.now())) {
             return cachedValues.get(key);
         } else {
             return null;
@@ -94,14 +91,14 @@ public class ACachedValue<T> {
 
     private Double insertDoubleValueForKey(String key, Double value) {
         cachedValues.put(key, (T) value);
-        cachedAtFrame.put(key, AGame.getTimeFrames());
+        cachedAtFrame.put(key, AGame.now());
 //        System.out.println("Cache between " + key + " at " + AGame.getTimeFrames() + " is " + value);
         return value;
     }
 
     private T insertNewValueForKey(String key, T value) {
         cachedValues.put(key, value);
-        cachedAtFrame.put(key, AGame.getTimeFrames());
+        cachedAtFrame.put(key, AGame.now());
         return value;
     }
 

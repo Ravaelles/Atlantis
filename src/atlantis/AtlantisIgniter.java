@@ -1,13 +1,9 @@
 package atlantis;
 
-import atlantis.util.AtlantisUtilities;
+import atlantis.util.A;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- *
- * @author Rafal Poniatowski <ravaelles@gmail.com>
- */
 public class AtlantisIgniter {
     
     private static boolean shouldUpdateFileContent = false;
@@ -35,7 +31,7 @@ public class AtlantisIgniter {
         }
         
         // Read every single line
-        ArrayList<String> linesList = AtlantisUtilities.readTextFileToList(bwapiIniPath);
+        ArrayList<String> linesList = A.readTextFileToList(bwapiIniPath);
         fileContent = new String[linesList.size()];
         fileContent = linesList.toArray(fileContent);
         
@@ -61,7 +57,7 @@ public class AtlantisIgniter {
         
         String[] potentialBwapiPaths = new String[] {
             "C:/StarCraft/bwapi-data/bwapi.ini",
-            "D:/GRY/StarCraft/bwapi-data/bwapi.ini",
+            "D:/GAMES/StarCraft/bwapi-data/bwapi.ini",
             "C:/Program files/StarCraft/bwapi-data/bwapi.ini",
             "C:/Program files (x86)/StarCraft/bwapi-data/bwapi.ini"
         };
@@ -120,7 +116,8 @@ public class AtlantisIgniter {
             
             // game_type = USE_MAP_SETTINGS
             else if (line.startsWith("game_type = ")) {
-                String gameType = AtlantisConfig.MAP.contains("umt/") ? "USE_MAP_SETTINGS" : "MELEE";
+                String gameType = (AtlantisConfig.MAP.contains("ums/") || AtlantisConfig.MAP.contains("Atlantis/"))
+                        ? "USE_MAP_SETTINGS" : "MELEE";
                 fileContent[i] = "game_type = " + gameType;
                 
                 if (!fileContent[i].equals(line)) {
@@ -138,7 +135,7 @@ public class AtlantisIgniter {
             finalContent += line + "\n";
         }
         
-        AtlantisUtilities.saveToFile(bwapiIniPath, finalContent, true);
+        A.saveToFile(bwapiIniPath, finalContent, true);
     }
     
 }

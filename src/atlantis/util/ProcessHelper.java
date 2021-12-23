@@ -5,13 +5,14 @@ package atlantis.util;
  */
 public class ProcessHelper {
 
+    public static String ChaosLauncherPath = "D:\\GAMES\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe";
+
     public static void killStarcraftProcess() {
-        executeInCommandLine("taskkill /f /im Starcraft.exe");
-        executeInCommandLine("taskkill /f /im StarCraft.exe");
+        executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
     }
     
     public static void killChaosLauncherProcess() {
-        executeInCommandLine("taskkill /f /im Chaoslauncher.exe");
+        executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
     }
     
     /**
@@ -21,11 +22,11 @@ public class ProcessHelper {
      */
     public static void startChaosLauncherProcess() {
         try {
-            Thread.sleep(250);
-            executeInCommandLine("C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe");
-        } catch (InterruptedException ex) {
-            // Don't do anything
-        }
+            Thread.sleep(150);
+            String command = "cmd /c " + ProcessHelper.ChaosLauncherPath;
+
+            executeInCommandLine(command);
+        } catch (InterruptedException ignored) { }
     }
     
     // =========================================================
