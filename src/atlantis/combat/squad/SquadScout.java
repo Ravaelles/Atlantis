@@ -19,13 +19,11 @@ import bwapi.Color;
 public class SquadScout {
 
     public static boolean handle(AUnit unit) {
-//        if (We.terran()) {
-//            return false;
-//        }
 
-        if (unit.equals(unit.squad().getSquadScout())) {
-            return handleSquadScout(unit);
-        }
+        // Disabled for now
+//        if (unit.equals(unit.squad().getSquadScout())) {
+//            return handleSquadScout(unit);
+//        }
 
         return false;
     }

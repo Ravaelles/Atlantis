@@ -72,7 +72,7 @@ public class Avoid {
     }
 
     protected static boolean handleErrorRun(AUnit unit) {
-        System.err.println("ERROR_RUN for " + unit.shortNameWithId());
+//        System.err.println("ERROR_RUN for " + unit.shortNameWithId());
 
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         unit.setTooltip("Cant run, fight");

@@ -45,10 +45,10 @@ public class ASquadCohesionManager {
     }
 
     private static double maxDistanceToSquadCenter(AUnit unit) {
-        int max = Math.max(2, unit.squadSize() / 4);
+        int max = Math.max(2, unit.squadSize() / 5);
 
-        if (unit.equals(unit.squad().getSquadScout())) {
-            max += 3;
+        if (unit.isSquadScout()) {
+            max += 1;
         }
 
         return max;
