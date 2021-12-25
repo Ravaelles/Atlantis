@@ -255,11 +255,13 @@ public class Selection {
         return this;
     }
 
-    /**
-     * Selects only units that do not currently have max hit points.
-     */
     public Selection wounded() {
         data.removeIf(unit -> !unit.isWounded());
+        return this;
+    }
+
+    public Selection criticallyWounded() {
+        data.removeIf(unit -> unit.hp() >= 21);
         return this;
     }
 

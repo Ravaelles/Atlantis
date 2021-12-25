@@ -11,22 +11,19 @@ import static org.junit.Assert.assertTrue;
 public class CombatEvaluatorTest extends AbstractTestFakingGame {
 
     @Test
-    public void oneMarineVsTwoHydras() {
+    public void combatEvaluatorReturnsRelativeAndAbsoluteValuesThatMakeSense() {
         createWorld(0, () -> {
             FakeUnit our = ourFirst;
             FakeUnit enemy = nearestEnemy(our);
 
-            double ourEval = our.combatEval(false);
-            double enemyEval = enemy.combatEval(false);
+            double ourEval = our.combatEvalAbsolute();
+            double enemyEval = enemy.combatEvalAbsolute();
 
             assertTrue(ourEval < enemyEval);
             assertTrue(ourEval * 5 < enemyEval);
 
-            ourEval = our.combatEval(true);
-            enemyEval = enemy.combatEval(true);
-
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+            ourEval = our.combatEvalRelative();
+            enemyEval = enemy.combatEvalRelative();
 
             assertTrue(Math.abs(ourEval - 0.18) < 0.1);
             assertTrue(Math.abs(enemyEval - 5.29) < 0.1);

@@ -55,7 +55,7 @@ public class ARepairerManager {
 
             return repairer.repair(
                     target,
-                    "Repair " + target.shortNameWithId() + "(" + repairer.lastOrderFramesAgo() + ")"
+                    "Repair " + target.nameWithId() + "(" + repairer.lastOrderFramesAgo() + ")"
             );
         }
 
@@ -131,7 +131,7 @@ public class ARepairerManager {
             // Try finding any repairable and wounded unit nearby
             AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null && A.hasMinerals(5)) {
-                repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.shortName());
+                repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.name());
                 return true;
             }
         }

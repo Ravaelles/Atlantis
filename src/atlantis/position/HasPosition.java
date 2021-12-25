@@ -84,6 +84,13 @@ public interface HasPosition {
         return distTo(otherPosition) >= minDist;
     }
 
+    /**
+     * Returns real ground distance to given point (not the air shortcut over impassable terrain).
+     */
+    default double groundDist(HasPosition other) {
+        return PositionUtil.groundDistanceTo(this.position(), other.position());
+    }
+
     default boolean isWalkable() {
         return Atlantis.game().isWalkable(position().toWalkPosition());
     }

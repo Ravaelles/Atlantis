@@ -13,11 +13,15 @@ public class AvoidCombatBuildingsFix {
         }
 
         double distTo = nearest.distTo(unit);
-        if (distTo < 7.7) {
+        if (distTo <= 7.8) {
+//            System.out.println(unit.nameWithId() + " " + distTo);
             return unit.runningManager().runFrom(nearest, 1);
 //            return unit.runningManager().runFrom(nearest, 1, "AvoidBuilding");
         }
-        else if (distTo < 8.0 && unit.isMoving() && !unit.isRunning()) {
+        else if (distTo < 8.2) {
+            // Do nothing
+        }
+        else if (distTo < 8.8 && unit.isMoving() && !unit.isRunning()) {
             return unit.holdPosition("HoldHere");
         }
 

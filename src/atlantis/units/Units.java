@@ -188,7 +188,7 @@ public class Units {
             return -1;
         }
         if (!hasValueFor(unit)) {
-            System.err.println("No unit value for " + unit.shortName() + ". Return -1 as fallback.");
+            System.err.println("No unit value for " + unit.name() + ". Return -1 as fallback.");
             return -1;
         }
 

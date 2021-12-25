@@ -47,7 +47,7 @@ public class AAttackEnemyUnit {
         if (!isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
             return false;
         }
-//            unit.setTooltip("->" + enemy.shortName() + "(" + unit.cooldownRemaining() + ")");
+//            unit.setTooltip("->" + enemy.name() + "(" + unit.cooldownRemaining() + ")");
 //            APainter.paintLine(unit, enemy, Color.Red);
         return processAttackUnit(unit, enemy);
     }
@@ -97,7 +97,7 @@ public class AAttackEnemyUnit {
             return unit.move(target, UnitActions.MOVE_TO_ENGAGE, "BaseAttack");
         }
 
-        unit.setTooltip("@" + target.shortName());
+        unit.setTooltip("@" + target.name());
         return unit.attackUnit(target);
     }
 

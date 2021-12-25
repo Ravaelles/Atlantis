@@ -107,7 +107,7 @@ public class UnitsArchive {
 
         AUnit ourKiller = ourUnitThatKilledEnemy(enemy);
         if (ourKiller != null && !enemy.isBuilding()) {
-//            System.out.println(ourKiller.shortName() + " killed " + enemy.shortName() + " (worth " + enemy.totalCost() + ")");
+//            System.out.println(ourKiller.name() + " killed " + enemy.name() + " (worth " + enemy.totalCost() + ")");
             ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());
             ourKilledResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
         }

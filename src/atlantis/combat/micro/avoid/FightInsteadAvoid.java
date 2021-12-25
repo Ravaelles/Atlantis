@@ -206,8 +206,9 @@ public class FightInsteadAvoid {
         }
 
         boolean medicNearby = unit.medicNearby();
+        int meleeNearby = unit.enemiesNearby().melee().inRadius(1.5, unit).count();
 
-        if (unit.hp() <= (Enemy.protoss() ? 18 : 11)) {
+        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) * meleeNearby) {
             return false;
         }
 //        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) && enemiesSelection.melee().atLeast((Enemy.protoss() ? 1 : 2))) {
@@ -256,7 +257,7 @@ public class FightInsteadAvoid {
             return unit.mission().isMissionAttack()
                     && Select.ourCombatUnits().inRadius(6, unit).atLeast(10)
                     && ACombatEvaluator.advantagePercent(unit, 50)
-                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.shortNameWithId());
+                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
         }
 
         return ourNearby >= 5 || unitsNearby >= 6;

@@ -145,13 +145,13 @@ public class ProductionOrder {
     @Override
     public String toString() {
         if (unitOrBuilding != null) {
-            return "At " + minSupply + " " + shortName() + (modifier != null ? " " + modifier : "");
+            return "At " + minSupply + " " + name() + (modifier != null ? " " + modifier : "");
         }
         else if (upgrade != null) {
-            return "At " + minSupply + " " + shortName();
+            return "At " + minSupply + " " + name();
         }
         else if (tech != null) {
-            return "At " + minSupply + " " + shortName();
+            return "At " + minSupply + " " + name();
         }
         else if (mission != null) {
             return "At " + minSupply + " " + mission.name();
@@ -161,9 +161,9 @@ public class ProductionOrder {
         }
     }
 
-    public String shortName() {
+    public String name() {
         if (unitOrBuilding != null) {
-            return unitOrBuilding.shortName();
+            return unitOrBuilding.name();
         } else if (upgrade != null) {
             return upgrade.toString().replace("_", " ");
         } else if (tech != null) {

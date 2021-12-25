@@ -97,7 +97,7 @@ public class ACombatUnitManager {
         }
 
         if (unit.isNotRealUnit()) {
-            System.err.println("Not real unit: " + unit.shortName());
+            System.err.println("Not real unit: " + unit.name());
             return true;
         }
 

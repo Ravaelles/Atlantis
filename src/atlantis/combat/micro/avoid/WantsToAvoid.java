@@ -21,7 +21,7 @@ public class WantsToAvoid {
                     !unit.hasNoWeaponAtAll()
                     && (new FightInsteadAvoid(unit, enemies)).shouldFight()
             ) {
-//                System.err.println("FIGHT INSTEAD AVOID " + unit.shortNamePlusId() + " // " + unit.hp());
+//                System.err.println("FIGHT INSTEAD AVOID " + unit.namePlusId() + " // " + unit.hp());
                 return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
             }
         }

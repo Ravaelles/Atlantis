@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.debug.APainter;
 import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnit;
@@ -38,24 +39,34 @@ public abstract class AAvoidUnits {
         AUnit first = enemiesDangerouslyClose.first();
         int firstValue = (int) enemiesDangerouslyClose.valueFor(first);
 
-        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
-        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-            APainter.paintLine(enemy, unit, Color.Orange);
-            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
-        }
-        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-                "C=" + enemiesDangerouslyClose.size() + "(" + first.shortName() + ":" + firstValue + ")",
-                Color.Teal);
+//        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+//        for (AUnit enemy : enemiesDangerouslyClose.list()) {
+//            APainter.paintLine(enemy, unit, Color.Orange);
+//            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
+//        }
+//        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
+//                "C=" + enemiesDangerouslyClose.size() + "(" + first.name() + ":" + firstValue + ")",
+//                Color.Teal);
 
+        // =========================================================
+
+        // Only COMBAT BUILDINGS
         if (onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
-            return AvoidCombatBuildingsFix.handle(unit, enemiesDangerouslyClose);
+            if (RetreatManager.shouldNotEngageCombatBuilding(unit)) {
+                return AvoidCombatBuildingsFix.handle(unit, enemiesDangerouslyClose);
+            }
+
+            return false;
         }
 
-        if (WantsToAvoid.units(unit, enemiesDangerouslyClose)) {
-            return true;
+        else {
+
+            // Standard case
+            if (WantsToAvoid.units(unit, enemiesDangerouslyClose)) {
+                return true;
+            }
         }
 
-//        System.err.println("WantsToAvoid false for " + unit.shortNamePlusId());
         return false;
     }
 
@@ -70,7 +81,7 @@ public abstract class AAvoidUnits {
     }
 
     private static boolean onlyCombatBuildingsAreDangerouslyClose(Units enemiesDangerouslyClose) {
-        return Select.from(enemiesDangerouslyClose).combatUnits().size() == enemiesDangerouslyClose.size();
+        return Select.from(enemiesDangerouslyClose).combatBuildings(false).size() == enemiesDangerouslyClose.size();
     }
 
     public static Units unitsToAvoid(AUnit unit) {

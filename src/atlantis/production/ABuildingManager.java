@@ -12,7 +12,7 @@ public class ABuildingManager {
     public static boolean update() {
 //        for (AUnit building : Select.ourBuildings().listUnits()) {
         for (AUnit building : Select.our().listUnits()) {
-//            System.out.println(building.shortName());
+//            System.out.println(building.name());
 
             if (building.is(AUnitType.Terran_Comsat_Station)) {
                 return TerranComsatStation.update(building);

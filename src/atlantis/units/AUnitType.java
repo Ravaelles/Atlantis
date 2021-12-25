@@ -398,7 +398,7 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * Returns name for of unit type like e.g. "Zerg Zergling", "Terran Marine", "Protoss Gateway".
      */
-    public String name() {
+    public String fullName() {
         return ut.toString();
 //        return (String) cache.get(
 //                "getName",
@@ -412,12 +412,12 @@ public class AUnitType implements Comparable<AUnitType> {
     /**
      * Returns short name for of unit type like e.g. "Zergling", "Marine", "Mutalisk", "Barracks".
      */
-    public String shortName() {
+    public String name() {
         return (String) cache.get(
-                "shortName",
+                "name",
                 -1,
                 () -> {
-                    String name = name()
+                    String name = fullName()
                             .replace("Terran_Vulture_", "")
                             .replace("Terran_", "").replace("Protoss_", "")
                             .replace("Zerg_", "").replace("Hero_", "")
@@ -477,7 +477,7 @@ public class AUnitType implements Comparable<AUnitType> {
 
     @Override
     public String toString() {
-        return shortName();
+        return name();
     }
 
     // =========================================================
@@ -953,7 +953,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (boolean) cache.get(
                 "isNeutralType",
                 -1,
-                () -> name().charAt(0) != 'Z' && name().charAt(0) != 'T' && name().charAt(0) != 'P'
+                () -> fullName().charAt(0) != 'Z' && fullName().charAt(0) != 'T' && fullName().charAt(0) != 'P'
         );
     }
 
@@ -965,7 +965,7 @@ public class AUnitType implements Comparable<AUnitType> {
                 "isSpecial",
                 -1,
                 () -> {
-                    String name = name();
+                    String name = fullName();
                     return name.startsWith("Powerup") || name.startsWith("Special");
                 }
         );

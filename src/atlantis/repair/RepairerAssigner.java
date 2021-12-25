@@ -21,7 +21,7 @@ public class RepairerAssigner {
                 int newRepairersNeeded = optimalRepairersFor(woundedUnit);
                 if (newRepairersNeeded > 0) {
                     ARepairerManager.assignRepairersToWoundedUnits(woundedUnit, newRepairersNeeded);
-//                    System.out.println("Assign " + newRepairersNeeded + " repairers to " + woundedUnit.shortName());
+//                    System.out.println("Assign " + newRepairersNeeded + " repairers to " + woundedUnit.name());
                 }
             }
         }

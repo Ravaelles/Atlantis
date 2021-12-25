@@ -184,12 +184,12 @@ public class ARunningManager {
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
             System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
-            APainter.paintLine(unit, runTo, Color.Purple);
-            APainter.paintLine(
-                    unit.translateByPixels(0, 1),
-                    runTo.translateByPixels(0, 1),
-                    Color.Purple
-            );
+//            APainter.paintLine(unit, runTo, Color.Purple);
+//            APainter.paintLine(
+//                    unit.translateByPixels(0, 1),
+//                    runTo.translateByPixels(0, 1),
+//                    Color.Purple
+//            );
             APainter.paintCircleFilled(runTo, 8, Color.Red);
         }
 
@@ -302,12 +302,10 @@ public class ARunningManager {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-//        System.out.println("unit.position() = " + unit.position());
-//        System.out.println("runTo = " + runTo);
-//        System.out.println("isPossibleAndReasonablePosition = " + isPossibleAndReasonablePosition(unit, runTo, true, "O", "X"));
-        if (isPossibleAndReasonablePosition(unit, runTo, true, "O", "X")) {
-            APainter.paintLine(unit.position(), runTo, Color.Purple);
-            APainter.paintLine(unit.translateByPixels(-1, -1), runTo, Color.Purple);
+//        if (isPossibleAndReasonablePosition(unit, runTo, true, "O", "X")) {
+        if (isPossibleAndReasonablePosition(unit, runTo, true, null, null)) {
+//            APainter.paintLine(unit.position(), runTo, Color.Purple);
+//            APainter.paintLine(unit.translateByPixels(-1, -1), runTo, Color.Purple);
             return runTo;
         } else {
             return null;
@@ -371,8 +369,9 @@ public class ARunningManager {
                 APosition potentialPosition = unitPosition.translateByTiles(dtx, dty).makeValidFarFromBounds();
 
                 // If has path to given point, add it to the list of potential points
-                APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
-                if (isPossibleAndReasonablePosition(unit, potentialPosition, false, "v", "x")) {
+//                APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
+//                if (isPossibleAndReasonablePosition(unit, potentialPosition, false, "v", "x")) {
+                if (isPossibleAndReasonablePosition(unit, potentialPosition, false, null, null)) {
                     potentialPositionsList.add(potentialPosition);
                 }
             }
@@ -456,7 +455,8 @@ public class ARunningManager {
     public boolean isPossibleAndReasonablePosition(
             AUnit unit, APosition position
     ) {
-        return isPossibleAndReasonablePosition(unit, position, true, "#", "%");
+//        return isPossibleAndReasonablePosition(unit, position, true, "#", "%");
+        return isPossibleAndReasonablePosition(unit, position, true, null, null);
     }
 
     public boolean isPossibleAndReasonablePosition(

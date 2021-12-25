@@ -21,8 +21,8 @@ public class AUnitTypesHelper {
         HashMap<AUnitType, Double> unitsTopRatioGroundDamage = new HashMap<>();
         
         for (AUnitType type : AUnitType.getAllUnitTypes()) {
-            if (type.name().startsWith("Hero") || type.name().startsWith("Special")
-                    || type.name().startsWith("Powerup") || type.name().startsWith("Critter")) {
+            if (type.fullName().startsWith("Hero") || type.fullName().startsWith("Special")
+                    || type.fullName().startsWith("Powerup") || type.fullName().startsWith("Critter")) {
                 continue;
             }
             
@@ -54,27 +54,27 @@ public class AUnitTypesHelper {
         
         System.out.println("===== Best ground damage =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
-            System.out.println(unitType.shortName() + " (" + unitType.groundWeapon() + ", range "
+            System.out.println(unitType.name() + " (" + unitType.groundWeapon() + ", range "
                     + (unitType.groundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
         }
         System.out.println();
         
         System.out.println("===== Best air damage =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
-            System.out.println(unitType.shortName() + "(" + unitType.groundWeapon() + ", range "
+            System.out.println(unitType.name() + "(" + unitType.groundWeapon() + ", range "
                     + (unitType.airWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
         }
         System.out.println();
         
         System.out.println("===== Top quality / price ground units =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
-            System.out.println(unitType.shortName() + " ratio: " + String.format("%.2f", bestGroundDamage.get(unitType)));
+            System.out.println(unitType.name() + " ratio: " + String.format("%.2f", bestGroundDamage.get(unitType)));
         }
         System.out.println();
         
         System.out.println("===== Top quality / price air units =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
-            System.out.println(unitType.shortName() + " ratio: " + String.format("%.2f", bestAirDamage.get(unitType)));
+            System.out.println(unitType.name() + " ratio: " + String.format("%.2f", bestAirDamage.get(unitType)));
         }
         System.out.println();
     }
@@ -82,7 +82,7 @@ public class AUnitTypesHelper {
     public static void printUnitsAndRequirements() {
         System.out.println("=== All unit types ===");
         for (AUnitType type : AUnitType.getAllUnitTypes()) {
-            System.out.println(type.shortName() + ", required:" + type.getWhatIsRequired() + ", buildsIt:" + type.whatBuildsIt());
+            System.out.println(type.name() + ", required:" + type.getWhatIsRequired() + ", buildsIt:" + type.whatBuildsIt());
         }
         System.out.println("=== END OF All unit types ===");
     }

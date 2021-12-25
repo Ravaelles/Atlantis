@@ -27,7 +27,7 @@ public class ATargeting {
 //        AUnit enemy = Select.enemy().nearestTo(unit);
 
         if (enemy != null) {
-            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.shortName(), Color.Green);
+            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
         }
 
         return enemy;
@@ -196,7 +196,7 @@ public class ATargeting {
 
         if ((target = ATargetingCrucial.target(unit)) != null) {
 //            if (!target.type().isCarrier()) {
-//                System.out.println(A.now() + "  #" + unit.id() + " " + unit.shortName() + " > " + target.shortName());
+//                System.out.println(A.now() + "  #" + unit.id() + " " + unit.name() + " > " + target.name());
 //            }
             if (ATargeting.debug(unit)) System.out.println("B = "+ target);
             return target;

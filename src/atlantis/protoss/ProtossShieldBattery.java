@@ -15,13 +15,13 @@ public class ProtossShieldBattery {
                         return false;
                     }
 
-                    if (shieldBattery.groundDistance(unit) > 15) {
+                    if (shieldBattery.groundDist(unit) > 15) {
                         return false;
                     }
                     if (!shieldBattery.equals(unit.target()) || A.chance(2)) {
                         unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
                     }
-                    shieldBattery.setTooltip("RECHARGE " + unit.shortName());
+                    shieldBattery.setTooltip("RECHARGE " + unit.name());
                     return true;
                 }
             }

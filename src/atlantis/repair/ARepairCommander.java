@@ -42,7 +42,7 @@ public class ARepairCommander {
             AUnit repairer = iterator.next();
 
             if (!repairer.isAlive()) {
-                System.err.println("Dead repairer " + repairer.shortName() + " // " + repairer.hp());
+                System.err.println("Dead repairer " + repairer.name() + " // " + repairer.hp());
                 ARepairAssignments.removeRepairerOrProtector(repairer);
                 iterator.remove();
                 continue;

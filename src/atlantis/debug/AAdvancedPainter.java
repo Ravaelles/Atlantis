@@ -234,7 +234,7 @@ public class AAdvancedPainter extends APainter {
         for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
             paintCircle(enemy, 16, Color.Orange);
             paintCircle(enemy, 15, Color.Orange);
-            paintTextCentered(enemy, "Cloaked," + enemy.shortName() + ",HP=" + enemy.hp(), Color.Red);
+            paintTextCentered(enemy, "Cloaked," + enemy.name() + ",HP=" + enemy.hp(), Color.Red);
         }
         for (AUnit enemy : Select.enemy().effVisible().listUnits()) {
             if (enemy.isCloaked() || enemy.isBurrowed()) {
@@ -315,8 +315,8 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintCombatEval(AUnit unit) {
         APosition unitPosition = unit.position();
-//        double combatEval = unit.combatEval(true);
-        double combatEval = unit.combatEval(false);
+//        double combatEval = unit.combatEvalRelative();
+        double combatEval = unit.combatEvalAbsolute();
         String combatStrength = ColorUtil.getColorString(Color.Red) +
                 (combatEval >= 9876 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
         paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
@@ -510,7 +510,7 @@ public class AAdvancedPainter extends APainter {
         int counter = 1;
         for (ProductionOrder order : produceNow) {
             paintSideMessage(
-                    String.format("%02d", order.minSupply()) + " - " + order.shortName(),
+                    String.format("%02d", order.minSupply()) + " - " + order.name(),
                     order.hasWhatRequired() ? (order.currentlyInProduction() ? Color.Green : Color.Yellow) : Color.Red
             );
             if (++counter >= 10) {
@@ -524,12 +524,12 @@ public class AAdvancedPainter extends APainter {
 //                5 - produceNow.size());
 //        for (int index = produceNow.size(); index < fullQueue.size(); index++) {
 //            ProductionOrder order = fullQueue.get(index);
-//            if (order != null && order.shortName() != null) {
+//            if (order != null && order.name() != null) {
 //                if (order.getUnitOrBuilding() != null
 //                        && !AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
 //                    continue;
 //                }
-//                paintSideMessage(order.shortName(), Color.Red);
+//                paintSideMessage(order.name(), Color.Red);
 //            }
 //        }
 
@@ -545,7 +545,7 @@ public class AAdvancedPainter extends APainter {
         // Constructions already planned
         for (ConstructionOrder order : ConstructionRequests.getNotStarted()) {
             AUnitType type = order.buildingType();
-            paintSideMessage(type.shortName(), Color.Cyan);
+            paintSideMessage(type.name(), Color.Cyan);
         }
     }
 
@@ -556,7 +556,7 @@ public class AAdvancedPainter extends APainter {
             if (type.equals(AUnitType.Zerg_Egg)) {
                 type = unit.buildType();
             }
-            paintSideMessage(type.shortName(), Color.Green);
+            paintSideMessage(type.name(), Color.Green);
         }
 
         // Techs
@@ -599,7 +599,7 @@ public class AAdvancedPainter extends APainter {
                 String builderDist = A.dist(constructionOrder.builder(), constructionOrder.positionToBuild());
                 if (constructionOrder.builder() != null) {
                     String builder = (constructionOrder.builder().idWithHash() + " " + builderDist);
-                    paintSideMessage(constructionOrder.buildingType().shortName()
+                    paintSideMessage(constructionOrder.buildingType().name()
                             + ", " + status + ", " + builder, color, yOffset);
                 }
             }
@@ -637,7 +637,7 @@ public class AAdvancedPainter extends APainter {
         }
 
         if (text == null) {
-            text = buildingType.shortName();
+            text = buildingType.name();
         }
 
         // Paint box
@@ -865,7 +865,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             // Display name of unit
-            String name = (building.buildType() != null ? building.buildType().shortName() : "-BUG_NULL");
+            String name = (building.buildType() != null ? building.buildType().name() : "-BUG_NULL");
 
             // Paint building name
             paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 7),
@@ -958,7 +958,7 @@ public class AAdvancedPainter extends APainter {
                 AUnitType unitType = building.trainingQueue().get(0);
                 paintBuildingActionProgress(
                         building,
-                        unitType.shortName(),
+                        unitType.name(),
                         building.remainingTrainTime(),
                         unitType.totalTrainTime()
                 );
@@ -1093,7 +1093,7 @@ public class AAdvancedPainter extends APainter {
                     foggedEnemy.type().dimensionDown() / 32,
                     Color.Grey
             );
-            paintText(topLeft, foggedEnemy.type().shortName() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
+            paintText(topLeft, foggedEnemy.type().name() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
         }
     }
 
@@ -1346,7 +1346,7 @@ public class AAdvancedPainter extends APainter {
         // Next defensive building position
 //        if (Count.bases() > 0) {
 //            AUnitType building = AAntiLandBuildingRequests.building();
-//            paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.shortName(), Color.Brown);
+//            paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.name(), Color.Brown);
 //        }
 
         // Turrets in main

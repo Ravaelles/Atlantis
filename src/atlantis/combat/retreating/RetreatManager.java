@@ -14,14 +14,11 @@ public class RetreatManager {
     public static int GLOBAL_RETREAT_COUNTER = 0;
     private static Cache<Boolean> cache = new Cache<>();
 
-//    public static boolean shouldNotRetreat(AUnit unit, Units enemies) {
-//        return shouldRetreat(unit, enemies);
-//    }
+    // =========================================================
 
     /**
      * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
      */
-//    public static boolean shouldRetreat(AUnit unit, Units enemies) {
     public static boolean shouldRetreat(AUnit unit) {
         return cache.get(
                 "shouldRetreat:" + unit.id(),
@@ -50,6 +47,22 @@ public class RetreatManager {
 
                     return false;
                 }
+        );
+    }
+
+    /**
+     * Calculated per unit squad, not per unit.
+     */
+    public static boolean shouldNotEngageCombatBuilding(AUnit unit) {
+        if (unit.squad() == null) {
+            return false;
+        }
+
+        return cache.get(
+                "shouldNotEngageCombatBuilding:" + unit.squad().name(),
+                10,
+                () -> ACombatEvaluator.relativeAdvantage(unit) <= 1.7
+//                () -> ACombatEvaluator.relativeAdvantage(unit) <= 0.6
         );
     }
 

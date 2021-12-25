@@ -64,11 +64,11 @@ public class OnEveryFrame {
 
 //        for (AFoggedUnit unit : EnemyUnits.discoveredAndAliveUnits()) {
 //            if (unit.isBuilding()) {
-//                System.out.println(unit.shortName() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
+//                System.out.println(unit.name() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //            }
 //        }
 //        for (AFoggedUnit unit : EnemyUnits.()) {
-//            System.out.println(unit.shortName() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
+//            System.out.println(unit.name() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //        }
 
 //        for (AUnit unit : Select.ourOfType(AUnitType.Terran_Marine).list()) {
@@ -79,7 +79,7 @@ public class OnEveryFrame {
 
 //        for (AUnit unit : Select.enemies(AUnitType.Zerg_Lurker).list()) {
 //            if (!unit.effVisible() || !unit.isDetected()) {
-//                System.out.println(unit.shortName() + " // vis=" + unit.effVisible() + " // cloa=" + unit.effCloaked() + " // det=" + unit.isDetected());
+//                System.out.println(unit.name() + " // vis=" + unit.effVisible() + " // cloa=" + unit.effCloaked() + " // det=" + unit.isDetected());
 //            }
 //        }
 
@@ -95,8 +95,8 @@ public class OnEveryFrame {
 //        AUnit unit2 = Select.ourCombatUnits().last();
 //
 //        if (unit1 != null && (unit1.squad() == null || unit1.squad() == null)) {
-//            System.out.println("unit1 = " + unit1.idWithHash() + unit1.shortName() + " // " + unit1.squad());
-//            System.out.println("unit2 = " + unit2.idWithHash() + unit2.shortName() + " // " + unit2.squad());
+//            System.out.println("unit1 = " + unit1.idWithHash() + unit1.name() + " // " + unit1.squad());
+//            System.out.println("unit2 = " + unit2.idWithHash() + unit2.name() + " // " + unit2.squad());
 //        }
 
 //        for (AUnit unit : Select.ourCombatUnits().list()) {

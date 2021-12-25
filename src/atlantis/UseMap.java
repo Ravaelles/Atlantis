@@ -18,7 +18,7 @@ public class UseMap {
 
 //        return "ums/rav/T_v_Sunkens.scx";
 //        return "ums/rav/T_v_Sunkens2.scx";
-        return "ums/rav/T_v_Sunkens3.scx";
+//        return "ums/rav/T_v_Sunkens3.scx";
 //        return "ums/rav/Wraiths_v_Probes.scm";
 //        return "ums/rav/Wraiths_v_Cannons.scm";
 //        return "ums/rav/M&M_v_Dragoons_A.scx";
@@ -27,7 +27,7 @@ public class UseMap {
 //        return "ums/rav/M_v_Hydras.scx";
 
 //        return "ums/rav/minimaps/M_v_Zealots.scx";
-//        return "ums/rav/minimaps/M&M_v_Zealots.scx";
+        return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        return "ums/rav/minimaps/4M_v_2Zealots.scx";
 
@@ -127,8 +127,8 @@ public class UseMap {
 
         else if (activeMap().equals("ums/marines_v_zerglings.scm")) {
             if (A.now() <= 1) {
-                GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(40);
+                GameSpeed.changeSpeedTo(20);
+                GameSpeed.changeFrameSkipTo(0);
             }
             if (Atlantis.KILLED >= 32) {
                 Atlantis.getInstance().onEnd(true);
@@ -153,8 +153,8 @@ public class UseMap {
             ) {
 //                GameSpeed.pauseGame();
                 APainter.disablePainting();
-                GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(60);
+                GameSpeed.changeSpeedTo(30);
+                GameSpeed.changeFrameSkipTo(0);
                 CameraManager.centerCameraNowOnSquadCenter();
 //                GameSpeed.unpauseGame();
             }

@@ -153,11 +153,11 @@ public class AFoggedUnit extends AUnit {
 
     public void updatePosition(AUnit unit) {
 //        if (unit.isBuilding()) {
-//            System.out.println(unit.shortName() + " // " + unit.x() + "," + unit.y());
+//            System.out.println(unit.name() + " // " + unit.x() + "," + unit.y());
 //        }
 
 //        if (unit.isVisible()) {
-//            System.out.println("Update " + unit.shortName() + " to " + unit.getPosition());
+//            System.out.println("Update " + unit.name() + " to " + unit.getPosition());
             if (unit.x() > 0 && unit.y() > 0) {
                 _position = new APosition(unit.x(), unit.y());
                 cacheInt.set("lastPositionUpdated", -1, A.now());

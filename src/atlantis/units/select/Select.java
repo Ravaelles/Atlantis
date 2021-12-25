@@ -170,7 +170,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static Selection allOfType(AUnitType type) {
         String cachePath;
         return cache.get(
-                cachePath = "allOfType:" + type.shortName(),
+                cachePath = "allOfType:" + type.name(),
                 0,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
@@ -258,7 +258,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      */
     public static int countOurOfType(AUnitType type) {
         return cacheInt.get(
-                "countOurOfType:" + type.shortName(),
+                "countOurOfType:" + type.name(),
                 type.isBuilding() ? 0 : 30,
                 () -> {
                     int total = 0;
@@ -279,7 +279,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      */
     public static int countOurOfTypeIncludingUnfinished(AUnitType type) {
         return cacheInt.get(
-                "countOurOfTypeIncludingUnfinished:" + type.shortName(),
+                "countOurOfTypeIncludingUnfinished:" + type.name(),
                 microCacheForFrames,
                 () -> {
                     int total = 0;
@@ -301,7 +301,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static Selection ourOfTypeIncludingUnfinished(AUnitType type) {
         String cachePath;
         return cache.get(
-                cachePath = "ourOfTypeIncludingUnfinished:" + type.shortName(),
+                cachePath = "ourOfTypeIncludingUnfinished:" + type.name(),
                 microCacheForFrames,
                 () -> {
                     List<AUnit> data = new ArrayList<>();

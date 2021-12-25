@@ -282,7 +282,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     @Override
     public String toString() {
-        return idWithHash() + " " + type().shortName();
+        return idWithHash() + " " + type().name();
     }
 
     @Override
@@ -415,12 +415,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u().getSpiderMineCount();
     }
 
-    public String shortName() {
-        return type().shortName();
+    public String name() {
+        return type().name();
     }
 
-    public String shortNameWithId() {
-        return type().shortName() + " #" + id();
+    public String nameWithId() {
+        return type().name() + " #" + id();
     }
 
     public boolean isInWeaponRangeByGame(AUnit target) {
@@ -567,13 +567,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double distTo(AUnit otherUnit) {
         return PositionUtil.distanceTo(this, otherUnit);
-    }
-
-    /**
-     * Returns real ground distance to given point (not the air shortcut over impassable terrain).
-     */
-    public double groundDistance(HasPosition otherUnit) {
-        return PositionUtil.groundDistanceTo(this.position(), otherUnit.position());
     }
 
     public double distTo(Object o) {
@@ -1673,7 +1666,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean is(AUnitType type) {
         return cacheBoolean.get(
 //                "isType:" + type.id(),
-                "isType:" + type.name(),
+                "isType:" + type.fullName(),
                 -1,
                 () -> type().is(type)
         );
@@ -1784,8 +1777,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.getStimTimer();
     }
 
-    public double combatEval(boolean relativeToEnemy) {
-        return ACombatEvaluator.evaluateSituation(this, relativeToEnemy);
+    public double combatEvalAbsolute() {
+        return ACombatEvaluator.absoluteEvaluation(this);
+    }
+
+    public double combatEvalRelative() {
+        return ACombatEvaluator.relativeAdvantage(this);
     }
 
     public boolean isMedic() {
@@ -1899,6 +1896,26 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                     }
                     else if (unit().isEnemy()) {
                         return Select.ourRealUnits()
+                                .inRadius(14, this);
+                    }
+                    else {
+                        return Select.from(new Units());
+                    }
+                }
+        ));
+    }
+
+    public Selection friendsNearby() {
+        return ((Selection) cache.get(
+                "friends",
+                5,
+                () -> {
+                    if (unit().isOur()) {
+                        return Select.ourRealUnits()
+                                .inRadius(14, this);
+                    }
+                    else if (unit().isEnemy()) {
+                        return Select.enemyRealUnits(true, true, true)
                                 .inRadius(14, this);
                     }
                     else {

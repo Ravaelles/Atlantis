@@ -85,7 +85,7 @@ public interface AUnitOrders {
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {
         unit().setUnitAction(UnitActions.BUILD);
         boolean result = u().build(buildingType.ut(), buildTilePosition);
-        unit().setTooltip("Construct " + buildingType.shortName());
+        unit().setTooltip("Construct " + buildingType.name());
         unit().setLastUnitOrderNow();
         return result;
     }

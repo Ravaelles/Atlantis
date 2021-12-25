@@ -14,19 +14,13 @@ public class ACombatEvaluator {
     private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT = 7;
     private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS = 20;
 
-    /**
-     * Maximum allowed value as a result of evaluation.
-     */
+    /** Maximum allowed value as a result of evaluation. */
     private static final double MAX_VALUE = 9876;
-
-    /**
-     * Stores the instances of AtlantisCombatInformation for each unit
-     */
-    private static final Map<AUnit, ACombatInformation> combatInfo = new HashMap<>();
 
     private static Cache<Object> cache = new Cache<>();
 
     // =========================================================
+
     /**
      * Returns <b>TRUE</b> if our <b>unit</b> should engage in combat with nearby units or
      * <b>FALSE</b> if enemy is too strong and we should pull back.
@@ -39,46 +33,29 @@ public class ACombatEvaluator {
             return true;
         }
 
-//        if (ACombatEvaluatorExtraConditions.shouldAlwaysFight(unit, nearestEnemy)) {
-//            return true;
-//        }
-
-//        if (AtlantisCombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
-//            return false;
-//        }
-
-//        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight);
-        return (evaluateSituation(unit) * (100 - percentOfAdvantageNeeded(unit)) / 100) >= evaluateSituation(nearestEnemy);
+        return (absoluteEvaluation(unit) * (100 - percentOfAdvantageNeeded(unit)) / 100) >= absoluteEvaluation(nearestEnemy);
     }
 
-    private static double percentOfAdvantageNeeded(AUnit unit) {
-        if (unit.enemiesNearby().combatBuildings(false).inRadius(8.2, unit).isNotEmpty()) {
-            return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS;
+    /**
+     * Calculated per squad, not per unit.
+     * 1.6 means ~60% advantage of unit's squad against nearby enemies
+     * 1.0 means same strength
+     * 0.8 means ~20% disadvantage against enemies
+     */
+    public static double relativeAdvantage(AUnit unit) {
+        AUnit nearestEnemy = unit.enemiesNearby().canAttack(unit, 4).nearestTo(unit);
+        if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
+            return MAX_VALUE;
         }
 
-        return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT;
+        return absoluteEvaluation(unit) / absoluteEvaluation(nearestEnemy);
     }
 
     /**
-     * Returns <b>TRUE</b> if our <b>unit</b> has overwhelmingly high chances to win nearby fight and should
-     * engage in combat with nearby enemy units. Returns
-     * <b>FALSE</b> if enemy is too strong and we should pull back.
+     * Calculated per squad, not per unit.
+     * More equals given squad is considered to be stronger.
      */
-//    public static boolean isSituationExtremelyFavorable(AUnit unit, boolean isPendingFight) {
-//        AUnit nearestEnemy = Select.enemy().nearestTo(unit);
-//
-//        if (ACombatEvaluatorExtraConditions.shouldAlwaysRetreat(unit, nearestEnemy)) {
-//            return false;
-//        }
-//
-//        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight) + 0.5;
-//    }
-
-    /**
-     * Returns <b>POSITIVE</b> value if our unit <b>unit</b> should engage in combat with nearby units or
-     * <b>NEGATIVE</b> when enemy is too strong and we should pull back.
-     */
-    public static double evaluateSituation(AUnit unit) {
+    public static double absoluteEvaluation(AUnit unit) {
         return evaluateSituation(unit, false);
     }
 
@@ -90,12 +67,12 @@ public class ACombatEvaluator {
      * When absolute value is true, it returns the evaluation value 
      * (like 3564, more equals higher combat strength).
      */
-    public static double evaluateSituation(AUnit unit, boolean relativeToEnemy) {
+    private static double evaluateSituation(AUnit unit, boolean relativeToEnemy) {
         return (double) cache.get(
             "evaluateSituation:" + unit.id() + "," + relativeToEnemy,
             3,
             () -> {
-//                System.err.println(unit.shortNameWithId() + " // our:" + unit.isOur() + " // enemy:" + unit.isEnemy());
+//                System.err.println(unit.nameWithId() + " // our:" + unit.isOur() + " // enemy:" + unit.isEnemy());
 
                 // =========================================================
                 // Define nearby enemy and our units
@@ -144,6 +121,16 @@ public class ACombatEvaluator {
                 }
             }
         );
+    }
+
+    // =========================================================
+
+    private static double percentOfAdvantageNeeded(AUnit unit) {
+        if (unit.enemiesNearby().combatBuildings(false).inRadius(8.2, unit).isNotEmpty()) {
+            return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS;
+        }
+
+        return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT;
     }
 
     private static Units theseUnits(AUnit unit) {

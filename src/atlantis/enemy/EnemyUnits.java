@@ -82,7 +82,7 @@ public class EnemyUnits {
 
                         for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
                             if (enemy.type().isBuilding() && enemy.position() != null) {
-                                double dist = ourMainBase.groundDistance(enemy.position());
+                                double dist = ourMainBase.groundDist(enemy.position());
                                 if (dist < minDist) {
                                     minDist = dist;
                                     best = enemy;

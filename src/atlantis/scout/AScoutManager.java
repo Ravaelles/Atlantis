@@ -362,7 +362,7 @@ public class AScoutManager {
 
             // Calculate actual ground distance to this position
 //            double groundDistance = AMap.getGroundDistance(scout, position);
-            double groundDistance = scout.groundDistance(position);
+            double groundDistance = scout.groundDist(position);
 
             // Fix problem with some points being unwalkable despite isWalkable being true
 //            if (groundDistance < 2) {

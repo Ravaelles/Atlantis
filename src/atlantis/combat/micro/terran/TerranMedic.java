@@ -4,6 +4,7 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -34,19 +35,27 @@ public class TerranMedic {
     // =========================================================
 
     public static boolean update(AUnit medic) {
-        if (unblockChoke(medic)) {
+        if (medic.hp() <= 17 && AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
             return true;
         }
 
-        if (handleHealWoundedUnit(medic)) {
+//        if (unblockChoke(medic)) {
+//            return true;
+//        }
+
+        if (healCriticallyWoundedUnits(medic)) {
+            return true;
+        }
+
+        if (bodyBlockMelee(medic)) {
+            return true;
+        }
+
+        if (healWoundedUnits(medic)) {
             return true;
         }
 
         if (tooFarFromNearestInfantry(medic)) {
-            return true;
-        }
-
-        if (medic.hp() <= 17 && AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
             return true;
         }
 
@@ -55,6 +64,27 @@ public class TerranMedic {
     }
 
     // =========================================================
+
+    private static boolean bodyBlockMelee(AUnit medic) {
+        Selection meleeEnemies = medic.enemiesNearby().melee();
+//        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 3) {
+        if (meleeEnemies.count() == 0) {
+            return false;
+        }
+
+        AUnit nearestFriend = medic.friendsNearby().excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
+        AUnit nearestEnemy = meleeEnemies.inRadius(2, medic).nearestTo(medic);
+        if (nearestEnemy == null || nearestFriend == null) {
+            return false;
+        }
+
+        APosition desiredPosition = nearestFriend.translateTilesTowards(0.4, nearestEnemy);
+        if (medic.distToMoreThan(desiredPosition, 0.15) || medic.isIdle()) {
+            return medic.move(desiredPosition, UnitActions.MOVE, "Block");
+        }
+
+        return false;
+    }
 
     private static boolean unblockChoke(AUnit medic) {
         AChoke choke = Chokes.nearestChoke(medic);
@@ -179,19 +209,32 @@ public class TerranMedic {
         return false;
     }
 
-    private static boolean handleHealWoundedUnit(AUnit medic) {
-//        if (!medic.isIdle() && medic.getLastCommand().getType() == UnitCommandType.Right_Click_Unit) {
-//            return true;
-//        }
+    private static boolean healCriticallyWoundedUnits(AUnit medic) {
+        AUnit nearestWoundedInfantry = Select.our()
+                .organic()
+                .criticallyWounded()
+                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
+                .exclude(medic)
+                .nearestTo(medic);
 
+        // =========================================================
+        // If there's a wounded unit, heal it.
+
+        if (nearestWoundedInfantry != null) {
+            healUnit(medic, nearestWoundedInfantry);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean healWoundedUnits(AUnit medic) {
         AUnit nearestWoundedInfantry = Select.our()
                 .organic()
                 .wounded()
                 .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
                 .exclude(medic)
                 .nearestTo(medic);
-
-//        System.out.println(nearestWoundedInfantry + " // " + nearestWoundedInfantry.hp() + " // " + nearestWoundedInfantry.maxHp());
 
         // =========================================================
         // If there's a wounded unit, heal it.

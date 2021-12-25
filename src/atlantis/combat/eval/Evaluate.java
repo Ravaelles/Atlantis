@@ -92,11 +92,11 @@ public class Evaluate {
 
 //        if (!isEnemyEval) {
         if (enemyCombatBuildingFound) {
-            totalStrength += theseUnits.onlyAir() ? 50 : 60;
+            totalStrength += theseUnits.onlyAir() ? 50 : 40;
         }
-        if (enemyCombatBuildingInRange) {
-            totalStrength += theseUnits.onlyAir() ? 50 : 60;
-        }
+//        if (enemyCombatBuildingInRange) {
+//            totalStrength += theseUnits.onlyAir() ? 50 : 60;
+//        }
 //        }
 
         return totalStrength;
@@ -152,7 +152,7 @@ public class Evaluate {
         double damageFactor = damageFactor(type, againstUnit);
         double total = hpFactor + damageFactor;
 
-//        System.out.println(type + " against " + againstUnit.shortName() + " // "
+//        System.out.println(type + " against " + againstUnit.name() + " // "
 //                + total + " // "
 //                + damageFactor + " // "
 //                + hpFactor * EVAL_HIT_POINTS_FACTOR + " // "

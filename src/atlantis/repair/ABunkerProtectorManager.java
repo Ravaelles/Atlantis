@@ -12,7 +12,7 @@ public class ABunkerProtectorManager {
 
             // WOUNDED
             if (unit.woundPercent() >= 1 && A.hasMinerals(5)) {
-                protector.repair(unit, "Protect " + unit.shortName());
+                protector.repair(unit, "Protect " + unit.name());
                 return true;
             }
 
@@ -20,11 +20,11 @@ public class ABunkerProtectorManager {
             else {
                 double distanceToUnit = unit.distTo(protector);
                 if (distanceToUnit > 1 && !protector.isMoving()) {
-                    protector.move(unit.position(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.shortName());
+                    protector.move(unit.position(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.name());
                     return true;
                 }
                 else {
-                    protector.setTooltip("Protect " + unit.shortName());
+                    protector.setTooltip("Protect " + unit.name());
                 }
             }
         }

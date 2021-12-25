@@ -62,7 +62,7 @@ public class Tooltip {
         return String.format(
                 "Tooltip for (%d) %s %s: %s. Start @ frame %d",
                 unit.id(),
-                unit.type().shortName(),
+                unit.type().name(),
                 unit.position().toTilePosition(),
                 hasTooltip() ? String.format("'%s'", tooltip) : "null",
                 tooltipStartInFrames

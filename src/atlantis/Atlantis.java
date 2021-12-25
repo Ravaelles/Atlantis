@@ -199,7 +199,7 @@ public class Atlantis implements BWEventListener {
         ASquadManager.removeUnitFromSquads(unit);
 //        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 
-//        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.shortName());
+//        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.name());
 
         // Our unit
         if (unit.isOur()) {
@@ -248,7 +248,7 @@ public class Atlantis implements BWEventListener {
 
             else {
                 if (!unit.isNotRealUnit()) {
-//                    System.out.println("Neutral unit discovered! " + unit.shortName());
+//                    System.out.println("Neutral unit discovered! " + unit.name());
                     if (A.isUms()) {
                         UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
                     }
@@ -372,14 +372,14 @@ public class Atlantis implements BWEventListener {
         // New unit taken from us
         if (u.getPlayer().equals(AGame.getPlayerUs())) {
             ourNewUnit(newUnit);
-            System.out.println("NEW RENEGADE FOR US " + newUnit.shortName());
+            System.out.println("NEW RENEGADE FOR US " + newUnit.name());
             UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = newUnit;
         }
 
         // New unit for us e.g. some UMS maps give units
         else {
             enemyNewUnit(newUnit);
-            System.out.println("NEW RENEGADE FOR ENEMY " + newUnit.shortName());
+            System.out.println("NEW RENEGADE FOR ENEMY " + newUnit.name());
         }
     }
 

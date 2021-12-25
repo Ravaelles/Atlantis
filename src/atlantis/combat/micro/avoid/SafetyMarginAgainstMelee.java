@@ -11,7 +11,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
     public static double INFANTRY_BASE_IF_MEDIC = 1.60;
     public static int INFANTRY_WOUND_IF_MEDIC = 19;
-    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.49;
+    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.55;
     public static int INFANTRY_WOUND_IF_NO_MEDIC = 60;
 //    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
 //    public static int INFANTRY_WOUND_IF_MEDIC = 20;
@@ -25,15 +25,18 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         if (defender.isTerranInfantry()) {
             if (defender.hasMedicInRange()) {
                 criticalDist = INFANTRY_BASE_IF_MEDIC
-                        + woundedAgainstMeleeBonus(defender, attacker);
+                        + woundedAgainstMeleeBonus(defender, attacker)
+                        + enemyMovementBonus(defender, attacker) / 3;
             } else {
                 criticalDist = INFANTRY_BASE_IF_NO_MEDIC
                         + woundedAgainstMeleeBonus(defender, attacker)
-                        + ourMovementBonus(defender) / 3
+//                        + ourMovementBonus(defender) / 4
                         + enemyMovementBonus(defender, attacker) / 3;
 
                 criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
             }
+
+            criticalDist = Math.min(criticalDist, 3.0);
         }
 
         // VULTURE
@@ -52,13 +55,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     + ourMovementBonus(defender)
                     + quicknessBonus(defender, attacker)
                     + enemyMovementBonus(defender, attacker);
+
+            // 3.9 tiles (almost base width) should be enough as a minimum versus melee unit
+            criticalDist = Math.min(criticalDist, 3.9);
         }
 
-        // 3.9 tiles (almost base width) should be enough as a minimum versus melee unit
-        criticalDist = Math.min(criticalDist, 3.9);
-
         if (defender.isRanged() && attacker.isWorker()) {
-            criticalDist = 2.3;
+            criticalDist = 2.5;
         }
 
         return attacker.distTo(defender) - criticalDist;
