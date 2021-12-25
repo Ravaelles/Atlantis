@@ -11,7 +11,8 @@ import java.util.Map;
 
 public class ACombatEvaluator {
 
-    private static final double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT = 7;
+    private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT = 7;
+    private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS = 20;
 
     /**
      * Maximum allowed value as a result of evaluation.
@@ -47,7 +48,15 @@ public class ACombatEvaluator {
 //        }
 
 //        return evaluateSituation(unit) >= calculateFavorableValueThreshold(isPendingFight);
-        return (evaluateSituation(unit) * (100 - PERCENT_ADVANTAGE_NEEDED_TO_FIGHT) / 100) >= evaluateSituation(nearestEnemy);
+        return (evaluateSituation(unit) * (100 - percentOfAdvantageNeeded(unit)) / 100) >= evaluateSituation(nearestEnemy);
+    }
+
+    private static double percentOfAdvantageNeeded(AUnit unit) {
+        if (unit.enemiesNearby().combatBuildings(false).inRadius(8.2, unit).isNotEmpty()) {
+            return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS;
+        }
+
+        return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT;
     }
 
     /**

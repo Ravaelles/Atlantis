@@ -4,6 +4,7 @@ import atlantis.debug.APainter;
 import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Cache;
 import bwapi.Color;
@@ -46,6 +47,10 @@ public abstract class AAvoidUnits {
                 "C=" + enemiesDangerouslyClose.size() + "(" + first.shortName() + ":" + firstValue + ")",
                 Color.Teal);
 
+        if (onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
+            return AvoidCombatBuildingsFix.handle(unit, enemiesDangerouslyClose);
+        }
+
         if (WantsToAvoid.units(unit, enemiesDangerouslyClose)) {
             return true;
         }
@@ -62,6 +67,10 @@ public abstract class AAvoidUnits {
 
     private static boolean shouldSkip(AUnit unit) {
         return unit.isLoaded();
+    }
+
+    private static boolean onlyCombatBuildingsAreDangerouslyClose(Units enemiesDangerouslyClose) {
+        return Select.from(enemiesDangerouslyClose).combatUnits().size() == enemiesDangerouslyClose.size();
     }
 
     public static Units unitsToAvoid(AUnit unit) {
