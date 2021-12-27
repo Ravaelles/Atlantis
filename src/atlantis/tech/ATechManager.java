@@ -34,9 +34,9 @@ public class ATechManager extends Helpers {
 
     private static AUnitType whatMakes(Object techUpgradeOrUnit) {
         if (techUpgradeOrUnit instanceof TechType) {
-            return AUnitType.create(((TechType) techUpgradeOrUnit).whatResearches());
+            return AUnitType.from(((TechType) techUpgradeOrUnit).whatResearches());
         } else if (techUpgradeOrUnit instanceof UpgradeType) {
-            return AUnitType.create(((UpgradeType) techUpgradeOrUnit).whatUpgrades());
+            return AUnitType.from(((UpgradeType) techUpgradeOrUnit).whatUpgrades());
         } else if (techUpgradeOrUnit instanceof AUnitType) {
             return ((AUnitType) techUpgradeOrUnit).whatBuildsIt();
         } else {

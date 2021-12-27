@@ -109,7 +109,9 @@ public class UnitTestHelper {
 
     public static Game newGameMock(int framesNow) {
         Game game = Mockito.mock(Game.class);
+
         when(game.getFrameCount()).thenReturn(framesNow);
+
         return game;
     }
 

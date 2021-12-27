@@ -97,13 +97,13 @@ public class ARunningManager {
             return makeUnitRun();
         }
 
-        System.err.println("=== RUN ERROR =================");
-        System.err.println("Unit position = " + unit.position());
-        System.err.println("runTo = " + runTo);
-        System.err.println("_lastPosition = " + _lastPosition);
-        System.err.println("Our count = " + Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
-        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
-        System.err.println();
+//        System.err.println("=== RUN ERROR =================");
+//        System.err.println("Unit position = " + unit.position() + " // " + unit);
+//        System.err.println("runTo = " + runTo);
+//        System.err.println("_lastPosition = " + _lastPosition);
+//        System.err.println("Our count = " + Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
+//        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
+//        System.err.println();
 //                && unit.position().groundDistanceTo(position) <= 18
 
         unit.setTooltip("Cant run");
@@ -183,7 +183,7 @@ public class ARunningManager {
                 && unit.distTo(runTo) < 0.002
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
-            System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
+//            System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
 //            APainter.paintLine(unit, runTo, Color.Purple);
 //            APainter.paintLine(
 //                    unit.translateByPixels(0, 1),

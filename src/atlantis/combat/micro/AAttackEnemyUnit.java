@@ -9,7 +9,7 @@ import atlantis.util.A;
 
 public class AAttackEnemyUnit {
 
-    private static final double MAX_DIST_TO_ATTACK = 14;
+    private static final double MAX_DIST_TO_ATTACK = 20;
 
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit) {
         return handleAttackNearbyEnemyUnits(unit, MAX_DIST_TO_ATTACK);

@@ -29,6 +29,7 @@ public class Atlantis implements BWEventListener {
      * JBWAPI core class.
      */
     private static BWClient bwClient;
+    private final OnUnitMorph onUnitMorph = new OnUnitMorph();
 
     /**
      * JBWAPI's game object, contains low-level methods.
@@ -264,7 +265,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitEvade(Unit u) {
         AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
-            EnemyInformation.updateEnemyUnitPosition(unit);
+            EnemyInformation.updateEnemyUnitTypeAndPosition(unit);
         }
     }
 
@@ -275,7 +276,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitHide(Unit u) {
         AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
-            EnemyInformation.updateEnemyUnitPosition(unit);
+            EnemyInformation.updateEnemyUnitTypeAndPosition(unit);
         }
     }
 
@@ -288,62 +289,7 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitMorph(Unit u) {
         AUnit unit = AUnit.getById(u);
-        unit.refreshType();
-//        System.out.println("MORPH u = " + u);
-//        System.out.println("MORPH = " + unit);
-//        System.out.println(unit.isEnemy());
-//        System.out.println(unit.isNeutral());
-//        System.out.println(unit.isOur());
-//        UnitsArchive.markUnitAsDestroyed(unit);
-
-        // A bit of safe approach: forget the unit and remember it again.
-        // =========================================================
-        // Forget unit
-//        if (unit != null) {
-//            if (unit.isOur()) {
-//                ASquadManager.unitDestroyed(unit);
-//            } if (unit.isEnemy()) {
-//                EnemyUnits.removeDiscoveredUnit(unit);
-//            }
-//            unit = AUnit.getById(u);
-//        }
-
-        // =========================================================
-        // Remember the unit
-        if (unit != null) {
-            unit.refreshType();
-
-            // Our unit
-            if (unit.isOur()) {
-
-                // === Fix for Zerg Extractor ========================================
-                // Detect morphed gas building meaning construction has just started
-                if (unit.type().isGasBuilding()) {
-                    for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
-                        if (order.buildingType().equals(AtlantisConfig.GAS_BUILDING)
-                                && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
-                            order.setConstruction(unit);
-                            break;
-                        }
-                    }
-                }
-
-                // =========================================================
-
-                ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-
-                // Add to combat squad if it's military unit
-                if (unit.isRealUnit()) {
-                    ASquadManager.removeUnitFromSquads(unit);
-                    NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
-                }
-            }
-
-            // Enemy unit
-            else {
-                EnemyInformation.refreshEnemyUnit(unit);
-            }
-        }
+        OnUnitMorph.update(unit);
     }
 
     /**
@@ -378,6 +324,10 @@ public class Atlantis implements BWEventListener {
 
         // New unit for us e.g. some UMS maps give units
         else {
+            if (newUnit.isOverlord()) {
+                return;
+            }
+
             enemyNewUnit(newUnit);
             System.out.println("NEW RENEGADE FOR ENEMY " + newUnit.name());
         }

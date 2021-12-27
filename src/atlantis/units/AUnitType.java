@@ -13,7 +13,7 @@ import java.util.*;
  * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you can
  * create missing method here and you can reference original UnitType class via ut() method.
  */
-public class AUnitType implements Comparable<AUnitType> {
+public class AUnitType implements Comparable<Object> {
 
     public static boolean disableErrorReporting = false;
     private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
@@ -27,7 +27,7 @@ public class AUnitType implements Comparable<AUnitType> {
     public static Collection<AUnitType> getAllUnitTypes() {
         if (instances.size() < 30) {
             for (UnitType type : UnitType.values()) {
-                create(type);
+                from(type);
             }
         }
 
@@ -52,7 +52,7 @@ public class AUnitType implements Comparable<AUnitType> {
      * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you
      * can create missing method here and you can reference original UnitType class via ut() method.
      */
-    public static AUnitType create(UnitType ut) {
+    public static AUnitType from(UnitType ut) {
         if (ut == null) {
             throw new RuntimeException("AUnitType constructor: type is null");
         }
@@ -470,10 +470,23 @@ public class AUnitType implements Comparable<AUnitType> {
     }
 
     @Override
-    public int compareTo(AUnitType o) {
+    public int compareTo(Object o) {
+        if (o instanceof AUnitType) {
+            return Integer.compare(ID, ((AUnitType) o).ID);
+        }
+        else if (o instanceof UnitType) {
+            return Integer.compare(ut.ordinal(), ((UnitType) o).ordinal());
+        }
+
+        return -1;
+
 //        return this.ut.toString().compareTo(o.toString());
-        return Integer.compare(ID, o.ID);
+//        return Integer.compare(ID, o.ID);
     }
+//    public int compareTo(AUnitType o) {
+////        return this.ut.toString().compareTo(o.toString());
+//        return Integer.compare(ID, o.ID);
+//    }
 
     @Override
     public String toString() {
@@ -491,7 +504,7 @@ public class AUnitType implements Comparable<AUnitType> {
             MappingCounter<AUnitType> units = new MappingCounter<>();
             for (Object key : ((Map) collection).keySet()) {
                 UnitType ut = (UnitType) key;
-                AUnitType unitType = create(ut);
+                AUnitType unitType = from(ut);
 //                result.put(unitType, (Integer) ((Map) collection).get(ut));
                 units.setValueFor(unitType, (Integer) ((Map) collection).get(ut));
             }
@@ -500,7 +513,7 @@ public class AUnitType implements Comparable<AUnitType> {
             List<AUnitType> result = new ArrayList<>();
             for (Object key : (List) collection) {
                 UnitType ut = (UnitType) key;
-                AUnitType unitType = create(ut);
+                AUnitType unitType = from(ut);
                 result.add(unitType);
             }
             return result;
@@ -846,7 +859,7 @@ public class AUnitType implements Comparable<AUnitType> {
         return (AUnitType) cache.get(
                 "whatBuildsIt",
                 -1,
-                () -> create(ut.whatBuilds().getFirst())
+                () -> from(ut.whatBuilds().getFirst())
         );
     }
 

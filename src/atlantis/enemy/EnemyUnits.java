@@ -2,28 +2,30 @@ package atlantis.enemy;
 
 import atlantis.information.AFoggedUnit;
 import atlantis.position.APosition;
+import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EnemyUnits {
 
-    protected static Map<AUnit, AFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
+    private static Map<Integer, AFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
     private static Cache<Object> cache = new Cache<>();
 
     // =========================================================
 
     public static void updateFoggedUnits() {
         for (AUnit enemy : Select.enemy().list()) {
-            EnemyInformation.updateEnemyUnitPosition(enemy);
+            EnemyInformation.updateEnemyUnitTypeAndPosition(enemy);
         }
 
-//        for (AFoggedUnit fogged : enemyUnitsDiscovered.values()) {
+//        for (AFoggedUnit fogged : enemyUnitsDiscovered()) {
 ////            System.err.println(fogged + " // " + fogged.isBuilding() + " // " + fogged.getPosition().isVisible() + " // " +fogged.isVisibleOnMap());
 //            if (
 //                    !fogged.isBuilding()
@@ -42,25 +44,44 @@ public class EnemyUnits {
         enemyUnitsDiscovered.clear();
     }
 
+    public static void addFoggedUnit(AUnit enemyUnit) {
+        AFoggedUnit foggedUnit = enemyUnit instanceof FakeUnit 
+                ? AFoggedUnit.fromFake((FakeUnit) enemyUnit) : AFoggedUnit.from(enemyUnit);
+        enemyUnitsDiscovered.put(enemyUnit.id(), foggedUnit);
+    }
+
+    public static void remove(AUnit enemyUnit) {
+        enemyUnitsDiscovered.remove(enemyUnit.id());
+    }
+
+    public static boolean isKnown(AUnit enemyUnit) {
+        return enemyUnitsDiscovered.containsKey(enemyUnit.id());
+    }
+
+    public static AFoggedUnit getFoggedUnit(AUnit enemyUnit) {
+        return enemyUnitsDiscovered.get(enemyUnit.id());
+    }
+
+    public static Collection<AFoggedUnit> unitsDiscovered() {
+        return enemyUnitsDiscovered.values();
+    }
+
+    public static Selection unitsDiscoveredSelection() {
+        return Select.from(unitsDiscovered(), "");
+    }
+
     // =========================================================
 
     public static Selection foggedUnits() {
         return Select.from(EnemyInformation.discoveredAndAliveUnits(), "foggedUnits");
     }
 
-    /**
-     *
-     */
-//    public static APosition getLastPositionOfEnemyUnit(AUnit enemyUnit) {
-//        return enemyUnitsDiscovered.containsKey(enemyUnit) ? enemyUnitsDiscovered.get(enemyUnit).position() : null;
-//    }
-
     public static APosition enemyBase() {
         return (APosition) cache.get(
                 "enemyBase",
                 30,
                 () -> {
-                    for (AFoggedUnit enemyUnit : enemyUnitsDiscovered.values()) {
+                    for (AFoggedUnit enemyUnit : unitsDiscovered()) {
                         if (enemyUnit.isBase()) {
                             return enemyUnit.position();
                         }
@@ -80,7 +101,7 @@ public class EnemyUnits {
                     if (ourMainBase != null) {
                         double minDist = 999999;
 
-                        for (AFoggedUnit enemy : enemyUnitsDiscovered.values()) {
+                        for (AFoggedUnit enemy : unitsDiscovered()) {
                             if (enemy.type().isBuilding() && enemy.position() != null) {
                                 double dist = ourMainBase.groundDist(enemy.position());
                                 if (dist < minDist) {
@@ -120,4 +141,5 @@ public class EnemyUnits {
                 }
         );
     }
+
 }

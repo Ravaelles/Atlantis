@@ -43,7 +43,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         // === Zerg ======================================================
 
         if (Enemy.zerg()) {
-            if (Missions.counter() <= 2) {
+            if (Missions.counter() <= 3) {
 //                return A.resourcesBalance() < 150 || Count.ourCombatUnits() <= 15;
                 return Count.ourCombatUnits() <= 3 && A.resourcesBalance() < -100;
             }

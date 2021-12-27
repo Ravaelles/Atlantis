@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class TerranMedic {
     
-    public static double MIN_DIST_TO_ASSIGNMENT = 1.75;
+    public static double MIN_DIST_TO_ASSIGNMENT = 0.75;
 
     /**
      * Maximum allowed distance for a medic to heal wounded units that are not their assignment.
@@ -73,7 +73,7 @@ public class TerranMedic {
         }
 
         AUnit nearestFriend = medic.friendsNearby().excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
-        AUnit nearestEnemy = meleeEnemies.inRadius(2, medic).nearestTo(medic);
+        AUnit nearestEnemy = meleeEnemies.inRadius(4, medic).nearestTo(medic);
         if (nearestEnemy == null || nearestFriend == null) {
             return false;
         }

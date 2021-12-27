@@ -10,13 +10,8 @@ import java.util.TreeMap;
 
 /**
  * Stores information about units in order to retrieve them when they are out of sight
- *
- * @author Anderson
- *
  */
-//public class AFoggedUnit implements HasPosition {
 public class AFoggedUnit extends AUnit {
-//public class AFoggedUnit implements UnitInterface, HasPosition, Comparable<AUnit> {
 
     protected final static TreeMap<Integer, AFoggedUnit> all = new TreeMap<>();
 
@@ -50,7 +45,20 @@ public class AFoggedUnit extends AUnit {
         all.put(unit.id(), this);
     }
 
-    protected AFoggedUnit(FakeUnit unit) {
+    // === Fake units - used for tests =========================
+
+    private AFoggedUnit() {
+    }
+
+    public static AFoggedUnit fromFake(FakeUnit unit) {
+        AFoggedUnit fakeFoggedUnit = new AFoggedUnit();
+        fakeFoggedUnit._id = unit.id();
+        fakeFoggedUnit.aUnit = unit;
+        fakeFoggedUnit.update(unit);
+
+        all.put(unit.id(), fakeFoggedUnit);
+
+        return fakeFoggedUnit;
     }
 
     // =========================================================
@@ -58,13 +66,6 @@ public class AFoggedUnit extends AUnit {
     public static void clearCache() {
         all.clear();
     }
-
-    /**
-     * Updates last known position of this unit.
-     */
-//    public void updatePosition(APosition position) {
-//        this._position = new APosition(position);
-//    }
 
     @Override
     public APosition position() {
@@ -166,8 +167,12 @@ public class AFoggedUnit extends AUnit {
     }
 
     protected void updateType(AUnit unit) {
-        if (_lastType == null || (unit.type() != null && !_lastType.equals(unit.type()))) {
-            _lastType = aUnit.type();
+        if (_lastType == null || (unit.type() != null && !_lastType.equals(unit.bwapiType()))) {
+//            System.err.println("UPDATING TYPE, current = " + _lastType
+//                             + ", \n           foggedUnit = " + this
+//                             + ", \n           REAL = " + unit.bwapiType().name());
+            _lastType = AUnitType.from(unit.bwapiType());
+//            System.err.println("NOW TYPE = " + _lastType + " // " + type());
         }
     }
 

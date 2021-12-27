@@ -59,8 +59,8 @@ public class Requirements {
             return Have.machineShop();
         }
 
-        AUnitType required = AUnitType.create(tech.requiredUnit());
-        if (required != null && Count.ofType(AUnitType.create(tech.requiredUnit())) == 0) {
+        AUnitType required = AUnitType.from(tech.requiredUnit());
+        if (required != null && Count.ofType(AUnitType.from(tech.requiredUnit())) == 0) {
             return false;
         }
         return true;
@@ -73,7 +73,7 @@ public class Requirements {
             }
         }
 
-        AUnitType required = AUnitType.create(upgrade.whatsRequired());
+        AUnitType required = AUnitType.from(upgrade.whatsRequired());
         if (required != null && Count.ofType(required) == 0) {
             return false;
         }

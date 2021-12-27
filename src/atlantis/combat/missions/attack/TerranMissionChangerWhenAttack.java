@@ -36,7 +36,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
             return false;
         }
 
-        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.main()).atLeast(3)) {
+        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.main()).atLeast(5)) {
             return true;
         }
 

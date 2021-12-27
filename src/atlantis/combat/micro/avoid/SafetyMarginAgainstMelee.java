@@ -11,7 +11,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
     public static double INFANTRY_BASE_IF_MEDIC = 1.60;
     public static int INFANTRY_WOUND_IF_MEDIC = 19;
-    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.55;
+    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.65;
     public static int INFANTRY_WOUND_IF_NO_MEDIC = 60;
 //    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
 //    public static int INFANTRY_WOUND_IF_MEDIC = 20;

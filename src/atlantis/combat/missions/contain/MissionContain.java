@@ -49,24 +49,28 @@ public class MissionContain extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-//        APosition focusPoint = focusPoint();
+        AFocusPoint focusPoint = focusPoint();
 
-        if (unit.isStimmed()) {
-            return true;
-        }
-
-        if (enemy.hasWeaponRangeToAttack(unit, 1.5) || unit.hasWeaponRangeToAttack(enemy, 1.5)) {
+        if (enemy.hasWeaponRangeToAttack(unit, 1.1) || unit.hasWeaponRangeToAttack(enemy, 1.1)) {
 //        if (enemy.distTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
             return true;
         }
 
         // Attack enemies near squad center
-        if (enemy.distTo(unit.squad().median()) <= 8) {
+        if (enemy.distTo(unit.squad().median()) <= 6) {
             return true;
         }
 
         // Allow to defend bases
         if (enemyIsNearBase(enemy)) {
+            return true;
+        }
+
+        if (unit.distTo(enemy) > unit.distTo(focusPoint) + 1.2) {
+            return false;
+        }
+
+        if (unit.isStimmed()) {
             return true;
         }
 

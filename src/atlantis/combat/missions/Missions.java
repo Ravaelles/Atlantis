@@ -107,9 +107,17 @@ public class Missions {
             return;
         }
 
-        MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
-        lastMissionChanged = A.now();
         currentGlobalMission = mission;
+        lastMissionChanged = A.now();
+
+        if (A.now() > 50) {
+//            if (mission.isMissionDefend()) {
+//                throw new RuntimeException("DEF?!?");
+//            }
+
+            System.err.println("CHANGED MISSION TO: " + mission.name());
+            MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
+        }
     }
 
     public static int lastMissionChangedAgo() {

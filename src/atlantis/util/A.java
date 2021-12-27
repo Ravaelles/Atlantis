@@ -146,7 +146,7 @@ public class A {
      * @return true if given random event occured
      */
     public static boolean chance(double percentChance) {
-        return random.nextDouble() <= (percentChance / 100);
+        return random.nextDouble() <= (percentChance / 100.0);
     }
 
     /**

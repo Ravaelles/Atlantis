@@ -50,7 +50,7 @@ public abstract class MoveToFocusPoint {
             if (distUnitToFromSide > 2) {
                 return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "TooClose" + dist);
             }
-            return unit.moveAwayFrom(focusPoint, 0.5, "TooClose" + dist);
+            return unit.moveAwayFrom(focusPoint, 0.3, "TooClose" + dist);
         }
 
         return false;

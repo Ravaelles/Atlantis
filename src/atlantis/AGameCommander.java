@@ -8,6 +8,7 @@ import atlantis.debug.AAdvancedPainter;
 import atlantis.production.ABuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
+import atlantis.util.A;
 import atlantis.util.CodeProfiler;
 import atlantis.workers.AWorkerCommander;
 
@@ -17,11 +18,11 @@ import atlantis.workers.AWorkerCommander;
 public class AGameCommander {
 
     /**
-     * Executed every time when game has new frame. It represents minimal passage of game-time (one action
-     * frame).
+     * Executed every time when game has new frame.
+     * It represents minimal passage of game-time (one game frame).
      */
     public void update() {
-//        System.out.println("Frame number: " + AGame.getTimeFrames());
+//        System.out.println("AGameCommander Frame = " + A.now());
 
         // === Execute paint methods ========================================
         

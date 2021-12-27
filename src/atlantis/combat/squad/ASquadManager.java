@@ -33,7 +33,7 @@ public class ASquadManager {
     // Beta
 
     private static boolean shouldHaveBeta() {
-        return Count.ourCombatUnits() >= 18 && Have.main();
+        return Count.ourCombatUnits() >= 24 && Have.main();
     }
 
     private static void handleReinforcements(Squad squad) {

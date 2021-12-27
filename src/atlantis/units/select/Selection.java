@@ -812,7 +812,11 @@ public class Selection {
     }
 
     public void print() {
-        System.out.println("=== " + currentCachePath + " (" + size() + ") ===");
+        print(null);
+    }
+
+    public void print(String message) {
+        System.out.println("=== " + (message != null ? message : currentCachePath) + " (" + size() + ") ===");
         for (AUnit unit : data) {
             System.out.println(unit);
 //            System.out.println(" - " + unit.hasNoWeaponAtAll());

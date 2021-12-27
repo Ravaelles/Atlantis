@@ -5,14 +5,14 @@ import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitAction;
-import bwapi.CommandType;
 import bwapi.TechType;
+import bwapi.UnitType;
 
 public class FakeUnit extends AUnit {
 
     public static int firstFreeId = 1;
     public int id;
-    public AUnitType type;
+    public AUnitType rawType;
     public APosition position;
     public boolean enemy = false;
     public boolean neutral = false;
@@ -30,7 +30,7 @@ public class FakeUnit extends AUnit {
     public FakeUnit(AUnitType type, int tx, int ty) {
         super();
         this.id = firstFreeId++;
-        this.type = type;
+        this.rawType = type;
         this._lastType = type;
         this.position = APosition.create(tx, ty);
     }
@@ -72,6 +72,11 @@ public class FakeUnit extends AUnit {
     @Override
     public int y() {
         return position.y;
+    }
+
+    @Override
+    public UnitType bwapiType() {
+        return rawType.ut();
     }
 
     @Override
@@ -149,6 +154,16 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public boolean isAttackFrame() {
+        return false;
+    }
+
+    @Override
+    public boolean isStartingAttack() {
+        return false;
+    }
+
+    @Override
     public boolean isMoving() {
         return lastCommand.equals("Move");
     }
@@ -188,6 +203,11 @@ public class FakeUnit extends AUnit {
     }
 
     // =========================================================
+
+    @Override
+    protected void cacheType() {
+        _lastType = rawType;
+    }
 
     @Override
     public double distTo(AUnit otherUnit) {
@@ -296,4 +316,7 @@ public class FakeUnit extends AUnit {
         return this;
     }
 
+    public void changeRawUnitType(AUnitType newType) {
+        rawType = newType;
+    }
 }

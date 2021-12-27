@@ -1,14 +1,17 @@
 package atlantis.tests.unit;
 
+import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
+import atlantis.tests.acceptance.AbstractTestFakingGame;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 import bwapi.Game;
 import org.junit.Before;
 import org.mockito.MockedStatic;
@@ -22,11 +25,16 @@ import java.util.Arrays;
 
 public class AbstractTestWithUnits extends UnitTestHelper {
 
+//    protected int currentFrames = 1;
+
+    // =========================================================
+
     @Before
     public void before() {
-        useFakeTime(0);
+        if (!(this instanceof AbstractTestFakingGame)) {
+            useFakeTime(1);
+        }
         APainter.disablePainting();
-
         Select.clearCache();
         BaseSelect.clearCache();
         FakeFoggedUnit.clearCache();
@@ -35,18 +43,16 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         AAvoidUnits.clearCache();
     }
 
+    // =========================================================
+
     protected void useFakeTime(int framesNow) {
         Game game = Atlantis.game() == null ? newGameMock(framesNow) : Atlantis.game();
 
         when(game.getFrameCount()).thenReturn(framesNow);
 
-        Atlantis.getInstance().setGame(game);
-
-//        try (MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class)) {
-//            aGame.when(AGame::now).thenReturn(framesNow);
-//
-//            runnable.run();
-//        }
+        if (Atlantis.game() == null) {
+            Atlantis.getInstance().setGame(game);
+        }
     }
 
     protected void usingFakeOurs(Runnable runnable) {

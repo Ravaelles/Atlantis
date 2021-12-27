@@ -63,9 +63,9 @@ public abstract class AStrategyResponse {
         }
 
         if (enemyStrategy.isAirUnits()) {
-            if (!Enemy.protoss()) {
-                Missions.setGlobalMissionDefend();
-            }
+//            if (!Enemy.protoss()) {
+//                Missions.setGlobalMissionDefend();
+//            }
 
             handleAirUnitsDefence();
         }

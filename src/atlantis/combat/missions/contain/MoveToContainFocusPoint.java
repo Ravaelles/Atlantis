@@ -7,7 +7,7 @@ import atlantis.units.select.Select;
 
 public class MoveToContainFocusPoint extends MoveToFocusPoint {
 
-    protected static final double MARGIN = 0.6;
+//    protected static final double MARGIN = 0.6;
 
     public static boolean move(AUnit unit, AFocusPoint focusPoint) {
         MoveToContainFocusPoint.unit = unit;

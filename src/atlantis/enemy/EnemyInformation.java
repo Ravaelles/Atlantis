@@ -11,7 +11,9 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 import atlantis.util.Cache;
+import atlantis.util.We;
 
 import java.util.Collection;
 
@@ -58,7 +60,7 @@ public class EnemyInformation {
                 "hasDiscoveredAnyBuilding",
                 50,
                 () -> {
-                    for (AUnit enemyUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
+                    for (AUnit enemyUnit : EnemyUnits.unitsDiscovered()) {
                         if (enemyUnit.isBuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
                             return true;
                         }
@@ -76,7 +78,7 @@ public class EnemyInformation {
                 "hasDiscoveredAnyCombatUnit",
                 30,
                 () -> {
-                    for (AUnit enemyUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
+                    for (AUnit enemyUnit : EnemyUnits.unitsDiscovered()) {
                         if (enemyUnit.isCombatUnit() && !UnitsArchive.isDestroyed(enemyUnit)) {
                             return true;
                         }
@@ -95,14 +97,14 @@ public class EnemyInformation {
     }
 
     public static Collection<AFoggedUnit> discoveredAndAliveUnits() {
-        return EnemyUnits.enemyUnitsDiscovered.values();
+        return EnemyUnits.unitsDiscovered();
     }
 
     /**
      * Saves information about enemy unit that we see for the first time.
      */
     public static void weDiscoveredEnemyUnit(AUnit enemyUnit) {
-        EnemyUnits.enemyUnitsDiscovered.put(enemyUnit, AFoggedUnit.from(enemyUnit));
+        EnemyUnits.addFoggedUnit(enemyUnit);
 
         EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
     }
@@ -111,29 +113,32 @@ public class EnemyInformation {
      * Saves information about given unit being destroyed, so counting units works properly.
      */
     public static void removeDiscoveredUnit(AUnit enemyUnit) {
-        EnemyUnits.enemyUnitsDiscovered.remove(enemyUnit);
+        EnemyUnits.remove(enemyUnit);
     }
 
     /**
      * Forgets and refreshes info about given unit
      */
     public static void refreshEnemyUnit(AUnit enemyUnit) {
-        EnemyUnits.enemyUnitsDiscovered.remove(enemyUnit);
+        EnemyUnits.remove(enemyUnit);
         weDiscoveredEnemyUnit(enemyUnit);
     }
 
     /**
      * Updates last known position of the enemy unit.
      */
-    public static void updateEnemyUnitPosition(AUnit enemyUnit) {
-        if (!enemyUnit.type().isGasBuildingOrGeyser()) {
-            return;
-        }
+    public static void updateEnemyUnitTypeAndPosition(AUnit enemyUnit) {
+//        if (enemyUnit.type().isGasBuildingOrGeyser()) {
+//            return;
+//        }
 
-        if (EnemyUnits.enemyUnitsDiscovered.containsKey(enemyUnit)) {
-            EnemyUnits.enemyUnitsDiscovered.get(enemyUnit).update(enemyUnit);
+        AFoggedUnit foggedUnit = EnemyUnits.getFoggedUnit(enemyUnit);
+        if (foggedUnit != null) {
+            foggedUnit.update(enemyUnit);
         }
     }
+
+    // =========================================================
 
     /**
      * Returns number of discovered and alive enemy units of given type. Some of them (maybe even all of them)
@@ -141,7 +146,7 @@ public class EnemyInformation {
      */
     public static int countEnemyKnownUnitsOfType(AUnitType type) {
         int total = 0;
-        for (AUnit enemyUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
+        for (AUnit enemyUnit : EnemyUnits.unitsDiscovered()) {
             if (enemyUnit.is(type)) {
                 total++;
             }
@@ -150,7 +155,7 @@ public class EnemyInformation {
     }
 
     public static void printEnemyFoggedUnits() {
-        Collection<AFoggedUnit> foggedUnits = EnemyUnits.enemyUnitsDiscovered.values();
+        Collection<AFoggedUnit> foggedUnits = EnemyUnits.unitsDiscovered();
         if (!foggedUnits.isEmpty()) {
             System.out.println("--- Enemy fogged units (" + foggedUnits.size() + ") ---");
             for (AUnit fogged : foggedUnits) {
@@ -199,9 +204,18 @@ public class EnemyInformation {
                 "hasDefensiveLandBuilding",
                 30,
                 () -> EnemyUnits.foggedUnits()
-                        .combatBuildings(true)
+                        .combatBuildings(false)
                         .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony)
                         .atLeast(1)
         );
     }
+
+    public static boolean isProxyBuilding(AFoggedUnit enemyBuilding) {
+        if (A.seconds() >= 400 || !We.haveBase()) {
+            return false;
+        }
+
+        return Select.main().distToLessThan(enemyBuilding, 20);
+    }
+
 }

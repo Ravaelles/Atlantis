@@ -3,12 +3,17 @@ package atlantis.interrupt;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.Enemy;
 import bwapi.Color;
 
 public class DontDisturbInterrupt {
 
     public static boolean dontInterruptImportantActions(AUnit unit) {
-        if (true) return false;
+//        if (true) return false;
+
+        if (unit.hp() <= (Enemy.protoss() ? 18 : 11)) {
+            return false;
+        }
 
         // Allow to use tech
         if (unit.lastActionLessThanAgo(3, UnitActions.USING_TECH)) {

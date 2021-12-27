@@ -93,8 +93,8 @@ public class SafetyMargin {
         return (defender.woundPercent() * (applyExtraModifier ? 2 : 1)) / 32.0;
     }
 
-    protected static double transportBonus(AUnit defender) {
-        return defender.type().isTransport() ? 4 : 0;
+    protected static double specialAirUnitBonus(AUnit defender) {
+        return defender.type().isTransport() ? 4 : (defender.is(AUnitType.Terran_Science_Vessel) ? 3 : 0);
     }
 
     protected static double quicknessBonus(AUnit defender, AUnit attacker) {

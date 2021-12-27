@@ -114,21 +114,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return unit;
     }
 
+    // =========================================================
     // Only for tests
     protected AUnit() { }
     protected AUnit(FakeUnit unit) { }
+    // =========================================================
 
     protected AUnit(Unit u) {
-        this(u, false);
-    }
-
-    protected AUnit(Unit u, boolean allowNull) {
-        if (u == null && !allowNull) {
-            throw new RuntimeException("AUnit constructor: unit is null");
-        }
-
         this.u = u;
-//        this.innerID = firstFreeID++;
 
         // Cached type helpers
         refreshType();
@@ -158,38 +151,25 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public AUnitType type() {
         if (_lastType == null) {
-            _lastType = AUnitType.create(u.getType());
+            cacheType();
         }
 
         return _lastType;
+    }
 
-//        return (AUnitType) cache.get(
-//                "type",
-//                isOur() ? -1 : 3,
-//                () -> {
-//                    AUnitType type = AUnitType.create(u.getType());
-//                    if (type.isUnknown()) {
-//                        if (this.isOur()) {
-//                            System.err.println("Our unit (" + u.getType() + ") returned Unknown type");
-//                        }
-//                        // This is expected - invisible units return Unknown type
-//                        else {
-////                            System.err.println("Enemy unit type is Unknown...");
-////                            System.err.println(u.getType());
-////                            System.err.println(u.getHitPoints());
-//                        }
-//                    }
-////                    System.out.println(this.u + " // " + type.ut().name());
-//                    return type;
-//                }
-//        );
+    public UnitType bwapiType() {
+        return u.getType();
     }
 
     public void refreshType() {
-        _lastType = null;
         cache.clear();
         cacheBoolean.clear();
         cacheInt.clear();
+        cacheType();
+    }
+
+    protected void cacheType() {
+        _lastType = AUnitType.from(u.getType());
     }
 
     @Override
@@ -1194,7 +1174,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnitType buildType() {
-        return u.getBuildType() != null ? AUnitType.create(u.getBuildType()) : null;
+        return u.getBuildType() != null ? AUnitType.from(u.getBuildType()) : null;
     }
 
     public boolean isVulture() {
@@ -1229,8 +1209,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isMoving();
     }
 
+    protected boolean isAttacking() {
+        return u.isAttacking();
+    }
+
     public boolean isAttackingOrMovingToAttack() {
-        return u.isAttacking() || (
+        return isAttacking() || (
             getUnitAction() != null && getUnitAction().isAttacking() && target() != null && target().isAlive()
         );
     }
@@ -1961,6 +1945,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                         .inRadius(2, this)
                         .havingEnergy(15)
                         .atLeast(1)
+        );
+    }
+
+    public boolean isOverlord() {
+        return cacheBoolean.get(
+                "isOverlord",
+                -1,
+                () -> is(AUnitType.Zerg_Overlord)
         );
     }
 }

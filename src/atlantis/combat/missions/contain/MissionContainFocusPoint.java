@@ -6,9 +6,12 @@ import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.map.AChoke;
+import atlantis.map.AMap;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
+import atlantis.strategy.response.AStrategyResponse;
+import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 import atlantis.util.We;
@@ -23,16 +26,33 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 "focusPoint",
                 30,
                 () -> {
-                    if (We.terran()) {
+                    if (We.terran() && We.haveBase()) {
 //                        if (!EnemyInformation.hasDefensiveLandBuilding()) {
                         AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-                        if (enemyBuilding != null && enemyBuilding.position() != null) {
+                        if (
+                                enemyBuilding != null
+                                        && enemyBuilding.position() != null
+                                        && EnemyInformation.isProxyBuilding(enemyBuilding)
+                        ) {
                             return new AFocusPoint(
                                     enemyBuilding,
                                     Select.main()
                             );
                         }
 //                        }
+                    }
+
+                    if (EnemyInformation.hasDefensiveLandBuilding() && We.haveBase()) {
+                        AUnit nearestCombatBuilding = EnemyUnits.foggedUnits().combatBuildings(false).nearestTo(Select.main());
+                        if (nearestCombatBuilding != null) {
+                            AChoke choke = Chokes.nearestChoke(nearestCombatBuilding);
+                            if (choke != null) {
+                                return new AFocusPoint(
+                                    choke.position(),
+                                    Select.main()
+                                );
+                            }
+                        }
                     }
 
                     AChoke mainChoke = Chokes.enemyMainChoke();

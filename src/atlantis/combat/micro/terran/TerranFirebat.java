@@ -12,16 +12,16 @@ public class TerranFirebat {
             return true;
         }
 
-        int medics = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).inRadius(2.2, unit).count();
+        int medics = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).inRadius(1.85, unit).count();
 
-        if (medics >= 2) {
+        if (medics >= 1) {
             return true;
         }
 
         int enemies = Select.enemyCombatUnits().canAttack(unit, 0).count();
 
-        int enemyModifier = Enemy.zerg() ? 15 : 30;
-        return unit.hpPercent(enemies * enemyModifier);
+        int enemyModifier = Enemy.zerg() ? 25 : 35;
+        return unit.hpPercent(Math.min(50, enemies * enemyModifier));
     }
 
 }

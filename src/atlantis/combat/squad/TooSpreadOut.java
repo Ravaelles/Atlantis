@@ -36,7 +36,7 @@ public class TooSpreadOut extends ASquadCohesionManager {
         double unitDistToFocus = unit.groundDist(focusPoint);
         double centerDistToFocus = squadCenter.groundDist(focusPoint);
 
-        return unitDistToFocus - centerDistToFocus <= -2.8;
+        return unitDistToFocus - centerDistToFocus <= -5.8;
     }
 
     // =========================================================

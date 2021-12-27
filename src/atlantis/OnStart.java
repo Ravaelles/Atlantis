@@ -75,13 +75,13 @@ public class OnStart {
         }
     }
 
-    private static void initializeAllStrategies() {
+    public static void initializeAllStrategies() {
         TerranStrategies.initialize();
         ProtossStrategies.initialize();
         ZergStrategies.initialize();
     }
 
-    private static void initStrategyAndBuildOrder() {
+    public static void initStrategyAndBuildOrder() {
         try {
             OurStrategyManager.initialize();
 

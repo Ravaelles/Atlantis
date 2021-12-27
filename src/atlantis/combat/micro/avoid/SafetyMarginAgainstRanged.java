@@ -50,7 +50,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return 3
                 + enemyWeaponRange(defender, attacker)
                 + woundedBonus(defender, attacker)
-                + transportBonus(defender)
+                + specialAirUnitBonus(defender)
                 + ourMovementBonus(defender)
                 + enemyMovementBonus(defender, attacker);
 //        return applyAirUnitTweaks(defender, attacker);

@@ -137,15 +137,15 @@ public interface AUnitOrders {
 //            return true;
 //        }
 
-//        if (unit().isSieged()) {
-//            if (unit().lastActionMoreThanAgo(30 * 12, UnitActions.SIEGE) && A.chance(2)) {
-//                unit().unsiege();
-//                unit().setLastUnitOrderNow();
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
+        if (unit().isSieged()) {
+            if (unit().lastActionMoreThanAgo(30 * 12, UnitActions.SIEGE) && A.chance(1.5)) {
+                unit().unsiege();
+                unit().setLastUnitOrderNow();
+                return true;
+            } else {
+                return false;
+            }
+        }
             
         // =========================================================
 

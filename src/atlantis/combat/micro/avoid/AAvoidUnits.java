@@ -59,6 +59,11 @@ public abstract class AAvoidUnits {
             return false;
         }
 
+        // Only ENEMY WORKERS
+        if (unit.hpPercent() >= 70 && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()) {
+            return false;
+        }
+
         else {
 
             // Standard case

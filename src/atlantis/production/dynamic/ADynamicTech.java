@@ -20,7 +20,7 @@ public class ADynamicTech {
             return false;
         }
 
-        AUnit building = Select.ourOfType(AUnitType.create(tech.whatResearches())).free().first();
+        AUnit building = Select.ourOfType(AUnitType.from(tech.whatResearches())).free().first();
         if (building != null) {
 //            System.out.println("### Research now " + tech.name());
             return building.research(tech);
@@ -38,7 +38,7 @@ public class ADynamicTech {
             return false;
         }
 
-        AUnit building = Select.ourOfType(AUnitType.create(upgrade.whatUpgrades())).free().first();
+        AUnit building = Select.ourOfType(AUnitType.from(upgrade.whatUpgrades())).free().first();
         if (building != null) {
             return building.upgrade(upgrade);
         }

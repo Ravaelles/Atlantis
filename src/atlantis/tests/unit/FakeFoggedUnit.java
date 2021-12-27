@@ -15,7 +15,7 @@ public class FakeFoggedUnit extends AFoggedUnit {
 
     // =========================================================
 
-    public static FakeFoggedUnit fromFake(FakeUnit unit) {
+    public static FakeFoggedUnit fromFakeFogged(FakeUnit unit) {
         _lastAUnit = unit;
 
         FakeFoggedUnit foggedUnit = (FakeFoggedUnit) all.get(unit.id());
