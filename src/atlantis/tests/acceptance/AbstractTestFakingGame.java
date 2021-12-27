@@ -37,8 +37,6 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected FakeUnit[] enemies;
     protected FakeUnit[] neutral;
 
-    // Static mock classes
-//    public MockedStatic<Game> game;
     public Game game;
     public MockedStatic<AGame> aGame;
     public MockedStatic<ATech> aTech;
@@ -46,10 +44,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
     // =========================================================
 
-    protected void createWorld(int gameLengthInFrames, Runnable onFrame) {
-//        initAtlantisConfig();
-//        initGameObject();
-//        initAGameObject();
+    protected void createWorld(int proceedUntilFrameReached, Runnable onFrame) {
 
         // === Units ======================================================
 
@@ -57,6 +52,8 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         ourFirst = our[0];
         enemies = generateEnemies();
         neutral = generateNeutral();
+
+        // === Mock static classes ========================================
 
         try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
@@ -70,9 +67,8 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
             mockOtherStaticClasses();
 
             int framesNow = 1;
-            while (framesNow <= gameLengthInFrames) {
+            while (framesNow <= proceedUntilFrameReached) {
                 useFakeTime(framesNow);
-//                System.err.println("game = " + game.getFrameCount() + " // " + Atlantis.game().getFrameCount() + " // " + A.now() + " // " + AGame.now());
 
                 onFrame.run();
 

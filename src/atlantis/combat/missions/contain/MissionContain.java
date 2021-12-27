@@ -7,6 +7,7 @@ import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.SquadScout;
 import atlantis.units.AUnit;
 import atlantis.util.A;
+import atlantis.util.Enemy;
 
 public class MissionContain extends Mission {
 
@@ -56,7 +57,7 @@ public class MissionContain extends Mission {
         }
 
         // Attack enemies near squad center
-        if (enemy.distTo(unit.squad().median()) <= 6.1) {
+        if (enemy.distTo(unit.squad().median()) <= (Enemy.zerg() ? 5.1 : 6.3)) {
             return true;
         }
 
@@ -65,7 +66,7 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        if (unit.distTo(enemy) > unit.distTo(focusPoint) + 1.2) {
+        if (unit.distTo(enemy) > unit.distTo(focusPoint) + 0.7) {
             return false;
         }
 

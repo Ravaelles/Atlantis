@@ -11,23 +11,9 @@ import bwapi.TechType;
 public class TerranComsatStation {
 
     public static boolean update(AUnit comsat) {
-//        comsat.setTooltip(
-//                "Lurkers:"
-//                + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count()
-//                + "/" + Select.enemies(AUnitType.Zerg_Lurker).count()
-//        );
-
-//        if (AGame.notNthGameFrame(5 + ((250 - comsat.energy()) / 3))) {
         if (AGame.notNthGameFrame(15)) {
             return false;
         }
-        System.err.println(
-                Select.enemy().effCloaked().ofType(AUnitType.Zerg_Lurker).count()
-                        + " // " +
-                Select.enemy().ofType(AUnitType.Zerg_Lurker).count()
-                        + " // " +
-                EnemyUnits.foggedUnits().ofType(AUnitType.Zerg_Lurker).count()
-        );
 
         if (comsat.energy() >= 50) {
             return scanLurkers(comsat)
@@ -42,13 +28,7 @@ public class TerranComsatStation {
     // Zerg
 
     private static boolean scanLurkers(AUnit comsat) {
-        if (Select.enemies(AUnitType.Zerg_Lurker).count() > 0) {
-            System.out.println("lurker count = " + Select.enemies(AUnitType.Zerg_Lurker).count());
-            System.out.println("lurker count EFFCloaked = " + Select.enemies(AUnitType.Zerg_Lurker).effCloaked().count());
-        }
-
         for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effCloaked().listUnits()) {
-//            System.out.println(lurker + " // " + lurker.effVisible() + " // " + lurker.isDetected() + " // " + lurker.hp());
             if (shouldScanThisLurker(lurker, comsat)) {
                 return scan(comsat, lurker);
             }
@@ -63,9 +43,6 @@ public class TerranComsatStation {
         }
 
         int minUnitsNearby = (comsat.energy(160) ? 3 : (comsat.energy(60) ? 4 : 6));
-//        System.out.println(comsat.energy() + " energy,  minUnitsNearby = " + minUnitsNearby + ", but there are " + Select.ourCombatUnits()
-//                .excludeTypes(AUnitType.Terran_Medic)
-//                .inRadius(12, lurker).count());
 
         if (comsat.energy(100) && Select.ourBuildingsIncludingUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
             System.err.println("Scan " + lurker + " because buildings are close");

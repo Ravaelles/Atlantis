@@ -36,9 +36,6 @@ public class OnUnitRenegade {
 
         // Neutral means Refinery / Extractor
         else if (unit.isNeutral()) {
-            Atlantis.ourNewUnit(unit);
-            System.out.println("NEW RENEGADE FOR US " + unit.name());
-            UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
         }
 
         // New unit for us e.g. some UMS maps give units

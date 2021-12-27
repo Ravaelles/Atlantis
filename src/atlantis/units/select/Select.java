@@ -55,7 +55,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
                     for (AUnit unit : ourUnits()) {
                         if (unit.isCompleted()) {
-                            data.add(unit);    //TODO: make it more efficient by just querying the cache of known units
+                            data.add(unit);
                         }
                     }
 

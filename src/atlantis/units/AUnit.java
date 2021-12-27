@@ -93,7 +93,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         AUnit unit;
         if (instances.containsKey(u.getID())) {
             unit = instances.get(u.getID());
-            if (unit != null && unit.isAlive()) {
+//            if (unit != null && unit.isAlive()) {
+            if (unit != null) {
                 return unit;
             }
 //            instances.remove(id());
@@ -105,13 +106,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public static AUnit getById(Unit u) {
-        AUnit unit = instances.get(u.getID());
-
-        if (unit == null) {
-            return createFrom(u);
-        }
-
-        return unit;
+        return createFrom(u);
     }
 
     // =========================================================

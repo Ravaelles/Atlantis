@@ -23,11 +23,12 @@ public class AExpansionManager {
         }
 
         if (
-                (
-                        (A.seconds() >= 400 && Count.ourCombatUnits() >= 25)
+                Count.includingPlanned(AtlantisConfig.BASE) <= 1
+                && (
+                        (AGame.canAfford(370, 0))
+                        || (A.seconds() >= 400 && Count.ourCombatUnits() >= 25)
                         || (A.seconds() >= 600 && Count.ourCombatUnits() >= 20)
                 )
-                && Count.includingPlanned(AtlantisConfig.BASE) <= 1
         ) {
             return true;
         }
