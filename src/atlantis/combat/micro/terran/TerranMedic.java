@@ -199,17 +199,21 @@ public class TerranMedic {
                 return medic.move(assignment.position(), UnitActions.MOVE, "Stick");
             }
             else if (dist <= MIN_DIST_TO_ASSIGNMENT) {
-                return medic.moveAwayFrom(assignment.position(), 0.18, "TooClose");
+                return medic.moveAwayFrom(assignment.position(), 0.3, "TooClose");
             }
-            else if (medic.isMoving()) {
-                return medic.holdPosition("Ok");
-            }
+//            else if (medic.isMoving()) {
+//                return medic.holdPosition("Ok");
+//            }
         }
         
         return false;
     }
 
     private static boolean healCriticallyWoundedUnits(AUnit medic) {
+        if (medic.energy() < 2) {
+            return false;
+        }
+
         AUnit nearestWoundedInfantry = Select.our()
                 .organic()
                 .criticallyWounded()
@@ -229,6 +233,10 @@ public class TerranMedic {
     }
 
     private static boolean healWoundedUnits(AUnit medic) {
+        if (medic.energy() < 2) {
+            return false;
+        }
+
         AUnit nearestWoundedInfantry = Select.our()
                 .organic()
                 .wounded()

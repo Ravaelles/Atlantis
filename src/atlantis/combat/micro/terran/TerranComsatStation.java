@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.AGame;
+import atlantis.enemy.EnemyUnits;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -20,7 +21,13 @@ public class TerranComsatStation {
         if (AGame.notNthGameFrame(15)) {
             return false;
         }
-//        System.out.println(Select.enemy().ofType(AUnitType.Protoss_Observer).count());
+        System.err.println(
+                Select.enemy().effCloaked().ofType(AUnitType.Zerg_Lurker).count()
+                        + " // " +
+                Select.enemy().ofType(AUnitType.Zerg_Lurker).count()
+                        + " // " +
+                EnemyUnits.foggedUnits().ofType(AUnitType.Zerg_Lurker).count()
+        );
 
         if (comsat.energy() >= 50) {
             return scanLurkers(comsat)

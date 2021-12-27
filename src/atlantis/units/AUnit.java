@@ -142,8 +142,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // =========================================================
 
-    public static void forgetUnitEntirely(Unit u) {
-        instances.remove(u.getID());
+    public static void forgetUnitEntirely(AUnit unit) {
+        instances.remove(unit.id());
     }
 
     /**

@@ -35,6 +35,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected FakeUnit[] our;
     protected FakeUnit ourFirst;
     protected FakeUnit[] enemies;
+    protected FakeUnit[] neutral;
 
     // Static mock classes
 //    public MockedStatic<Game> game;
@@ -55,10 +56,12 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         our = generateOur();
         ourFirst = our[0];
         enemies = generateEnemies();
+        neutral = generateNeutral();
 
         try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
+            baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
 
             initAtlantisConfig();
             initGameObject();
@@ -159,6 +162,10 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected abstract FakeUnit[] generateOur();
 
     protected abstract FakeUnit[] generateEnemies();
+
+    protected FakeUnit[] generateNeutral() {
+        return new FakeUnit[] { };
+    }
 
     // =========================================================
 

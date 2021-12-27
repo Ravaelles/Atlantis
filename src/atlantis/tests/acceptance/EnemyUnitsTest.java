@@ -2,11 +2,11 @@ package atlantis.tests.acceptance;
 
 import atlantis.AGameCommander;
 import atlantis.OnUnitMorph;
+import atlantis.OnUnitRenegade;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.util.A;
 import org.junit.Test;
 
@@ -21,6 +21,7 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
     private FakeUnit drone4;
     private FakeUnit drone5;
     private FakeUnit drone6;
+    private FakeUnit geyser;
     private FakeUnit lurkerEgg;
     private FakeUnit larva;
 
@@ -64,6 +65,8 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
         drone1.changeRawUnitType(AUnitType.Zerg_Creep_Colony);
         drone2.changeRawUnitType(AUnitType.Zerg_Sunken_Colony);
         drone3.changeRawUnitType(AUnitType.Zerg_Lurker);
+        geyser.changeRawUnitType(AUnitType.Zerg_Extractor);
+        geyser.setEnemy();
 
         // Behind FoW
         drone4.changeRawUnitType(AUnitType.Zerg_Creep_Colony);
@@ -73,12 +76,15 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
         OnUnitMorph.update(drone1);
         OnUnitMorph.update(drone2);
         OnUnitMorph.update(drone3);
+//        OnUnitMorph.update(geyser);
+        OnUnitRenegade.update(geyser);
     }
 
     private void thirdFrame() {
         assertEquals(AUnitType.Zerg_Creep_Colony, EnemyUnits.getFoggedUnit(drone1).type());
         assertEquals(AUnitType.Zerg_Sunken_Colony, EnemyUnits.getFoggedUnit(drone2).type());
         assertEquals(AUnitType.Zerg_Lurker, EnemyUnits.getFoggedUnit(drone3).type());
+        assertEquals(AUnitType.Zerg_Extractor, EnemyUnits.getFoggedUnit(geyser).type());
 
         assertNull(EnemyUnits.getFoggedUnit(drone4));
         assertNull(EnemyUnits.getFoggedUnit(drone5));
@@ -136,6 +142,12 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
                 lurkerEgg = fake(AUnitType.Zerg_Lurker_Egg),
                 larva = fake(AUnitType.Zerg_Larva)
         );
+    }
+
+    protected FakeUnit[] generateNeutral() {
+        return new FakeUnit[] {
+                geyser = fake(AUnitType.Resource_Vespene_Geyser)
+        };
     }
 
 }

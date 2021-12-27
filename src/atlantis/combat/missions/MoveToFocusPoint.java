@@ -47,11 +47,11 @@ public abstract class MoveToFocusPoint {
         if (distUnitToFocus <= (optimalDist - MARGIN)) {
             String dist = A.dist(distUnitToFocus);
 
-//            if (distUnitToFromSide > 2) {
-//                return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "TooClose" + dist);
-//            }
+            if (distUnitToFromSide > 3) {
+                return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "TooClose" + dist);
+            }
 
-            return unit.moveAwayFrom(focusPoint, 0.3, "TooCloze" + dist);
+            return unit.moveAwayFrom(focusPoint, 0.15, "TooCloze" + dist);
         }
 
         return false;

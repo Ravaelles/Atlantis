@@ -309,35 +309,15 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitRenegade(Unit u) {
         onUnitDestroy(u);
-        AUnit.forgetUnitEntirely(u);
         AUnit newUnit = AUnit.createFrom(u);
-        if (newUnit.type().isGasBuilding() || newUnit.type().isGeyser() || newUnit.isLarvaOrEgg()) {
-            return;
-        }
-
-        // New unit taken from us
-        if (u.getPlayer().equals(AGame.getPlayerUs())) {
-            ourNewUnit(newUnit);
-            System.out.println("NEW RENEGADE FOR US " + newUnit.name());
-            UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = newUnit;
-        }
-
-        // New unit for us e.g. some UMS maps give units
-        else {
-            if (newUnit.isOverlord()) {
-                return;
-            }
-
-            enemyNewUnit(newUnit);
-            System.out.println("NEW RENEGADE FOR ENEMY " + newUnit.name());
-        }
+        OnUnitRenegade.update(newUnit);
     }
 
-    private void enemyNewUnit(AUnit unit) {
+    public static void enemyNewUnit(AUnit unit) {
         EnemyInformation.weDiscoveredEnemyUnit(unit);
     }
 
-    private void ourNewUnit(AUnit unit) {
+    public static void ourNewUnit(AUnit unit) {
         ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
         NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
     }

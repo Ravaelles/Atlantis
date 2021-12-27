@@ -7,6 +7,10 @@ import atlantis.units.select.Selection;
 public class ShouldSpreadOut {
 
     public static boolean handleSpreadOut(AUnit unit) {
+        if (unit.mission() != null && unit.mission().isMissionAttack()) {
+            return false;
+        }
+
         if (unit.squad().size() <= 1 || unit.isMoving()) {
             return false;
         }
@@ -15,7 +19,7 @@ public class ShouldSpreadOut {
         AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
 
         if (nearestBuddy != null && nearestBuddy.distToLessThan(unit, 0.5)) {
-            return unit.moveAwayFrom(nearestBuddy, 0.5, "Spread out");
+            return unit.moveAwayFrom(nearestBuddy, 0.5, "SpreadOut");
         }
 
         return false;
