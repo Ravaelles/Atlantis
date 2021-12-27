@@ -66,7 +66,7 @@ public class TerranMedic {
     // =========================================================
 
     private static boolean bodyBlockMelee(AUnit medic) {
-        Selection meleeEnemies = medic.enemiesNearby().melee();
+        Selection meleeEnemies = medic.enemiesNearby().melee().inRadius(6, medic);
 //        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 3) {
         if (meleeEnemies.count() == 0) {
             return false;

@@ -21,7 +21,7 @@ public class AvoidCombatBuildingsFix {
         else if (distTo < 8.2) {
             // Do nothing
         }
-        else if (distTo < 8.8 && unit.isMoving() && !unit.isRunning()) {
+        else if (distTo < 8.8 && unit.isMoving() && !unit.isRunning() && unit.target() == null) {
             return unit.holdPosition("HoldHere");
         }
 

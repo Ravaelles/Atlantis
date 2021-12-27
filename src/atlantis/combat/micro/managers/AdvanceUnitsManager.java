@@ -135,7 +135,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             return 8;
         }
         else if (unit.isFirebat()) {
-            return 2.6;
+            return 1.9;
         }
 
         return 8;

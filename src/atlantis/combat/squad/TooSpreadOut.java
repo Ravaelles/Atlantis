@@ -15,6 +15,10 @@ public class TooSpreadOut extends ASquadCohesionManager {
             return false;
         }
 
+        if (unit.friendsNearby().inRadius(5, unit).atLeast(7)) {
+            return false;
+        }
+
         APosition squadCenter = squadCenter(unit);
         if (unit.hasPathTo(squadCenter)) {
 //            boolean tooFarFromCenter = unit.distTo(squadCenter) >= maxDistanceToSquadCenter(unit);

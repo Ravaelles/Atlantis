@@ -7,6 +7,8 @@ import atlantis.units.select.Select;
 
 public class MoveToContainFocusPoint extends MoveToFocusPoint {
 
+    private static final double BASE_DIST_TO_FOCUS_POINT = 5.5;
+
 //    protected static final double MARGIN = 0.6;
 
     public static boolean move(AUnit unit, AFocusPoint focusPoint) {
@@ -25,18 +27,27 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
     // =========================================================
 
     protected static double optimalDist() {
-        int letWorkersComeThroughBonus = Select.enemy().inRadius(5, unit).isEmpty()
-                && Select.ourWorkers().inRadius(6, unit).atLeast(1)
-                ? 4 : 0;
+        int workersComeThroughBonus = workersComeThroughBonus();
+
         double ourUnitsNearbyBonus = Select.our().inRadius(2, unit).count() / 20.0;
 
-        return 0.1
-                + (unit.isTank() ? 3 : 0)
-                + (unit.isMedic() ? -2.5 : 0)
-                + (unit.isMarine() ? 2 : 0)
-                + letWorkersComeThroughBonus
-                + (unit.isRanged() ? 3 : 0)
+        return BASE_DIST_TO_FOCUS_POINT
+                + (unit.isTank() ? 3.8 : 0)
+                + (unit.isMedic() ? -0.8 : 0)
+//                + (unit.isMarine() ? 2 : 0)
+                + workersComeThroughBonus
+//                + (unit.isMelee() ? 3 : 0)
                 + ourUnitsNearbyBonus;
+    }
+
+    private static int workersComeThroughBonus() {
+        if (unit.mission() != null && unit.mission().isMissionDefend()) {
+            return Select.enemy().inRadius(5, unit).isEmpty()
+                    && Select.ourWorkers().inRadius(6, unit).atLeast(1)
+                    ? 4 : 0;
+        }
+
+        return 0;
     }
 
 }

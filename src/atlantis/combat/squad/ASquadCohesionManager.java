@@ -36,7 +36,7 @@ public class ASquadCohesionManager {
                 // Only mission contain enforces unit coordination
                 (unit.mission() != null && unit.mission().isMissionContain())
 //                unit.mission() != null && (unit.mission().isMissionAttack() || unit.mission().isMissionDefend());
-                || unit.friendsNearby().atLeast(2);
+                || unit.friendsNearby().atMost(2);
     }
 
 //    private static boolean handleShouldStickCloser(AUnit unit) {

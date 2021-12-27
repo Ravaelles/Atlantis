@@ -13,6 +13,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.Cache;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 import java.util.Collection;
@@ -45,7 +46,10 @@ public class EnemyInformation {
                 AUnitType.Zerg_Overlord, AUnitType.Protoss_Observer
         ).nearestTo(Select.main());
         if (nearestEnemy != null) {
-            return Select.ourBuildings().inRadius(13, nearestEnemy).atLeast(1)
+            return Select.ourBuildings()
+                    .excludeTypes(AUnitType.Terran_Missile_Turret)
+                    .inRadius(Enemy.terran() ? 13 : 7, nearestEnemy)
+                    .atLeast(1)
                     ? nearestEnemy : null;
         }
 
@@ -128,9 +132,9 @@ public class EnemyInformation {
      * Updates last known position of the enemy unit.
      */
     public static void updateEnemyUnitTypeAndPosition(AUnit enemyUnit) {
-//        if (enemyUnit.type().isGasBuildingOrGeyser()) {
-//            return;
-//        }
+        if (enemyUnit.type().isGasBuildingOrGeyser()) {
+            return;
+        }
 
         AFoggedUnit foggedUnit = EnemyUnits.getFoggedUnit(enemyUnit);
         if (foggedUnit != null) {

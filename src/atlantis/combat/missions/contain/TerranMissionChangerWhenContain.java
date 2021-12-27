@@ -71,12 +71,16 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
     }
 
     protected static boolean shouldChangeMissionToAttack() {
-        if (A.seconds() >= 600 && (A.supplyUsed() >= 150 || Count.ourCombatUnits() >= 35)) {
+        if (Missions.counter() >= 6 && A.supplyUsed() <= 90) {
+            return false;
+        }
+
+        if (A.seconds() >= 600 && (A.supplyUsed() >= 195 || Count.ourCombatUnits() >= 40)) {
             return true;
         }
 
         if (Select.main() != null) {
-            if (Select.enemy().inRadius(14, Select.main()).atLeast(2)) {
+            if (Select.enemy().inRadius(14, Select.main()).atLeast(3)) {
                 return false;
             }
         }

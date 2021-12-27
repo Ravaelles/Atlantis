@@ -52,12 +52,11 @@ public class MissionContain extends Mission {
         AFocusPoint focusPoint = focusPoint();
 
         if (enemy.hasWeaponRangeToAttack(unit, 1.1) || unit.hasWeaponRangeToAttack(enemy, 1.1)) {
-//        if (enemy.distTo(unit) <= 6.1 || unit.hasWeaponRange(enemy, 0.8)) {
             return true;
         }
 
         // Attack enemies near squad center
-        if (enemy.distTo(unit.squad().median()) <= 6) {
+        if (enemy.distTo(unit.squad().median()) <= 6.1) {
             return true;
         }
 
