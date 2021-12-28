@@ -1954,4 +1954,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 () -> is(AUnitType.Zerg_Overlord)
         );
     }
+
+    public int meleeEnemiesNearby(double maxDistToEnemy) {
+        return cacheInt.get(
+                "meleeEnemiesNearby",
+                2,
+                () -> enemiesNearby().melee().inRadius(maxDistToEnemy, this).size()
+        );
+    }
 }
