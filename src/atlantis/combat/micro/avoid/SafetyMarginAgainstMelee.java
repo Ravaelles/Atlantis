@@ -124,7 +124,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             return defender.woundPercent() / 10;
         }
 
-        boolean applyExtraModifier = defender.isTank();
+        boolean applyExtraModifier = defender.isTank() || defender.isVulture();
 
         return (defender.woundPercent() * (applyExtraModifier ? 2 : 1)) / 32.0;
     }
