@@ -75,7 +75,6 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     private static double enemyMeleeUnitsNearbyBonusIfNoMedic(AUnit defender) {
         if (defender.enemiesNearby().melee().inRadius(2, defender).atLeast(2)) {
-            System.out.println(A.now() + ",    def = " + defender.hp() + " // " + defender.isRunning());
             return 2;
         }
 

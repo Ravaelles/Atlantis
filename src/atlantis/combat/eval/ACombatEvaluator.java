@@ -90,7 +90,6 @@ public class ACombatEvaluator {
 //                    }
 //                }
 
-                System.out.println("THIS = " + unit);
                 Units theseUnits = theseUnits(unit);
 
 //                theseUnits.print("THESE");
