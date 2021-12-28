@@ -69,12 +69,14 @@ public abstract class AFoggedUnit extends AUnit {
 //        }
 
 //        if (unit.isVisible()) {
-//            System.out.println("Update " + unit.name() + " to " + unit.getPosition());
         if (unit.x() > 0 && unit.y() > 0) {
             _position = new APosition(unit.x(), unit.y());
             cacheInt.set("lastPositionUpdated", -1, A.now());
         }
-//        }
+        
+        if (_position != null && _position.isVisible() && isAccessible()) {
+            _position = null;
+        }
     }
 
     protected void updateType(AUnit unit) {
@@ -83,7 +85,6 @@ public abstract class AFoggedUnit extends AUnit {
 //                             + ", \n           foggedUnit = " + this
 //                             + ", \n           REAL = " + unit.bwapiType().name());
             _lastType = AUnitType.from(unit.bwapiType());
-//            System.err.println("NOW TYPE = " + _lastType + " // " + type());
         }
     }
 

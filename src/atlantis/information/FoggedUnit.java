@@ -22,8 +22,6 @@ public class FoggedUnit extends AFoggedUnit {
     }
 
     protected FoggedUnit(AUnit unit) {
-//        super(unit.u());
-
         this._id = unit.id();
         this.aUnit = unit;
         this.update(unit);
@@ -39,6 +37,11 @@ public class FoggedUnit extends AFoggedUnit {
     }
 
     @Override
+    public int id() {
+        return _id;
+    }
+
+    @Override
     public int x() {
         return position().getX();
     }
@@ -47,6 +50,13 @@ public class FoggedUnit extends AFoggedUnit {
     public int y() {
         return position().getY();
     }
+
+    @Override
+    public boolean isDetected() {
+        return true;
+    }
+
+    // =========================================================
 
     @Override
     public String toString() {

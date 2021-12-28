@@ -6,6 +6,7 @@ import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
 import atlantis.information.FoggedUnit;
 import atlantis.map.AChoke;
+import atlantis.map.AMap;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
@@ -29,8 +30,16 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 if (A.supplyUsed() <= 1 || !Have.main()) {
                     AUnit enemy = Select.enemy().first();
                     AUnit our = Select.our().first();
-                    if (enemy == null || our == null) {
+
+                    if (our == null) {
                         return null;
+                    }
+
+                    if (enemy == null) {
+                        return new AFocusPoint(
+                                AMap.randomInvisiblePosition(our.position()),
+                                our
+                        );
                     }
 
                     return new AFocusPoint(

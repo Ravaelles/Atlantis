@@ -45,7 +45,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // VULTURE
         else if (defender.isVulture()) {
-            criticalDist = 3.6;
+            criticalDist = 2.8
+                    + woundedAgainstMeleeBonus(defender, attacker)
+                    + ourMovementBonus(defender)
+                    + enemyMovementBonus(defender, attacker);
         }
 
         // Standard unit
@@ -117,11 +120,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             }
         }
 
-        if (defender.isAir()) {
+        else if (defender.isAir()) {
             return defender.woundPercent() / 10;
         }
 
         boolean applyExtraModifier = defender.isTank();
+
         return (defender.woundPercent() * (applyExtraModifier ? 2 : 1)) / 32.0;
     }
 

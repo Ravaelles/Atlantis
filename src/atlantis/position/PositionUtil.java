@@ -1,5 +1,6 @@
 package atlantis.position;
 
+import atlantis.information.FoggedUnit;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.ARegionBoundary;
@@ -37,6 +38,9 @@ public class PositionUtil {
         else if (object1 instanceof FakeFoggedUnit) {
             fromPosition = ((FakeFoggedUnit) object1).position();
         }
+        else if (object1 instanceof FoggedUnit) {
+            fromPosition = ((FoggedUnit) object1).position();
+        }
         else if (object1 instanceof AUnit) {
             fromUnit = ((AUnit) object1).u();
         }
@@ -73,6 +77,9 @@ public class PositionUtil {
         }
         else if (object2 instanceof FakeFoggedUnit) {
             toPosition = ((FakeFoggedUnit) object2).position();
+        }
+        else if (object2 instanceof FoggedUnit) {
+            toPosition = ((FoggedUnit) object2).position();
         }
         else if (object2 instanceof AUnit) {
             toUnit = ((AUnit) object2).u();

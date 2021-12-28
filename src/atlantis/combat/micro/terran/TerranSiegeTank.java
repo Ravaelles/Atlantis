@@ -6,6 +6,7 @@ import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.util.A;
@@ -82,27 +83,27 @@ public class TerranSiegeTank {
     }
 
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
-        for (AUnit enemy : Select.enemyFoggedUnits().effCloaked().groundUnits().inRadius(12, tank).list()) {
-            if (enemy.distTo(tank) >= tank.groundWeaponMinRange()) {
+        for (AUnit lurker : Select.enemyFoggedUnits().ofType(AUnitType.Zerg_Lurker).groundUnits().inRadius(12, tank).list()) {
+            if (lurker.distTo(tank) >= tank.groundWeaponMinRange()) {
                 if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
                     tank.setTooltip("SMASH invisible!");
-                    tank.attackPosition(enemy.position());
+                    tank.attackPosition(lurker.position());
                 }
                 tank.setTooltip("SmashInvisible");
                 return true;
             }
         }
 
-        for (AUnit enemy : Select.enemy().effCloaked().groundUnits().inRadius(12, tank).list()) {
-            if (enemy.distTo(tank) >= tank.groundWeaponMinRange()) {
-                if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
-                    tank.setTooltip("SMASH invisible!");
-                    tank.attackPosition(enemy.position());
-                }
-                tank.setTooltip("SmashInvisible");
-                return true;
-            }
-        }
+//        for (AUnit enemy : Select.enemy().effCloaked().groundUnits().inRadius(12, tank).list()) {
+//            if (enemy.distTo(tank) >= tank.groundWeaponMinRange()) {
+//                if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
+//                    tank.setTooltip("SMASH invisible!");
+//                    tank.attackPosition(enemy.position());
+//                }
+//                tank.setTooltip("SmashInvisible");
+//                return true;
+//            }
+//        }
 
         return false;
     }

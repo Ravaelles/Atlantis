@@ -35,11 +35,11 @@ public abstract class AAvoidUnits {
             return false;
         }
 
-//        System.out.println(unit.idWithHash() + " (" + unit.hp() + "hp) has " + enemiesDangerouslyClose.size() + " enemies around");
         AUnit first = enemiesDangerouslyClose.first();
         int firstValue = (int) enemiesDangerouslyClose.valueFor(first);
 
-        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+//        System.out.println(unit.idWithHash() + " (" + unit.hp() + "hp) has " + enemiesDangerouslyClose.size() + " enemies around");
+        APainter.paintLine(unit, unit.targetPosition(), Color.Orange);
 //        for (AUnit enemy : enemiesDangerouslyClose.list()) {
 //            APainter.paintLine(enemy, unit, Color.Orange);
 //            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
@@ -65,7 +65,6 @@ public abstract class AAvoidUnits {
         }
 
         else {
-
             // Standard case
             if (WantsToAvoid.units(unit, enemiesDangerouslyClose)) {
                 return true;
@@ -104,11 +103,12 @@ public abstract class AAvoidUnits {
                     enemies.addUnitWithValue(enemy, SafetyMargin.calculate(unit, enemy));
                 }
 
+//                System.out.println(unit + " enemies near = " + enemyUnitsToPotentiallyAvoid(unit).size());
+
                 if (enemies.isEmpty()) {
                     return new Units();
                 }
 
-//                System.out.println(unit + " enemies near = " + enemyUnitsToPotentiallyAvoid(unit).size());
 //                for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
 //                    System.out.println(enemy + " which is " + A.dist(enemy, unit) + " away from " + unit);
 //                }

@@ -13,9 +13,9 @@ public class DontDisturbInterrupt {
     public static boolean dontInterruptImportantActions(AUnit unit) {
 //        if (true) return false;
 
-        if (unit.hp() >= 38) {
-            return true;
-        }
+//        if (unit.hp() >= 38) {
+//            return true;
+//        }
 
 //        System.out.println("unit.meleeEnemiesNearby(1.9) = " + unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE));
         int enemiesMultiplier = unit.medicNearby() ? 1 : unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE);
@@ -34,7 +34,7 @@ public class DontDisturbInterrupt {
         // Don't INTERRUPT shooting units
 //        if (unit.hp() >= 17 && DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
         if (
-                (unit.hp() >= 17 || unit.lastUnderAttackMoreThanAgo(10))
+                (unit.hp() >= 21 || unit.lastUnderAttackMoreThanAgo(10))
                 && DontInterruptStartedAttacks.shouldNotInterrupt(unit)
         ) {
             unit.setTooltip("Shoot");

@@ -1165,10 +1165,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit buildUnit() {
+        if (u == null) {
+            return null;
+        }
         return u.getBuildUnit() != null ? AUnit.getById(u.getBuildUnit()) : null;
     }
 
     public AUnitType buildType() {
+        if (u == null) {
+            return null;
+        }
         return u.getBuildType() != null ? AUnitType.from(u.getBuildType()) : null;
     }
 

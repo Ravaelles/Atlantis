@@ -27,6 +27,8 @@ public class ACombatUnitManager {
             return true;
         }
 
+        if (debug) System.out.println("A " + unit.nameWithId());
+
         // =========================================================
         // === SPECIAL units =======================================
         // =========================================================
@@ -37,6 +39,8 @@ public class ACombatUnitManager {
             return true;
         }
 
+        if (debug) System.out.println("B " + unit.nameWithId());
+
         // =========================================================
         // === TOP priority ========================================
         // =========================================================
@@ -44,6 +48,8 @@ public class ACombatUnitManager {
         if (handledTopPriority(unit)) {
             return true;
         }
+
+        if (debug) System.out.println("C " + unit.nameWithId());
 
         // =========================================================
         // === SPECIAL units =======================================
@@ -55,17 +61,17 @@ public class ACombatUnitManager {
             return true;
         }
 
+        if (debug) System.out.println("D " + unit.nameWithId());
+
         // =========================================================
         // === MEDIUM priority - TACTICAL level ====================
         // =========================================================
-
-        if (debug) System.out.println("A");
 
         if (handledMediumPriority(unit)) {
             return true;
         }
 
-        if (debug) System.out.println("B");
+        if (debug) System.out.println("E " + unit.nameWithId());
 
         // =========================================================
         // === LOW priority - STRATEGY level =======================
@@ -92,9 +98,9 @@ public class ACombatUnitManager {
 //            GameSpeed.oneTimeSlowdownUsed = true;
 //        }
 
-        if (unit.targetPosition() != null) {
-            APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
-        }
+//        if (unit.targetPosition() != null) {
+//            APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+//        }
 
         if (unit.isNotRealUnit()) {
             System.err.println("Not real unit: " + unit.name());
@@ -144,7 +150,8 @@ public class ACombatUnitManager {
 //        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
         if (unit.isRunning()) {
 //            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
-            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
+//            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
+            return AAvoidUnits.avoidEnemiesIfNeeded(unit);
         }
 
         // Useful for testing and debugging of shooting/running
