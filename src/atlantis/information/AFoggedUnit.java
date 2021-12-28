@@ -20,6 +20,7 @@ public abstract class AFoggedUnit extends AUnit {
     protected int _id;
     protected APosition _position;
     protected AUnitType _lastType;
+    protected boolean _isCompleted;
     protected Cache<Integer> cacheInt = new Cache<>();
 
 //    protected AFoggedUnit(FakeUnit unit) {
@@ -61,6 +62,7 @@ public abstract class AFoggedUnit extends AUnit {
     public void update(AUnit unit) {
         updatePosition(unit);
         updateType(unit);
+        _isCompleted = unit.isCompleted();
     }
 
     public void updatePosition(AUnit unit) {
@@ -74,7 +76,7 @@ public abstract class AFoggedUnit extends AUnit {
             cacheInt.set("lastPositionUpdated", -1, A.now());
         }
         
-        if (_position != null && _position.isVisible() && isAccessible()) {
+        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
             _position = null;
         }
     }
@@ -117,7 +119,7 @@ public abstract class AFoggedUnit extends AUnit {
 
     @Override
     public boolean isCompleted() {
-        return true;
+        return _isCompleted;
     }
 
     @Override
@@ -128,6 +130,16 @@ public abstract class AFoggedUnit extends AUnit {
     @Override
     public boolean isMoving() {
         return false;
+    }
+
+    @Override
+    public boolean effCloaked() {
+        return false;
+    }
+
+    @Override
+    public boolean effVisible() {
+        return true;
     }
 
     @Override

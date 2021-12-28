@@ -24,7 +24,7 @@ public class AFocusPoint extends APosition {
 
         if (position.position().equals(this.fromSide)) {
             System.err.println("AFocusPoint got fromSide being the same point.");
-            A.printStack();
+            A.printStackTrace();
             this.fromSide = null;
         }
     }

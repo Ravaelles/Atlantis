@@ -23,7 +23,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         if (A.everyNthGameFrame(60)) {
             TerranMissileTurretsForMain.buildIfNeeded();
             TerranMissileTurretsForNonMain.buildIfNeeded();
-            OffensiveTerranMissileTurrets.buildIfNeeded();
+//            OffensiveTerranMissileTurrets.buildIfNeeded();
 //            TerranBunker.handleOffensiveBunkers();
         }
 

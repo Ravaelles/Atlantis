@@ -5,6 +5,7 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.Squad;
+import atlantis.information.AFoggedUnit;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
@@ -607,6 +608,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             double extraMargin
     ) {
         if (hasNoWeaponAtAll() && !isBunker()) {
+            return false;
+        }
+
+        if (target.isFoggedUnitWithUnknownPosition()) {
             return false;
         }
 
@@ -1968,4 +1973,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 () -> enemiesNearby().melee().inRadius(maxDistToEnemy, this).size()
         );
     }
+
+    public boolean isFoggedUnitWithUnknownPosition() {
+        return this instanceof AFoggedUnit && position() == null;
+    }
+
 }

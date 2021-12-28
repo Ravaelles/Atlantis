@@ -8,7 +8,7 @@ public class TerranDynamicUnitsManager extends AbstractDynamicUnits {
     public static void update() {
         TerranDynamicFactoryUnits.handleFactoryProduction();
 
-        TerranDynamicInfantry.medicsOrFirebats();
+        TerranDynamicInfantry.medics();
         TerranDynamicInfantry.marines();
     }
 

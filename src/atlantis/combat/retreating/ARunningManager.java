@@ -17,11 +17,12 @@ import java.util.ArrayList;
 
 public class ARunningManager {
 
-//    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
+    //    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
-    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
+    private static final double SHOW_BACK_TO_ENEMY_DIST = 3;
+    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 1;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
 
     private final AUnit unit;
@@ -231,16 +232,15 @@ public class ARunningManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private APosition findRunPositionShowYourBackToEnemy(AUnit unit, HasPosition runAwayFrom, double dist) {
-        double minTiles = dist >= 1 ? dist : 1.1;
-        double maxDist = dist >= 1 ? dist : 3.0;
+        double minTiles = dist >= 1 ? dist : 0.5;
+        double maxDist = dist >= 1 ? dist : SHOW_BACK_TO_ENEMY_DIST;
 
         double currentDist = maxDist;
         while (currentDist >= minTiles) {
 
             // Check if this is good position
-            APosition runTo = showBackToEnemyIfPossible(unit, runAwayFrom, currentDist);
+            APosition runTo = showBackToEnemyIfPossible(unit, runAwayFrom);
 
-            // Also check if can run further (avoid corner shitholes)
             if (runTo != null && unit.distToMoreThan(runTo, 0.002)) {
                 return runTo;
             }
@@ -251,16 +251,17 @@ public class ARunningManager {
         return null;
     }
 
-    private APosition showBackToEnemyIfPossible(AUnit unit, HasPosition runAwayFrom, double dist) {
+    private APosition showBackToEnemyIfPossible(AUnit unit, HasPosition runAwayFrom) {
         APosition runTo;
         runAwayFrom = runAwayFrom.position();
         double vectorLength = unit.distTo(runAwayFrom);
 
         if (vectorLength < 0.01) {
             System.err.println("Serious issue: run vectorLength = " + vectorLength);
-//            System.err.println("runner = " + unit + " // " + unit.position());
-//            System.err.println("runAwayFrom = " + runAwayFrom);
-//            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
+            System.err.println("runner = " + unit + " // " + unit.position());
+            System.err.println("runAwayFrom = " + runAwayFrom);
+            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
+            A.printStackTrace();
         }
 
         double vectorX = (runAwayFrom.x() - unit.x()) / 32.0;

@@ -1204,7 +1204,7 @@ public class A {
         }
     }
 
-    public static void printStack() {
+    public static void printStackTrace() {
         Thread.dumpStack();
     }
 

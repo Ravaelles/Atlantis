@@ -52,7 +52,7 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         AFocusPoint focusPoint = focusPoint();
 
-        if (enemy.hasWeaponRangeToAttack(unit, 1.1) || unit.hasWeaponRangeToAttack(enemy, 1.1)) {
+        if (enemy.hasWeaponRangeToAttack(unit, 0.2) || unit.hasWeaponRangeToAttack(enemy, 0.3)) {
             return true;
         }
 
@@ -66,7 +66,7 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        if (unit.distTo(enemy) > unit.distTo(focusPoint) + 0.7) {
+        if (unit.distTo(enemy) > (unit.distTo(focusPoint) + 0.2)) {
             return false;
         }
 

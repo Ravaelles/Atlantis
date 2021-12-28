@@ -27,18 +27,21 @@ public class OnUnitRenegade {
 //            return;
 //        }
 
-        // New unit taken from us
+        // New unit for us e.g. some UMS maps give units
         if (unit.isOur()) {
             Atlantis.ourNewUnit(unit);
-            System.out.println("NEW RENEGADE FOR US " + unit.name());
-            UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+
+            if (!unit.type().isGasBuildingOrGeyser()) {
+                System.out.println("NEW RENEGADE FOR US " + unit.name());
+                UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+            }
         }
 
         // Neutral means Refinery / Extractor
         else if (unit.isNeutral()) {
         }
 
-        // New unit for us e.g. some UMS maps give units
+        // New enemy
         else {
             if (unit.isOverlord()) {
                 return;

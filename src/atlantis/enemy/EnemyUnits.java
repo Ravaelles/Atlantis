@@ -131,16 +131,23 @@ public class EnemyUnits {
     public static Selection combatUnitsToBetterAvoid() {
         return (Selection) cache.get(
                 "combatUnitsToBetterAvoid:",
-                40,
+                30,
                 () -> {
-                    Selection combatUnits = foggedUnits().combatUnits();
+                    Selection combatUnits = foggedUnits()
+                            .combatUnits()
+                            .havingPosition();
 
-                    return combatUnits.clone().combatBuildings(false).add(
-                            combatUnits.clone().ofType(
-                                AUnitType.Terran_Siege_Tank_Siege_Mode,
-                                AUnitType.Zerg_Lurker
-                            )
-                    );
+                    return combatUnits
+                            .clone()
+                            .combatBuildings(false)
+                            .add(
+                                combatUnits.clone().ofType(
+                                    AUnitType.Protoss_Photon_Cannon,
+                                    AUnitType.Terran_Siege_Tank_Siege_Mode,
+                                    AUnitType.Zerg_Lurker,
+                                    AUnitType.Zerg_Sunken_Colony
+                                )
+                            );
                 }
         );
     }

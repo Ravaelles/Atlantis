@@ -6,7 +6,6 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
 import atlantis.combat.missions.defend.TerranMissionChangerWhenDefend;
-import atlantis.enemy.EnemyInformation;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -71,7 +70,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
     }
 
     protected static boolean shouldChangeMissionToAttack() {
-        if (Missions.counter() >= 6 && A.supplyUsed() <= 90) {
+        if (Missions.counter() >= 3 && A.supplyUsed() <= 90) {
             return false;
         }
 

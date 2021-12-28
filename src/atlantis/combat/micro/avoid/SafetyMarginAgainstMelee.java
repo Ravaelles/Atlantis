@@ -33,9 +33,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             } else {
                 criticalDist = INFANTRY_BASE_IF_NO_MEDIC
                         + woundedAgainstMeleeBonus(defender, attacker)
-                        + enemyMeleeUnitsNearbyBonusIfNoMedic(defender)
+                        + enemyMeleeUnitsNearbyBonusIfNoMedic(defender);
 //                        + ourMovementBonus(defender) / 4
-                        + enemyMovementBonus(defender, attacker) / 3;
+//                        + enemyMovementBonus(defender, attacker) / 3;
 
                 criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
             }
@@ -77,8 +77,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     // =========================================================
 
     private static double enemyMeleeUnitsNearbyBonusIfNoMedic(AUnit defender) {
-        if (defender.enemiesNearby().melee().inRadius(2, defender).atLeast(2)) {
-            return 2;
+        if (defender.enemiesNearby().melee().inRadius(2.4, defender).atLeast(2)) {
+            return 1.2;
         }
 
         return 0;

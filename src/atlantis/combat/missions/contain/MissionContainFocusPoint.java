@@ -41,8 +41,10 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //                        }
                     }
 
-                    if (EnemyInformation.hasDefensiveLandBuilding() && We.haveBase()) {
-                        AUnit nearestCombatBuilding = EnemyUnits.foggedUnits().combatBuildings(false).nearestTo(Select.main());
+                    if (EnemyInformation.hasDefensiveLandBuilding(true) && We.haveBase()) {
+                        AUnit nearestCombatBuilding = EnemyUnits.foggedUnits()
+                                .combatBuildings(false)
+                                .nearestTo(Select.main());
                         if (nearestCombatBuilding != null) {
                             AChoke choke = Chokes.nearestChoke(nearestCombatBuilding);
                             if (choke != null) {

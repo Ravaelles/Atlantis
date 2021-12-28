@@ -278,6 +278,14 @@ public class Selection {
         return this;
     }
 
+    /**
+     * Fogged units may have no position if e.g. unit moved and we don't know where it is.
+     */
+    public Selection havingPosition() {
+        data.removeIf(unit -> unit.position() == null);
+        return this;
+    }
+
     public Selection combatUnits() {
         data.removeIf(unit -> !unit.isCompleted() || !unit.type().isCombatUnit());
         return this;
@@ -288,6 +296,11 @@ public class Selection {
      */
     public Selection combatBuildings(boolean includeCreepColonies) {
         data.removeIf(unit -> includeCreepColonies ? !unit.type().isCombatBuildingOrCreepColony() : !unit.type().isCombatBuilding());
+        return this;
+    }
+
+    public Selection onlyCompleted() {
+        data.removeIf(unit -> !unit.isCompleted());
         return this;
     }
 

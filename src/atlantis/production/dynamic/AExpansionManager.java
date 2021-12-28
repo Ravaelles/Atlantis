@@ -3,6 +3,7 @@ package atlantis.production.dynamic;
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.map.Bases;
+import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
@@ -99,7 +100,10 @@ public class AExpansionManager {
 
         // TERRAN + PROTOSS
         else {
-            AddToQueue.withHighPriority(AtlantisConfig.BASE);
+            ProductionOrder productionOrder = AddToQueue.withHighPriority(AtlantisConfig.BASE);
+            if (Count.bases() == 1) {
+                productionOrder.setModifier("NATURAL");
+            }
         }
     }
 }

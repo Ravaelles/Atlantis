@@ -10,6 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import bwapi.Color;
 import bwapi.TechType;
 
@@ -52,7 +53,7 @@ public class TerranMedic {
             return true;
         }
 
-        if (bodyBlockMelee(medic)) {
+        if (Enemy.protoss() && bodyBlockMelee(medic)) {
             return true;
         }
 

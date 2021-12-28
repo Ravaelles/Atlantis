@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.A;
 import atlantis.util.Cache;
 import atlantis.util.Enemy;
@@ -149,15 +150,15 @@ public class EnemyInformation {
      * Returns number of discovered and alive enemy units of given type. Some of them (maybe even all of them)
      * may not be visible right now.
      */
-    public static int countEnemyKnownUnitsOfType(AUnitType type) {
-        int total = 0;
-        for (AUnit enemyUnit : EnemyUnits.unitsDiscovered()) {
-            if (enemyUnit.is(type)) {
-                total++;
-            }
-        }
-        return total;
-    }
+//    public static int countEnemyKnownUnitsOfType(AUnitType type) {
+//        int total = 0;
+//        for (AUnit enemyUnit : EnemyUnits.unitsDiscovered()) {
+//            if (enemyUnit.is(type)) {
+//                total++;
+//            }
+//        }
+//        return total;
+//    }
 
     public static void printEnemyFoggedUnits() {
         Collection<AFoggedUnit> foggedUnits = EnemyUnits.unitsDiscovered();
@@ -204,14 +205,21 @@ public class EnemyInformation {
         );
     }
 
-    public static boolean hasDefensiveLandBuilding() {
+    public static boolean hasDefensiveLandBuilding(boolean onlyCompleted) {
         return cacheBoolean.get(
-                "hasDefensiveLandBuilding",
+                "hasDefensiveLandBuilding:" + onlyCompleted,
                 30,
-                () -> EnemyUnits.foggedUnits()
-                        .combatBuildings(false)
-                        .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony)
-                        .atLeast(1)
+                () -> {
+                    Selection selection = EnemyUnits.foggedUnits()
+                            .combatBuildings(false)
+                            .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony);
+
+                    if (onlyCompleted) {
+                        selection = selection.onlyCompleted();
+                    }
+
+                    return selection.atLeast(1);
+                }
         );
     }
 

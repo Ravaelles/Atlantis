@@ -27,7 +27,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         return false;
     }
 
-    protected static void medicsOrFirebats() {
+    protected static void medics() {
         if (!OurDecisions.shouldBuildBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
             return;
         }
@@ -42,11 +42,14 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
-            if (Count.medics() >= 4 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
-                produceUnit(barracks.first(), AUnitType.Terran_Firebat);
-                return;
-            }
 
+            // Firebats - disabled, too problematic
+//            if (Count.medics() >= 4 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
+//                produceUnit(barracks.first(), AUnitType.Terran_Firebat);
+//                return;
+//            }
+
+            // Medics
             if (TerranArmyComposition.medicsToInfantryRatioTooLow()) {
                 produceUnit(barracks.first(), AUnitType.Terran_Medic);
             }
