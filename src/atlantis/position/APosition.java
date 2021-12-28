@@ -93,6 +93,10 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         return new APosition(tileX * 32, tileY * 32);
     }
 
+    public static APosition createFromPixels(int px, int py) {
+        return new APosition(px, py);
+    }
+
     // =========================================================
 
     /**

@@ -5,12 +5,11 @@ import atlantis.combat.missions.MissionFocusPoint;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
+import atlantis.information.FoggedUnit;
 import atlantis.map.AChoke;
-import atlantis.map.AMap;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
-import atlantis.strategy.response.AStrategyResponse;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
@@ -82,7 +81,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //                        return mainChoke.position();
 //                    }
 
-//                    AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+//                    FoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
 //                    if (enemyBuilding != null) {
 //                        return enemyBuilding.position();
 //                    }

@@ -3,7 +3,7 @@ package atlantis.tests.unit;
 import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.enemy.EnemyInformation;
-import atlantis.information.AFoggedUnit;
+import atlantis.information.FoggedUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -19,28 +19,34 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
     @Test
     public void zergUnits() {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
-        FakeUnit enemy1, enemy2, enemy3, enemy4;
+        FakeUnit enemy1, enemy2, enemy3, enemy4, enemy5;
 
         FakeUnit[] enemies = fakeEnemies(
                 enemy1 = fake(AUnitType.Zerg_Drone, 12),
                 fake(AUnitType.Zerg_Larva, 11),
                 fake(AUnitType.Zerg_Egg, 11),
+                fake(AUnitType.Zerg_Hatchery, 11),
                 fake(AUnitType.Zerg_Lurker_Egg, 11),
                 fake(AUnitType.Zerg_Cocoon, 11),
                 fake(AUnitType.Zerg_Creep_Colony, 12),
                 fake(AUnitType.Zerg_Spore_Colony, 12),
                 fake(AUnitType.Zerg_Drone, 13),
-                enemy2 = fake(AUnitType.Zerg_Zergling, 13),
+                enemy2 = fake(AUnitType.Zerg_Zergling, 12.5),
                 enemy3 = fake(AUnitType.Zerg_Hydralisk, 14),
                 enemy4 = fake(AUnitType.Zerg_Sunken_Colony, 16),
                 fake(AUnitType.Zerg_Creep_Colony, 11),
-                fake(AUnitType.Zerg_Hatchery, 11),
+                enemy5 = fake(AUnitType.Zerg_Zergling, 12.9),
+                fake(AUnitType.Zerg_Zergling, 13),
+                fake(AUnitType.Zerg_Zergling, 14),
+                fake(AUnitType.Zerg_Zergling, 15),
+                fake(AUnitType.Zerg_Zergling, 16),
+                fake(AUnitType.Zerg_Hydralisk, 18),
                 fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
-                    new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
+                    new FakeUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5 },
                     AAvoidUnits.unitsToAvoid(our).array()
             );
         });
@@ -159,20 +165,20 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
             MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class);
             aGame.when(AGame::now).thenReturn(framesNow);
 
-            AUnit enemy2, enemy3, enemy4, enemy5;
+            FakeFoggedUnit enemy2, enemy3, enemy4, enemy5;
 
-            AFoggedUnit[] fogged = new AFoggedUnit[] {
-                    (AFoggedUnit) (enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange)),
+            FakeFoggedUnit[] fogged = new FakeFoggedUnit[] {
+                    enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange),
                     fogged(AUnitType.Protoss_Photon_Cannon, outsideRange),
-                    (AFoggedUnit) (enemy3 = fogged(AUnitType.Zerg_Sunken_Colony, inRange)),
+                    enemy3 = fogged(AUnitType.Zerg_Sunken_Colony, inRange),
                     fogged(AUnitType.Zerg_Sunken_Colony, outsideRange),
                     fogged(AUnitType.Protoss_Zealot, inRange),
                     fogged(AUnitType.Zerg_Mutalisk, inRange),
-                    (AFoggedUnit) (enemy4 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange)),
+                    enemy4 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange),
                     fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, outsideRange),
                     fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, inRange),
                     fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, outsideRange),
-                    (AFoggedUnit) (enemy5 = fogged(AUnitType.Zerg_Lurker, inRange)),
+                    enemy5 = fogged(AUnitType.Zerg_Lurker, inRange),
                     fogged(AUnitType.Zerg_Lurker, outsideRange)
             };
 
@@ -189,6 +195,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
             // Clean up
             enemyInformation.when(EnemyInformation::discoveredAndAliveUnits).thenReturn(Collections.emptyList());
+            aGame.close();
         }
     }
 

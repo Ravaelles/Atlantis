@@ -4,6 +4,7 @@ import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
+import atlantis.information.FoggedUnit;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;

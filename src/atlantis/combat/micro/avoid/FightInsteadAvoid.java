@@ -205,16 +205,15 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        boolean medicNearby = unit.medicNearby();
-        int meleeNearby = unit.enemiesNearby().melee().inRadius(1.5, unit).count();
-
-        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) * meleeNearby) {
+        int meleeEnemiesNearby = unit.enemiesNearby().melee().inRadius(1.5, unit).count();
+        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) * meleeEnemiesNearby) {
             return false;
         }
 //        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) && enemiesSelection.melee().atLeast((Enemy.protoss() ? 1 : 2))) {
 //            return false;
 //        }
 
+        boolean medicNearby = unit.medicNearby();
         return medicNearby || (!unit.isWounded() && ranged == null);
     }
 

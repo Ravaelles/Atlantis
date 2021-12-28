@@ -16,14 +16,15 @@ import bwapi.TechType;
 import java.util.HashMap;
 
 public class TerranMedic {
-    
+
+    public static double BODY_BLOCK_POSITION_ERROR_MARGIN = 0.2;
     public static double MIN_DIST_TO_ASSIGNMENT = 0.75;
 
     /**
      * Maximum allowed distance for a medic to heal wounded units that are not their assignment.
      * The idea is to disallow them to move away too much.
      */
-    private static final int HEAL_OTHER_UNITS_MAX_DISTANCE = 10;
+    public static int HEAL_OTHER_UNITS_MAX_DISTANCE = 10;
 
     /**
      * Specific units that medics should follow in order to heal them as fast as possible
@@ -43,7 +44,11 @@ public class TerranMedic {
 //            return true;
 //        }
 
-        if (healCriticallyWoundedUnits(medic)) {
+//        if (healCriticallyWoundedUnits(medic)) {
+//            return true;
+//        }
+
+        if (healMostWoundedInRange(medic)) {
             return true;
         }
 
@@ -51,7 +56,7 @@ public class TerranMedic {
             return true;
         }
 
-        if (healWoundedUnits(medic)) {
+        if (healAnyWoundedNearby(medic)) {
             return true;
         }
 
@@ -79,26 +84,26 @@ public class TerranMedic {
         }
 
         APosition desiredPosition = nearestFriend.translateTilesTowards(0.4, nearestEnemy);
-        if (medic.distToMoreThan(desiredPosition, 0.15) || medic.isIdle()) {
+        if (medic.distToMoreThan(desiredPosition, BODY_BLOCK_POSITION_ERROR_MARGIN) || medic.isIdle()) {
             return medic.move(desiredPosition, UnitActions.MOVE, "Block");
         }
 
         return false;
     }
 
-    private static boolean unblockChoke(AUnit medic) {
-        AChoke choke = Chokes.nearestChoke(medic);
-
-        // We're possibly blocking the choke
-        if (choke != null && choke.width() <= 3.8 && choke.distToLessThan(medic, choke.width() + 1)) {
-            AUnit nearestUnit = Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
-            if (nearestUnit != null && nearestUnit.distToLessThan(medic, 0.5)) {
-                return medic.moveAwayFrom(nearestUnit, 0.2, "MoveBitch"); // Get out of the way
-            }
-        }
-
-        return false;
-    }
+//    private static boolean unblockChoke(AUnit medic) {
+//        AChoke choke = Chokes.nearestChoke(medic);
+//
+//        // We're possibly blocking the choke
+//        if (choke != null && choke.width() <= 3.8 && choke.distToLessThan(medic, choke.width() + 1)) {
+//            AUnit nearestUnit = Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
+//            if (nearestUnit != null && nearestUnit.distToLessThan(medic, 0.5)) {
+//                return medic.moveAwayFrom(nearestUnit, 0.2, "MoveBitch"); // Get out of the way
+//            }
+//        }
+//
+//        return false;
+//    }
 
     private static boolean tooFarFromNearestInfantry(AUnit medic) {
         AUnit infantry = Select.ourTerranInfantryWithoutMedics().nearestTo(medic);
@@ -232,8 +237,32 @@ public class TerranMedic {
         return false;
     }
 
-    private static boolean healWoundedUnits(AUnit medic) {
-        if (medic.energy() < 2) {
+    private static boolean healMostWoundedInRange(AUnit medic) {
+        if (!medic.energy(5)) {
+            return false;
+        }
+
+        AUnit nearestWoundedInfantry = Select.our()
+                .organic()
+                .notHavingHp(19)
+                .inRadius(1.99, medic)
+                .exclude(medic)
+                .sortByHealth()
+                .first();
+
+        // =========================================================
+        // If there's a wounded unit, heal it.
+
+        if (nearestWoundedInfantry != null) {
+            healUnit(medic, nearestWoundedInfantry);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean healAnyWoundedNearby(AUnit medic) {
+        if (!medic.energy(5)) {
             return false;
         }
 

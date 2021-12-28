@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.A;
 import org.junit.Test;
 
-public class MvHydrasTest extends AbstractTestFakingGame {
+public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 
     @Test
     public void runsFromHydras() {

@@ -1,17 +1,15 @@
 package atlantis.tests.acceptance;
 
-import atlantis.combat.ACombatUnitManager;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.A;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class CombatEvaluatorTest extends AbstractTestFakingGame {
+public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
 
     @Test
-    public void combatEvaluatorReturnsRelativeAndAbsoluteValuesThatMakeSense() {
+    public void evaluatesMeleeUnits() {
         createWorld(1, () -> {
             FakeUnit our = ourFirst;
             FakeUnit enemy = nearestEnemy(our);
@@ -19,14 +17,20 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             double ourEval = our.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();
 
+//            System.out.println("ourEval = " + ourEval);
+//            System.out.println("enemyEval = " + enemyEval);
+
             assertTrue(ourEval < enemyEval);
-            assertTrue(ourEval * 5 < enemyEval);
+            assertTrue(ourEval * 4 > enemyEval);
 
             ourEval = our.combatEvalRelative();
             enemyEval = enemy.combatEvalRelative();
 
-            assertTrue(Math.abs(ourEval - 0.18) < 0.1);
-            assertTrue(Math.abs(enemyEval - 5.29) < 0.1);
+//            System.out.println("ourEval = " + ourEval);
+//            System.out.println("enemyEval = " + enemyEval);
+
+            assertTrue(ourEval > 0);
+            assertTrue(enemyEval > 0);
         });
     }
 
@@ -34,15 +38,17 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+                fake(AUnitType.Terran_Firebat, 10),
+                fake(AUnitType.Terran_Firebat, 11),
+                fake(AUnitType.Terran_Firebat, 10)
         );
     }
 
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 16;
         return fakeEnemies(
-                fake(AUnitType.Zerg_Hydralisk, enemyTy),
-                fake(AUnitType.Zerg_Hydralisk, enemyTy + 1)
+                fake(AUnitType.Protoss_Zealot, enemyTy),
+                fake(AUnitType.Protoss_Zealot, enemyTy + 1)
         );
     }
 

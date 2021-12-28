@@ -130,7 +130,6 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
     private void initAGameObject() {
         aGame = Mockito.mockStatic(AGame.class);
-//        aGame.when(AGame::now).thenReturn(currentFrames);
         aGame.when(AGame::supplyTotal).thenReturn(5);
         aGame.when(AGame::supplyUsed).thenReturn(5);
     }
@@ -142,10 +141,15 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     }
 
     private void cleanUpStaticMocks() {
+        game = null;
+
         for (Field field : getClass().getFields()) {
             if (field.getType().toString().contains("MockedStatic")) {
                 try {
-                    ((MockedStatic) field.get(this)).reset();
+                    Object object = field.get(this);
+                    if (object != null) {
+                        ((MockedStatic) object).close();
+                    }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Something went wrong here");
                 }

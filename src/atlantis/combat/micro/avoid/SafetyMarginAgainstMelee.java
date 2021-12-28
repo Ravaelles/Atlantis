@@ -3,16 +3,19 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-//    public static double ENEMIES_NEARBY_FACTOR = 5.9;
+    //    public static double ENEMIES_NEARBY_FACTOR = 5.9;
     public static double ENEMIES_NEARBY_FACTOR = 0.3;
     public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
     public static double INFANTRY_BASE_IF_MEDIC = 1.60;
     public static int INFANTRY_WOUND_IF_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 2.65;
     public static int INFANTRY_WOUND_IF_NO_MEDIC = 60;
+    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 1.95;
+    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 2.15;
 //    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
 //    public static int INFANTRY_WOUND_IF_MEDIC = 20;
 //    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.02;
@@ -30,6 +33,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             } else {
                 criticalDist = INFANTRY_BASE_IF_NO_MEDIC
                         + woundedAgainstMeleeBonus(defender, attacker)
+                        + enemyMeleeUnitsNearbyBonusIfNoMedic(defender)
 //                        + ourMovementBonus(defender) / 4
                         + enemyMovementBonus(defender, attacker) / 3;
 
@@ -69,6 +73,15 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     // =========================================================
 
+    private static double enemyMeleeUnitsNearbyBonusIfNoMedic(AUnit defender) {
+        if (defender.enemiesNearby().melee().inRadius(2, defender).atLeast(2)) {
+            System.out.println(A.now() + ",    def = " + defender.hp() + " // " + defender.isRunning());
+            return 2;
+        }
+
+        return 0;
+    }
+
     private static double baseForMelee(AUnit defender, AUnit attacker) {
         return attacker.isZealot() ? 0.5 : 0.7;
     }
@@ -93,8 +106,14 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {
         if (defender.isTerranInfantry()) {
             if (defender.hasMedicInRange()) {
+                if (defender.hp() <= 18) {
+                    return INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC;
+                }
                 return defender.woundPercent() / INFANTRY_WOUND_IF_MEDIC;
             } else {
+                if (defender.hp() <= 22) {
+                    return INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC;
+                }
                 return defender.woundPercent() / INFANTRY_WOUND_IF_NO_MEDIC;
             }
         }

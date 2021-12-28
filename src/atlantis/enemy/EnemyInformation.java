@@ -1,6 +1,7 @@
 package atlantis.enemy;
 
 import atlantis.information.AFoggedUnit;
+import atlantis.information.FoggedUnit;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.Bases;

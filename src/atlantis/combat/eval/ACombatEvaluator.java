@@ -90,6 +90,7 @@ public class ACombatEvaluator {
 //                    }
 //                }
 
+                System.out.println("THIS = " + unit);
                 Units theseUnits = theseUnits(unit);
 
 //                theseUnits.print("THESE");
@@ -145,9 +146,13 @@ public class ACombatEvaluator {
         }
 
         // Enemy eval
-        else {
+        else if (unit.isEnemy()) {
             theseUnits = Select.enemyCombatUnits().ranged().inRadius(rangedRadius, unit).units();
-            theseUnits.addAll(Select.ourCombatUnits().melee().inRadius(meleeRadius, unit).list());
+            theseUnits.addAll(Select.enemyCombatUnits().melee().inRadius(meleeRadius, unit).list());
+        }
+
+        else {
+            throw new RuntimeException("Trying to combat eval neutral unit");
         }
 
         return theseUnits;

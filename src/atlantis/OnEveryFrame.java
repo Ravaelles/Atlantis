@@ -62,12 +62,12 @@ public class OnEveryFrame {
 //            CameraManager.centerCameraOn(wraith);
 //        }
 
-//        for (AFoggedUnit unit : EnemyUnits.discoveredAndAliveUnits()) {
+//        for (FoggedUnit unit : EnemyUnits.discoveredAndAliveUnits()) {
 //            if (unit.isBuilding()) {
 //                System.out.println(unit.name() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //            }
 //        }
-//        for (AFoggedUnit unit : EnemyUnits.()) {
+//        for (FoggedUnit unit : EnemyUnits.()) {
 //            System.out.println(unit.name() + " // " + unit.position() + " // " + unit.lastPositionUpdatedAgo());
 //        }
 

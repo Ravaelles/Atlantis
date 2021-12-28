@@ -39,14 +39,14 @@ public abstract class AAvoidUnits {
         AUnit first = enemiesDangerouslyClose.first();
         int firstValue = (int) enemiesDangerouslyClose.valueFor(first);
 
-//        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
 //        for (AUnit enemy : enemiesDangerouslyClose.list()) {
 //            APainter.paintLine(enemy, unit, Color.Orange);
 //            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
 //        }
-//        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-//                "C=" + enemiesDangerouslyClose.size() + "(" + first.name() + ":" + firstValue + ")",
-//                Color.Teal);
+        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
+                "C=" + enemiesDangerouslyClose.size() + "(" + first.name() + ":" + firstValue + ")",
+                Color.Teal);
 
         // =========================================================
 

@@ -1,6 +1,7 @@
 package atlantis.tests.unit;
 
 import atlantis.information.AFoggedUnit;
+import atlantis.information.FoggedUnit;
 import atlantis.position.APosition;
 
 public class FakeFoggedUnit extends AFoggedUnit {
@@ -15,7 +16,7 @@ public class FakeFoggedUnit extends AFoggedUnit {
 
     // =========================================================
 
-    public static FakeFoggedUnit fromFakeFogged(FakeUnit unit) {
+    public static FakeFoggedUnit fromFake(FakeUnit unit) {
         _lastAUnit = unit;
 
         FakeFoggedUnit foggedUnit = (FakeFoggedUnit) all.get(unit.id());
@@ -27,8 +28,6 @@ public class FakeFoggedUnit extends AFoggedUnit {
     }
 
     private FakeFoggedUnit(FakeUnit unit) {
-        super(null);
-
         this._id = unit.id();
         this.aUnit = unit;
         this.update(unit);

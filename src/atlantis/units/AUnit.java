@@ -1784,6 +1784,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return hp() < min;
     }
 
+    public boolean hpMoreThan(int max) {
+        return hp() > max;
+    }
+
     public boolean isSunken() {
         return type().isSunken();
     }

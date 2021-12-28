@@ -209,23 +209,6 @@ public class ARunningManager {
 
         return runTo;
     }
-    
-    // =========================================================
-    
-    /**
-     *
-     */
-//    public APosition simplePositionAwayFrom(AUnit unit, HasPosition runAwayFrom, double dist) {
-//        if (unit == null || runAwayFrom == null) {
-//            return null;
-//        }
-//
-////        if (AGame.getTimeSeconds() <= 250 && shouldRunTowardsMainBase(unit, runAwayFrom)) {
-////            return Select.mainBase().getPosition();
-////        }
-//
-//        return unit.runningManager().findBestPositionToRun(unit, runAwayFrom, dist);
-//    }
 
     // =========================================================
     /**
@@ -275,7 +258,7 @@ public class ARunningManager {
 
         if (vectorLength < 0.01) {
             System.err.println("Serious issue: run vectorLength = " + vectorLength);
-//            System.err.println("unit = " + unit + " // " + unit.position());
+//            System.err.println("runner = " + unit + " // " + unit.position());
 //            System.err.println("runAwayFrom = " + runAwayFrom);
 //            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
         }
@@ -500,6 +483,9 @@ public class ARunningManager {
     }
 
     private boolean handleOnlyCombatBuildingsAreDangerouslyClose(AUnit unit) {
+        if (unit.isRunning()) {
+            return false;
+        }
 
         // Check if only combat buildings are dangerously close. If so, don't run in any direction.
         Units dangerous = AAvoidUnits.unitsToAvoid(unit, true);

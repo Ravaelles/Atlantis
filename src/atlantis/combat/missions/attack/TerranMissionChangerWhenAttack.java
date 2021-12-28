@@ -25,7 +25,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
         int ourCount = Select.ourCombatUnits().count();
 
         if (OurStrategy.get().goingBio()) {
-            return Count.ourCombatUnits() <= 33;
+            return Count.ourCombatUnits() <= 18;
         }
 
         return ourCount <= 15 || Select.enemyRealUnits().count() >= ourCount + 2;

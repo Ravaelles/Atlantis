@@ -1,6 +1,5 @@
 package atlantis.tests.unit;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
@@ -11,7 +10,6 @@ import atlantis.tests.acceptance.AbstractTestFakingGame;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import bwapi.Game;
 import org.junit.Before;
 import org.mockito.MockedStatic;
@@ -32,12 +30,12 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     @Before
     public void before() {
         if (!(this instanceof AbstractTestFakingGame)) {
-            useFakeTime(1);
+            useFakeTime(0); // This needs to be 0 so every modulo division returns 0
         }
         APainter.disablePainting();
         Select.clearCache();
         BaseSelect.clearCache();
-        FakeFoggedUnit.clearCache();
+        AFoggedUnit.clearCache();
         EnemyInformation.clearCache();
         EnemyUnits.clearCache();
         AAvoidUnits.clearCache();
@@ -97,7 +95,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         }
     }
 
-//    protected void usingFakeSetup(int framesNow, FakeUnit our, FakeUnit[] enemies, AFoggedUnit[] fogged, Runnable runnable) {
+//    protected void usingFakeSetup(int framesNow, FakeUnit our, FakeUnit[] enemies, FoggedUnit[] fogged, Runnable runnable) {
 ////        MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class);
 ////        MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class);
 ////        try (baseSelect) {
@@ -119,7 +117,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         return new FakeUnit(type, 10, 10);
     }
 
-    protected FakeUnit fake(AUnitType type, int x) {
+    protected FakeUnit fake(AUnitType type, double x) {
         return new FakeUnit(type, x, 10);
     }
 
@@ -138,7 +136,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         return fakeUnits;
     }
 
-    protected AFoggedUnit fogged(AUnitType type, int x) {
+    protected FakeFoggedUnit fogged(AUnitType type, int x) {
         return FakeFoggedUnit.fromFake(fake(type, x));
     }
 

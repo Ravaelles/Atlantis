@@ -175,14 +175,10 @@ public class Units {
     }
 
     public boolean hasValueFor(AUnit unit) {
-        return extraValues.containsKey(unit);
+        return extraValues.containsKey(unit) && extraValues.get(unit) != null;
     }
 
     public double valueFor(AUnit unit) {
-//        assert !units.isEmpty();
-//        assert unit != null;
-//        assert has(unit);
-
         if (unit == null) {
             System.err.println("Invalid unit: NULL. Return -1 as fallback.");
             return -1;
@@ -395,7 +391,7 @@ public class Units {
         for (AUnit unit : list()) {
             System.out.print(unit);
             if (hasValueFor(unit)) {
-                System.out.println(", extra value: " + valueFor(unit));
+                System.out.println(", extra value: " + (hasValueFor(unit) ? valueFor(unit) : ""));
             } else {
                 System.out.println();
             }

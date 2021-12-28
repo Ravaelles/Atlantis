@@ -27,19 +27,19 @@ public class FakeUnit extends AUnit {
 
     // =========================================================
 
-    public FakeUnit(AUnitType type, int tx, int ty) {
+    public FakeUnit(AUnitType type, double tx, double ty) {
         super();
         this.id = firstFreeId++;
         this.rawType = type;
         this._lastType = type;
-        this.position = APosition.create(tx, ty);
+        this.position = APosition.createFromPixels((int) tx * 32, (int) ty * 32);
     }
 
     // =========================================================
 
     @Override
     public String toString() {
-        return "Fake " + super.toString();
+        return "Fake " + super.toString() + " " + position();
     }
 
     public String lastCommand() {

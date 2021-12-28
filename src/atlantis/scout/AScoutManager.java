@@ -7,6 +7,7 @@ import atlantis.debug.APainter;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
+import atlantis.information.FoggedUnit;
 import atlantis.map.*;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;

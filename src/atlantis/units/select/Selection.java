@@ -106,7 +106,7 @@ public class Selection {
     /**
      * Returns whether the type in unit matches one in the haystack
      */
-//    private boolean typeMatches(AFoggedUnit unit, AUnitType... haystack) {
+//    private boolean typeMatches(FoggedUnit unit, AUnitType... haystack) {
 //        for (AUnitType type : haystack) {
 //            if (unit.type().equals(type) || (unit.type().equals(AUnitType.Zerg_Egg) && unit.type().equals(type))) {
 //                return true;
@@ -334,6 +334,11 @@ public class Selection {
 
     public Selection havingEnergy(int minEnergy) {
         data.removeIf(unit -> !unit.energy(minEnergy));
+        return this;
+    }
+
+    public Selection notHavingHp(int hp) {
+        data.removeIf(unit -> unit.hpMoreThan(hp));
         return this;
     }
 
@@ -603,13 +608,13 @@ public class Selection {
     }
 
     /**
-     * Returns a AUnit out of an entity that is either a AUnit or AFoggedUnit
+     * Returns a AUnit out of an entity that is either a AUnit or FoggedUnit
      *
      * @param unitOrData
      * @return
      */
 //    private AUnit unitFrom(Object unitOrData) {
-//        return (unitOrData instanceof AUnit ? (AUnit) unitOrData : ((AFoggedUnit) unitOrData).getUnit());
+//        return (unitOrData instanceof AUnit ? (AUnit) unitOrData : ((FoggedUnit) unitOrData).getUnit());
 //    }
 
     /**
@@ -619,8 +624,8 @@ public class Selection {
      * @return
      */
     private AUnit dataFrom(Object unitOrData) {
-//        return (unitOrData instanceof AFoggedUnit ? (AFoggedUnit) unitOrData : new AFoggedUnit((AUnit) unitOrData));
-//        if (unitOrData instanceof AFoggedUnit) {
+//        return (unitOrData instanceof FoggedUnit ? (FoggedUnit) unitOrData : new FoggedUnit((AUnit) unitOrData));
+//        if (unitOrData instanceof FoggedUnit) {
 //            return (T) unitOrData;
 //        }
 //        else
@@ -769,14 +774,14 @@ public class Selection {
         return data;
     }
 
-    public List<AUnit> sortByHealth() {
+    public Selection sortByHealth() {
         if (data.isEmpty()) {
-            return null;
+            return new Selection(new ArrayList<>(), "");
         }
 
-        Collections.sort(data, Comparator.comparingDouble(u -> ((AUnit) u).hpPercent()));
+        data.sort(Comparator.comparingDouble(AUnit::hpPercent));
 
-        return data;
+        return this;
     }
 
     public Selection clone() {

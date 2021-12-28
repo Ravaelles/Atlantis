@@ -1,6 +1,8 @@
 package atlantis.enemy;
 
 import atlantis.information.AFoggedUnit;
+import atlantis.information.FakeFoggedUnit;
+import atlantis.information.FoggedUnit;
 import atlantis.position.APosition;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnit;
@@ -25,7 +27,7 @@ public class EnemyUnits {
             EnemyInformation.updateEnemyUnitTypeAndPosition(enemy);
         }
 
-//        for (AFoggedUnit fogged : enemyUnitsDiscovered()) {
+//        for (FoggedUnit fogged : enemyUnitsDiscovered()) {
 ////            System.err.println(fogged + " // " + fogged.isBuilding() + " // " + fogged.getPosition().isVisible() + " // " +fogged.isVisibleOnMap());
 //            if (
 //                    !fogged.isBuilding()
@@ -45,8 +47,9 @@ public class EnemyUnits {
     }
 
     public static void addFoggedUnit(AUnit enemyUnit) {
-        AFoggedUnit foggedUnit = enemyUnit instanceof FakeUnit 
-                ? AFoggedUnit.fromFake((FakeUnit) enemyUnit) : AFoggedUnit.from(enemyUnit);
+        AFoggedUnit foggedUnit = enemyUnit instanceof FakeUnit
+                ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
+                : FoggedUnit.from(enemyUnit);
         enemyUnitsDiscovered.put(enemyUnit.id(), foggedUnit);
     }
 

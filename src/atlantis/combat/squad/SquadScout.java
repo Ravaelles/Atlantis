@@ -8,6 +8,7 @@ import atlantis.debug.APainter;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
 import atlantis.information.AFoggedUnit;
+import atlantis.information.FoggedUnit;
 import atlantis.log.Log;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
