@@ -959,8 +959,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 "getMaxHitPoints",
                 -1,
                 () -> {
-                    int hp = u.getType().maxHitPoints() + maxShields();
-                    if (hp == 0) {
+                    int hp = type().maxHp() + maxShields();
+                    if (hp == 0 && !type().isSpell()) {
                         System.err.println("Max HP = 0 for");
                         System.err.println(this);
                     }
