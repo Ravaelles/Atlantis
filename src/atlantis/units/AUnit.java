@@ -1738,8 +1738,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         return target().isAlive()
                 && (
-                    (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
-                    || targetAcquiredAgo <= cooldownAbsolute() / 1.1
+                    targetAcquiredAgo <= 2
+//                    (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
+//                    || targetAcquiredAgo <= cooldownAbsolute() / 1.1
                 );
     }
 

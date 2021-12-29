@@ -31,7 +31,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
         // ==============================================
 
-        return attacker.distTo(defender) - criticalDist;
+        return criticalDist;
     }
 
     private static double forGroundUnit(AUnit defender, AUnit attacker) {

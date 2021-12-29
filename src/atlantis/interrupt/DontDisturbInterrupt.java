@@ -29,7 +29,7 @@ public class DontDisturbInterrupt {
         }
 
         // Don't INTERRUPT shooting units
-        if (unit.hp() >= 21 && DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
+        if (DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
             unit.setTooltip("Shoot");
             APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Red);
             return true;

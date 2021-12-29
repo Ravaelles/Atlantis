@@ -9,10 +9,7 @@ public class DontInterruptStartedAttacks {
     private static final boolean DEBUG = false;
 
     public static boolean shouldNotInterrupt(AUnit unit) {
-        if (
-                unit.hp() <= 20
-                || !unit.isAttackingOrMovingToAttack()
-        ) {
+        if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
             return false;
         }
 
@@ -25,13 +22,8 @@ public class DontInterruptStartedAttacks {
 
         // === Target acquired recently, allow to attack ===========
 
-        if (unit.recentlyAcquiredTargetToAttack() && !unit.isRunning()) {
-//            if (unit.isFirstCombatUnit()) {
-//                System.out.println(A.now() + "  " + unit.idWithHash() + " TARGET ACQUIRED");
-//            }
-//            APainter.paintCircle(unit, 14, Color.White);
-//            APainter.paintCircle(unit, 12, Color.White);
-//            APainter.paintCircle(unit, 10, Color.White);
+        if (unit.recentlyAcquiredTargetToAttack()) {
+//            System.out.println(unit.idWithHash() + " // hp=" + unit.hp() + " // acq=" + unit.lastTargetToAttackAcquiredAgo());
             unit.setTooltip("Target(" + unit.lastTargetToAttackAcquiredAgo() + ")");
             return true;
         }

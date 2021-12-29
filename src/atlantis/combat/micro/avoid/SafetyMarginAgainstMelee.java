@@ -9,10 +9,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     public static double ENEMIES_NEARBY_FACTOR = 0.3;
     public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
 //    public static double INFANTRY_BASE_IF_MEDIC = 1.60;
-    public static double INFANTRY_BASE_IF_MEDIC = 1.80;
+//    public static double INFANTRY_BASE_IF_MEDIC = 1.80;
+    public static double INFANTRY_BASE_IF_MEDIC = 0;
     public static int INFANTRY_WOUND_MODIFIER_WITH_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 2.65;
-    public static int INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = 40;
+    public static int INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = 33;
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 1.95;
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 3.0;
 //    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
@@ -26,25 +27,30 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         // Terran INFANTRY
         if (defender.isTerranInfantry()) {
             if (defender.hasMedicInRange()) {
+//                if (!defender.isWounded()) {
+//                    return 0;
+//                }
+
                 criticalDist = INFANTRY_BASE_IF_MEDIC
                         + enemyMeleeUnitsNearbyBonus(defender)
+                        + ourMovementBonus(defender)
+                        + enemyMovementBonus(defender, attacker)
                         + woundedAgainstMeleeBonus(defender, attacker);
-//                        + enemyMovementBonus(defender, attacker) / 2;
 
-                criticalDist = Math.min(criticalDist, 3.0);
+                criticalDist = Math.min(criticalDist, 2.5);
             }
 
             else {
                 criticalDist = INFANTRY_BASE_IF_NO_MEDIC
                         + enemyMeleeUnitsNearbyBonus(defender)
+                        + ourMovementBonus(defender)
+                        + enemyMovementBonus(defender, attacker)
                         + woundedAgainstMeleeBonus(defender, attacker);
-//                        + ourMovementBonus(defender) / 4
-//                        + enemyMovementBonus(defender, attacker);
 
 //                System.out.println("criticalDist = " + criticalDist + " (hp = " + defender.hp() + ")");
                 criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
 
-                criticalDist = Math.min(criticalDist, 3.7);
+                criticalDist = Math.min(criticalDist, defender.isWounded() ? 3.2 : 2.5);
             }
         }
 
@@ -76,7 +82,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             criticalDist = 2.5;
         }
 
-        return attacker.distTo(defender) - criticalDist;
+        return criticalDist;
     }
 
     // =========================================================

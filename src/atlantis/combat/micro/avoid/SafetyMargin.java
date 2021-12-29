@@ -27,10 +27,10 @@ public class SafetyMargin {
         double base = baseMargin(defender, attacker);
 
         if (attacker.isMelee()) {
-            return base + SafetyMarginAgainstMelee.calculate(defender, attacker);
+            return base + defender.distTo(attacker) - SafetyMarginAgainstMelee.calculate(defender, attacker);
         }
         else {
-            return base + SafetyMarginAgainstRanged.calculate(defender, attacker);
+            return base + defender.distTo(attacker) - SafetyMarginAgainstRanged.calculate(defender, attacker);
         }
     }
 
@@ -38,10 +38,10 @@ public class SafetyMargin {
 
     private static double baseMargin(AUnit defender, AUnit attacker) {
         if (defender.isTank()) {
-            return 2.7;
+            return -2.7;
         }
 
-        return defender.isOur() && defender.isSquadScout() ? 2.7 : 0;
+        return defender.isSquadScout() ? -2.7 : 0;
     }
 
     protected static double enemyWeaponRange(AUnit defender, AUnit attacker) {

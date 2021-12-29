@@ -32,18 +32,22 @@ public abstract class AAvoidUnits {
 //        }
 
         if (enemiesDangerouslyClose.isEmpty()) {
+//            AUnit nearestEnemy = unit.enemiesNearby().nearestTo(unit);
+//            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
+//                    "C=0(" + (nearestEnemy != null ? A.dist(unit, nearestEnemy) : "-") + ")",
+//                    Color.Green                           );
             return false;
         }
 
-        AUnit first = enemiesDangerouslyClose.first();
-        int firstValue = (int) enemiesDangerouslyClose.valueFor(first);
-
 //        System.out.println(unit.idWithHash() + " (" + unit.hp() + "hp) has " + enemiesDangerouslyClose.size() + " enemies around");
-        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
-        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-            APainter.paintLine(enemy, unit, Color.Orange);
-//            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
-        }
+//        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+//        for (AUnit enemy : enemiesDangerouslyClose.list()) {
+//            APainter.paintLine(enemy, unit, Color.Orange);
+////            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
+//        }
+
+        AUnit first = enemiesDangerouslyClose.first();
+        String firstValue = A.digit(enemiesDangerouslyClose.valueFor(first));
         APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
                 "C=" + enemiesDangerouslyClose.size() + "(" + first.name() + ":" + firstValue + ")",
                 Color.Teal);
