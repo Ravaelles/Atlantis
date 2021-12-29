@@ -8,6 +8,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
+import atlantis.util.A;
 import bwapi.Color;
 
 
@@ -72,14 +73,18 @@ public abstract class Mission {
 //    }
 
     protected boolean handleWeDontKnowWhereTheEnemyIs(AUnit unit) {
-        if (temporaryTarget == null || temporaryTarget.isExplored()) {
+        if (unit.isMoving()) {
+            return false;
+        }
+
+        if (A.chance(10) && (temporaryTarget == null || temporaryTarget.isExplored())) {
             temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
 //            if (temporaryTarget != null) {
 //                System.out.println("Go to unexplored " + temporaryTarget);
 //            }
         }
         if (temporaryTarget == null || temporaryTarget.isVisible()) {
-            temporaryTarget = AMap.randomInvisiblePosition(unit.position());
+            temporaryTarget = AMap.randomInvisiblePosition(unit);
 //            if (temporaryTarget != null) {
 //                System.out.println("Go to invisible " + temporaryTarget);
 //            }

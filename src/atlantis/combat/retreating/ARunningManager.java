@@ -21,6 +21,7 @@ public class ARunningManager {
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
+    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
     private static final double SHOW_BACK_TO_ENEMY_DIST = 3;
     public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
@@ -112,8 +113,9 @@ public class ARunningManager {
         }
 
         // Fix against same unit position / run away from position
-        if (unit.distToLessThan(runAwayFrom, 0.02)) {
-            runAwayFrom = runAwayFrom.translateByPixels(20, 20);
+        if (unit.distToLessThan(runAwayFrom, 0.05)) {
+//            runAwayFrom = runAwayFrom.translateByPixels(20, 20);
+            runAwayFrom = unit.enemiesNearby().nearestTo(unit);
         }
 
         return runAwayFrom;
@@ -157,12 +159,12 @@ public class ARunningManager {
 
         // === Run directly away from the enemy ========================================
 
-        APosition runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
+        APosition runTo = findRunPositionShowYourBackToEnemy(runAwayFrom, dist);
 
         // === Get run to position - as far from enemy as possible =====================
 
         if (runTo == null) {
-            runTo = findPositionToRunInAnyDirection(unit, runAwayFrom);
+            runTo = findRunPositionInAnyDirection(runAwayFrom);
         }
 
         // =============================================================================
@@ -214,13 +216,13 @@ public class ARunningManager {
     /**
      * Simplest case: add enemy-to-you-vector to your own position.
      */
-    private APosition findRunPositionShowYourBackToEnemy(AUnit unit, HasPosition runAwayFrom, double dist) {
-        double minTiles = 0.5;
-        double maxDist = dist > 0 ? dist : SHOW_BACK_TO_ENEMY_DIST;
+    private APosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom, double dist) {
+        double minTiles = SHOW_BACK_TO_ENEMY_DIST_MIN;
+        double maxDist = (dist > 0 ? dist : SHOW_BACK_TO_ENEMY_DIST) + (unit.isVulture() ? 1.6 : 0);
         double currentDist = maxDist;
 
         do {
-            APosition runTo = showBackToEnemyIfPossible(unit, runAwayFrom);
+            APosition runTo = showBackToEnemyIfPossible(runAwayFrom);
 
             if (runTo != null && unit.distToMoreThan(runTo, 0.002)) {
                 return runTo;
@@ -232,7 +234,7 @@ public class ARunningManager {
         return null;
     }
 
-    private APosition showBackToEnemyIfPossible(AUnit unit, HasPosition runAwayFrom) {
+    private APosition showBackToEnemyIfPossible(HasPosition runAwayFrom) {
         APosition runTo;
         runAwayFrom = runAwayFrom.position();
         double vectorLength = unit.distTo(runAwayFrom);
@@ -285,44 +287,45 @@ public class ARunningManager {
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
      * to given runAwayFrom position.
      */
-    private APosition findPositionToRunInAnyDirection(AUnit unit, HasPosition runAwayFrom) {
-
-        // === Define run from ====================================================
-//        Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
-//        APosition runAwayFrom = unitsInRadius.median();
-        if (runAwayFrom == null) {
-            System.err.println("Run away from is null in findRunPositionAtAnyDirection");
-            return null;
-        }
-        
-        // === Define if we don't want to go towards region polygon points ========
-
-//        boolean avoidCornerPoints = AMap.getDistanceToAnyRegionPolygonPoint(unit.getPosition()) > 1.5;
-        
-        // ========================================================================
-        
-        APosition unitPosition = unit.position();
-        int radius = runAnyDirectionInitialRadius(unit);
-        APosition bestPosition = null;
-        while (bestPosition == null && radius >= 0.3) {
-            bestPosition = findRunPositionInAnyDirection(unitPosition, runAwayFrom, radius);
-            radius -= 1;
-        }
-        
-        // =========================================================
-
-//        if (bestPosition != null) {
-//            APainter.paintLine(unit, bestPosition, Color.Green);
-//            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
+//    private APosition findPositionToRunInAnyDirection(AUnit unit, HasPosition runAwayFrom) {
+//
+//        // === Define run from ====================================================
+////        Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
+////        APosition runAwayFrom = unitsInRadius.median();
+//        if (runAwayFrom == null) {
+//            System.err.println("Run away from is null in findRunPositionAtAnyDirection");
+//            return null;
 //        }
-        
-//        AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Purple);
-//        AtlantisPainter.paintLine(unit.getPosition(), bestPosition, Color.Green);
-//        AtlantisPainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
-        return bestPosition;
-    }
+//
+//        // === Define if we don't want to go towards region polygon points ========
+//
+////        boolean avoidCornerPoints = AMap.getDistanceToAnyRegionPolygonPoint(unit.getPosition()) > 1.5;
+//
+//        // ========================================================================
+//
+//        APosition unitPosition = unit.position();
+//        int radius = runAnyDirectionInitialRadius(unit);
+//        APosition bestPosition = null;
+//        while (bestPosition == null && radius >= 0.3) {
+//            bestPosition = findRunPositionInAnyDirection(unitPosition, runAwayFrom, radius);
+//            radius -= 1;
+//        }
+//
+//        // =========================================================
+//
+////        if (bestPosition != null) {
+////            APainter.paintLine(unit, bestPosition, Color.Green);
+////            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
+////        }
+//
+////        AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Purple);
+////        AtlantisPainter.paintLine(unit.getPosition(), bestPosition, Color.Green);
+////        AtlantisPainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
+//        return bestPosition;
+//    }
 
-    private APosition findRunPositionInAnyDirection(APosition unitPosition, HasPosition runAwayFrom, int radius) {
+    private APosition findRunPositionInAnyDirection(HasPosition runAwayFrom) {
+        int radius = runAnyDirectionInitialRadius(unit);
 
         // Build list of possible run positions, basically around the clock
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
@@ -335,7 +338,7 @@ public class ARunningManager {
                 }
 
                 // Create position, Make sure it's inbounds
-                APosition potentialPosition = unitPosition.translateByTiles(dtx, dty).makeValidFarFromBounds();
+                APosition potentialPosition = unit.translateByTiles(dtx, dty).makeValidFarFromBounds();
 
                 // If has path to given point, add it to the list of potential points
 //                APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
@@ -365,7 +368,7 @@ public class ARunningManager {
 
     private int runAnyDirectionInitialRadius(AUnit unit) {
         if (unit.isVulture()){
-            return 5;
+            return 4;
         }
 
         if (unit.isInfantry()) {

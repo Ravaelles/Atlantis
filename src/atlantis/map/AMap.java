@@ -5,6 +5,7 @@ import atlantis.Atlantis;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.A;
@@ -86,18 +87,18 @@ public class AMap {
     /**
      * Returns random point on map with fog of war, preferably unexplored one.
      */
-    public static APosition randomInvisiblePosition(APosition startPoint) {
+    public static APosition randomInvisiblePosition(AUnit unit) {
         APosition position = null;
         for (int attempts = 0; attempts < 50; attempts++) {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
-            int dx = -maxRadius + A.rand(0, 2 * maxRadius);
-            int dy = -maxRadius + A.rand(0, 2 * maxRadius);
-            position = startPoint.translateByPixels(dx, dy).makeValidFarFromBounds();
+            int dx = -maxRadius + A.randWithSeed(0, 2 * maxRadius, unit.id());
+            int dy = -maxRadius + A.randWithSeed(0, 2 * maxRadius, unit.id());
+            position = unit.translateByPixels(dx, dy).makeValidFarFromBounds();
             if (
                     position.isWalkable()
                             && !position.isVisible()
-                            && startPoint.hasPathTo(position)
-                            && startPoint.groundDistanceTo(position) <= 100
+                            && unit.hasPathTo(position)
+                            && unit.position().groundDistanceTo(position) <= 100
             ) {
                 return position;
             }

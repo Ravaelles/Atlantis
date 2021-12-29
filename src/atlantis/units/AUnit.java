@@ -1561,6 +1561,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u().getAngle();
     }
 
+    public boolean isFacingItsTarget() {
+        return target() != null && target().isOtherUnitFacingThisUnit(this);
+    }
+
     public boolean isOtherUnitFacingThisUnit(AUnit otherUnit) {
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
@@ -1727,18 +1731,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-//        if (!isAttackingOrMovingToAttack()) {
-//            return false;
-//        }
-
-//        System.out.println(unit().idWithHash() + " got target " + lastTargetToAttackAcquiredAgo() + " ago");
-
-//        int targetAcquiredAgo = A.atMostFramesAgo(_lastTargetToAttackAcquired, (int) (cooldownAbsolute() / 1.3));
         int targetAcquiredAgo = lastTargetToAttackAcquiredAgo();
 
         return target().isAlive()
                 && (
-                    targetAcquiredAgo <= 2
+                    targetAcquiredAgo <= 4
 //                    (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
 //                    || targetAcquiredAgo <= cooldownAbsolute() / 1.1
                 );

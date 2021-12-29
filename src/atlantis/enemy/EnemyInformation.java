@@ -200,7 +200,7 @@ public class EnemyInformation {
                         return position;
                     }
 
-                    return AMap.randomInvisiblePosition(Select.our().first().position());
+                    return AMap.randomInvisiblePosition(Select.our().first());
                 }
         );
     }

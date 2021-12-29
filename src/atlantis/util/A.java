@@ -56,7 +56,7 @@ public class A {
     /**
      * <b>Random</b> object that can be used in any part of code.
      */
-    public static final Random random = new Random();
+    public static Random random = new Random();
 
     public static Game game() {
         return Atlantis.game();
@@ -154,6 +154,11 @@ public class A {
 	 *
      */
     public static int rand(int min, int max) {
+        return min + random.nextInt(max - min + 1);
+    }
+
+    public static int randWithSeed(int min, int max, long seed) {
+        random = new Random(seed);
         return min + random.nextInt(max - min + 1);
     }
 

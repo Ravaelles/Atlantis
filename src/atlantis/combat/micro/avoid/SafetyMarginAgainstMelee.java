@@ -56,7 +56,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // VULTURE
         else if (defender.isVulture()) {
-            criticalDist = 2.8
+            criticalDist = 2.5
                     + woundedAgainstMeleeBonus(defender, attacker)
                     + ourMovementBonus(defender)
                     + enemyMovementBonus(defender, attacker);
@@ -137,6 +137,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         else if (defender.isAir()) {
             return defender.woundPercent() / 10;
+        }
+
+        else if (defender.isVulture()) {
+            return defender.woundPercent() / 30;
         }
 
         boolean applyExtraModifier = defender.isTank() || defender.isVulture();

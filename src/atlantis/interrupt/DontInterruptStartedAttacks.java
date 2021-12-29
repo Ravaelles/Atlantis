@@ -13,6 +13,18 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
+        if (unit.isVulture() && unit.target() != null && unit.isUnitActionAttack()) {
+//            if (unit.lastStartedAttackLessThanAgo(12 + unit.hpPercent() / 25)) {
+            if (
+                    unit.target().hp() <= 18
+                    || unit.lastStartedAttackLessThanAgo(10)
+                    || unit.target().distToMoreThan(unit, 2.4)
+//                    || (unit.lastStartedAttackLessThanAgo(13) && unit.isFacingItsTarget())
+            ) {
+                return true;
+            }
+        }
+
 //        int lastAttackFrame = A.ago(unit._lastAttackFrame);
 //        int lastStartingAttack = A.ago(unit._lastStartedAttack);
 //        int cooldown = unit.cooldownRemaining();

@@ -46,11 +46,11 @@ public abstract class AAvoidUnits {
 ////            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
 //        }
 
-        AUnit first = enemiesDangerouslyClose.first();
-        String firstValue = A.digit(enemiesDangerouslyClose.valueFor(first));
-        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-                "C=" + enemiesDangerouslyClose.size() + "(" + first.name() + ":" + firstValue + ")",
-                Color.Teal);
+//        AUnit first = enemiesDangerouslyClose.first();
+//        String firstValue = A.digit(enemiesDangerouslyClose.valueFor(first));
+//        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
+//                "C=" + enemiesDangerouslyClose.size() + "(" + first.name() + ":" + firstValue + ")",
+//                Color.Teal);
 
         // =========================================================
 
