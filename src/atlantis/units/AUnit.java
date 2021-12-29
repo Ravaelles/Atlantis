@@ -759,9 +759,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if unit is in the middle of an attack and should not be interrupted otherwise
      * it would never shoot, just raise the weapon.
      */
-    public boolean isJustShooting() {
-        return DontInterruptStartedAttacks.shouldNotInterrupt(unit());
-    }
+//    public boolean isJustShooting() {
+//        return DontInterruptStartedAttacks.shouldNotInterrupt(unit());
+//    }
 
     /**
      * Returns the frames counter (time) when the unit had been issued any command.

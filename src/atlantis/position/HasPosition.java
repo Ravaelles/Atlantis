@@ -58,6 +58,10 @@ public interface HasPosition {
         return new APosition(x() + tileDX * 32, y() + tileDY * 32);
     }
 
+    default APosition translateByTiles(double tileDX, double tileDY) {
+        return new APosition((int) (x() + tileDX * 32), (int) (y() + tileDY * 32));
+    }
+
     default APosition translateByVector(Vector vector) {
         return new APosition((int) (x() + vector.x), (int) (y() + vector.y));
     }

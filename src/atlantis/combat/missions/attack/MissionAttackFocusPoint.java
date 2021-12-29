@@ -36,10 +36,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                     }
 
                     if (enemy == null) {
-                        return new AFocusPoint(
-                                AMap.randomInvisiblePosition(our.position()),
-                                our
-                        );
+                        return null;
                     }
 
                     return new AFocusPoint(

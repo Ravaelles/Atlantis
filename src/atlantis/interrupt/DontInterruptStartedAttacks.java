@@ -9,7 +9,10 @@ public class DontInterruptStartedAttacks {
     private static final boolean DEBUG = false;
 
     public static boolean shouldNotInterrupt(AUnit unit) {
-        if (!unit.isAttackingOrMovingToAttack()) {
+        if (
+                unit.hp() <= 20
+                || !unit.isAttackingOrMovingToAttack()
+        ) {
             return false;
         }
 

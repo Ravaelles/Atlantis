@@ -14,10 +14,11 @@ public class DontDisturbInterrupt {
 //        if (true) return false;
 
 //        System.out.println("unit.meleeEnemiesNearby(1.9) = " + unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE));
-        int enemiesMultiplier = unit.medicNearby() ? 1 : unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE);
-        if (unit.hp() <= (Enemy.protoss() ? 18 : 8) * enemiesMultiplier) {
+//        int enemiesMultiplier = unit.medicNearby() ? 1 : unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE);
+//        if (unit.hp() <= (Enemy.protoss() ? 18 : 8) * enemiesMultiplier) {
 //            APainter.paintCircleFilled(unit, 10, Color.Purple);
 //            System.err.println(unit.hp() + " < " + (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE));
+        if (unit.hp() <= (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE)) {
             return false;
         }
 
@@ -28,13 +29,8 @@ public class DontDisturbInterrupt {
         }
 
         // Don't INTERRUPT shooting units
-//        if (unit.hp() >= 17 && DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
-        if (
-                (unit.hp() >= 21 || unit.lastUnderAttackMoreThanAgo(10))
-                && DontInterruptStartedAttacks.shouldNotInterrupt(unit)
-        ) {
+        if (unit.hp() >= 21 && DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
             unit.setTooltip("Shoot");
-//            System.out.println(A.now() + " SHOOT");
             APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Red);
             return true;
         }

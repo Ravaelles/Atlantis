@@ -30,6 +30,10 @@ public class MissionAttack extends Mission {
     private boolean handleAdvance(AUnit unit) {
         AFocusPoint focusPoint = focusPoint();
 
+        if (focusPoint == null) {
+            return handleWeDontKnowWhereTheEnemyIs(unit);
+        }
+
         if (ASquadCohesionManager.handle(unit)) {
             return true;
         }

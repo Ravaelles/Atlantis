@@ -22,7 +22,7 @@ public class ARunningManager {
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
     private static final double SHOW_BACK_TO_ENEMY_DIST = 3;
-    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 1;
+    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
 
     private final AUnit unit;
@@ -69,24 +69,13 @@ public class ARunningManager {
             throw new RuntimeException("Null unit to run from");
         }
 
-        HasPosition runAwayFrom = (HasPosition) unitOrPosition;
-        if (unitOrPosition instanceof AUnit) {
-            AUnit runAwayFromAsUnit = ((AUnit) unitOrPosition);
-            runAwayFrom = runAwayFromAsUnit.position();
-        } else if (unitOrPosition instanceof APosition) {
-            runAwayFrom = (APosition) unitOrPosition;
-        }
-
-        // === Define run to position ==============================
-
         if (handleOnlyCombatBuildingsAreDangerouslyClose(unit)) {
             return true;
         }
 
-//        if (A.notUms() && A.seconds() <= 350 && Count.ourCombatUnits() <= 6 && unit.distToMoreThan(Select.mainBase(), 30)) {
-//        if (A.notUms() && A.seconds() <= 350 && (Count.ourCombatUnits() <= 4 && unit.distToMoreThan(Select.mainBase(), 13))) {
-//            runTo = Select.mainBase().position();
-//        } else {
+        HasPosition runAwayFrom = defineRunAwayFrom(unitOrPosition);
+
+        // === Define run to position ==============================
 
         runTo = findBestPositionToRun(unit, runAwayFrom, dist);
 
@@ -109,6 +98,25 @@ public class ARunningManager {
 
         unit.setTooltip("Cant run");
         return false;
+    }
+
+    private HasPosition defineRunAwayFrom(Object unitOrPosition) {
+        HasPosition runAwayFrom = (HasPosition) unitOrPosition;
+
+        if (unitOrPosition instanceof AUnit) {
+            AUnit runAwayFromAsUnit = ((AUnit) unitOrPosition);
+            runAwayFrom = runAwayFromAsUnit.position();
+        }
+        else if (unitOrPosition instanceof APosition) {
+            runAwayFrom = (APosition) unitOrPosition;
+        }
+
+        // Fix against same unit position / run away from position
+        if (unit.distToLessThan(runAwayFrom, 0.02)) {
+            runAwayFrom = runAwayFrom.translateByPixels(20, 20);
+        }
+
+        return runAwayFrom;
     }
 
     private APosition handleRunToMainAsAFallback(AUnit unit, HasPosition runAwayFrom) {
@@ -146,35 +154,10 @@ public class ARunningManager {
      * Running behavior which will make unit run straight away from the enemy.
      */
     private APosition findBestPositionToRun(AUnit unit, HasPosition runAwayFrom, double dist) {
-        APosition runTo = null;
-
-        // =========================================================
-
-        if (unit.position().equals(runAwayFrom)) {
-            runAwayFrom = runAwayFrom.translateByPixels(1, 1);
-        }
 
         // === Run directly away from the enemy ========================================
-        
-//        if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {
-        if (!unit.position().isCloseToMapBounds()) {
-            Selection closeEnemies = unit.enemiesNearby().canAttack(unit, 1.9);
-//            System.err.println("closeEnemies = " + closeEnemies);
 
-            if (runAwayFrom == null && closeEnemies != null && closeEnemies.size() <= 2) {
-                if (closeEnemies.size() == 1) {
-                    runAwayFrom = closeEnemies.first();
-                } else {
-                    runAwayFrom = closeEnemies.center();
-                }
-            }
-
-            runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
-
-            if (runTo != null && unit.distTo(runTo) < 0.002) {
-                throw new RuntimeException("WTF runTo dist = " + unit.distTo(runTo));
-            }
-        }
+        APosition runTo = findRunPositionShowYourBackToEnemy(unit, runAwayFrom, dist);
 
         // === Get run to position - as far from enemy as possible =====================
 
@@ -206,12 +189,6 @@ public class ARunningManager {
             runTo = handleRunToMainAsAFallback(unit, runAwayFrom);
         }
 
-        // === Still nothing, try to run anywhere ==================
-
-        if (runTo == null) {
-            runTo = findPositionToRunInAnyDirection(unit, runAwayFrom);
-        }
-
         // =============================================================================
 
         return runTo;
@@ -238,13 +215,11 @@ public class ARunningManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private APosition findRunPositionShowYourBackToEnemy(AUnit unit, HasPosition runAwayFrom, double dist) {
-        double minTiles = dist >= 1 ? dist : 0.5;
-        double maxDist = dist >= 1 ? dist : SHOW_BACK_TO_ENEMY_DIST;
-
+        double minTiles = 0.5;
+        double maxDist = dist > 0 ? dist : SHOW_BACK_TO_ENEMY_DIST;
         double currentDist = maxDist;
-        while (currentDist >= minTiles) {
 
-            // Check if this is good position
+        do {
             APosition runTo = showBackToEnemyIfPossible(unit, runAwayFrom);
 
             if (runTo != null && unit.distToMoreThan(runTo, 0.002)) {
@@ -252,7 +227,7 @@ public class ARunningManager {
             }
 
             currentDist -= 0.9;
-        }
+        } while (currentDist >= minTiles);
 
         return null;
     }
@@ -270,11 +245,15 @@ public class ARunningManager {
             A.printStackTrace();
         }
 
-        double vectorX = (runAwayFrom.x() - unit.x()) / 32.0;
-        double vectorY = (runAwayFrom.y() - unit.y()) / 32.0;
+        double vectorTx = (unit.x() - runAwayFrom.x()) / 32.0;
+        double vectorTy = (unit.y() - runAwayFrom.y()) / 32.0;
 
         // Apply opposite 2D vector
-        runTo = new APosition((int) (unit.x() - vectorX), (int) (unit.y() - vectorY));
+        runTo = unit.position().translateByTiles(vectorTx, vectorTy);
+
+//        System.out.println("vectorTx = " + vectorTx);
+//        System.out.println("vectorTy = " + vectorTy);
+//        System.out.println("runTo = " + runTo + " // " + unit.position());
 
         // === Ensure position is in bounds ========================================
         
@@ -283,7 +262,7 @@ public class ARunningManager {
 
         runTo = runTo.makeValidFarFromBounds();
 
-        // If vector changed (meaning we almost reached the map boundaries) disallow it
+        // If vector changed (meaning we almost reached map boundaries) disallow it
         if (runTo.getX() != oldX && runTo.getY() != oldY) {
 //            throw new RuntimeException("aaa " + unit + " // " + unit.position() + " // " + runAwayFrom);
             return null;
@@ -292,8 +271,8 @@ public class ARunningManager {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-//        if (isPossibleAndReasonablePosition(unit, runTo, true, "O", "X")) {
-        if (isPossibleAndReasonablePosition(unit, runTo, true, null, null)) {
+        if (isPossibleAndReasonablePosition(unit, runTo, true, "O", "X")) {
+//        if (isPossibleAndReasonablePosition(unit, runTo, true, null, null)) {
 //            APainter.paintLine(unit.position(), runTo, Color.Purple);
 //            APainter.paintLine(unit.translateByPixels(-1, -1), runTo, Color.Purple);
             return runTo;

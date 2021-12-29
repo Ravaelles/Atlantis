@@ -551,6 +551,10 @@ public class Selection {
         return data.isEmpty() ? null : (AUnit) data.get(0);
     }
 
+    public AUnit second() {
+        return data.size() < 2 ? null : (AUnit) data.get(1);
+    }
+
     public AUnit randomWithSeed(int seed) {
         Random rand = new Random(seed);
         return data.isEmpty() ? null : (AUnit) data.get(rand.nextInt(data.size()));

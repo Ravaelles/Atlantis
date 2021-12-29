@@ -148,7 +148,7 @@ public class ACombatUnitManager {
         }
 
 //        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
-        if (unit.isRunning()) {
+        if (unit.isRunning() && A.everyNthGameFrame(3)) {
 //            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
 //            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
             return AAvoidUnits.avoidEnemiesIfNeeded(unit);

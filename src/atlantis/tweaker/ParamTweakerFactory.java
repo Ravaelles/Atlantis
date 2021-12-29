@@ -1,8 +1,6 @@
 package atlantis.tweaker;
 
 import atlantis.combat.micro.avoid.SafetyMarginAgainstMelee;
-import atlantis.combat.micro.terran.TerranMedic;
-import atlantis.combat.retreating.ARunningManager;
 import atlantis.util.A;
 
 public class ParamTweakerFactory extends ParamTweaker {
@@ -28,8 +26,8 @@ public class ParamTweakerFactory extends ParamTweaker {
         ));
         tweaker.addParam(new Param(
                 "SafetyMeleeInfantryWoundNoMedic",
-                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_NO_MEDIC,
-                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_IF_NO_MEDIC = A.rand(70, 85)
+                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC,
+                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = A.rand(70, 85)
         ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBaseIfMedic",

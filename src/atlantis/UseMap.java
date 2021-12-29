@@ -27,9 +27,9 @@ public class UseMap {
 //        return "ums/rav/Vultures_v_Zealots.scm";
 
 //        return "ums/rav/minimaps/M_v_Zealots.scx";
-//        return "ums/rav/minimaps/M&M_v_Zealots.scx";
+        return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        return "ums/rav/minimaps/3M_v_2Zealots.scx";
-        return "ums/rav/minimaps/4M_v_2Zealots.scx";
+//        return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        return "ums/";
 //        return "ums/";
 //        return "ums/";

@@ -3,19 +3,18 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-    //    public static double ENEMIES_NEARBY_FACTOR = 5.9;
     public static double ENEMIES_NEARBY_FACTOR = 0.3;
     public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
-    public static double INFANTRY_BASE_IF_MEDIC = 1.60;
-    public static int INFANTRY_WOUND_IF_MEDIC = 19;
+//    public static double INFANTRY_BASE_IF_MEDIC = 1.60;
+    public static double INFANTRY_BASE_IF_MEDIC = 1.80;
+    public static int INFANTRY_WOUND_MODIFIER_WITH_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 2.65;
-    public static int INFANTRY_WOUND_IF_NO_MEDIC = 60;
+    public static int INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = 40;
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 1.95;
-    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 2.15;
+    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 3.0;
 //    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
 //    public static int INFANTRY_WOUND_IF_MEDIC = 20;
 //    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.02;
@@ -28,19 +27,25 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         if (defender.isTerranInfantry()) {
             if (defender.hasMedicInRange()) {
                 criticalDist = INFANTRY_BASE_IF_MEDIC
-                        + woundedAgainstMeleeBonus(defender, attacker)
-                        + enemyMovementBonus(defender, attacker) / 3;
-            } else {
-                criticalDist = INFANTRY_BASE_IF_NO_MEDIC
-                        + woundedAgainstMeleeBonus(defender, attacker)
-                        + enemyMeleeUnitsNearbyBonusIfNoMedic(defender);
-//                        + ourMovementBonus(defender) / 4
-//                        + enemyMovementBonus(defender, attacker) / 3;
+                        + enemyMeleeUnitsNearbyBonus(defender)
+                        + woundedAgainstMeleeBonus(defender, attacker);
+//                        + enemyMovementBonus(defender, attacker) / 2;
 
-                criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
+                criticalDist = Math.min(criticalDist, 3.0);
             }
 
-            criticalDist = Math.min(criticalDist, 3.0);
+            else {
+                criticalDist = INFANTRY_BASE_IF_NO_MEDIC
+                        + enemyMeleeUnitsNearbyBonus(defender)
+                        + woundedAgainstMeleeBonus(defender, attacker);
+//                        + ourMovementBonus(defender) / 4
+//                        + enemyMovementBonus(defender, attacker);
+
+//                System.out.println("criticalDist = " + criticalDist + " (hp = " + defender.hp() + ")");
+                criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
+
+                criticalDist = Math.min(criticalDist, 3.7);
+            }
         }
 
         // VULTURE
@@ -76,9 +81,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     // =========================================================
 
-    private static double enemyMeleeUnitsNearbyBonusIfNoMedic(AUnit defender) {
-        if (defender.enemiesNearby().melee().inRadius(2.4, defender).atLeast(2)) {
-            return 1.2;
+    private static double enemyMeleeUnitsNearbyBonus(AUnit defender) {
+        if (defender.enemiesNearby().melee().inRadius(2.7, defender).atLeast(2)) {
+            return 1.8;
         }
 
         return 0;
@@ -106,17 +111,21 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {
+        if (attacker.isRanged()) {
+            return 0;
+        }
+
         if (defender.isTerranInfantry()) {
             if (defender.hasMedicInRange()) {
                 if (defender.hp() <= 18) {
                     return INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC;
                 }
-                return defender.woundPercent() / INFANTRY_WOUND_IF_MEDIC;
+                return defender.woundPercent() / INFANTRY_WOUND_MODIFIER_WITH_MEDIC;
             } else {
                 if (defender.hp() <= 22) {
                     return INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC;
                 }
-                return defender.woundPercent() / INFANTRY_WOUND_IF_NO_MEDIC;
+                return defender.woundPercent() / INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC;
             }
         }
 

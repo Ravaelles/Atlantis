@@ -34,7 +34,7 @@ public class ASquadCohesionManager {
     private static boolean shouldSkip(AUnit unit) {
         return
                 // Only mission contain enforces unit coordination
-                (unit.mission() != null && unit.mission().isMissionContain())
+                (unit.mission() != null && !unit.mission().isMissionDefend())
 //                unit.mission() != null && (unit.mission().isMissionAttack() || unit.mission().isMissionDefend());
                 || unit.friendsNearby().atMost(2);
     }

@@ -45,15 +45,15 @@ public class TooSpreadOut extends ASquadCohesionManager {
 
     // =========================================================
 
-    private static double maxDistanceToSquadCenter(AUnit unit) {
-        int max = Math.max(2, unit.squadSize() / 5);
-
-        if (unit.isSquadScout()) {
-            max += 1;
-        }
-
-        return max;
-    }
+//    private static double maxDistanceToSquadCenter(AUnit unit) {
+//        int max = Math.max(2, unit.squadSize() / 5);
+//
+//        if (unit.isSquadScout()) {
+//            max += 1;
+//        }
+//
+//        return max;
+//    }
 
     private static boolean shouldSkipTooSpreadOut(AUnit unit) {
         if (Count.ourCombatUnits() <= 4) {
@@ -73,23 +73,22 @@ public class TooSpreadOut extends ASquadCohesionManager {
 
     // =========================================================
 
-
-    private static boolean isTooFarFromSquadCenter(AUnit unit, AUnit nearestFriend, APosition center) {
-        double maxDistToSquadCenter = preferredDistToSquadCenter(unit.squadSize());
-
-        if (
-                unit.distTo(center) > maxDistToSquadCenter
-                        && unit.distTo(nearestFriend) > 3
-        ) {
-            unit.move(
-                    unit.translatePercentTowards(center, 20),
-                    UnitActions.MOVE,
-                    "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
-            );
-            return true;
-        }
-
-        return false;
-    }
+//    private static boolean isTooFarFromSquadCenter(AUnit unit, AUnit nearestFriend, APosition center) {
+//        double maxDistToSquadCenter = preferredDistToSquadCenter(unit.squadSize());
+//
+//        if (
+//                unit.distTo(center) > maxDistToSquadCenter
+//                        && unit.distTo(nearestFriend) > 3
+//        ) {
+//            unit.move(
+//                    unit.translatePercentTowards(center, 20),
+//                    UnitActions.MOVE,
+//                    "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
+//            );
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
 }
