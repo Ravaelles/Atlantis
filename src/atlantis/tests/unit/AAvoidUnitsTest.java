@@ -16,6 +16,9 @@ import java.util.Collections;
 
 public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
+    public MockedStatic<AGame> aGame;
+    public MockedStatic<EnemyInformation> enemyInformation;
+
     @Test
     public void zergUnits() {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
@@ -162,7 +165,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
         int framesNow = 1;
         try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-            MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class);
+            aGame = Mockito.mockStatic(AGame.class);
             aGame.when(AGame::now).thenReturn(framesNow);
 
             FakeFoggedUnit enemy2, enemy3, enemy4, enemy5;
@@ -182,7 +185,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                     fogged(AUnitType.Zerg_Lurker, outsideRange)
             };
 
-            MockedStatic<EnemyInformation> enemyInformation = Mockito.mockStatic(EnemyInformation.class);
+            enemyInformation = Mockito.mockStatic(EnemyInformation.class);
             enemyInformation.when(EnemyInformation::discoveredAndAliveUnits).thenReturn(Arrays.asList(fogged));
 
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
@@ -192,10 +195,6 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                     new AUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5 },
                     AAvoidUnits.unitsToAvoid(our).array()
             );
-
-            // Clean up
-            enemyInformation.when(EnemyInformation::discoveredAndAliveUnits).thenReturn(Collections.emptyList());
-            aGame.close();
         }
     }
 

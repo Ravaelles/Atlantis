@@ -67,15 +67,12 @@ public class ASpecialPositionFinder {
         System.err.println("=== modifier /" + modifier + "/ ===");
         if (modifier != null) {
             if (modifier.equals(NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
-                System.err.println("A");
                 if (constructionOrder.maxDistance() < 0) {
                     constructionOrder.setMaxDistance(40);
                 }
                 return findPositionForBase_nearMainBase(building, builder, constructionOrder);
             }
             else if (modifier.equals(AT_NATURAL)) {
-                System.err.println("B");
-
                 if (constructionOrder.maxDistance() < 0) {
                     constructionOrder.setMaxDistance(30);
                 }

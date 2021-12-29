@@ -39,6 +39,11 @@ public abstract class AFoggedUnit extends AUnit {
         all.clear();
     }
 
+    @Override
+    public int id() {
+        return _id;
+    }
+
     /**
      * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached
      * type.
@@ -113,6 +118,15 @@ public abstract class AFoggedUnit extends AUnit {
 
     public boolean isAccessible() {
         return !AUnitType.Unknown.equals(aUnit.type());
+    }
+
+    // =========================================================
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " "
+                + nameWithId() +
+                " at " + _position;
     }
 
     // =========================================================

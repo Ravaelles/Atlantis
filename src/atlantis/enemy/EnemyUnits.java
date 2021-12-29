@@ -50,6 +50,7 @@ public class EnemyUnits {
         AFoggedUnit foggedUnit = enemyUnit instanceof FakeUnit
                 ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
                 : FoggedUnit.from(enemyUnit);
+
         enemyUnitsDiscovered.put(enemyUnit.id(), foggedUnit);
     }
 

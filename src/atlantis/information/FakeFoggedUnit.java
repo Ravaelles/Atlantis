@@ -20,4 +20,6 @@ public class FakeFoggedUnit extends AFoggedUnit {
         return fakeFoggedUnit;
     }
 
+    // =========================================================
+
 }

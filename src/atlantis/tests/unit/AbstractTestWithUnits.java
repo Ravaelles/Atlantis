@@ -16,17 +16,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.exceptions.base.MockitoException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public class AbstractTestWithUnits extends UnitTestHelper {
 
-//    protected int currentFrames = 1;
-    protected Game game;
+    public Game game;
 
     // =========================================================
 
@@ -47,9 +48,31 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     @After
     public void after() {
-        if (game != null) {
-            game = null;
+        cleanUp();
+    }
+
+    /**
+     * PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK.
+     */
+    protected void cleanUp() {
+
+        // Close static mocks - PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK
+        for (Field field : getClass().getFields()) {
+            if (field.getType().toString().contains("MockedStatic")) {
+                try {
+                    Object object = field.get(this);
+                    if (object != null) {
+                        ((MockedStatic) object).close();
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Something went wrong here");
+                } catch (MockitoException e) {
+                    // Mock already closed, that's ok
+                }
+            }
         }
+
+        game = null;
         Atlantis.getInstance().setGame(null);
     }
 
@@ -106,24 +129,6 @@ public class AbstractTestWithUnits extends UnitTestHelper {
             runnable.run();
         }
     }
-
-//    protected void usingFakeSetup(int framesNow, FakeUnit our, FakeUnit[] enemies, FoggedUnit[] fogged, Runnable runnable) {
-////        MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class);
-////        MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class);
-////        try (baseSelect) {
-//        try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-//            MockedStatic<AGame> aGame = Mockito.mockStatic(AGame.class);
-//            aGame.when(AGame::now).thenReturn(framesNow);
-//
-//            baseSelect.when(EnemyUnits::combatUnitsToBetterAvoid).thenReturn(Select.from(Arrays.asList(fogged)));
-//            baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
-//            baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
-//
-//            Atlantis.getInstance().setGame(gameMock(0));
-//
-//            runnable.run();
-//        }
-//    }
 
     protected FakeUnit fake(AUnitType type) {
         return new FakeUnit(type, 10, 10);
