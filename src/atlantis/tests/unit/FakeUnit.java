@@ -116,16 +116,17 @@ public class FakeUnit extends AUnit {
 
     @Override
     public int hp() {
-        return id * 10;
+        return maxHp();
+    }
+
+    @Override
+    public int maxHp() {
+        return type().maxHp();
     }
 
     @Override
     public int energy() {
         return energy;
-    }
-
-    public int maxHp() {
-        return hp() + id * 10;
     }
 
     @Override

@@ -20,6 +20,7 @@ import bwapi.Game;
 import bwapi.Position;
 import bwapi.Race;
 import bwapi.WalkPosition;
+import org.junit.After;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -37,10 +38,22 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected FakeUnit[] enemies;
     protected FakeUnit[] neutral;
 
-    public Game game;
     public MockedStatic<AGame> aGame;
     public MockedStatic<ATech> aTech;
     public MockedStatic<PositionUtil> positionUtil;
+
+    // =========================================================
+
+    @After
+    public void after() {
+        super.after();
+
+        cleanUpStaticMocks();
+
+        if (game != null) {
+            game = null;
+        }
+    }
 
     // =========================================================
 
@@ -76,8 +89,6 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
                 FakeOnFrameEnd.onFrameEnd(this);
             }
-
-            cleanUpStaticMocks();
         }
     }
 

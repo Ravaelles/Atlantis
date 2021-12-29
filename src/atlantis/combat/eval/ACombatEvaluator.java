@@ -21,6 +21,10 @@ public class ACombatEvaluator {
 
     // =========================================================
 
+    public static void clearCache() {
+        cache.clear();
+    }
+
     /**
      * Returns <b>TRUE</b> if our <b>unit</b> should engage in combat with nearby units or
      * <b>FALSE</b> if enemy is too strong and we should pull back.

@@ -1,6 +1,7 @@
 package atlantis.tests.unit;
 
 import atlantis.Atlantis;
+import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.EnemyInformation;
@@ -11,6 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import bwapi.Game;
+import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -24,6 +26,7 @@ import java.util.Arrays;
 public class AbstractTestWithUnits extends UnitTestHelper {
 
 //    protected int currentFrames = 1;
+    protected Game game;
 
     // =========================================================
 
@@ -35,16 +38,25 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         APainter.disablePainting();
         Select.clearCache();
         BaseSelect.clearCache();
+        ACombatEvaluator.clearCache();
         AFoggedUnit.clearCache();
         EnemyInformation.clearCache();
         EnemyUnits.clearCache();
         AAvoidUnits.clearCache();
     }
 
+    @After
+    public void after() {
+        if (game != null) {
+            game = null;
+        }
+        Atlantis.getInstance().setGame(null);
+    }
+
     // =========================================================
 
     protected void useFakeTime(int framesNow) {
-        Game game = Atlantis.game() == null ? newGameMock(framesNow) : Atlantis.game();
+        game = Atlantis.game() == null ? newGameMock(framesNow) : Atlantis.game();
 
         when(game.getFrameCount()).thenReturn(framesNow);
 

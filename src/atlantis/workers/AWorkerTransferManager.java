@@ -53,8 +53,8 @@ public class AWorkerTransferManager {
         AUnit baseWithMostWorkers = baseWorkersRatios.unitWithHighestValue();
 
         if (baseWithFewestWorkers == null || baseWithMostWorkers == null) {
-            System.err.println("baseWithFewestWorkers = " + baseWithFewestWorkers);
-            System.err.println("baseWithMostWorkers = " + baseWithMostWorkers);
+//            System.err.println("baseWithFewestWorkers = " + baseWithFewestWorkers);
+//            System.err.println("baseWithMostWorkers = " + baseWithMostWorkers);
             return;
         }
 

@@ -148,6 +148,12 @@ public class ARunningManager {
     private APosition findBestPositionToRun(AUnit unit, HasPosition runAwayFrom, double dist) {
         APosition runTo = null;
 
+        // =========================================================
+
+        if (unit.position().equals(runAwayFrom)) {
+            runAwayFrom = runAwayFrom.translateByPixels(1, 1);
+        }
+
         // === Run directly away from the enemy ========================================
         
 //        if (!unit.position().isCloseToMapBounds() && (closeEnemies == null || closeEnemies.size() <= 1)) {

@@ -16,19 +16,19 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 
             FakeUnit enemy = nearestEnemy(unit);
 
-            System.out.println(A.now() + " -       " + unit.tooltip()
-                    + "\n " + unit.lastCommand()
-                    + ",\n tx:" + unit.tx() + ", x:" + unit.x()
-                    + ",\n combat_eval:" + unit.combatEvalRelative()
-//                    + ",\n ENEMY_eval:" + enemy.combatEvalAbsolute()
-//                    + ",\n combat_eval:" + unit.combatEvalAbsolute()
-//                    + (i(nearestEnemy) ? "" : "a")
-                    + ",\n dist_to_enemy:" + distToNearestEnemy(unit)
-//                    + (nearestEnemy == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target))
-                    + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target) + " (" + unit.target.hp() + "hp)")
-                    + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
-            );
-            System.out.println("_______________________________________");
+//            System.out.println(A.now() + " -       " + unit.tooltip()
+//                    + "\n " + unit.lastCommand()
+//                    + ",\n tx:" + unit.tx() + ", x:" + unit.x()
+//                    + ",\n combat_eval:" + unit.combatEvalRelative()
+////                    + ",\n ENEMY_eval:" + enemy.combatEvalAbsolute()
+////                    + ",\n combat_eval:" + unit.combatEvalAbsolute()
+////                    + (i(nearestEnemy) ? "" : "a")
+//                    + ",\n dist_to_enemy:" + distToNearestEnemy(unit)
+////                    + (nearestEnemy == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target))
+//                    + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target) + " (" + unit.target.hp() + "hp)")
+//                    + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
+//            );
+//            System.out.println("_______________________________________");
         });
     }
 

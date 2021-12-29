@@ -724,7 +724,7 @@ public class AUnitType implements Comparable<Object> {
         return ut.tileHeight();
     }
 
-    public int getMaxHitPoints() {
+    public int maxHp() {
         return ut.maxHitPoints();
     }
 

@@ -19,14 +19,20 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             double ourEval = our.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();
 
+//            System.out.println("ourEval = " + ourEval);
+//            System.out.println("enemyEval = " + enemyEval);
+
             assertTrue(ourEval < enemyEval);
-            assertTrue(ourEval * 5 < enemyEval);
+            assertTrue(ourEval * 3.6 > enemyEval);
 
             ourEval = our.combatEvalRelative();
             enemyEval = enemy.combatEvalRelative();
 
-            assertTrue(Math.abs(ourEval - 0.18) < 0.1);
-            assertTrue(Math.abs(enemyEval - 5.29) < 0.1);
+//            System.out.println("ourEval = " + ourEval);
+//            System.out.println("enemyEval = " + enemyEval);
+
+            assertTrue(Math.abs(ourEval - 0.3) < 0.1);
+            assertTrue(Math.abs(enemyEval - 3.1) < 0.1);
         });
     }
 

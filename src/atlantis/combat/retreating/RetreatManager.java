@@ -3,6 +3,7 @@ package atlantis.combat.retreating;
 import atlantis.AGame;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
+import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.util.Cache;
@@ -38,7 +39,13 @@ public class RetreatManager {
                         GLOBAL_RETREAT_COUNTER++;
                         unit.setTooltip("Retreat");
                         MissionChanger.notifyThatUnitRetreated(unit);
-                        return unit.runningManager().runFrom(enemies.average(), 3.5);
+                        APosition averageEnemyPosition = enemies.average();
+
+                        if (unit.position().equals(averageEnemyPosition)) {
+                            averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
+                        }
+
+                        return unit.runningManager().runFrom(averageEnemyPosition, 3.5);
                     }
 
                     if (Objects.equals(unit.tooltip(), "Retreat")) {
