@@ -81,6 +81,14 @@ public class RetreatManager {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
+        if (unit.isHealthy()) {
+            return true;
+        }
+
+        if (unit.isStimmed()) {
+            return true;
+        }
+
         if (unit.type().isReaver()) {
             return unit.enemiesNearby().isEmpty() && unit.cooldownRemaining() <= 7;
         }

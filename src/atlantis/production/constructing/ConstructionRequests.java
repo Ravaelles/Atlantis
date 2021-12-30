@@ -2,11 +2,11 @@ package atlantis.production.constructing;
 
 import atlantis.AGame;
 import atlantis.position.HasPosition;
+import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
-import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
@@ -254,7 +254,7 @@ public class ConstructionRequests {
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
      * then, we can e.g. "get not started Terran Barracks constructions".
      */
-    public static ArrayList<ConstructionOrder> getNotStartedOfType(AUnitType type) {
+    public static ArrayList<ConstructionOrder> notStartedOfType(AUnitType type) {
         ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
@@ -265,7 +265,7 @@ public class ConstructionRequests {
         return notStarted;
     }
 
-    public static ArrayList<ConstructionOrder> getNotStarted() {
+    public static ArrayList<ConstructionOrder> notStarted() {
         ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
@@ -281,8 +281,18 @@ public class ConstructionRequests {
      *
      * @return
      */
-    public static ArrayList<ConstructionOrder> getAllConstructionOrders() {
+    public static ArrayList<ConstructionOrder> allConstructionOrders() {
         return new ArrayList<>(constructionOrders);
+    }
+
+    public static ArrayList<HasPosition> allConstructionOrdersIncludingCached() {
+        ArrayList<HasPosition> positions = new ArrayList<>();
+        for (ConstructionOrder order : ConstructionRequests.constructionOrders) {
+            positions.add(order.positionToBuild());
+        }
+        positions.addAll(APositionFinder.cache.values());
+
+        return positions;
     }
 
     /**
@@ -291,7 +301,7 @@ public class ConstructionRequests {
     public static int[] resourcesNeededForNotStarted() {
         int mineralsNeeded = 0;
         int gasNeeded = 0;
-        for (ConstructionOrder constructionOrder : getNotStartedOfType(null)) {
+        for (ConstructionOrder constructionOrder : notStartedOfType(null)) {
             mineralsNeeded += constructionOrder.buildingType().getMineralPrice();
             gasNeeded += constructionOrder.buildingType().getGasPrice();
         }
@@ -316,7 +326,7 @@ public class ConstructionRequests {
     }
 
     public static boolean hasNotStartedNear(AUnitType building, HasPosition position, double inRadius) {
-        for (ConstructionOrder order : getNotStartedOfType(building)) {
+        for (ConstructionOrder order : notStartedOfType(building)) {
             if (order.positionToBuild() != null && position.distToLessThan(position, inRadius)) {
                 return true;
             }

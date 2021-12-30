@@ -248,7 +248,7 @@ public class Bases {
         }
 
         // Check for planned constructions
-        for (ConstructionOrder constructionOrder : ConstructionRequests.getAllConstructionOrders()) {
+        for (ConstructionOrder constructionOrder : ConstructionRequests.allConstructionOrders()) {
             APosition constructionPlace = constructionOrder.positionToBuildCenter();
             if (constructionPlace != null && constructionPlace.distTo(baseLocation.position()) < 8) {
                 return false;

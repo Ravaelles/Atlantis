@@ -5,13 +5,13 @@ import atlantis.Atlantis;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
+import atlantis.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.map.ABaseLocation;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import bwapi.Position;
@@ -86,23 +86,23 @@ public abstract class AbstractPositionFinder {
      * add-on place of another. Buildings can be stacked, but it needs to be done properly e.g. Supply Depots
      * could be stacked.
      */
-    protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, Position position) {
+    protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
         
         // Compare against planned construction places
-        for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
             if (
-                    order.notStarted()
-                    && !builder.equals(order.builder())
-                    && order.positionToBuild() != null
+//                    order.notStarted()
+//                    !builder.equals(order.builder())
+                    position != null
             ) {
-                double distance = PositionUtil.distanceTo(order.positionToBuild(), position);
-                boolean areBasesTooCloseOneToAnother = (distance <= 5 && !AGame.isPlayingAsZerg()
-                        && building.isBase() && order.buildingType().isBase());
+                double distance = position.distTo(constructionPosition);
+//                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
+//                        && (distance <= 5 && !AGame.isPlayingAsZerg());
 
                 // Look for two bases that would be built too close one to another
-                if (distance <= 4 || areBasesTooCloseOneToAnother) {
+                if (distance <= 5) {
                     _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE ("
-                            + order.buildingType() + ", DIST: " + distance + ")";
+                            + building + ", DIST: " + distance + ")";
                     return true;
                 }
             }

@@ -8,7 +8,6 @@ import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
-import bwapi.Unit;
 
 public class OnUnitMorph {
 
@@ -33,7 +32,7 @@ public class OnUnitMorph {
             // === Fix for Zerg Extractor ========================================
             // Detect morphed gas building meaning construction has just started
             if (unit.type().isGasBuilding()) {
-                for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+                for (ConstructionOrder order : ConstructionRequests.allConstructionOrders()) {
                     if (order.buildingType().equals(AtlantisConfig.GAS_BUILDING)
                             && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         order.setConstruction(unit);

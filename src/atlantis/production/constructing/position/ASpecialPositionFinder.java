@@ -7,6 +7,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.Cache;
 
 public class ASpecialPositionFinder {
     
@@ -31,6 +32,8 @@ public class ASpecialPositionFinder {
      * (also called the "expansion").
      */
     public static final String AT_NATURAL = "NATURAL";
+
+    private static Cache<APosition> cache = new Cache<>();
     
     // =========================================================
 
@@ -58,29 +61,34 @@ public class ASpecialPositionFinder {
      * built.
      */
     public static APosition findPositionForBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        String modifier = constructionOrder.productionOrder() != null ?
-                constructionOrder.productionOrder().getModifier() : null;
-        
-        System.err.println("");
-        System.err.println(constructionOrder.productionOrder());
-        System.err.println(constructionOrder.maxDistance());
-        System.err.println("=== modifier /" + modifier + "/ ===");
-        if (modifier != null) {
-            if (modifier.equals(NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
-                if (constructionOrder.maxDistance() < 0) {
-                    constructionOrder.setMaxDistance(40);
+        return cache.get(
+                "findPositionForBase:" + builder + "," + constructionOrder.id(),
+                50,
+                () -> {
+                    String modifier = constructionOrder.productionOrder() != null ?
+                            constructionOrder.productionOrder().getModifier() : null;
+
+                    System.err.println("");
+                    System.err.println(constructionOrder.productionOrder());
+                    System.err.println(constructionOrder.maxDistance());
+                    System.err.println("=== modifier /" + modifier + "/ ===");
+                    if (modifier != null) {
+                        if (modifier.equals(NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
+                            if (constructionOrder.maxDistance() < 0) {
+                                constructionOrder.setMaxDistance(40);
+                            }
+                            return findPositionForBase_nearMainBase(building, builder, constructionOrder);
+                        } else if (modifier.equals(AT_NATURAL)) {
+                            if (constructionOrder.maxDistance() < 0) {
+                                constructionOrder.setMaxDistance(30);
+                            }
+                            return findPositionForBase_natural(building, builder, constructionOrder);
+                        }
+                    }
+
+                    return findPositionForBase_nearestFreeBase(building, builder, constructionOrder);
                 }
-                return findPositionForBase_nearMainBase(building, builder, constructionOrder);
-            }
-            else if (modifier.equals(AT_NATURAL)) {
-                if (constructionOrder.maxDistance() < 0) {
-                    constructionOrder.setMaxDistance(30);
-                }
-                return findPositionForBase_natural(building, builder, constructionOrder);
-            }
-        }
-        
-        return findPositionForBase_nearestFreeBase(building, builder, constructionOrder);
+        );
     }
 
     // =========================================================

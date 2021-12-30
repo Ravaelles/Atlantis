@@ -2,13 +2,15 @@ package atlantis.combat.eval;
 
 import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnit;
-import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
 
 public class ACombatEvaluator {
+
+    private static double RANGED_RADIUS = 15;
+    private static double MELEE_RADIUS = 5.5;
 
     private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT = 7;
     private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS = 20;
@@ -142,20 +144,18 @@ public class ACombatEvaluator {
 
     private static Selection theseUnits(AUnit unit) {
         Selection theseUnits;
-        double rangedRadius = 13;
-        double meleeRadius = 4.5;
 
         // Our eval
         if (unit.isOur()) {
-            theseUnits = Select.ourCombatUnits().ranged().inRadius(rangedRadius, unit);
-            theseUnits.add(Select.ourCombatUnits().melee().inRadius(meleeRadius, unit));
+            theseUnits = Select.ourCombatUnits().ranged().inRadius(RANGED_RADIUS, unit);
+            theseUnits.add(Select.ourCombatUnits().melee().inRadius(MELEE_RADIUS, unit));
         }
 
         // Enemy eval
         else if (unit.isEnemy()) {
-            theseUnits = Select.enemyCombatUnits().ranged().inRadius(rangedRadius, unit);
-            theseUnits.add(Select.enemyCombatUnits().melee().inRadius(meleeRadius, unit));
-            theseUnits.add(EnemyUnits.combatUnitsToBetterAvoid().inRadius(rangedRadius, unit));
+            theseUnits = Select.enemyCombatUnits().ranged().inRadius(RANGED_RADIUS, unit);
+            theseUnits.add(Select.enemyCombatUnits().melee().inRadius(MELEE_RADIUS, unit));
+            theseUnits.add(EnemyUnits.combatUnitsToBetterAvoid().inRadius(RANGED_RADIUS, unit));
             theseUnits.removeDuplicates();
         }
 

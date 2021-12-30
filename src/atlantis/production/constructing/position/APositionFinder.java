@@ -9,15 +9,12 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.Cache;
 import atlantis.util.We;
 
 public class APositionFinder {
 
-    public static int totalRequests = 0;
-    
-//    protected static AUnitType building;
-//    protected static Position nearTo;
-//    protected static double maxDistance;
+    public static Cache<APosition> cache = new Cache<>();
 
     // =========================================================
 
@@ -40,7 +37,7 @@ public class APositionFinder {
             ConstructionOrder constructionOrder,
             HasPosition nearTo, double maxDistance
     ) {
-        totalRequests++;
+//        totalRequests++;
         constructionOrder.setMaxDistance(maxDistance);
 
         // =========================================================
@@ -122,32 +119,37 @@ public class APositionFinder {
      * Returns standard build position for building near given position.
      */
     public static APosition findStandardPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-        
-        // ===========================================================
-        // = Handle standard building position according to the race =
-        // = as every race uses completely different approach        =
-        // ===========================================================
-        
-        // Terran
-        if (AGame.isPlayingAsTerran()) {
-            return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-        }
+        return cache.get(
+                "findStandardPosition",
+                40,
+                () -> {
 
-        // Protoss
-        else if (AGame.isPlayingAsProtoss()) {
-            return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-        }
 
-        // Zerg
-        else if (AGame.isPlayingAsZerg()) {
-            return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-        }
+                    // ===========================================================
+                    // = Handle standard building position according to the race =
+                    // = as every race uses completely different approach        =
+                    // ===========================================================
 
-        else {
-            System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
-            System.exit(-1);
-            return null;
-        }
+                    // Terran
+                    if (AGame.isPlayingAsTerran()) {
+                        return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+                    }
+
+                    // Protoss
+                    else if (AGame.isPlayingAsProtoss()) {
+                        return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+                    }
+
+                    // Zerg
+                    else if (AGame.isPlayingAsZerg()) {
+                        return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+                    } else {
+                        System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
+                        System.exit(-1);
+                        return null;
+                    }
+                }
+        );
     }
 
 }

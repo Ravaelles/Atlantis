@@ -187,7 +187,7 @@ public class AConstructionManager {
      */
     private static void handleZergConstructionsWhichBecameBuildings() {
         if (AGame.isPlayingAsZerg()) {
-            ArrayList<ConstructionOrder> allOrders = ConstructionRequests.getAllConstructionOrders();
+            ArrayList<ConstructionOrder> allOrders = ConstructionRequests.allConstructionOrders();
             if (!allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.builder();

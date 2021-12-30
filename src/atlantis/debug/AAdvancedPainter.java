@@ -543,7 +543,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintNotStartedConstructions() {
 
         // Constructions already planned
-        for (ConstructionOrder order : ConstructionRequests.getNotStarted()) {
+        for (ConstructionOrder order : ConstructionRequests.notStarted()) {
             AUnitType type = order.buildingType();
             paintSideMessage(type.name(), Color.Cyan);
         }
@@ -575,7 +575,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintSidebarConstructionsPending() {
         int yOffset = 220;
-        ArrayList<ConstructionOrder> allOrders = ConstructionRequests.getAllConstructionOrders();
+        ArrayList<ConstructionOrder> allOrders = ConstructionRequests.allConstructionOrders();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
@@ -611,7 +611,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintConstructionPlaces() {
         Color color = Color.Grey;
-        for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+        for (ConstructionOrder order : ConstructionRequests.allConstructionOrders()) {
             if (order.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 APosition positionToBuild = order.positionToBuild();
@@ -807,7 +807,7 @@ public class AAdvancedPainter extends APainter {
     static void paintConstructionProgress() {
         setTextSizeMedium();
 //        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-        for (ConstructionOrder order : ConstructionRequests.getAllConstructionOrders()) {
+        for (ConstructionOrder order : ConstructionRequests.allConstructionOrders()) {
             AUnit building = order.construction();
             if (building == null || building.isCompleted()) {
                 continue;

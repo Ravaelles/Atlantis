@@ -115,8 +115,12 @@ public class ARunningManager {
 
         // Fix against same unit position / run away from position
         if (unit.distToLessThan(runAwayFrom, 0.05)) {
-//            runAwayFrom = runAwayFrom.translateByPixels(20, 20);
             runAwayFrom = unit.enemiesNearby().nearestTo(unit);
+        }
+
+        // Fix against same unit position / run away from position
+        if (unit.distToLessThan(runAwayFrom, 0.05)) {
+            runAwayFrom = runAwayFrom.translateByPixels(20, 20);
         }
 
         return runAwayFrom;

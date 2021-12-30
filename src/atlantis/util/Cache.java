@@ -1,8 +1,8 @@
 package atlantis.util;
 
-import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
+import java.util.Collection;
 import java.util.TreeMap;
 
 /**
@@ -100,6 +100,10 @@ public class Cache<V> {
         } else {
             cachedUntil.remove(cacheKey);
         }
+    }
+
+    public Collection<V> values() {
+        return data.values();
     }
 
     public int size() {

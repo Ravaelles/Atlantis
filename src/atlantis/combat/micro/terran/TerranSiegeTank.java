@@ -14,6 +14,8 @@ import atlantis.wrappers.ATech;
 import bwapi.Color;
 import bwapi.TechType;
 
+import java.util.List;
+
 
 public class TerranSiegeTank {
     private static AUnit nearestEnemyUnit;
@@ -83,7 +85,12 @@ public class TerranSiegeTank {
     }
 
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
-        for (AUnit lurker : Select.enemyFoggedUnits().ofType(AUnitType.Zerg_Lurker).groundUnits().inRadius(12, tank).list()) {
+        List<AUnit> lurkers = Select.enemyFoggedUnits()
+                .ofType(AUnitType.Zerg_Lurker)
+                .havingPosition()
+                .inRadius(12, tank)
+                .list();
+        for (AUnit lurker : lurkers) {
             if (lurker.distTo(tank) >= tank.groundWeaponMinRange()) {
                 if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
                     tank.setTooltip("SMASH invisible!");

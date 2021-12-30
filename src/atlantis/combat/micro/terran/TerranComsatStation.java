@@ -44,7 +44,7 @@ public class TerranComsatStation {
         int minUnitsNearby = (comsat.energy(160) ? 3 : (comsat.energy(60) ? 4 : 6));
 
         if (comsat.energy(100) && Select.ourBuildingsIncludingUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
-            System.err.println("Scan " + lurker + " because buildings are close");
+//            System.err.println("Scan " + lurker + " because buildings are close");
             return true;
         }
 
@@ -113,7 +113,7 @@ public class TerranComsatStation {
 //        }
 
         if (!(unitToScan instanceof FakeUnit)) {
-            System.err.println("=== COMSAT SCAN on " + unitToScan + ", energy = " + comsat.energy() + " ===");
+//            System.err.println("=== COMSAT SCAN on " + unitToScan + ", energy = " + comsat.energy() + " ===");
         }
         comsat.setTooltip("Scanning " + unitToScan.name());
         return comsat.useTech(TechType.Scanner_Sweep, unitToScan);

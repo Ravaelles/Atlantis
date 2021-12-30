@@ -19,19 +19,23 @@ public class TooSpreadOut extends ASquadCohesionManager {
             return false;
         }
 
-        APosition squadCenter = squadCenter(unit);
-        if (unit.hasPathTo(squadCenter)) {
-//            boolean tooFarFromCenter = unit.distTo(squadCenter) >= maxDistanceToSquadCenter(unit);
-//            if (tooFarFromCenter || tooFarForward) {
-            if (unit.mission() != null && unit.mission().focusPoint() != null) {
-                if (tooFarForward(unit, unit.mission().focusPoint(), squadCenter)) {
-                    return unit.move(squadCenter(unit), UnitActions.MOVE, "TooSpread");
-                }
-            }
-
-
-//            maxDistanceToSquadCenter(unit)
+        if (isTooFarFromSquadCenter(unit)) {
+            return true;
         }
+
+//        APosition squadCenter = squadCenter(unit);
+//        if (unit.hasPathTo(squadCenter)) {
+////            boolean tooFarFromCenter = unit.distTo(squadCenter) >= maxDistanceToSquadCenter(unit);
+////            if (tooFarFromCenter || tooFarForward) {
+//            if (unit.mission() != null && unit.mission().focusPoint() != null) {
+//                if (tooFarForward(unit, unit.mission().focusPoint(), squadCenter)) {
+//                    return unit.move(squadCenter(unit), UnitActions.MOVE, "TooSpread");
+//                }
+//            }
+//
+//
+////            maxDistanceToSquadCenter(unit)
+//        }
 
         return false;
     }
@@ -73,22 +77,29 @@ public class TooSpreadOut extends ASquadCohesionManager {
 
     // =========================================================
 
-//    private static boolean isTooFarFromSquadCenter(AUnit unit, AUnit nearestFriend, APosition center) {
-//        double maxDistToSquadCenter = preferredDistToSquadCenter(unit.squadSize());
-//
-//        if (
-//                unit.distTo(center) > maxDistToSquadCenter
-//                        && unit.distTo(nearestFriend) > 3
-//        ) {
-//            unit.move(
-//                    unit.translatePercentTowards(center, 20),
-//                    UnitActions.MOVE,
-//                    "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
-//            );
-//            return true;
-//        }
-//
-//        return false;
-//    }
+    private static boolean isTooFarFromSquadCenter(AUnit unit) {
+        if (unit.squad() == null) {
+            return false;
+        }
+
+        APosition center = unit.squad().center();
+        double maxDistToSquadCenter = preferredDistToSquadCenter(unit.squadSize());
+
+        if (unit.distTo(center) > maxDistToSquadCenter) {
+            AUnit nearestFriend = unit.friendsNearby().nearestTo(unit);
+            if (nearestFriend == null) {
+                return false;
+            }
+
+            unit.move(
+                    unit.translatePercentTowards(center, 20),
+                    UnitActions.MOVE,
+                    "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
+            );
+            return true;
+        }
+
+        return false;
+    }
 
 }
