@@ -4,12 +4,8 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.production.constructing.ABuilderManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.repair.ARepairAssignments;
-import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.util.A;
 
 public class AWorkerManager {
 
@@ -128,7 +124,7 @@ public class AWorkerManager {
     public static int getHowManyWorkersWorkingNear(AUnit base, boolean includeMoving) {
         int total = 0;
 
-        for (AUnit worker : Select.ourWorkers().inRadius(25, base).listUnits()) {
+        for (AUnit worker : Select.ourWorkers().inRadius(25, base).list()) {
             if (worker.isMiningOrExtractingGas() || worker.isRepairing() || worker.isConstructing()
                     || (includeMoving && worker.isMoving())) {
                 total++;
@@ -142,7 +138,7 @@ public class AWorkerManager {
         boolean isGasBuilding = target.type().isGasBuilding();
 
         // Take those not carrying anything first
-        for (AUnit worker : Select.ourWorkers().listUnits()) {
+        for (AUnit worker : Select.ourWorkers().list()) {
             if (!isWorkerAssignedToBuilding(worker, target)) {
                 continue;
             }
@@ -153,7 +149,7 @@ public class AWorkerManager {
         }
 
         // Meh, take those carrying as well
-        for (AUnit worker : Select.ourWorkers().listUnits()) {
+        for (AUnit worker : Select.ourWorkers().list()) {
             if (isWorkerAssignedToBuilding(worker, target)) {
                 return worker;
             }

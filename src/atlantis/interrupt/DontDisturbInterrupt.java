@@ -8,8 +8,6 @@ import bwapi.Color;
 
 public class DontDisturbInterrupt {
 
-    private static final double MELEE_ENEMIES_RANGE = 2.7;
-
     public static boolean dontInterruptImportantActions(AUnit unit) {
 //        if (true) return false;
 
@@ -18,7 +16,7 @@ public class DontDisturbInterrupt {
 //        if (unit.hp() <= (Enemy.protoss() ? 18 : 8) * enemiesMultiplier) {
 //            APainter.paintCircleFilled(unit, 10, Color.Purple);
 //            System.err.println(unit.hp() + " < " + (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE));
-        if (unit.hp() <= (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE)) {
+        if (unit.isWounded() && unit.hp() <= (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearbyCount()) {
             return false;
         }
 

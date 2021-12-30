@@ -1,12 +1,11 @@
 package atlantis.combat.eval;
 
+import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.Cache;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class ACombatEvaluator {
@@ -81,7 +80,7 @@ public class ACombatEvaluator {
                 // =========================================================
                 // Define nearby enemy and our units
 
-                Units opposingUnits = opposingUnits(unit);
+                Selection opposingUnits = opposingUnits(unit);
 
                 if (opposingUnits.isEmpty()) {
                     return MAX_VALUE;
@@ -94,7 +93,7 @@ public class ACombatEvaluator {
 //                    }
 //                }
 
-                Units theseUnits = theseUnits(unit);
+                Selection theseUnits = theseUnits(unit);
 
 //                theseUnits.print("THESE");
 //                opposingUnits.print("OPPOSING");
@@ -102,8 +101,12 @@ public class ACombatEvaluator {
                 // =========================================================
                 // Evaluate our and enemy strength
 
-                double againstUnitsEvaluation = Evaluate.evaluateUnitsAgainstUnit(opposingUnits, theseUnits, true);
-                double theseUnitsEvaluation = Evaluate.evaluateUnitsAgainstUnit(theseUnits, opposingUnits, false);
+                double theseUnitsEvaluation = Evaluate.evaluateUnitsAgainstUnit(
+                        theseUnits.units(), opposingUnits.units(), false
+                );
+                double againstUnitsEvaluation = Evaluate.evaluateUnitsAgainstUnit(
+                        opposingUnits.units(), theseUnits.units(), true
+                );
 
 //                if (unit.isOur()) {
 //                    System.err.println("theseUnitsEvaluation = " + unit + " // " + + theseUnitsEvaluation);
@@ -137,21 +140,23 @@ public class ACombatEvaluator {
         return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT;
     }
 
-    private static Units theseUnits(AUnit unit) {
-        Units theseUnits;
+    private static Selection theseUnits(AUnit unit) {
+        Selection theseUnits;
         double rangedRadius = 13;
         double meleeRadius = 4.5;
 
         // Our eval
         if (unit.isOur()) {
-            theseUnits = Select.ourCombatUnits().ranged().inRadius(rangedRadius, unit).units();
-            theseUnits.addAll(Select.ourCombatUnits().melee().inRadius(meleeRadius, unit).list());
+            theseUnits = Select.ourCombatUnits().ranged().inRadius(rangedRadius, unit);
+            theseUnits.add(Select.ourCombatUnits().melee().inRadius(meleeRadius, unit));
         }
 
         // Enemy eval
         else if (unit.isEnemy()) {
-            theseUnits = Select.enemyCombatUnits().ranged().inRadius(rangedRadius, unit).units();
-            theseUnits.addAll(Select.enemyCombatUnits().melee().inRadius(meleeRadius, unit).list());
+            theseUnits = Select.enemyCombatUnits().ranged().inRadius(rangedRadius, unit);
+            theseUnits.add(Select.enemyCombatUnits().melee().inRadius(meleeRadius, unit));
+            theseUnits.add(EnemyUnits.combatUnitsToBetterAvoid().inRadius(rangedRadius, unit));
+            theseUnits.removeDuplicates();
         }
 
         else {
@@ -161,19 +166,24 @@ public class ACombatEvaluator {
         return theseUnits;
     }
 
-    public static Units opposingUnits(AUnit unit) {
+    public static Selection opposingUnits(AUnit unit) {
+
         // Ranged
-        Units againstUnits = unit.enemiesNearby().ranged()
-                .canAttack(unit, 4)
-                .units();
+        Selection againstUnits = unit.enemiesNearby()
+                .ranged()
+                .canAttack(unit, 4);
 
         // Melee
-        againstUnits.addAll(
+        againstUnits.add(
                 unit.enemiesNearby().melee()
                         .inRadius(6, unit)
                         .canAttack(unit, 6)
-                        .listUnits()
         );
+
+        if (unit.isOur()) {
+            againstUnits = againstUnits.add(EnemyUnits.combatUnitsToBetterAvoid())
+                        .removeDuplicates();
+        }
 
         return againstUnits;
     }
@@ -181,66 +191,5 @@ public class ACombatEvaluator {
     public static boolean advantagePercent(AUnit unit, int percentOfAdvantageRelativeToEnemyStrength) {
         return evaluateSituation(unit, true) >= (1 + percentOfAdvantageRelativeToEnemyStrength / 100.0);
     }
-
-    // =========================================================
-    // Safety margin
-    
-//    private static double calculateFavorableValueThreshold(boolean isPendingFight) {
-////        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK)
-////                + Math.min(0.1, AGame.getTimeSeconds() / 3000);
-//        return (isPendingFight ? SAFETY_MARGIN_RETREAT : SAFETY_MARGIN_ATTACK);
-//    }
-
-    // =========================================================
-    // Auxiliary
-    /**
-     * Auxiliary string with colors.
-     */
-//    public static String getEvalString(AUnit unit, double forceValue) {
-//        double eval = forceValue != 0 ? forceValue : evaluateSituation(unit);
-//        if (eval >= MAX_VALUE) {
-//            return "+";
-//        } else {
-//            String string = (eval < 0 ? "" : "+");
-//
-//            if (eval < 5) {
-//                string += String.format("%.1f", eval);
-//            }
-//            else {
-//                string += (int) eval;
-//            }
-//
-//            if (eval < -0.05) {
-//                string = ColorUtil.getColorString(Color.Red) + string;
-//            } else if (eval < 0.05) {
-//                string = ColorUtil.getColorString(Color.Yellow) + string;
-//            } else {
-//                string = ColorUtil.getColorString(Color.Green) + string;
-//            }
-//
-//            return string;
-//        }
-//    }
-
-    /**
-     * Returns combat eval and caches it for the time of several frames.
-     */
-//    private static double updateCombatEval(AUnit unit, double combatEval) {
-//        checkCombatInfo(unit);
-//        combatInfo.get(unit).updateCombatEval(combatEval);
-//        //unit.updateCombatEval(combatEval);
-//        return combatEval;
-//    }
-
-    /**
-     * Checks whether AtlantisCombatInformation exists for a given unit, creating an instance if necessary
-     *
-     * @param unit
-     */
-//    private static void checkCombatInfo(AUnit unit) {
-//        if (!combatInfo.containsKey(unit)) {
-//            combatInfo.put(unit, new ACombatInformation(unit));
-//        }
-//    }
 
 }

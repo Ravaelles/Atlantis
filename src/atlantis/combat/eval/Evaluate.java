@@ -41,6 +41,7 @@ public class Evaluate {
         boolean enemyCombatBuildingInRange = false;
         AUnit againstUnit = againstUnits.first();
 
+
         if (againstUnit == null) {
 //            System.err.println("againstUnit is NULL");
             return 0.0;
@@ -51,8 +52,7 @@ public class Evaluate {
         }
 
         // =========================================================
-//        for (AUnit unit : units.list()) {
-//        for (AUnit unit : units.iterator())
+
         for (Iterator<AUnit> iterator = theseUnits.iterator(); iterator.hasNext(); ) {
             AUnit unit = iterator.next();
             double unitStrengthEval = evaluateUnitHPandDamage(unit, againstUnit);
@@ -70,7 +70,7 @@ public class Evaluate {
             else if (unit.isCombatBuilding() && unit.canAttackTarget(againstUnit)) {
                 totalStrength += evaluateBuilding(unit, againstUnit, unitStrengthEval);
                 enemyCombatBuildingFound = true;
-                enemyCombatBuildingInRange = unit.hasWeaponRangeToAttack(againstUnit, 2.5);
+//                enemyCombatBuildingInRange = unit.hasWeaponRangeToAttack(againstUnit, 2.5);
             }
 
             // === Infantry ============================================
@@ -92,7 +92,7 @@ public class Evaluate {
 
 //        if (!isEnemyEval) {
         if (enemyCombatBuildingFound) {
-            totalStrength += theseUnits.onlyAir() ? 50 : 40;
+            totalStrength += theseUnits.onlyAir() ? 120 : 40;
         }
 //        if (enemyCombatBuildingInRange) {
 //            totalStrength += theseUnits.onlyAir() ? 50 : 60;

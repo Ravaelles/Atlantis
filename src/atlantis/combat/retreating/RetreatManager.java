@@ -6,6 +6,7 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class RetreatManager {
                         return false;
                     }
 
-                    Units enemies = enemies(unit);
+                    Selection enemies = enemies(unit);
 
                     boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
 
@@ -39,7 +40,7 @@ public class RetreatManager {
                         GLOBAL_RETREAT_COUNTER++;
                         unit.setTooltip("Retreat");
                         MissionChanger.notifyThatUnitRetreated(unit);
-                        APosition averageEnemyPosition = enemies.average();
+                        APosition averageEnemyPosition = enemies.units().average();
 
                         if (unit.position().equals(averageEnemyPosition)) {
                             averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
@@ -75,7 +76,7 @@ public class RetreatManager {
 
     // =========================================================
 
-    private static Units enemies(AUnit unit) {
+    private static Selection enemies(AUnit unit) {
         return ACombatEvaluator.opposingUnits(unit);
     }
 

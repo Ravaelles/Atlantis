@@ -9,7 +9,7 @@ public class ProtossShieldBattery {
     public static boolean update(AUnit shieldBattery) {
         if (shieldBattery.energy() >= 30) {
             shieldBattery.removeTooltip();
-            for (AUnit unit : Select.ourRealUnits().inRadius(11, shieldBattery).listUnits()) {
+            for (AUnit unit : Select.ourRealUnits().inRadius(11, shieldBattery).list()) {
                 if (unit.shields() + 12 < unit.maxShields() ) {
                     if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).isNotEmpty()) {
                         return false;

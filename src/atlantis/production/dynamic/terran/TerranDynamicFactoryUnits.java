@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.terran;
 
 import atlantis.AGame;
-import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.EnemyStrategy;
 import atlantis.strategy.decisions.OurDecisions;
 import atlantis.units.AUnit;
@@ -17,7 +16,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return;
         }
 
-        for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).free().listUnits()) {
+        for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).free().list()) {
             requestFactoryUnit(factory);
         }
     }

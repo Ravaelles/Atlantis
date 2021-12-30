@@ -18,20 +18,11 @@ public abstract class AFoggedUnit extends AUnit {
     protected static AUnit _lastAUnit = null;
     protected AUnit aUnit;
     protected int _id;
+    protected int _hp;
     protected APosition _position;
     protected AUnitType _lastType;
     protected boolean _isCompleted;
     protected Cache<Integer> cacheInt = new Cache<>();
-
-//    protected AFoggedUnit(FakeUnit unit) {
-//        super();
-//
-//        this._id = unit.id();
-//        this.aUnit = unit;
-//        this.update(unit);
-//
-//        all.put(unit.id(), this);
-//    }
 
     // =========================================================
 
@@ -68,14 +59,10 @@ public abstract class AFoggedUnit extends AUnit {
         updatePosition(unit);
         updateType(unit);
         _isCompleted = unit.isCompleted();
+        _hp = unit.hp();
     }
 
     public void updatePosition(AUnit unit) {
-//        if (unit.isBuilding()) {
-//            System.out.println(unit.name() + " // " + unit.x() + "," + unit.y());
-//        }
-
-//        if (unit.isVisible()) {
         if (unit.x() > 0 && unit.y() > 0) {
             _position = new APosition(unit.x(), unit.y());
             cacheInt.set("lastPositionUpdated", -1, A.now());
@@ -132,6 +119,16 @@ public abstract class AFoggedUnit extends AUnit {
     // =========================================================
 
     @Override
+    public boolean exists() {
+        return true;
+    }
+
+    @Override
+    public APosition position() {
+        return _position;
+    }
+
+    @Override
     public boolean isCompleted() {
         return _isCompleted;
     }
@@ -159,6 +156,11 @@ public abstract class AFoggedUnit extends AUnit {
     @Override
     public AUnit target() {
         return null;
+    }
+
+    @Override
+    public int hp() {
+        return _hp;
     }
 
 }

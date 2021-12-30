@@ -582,6 +582,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return new Selection(units.list(), null);
     }
 
+    public static Selection from(AUnit[] units) {
+        return new Selection(Arrays.asList(units), null);
+    }
+
     // === Aux ======================================================
 
     public static void printCache() {

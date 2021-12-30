@@ -20,11 +20,11 @@ public class UseMap {
 //        return "ums/rav/T_v_Sunkens2.scx";
 //        return "ums/rav/T_v_Sunkens3.scx";
 //        return "ums/rav/Wraiths_v_Probes.scm";
-//        return "ums/rav/Wraiths_v_Cannons.scm";
+        return "ums/rav/Wraiths_v_Cannons.scm";
 //        return "ums/rav/M&M_v_Dragoons_A.scx";
 //        return "ums/rav/M&M_v_Dragoons_B.scx";
 //        return "ums/rav/M_v_Zealots.scx";
-        return "ums/rav/Vultures_v_Zealots.scm";
+//        return "ums/rav/Vultures_v_Zealots.scm";
 
 //        return "ums/rav/minimaps/M_v_Zealots.scx";
 //        return "ums/rav/minimaps/M&M_v_Zealots.scx";

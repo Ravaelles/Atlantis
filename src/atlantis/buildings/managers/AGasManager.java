@@ -25,7 +25,7 @@ public class AGasManager {
         
         // =========================================================
         
-        Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).listUnits();
+        Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).list();
 //        Collection<AUnit> workers = Select.ourWorkers().listUnits();
         
         // =========================================================
@@ -90,7 +90,7 @@ public class AGasManager {
     private static int countWorkersGatheringGasNear(AUnit gasBuilding) {
         int total = 0;
 
-        for (AUnit worker : Select.ourWorkers().inRadius(12, gasBuilding).listUnits()) {
+        for (AUnit worker : Select.ourWorkers().inRadius(12, gasBuilding).list()) {
             if (worker.isGatheringGas()) {
                 total++;
             }

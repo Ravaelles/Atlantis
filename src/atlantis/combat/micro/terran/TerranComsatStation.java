@@ -1,7 +1,6 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.AGame;
-import atlantis.enemy.EnemyUnits;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -28,7 +27,7 @@ public class TerranComsatStation {
     // Zerg
 
     private static boolean scanLurkers(AUnit comsat) {
-        for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effCloaked().listUnits()) {
+        for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effCloaked().list()) {
             if (shouldScanThisLurker(lurker, comsat)) {
                 return scan(comsat, lurker);
             }
@@ -59,7 +58,7 @@ public class TerranComsatStation {
     // Protoss
 
     private static boolean scanDarkTemplars(AUnit comsat) {
-        for (AUnit dt : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Dark_Templar).listUnits()) {
+        for (AUnit dt : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Dark_Templar).list()) {
             if (Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
                     .atLeast(comsat.energy(150) ? (comsat.energy(190) ? 2 : 4) : 7)) {
                 if (Select.ourCombatUnits().nearestTo(dt).distToLessThan(dt, 6)) {
@@ -76,7 +75,7 @@ public class TerranComsatStation {
             return false;
         }
 
-        for (AUnit observer : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Observer).listUnits()) {
+        for (AUnit observer : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Observer).list()) {
             if (shouldScanThisObserver(observer, comsat)) {
                 return scan(comsat, observer);
             }

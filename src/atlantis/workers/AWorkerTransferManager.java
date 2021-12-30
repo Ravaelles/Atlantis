@@ -1,12 +1,9 @@
 package atlantis.workers;
 
 import atlantis.AGame;
-import atlantis.init.AInitialActions;
 import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.Units;
 import atlantis.units.actions.UnitActions;
 
@@ -24,7 +21,7 @@ public class AWorkerTransferManager {
             return;
         }
 
-        Collection<AUnit> ourBases = Select.ourBases().listUnits();
+        Collection<AUnit> ourBases = Select.ourBases().list();
         if (ourBases.size() <= 1) {
             return;
         }

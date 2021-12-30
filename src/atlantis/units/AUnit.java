@@ -11,7 +11,6 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.enemy.UnitsArchive;
-import atlantis.interrupt.DontInterruptStartedAttacks;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.repair.ARepairAssignments;
@@ -193,15 +192,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof AUnit)) return false;
         AUnit aUnit = (AUnit) o;
         return id() == aUnit.id();
     }
 
     @Override
-//    public int hashCode() {
-//        return Objects.hash(id());
-//    }
     public int hashCode() {
         return id();
     }
@@ -449,7 +445,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public int getUnitIndexInBwapi() {
         int index = 0;
-        for (AUnit otherUnit : Select.our().ofType(type()).listUnits()) {
+        for (AUnit otherUnit : Select.our().ofType(type()).list()) {
             if (otherUnit.id() < this.id()) {
                 index++;
             }
@@ -1897,6 +1893,22 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         ));
     }
 
+    public int meleeEnemiesNearbyCount() {
+        return cacheInt.get(
+                "meleeEnemiesNearbyCount",
+                3,
+                () -> enemiesNearby().melee().inRadius(2.7, this).size()
+        );
+    }
+
+    public int friendsNearbyCount() {
+        return cacheInt.get(
+                "friendsNearbyCount",
+                3,
+                () -> friendsNearby().size()
+        );
+    }
+
     public Selection friendsNearby() {
         return ((Selection) cache.get(
                 "friends",
@@ -1964,7 +1976,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
-    public int meleeEnemiesNearby(double maxDistToEnemy) {
+    public int meleeEnemiesNearbyCount(double maxDistToEnemy) {
         return cacheInt.get(
                 "meleeEnemiesNearby",
                 2,
@@ -1976,4 +1988,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this instanceof AFoggedUnit && position() == null;
     }
 
+    public boolean isHealthy() {
+        return !isWounded();
+    }
 }

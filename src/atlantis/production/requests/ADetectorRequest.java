@@ -1,6 +1,5 @@
 package atlantis.production.requests;
 
-import atlantis.AGame;
 import atlantis.AtlantisConfig;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.position.APosition;
@@ -72,7 +71,7 @@ public class ADetectorRequest {
 
         // === Protect every base ==========================================
 //
-        for (AUnit base : Select.ourBases().listUnits()) {
+        for (AUnit base : Select.ourBases().list()) {
             int numberOfDetectorsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
                     detectorBuilding, 15, base.position()
             );

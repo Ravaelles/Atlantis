@@ -12,7 +12,7 @@ public class AUnitStateManager {
         now = AGame.now();
         updatePosition = AGame.everyNthGameFrame(AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES);
 
-        for (AUnit unit : Select.our().listUnits()) {
+        for (AUnit unit : Select.our().list()) {
             updateUnitInfo(unit);
         }
     }

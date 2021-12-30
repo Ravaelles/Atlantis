@@ -4,6 +4,7 @@ import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.position.PositionHelper;
 import atlantis.position.PositionUtil;
+import atlantis.units.select.Selection;
 import atlantis.util.A;
 
 import java.util.*;
@@ -425,8 +426,14 @@ public class Units {
         return units.iterator();
     }
 
-    public void addAll(List<AUnit> newUnits) {
+    public void add(List<AUnit> newUnits) {
         for (AUnit unit : newUnits) {
+            addUnit(unit);
+        }
+    }
+
+    public void add(Selection newUnits) {
+        for (AUnit unit : newUnits.list()) {
             addUnit(unit);
         }
     }

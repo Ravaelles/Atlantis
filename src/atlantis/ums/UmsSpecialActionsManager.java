@@ -28,7 +28,7 @@ public class UmsSpecialActionsManager {
 
             System.out.println("Haaa! New companion!");
 
-            for (AUnit unit : Select.our().inRadius(10, goToRenegade).listUnits()) {
+            for (AUnit unit : Select.our().inRadius(10, goToRenegade).list()) {
                 if (unit.distTo(goToRenegade) > 0.5) {
                     unit.move(goToRenegade, UnitActions.MOVE, "Friendly Renegade!");
                 } else {

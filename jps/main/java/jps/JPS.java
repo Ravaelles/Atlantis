@@ -1,7 +1,5 @@
 package jps.main.java.jps;
 
-import jps.*;
-
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;

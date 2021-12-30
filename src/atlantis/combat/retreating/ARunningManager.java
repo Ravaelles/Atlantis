@@ -10,6 +10,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
+import atlantis.util.Vector;
 import bwapi.Color;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class ARunningManager {
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
-    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
+//    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
     private static final double SHOW_BACK_TO_ENEMY_DIST = 3;
     public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.80;
@@ -217,24 +218,25 @@ public class ARunningManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private APosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom, double dist) {
-        double minDist = SHOW_BACK_TO_ENEMY_DIST_MIN;
-        double maxDist = (dist > 0 ? dist : SHOW_BACK_TO_ENEMY_DIST);
+//        double minDist = SHOW_BACK_TO_ENEMY_DIST_MIN;
+//        double maxDist = (dist > 0 ? dist : SHOW_BACK_TO_ENEMY_DIST);
+//
+//        if (unit.isVulture()) {
+//            minDist = maxDist;
+//        }
+//
+//        double currentDist = maxDist;
+//
+//        do {
 
-        if (unit.isVulture()) {
-            minDist = maxDist;
+        APosition runTo = showBackToEnemyIfPossible(runAwayFrom);
+
+        if (runTo != null && unit.distToMoreThan(runTo, 0.002)) {
+            return runTo;
         }
 
-        double currentDist = maxDist;
-
-        do {
-            APosition runTo = showBackToEnemyIfPossible(runAwayFrom);
-
-            if (runTo != null && unit.distToMoreThan(runTo, 0.002)) {
-                return runTo;
-            }
-
-            currentDist -= 0.9;
-        } while (currentDist >= minDist);
+//            currentDist -= 0.9;
+//        } while (currentDist >= minDist);
 
         return null;
     }
@@ -252,11 +254,11 @@ public class ARunningManager {
             A.printStackTrace();
         }
 
-        double vectorTx = (unit.x() - runAwayFrom.x()) / 32.0;
-        double vectorTy = (unit.y() - runAwayFrom.y()) / 32.0;
+        Vector vector = new Vector((unit.x() - runAwayFrom.x()) / 32.0, (unit.y() - runAwayFrom.y()) / 32.0);
+        vector.normalize(new Vector(3, 3));
 
         // Apply opposite 2D vector
-        runTo = unit.position().translateByTiles(vectorTx, vectorTy);
+        runTo = unit.position().translateByVector(vector);
 
 //        System.out.println("vectorTx = " + vectorTx);
 //        System.out.println("vectorTy = " + vectorTy);

@@ -35,7 +35,7 @@ public class ZergBuildOrder extends ABuildOrder {
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
     public boolean produceZergUnit(AUnitType type) {
-        for (AUnit base : Select.ourBases().listUnits()) {
+        for (AUnit base : Select.ourBases().list()) {
             for (AUnit larva : base.getLarva()) {
                 try {
                     base.train(type);

@@ -1,18 +1,11 @@
 package atlantis.workers;
 
-import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
-import atlantis.util.A;
-import atlantis.wrappers.MappingCounter;
-import bwapi.Color;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * Auxiliary class that's supposed to assign workers to minerals at the beginning of game.
@@ -40,7 +33,7 @@ public class AMineralGathering {
         }
 
         // Assign every worker to the next free mineral
-        Collection<AUnit> workers = Select.ourWorkers().listUnits();
+        Collection<AUnit> workers = Select.ourWorkers().list();
         int counter = 0;
         for (AUnit worker : workers) {
             AUnit mineral = minerals.get(counter);
@@ -73,7 +66,7 @@ public class AMineralGathering {
         }
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals = Select.minerals().inRadius(12, base).listUnits();
+        List<AUnit> minerals = Select.minerals().inRadius(12, base).list();
 
         if (!minerals.isEmpty()) {
 

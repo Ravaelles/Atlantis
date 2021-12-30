@@ -12,7 +12,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 import java.util.List;
 
@@ -127,7 +126,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void scarabs() {
-        List<AUnit> reavers = Select.ourOfType(AUnitType.Protoss_Reaver).listUnits();
+        List<AUnit> reavers = Select.ourOfType(AUnitType.Protoss_Reaver).list();
         for (AUnit reaver : reavers) {
             if (reaver.scarabCount() <= 3 && !reaver.isTrainingAnyUnit()) {
                 reaver.train(AUnitType.Protoss_Scarab);

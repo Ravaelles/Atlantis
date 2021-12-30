@@ -22,7 +22,6 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.position.TerranPositionFinder;
-import atlantis.information.FoggedUnit;
 import atlantis.position.APosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.CurrentProductionQueue;
@@ -132,7 +131,7 @@ public class AAdvancedPainter extends APainter {
      * Painting for combat units can be a little different. Put here all the related code.
      */
     protected static void paintCombatUnits() {
-        for (AUnit unit : Select.ourCombatUnits().listUnits()) {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
             if (unit.isLoaded()) {
                 continue;
             }
@@ -220,7 +219,7 @@ public class AAdvancedPainter extends APainter {
      * Paint extra information about visible enemy combat units.
      */
     static void paintEnemyCombatUnits() {
-        for (AUnit enemy : Select.enemy().combatUnits().listUnits()) {
+        for (AUnit enemy : Select.enemy().combatUnits().list()) {
             if (!enemy.isAlive()) {
                 continue;
             }
@@ -232,12 +231,12 @@ public class AAdvancedPainter extends APainter {
         }
 
         setTextSizeMedium();
-        for (AUnit enemy : Select.enemy().effCloaked().listUnits()) {
+        for (AUnit enemy : Select.enemy().effCloaked().list()) {
             paintCircle(enemy, 16, Color.Orange);
             paintCircle(enemy, 15, Color.Orange);
             paintTextCentered(enemy, "Cloaked," + enemy.name() + ",HP=" + enemy.hp(), Color.Red);
         }
-        for (AUnit enemy : Select.enemy().effVisible().listUnits()) {
+        for (AUnit enemy : Select.enemy().effVisible().list()) {
             if (enemy.isCloaked() || enemy.isBurrowed()) {
                 paintCircle(enemy, 16, Color.Green);
                 paintCircle(enemy, 15, Color.Green);
@@ -458,7 +457,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintUnitCounters() {
         // Unfinished
         MappingCounter<AUnitType> unitTypesCounter = new MappingCounter<>();
-        for (AUnit unit : Select.ourUnfinishedRealUnits().listUnits()) {
+        for (AUnit unit : Select.ourUnfinishedRealUnits().list()) {
 //        for (AUnit unit : Select.our().listUnits()) {
             unitTypesCounter.incrementValueFor(unit.type());
         }
@@ -478,7 +477,7 @@ public class AAdvancedPainter extends APainter {
         // =========================================================
         // Finished
         unitTypesCounter = new MappingCounter<>();
-        for (AUnit unit : Select.our().listUnits()) {
+        for (AUnit unit : Select.our().list()) {
             unitTypesCounter.incrementValueFor(unit.type());
         }
 
@@ -666,7 +665,7 @@ public class AAdvancedPainter extends APainter {
      * Paints circles around units which mean what's their mission.
      */
     private static void paintColoredCirclesAroundUnits() {
-        for (AUnit unit : Select.ourRealUnits().listUnits()) {
+        for (AUnit unit : Select.ourRealUnits().list()) {
             if (unit.isWorker() && (unit.isGatheringMinerals() || unit.isGatheringGas()) || unit.isLoaded()) {
                 continue;
             }
@@ -886,7 +885,7 @@ public class AAdvancedPainter extends APainter {
      * For buildings not 100% healthy, paints its hit points using progress bar.
      */
     static void paintBuildingHealth() {
-        for (AUnit unit : Select.ourBuildings().listUnits()) {
+        for (AUnit unit : Select.ourBuildings().list()) {
             if (unit.isBunker() || unit.hp() >= unit.maxHp()) { //isWounded()
                 continue;
             }
@@ -929,7 +928,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintWorkersAssignedToBuildings() {
         setTextSizeLarge();
-        for (AUnit building : Select.ourBuildings().listUnits()) {
+        for (AUnit building : Select.ourBuildings().list()) {
             if (!building.isBase() && !building.type().isGasBuilding()) {
                 continue;
             }
@@ -949,7 +948,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintBuildingsTrainingUnitsAndResearching() {
         setTextSizeMedium();
-        for (AUnit building : Select.ourBuildings().listUnits()) {
+        for (AUnit building : Select.ourBuildings().list()) {
             if (!building.isBusy()) {
                 continue;
             }
@@ -1041,7 +1040,7 @@ public class AAdvancedPainter extends APainter {
      * from enemy" etc.
      */
     static void paintTooltipsOverUnits() {
-        for (AUnit unit : Select.our().listUnits()) {
+        for (AUnit unit : Select.our().list()) {
             if (unit.isLoaded()) {
                 continue;
             }

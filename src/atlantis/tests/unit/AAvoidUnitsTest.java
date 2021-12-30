@@ -90,7 +90,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         FakeUnit enemy1, enemy2, enemy3, enemy4;
 
         int inRange = 19; // Range is 7, but we need some safety margin which varies depending on the unit
-        int outsideRange = 21;
+        int outsideRange = 22;
         
         FakeUnit[] enemies = fakeEnemies(
                 enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange),

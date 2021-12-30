@@ -107,7 +107,7 @@ public class APainter {
         paintCircle(unit.position(), radius, color);
     }
 
-    public static void paintCircle(APosition position, int radius, Color color) {
+    public static void paintCircle(HasPosition position, int radius, Color color) {
         if (isDisabled()) { return; }
 
         if (position == null) {

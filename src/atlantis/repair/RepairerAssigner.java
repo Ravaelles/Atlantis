@@ -13,7 +13,7 @@ public class RepairerAssigner {
 
     protected static void assignRepairersToWoundedUnits() {
         if (!hasMoreRepairersThanAllowed() && A.hasMinerals(15)) {
-            for (AUnit woundedUnit : Select.our().repairable(true).excludeTypes(AtlantisConfig.WORKER).listUnits()) {
+            for (AUnit woundedUnit : Select.our().repairable(true).excludeTypes(AtlantisConfig.WORKER).list()) {
                 if (shouldNotRepairUnit(woundedUnit)) {
                     continue;
                 }

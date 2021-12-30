@@ -1,22 +1,30 @@
 package atlantis.tests.acceptance;
 
 import atlantis.combat.ACombatUnitManager;
+import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.enemy.EnemyInformation;
+import atlantis.enemy.EnemyUnits;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.A;
 import org.junit.Test;
 
+import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
+import static atlantis.units.AUnitType.Protoss_Zealot;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CombatEvaluatorTest extends AbstractTestFakingGame {
 
+    private FakeUnit marine;
+    private FakeUnit wraith;
+
     @Test
     public void combatEvaluatorReturnsRelativeAndAbsoluteValuesThatMakeSense() {
         createWorld(1, () -> {
-            FakeUnit our = ourFirst;
-            FakeUnit enemy = nearestEnemy(our);
+            FakeUnit enemy = nearestEnemy(marine);
 
-            double ourEval = our.combatEvalAbsolute();
+            double ourEval = marine.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();
 
 //            System.out.println("ourEval = " + ourEval);
@@ -25,7 +33,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             assertTrue(ourEval < enemyEval);
             assertTrue(ourEval * 3.6 > enemyEval);
 
-            ourEval = our.combatEvalRelative();
+            ourEval = marine.combatEvalRelative();
             enemyEval = enemy.combatEvalRelative();
 
 //            System.out.println("ourEval = " + ourEval);
@@ -36,11 +44,32 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
         });
     }
 
+    @Test
+    public void combatEvaluatorTakesIntoAccountFoggedUnits() {
+        createWorld(1, () -> {
+            EnemyInformation.weDiscoveredEnemyUnit(fake(Protoss_Photon_Cannon, 92));
+            EnemyInformation.weDiscoveredEnemyUnit(fake(Protoss_Photon_Cannon, 93));
+
+            FakeUnit enemy = nearestEnemy(wraith);
+
+            double ourEval = wraith.combatEvalAbsolute();
+            double enemyEval = enemy.combatEvalAbsolute();
+
+//            System.out.println("ourEval = " + ourEval);
+//            System.out.println("enemyEval = " + enemyEval);
+
+            assertTrue(ourEval < enemyEval);
+            assertTrue(ourEval * 8 > enemyEval);
+            assertEquals(2, ACombatEvaluator.opposingUnits(wraith).size());
+        });
+    }
+
     // =========================================================
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+                marine = fake(AUnitType.Terran_Marine, 10),
+                wraith = fake(AUnitType.Terran_Wraith, 90)
         );
     }
 
@@ -48,7 +77,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
         int enemyTy = 16;
         return fakeEnemies(
                 fake(AUnitType.Zerg_Hydralisk, enemyTy),
-                fake(AUnitType.Zerg_Hydralisk, enemyTy + 1)
+                fake(AUnitType.Zerg_Hydralisk, enemyTy + 1),
+                fake(Protoss_Zealot, 91)
         );
     }
 

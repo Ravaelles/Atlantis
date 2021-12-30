@@ -4,7 +4,6 @@ import atlantis.AGame;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -147,7 +146,7 @@ public class AWorkerDefenceManager {
         }
 
         // FIGHT against ZERGLINGS
-        for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).listUnits()) {
+        for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).list()) {
             if ((worker.hp() <= 24 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
                 worker.setTooltip("Aaargh!");
                 return true;
@@ -161,7 +160,7 @@ public class AWorkerDefenceManager {
         List<AUnit> enemies = Select.enemyCombatUnits()
                 .inRadius(1, worker)
                 .canBeAttackedBy(worker, 1)
-                .listUnits();
+                .list();
         for (AUnit enemy : enemies) {
             worker.attackUnit(enemy);
             worker.setTooltip("FurMotherland!");
@@ -173,7 +172,7 @@ public class AWorkerDefenceManager {
 
     private static boolean handleEnemyWorkersNearby(AUnit worker) {
         Selection enemyWorkers = Select.enemy().workers().inRadius(1.3, worker);
-        for (AUnit enemy : enemyWorkers.listUnits()) {
+        for (AUnit enemy : enemyWorkers.list()) {
             worker.setTooltip("NastyFuckers!");
             worker.attackUnit(enemy);
             return true;
@@ -187,7 +186,7 @@ public class AWorkerDefenceManager {
             return false;
         }
 
-        for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).listUnits()) {
+        for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).list()) {
             worker.attackUnit(enemyBuilding);
             worker.setTooltip("Cheesy!");
             return true;

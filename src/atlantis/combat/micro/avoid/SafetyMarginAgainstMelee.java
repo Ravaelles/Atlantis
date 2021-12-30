@@ -24,7 +24,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     public static double calculate(AUnit defender, AUnit attacker) {
         double criticalDist;
 
-        // Terran INFANTRY
+        // === Terran INFANTRY =====================================
+
         if (defender.isTerranInfantry()) {
             if (defender.hasMedicInRange()) {
 //                if (!defender.isWounded()) {
@@ -40,12 +41,25 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 criticalDist = Math.min(criticalDist, 2.5);
             }
 
+            // No medic nearby
             else {
+//                if (defender.isHealthy()) {
+//                    return defender.meleeEnemiesNearby()
+//                }
+
                 criticalDist = INFANTRY_BASE_IF_NO_MEDIC
                         + enemyMeleeUnitsNearbyBonus(defender)
                         + ourMovementBonus(defender)
                         + enemyMovementBonus(defender, attacker)
                         + woundedAgainstMeleeBonus(defender, attacker);
+
+                if (
+                        defender.hp() >= 24
+                                && defender.friendsNearbyCount() >= 5
+                                && 4 * defender.friendsNearbyCount() >= defender.meleeEnemiesNearbyCount()
+                ) {
+                    criticalDist = 1.7;
+                }
 
 //                System.out.println("criticalDist = " + criticalDist + " (hp = " + defender.hp() + ")");
                 criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
@@ -54,7 +68,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             }
         }
 
-        // VULTURE
+        // === VULTURE ===============================================
+
         else if (defender.isVulture()) {
             criticalDist = 2.5
                     + woundedAgainstMeleeBonus(defender, attacker)
@@ -64,7 +79,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             criticalDist = Math.min(criticalDist, 3.6);
         }
 
-        // Standard unit
+        // === Standard unit ==========================================
+
         else {
             criticalDist = baseForMelee(defender, attacker)
                     + enemyWeaponRange(defender, attacker)
@@ -90,7 +106,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     // =========================================================
 
     private static double enemyMeleeUnitsNearbyBonus(AUnit defender) {
-        if (defender.enemiesNearby().melee().inRadius(2.7, defender).atLeast(2)) {
+        if (defender.meleeEnemiesNearbyCount() >= 2) {
             return 1.8;
         }
 

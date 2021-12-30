@@ -41,7 +41,7 @@ public class AAntiAirBuildingRequests {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
 
         if (nearTo == null) {
-            for (AUnit base : Select.ourBases().listUnits()) {
+            for (AUnit base : Select.ourBases().list()) {
                 int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
                         building, 8, base.position()
                 );
@@ -77,7 +77,7 @@ public class AAntiAirBuildingRequests {
 
         // === Protect every base ==========================================
 
-        for (AUnit base : Select.ourBases().listUnits()) {
+        for (AUnit base : Select.ourBases().list()) {
             int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
                     building, 8, base.position()
             );

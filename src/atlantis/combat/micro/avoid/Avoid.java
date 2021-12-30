@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.debug.APainter;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.util.A;
@@ -22,23 +23,13 @@ public class Avoid {
     }
 
     public static boolean groupOfUnits(AUnit unit, Units enemiesDangerouslyClose) {
-        Units twoNearestEnemies = new Units();
-        twoNearestEnemies.addUnit(enemiesDangerouslyClose.get(0));
-        twoNearestEnemies.addUnit(enemiesDangerouslyClose.get(1));
-        enemiesDangerouslyClose = twoNearestEnemies;
+        HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
+        APainter.paintCircle(runFrom, 6, Color.Orange);
+        APainter.paintCircle(runFrom, 4, Color.Orange);
+        APainter.paintCircle(runFrom, 2, Color.Orange);
 
-        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-            APainter.paintCircle(enemy, 16, Color.Orange);
-        }
-
-//        APosition enemiesCenter = enemiesDangerouslyClose.median();
-        APosition enemiesCenter = enemiesDangerouslyClose.average();
-        APainter.paintCircle(enemiesCenter, 6, Color.Orange);
-        APainter.paintCircle(enemiesCenter, 4, Color.Orange);
-        APainter.paintCircle(enemiesCenter, 2, Color.Orange);
-
-        if (unit.runningManager().runFrom(enemiesCenter, getRunDistance(unit))) {
-            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(enemiesCenter)) + ")");
+        if (unit.runningManager().runFrom(runFrom, getRunDistance(unit))) {
+            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
             return true;
         }
 
@@ -47,9 +38,21 @@ public class Avoid {
 
     // =========================================================
 
-//    protected static double getRunDistance(AUnit unit, HasPosition enemies) {
-//        return 2.7;
-//    }
+    private static HasPosition defineRunFromForGroupOfUnits(Units enemiesDangerouslyClose) {
+        if (enemiesDangerouslyClose.size() >= 3) {
+            Units nearestEnemies = new Units();
+            nearestEnemies.addUnit(enemiesDangerouslyClose.get(0));
+            nearestEnemies.addUnit(enemiesDangerouslyClose.get(1));
+            nearestEnemies.addUnit(enemiesDangerouslyClose.get(2));
+            return nearestEnemies.average();
+        }
+
+        for (AUnit enemy : enemiesDangerouslyClose.list()) {
+            APainter.paintCircle(enemy, 16, Color.Orange);
+        }
+
+        return enemiesDangerouslyClose.first();
+    }
 
     protected static double getRunDistance(AUnit unit) {
         if (unit.isVulture()) {

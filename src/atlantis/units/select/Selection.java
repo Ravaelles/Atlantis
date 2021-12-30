@@ -2,7 +2,6 @@ package atlantis.units.select;
 
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import atlantis.position.PositionUtil;
 import atlantis.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -10,10 +9,11 @@ import atlantis.units.Units;
 import atlantis.util.A;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Selection {
 
-    protected final List<AUnit> data;
+    protected List<AUnit> data;
 
     /**
      * To cache a value we need all previous filters so in the end it looks like:
@@ -690,13 +690,6 @@ public class Selection {
     }
 
     /**
-     * Selects units as an iterable collection (list).
-     */
-    public List<AUnit> listUnits() {
-        return data;
-    }
-
-    /**
      * Returns result as an <b>Units</b> object, which contains multiple useful methods to handle set of
      * units.
      */
@@ -810,27 +803,9 @@ public class Selection {
     }
 
     public Selection removeDuplicates() {
-        ArrayList<Integer> indexesToRemove = new ArrayList<>();
-        for (int i = 0; i < data.size(); i++) {
-            for (int j = 0; j < data.size(); j++) {
-                if (i < j && data.get(j).equals(data.get(i))) {
-                    indexesToRemove.add(j);
-                }
-            }
-        }
+        data = data.stream().distinct().collect(Collectors.toList());
 
-        if (indexesToRemove.isEmpty()) {
-            return this;
-        }
-
-        ArrayList<AUnit> filteredUnits = new ArrayList<>();
-        for (int i = 0; i < data.size(); i++) {
-            if (!indexesToRemove.contains(i)) {
-                filteredUnits.add(data.get(i));
-            }
-        }
-
-        return new Selection(filteredUnits, this.currentCachePath);
+        return this;
     }
 
     public void print() {
@@ -841,7 +816,7 @@ public class Selection {
         System.out.println("=== " + (message != null ? message : currentCachePath) + " (" + size() + ") ===");
         for (AUnit unit : data) {
             System.out.println(unit);
-//            System.out.println(" - " + unit.hasNoWeaponAtAll());
         }
+        System.out.println();
     }
 }

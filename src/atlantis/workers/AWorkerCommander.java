@@ -23,7 +23,7 @@ public class AWorkerCommander {
 
         // === Act individually with every worker =================================
 
-        for (AUnit worker : Select.ourWorkers().listUnits()) {
+        for (AUnit worker : Select.ourWorkers().list()) {
             AWorkerManager.update(worker);
         }
 

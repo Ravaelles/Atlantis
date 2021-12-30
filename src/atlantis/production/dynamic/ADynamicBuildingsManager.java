@@ -133,7 +133,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     // =========================================================
 
     public static boolean hasABaseWithFreeGeyser() {
-        for (AUnit base : Select.ourBases().listUnits()) {
+        for (AUnit base : Select.ourBases().list()) {
             if (Select.geysers().inRadius(8, base).isNotEmpty()) {
                 return true;
             }
