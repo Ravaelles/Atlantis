@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -49,13 +50,24 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     // =========================================================
 
     protected void createWorld(int proceedUntilFrameReached, Runnable onFrame) {
+        createWorld(proceedUntilFrameReached, onFrame, null, null);
+    }
 
-        // === Units ======================================================
+    protected void createWorld(
+            int proceedUntilFrameReached, Runnable onFrame, Callable generateOur, Callable generateEnemies
+    ) {
 
-        our = generateOur();
-        ourFirst = our[0];
-        enemies = generateEnemies();
-        neutral = generateNeutral();
+        // === Create fake units ==========================================
+
+        try {
+            our = generateOur != null ? (FakeUnit[]) generateOur.call() : generateOur();
+            ourFirst = our[0];
+            enemies = generateEnemies != null ? (FakeUnit[]) generateEnemies.call() : generateEnemies();
+            neutral = generateNeutral();
+        } catch (Exception e) {
+            System.err.println("CreateWorld exception");
+            e.printStackTrace();
+        }
 
         // === Mock static classes ========================================
 

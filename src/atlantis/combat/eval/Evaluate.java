@@ -34,13 +34,14 @@ public class Evaluate {
      * Also it makes sense to distguish before enemy evaluation (we will almost always understimate enemy
      * strength) or our own evaluation (we're likely to overestimate our strength).
      */
-//    protected static double evaluateUnitsAgainstUnit(Units units, AUnit againstUnit, boolean isEnemyEval) {
     protected static double evaluateUnitsAgainstUnit(Units theseUnits, Units againstUnits, boolean isEnemyEval) {
         double totalStrength = 0;
         boolean enemyCombatBuildingFound = false;
         boolean enemyCombatBuildingInRange = false;
         AUnit againstUnit = againstUnits.first();
 
+//        theseUnits.print("THESE");
+//        againstUnits.print("AGAINST");
 
         if (againstUnit == null) {
 //            System.err.println("againstUnit is NULL");
@@ -56,6 +57,7 @@ public class Evaluate {
         for (Iterator<AUnit> iterator = theseUnits.iterator(); iterator.hasNext(); ) {
             AUnit unit = iterator.next();
             double unitStrengthEval = evaluateUnitHPandDamage(unit, againstUnit);
+//            System.err.println(unit + " // unitStrengthEval = " + unitStrengthEval);
 
             // =========================================================
             // WORKER

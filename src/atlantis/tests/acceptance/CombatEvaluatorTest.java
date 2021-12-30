@@ -20,7 +20,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     private FakeUnit wraith;
 
     @Test
-    public void combatEvaluatorReturnsRelativeAndAbsoluteValuesThatMakeSense() {
+    public void returnsRelativeAndAbsoluteValuesThatMakeSense() {
         createWorld(1, () -> {
             FakeUnit enemy = nearestEnemy(marine);
 
@@ -45,7 +45,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     }
 
     @Test
-    public void combatEvaluatorTakesIntoAccountFoggedUnits() {
+    public void takesIntoAccountFoggedUnits() {
         createWorld(1, () -> {
             EnemyInformation.weDiscoveredEnemyUnit(fake(Protoss_Photon_Cannon, 92));
             EnemyInformation.weDiscoveredEnemyUnit(fake(Protoss_Photon_Cannon, 93));
@@ -64,6 +64,31 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
         });
     }
 
+    @Test
+    public void consistentlyEvaluatesFoggedUnits() {
+        FakeUnit cannon1 = fakeEnemy(Protoss_Photon_Cannon, 92);
+        FakeUnit cannon2 = fakeEnemy(Protoss_Photon_Cannon, 93);
+        createWorld(1, () -> {
+                    EnemyInformation.weDiscoveredEnemyUnit(cannon1);
+                    EnemyInformation.weDiscoveredEnemyUnit(cannon2);
+
+                    FakeUnit enemy = cannon1;
+
+                    double ourEval = wraith.combatEvalAbsolute();
+                    double enemyEval = enemy.combatEvalAbsolute();
+
+        //            System.out.println("ourEval = " + ourEval);
+        //            System.out.println("enemyEval = " + enemyEval);
+
+                    assertTrue(ourEval < enemyEval);
+                    assertTrue(ourEval * 8 > enemyEval);
+                    assertEquals(2, ACombatEvaluator.opposingUnits(wraith).size());
+                },
+                () -> this.generateOur(),
+                () -> fakeEnemies()
+        );
+    }
+
     // =========================================================
 
     protected FakeUnit[] generateOur() {
@@ -76,9 +101,9 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 16;
         return fakeEnemies(
-                fake(AUnitType.Zerg_Hydralisk, enemyTy),
-                fake(AUnitType.Zerg_Hydralisk, enemyTy + 1),
-                fake(Protoss_Zealot, 91)
+                fakeEnemy(AUnitType.Zerg_Hydralisk, enemyTy),
+                fakeEnemy(AUnitType.Zerg_Hydralisk, enemyTy + 1),
+                fakeEnemy(Protoss_Zealot, 91)
         );
     }
 
