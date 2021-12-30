@@ -30,7 +30,8 @@ public class MissionAttack extends Mission {
     private boolean handleAdvance(AUnit unit) {
         AFocusPoint focusPoint = focusPoint();
 
-        if (focusPoint == null) {
+        // Invalid focus point, no enemy can be found, roam around map
+        if (focusPoint == null && (!unit.isAttackingOrMovingToAttack() || unit.isIdle())) {
             return handleWeDontKnowWhereTheEnemyIs(unit);
         }
 
@@ -42,11 +43,6 @@ public class MissionAttack extends Mission {
         if (focusPoint != null) {
             unit.setTooltip("#MA:Advance");
             return AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint);
-        }
-
-        // Invalid focus point, no enemy can be found, roam around map
-        if (!unit.isMoving() && !unit.isAttackingOrMovingToAttack()) {
-            return handleWeDontKnowWhereTheEnemyIs(unit);
         }
 
         unit.setTooltip("#MA-NoFocus");

@@ -37,10 +37,6 @@ public class SafetyMargin {
     // =========================================================
 
     private static double baseMargin(AUnit defender, AUnit attacker) {
-        if (defender.isTank()) {
-            return -2.7;
-        }
-
         return defender.isSquadScout() ? -2.7 : 0;
     }
 

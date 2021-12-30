@@ -22,11 +22,17 @@ public class Avoid {
     }
 
     public static boolean groupOfUnits(AUnit unit, Units enemiesDangerouslyClose) {
+        Units twoNearestEnemies = new Units();
+        twoNearestEnemies.addUnit(enemiesDangerouslyClose.get(0));
+        twoNearestEnemies.addUnit(enemiesDangerouslyClose.get(1));
+        enemiesDangerouslyClose = twoNearestEnemies;
+
         for (AUnit enemy : enemiesDangerouslyClose.list()) {
             APainter.paintCircle(enemy, 16, Color.Orange);
         }
 
-        APosition enemiesCenter = enemiesDangerouslyClose.median();
+//        APosition enemiesCenter = enemiesDangerouslyClose.median();
+        APosition enemiesCenter = enemiesDangerouslyClose.average();
         APainter.paintCircle(enemiesCenter, 6, Color.Orange);
         APainter.paintCircle(enemiesCenter, 4, Color.Orange);
         APainter.paintCircle(enemiesCenter, 2, Color.Orange);

@@ -60,6 +60,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     + woundedAgainstMeleeBonus(defender, attacker)
                     + ourMovementBonus(defender)
                     + enemyMovementBonus(defender, attacker);
+
+            criticalDist = Math.min(criticalDist, 3.6);
         }
 
         // Standard unit

@@ -1,7 +1,9 @@
 package atlantis.interrupt;
 
+import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import bwapi.Color;
 
 public class DontInterruptStartedAttacks {
 
@@ -21,6 +23,7 @@ public class DontInterruptStartedAttacks {
                     || unit.target().distToMoreThan(unit, 2.4)
 //                    || (unit.lastStartedAttackLessThanAgo(13) && unit.isFacingItsTarget())
             ) {
+                APainter.paintCircleFilled(unit, 10, Color.Brown);
                 return true;
             }
         }

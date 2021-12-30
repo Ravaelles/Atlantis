@@ -217,8 +217,13 @@ public class ARunningManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private APosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom, double dist) {
-        double minTiles = SHOW_BACK_TO_ENEMY_DIST_MIN;
-        double maxDist = (dist > 0 ? dist : SHOW_BACK_TO_ENEMY_DIST) + (unit.isVulture() ? 1.6 : 0);
+        double minDist = SHOW_BACK_TO_ENEMY_DIST_MIN;
+        double maxDist = (dist > 0 ? dist : SHOW_BACK_TO_ENEMY_DIST);
+
+        if (unit.isVulture()) {
+            minDist = maxDist;
+        }
+
         double currentDist = maxDist;
 
         do {
@@ -229,7 +234,7 @@ public class ARunningManager {
             }
 
             currentDist -= 0.9;
-        } while (currentDist >= minTiles);
+        } while (currentDist >= minDist);
 
         return null;
     }
