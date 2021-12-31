@@ -38,7 +38,7 @@ public class TerranSiegeTank {
 
 
     private static boolean updateWhenNotSieged(AUnit unit) {
-        if (unit.lastActionLessThanAgo(30 * 5, UnitActions.UNSIEGE)) {
+        if (unit.lastActionLessThanAgo(30 * 12, UnitActions.UNSIEGE)) {
             return false;
         }
 

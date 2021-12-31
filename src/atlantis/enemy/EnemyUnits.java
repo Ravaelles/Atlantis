@@ -134,15 +134,15 @@ public class EnemyUnits {
                 "combatUnitsToBetterAvoid:",
                 30,
                 () -> {
-                    Selection combatUnits = foggedUnits()
+                    Selection foggedCombatnits = foggedUnits()
                             .combatUnits()
                             .havingPosition();
 
-                    return combatUnits
+                    return foggedCombatnits
                             .clone()
                             .combatBuildings(false)
                             .add(
-                                combatUnits.clone().ofType(
+                                foggedCombatnits.clone().ofType(
                                     AUnitType.Protoss_Photon_Cannon,
                                     AUnitType.Terran_Siege_Tank_Siege_Mode,
                                     AUnitType.Zerg_Lurker,

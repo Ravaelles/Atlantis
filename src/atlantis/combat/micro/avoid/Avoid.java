@@ -14,6 +14,10 @@ public class Avoid {
     public static boolean unit(AUnit unit, AUnit enemy) {
         APainter.paintCircle(enemy, 16, Color.Orange);
 
+        if (enemy.position() == null) {
+            System.err.println("enemy.position() is NULL for " + enemy);
+        }
+
         if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit))) {
             unit.setTooltip(getTooltip(unit, enemy));
             return true;

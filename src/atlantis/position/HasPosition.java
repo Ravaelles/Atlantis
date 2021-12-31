@@ -66,6 +66,30 @@ public interface HasPosition {
         return new APosition((int) (x() + vector.x), (int) (y() + vector.y));
     }
 
+    default APosition makeWalkable() {
+        int maxRadius = 1;
+        int currentRadius = 0;
+        while (currentRadius <= maxRadius) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+                    if (
+                            dtx == -currentRadius || dtx == currentRadius
+                                    || dty == -currentRadius || dty == currentRadius
+                    ) {
+                        APosition position = this.translateByTiles(dtx, dty);
+                        if (position.isWalkable()) {
+                            return position;
+                        }
+                    }
+                }
+            }
+
+            currentRadius++;
+        }
+
+        return null;
+    }
+
     // =========================================================
 
     default double distTo(HasPosition position) {
@@ -142,4 +166,5 @@ public interface HasPosition {
     default boolean nearMapEdge(double maxTilesAwayFromMapEdges) {
         return !position().makeValidFarFromBounds((int) (maxTilesAwayFromMapEdges * 32)).equals(position());
     }
+
 }

@@ -46,7 +46,7 @@ public class MissionAttack extends Mission {
         }
 
         unit.setTooltip("#MA-NoFocus");
-        return false;
+        return handleWeDontKnowWhereTheEnemyIs(unit);
     }
 
     @Override

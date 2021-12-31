@@ -19,7 +19,7 @@ public class ATech {
     public static boolean isResearched(Object techOrUpgrade) {
         return cache.get(
                 "isResearched:" + techOrUpgrade,
-                100,
+                40,
                 () -> {
                     if (techOrUpgrade instanceof TechType) {
                         TechType tech = (TechType) techOrUpgrade;

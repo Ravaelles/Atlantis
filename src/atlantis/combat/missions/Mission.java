@@ -77,7 +77,7 @@ public abstract class Mission {
             return false;
         }
 
-        if (A.chance(10) && (temporaryTarget == null || temporaryTarget.isExplored())) {
+        if ((A.isUms() || A.chance(10)) && (temporaryTarget == null || temporaryTarget.isExplored())) {
             temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
 //            if (temporaryTarget != null) {
 //                System.out.println("Go to unexplored " + temporaryTarget);

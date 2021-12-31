@@ -1731,10 +1731,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         return target().isAlive()
                 && (
-                    targetAcquiredAgo <= 4
-//                    (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
-//                    || targetAcquiredAgo <= cooldownAbsolute() / 1.1
-                );
+                (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
+                        || targetAcquiredAgo <= cooldownAbsolute() / 1.1
+        );
+
+//        return target().isAlive()
+//                && (
+//                    targetAcquiredAgo <= 4
+////                    (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
+////                    || targetAcquiredAgo <= cooldownAbsolute() / 1.1
+//                );
     }
 
     public int lastTargetToAttackAcquiredAgo() {
@@ -1991,4 +1997,29 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isHealthy() {
         return !isWounded();
     }
+
+    public APosition makeLandable() {
+        int maxRadius = 1;
+        int currentRadius = 0;
+        while (currentRadius <= maxRadius) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+                    if (
+                            dtx == -currentRadius || dtx == currentRadius
+                                    || dty == -currentRadius || dty == currentRadius
+                    ) {
+                        APosition position = this.translateByTiles(dtx, dty);
+                        if (u.canLand(position.toTilePosition())) {
+                            return position;
+                        }
+                    }
+                }
+            }
+
+            currentRadius++;
+        }
+
+        return null;
+    }
+
 }
