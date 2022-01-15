@@ -15,12 +15,12 @@ import atlantis.tweaker.ParamTweakerFactory;
 public class OnStart {
 
     public static void execute() {
-        if (Env.isLocal() && Env.isFirstRun()) {
-            AForcedClicks.clickAltF9(); // Make ChaosLauncher double size
-            System.out.println("Info: I clicked Alt+F9 to make ChaosLauncher twice the size (double the failure)");
-        }
+//        if (Env.isLocal() && Env.isFirstRun()) {
+//            AForcedClicks.clickAltF9(); // Make ChaosLauncher double size
+//            System.out.println("Info: I clicked Alt+F9 to make ChaosLauncher twice the size (double the failure)");
+//        }
 
-        System.out.println("\n############### Starting Atlantis... ####################################");
+        System.out.println("\n############### Starting Atlantis... ##############################");
 
         // Uncomment this line to see list of units -> damage.
 //        AUnitTypesHelper.displayUnitTypesDamage();

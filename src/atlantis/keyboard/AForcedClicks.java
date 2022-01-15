@@ -6,6 +6,9 @@ import java.awt.event.KeyEvent;
 
 public class AForcedClicks {
 
+    /**
+     * Alt+F9 makes ChaosLauncher double the size, it's simply bigger.
+     */
     public static void clickAltF9() {
         Robot robot = null;
         try {
@@ -14,7 +17,6 @@ public class AForcedClicks {
             // Simulate a key press
             robot.keyPress(KeyEvent.VK_ALT);
             robot.keyPress(KeyEvent.VK_F9);
-//            System.out.println("Fire Ctrl+F9 click - Double window size");
             robot.keyRelease(KeyEvent.VK_F9);
             robot.keyRelease(KeyEvent.VK_ALT);
         } catch (AWTException e) { }

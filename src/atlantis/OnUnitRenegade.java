@@ -32,7 +32,7 @@ public class OnUnitRenegade {
             Atlantis.ourNewUnit(unit);
 
             if (!unit.type().isGasBuildingOrGeyser()) {
-                System.out.println("NEW RENEGADE FOR US " + unit.name());
+//                System.out.println("NEW RENEGADE FOR US " + unit.name());
                 UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
             }
         }
