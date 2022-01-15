@@ -27,10 +27,6 @@ public abstract class AAvoidUnits {
 
         Units enemiesDangerouslyClose = unitsToAvoid(unit);
 
-//        if (unit.isSquadScout()) {
-//            System.out.println(A.now() + " // " + unit.hp() + " // " + enemiesDangerouslyClose.size());
-//        }
-
         if (enemiesDangerouslyClose.isEmpty()) {
 //            AUnit nearestEnemy = unit.enemiesNearby().nearestTo(unit);
 //            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
@@ -40,11 +36,11 @@ public abstract class AAvoidUnits {
         }
 
 //        System.out.println(unit.idWithHash() + " (" + unit.hp() + "hp) has " + enemiesDangerouslyClose.size() + " enemies around");
-//        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
-//        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-//            APainter.paintLine(enemy, unit, Color.Orange);
-////            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
-//        }
+        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+        for (AUnit enemy : enemiesDangerouslyClose.list()) {
+            APainter.paintLine(enemy, unit, Color.Orange);
+//            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
+        }
 
 //        AUnit first = enemiesDangerouslyClose.first();
 //        String firstValue = A.digit(enemiesDangerouslyClose.valueFor(first));

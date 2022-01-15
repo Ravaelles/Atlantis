@@ -8,64 +8,29 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     public static double ENEMIES_NEARBY_FACTOR = 0.3;
     public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
-//    public static double INFANTRY_BASE_IF_MEDIC = 1.60;
-//    public static double INFANTRY_BASE_IF_MEDIC = 1.80;
     public static double INFANTRY_BASE_IF_MEDIC = 0;
     public static int INFANTRY_WOUND_MODIFIER_WITH_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 2.65;
     public static int INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = 33;
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 1.95;
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 3.0;
-//    public static double INFANTRY_BASE_IF_MEDIC = 0.64;
-//    public static int INFANTRY_WOUND_IF_MEDIC = 20;
-//    public static double INFANTRY_BASE_IF_NO_MEDIC = 2.02;
-//    public static int INFANTRY_WOUND_IF_NO_MEDIC = 85;
 
     public static double calculate(AUnit defender, AUnit attacker) {
         double criticalDist;
 
-        // === Terran INFANTRY =====================================
+        // === Protoss ===============================================
 
-        if (defender.isTerranInfantry()) {
-            if (defender.hasMedicInRange()) {
-//                if (!defender.isWounded()) {
-//                    return 0;
-//                }
+        if (
+                defender.isProtoss()
+                && (defender.shieldDamageAtMost(10) || defender.lastAttackFrameMoreThanAgo(30 * 10))
+        ) {
+            return -1;
+        }
 
-                criticalDist = INFANTRY_BASE_IF_MEDIC
-                        + enemyMeleeUnitsNearbyBonus(defender)
-                        + ourMovementBonus(defender)
-                        + enemyMovementBonus(defender, attacker)
-                        + woundedAgainstMeleeBonus(defender, attacker);
+        // === Terran INFANTRY =======================================
 
-                criticalDist = Math.min(criticalDist, 2.5);
-            }
-
-            // No medic nearby
-            else {
-//                if (defender.isHealthy()) {
-//                    return defender.meleeEnemiesNearby()
-//                }
-
-                criticalDist = INFANTRY_BASE_IF_NO_MEDIC
-                        + enemyMeleeUnitsNearbyBonus(defender)
-                        + ourMovementBonus(defender)
-                        + enemyMovementBonus(defender, attacker)
-                        + woundedAgainstMeleeBonus(defender, attacker);
-
-                if (
-                        defender.hp() >= 24
-                                && defender.friendsNearbyCount() >= 5
-                                && 4 * defender.friendsNearbyCount() >= defender.meleeEnemiesNearbyCount()
-                ) {
-                    criticalDist = 1.7;
-                }
-
-//                System.out.println("criticalDist = " + criticalDist + " (hp = " + defender.hp() + ")");
-                criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
-
-                criticalDist = Math.min(criticalDist, defender.isWounded() ? 3.2 : 2.5);
-            }
+        else if (defender.isTerranInfantry()) {
+            criticalDist = handleTerranInfantry(defender, attacker);
         }
 
         // === VULTURE ===============================================
@@ -79,7 +44,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             criticalDist = Math.min(criticalDist, 3.6);
         }
 
-        // === Standard unit ==========================================
+        // === Standard unit =========================================
 
         else {
             criticalDist = baseForMelee(defender, attacker)
@@ -164,6 +129,46 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         boolean applyExtraModifier = defender.isTank() || defender.isVulture();
 
         return (defender.woundPercent() * (applyExtraModifier ? 2 : 1)) / 32.0;
+    }
+
+    // =========================================================
+
+    private static double handleTerranInfantry(AUnit defender, AUnit attacker) {
+        double criticalDist;
+
+        if (defender.hasMedicInRange()) {
+            criticalDist = INFANTRY_BASE_IF_MEDIC
+                    + enemyMeleeUnitsNearbyBonus(defender)
+                    + ourMovementBonus(defender)
+                    + enemyMovementBonus(defender, attacker)
+                    + woundedAgainstMeleeBonus(defender, attacker);
+
+            criticalDist = Math.min(criticalDist, 2.5);
+        }
+
+        // No medic nearby
+        else {
+            criticalDist = INFANTRY_BASE_IF_NO_MEDIC
+                    + enemyMeleeUnitsNearbyBonus(defender)
+                    + ourMovementBonus(defender)
+                    + enemyMovementBonus(defender, attacker)
+                    + woundedAgainstMeleeBonus(defender, attacker);
+
+            if (
+                    defender.hp() >= 24
+                            && defender.friendsNearbyCount() >= 5
+                            && 4 * defender.friendsNearbyCount() >= defender.meleeEnemiesNearbyCount()
+            ) {
+                criticalDist = 1.7;
+            }
+
+//                System.out.println("criticalDist = " + criticalDist + " (hp = " + defender.hp() + ")");
+            criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
+
+            criticalDist = Math.min(criticalDist, defender.isWounded() ? 3.2 : 2.5);
+        }
+
+        return criticalDist;
     }
 
 }

@@ -2022,4 +2022,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return null;
     }
 
+    public boolean shieldDamageAtMost(int maxDamage) {
+        return shields() + maxDamage >= maxShields();
+    }
+    public boolean shieldDamageAtLeast(int minDamage) {
+        return shields() + minDamage <= maxShields();
+    }
 }

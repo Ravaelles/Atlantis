@@ -11,6 +11,7 @@ import atlantis.units.select.Selection;
 import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
 import atlantis.util.Vector;
+import atlantis.util.We;
 import bwapi.Color;
 
 import java.util.ArrayList;
@@ -393,6 +394,10 @@ public class ARunningManager {
      * Tell other units that might be blocking our escape route to move.
      */
     private boolean notifyNearbyUnitsToMakeSpace(AUnit unit) {
+        if (We.protoss() && unit.shieldDamageAtLeast(20)) {
+            return false;
+        }
+
         if (unit.isAir() || unit.isLoaded()) {
             return false;
         }
@@ -416,6 +421,8 @@ public class ARunningManager {
                 if (runFrom == null) {
                     continue;
                 }
+
+//                System.err.println(otherUnit + " // notified by " + unit + " (" + unit.hp() + ")");
 
                 otherUnit.runningManager().runFrom(runFrom, NEARBY_UNIT_MAKE_SPACE);
                 APainter.paintCircleFilled(unit, 10, Color.Yellow);
