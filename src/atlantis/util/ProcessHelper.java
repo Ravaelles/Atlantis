@@ -5,12 +5,12 @@ package atlantis.util;
  */
 public class ProcessHelper {
 
-    public static String ChaosLauncherPath = "D:\\GAMES\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe";
+    public static String ChaosLauncherPath = "D:\\JAVA\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe";
 
     public static void killStarcraftProcess() {
         executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
     }
-    
+
     public static void killChaosLauncherProcess() {
         executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
     }

@@ -54,8 +54,10 @@ public class AtlantisIgniter {
     private static String defineBwapiIniPath() {
         File file;
         String path;
-        
+
+        // Only one will be used, but we can have many
         String[] potentialBwapiPaths = new String[] {
+            "D:/JAVA/StarCraft/bwapi-data/bwapi.ini",
             "C:/StarCraft/bwapi-data/bwapi.ini",
             "D:/GAMES/StarCraft/bwapi-data/bwapi.ini",
             "C:/Program files/StarCraft/bwapi-data/bwapi.ini",
@@ -64,6 +66,8 @@ public class AtlantisIgniter {
 
         for (String potentialBwapiPath : potentialBwapiPaths) {
             file = new File(potentialBwapiPath);
+
+            // Return the first found from the list above, order matters.
             if (file.exists()) {
                 return potentialBwapiPath;
             }

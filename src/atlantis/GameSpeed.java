@@ -23,11 +23,9 @@ public class GameSpeed {
      */
     public static int frameSkip;
 
-//    private static final int NORMAL_GAME_SPEED = 10;
-    private static final int NORMAL_GAME_SPEED = 0;
+    // 0 speed - fastest, use positive frame skip to skip rendering and make it even quicker
+    private static final int NORMAL_GAME_SPEED = 1;
     private static final int NORMAL_FRAME_SKIP = 0;
-//    private static final int NORMAL_GAME_SPEED = 0;
-//    private static final int NORMAL_FRAME_SKIP = 500;
 
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
