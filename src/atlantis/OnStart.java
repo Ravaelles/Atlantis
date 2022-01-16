@@ -87,7 +87,7 @@ public class OnStart {
             OurStrategyManager.initialize();
 
             if (CurrentBuildOrder.get() != null) {
-//                System.out.println("Use build order: `" + CurrentBuildOrder.get().getName() + "`");
+                System.out.println("Use build order: `" + CurrentBuildOrder.get() + "`");
             }
             else {
                 System.err.println("Invalid (empty) build order in AtlantisConfig!");

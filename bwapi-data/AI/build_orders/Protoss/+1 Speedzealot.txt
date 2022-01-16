@@ -79,3 +79,4 @@ MISSION=ATTACK
 17 - Photon Cannon - @NATURAL
 18 - Photon Cannon - @NATURAL
 16 - Gateway - @NATURAL
+18 - Pylon
