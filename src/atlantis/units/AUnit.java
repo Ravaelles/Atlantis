@@ -1982,6 +1982,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public boolean isDragoon() {
+        return cacheBoolean.get(
+                "isDragoon",
+                -1,
+                () -> is(AUnitType.Protoss_Dragoon)
+        );
+    }
+
     public int meleeEnemiesNearbyCount(double maxDistToEnemy) {
         return cacheInt.get(
                 "meleeEnemiesNearby",
@@ -2028,4 +2036,5 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean shieldDamageAtLeast(int minDamage) {
         return shields() + minDamage <= maxShields();
     }
+
 }

@@ -24,12 +24,9 @@ public class Main {
             ProcessHelper.killStarcraftProcess();
             ProcessHelper.killChaosLauncherProcess();
 
-            if (Env.isLocal()) {
-
-                // Dynamically modify bwapi.ini file, change race and enemy race.
-                // If you want to change your/enemy race, edit AtlantisConfig constants.
-                AtlantisIgniter.modifyBwapiFileIfNeeded();
-            }
+            // Dynamically modify bwapi.ini file, change race and enemy race.
+            // If you want to change your/enemy race, edit AtlantisConfig constants.
+            AtlantisIgniter.modifyBwapiFileIfNeeded();
 
             // Listen for keyboard events
             AKeyboard.listenForKeyEvents();

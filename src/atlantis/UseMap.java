@@ -10,7 +10,7 @@ public class UseMap {
 
     public static String activeMap() {
 //        return "sscai/(2)Destination.scx";
-//        return "sscai/(2)Heartbreak Ridge.scx";
+        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
@@ -56,7 +56,7 @@ public class UseMap {
 
 //        return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
 //        return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
-        return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
+//        return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
 //        return "ums/ConTrol2.scx"; // More minigames
 //        return "ums/micro challenge.scx"; // Even more minigames
 //        return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
