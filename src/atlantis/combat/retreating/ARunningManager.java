@@ -1,5 +1,7 @@
 package atlantis.combat.retreating;
 
+import atlantis.CameraManager;
+import atlantis.GameSpeed;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.position.APosition;
@@ -252,11 +254,14 @@ public class ARunningManager {
         double vectorLength = unit.distTo(runAwayFrom);
 
         if (vectorLength < 0.01) {
-            System.err.println("Serious issue: run vectorLength = " + vectorLength);
-            System.err.println("runner = " + unit + " // " + unit.position());
-            System.err.println("runAwayFrom = " + runAwayFrom);
-            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
-            A.printStackTrace();
+            return null;
+//            CameraManager.centerCameraOn(unit);
+//            System.err.println("Serious issue: run vectorLength = " + vectorLength);
+//            System.err.println("runner = " + unit + " // " + unit.position());
+//            System.err.println("runAwayFrom = " + runAwayFrom);
+//            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
+//            A.printStackTrace();
+//            GameSpeed.pauseGame();
         }
 
         Vector vector = new Vector((unit.x() - runAwayFrom.x()) / 32.0, (unit.y() - runAwayFrom.y()) / 32.0);
@@ -394,8 +399,13 @@ public class ARunningManager {
      * Tell other units that might be blocking our escape route to move.
      */
     private boolean notifyNearbyUnitsToMakeSpace(AUnit unit) {
-        if (We.protoss() && unit.shieldDamageAtLeast(20)) {
-            return false;
+        if (We.protoss()) {
+            if (
+                    unit.shieldDamageAtLeast(20)
+                    || unit.friendsNearby().inRadius(1.5, unit).atLeast(4)
+            ) {
+                return false;
+            }
         }
 
         if (unit.isAir() || unit.isLoaded()) {

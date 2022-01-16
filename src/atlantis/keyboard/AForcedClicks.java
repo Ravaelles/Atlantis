@@ -20,6 +20,8 @@ public class AForcedClicks {
             robot.keyRelease(KeyEvent.VK_F9);
             robot.keyRelease(KeyEvent.VK_ALT);
         } catch (AWTException e) { }
+
+        System.out.println("Info: I clicked Alt+F9 to make ChaosLauncher twice the size (double the failure)");
     }
 
 }

@@ -23,8 +23,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         if (
                 defender.isDragoon()
                 && (
-                        defender.shieldDamageAtMost(10)
-                        || (defender.hp() >= 60 && defender.lastAttackFrameMoreThanAgo(80))
+                        defender.shieldDamageAtMost(6)
+                        || (defender.shields() >= 6 && defender.lastAttackFrameMoreThanAgo(80))
+                        || (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 6))
                 )
         ) {
             return -1;

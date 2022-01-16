@@ -10,11 +10,13 @@ public class UseMap {
 
     public static String activeMap() {
 //        return "sscai/(2)Destination.scx";
-        return "sscai/(2)Heartbreak Ridge.scx";
+//        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === UMS maps - great for bot development ============
+
+        return "ums/rav/Dragoons_v_Zerglings.scm";
 
 //        return "ums/rav/T_v_Sunkens.scx";
 //        return "ums/rav/T_v_Sunkens2.scx";
