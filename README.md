@@ -27,6 +27,7 @@ The latest stable version is in the `master` branch. In `develop` you will find 
 * IMPORTANT: In order to use BWAPI you have to create player profile in StarCraft. Just run StarCraft, click Single Player, BroodWar and create profile with any name. If you skip this step you will get an error.
 * First we need to install BWAPI in version 4.4.0, so [click here to get it](https://github.com/bwapi/bwapi/releases/download/v4.4.0/BWAPI_Setup.exe). Installation of BWAPI is a hard thing for beginners, so make sure you follow [this tutorial](http://sscaitournament.com/index.php?action=tutorial) closely.
 * Feel free to read the tutorial even further to see how a simple non-Atlantis bot would look like.
+* Make sure to follow [these steps from Atlantis Wiki](https://github.com/Ravaelles/Atlantis/wiki)
 * If you've done everything correctly, you should be good to go. Run Main class of Atlantis in IDE.
 
 # Quick usage
