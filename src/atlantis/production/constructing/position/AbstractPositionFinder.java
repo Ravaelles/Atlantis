@@ -91,9 +91,7 @@ public abstract class AbstractPositionFinder {
         // Compare against planned construction places
         for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
             if (
-//                    order.notStarted()
-//                    !builder.equals(order.builder())
-                    position != null
+                    position != null && constructionPosition != null
             ) {
                 double distance = position.distTo(constructionPosition);
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()

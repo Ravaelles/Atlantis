@@ -29,7 +29,7 @@ public class ARegionBoundaryCalculator {
             angle += 0.14;
         }
 
-        System.out.println(boundaries.size() + " border points added.");
+//        System.out.println(boundaries.size() + " border points added.");
         return boundaries;
     }
 

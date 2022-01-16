@@ -21,8 +21,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         // === Protoss ===============================================
 
         if (
-                defender.isProtoss()
-                && (defender.shieldDamageAtMost(10) || defender.lastAttackFrameMoreThanAgo(30 * 10))
+                defender.isDragoon()
+                && (
+                        defender.shieldDamageAtMost(10)
+                        || (defender.hp() >= 60 && defender.lastAttackFrameMoreThanAgo(80))
+                )
         ) {
             return -1;
         }
