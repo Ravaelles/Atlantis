@@ -117,6 +117,10 @@ public class AMap {
             if (
                     position.isWalkable()
                             && !position.isExplored()
+//                            && position.translateByTiles(-1, 0).isWalkable()
+//                            && position.translateByTiles(1, 0).isWalkable()
+//                            && position.translateByTiles(0, 1).isWalkable()
+//                            && position.translateByTiles(0, -1).isWalkable()
                             && startPoint.position().hasPathTo(position)
                             && startPoint.position().groundDistanceTo(position) <= 100
             ) {

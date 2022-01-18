@@ -4,7 +4,6 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +13,7 @@ public class ATransportManager {
     private static Map<AUnit, AUnit> passengersToTransports = new HashMap<>();
     private static Map<AUnit, AUnit> transportsToPassengers = new HashMap<>();
 
-    public static boolean handle(AUnit transport) {
+    public static boolean handleLoadAndUnload(AUnit transport) {
         AUnit baby = babyToCarry(transport);
         if (baby != null) {
             return TransportUnits.handleTransporting(transport, baby);

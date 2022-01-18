@@ -62,7 +62,7 @@ public class AScoutManager {
 
         // We don't know any enemy building, scout nearest starting location.
         if (!EnemyInformation.hasDiscoveredAnyBuilding()) {
-            return tryFindingEnemyBuilding(scout);
+            return tryFindingEnemy(scout);
         }
 
         // Scout other bases
@@ -130,32 +130,21 @@ public class AScoutManager {
     /**
      * We don't know any enemy building, scout nearest starting location.
      */
-    public static boolean tryFindingEnemyBuilding(AUnit scout) {
+    public static boolean tryFindingEnemy(AUnit scout) {
         if (scout == null) {
             return true;
         }
         scout.setTooltip("Find enemy");
-        //scout.setTooltip("Find enemy");
 
-        // Don't interrupt when moving
-//        if (scout.isMoving() || scout.isAttacking()) {
-//            return;
-//        }
         // Define center point for our searches
         AUnit ourMainBase = Select.main();
         if (ourMainBase == null && A.notUms()) {
             return false;
         }
 
-        // === Handle UMS ==========================================
-//        if (AGame.isUms()) {
-//            handleUmsExplore(scout);
-//            return;
-//        }
         // =========================================================
         // Get nearest unexplored starting location and go there
 
-//        APosition startingLocation;
         HasPosition startingLocation;
         if (scout.is(AUnitType.Zerg_Overlord) || scouts.size() > 1) {
             startingLocation = Bases.startingLocationBasedOnIndex(
@@ -166,12 +155,7 @@ public class AScoutManager {
         }
 
         // =========================================================
-//        APosition enemyBase = AtlantisEnemyUnits.getEnemyBase();
-//        if (enemyBase != null) {
-//            Region enemyBaseRegion = AtlantisMap.getRegion(enemyBase);
-//            enemyBaseRegion.getPolygon().getCenter()
-//        }
-        // =========================================================
+
         if (startingLocation != null) {
             scout.move(startingLocation, UnitActions.EXPLORE, "Explore");
             return true;

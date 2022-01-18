@@ -4,6 +4,7 @@ import atlantis.AGame;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
 import atlantis.information.AbstractFoggedUnit;
 import atlantis.production.constructing.AConstructionManager;
@@ -731,9 +732,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-//        if (squad == null && A.notUms() && isOur() && !isSpell() && !isBuilding() && !isWorker() && isAlive()) {
-//            System.err.println("Null squad for unit: " + this + " // alive:" + isAlive() + " // hp:" + hp());
-//        }
+        if (squad == null) {
+            NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
+        }
+
         return squad;
     }
 

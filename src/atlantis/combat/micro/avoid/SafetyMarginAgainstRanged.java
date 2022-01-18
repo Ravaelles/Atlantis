@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -24,7 +25,8 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
         // === For all ==================================
 
-        criticalDist += addBuildingBonus(defender, attacker, criticalDist);
+        criticalDist += addBuildingBonus(defender, attacker, criticalDist)
+                        + shouldRetreatBonus(defender);
 //        if (attacker.isCombatBuilding()) {
 //            System.out.println(defender + ", CRIT_DIST = " + criticalDist + " // " + addBuildingBonus(defender, attacker, criticalDist));
 //        }
@@ -32,6 +34,14 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         // ==============================================
 
         return criticalDist;
+    }
+
+    private static double shouldRetreatBonus(AUnit defender) {
+        if (RetreatManager.getCachedShouldRetreat(defender)) {
+            return 1.7;
+        }
+
+        return 0;
     }
 
     private static double forGroundUnit(AUnit defender, AUnit attacker) {

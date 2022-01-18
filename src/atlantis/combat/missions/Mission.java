@@ -77,12 +77,15 @@ public abstract class Mission {
             return false;
         }
 
+        // Go to random UNEXPLORED
         if ((A.isUms() || A.chance(10)) && (temporaryTarget == null || temporaryTarget.isExplored())) {
             temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
 //            if (temporaryTarget != null) {
 //                System.out.println("Go to unexplored " + temporaryTarget);
 //            }
         }
+
+        // Go to random INVISIBLE
         if (temporaryTarget == null || temporaryTarget.isVisible()) {
             temporaryTarget = AMap.randomInvisiblePosition(unit);
 //            if (temporaryTarget != null) {

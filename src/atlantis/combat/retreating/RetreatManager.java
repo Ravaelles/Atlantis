@@ -58,6 +58,10 @@ public class RetreatManager {
         );
     }
 
+    public static boolean getCachedShouldRetreat(AUnit unit) {
+        return cache.has("shouldRetreat:" + unit.id()) && cache.get("shouldRetreat:" + unit.id());
+    }
+
     /**
      * Calculated per unit squad, not per unit.
      */

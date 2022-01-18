@@ -46,7 +46,7 @@ public class ASpecialUnitManager {
      */
     public static boolean updateAndAllowTopManagers(AUnit unit) {
 
-        if (unit.type().isTransportExcludeOverlords() && ATransportManager.handle(unit)) {
+        if (unit.type().isTransportExcludeOverlords() && ATransportManager.handleLoadAndUnload(unit)) {
             return true;
         }
 

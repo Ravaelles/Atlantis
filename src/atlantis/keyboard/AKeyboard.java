@@ -88,13 +88,11 @@ public class AKeyboard implements NativeKeyListener {
 
             // Key "1"
             case 2:
-                System.out.println("--- KEY 1");
                 changeSpeedAndFrameSkip(20, 0);
                 break;
 
             // Key "2"
             case 3:
-                System.out.println("--- KEY 2");
                 changeSpeedAndFrameSkip(0, 0);
                 break;
 

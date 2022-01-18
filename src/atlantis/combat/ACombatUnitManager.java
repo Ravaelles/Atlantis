@@ -185,6 +185,10 @@ public class ACombatUnitManager {
         }
 
 //        System.out.println("RetreatManager.shouldRetreat(unit) = " + RetreatManager.shouldRetreat(unit));
+//        if (RetreatManager.shouldRetreat(unit)) {
+//
+//        }
+//        else {
         if (!RetreatManager.shouldRetreat(unit)) {
             return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         }

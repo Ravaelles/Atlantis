@@ -94,14 +94,14 @@ public abstract class AbstractPositionFinder {
 //        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
         for (ConstructionOrder order : ConstructionRequests.notStarted()) {
             HasPosition constructionPosition = order.positionToBuild();
-            System.out.println("constructionPosition = " + constructionPosition + " // " + order.buildingType());
+//            System.out.println("constructionPosition = " + constructionPosition + " // " + order.buildingType());
             if (
                     position != null && constructionPosition != null
             ) {
-                System.out.println("OK constructionPosition = " + constructionPosition);
+//                System.out.println("OK constructionPosition = " + constructionPosition);
                 double distance = position.distTo(constructionPosition);
-                System.out.println("distance = " + distance + " // " + position);
-                System.out.println("------------");
+//                System.out.println("distance = " + distance + " // " + position);
+//                System.out.println("------------");
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
 //                        && (distance <= 5 && !AGame.isPlayingAsZerg());
 
