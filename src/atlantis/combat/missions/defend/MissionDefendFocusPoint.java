@@ -34,7 +34,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // If NO BASE exists, return any building
                 AUnit mainBase = Select.main();
                 if (mainBase == null) {
-                    Selection selection = Select.ourBuildings();
+                    Selection selection = Select.ourBuildingsIncludingUnfinished();
                     if (selection == null) {
                         return null;
                     }

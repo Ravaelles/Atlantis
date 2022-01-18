@@ -134,7 +134,7 @@ public class ConstructionRequests {
     /**
      * Returns ConstructionOrder object for given builder.
      */
-    public static ConstructionOrder getConstructionOrderFor(AUnit builder) {
+    public static ConstructionOrder constructionOrderFor(AUnit builder) {
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (builder.equals(constructionOrder.builder())) {
                 return constructionOrder;

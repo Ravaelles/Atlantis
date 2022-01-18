@@ -135,40 +135,23 @@ public class GameSpeed {
     public static void changeSpeedTo(int speed) {
         dynamicSlowdownIsActive = false;
 
-        if (speed < 0) {
+        if (speed <= 0) {
+            if (gameSpeed == 0) {
+                changeFrameSkipTo(frameSkip + 5);
+            }
             speed = 0;
-            changeFrameSkipTo(frameSkip - 5);
         }
-        if (speed > 0) {
+        else if (speed > 0) {
             changeFrameSkipTo(0);
         }
 
-//        GameSpeed.pauseGame();
-
-//        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
-
         gameSpeed = speed;
 
-//        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
-
-//        try {
-//            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-//            Thread.sleep(40);
-//            game().setLocalSpeed(AtlantisConfig.GAME_SPEED);
-//            Thread.sleep(40);
-//        } catch (InterruptedException ex) {
-//            // Ignore
-//        }
-//        try { TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException e) {}
         AGame.sendMessage("/speed " + gameSpeed);
         game().setLocalSpeed(gameSpeed);
 
         // Turn off GUI for huge game speeds to make it even quicker
         game().setGUI(frameSkip <= 150);
-
-//        GameSpeed.unpauseGame();
-//        String speedString = AtlantisConfig.GAME_SPEED + (AtlantisConfig.GAME_SPEED == 0 ? " (Max)" : "");
-//        sendMessage("Game speed: " + speedString);
     }
 
     /**

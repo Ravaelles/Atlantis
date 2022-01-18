@@ -6,8 +6,7 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
-import atlantis.information.AFoggedUnit;
-import atlantis.information.FoggedUnit;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.map.*;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
@@ -117,7 +116,7 @@ public class AScoutManager {
             return scout.move(nextPositionToScout, UnitActions.SCOUT, "ScoutBases");
         }
 
-        AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+        AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
         APosition position = enemyBuilding != null ? enemyBuilding.position() : scout.position();
         nextPositionToScout = Bases.nearestUnexploredStartingLocation(position);
         if (nextPositionToScout != null) {
@@ -192,7 +191,7 @@ public class AScoutManager {
 
         APosition enemy = EnemyUnits.enemyBase();
         if (enemy == null) {
-            AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+            AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
             if (enemyBuilding != null) {
                 enemy = enemyBuilding.position();
             }

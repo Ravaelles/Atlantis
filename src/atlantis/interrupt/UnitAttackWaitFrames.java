@@ -58,7 +58,8 @@ public class UnitAttackWaitFrames {
     }
 
     protected static int minStop(AUnitType type) {
-        if (type == AUnitType.Protoss_Dragoon) return 5;
+//        if (type == AUnitType.Protoss_Dragoon) return 5; // Original
+        if (type == AUnitType.Protoss_Dragoon) return 6; // Raised to 6, still some glitches
         else if (type == AUnitType.Protoss_Carrier) return 48;
         else if (type == AUnitType.Zerg_Devourer) return 7;
         else return 0;

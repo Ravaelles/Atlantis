@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 /**
  * Stores information about units in order to retrieve them when they are out of sight
  */
-public class FoggedUnit extends AFoggedUnit {
+public class FoggedUnit extends AbstractFoggedUnit {
 
     // =========================================================
 

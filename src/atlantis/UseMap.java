@@ -16,7 +16,7 @@ public class UseMap {
 
         // === UMS maps - great for bot development ============
 
-        return "ums/rav/Dragoons_v_Zerglings.scm";
+//        return "ums/rav/Dragoons_v_Zerglings.scm";
 
 //        return "ums/rav/T_v_Sunkens.scx";
 //        return "ums/rav/T_v_Sunkens2.scx";
@@ -56,15 +56,15 @@ public class UseMap {
 //        return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        return "ums/LostTemple.scm"; // v. 2x Protoss players, again Zealot rush
 
+//        return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
 //        return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
-//        return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
+        return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
 //        return "ums/ConTrol2.scx"; // More minigames
 //        return "ums/micro challenge.scx"; // Even more minigames
 //        return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
 //        return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships v. Dragoons
 //        return "ums/trainzvreaver.scm"; // Zerglings & Hydras v. 2 Reavers & Shuttle
-//        return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        return "ums/trening nr 2.scx";
 //        return "ums/micro tvp 1.00.scx"; // Huge Terran army (tanks & vultures) v. Zealots & Hi-Templars & Dragoons
 //        return "ums/micro3.scx";

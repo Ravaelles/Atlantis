@@ -5,12 +5,14 @@ import atlantis.AGame;
 import atlantis.GameSpeed;
 import atlantis.AtlantisConfig;
 import atlantis.debug.APainter;
+import atlantis.util.A;
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.NativeHookException;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 
 public class AKeyboard implements NativeKeyListener {
 
@@ -85,48 +87,50 @@ public class AKeyboard implements NativeKeyListener {
                 break;
 
             // Key "1"
-            case 2: 
-                GameSpeed.changeFrameSkipTo(0);
+            case 2:
+                System.out.println("--- KEY 1");
+                changeSpeedAndFrameSkip(20, 0);
                 break;
 
             // Key "2"
             case 3:
-                GameSpeed.changeFrameSkipTo(5);
+                System.out.println("--- KEY 2");
+                changeSpeedAndFrameSkip(0, 0);
                 break;
 
             // Key "3"
             case 4:
-                GameSpeed.changeFrameSkipTo(10);
+                changeSpeedAndFrameSkip(0, 10);
                 break;
 
             // Key "4"
             case 5:
-                GameSpeed.changeFrameSkipTo(20);
+                changeSpeedAndFrameSkip(0, 20);
                 break;
 
             // Key "5"
             case 6:
-                GameSpeed.changeFrameSkipTo(40);
+                changeSpeedAndFrameSkip(0, 40);
                 break;
 
             // Key "6"
             case 7:
-                GameSpeed.changeFrameSkipTo(80);
+                changeSpeedAndFrameSkip(0, 80);
                 break;
 
             // Key "7"
             case 8:
-                GameSpeed.changeFrameSkipTo(150);
+                changeSpeedAndFrameSkip(0, 150);
                 break;
 
             // Key "8"
             case 9:
-                GameSpeed.changeFrameSkipTo(250);
+                changeSpeedAndFrameSkip(0, 250);
                 break;
 
             // Key "9"
             case 10:
-                GameSpeed.changeFrameSkipTo(500);
+                changeSpeedAndFrameSkip(0, 500);
                 break;
 
             // Key "0"
@@ -134,6 +138,14 @@ public class AKeyboard implements NativeKeyListener {
                 AGame.changeDisableUI(!AtlantisConfig.DISABLE_GUI);
                 break;
         }
+    }
+
+    private void changeSpeedAndFrameSkip(int speed, int frameSkip) {
+//        GameSpeed.pauseGame();
+        GameSpeed.changeSpeedTo(speed);
+        GameSpeed.changeFrameSkipTo(frameSkip);
+//        A.sleep(20);
+//        GameSpeed.unpauseGame();
     }
 
     @Override

@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.A;
 import bwapi.Color;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {
@@ -65,7 +66,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      */
     private static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
         _CONDITION_THAT_FAILED = null;
-//        APainter.paintCircle(position, 5, Color.Red);
+        if (DEBUG) APainter.paintCircle(position, 5, Color.Red);
 
         // Check for POWER
         if (!isPowerConditionFulfilled(building, position)) {
@@ -118,7 +119,11 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         }
 
         // All conditions are fullfilled, return this position
-        APainter.paintCircle(position, 5, Color.Green);
+        if (DEBUG) APainter.paintCircle(position, 5, Color.Green);
+        if (DEBUG) {
+//            A.centerAndPause(position);
+//            A.centerAndChangeSpeed(position, 1);
+        }
         return true;
     }
 

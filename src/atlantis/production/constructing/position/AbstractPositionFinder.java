@@ -19,6 +19,8 @@ import bwapi.Position;
 public abstract class AbstractPositionFinder {
     
     public static String _CONDITION_THAT_FAILED = null;
+    public static boolean DEBUG = true;
+//    public static boolean DEBUG = false;
 
     // =========================================================
     // Hi-level methods
@@ -89,18 +91,23 @@ public abstract class AbstractPositionFinder {
     protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
         
         // Compare against planned construction places
-        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
+//        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
+        for (ConstructionOrder order : ConstructionRequests.notStarted()) {
+            HasPosition constructionPosition = order.positionToBuild();
+            System.out.println("constructionPosition = " + constructionPosition + " // " + order.buildingType());
             if (
                     position != null && constructionPosition != null
             ) {
+                System.out.println("OK constructionPosition = " + constructionPosition);
                 double distance = position.distTo(constructionPosition);
+                System.out.println("distance = " + distance + " // " + position);
+                System.out.println("------------");
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
 //                        && (distance <= 5 && !AGame.isPlayingAsZerg());
 
                 // Look for two bases that would be built too close one to another
-                if (distance <= 5) {
-                    _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE ("
-                            + building + ", DIST: " + distance + ")";
+                if (distance <= 4) {
+                    _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" + building + ", DIST: " + distance + ")";
                     return true;
                 }
             }

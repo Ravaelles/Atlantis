@@ -1,7 +1,6 @@
 package atlantis.enemy;
 
-import atlantis.information.AFoggedUnit;
-import atlantis.information.FoggedUnit;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.Bases;
@@ -102,7 +101,7 @@ public class EnemyInformation {
         );
     }
 
-    public static Collection<AFoggedUnit> discoveredAndAliveUnits() {
+    public static Collection<AbstractFoggedUnit> discoveredAndAliveUnits() {
         return EnemyUnits.unitsDiscovered();
     }
 
@@ -138,7 +137,7 @@ public class EnemyInformation {
             return;
         }
 
-        AFoggedUnit foggedUnit = EnemyUnits.getFoggedUnit(enemyUnit);
+        AbstractFoggedUnit foggedUnit = EnemyUnits.getFoggedUnit(enemyUnit);
         if (foggedUnit != null) {
             foggedUnit.update(enemyUnit);
         }
@@ -161,7 +160,7 @@ public class EnemyInformation {
 //    }
 
     public static void printEnemyFoggedUnits() {
-        Collection<AFoggedUnit> foggedUnits = EnemyUnits.unitsDiscovered();
+        Collection<AbstractFoggedUnit> foggedUnits = EnemyUnits.unitsDiscovered();
         if (!foggedUnits.isEmpty()) {
             System.out.println("--- Enemy fogged units (" + foggedUnits.size() + ") ---");
             for (AUnit fogged : foggedUnits) {
@@ -185,7 +184,7 @@ public class EnemyInformation {
                         return enemyBase.position();
                     }
 
-                    AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+                    AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
                     if (enemyBuilding != null) {
                         return enemyBuilding.position();
                     }
@@ -223,7 +222,7 @@ public class EnemyInformation {
         );
     }
 
-    public static boolean isProxyBuilding(AFoggedUnit enemyBuilding) {
+    public static boolean isProxyBuilding(AbstractFoggedUnit enemyBuilding) {
         if (A.seconds() >= 400 || !We.haveBase()) {
             return false;
         }

@@ -5,7 +5,7 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.Squad;
-import atlantis.information.AFoggedUnit;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.ConstructionOrder;
@@ -866,7 +866,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * construction.
      */
     public ConstructionOrder constructionOrder() {
-        return ConstructionRequests.getConstructionOrderFor(this);
+        return ConstructionRequests.constructionOrderFor(this);
     }
 
     /**
@@ -1989,6 +1989,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 () -> is(AUnitType.Protoss_Dragoon)
         );
     }
+    public boolean isDT() {
+        return cacheBoolean.get(
+                "isDT",
+                -1,
+                () -> is(AUnitType.Protoss_Dark_Templar)
+        );
+    }
 
     public int meleeEnemiesNearbyCount(double maxDistToEnemy) {
         return cacheInt.get(
@@ -1999,7 +2006,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isFoggedUnitWithUnknownPosition() {
-        return this instanceof AFoggedUnit && position() == null;
+        return this instanceof AbstractFoggedUnit && position() == null;
     }
 
     public boolean isHealthy() {

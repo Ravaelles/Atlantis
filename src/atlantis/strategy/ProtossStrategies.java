@@ -10,6 +10,7 @@ public class ProtossStrategies extends AStrategy {
     // Rush
     public static final AStrategy PROTOSS_2_Gate_Zealot = new AStrategy();
     public static final AStrategy PROTOSS_Speedzealot = new AStrategy();
+    public static final AStrategy PROTOSS_One_Base_Speedzealot = new AStrategy();
 
     // Cheese
     public static final AStrategy PROTOSS_3_Gate = new AStrategy();
@@ -35,6 +36,10 @@ public class ProtossStrategies extends AStrategy {
         PROTOSS_Speedzealot.setProtoss().setName("+1 Speedzealot")
                 .setGoingRush()
                 .setUrl("https://liquipedia.net/starcraft/%2B1_Speedzealot_(vs_Zerg)");
+
+        PROTOSS_One_Base_Speedzealot.setProtoss().setName("One Base Speedzealot")
+                .setGoingRush()
+                .setUrl("https://liquipedia.net/starcraft/One_Base_Speedzeal_(vs._Zerg)");
 
         // === Cheese ========================================
         

@@ -402,7 +402,7 @@ public class ARunningManager {
         if (We.protoss()) {
             if (
                     unit.shieldDamageAtLeast(20)
-                    || unit.friendsNearby().inRadius(1.5, unit).atLeast(4)
+                    || unit.friendsNearby().inRadius(0.7, unit).atLeast(3)
             ) {
                 return false;
             }

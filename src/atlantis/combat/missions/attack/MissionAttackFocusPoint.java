@@ -3,10 +3,8 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
 import atlantis.enemy.EnemyUnits;
-import atlantis.information.AFoggedUnit;
-import atlantis.information.FoggedUnit;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.map.AChoke;
-import atlantis.map.AMap;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.position.APosition;
@@ -55,7 +53,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 }
 
                 // Try going near any enemy building
-                AFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+                AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
                 if (enemyBuilding != null && enemyBuilding.position() != null) {
                     return new AFocusPoint(
                             enemyBuilding,

@@ -155,7 +155,7 @@ public class ACombatEvaluator {
         else if (unit.isEnemy()) {
             theseUnits = Select.enemyCombatUnits().ranged().inRadius(RANGED_RADIUS, unit);
             theseUnits.add(Select.enemyCombatUnits().melee().inRadius(MELEE_RADIUS, unit));
-            theseUnits.add(EnemyUnits.combatUnitsToBetterAvoid().inRadius(RANGED_RADIUS, unit));
+            theseUnits.add(EnemyUnits.combatUnitsToBetterAvoid().havingPosition().inRadius(RANGED_RADIUS, unit));
             theseUnits.removeDuplicates();
         }
 

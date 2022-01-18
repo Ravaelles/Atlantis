@@ -2,6 +2,9 @@ package atlantis.util;
 
 import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.CameraManager;
+import atlantis.GameSpeed;
+import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import bwapi.Game;
@@ -38,6 +41,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -1237,5 +1241,24 @@ public class A {
     public static boolean printAndReturnTrue(String text) {
         System.err.println(text);
         return true;
+    }
+
+    public static void centerAndPause(APosition position) {
+        CameraManager.centerCameraOn(position);
+        GameSpeed.pauseGame();
+    }
+
+    public static void centerAndChangeSpeed(APosition position, int newGameSpeed) {
+        CameraManager.centerCameraOn(position);
+        GameSpeed.changeSpeedTo(newGameSpeed);
+    }
+    public static void centerAndPauseAndChangeSpeed(APosition position, int newGameSpeed) {
+        CameraManager.centerCameraOn(position);
+        GameSpeed.changeSpeedTo(newGameSpeed);
+        GameSpeed.pauseGame();
+    }
+
+    public static void sleep(int ms) {
+        try { TimeUnit.MILLISECONDS.sleep(ms); } catch (InterruptedException e) {}
     }
 }

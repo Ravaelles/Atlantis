@@ -138,7 +138,7 @@ public class AConstructionManager {
         // Building doesn't exist yet, means builder is travelling to the construction place
         else if (builder != null && !builder.isMoving()) {
             if (order.positionToBuild() == null) {
-                APosition positionToBuild = APositionFinder.getPositionForNew(
+                APosition positionToBuild = APositionFinder.findPositionForNew(
                         order.builder(), order.buildingType(), order
                 );
                 order.setPositionToBuild(positionToBuild);
@@ -161,7 +161,7 @@ public class AConstructionManager {
      */
     public static boolean isBuilder(AUnit worker) {
         if (worker.isConstructing() || 
-                (!AGame.isPlayingAsProtoss() && ConstructionRequests.getConstructionOrderFor(worker) != null)) {
+                (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionOrderFor(worker) != null)) {
             return true;
         }
 

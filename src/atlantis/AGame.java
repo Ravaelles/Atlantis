@@ -325,5 +325,4 @@ public class AGame {
             game().sendText(message);
         }
     }
-
 }

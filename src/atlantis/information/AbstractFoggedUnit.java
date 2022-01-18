@@ -11,9 +11,9 @@ import java.util.TreeMap;
 /**
  * Stores information about units in order to retrieve them when they are out of sight
  */
-public abstract class AFoggedUnit extends AUnit {
+public abstract class AbstractFoggedUnit extends AUnit {
 
-    protected final static TreeMap<Integer, AFoggedUnit> all = new TreeMap<>();
+    protected final static TreeMap<Integer, AbstractFoggedUnit> all = new TreeMap<>();
 
     protected static AUnit _lastAUnit = null;
     protected AUnit aUnit;

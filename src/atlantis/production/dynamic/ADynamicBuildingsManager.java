@@ -76,7 +76,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     }
 
     protected static void buildToHaveOne(AUnitType type) {
-        if (Count.ofType(type) > 0) {
+        if (Count.includingPlanned(type) > 0) {
             return;
         }
 

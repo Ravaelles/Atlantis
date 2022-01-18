@@ -16,41 +16,22 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 3.0;
 
     public static double calculate(AUnit defender, AUnit attacker) {
-        double criticalDist;
+        double criticalDist = -1;
 
         // === Protoss ===============================================
 
-        if (
-                defender.isDragoon()
-                && (
-                        defender.shieldDamageAtMost(6)
-                        || (defender.shields() >= 6 && defender.lastAttackFrameMoreThanAgo(80))
-                        || (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 6))
-                )
-        ) {
-            return -1;
+        if (defender.isProtoss()) {
+            criticalDist = handleProtoss(defender, attacker);
         }
+        // === Terran ===============================================
 
-        // === Terran INFANTRY =======================================
-
-        else if (defender.isTerranInfantry()) {
-            criticalDist = handleTerranInfantry(defender, attacker);
-        }
-
-        // === VULTURE ===============================================
-
-        else if (defender.isVulture()) {
-            criticalDist = 2.5
-                    + woundedAgainstMeleeBonus(defender, attacker)
-                    + ourMovementBonus(defender)
-                    + enemyMovementBonus(defender, attacker);
-
-            criticalDist = Math.min(criticalDist, 3.6);
+        else if (defender.isTerran()) {
+            criticalDist = handleTerran(defender, attacker);
         }
 
         // === Standard unit =========================================
 
-        else {
+        if (criticalDist <= -1) {
             criticalDist = baseForMelee(defender, attacker)
                     + enemyWeaponRange(defender, attacker)
                     + woundedAgainstMeleeBonus(defender, attacker)
@@ -70,6 +51,71 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
         return criticalDist;
+    }
+
+    // =========================================================
+
+    private static double handleProtoss(AUnit defender, AUnit attacker) {
+        if (
+                defender.isDragoon()
+                        && !attacker.isDT()
+//                && (
+//                        defender.shieldDamageAtMost(6)
+//                        || (defender.shields() >= 6 && defender.lastAttackFrameMoreThanAgo(80))
+//                        || (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 6))
+//                )
+        ) {
+            if (defender.shieldDamageAtMost(6)) {
+                return 0;
+            }
+            else if (
+                    defender.hasNotMovedInAWhile()
+                            && defender.shieldDamageAtMost(30)
+                            && defender.lastUnderAttackMoreThanAgo(60)
+            ) {
+                return 0;
+            }
+            else if (
+                    defender.shieldDamageAtMost(30)
+                    && (
+                            defender.lastAttackFrameMoreThanAgo(80)
+                            || defender.lastUnderAttackMoreThanAgo(90)
+                    )
+            ) {
+                return 2
+                        + woundedAgainstMeleeBonus(defender, attacker)
+                        + ourMovementBonus(defender)
+                        + quicknessBonus(defender, attacker)
+                        + enemyMovementBonus(defender, attacker);
+            }
+            else if (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 8)) {
+                return 2.6;
+            }
+        }
+
+        return -1;
+    }
+
+    private static double handleTerran(AUnit defender, AUnit attacker) {
+
+        // === Terran INFANTRY =======================================
+
+        if (defender.isTerranInfantry()) {
+            return handleTerranInfantry(defender, attacker);
+        }
+
+        // === VULTURE ===============================================
+
+        else if (defender.isVulture()) {
+            return Math.min(
+                    3.6,
+                    2.5 + woundedAgainstMeleeBonus(defender, attacker)
+                        + ourMovementBonus(defender)
+                        + enemyMovementBonus(defender, attacker)
+            );
+        }
+
+        return -1;
     }
 
     // =========================================================

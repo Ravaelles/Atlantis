@@ -1,6 +1,6 @@
 package atlantis.enemy;
 
-import atlantis.information.AFoggedUnit;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.information.FakeFoggedUnit;
 import atlantis.information.FoggedUnit;
 import atlantis.position.APosition;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class EnemyUnits {
 
-    private static Map<Integer, AFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
+    private static Map<Integer, AbstractFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
     private static Cache<Object> cache = new Cache<>();
 
     // =========================================================
@@ -47,7 +47,7 @@ public class EnemyUnits {
     }
 
     public static void addFoggedUnit(AUnit enemyUnit) {
-        AFoggedUnit foggedUnit = enemyUnit instanceof FakeUnit
+        AbstractFoggedUnit foggedUnit = enemyUnit instanceof FakeUnit
                 ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
                 : FoggedUnit.from(enemyUnit);
 
@@ -62,11 +62,11 @@ public class EnemyUnits {
         return enemyUnitsDiscovered.containsKey(enemyUnit.id());
     }
 
-    public static AFoggedUnit getFoggedUnit(AUnit enemyUnit) {
+    public static AbstractFoggedUnit getFoggedUnit(AUnit enemyUnit) {
         return enemyUnitsDiscovered.get(enemyUnit.id());
     }
 
-    public static Collection<AFoggedUnit> unitsDiscovered() {
+    public static Collection<AbstractFoggedUnit> unitsDiscovered() {
         return enemyUnitsDiscovered.values();
     }
 
@@ -85,7 +85,7 @@ public class EnemyUnits {
                 "enemyBase",
                 30,
                 () -> {
-                    for (AFoggedUnit enemyUnit : unitsDiscovered()) {
+                    for (AbstractFoggedUnit enemyUnit : unitsDiscovered()) {
                         if (enemyUnit.isBase()) {
                             return enemyUnit.position();
                         }
@@ -95,17 +95,17 @@ public class EnemyUnits {
         );
     }
 
-    public static AFoggedUnit nearestEnemyBuilding() {
-        return (AFoggedUnit) cache.get(
+    public static AbstractFoggedUnit nearestEnemyBuilding() {
+        return (AbstractFoggedUnit) cache.get(
                 "nearestEnemyBuilding",
                 50,
                 () -> {
                     AUnit ourMainBase = Select.main();
-                    AFoggedUnit best = null;
+                    AbstractFoggedUnit best = null;
                     if (ourMainBase != null) {
                         double minDist = 999999;
 
-                        for (AFoggedUnit enemy : unitsDiscovered()) {
+                        for (AbstractFoggedUnit enemy : unitsDiscovered()) {
                             if (enemy.type().isBuilding() && enemy.position() != null) {
                                 double dist = ourMainBase.groundDist(enemy.position());
                                 if (dist < minDist) {
@@ -148,7 +148,8 @@ public class EnemyUnits {
                                     AUnitType.Zerg_Lurker,
                                     AUnitType.Zerg_Sunken_Colony
                                 )
-                            );
+                            )
+                            .havingPosition();
                 }
         );
     }

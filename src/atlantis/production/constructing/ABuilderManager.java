@@ -36,7 +36,7 @@ public class ABuilderManager {
     // =========================================================
     
     private static boolean handleConstruction(AUnit builder) {
-        ConstructionOrder constructionOrder = ConstructionRequests.getConstructionOrderFor(builder);
+        ConstructionOrder constructionOrder = ConstructionRequests.constructionOrderFor(builder);
         if (constructionOrder != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
@@ -179,8 +179,8 @@ public class ABuilderManager {
     private static boolean shouldNotTravelYet(AUnitType building, double distance) {
         if (AGame.timeSeconds() < 200 && !building.isBase()) {
             return !AGame.canAfford(
-                     building.getMineralPrice() - 2 - (int) distance,
-                    building.getGasPrice() - 2- (int) distance
+                     building.getMineralPrice() - 24 - (int) distance,
+                    building.getGasPrice() - 16 - (int) distance
             );
         }
 

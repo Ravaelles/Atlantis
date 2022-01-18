@@ -5,7 +5,7 @@ import atlantis.tests.unit.FakeUnit;
 /**
  * Used only in tests.
  */
-public class FakeFoggedUnit extends AFoggedUnit {
+public class FakeFoggedUnit extends AbstractFoggedUnit {
 
     protected FakeFoggedUnit() { }
 

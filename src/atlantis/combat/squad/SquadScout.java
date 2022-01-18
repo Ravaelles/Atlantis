@@ -7,8 +7,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.debug.APainter;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
-import atlantis.information.AFoggedUnit;
-import atlantis.information.FoggedUnit;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.log.Log;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
@@ -80,7 +79,7 @@ public class SquadScout {
         }
 
         if (positionToEngage == null) {
-            AFoggedUnit nearestEnemyBuilding = EnemyUnits.nearestEnemyBuilding();
+            AbstractFoggedUnit nearestEnemyBuilding = EnemyUnits.nearestEnemyBuilding();
             if (nearestEnemyBuilding != null) {
                 positionToEngage = nearestEnemyBuilding.position();
             }

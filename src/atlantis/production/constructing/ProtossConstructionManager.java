@@ -32,7 +32,7 @@ public class ProtossConstructionManager {
             
             // Assume that closest builder is the one that has just constructed a building.
             if (closestBuilder != null) {
-                ConstructionOrder order = ConstructionRequests.getConstructionOrderFor(closestBuilder);
+                ConstructionOrder order = ConstructionRequests.constructionOrderFor(closestBuilder);
                 if (order != null) {
                     order.cancel();
                 }

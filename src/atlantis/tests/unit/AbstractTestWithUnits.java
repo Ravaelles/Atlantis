@@ -6,7 +6,7 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.enemy.EnemyInformation;
 import atlantis.enemy.EnemyUnits;
-import atlantis.information.AFoggedUnit;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.tests.acceptance.AbstractTestFakingGame;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -40,7 +40,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         Select.clearCache();
         BaseSelect.clearCache();
         ACombatEvaluator.clearCache();
-        AFoggedUnit.clearCache();
+        AbstractFoggedUnit.clearCache();
         EnemyInformation.clearCache();
         EnemyUnits.clearCache();
         AAvoidUnits.clearCache();

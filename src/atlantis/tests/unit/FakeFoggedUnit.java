@@ -1,10 +1,9 @@
 package atlantis.tests.unit;
 
-import atlantis.information.AFoggedUnit;
-import atlantis.information.FoggedUnit;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.position.APosition;
 
-public class FakeFoggedUnit extends AFoggedUnit {
+public class FakeFoggedUnit extends AbstractFoggedUnit {
 
 //    public int _id;
 //    public AUnitType type;
