@@ -20,9 +20,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // === Protoss ===============================================
 
-        if (defender.isProtoss()) {
-            criticalDist = handleProtoss(defender, attacker);
+        if (defender.isDragoon()) {
+            criticalDist = handleDragoon(defender, attacker);
         }
+
         // === Terran ===============================================
 
         else if (defender.isTerran()) {
@@ -55,42 +56,35 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     // =========================================================
 
-    private static double handleProtoss(AUnit defender, AUnit attacker) {
-        if (
-                defender.isDragoon()
-                        && !attacker.isDT()
-//                && (
-//                        defender.shieldDamageAtMost(6)
-//                        || (defender.shields() >= 6 && defender.lastAttackFrameMoreThanAgo(80))
-//                        || (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 6))
-//                )
+    private static double handleDragoon(AUnit defender, AUnit attacker) {
+        if (!defender.isDragoon() || attacker.isDT()) {
+            return -1;
+        }
+
+        double min = 0;
+
+        if (defender.shieldDamageAtMost(6)) {
+            return min;
+        } else if (
+                defender.hasNotMovedInAWhile()
+                        && defender.shieldDamageAtMost(30)
+                        && defender.lastUnderAttackMoreThanAgo(60)
         ) {
-            if (defender.shieldDamageAtMost(6)) {
-                return 0;
-            }
-            else if (
-                    defender.hasNotMovedInAWhile()
-                            && defender.shieldDamageAtMost(30)
-                            && defender.lastUnderAttackMoreThanAgo(60)
-            ) {
-                return 0;
-            }
-            else if (
-                    defender.shieldDamageAtMost(30)
-                    && (
-                            defender.lastAttackFrameMoreThanAgo(80)
-                            || defender.lastUnderAttackMoreThanAgo(90)
-                    )
-            ) {
-                return 2
-                        + woundedAgainstMeleeBonus(defender, attacker)
-                        + ourMovementBonus(defender)
-                        + quicknessBonus(defender, attacker)
-                        + enemyMovementBonus(defender, attacker);
-            }
-            else if (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 8)) {
-                return 2.6;
-            }
+            return min;
+        } else if (
+                defender.shieldDamageAtMost(30) &&
+                        (
+                                defender.lastAttackFrameMoreThanAgo(80)
+                                        || defender.lastUnderAttackMoreThanAgo(90)
+                        )
+        ) {
+            return min
+                    + woundedAgainstMeleeBonus(defender, attacker)
+                    + ourMovementBonus(defender)
+                    + quicknessBonus(defender, attacker)
+                    + enemyMovementBonus(defender, attacker);
+        } else if (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 3)) {
+            return 1.6;
         }
 
         return -1;
@@ -110,8 +104,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             return Math.min(
                     3.6,
                     2.5 + woundedAgainstMeleeBonus(defender, attacker)
-                        + ourMovementBonus(defender)
-                        + enemyMovementBonus(defender, attacker)
+                            + ourMovementBonus(defender)
+                            + enemyMovementBonus(defender, attacker)
             );
         }
 
@@ -166,13 +160,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 }
                 return defender.woundPercent() / INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC;
             }
-        }
-
-        else if (defender.isAir()) {
+        } else if (defender.isAir()) {
             return defender.woundPercent() / 10;
-        }
-
-        else if (defender.isVulture()) {
+        } else if (defender.isVulture()) {
             return defender.woundPercent() / 30;
         }
 
