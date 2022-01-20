@@ -23,12 +23,12 @@ public class ARunningManager {
 
     //    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
-    public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 2;
+    public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
     public static double NEARBY_UNIT_MAKE_SPACE = 0.75;
 //    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
     private static final double SHOW_BACK_TO_ENEMY_DIST = 3;
     public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
-    public static double NOTIFY_UNITS_IN_RADIUS = 0.55;
+    public static double NOTIFY_UNITS_IN_RADIUS = 0.65;
 
     private final AUnit unit;
     private static APosition _lastPosition;
@@ -473,15 +473,17 @@ public class ARunningManager {
 //        System.out.println("position.isWalkable() = " + position.isWalkable());
 //        System.out.println("unit.hasPathTo(position) = " + unit.hasPathTo(position));
 //        System.out.println("unit.position().groundDistanceTo(position) = " + unit.position().groundDistanceTo(position));
+        int walkRadius = 32;
+
         boolean isOkay = position.isWalkable()
 //                && (
 //                    !includeNearbyWalkability
-//                    || (
-//                        position.translateByPixels(-48, -48).isWalkable()
-//                        && position.translateByPixels(48, 48).isWalkable()
-//                        && position.translateByPixels(48, -48).isWalkable()
-//                        && position.translateByPixels(-48, -48).isWalkable()
-//                    )
+                    && (
+                        position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
+                        && position.translateByPixels(walkRadius, walkRadius).isWalkable()
+                        && position.translateByPixels(walkRadius, -walkRadius).isWalkable()
+                        && position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
+                    )
 //                )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
 //                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0

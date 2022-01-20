@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.debug.APainter;
-import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
@@ -11,7 +10,7 @@ import bwapi.Color;
 
 public class Avoid {
 
-    public static boolean unit(AUnit unit, AUnit enemy) {
+    public static boolean singleUnit(AUnit unit, AUnit enemy) {
         APainter.paintCircle(enemy, 16, Color.Orange);
 
         if (enemy.position() == null) {
@@ -45,11 +44,11 @@ public class Avoid {
     // =========================================================
 
     private static HasPosition defineRunFromForGroupOfUnits(Units enemiesDangerouslyClose) {
-        if (enemiesDangerouslyClose.size() >= 2) {
+        if (enemiesDangerouslyClose.size() >= 3) {
             Units nearestEnemies = new Units();
             nearestEnemies.addUnit(enemiesDangerouslyClose.get(0));
             nearestEnemies.addUnit(enemiesDangerouslyClose.get(1));
-//            nearestEnemies.addUnit(enemiesDangerouslyClose.get(2));
+            nearestEnemies.addUnit(enemiesDangerouslyClose.get(2));
             return nearestEnemies.average();
         }
 

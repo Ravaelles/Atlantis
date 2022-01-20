@@ -51,7 +51,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
         if (defender.isRanged() && attacker.isWorker()) {
-            criticalDist = 2.5;
+            criticalDist = 2.3;
         }
 
         return criticalDist;
@@ -190,6 +190,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     private static double handleTerranInfantry(AUnit defender, AUnit attacker) {
         double criticalDist;
+
+//        if (true) return 3;
 
         if (defender.hasMedicInRange()) {
             if (defender.isHealthy()) {

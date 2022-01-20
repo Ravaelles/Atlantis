@@ -29,7 +29,7 @@ public class WantsToAvoid {
         // =========================================================
 
         if (enemies.size() == 1) {
-            return Avoid.unit(unit, enemies.first());
+            return Avoid.singleUnit(unit, enemies.first());
         }
         else {
             return Avoid.groupOfUnits(unit, enemies);

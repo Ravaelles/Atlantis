@@ -17,6 +17,10 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
+        if (unit.hp() <= 40 && unit.enemiesNearby().ofType(AUnitType.Protoss_Zealot).inRadius(2.7, unit).atLeast(2)) {
+            return false;
+        }
+
         if (unit.isVulture() && unit.target() != null && unit.isUnitActionAttack()) {
 //            if (unit.lastStartedAttackLessThanAgo(12 + unit.hpPercent() / 25)) {
             if (

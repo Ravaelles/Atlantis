@@ -185,11 +185,6 @@ public class TerranSiegeTank {
         return unit.lastActionLessThanAgo(30 * 9, UnitActions.SIEGE);
     }
 
-    private static boolean shouldNotDisturb(AUnit tank) {
-        return tank.lastActionLessThanAgo(15, UnitActions.SIEGE)
-                || tank.lastActionLessThanAgo(15, UnitActions.UNSIEGE);
-    }
-
     private static void initCache(AUnit tank) {
         nearestEnemyUnit = Select.enemyRealUnits().combatUnits().groundUnits().nearestTo(tank);
         nearestEnemyUnitDist = nearestEnemyUnit != null ? tank.distTo(nearestEnemyUnit) : 999;
