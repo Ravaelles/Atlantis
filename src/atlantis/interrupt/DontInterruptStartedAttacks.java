@@ -11,6 +11,8 @@ public class DontInterruptStartedAttacks {
     private static final boolean DEBUG = false;
 
     public static boolean shouldNotInterrupt(AUnit unit) {
+//        if (true) return false;
+
         if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
             return false;
         }
@@ -38,8 +40,6 @@ public class DontInterruptStartedAttacks {
         // === Target acquired recently, allow to attack ===========
 
         if (unit.recentlyAcquiredTargetToAttack()) {
-//            System.out.println(unit.idWithHash() + " // hp=" + unit.hp() + " // acq=" + unit.lastTargetToAttackAcquiredAgo());
-            unit.setTooltip("Target(" + unit.lastTargetToAttackAcquiredAgo() + ")");
             return true;
         }
 
@@ -55,51 +55,9 @@ public class DontInterruptStartedAttacks {
 //            APainter.paintCircle(unit, 15, Color.Green);
 //            APainter.paintCircle(unit, 13, Color.Green);
 //            APainter.paintCircle(unit, 11, Color.Green);
-            unit.setTooltip("Shoot(" + unit.lastFrameOfStartingAttackAgo() + ")");
+//            unit.setTooltip("Shoot(" + unit.lastFrameOfStartingAttackAgo() + ")");
             return true;
         }
-
-        // =========================================================
-
-//        if (attackingCrucialUnit(unit)) {
-//            unit.setTooltip("Crucial");
-//            return true;
-//        }
-
-//        if (unit.isMelee() || unit.type().isReaver()) {
-//            return true;
-//        }
-//
-//        if (attackingCrucialUnit(unit)) {
-//            return true;
-//        }
-//
-//        if ((shouldAvoidAnyUnit || unit.isUnderAttack(40)) && !unit.isMelee() && unit.woundPercent() > 65) {
-//            return false;
-//        }
-//
-//        if (unit.isAttackFrame() && unit.lastAttackOrderLessThanAgo(14)) {
-//            unit.setTooltip("Attack frame(" + lastAttackFrame + "/" + lastStartingAttack + ")");
-//            return true;
-//        }
-//
-////        if (unit.lastAttackOrderMoreThanAgo(20) && shouldAvoidAnyUnit) {
-////            return false;
-////        }
-//
-//        if (cooldown <= 3 && unit.lastAttackOrderLessThanAgo(9)) {
-//            return true;
-//        }
-//
-//        if (unit.isStartingAttack() || unit.lastStartedAttackLessThanAgo(Math.min(9, cooldownAbs / 4))) {
-//            unit.setTooltip("Starts attack(" + lastAttackFrame + "/" + lastStartingAttack + ")");
-//            return true;
-//        }
-//
-//        if (cooldown <= 3 && unit.lastAttackOrderLessThanAgo(Math.min(8, cooldownAbs / 3))) {
-//            unit.setTooltip("Attack(" + lastAttackFrame + "/" + lastStartingAttack + " // " + cooldown + ")");
-//            return true;
-//        }
 
         return false;
     }

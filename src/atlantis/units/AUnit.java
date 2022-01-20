@@ -463,6 +463,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         this.tooltip = tooltip;
         return this;
     }
+    public AUnit addTooltip(String tooltip) {
+        this.tooltip = tooltip() + tooltip;
+        return this;
+    }
 
     public String tooltip() {
 //        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {

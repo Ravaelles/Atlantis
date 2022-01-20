@@ -3,6 +3,9 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.A;
+
+import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
@@ -20,13 +23,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // === Protoss ===============================================
 
-        if (defender.isDragoon()) {
-            criticalDist = handleDragoon(defender, attacker);
-        }
+//        if (defender.isDragoon()) {
+//            criticalDist = handleDragoon(defender, attacker);
+//        }
 
         // === Terran ===============================================
 
-        else if (defender.isTerran()) {
+        if (defender.isTerran()) {
             criticalDist = handleTerran(defender, attacker);
         }
 
@@ -56,39 +59,41 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     // =========================================================
 
-    private static double handleDragoon(AUnit defender, AUnit attacker) {
-        if (!defender.isDragoon() || attacker.isDT()) {
-            return -1;
-        }
-
-        double min = 0;
-
-        if (defender.shieldDamageAtMost(6)) {
-            return min;
-        } else if (
-                defender.hasNotMovedInAWhile()
-                        && defender.shieldDamageAtMost(30)
-                        && defender.lastUnderAttackMoreThanAgo(60)
-        ) {
-            return min;
-        } else if (
-                defender.shieldDamageAtMost(30) &&
-                        (
-                                defender.lastAttackFrameMoreThanAgo(80)
-                                        || defender.lastUnderAttackMoreThanAgo(90)
-                        )
-        ) {
-            return min
-                    + woundedAgainstMeleeBonus(defender, attacker)
-                    + ourMovementBonus(defender)
-                    + quicknessBonus(defender, attacker)
-                    + enemyMovementBonus(defender, attacker);
-        } else if (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 3)) {
-            return 1.6;
-        }
-
-        return -1;
-    }
+//    private static double handleDragoon(AUnit defender, AUnit attacker) {
+//        if (!defender.isDragoon() || attacker.isDT()) {
+//            return -1;
+//        }
+//
+//        double min = -0.5;
+//        double safer = 1.2;
+//
+//        if (defender.shieldDamageAtMost(12)) {
+//            return min;
+//        } else if (
+//                defender.hasNotMovedInAWhile()
+//                        && defender.shieldDamageAtMost(30)
+////                        && defender.lastUnderAttackMoreThanAgo(60)
+//        ) {
+//            return safer;
+//        } else if (
+//                defender.shieldDamageAtMost(40) &&
+//                        (
+//                                defender.lastAttackFrameMoreThanAgo(80)
+////                                        || defender.lastUnderAttackMoreThanAgo(90)
+//                        )
+//        ) {
+//            return safer
+//                    + woundedAgainstMeleeBonus(defender, attacker)
+//                    + ourMovementBonus(defender)
+//                    + quicknessBonus(defender, attacker)
+//                    + enemyMovementBonus(defender, attacker);
+//        }
+////        else if (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 3)) {
+////            return safe;
+////        }
+//
+//        return -1;
+//    }
 
     private static double handleTerran(AUnit defender, AUnit attacker) {
 
@@ -127,7 +132,17 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     private static double enemyUnitsNearbyBonus(AUnit defender) {
-        return Select.enemyCombatUnits().inRadius(ENEMIES_NEARBY_MAX_DIST, defender).count();
+//        return Select.enemyCombatUnits().inRadius(ENEMIES_NEARBY_MAX_DIST, defender).count();
+
+        if (defender.enemiesNearby().ofType(Protoss_Zealot).inRadius(2, defender).atLeast(3)) {
+            return 2.3;
+        }
+
+        if (defender.enemiesNearby().ofType(Protoss_Zealot).inRadius(2, defender).atLeast(2)) {
+            return 1.6;
+        }
+
+        return 0;
     }
 
     protected static double beastBonus(AUnit defender) {
@@ -177,36 +192,48 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         double criticalDist;
 
         if (defender.hasMedicInRange()) {
+            if (defender.isHealthy()) {
+                defender.setTooltip("Healthy");
+                return enemyUnitsNearbyBonus(defender);
+            }
+
             criticalDist = INFANTRY_BASE_IF_MEDIC
-                    + enemyMeleeUnitsNearbyBonus(defender)
-                    + ourMovementBonus(defender)
-                    + enemyMovementBonus(defender, attacker)
+//                    + ourMovementBonus(defender)
+//                    + enemyMovementBonus(defender, attacker)
                     + woundedAgainstMeleeBonus(defender, attacker);
 
-            criticalDist = Math.min(criticalDist, 2.5);
+//            if (defender.hp() >= 21) {
+//                criticalDist = Math.min(criticalDist, 2.5);
+//            }
+            defender.setTooltip("HasMedic");
         }
 
         // No medic nearby
         else {
             criticalDist = INFANTRY_BASE_IF_NO_MEDIC
-                    + enemyMeleeUnitsNearbyBonus(defender)
-                    + ourMovementBonus(defender)
-                    + enemyMovementBonus(defender, attacker)
+//                    + ourMovementBonus(defender)
+//                    + enemyMovementBonus(defender, attacker)
                     + woundedAgainstMeleeBonus(defender, attacker);
 
-            if (
-                    defender.hp() >= 24
-                            && defender.friendsNearbyCount() >= 5
-                            && 4 * defender.friendsNearbyCount() >= defender.meleeEnemiesNearbyCount()
-            ) {
-                criticalDist = 1.7;
-            }
+//            if (
+//                    defender.hp() >= 24
+//                            && defender.friendsNearbyCount() >= 5
+//                            && 4 * defender.friendsNearbyCount() >= defender.meleeEnemiesNearbyCount()
+//            ) {
+//                criticalDist = 1.7;
+//            }
 
 //                System.out.println("criticalDist = " + criticalDist + " (hp = " + defender.hp() + ")");
-            criticalDist += enemyUnitsNearbyBonus(defender) * ENEMIES_NEARBY_FACTOR;
 
             criticalDist = Math.min(criticalDist, defender.isWounded() ? 3.2 : 2.5);
+
+            defender.setTooltip("NoMedic");
         }
+
+        criticalDist += enemyUnitsNearbyBonus(defender);
+        criticalDist = Math.min(criticalDist, 3.5);
+
+        defender.addTooltip(A.digit(criticalDist));
 
         return criticalDist;
     }

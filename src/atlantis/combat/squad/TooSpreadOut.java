@@ -60,6 +60,10 @@ public class TooSpreadOut extends ASquadCohesionManager {
 //    }
 
     private static boolean shouldSkipTooSpreadOut(AUnit unit) {
+        if (unit.cooldownAbsolute() > 0) {
+            return true;
+        }
+
         if (Count.ourCombatUnits() <= 4) {
             return true;
         }
@@ -94,7 +98,7 @@ public class TooSpreadOut extends ASquadCohesionManager {
             unit.move(
                     unit.translatePercentTowards(center, 20),
                     UnitActions.MOVE,
-                    "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
+                    "Closa(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
             );
             return true;
         }

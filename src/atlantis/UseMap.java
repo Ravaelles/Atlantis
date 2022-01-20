@@ -14,9 +14,14 @@ public class UseMap {
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
-        // === UMS maps - great for bot development ============
+        // === UMS maps - great for bot development =============
 
-        return "ums/rav/Dragoons_v_Zerglings.scm";
+        // === Protoss ==========================================
+
+//        return "ums/rav/Dragoons_v_Zerglings.scm";
+//        return "ums/rav/ZealDrag_v_LingsHydra.scm";
+
+        // === Terran ===========================================
 
 //        return "ums/rav/T_v_Sunkens.scx";
 //        return "ums/rav/T_v_Sunkens2.scx";
@@ -30,7 +35,7 @@ public class UseMap {
 //        return "ums/rav/Vultures_v_Dragoons.scm";
 
 //        return "ums/rav/minimaps/M_v_Zealots.scx";
-//        return "ums/rav/minimaps/M&M_v_Zealots.scx";
+        return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        return "ums/";
@@ -47,6 +52,8 @@ public class UseMap {
 
 //        return "ums/marines/m (5).scx"; // Nice map to test different terran infantry in rounds
 //        return "ums/marines/m (8).scx"; // Hmm
+
+        // === Generic ======================================================
 
         // ### Gosu bots ###
 //        return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing

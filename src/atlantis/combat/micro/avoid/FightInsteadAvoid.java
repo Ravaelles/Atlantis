@@ -56,6 +56,8 @@ public class FightInsteadAvoid {
     // =========================================================
 
     public boolean shouldFight() {
+//        if (true) return false;
+
         if (enemies.isEmpty()) {
             return false;
         }
@@ -163,6 +165,9 @@ public class FightInsteadAvoid {
         }
 
         if (RetreatManager.shouldRetreat(unit)) {
+            if (unit.isRanged() && ranged == null) {
+                return true;
+            }
             return false;
         }
 

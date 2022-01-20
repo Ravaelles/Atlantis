@@ -19,7 +19,7 @@ public class Avoid {
         }
 
         if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit))) {
-            unit.setTooltip(getTooltip(unit, enemy));
+//            unit.setTooltip(getTooltip(unit, enemy));
             return true;
         }
 
@@ -33,7 +33,9 @@ public class Avoid {
         APainter.paintCircle(runFrom, 2, Color.Orange);
 
         if (unit.runningManager().runFrom(runFrom, getRunDistance(unit))) {
-            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
+            APainter.paintCircleFilled(unit.position(), 5, Color.Green);
+            APainter.paintCircleFilled(runFrom, 5, Color.Red);
+//            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
             return true;
         }
 
@@ -43,11 +45,11 @@ public class Avoid {
     // =========================================================
 
     private static HasPosition defineRunFromForGroupOfUnits(Units enemiesDangerouslyClose) {
-        if (enemiesDangerouslyClose.size() >= 3) {
+        if (enemiesDangerouslyClose.size() >= 2) {
             Units nearestEnemies = new Units();
             nearestEnemies.addUnit(enemiesDangerouslyClose.get(0));
             nearestEnemies.addUnit(enemiesDangerouslyClose.get(1));
-            nearestEnemies.addUnit(enemiesDangerouslyClose.get(2));
+//            nearestEnemies.addUnit(enemiesDangerouslyClose.get(2));
             return nearestEnemies.average();
         }
 

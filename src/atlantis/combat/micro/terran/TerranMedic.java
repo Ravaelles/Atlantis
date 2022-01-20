@@ -41,6 +41,10 @@ public class TerranMedic {
             return true;
         }
 
+        if (medic.lastActionLessThanAgo(5, UnitActions.HEAL)) {
+            return true;
+        }
+
 //        if (unblockChoke(medic)) {
 //            return true;
 //        }
