@@ -38,7 +38,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
     private static double shouldRetreatBonus(AUnit defender) {
         if (RetreatManager.getCachedShouldRetreat(defender)) {
-            return 1.7;
+            return 4.2;
         }
 
         return 0;

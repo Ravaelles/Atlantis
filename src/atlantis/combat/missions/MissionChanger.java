@@ -7,6 +7,7 @@ import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Have;
+import atlantis.util.A;
 
 import java.util.ArrayList;
 
@@ -46,12 +47,14 @@ public class MissionChanger {
     // =========================================================
 
     public static void notifyThatUnitRetreated(AUnit unit) {
-        if (
-                Missions.isFirstMission()
-                    && Missions.isGlobalMissionAttack()
-                    && RetreatManager.GLOBAL_RETREAT_COUNTER >= 4
-        ) {
-            forceMissionContain();
+        if (Missions.isFirstMission()) {
+            if (Missions.isGlobalMissionAttack() && unit.friendsNearby().atLeast(3)) {
+                forceMissionContain();
+            }
+        }
+
+        if (!A.supplyUsed(180) && unit.friendsNearby().atLeast(5)) {
+            forceMissionDefend();
         }
     }
 
@@ -68,6 +71,9 @@ public class MissionChanger {
 
     public static void forceMissionContain() {
         Missions.setGlobalMissionContain();
+    }
+    public static void forceMissionDefend() {
+        Missions.setGlobalMissionDefend();
     }
 
 }

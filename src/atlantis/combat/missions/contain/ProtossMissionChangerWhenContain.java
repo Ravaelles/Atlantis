@@ -30,17 +30,17 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 
         int ourCombatUnits = Count.ourCombatUnits();
 
-        return ourCombatUnits <= 6 || AGame.killsLossesResourceBalance() <= 200;
+        return ourCombatUnits <= 6;
     }
 
     // === ATTACK ==============================================
 
     private static boolean shouldChangeMissionToAttack() {
-        if (AGame.killsLossesResourceBalance() <= 100) {
-            return false;
-        }
+//        if (AGame.killsLossesResourceBalance() <= 100) {
+//            return false;
+//        }
 
-        if (A.supplyUsed() >= 90 || Count.ourCombatUnits() >= 35) {
+        if (A.supplyUsed() >= 190 || Count.ourCombatUnits() >= 35) {
             return true;
         }
 

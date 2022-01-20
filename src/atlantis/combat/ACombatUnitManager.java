@@ -8,14 +8,12 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.debug.APainter;
 import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Select;
 import atlantis.util.A;
-import bwapi.Color;
 
 public class ACombatUnitManager {
 
@@ -130,7 +128,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
+        if ((unit.isMoving() && !unit.isAttackingOrMovingToAttack()) && TransportUnits.handleLoad(unit)) {
             return true;
         }
 

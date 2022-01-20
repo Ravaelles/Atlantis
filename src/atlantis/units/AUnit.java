@@ -1074,6 +1074,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isBurrowed() {
+        if (u == null) {
+            return true;
+        }
+
         return u.isBurrowed();
     }
 

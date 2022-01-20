@@ -35,7 +35,6 @@ public class ASpecialUnitManager {
 
         // === Zerg ========================================
 
-
         // =========================================================
 
         return false;
@@ -46,7 +45,7 @@ public class ASpecialUnitManager {
      */
     public static boolean updateAndAllowTopManagers(AUnit unit) {
 
-        if (unit.type().isTransportExcludeOverlords() && ATransportManager.handleLoadAndUnload(unit)) {
+        if (unit.type().isTransportExcludeOverlords() && ATransportManager.handleTransportUnit(unit)) {
             return true;
         }
 

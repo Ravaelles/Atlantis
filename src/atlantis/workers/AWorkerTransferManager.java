@@ -63,9 +63,17 @@ public class AWorkerTransferManager {
             return;
         }
 
-//        System.out.println("Fewest: " + baseWithFewestWorkers + " / " + fewestWorkersRatio);
-//        System.out.println("Most: " + baseWithMostWorkers + " / " + mostWorkersRatio);
-//        System.out.println();
+        System.out.println(
+                "Fewest: " + baseWithFewestWorkers
+                        + " (" + baseWorkersRatios.valueFor(baseWithFewestWorkers)
+                        + ") / " + fewestWorkersRatio
+        );
+        System.out.println(
+                "Most: " + baseWithMostWorkers
+                        + " (" + baseWorkersRatios.valueFor(baseWithMostWorkers)
+                        + ") / " + fewestWorkersRatio
+        );
+        System.out.println();
 
         // === Perform worker transfer from base to base ========================================
 

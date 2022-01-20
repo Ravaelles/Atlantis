@@ -32,7 +32,11 @@ public class TransportUnits {
     public static boolean unloadFromTransport(AUnit unit) {
 //        System.out.println("unit.isLoaded() = " + unit.isLoaded());
 //        System.out.println("isBabyInDanger(unit, true) = " + isBabyInDanger(unit, true));
-        if (unit.isLoaded() && !isBabyInDanger(unit, true)) {
+        if (
+                unit.isLoaded()
+                        && unit.lastActionMoreThanAgo(30 * 3, UnitActions.LOAD)
+                        && !isBabyInDanger(unit, true)
+        ) {
             unit.loadedInto().unload(unit);
             unit.setTooltip("Disembark");
             return true;
@@ -41,14 +45,14 @@ public class TransportUnits {
         return false;
     }
 
-    public static boolean loadRunningUnitsIntoTransport(AUnit unit) {
+    public static boolean handleLoad(AUnit unit) {
 //        if (unit.cooldownRemaining() == 0) {
 //            return false;
 //        }
 
-        if (!unit.isRunning()) {
-            return false;
-        }
+//        if (!unit.isRunning()) {
+//            return false;
+//        }
 
         if (unit.lastActionMoreThanAgo(8, UnitActions.LOAD)) {
             AUnit transport = Select.our().transports(true).inRadius(3, unit).nearestTo(unit);

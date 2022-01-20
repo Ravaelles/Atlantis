@@ -13,7 +13,7 @@ public class ATransportManager {
     private static Map<AUnit, AUnit> passengersToTransports = new HashMap<>();
     private static Map<AUnit, AUnit> transportsToPassengers = new HashMap<>();
 
-    public static boolean handleLoadAndUnload(AUnit transport) {
+    public static boolean handleTransportUnit(AUnit transport) {
         AUnit baby = babyToCarry(transport);
         if (baby != null) {
             return TransportUnits.handleTransporting(transport, baby);
