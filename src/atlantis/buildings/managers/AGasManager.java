@@ -49,7 +49,7 @@ public class AGasManager {
             else if (numOfWorkersNearby > optimalNumOfGasWorkers) {
                 AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
-                    worker.stop("I'm fired!");
+                    worker.stop("I'm fired!", true);
                 }
                 break; // Only one worker per execution
             }
@@ -84,7 +84,7 @@ public class AGasManager {
 //        }
 
         worker.gather(gasBuilding);
-        worker.setTooltip("Gas");
+        worker.setTooltipTactical("Gas");
     }
 
     private static int countWorkersGatheringGasNear(AUnit gasBuilding) {

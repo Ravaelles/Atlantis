@@ -62,6 +62,7 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
-        return unit.hp() >= 18;
+        return false;
+//        return enemies.onlyMelee() && unit.hp() >= 18;
     }
 }

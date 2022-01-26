@@ -12,7 +12,7 @@ public class ABunkerProtectorManager {
 
             // WOUNDED
             if (unit.woundPercent() >= 1 && A.hasMinerals(5)) {
-                protector.repair(unit, "Protect " + unit.name());
+                protector.repair(unit, "Protect " + unit.name(), true);
                 return true;
             }
 
@@ -20,16 +20,16 @@ public class ABunkerProtectorManager {
             else {
                 double distanceToUnit = unit.distTo(protector);
                 if (distanceToUnit > 1 && !protector.isMoving()) {
-                    protector.move(unit.position(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.name());
+                    protector.move(unit.position(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.name(), true);
                     return true;
                 }
                 else {
-                    protector.setTooltip("Protect " + unit.name());
+                    protector.setTooltipTactical("Protect " + unit.name());
                 }
             }
         }
         else {
-            protector.setTooltip("Null bunker");
+            protector.setTooltipTactical("Null bunker");
             ARepairAssignments.removeRepairerOrProtector(protector);
             return true;
         }

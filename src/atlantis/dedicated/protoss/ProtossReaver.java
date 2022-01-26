@@ -9,7 +9,7 @@ public class ProtossReaver {
 
     public static boolean update(AUnit reaver) {
         if (reaver.scarabCount() <= 0) {
-            reaver.setTooltip("NoScarab");
+            reaver.setTooltipTactical("NoScarab");
             return AAvoidUnits.avoidEnemiesIfNeeded(reaver);
         }
 
@@ -19,14 +19,14 @@ public class ProtossReaver {
         // First attack very close enemies
         if ((enemy = enemiesInRange.clone().inRadius(5, reaver).nearestTo(reaver)) != null) {
             reaver.attackUnit(enemy);
-            reaver.setTooltip("Near" + enemy.name());
+            reaver.setTooltipTactical("Near" + enemy.name());
             return true;
         }
 
         // If no very close enemy, then attack the one most distant
         if ((enemy = enemiesInRange.clone().nearestTo(reaver)) != null) {
             reaver.attackUnit(enemy);
-            reaver.setTooltip("Far" + enemy.name());
+            reaver.setTooltipTactical("Far" + enemy.name());
             return true;
         }
 

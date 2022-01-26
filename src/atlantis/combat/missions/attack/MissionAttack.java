@@ -6,7 +6,6 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 /**
@@ -22,7 +21,7 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean update(AUnit unit) {
-        unit.setTooltip("#MA");
+        unit.setTooltipTactical("#MA");
 
         return handleAdvance(unit);
     }
@@ -41,11 +40,11 @@ public class MissionAttack extends Mission {
 
         // Focus point is well known
         if (focusPoint != null) {
-            unit.setTooltip("#MA:Advance");
+            unit.setTooltipTactical("#MA:Advance");
             return AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint);
         }
 
-        unit.setTooltip("#MA-NoFocus");
+        unit.setTooltipTactical("#MA-NoFocus");
         return handleWeDontKnowWhereTheEnemyIs(unit);
     }
 

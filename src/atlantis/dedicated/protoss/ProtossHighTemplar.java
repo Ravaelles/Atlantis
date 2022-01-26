@@ -55,20 +55,20 @@ public class ProtossHighTemplar {
                 && TechType.Archon_Warp.name().equals(highTemplar.lastTechUsed().name())
                 && highTemplar.lastTechUnit().isAlive()
         ) {
-            highTemplar.setTooltip("Sex & Archon");
+            highTemplar.setTooltipTactical("Sex & Archon");
             return true;
         }
 
         // Is target of Archon Warp
         for (AUnit otherHT : Select.ourOfType(AUnitType.Protoss_High_Templar).inRadius(3, highTemplar).list()) {
             if (highTemplar.equals(otherHT.target()) && highTemplar.lastTechUsedAgo() <= 90) {
-                highTemplar.setTooltip("Lets get it on");
+                highTemplar.setTooltipTactical("Lets get it on");
                 return true;
             }
         }
 
         if (highTemplar.lastActionLessThanAgo(40, UnitActions.USING_TECH)) {
-            highTemplar.setTooltip(highTemplar.lastTechUsed().name() + "...");
+            highTemplar.setTooltipTactical(highTemplar.lastTechUsed().name() + "...");
             return true;
         }
 
@@ -77,7 +77,7 @@ public class ProtossHighTemplar {
 
     private static boolean handlePsionic(AUnit highTemplar) {
         if (highTemplar.energy() < 75) {
-            highTemplar.setTooltip("NoEnergy");
+            highTemplar.setTooltipTactical("NoEnergy");
             return false;
         }
 
@@ -124,7 +124,7 @@ public class ProtossHighTemplar {
 
         if (mostCondensedEnemy != null) {
             int most = (int) condensedEnemies.valueFor(mostCondensedEnemy);
-            highTemplar.setTooltip("Psionic?(" + most + " enemies)");
+            highTemplar.setTooltipTactical("Psionic?(" + most + " enemies)");
 
             int minUnitsInOnePlace = highTemplar.energy() >= 180 ? 5 : 6;
             if (most >= minUnitsInOnePlace || forceUsage) {
@@ -199,7 +199,7 @@ public class ProtossHighTemplar {
             }
 
             if (center.distTo(highTemplar) > 1) {
-                highTemplar.move(center, UnitActions.MOVE, "Follow army");
+                highTemplar.move(center, UnitActions.MOVE, "Follow army", true);
                 return true;
             }
         }
@@ -224,8 +224,8 @@ public class ProtossHighTemplar {
 //            if (closestOtherHT.distTo(highTemplar) <= 0.9) {
                 highTemplar.useTech(TechType.Archon_Warp, closestOtherHT);
 //                System.out.println("Warp Archon");
-                highTemplar.setTooltip("WarpArchon");
-                closestOtherHT.setTooltip("OhArchon");
+                highTemplar.setTooltipTactical("WarpArchon");
+                closestOtherHT.setTooltipTactical("OhArchon");
 //                GameSpeed.changeSpeedTo(10);
 //                CameraManager.centerCameraOn(highTemplar);
 //            }

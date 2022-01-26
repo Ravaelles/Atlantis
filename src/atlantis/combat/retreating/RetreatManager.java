@@ -5,7 +5,6 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Units;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
@@ -38,7 +37,7 @@ public class RetreatManager {
                     if (!isSituationFavorable) {
                         unit._lastRetreat = AGame.now();
                         GLOBAL_RETREAT_COUNTER++;
-                        unit.setTooltip("Retreat");
+                        unit.setTooltipTactical("Retreat");
                         MissionChanger.notifyThatUnitRetreated(unit);
                         APosition averageEnemyPosition = enemies.units().average();
 

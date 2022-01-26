@@ -27,14 +27,14 @@ public abstract class MoveToFocusPoint {
             if ((distUnitToFocus + distUnitToFromSide) > distFocusToFromSide * 1.1) {
                 if (distUnitToFromSide > distUnitToFocus) {
                     String dist = A.dist(distUnitToFocus);
-                    return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "Withdraw" + dist);
+                    return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "Withdraw" + dist, true);
                 }
             }
         }
 
         if (distUnitToFocus > (optimalDist + MARGIN)) {
             String dist = A.dist(distUnitToFocus);
-            return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "GoToFocus" + dist);
+            return unit.move(focusPoint, UnitActions.MOVE_TO_FOCUS, "GoToFocus" + dist, true);
         }
 
         return false;
@@ -48,7 +48,7 @@ public abstract class MoveToFocusPoint {
             String dist = A.dist(distUnitToFocus);
 
             if (distUnitToFromSide > 3) {
-                return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "TooClose" + dist);
+                return unit.move(fromSide, UnitActions.MOVE_TO_FOCUS, "TooClose" + dist, true);
             }
 
             return unit.moveAwayFrom(focusPoint, 0.15, "TooCloze" + dist);

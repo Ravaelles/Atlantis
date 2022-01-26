@@ -50,7 +50,7 @@ public class AScoutManager {
     // =========================================================
 
     private static boolean update(AUnit scout) {
-        scout.setTooltip("Scout...");
+        scout.setTooltipTactical("Scout...");
 
         if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
             nextPositionToScout = null;
@@ -113,7 +113,7 @@ public class AScoutManager {
 
     private static boolean handleScoutFreeBases(AUnit scout) {
         if (nextPositionToScout != null && !nextPositionToScout.isVisible()) {
-            return scout.move(nextPositionToScout, UnitActions.SCOUT, "ScoutBases");
+            return scout.move(nextPositionToScout, UnitActions.SCOUT, "ScoutBases", true);
         }
 
         AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
@@ -134,7 +134,7 @@ public class AScoutManager {
         if (scout == null) {
             return true;
         }
-        scout.setTooltip("Find enemy");
+        scout.setTooltipTactical("Find enemy");
 
         // Define center point for our searches
         AUnit ourMainBase = Select.main();
@@ -157,7 +157,7 @@ public class AScoutManager {
         // =========================================================
 
         if (startingLocation != null) {
-            scout.move(startingLocation, UnitActions.EXPLORE, "Explore");
+            scout.move(startingLocation, UnitActions.EXPLORE, "Explore", true);
             return true;
         }
         else {
@@ -191,10 +191,10 @@ public class AScoutManager {
 
             defineNextPolygonPointForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
             if (scoutingAroundBaseLastPolygonPoint != null) {
-                scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE, "Roam around");
+                scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE, "Roam around", true);
                 return true;
             } else {
-                scout.setTooltip("Can't find polygon point");
+                scout.setTooltipTactical("Can't find polygon point");
             }
         }
 
@@ -277,13 +277,13 @@ public class AScoutManager {
     private static void scoutForTheNextBase(AUnit scout) {
         APosition baseLocation = Bases.nearestUnexploredStartingLocation(scout.position());
         if (baseLocation != null) {
-            scout.move(baseLocation.position(), UnitActions.EXPLORE, "Explore next base");
+            scout.move(baseLocation.position(), UnitActions.EXPLORE, "Explore next base", true);
         }
     }
 
     private static void defineNextPolygonPointForEnemyBaseRoamingUnit(ARegion region, AUnit scout) {
         if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
-            scout.setTooltip("ChangeOfPlans");
+            scout.setTooltipTactical("ChangeOfPlans");
             return;
         }
 
@@ -411,14 +411,14 @@ public class AScoutManager {
         AUnit horse = workers.last();
         if (horse.equals(worker)) {
             AScoutManager.roamAroundEnemyBase(worker);
-            worker.setTooltip("Patataj");
+            worker.setTooltipTactical("Patataj");
             return true;
         }
         else {
-            worker.setTooltip("Dajesz kurwa!");
+            worker.setTooltipTactical("Dajesz kurwa!");
             if (A.now() % 50 >= 25) {
-                worker.move(horse, UnitActions.MOVE, "");
-                worker.setTooltip("Ciśniesz!");
+                worker.move(horse, UnitActions.MOVE, "", true);
+                worker.setTooltipTactical("Ciśniesz!");
             }
         }
 

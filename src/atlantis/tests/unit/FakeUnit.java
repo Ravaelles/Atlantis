@@ -240,7 +240,7 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
-    public boolean holdPosition(String tooltip) {
+    public boolean holdPosition(String tooltip, boolean strategicLevel) {
         lastCommand = "Hold";
         target = null;
         targetPosition = null;
@@ -268,7 +268,7 @@ public class FakeUnit extends AUnit {
 //    }
 
     @Override
-    public boolean move(HasPosition target, UnitAction unitAction, String tooltip) {
+    public boolean move(HasPosition target, UnitAction unitAction, String tooltip, boolean strategicLevel) {
         if (target == null) {
             throw new RuntimeException("FakeUnit move got null");
         }

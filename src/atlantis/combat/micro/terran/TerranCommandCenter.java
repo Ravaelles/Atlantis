@@ -45,7 +45,7 @@ public class TerranCommandCenter {
                         if (building.distToLessThan(baseLocation, 1.5)) {
                             building.land(building.makeLandable().toTilePosition());
                         } else {
-                            building.move(baseLocation.position(), UnitActions.MOVE, "Rebase");
+                            building.move(baseLocation.position(), UnitActions.MOVE, "Rebase", true);
                         }
                     }
                     return true;

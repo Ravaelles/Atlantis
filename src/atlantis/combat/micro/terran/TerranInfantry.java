@@ -47,7 +47,7 @@ public class TerranInfantry {
 
         AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(30).nearestTo(unit);
         if (medic != null && medic.distToMoreThan(unit, 2)) {
-            return unit.move(medic, UnitActions.MOVE, "BeHealed");
+            return unit.move(medic, UnitActions.MOVE, "BeHealed", false);
         }
 
         return false;
@@ -89,7 +89,7 @@ public class TerranInfantry {
                 && unit.enemiesNearby().isEmpty()
         ) {
             Select.ourOfType(AUnitType.Terran_Bunker).inRadius(0.5, unit).first().unloadAll();
-            unit.setTooltip("Unload");
+            unit.setTooltipTactical("Unload");
             return true;
         }
 
@@ -119,7 +119,7 @@ public class TerranInfantry {
         ) {
             if (nearestBunker != null && nearestBunker.distTo(unit) < maxDistanceToLoad) {
                 unit.load(nearestBunker);
-                unit.setTooltip("GTFInto bunker!");
+                unit.setTooltipTactical("GTFInto bunker!");
                 return true;
             }
         }

@@ -62,7 +62,7 @@ public class MobileDetector {
         if (scout != null) {
             unitForSquadScout = unit;
             if (scout.distTo(unit) > 1) {
-                unitForSquadScout.move(scout, UnitActions.MOVE, "FollowScout");
+                unitForSquadScout.move(scout, UnitActions.MOVE, "FollowScout", true);
             }
             return true;
         }
@@ -79,7 +79,7 @@ public class MobileDetector {
         if (goTo != null) {
             unitForArmy = unit;
             if (goTo.distTo(unit) > 1) {
-                unitForArmy.move(goTo, UnitActions.MOVE, "Follow");
+                unitForArmy.move(goTo, UnitActions.MOVE, "Follow", true);
             }
             return true;
         }
@@ -104,7 +104,7 @@ public class MobileDetector {
         if (dangerousInvisibleEnemy != null) {
             unitForBase = unit;
             if (unitForBase.distTo(dangerousInvisibleEnemy) > 0.2) {
-                unitForBase.move(dangerousInvisibleEnemy.position(), UnitActions.MOVE, "RevealEnemy");
+                unitForBase.move(dangerousInvisibleEnemy.position(), UnitActions.MOVE, "RevealEnemy", true);
             }
             return true;
         }

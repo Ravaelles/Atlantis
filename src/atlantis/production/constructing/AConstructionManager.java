@@ -53,7 +53,7 @@ public class AConstructionManager {
                                 && constructionOrder.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
                 ) {
                     builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(constructionOrder.construction());
-                    builder.setTooltip("Resume");
+                    builder.setTooltipTactical("Resume");
                 }
             }
         }
@@ -187,7 +187,7 @@ public class AConstructionManager {
      */
     private static void handleZergConstructionsWhichBecameBuildings() {
         if (AGame.isPlayingAsZerg()) {
-            ArrayList<ConstructionOrder> allOrders = ConstructionRequests.allConstructionOrders();
+            ArrayList<ConstructionOrder> allOrders = ConstructionRequests.all();
             if (!allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.builder();

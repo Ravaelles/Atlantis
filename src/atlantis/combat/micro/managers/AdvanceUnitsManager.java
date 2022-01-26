@@ -69,14 +69,14 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         // Close enough
         else if (allowCloseEnough && distToFocusPoint <= optimalDist + margin) {
             if (unit.isMoving()) {
-                unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")");
+                unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true);
             }
             return true;
         }
 
         // Too far
         else if (distToFocusPoint > optimalDist + margin) {
-            return unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")");
+            return unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")", true);
         }
 
         return false;
@@ -100,7 +100,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
             if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
                 if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
-                    return unit.move(medic, UnitActions.MOVE, "ToMedic");
+                    return unit.move(medic, UnitActions.MOVE, "ToMedic", false);
                 }
             }
         }

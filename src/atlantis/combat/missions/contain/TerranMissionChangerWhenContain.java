@@ -30,9 +30,14 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         if (
                 A.supplyUsed(150)
                 || Atlantis.LOST <= 4
-//                || (A.notUms() && A.resourcesBalance() >= 250)
         ) {
             return false;
+        }
+
+        if (
+                Count.ourCombatUnits() <= 20 && Atlantis.LOST >= 2
+        ) {
+            return true;
         }
 
 //        if (EnemyInformation.isEnemyNearAnyOurBuilding()) {

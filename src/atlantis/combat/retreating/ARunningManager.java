@@ -56,7 +56,7 @@ public class ARunningManager {
                 && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.runningManager().stopRunning();
-            unit.setTooltip("StopRun");
+            unit.setTooltip("StopRun", false);
             return true;
         }
 
@@ -89,7 +89,7 @@ public class ARunningManager {
 
         if (runTo != null && unit.distTo(runTo) >= 0.001) {
             dist = unit.distTo(runTo);
-            unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")");
+            unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")", false);
             return makeUnitRun();
         }
 
@@ -100,7 +100,7 @@ public class ARunningManager {
         System.err.println("Our count = " + Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
         System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
 
-        unit.setTooltip("Cant run");
+        unit.setTooltip("Cant run", false);
         return false;
     }
 
@@ -439,7 +439,7 @@ public class ARunningManager {
                 otherUnit.runningManager().runFrom(runFrom, NEARBY_UNIT_MAKE_SPACE);
                 APainter.paintCircleFilled(unit, 10, Color.Yellow);
                 APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
-                otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit));
+                otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit), false);
             }
         }
         return true;
@@ -518,7 +518,7 @@ public class ARunningManager {
         Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
         if (dangerous.size() == combatBuildings.size() && unit.enemiesNearby().combatUnits().atMost(1)) {
             if (combatBuildings.nearestTo(unit).distToMoreThan(unit, 7.9)) {
-                unit.holdPosition("Steady");
+                unit.holdPosition("Steady", true);
                 return true;
             }
         }
@@ -549,7 +549,7 @@ public class ARunningManager {
         if (runTo == null) {
             stopRunning();
             System.err.println("RunTo should not be null!");
-            unit.setTooltip("Fuck!");
+            unit.setTooltip("Fuck!", false);
             return true;
         }
 
@@ -558,7 +558,7 @@ public class ARunningManager {
         else {
             // Update last time run order was issued
             unit._lastStartedRunning = A.now();
-            unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distTo(runTo)) + ")");
+            unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distTo(runTo)) + ")", false);
 
             // Make all other units very close to it run as well
             notifyNearbyUnitsToMakeSpace(unit);

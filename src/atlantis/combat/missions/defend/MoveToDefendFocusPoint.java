@@ -23,7 +23,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
             return true;
         }
 
-        unit.holdPosition("HoldHere");
+        unit.holdPosition("DefendHere", true);
         return true;
     }
 

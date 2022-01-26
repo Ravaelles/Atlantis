@@ -30,7 +30,7 @@ public class UmsSpecialActionsManager {
 
             for (AUnit unit : Select.our().inRadius(10, goToRenegade).list()) {
                 if (unit.distTo(goToRenegade) > 0.5) {
-                    unit.move(goToRenegade, UnitActions.MOVE, "Friendly Renegade!");
+                    unit.move(goToRenegade, UnitActions.MOVE, "Friendly Renegade!", true);
                 } else {
                     NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = null;
                 }
@@ -55,7 +55,7 @@ public class UmsSpecialActionsManager {
             AUnit unit = ours.clone().inRadius(9, beacon).nearestTo(beacon);
             AUnit nearestBeacon = beacons.clone().nearestTo(unit);
             if (unit != null && beacon != null) {
-                unit.move(nearestBeacon, UnitActions.MOVE, "To beacon");
+                unit.move(nearestBeacon, UnitActions.MOVE, "To beacon", true);
                 APainter.paintLine(unit, nearestBeacon, Color.White);
             }
             return true;

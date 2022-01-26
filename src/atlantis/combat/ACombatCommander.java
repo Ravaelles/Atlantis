@@ -49,11 +49,11 @@ public class ACombatCommander {
         if (nearestEnemy != null) {
             String tooltip = unit.tooltip() + "";
             if (tooltip.contains(" / ")) {
-                unit.setTooltip("");
+                unit.setTooltipTactical("");
             }
 
             double margin = AAvoidUnits.lowestSafetyMarginForAnyEnemy(unit);
-            unit.setTooltip( (margin < 9876 ? A.digit(margin) : "-") + " / " + unit.tooltip()
+            unit.setTooltipTactical( (margin < 9876 ? A.digit(margin) : "-") + " / " + unit.tooltip()
 //                    A.digit(nearestEnemy.distanceTo(unit)) + " \\ "
 //                            + A.digit(AAvoidUnits.lowestSafetyMarginForAnyEnemy(unit)) + " / "
             );

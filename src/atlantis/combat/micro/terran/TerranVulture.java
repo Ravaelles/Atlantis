@@ -29,13 +29,13 @@ public class TerranVulture {
 //        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
         if (unit.isUnitAction(UnitActions.USING_TECH) && unit.lastOrderFramesAgo() > 15) {
             unit.setUnitAction(UnitActions.STOP);
-            unit.setTooltip("Planted!");
+            unit.setTooltipTactical("Planted!");
             return false;
         }
 
         // Can't allow to interrupt
         if (unit.isUnitAction(UnitActions.USING_TECH) && unit.lastActionLessThanAgo(15, UnitActions.USING_TECH)) {
-            unit.setTooltip("Planting mine");
+            unit.setTooltipTactical("Planting mine");
             return true;
         }
 
@@ -53,7 +53,7 @@ public class TerranVulture {
         // Disallow mines close to buildings
         AUnit nearestBuilding = Select.ourBuildings().nearestTo(unit);
         if (nearestBuilding != null && nearestBuilding.distTo(unit) <= 7) {
-            unit.setTooltip("Don't mine");
+            unit.setTooltipTactical("Don't mine");
             return false;
         }
         
@@ -123,7 +123,7 @@ public class TerranVulture {
                 APainter.paintCircleFilled(enemiesCenter, 24, Color.Red);
                 System.out.println("finalPlace = " + finalPlace);
                 plantMineAt(unit, finalPlace);
-                unit.setTooltip("UseMine");
+                unit.setTooltipTactical("UseMine");
                 return true;
             }
         }
@@ -136,7 +136,7 @@ public class TerranVulture {
         if ((nearbyMines.count() <= 3 || (unit.minesCount() >= 3 && nearbyMines.count() <= 4))
                 && nearbyMines.inRadius(2, unit).atMost(1)) {
             plantMineAt(unit, unit.position());
-            unit.setTooltip("Plant mine");
+            unit.setTooltipTactical("Plant mine");
             return true;
         }
 

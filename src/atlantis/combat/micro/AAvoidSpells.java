@@ -25,7 +25,7 @@ public class AAvoidSpells {
 //                    System.err.println("------------- " + A.now() + " PSIONIC! ----------------");
 
                     if (handleMoveAwayIfCloserThan(unit, APosition.create(bullet.getPosition()), 3.2)) {
-                        unit.setTooltip("Psionic Storm!");
+                        unit.setTooltipTactical("Psionic Storm!");
                         return true;
                     }
                 }
@@ -58,13 +58,13 @@ public class AAvoidSpells {
             else {
                 if (canShootAtMines) {
                     if (handleEnemyMineAsRangedUnit(unit, mine)) {
-                        unit.setTooltip("ShootMine");
+                        unit.setTooltipTactical("ShootMine");
                         return true;
                     }
                 }
                 else {
                     if (handleEnemyMineAsMeleeUnit(unit, mine)) {
-                        unit.setTooltip("AvoidMine");
+                        unit.setTooltipTactical("AvoidMine");
                         return true;
                     }
                 }
@@ -83,12 +83,12 @@ public class AAvoidSpells {
     private static boolean handleEnemyMineAsRangedUnit(AUnit unit, AUnit mine) {
         if (mine.distTo(unit) <= 2.0) {
             unit.runningManager().runFrom(mine, 3);
-            unit.setTooltip("AVOID MINE(" + mine.distTo(unit) + ")");
+            unit.setTooltipTactical("AVOID MINE(" + mine.distTo(unit) + ")");
             return true;
         }
 
         unit.attackUnit(mine);
-        unit.setTooltip("SHOOT MINE");
+        unit.setTooltipTactical("SHOOT MINE");
         return true;
     }
 

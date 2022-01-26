@@ -38,7 +38,7 @@ public class TerranScienceVessel extends MobileDetector {
         if (Enemy.protoss()) {
             if (scienceVessel.energy(100) && ATech.isResearched(TechType.EMP_Shockwave)) {
                 if (empShockwave(scienceVessel)) {
-                    scienceVessel.setTooltip("EMP!");
+                    scienceVessel.setTooltipTactical("EMP!");
                     return true;
                 }
             }
@@ -47,7 +47,7 @@ public class TerranScienceVessel extends MobileDetector {
         if (Enemy.zerg() || A.isUms()) {
             if (scienceVessel.energy(75) && ATech.isResearched(TechType.Irradiate)) {
                 if (irradiate(scienceVessel)) {
-                    scienceVessel.setTooltip("Irradiate!");
+                    scienceVessel.setTooltipTactical("Irradiate!");
                     return true;
                 }
             }

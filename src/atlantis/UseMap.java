@@ -35,7 +35,7 @@ public class UseMap {
 //        return "ums/rav/Vultures_v_Dragoons.scm";
 
 //        return "ums/rav/minimaps/M_v_Zealots.scx";
-        return "ums/rav/minimaps/M&M_v_Zealots.scx";
+//        return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        return "ums/";
@@ -57,7 +57,7 @@ public class UseMap {
 
         // ### Gosu bots ###
 //        return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
-//        return "ums/exp_skilltest.scx"; // v. AI Protoss player
+        return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        return "ums/vGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
@@ -117,15 +117,16 @@ public class UseMap {
                 activeMap().equals("ums/vGosuComputer.scx")
                 || activeMap().equals("ums/exp_skilltest.scx")
         ) {
-            int FAST = 90;
+//            int FAST = 90;
+            int frameSkip = 0;
 
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(FAST);
+                GameSpeed.changeFrameSkipTo(frameSkip);
             }
 
             if (A.everyNthGameFrame(50)) {
-                if (GameSpeed.frameSkip == FAST && Select.enemyCombatUnits().atLeast(3)) {
+                if (GameSpeed.frameSkip == frameSkip && Select.enemyCombatUnits().atLeast(3)) {
                     GameSpeed.changeFrameSkipTo(0);
                 }
             }

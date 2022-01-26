@@ -240,15 +240,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         if (
                 runningManager().isPossibleAndReasonablePosition(this, newPosition)
-                && move(newPosition, UnitActions.MOVE, "Move away")
+                && move(newPosition, UnitActions.MOVE, "Move away", false)
         ) {
-            this.setTooltip(tooltip);
+            this.setTooltip(tooltip, false);
             return true;
         }
 
         APainter.paintLine(position, newPosition, Color.Teal);
-        this.setTooltip("Cant move away");
-        return move(newPosition, UnitActions.MOVE, "Force move");
+        this.setTooltip("Cant move away", false);
+        return move(newPosition, UnitActions.MOVE, "Force move", false);
     }
 
     // =========================================================
@@ -459,14 +459,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private String tooltip;
 //    private int tooltipStartInFrames;
 
-    public AUnit setTooltip(String tooltip) {
-        this.tooltip = tooltip;
+    public AUnit setTooltipTactical(String tooltip) {
+        return setTooltip(tooltip, false);
+    }
+
+    public AUnit setTooltip(String tooltip, boolean strategicLevel) {
+        if (strategicLevel) {
+            this.tooltip = tooltip;
+        }
         return this;
     }
-    public AUnit addTooltip(String tooltip) {
-        this.tooltip = tooltip() + tooltip;
-        return this;
-    }
+
+//    public AUnit addTooltip(String tooltip) {
+//        this.tooltip = tooltip() + tooltip;
+//        return this;
+//    }
 
     public String tooltip() {
 //        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
@@ -2050,8 +2057,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean shieldDamageAtMost(int maxDamage) {
         return shields() + maxDamage >= maxShields();
     }
+
     public boolean shieldDamageAtLeast(int minDamage) {
         return shields() + minDamage <= maxShields();
     }
 
+    public boolean targetPositionAtLeastAway(double minTiles) {
+        return targetPosition() != null && targetPosition().distToMoreThan(this, minTiles);
+    }
 }

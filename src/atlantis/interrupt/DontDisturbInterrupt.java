@@ -22,7 +22,7 @@ public class DontDisturbInterrupt {
 
         // Allow to use tech
         if (unit.lastActionLessThanAgo(3, UnitActions.USING_TECH)) {
-            unit.setTooltip("UsingTech");
+            unit.setTooltipTactical("UsingTech");
             return true;
         }
 
@@ -34,15 +34,15 @@ public class DontDisturbInterrupt {
         }
 
         // Allow unit to load to shuttle
-        if (allowUnitToLoadToTransport(unit)) {
-            unit.setTooltip("Load");
-            APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Blue);
-//            System.out.println(A.now() + " TRANSP");
-            return true;
-        }
+//        if (allowUnitToLoadToTransport(unit)) {
+//            unit.setTooltip("Load");
+//            APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Blue);
+////            System.out.println(A.now() + " TRANSP");
+//            return true;
+//        }
 
         if (allowUnitToContinueRareRightClickActions(unit)) {
-            unit.setTooltip("RightClick");
+            unit.setTooltipTactical("RightClick");
             return true;
         }
 
@@ -51,9 +51,9 @@ public class DontDisturbInterrupt {
 
     // =========================================================
 
-    private static boolean allowUnitToLoadToTransport(AUnit unit) {
-        return !unit.type().isTransport() && unit.lastActionLessThanAgo(13, UnitActions.LOAD);
-    }
+//    private static boolean allowUnitToLoadToTransport(AUnit unit) {
+//        return !unit.type().isTransport() && unit.lastActionLessThanAgo(13, UnitActions.LOAD);
+//    }
 
     private static boolean allowUnitToContinueRareRightClickActions(AUnit unit) {
         return unit.lastActionLessThanAgo(6, UnitActions.RIGHT_CLICK);

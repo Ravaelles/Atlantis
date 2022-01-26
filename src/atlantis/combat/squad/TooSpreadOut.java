@@ -98,7 +98,8 @@ public class TooSpreadOut extends ASquadCohesionManager {
             unit.move(
                     unit.translatePercentTowards(center, 20),
                     UnitActions.MOVE,
-                    "Closa(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
+                    "Closa(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
+                    false
             );
             return true;
         }

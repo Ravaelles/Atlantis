@@ -575,7 +575,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintSidebarConstructionsPending() {
         int yOffset = 220;
-        ArrayList<ConstructionOrder> allOrders = ConstructionRequests.allConstructionOrders();
+        ArrayList<ConstructionOrder> allOrders = ConstructionRequests.all();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
             for (ConstructionOrder constructionOrder : allOrders) {
@@ -599,8 +599,13 @@ public class AAdvancedPainter extends APainter {
                 String builderDist = A.dist(constructionOrder.builder(), constructionOrder.positionToBuild());
                 if (constructionOrder.builder() != null) {
                     String builder = (constructionOrder.builder().idWithHash() + " " + builderDist);
-                    paintSideMessage(constructionOrder.buildingType().name()
-                            + ", " + status + ", " + builder, color, yOffset);
+                    paintSideMessage(
+                            constructionOrder.buildingType().name()
+                            + ", " + constructionOrder.positionToBuild()
+                            + ", " + status + ", " + builder,
+                            color,
+                            yOffset
+                    );
                 }
             }
         }
@@ -611,7 +616,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintConstructionPlaces() {
         Color color = Color.Grey;
-        for (ConstructionOrder order : ConstructionRequests.allConstructionOrders()) {
+        for (ConstructionOrder order : ConstructionRequests.all()) {
             if (order.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 APosition positionToBuild = order.positionToBuild();
@@ -693,7 +698,7 @@ public class AAdvancedPainter extends APainter {
             }
             // STUCK
             if (unit.isStuck()) {
-                unit.setTooltip("STUCK");
+                unit.setTooltipTactical("STUCK");
                 paintCircle(unit, 2, Color.Teal);
                 paintCircle(unit, 4, Color.Teal);
                 paintCircle(unit, 6, Color.Teal);
@@ -807,7 +812,7 @@ public class AAdvancedPainter extends APainter {
     static void paintConstructionProgress() {
         setTextSizeMedium();
 //        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
-        for (ConstructionOrder order : ConstructionRequests.allConstructionOrders()) {
+        for (ConstructionOrder order : ConstructionRequests.all()) {
             AUnit building = order.construction();
             if (building == null || building.isCompleted()) {
                 continue;

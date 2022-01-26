@@ -34,12 +34,12 @@ public class AUnitBeingReparedManager {
 
         // Go to repairer if he's close
         if (distanceToRepairer > 1) {
-            unitBeingRepared.move(repairer.position(), UnitActions.MOVE_TO_REPAIR, "To repairer");
+            unitBeingRepared.move(repairer.position(), UnitActions.MOVE_TO_REPAIR, "To repairer", false);
             return true;
         }
 
         if (distanceToRepairer <= 1) {
-            unitBeingRepared.holdPosition("Be repaired");
+            unitBeingRepared.holdPosition("Be repaired", false);
             return true;
         }
 

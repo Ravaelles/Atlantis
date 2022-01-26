@@ -41,7 +41,7 @@ public class SquadScout {
             APainter.paintTextCentered(positionToEngage, "SquadScout" + dist, Color.Orange);
 
             if (positionToEngage.distTo(squadScout) > 2.2) {
-                return squadScout.move(positionToEngage, UnitActions.MOVE_TO_ENGAGE, "Pioneer" + dist);
+                return squadScout.move(positionToEngage, UnitActions.MOVE_TO_ENGAGE, "Pioneer" + dist, true);
             }
             else {
                 engageWorkersNow(squadScout);
@@ -49,7 +49,7 @@ public class SquadScout {
             }
         }
         else {
-            squadScout.setTooltip("NoEngagePosition");
+            squadScout.setTooltipTactical("NoEngagePosition");
             if (EnemyInformation.hasDiscoveredAnyBuilding()) {
                 System.err.println("positionToEngage null, base = " + EnemyUnits.enemyBase());
             }
@@ -60,7 +60,7 @@ public class SquadScout {
 
     private static void engageWorkersNow(AUnit squadScout) {
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(squadScout);
-        squadScout.setTooltip("MadeContact");
+        squadScout.setTooltipTactical("MadeContact");
 
         if (Select.enemyCombatUnits().atMost(2)) {
             Log.addMessage("Squad scout forced GLOBAL ATTACK");

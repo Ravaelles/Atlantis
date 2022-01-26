@@ -25,7 +25,7 @@ public class TransportUnits {
             return true;
         }
 
-        transport.setTooltip("Nothing");
+        transport.setTooltipTactical("Nothing");
         return false;
     }
 
@@ -38,7 +38,7 @@ public class TransportUnits {
                         && !isBabyInDanger(unit, true)
         ) {
             unit.loadedInto().unload(unit);
-            unit.setTooltip("Disembark");
+            unit.setTooltipTactical("Disembark");
             return true;
         }
 
@@ -54,13 +54,13 @@ public class TransportUnits {
 //            return false;
 //        }
 
-        if (unit.lastActionMoreThanAgo(8, UnitActions.LOAD)) {
+        if (shouldLoad(unit)) {
             AUnit transport = Select.our().transports(true).inRadius(3, unit).nearestTo(unit);
             if (transport != null && transport.hasFreeSpaceFor(unit) && !transport.hasCargo()) {
                 unit.load(transport);
                 transport.load(unit);
                 APainter.paintCircleFilled(unit, 7, Color.Blue);
-                unit.setTooltip("Embark!");
+                unit.setTooltipTactical("Embark!");
                 return true;
             }
 
@@ -68,10 +68,38 @@ public class TransportUnits {
                 if (anotherTransport.hasFreeSpaceFor(unit)) {
                     unit.load(anotherTransport);
                     anotherTransport.load(unit);
-                    unit.setTooltip("Eeembark!");
+                    unit.setTooltipTactical("Eeembark!");
                     return true;
                 }
             }
+        }
+
+        return false;
+    }
+
+    private static boolean shouldLoad(AUnit unit) {
+
+        // Always load when unit is moving, otherwise it walks instead of flying
+        if (unit.isMoving() && unit.targetPositionAtLeastAway(3)) {
+            return true;
+        }
+
+        // Don't load too often
+        if (
+                unit.lastActionLessThanAgo(8, UnitActions.LOAD)
+                || unit.lastActionLessThanAgo(8, UnitActions.UNLOAD)
+        ) {
+            return false;
+        }
+
+        // Avoid ranged units
+        if (unit.enemiesNearby().ranged().canAttack(unit, 2.2).isEmpty()) {
+            return false;
+        }
+
+        // Only run from melee if they really close
+        if (unit.enemiesNearby().melee().inRadius(1.5, unit).isEmpty()) {
+            return false;
         }
 
         return false;
@@ -118,7 +146,7 @@ public class TransportUnits {
 
     private static boolean followBaby(AUnit transport, AUnit baby) {
         if (!baby.isLoaded() && (baby.isMoving() || transport.distToMoreThan(baby, 0.2))) {
-            return transport.move(baby, UnitActions.MOVE, "Follow");
+            return transport.move(baby, UnitActions.MOVE, "Follow", true);
         }
 
         return false;
@@ -159,7 +187,7 @@ public class TransportUnits {
         transport.load(baby);
         baby.load(transport);
         baby.runningManager().stopRunning();
-        transport.setTooltip("LoadBaby");
+        transport.setTooltipTactical("LoadBaby");
         return true;
     }
 
@@ -167,7 +195,7 @@ public class TransportUnits {
         AUnit baby = transport.loadedUnits().get(0);
         transport.unload(baby);
         baby.unload(transport);
-        transport.setTooltip("DropBaby");
+        transport.setTooltipTactical("DropBaby");
         return true;
     }
 

@@ -1,6 +1,5 @@
 package atlantis.production.constructing.position;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
@@ -14,7 +13,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
     
@@ -89,12 +87,16 @@ public abstract class AbstractPositionFinder {
      * could be stacked.
      */
     protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
+
+//        System.out.println("============================");
+//        System.out.println("position = " + position + ", others count = " + ConstructionRequests.notStarted().size()
+//                + " // all = " + ConstructionRequests.all().size());
         
         // Compare against planned construction places
 //        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
-        for (ConstructionOrder order : ConstructionRequests.notStarted()) {
+        for (ConstructionOrder order : ConstructionRequests.all()) {
             HasPosition constructionPosition = order.positionToBuild();
-//            System.out.println("constructionPosition = " + constructionPosition + " // " + order.buildingType());
+//            System.out.println("another = " + constructionPosition + " // " + order.buildingType());
             if (
                     position != null && constructionPosition != null
             ) {

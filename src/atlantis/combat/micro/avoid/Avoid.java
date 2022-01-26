@@ -89,7 +89,7 @@ public class Avoid {
 //        System.err.println("ERROR_RUN for " + unit.nameWithId());
 
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
-        unit.setTooltip("Cant run, fight");
+        unit.setTooltipTactical("Cant run, fight");
 
         return true;
     }

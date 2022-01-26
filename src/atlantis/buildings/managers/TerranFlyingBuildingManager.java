@@ -53,7 +53,7 @@ public class TerranFlyingBuildingManager {
             if (building.isLifted() && building.lastUnderAttackLessThanAgo(30 * 4)) {
                 APosition median = Alpha.get().median();
                 if (median != null) {
-                    building.move(median, UnitActions.RUN, "AwayFromAlpha");
+                    building.moveStrategic(median, UnitActions.RUN, "AwayFromAlpha");
                     return;
                 }
             }
@@ -69,7 +69,7 @@ public class TerranFlyingBuildingManager {
         if (flyingBuilding.lastUnderAttackLessThanAgo(60)) {
             APosition median = Alpha.get().median();
             if (median != null) {
-                flyingBuilding.move(median, UnitActions.RUN, "BackOff");
+                flyingBuilding.moveStrategic(median, UnitActions.RUN, "BackOff");
                 return true;
             }
         }
@@ -81,7 +81,7 @@ public class TerranFlyingBuildingManager {
             double distToFocusPoint = focusPoint.distTo(flyingBuilding);
             
             if (distToFocusPoint > 2) {
-                flyingBuilding.move(focusPoint, UnitActions.MOVE, "Fly baby!");
+                flyingBuilding.moveStrategic(focusPoint, UnitActions.MOVE, "Fly baby!");
                 return true;
             }
         }

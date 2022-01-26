@@ -15,7 +15,7 @@ public class ZergOverlordManager {
     public static boolean update(AUnit unit) {
 
         if (AAvoidUnits.avoidEnemiesIfNeeded(unit)) {
-            unit.setTooltip("Uaaa!");
+            unit.setTooltipTactical("Uaaa!");
             return true;
         }
 
@@ -62,7 +62,7 @@ public class ZergOverlordManager {
     private static boolean stayInHome(AUnit overlord) {
         AUnit main = Select.main();
         if (main != null && overlord.distToMoreThan(main, 8)) {
-            return overlord.move(main, UnitActions.MOVE, "Home");
+            return overlord.move(main, UnitActions.MOVE, "Home", true);
         }
 
         return false;
@@ -72,7 +72,7 @@ public class ZergOverlordManager {
         APosition medianUnitPosition = Alpha.get().center();
         if (medianUnitPosition != null) {
             if (overlord.distTo(medianUnitPosition) > 2.5) {
-                overlord.move(medianUnitPosition, UnitActions.MOVE, "Follow army");
+                overlord.move(medianUnitPosition, UnitActions.MOVE, "Follow army", true);
                 return true;
             }
         }
@@ -84,7 +84,7 @@ public class ZergOverlordManager {
      * We don't know at any enemy building location.
      */
     private static boolean actWhenDontKnowEnemyLocation(AUnit unit) {
-        unit.setTooltip("Find enemy");
+        unit.setTooltipTactical("Find enemy");
         return AScoutManager.tryFindingEnemy(unit);
     }
 

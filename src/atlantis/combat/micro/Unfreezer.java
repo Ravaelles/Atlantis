@@ -54,21 +54,20 @@ public class Unfreezer {
 //        GameSpeed.changeSpeedTo(70);
 //        GameSpeed.pauseGame();
 
-        if (Select.main() != null && unit.move(Select.main(), UnitActions.MOVE, "Unfreeze")) {
+        if (Select.main() != null && unit.moveTactical(Select.main(), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
 
-//        if (unit.isHoldingPosition()) {
-        if (unit.move(unit.translateByPixels(8, 0), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(8, 0), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.translateByPixels(-8, 0), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(-8, 0), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.translateByPixels(0, 8), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(0, 8), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.translateByPixels(0, -8), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(0, -8), UnitActions.MOVE, "Unfreeze")) {
             return true;
         }
 //        } else {

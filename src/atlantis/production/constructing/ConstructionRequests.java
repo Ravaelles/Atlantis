@@ -15,8 +15,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ConstructionRequests {
@@ -281,19 +280,19 @@ public class ConstructionRequests {
      *
      * @return
      */
-    public static ArrayList<ConstructionOrder> allConstructionOrders() {
+    public static ArrayList<ConstructionOrder> all() {
         return new ArrayList<>(constructionOrders);
     }
 
-    public static ArrayList<HasPosition> allConstructionOrdersIncludingCached() {
-        ArrayList<HasPosition> positions = new ArrayList<>();
-        for (ConstructionOrder order : ConstructionRequests.constructionOrders) {
-            positions.add(order.positionToBuild());
-        }
-        positions.addAll(APositionFinder.cache.values());
-
-        return positions;
-    }
+//    public static ArrayList<HasPosition> allConstructionOrdersIncludingCached() {
+//        ArrayList<HasPosition> positions = new ArrayList<>();
+//        for (ConstructionOrder order : ConstructionRequests.constructionOrders) {
+//            positions.add(order.positionToBuild());
+//        }
+//        positions.addAll(APositionFinder.cache.values());
+//
+//        return positions;
+//    }
 
     /**
      * @return first int is number minerals, second int is number of gas required.

@@ -73,7 +73,7 @@ public class AAttackEnemyUnit {
         }
 
         if (!unit.canAttackTarget(target, false, true)) {
-            unit.setTooltip("Invalid target");
+            unit.setTooltipTactical("Invalid target");
             System.err.println("Invalid target for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
             return false;
         }
@@ -94,7 +94,7 @@ public class AAttackEnemyUnit {
         }
 
         if (target.isBase() && unit.distToMoreThan(target, 4)) {
-            return unit.move(target, UnitActions.MOVE_TO_ENGAGE, "BaseAttack");
+            return unit.move(target, UnitActions.MOVE_TO_ENGAGE, "BaseAttack", false);
         }
 
 //        unit.setTooltip("@" + target.name());
@@ -123,7 +123,7 @@ public class AAttackEnemyUnit {
                 return false;
             }
 
-            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz" + A.dist(enemy, unit) + "/" + count)) {
+            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
                 return true;
             }
         }

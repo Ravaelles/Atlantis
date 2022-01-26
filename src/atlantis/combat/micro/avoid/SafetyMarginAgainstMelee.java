@@ -195,7 +195,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         if (defender.hasMedicInRange()) {
             if (defender.isHealthy()) {
-                defender.setTooltip("Healthy");
+                defender.setTooltipTactical("Healthy");
                 return enemyUnitsNearbyBonus(defender);
             }
 
@@ -207,7 +207,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //            if (defender.hp() >= 21) {
 //                criticalDist = Math.min(criticalDist, 2.5);
 //            }
-            defender.setTooltip("HasMedic");
+            defender.setTooltipTactical("HasMedic");
         }
 
         // No medic nearby
@@ -229,13 +229,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
             criticalDist = Math.min(criticalDist, defender.isWounded() ? 3.2 : 2.5);
 
-            defender.setTooltip("NoMedic");
+            defender.setTooltipTactical("NoMedic");
         }
 
         criticalDist += enemyUnitsNearbyBonus(defender);
         criticalDist = Math.min(criticalDist, 3.5);
 
-        defender.addTooltip(A.digit(criticalDist));
+//        defender.addTooltip(A.digit(criticalDist));
 
         return criticalDist;
     }

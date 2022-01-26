@@ -79,7 +79,7 @@ public class ABuilderManager {
         // Move builder to the build position
         if (distance > minDistanceToIssueBuildOrder) {
             if (shouldNotTravelYet(buildingType, distance)) {
-                builder.setTooltip("Wait to build " + buildingType.name() + distString);
+                builder.setTooltipTactical("Wait to build " + buildingType.name() + distString);
                 return false;
             }
 
@@ -88,7 +88,8 @@ public class ABuilderManager {
                 builder.move(
                     constructionOrder.positionToBuildCenter(),
                     UnitActions.MOVE_TO_BUILD,
-                    "Build " + buildingType.name() + distString
+                    "Build " + buildingType.name() + distString,
+                    true
                 );
             }
 
@@ -109,7 +110,7 @@ public class ABuilderManager {
                 if (newBuilding != null) {
                     constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
                     constructionOrder.setBuilder(null);
-                    builder.stop("Finished!");
+                    builder.stop("Finished!", true);
                     return false;
                 }
             }

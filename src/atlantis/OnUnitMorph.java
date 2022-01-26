@@ -32,7 +32,7 @@ public class OnUnitMorph {
             // === Fix for Zerg Extractor ========================================
             // Detect morphed gas building meaning construction has just started
             if (unit.type().isGasBuilding()) {
-                for (ConstructionOrder order : ConstructionRequests.allConstructionOrders()) {
+                for (ConstructionOrder order : ConstructionRequests.all()) {
                     if (order.buildingType().equals(AtlantisConfig.GAS_BUILDING)
                             && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         order.setConstruction(unit);

@@ -115,7 +115,7 @@ public class TerranComsatStation {
         if (!(unitToScan instanceof FakeUnit)) {
 //            System.err.println("=== COMSAT SCAN on " + unitToScan + ", energy = " + comsat.energy() + " ===");
         }
-        comsat.setTooltip("Scanning " + unitToScan.name());
+        comsat.setTooltipTactical("Scanning " + unitToScan.name());
         return comsat.useTech(TechType.Scanner_Sweep, unitToScan);
     }
 

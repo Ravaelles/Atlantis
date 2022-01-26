@@ -17,7 +17,7 @@ public class ARepairerManager {
             throw new RuntimeException(repairer + " is not SCV!");
         }
 
-        repairer.setTooltip("Repairer");
+        repairer.setTooltipTactical("Repairer");
 
         if (handleRepairerSafety(repairer)) {
             return true;
@@ -32,7 +32,7 @@ public class ARepairerManager {
         AUnit target = ARepairAssignments.getUnitToRepairFor(repairer);
 
         if (target == null || !target.isAlive()) {
-            repairer.setTooltip("TargetRIP");
+            repairer.setTooltipTactical("TargetRIP");
 //            System.err.println("Invalid repair target: " + target + ", alive:" + (target != null ? target.isAlive() : "-"));
             ARepairAssignments.removeRepairerOrProtector(repairer);
             return false;
@@ -40,7 +40,7 @@ public class ARepairerManager {
 
         // Target is totally healthy
         if (!target.isWounded()) {
-            repairer.setTooltip("Repaired!");
+            repairer.setTooltipTactical("Repaired!");
             ARepairAssignments.removeRepairerOrProtector(repairer);
             return handleRepairCompletedTryFindingNewTarget(repairer);
         }
@@ -49,32 +49,33 @@ public class ARepairerManager {
         if (!repairer.isRepairing() && target.isAlive() && A.hasMinerals(5)) {
             if (repairer.lastActionMoreThanAgo(30 * 3)) {
                 ARepairAssignments.removeRepairerOrProtector(repairer);
-                repairer.setTooltip("IdleGTFO");
+                repairer.setTooltipTactical("IdleGTFO");
                 return false;
             }
 
             return repairer.repair(
                     target,
-                    "Repair " + target.nameWithId() + "(" + repairer.lastOrderFramesAgo() + ")"
+                    "Repair " + target.nameWithId() + "(" + repairer.lastOrderFramesAgo() + ")",
+                    true
             );
         }
 
         if (repairer.isRepairing()) {
-            repairer.setTooltip("::repair::");
+            repairer.setTooltipTactical("::repair::");
             return true;
         }
 
         if (!ARepairAssignments.isProtector(repairer) && repairer.lastActionMoreThanAgo(30 * 2)) {
             System.err.println("Idle repairer, remove. Target was = " + target + " // " + target.hp() + " // " + target.isAlive());
             ARepairAssignments.removeRepairerOrProtector(repairer);
-            repairer.setTooltip("GoHome");
+            repairer.setTooltipTactical("GoHome");
         }
         return false;
     }
 
     private static boolean handleRepairerSafety(AUnit repairer) {
         if ((!repairer.isRepairing() || repairer.hpPercent() <= 30) && AAvoidUnits.avoidEnemiesIfNeeded(repairer)) {
-            repairer.setTooltip("FuckThisJob");
+            repairer.setTooltipTactical("FuckThisJob");
             return true;
         }
 
@@ -117,7 +118,7 @@ public class ARepairerManager {
         AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(15, repairer).first();
         if (closestUnitNeedingRepair != null && A.hasMinerals(5)) {
             ARepairAssignments.addRepairer(repairer, closestUnitNeedingRepair);
-            repairer.repair(closestUnitNeedingRepair, "Extra repair");
+            repairer.repair(closestUnitNeedingRepair, "Extra repair", true);
             return true;
         }
 
@@ -131,7 +132,7 @@ public class ARepairerManager {
             // Try finding any repairable and wounded unit nearby
             AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null && A.hasMinerals(5)) {
-                repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.name());
+                repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.name(), true);
                 return true;
             }
         }

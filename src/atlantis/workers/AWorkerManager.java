@@ -19,7 +19,7 @@ public class AWorkerManager {
             return false;
         }
 
-        worker.setTooltip(":)");
+        worker.setTooltipTactical(":)");
 
         if (AWorkerDefenceManager.handleDefenceIfNeeded(worker)) {
             return true;
@@ -35,13 +35,13 @@ public class AWorkerManager {
 
         // Act as BUILDER
         if (AConstructionManager.isBuilder(worker)) {
-            worker.setTooltip("Builder");
+            worker.setTooltipTactical("Builder");
             return ABuilderManager.update(worker);
         }
 
         // Ordinary WORKER
         else {
-            worker.setTooltip("Gather");
+            worker.setTooltipTactical("Gather");
             return handleGatherMineralsOrGas(worker);
         }
     }
@@ -50,7 +50,7 @@ public class AWorkerManager {
 
     private static boolean workerManagerForbiddenFor(AUnit worker) {
         if (worker.isScout()) {
-            worker.setTooltip("Scout");
+            worker.setTooltipTactical("Scout");
             return true;
         }
 
@@ -73,7 +73,7 @@ public class AWorkerManager {
 
         // Don't react if already gathering
         if (worker.isMiningOrExtractingGas()) {
-            worker.setTooltip("Miner");
+            worker.setTooltipTactical("Miner");
             return true;
         }
 
@@ -89,7 +89,7 @@ public class AWorkerManager {
 //        }
 
         if (worker.isRepairing()) {
-            worker.setTooltip("Repair");
+            worker.setTooltipTactical("Repair");
             return true;
         }
 
@@ -108,7 +108,7 @@ public class AWorkerManager {
         // But check for multiple conditions (like if isn't constructing, repairing etc).
         if (worker.isIdle() || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
                 && !worker.isConstructing() && !worker.isAttackingOrMovingToAttack() && !worker.isRepairing())) {
-            worker.setTooltip("Move ass!");
+            worker.setTooltipTactical("Move ass!");
             AMineralGathering.gatherResources(worker);
             return true;
         }

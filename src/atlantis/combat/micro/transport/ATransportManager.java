@@ -23,7 +23,7 @@ public class ATransportManager {
             return true;
         }
 
-        transport.setTooltip("Chill");
+        transport.setTooltipTactical("Chill");
         return true;
     }
 

@@ -112,12 +112,12 @@ public class ACombatUnitManager {
 
         if (unit.lastActionLessThanAgo(90, UnitActions.PATROL) || unit.isPatrolling()) {
             if (A.now() > 90) {
-                unit.setTooltip("#Manual");
+                unit.setTooltipTactical("#Manual");
                 return true;
             }
         }
 
-        unit.setTooltip(unit.tooltip() + ".");
+        unit.setTooltipTactical(unit.tooltip() + ".");
         return false;
     }
 
@@ -209,7 +209,7 @@ public class ACombatUnitManager {
 
         Mission mission = unit.mission();
         if (mission != null) {
-            unit.setTooltip(mission.name());
+            unit.setTooltipTactical(mission.name());
             return mission.update(unit);
         }
 

@@ -76,7 +76,7 @@ public class AWorkerDefenceManager {
             if (builder.hp() < 40 && builder.lastUnderAttackLessThanAgo(30 * 10)) {
                 AUnit nearestPeskyEnemyWorker = Select.enemy().workers().inRadius(3, builder).nearestTo(worker);
                 if (nearestPeskyEnemyWorker != null) {
-                    worker.setTooltip("ProtectBuilder");
+                    worker.setTooltipTactical("ProtectBuilder");
                     return worker.attackUnit(nearestPeskyEnemyWorker);
                 }
             }
@@ -110,8 +110,8 @@ public class AWorkerDefenceManager {
         AUnit wounded = Select.ourWorkers().wounded().inRadius(3, worker).nearestTo(worker);
 
         if (wounded != null && A.hasMinerals(5) && wounded.isWounded() && wounded.isAlive() && !wounded.isBuilder()) {
-            worker.repair(wounded, "BuddyRepair!");
-            wounded.repair(worker, "BuddyRepair!");
+            worker.repair(wounded, "BuddyRepair!", true);
+            wounded.repair(worker, "BuddyRepair!", true);
 //            if (!worker.isRepairing()) {
 //            }
 //            if (!wounded.isRepairing()) {
@@ -148,11 +148,11 @@ public class AWorkerDefenceManager {
         // FIGHT against ZERGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).list()) {
             if ((worker.hp() <= 24 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
-                worker.setTooltip("Aaargh!");
+                worker.setTooltipTactical("Aaargh!");
                 return true;
             }
             worker.attackUnit(enemy);
-            worker.setTooltip("ForMotherland!");
+            worker.setTooltipTactical("ForMotherland!");
             return true;
         }
 
@@ -163,7 +163,7 @@ public class AWorkerDefenceManager {
                 .list();
         for (AUnit enemy : enemies) {
             worker.attackUnit(enemy);
-            worker.setTooltip("FurMotherland!");
+            worker.setTooltipTactical("FurMotherland!");
             return true;
         }
 
@@ -173,7 +173,7 @@ public class AWorkerDefenceManager {
     private static boolean handleEnemyWorkersNearby(AUnit worker) {
         Selection enemyWorkers = Select.enemy().workers().inRadius(1.3, worker);
         for (AUnit enemy : enemyWorkers.list()) {
-            worker.setTooltip("NastyFuckers!");
+            worker.setTooltipTactical("NastyFuckers!");
             worker.attackUnit(enemy);
             return true;
         }
@@ -188,7 +188,7 @@ public class AWorkerDefenceManager {
 
         for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).list()) {
             worker.attackUnit(enemyBuilding);
-            worker.setTooltip("Cheesy!");
+            worker.setTooltipTactical("Cheesy!");
             return true;
         }
 
@@ -199,7 +199,7 @@ public class AWorkerDefenceManager {
         AUnit mineral = Select.minerals().inRadius(10, enemy).mostDistantTo(enemy);
         if (mineral != null) {
             worker.gather(mineral);
-            worker.setTooltip("DidntSignUpForThis");
+            worker.setTooltipTactical("DidntSignUpForThis");
             return true;
         }
         return false;

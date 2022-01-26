@@ -59,7 +59,7 @@ public class ARepairAssignments {
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.get(unitToRepair).remove(repairer);
-            repairer.stop("No longer repairer");
+            repairer.stop("No longer repairer", true);
             if (addLogs) { Log.addMessage("No longer repairer of " + unitToRepair); }
         }
         repairersToUnit.remove(repairer);

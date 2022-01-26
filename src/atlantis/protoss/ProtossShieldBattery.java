@@ -21,7 +21,7 @@ public class ProtossShieldBattery {
                     if (!shieldBattery.equals(unit.target()) || A.chance(2)) {
                         unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
                     }
-                    shieldBattery.setTooltip("RECHARGE " + unit.name());
+                    shieldBattery.setTooltipTactical("RECHARGE " + unit.name());
                     return true;
                 }
             }

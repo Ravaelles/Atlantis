@@ -86,8 +86,8 @@ public class Missions {
 //            return Missions.DEFEND;
 //        }
 
-//        return Missions.DEFEND;
-        return Missions.ATTACK;
+        return Missions.DEFEND;
+//        return Missions.ATTACK;
 //        return Missions.CONTAIN;
     }
 

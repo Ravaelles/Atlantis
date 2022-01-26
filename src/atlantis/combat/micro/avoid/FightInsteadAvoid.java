@@ -106,7 +106,7 @@ public class FightInsteadAvoid {
 
         // Attacking critically important unit
         if (ATargetingCrucial.isCrucialUnit(unit.target())) {
-            unit.setTooltip("Crucial!");
+            unit.setTooltipTactical("Crucial!");
             return true;
         }
 
