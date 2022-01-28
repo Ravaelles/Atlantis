@@ -19,6 +19,7 @@ public class FakeUnit extends AUnit {
     public boolean detected = true;
     public boolean completed = true;
     public boolean loaded = false;
+    public boolean stimmed = false;
     public int energy = 0;
     public FakeUnit target = null;
     public APosition targetPosition = null;
@@ -165,6 +166,11 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public boolean isStimmed() {
+        return stimmed;
+    }
+
+    @Override
     public boolean isMoving() {
         return lastCommand.equals("Move");
     }
@@ -182,11 +188,6 @@ public class FakeUnit extends AUnit {
     public boolean isHoldingPosition() {
         return lastCommand.equals("Hold");
     }
-
-//    @Override
-//    public boolean isAttacking() {
-//        return lastCommand.equals("Attacking");
-//    }
 
     @Override
     public boolean isUnderDarkSwarm() {

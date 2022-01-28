@@ -1,6 +1,7 @@
 package atlantis.tests.unit;
 
 import atlantis.Atlantis;
+import atlantis.AtlantisConfig;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
@@ -12,6 +13,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import bwapi.Game;
+import bwapi.Race;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockedStatic;
@@ -36,6 +38,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         if (!(this instanceof AbstractTestFakingGame)) {
             useFakeTime(0); // This needs to be 0 so every modulo division returns 0
         }
+
+        mockAtlantisConfig();
         APainter.disablePainting();
         Select.clearCache();
         BaseSelect.clearCache();
@@ -77,6 +81,16 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     // =========================================================
+
+    protected void mockAtlantisConfig() {
+        AtlantisConfig.MY_RACE = Race.Terran;
+        AtlantisConfig.BASE = AUnitType.Terran_Command_Center;
+        AtlantisConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
+        AtlantisConfig.WORKER = AUnitType.Terran_SCV;
+        AtlantisConfig.BARRACKS = AUnitType.Terran_Barracks;
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
+        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
+    }
 
     protected void useFakeTime(int framesNow) {
         game = Atlantis.game() == null ? newGameMock(framesNow) : Atlantis.game();

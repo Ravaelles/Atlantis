@@ -46,10 +46,7 @@ public class RetreatManager {
     private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
         double radius = 1.2;
         Selection friends = unit.friendsNearby().inRadius(radius, unit);
-
-        System.out.print(enemies.size() + " / ");
         Selection veryCloseEnemies = enemies.inRadius(radius, unit);
-        System.out.println(enemies.size());
 
         if (veryCloseEnemies.totalHp() > friends.totalHp()) {
             return true;

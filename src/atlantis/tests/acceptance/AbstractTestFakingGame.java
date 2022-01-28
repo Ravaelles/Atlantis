@@ -94,16 +94,6 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         }
     }
 
-    private void mockAtlantisConfig() {
-        AtlantisConfig.MY_RACE = Race.Terran;
-        AtlantisConfig.BASE = AUnitType.Terran_Command_Center;
-        AtlantisConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
-        AtlantisConfig.WORKER = AUnitType.Terran_SCV;
-        AtlantisConfig.BARRACKS = AUnitType.Terran_Barracks;
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
-    }
-
     /**
      * You have to define static mocks as public field of this class, so they can be automatically reset on test end.
      */
