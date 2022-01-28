@@ -12,9 +12,28 @@ import static org.junit.Assert.assertEquals;
 public class SelectionTest extends AbstractTestWithUnits {
 
     @Test
+    public void chainingSubsequentCallsWorksAsExpected() {
+        usingFakeOurs(() -> {
+            int total = 22;
+            Selection selection = Select.our();
+            FakeUnit first = (FakeUnit) Select.our().first();
+
+            assertEquals(total, selection.size());
+
+            selection.ranged();
+
+            assertEquals(total, selection.size());
+
+            selection.ranged().inRadius(1, first);
+
+            assertEquals(total, selection.size());
+        });
+    }
+
+    @Test
     public void ranged() {
         usingFakeOurs(() -> {
-//            Select.our().ranged().print();
+//            Select.our().print();
             assertEquals(9, Select.our().ranged().size());
         });
     }

@@ -9,6 +9,7 @@ import atlantis.units.Units;
 import atlantis.util.A;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Selection {
@@ -76,6 +77,7 @@ public class Selection {
                 addToCachePath("inRadius:" + maxDist + ":" + unit.id()),
                 0,
                 () -> {
+//                    data.removeIf(u -> u.distTo(unit) > maxDist);
                     data.removeIf(u -> u.distTo(unit) > maxDist);
                     return this;
                 }
@@ -251,8 +253,12 @@ public class Selection {
      * Selects only units that do not currently have max hit points.
      */
     public Selection ranged() {
-        data.removeIf(unit -> !unit.isRanged());
-        return this;
+        return clone(unit -> !unit.isRanged());
+    }
+
+    private List<AUnit> newData() {
+        List<AUnit> newData = new ArrayList<>(data);
+        return newData;
     }
 
     public Selection wounded() {
@@ -284,6 +290,21 @@ public class Selection {
     public Selection havingPosition() {
         data.removeIf(unit -> unit.position() == null);
         return this;
+    }
+
+    public int totalHp() {
+        if (data.size() >= 1) {
+
+        System.err.println(data.size() + " // " + data.get(0));
+        data.stream()
+                .map(AUnit::hp).reduce(0, Integer::sum);
+        System.err.println(data.size() + " // " + data.get(0));
+        System.err.println("-----------");
+        }
+
+        return data.stream()
+                .map(AUnit::hp)
+                .reduce(0, Integer::sum);
     }
 
     public Selection combatUnits() {
@@ -796,6 +817,14 @@ public class Selection {
 
     public Selection clone() {
         return new Selection(this.data, currentCachePath);
+    }
+
+    public Selection clone(Predicate<AUnit> newDataPredicate) {
+        List<AUnit> newData = newData();
+        System.out.println("newData = " + newData.size());
+        newData.removeIf(newDataPredicate);
+        System.out.println("newData = " + newData.size());
+        return new Selection(newData, currentCachePath);
     }
 
     public APosition center() {
