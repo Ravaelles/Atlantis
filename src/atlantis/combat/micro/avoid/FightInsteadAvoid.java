@@ -110,9 +110,9 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (forbidMeleeUnitsAbandoningCloseTargets(unit)) {
-            return true;
-        }
+//        if (forbidMeleeUnitsAbandoningCloseTargets(unit)) {
+//            return true;
+//        }
 
         if (forbidAntiAirAbandoningCloseTargets(unit)) {
             return true;
@@ -222,14 +222,14 @@ public class FightInsteadAvoid {
         return medicNearby || (!unit.isWounded() && ranged == null);
     }
 
-    protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
-        return unit.isMelee()
-                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
-                && unit.enemiesNearby()
-                    .canBeAttackedBy(unit, 3)
-                    .inRadius(3, unit)
-                    .isNotEmpty();
-    }
+//    protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
+//        return unit.isMelee()
+//                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
+//                && unit.enemiesNearby()
+//                    .canBeAttackedBy(unit, 3)
+//                    .inRadius(3, unit)
+//                    .isNotEmpty();
+//    }
 
     protected boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
         return unit.isAirUnitAntiAir()
