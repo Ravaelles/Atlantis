@@ -1,19 +1,13 @@
 package atlantis;
 
-import atlantis.production.orders.ABuildOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 
 /**
- * This class is used to set up your Atlantis framework by providing some basic informations about your bot.
- * It's race-agnostic by definition.
- * <br /><br />
- * Feel free to analyze and adjust variables in this class.
- * <br /><br />Example code:
- * <p>
- * <b> useConfigForTerran() </b>
- * </p>
- * is used to load config for Terran.
+ * This class is used to set up your Atlantis framework by providing basic information about your bot and bwapi.ini.
+ *
+ * Notice that setting OUR_RACE, ENEMY_RACE and MAP will automatically override respective content in bwapi.ini file,
+ * to save you from manually having to update these.
  */
 public class AtlantisConfig {
 
@@ -22,63 +16,35 @@ public class AtlantisConfig {
 
     /**
      * Disabling makes game so fast, you actually be like "Daaaaamn!".
-     * Unfortunately it means nothing is rendered.
+     * Unfortunately it means nothing gets rendered, so game appears to be frozen.
      */
     public static boolean DISABLE_GUI = false;
 
     /**`
      * Race used by the Atlantis.
      */
-    public static final String OUR_RACE = "Terran";
-//    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Protoss";
 //    public static final String OUR_RACE = "Zerg";
 
     /**
      * Single player enemy race.
      */
 //    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Protoss";
-    public static final String ENEMY_RACE = "Zerg";
+    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Zerg";
     
     /**
      * Will modify bwapi.ini to use this map.
      */
     public static final String MAP = UseMap.activeMapPath();
 
-    // ==========================================================
-    // === These are default values that can be overridden in ===
-    // === specific build order file. See `build_orders` dir  ===
-    // ==========================================================
-    
-    /**
-     * If value less than 201 is passed, then you don't need to specify when to build supply buildings. They
-     * will be <b>automatically built only if your total supply exceeds this value</b>.
-     */
-//    public static int AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = 201;
-
-    /**
-     * Force production of a worker whenever you have minerals and more than N workers, but less than
-     * AUTO_PRODUCE_WORKERS_MAX_WORKERS.
-     */
-//    public static int AUTO_PRODUCE_WORKERS_MIN_WORKERS = 1;
-
-    /**
-     * Maximum number of workers. This variable ONLY MAKES SENSE WHEN USED TOGETHER WITH 
-     * <b>AUTO_PRODUCE_WORKERS_MAX_WORKERS</b>.
-     */
-//    public static int AUTO_PRODUCE_WORKERS_MAX_WORKERS = 50;
-
-    /**
-     * We must reach at least N workers (SCVs, Probes) to scout for the enemy location.
-     */
-//    public static int SCOUT_IS_NTH_WORKER = 8;
-
     // =========================================================
     // =========================================================
     // =========================================================
     // =========================================================
     // =========================================================
-    // Do not customize - see methods "useConfigFor{Race}"
+    // Do not change manually - see AtlantisConfigChanger::useConfigFor
     
     public static Race MY_RACE = null;
     public static AUnitType BASE = null;
@@ -88,7 +54,6 @@ public class AtlantisConfig {
     public static AUnitType GAS_BUILDING = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_LAND = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
-//    public static ABuildOrder DEFAULT_BUILD_ORDER = null;
 
     // =========================================================
 
@@ -102,7 +67,6 @@ public class AtlantisConfig {
         validate("BARRACKS", BARRACKS);
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
-//        validate("You have to define default build order\n-> AtlantisConfig.DEFAULT_BUILD_ORDER", DEFAULT_BUILD_ORDER);
 
         System.out.println("Atlantis config is valid.");
     }

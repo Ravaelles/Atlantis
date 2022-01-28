@@ -72,7 +72,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         if (!isPowerConditionFulfilled(building, position)) {
             _CONDITION_THAT_FAILED = "No power";
 
-            if (Count.inQueueOrUnfinished(AUnitType.Protoss_Pylon, 2) == 0) {
+            if (A.supplyTotal() >= 20 && Count.inQueueOrUnfinished(AUnitType.Protoss_Pylon, 2) == 0) {
                 AddToQueue.withTopPriority(AUnitType.Protoss_Pylon);
                 System.out.println("Requested Pylon for more powered up surface.");
             }

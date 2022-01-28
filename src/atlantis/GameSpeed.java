@@ -147,7 +147,7 @@ public class GameSpeed {
 
         gameSpeed = speed;
 
-        AGame.sendMessage("/speed " + gameSpeed);
+//        AGame.sendMessage("/speed " + gameSpeed);
         game().setLocalSpeed(gameSpeed);
 
         // Turn off GUI for huge game speeds to make it even quicker

@@ -31,30 +31,54 @@ public class RetreatManager {
 
                     Selection enemies = enemies(unit);
 
-                    boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
-
-                    // If situation is unfavorable, retreat
-                    if (!isSituationFavorable) {
-                        unit._lastRetreat = AGame.now();
-                        GLOBAL_RETREAT_COUNTER++;
-                        unit.setTooltipTactical("Retreat");
-                        MissionChanger.notifyThatUnitRetreated(unit);
-                        APosition averageEnemyPosition = enemies.units().average();
-
-                        if (unit.position().equals(averageEnemyPosition)) {
-                            averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
-                        }
-
-                        return unit.runningManager().runFrom(averageEnemyPosition, 3.5);
+                    if (shouldSmallScaleRetreat(unit, enemies)) {
+                        return true;
                     }
-
-                    if (Objects.equals(unit.tooltip(), "Retreat")) {
-                        unit.removeTooltip();
+                    if (shouldLargeScaleRetreat(unit, enemies)) {
+                        return true;
                     }
 
                     return false;
                 }
         );
+    }
+
+    private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
+        double radius = 1.2;
+        Selection friends = unit.friendsNearby().inRadius(radius, unit);
+
+        System.out.print(enemies.size() + " / ");
+        Selection veryCloseEnemies = enemies.inRadius(radius, unit);
+        System.out.println(enemies.size());
+
+        if (veryCloseEnemies.totalHp() > friends.totalHp()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
+        boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
+        if (!isSituationFavorable) {
+            unit._lastRetreat = AGame.now();
+            GLOBAL_RETREAT_COUNTER++;
+            unit.setTooltipTactical("Retreat");
+            MissionChanger.notifyThatUnitRetreated(unit);
+            APosition averageEnemyPosition = enemies.units().average();
+
+            if (unit.position().equals(averageEnemyPosition)) {
+                averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
+            }
+
+            return unit.runningManager().runFrom(averageEnemyPosition, 3.5);
+        }
+
+        if ("Retreat".equals(unit.tooltip())) {
+            unit.removeTooltip();
+        }
+
+        return false;
     }
 
     public static boolean getCachedShouldRetreat(AUnit unit) {
@@ -84,9 +108,9 @@ public class RetreatManager {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
-        if (unit.isHealthy()) {
-            return true;
-        }
+//        if (unit.isHealthy()) {
+//            return true;
+//        }
 
         if (unit.isStimmed()) {
             return true;

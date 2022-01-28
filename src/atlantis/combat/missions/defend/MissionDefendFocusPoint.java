@@ -35,7 +35,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 AUnit mainBase = Select.main();
                 if (mainBase == null) {
                     Selection selection = Select.ourBuildingsIncludingUnfinished();
-                    if (selection == null) {
+                    if (selection == null || selection.first() == null) {
                         return null;
                     }
 

@@ -1172,6 +1172,10 @@ public class A {
         return AGame.supplyUsed();
     }
 
+    public static int supplyTotal() {
+        return AGame.supplyTotal();
+    }
+
     public static boolean supplyUsed(int min) {
         return AGame.supplyUsed() >= min;
     }
