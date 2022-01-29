@@ -61,6 +61,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Engineering_Bay) > 0;
     }
 
+    public static boolean dragoon() {
+        return Count.ofType(AUnitType.Protoss_Dragoon) > 0;
+    }
+
     public static boolean barracks() {
         return Count.ofType(AUnitType.Terran_Barracks) > 0;
     }

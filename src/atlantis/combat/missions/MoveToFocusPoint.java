@@ -23,6 +23,11 @@ public abstract class MoveToFocusPoint {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     protected static boolean tooFar() {
+        if ((distUnitToFromSide + MARGIN) > distFocusToFromSide) {
+            String dist = A.dist(distUnitToFocus);
+            return unit.move(fromSide, Actions.MOVE_FOCUS, "WithDraw" + dist, true);
+        }
+
         if (fromSide != null && distUnitToFromSide < 12) {
             if ((distUnitToFocus + distUnitToFromSide) > distFocusToFromSide * 1.1) {
                 if (distUnitToFromSide > distUnitToFocus) {

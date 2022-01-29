@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -18,17 +19,20 @@ public class WantsToAvoid {
 
         if (!shouldAlwaysAvoid(unit, enemies)) {
             if (
-                    !unit.hasNoWeaponAtAll()
-                    && (new FightInsteadAvoid(unit, enemies)).shouldFight()
+                    unit.hasAnyWeapon() && (new FightInsteadAvoid(unit, enemies)).shouldFight()
             ) {
-//                APainter.paintCircle(unit, 10, Color.Green);
-//                APainter.paintCircle(unit, 11, Color.Green);
+                APainter.paintCircle(unit, 10, Color.Green);
+                APainter.paintCircle(unit, 11, Color.Green);
 
                 return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
             }
         }
 
         // =========================================================
+
+//        if (unit.isDragoon()) {
+//            A.printStackTrace();
+//        }
 
         if (enemies.size() == 1) {
             return Avoid.singleUnit(unit, enemies.first());

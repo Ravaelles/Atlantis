@@ -25,8 +25,17 @@ public class MissionDefend extends Mission {
 
         AFocusPoint focusPoint = focusPoint();
         if (focusPoint == null) {
+            if (!Have.base()) {
+                return false;
+            }
+
             System.err.println("Couldn't define choke point.");
             throw new RuntimeException("Couldn't define choke point.");
+        }
+
+        // Don't reposition if enemies nearby
+        if (unit.enemiesNearby().inRadius(7, unit).atLeast(3)) {
+            return false;
         }
 
         return MoveToDefendFocusPoint.move(unit, focusPoint);
@@ -36,7 +45,10 @@ public class MissionDefend extends Mission {
 
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (unit.hasWeaponRangeToAttack(enemy, 1.6)) {
+        if (
+                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 1.2))
+                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 3.2))
+        ) {
             return true;
         }
 
@@ -52,7 +64,10 @@ public class MissionDefend extends Mission {
 
         if (focusPoint() != null) {
             double unitDistToFocusPoint = unit.distTo(focusPoint());
-            if (unitDistToFocusPoint >= 8 || unitDistToFocusPoint > unit.distTo(enemy)) {
+
+            // @ToDo CHECK
+//            if (unitDistToFocusPoint >= 8 || unitDistToFocusPoint > unit.distTo(enemy)) {
+            if (unitDistToFocusPoint <= 2 || unitDistToFocusPoint > unit.distTo(enemy)) {
                 return true;
             }
         }
@@ -62,6 +77,10 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
+        if (unit.isHealthy() || unit.shieldDamageAtMost(14)) {
+            return true;
+        }
+
         if (unit.isMelee() && unit.friendsNearby().inRadius(1.3, unit).atLeast(3)) {
             return true;
         }

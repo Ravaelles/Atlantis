@@ -7,19 +7,20 @@ import atlantis.game.A;
 import atlantis.game.CameraManager;
 import atlantis.game.GameSpeed;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 public class UseMap {
 
     public static String activeMap() {
 //        return "sscai/(2)Destination.scx";
-        return "sscai/(2)Heartbreak Ridge.scx";
+//        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
-        // === UMS maps - great for bot development =============
+        // === UMS maps - great for bot development ===============
 
-        // === Protoss ==========================================
+        // === Protoss ============================================
 
 //        return "ums/rav/Dragoons_v_Zerglings.scm";
 //        return "ums/rav/ZealDrag_v_LingsHydra.scm";
@@ -32,7 +33,7 @@ public class UseMap {
 //        return "ums/rav/4Drag_v_4Drag.scm";
 //        return "ums/rav/4Drag_v_5Drag.scm";
 
-        // === Terran ===========================================
+        // === Terran ==============================================
 
 //        return "ums/rav/T_v_Sunkens.scx";
 //        return "ums/rav/T_v_Sunkens2.scx";
@@ -45,14 +46,21 @@ public class UseMap {
 //        return "ums/rav/Vultures_v_Zealots.scm";
 //        return "ums/rav/Vultures_v_Dragoons.scm";
 
+        // === Gosu bots - advanced single player cheating bots ====
+
+        return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+//        return "ums/exp_skilltest.scx"; // v. AI Protoss player
+//        return "ums/vGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        return "ums/lt-terran1j.scm"; // Zerg v. Terran
+//        return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
+//        return "ums/LostTemple.scm"; // v. 2x Protoss players, again Zealot rush
+
+        // =========================================================
+
 //        return "ums/rav/minimaps/M_v_Zealots.scx";
 //        return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        return "ums/rav/minimaps/4M_v_2Zealots.scx";
-//        return "ums/";
-//        return "ums/";
-//        return "ums/";
-//        return "ums/";
 //        return "ums/gol_v_zeals.scx";
 //        return "ums/aaa (1).scx"; // Nice mini maps for terran
 //        return "ums/aaa (2).scx";
@@ -65,14 +73,6 @@ public class UseMap {
 //        return "ums/marines/m (8).scx"; // Hmm
 
         // === Generic ======================================================
-
-        // ### Gosu bots ###
-//        return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
-//        return "ums/exp_skilltest.scx"; // v. AI Protoss player
-//        return "ums/vGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
-//        return "ums/lt-terran1j.scm"; // Zerg v. Terran
-//        return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
-//        return "ums/LostTemple.scm"; // v. 2x Protoss players, again Zealot rush
 
 //        return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
@@ -137,7 +137,10 @@ public class UseMap {
             }
 
             if (GameSpeed.frameSkip == initFrameSkip && A.everyNthGameFrame(50)) {
-                if (Select.enemyCombatUnits().atLeast(2)) {
+                if (
+                        Select.enemyCombatUnits().atLeast(4)
+                        && Have.dragoon()
+                ) {
                     GameSpeed.changeSpeedTo(1);
                     GameSpeed.changeFrameSkipTo(0);
                 }

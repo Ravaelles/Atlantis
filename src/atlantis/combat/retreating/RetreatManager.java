@@ -112,7 +112,15 @@ public class RetreatManager {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
-//        if (unit.isHealthy()) {
+        if (unit.isHealthy()) {
+            return true;
+        }
+
+        if (unit.mission() != null && unit.mission().isMissionDefend()) {
+            return true;
+        }
+
+//        if (!unit.woundPercent(15) && unit.mission().isMissionDefend()) {
 //            return true;
 //        }
 

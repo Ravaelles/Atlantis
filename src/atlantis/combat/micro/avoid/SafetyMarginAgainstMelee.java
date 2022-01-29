@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -34,8 +35,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     )
             ) {
                 defender.addLog("CoolDragoon");
-                return (defender.isHealthy() || enemyFacingUs) ? -1 : 1.2;
+                return (defender.isHealthy() || enemyFacingUs) ? 0 : 1.2;
     //            criticalDist = handleDragoon(defender, attacker);
+            }
+
+            if (Missions.isGlobalMissionDefend()) {
+                return defender.isHealthy() ? 0 : 2.3;
             }
         }
 

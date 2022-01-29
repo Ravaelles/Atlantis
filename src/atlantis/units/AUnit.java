@@ -1751,6 +1751,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return spaceRemaining() >= passenger.spaceRequired();
     }
 
+    public boolean hasAnyWeapon() {
+        return !hasNoWeaponAtAll();
+    }
+
     public boolean hasNoWeaponAtAll() {
         return cacheBoolean.get(
                 "hasNoWeaponAtAll",

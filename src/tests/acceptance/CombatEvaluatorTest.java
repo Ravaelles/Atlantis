@@ -22,8 +22,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
         createWorld(1, () -> {
             FakeUnit enemy = nearestEnemy(marine);
 
-            Select.our().print();
-            Select.enemy().print();
+//            Select.our().print();
+//            Select.enemy().print();
 
             double ourEval = marine.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();

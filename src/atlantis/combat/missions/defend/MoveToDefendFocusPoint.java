@@ -15,9 +15,9 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         fromSide = focusPoint.fromSide();
 
         optimalDist = optimalDist();
-        distUnitToFocus = unit.distTo(focusPoint);
-        distUnitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
-        distFocusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
+        distUnitToFocus = unit.groundDist(focusPoint);
+        distUnitToFromSide = focusPoint.fromSide() == null ? -1 : unit.groundDist(focusPoint.fromSide());
+        distFocusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.groundDist(focusPoint.fromSide());
 
         if (tooFar() || tooClose()) {
             return true;
