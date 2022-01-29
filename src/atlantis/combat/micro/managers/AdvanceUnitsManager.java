@@ -6,10 +6,9 @@ import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitAction;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
 public class AdvanceUnitsManager extends MissionUnitManager {
@@ -61,7 +60,12 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         if (
                 allowTooClose
                 && distToFocusPoint <= optimalDist - margin
-                && (result = unit.moveAwayFrom(focusPoint, 2.5, "#Adv:TooClose(" + (int) distToFocusPoint + ")"))
+                && (result = unit.moveAwayFrom(
+                        focusPoint,
+                        2.5,
+                        "#Adv:TooClose(" + (int) distToFocusPoint + ")",
+                        Actions.MOVE_FORMATION
+                ))
         ) {
             return result;
         }
@@ -76,7 +80,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // Too far
         else if (distToFocusPoint > optimalDist + margin) {
-            return unit.move(focusPoint, UnitActions.MOVE_TO_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")", true);
+            return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")", true);
         }
 
         return false;
@@ -100,7 +104,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
             if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
                 if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
-                    return unit.move(medic, UnitActions.MOVE, "ToMedic", false);
+                    return unit.move(medic, Actions.MOVE_FOCUS, "ToMedic", false);
                 }
             }
         }

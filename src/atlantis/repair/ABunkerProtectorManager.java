@@ -1,7 +1,7 @@
 package atlantis.repair;
 
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.util.A;
 
 public class ABunkerProtectorManager {
@@ -20,7 +20,7 @@ public class ABunkerProtectorManager {
             else {
                 double distanceToUnit = unit.distTo(protector);
                 if (distanceToUnit > 1 && !protector.isMoving()) {
-                    protector.move(unit.position(), UnitActions.MOVE_TO_REPAIR, "Go to " + unit.name(), true);
+                    protector.move(unit.position(), Actions.MOVE_REPAIR, "Go to " + unit.name(), true);
                     return true;
                 }
                 else {

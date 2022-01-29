@@ -1,9 +1,7 @@
 package atlantis.combat.micro;
 
-import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
 
 public class AvoidEdgesWhenMoving {

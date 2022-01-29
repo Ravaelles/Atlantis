@@ -16,7 +16,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.A;
 import atlantis.util.We;
@@ -113,7 +113,7 @@ public class AScoutManager {
 
     private static boolean handleScoutFreeBases(AUnit scout) {
         if (nextPositionToScout != null && !nextPositionToScout.isVisible()) {
-            return scout.move(nextPositionToScout, UnitActions.SCOUT, "ScoutBases", true);
+            return scout.move(nextPositionToScout, Actions.MOVE_SCOUT, "ScoutBases", true);
         }
 
         AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
@@ -157,7 +157,7 @@ public class AScoutManager {
         // =========================================================
 
         if (startingLocation != null) {
-            scout.move(startingLocation, UnitActions.EXPLORE, "Explore", true);
+            scout.move(startingLocation, Actions.MOVE_EXPLORE, "Explore", true);
             return true;
         }
         else {
@@ -191,7 +191,7 @@ public class AScoutManager {
 
             defineNextPolygonPointForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
             if (scoutingAroundBaseLastPolygonPoint != null) {
-                scout.move(scoutingAroundBaseLastPolygonPoint, UnitActions.EXPLORE, "Roam around", true);
+                scout.move(scoutingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "Roam around", true);
                 return true;
             } else {
                 scout.setTooltipTactical("Can't find polygon point");
@@ -277,7 +277,7 @@ public class AScoutManager {
     private static void scoutForTheNextBase(AUnit scout) {
         APosition baseLocation = Bases.nearestUnexploredStartingLocation(scout.position());
         if (baseLocation != null) {
-            scout.move(baseLocation.position(), UnitActions.EXPLORE, "Explore next base", true);
+            scout.move(baseLocation.position(), Actions.MOVE_EXPLORE, "Explore next base", true);
         }
     }
 
@@ -417,7 +417,7 @@ public class AScoutManager {
         else {
             worker.setTooltipTactical("Dajesz kurwa!");
             if (A.now() % 50 >= 25) {
-                worker.move(horse, UnitActions.MOVE, "", true);
+                worker.move(horse, Actions.MOVE_SPECIAL, "", true);
                 worker.setTooltipTactical("Ciśniesz!");
             }
         }

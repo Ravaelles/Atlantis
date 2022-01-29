@@ -4,7 +4,7 @@ import atlantis.combat.targeting.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.util.A;
 
 public class AAttackEnemyUnit {
@@ -94,7 +94,7 @@ public class AAttackEnemyUnit {
         }
 
         if (target.isBase() && unit.distToMoreThan(target, 4)) {
-            return unit.move(target, UnitActions.MOVE_TO_ENGAGE, "BaseAttack", false);
+            return unit.move(target, Actions.MOVE_ENGAGE, "BaseAttack", false);
         }
 
 //        unit.setTooltip("@" + target.name());
@@ -123,7 +123,7 @@ public class AAttackEnemyUnit {
                 return false;
             }
 
-            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
+            if (unit.move(enemy, Actions.MOVE_ENGAGE, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
                 return true;
             }
         }

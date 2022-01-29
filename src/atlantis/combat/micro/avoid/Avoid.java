@@ -5,6 +5,7 @@ import atlantis.debug.APainter;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.actions.Actions;
 import atlantis.util.A;
 import bwapi.Color;
 
@@ -17,7 +18,7 @@ public class Avoid {
             System.err.println("enemy.position() is NULL for " + enemy);
         }
 
-        if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit))) {
+        if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit), Actions.RUN_ENEMY)) {
 //            unit.setTooltip(getTooltip(unit, enemy));
             return true;
         }
@@ -31,7 +32,7 @@ public class Avoid {
         APainter.paintCircle(runFrom, 4, Color.Orange);
         APainter.paintCircle(runFrom, 2, Color.Orange);
 
-        if (unit.runningManager().runFrom(runFrom, getRunDistance(unit))) {
+        if (unit.runningManager().runFrom(runFrom, getRunDistance(unit), Actions.RUN_ENEMIES)) {
             APainter.paintCircleFilled(unit.position(), 5, Color.Green);
             APainter.paintCircleFilled(runFrom, 5, Color.Red);
 //            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");

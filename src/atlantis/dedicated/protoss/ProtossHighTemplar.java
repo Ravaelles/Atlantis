@@ -10,7 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.Units;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import bwapi.TechType;
 
 import java.util.List;
@@ -51,7 +51,7 @@ public class ProtossHighTemplar {
         // Wants to Warp Archon
         if (
                 highTemplar.lastTechUsed() != null
-                && highTemplar.lastActionLessThanAgo(50, UnitActions.USING_TECH)
+                && highTemplar.lastActionLessThanAgo(50, Actions.USING_TECH)
                 && TechType.Archon_Warp.name().equals(highTemplar.lastTechUsed().name())
                 && highTemplar.lastTechUnit().isAlive()
         ) {
@@ -67,7 +67,7 @@ public class ProtossHighTemplar {
             }
         }
 
-        if (highTemplar.lastActionLessThanAgo(40, UnitActions.USING_TECH)) {
+        if (highTemplar.lastActionLessThanAgo(40, Actions.USING_TECH)) {
             highTemplar.setTooltipTactical(highTemplar.lastTechUsed().name() + "...");
             return true;
         }
@@ -194,12 +194,13 @@ public class ProtossHighTemplar {
                 return highTemplar.moveAwayFrom(
                         Select.our().exclude(highTemplar).nearestTo(highTemplar),
                         1,
-                        "Stacked"
+                        "Stacked",
+                        Actions.MOVE_FORMATION
                 );
             }
 
             if (center.distTo(highTemplar) > 1) {
-                highTemplar.move(center, UnitActions.MOVE, "Follow army", true);
+                highTemplar.move(center, Actions.MOVE_FOLLOW, "Follow army", true);
                 return true;
             }
         }

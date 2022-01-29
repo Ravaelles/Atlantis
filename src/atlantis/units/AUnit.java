@@ -18,8 +18,8 @@ import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.tech.SpellCoordinator;
 import atlantis.tests.unit.FakeUnit;
-import atlantis.units.actions.UnitAction;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Action;
+import atlantis.units.actions.Actions;
 import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -55,9 +55,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
     protected AUnitType _lastType = null;
-    private UnitAction unitAction = UnitActions.INIT;
+    private Action unitAction = Actions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
+    private int _lastActionReceived = 0;
     public int _lastAttackOrder;
     public int _lastAttackFrame;
     public int _lastCooldown;
@@ -209,14 +210,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     private Squad squad;
     private final ARunningManager runningManager = new ARunningManager(this);
-    private int lastUnitOrder = 0;
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
     private boolean _isMilitaryBuildingAntiGround = false;
     private boolean _isMilitaryBuildingAntiAir = false;
-    private double _lastCombatEval;
-    private int _lastTimeCombatEval = 0;
 
     // =========================================================
     // Important methods
@@ -224,7 +222,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
-    public boolean moveAwayFrom(HasPosition position, double moveDistance, String tooltip) {
+    public boolean moveAwayFrom(HasPosition position, double moveDistance, String tooltip, Action action) {
         if (position == null || moveDistance < 0.01) {
             return false;
         }
@@ -240,7 +238,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         if (
                 runningManager().isPossibleAndReasonablePosition(this, newPosition)
-                && move(newPosition, UnitActions.MOVE, "Move away", false)
+                && move(newPosition, action, "Move away", false)
         ) {
             this.setTooltip(tooltip, false);
             return true;
@@ -248,7 +246,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         APainter.paintLine(position, newPosition, Color.Teal);
         this.setTooltip("Cant move away", false);
-        return move(newPosition, UnitActions.MOVE, "Force move", false);
+        return move(newPosition, Actions.MOVE_ERROR, "Force move", false);
     }
 
     // =========================================================
@@ -732,11 +730,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return UnitActions.RUN.equals(getUnitAction()) && runningManager.isRunning();
+        return Actions.MOVE_SAFETY.equals(action()) && runningManager.isRunning();
     }
 
-    public boolean isLastOrderFramesAgo(int minFramesAgo) {
-        return AGame.now() - lastUnitOrder >= minFramesAgo;
+    public boolean lastOrderMinFramesAgo(int minFramesAgo) {
+        return AGame.now() - _lastActionReceived >= minFramesAgo;
     }
 
     /**
@@ -776,21 +774,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns the frames counter (time) when the unit had been issued any command.
      */
     public int lastUnitOrderTime() {
-        return lastUnitOrder;
+        return _lastActionReceived;
     }
 
     /**
      * Returns the frames counter (time) since the unit had been issued any command.
      */
-    public int lastOrderFramesAgo() {
-        return AGame.now() - lastUnitOrder;
+    public int lastActionFramesAgo() {
+        return AGame.now() - _lastActionReceived;
     }
 
     /**
      * Indicate that in this frame unit received some command (attack, move etc).
      */
-    public AUnit setLastUnitOrderNow() {
-        this.lastUnitOrder = AGame.now();
+    public AUnit setLastActionReceivedNow() {
+        this._lastActionReceived = AGame.now();
         return this;
     }
 
@@ -1238,7 +1236,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isAttackingOrMovingToAttack() {
         return isAttacking() || (
-            getUnitAction() != null && getUnitAction().isAttacking() && target() != null && target().isAlive()
+            action() != null && action().isAttacking() && target() != null && target().isAlive()
         );
     }
 
@@ -1319,49 +1317,45 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.getLastCommand() != null && u.getLastCommand().getType().equals(command);
     }
 
-    public UnitAction getUnitAction() {
+    public Action action() {
         return unitAction;
     }
 
     // === Unit actions ========================================
 
-    public boolean isUnitAction(UnitAction constant) {
+    public boolean isUnitAction(Action constant) {
         return unitAction == constant;
     }
 
     public boolean isUnitActionAttack() {
-        return unitAction == UnitActions.ATTACK_POSITION || unitAction == UnitActions.ATTACK_UNIT
-                 || unitAction == UnitActions.MOVE_TO_ENGAGE;
+        return unitAction == Actions.ATTACK_POSITION || unitAction == Actions.ATTACK_UNIT
+                 || unitAction == Actions.MOVE_ENGAGE;
     }
 
-    public boolean isUnitActionMove() {
-        return unitAction == UnitActions.MOVE || unitAction == UnitActions.MOVE_TO_ENGAGE
-                || unitAction == UnitActions.MOVE_TO_BUILD || unitAction == UnitActions.MOVE_TO_REPAIR
-                || unitAction == UnitActions.MOVE_TO_FOCUS
-                || unitAction == UnitActions.RETREAT
-                || unitAction == UnitActions.EXPLORE
-                || unitAction == UnitActions.RUN;
-    }
+//    public boolean isUnitActionMove() {
+//        return unitAction.name().startsWith("MOVE_");
+//    }
 
     public boolean isUnitActionRepair() {
-        return unitAction == UnitActions.REPAIR || unitAction == UnitActions.MOVE_TO_REPAIR;
+        return unitAction == Actions.REPAIR || unitAction == Actions.MOVE_REPAIR;
     }
 
-    public AUnit setUnitAction(UnitAction unitAction) {
+    public AUnit setAction(Action unitAction) {
         this.unitAction = unitAction;
-        cacheUnitActionTimestamp(unitAction);
+        setLastActionReceivedNow();
+        rememberSpecificUnitAction(unitAction);
         return this;
     }
 
-    public AUnit setUnitAction(UnitAction unitAction, TechType tech, APosition usedAt) {
+    public AUnit setAction(Action unitAction, TechType tech, APosition usedAt) {
         this._lastTech = tech;
         this._lastTechPosition = usedAt;
         SpellCoordinator.newSpellAt(usedAt, tech);
 
-        return setUnitAction(unitAction);
+        return setAction(unitAction);
     }
 
-    public AUnit setUnitAction(UnitAction unitAction, TechType tech, AUnit usedOn) {
+    public AUnit setAction(Action unitAction, TechType tech, AUnit usedOn) {
         this._lastTech = tech;
         this._lastTechUnit = usedOn;
 
@@ -1369,10 +1363,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             SpellCoordinator.newSpellAt(usedOn.position(), tech);
         }
 
-        return setUnitAction(unitAction);
+        return setAction(unitAction);
     }
 
-    private void cacheUnitActionTimestamp(UnitAction unitAction) {
+    private void rememberSpecificUnitAction(Action unitAction) {
         if (unitAction == null) {
             return;
         }
@@ -1396,7 +1390,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return lastActionAgo(unitAction) <= framesAgo;
     }
 
-    public boolean lastActionMoreThanAgo(int framesAgo, UnitAction unitAction) {
+    public boolean lastActionMoreThanAgo(int framesAgo, Action unitAction) {
         if (unitAction == null) {
             System.err.println("unitAction B null for " + this);
             return true;
@@ -1405,7 +1399,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return lastActionAgo(unitAction) >= framesAgo;
     }
 
-    public boolean lastActionLessThanAgo(int framesAgo, UnitAction unitAction) {
+    public boolean lastActionLessThanAgo(int framesAgo, Action unitAction) {
         if (unitAction == null) {
             return false;
         }
@@ -1413,7 +1407,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return lastActionAgo(unitAction) <= framesAgo;
     }
 
-    public int lastActionAgo(UnitAction unitAction) {
+    public int lastActionAgo(Action unitAction) {
         Integer time = cacheInt.get("_last" + unitAction.name());
 
 //        if (!cacheInt.isEmpty()) {
@@ -1426,7 +1420,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return A.now() - time;
     }
 
-    public int lastActionFrame(UnitAction unitAction) {
+    public int lastActionFrame(Action unitAction) {
         Integer time = cacheInt.get("_last" + unitAction.name());
 
         if (time == null) {
@@ -1708,7 +1702,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int lastTechUsedAgo() {
-        return lastActionAgo(UnitActions.USING_TECH);
+        return lastActionAgo(Actions.USING_TECH);
     }
 
     public TechType lastTechUsed() {
@@ -2068,5 +2062,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean targetPositionAtLeastAway(double minTiles) {
         return targetPosition() != null && targetPosition().distToMoreThan(this, minTiles);
+    }
+
+    public void paintInfo(String text) {
+        APainter.paintTextCentered(this, text, Color.White);
+    }
+
+    public void paintInfo(String text, Color color, double dty) {
+        APainter.paintTextCentered(this, text, color, 0, dty);
     }
 }

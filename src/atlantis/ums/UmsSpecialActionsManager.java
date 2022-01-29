@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import bwapi.Color;
 
 public class UmsSpecialActionsManager {
@@ -30,7 +30,7 @@ public class UmsSpecialActionsManager {
 
             for (AUnit unit : Select.our().inRadius(10, goToRenegade).list()) {
                 if (unit.distTo(goToRenegade) > 0.5) {
-                    unit.move(goToRenegade, UnitActions.MOVE, "Friendly Renegade!", true);
+                    unit.move(goToRenegade, Actions.MOVE_SPECIAL, "Friendly Renegade!", true);
                 } else {
                     NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = null;
                 }
@@ -55,7 +55,7 @@ public class UmsSpecialActionsManager {
             AUnit unit = ours.clone().inRadius(9, beacon).nearestTo(beacon);
             AUnit nearestBeacon = beacons.clone().nearestTo(unit);
             if (unit != null && beacon != null) {
-                unit.move(nearestBeacon, UnitActions.MOVE, "To beacon", true);
+                unit.move(nearestBeacon, Actions.MOVE_SPECIAL, "To beacon", true);
                 APainter.paintLine(unit, nearestBeacon, Color.White);
             }
             return true;

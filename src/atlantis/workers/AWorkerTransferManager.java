@@ -5,7 +5,7 @@ import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.Units;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 
 import java.util.Collection;
 
@@ -88,7 +88,7 @@ public class AWorkerTransferManager {
 
     private static void transferWorkerTo(AUnit worker, AUnit baseWithFewestWorkers) {
         if (worker.distTo(baseWithFewestWorkers.position()) > 3) {
-            worker.move(baseWithFewestWorkers.position(), UnitActions.TRANSFER, "Transfer", true);
+            worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true);
         } else if (worker.isMoving()) {
             AMineralGathering.gatherResources(worker);
             worker.setTooltipTactical("Transferred!");

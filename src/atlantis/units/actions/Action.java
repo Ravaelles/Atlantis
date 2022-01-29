@@ -1,22 +1,27 @@
 package atlantis.units.actions;
 
-public class UnitAction {
+/**
+ * Specific unit action.
+ * @see Actions
+ */
+public class Action {
 
     private String name;
+    private String toString;
     private final boolean attack;
     private boolean run;
 
     // =========================================================
     
-    protected UnitAction() {
+    protected Action() {
         this(false);
     }
 
-    protected UnitAction(boolean attack) {
-        this.attack = attack;
+    protected Action(boolean attack) {
+        this(attack, false);
     }
 
-    protected UnitAction(boolean attack, boolean run) {
+    protected Action(boolean attack, boolean run) {
         this.attack = attack;
         this.run = run;
     }
@@ -25,7 +30,7 @@ public class UnitAction {
 
     @Override
     public String toString() {
-        return name;
+        return toString;
     }
     
     // =========================================================
@@ -42,8 +47,9 @@ public class UnitAction {
         return name;
     }
 
-    public UnitAction setName(String name) {
+    public Action setName(String name) {
         this.name = name;
+        this.toString = name.replace("MOVE_", "");
         return this;
     }
     

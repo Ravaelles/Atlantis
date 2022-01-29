@@ -1,16 +1,15 @@
 package atlantis.combat.retreating;
 
-import atlantis.CameraManager;
-import atlantis.GameSpeed;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.APainter;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.actions.Action;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.actions.UnitActions;
 import atlantis.util.A;
 import atlantis.util.Vector;
 import atlantis.util.We;
@@ -68,7 +67,7 @@ public class ARunningManager {
 //    }
 
 //    public boolean runFrom(Object unitOrPosition, double dist) {
-    public boolean runFrom(HasPosition runAwayFrom, double dist) {
+    public boolean runFrom(HasPosition runAwayFrom, double dist, Action action) {
         if (runAwayFrom == null) {
             System.err.println("Null unit to run from");
             stopRunning();
@@ -90,7 +89,7 @@ public class ARunningManager {
         if (runTo != null && unit.distTo(runTo) >= 0.001) {
             dist = unit.distTo(runTo);
             unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")", false);
-            return makeUnitRun();
+            return makeUnitRun(action);
         }
 
         System.err.println("=== RUN ERROR =================");
@@ -436,7 +435,7 @@ public class ARunningManager {
 
 //                System.err.println(otherUnit + " // notified by " + unit + " (" + unit.hp() + ")");
 
-                otherUnit.runningManager().runFrom(runFrom, NEARBY_UNIT_MAKE_SPACE);
+                otherUnit.runningManager().runFrom(runFrom, NEARBY_UNIT_MAKE_SPACE, Actions.MOVE_SPACE);
                 APainter.paintCircleFilled(unit, 10, Color.Yellow);
                 APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
                 otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit), false);
@@ -541,7 +540,7 @@ public class ARunningManager {
 //        return true;
 //    }
 
-    private boolean makeUnitRun() {
+    private boolean makeUnitRun(Action action) {
         if (unit == null) {
             return false;
         }
@@ -558,7 +557,7 @@ public class ARunningManager {
         else {
             // Update last time run order was issued
             unit._lastStartedRunning = A.now();
-            unit.move(runTo, UnitActions.RUN, "Run(" + A.digit(unit.distTo(runTo)) + ")", false);
+            unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false);
 
             // Make all other units very close to it run as well
             notifyNearbyUnitsToMakeSpace(unit);

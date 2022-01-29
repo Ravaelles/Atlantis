@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import bwapi.Bullet;
 import bwapi.BulletType;
@@ -49,7 +50,7 @@ public class AAvoidSpells {
             // Our mine
             if (mine.isOur()) {
                 if (mine.isMoving() && mine.distTo(unit) <= 3.5) {
-                    unit.moveAwayFrom(mine.position(), 2, "Avoid mine!");
+                    unit.moveAwayFrom(mine.position(), 2, "Avoid mine!", Actions.MOVE_AVOID);
                     return true;
                 }
             }
@@ -75,14 +76,14 @@ public class AAvoidSpells {
     }
 
     private static boolean handleEnemyMineAsMeleeUnit(AUnit unit, AUnit mine) {
-        unit.moveAwayFrom(mine.position(), 1, "Avoid mine!");
+        unit.moveAwayFrom(mine.position(), 1, "Avoid mine!", Actions.MOVE_AVOID);
 //        APainter.paintLine(unit, mine, Color.Yellow);
         return true;
     }
 
     private static boolean handleEnemyMineAsRangedUnit(AUnit unit, AUnit mine) {
         if (mine.distTo(unit) <= 2.0) {
-            unit.runningManager().runFrom(mine, 3);
+            unit.runningManager().runFrom(mine, 3, Actions.MOVE_AVOID);
             unit.setTooltipTactical("AVOID MINE(" + mine.distTo(unit) + ")");
             return true;
         }
@@ -94,7 +95,7 @@ public class AAvoidSpells {
 
     private static boolean handleMoveAwayIfCloserThan(AUnit unit, APosition avoidCenter, double minDist) {
         if (unit.distTo(avoidCenter) < minDist) {
-            unit.moveAwayFrom(avoidCenter, 3, "AvoidSpell");
+            unit.moveAwayFrom(avoidCenter, 3, "AvoidSpell", Actions.MOVE_AVOID);
             return true;
         }
         else {

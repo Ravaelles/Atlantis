@@ -24,7 +24,7 @@ public class ATargeting {
 //        if (true) return null;
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
-//        AUnit enemy = Select.enemy().nearestTo(unit);
+//        AUnit enemy = Select.enemy().canBeAttackedBy(unit, 30).nearestTo(unit);
 
         if (enemy != null) {
             APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
@@ -60,18 +60,21 @@ public class ATargeting {
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 0);
         if (enemy != null) {
+            ourUnit.paintInfo("Range", Color.White, 1);
             return enemy;
         }
 
         // Most wounded enemy ALMOST IN RANGE
         enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 1.2);
         if (enemy != null) {
+            ourUnit.paintInfo("Close", Color.White, 1);
             return enemy;
         }
 
         // Distant enemies
         enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 40);
         if (enemy != null) {
+            ourUnit.paintInfo("Far", Color.White, 1);
             return enemy;
         }
 

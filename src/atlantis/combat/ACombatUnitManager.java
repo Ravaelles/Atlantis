@@ -11,7 +11,7 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.interrupt.DontDisturbInterrupt;
 import atlantis.repair.AUnitBeingReparedManager;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 
@@ -110,7 +110,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (unit.lastActionLessThanAgo(90, UnitActions.PATROL) || unit.isPatrolling()) {
+        if (unit.lastActionLessThanAgo(90, Actions.PATROL) || unit.isPatrolling()) {
             if (A.now() > 90) {
                 unit.setTooltipTactical("#Manual");
                 return true;

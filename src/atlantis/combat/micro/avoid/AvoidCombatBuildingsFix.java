@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class AvoidCombatBuildingsFix {
@@ -15,7 +16,7 @@ public class AvoidCombatBuildingsFix {
         double baseDist = 7.8 + (unit.isAir() ? 2.5 : 0);
         double distTo = nearest.distTo(unit);
         if (distTo <= baseDist) {
-            return unit.runningManager().runFrom(nearest, 1);
+            return unit.runningManager().runFrom(nearest, 1, Actions.MOVE_AVOID);
         }
         else if (distTo < (baseDist + 0.4)) {
             // Do nothing

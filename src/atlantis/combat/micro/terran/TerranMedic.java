@@ -8,7 +8,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import bwapi.Color;
@@ -45,7 +45,7 @@ public class TerranMedic extends Microable {
             return true;
         }
 
-        if (medic.lastActionLessThanAgo(5, UnitActions.HEAL)) {
+        if (medic.lastActionLessThanAgo(5, Actions.HEAL)) {
             return true;
         }
 
@@ -94,7 +94,7 @@ public class TerranMedic extends Microable {
 
         APosition desiredPosition = nearestFriend.translateTilesTowards(0.4, nearestEnemy);
         if (medic.distToMoreThan(desiredPosition, BODY_BLOCK_POSITION_ERROR_MARGIN) || medic.isIdle()) {
-            return medic.move(desiredPosition, UnitActions.MOVE, "Block", false);
+            return medic.move(desiredPosition, Actions.MOVE_MACRO, "Block", false);
         }
 
         return false;
@@ -117,7 +117,7 @@ public class TerranMedic extends Microable {
     private static boolean tooFarFromNearestInfantry(AUnit medic) {
         AUnit infantry = Select.ourTerranInfantryWithoutMedics().nearestTo(medic);
         if (infantry != null && infantry.distToMoreThan(medic, 4)) {
-            return medic.move(infantry, UnitActions.MOVE, "SemperFi", false);
+            return medic.move(infantry, Actions.MOVE_FOCUS, "SemperFi", false);
         }
 
         if (infantry == null) {
@@ -210,10 +210,10 @@ public class TerranMedic extends Microable {
             double dist = assignment.distTo(medic);
 
             if (dist > 1.9) {
-                return medic.move(assignment.position(), UnitActions.MOVE, "Stick", false);
+                return medic.move(assignment.position(), Actions.MOVE_FOLLOW, "Stick", false);
             }
             else if (dist <= MIN_DIST_TO_ASSIGNMENT) {
-                return medic.moveAwayFrom(assignment.position(), 0.3, "TooClose");
+                return medic.moveAwayFrom(assignment.position(), 0.3, "TooClose", Actions.MOVE_FORMATION);
             }
 //            else if (medic.isMoving()) {
 //                return medic.holdPosition("Ok");

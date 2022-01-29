@@ -2,7 +2,7 @@ package atlantis.interrupt;
 
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.util.Enemy;
 import bwapi.Color;
 
@@ -21,7 +21,7 @@ public class DontDisturbInterrupt {
         }
 
         // Allow to use tech
-        if (unit.lastActionLessThanAgo(3, UnitActions.USING_TECH)) {
+        if (unit.lastActionLessThanAgo(3, Actions.USING_TECH)) {
             unit.setTooltipTactical("UsingTech");
             return true;
         }
@@ -56,7 +56,7 @@ public class DontDisturbInterrupt {
 //    }
 
     private static boolean allowUnitToContinueRareRightClickActions(AUnit unit) {
-        return unit.lastActionLessThanAgo(6, UnitActions.RIGHT_CLICK);
+        return unit.lastActionLessThanAgo(6, Actions.RIGHT_CLICK);
     }
 
 }

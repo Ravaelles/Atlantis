@@ -7,7 +7,7 @@ import atlantis.enemy.EnemyInformation;
 import atlantis.position.APosition;
 import atlantis.scout.AScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class ZergOverlordManager {
@@ -62,7 +62,7 @@ public class ZergOverlordManager {
     private static boolean stayInHome(AUnit overlord) {
         AUnit main = Select.main();
         if (main != null && overlord.distToMoreThan(main, 8)) {
-            return overlord.move(main, UnitActions.MOVE, "Home", true);
+            return overlord.move(main, Actions.MOVE_FOCUS, "Home", true);
         }
 
         return false;
@@ -72,7 +72,7 @@ public class ZergOverlordManager {
         APosition medianUnitPosition = Alpha.get().center();
         if (medianUnitPosition != null) {
             if (overlord.distTo(medianUnitPosition) > 2.5) {
-                overlord.move(medianUnitPosition, UnitActions.MOVE, "Follow army", true);
+                overlord.move(medianUnitPosition, Actions.MOVE_FOLLOW, "Follow army", true);
                 return true;
             }
         }

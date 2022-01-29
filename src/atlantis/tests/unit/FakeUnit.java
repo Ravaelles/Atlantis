@@ -4,7 +4,7 @@ import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitAction;
+import atlantis.units.actions.Action;
 import bwapi.TechType;
 import bwapi.UnitType;
 
@@ -269,7 +269,7 @@ public class FakeUnit extends AUnit {
 //    }
 
     @Override
-    public boolean move(HasPosition target, UnitAction unitAction, String tooltip, boolean strategicLevel) {
+    public boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         if (target == null) {
             throw new RuntimeException("FakeUnit move got null");
         }

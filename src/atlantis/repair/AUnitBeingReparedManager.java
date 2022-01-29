@@ -1,7 +1,7 @@
 package atlantis.repair;
 
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 
 public class AUnitBeingReparedManager {
 
@@ -34,7 +34,7 @@ public class AUnitBeingReparedManager {
 
         // Go to repairer if he's close
         if (distanceToRepairer > 1) {
-            unitBeingRepared.move(repairer.position(), UnitActions.MOVE_TO_REPAIR, "To repairer", false);
+            unitBeingRepared.move(repairer.position(), Actions.MOVE_REPAIR, "To repairer", false);
             return true;
         }
 

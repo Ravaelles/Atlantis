@@ -7,7 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.util.A;
 import atlantis.wrappers.ATech;
 import bwapi.Color;
@@ -27,14 +27,14 @@ public class TerranVulture {
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
 //        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
-        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.lastOrderFramesAgo() > 15) {
-            unit.setUnitAction(UnitActions.STOP);
+        if (unit.isUnitAction(Actions.USING_TECH) && unit.lastActionFramesAgo() > 15) {
+            unit.setAction(Actions.STOP);
             unit.setTooltipTactical("Planted!");
             return false;
         }
 
         // Can't allow to interrupt
-        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.lastActionLessThanAgo(15, UnitActions.USING_TECH)) {
+        if (unit.isUnitAction(Actions.USING_TECH) && unit.lastActionLessThanAgo(15, Actions.USING_TECH)) {
             unit.setTooltipTactical("Planting mine");
             return true;
         }
@@ -145,7 +145,7 @@ public class TerranVulture {
 
     private static void plantMineAt(AUnit unit, APosition position) {
         unit.useTech(TechType.Spider_Mines, position);
-        unit.setUnitAction(UnitActions.USING_TECH, TechType.Spider_Mines, position);
+        unit.setAction(Actions.USING_TECH, TechType.Spider_Mines, position);
     }
 
 }

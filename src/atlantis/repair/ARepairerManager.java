@@ -55,7 +55,7 @@ public class ARepairerManager {
 
             return repairer.repair(
                     target,
-                    "Repair " + target.nameWithId() + "(" + repairer.lastOrderFramesAgo() + ")",
+                    "Repair " + target.nameWithId() + "(" + repairer.lastActionFramesAgo() + ")",
                     true
             );
         }

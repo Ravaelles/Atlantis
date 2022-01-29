@@ -6,7 +6,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.util.A;
 import atlantis.util.We;
 import bwapi.TilePosition;
@@ -87,7 +87,7 @@ public class ABuilderManager {
 //                    GameSpeed.changeSpeedTo(60);
                 builder.move(
                     constructionOrder.positionToBuildCenter(),
-                    UnitActions.MOVE_TO_BUILD,
+                    Actions.MOVE_BUILD,
                     "Build " + buildingType.name() + distString,
                     true
                 );

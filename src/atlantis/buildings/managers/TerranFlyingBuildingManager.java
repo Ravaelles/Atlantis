@@ -7,7 +7,7 @@ import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,7 +53,7 @@ public class TerranFlyingBuildingManager {
             if (building.isLifted() && building.lastUnderAttackLessThanAgo(30 * 4)) {
                 APosition median = Alpha.get().median();
                 if (median != null) {
-                    building.moveStrategic(median, UnitActions.RUN, "AwayFromAlpha");
+                    building.moveStrategic(median, Actions.MOVE_ENGAGE, "AwayFromAlpha");
                     return;
                 }
             }
@@ -69,7 +69,7 @@ public class TerranFlyingBuildingManager {
         if (flyingBuilding.lastUnderAttackLessThanAgo(60)) {
             APosition median = Alpha.get().median();
             if (median != null) {
-                flyingBuilding.moveStrategic(median, UnitActions.RUN, "BackOff");
+                flyingBuilding.moveStrategic(median, Actions.MOVE_SAFETY, "UnderFire");
                 return true;
             }
         }
@@ -81,7 +81,7 @@ public class TerranFlyingBuildingManager {
             double distToFocusPoint = focusPoint.distTo(flyingBuilding);
             
             if (distToFocusPoint > 2) {
-                flyingBuilding.moveStrategic(focusPoint, UnitActions.MOVE, "Fly baby!");
+                flyingBuilding.moveStrategic(focusPoint, Actions.MOVE_SPECIAL, "Fly baby!");
                 return true;
             }
         }

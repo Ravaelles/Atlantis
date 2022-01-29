@@ -12,6 +12,9 @@ public class DontInterruptStartedAttacks {
 
     public static boolean shouldNotInterrupt(AUnit unit) {
 //        if (true) return false;
+        if (unit.cooldownRemaining() == 0 || unit.lastActionMoreThanAgo(15)) {
+            return false;
+        }
 
         if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
             return false;

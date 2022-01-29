@@ -190,16 +190,10 @@ public class AAdvancedPainter extends APainter {
             String squadLetter = unit.squad() == null ? "NO_SQUAD" : unit.squad().letter();
             paintTextCentered(unit.translateByPixels(0, 22), squadLetter, Color.Purple);
 
-            // =========================================================
-            // === Paint circle around units with zero ground weapon
-            // === cooldown equal to 0 - meaning they can shoot now
-            // =========================================================
-//                if (unit.getGroundWeaponCooldown() == 0) {
-//                    paintCircle(unitPosition, 14, Color.White);
-//                }
-//            }
-            String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
-                    + "(" + unit.lastOrderFramesAgo() + ")";
+//            String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
+//                    + "(" + unit.lastOrderFramesAgo() + ")";
+//            String order = unit.getAction().toString() + "(" + unit.lastOrderFramesAgo() + ")";
+            String order = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
             paintTextCentered(new APosition(position.getX(), position.getY() + 8), order, Color.Grey);
         }
     }
@@ -744,7 +738,7 @@ public class AAdvancedPainter extends APainter {
 
             // Paint #ID
             paintTextCentered(unit.translateByTiles(0, 1),
-                    "#" + unit.id() + " " + unit.getUnitAction(), Color.Cyan);
+                    "#" + unit.id() + " " + unit.action(), Color.Cyan);
 
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
@@ -758,26 +752,24 @@ public class AAdvancedPainter extends APainter {
 //            }
             // =========================================================
             Color color = Color.Grey;
-            if (unit.getUnitAction() != null) {
-//                if (unit.getUnitAction().equals(UnitActions.MOVE)) {
+            if (unit.action() != null) {
+//                if (unit.getAction().equals(UnitActions.MOVE)) {
 //                    color = Color.Teal;
-//                } else if (unit.getUnitAction().isAttacking()) {
+//                } else if (unit.getAction().isAttacking()) {
 //                    color = Color.Orange;
-//                } else if (unit.getUnitAction().equals(UnitActions.RUN)) {
+//                } else if (unit.getAction().equals(UnitActions.RETREAT)) {
 //                    color = Color.Brown;
-//                } else if (unit.getUnitAction().equals(UnitActions.RETREAT)) {
-//                    color = Color.Brown;
-//                } else if (unit.getUnitAction().equals(UnitActions.HEAL)) {
+//                } else if (unit.getAction().equals(UnitActions.HEAL)) {
 //                    color = Color.Purple;
-//                } else if (unit.getUnitAction().equals(UnitActions.BUILD)) {
+//                } else if (unit.getAction().equals(UnitActions.BUILD)) {
 //                    color = Color.Purple;
-//                } else if (unit.getUnitAction().equals(UnitActions.REPAIR)) {
+//                } else if (unit.getAction().equals(UnitActions.REPAIR)) {
 //                    color = Color.Purple;
 //                }
-//            else if (unit.getUnitAction().equals(UnitActions.)) {
+//            else if (unit.getAction().equals(UnitActions.)) {
 //                color = Color.;
 //            }
-//            else if (unit.getUnitAction().equals(UnitActions.)) {
+//            else if (unit.getAction().equals(UnitActions.)) {
 //                color = Color.;
 //            }
             }
@@ -1065,8 +1057,8 @@ public class AAdvancedPainter extends APainter {
 
 //            string += "/";
 //
-//            if (unit.getUnitAction() != null) {
-//                string += unit.getUnitAction();
+//            if (unit.getAction() != null) {
+//                string += unit.getAction();
 //            }
 //            else {
 //                string += "no_mission";

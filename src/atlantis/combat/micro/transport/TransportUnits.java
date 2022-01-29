@@ -3,7 +3,7 @@ package atlantis.combat.micro.transport;
 import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import bwapi.Color;
 
 public class TransportUnits {
@@ -34,7 +34,7 @@ public class TransportUnits {
 //        System.out.println("isBabyInDanger(unit, true) = " + isBabyInDanger(unit, true));
         if (
                 unit.isLoaded()
-                        && unit.lastActionMoreThanAgo(30 * 3, UnitActions.LOAD)
+                        && unit.lastActionMoreThanAgo(30 * 3, Actions.LOAD)
                         && !isBabyInDanger(unit, true)
         ) {
             unit.loadedInto().unload(unit);
@@ -86,8 +86,8 @@ public class TransportUnits {
 
         // Don't load too often
         if (
-                unit.lastActionLessThanAgo(8, UnitActions.LOAD)
-                || unit.lastActionLessThanAgo(8, UnitActions.UNLOAD)
+                unit.lastActionLessThanAgo(8, Actions.LOAD)
+                || unit.lastActionLessThanAgo(8, Actions.UNLOAD)
         ) {
             return false;
         }
@@ -110,7 +110,7 @@ public class TransportUnits {
     private static boolean handleGoToSafety(AUnit transport, AUnit baby) {
         AUnit nearEnemy = Select.enemyCombatUnits().canAttack(baby, 5).nearestTo(transport);
         if (nearEnemy != null) {
-            transport.moveAwayFrom(nearEnemy, 8, "ToSafety");
+            transport.moveAwayFrom(nearEnemy, 8, "ToSafety", Actions.MOVE_SAFETY);
             APainter.paintLine(transport, transport.targetPosition(), Color.White);
             return true;
         }
@@ -146,7 +146,7 @@ public class TransportUnits {
 
     private static boolean followBaby(AUnit transport, AUnit baby) {
         if (!baby.isLoaded() && (baby.isMoving() || transport.distToMoreThan(baby, 0.2))) {
-            return transport.move(baby, UnitActions.MOVE, "Follow", true);
+            return transport.move(baby, Actions.MOVE_FOLLOW, "Follow", true);
         }
 
         return false;
@@ -157,7 +157,7 @@ public class TransportUnits {
         return !baby.isLoaded()
                 && transport.hasFreeSpaceFor(baby)
 //                && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
-                && transport.lastActionMoreThanAgo(8, UnitActions.UNLOAD)
+                && transport.lastActionMoreThanAgo(8, Actions.UNLOAD)
                 && (baby.isUnderAttack(15))
 //                && (baby.cooldownRemaining() > 0 && baby.lastStartedAttackMoreThanAgo(9) && baby.lastFrameOfStartingAttackMoreThanAgo(7))
                 && (!isTransportInDanger(transport) && isBabyInDanger(baby, false));
@@ -174,12 +174,12 @@ public class TransportUnits {
         return baby.isLoaded()
                 && transport.hasCargo()
 //                && baby.cooldownRemaining() <= 8
-                && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
+                && transport.lastActionMoreThanAgo(25, Actions.LOAD)
                 && (
                         isTransportInDanger(transport)
                         || transport.woundPercent() >= 87
                         || !isBabyInDanger(baby, true)
-                        || transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD)
+                        || transport.lastActionMoreThanAgo(30 * 12, Actions.LOAD)
                 );
     }
 

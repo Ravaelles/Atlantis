@@ -7,7 +7,7 @@ import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.wrappers.ATech;
@@ -38,7 +38,7 @@ public class TerranSiegeTank {
 
 
     private static boolean updateWhenNotSieged(AUnit unit) {
-        if (unit.lastActionLessThanAgo(30 * 12, UnitActions.UNSIEGE)) {
+        if (unit.lastActionLessThanAgo(30 * 12, Actions.UNSIEGE)) {
             return false;
         }
 
@@ -48,7 +48,7 @@ public class TerranSiegeTank {
 
         // =========================================================
 
-        boolean longNotMoved = !unit.isMoving() && unit.lastActionMoreThanAgo(60, UnitActions.MOVE);
+        boolean longNotMoved = !unit.isMoving() && unit.lastActionMoreThanAgo(60);
 
 //        if (Missions.isGlobalMissionContain() || Missions.isGlobalMissionDefend()) {
         APosition focusPoint = Missions.globalMission().focusPoint();
@@ -92,7 +92,7 @@ public class TerranSiegeTank {
                 .list();
         for (AUnit lurker : lurkers) {
             if (lurker.distTo(tank) >= tank.groundWeaponMinRange()) {
-                if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
+                if (tank.lastActionMoreThanAgo(30, Actions.ATTACK_POSITION)) {
                     tank.setTooltipTactical("SMASH invisible!");
                     tank.attackPosition(lurker.position());
                 }
@@ -129,7 +129,7 @@ public class TerranSiegeTank {
 
         // =========================================================
 
-        if (unit.lastActionLessThanAgo(30 * 8, UnitActions.SIEGE)) {
+        if (unit.lastActionLessThanAgo(30 * 8, Actions.SIEGE)) {
             return true;
         }
 
@@ -182,7 +182,7 @@ public class TerranSiegeTank {
     }
 
     private static boolean hasJustSiegedRecently(AUnit unit) {
-        return unit.lastActionLessThanAgo(30 * 9, UnitActions.SIEGE);
+        return unit.lastActionLessThanAgo(30 * 9, Actions.SIEGE);
     }
 
     private static void initCache(AUnit tank) {

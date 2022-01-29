@@ -5,6 +5,7 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
@@ -72,7 +73,7 @@ public class RetreatManager {
                 averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
             }
 
-            return unit.runningManager().runFrom(averageEnemyPosition, 3.5);
+            return unit.runningManager().runFrom(averageEnemyPosition, 3.5, Actions.RUN_RETREAT);
         }
 
         if ("Retreat".equals(unit.tooltip())) {

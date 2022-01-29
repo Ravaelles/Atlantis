@@ -11,7 +11,7 @@ import atlantis.information.AbstractFoggedUnit;
 import atlantis.log.Log;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.A;
 import bwapi.Color;
@@ -41,7 +41,7 @@ public class SquadScout {
             APainter.paintTextCentered(positionToEngage, "SquadScout" + dist, Color.Orange);
 
             if (positionToEngage.distTo(squadScout) > 2.2) {
-                return squadScout.move(positionToEngage, UnitActions.MOVE_TO_ENGAGE, "Pioneer" + dist, true);
+                return squadScout.move(positionToEngage, Actions.MOVE_ENGAGE, "Pioneer" + dist, true);
             }
             else {
                 engageWorkersNow(squadScout);

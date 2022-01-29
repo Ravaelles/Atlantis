@@ -7,7 +7,7 @@ import atlantis.map.AMap;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.util.A;
 import bwapi.Color;
 
@@ -94,7 +94,7 @@ public abstract class Mission {
         }
 
         if (temporaryTarget != null) {
-            unit.move(temporaryTarget, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy", true);
+            unit.move(temporaryTarget, Actions.MOVE_ENGAGE, "#FindEnemy", true);
             APainter.paintLine(unit.position(), temporaryTarget, Color.Yellow);
             return true;
         }
