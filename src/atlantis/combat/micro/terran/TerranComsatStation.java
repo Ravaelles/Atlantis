@@ -1,11 +1,11 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.AGame;
-import atlantis.tests.unit.FakeUnit;
+import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import bwapi.TechType;
+import tests.unit.FakeUnit;
 
 public class TerranComsatStation {
 

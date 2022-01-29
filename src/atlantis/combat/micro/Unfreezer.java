@@ -1,6 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.debug.APainter;
+import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;

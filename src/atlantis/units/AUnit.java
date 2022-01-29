@@ -1,32 +1,35 @@
 package atlantis.units;
 
-import atlantis.AGame;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
-import atlantis.debug.APainter;
-import atlantis.enemy.UnitsArchive;
-import atlantis.information.AbstractFoggedUnit;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.position.PositionUtil;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.information.enemy.UnitsArchive;
+import atlantis.information.tech.ATech;
+import atlantis.information.tech.SpellCoordinator;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.map.position.PositionUtil;
+import atlantis.map.scout.AScoutManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.repair.ARepairAssignments;
-import atlantis.scout.AScoutManager;
-import atlantis.tech.SpellCoordinator;
-import atlantis.tests.unit.FakeUnit;
+import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
-import atlantis.util.*;
-import atlantis.wrappers.ATech;
+import atlantis.util.CappedList;
+import atlantis.util.Vector;
+import atlantis.util.Vectors;
+import atlantis.util.log.Log;
 import bwapi.*;
+import tests.unit.FakeUnit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +61,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
     protected AUnitType _lastType = null;
+    private Log log = new Log(40);
     private Action unitAction = Actions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
@@ -468,6 +472,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (strategicLevel) {
             this.tooltip = tooltip;
         }
+        this.tooltip = tooltip;
         return this;
     }
 
@@ -733,7 +738,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return Actions.MOVE_SAFETY.equals(action()) && runningManager.isRunning();
+        return runningManager.isRunning()
+                || unit().action().isRunning();
     }
 
     public boolean lastOrderMinFramesAgo(int minFramesAgo) {
@@ -2073,5 +2079,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public void paintInfo(String text, Color color, double dty) {
         APainter.paintTextCentered(this, text, color, 0, dty);
+    }
+
+    public void addLog(String message) {
+        log.addMessage(message);
+    }
+
+    public Log log() {
+        return log;
     }
 }

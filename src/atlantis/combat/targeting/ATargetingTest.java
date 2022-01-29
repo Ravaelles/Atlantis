@@ -1,9 +1,9 @@
 package atlantis.combat.targeting;
 
-import atlantis.tests.unit.AbstractTestWithUnits;
-import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnitType;
 import org.junit.Test;
+import tests.unit.AbstractTestWithUnits;
+import tests.unit.FakeUnit;
 
 import static org.junit.Assert.assertEquals;
 

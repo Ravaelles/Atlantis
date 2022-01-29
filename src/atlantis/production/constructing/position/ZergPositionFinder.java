@@ -1,9 +1,9 @@
 package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
-import atlantis.debug.APainter;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.debug.painter.APainter;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Color;

@@ -3,12 +3,12 @@ package atlantis.combat.micro.avoid;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -88,6 +88,53 @@ public class FightInsteadAvoid {
 
     // =========================================================
 
+    protected boolean fightAsCombatUnit() {
+        if (fightBecauseWayTooManyUnitsNearby(unit)) {
+            unit.addLog("FightStacked");
+            return true;
+        }
+
+        if (RetreatManager.shouldRetreat(unit)) {
+            if (unit.isRanged() && ranged == null) {
+                return true;
+            } else {
+                unit.addLog("Retreat");
+                return false;
+            }
+        }
+
+        if (handleTerranInfantryShouldFight(unit)) {
+            return true;
+        }
+
+//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
+//            return true;
+//        }
+
+//        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
+//        if (enemies.onlyMelee() && ACombatEvaluator.isSituationFavorable(unit)) {
+//            return true;
+//        }
+
+        if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
+            return true;
+        }
+
+//        if (tankSieged != null || tanks != null) {
+//            return true;
+//        }
+
+        if (combatBuilding != null) {
+            return unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding);
+        }
+
+        if (unit.isMelee()) {
+            return fightAsMeleeUnit();
+        } else {
+            return fightAsRangedUnit();
+        }
+    }
+
     protected boolean dontFightInImportantCases() {
 
         // Always avoid invisible combat units
@@ -155,51 +202,8 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        return !RetreatManager.shouldRetreat(unit);
-    }
-
-    protected boolean fightAsCombatUnit() {
-        if (fightBecauseWayTooManyUnitsNearby(unit)) {
-            return true;
-        }
-
-        if (RetreatManager.shouldRetreat(unit)) {
-            if (unit.isRanged() && ranged == null) {
-                return true;
-            }
-            return false;
-        }
-
-        if (handleTerranInfantryShouldFight(unit)) {
-            return true;
-        }
-
-//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
-//            return true;
-//        }
-
-//        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
-//        if (enemies.onlyMelee() && ACombatEvaluator.isSituationFavorable(unit)) {
-//            return true;
-//        }
-
-        if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
-            return true;
-        }
-
-//        if (tankSieged != null || tanks != null) {
-//            return true;
-//        }
-
-        if (combatBuilding != null) {
-            return unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding);
-        }
-
-        if (unit.isMelee()) {
-            return fightAsMeleeUnit();
-        } else {
-            return fightAsRangedUnit();
-        }
+        return true;
+//        return !RetreatManager.shouldRetreat(unit);
     }
 
     // =========================================================

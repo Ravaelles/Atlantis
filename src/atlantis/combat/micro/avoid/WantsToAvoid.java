@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.debug.APainter;
+import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -9,7 +9,7 @@ import bwapi.Color;
 
 public class WantsToAvoid {
 
-    public static boolean units(AUnit unit, Units enemies) {
+    public static boolean unitOrUnits(AUnit unit, Units enemies) {
         if (shouldNeverAvoidIf(unit, enemies)) {
             return false;
         }

@@ -1,6 +1,6 @@
 package atlantis.util;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import bwapi.UnitType;

@@ -1,12 +1,12 @@
 package atlantis.combat.missions;
 
-import atlantis.AGame;
 import atlantis.combat.missions.attack.MissionChangerWhenAttack;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.select.Have;
-import atlantis.util.A;
 
 import java.util.ArrayList;
 

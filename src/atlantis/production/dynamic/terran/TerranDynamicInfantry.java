@@ -1,15 +1,15 @@
 package atlantis.production.dynamic.terran;
 
-import atlantis.AGame;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.information.TerranArmyComposition;
+import atlantis.information.strategy.decisions.OurDecisions;
 import atlantis.production.AbstractDynamicUnits;
-import atlantis.strategy.decisions.OurDecisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 
 public class TerranDynamicInfantry extends TerranDynamicUnitsManager {

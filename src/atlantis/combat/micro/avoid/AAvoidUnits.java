@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -63,7 +63,7 @@ public abstract class AAvoidUnits {
 
         else {
             // Standard case
-            if (WantsToAvoid.units(unit, enemiesDangerouslyClose)) {
+            if (WantsToAvoid.unitOrUnits(unit, enemiesDangerouslyClose)) {
                 return true;
             }
         }

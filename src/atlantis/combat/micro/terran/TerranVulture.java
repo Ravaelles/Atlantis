@@ -1,15 +1,15 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.debug.APainter;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.information.tech.ATech;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
-import atlantis.wrappers.ATech;
 import bwapi.Color;
 import bwapi.TechType;
 

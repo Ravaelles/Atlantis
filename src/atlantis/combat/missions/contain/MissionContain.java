@@ -4,8 +4,8 @@ import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 
 public class MissionContain extends Mission {

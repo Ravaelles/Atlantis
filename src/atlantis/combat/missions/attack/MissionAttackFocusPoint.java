@@ -2,17 +2,17 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
-import atlantis.enemy.EnemyUnits;
-import atlantis.information.AbstractFoggedUnit;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import atlantis.util.Cache;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {

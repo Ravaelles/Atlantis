@@ -1,7 +1,7 @@
 package atlantis.units.select;
 
-import atlantis.AtlantisConfig;
-import atlantis.enemy.EnemyInformation;
+import atlantis.config.AtlantisConfig;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

@@ -1,7 +1,5 @@
 package atlantis.combat;
 
-import atlantis.AGame;
-import atlantis.ASpecialUnitManager;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidSpells;
 import atlantis.combat.micro.Unfreezer;
@@ -9,13 +7,14 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
-import atlantis.combat.retreating.RetreatManager;
-import atlantis.interrupt.DontDisturbInterrupt;
-import atlantis.repair.AUnitBeingReparedManager;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.terran.repair.AUnitBeingReparedManager;
+import atlantis.units.ASpecialUnitManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.interrupt.DontDisturbInterrupt;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 
 public class ACombatUnitManager {
 
@@ -184,16 +183,8 @@ public class ACombatUnitManager {
             return true;
         }
 
-//        System.out.println("RetreatManager.shouldRetreat(unit) = " + RetreatManager.shouldRetreat(unit));
-//        if (RetreatManager.shouldRetreat(unit)) {
-//
-//        }
-//        else {
-        if (!RetreatManager.shouldRetreat(unit)) {
-            return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
-        }
-
-        return false;
+        return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+//        return false;
     }
 
 //    private static boolean canHandleLowPriority(AUnit unit) {

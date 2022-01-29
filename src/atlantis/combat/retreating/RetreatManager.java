@@ -1,9 +1,9 @@
 package atlantis.combat.retreating;
 
-import atlantis.AGame;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
-import atlantis.position.APosition;
+import atlantis.game.AGame;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -22,7 +22,7 @@ public class RetreatManager {
     public static boolean shouldRetreat(AUnit unit) {
         return cache.get(
                 "shouldRetreat:" + unit.id(),
-                3,
+                6,
                 () -> {
                     if (shouldNotConsiderRetreatingNow(unit)) {
                         return false;

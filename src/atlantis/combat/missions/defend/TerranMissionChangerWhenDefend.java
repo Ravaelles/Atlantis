@@ -3,10 +3,10 @@ package atlantis.combat.missions.defend;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
-import atlantis.enemy.EnemyInformation;
-import atlantis.strategy.OurStrategy;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.select.Count;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 
 public class TerranMissionChangerWhenDefend extends MissionChanger {

@@ -3,7 +3,7 @@ package atlantis.combat.micro.managers;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionUnitManager;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;

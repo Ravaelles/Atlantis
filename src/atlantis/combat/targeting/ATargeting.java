@@ -1,11 +1,9 @@
 package atlantis.combat.targeting;
 
-import atlantis.debug.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import bwapi.Color;
 
 public class ATargeting {
 
@@ -25,9 +23,9 @@ public class ATargeting {
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
 //        AUnit enemy = Select.enemy().canBeAttackedBy(unit, 30).nearestTo(unit);
 
-        if (enemy != null) {
-            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
-        }
+//        if (enemy != null) {
+//            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
+//        }
 
         return enemy;
     }
@@ -59,21 +57,21 @@ public class ATargeting {
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 0);
         if (enemy != null) {
-            ourUnit.paintInfo("Range", Color.White, 1);
+//            ourUnit.paintInfo("Range", Color.White, 1);
             return enemy;
         }
 
         // Most wounded enemy ALMOST IN RANGE
         enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 1.2);
         if (enemy != null) {
-            ourUnit.paintInfo("Close", Color.White, 1);
+//            ourUnit.paintInfo("Close", Color.White, 1);
             return enemy;
         }
 
         // Distant enemies
         enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 40);
         if (enemy != null) {
-            ourUnit.paintInfo("Far", Color.White, 1);
+//            ourUnit.paintInfo("Far", Color.White, 1);
             return enemy;
         }
 

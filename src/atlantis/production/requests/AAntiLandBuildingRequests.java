@@ -1,14 +1,14 @@
 package atlantis.production.requests;
 
-import atlantis.AtlantisConfig;
+import atlantis.config.AtlantisConfig;
+import atlantis.information.strategy.decisions.OurStrategicBuildings;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.Requirements;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;
-import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

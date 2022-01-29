@@ -25,23 +25,29 @@ public class Action {
         this.attack = attack;
         this.run = run;
     }
-    
+
+    // =========================================================
+
+    public boolean isRunning() {
+        return name.startsWith("RUN_") || equals(Actions.MOVE_SAFETY);
+    }
+
     // =========================================================
 
     @Override
     public String toString() {
         return toString;
     }
-    
+
     // =========================================================
-    
+
     public boolean isAttacking() {
         return attack;
     }
 
-    public boolean isRunningOrRetreating() {
-        return run;
-    }
+//    public boolean isRunningOrRetreating() {
+//        return run;
+//    }
 
     public String name() {
         return name;
@@ -52,5 +58,4 @@ public class Action {
         this.toString = name.replace("MOVE_", "");
         return this;
     }
-    
 }

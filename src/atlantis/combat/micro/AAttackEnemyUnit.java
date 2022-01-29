@@ -1,15 +1,15 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.targeting.ATargeting;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 
 public class AAttackEnemyUnit {
 
-    private static final double MAX_DIST_TO_ATTACK = 20;
+    private static final double MAX_DIST_TO_ATTACK = 40;
 
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit) {
         return handleAttackNearbyEnemyUnits(unit, MAX_DIST_TO_ATTACK);

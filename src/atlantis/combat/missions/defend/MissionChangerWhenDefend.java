@@ -1,6 +1,6 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
 
 public class MissionChangerWhenDefend {
 

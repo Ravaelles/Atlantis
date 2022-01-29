@@ -1,10 +1,10 @@
 package atlantis.keyboard;
 
-import atlantis.AGame;
-import atlantis.AtlantisConfig;
-import atlantis.CameraManager;
-import atlantis.GameSpeed;
-import atlantis.debug.APainter;
+import atlantis.config.AtlantisConfig;
+import atlantis.debug.painter.APainter;
+import atlantis.game.AGame;
+import atlantis.game.CameraManager;
+import atlantis.game.GameSpeed;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;

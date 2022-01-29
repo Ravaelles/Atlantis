@@ -1,11 +1,11 @@
 package atlantis.units;
 
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.game.A;
+import atlantis.information.tech.ATech;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
-import atlantis.util.A;
-import atlantis.wrappers.ATech;
 import bwapi.*;
 
 /**

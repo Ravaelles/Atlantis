@@ -1,7 +1,8 @@
 package atlantis.production.dynamic;
 
-import atlantis.AGame;
-import atlantis.AtlantisConfig;
+import atlantis.config.AtlantisConfig;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
@@ -9,7 +10,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 import atlantis.util.Helpers;
 
 

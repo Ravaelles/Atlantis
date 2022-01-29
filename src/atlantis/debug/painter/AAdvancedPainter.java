@@ -1,0 +1,1405 @@
+package atlantis.debug.painter;
+
+import atlantis.Atlantis;
+import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
+import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.attack.MissionAttack;
+import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.combat.squad.ASquadManager;
+import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.game.GameLog;
+import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.strategy.EnemyStrategy;
+import atlantis.information.tech.ATech;
+import atlantis.map.*;
+import atlantis.map.position.APosition;
+import atlantis.map.scout.AScoutManager;
+import atlantis.production.ProductionOrder;
+import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.ConstructionOrderStatus;
+import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.position.TerranPositionFinder;
+import atlantis.production.orders.CurrentProductionQueue;
+import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.ProductionQueueMode;
+import atlantis.terran.repair.ARepairAssignments;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.buildings.AGasManager;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
+import atlantis.units.workers.AWorkerManager;
+import atlantis.util.CodeProfiler;
+import atlantis.util.ColorUtil;
+import atlantis.util.MappingCounter;
+import atlantis.util.We;
+import atlantis.util.log.LogMessage;
+import bwapi.Color;
+import bwapi.TechType;
+import bwapi.UpgradeType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class AAdvancedPainter extends APainter {
+
+    protected static int sideMessageTopCounter = 0;
+    protected static int sideMessageMiddleCounter = 0;
+    protected static int sideMessageBottomCounter = 0;
+    protected static int prevTotalFindBuildPlace = 0;
+    private static final int rightSideMessageLeftOffset = 572;
+    private static final int rightSideMessageTopOffset = 450;
+    private static final int timeConsumptionLeftOffset = 572;
+    private static final int timeConsumptionTopOffset = 65;
+    private static final int timeConsumptionBarMaxWidth = 50;
+    private static final int timeConsumptionBarHeight = 14;
+    private static final int timeConsumptionYInterval = 16;
+
+    // =========================================================
+
+    /**
+     * Executed once per frame, at the end of all other actions.
+     */
+    public static void paint() {
+        if (paintingMode == MODE_NO_PAINTING) {
+            return;
+        }
+
+        if (A.now() < 1) {
+            return;
+        }
+
+        sideMessageTopCounter = 0;
+        sideMessageBottomCounter = 0;
+
+        // === PARTIAL PAINTING ====================================
+//        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
+        setTextSizeMedium();
+
+        paintSidebarInfo();
+        paintKilledAndLost();
+        paintProductionQueue();
+        paintSidebarConstructionsPending();
+        paintLog();
+        paintConstructionPlaces();
+        //        paintUnitCounters();
+
+        if (paintingMode == MODE_PARTIAL_PAINTING) {
+            CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
+            return;
+        }
+
+        // =========================================================
+
+//        setTextSizeSmall();
+
+        paintRegions();
+//        paintMineralDistance();
+        paintChokepoints();
+        paintImportantPlaces();
+        paintStrategicLocations();
+//        paintTestSupplyDepotLocationsNearMain();
+        paintConstructionProgress();
+//        paintEnemyRegionDetails();
+//        paintColoredCirclesAroundUnits();
+        paintBuildingHealth();
+        paintWorkersAssignedToBuildings();
+        paintBuildingsTrainingUnitsAndResearching();
+        paintBarsUnderUnits();
+        paintFoggedUnitsThatIsEnemiesDiscovered();
+        paintCombatUnits();
+        paintEnemyCombatUnits();
+        paintTooltipsOverUnits();
+        paintCodeProfiler();
+        paintSquads();
+
+        setTextSizeMedium();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
+    }
+
+    // =========================================================
+
+    /**
+     * Painting for combat units can be a little different. Put here all the related code.
+     */
+    protected static void paintCombatUnits() {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            if (unit.isLoaded()) {
+                continue;
+            }
+            APosition position = unit.position();
+
+            // =========================================================
+            // === Paint targets for combat units
+            // =========================================================
+
+            paintOurCombatUnitTargets(unit);
+
+            // =========================================================
+            // === Paint running and white flag
+            // =========================================================
+
+            if (unit.isRunning()) {
+                paintWhiteFlagForRunningUnit(unit);
+            }
+
+            // =========================================================
+            // === Paint life bars bars over wounded units
+            // =========================================================
+
+            paintLifeBar(unit);
+
+            // =========================================================
+            // === Paint if enemy units is dangerously close
+            // =========================================================
+
+//            paintCooldown(unit);
+
+            if (unit.isStimmed()) {
+                paintCircle(unit, 13, Color.Purple);
+                paintCircle(unit, 11, Color.Purple);
+            }
+
+            // =========================================================
+            // === Combat Evaluation Strength
+            // =========================================================
+
+            paintCombatEval(unit);
+
+////            if (combatEval < 10) {
+//            double eval = ACombatEvaluator.evaluateSituation(unit, true, false);
+////                if (eval < 999) {
+////                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + ":)")
+////                            : AtlantisCombatEvaluator.getEvalString(unit);
+//            String combatStrength = ColorUtil.getColorString(Color.Green)
+//                    + ACombatEvaluator.getEvalString(unit, eval);
+//            paintTextCentered(new APosition(position.getX(), position.getY() - 15), combatStrength, null);
+////                }
+
+            // =========================================================
+            // === Other stuff =========================================
+
+            String squadLetter = unit.squad() == null ? "NO_SQUAD" : unit.squad().letter();
+            paintTextCentered(unit.translateByPixels(0, 22), squadLetter, Color.Purple);
+
+//            String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
+//                    + "(" + unit.lastOrderFramesAgo() + ")";
+//            String order = unit.getAction().toString() + "(" + unit.lastOrderFramesAgo() + ")";
+            String order = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
+            paintTextCentered(new APosition(position.getX(), position.getY() + 8), order, Color.Grey);
+
+            // =========================================================
+
+            paintUnitLog(unit);
+        }
+    }
+
+    private static void paintUnitLog(AUnit unit) {
+        double baseTy = 1.3;
+        for (int i = 0; i < unit.log().messages().size(); i++) {
+            LogMessage message = unit.log().messages().get(i);
+            unit.paintInfo(A.now() + " " + message.message(), Color.Grey, baseTy + 0.1 * i);
+        }
+    }
+
+    private static void paintOurCombatUnitTargets(AUnit unit) {
+        if (unit.hasTargetPosition() && !unit.targetPositionAtLeastAway(7)) {
+            paintLine(unit, unit.targetPosition(), Color.Grey);
+//            paintLine(unit, unit.targetPosition(), (unit.isAttackingOrMovingToAttack() ? Color.Teal : Color.Grey));
+//            paintLine(unit, unit.target(), (unit.isAttackingOrMovingToAttack() ? Color.Green : Color.Yellow));
+        }
+//        if (!paintLine(unit, unit.getTarget(), (unit.isAttacking() ? Color.Green : Color.Yellow))) {
+//            paintLine(unit, unit.getTargetPosition(), (unit.isAttacking() ? Color.Orange : Color.Yellow));
+//        }
+    }
+
+    private static void paintEnemyTargets(AUnit enemy) {
+        paintLine(enemy, enemy.target(), Color.Red);
+    }
+
+    /**
+     * Paint extra information about visible enemy combat units.
+     */
+    static void paintEnemyCombatUnits() {
+        for (AUnit enemy : Select.enemy().combatUnits().list()) {
+            if (!enemy.isAlive()) {
+                continue;
+            }
+
+            paintCombatEval(enemy);
+            paintLifeBar(enemy);
+//            paintEnemyTargets(enemy);
+            paintTextCentered(enemy, enemy.idWithHash(), Color.Grey, 0, 1);
+        }
+
+        setTextSizeMedium();
+        for (AUnit enemy : Select.enemy().effCloaked().list()) {
+            paintCircle(enemy, 16, Color.Orange);
+            paintCircle(enemy, 15, Color.Orange);
+            paintTextCentered(enemy, "Cloaked," + enemy.name() + ",HP=" + enemy.hp(), Color.Red);
+        }
+        for (AUnit enemy : Select.enemy().effVisible().list()) {
+            if (enemy.isCloaked() || enemy.isBurrowed()) {
+                paintCircle(enemy, 16, Color.Green);
+                paintCircle(enemy, 15, Color.Green);
+                paintCircle(enemy, 14, Color.Green);
+                paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.White);
+            }
+        }
+    }
+
+    /**
+     * Paint focus point for global attack mission etc.
+     */
+    static void paintSidebarInfo() {
+        Color color;
+        Mission mission = Alpha.get().mission();
+
+        // Time
+        if (AGame.isUms()) {
+            paintSideMessage("UMS map mode enabled", Color.Green);
+        }
+        paintSideMessage("Time: " + AGame.timeSeconds() + "s", Color.Grey);
+
+        // =========================================================
+        // Global mission
+
+        paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
+                ? EnemyStrategy.get().toString() : "Unknown"),
+                EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
+
+        if (mission.isMissionDefend()) {
+            color = Color.White;
+        } else if (mission.isMissionContain()) {
+            color = Color.Teal;
+        } else {
+            color = Color.Orange;
+        }
+        paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", color);
+
+        paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
+        paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.White);
+
+        // =========================================================
+        // Focus point
+
+        APosition focusPoint = MissionAttack.getInstance().focusPoint();
+        AUnit mainBase = Select.main();
+        String desc = "";
+        if (focusPoint != null && mainBase != null) {
+            desc = "(" + ((int) mainBase.distTo(focusPoint)) + " tiles)";
+        }
+        paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
+
+        // =========================================================
+
+        paintSideMessage("Combat squad size: " + Alpha.get().size(), Color.Yellow, 0);
+
+        int scouts = AScoutManager.getScouts().size();
+        color = scouts == 0 ? Color.Grey : (scouts == 1 ? Color.Yellow : Color.Red);
+        paintSideMessage("Scouts: " + scouts, color, 0);
+
+        if (We.terran()) {
+            paintSideMessage("Repairers: " + ARepairAssignments.countTotalRepairers(), Color.White, 0);
+            paintSideMessage("Protectors: " + ARepairAssignments.countTotalProtectors(), Color.White, 0);
+        }
+
+        // =========================================================
+        // Gas workers
+//        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
+//                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
+//        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
+        paintSideMessage("Workers: " + Count.workers(), Color.White);
+        paintSideMessage("Gas workers: " + AGasManager.defineMinGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + ProductionQueue.mineralsReserved(), Color.Grey);
+        paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
+    }
+
+    private static void paintCombatEval(AUnit unit) {
+        APosition unitPosition = unit.position();
+//        double combatEval = unit.combatEvalRelative();
+        double combatEval = unit.combatEvalAbsolute();
+        String combatStrength = ColorUtil.getColorString(Color.Red) +
+                (combatEval >= 9876 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
+        paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
+    }
+
+    /**
+     * Paints small progress bars over units that have cooldown.
+     */
+    static void paintBarsUnderUnits() {
+//        for (AUnit unit : Select.ourCombatUnits().listUnits()) {
+//
+//            // =========================================================
+//            // === Paint life bars bars over wounded units
+//            // =========================================================
+//            if (UnitUtil.getHPPercent(unit) < 100) {
+//                int boxWidth = 20;
+//                int boxHeight = 4;
+//                int boxLeft = unit.getPosition().getX() - boxWidth / 2;
+//                int boxTop = unit.getPosition().getY() + 23;
+//
+//                Position topLeft = new APosition(boxLeft, boxTop);
+//
+//                // =========================================================
+//                // Paint box
+//                int healthBarProgress = boxWidth * unit.getHitPoints() / (unit.getMaxHitPoints() + 1);
+//                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Red, true);
+//                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + healthBarProgress, boxTop + boxHeight), Color.Green, true);
+//
+//                // =========================================================
+//                // Paint box borders
+//                bwapi.drawBoxMap(topLeft, new APosition(boxLeft + boxWidth, boxTop + boxHeight), Color.Black, false);
+//            }
+
+        // =========================================================
+        // === Paint cooldown progress bars over units
+        // =========================================================
+//            if (unit.getGroundWeaponCooldown() > 0) {
+//                int cooldownWidth = 20;
+//                int cooldownHeight = 4;
+//                int cooldownLeft = unit.getPX() - cooldownWidth / 2;
+//                int cooldownTop = unit.getPY() + 23;
+//                String cooldown = Color.getColorString(Color.Yellow) + "(" + unit.getGroundWeaponCooldown() + ")";
+//
+//                Position topLeft = new APosition(cooldownLeft, cooldownTop);
+//
+//                // =========================================================
+//                // Paint box
+//                int cooldownProgress = cooldownWidth * unit.getGroundWeaponCooldown()
+//                        / (unit.type().getGroundWeapon().getDamageCooldown() + 1);
+//                bwapi.drawBox(topLeft, new APosition(cooldownLeft + cooldownProgress, cooldownTop + cooldownHeight),
+//                        Color.Brown, true, false);
+//
+//                // =========================================================
+//                // Paint box borders
+//                bwapi.drawBox(topLeft, new APosition(cooldownLeft + cooldownWidth, cooldownTop + cooldownHeight),
+//                        Color.Black, false, false);
+//
+//                // =========================================================
+//                // Paint label
+////                paintTextCentered(new APosition(cooldownLeft + cooldownWidth - 4, cooldownTop), cooldown, false);
+//            }
+        // =========================================================
+        // === Paint battle squad
+        // =========================================================
+//            if (unit.getSquad() != null) {
+//                paintTextCentered(new APosition(unit.getPX(), unit.getPY() + 3), Color.getColorString(Color.Grey)
+//                        + "#" + unit.getSquad().getID(), false);
+//            }
+        // =========================================================
+        // === Paint num of other units around this unit
+        // =========================================================
+//            int ourAround = Select.ourCombatUnits().inRadius(1.7, unit).count();
+//            paintTextCentered(new APosition(unit.getPX(), unit.getPY() - 15), Color.getColorString(Color.Orange)
+//                    + "(" + ourAround + ")", false);
+//            // =========================================================
+//            // === Combat Evaluation Strength
+//            // =========================================================
+//            if (AtlantisCombatEvaluator.evaluateSituation(unit) < 10) {
+//                double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+//                if (eval < 999) {
+//                    String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + "++")
+//                            : AtlantisCombatEvaluator.getEvalString(unit);
+//                    paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
+//                }
+//            }
+//        }
+//
+//        for (AUnit unit : Select.enemy().combatUnits().listUnits()) {
+//            double eval = AtlantisCombatEvaluator.evaluateSituation(unit);
+//            if (eval < 999) {
+//                String combatStrength = eval >= 10 ? (ColorUtil.getColorString(Color.Green) + "++")
+//                        : AtlantisCombatEvaluator.getEvalString(unit);
+//                paintTextCentered(new APosition(unit.getPosition().getX(), unit.getPosition().getY() - 15), combatStrength, null);
+//            }
+//        }
+    }
+
+    /**
+     * Paints important choke point near the base.
+     */
+    static void paintImportantPlaces() {
+
+        // === Handle UMS ==========================================
+        if (AGame.isUms()) {
+            return;
+        }
+
+        // =========================================================
+
+//        APosition missionFocusPoint;
+        APosition missionFocusPoint = Missions.globalMission().focusPoint();
+//
+        paintCircle(missionFocusPoint, 22, Color.Teal);
+        paintCircle(missionFocusPoint, 20, Color.Teal);
+        paintCircle(missionFocusPoint, 18, Color.Teal);
+        paintTextCentered(missionFocusPoint, "FOCUS", Color.Teal);
+
+//        // Main DEFEND focus point
+//        APosition position = MissionAttack.getInstance().focusPoint();
+//        if (position != null) {
+//            position = MissionDefend.getInstance().focusPoint();
+//            paintCircle(position, 20, Color.Orange);
+//            paintCircle(position, 19, Color.Orange);
+//            paintTextCentered(position, "DEFEND", Color.Orange);
+//        }
+//
+//        missionFocusPoint = MissionAttack.getInstance().focusPoint();
+//        if (missionFocusPoint != null) {
+//            paintCircle(missionFocusPoint, 20, Color.Red);
+//            //        paintCircle(position, 19, Color.Black);
+//            paintTextCentered(missionFocusPoint, "ATTACK", Color.Red);
+//        }
+    }
+
+    /**
+     * Paints list of units we have in top left corner.
+     */
+    private static void paintUnitCounters() {
+        // Unfinished
+        MappingCounter<AUnitType> unitTypesCounter = new MappingCounter<>();
+        for (AUnit unit : Select.ourUnfinishedRealUnits().list()) {
+//        for (AUnit unit : Select.our().listUnits()) {
+            unitTypesCounter.incrementValueFor(unit.type());
+        }
+
+        Map<AUnitType, Integer> counters = unitTypesCounter.map();
+        counters = A.sortByValue(counters, false);
+        boolean paintedMessage = false;
+        for (AUnitType unitType : counters.keySet()) {
+            paintSideMessage("+" + counters.get(unitType) + " " + unitType.toString(), Color.Blue, 0);
+            paintedMessage = true;
+        }
+
+        if (paintedMessage) {
+            paintSideMessage("", Color.White, 0);
+        }
+
+        // =========================================================
+        // Finished
+        unitTypesCounter = new MappingCounter<>();
+        for (AUnit unit : Select.our().list()) {
+            unitTypesCounter.incrementValueFor(unit.type());
+        }
+
+        counters = unitTypesCounter.map();
+        counters = A.sortByValue(counters, false);
+        for (AUnitType unitType : counters.keySet()) {
+            if (!unitType.isBuilding()) {
+                paintSideMessage(counters.get(unitType) + "x " + unitType, Color.Grey, 0);
+            }
+        }
+        paintSideMessage("", Color.White, 0);
+    }
+
+    /**
+     * Paints next units to build in top left corner.
+     */
+    static void paintProductionQueue() {
+        paintSideMessage("", Color.White);
+        paintSideMessage("Prod. queue:", Color.White);
+
+        // === Display units currently in production ========================================
+
+//        paintCurrentlyInProduction();
+//        paintNotStartedConstructions();
+
+        // === Display units that should be produced right now or any time ==================
+
+        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ENTIRE_QUEUE);
+//        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
+        int counter = 1;
+        for (ProductionOrder order : produceNow) {
+            paintSideMessage(
+                    String.format("%02d", order.minSupply()) + " - " + order.name(),
+                    order.hasWhatRequired() ? (order.currentlyInProduction() ? Color.Green : Color.Yellow) : Color.Red
+            );
+            if (++counter >= 10) {
+                break;
+            }
+        }
+
+        // === Display next units to produce ================================================
+
+//        ArrayList<ProductionOrder> fullQueue = ProductionQueue.nextInProductionQueue(
+//                5 - produceNow.size());
+//        for (int index = produceNow.size(); index < fullQueue.size(); index++) {
+//            ProductionOrder order = fullQueue.get(index);
+//            if (order != null && order.name() != null) {
+//                if (order.getUnitOrBuilding() != null
+//                        && !AGame.hasBuildingsToProduce(order.getUnitOrBuilding(), true)) {
+//                    continue;
+//                }
+//                paintSideMessage(order.name(), Color.Red);
+//            }
+//        }
+
+        // === Paint info if queues are empty ===============================================
+
+        if (produceNow.isEmpty()) {
+            paintSideMessage("Nothing to produce - it's a bug", Color.Red);
+        }
+    }
+
+    private static void paintNotStartedConstructions() {
+
+        // Constructions already planned
+        for (ConstructionOrder order : ConstructionRequests.notStarted()) {
+            AUnitType type = order.buildingType();
+            paintSideMessage(type.name(), Color.Cyan);
+        }
+    }
+
+    private static void paintCurrentlyInProduction() {
+        // Units & buildings
+        for (AUnit unit : Select.ourUnfinished().list()) {
+            AUnitType type = unit.type();
+            if (type.equals(AUnitType.Zerg_Egg)) {
+                type = unit.buildType();
+            }
+            paintSideMessage(type.name(), Color.Green);
+        }
+
+        // Techs
+        for (TechType techType : ATech.getCurrentlyResearching()) {
+            paintSideMessage(techType.toString(), Color.Green);
+        }
+
+        // Upgrades
+        for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
+            paintSideMessage(upgradeType.toString(), Color.Green);
+        }
+    }
+
+    /**
+     * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
+     */
+    static void paintSidebarConstructionsPending() {
+        int yOffset = 220;
+        ArrayList<ConstructionOrder> allOrders = ConstructionRequests.all();
+        if (!allOrders.isEmpty()) {
+            paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
+            for (ConstructionOrder constructionOrder : allOrders) {
+                Color color = null;
+                switch (constructionOrder.status()) {
+                    case CONSTRUCTION_NOT_STARTED:
+                        color = Color.Red;
+                        break;
+                    case CONSTRUCTION_IN_PROGRESS:
+                        color = Color.Blue;
+                        break;
+                    case CONSTRUCTION_FINISHED:
+                        color = Color.Teal;
+                        break;
+                    default:
+                        color = Color.Purple;
+                        break;
+                }
+
+                String status = constructionOrder.status().toString().replace("CONSTRUCTION_", "");
+                String builderDist = A.dist(constructionOrder.builder(), constructionOrder.positionToBuild());
+                if (constructionOrder.builder() != null) {
+                    String builder = (constructionOrder.builder().idWithHash() + " " + builderDist);
+                    paintSideMessage(
+                            constructionOrder.buildingType().name()
+                            + ", " + constructionOrder.positionToBuild()
+                            + ", " + status + ", " + builder,
+                            color,
+                            yOffset
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Paints places where buildings that do not yet exist are planned to be placed.
+     */
+    static void paintConstructionPlaces() {
+        Color color = Color.Grey;
+        for (ConstructionOrder order : ConstructionRequests.all()) {
+            if (order.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+//            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
+                APosition positionToBuild = order.positionToBuild();
+                AUnitType buildingType = order.buildingType();
+                if (positionToBuild == null || buildingType == null) {
+                    continue;
+                }
+
+                paintConstructionPlace(positionToBuild, buildingType, null, color);
+            }
+        }
+    }
+
+    private static void paintConstructionPlace(APosition positionToBuild, AUnitType buildingType, String text, Color color) {
+        if (positionToBuild == null) {
+            if (Select.main() != null) {
+                System.err.println(buildingType + " has no position to build");
+//                throw new Exception("That's unacceptable, lad!");
+                return;
+            } else {
+                return;
+            }
+        }
+
+        if (text == null) {
+            text = buildingType.name();
+        }
+
+        // Paint box
+        paintRectangle(positionToBuild, buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, color);
+
+        // Draw X
+        paintLine(
+                positionToBuild.translateByPixels(buildingType.getTileWidth() * 32, 0),
+                positionToBuild.translateByPixels(0, buildingType.getTileHeight() * 32),
+                color
+        );
+        paintLine(positionToBuild,
+                buildingType.getTileWidth() * 32,
+                buildingType.getTileHeight() * 32,
+                color
+        );
+
+        // Draw text
+        paintTextCentered(
+                positionToBuild.translateByPixels(buildingType.dimensionLeft(), 69), text, color
+        );
+    }
+
+    /**
+     * Paints circles around units which mean what's their mission.
+     */
+    private static void paintColoredCirclesAroundUnits() {
+        for (AUnit unit : Select.ourRealUnits().list()) {
+            if (unit.isWorker() && (unit.isGatheringMinerals() || unit.isGatheringGas()) || unit.isLoaded()) {
+                continue;
+            }
+
+            APosition unitPosition = unit.position();
+            APosition targetPosition = unit.targetPosition();
+            int unitRadius = unit.type().dimensionLeft();
+
+            // STARTING ATTACK
+            if (unit.isStartingAttack()) {
+                paintCircle(unit, unitRadius - 7, Color.Orange);
+                paintCircle(unit, unitRadius - 6, Color.Orange);
+                paintCircle(unit, unitRadius - 5, Color.Orange);
+                paintCircle(unit, unitRadius - 4, Color.Orange);
+                paintCircle(unit, unitRadius - 3, Color.Orange);
+            }
+            // ATTACK FRAME
+            if (unit.isAttackFrame()) {
+                paintRectangleFilled(unit.translateByPixels(-5, -10), 10, 20, Color.Red);
+//                paintCircle(unit, 2, Color.Red);
+//                paintCircle(unit, 4, Color.Red);
+//                paintCircle(unit, 5, Color.Red);
+//                paintCircle(unit, 8, Color.Red);
+//                paintCircle(unit, 9, Color.Red);
+            }
+            // STUCK
+            if (unit.isStuck()) {
+                unit.setTooltipTactical("STUCK");
+                paintCircle(unit, 2, Color.Teal);
+                paintCircle(unit, 4, Color.Teal);
+                paintCircle(unit, 6, Color.Teal);
+                paintCircle(unit, 8, Color.Teal);
+                paintCircle(unit, 10, Color.Teal);
+            }
+            // ATTACKING
+            if (unit.isAttackingOrMovingToAttack()) {
+                paintCircle(unit, unitRadius - 3, Color.Yellow);
+                paintCircle(unit, unitRadius - 2, Color.Yellow);
+            }
+            // MOVE
+            if (unit.isMoving()) {
+                paintCircle(unit, unitRadius - 4, Color.Blue);
+                paintCircle(unit, unitRadius - 3, Color.Blue);
+                paintCircle(unit, unitRadius - 2, Color.Blue);
+                if (unit.targetPosition() != null) {
+                    paintCircleFilled(unit.targetPosition(), 4, Color.Blue);
+                    paintLine(unit.position(), unit.targetPosition(), Color.Blue);
+                }
+            }
+//            // CONSTRUCTING
+//            if (unit.isConstructing()) {
+//                paintCircle(unit, 6, Color.Teal);
+//                paintCircle(unit, 5, Color.Teal);
+//            }
+
+            // RUN
+            if (unit.isRunning()) {
+                paintLine(unit.position(), unit.runningManager().getRunToPosition(), Color.Yellow);
+                paintLine(unit.translateByPixels(1, 1), unit.runningManager().getRunToPosition(), Color.Yellow);
+
+                if (unit.runningManager().getRunToPosition() != null) {
+                    paintCircleFilled(unit.runningManager().getRunToPosition(), 10, Color.Yellow);
+                }
+
+                paintWhiteFlagForRunningUnit(unit);
+            }
+
+            // Paint #ID
+            paintTextCentered(unit.translateByTiles(0, 1),
+                    "#" + unit.id() + " " + unit.action(), Color.Cyan);
+
+            // BUILDER
+//            if (AtlantisConstructingManager.isBuilder(unit)) {
+//                paintCircle(unit, 15, Color.Teal);
+//                paintCircle(unit, 13, Color.Teal);
+//                paintCircle(unit, 11, Color.Teal);
+//            }
+            // Current COMMAND
+//            if (!unit.isMoving()) {
+//                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
+//            }
+            // =========================================================
+            Color color = Color.Grey;
+            if (unit.action() != null) {
+//                if (unit.getAction().equals(UnitActions.MOVE)) {
+//                    color = Color.Teal;
+//                } else if (unit.getAction().isAttacking()) {
+//                    color = Color.Orange;
+//                } else if (unit.getAction().equals(UnitActions.RETREAT)) {
+//                    color = Color.Brown;
+//                } else if (unit.getAction().equals(UnitActions.HEAL)) {
+//                    color = Color.Purple;
+//                } else if (unit.getAction().equals(UnitActions.BUILD)) {
+//                    color = Color.Purple;
+//                } else if (unit.getAction().equals(UnitActions.REPAIR)) {
+//                    color = Color.Purple;
+//                }
+//            else if (unit.getAction().equals(UnitActions.)) {
+//                color = Color.;
+//            }
+//            else if (unit.getAction().equals(UnitActions.)) {
+//                color = Color.;
+//            }
+            }
+
+//            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+//                paintCircle(unit, unit.type().getDimensionLeft() + unit.type().getDimensionRight(), color);
+//                paintCircle(unit, unit.type().getDimensionLeft() - 2 + unit.type().getDimensionRight(), color);
+//            }
+            if (unit.isWorker() && unit.isIdle()) {
+                paintCircle(unit, 10, Color.Black);
+                paintCircle(unit, 8, Color.Black);
+                paintCircle(unit, 6, Color.Black);
+                paintCircle(unit, 4, Color.Black);
+            }
+        }
+    }
+
+    private static void paintWhiteFlagForRunningUnit(AUnit unit) {
+        int flagWidth = 15;
+        int flagHeight = 8;
+        int dy = 12;
+        Color flagColor = RetreatManager.shouldRetreat(unit) ? Color.Red : Color.White;
+
+        paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
+
+        paintRectangleFilled(unit.translateByPixels(0, -flagHeight - dy),
+                flagWidth, flagHeight, flagColor); // White flag
+        paintRectangle(unit.translateByPixels(0, -flagHeight - dy),
+                flagWidth, flagHeight, Color.Grey); // Flag border
+        paintRectangleFilled(unit.translateByPixels(-1, flagHeight - dy),
+                2, flagHeight, Color.Grey); // Flag stick
+    }
+
+    /**
+     * Paints progress bar with percent of completion over all buildings under construction.
+     */
+    static void paintConstructionProgress() {
+        setTextSizeMedium();
+//        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
+        for (ConstructionOrder order : ConstructionRequests.all()) {
+            AUnit building = order.construction();
+            if (building == null || building.isCompleted()) {
+                continue;
+            }
+
+            String stringToDisplay;
+
+            int labelMaxWidth = 60;
+            int labelHeight = 14;
+            int labelLeft = building.position().getX() - labelMaxWidth / 2;
+            int labelTop = building.position().getY() + 8;
+
+            double progress = (double) building.hp() / building.maxHp();
+            int labelProgress = (int) (1 + 99 * progress);
+
+            // Paint box
+            bwapi.drawBoxMap(
+                    new APosition(labelLeft, labelTop),
+                    new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight),
+                    Color.Blue,
+                    true
+            );
+            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight), Color.Blue, true, false);
+
+            // Paint box borders
+            bwapi.drawBoxMap(
+                    new APosition(labelLeft, labelTop),
+                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight),
+                    Color.Black,
+                    false
+            );
+            //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.Black, false, false);
+
+
+            // =========================================================
+            // Paint progress text
+
+            Color progressColor;
+            if (labelProgress < 26) {
+                progressColor = Color.Red;
+            }
+            else if (labelProgress < 67) {
+                progressColor = Color.Yellow;
+            }
+            else {
+                progressColor = Color.Green;
+            }
+            stringToDisplay = labelProgress + "%";
+
+            paintTextCentered(
+                    new APosition(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2),
+                    stringToDisplay, progressColor
+            );
+
+            // =========================================================
+
+            // Display name of unit
+            String name = (building.buildType() != null ? building.buildType().name() : "-BUG_NULL");
+
+            // Paint building name
+            paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 7),
+                    name, Color.White);
+
+            // Builder status
+            AUnit builder = order.builder();
+            boolean builderProblem = builder == null || !builder.isAlive();
+            paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 15),
+                    builderProblem ? "NO BUILDER" : "", builderProblem ? Color.Red : Color.Green);
+        }
+
+        setTextSizeSmall();
+    }
+
+    /**
+     * For buildings not 100% healthy, paints its hit points using progress bar.
+     */
+    static void paintBuildingHealth() {
+        for (AUnit unit : Select.ourBuildings().list()) {
+            if (unit.isBunker() || unit.hp() >= unit.maxHp()) { //isWounded()
+                continue;
+            }
+            int labelMaxWidth = 56;
+            int labelHeight = 4;
+            int labelLeft = unit.position().getX() - labelMaxWidth / 2;
+            int labelTop = unit.position().getY() + 13;
+
+            double hpRatio = (double) unit.hp() / unit.maxHp();
+            int hpProgress = (int) (1 + 99 * hpRatio);
+
+            Color color = Color.Green;
+            if (hpRatio < 0.66) {
+                color = Color.Yellow;
+                if (hpRatio < 0.33) {
+                    color = Color.Red;
+                }
+            }
+
+            // Paint box
+            bwapi.drawBoxMap(
+                    new APosition(labelLeft, labelTop),
+                    new APosition(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight),
+                    color,
+                    true
+            );
+
+            // Paint box borders
+            bwapi.drawBoxMap(
+                    new APosition(labelLeft, labelTop),
+                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight),
+                    Color.Black,
+                    false
+            );
+        }
+    }
+
+    /**
+     * Paints the number of workers that are gathering to this building.
+     */
+    static void paintWorkersAssignedToBuildings() {
+        setTextSizeLarge();
+        for (AUnit building : Select.ourBuildings().list()) {
+            if (!building.isBase() && !building.type().isGasBuilding()) {
+                continue;
+            }
+
+            // Paint text
+            int workers = AWorkerManager.getHowManyWorkersWorkingNear(building, false);
+            if (workers > 0) {
+                String workersAssigned = workers + "";
+                paintTextCentered(building.translateByPixels(-5, -36), workersAssigned, Color.Grey);
+            }
+        }
+        setTextSizeSmall();
+    }
+
+    /**
+     * If buildings are training units, it paints what unit is trained and the progress.
+     */
+    static void paintBuildingsTrainingUnitsAndResearching() {
+        setTextSizeMedium();
+        for (AUnit building : Select.ourBuildings().list()) {
+            if (!building.isBusy()) {
+                continue;
+            }
+
+            // UNITS PRODUCED
+            if (building.isTrainingAnyUnit()) {
+                AUnitType unitType = building.trainingQueue().get(0);
+                paintBuildingActionProgress(
+                        building,
+                        unitType.name(),
+                        building.remainingTrainTime(),
+                        unitType.totalTrainTime()
+                );
+            }
+
+            // RESEARCHING
+            else if (building.isResearching()) {
+                TechType techType = building.whatIsResearching();
+                paintBuildingActionProgress(
+                        building,
+                        techType.name(),
+                        building.remainingResearchTime(),
+                        techType.researchTime()
+                );
+            }
+
+            // UPGRADING
+            else if (building.isResearching()) {
+                UpgradeType upgradeType = building.whatIsUpgrading();
+                paintBuildingActionProgress(
+                        building,
+                        upgradeType.name(),
+                        building.remainingUpgradeTime(),
+                        upgradeType.upgradeTime()
+                );
+            }
+        }
+        setTextSizeSmall();
+    }
+
+    public static void paintBuildingActionProgress(AUnit building, String text, int remaining, int max) {
+        int labelMaxWidth = 90;
+        int labelHeight = 14;
+        int labelLeft = building.position().getX() - labelMaxWidth / 2;
+        int labelTop = building.position().getY();
+
+        double operationProgress = (max - remaining) / (max + 1.0);
+
+        // Paint box
+        paintRectangleFilled(
+                new APosition(labelLeft, labelTop), (int) (labelMaxWidth * operationProgress), labelHeight, Color.Grey
+        );
+
+        // Paint box borders
+        paintRectangle(
+                new APosition(labelLeft, labelTop), labelMaxWidth, labelHeight, Color.Black
+        );
+
+        // Display label
+        paintTextCentered(
+                new APosition(labelLeft + labelMaxWidth / 2, labelTop + 2), text, Color.White
+        );
+    }
+
+    /**
+     * Paints number of units killed and lost in the top right corner.
+     */
+    static void paintKilledAndLost() {
+        int x = 574;
+        int y = 18;
+        int dx = 30;
+        int dy = 9;
+
+        paintMessage("Killed: ", Color.White, x, y, true);
+        paintMessage("Lost: ", Color.White, x, y + dy, true);
+        paintMessage("-----------", Color.Grey, x, y + 2 * dy, true);
+        paintMessage("Price: ", Color.White, x, y + 3 * dy, true);
+
+        paintMessage(Atlantis.KILLED + "", Color.Green, x + dx, y, true);
+        paintMessage(Atlantis.LOST + "", Color.Red, x + dx, y + dy, true);
+
+        int balance = AGame.killsLossesResourceBalance();
+        Color color = balance >= 0 ? Color.Green : Color.Red;
+        paintMessage((balance >= 0 ? "+" : "") + balance, color, x + dx, y + 3 * dy, true);
+    }
+
+    /**
+     * Tooltips are units messages that appear over them and allow to report actions like "Repairing" or "Run
+     * from enemy" etc.
+     */
+    static void paintTooltipsOverUnits() {
+        for (AUnit unit : Select.our().list()) {
+            if (unit.isLoaded()) {
+                continue;
+            }
+
+            if (unit.hasTooltip() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+                String string = "";
+
+                if (unit.hasTooltip()) {
+                    string += unit.tooltip();
+                } else {
+                    string += "---";
+                }
+
+//            string += "/";
+//
+//            if (unit.getAction() != null) {
+//                string += unit.getAction();
+//            }
+//            else {
+//                string += "no_mission";
+//            }
+                paintTextCentered(unit.position(), string, Color.White);
+            }
+        }
+    }
+
+    /**
+     * Paints information about enemy units that are not visible, but as far as we know are alive.
+     */
+    static void paintFoggedUnitsThatIsEnemiesDiscovered() {
+        for (AbstractFoggedUnit foggedEnemy : EnemyInformation.discoveredAndAliveUnits()) {
+            if (!foggedEnemy.hasKnownPosition()) {
+                continue;
+            }
+
+            APosition topLeft;
+            topLeft = foggedEnemy.translateByPixels(
+                    -foggedEnemy.type().dimensionLeft(),
+                    -foggedEnemy.type().dimensionUp()
+            );
+//            paintRectangle(
+//                    topLeft,
+//                    foggedEnemy.type().getDimensionRight() / 32,
+//                    foggedEnemy.type().getDimensionDown() / 32,
+//                    Color.Grey
+//            );
+            paintRectangle(
+                    foggedEnemy.position(),
+                    foggedEnemy.type().dimensionRight() / 32,
+                    foggedEnemy.type().dimensionDown() / 32,
+                    Color.Grey
+            );
+            paintText(topLeft, foggedEnemy.type().name() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
+        }
+    }
+
+    /**
+     * Every frame paint next allowed location of Supply Depot. Can be used to debug construction finding, but
+     * slows the game down impossibly.
+     */
+    private static void paintTestSupplyDepotLocationsNearMain() {
+        AUnit worker = Select.ourWorkers().first();
+        AUnit base = Select.ourBases().first();
+        int tileX = base.position().tx();
+        int tileY = base.position().ty();
+        for (int x = tileX - 10; x <= tileX + 10; x++) {
+            for (int y = tileY - 10; y <= tileY + 10; y++) {
+                APosition position = APosition.create(x, y);
+                boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
+                        worker, AUnitType.Terran_Supply_Depot, position
+                );
+
+                paintCircleFilled(position, 4, canBuild ? Color.Green : Color.Red);
+
+                if (x == tileX && y == tileY) {
+                    paintCircleFilled(position, 10, canBuild ? Color.Green : Color.Red);
+                }
+            }
+        }
+    }
+
+    /**
+     * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
+     */
+    private static void paintEnemyRegionDetails() {
+        APosition enemyBase = EnemyUnits.enemyBase();
+        if (enemyBase != null) {
+            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
+//            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
+//            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
+            for (ARegionBoundary point : AScoutManager.scoutingAroundBasePoints.arrayList()) {
+                paintCircleFilled(point, 2, Color.Yellow);
+            }
+        }
+    }
+
+    /**
+     * Paints bars showing CPU time usage by game aspect (like "Production", "Combat", "Workers", "Scouting").
+     */
+    static void paintCodeProfiler() {
+        int counter = 0;
+        double maxValue = A.getMaxElement(
+                CodeProfiler.getAspectsTimeConsumption().values()
+        );
+
+        for (String aspectTitle : CodeProfiler.getAspectsTimeConsumption().keySet()) {
+            int x = timeConsumptionLeftOffset;
+            int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++;
+
+            int value = CodeProfiler.getAspectsTimeConsumption().get(aspectTitle).intValue();
+
+            // Draw aspect time consumption bar
+            int barWidth = (int) (timeConsumptionBarMaxWidth * value / maxValue);
+            if (barWidth < 3) {
+                barWidth = 3;
+            }
+            if (barWidth > timeConsumptionBarMaxWidth) {
+                barWidth = timeConsumptionBarMaxWidth;
+            }
+
+            bwapi.drawBoxScreen(x, y, x + barWidth, y + timeConsumptionBarHeight, Color.Grey, true);
+            bwapi.drawBoxScreen(x, y, x + timeConsumptionBarMaxWidth, y + timeConsumptionBarHeight, Color.Black);
+
+            // Draw aspect label
+            paintMessage(aspectTitle, Color.White, x + 4, y + 1, true);
+        }
+
+        // Paint total time
+        int x = timeConsumptionLeftOffset;
+        int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++ + 3;
+        int frameLength = (int) CodeProfiler.getTotalFrameLength();
+        paintMessage("Length: " + frameLength, Color.White, x + 4, y + 1, true);
+
+        paintSquadsInfo(x, y);
+    }
+
+    private static void paintSquadsInfo(int x, int y) {
+        y += 26;
+
+        if (Alpha.get().isNotEmpty()) {
+            paintMessage("Squads: ", Color.White, x + 4, y, true);
+            for (Squad squad : ASquadManager.allSquads()) {
+                if (squad.size() == 0) {
+                    continue;
+                }
+                paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y += 12, true);
+            }
+        }
+    }
+
+    private static void paintSquads() {
+        for (Squad squad : ASquadManager.allSquads()) {
+            APosition median = squad.center();
+            if (median != null) {
+                int maxDist = (int) (ASquadCohesionManager.preferredDistToSquadCenter(squad.size()) * 32);
+
+                APainter.paintCircle(median, maxDist + 1, Color.Cyan);
+                APainter.paintCircle(median, maxDist, Color.Cyan);
+
+                //            APainter.setTextSizeMedium();
+                //            APainter.paintTextCentered(median, "Median (" + maxDist + ")", Color.Cyan, 0, 0.5);
+            }
+        }
+    }
+
+    private static void paintLog() {
+        int x = rightSideMessageLeftOffset - 130;
+        int y = rightSideMessageTopOffset;
+
+        int counter = 0;
+        APainter.setTextSizeSmall();
+        for (LogMessage log : GameLog.get().messages()) {
+            paintMessage(log.message(), log.color(), x, y - 12 * counter++, true);
+        }
+    }
+
+    private static void paintCooldown(AUnit unit) {
+        boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);
+
+//        paintUnitProgressBar(unit, 27, 100, Color.Grey);
+        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldAvoidAnyUnit ? Color.Red : Color.Teal);
+    }
+
+    private static void paintLifeBar(AUnit unit) {
+        Color color = unit.isOur() ? Color.Green : Color.Yellow;
+
+//        if (unit.isWounded()) {
+        paintUnitProgressBar(unit, 17, 100, Color.Red);
+        paintUnitProgressBar(unit, 17, unit.hpPercent(), color);
+//        }
+    }
+
+    private static void paintUnitProgressBar(AUnit unit, int dpy, int progressPercent, Color barColor) {
+        int barWidth = 20;
+        int barHeight = 4;
+        APosition topLeft = new APosition(unit.x() - barWidth / 2, unit.y() + dpy);
+
+        // Progress bar
+        paintRectangleFilled(topLeft, (int) A.inRange(1, barWidth * progressPercent / 100, 100), barHeight, barColor);
+
+        // Bar borders
+        paintRectangle(topLeft, barWidth, barHeight, Color.Black);
+    }
+
+    private static void paintBar(APosition topLeft, int width, int height, Color barColor) {
+
+        // Progress bar
+        paintRectangleFilled(topLeft, width, height, barColor);
+
+        // Bar borders
+        paintRectangle(topLeft, width, height, Color.Black);
+    }
+
+    protected static void paintRegions() {
+        AUnit main = Select.main();
+        if (main == null) {
+            return;
+        }
+
+        ARegion mainRegion = main.position().region();
+        if (mainRegion == null) {
+            return;
+        }
+
+        paintRegionBoundaries(mainRegion);
+
+        APosition enemyBase = EnemyUnits.enemyBase();
+        if (enemyBase != null) {
+            paintRegionBoundaries(enemyBase.region());
+        }
+
+//        List<ARegion> regions = Regions.regions();
+//        for (ARegion region : regions) {
+//            APainter.paintRectangle(
+//                    region.center().translateByTiles(-3, -3),
+//                    6,
+//                    6,
+//                    Color.Brown
+//            );
+//            APainter.paintTextCentered(
+//                    region.center(),
+//                    region.toString(),
+//                    Color.Brown
+//            );
+//        }
+    }
+
+    protected static void paintRegionBoundaries(ARegion region) {
+        if (region == null) {
+            return;
+        }
+
+        APainter.paintCircle(region.center(), 6, Color.Brown);
+        APainter.paintCircle(region.center(), 5, Color.Brown);
+
+        ArrayList<ARegionBoundary> boundaries = region.boundaries();
+        for (ARegionBoundary boundary : boundaries) {
+            APosition position = boundary.position();
+            Color color = Color.Grey;
+//            Color color = Color.Green;
+            paintCircle(position, 4, color);
+            paintCircle(position, 3, color);
+        }
+
+    }
+
+    protected static void paintChokepoints() {
+
+        // All chokes
+        List<AChoke> chokePoints = Chokes.chokes();
+        for (AChoke choke : chokePoints) {
+            paintChoke(choke, Color.Brown, "");
+        }
+    }
+
+    protected static void paintStrategicLocations() {
+        if (AGame.isUms()) {
+            return;
+        }
+
+        APainter.setTextSizeMedium();
+
+        // Natural base
+        APosition natural = Bases.natural();
+        paintBase(natural, "Our natural", Color.Grey);
+
+        // Enemy base
+        APosition enemyBase = Bases.enemyNatural();
+        paintBase(enemyBase, "Enemy natural", Color.Orange);
+
+        // Our main choke
+        AChoke mainChoke = Chokes.mainChoke();
+        paintChoke(mainChoke, Color.Green, "Main choke");
+
+        // Our natural choke
+        AChoke naturalChoke = Chokes.natural(Bases.natural());
+        paintChoke(naturalChoke, Color.Green, "Natural choke");
+
+        // Enemy natural choke
+        AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
+        paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
+
+        // Next defensive building position
+//        if (Count.bases() > 0) {
+//            AUnitType building = AAntiLandBuildingRequests.building();
+//            paintConstructionPlace(AAntiLandBuildingRequests.positionForNextBuilding(), building, building.name(), Color.Brown);
+//        }
+
+//        paintTurretsInMain();
+    }
+
+    private static void paintTurretsInMain() {
+        ArrayList<APosition> turrets = TerranMissileTurretsForMain.positionsForTurretsNearMainBorder();
+//        System.out.println("turrets = " + turrets.size());
+        for (APosition turret : turrets) {
+//            System.out.println("turret = " + turret);
+            paintRectangle(turret, 34, 34, Color.Purple);
+            paintRectangle(turret.translateByPixels(1, 1), 32, 32, Color.Purple);
+            paintTextCentered(turret.translateByPixels(17, 12), "Turret", Color.Purple);
+
+//            CameraManager.centerCameraOn(turret);
+        }
+    }
+
+    private static void paintMineralDistance() {
+        AUnit mainBase = Select.main();
+        if (mainBase == null) {
+            return;
+        }
+
+        for (AUnit mineral : Select.minerals().inRadius(8, mainBase).list()) {
+            String dist = A.digit(mineral.distTo(mainBase));
+            int assigned = AWorkerManager.countWorkersAssignedTo(mineral);
+            setTextSizeLarge();
+            paintTextCentered(mineral, dist + " (" + assigned + ")", Color.White);
+        }
+
+        if (A.now() <= 100) {
+            for (AUnit worker : Select.ourWorkers().list()) {
+                if (worker.target() != null) {
+                    paintLine(worker, worker.target(), Color.Grey);
+                }
+            }
+        }
+    }
+
+}

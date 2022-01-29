@@ -1,14 +1,14 @@
 package atlantis.combat.missions;
 
-import atlantis.AGame;
-import atlantis.debug.APainter;
-import atlantis.enemy.EnemyInformation;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.map.AMap;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
-import atlantis.util.A;
 import bwapi.Color;
 
 

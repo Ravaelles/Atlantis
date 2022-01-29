@@ -1,9 +1,9 @@
 package atlantis.combat.missions;
 
-import atlantis.position.APosition;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.A;
 
 public abstract class MoveToFocusPoint {
 

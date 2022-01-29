@@ -1,10 +1,10 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.util.A;
 import atlantis.util.Cache;
 import bwapi.TilePosition;
 import bwem.BWEM;

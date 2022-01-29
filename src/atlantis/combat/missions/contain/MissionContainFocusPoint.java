@@ -2,14 +2,14 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
-import atlantis.enemy.EnemyInformation;
-import atlantis.enemy.EnemyUnits;
-import atlantis.information.AbstractFoggedUnit;
+import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 import atlantis.util.We;

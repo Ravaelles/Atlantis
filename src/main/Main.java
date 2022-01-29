@@ -1,8 +1,8 @@
 package main;
 
 import atlantis.Atlantis;
-import atlantis.AtlantisIgniter;
-import atlantis.env.Env;
+import atlantis.config.AtlantisIgniter;
+import atlantis.config.env.Env;
 import atlantis.keyboard.AKeyboard;
 import atlantis.util.ProcessHelper;
 

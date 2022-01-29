@@ -1,7 +1,7 @@
 package atlantis.production.requests;
 
-import atlantis.AtlantisConfig;
-import atlantis.position.APosition;
+import atlantis.config.AtlantisConfig;
+import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;

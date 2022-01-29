@@ -1,16 +1,16 @@
 package atlantis.production.orders;
 
-import atlantis.AGame;
 import atlantis.combat.missions.Mission;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.information.tech.ATech;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import atlantis.util.We;
-import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

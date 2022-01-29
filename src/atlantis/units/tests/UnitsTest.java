@@ -1,9 +1,9 @@
 package atlantis.units.tests;
 
-import atlantis.tests.unit.AbstractTestWithUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import org.junit.Test;
+import tests.unit.AbstractTestWithUnits;
 
 import java.util.List;
 

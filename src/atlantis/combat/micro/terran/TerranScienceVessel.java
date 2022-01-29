@@ -2,14 +2,14 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.micro.generic.MobileDetector;
-import atlantis.position.APosition;
+import atlantis.game.A;
+import atlantis.information.tech.ATech;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 import atlantis.util.Enemy;
-import atlantis.wrappers.ATech;
 import bwapi.TechType;
 
 public class TerranScienceVessel extends MobileDetector {

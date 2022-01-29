@@ -1,10 +1,10 @@
 package atlantis.production;
 
+import atlantis.game.A;
+import atlantis.information.tech.ATech;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.A;
-import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

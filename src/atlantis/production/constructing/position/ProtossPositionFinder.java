@@ -1,18 +1,18 @@
 package atlantis.production.constructing.position;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.debug.APainter;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import bwapi.Color;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {

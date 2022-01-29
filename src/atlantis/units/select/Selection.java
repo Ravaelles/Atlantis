@@ -1,12 +1,12 @@
 package atlantis.units.select;
 
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.repair.ARepairAssignments;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.util.A;
 
 import java.util.*;
 import java.util.function.Predicate;

@@ -1,8 +1,8 @@
 package atlantis.production.constructing;
 
-import atlantis.AGame;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.game.AGame;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
 import atlantis.production.constructing.position.AbstractPositionFinder;

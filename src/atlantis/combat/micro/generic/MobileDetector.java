@@ -1,7 +1,7 @@
 package atlantis.combat.micro.generic;
 
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;

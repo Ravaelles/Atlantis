@@ -1,9 +1,9 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.AGame;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
-import atlantis.enemy.EnemyInformation;
+import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.units.AUnit;

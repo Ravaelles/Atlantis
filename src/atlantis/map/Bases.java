@@ -1,9 +1,9 @@
 package atlantis.map;
 
-import atlantis.enemy.EnemyUnits;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.position.Positions;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.map.position.Positions;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;

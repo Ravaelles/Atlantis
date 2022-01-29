@@ -2,7 +2,7 @@ package atlantis.production.constructing.position;
 
 import atlantis.map.ABaseLocation;
 import atlantis.map.Bases;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

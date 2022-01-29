@@ -1,16 +1,16 @@
 package atlantis.combat.retreating;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.debug.APainter;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 import atlantis.util.Vector;
 import atlantis.util.We;
 import bwapi.Color;
@@ -557,6 +557,8 @@ public class ARunningManager {
         else {
             // Update last time run order was issued
             unit._lastStartedRunning = A.now();
+//            if (true) throw new RuntimeException("aaa");
+//            A.printStackTrace();
             unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false);
 
             // Make all other units very close to it run as well

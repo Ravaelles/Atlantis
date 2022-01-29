@@ -1,13 +1,13 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
+import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.wrappers.ATech;
 import bwapi.TechType;
 
 

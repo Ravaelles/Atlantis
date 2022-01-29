@@ -1,7 +1,7 @@
 package atlantis.combat.eval;
 
-import atlantis.AGame;
-import atlantis.position.PositionUtil;
+import atlantis.game.AGame;
+import atlantis.map.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 

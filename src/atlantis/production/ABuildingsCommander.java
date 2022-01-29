@@ -1,10 +1,10 @@
 package atlantis.production;
 
-import atlantis.AGame;
-import atlantis.buildings.managers.ASupplyManager;
-import atlantis.buildings.managers.TerranFlyingBuildingManager;
+import atlantis.game.AGame;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.production.dynamic.ADynamicProductionCommander;
+import atlantis.terran.TerranFlyingBuildingManager;
+import atlantis.units.buildings.ASupplyManager;
 import atlantis.util.We;
 
 /**

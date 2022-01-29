@@ -1,7 +1,7 @@
 package atlantis.units.select;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.util.Cache;
 import atlantis.util.Enemy;

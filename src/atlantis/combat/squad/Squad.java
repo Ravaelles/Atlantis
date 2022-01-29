@@ -3,7 +3,7 @@ package atlantis.combat.squad;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Count;

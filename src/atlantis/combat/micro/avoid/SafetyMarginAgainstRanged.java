@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.debug.APainter;
+import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Color;

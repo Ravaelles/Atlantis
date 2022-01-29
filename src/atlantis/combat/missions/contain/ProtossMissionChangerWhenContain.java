@@ -2,9 +2,9 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
-import atlantis.enemy.EnemyInformation;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.units.select.Count;
-import atlantis.util.A;
 
 public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain {
 

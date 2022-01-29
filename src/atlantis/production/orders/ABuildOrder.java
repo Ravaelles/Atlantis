@@ -1,8 +1,7 @@
 package atlantis.production.orders;
 
-import atlantis.AGame;
-import atlantis.AtlantisConfig;
-import atlantis.information.Neighborhood;
+import atlantis.config.AtlantisConfig;
+import atlantis.game.AGame;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -46,24 +45,23 @@ public abstract class ABuildOrder {
      *
      * See ADynamicWorkerProductionManager which is also used to produce workers.
      */
-    public boolean produceWorker() {
+    public boolean produceWorker(AUnit base) {
         if (!AGame.canAfford(50, 0) || AGame.supplyFree() < 1) {
             return false;
         }
 
-        AUnit aBase = Select.ourOneNotTrainingUnits(AtlantisConfig.BASE);
-        if (aBase != null && Neighborhood.isItSafeToProduceWorker(aBase)) {
-            return aBase.train(AtlantisConfig.WORKER);
+        if (base != null) {
+            return base.train(AtlantisConfig.WORKER);
         }
 
         // If we're here it means all bases are busy. Try queue request
-        for (AUnit base : Select.ourBases().reverse().list()) {
+        for (AUnit anotherBase : Select.ourBases().reverse().list()) {
             if (
-                    base.remainingTrainTime() <= 4
-                            && base.hasNothingInQueue()
+                    anotherBase.remainingTrainTime() <= 4
+                            && anotherBase.hasNothingInQueue()
                             && AGame.supplyFree() >= 2
             ) {
-                base.train(AtlantisConfig.WORKER);
+                anotherBase.train(AtlantisConfig.WORKER);
                 return true;
             }
         }

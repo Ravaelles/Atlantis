@@ -4,16 +4,16 @@ import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
-import atlantis.debug.APainter;
-import atlantis.enemy.EnemyInformation;
-import atlantis.enemy.EnemyUnits;
-import atlantis.information.AbstractFoggedUnit;
-import atlantis.log.Log;
-import atlantis.position.APosition;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.game.GameLog;
+import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import bwapi.Color;
 
 public class SquadScout {
@@ -63,7 +63,7 @@ public class SquadScout {
         squadScout.setTooltipTactical("MadeContact");
 
         if (Select.enemyCombatUnits().atMost(2)) {
-            Log.addMessage("Squad scout forced GLOBAL ATTACK");
+            GameLog.get().addMessage("Squad scout forced GLOBAL ATTACK");
             if (!Missions.isGlobalMissionAttack()) {
                 MissionChanger.forceMissionAttack();
             }

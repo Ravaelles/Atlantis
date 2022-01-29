@@ -1,7 +1,7 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.missions.AFocusPoint;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;

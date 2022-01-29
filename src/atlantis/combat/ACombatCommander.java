@@ -5,9 +5,9 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 
 public class ACombatCommander {
     

@@ -1,7 +1,7 @@
 package atlantis.production.dynamic;
 
 
-import atlantis.AGame;
+import atlantis.game.AGame;
 
 public class ADynamicProductionCommander {
 

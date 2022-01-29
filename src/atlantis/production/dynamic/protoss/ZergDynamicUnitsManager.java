@@ -1,7 +1,7 @@
 
 package atlantis.production.dynamic.protoss;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
 import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.units.AUnitType;

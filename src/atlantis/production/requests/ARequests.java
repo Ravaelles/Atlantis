@@ -1,7 +1,7 @@
 package atlantis.production.requests;
 
-import atlantis.AGame;
-import atlantis.position.APosition;
+import atlantis.game.AGame;
+import atlantis.map.position.APosition;
 
 
 public abstract class ARequests {

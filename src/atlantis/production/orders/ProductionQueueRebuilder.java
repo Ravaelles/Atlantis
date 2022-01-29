@@ -1,11 +1,11 @@
 package atlantis.production.orders;
 
+import atlantis.information.tech.ATech;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.wrappers.ATech;
-import atlantis.wrappers.MappingCounter;
+import atlantis.util.MappingCounter;
 
 import java.util.Comparator;
 
