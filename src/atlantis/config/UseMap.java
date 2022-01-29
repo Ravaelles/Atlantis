@@ -13,7 +13,7 @@ public class UseMap {
 
     public static String activeMap() {
 //        return "sscai/(2)Destination.scx";
-        return "sscai/(2)Heartbreak Ridge.scx";
+//        return "sscai/(2)Heartbreak Ridge.scx";
 //        return "sscai/(4)Roadrunner.scx";
 //        return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
@@ -23,9 +23,10 @@ public class UseMap {
 
 //        return "ums/rav/Dragoons_v_Zerglings.scm";
 //        return "ums/rav/ZealDrag_v_LingsHydra.scm";
-//        return "ums/rav/ZealDrag_v_ZealDrag.scm";
+        return "ums/rav/ZealDrag_v_ZealDrag.scm";
 //        return "ums/rav/Zeal_v_Zeal.scm";
 //        return "ums/rav/3Zeal_v_1Zeal.scm";
+//        return "ums/rav/4Drag_v_Zeal.scm";
 //        return "ums/rav/3Drag_v_1Drag.scm";
 //        return "ums/rav/3Drag_v_4Drag.scm";
 //        return "ums/rav/4Drag_v_4Drag.scm";

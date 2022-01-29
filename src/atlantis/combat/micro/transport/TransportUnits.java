@@ -2,9 +2,12 @@ package atlantis.combat.micro.transport;
 
 import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import bwapi.Color;
+
+import static atlantis.units.AUnitType.Protoss_High_Templar;
 
 public class TransportUnits {
 
@@ -78,6 +81,9 @@ public class TransportUnits {
     }
 
     private static boolean shouldLoad(AUnit unit) {
+        if (!unit.is(AUnitType.Protoss_Reaver, Protoss_High_Templar)) {
+            return false;
+        }
 
         // Always load when unit is moving, otherwise it walks instead of flying
         if (unit.isMoving() && unit.targetPositionAtLeastAway(3)) {

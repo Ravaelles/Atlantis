@@ -62,6 +62,10 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
+        if (unit.isMelee() && unit.friendsNearby().inRadius(1.3, unit).atLeast(3)) {
+            return true;
+        }
+
         return false;
 //        return enemies.onlyMelee() && unit.hp() >= 18;
     }

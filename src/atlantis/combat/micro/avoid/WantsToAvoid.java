@@ -16,13 +16,14 @@ public class WantsToAvoid {
 
         // =========================================================
 
-//        System.out.println("(new FightInsteadAvoid(unit, enemies)).shouldFight() = " + (new FightInsteadAvoid(unit, enemies)).shouldFight());
         if (!shouldAlwaysAvoid(unit, enemies)) {
             if (
                     !unit.hasNoWeaponAtAll()
                     && (new FightInsteadAvoid(unit, enemies)).shouldFight()
             ) {
-//                System.err.println("FIGHT INSTEAD AVOID " + unit.namePlusId() + " // " + unit.hp());
+//                APainter.paintCircle(unit, 10, Color.Green);
+//                APainter.paintCircle(unit, 11, Color.Green);
+
                 return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
             }
         }
@@ -40,8 +41,13 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
-        if (unit.isWorker() || unit.isScout() || unit.hpLessThan(17)) {
-            unit.addLog("AlwaysAvoid" + unit.isSquadScout() + unit.isScout());
+        if (unit.isWorker() || unit.isScout()) {
+            unit.addLog("AlwaysAvoid");
+            return true;
+        }
+
+        if (unit.hpLessThan(17) && !enemies.onlyMelee()) {
+            unit.addLog("AlmostDead");
             return true;
         }
 

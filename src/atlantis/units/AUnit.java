@@ -61,7 +61,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
     protected AUnitType _lastType = null;
-    private Log log = new Log(30, 3);
+    private Log log = new Log(30, 5);
     private Action unitAction = Actions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
@@ -748,8 +748,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return runningManager.isRunning()
-                || unit().action().isRunning();
+        return runningManager.isRunning() || action().isRunning();
     }
 
     public boolean lastOrderMinFramesAgo(int minFramesAgo) {
@@ -1794,6 +1793,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isSquadScout() {
+        if (A.isUms()) {
+            return false;
+        }
+
         return squad() != null && equals(squad().getSquadScout());
     }
 

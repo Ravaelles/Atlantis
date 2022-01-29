@@ -84,7 +84,6 @@ MISSION=ATTACK
 10 - Forge
 //14 - Nexus - @NATURAL
 14 - Photon Cannon
-14 - Photon Cannon
 16 - Pylon
 16 - Gateway
 16 - Assimilator - @MAIN

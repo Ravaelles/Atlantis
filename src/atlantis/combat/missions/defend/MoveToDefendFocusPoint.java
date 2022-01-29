@@ -40,8 +40,16 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
                 + (unit.isMedic() ? -2.5 : 0)
                 + (unit.isMarine() ? 2 : 0)
                 + letWorkersComeThroughBonus
-                + (unit.isRanged() ? 3 : 0)
+                + rangedDistBonus()
                 + ourUnitsNearbyBonus;
+    }
+
+    private static double rangedDistBonus() {
+        if (unit.isDragoon()) {
+            return 1.7;
+        }
+
+        return (unit.isRanged() ? 3 : 0);
     }
 
 }

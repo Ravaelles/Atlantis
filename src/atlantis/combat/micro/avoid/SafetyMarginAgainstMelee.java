@@ -23,11 +23,20 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // === Protoss ===============================================
 
-        if (defender.isDragoon() && (
-                defender.isHealthy() || !defender.equals(attacker.target()) || !attacker.isFacingItsTarget()
-        )) {
-            return 0.2;
-//            criticalDist = handleDragoon(defender, attacker);
+        if (defender.isDragoon()) {
+            boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
+            if (
+                    (attacker.hp() <= 16 || defender.shieldDamageAtMost(32))
+                    && (
+                        !enemyFacingUs
+                        || defender.lastAttackFrameMoreThanAgo(90)
+                        || (defender.lastAttackFrameMoreThanAgo(40) && defender.lastUnderAttackMoreThanAgo(150))
+                    )
+            ) {
+                defender.addLog("CoolDragoon");
+                return (defender.isHealthy() || enemyFacingUs) ? -1 : 1.2;
+    //            criticalDist = handleDragoon(defender, attacker);
+            }
         }
 
 //        if (defender.isProtoss()) {
@@ -54,7 +63,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     + enemyMovementBonus(defender, attacker);
 
             // 3.9 tiles (almost base width) should be enough as a minimum versus melee unit
-            criticalDist = Math.min(criticalDist, 3.9);
+            criticalDist = Math.min(criticalDist, 3.4);
         }
 
         if (defender.isRanged() && attacker.isWorker()) {

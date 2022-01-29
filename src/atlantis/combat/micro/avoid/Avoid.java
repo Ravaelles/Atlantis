@@ -33,7 +33,7 @@ public class Avoid {
         APainter.paintCircle(runFrom, 2, Color.Orange);
 
         if (unit.runningManager().runFrom(runFrom, getRunDistance(unit), Actions.RUN_ENEMIES)) {
-            APainter.paintCircleFilled(unit.position(), 5, Color.Green);
+//            APainter.paintCircleFilled(unit.position(), 5, Color.Green);
             APainter.paintCircleFilled(runFrom, 5, Color.Red);
 //            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
             return true;
@@ -88,6 +88,7 @@ public class Avoid {
 
     protected static boolean handleErrorRun(AUnit unit) {
 //        System.err.println("ERROR_RUN for " + unit.nameWithId());
+        unit.addLog("RUN-ERROR");
 
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
         unit.setTooltipTactical("Cant run, fight");

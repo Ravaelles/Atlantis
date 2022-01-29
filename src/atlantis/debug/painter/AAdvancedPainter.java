@@ -195,7 +195,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintLog(AUnit unit) {
-        int baseOffset = 10;
+        int baseOffset = 13;
         int counter = 0;
         for (int i = unit.log().messages().size() - 1; i >= 0; i--) {
             LogMessage message = unit.log().messages().get(i);
@@ -206,7 +206,7 @@ public class AAdvancedPainter extends APainter {
 //                    Color.Grey,
                     Color.Yellow,
                     0,
-                    (baseOffset + (9 * (counter++))) / 32.0
+                    (baseOffset + (8 * (counter++))) / 32.0
             );
         }
     }

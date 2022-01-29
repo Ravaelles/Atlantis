@@ -15,7 +15,7 @@ import atlantis.util.We;
 public class AExpansionManager {
 
     public static boolean shouldBuildNewBase() {
-        if (Count.existingOrInProductionOrInQueue(AtlantisConfig.BASE) >= 2) {
+        if (Count.bases() >= 5 || Count.inProductionOrInQueue(AtlantisConfig.BASE) >= 1) {
             return false;
         }
 

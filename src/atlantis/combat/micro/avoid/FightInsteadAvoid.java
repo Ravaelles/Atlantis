@@ -61,7 +61,7 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (dontFightInImportantCases()) {
+        if (dontFightInTopImportantCases()) {
             unit.addLog("DontFightImportant");
             return false;
         }
@@ -102,8 +102,8 @@ public class FightInsteadAvoid {
             }
 
             if (unit.isRanged() && ranged == null) {
-                unit.addLog("FightRanged");
-                return true;
+//                unit.addLog("FightRanged");
+                return false;
             } else {
                 unit.addLog("Retreat");
                 return false;
@@ -145,7 +145,7 @@ public class FightInsteadAvoid {
         }
     }
 
-    protected boolean dontFightInImportantCases() {
+    protected boolean dontFightInTopImportantCases() {
 
         // Always avoid invisible combat units
         if (invisibleDT != null || invisibleCombatUnit != null) {
@@ -182,6 +182,7 @@ public class FightInsteadAvoid {
     protected boolean fightAsRangedUnit() {
         if (melee != null) {
             unit.addLog("RunMelee" + A.dist(unit, melee));
+//            unit.addLog("RunMelee");
             return false;
         }
 
@@ -234,8 +235,12 @@ public class FightInsteadAvoid {
     // =========================================================
 
     private boolean finishOffAlmostDeadTarget(AUnit unit) {
+        if (unit.cooldownRemaining() >= 5) {
+            return false;
+        }
+
         AUnit target = unit.target();
-        if (target != null && target.hp() <= unit.damageAgainst(target)) {
+        if (target != null && target.hp() <= (unit.damageAgainst(target) + 8)) {
             return true;
         }
 
