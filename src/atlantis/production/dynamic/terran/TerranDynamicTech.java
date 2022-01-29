@@ -1,10 +1,10 @@
 package atlantis.production.dynamic.terran;
 
+import atlantis.game.A;
+import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.decisions.OurDecisions;
+import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.ADynamicTech;
-import atlantis.strategy.OurStrategy;
-import atlantis.strategy.decisions.OurDecisions;
-import atlantis.util.A;
-import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

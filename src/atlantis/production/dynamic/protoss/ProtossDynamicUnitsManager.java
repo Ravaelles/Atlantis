@@ -1,12 +1,12 @@
 
 package atlantis.production.dynamic.protoss;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
 import atlantis.information.ProtossArmyComposition;
+import atlantis.information.strategy.EnemyStrategy;
+import atlantis.information.strategy.GamePhase;
 import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.BuildOrderSettings;
-import atlantis.strategy.EnemyStrategy;
-import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

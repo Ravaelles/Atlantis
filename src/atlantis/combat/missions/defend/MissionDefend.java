@@ -1,8 +1,8 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.AGame;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
+import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Have;
@@ -62,6 +62,11 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
-        return unit.hp() >= 18;
+        if (unit.isMelee() && unit.friendsNearby().inRadius(1.3, unit).atLeast(3)) {
+            return true;
+        }
+
+        return false;
+//        return enemies.onlyMelee() && unit.hp() >= 18;
     }
 }

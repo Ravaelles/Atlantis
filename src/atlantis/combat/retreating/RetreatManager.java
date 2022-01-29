@@ -1,15 +1,13 @@
 package atlantis.combat.retreating;
 
-import atlantis.AGame;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
-import atlantis.position.APosition;
+import atlantis.game.AGame;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Units;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
-
-import java.util.Objects;
 
 public class RetreatManager {
 
@@ -24,7 +22,7 @@ public class RetreatManager {
     public static boolean shouldRetreat(AUnit unit) {
         return cache.get(
                 "shouldRetreat:" + unit.id(),
-                3,
+                35,
                 () -> {
                     if (shouldNotConsiderRetreatingNow(unit)) {
                         return false;
@@ -32,30 +30,63 @@ public class RetreatManager {
 
                     Selection enemies = enemies(unit);
 
-                    boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
-
-                    // If situation is unfavorable, retreat
-                    if (!isSituationFavorable) {
-                        unit._lastRetreat = AGame.now();
-                        GLOBAL_RETREAT_COUNTER++;
-                        unit.setTooltip("Retreat");
-                        MissionChanger.notifyThatUnitRetreated(unit);
-                        APosition averageEnemyPosition = enemies.units().average();
-
-                        if (unit.position().equals(averageEnemyPosition)) {
-                            averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
-                        }
-
-                        return unit.runningManager().runFrom(averageEnemyPosition, 3.5);
+                    if (shouldSmallScaleRetreat(unit, enemies)) {
+                        return true;
                     }
-
-                    if (Objects.equals(unit.tooltip(), "Retreat")) {
-                        unit.removeTooltip();
+                    if (shouldLargeScaleRetreat(unit, enemies)) {
+                        return true;
                     }
 
                     return false;
                 }
         );
+    }
+
+    private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
+        if (!unit.isTerran() && unit.isRanged() && unit.isHealthy()) {
+            return false;
+        }
+
+        double radius = 1.2;
+        Selection friends = unit.friendsNearby().inRadius(radius, unit);
+        Selection veryCloseEnemies = enemies.inRadius(radius, unit);
+
+        if (veryCloseEnemies.totalHp() > friends.totalHp()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
+        boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
+        if (!isSituationFavorable) {
+            unit._lastRetreat = AGame.now();
+            GLOBAL_RETREAT_COUNTER++;
+            unit.setTooltipTactical("Retreat");
+            MissionChanger.notifyThatUnitRetreated(unit);
+            APosition averageEnemyPosition = enemies.units().average();
+
+            if (unit.position().equals(averageEnemyPosition)) {
+                averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
+            }
+
+            if (averageEnemyPosition == null) {
+                return false;
+            }
+
+            return unit.runningManager().runFrom(averageEnemyPosition, 3.5, Actions.RUN_RETREAT);
+        }
+
+        if ("Retreat".equals(unit.tooltip())) {
+            unit.removeTooltip();
+        }
+
+        return false;
+    }
+
+    public static boolean getCachedShouldRetreat(AUnit unit) {
+        return cache.has("shouldRetreat:" + unit.id()) && cache.get("shouldRetreat:" + unit.id());
     }
 
     /**
@@ -81,9 +112,9 @@ public class RetreatManager {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
-        if (unit.isHealthy()) {
-            return true;
-        }
+//        if (unit.isHealthy()) {
+//            return true;
+//        }
 
         if (unit.isStimmed()) {
             return true;

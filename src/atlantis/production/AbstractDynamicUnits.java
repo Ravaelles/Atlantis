@@ -1,6 +1,6 @@
 package atlantis.production;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.AddToQueue;
 import atlantis.production.orders.ProductionQueue;

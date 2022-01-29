@@ -73,10 +73,22 @@ MISSION=ATTACK
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-8 - Pylon - @NATURAL
-14 - Nexus - @NATURAL
-16 - Forge - @NATURAL
-17 - Photon Cannon - @NATURAL
-18 - Photon Cannon - @NATURAL
-16 - Gateway - @NATURAL
-18 - Pylon
+//8 - Pylon - @NATURAL
+//14 - Nexus - @NATURAL
+//16 - Forge - @NATURAL
+//17 - Photon Cannon - @NATURAL
+//18 - Photon Cannon - @NATURAL
+//16 - Gateway - @NATURAL
+//18 - Pylon - @NATURAL
+9 - Pylon
+10 - Forge
+//14 - Nexus - @NATURAL
+14 - Photon Cannon
+16 - Pylon
+16 - Gateway
+16 - Assimilator - @MAIN
+18 - Zealot
+21 - Cybernetics Core
+24 - Protoss Ground Weapons
+24 - Pylon - @MAIN
+27 - Citadel of Adun - @MAIN

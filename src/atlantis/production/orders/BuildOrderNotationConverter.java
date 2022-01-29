@@ -1,6 +1,6 @@
 //package atlantis.production.orders;
 //
-//import atlantis.AtlantisConfig;
+//import atlantis.config.AtlantisConfig;
 //import atlantis.production.ProductionOrder;
 //
 //import java.util.ArrayList;

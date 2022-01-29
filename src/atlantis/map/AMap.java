@@ -1,19 +1,14 @@
 package atlantis.map;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.position.PositionHelper;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.util.A;
 import atlantis.util.Cache;
 import bwapi.TilePosition;
 import bwem.BWEM;
 import bwem.BWMap;
-import jbweb.*;
 
 /**
  * This class provides information about high-abstraction level map operations like returning place for the
@@ -117,6 +112,10 @@ public class AMap {
             if (
                     position.isWalkable()
                             && !position.isExplored()
+//                            && position.translateByTiles(-1, 0).isWalkable()
+//                            && position.translateByTiles(1, 0).isWalkable()
+//                            && position.translateByTiles(0, 1).isWalkable()
+//                            && position.translateByTiles(0, -1).isWalkable()
                             && startPoint.position().hasPathTo(position)
                             && startPoint.position().groundDistanceTo(position) <= 100
             ) {

@@ -3,11 +3,11 @@ package atlantis.combat.micro.zerg;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.stack.StackedUnitsManager;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.enemy.EnemyInformation;
-import atlantis.position.APosition;
-import atlantis.scout.AScoutManager;
+import atlantis.information.enemy.EnemyInformation;
+import atlantis.map.position.APosition;
+import atlantis.map.scout.AScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class ZergOverlordManager {
@@ -15,7 +15,7 @@ public class ZergOverlordManager {
     public static boolean update(AUnit unit) {
 
         if (AAvoidUnits.avoidEnemiesIfNeeded(unit)) {
-            unit.setTooltip("Uaaa!");
+            unit.setTooltipTactical("Uaaa!");
             return true;
         }
 
@@ -62,7 +62,7 @@ public class ZergOverlordManager {
     private static boolean stayInHome(AUnit overlord) {
         AUnit main = Select.main();
         if (main != null && overlord.distToMoreThan(main, 8)) {
-            return overlord.move(main, UnitActions.MOVE, "Home");
+            return overlord.move(main, Actions.MOVE_FOCUS, "Home", true);
         }
 
         return false;
@@ -72,7 +72,7 @@ public class ZergOverlordManager {
         APosition medianUnitPosition = Alpha.get().center();
         if (medianUnitPosition != null) {
             if (overlord.distTo(medianUnitPosition) > 2.5) {
-                overlord.move(medianUnitPosition, UnitActions.MOVE, "Follow army");
+                overlord.move(medianUnitPosition, Actions.MOVE_FOLLOW, "Follow army", true);
                 return true;
             }
         }
@@ -84,8 +84,8 @@ public class ZergOverlordManager {
      * We don't know at any enemy building location.
      */
     private static boolean actWhenDontKnowEnemyLocation(AUnit unit) {
-        unit.setTooltip("Find enemy");
-        return AScoutManager.tryFindingEnemyBuilding(unit);
+        unit.setTooltipTactical("Find enemy");
+        return AScoutManager.tryFindingEnemy(unit);
     }
 
 }

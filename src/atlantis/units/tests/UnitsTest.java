@@ -1,13 +1,13 @@
 package atlantis.units.tests;
 
-import atlantis.tests.unit.AbstractTestWithUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import org.junit.Test;
+import tests.unit.AbstractTestWithUnits;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class UnitsTest extends AbstractTestWithUnits {
 

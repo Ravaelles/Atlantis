@@ -1,7 +1,7 @@
 package atlantis.units.select;
 
-import atlantis.AtlantisConfig;
-import atlantis.enemy.EnemyInformation;
+import atlantis.config.AtlantisConfig;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -9,7 +9,10 @@ import atlantis.units.Units;
 import atlantis.util.Cache;
 import atlantis.util.We;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This class allows to easily select units e.g. to select one of your Marines, nearest to given location, you

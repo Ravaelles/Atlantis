@@ -1,11 +1,5 @@
 package atlantis.combat.micro.managers;
 
-import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.MissionUnitManager;
-import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
-
 //public class ContainUnitManager extends MissionUnitManager {
 //
 //    private Mission mission;

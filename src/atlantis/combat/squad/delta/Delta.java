@@ -2,7 +2,6 @@ package atlantis.combat.squad.delta;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.beta.Beta;
 import atlantis.units.select.Count;
 
 /**

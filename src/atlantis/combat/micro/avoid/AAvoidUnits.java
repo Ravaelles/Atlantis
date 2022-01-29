@@ -1,12 +1,11 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.debug.APainter;
-import atlantis.enemy.EnemyUnits;
+import atlantis.debug.painter.APainter;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import atlantis.util.Cache;
 import bwapi.Color;
 
@@ -35,25 +34,22 @@ public abstract class AAvoidUnits {
             return false;
         }
 
-//        System.out.println(unit.idWithHash() + " (" + unit.hp() + "hp) has " + enemiesDangerouslyClose.size() + " enemies around");
-        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
-        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-            APainter.paintLine(enemy, unit, Color.Orange);
-//            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
-        }
-
-//        AUnit first = enemiesDangerouslyClose.first();
-//        String firstValue = A.digit(enemiesDangerouslyClose.valueFor(first));
-//        APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-//                "C=" + enemiesDangerouslyClose.size() + "(" + first.name() + ":" + firstValue + ")",
-//                Color.Teal);
+//        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+//        for (AUnit enemy : enemiesDangerouslyClose.list()) {
+//            APainter.paintLine(enemy, unit, Color.Orange);
+////            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
+//        }
 
         // =========================================================
 
         // Only COMBAT BUILDINGS
         if (onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
-            if (RetreatManager.shouldNotEngageCombatBuilding(unit)) {
-                return AvoidCombatBuildingsFix.handle(unit, enemiesDangerouslyClose);
+            if (
+                    RetreatManager.shouldNotEngageCombatBuilding(unit)
+                    && AvoidCombatBuildingsFix.handle(unit, enemiesDangerouslyClose)
+            ) {
+                unit.addLog("KeepAway");
+                return true;
             }
 
             return false;
@@ -61,12 +57,13 @@ public abstract class AAvoidUnits {
 
         // Only ENEMY WORKERS
         if (unit.hpPercent() >= 70 && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()) {
+            unit.addLog("FightWorkers");
             return false;
         }
 
         else {
             // Standard case
-            if (WantsToAvoid.units(unit, enemiesDangerouslyClose)) {
+            if (WantsToAvoid.unitOrUnits(unit, enemiesDangerouslyClose)) {
                 return true;
             }
         }
@@ -95,9 +92,10 @@ public abstract class AAvoidUnits {
     public static Units unitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
         return cache.get(
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
-            2,
+            4,
             () -> {
                 Units enemies = new Units();
+//                System.out.println("enemyUnitsToPotentiallyAvoid(unit) = " + enemyUnitsToPotentiallyAvoid(unit).size());
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
 //                    APainter.paintLine(enemy, unit, Color.Yellow);
                     enemies.addUnitWithValue(enemy, SafetyMargin.calculate(unit, enemy));

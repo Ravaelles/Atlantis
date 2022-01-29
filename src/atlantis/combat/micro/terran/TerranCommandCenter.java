@@ -1,14 +1,14 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.AGame;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.ABaseLocation;
 import atlantis.map.Bases;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class TerranCommandCenter {
                         if (building.distToLessThan(baseLocation, 1.5)) {
                             building.land(building.makeLandable().toTilePosition());
                         } else {
-                            building.move(baseLocation.position(), UnitActions.MOVE, "Rebase");
+                            building.move(baseLocation.position(), Actions.MOVE_SPECIAL, "Rebase", true);
                         }
                     }
                     return true;

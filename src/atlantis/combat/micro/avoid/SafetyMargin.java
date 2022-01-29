@@ -61,7 +61,20 @@ public class SafetyMargin {
                     );
         }
         else {
-            return defender.isTargetedBy(attacker) ? 1.2 : -1.0;
+//            return defender.isTargetedBy(attacker) ? 1.2 : -1.0;
+
+            // TARGETED by enemy
+            if (defender.isTargetedBy(attacker)) {
+                return 1.2;
+            }
+
+            // NOT targeted by enemy
+            else {
+//                if (defender.isDragoon() && defender.hp() >= 40) {
+//                    return -2.0;
+//                }
+                return -1.0;
+            }
         }
 
 //        if (attacker.isMoving()) {

@@ -1,10 +1,10 @@
 package atlantis.combat.micro.generic;
 
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
@@ -42,7 +42,7 @@ public class MobileDetector {
                 .inRadius(minDistBetween, unit).exclude(unit);
         if (units.count() > 0) {
             AUnit otherunit = units.nearestTo(unit);
-            unit.moveAwayFrom(otherunit.position(), minDistBetween, "SpreadDetectors");
+            unit.moveAwayFrom(otherunit.position(), minDistBetween, "SpreadDetectors", Actions.MOVE_FORMATION);
             return true;
         }
 
@@ -62,7 +62,7 @@ public class MobileDetector {
         if (scout != null) {
             unitForSquadScout = unit;
             if (scout.distTo(unit) > 1) {
-                unitForSquadScout.move(scout, UnitActions.MOVE, "FollowScout");
+                unitForSquadScout.move(scout, Actions.MOVE_FOLLOW, "FollowScout", true);
             }
             return true;
         }
@@ -79,7 +79,7 @@ public class MobileDetector {
         if (goTo != null) {
             unitForArmy = unit;
             if (goTo.distTo(unit) > 1) {
-                unitForArmy.move(goTo, UnitActions.MOVE, "Follow");
+                unitForArmy.move(goTo, Actions.MOVE_FOLLOW, "Follow", true);
             }
             return true;
         }
@@ -104,7 +104,7 @@ public class MobileDetector {
         if (dangerousInvisibleEnemy != null) {
             unitForBase = unit;
             if (unitForBase.distTo(dangerousInvisibleEnemy) > 0.2) {
-                unitForBase.move(dangerousInvisibleEnemy.position(), UnitActions.MOVE, "RevealEnemy");
+                unitForBase.move(dangerousInvisibleEnemy.position(), Actions.MOVE_ENGAGE, "RevealEnemy", true);
             }
             return true;
         }

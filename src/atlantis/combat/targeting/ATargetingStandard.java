@@ -96,7 +96,7 @@ public class ATargetingStandard extends ATargeting {
 
         return Select.enemyRealUnits()
                 .effVisible()
-                .canBeAttackedBy(unit, 5)
+                .canBeAttackedBy(unit, 150)
                 .nearestTo(unit);
     }
 

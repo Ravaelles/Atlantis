@@ -1,12 +1,11 @@
 package atlantis.production.constructing;
 
-import atlantis.AGame;
-import atlantis.position.HasPosition;
-import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.position.APosition;
+import atlantis.game.AGame;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
+import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
@@ -134,7 +133,7 @@ public class ConstructionRequests {
     /**
      * Returns ConstructionOrder object for given builder.
      */
-    public static ConstructionOrder getConstructionOrderFor(AUnit builder) {
+    public static ConstructionOrder constructionOrderFor(AUnit builder) {
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (builder.equals(constructionOrder.builder())) {
                 return constructionOrder;
@@ -281,19 +280,19 @@ public class ConstructionRequests {
      *
      * @return
      */
-    public static ArrayList<ConstructionOrder> allConstructionOrders() {
+    public static ArrayList<ConstructionOrder> all() {
         return new ArrayList<>(constructionOrders);
     }
 
-    public static ArrayList<HasPosition> allConstructionOrdersIncludingCached() {
-        ArrayList<HasPosition> positions = new ArrayList<>();
-        for (ConstructionOrder order : ConstructionRequests.constructionOrders) {
-            positions.add(order.positionToBuild());
-        }
-        positions.addAll(APositionFinder.cache.values());
-
-        return positions;
-    }
+//    public static ArrayList<HasPosition> allConstructionOrdersIncludingCached() {
+//        ArrayList<HasPosition> positions = new ArrayList<>();
+//        for (ConstructionOrder order : ConstructionRequests.constructionOrders) {
+//            positions.add(order.positionToBuild());
+//        }
+//        positions.addAll(APositionFinder.cache.values());
+//
+//        return positions;
+//    }
 
     /**
      * @return first int is number minerals, second int is number of gas required.

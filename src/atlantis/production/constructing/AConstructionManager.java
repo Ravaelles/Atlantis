@@ -1,9 +1,9 @@
 package atlantis.production.constructing;
 
-import atlantis.AGame;
-import atlantis.AtlantisConfig;
+import atlantis.config.AtlantisConfig;
+import atlantis.game.AGame;
+import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.APositionFinder;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -53,7 +53,7 @@ public class AConstructionManager {
                                 && constructionOrder.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
                 ) {
                     builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(constructionOrder.construction());
-                    builder.setTooltip("Resume");
+                    builder.setTooltipTactical("Resume");
                 }
             }
         }
@@ -138,7 +138,7 @@ public class AConstructionManager {
         // Building doesn't exist yet, means builder is travelling to the construction place
         else if (builder != null && !builder.isMoving()) {
             if (order.positionToBuild() == null) {
-                APosition positionToBuild = APositionFinder.getPositionForNew(
+                APosition positionToBuild = APositionFinder.findPositionForNew(
                         order.builder(), order.buildingType(), order
                 );
                 order.setPositionToBuild(positionToBuild);
@@ -161,7 +161,7 @@ public class AConstructionManager {
      */
     public static boolean isBuilder(AUnit worker) {
         if (worker.isConstructing() || 
-                (!AGame.isPlayingAsProtoss() && ConstructionRequests.getConstructionOrderFor(worker) != null)) {
+                (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionOrderFor(worker) != null)) {
             return true;
         }
 
@@ -187,7 +187,7 @@ public class AConstructionManager {
      */
     private static void handleZergConstructionsWhichBecameBuildings() {
         if (AGame.isPlayingAsZerg()) {
-            ArrayList<ConstructionOrder> allOrders = ConstructionRequests.allConstructionOrders();
+            ArrayList<ConstructionOrder> allOrders = ConstructionRequests.all();
             if (!allOrders.isEmpty()) {
                 for (ConstructionOrder constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.builder();

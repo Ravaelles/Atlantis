@@ -1,9 +1,9 @@
 package atlantis.combat.micro;
 
-import atlantis.debug.APainter;
+import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
 import bwapi.Color;
 
 public class Unfreezer {
@@ -13,7 +13,7 @@ public class Unfreezer {
      * This is my ugly way of fixing this.
      */
     public static boolean handleUnfreeze(AUnit unit) {
-        if (unit.isRunning() && unit.lastOrderFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES) {
+        if (unit.isRunning() && unit.lastActionFramesAgo() >= (AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES + 1)) {
             if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
                 System.err.println("UNFREEZE #1!");
 //                unit.setTooltip("UNFREEZE!");
@@ -54,21 +54,20 @@ public class Unfreezer {
 //        GameSpeed.changeSpeedTo(70);
 //        GameSpeed.pauseGame();
 
-        if (Select.main() != null && unit.move(Select.main(), UnitActions.MOVE, "Unfreeze")) {
+        if (Select.main() != null && unit.moveTactical(Select.main(), Actions.MOVE_SPECIAL, "Unfreeze")) {
             return true;
         }
 
-//        if (unit.isHoldingPosition()) {
-        if (unit.move(unit.translateByPixels(8, 0), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(8, 0), Actions.MOVE_SPECIAL, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.translateByPixels(-8, 0), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(-8, 0), Actions.MOVE_SPECIAL, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.translateByPixels(0, 8), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(0, 8), Actions.MOVE_SPECIAL, "Unfreeze")) {
             return true;
         }
-        if (unit.move(unit.translateByPixels(0, -8), UnitActions.MOVE, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(0, -8), Actions.MOVE_SPECIAL, "Unfreeze")) {
             return true;
         }
 //        } else {

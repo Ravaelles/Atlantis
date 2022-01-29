@@ -1,11 +1,11 @@
 package atlantis.units;
 
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.position.PositionHelper;
-import atlantis.position.PositionUtil;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.map.position.PositionHelper;
+import atlantis.map.position.PositionUtil;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 
 import java.util.*;
 import java.util.stream.Stream;

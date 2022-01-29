@@ -4,9 +4,8 @@ import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.ASquadCohesionManager;
-import atlantis.combat.squad.SquadScout;
+import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 
 public class MissionContain extends Mission {
@@ -19,7 +18,7 @@ public class MissionContain extends Mission {
     @Override
     public boolean update(AUnit unit) {
         AFocusPoint focusPoint = focusPoint();
-        unit.setTooltip("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
+        unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
 
         // =========================================================
 
@@ -66,7 +65,7 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        if (unit.distTo(enemy) > (unit.distTo(focusPoint) + 0.2)) {
+        if (focusPoint != null && unit.distTo(enemy) > (unit.distTo(focusPoint) + 0.2)) {
             return false;
         }
 

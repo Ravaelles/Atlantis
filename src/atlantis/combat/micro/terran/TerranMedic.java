@@ -1,14 +1,14 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.combat.micro.Microable;
 import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.debug.APainter;
-import atlantis.map.AChoke;
-import atlantis.map.Chokes;
-import atlantis.position.APosition;
+import atlantis.combat.micro.terran.medic.BodyBlock;
+import atlantis.debug.painter.APainter;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import bwapi.Color;
@@ -16,7 +16,7 @@ import bwapi.TechType;
 
 import java.util.HashMap;
 
-public class TerranMedic {
+public class TerranMedic extends Microable {
 
     public static double BODY_BLOCK_POSITION_ERROR_MARGIN = 0.2;
     public static double MIN_DIST_TO_ASSIGNMENT = 0.75;
@@ -34,10 +34,18 @@ public class TerranMedic {
     private static final HashMap<AUnit, AUnit> medicsToAssignments = new HashMap<>();
     private static final HashMap<AUnit, AUnit> assignmentsToMedics = new HashMap<>();
 
+    public static Class[] macroManagers = new Class[] {
+        BodyBlock.class,
+    };
+
     // =========================================================
 
     public static boolean update(AUnit medic) {
         if (medic.hp() <= 17 && AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
+            return true;
+        }
+
+        if (medic.lastActionLessThanAgo(5, Actions.HEAL)) {
             return true;
         }
 
@@ -86,7 +94,7 @@ public class TerranMedic {
 
         APosition desiredPosition = nearestFriend.translateTilesTowards(0.4, nearestEnemy);
         if (medic.distToMoreThan(desiredPosition, BODY_BLOCK_POSITION_ERROR_MARGIN) || medic.isIdle()) {
-            return medic.move(desiredPosition, UnitActions.MOVE, "Block");
+            return medic.move(desiredPosition, Actions.MOVE_MACRO, "Block", false);
         }
 
         return false;
@@ -109,7 +117,7 @@ public class TerranMedic {
     private static boolean tooFarFromNearestInfantry(AUnit medic) {
         AUnit infantry = Select.ourTerranInfantryWithoutMedics().nearestTo(medic);
         if (infantry != null && infantry.distToMoreThan(medic, 4)) {
-            return medic.move(infantry, UnitActions.MOVE, "SemperFi");
+            return medic.move(infantry, Actions.MOVE_FOCUS, "SemperFi", false);
         }
 
         if (infantry == null) {
@@ -124,7 +132,7 @@ public class TerranMedic {
     private static void healUnit(AUnit medic, AUnit unitToHeal) {
         if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.target())) {
             medic.useTech(TechType.Healing, unitToHeal);
-            medic.setTooltip("Heal");
+            medic.setTooltipTactical("Heal");
         }
     }
 
@@ -185,7 +193,7 @@ public class TerranMedic {
     private static void addMedicAssignment(AUnit medic, AUnit assignment) {
         medicsToAssignments.put(medic, assignment);
         assignmentsToMedics.put(assignment, medic);
-        medic.setTooltip("NewAssignment");
+        medic.setTooltipTactical("NewAssignment");
     }
 
     private static void removeAssignment(AUnit medic, AUnit assignment) {
@@ -202,10 +210,10 @@ public class TerranMedic {
             double dist = assignment.distTo(medic);
 
             if (dist > 1.9) {
-                return medic.move(assignment.position(), UnitActions.MOVE, "Stick");
+                return medic.move(assignment.position(), Actions.MOVE_FOLLOW, "Stick", false);
             }
             else if (dist <= MIN_DIST_TO_ASSIGNMENT) {
-                return medic.moveAwayFrom(assignment.position(), 0.3, "TooClose");
+                return medic.moveAwayFrom(assignment.position(), 0.3, "TooClose", Actions.MOVE_FORMATION);
             }
 //            else if (medic.isMoving()) {
 //                return medic.holdPosition("Ok");

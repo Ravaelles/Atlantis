@@ -1,13 +1,7 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.missions.AFocusPoint;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.We;
 
 public class ASquadCohesionManager {
 
@@ -34,9 +28,11 @@ public class ASquadCohesionManager {
     private static boolean shouldSkip(AUnit unit) {
         return
                 // Only mission contain enforces unit coordination
-                (unit.mission() != null && !unit.mission().isMissionDefend())
+//                (unit.mission() != null && !unit.mission().isMissionDefend())
+                (unit.mission() != null && unit.mission().isMissionDefend())
 //                unit.mission() != null && (unit.mission().isMissionAttack() || unit.mission().isMissionDefend());
-                || unit.friendsNearby().atMost(2);
+//                || unit.friendsNearby().atMost(2);
+                || unit.squadSize() <= 2;
     }
 
 //    private static boolean handleShouldStickCloser(AUnit unit) {

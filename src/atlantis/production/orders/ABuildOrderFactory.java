@@ -1,10 +1,6 @@
 
 package atlantis.production.orders;
 
-import atlantis.production.ProductionOrder;
-
-import java.util.ArrayList;
-
 /**
  * Represents sequence of commands to produce units/buildings.
  */

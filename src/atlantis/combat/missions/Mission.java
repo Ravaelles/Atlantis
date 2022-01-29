@@ -1,14 +1,14 @@
 package atlantis.combat.missions;
 
-import atlantis.AGame;
-import atlantis.debug.APainter;
-import atlantis.enemy.EnemyInformation;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.map.AMap;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
+import atlantis.units.actions.Actions;
 import bwapi.Color;
 
 
@@ -77,12 +77,15 @@ public abstract class Mission {
             return false;
         }
 
+        // Go to random UNEXPLORED
         if ((A.isUms() || A.chance(10)) && (temporaryTarget == null || temporaryTarget.isExplored())) {
             temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
 //            if (temporaryTarget != null) {
 //                System.out.println("Go to unexplored " + temporaryTarget);
 //            }
         }
+
+        // Go to random INVISIBLE
         if (temporaryTarget == null || temporaryTarget.isVisible()) {
             temporaryTarget = AMap.randomInvisiblePosition(unit);
 //            if (temporaryTarget != null) {
@@ -91,7 +94,7 @@ public abstract class Mission {
         }
 
         if (temporaryTarget != null) {
-            unit.move(temporaryTarget, UnitActions.MOVE_TO_ENGAGE, "#FindEnemy");
+            unit.move(temporaryTarget, Actions.MOVE_ENGAGE, "#FindEnemy", true);
             APainter.paintLine(unit.position(), temporaryTarget, Color.Yellow);
             return true;
         }

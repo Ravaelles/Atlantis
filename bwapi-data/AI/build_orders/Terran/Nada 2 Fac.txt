@@ -26,8 +26,8 @@ http://wiki.teamliquid.net/starcraft/Nada_2_Fac
 10 - Barracks
 12 - Refinery
 13 - Marine
+15 - Factory
 16 - Supply Depot
-16 - Factory
 18 - Vulture
 18 - Factory
 19 - Marine

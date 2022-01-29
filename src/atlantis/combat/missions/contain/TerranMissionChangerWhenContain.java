@@ -1,15 +1,15 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
 import atlantis.combat.missions.defend.TerranMissionChangerWhenDefend;
-import atlantis.strategy.OurStrategy;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 
 public class TerranMissionChangerWhenContain extends MissionChanger {
@@ -30,9 +30,14 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         if (
                 A.supplyUsed(150)
                 || Atlantis.LOST <= 4
-//                || (A.notUms() && A.resourcesBalance() >= 250)
         ) {
             return false;
+        }
+
+        if (
+                Count.ourCombatUnits() <= 20 && Atlantis.LOST >= 2
+        ) {
+            return true;
         }
 
 //        if (EnemyInformation.isEnemyNearAnyOurBuilding()) {

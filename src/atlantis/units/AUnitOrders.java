@@ -1,11 +1,11 @@
 package atlantis.units;
 
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.units.actions.UnitAction;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
-import atlantis.wrappers.ATech;
+import atlantis.game.A;
+import atlantis.information.tech.ATech;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.units.actions.Action;
+import atlantis.units.actions.Actions;
 import bwapi.*;
 
 /**
@@ -48,8 +48,9 @@ public interface AUnitOrders {
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
 //            System.out.println("                  ------> ATTACK #" + target.getID());
 //        }
-        unit().setUnitAction(UnitActions.ATTACK_UNIT);
-        unit().setLastUnitOrderNow();
+
+//        unit().addLog("Target-" + target.idWithHash());
+        unit().setAction(Actions.ATTACK_UNIT);
         return u().attack(target.u());
     }
 
@@ -62,8 +63,7 @@ public interface AUnitOrders {
     default boolean attackPosition(APosition target) {
         if (u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
             u().attack(target);
-            unit().setLastUnitOrderNow();
-            unit().setUnitAction(UnitActions.ATTACK_POSITION);
+            unit().setAction(Actions.ATTACK_POSITION);
             return true;
         }
 
@@ -71,50 +71,52 @@ public interface AUnitOrders {
     }
 
     default boolean train(AUnitType unitToTrain) {
-        unit().setUnitAction(UnitActions.TRAIN);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.TRAIN);
         return u().train(unitToTrain.ut());
     }
 
     default boolean morph(AUnitType into) {
-        unit().setUnitAction(UnitActions.MORPH);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.MORPH);
         return u().morph(into.ut());
     }
 
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {
-        unit().setUnitAction(UnitActions.BUILD);
+        unit().setAction(Actions.BUILD);
         boolean result = u().build(buildingType.ut(), buildTilePosition);
-        unit().setTooltip("Construct " + buildingType.name());
-        unit().setLastUnitOrderNow();
+        unit().setTooltipTactical("Construct " + buildingType.name());
         return result;
     }
 
     default boolean buildAddon(AUnitType addon) {
-        unit().setUnitAction(UnitActions.BUILD);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.BUILD);
         return u().buildAddon(addon.ut());
     }
 
     default boolean upgrade(UpgradeType upgrade) {
-        unit().setUnitAction(UnitActions.RESEARCH_OR_UPGRADE);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.RESEARCH_OR_UPGRADE);
         ATech.markAsBeingUpgraded(upgrade);
         return u().upgrade(upgrade);
     }
 
     default boolean research(TechType tech) {
-        unit().setUnitAction(UnitActions.RESEARCH_OR_UPGRADE);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.RESEARCH_OR_UPGRADE);
         ATech.markAsBeingResearched(tech);
         return u().research(tech);
     }
 
-    default boolean move(AUnit target, UnitAction unitAction, String tooltip) {
-        return move(target.position(), unitAction, tooltip);
+    default boolean move(AUnit target, Action unitAction, String tooltip, boolean strategicLevel) {
+        return move(target.position(), unitAction, tooltip, strategicLevel);
     }
 
-    default boolean move(HasPosition target, UnitAction unitAction, String tooltip) {
+    default boolean moveStrategic(HasPosition target, Action unitAction, String tooltip) {
+        return move(target, unitAction, tooltip, true);
+    }
+
+    default boolean moveTactical(HasPosition target, Action unitAction, String tooltip) {
+        return move(target, unitAction, tooltip, false);
+    }
+
+    default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println("MOVE @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
         }
@@ -123,7 +125,7 @@ public interface AUnitOrders {
             return false;
         }
 
-        unit().setTooltip(tooltip);
+        unit().setTooltip(tooltip, strategicLevel);
 
 //        if (unit().isCommand(UnitCommandType.Move) && target.equals(u().getTargetPosition())) {
 //            return true;
@@ -161,14 +163,14 @@ public interface AUnitOrders {
         
         APosition currentTarget = unit().targetPosition();
 
-        if (currentTarget == null || (!currentTarget.equals(target) || unit().isLastOrderFramesAgo(6))) {
+        if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
 //            if (unit().isFirstCombatUnit()) {
 //                System.out.println(A.now() + " move");
 //            }
             u().move(target.position());
 
-            unit().setLastUnitOrderNow()
-                .setUnitAction(unitAction);
+            unit().setLastActionReceivedNow()
+                .setAction(unitAction);
             return true;
         }
         
@@ -185,10 +187,9 @@ public interface AUnitOrders {
      * determined that the command would fail. Note There is a small chance for a command to fail after it has
      * been passed to Broodwar. See also isPatrolling, canPatrol
      */
-    default boolean patrol(APosition target, UnitAction unitAction, String tooltip) {
-        unit().setTooltip(tooltip)
-                .setUnitAction(UnitActions.PATROL)
-                .setLastUnitOrderNow();
+    default boolean patrol(APosition target, Action unitAction, String tooltip, boolean strategicLevel) {
+        unit().setTooltip(tooltip, strategicLevel)
+                .setAction(Actions.PATROL);
         return u().patrol(target);
     }
 
@@ -199,14 +200,13 @@ public interface AUnitOrders {
      * if BWAPI determined that the command would fail. Note There is a small chance for a command to fail
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
-    default boolean holdPosition(String tooltip) {
+    default boolean holdPosition(String tooltip, boolean strategicLevel) {
         if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println("HOLD @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
         }
 
-        unit().setTooltip(tooltip)
-                .setUnitAction(UnitActions.HOLD_POSITION)
-                .setLastUnitOrderNow();
+        unit().setTooltip(tooltip, strategicLevel)
+                .setAction(Actions.HOLD_POSITION);
         return u().holdPosition();
     }
 
@@ -217,14 +217,13 @@ public interface AUnitOrders {
      * determined that the command would fail. Note There is a small chance for a command to fail after it has
      * been passed to Broodwar. See also canStop, isIdle
      */
-    default boolean stop(String tooltip) {
+    default boolean stop(String tooltip, boolean strategicLevel) {
         if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println("STOP @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
         }
 
-        unit().setTooltip(tooltip)
-                .setUnitAction(UnitActions.STOP)
-                .setLastUnitOrderNow();
+        unit().setTooltip(tooltip, strategicLevel)
+                .setAction(Actions.STOP);
         return u().stop();
     }
 
@@ -237,10 +236,9 @@ public interface AUnitOrders {
      * would fail. Note There is a small chance for a command to fail after it has been passed to Broodwar.
      * See also isFollowing, canFollow, getOrderTarget
      */
-    default boolean follow(AUnit target, String tooltip) {
-        unit().setTooltip(tooltip)
-                .setUnitAction(UnitActions.FOLLOW)
-                .setLastUnitOrderNow();
+    default boolean follow(AUnit target, String tooltip, boolean strategicLevel) {
+        unit().setTooltip(tooltip, strategicLevel)
+                .setAction(Actions.MOVE_FOLLOW);
         return u().follow(target.u());
     }
 
@@ -258,11 +256,10 @@ public interface AUnitOrders {
         }
         
         if (target.type().isMineralField()) {
-            unit().setUnitAction(UnitActions.GATHER_MINERALS);
+            unit().setAction(Actions.GATHER_MINERALS);
         } else {
-            unit().setUnitAction(UnitActions.GATHER_GAS);
+            unit().setAction(Actions.GATHER_GAS);
         }
-        unit().setLastUnitOrderNow();
 
         return u().gather(target.u());
     }
@@ -286,7 +283,7 @@ public interface AUnitOrders {
 //        if (base != null) {
 //            unit().doRightClickAndYesIKnowIShouldAvoidUsingIt(base);
 //
-//            unit().setUnitAction(UnitActions.RETURN_CARGO);
+//            unit().setAction(UnitActions.RETURN_CARGO);
 //            unit().setLastUnitOrderNow();
 //            unit().setTooltip("ReturnCargo");
 //
@@ -306,7 +303,7 @@ public interface AUnitOrders {
      * is a small chance for a command to fail after it has been passed to Broodwar. See also isRepairing,
      * canRepair
      */
-    default boolean repair(AUnit target, String tooltip) {
+    default boolean repair(AUnit target, String tooltip, boolean strategicLevel) {
         if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
             System.out.println("REPAIR @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
         }
@@ -315,14 +312,13 @@ public interface AUnitOrders {
             return false;
         }
 
-        unit().setTooltip(tooltip);
+        unit().setTooltip(tooltip, strategicLevel);
 
         if (unit().isCommand(UnitCommandType.Repair) && !target.u().equals(u().getTarget())) {
             return true;
         }
 
-        unit().setUnitAction(UnitActions.REPAIR);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.REPAIR);
         u().repair(target.u());
 
         return true;
@@ -332,7 +328,7 @@ public interface AUnitOrders {
 //            return unit().move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
 //        }
 //        else {
-//            unit().setUnitAction(UnitActions.REPAIR);
+//            unit().setAction(UnitActions.REPAIR);
 //            if (unit().getTarget() == null || !unit().getTarget().equals(target) || !unit().isRepairing()) {
 //                unit().setLastUnitOrderNow();
 //                unit().setLastUnitOrderNow();
@@ -352,8 +348,7 @@ public interface AUnitOrders {
      * canBurrow
      */
     default boolean burrow() {
-        unit().setUnitAction(UnitActions.BURROW);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.BURROW);
         return u().burrow();
     }
 
@@ -363,8 +358,7 @@ public interface AUnitOrders {
      * it has been passed to Broodwar. See also burrow, isBurrowed, canUnburrow
      */
     default boolean unburrow() {
-        unit().setUnitAction(UnitActions.UNBURROW);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.UNBURROW);
         return u().unburrow();
     }
 
@@ -374,8 +368,7 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also decloak, isCloaked, canCloak
      */
     default boolean cloak() {
-        unit().setUnitAction(UnitActions.CLOAK);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.CLOAK);
         return u().cloak();
     }
 
@@ -385,8 +378,7 @@ public interface AUnitOrders {
      * it has been passed to Broodwar. See also cloak, isCloaked, canDecloak
      */
     default boolean decloak() {
-        unit().setUnitAction(UnitActions.LOAD);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.LOAD);
         return u().decloak();
     }
 
@@ -396,8 +388,7 @@ public interface AUnitOrders {
      * command to fail after it has been passed to Broodwar. See also unsiege, isSieged, canSiege
      */
     default boolean siege() {
-        unit().setUnitAction(UnitActions.SIEGE);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.SIEGE);
         return u().siege();
     }
 
@@ -407,8 +398,7 @@ public interface AUnitOrders {
      * for a command to fail after it has been passed to Broodwar. See also siege, isSieged, canUnsiege
      */
     default boolean unsiege() {
-        unit().setUnitAction(UnitActions.UNSIEGE);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.UNSIEGE);
         return u().unsiege();
     }
 
@@ -418,8 +408,7 @@ public interface AUnitOrders {
      * chance for a command to fail after it has been passed to Broodwar. See also land, isLifted, canLift
      */
     default boolean lift() {
-        unit().setUnitAction(UnitActions.LIFT);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.LIFT);
         return u().lift();
     }
 
@@ -430,8 +419,7 @@ public interface AUnitOrders {
      * fail after it has been passed to Broodwar. See also lift, isLifted, canLand
      */
     default boolean land(TilePosition target) {
-        unit().setUnitAction(UnitActions.LAND);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.LAND);
         return u().land(target);
     }
 
@@ -445,8 +433,7 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also unload, unloadAll, getLoadedUnits, isLoaded
      */
     default boolean load(AUnit target) {
-        unit().setUnitAction(UnitActions.LOAD);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.LOAD);
         return u().load(target.u());
     }
 
@@ -458,9 +445,8 @@ public interface AUnitOrders {
      * Broodwar. See also load, unloadAll, getLoadedUnits, isLoaded, canUnload, canUnloadAtPosition
      */
     default boolean unload(AUnit target) {
-        unit().setUnitAction(UnitActions.UNLOAD);
-        target.setUnitAction(UnitActions.UNLOAD);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.UNLOAD);
+        target.setAction(Actions.UNLOAD);
         return u().unload(target.u());
     }
 
@@ -474,11 +460,9 @@ public interface AUnitOrders {
      * isLoaded, canUnloadAll, canUnloadAtPosition
      */
     default boolean unloadAll() {
-        unit().setUnitAction(UnitActions.UNLOAD);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.UNLOAD);
         for (AUnit loaded : unit().loadedUnits()) {
-            loaded.setUnitAction(UnitActions.UNLOAD);
-            loaded.setLastUnitOrderNow();
+            loaded.setAction(Actions.UNLOAD);
         }
         return u().unloadAll();
     }
@@ -493,11 +477,9 @@ public interface AUnitOrders {
      * isLoaded, canUnloadAll, canUnloadAtPosition
      */
     default boolean unloadAll(APosition target) {
-        unit().setUnitAction(UnitActions.UNLOAD);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.UNLOAD);
         for (AUnit loaded : unit().loadedUnits()) {
-            loaded.setUnitAction(UnitActions.UNLOAD);
-            loaded.setLastUnitOrderNow();
+            loaded.setAction(Actions.UNLOAD);
         }
         return u().unloadAll(target);
     }
@@ -508,7 +490,7 @@ public interface AUnitOrders {
 //    default boolean rightClick(AUnit target) {
 //        if (target != null) {
 //            if (!target.u().equals(u().getTarget())) {
-//                unit().setUnitAction(UnitActions.RIGHT_CLICK);
+//                unit().setAction(UnitActions.RIGHT_CLICK);
 //                boolean result = u().rightClick(target.u());
 //            }
 //            return true;
@@ -528,7 +510,7 @@ public interface AUnitOrders {
      * command to fail after it has been passed to Broodwar. See also isConstructing, canHaltConstruction
      */
     default boolean haltConstruction() {
-        unit().setUnitAction(null);
+        unit().setAction(null);
         return u().haltConstruction();
     }
 
@@ -539,7 +521,7 @@ public interface AUnitOrders {
      * canCancelConstruction
      */
     default boolean cancelConstruction() {
-        unit().setUnitAction(null);
+        unit().setAction(null);
         return u().cancelConstruction();
     }
 
@@ -550,7 +532,7 @@ public interface AUnitOrders {
      * buildAddon
      */
     default boolean cancelAddon() {
-        unit().setUnitAction(null);
+        unit().setAction(null);
         return u().cancelAddon();
     }
 
@@ -563,12 +545,12 @@ public interface AUnitOrders {
      * canCancelTrain, canCancelTrainSlot
      */
     default boolean cancelTrain() {
-        unit().setUnitAction(null);
+        unit().setAction(null);
         return u().cancelTrain();
     }
 
     default boolean cancelTrain(int slot) {
-        unit().setUnitAction(null);
+        unit().setAction(null);
         return u().cancelTrain(slot);
     }
 
@@ -613,7 +595,7 @@ public interface AUnitOrders {
 //            System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().id());
 //        }
 //
-//        unit().setUnitAction(UnitActions.USING_TECH, tech, null);
+//        unit().setAction(UnitActions.USING_TECH, tech, null);
 //        unit().setLastUnitOrderNow();
 //        return u().useTech(tech);
 //    }
@@ -623,8 +605,7 @@ public interface AUnitOrders {
             System.out.println("TECH_2 @" + A.now() + " / unit#" + unit().id());
         }
 
-        unit().setUnitAction(UnitActions.USING_TECH, tech, target);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.USING_TECH, tech, target);
         return u().useTech(tech, target);
     }
 
@@ -633,8 +614,7 @@ public interface AUnitOrders {
             System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().id());
         }
 
-        unit().setUnitAction(UnitActions.USING_TECH, tech, unit());
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.USING_TECH, tech, unit());
         return u().useTech(tech);
     }
 
@@ -643,8 +623,7 @@ public interface AUnitOrders {
             System.out.println("TECH_3 @" + A.now() + " / unit#" + unit().id());
         }
 
-        unit().setUnitAction(UnitActions.USING_TECH, tech, target);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.USING_TECH, tech, target);
         return u().useTech(tech, target.u());
     }
 
@@ -653,8 +632,7 @@ public interface AUnitOrders {
             System.out.println("RIGHT_CLICK @" + A.now() + " / unit#" + unit().id() + " // " + target);
         }
 
-        unit().setUnitAction(UnitActions.RIGHT_CLICK);
-        unit().setLastUnitOrderNow();
+        unit().setAction(Actions.RIGHT_CLICK);
         return u().rightClick(target.u());
     }
 

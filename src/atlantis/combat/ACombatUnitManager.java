@@ -1,21 +1,20 @@
 package atlantis.combat;
 
-import atlantis.AGame;
-import atlantis.ASpecialUnitManager;
-import atlantis.combat.micro.*;
+import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.AAvoidSpells;
+import atlantis.combat.micro.Unfreezer;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
-import atlantis.combat.retreating.RetreatManager;
-import atlantis.debug.APainter;
-import atlantis.interrupt.DontDisturbInterrupt;
-import atlantis.repair.AUnitBeingReparedManager;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.terran.repair.AUnitBeingReparedManager;
+import atlantis.units.ASpecialUnitManager;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
+import atlantis.units.interrupt.DontDisturbInterrupt;
 import atlantis.units.select.Select;
-import atlantis.util.A;
-import bwapi.Color;
 
 public class ACombatUnitManager {
 
@@ -112,14 +111,14 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (unit.lastActionLessThanAgo(90, UnitActions.PATROL) || unit.isPatrolling()) {
+        if (unit.lastActionLessThanAgo(90, Actions.PATROL) || unit.isPatrolling()) {
             if (A.now() > 90) {
-                unit.setTooltip("#Manual");
+                unit.setTooltipTactical("#Manual");
                 return true;
             }
         }
 
-        unit.setTooltip(unit.tooltip() + ".");
+        unit.setTooltipTactical(unit.tooltip() + ".");
         return false;
     }
 
@@ -130,7 +129,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (unit.isRunning() && TransportUnits.loadRunningUnitsIntoTransport(unit)) {
+        if ((unit.isMoving() && !unit.isAttackingOrMovingToAttack()) && TransportUnits.handleLoad(unit)) {
             return true;
         }
 
@@ -184,17 +183,8 @@ public class ACombatUnitManager {
             return true;
         }
 
-//        System.out.println("RetreatManager.shouldRetreat(unit) = " + RetreatManager.shouldRetreat(unit));
-        if (!RetreatManager.shouldRetreat(unit)) {
-            return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
-        }
-
-        return false;
+        return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
     }
-
-//    private static boolean canHandleLowPriority(AUnit unit) {
-//        return unit.isStopped() || unit.isIdle();
-//    }
 
     /**
      * If we're here, mission manager is allowed to take control over this unit.
@@ -207,7 +197,7 @@ public class ACombatUnitManager {
 
         Mission mission = unit.mission();
         if (mission != null) {
-            unit.setTooltip(mission.name());
+            unit.setTooltipTactical(mission.name());
             return mission.update(unit);
         }
 
@@ -215,14 +205,6 @@ public class ACombatUnitManager {
     }
 
     // =========================================================
-
-    /**
-     * Some units like Reavers should open fire to nearby enemies even when retreating, otherwise they'll
-     * just get destroyed without firing even once.
-     */
-//    private static boolean isAllowedToAttackBeforeRetreating(AUnit unit) {
-//        return unit.isType(AUnitType.Protoss_Reaver, AUnitType.Terran_Vulture) && unit.getHPPercent() > 10;
-//    }
 
     /**
      * Can be used for testing.

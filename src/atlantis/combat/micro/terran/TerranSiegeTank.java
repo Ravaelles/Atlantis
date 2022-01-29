@@ -1,16 +1,16 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
-import atlantis.debug.APainter;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.information.tech.ATech;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.util.A;
-import atlantis.wrappers.ATech;
 import bwapi.Color;
 import bwapi.TechType;
 
@@ -38,7 +38,7 @@ public class TerranSiegeTank {
 
 
     private static boolean updateWhenNotSieged(AUnit unit) {
-        if (unit.lastActionLessThanAgo(30 * 12, UnitActions.UNSIEGE)) {
+        if (unit.lastActionLessThanAgo(30 * 12, Actions.UNSIEGE)) {
             return false;
         }
 
@@ -48,7 +48,7 @@ public class TerranSiegeTank {
 
         // =========================================================
 
-        boolean longNotMoved = !unit.isMoving() && unit.lastActionMoreThanAgo(60, UnitActions.MOVE);
+        boolean longNotMoved = !unit.isMoving() && unit.lastActionMoreThanAgo(60);
 
 //        if (Missions.isGlobalMissionContain() || Missions.isGlobalMissionDefend()) {
         APosition focusPoint = Missions.globalMission().focusPoint();
@@ -59,7 +59,7 @@ public class TerranSiegeTank {
                         && (canSiegeHere(unit) || longNotMoved)
         ) {
             unit.siege();
-            unit.setTooltip("Contain siege!");
+            unit.setTooltipTactical("Contain siege!");
             return true;
         }
 
@@ -92,11 +92,11 @@ public class TerranSiegeTank {
                 .list();
         for (AUnit lurker : lurkers) {
             if (lurker.distTo(tank) >= tank.groundWeaponMinRange()) {
-                if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
-                    tank.setTooltip("SMASH invisible!");
+                if (tank.lastActionMoreThanAgo(30, Actions.ATTACK_POSITION)) {
+                    tank.setTooltipTactical("SMASH invisible!");
                     tank.attackPosition(lurker.position());
                 }
-                tank.setTooltip("SmashInvisible");
+                tank.setTooltipTactical("SmashInvisible");
                 return true;
             }
         }
@@ -129,7 +129,7 @@ public class TerranSiegeTank {
 
         // =========================================================
 
-        if (unit.lastActionLessThanAgo(30 * 8, UnitActions.SIEGE)) {
+        if (unit.lastActionLessThanAgo(30 * 8, Actions.SIEGE)) {
             return true;
         }
 
@@ -138,7 +138,7 @@ public class TerranSiegeTank {
 
         if (tooLonely(unit) && !hasJustSiegedRecently(unit)) {
             unit.unsiege();
-            unit.setTooltip("TooLonely");
+            unit.setTooltipTactical("TooLonely");
             return true;
         }
 
@@ -146,7 +146,7 @@ public class TerranSiegeTank {
                 (nearestEnemyUnit == null && nearestEnemyCombatBuilding == null)
                         || (nearestEnemyUnitDist > 11.9 && nearestEnemyCombatBuildingDist > 11.9)
         ) {
-            unit.setTooltip("Considers unsiege");
+            unit.setTooltipTactical("Considers unsiege");
 
 //            if (AGame.isUms()) {
 //                unit.unsiege();
@@ -163,7 +163,7 @@ public class TerranSiegeTank {
             if (!hasJustSiegedRecently(unit)) {
                 if (unit.mission().isMissionAttack() && A.chance(1.5)) {
                     unit.unsiege();
-                    unit.setTooltip("Unsiege");
+                    unit.setTooltipTactical("Unsiege");
                     return true;
                 }
 
@@ -171,7 +171,7 @@ public class TerranSiegeTank {
                     APosition focusPoint = Missions.globalMission().focusPoint();
                     if (focusPoint != null && unit.distTo(focusPoint) >= 12.5 && A.chance(1)) {
                         unit.unsiege();
-                        unit.setTooltip("Unsiege");
+                        unit.setTooltipTactical("Unsiege");
                         return true;
                     }
                 }
@@ -182,12 +182,7 @@ public class TerranSiegeTank {
     }
 
     private static boolean hasJustSiegedRecently(AUnit unit) {
-        return unit.lastActionLessThanAgo(30 * 9, UnitActions.SIEGE);
-    }
-
-    private static boolean shouldNotDisturb(AUnit tank) {
-        return tank.lastActionLessThanAgo(15, UnitActions.SIEGE)
-                || tank.lastActionLessThanAgo(15, UnitActions.UNSIEGE);
+        return unit.lastActionLessThanAgo(30 * 9, Actions.SIEGE);
     }
 
     private static void initCache(AUnit tank) {
@@ -222,7 +217,7 @@ public class TerranSiegeTank {
             ) {
 //                tank.setTooltip("Buildz:" + Select.enemy().combatBuildings().count() + "," + A.digit(tank.distTo(nearestEnemyCombatBuilding)));
                 tank.siege();
-                tank.setTooltip("SiegeBuilding" + A.dist(tank, nearestEnemyCombatBuilding));
+                tank.setTooltipTactical("SiegeBuilding" + A.dist(tank, nearestEnemyCombatBuilding));
                 return true;
             }
         }
@@ -243,20 +238,20 @@ public class TerranSiegeTank {
 
         // Don't siege when enemy is too close
         if (distanceToEnemy < 10 && !enemy.isRanged()) {
-            tank.setTooltip("Dont siege");
+            tank.setTooltipTactical("Dont siege");
             return false;
         }
 
         if (siegeResearched()) {
             if (distanceToEnemy < 13.6 && enemy.type().isDangerousGroundUnit() && canSiegeHere(tank)) {
                 tank.siege();
-                tank.setTooltip("Better siege");
+                tank.setTooltipTactical("Better siege");
                 return true;
             }
 
             if (distanceToEnemy <= 12 && canSiegeHere(tank) && !tooLonely(tank)) {
                 tank.siege();
-                tank.setTooltip("Siege!");
+                tank.setTooltipTactical("Siege!");
                 return true;
             }
         }

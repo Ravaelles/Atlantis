@@ -1,12 +1,12 @@
 package atlantis.production.orders;
 
-import atlantis.AGame;
+import atlantis.combat.missions.DynamicMissionsFromBuildOrder;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.DynamicMissionsFromBuildOrder;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.util.A;
 import atlantis.util.NameUtil;
 import bwapi.TechType;
 import bwapi.UpgradeType;

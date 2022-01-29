@@ -1,12 +1,12 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.AGame;
 import atlantis.combat.missions.Missions;
-import atlantis.debug.AAdvancedPainter;
+import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.game.AGame;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

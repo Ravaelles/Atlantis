@@ -1,14 +1,15 @@
 package atlantis.map;
 
-import atlantis.AGame;
-import atlantis.enemy.EnemyUnits;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.util.Cache;
 import bwem.ChokePoint;
 import jbweb.JBWEB;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Chokes {
 

@@ -1,8 +1,8 @@
 package atlantis.combat.micro.zerg;
 
+import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.position.APositionFinder;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

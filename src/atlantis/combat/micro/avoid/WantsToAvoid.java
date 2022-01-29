@@ -1,15 +1,15 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.debug.APainter;
+import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.units.Units;
+import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class WantsToAvoid {
 
-    public static boolean units(AUnit unit, Units enemies) {
+    public static boolean unitOrUnits(AUnit unit, Units enemies) {
         if (shouldNeverAvoidIf(unit, enemies)) {
             return false;
         }
@@ -21,7 +21,9 @@ public class WantsToAvoid {
                     !unit.hasNoWeaponAtAll()
                     && (new FightInsteadAvoid(unit, enemies)).shouldFight()
             ) {
-//                System.err.println("FIGHT INSTEAD AVOID " + unit.namePlusId() + " // " + unit.hp());
+//                APainter.paintCircle(unit, 10, Color.Green);
+//                APainter.paintCircle(unit, 11, Color.Green);
+
                 return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
             }
         }
@@ -29,7 +31,7 @@ public class WantsToAvoid {
         // =========================================================
 
         if (enemies.size() == 1) {
-            return Avoid.unit(unit, enemies.first());
+            return Avoid.singleUnit(unit, enemies.first());
         }
         else {
             return Avoid.groupOfUnits(unit, enemies);
@@ -39,7 +41,18 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
-        if (unit.isWorker() || unit.isScout() || unit.isSquadScout() || unit.hpLessThan(17)) {
+        if (unit.isWorker() || unit.isScout()) {
+            unit.addLog("AlwaysAvoid");
+            return true;
+        }
+
+        if (unit.hpLessThan(17) && !enemies.onlyMelee()) {
+            unit.addLog("AlmostDead");
+            return true;
+        }
+
+        if (unit.isSquadScout() && unit.friendsNearby().inRadius(3, unit).isEmpty()) {
+            unit.addLog("SquadScoutAvoid");
             return true;
         }
 

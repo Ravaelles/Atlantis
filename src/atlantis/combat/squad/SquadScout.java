@@ -4,17 +4,16 @@ import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
-import atlantis.debug.APainter;
-import atlantis.enemy.EnemyInformation;
-import atlantis.enemy.EnemyUnits;
-import atlantis.information.AFoggedUnit;
-import atlantis.information.FoggedUnit;
-import atlantis.log.Log;
-import atlantis.position.APosition;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.game.GameLog;
+import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import bwapi.Color;
 
 public class SquadScout {
@@ -42,7 +41,7 @@ public class SquadScout {
             APainter.paintTextCentered(positionToEngage, "SquadScout" + dist, Color.Orange);
 
             if (positionToEngage.distTo(squadScout) > 2.2) {
-                return squadScout.move(positionToEngage, UnitActions.MOVE_TO_ENGAGE, "Pioneer" + dist);
+                return squadScout.move(positionToEngage, Actions.MOVE_ENGAGE, "Pioneer" + dist, true);
             }
             else {
                 engageWorkersNow(squadScout);
@@ -50,7 +49,7 @@ public class SquadScout {
             }
         }
         else {
-            squadScout.setTooltip("NoEngagePosition");
+            squadScout.setTooltipTactical("NoEngagePosition");
             if (EnemyInformation.hasDiscoveredAnyBuilding()) {
                 System.err.println("positionToEngage null, base = " + EnemyUnits.enemyBase());
             }
@@ -61,10 +60,10 @@ public class SquadScout {
 
     private static void engageWorkersNow(AUnit squadScout) {
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(squadScout);
-        squadScout.setTooltip("MadeContact");
+        squadScout.setTooltipTactical("MadeContact");
 
         if (Select.enemyCombatUnits().atMost(2)) {
-            Log.addMessage("Squad scout forced GLOBAL ATTACK");
+            GameLog.get().addMessage("Squad scout forced GLOBAL ATTACK");
             if (!Missions.isGlobalMissionAttack()) {
                 MissionChanger.forceMissionAttack();
             }
@@ -80,7 +79,7 @@ public class SquadScout {
         }
 
         if (positionToEngage == null) {
-            AFoggedUnit nearestEnemyBuilding = EnemyUnits.nearestEnemyBuilding();
+            AbstractFoggedUnit nearestEnemyBuilding = EnemyUnits.nearestEnemyBuilding();
             if (nearestEnemyBuilding != null) {
                 positionToEngage = nearestEnemyBuilding.position();
             }

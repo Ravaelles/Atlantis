@@ -19,7 +19,12 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         distUnitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         distFocusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
-        return tooFar() || tooClose();
+        if (tooFar() || tooClose()) {
+            return true;
+        }
+
+        unit.holdPosition("DefendHere", true);
+        return true;
     }
 
     // =========================================================
@@ -30,13 +35,21 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
                 ? 4 : 0;
         double ourUnitsNearbyBonus = Select.our().inRadius(2, unit).count() / 20.0;
 
-        return 0.1
+        return 0.7
                 + (unit.isTank() ? 3 : 0)
                 + (unit.isMedic() ? -2.5 : 0)
                 + (unit.isMarine() ? 2 : 0)
                 + letWorkersComeThroughBonus
-                + (unit.isRanged() ? 3 : 0)
+                + rangedDistBonus()
                 + ourUnitsNearbyBonus;
+    }
+
+    private static double rangedDistBonus() {
+        if (unit.isDragoon()) {
+            return 1.7;
+        }
+
+        return (unit.isRanged() ? 3 : 0);
     }
 
 }

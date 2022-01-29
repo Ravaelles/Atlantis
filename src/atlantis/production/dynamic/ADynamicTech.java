@@ -1,10 +1,10 @@
 package atlantis.production.dynamic;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
+import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.wrappers.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

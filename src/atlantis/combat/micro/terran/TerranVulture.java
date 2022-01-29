@@ -1,15 +1,15 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.debug.APainter;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.information.tech.ATech;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
-import atlantis.wrappers.ATech;
 import bwapi.Color;
 import bwapi.TechType;
 
@@ -27,15 +27,15 @@ public class TerranVulture {
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
 //        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
-        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.lastOrderFramesAgo() > 15) {
-            unit.setUnitAction(UnitActions.STOP);
-            unit.setTooltip("Planted!");
+        if (unit.isUnitAction(Actions.USING_TECH) && unit.lastActionFramesAgo() > 15) {
+            unit.setAction(Actions.STOP);
+            unit.setTooltipTactical("Planted!");
             return false;
         }
 
         // Can't allow to interrupt
-        if (unit.isUnitAction(UnitActions.USING_TECH) && unit.lastActionLessThanAgo(15, UnitActions.USING_TECH)) {
-            unit.setTooltip("Planting mine");
+        if (unit.isUnitAction(Actions.USING_TECH) && unit.lastActionLessThanAgo(15, Actions.USING_TECH)) {
+            unit.setTooltipTactical("Planting mine");
             return true;
         }
 
@@ -53,7 +53,7 @@ public class TerranVulture {
         // Disallow mines close to buildings
         AUnit nearestBuilding = Select.ourBuildings().nearestTo(unit);
         if (nearestBuilding != null && nearestBuilding.distTo(unit) <= 7) {
-            unit.setTooltip("Don't mine");
+            unit.setTooltipTactical("Don't mine");
             return false;
         }
         
@@ -123,7 +123,7 @@ public class TerranVulture {
                 APainter.paintCircleFilled(enemiesCenter, 24, Color.Red);
                 System.out.println("finalPlace = " + finalPlace);
                 plantMineAt(unit, finalPlace);
-                unit.setTooltip("UseMine");
+                unit.setTooltipTactical("UseMine");
                 return true;
             }
         }
@@ -136,7 +136,7 @@ public class TerranVulture {
         if ((nearbyMines.count() <= 3 || (unit.minesCount() >= 3 && nearbyMines.count() <= 4))
                 && nearbyMines.inRadius(2, unit).atMost(1)) {
             plantMineAt(unit, unit.position());
-            unit.setTooltip("Plant mine");
+            unit.setTooltipTactical("Plant mine");
             return true;
         }
 
@@ -145,7 +145,7 @@ public class TerranVulture {
 
     private static void plantMineAt(AUnit unit, APosition position) {
         unit.useTech(TechType.Spider_Mines, position);
-        unit.setUnitAction(UnitActions.USING_TECH, TechType.Spider_Mines, position);
+        unit.setAction(Actions.USING_TECH, TechType.Spider_Mines, position);
     }
 
 }

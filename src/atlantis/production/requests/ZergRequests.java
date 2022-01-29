@@ -1,6 +1,6 @@
 package atlantis.production.requests;
 
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 
 
 public class ZergRequests extends ARequests {

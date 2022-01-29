@@ -1,8 +1,8 @@
 package atlantis.map;
 
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.position.Positions;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.map.position.Positions;
 import atlantis.util.Cache;
 import bwem.Area;
 

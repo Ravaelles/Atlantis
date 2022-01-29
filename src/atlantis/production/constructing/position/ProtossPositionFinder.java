@@ -1,12 +1,13 @@
 package atlantis.production.constructing.position;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
-import atlantis.debug.APainter;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -65,13 +66,13 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      */
     private static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
         _CONDITION_THAT_FAILED = null;
-//        APainter.paintCircle(position, 5, Color.Red);
+        if (DEBUG) APainter.paintCircle(position, 5, Color.Red);
 
         // Check for POWER
         if (!isPowerConditionFulfilled(building, position)) {
             _CONDITION_THAT_FAILED = "No power";
 
-            if (Count.inQueueOrUnfinished(AUnitType.Protoss_Pylon, 2) == 0) {
+            if (A.supplyTotal() >= 20 && Count.inQueueOrUnfinished(AUnitType.Protoss_Pylon, 2) == 0) {
                 AddToQueue.withTopPriority(AUnitType.Protoss_Pylon);
                 System.out.println("Requested Pylon for more powered up surface.");
             }
@@ -118,7 +119,11 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         }
 
         // All conditions are fullfilled, return this position
-        APainter.paintCircle(position, 5, Color.Green);
+        if (DEBUG) APainter.paintCircle(position, 5, Color.Green);
+        if (DEBUG) {
+//            A.centerAndPause(position);
+//            A.centerAndChangeSpeed(position, 1);
+        }
         return true;
     }
 

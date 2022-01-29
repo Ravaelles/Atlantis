@@ -1,18 +1,18 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.enemy.EnemyInformation;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.position.Positions;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.map.position.Positions;
 import atlantis.production.orders.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import atlantis.util.Cache;
 
 import java.util.ArrayList;

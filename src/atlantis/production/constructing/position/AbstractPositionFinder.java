@@ -1,24 +1,24 @@
 package atlantis.production.constructing.position;
 
-import atlantis.AGame;
 import atlantis.Atlantis;
+import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
-import atlantis.position.HasPosition;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
-import atlantis.map.ABaseLocation;
-import atlantis.position.APosition;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import bwapi.Position;
 
 public abstract class AbstractPositionFinder {
     
     public static String _CONDITION_THAT_FAILED = null;
+    public static boolean DEBUG = true;
+//    public static boolean DEBUG = false;
 
     // =========================================================
     // Hi-level methods
@@ -87,20 +87,29 @@ public abstract class AbstractPositionFinder {
      * could be stacked.
      */
     protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
+
+//        System.out.println("============================");
+//        System.out.println("position = " + position + ", others count = " + ConstructionRequests.notStarted().size()
+//                + " // all = " + ConstructionRequests.all().size());
         
         // Compare against planned construction places
-        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
+//        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
+        for (ConstructionOrder order : ConstructionRequests.all()) {
+            HasPosition constructionPosition = order.positionToBuild();
+//            System.out.println("another = " + constructionPosition + " // " + order.buildingType());
             if (
                     position != null && constructionPosition != null
             ) {
+//                System.out.println("OK constructionPosition = " + constructionPosition);
                 double distance = position.distTo(constructionPosition);
+//                System.out.println("distance = " + distance + " // " + position);
+//                System.out.println("------------");
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
 //                        && (distance <= 5 && !AGame.isPlayingAsZerg());
 
                 // Look for two bases that would be built too close one to another
-                if (distance <= 5) {
-                    _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE ("
-                            + building + ", DIST: " + distance + ")";
+                if (distance <= 4) {
+                    _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" + building + ", DIST: " + distance + ")";
                     return true;
                 }
             }

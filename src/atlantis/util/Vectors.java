@@ -1,6 +1,6 @@
 package atlantis.util;
 
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 
 public class Vectors {

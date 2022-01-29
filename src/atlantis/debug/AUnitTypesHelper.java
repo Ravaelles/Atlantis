@@ -1,8 +1,9 @@
 package atlantis.debug;
 
+import atlantis.game.A;
 import atlantis.units.AUnitType;
-import atlantis.util.A;
 import atlantis.util.WeaponUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 

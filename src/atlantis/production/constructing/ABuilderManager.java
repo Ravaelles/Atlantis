@@ -1,13 +1,13 @@
 package atlantis.production.constructing;
 
-import atlantis.AGame;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
 import atlantis.util.We;
 import bwapi.TilePosition;
 
@@ -36,7 +36,7 @@ public class ABuilderManager {
     // =========================================================
     
     private static boolean handleConstruction(AUnit builder) {
-        ConstructionOrder constructionOrder = ConstructionRequests.getConstructionOrderFor(builder);
+        ConstructionOrder constructionOrder = ConstructionRequests.constructionOrderFor(builder);
         if (constructionOrder != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
@@ -79,7 +79,7 @@ public class ABuilderManager {
         // Move builder to the build position
         if (distance > minDistanceToIssueBuildOrder) {
             if (shouldNotTravelYet(buildingType, distance)) {
-                builder.setTooltip("Wait to build " + buildingType.name() + distString);
+                builder.setTooltipTactical("Wait to build " + buildingType.name() + distString);
                 return false;
             }
 
@@ -87,8 +87,9 @@ public class ABuilderManager {
 //                    GameSpeed.changeSpeedTo(60);
                 builder.move(
                     constructionOrder.positionToBuildCenter(),
-                    UnitActions.MOVE_TO_BUILD,
-                    "Build " + buildingType.name() + distString
+                    Actions.MOVE_BUILD,
+                    "Build " + buildingType.name() + distString,
+                    true
                 );
             }
 
@@ -109,7 +110,7 @@ public class ABuilderManager {
                 if (newBuilding != null) {
                     constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
                     constructionOrder.setBuilder(null);
-                    builder.stop("Finished!");
+                    builder.stop("Finished!", true);
                     return false;
                 }
             }
@@ -179,8 +180,8 @@ public class ABuilderManager {
     private static boolean shouldNotTravelYet(AUnitType building, double distance) {
         if (AGame.timeSeconds() < 200 && !building.isBase()) {
             return !AGame.canAfford(
-                     building.getMineralPrice() - 2 - (int) distance,
-                    building.getGasPrice() - 2- (int) distance
+                     building.getMineralPrice() - 24 - (int) distance,
+                    building.getGasPrice() - 16 - (int) distance
             );
         }
 

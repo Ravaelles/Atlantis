@@ -1,12 +1,10 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.missions.AFocusPoint;
-import atlantis.position.APosition;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 public class TooSpreadOut extends ASquadCohesionManager {
 
@@ -60,6 +58,10 @@ public class TooSpreadOut extends ASquadCohesionManager {
 //    }
 
     private static boolean shouldSkipTooSpreadOut(AUnit unit) {
+        if (unit.cooldownAbsolute() > 0) {
+            return true;
+        }
+
         if (Count.ourCombatUnits() <= 4) {
             return true;
         }
@@ -93,8 +95,9 @@ public class TooSpreadOut extends ASquadCohesionManager {
 
             unit.move(
                     unit.translatePercentTowards(center, 20),
-                    UnitActions.MOVE,
-                    "StickTogether(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")"
+                    Actions.MOVE_FOCUS,
+                    "Closa(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
+                    false
             );
             return true;
         }

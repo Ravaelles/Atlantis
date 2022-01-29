@@ -1,8 +1,8 @@
 package atlantis.combat.missions;
 
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
-import atlantis.util.A;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 
 /**
  * POSITION - where units should concentrate around. Can be offensive or defensive. Usually around a choke.

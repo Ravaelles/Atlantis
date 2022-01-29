@@ -1,5 +1,6 @@
 package atlantis.util;
 
+import atlantis.game.A;
 import atlantis.units.select.Selection;
 
 import java.util.Collection;
@@ -19,12 +20,17 @@ public class Cache<V> {
      * Get cached value or return null.
      */
     public V get(String cacheKey) {
-
         if (data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
             return data.get(cacheKey);
         }
 
         return null;
+    }
+    /**
+     * Get cached value or return null.
+     */
+    public boolean has(String cacheKey) {
+        return data.containsKey(cacheKey) && isCacheStillValid(cacheKey);
     }
 
     /**

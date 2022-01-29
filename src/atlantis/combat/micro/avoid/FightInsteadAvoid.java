@@ -1,15 +1,14 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.eval.ACombatEvaluator;
-import atlantis.combat.micro.terran.TerranFirebat;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.Units;
-import atlantis.util.A;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -56,16 +55,19 @@ public class FightInsteadAvoid {
     // =========================================================
 
     public boolean shouldFight() {
+//        if (true) return false;
+
         if (enemies.isEmpty()) {
-            return false;
+            return true;
         }
 
-        if (dontFightInImportantCases()) {
+        if (dontFightInTopImportantCases()) {
+            unit.addLog("DontFightImportant");
             return false;
         }
 
         if (unit.mission().forcesUnitToFight(unit, enemies)) {
-//            System.err.println("Mission forced to fight!");
+            unit.addLog("ForcedFight");
             return true;
         }
 
@@ -77,7 +79,7 @@ public class FightInsteadAvoid {
         // Combat units
         else {
             if (fightInImportantCases()) {
-//                System.err.println("Important case");
+                unit.addLog("FightImportant");
                 return true;
             }
 
@@ -87,7 +89,63 @@ public class FightInsteadAvoid {
 
     // =========================================================
 
-    protected boolean dontFightInImportantCases() {
+    protected boolean fightAsCombatUnit() {
+        if (fightBecauseWayTooManyUnitsNearby(unit)) {
+            unit.addLog("FightStacked");
+            return true;
+        }
+
+        if (RetreatManager.shouldRetreat(unit)) {
+            if (finishOffAlmostDeadTarget(unit)) {
+                unit.addLog("FatalityTo" + unit.target().type());
+                return true;
+            }
+
+            if (unit.isRanged() && ranged == null) {
+//                unit.addLog("FightRanged");
+                return false;
+            } else {
+                unit.addLog("Retreat");
+                return false;
+            }
+        }
+
+        if (handleTerranInfantryShouldFight(unit)) {
+            unit.addLog("InfantryFight");
+            return true;
+        }
+
+//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
+//            return true;
+//        }
+
+//        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
+//        if (enemies.onlyMelee() && ACombatEvaluator.isSituationFavorable(unit)) {
+//            return true;
+//        }
+
+        if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
+            unit.addLog("FightLurker");
+            return true;
+        }
+
+//        if (tankSieged != null || tanks != null) {
+//            return true;
+//        }
+
+        if (combatBuilding != null && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)) {
+            unit.addLog("FightBuilding");
+            return true;
+        }
+
+        if (unit.isMelee()) {
+            return fightAsMeleeUnit();
+        } else {
+            return fightAsRangedUnit();
+        }
+    }
+
+    protected boolean dontFightInTopImportantCases() {
 
         // Always avoid invisible combat units
         if (invisibleDT != null || invisibleCombatUnit != null) {
@@ -104,11 +162,12 @@ public class FightInsteadAvoid {
 
         // Attacking critically important unit
         if (ATargetingCrucial.isCrucialUnit(unit.target())) {
-            unit.setTooltip("Crucial!");
+            unit.setTooltipTactical("Crucial!");
             return true;
         }
 
         if (forbidMeleeUnitsAbandoningCloseTargets(unit)) {
+            unit.setTooltipTactical("DontLeave");
             return true;
         }
 
@@ -122,83 +181,71 @@ public class FightInsteadAvoid {
     // RANGED
     protected boolean fightAsRangedUnit() {
         if (melee != null) {
+            unit.addLog("RunMelee" + A.dist(unit, melee));
+//            unit.addLog("RunMelee");
             return false;
         }
 
         if (vulture != null) {
+            unit.addLog("FightVulture");
             return true;
         }
 
         if (ranged != null) {
             if (unit.isTank() && !unit.isSieged() && unit.lastAttackFrameMoreThanAgo(30 * 4)) {
+                unit.addLog("TankShoot");
                 return true;
             }
 
             // Dragoon faster than Marines, can outrun them
             if (unit.isQuickerOrSameSpeedAs(enemies) && unit.hasBiggerRangeThan(enemies)) {
-                return unit.woundPercent() <= 40 && unit.lastUnderAttackMoreThanAgo(30 * 8);
+                if (unit.woundPercent() <= 40 && unit.lastUnderAttackMoreThanAgo(30 * 8)) {
+                    unit.addLog("FightQuick");
+                    return true;
+                }
             }
 
             // Dragoon slower than Vultures, cannot outrun them
             else {
-                return false;
+                unit.addLog("FightTooSlow");
+                return true;
             }
         }
 
+        if (ranged != null && !RetreatManager.shouldRetreat(unit)) {
+            unit.addLog("CanFight");
+            return true;
+        }
+
+        unit.addLog("DontFight");
         return false;
     }
 
     // MELEE
     protected boolean fightAsMeleeUnit() {
         if (invisibleDT != null || invisibleCombatUnit != null) {
+            unit.addLog("RunInvisible");
             return false;
         }
 
         return !RetreatManager.shouldRetreat(unit);
-    }
-
-    protected boolean fightAsCombatUnit() {
-        if (fightBecauseWayTooManyUnitsNearby(unit)) {
-            return true;
-        }
-
-        if (RetreatManager.shouldRetreat(unit)) {
-            return false;
-        }
-
-        if (handleTerranInfantryShouldFight(unit)) {
-            return true;
-        }
-
-//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
-//            return true;
-//        }
-
-//        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
-//        if (enemies.onlyMelee() && ACombatEvaluator.isSituationFavorable(unit)) {
-//            return true;
-//        }
-
-        if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
-            return true;
-        }
-
-//        if (tankSieged != null || tanks != null) {
-//            return true;
-//        }
-
-        if (combatBuilding != null) {
-            return unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding);
-        }
-
-        if (unit.isMelee()) {
-            return fightAsMeleeUnit();
-        } else {
-            return fightAsRangedUnit();
-        }
+//        return true;
     }
 
     // =========================================================
+
+    private boolean finishOffAlmostDeadTarget(AUnit unit) {
+        if (unit.cooldownRemaining() >= 5) {
+            return false;
+        }
+
+        AUnit target = unit.target();
+        if (target != null && target.hp() <= (unit.damageAgainst(target) + 8)) {
+            return true;
+        }
+
+        return false;
+    }
 
     private boolean handleTerranInfantryShouldFight(AUnit unit) {
         if (!unit.isTerranInfantry()) {
@@ -219,11 +266,11 @@ public class FightInsteadAvoid {
 
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()
-                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
-                && unit.enemiesNearby()
-                    .canBeAttackedBy(unit, 3)
-                    .inRadius(3, unit)
-                    .isNotEmpty();
+//                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
+                && (
+                    (unit.hp() <= 30 && unit.enemiesNearby().ranged().inRadius(6, unit).notEmpty())
+                    || (unit.enemiesNearby().ranged().inRadius(1, unit).isNotEmpty())
+                );
     }
 
     protected boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {

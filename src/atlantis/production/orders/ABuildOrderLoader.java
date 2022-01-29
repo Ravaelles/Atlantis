@@ -1,8 +1,8 @@
 package atlantis.production.orders;
 
+import atlantis.game.A;
+import atlantis.information.strategy.AStrategy;
 import atlantis.production.ProductionOrder;
-import atlantis.strategy.AStrategy;
-import atlantis.util.A;
 
 import java.io.File;
 import java.util.ArrayList;

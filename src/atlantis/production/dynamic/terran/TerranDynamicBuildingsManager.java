@@ -1,20 +1,21 @@
 package atlantis.production.dynamic.terran;
 
-import atlantis.AGame;
-import atlantis.combat.micro.terran.*;
+import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
+import atlantis.combat.micro.terran.TerranMissileTurretsForNonMain;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.information.strategy.EnemyStrategy;
+import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.decisions.OurDecisions;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.AddToQueue;
-import atlantis.strategy.EnemyStrategy;
-import atlantis.strategy.OurStrategy;
-import atlantis.strategy.decisions.OurDecisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.A;
 
 
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {

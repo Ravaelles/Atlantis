@@ -1,8 +1,8 @@
 package atlantis.init;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
 import atlantis.units.select.Select;
-import atlantis.workers.AMineralGathering;
+import atlantis.units.workers.AMineralGathering;
 
 public class AInitialActions {
 

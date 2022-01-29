@@ -2,6 +2,7 @@ package atlantis.production.constructing;
 
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+
 import java.util.ArrayList;
 
 public class ProtossConstructionManager {
@@ -32,7 +33,7 @@ public class ProtossConstructionManager {
             
             // Assume that closest builder is the one that has just constructed a building.
             if (closestBuilder != null) {
-                ConstructionOrder order = ConstructionRequests.getConstructionOrderFor(closestBuilder);
+                ConstructionOrder order = ConstructionRequests.constructionOrderFor(closestBuilder);
                 if (order != null) {
                     order.cancel();
                 }

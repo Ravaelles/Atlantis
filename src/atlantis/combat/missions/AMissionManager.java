@@ -1,6 +1,6 @@
 package atlantis.combat.missions;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
 
 public class AMissionManager {
 

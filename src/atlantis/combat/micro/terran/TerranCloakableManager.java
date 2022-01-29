@@ -1,9 +1,9 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.AGame;
+import atlantis.game.AGame;
+import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.wrappers.ATech;
 import bwapi.TechType;
 
 public class TerranCloakableManager {
@@ -27,7 +27,7 @@ public class TerranCloakableManager {
                 if (unit.energy() > 10 && enemiesNearby && !detectorsNearby) {
                     System.err.println(unit.name() + " CLOAKED");
                     unit.cloak();
-                    unit.setTooltip("CLOAK!");
+                    unit.setTooltipTactical("CLOAK!");
                     return true;
                 }
             }
@@ -38,7 +38,7 @@ public class TerranCloakableManager {
                 if (!enemiesNearby || detectorsNearby || unit.lastUnderAttackLessThanAgo(25)) {
                     System.err.println("------------- DECLOAK");
                     unit.decloak();
-                    unit.setTooltip("DECLOAK");
+                    unit.setTooltipTactical("DECLOAK");
                     return true;
                 }
             }

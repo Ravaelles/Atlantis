@@ -1,6 +1,6 @@
 package atlantis.production.orders;
 
-import atlantis.position.HasPosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

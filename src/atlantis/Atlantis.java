@@ -2,16 +2,16 @@ package atlantis;
 
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.enemy.EnemyInformation;
-import atlantis.enemy.UnitsArchive;
+import atlantis.game.*;
+import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.UnitsArchive;
+import atlantis.production.constructing.ProtossConstructionManager;
 import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.production.orders.ProductionQueueRebuilder;
-import atlantis.ums.UmsSpecialActionsManager;
-import atlantis.production.constructing.*;
-import atlantis.repair.ARepairAssignments;
+import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.AUnit;
+import atlantis.units.UmsSpecialActionsManager;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 

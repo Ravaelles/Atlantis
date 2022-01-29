@@ -1,14 +1,14 @@
 package atlantis.production.constructing;
 
-import atlantis.AGame;
-import atlantis.position.HasPosition;
-import atlantis.production.constructing.position.APositionFinder;
-import atlantis.position.APosition;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.ProductionOrder;
+import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -43,7 +43,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
     public APosition findPositionForNewBuilding() {
-        return APositionFinder.getPositionForNew(builder, buildingType, this);
+        return APositionFinder.findPositionForNew(builder, buildingType, this);
     }
 
     /**

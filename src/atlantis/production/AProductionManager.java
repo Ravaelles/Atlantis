@@ -1,16 +1,20 @@
 package atlantis.production;
 
-import atlantis.AGame;
-import atlantis.AtlantisConfig;
 import atlantis.combat.missions.Missions;
+import atlantis.config.AtlantisConfig;
+import atlantis.game.AGame;
+import atlantis.information.tech.ATechRequests;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.*;
-import atlantis.tech.ATechRequests;
+import atlantis.production.orders.CurrentBuildOrder;
+import atlantis.production.orders.CurrentProductionQueue;
+import atlantis.production.orders.ProductionQueueMode;
+import atlantis.production.orders.ZergBuildOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+
 import java.util.ArrayList;
 
 public class AProductionManager {
@@ -75,7 +79,17 @@ public class AProductionManager {
     // =========================================================
 
     public static boolean produceWorker() {
-        return CurrentBuildOrder.get().produceWorker();
+        AUnit base = Select.ourOneNotTrainingUnits(AtlantisConfig.BASE);
+
+        if (base == null) {
+            return false;
+        }
+
+        if (isSafeToProduceWorkerAt(base)) {
+            return CurrentBuildOrder.get().produceWorker(base);
+        }
+
+        return false;
     }
 
     private static boolean produceUnit(AUnitType type) {
@@ -124,6 +138,10 @@ public class AProductionManager {
             building.buildAddon(addon);
             return;
         }
+    }
+
+    private static boolean isSafeToProduceWorkerAt(AUnit base) {
+        return Select.enemyCombatUnits().inRadius(10, base).isEmpty();
     }
 
 }

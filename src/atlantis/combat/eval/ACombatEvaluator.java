@@ -1,6 +1,6 @@
 package atlantis.combat.eval;
 
-import atlantis.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -13,6 +13,7 @@ public class ACombatEvaluator {
     private static double MELEE_RADIUS = 5.5;
 
     private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT = 7;
+    private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_MISSION_ATTACK = -20;
     private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS = 20;
 
     /** Maximum allowed value as a result of evaluation. */
@@ -139,7 +140,8 @@ public class ACombatEvaluator {
             return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS;
         }
 
-        return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT;
+        return unit.mission().isMissionAttack()
+                ? PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_MISSION_ATTACK : PERCENT_ADVANTAGE_NEEDED_TO_FIGHT;
     }
 
     private static Selection theseUnits(AUnit unit) {
@@ -155,7 +157,7 @@ public class ACombatEvaluator {
         else if (unit.isEnemy()) {
             theseUnits = Select.enemyCombatUnits().ranged().inRadius(RANGED_RADIUS, unit);
             theseUnits.add(Select.enemyCombatUnits().melee().inRadius(MELEE_RADIUS, unit));
-            theseUnits.add(EnemyUnits.combatUnitsToBetterAvoid().inRadius(RANGED_RADIUS, unit));
+            theseUnits.add(EnemyUnits.combatUnitsToBetterAvoid().havingPosition().inRadius(RANGED_RADIUS, unit));
             theseUnits.removeDuplicates();
         }
 
@@ -181,8 +183,7 @@ public class ACombatEvaluator {
         );
 
         if (unit.isOur()) {
-            againstUnits = againstUnits.add(EnemyUnits.combatUnitsToBetterAvoid())
-                        .removeDuplicates();
+            againstUnits = againstUnits.add(EnemyUnits.combatUnitsToBetterAvoid()).removeDuplicates();
         }
 
         return againstUnits;

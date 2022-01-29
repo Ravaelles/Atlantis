@@ -1,6 +1,6 @@
 package atlantis.production.orders;
 
-import atlantis.AtlantisConfig;
+import atlantis.config.AtlantisConfig;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
@@ -20,7 +20,7 @@ public class ZergBuildOrder extends ABuildOrder {
     // =========================================================
 
     @Override
-    public boolean produceWorker() {
+    public boolean produceWorker(AUnit base) {
         return produceZergUnit(AtlantisConfig.WORKER);
     }
 

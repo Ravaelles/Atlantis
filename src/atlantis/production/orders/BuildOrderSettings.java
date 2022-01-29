@@ -1,7 +1,6 @@
 package atlantis.production.orders;
 
 import java.util.Map;
-import java.util.TreeMap;
 
 public class BuildOrderSettings {
 

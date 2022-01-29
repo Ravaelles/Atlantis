@@ -1,12 +1,11 @@
 package atlantis.combat.missions;
 
-import atlantis.AGame;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.units.select.Select;
-import atlantis.util.A;
-import atlantis.util.Enemy;
 
 /**
  * Handles the global mission that is mission that affects the battle squad Alpha.
@@ -86,8 +85,8 @@ public class Missions {
 //            return Missions.DEFEND;
 //        }
 
-//        return Missions.DEFEND;
-        return Missions.ATTACK;
+        return Missions.DEFEND;
+//        return Missions.ATTACK;
 //        return Missions.CONTAIN;
     }
 
@@ -113,6 +112,9 @@ public class Missions {
         if (A.now() > 50) {
 //            if (mission.isMissionDefend()) {
 //                throw new RuntimeException("DEF?!?");
+//            }
+//            if (mission.isMissionContain()) {
+//                throw new RuntimeException("CHange to contain?!?");
 //            }
 
             System.err.println("CHANGED MISSION TO: " + mission.name());

@@ -1,15 +1,15 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.targeting.ATargeting;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.units.actions.UnitActions;
-import atlantis.util.A;
 
 public class AAttackEnemyUnit {
 
-    private static final double MAX_DIST_TO_ATTACK = 20;
+    private static final double MAX_DIST_TO_ATTACK = 40;
 
     public static boolean handleAttackNearbyEnemyUnits(AUnit unit) {
         return handleAttackNearbyEnemyUnits(unit, MAX_DIST_TO_ATTACK);
@@ -25,30 +25,16 @@ public class AAttackEnemyUnit {
         if (unit.hasNoWeaponAtAll()) {
             return false;
         }
-//        if (shouldNotAttack(unit)) {
-//            return false;
-//        }
-
-//        if (unit.isWorker()) {
-//            throw new RuntimeException("aa");
-//        }
 
         AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
-//        System.out.println(unit + ", target = " + enemy);
 
         if (enemy == null) {
             return false;
         }
-
-//        atakujemy CHYBA fgged unit, nie ma takiego unitu wiec on odkurwia cos dziwnego
-
-//        System.out.println("enemy = " + enemy + " // effVisible:" + enemy.effVisible());
-
         if (!isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
             return false;
         }
-//            unit.setTooltip("->" + enemy.name() + "(" + unit.cooldownRemaining() + ")");
-//            APainter.paintLine(unit, enemy, Color.Red);
+
         return processAttackUnit(unit, enemy);
     }
 
@@ -73,7 +59,7 @@ public class AAttackEnemyUnit {
         }
 
         if (!unit.canAttackTarget(target, false, true)) {
-            unit.setTooltip("Invalid target");
+            unit.setTooltipTactical("Invalid target");
             System.err.println("Invalid target for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
             return false;
         }
@@ -94,10 +80,10 @@ public class AAttackEnemyUnit {
         }
 
         if (target.isBase() && unit.distToMoreThan(target, 4)) {
-            return unit.move(target, UnitActions.MOVE_TO_ENGAGE, "BaseAttack");
+            return unit.move(target, Actions.MOVE_ENGAGE, "BaseAttack", false);
         }
 
-        unit.setTooltip("@" + target.name());
+//        unit.setTooltip("@" + target.name());
         return unit.attackUnit(target);
     }
 
@@ -123,7 +109,7 @@ public class AAttackEnemyUnit {
                 return false;
             }
 
-            if (unit.move(enemy, UnitActions.MOVE_TO_ENGAGE, "Soyuz" + A.dist(enemy, unit) + "/" + count)) {
+            if (unit.move(enemy, Actions.MOVE_ENGAGE, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
                 return true;
             }
         }

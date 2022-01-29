@@ -1,14 +1,14 @@
 package atlantis.production.dynamic.protoss;
 
-import atlantis.AGame;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.information.strategy.EnemyStrategy;
+import atlantis.information.strategy.GamePhase;
+import atlantis.information.tech.ATechRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
-import atlantis.strategy.EnemyStrategy;
-import atlantis.strategy.GamePhase;
-import atlantis.tech.ATechRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.A;
 import bwapi.TechType;
 
 public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {

@@ -1,12 +1,11 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.AGame;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
-import atlantis.enemy.EnemyInformation;
+import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -34,8 +33,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // If NO BASE exists, return any building
                 AUnit mainBase = Select.main();
                 if (mainBase == null) {
-                    Selection selection = Select.ourBuildings();
-                    if (selection == null) {
+                    Selection selection = Select.ourBuildingsIncludingUnfinished();
+                    if (selection == null || selection.first() == null) {
                         return null;
                     }
 

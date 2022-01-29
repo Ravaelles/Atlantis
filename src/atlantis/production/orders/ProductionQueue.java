@@ -1,7 +1,7 @@
 package atlantis.production.orders;
 
+import atlantis.information.strategy.AStrategy;
 import atlantis.production.ProductionOrder;
-import atlantis.strategy.AStrategy;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;

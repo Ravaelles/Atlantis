@@ -1,10 +1,5 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.missions.Mission;
-import atlantis.position.APosition;
-import atlantis.units.AUnit;
-import atlantis.units.select.Select;
-
 //public class MissionDefendBase extends Mission {
 //
 //    protected MissionDefendBase(String name) {

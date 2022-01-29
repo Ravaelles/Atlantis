@@ -3,8 +3,8 @@ package atlantis.combat.micro.terran;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.select.Have;
 
 public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMain {

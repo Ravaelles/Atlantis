@@ -1,25 +1,25 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.debug.APainter;
-import atlantis.position.APosition;
-import atlantis.position.HasPosition;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.util.A;
+import atlantis.units.actions.Actions;
 import bwapi.Color;
 
 public class Avoid {
 
-    public static boolean unit(AUnit unit, AUnit enemy) {
+    public static boolean singleUnit(AUnit unit, AUnit enemy) {
         APainter.paintCircle(enemy, 16, Color.Orange);
 
         if (enemy.position() == null) {
             System.err.println("enemy.position() is NULL for " + enemy);
         }
 
-        if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit))) {
-            unit.setTooltip(getTooltip(unit, enemy));
+        if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit), Actions.RUN_ENEMY)) {
+//            unit.setTooltip(getTooltip(unit, enemy));
             return true;
         }
 
@@ -32,8 +32,10 @@ public class Avoid {
         APainter.paintCircle(runFrom, 4, Color.Orange);
         APainter.paintCircle(runFrom, 2, Color.Orange);
 
-        if (unit.runningManager().runFrom(runFrom, getRunDistance(unit))) {
-            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
+        if (unit.runningManager().runFrom(runFrom, getRunDistance(unit), Actions.RUN_ENEMIES)) {
+//            APainter.paintCircleFilled(unit.position(), 5, Color.Green);
+            APainter.paintCircleFilled(runFrom, 5, Color.Red);
+//            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
             return true;
         }
 
@@ -86,9 +88,10 @@ public class Avoid {
 
     protected static boolean handleErrorRun(AUnit unit) {
 //        System.err.println("ERROR_RUN for " + unit.nameWithId());
+        unit.addLog("RUN-ERROR");
 
         AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
-        unit.setTooltip("Cant run, fight");
+        unit.setTooltipTactical("Cant run, fight");
 
         return true;
     }

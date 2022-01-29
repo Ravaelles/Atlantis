@@ -1,13 +1,13 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
+import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.UnitActions;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.wrappers.ATech;
 import bwapi.TechType;
 
 
@@ -47,7 +47,7 @@ public class TerranInfantry {
 
         AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(30).nearestTo(unit);
         if (medic != null && medic.distToMoreThan(unit, 2)) {
-            return unit.move(medic, UnitActions.MOVE, "BeHealed");
+            return unit.move(medic, Actions.MOVE_SPECIAL, "BeHealed", false);
         }
 
         return false;
@@ -67,7 +67,7 @@ public class TerranInfantry {
         if (
                 enemies.atLeast(Enemy.zerg() ? 3 : 2)
         ) {
-            if (unit.lastActionMoreThanAgo(5, UnitActions.USING_TECH)) {
+            if (unit.lastActionMoreThanAgo(5, Actions.USING_TECH)) {
                 if (Select.ourOfType(AUnitType.Terran_Medic).inRadius(5, unit).havingEnergy(40).atLeast(2)) {
                     unit.useTech(stim());
                 }
@@ -85,11 +85,11 @@ public class TerranInfantry {
 
 //        if (Select.enemyRealUnits().inRadius(6, unit).isEmpty()) {
         if (
-                unit.lastActionLessThanAgo(1, UnitActions.MOVE)
-                && unit.enemiesNearby().isEmpty()
+                unit.enemiesNearby().isEmpty()
+                && unit.lastActionMoreThanAgo(15)
         ) {
             Select.ourOfType(AUnitType.Terran_Bunker).inRadius(0.5, unit).first().unloadAll();
-            unit.setTooltip("Unload");
+            unit.setTooltipTactical("Unload");
             return true;
         }
 
@@ -114,12 +114,12 @@ public class TerranInfantry {
         int maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 15 : 9;
 
         if (
-                unit.lastActionMoreThanAgo(10, UnitActions.MOVE)
+                unit.lastActionMoreThanAgo(20)
 //                || Select.enemyRealUnits().inRadius(6, unit).atLeast(1)
         ) {
             if (nearestBunker != null && nearestBunker.distTo(unit) < maxDistanceToLoad) {
                 unit.load(nearestBunker);
-                unit.setTooltip("GTFInto bunker!");
+                unit.setTooltipTactical("GTFInto bunker!");
                 return true;
             }
         }
