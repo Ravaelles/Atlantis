@@ -141,7 +141,7 @@ public class AProductionManager {
     }
 
     private static boolean isSafeToProduceWorkerAt(AUnit base) {
-        return Select.enemyCombatUnits().inRadius(10, base).isEmpty();
+        return Select.enemyCombatUnits().excludeTypes().inRadius(10, base).atMost(1);
     }
 
 }

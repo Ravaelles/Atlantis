@@ -48,7 +48,7 @@ Two High Templars or Dark Templars
 13 - Zealot
 14 - Pylon
 17 - Zealot
-20 - Cybernetics Core
+18 - Cybernetics Core
 21 - Zealot
 23 - Pylon
 25 - Dragoon

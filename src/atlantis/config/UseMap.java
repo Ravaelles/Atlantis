@@ -48,9 +48,9 @@ public class UseMap {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-        return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+//        return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        return "ums/exp_skilltest.scx"; // v. AI Protoss player
-//        return "ums/vGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+        return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        return "ums/LostTemple.scm"; // v. 2x Protoss players, again Zealot rush
