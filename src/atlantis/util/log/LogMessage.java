@@ -68,4 +68,8 @@ public class LogMessage {
             return Color.Black;
         }
     }
+
+    public int createdAtFrames() {
+        return createdAtFrames;
+    }
 }

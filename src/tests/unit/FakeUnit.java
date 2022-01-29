@@ -207,8 +207,9 @@ public class FakeUnit extends AUnit {
     // =========================================================
 
     @Override
-    protected void cacheType() {
+    protected AUnitType cacheType() {
         _lastType = rawType;
+        return null;
     }
 
     @Override

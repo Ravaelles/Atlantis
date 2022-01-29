@@ -58,15 +58,16 @@ public class FightInsteadAvoid {
 //        if (true) return false;
 
         if (enemies.isEmpty()) {
-            return false;
+            return true;
         }
 
         if (dontFightInImportantCases()) {
+            unit.addLog("DontFightImportant");
             return false;
         }
 
         if (unit.mission().forcesUnitToFight(unit, enemies)) {
-//            System.err.println("Mission forced to fight!");
+            unit.addLog("ForcedFight");
             return true;
         }
 
@@ -78,7 +79,7 @@ public class FightInsteadAvoid {
         // Combat units
         else {
             if (fightInImportantCases()) {
-//                System.err.println("Important case");
+                unit.addLog("FightImportant");
                 return true;
             }
 
@@ -95,7 +96,13 @@ public class FightInsteadAvoid {
         }
 
         if (RetreatManager.shouldRetreat(unit)) {
+            if (finishOffAlmostDeadTarget(unit)) {
+                unit.addLog("FatalityTo" + unit.target().type());
+                return true;
+            }
+
             if (unit.isRanged() && ranged == null) {
+                unit.addLog("FightRanged");
                 return true;
             } else {
                 unit.addLog("Retreat");
@@ -104,6 +111,7 @@ public class FightInsteadAvoid {
         }
 
         if (handleTerranInfantryShouldFight(unit)) {
+            unit.addLog("InfantryFight");
             return true;
         }
 
@@ -117,6 +125,7 @@ public class FightInsteadAvoid {
 //        }
 
         if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
+            unit.addLog("FightLurker");
             return true;
         }
 
@@ -124,8 +133,9 @@ public class FightInsteadAvoid {
 //            return true;
 //        }
 
-        if (combatBuilding != null) {
-            return unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding);
+        if (combatBuilding != null && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)) {
+            unit.addLog("FightBuilding");
+            return true;
         }
 
         if (unit.isMelee()) {
@@ -156,9 +166,10 @@ public class FightInsteadAvoid {
             return true;
         }
 
-//        if (forbidMeleeUnitsAbandoningCloseTargets(unit)) {
-//            return true;
-//        }
+        if (forbidMeleeUnitsAbandoningCloseTargets(unit)) {
+            unit.setTooltipTactical("DontLeave");
+            return true;
+        }
 
         if (forbidAntiAirAbandoningCloseTargets(unit)) {
             return true;
@@ -170,43 +181,66 @@ public class FightInsteadAvoid {
     // RANGED
     protected boolean fightAsRangedUnit() {
         if (melee != null) {
+            unit.addLog("RunMelee" + A.dist(unit, melee));
             return false;
         }
 
         if (vulture != null) {
+            unit.addLog("FightVulture");
             return true;
         }
 
         if (ranged != null) {
             if (unit.isTank() && !unit.isSieged() && unit.lastAttackFrameMoreThanAgo(30 * 4)) {
+                unit.addLog("TankShoot");
                 return true;
             }
 
             // Dragoon faster than Marines, can outrun them
             if (unit.isQuickerOrSameSpeedAs(enemies) && unit.hasBiggerRangeThan(enemies)) {
-                return unit.woundPercent() <= 40 && unit.lastUnderAttackMoreThanAgo(30 * 8);
+                if (unit.woundPercent() <= 40 && unit.lastUnderAttackMoreThanAgo(30 * 8)) {
+                    unit.addLog("FightQuick");
+                    return true;
+                }
             }
 
             // Dragoon slower than Vultures, cannot outrun them
             else {
-                return false;
+                unit.addLog("FightTooSlow");
+                return true;
             }
         }
 
+        if (ranged != null && !RetreatManager.shouldRetreat(unit)) {
+            unit.addLog("CanFight");
+            return true;
+        }
+
+        unit.addLog("DontFight");
         return false;
     }
 
     // MELEE
     protected boolean fightAsMeleeUnit() {
         if (invisibleDT != null || invisibleCombatUnit != null) {
+            unit.addLog("RunInvisible");
             return false;
         }
 
-        return true;
-//        return !RetreatManager.shouldRetreat(unit);
+        return !RetreatManager.shouldRetreat(unit);
+//        return true;
     }
 
     // =========================================================
+
+    private boolean finishOffAlmostDeadTarget(AUnit unit) {
+        AUnit target = unit.target();
+        if (target != null && target.hp() <= unit.damageAgainst(target)) {
+            return true;
+        }
+
+        return false;
+    }
 
     private boolean handleTerranInfantryShouldFight(AUnit unit) {
         if (!unit.isTerranInfantry()) {
@@ -225,14 +259,14 @@ public class FightInsteadAvoid {
         return medicNearby || (!unit.isWounded() && ranged == null);
     }
 
-//    protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
-//        return unit.isMelee()
+    protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
+        return unit.isMelee()
 //                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
-//                && unit.enemiesNearby()
-//                    .canBeAttackedBy(unit, 3)
-//                    .inRadius(3, unit)
-//                    .isNotEmpty();
-//    }
+                && (
+                    (unit.hp() <= 30 && unit.enemiesNearby().ranged().inRadius(6, unit).notEmpty())
+                    || (unit.enemiesNearby().ranged().inRadius(1, unit).isNotEmpty())
+                );
+    }
 
     protected boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
         return unit.isAirUnitAntiAir()

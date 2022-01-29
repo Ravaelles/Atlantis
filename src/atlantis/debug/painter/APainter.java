@@ -167,8 +167,8 @@ public class APainter {
     }
 
     public static void paintTextCentered(HasPosition position, String text, Color color, double tileDX, double tileDY) {
-        paintTextCentered(position.translateByPixels(
-                (int) tileDX * 32, (int) tileDY * 32),
+        paintTextCentered(
+                position.translateByPixels((int) (tileDX * 32), (int) (tileDY * 32)),
                 text, color, false
         );
     }

@@ -89,7 +89,7 @@ public class AAdvancedPainter extends APainter {
         paintKilledAndLost();
         paintProductionQueue();
         paintSidebarConstructionsPending();
-        paintLog();
+        paintGameLog();
         paintConstructionPlaces();
         //        paintUnitCounters();
 
@@ -188,27 +188,40 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
             // === Other stuff =========================================
 
-            String squadLetter = unit.squad() == null ? "NO_SQUAD" : unit.squad().letter();
-            paintTextCentered(unit.translateByPixels(0, 22), squadLetter, Color.Purple);
-
-//            String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
-//                    + "(" + unit.lastOrderFramesAgo() + ")";
-//            String order = unit.getAction().toString() + "(" + unit.lastOrderFramesAgo() + ")";
-            String order = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
-            paintTextCentered(new APosition(position.getX(), position.getY() + 8), order, Color.Grey);
-
-            // =========================================================
-
-            paintUnitLog(unit);
+            paintSquad(unit);
+            paintLastOrder(unit);
+            paintLog(unit);
         }
     }
 
-    private static void paintUnitLog(AUnit unit) {
-        double baseTy = 1.3;
-        for (int i = 0; i < unit.log().messages().size(); i++) {
+    private static void paintLog(AUnit unit) {
+        int baseOffset = 10;
+        int counter = 0;
+        for (int i = unit.log().messages().size() - 1; i >= 0; i--) {
             LogMessage message = unit.log().messages().get(i);
-            unit.paintInfo(A.now() + " " + message.message(), Color.Grey, baseTy + 0.1 * i);
+//            unit.paintInfo(message.createdAtFrames() + "-" + message.message(), Color.Grey, offset);
+            APainter.paintTextCentered(
+                    unit,
+                    message.createdAtFrames() + "-" + message.message(),
+//                    Color.Grey,
+                    Color.Yellow,
+                    0,
+                    (baseOffset + (9 * (counter++))) / 32.0
+            );
         }
+    }
+
+    private static void paintLastOrder(AUnit unit) {
+        //            String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
+//                    + "(" + unit.lastOrderFramesAgo() + ")";
+//            String order = unit.getAction().toString() + "(" + unit.lastOrderFramesAgo() + ")";
+        String order = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
+        paintTextCentered(new APosition(unit.x(), unit.y() - 6), order, Color.Grey);
+    }
+
+    private static void paintSquad(AUnit unit) {
+        String squadLetter = unit.squad() == null ? "NO_SQUAD" : unit.squad().letter();
+        paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
     }
 
     private static void paintOurCombatUnitTargets(AUnit unit) {
@@ -1221,7 +1234,7 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    private static void paintLog() {
+    private static void paintGameLog() {
         int x = rightSideMessageLeftOffset - 130;
         int y = rightSideMessageTopOffset;
 
@@ -1243,8 +1256,8 @@ public class AAdvancedPainter extends APainter {
         Color color = unit.isOur() ? Color.Green : Color.Yellow;
 
 //        if (unit.isWounded()) {
-        paintUnitProgressBar(unit, 17, 100, Color.Red);
-        paintUnitProgressBar(unit, 17, unit.hpPercent(), color);
+        paintUnitProgressBar(unit, 10, 100, Color.Red);
+        paintUnitProgressBar(unit, 10, unit.hpPercent(), color);
 //        }
     }
 

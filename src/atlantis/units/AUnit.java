@@ -61,7 +61,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
     protected AUnitType _lastType = null;
-    private Log log = new Log(40);
+    private Log log = new Log(30, 3);
     private Action unitAction = Actions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
@@ -154,11 +154,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns unit type from bridge OR if type is Unknown (behind fog of war) it will return last cached type.
      */
     public AUnitType type() {
-        if (_lastType == null) {
-            cacheType();
+        if (_lastType != null) {
+            return _lastType;
         }
 
-        return _lastType;
+        return cacheType();
     }
 
     public UnitType bwapiType() {
@@ -172,8 +172,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         cacheType();
     }
 
-    protected void cacheType() {
+    protected AUnitType cacheType() {
         _lastType = AUnitType.from(u.getType());
+        return _lastType;
     }
 
     @Override
@@ -472,7 +473,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (strategicLevel) {
             this.tooltip = tooltip;
         }
-        this.tooltip = tooltip;
+//        this.tooltip = tooltip;
         return this;
     }
 
@@ -717,6 +718,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
     }
 
+    public int damageAgainst(AUnit target) {
+        WeaponType weapon = weaponAgainst(target);
+        if (weapon == null) {
+            return 0;
+        }
+
+        return weapon.damageAmount() * weapon.damageFactor();
+    }
+
     public boolean distToLessThan(AUnit target, double maxDist) {
         if (target == null) {
             return false;
@@ -934,6 +944,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public String idWithHash() {
         return "#" + id();
+    }
+
+    public String typeWithHash() {
+        return "#" + type();
     }
 
     // =========================================================
@@ -1179,6 +1193,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         return orderTarget();
+    }
+
+    public boolean hasTarget() {
+        return u.getTarget() != null;
     }
 
     public boolean hasTargetPosition() {
@@ -1735,15 +1753,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasNoWeaponAtAll() {
-        if (isBunker()) {
-            return false;
-        }
+        return cacheBoolean.get(
+                "hasNoWeaponAtAll",
+                -1,
+                () -> !isBunker() && type().hasNoWeaponAtAll()
+        );
 
-        if (type().isReaver() && scarabCount() == 0) {
-            return true;
-        }
-
-        return type().hasNoWeaponAtAll();
+//        if (type().isReaver() && scarabCount() == 0) {
+//            return true;
+//        }
     }
 
     public boolean recentlyAcquiredTargetToAttack() {
@@ -2073,16 +2091,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return targetPosition() != null && targetPosition().distToMoreThan(this, minTiles);
     }
 
-    public void paintInfo(String text) {
-        APainter.paintTextCentered(this, text, Color.White);
-    }
-
-    public void paintInfo(String text, Color color, double dty) {
-        APainter.paintTextCentered(this, text, color, 0, dty);
-    }
+//    public void paintInfo(String text) {
+//        APainter.paintTextCentered(this, text, Color.White);
+//    }
+//
+//    public void paintInfo(String text, Color color, double dty) {
+//        APainter.paintTextCentered(this, text, color, 0, dty / 32.0);
+//    }
 
     public void addLog(String message) {
-        log.addMessage(message);
+        if (!log.lastMessageWas(message)) {
+            log.addMessage(message);
+        }
     }
 
     public Log log() {

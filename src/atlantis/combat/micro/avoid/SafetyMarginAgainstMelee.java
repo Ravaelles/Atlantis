@@ -3,13 +3,14 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-    public static double ENEMIES_NEARBY_FACTOR = 0.3;
-    public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
+//    public static double ENEMIES_NEARBY_FACTOR = 0.3;
+//    public static double ENEMIES_NEARBY_MAX_DIST = 1.44;
     public static double INFANTRY_BASE_IF_MEDIC = 0;
     public static int INFANTRY_WOUND_MODIFIER_WITH_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 2.65;
@@ -22,8 +23,15 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // === Protoss ===============================================
 
-//        if (defender.isDragoon()) {
+        if (defender.isDragoon() && (
+                defender.isHealthy() || !defender.equals(attacker.target()) || !attacker.isFacingItsTarget()
+        )) {
+            return 0.2;
 //            criticalDist = handleDragoon(defender, attacker);
+        }
+
+//        if (defender.isProtoss()) {
+//
 //        }
 
         // === Terran ===============================================

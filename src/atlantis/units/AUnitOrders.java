@@ -48,6 +48,8 @@ public interface AUnitOrders {
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
 //            System.out.println("                  ------> ATTACK #" + target.getID());
 //        }
+
+//        unit().addLog("Target-" + target.idWithHash());
         unit().setAction(Actions.ATTACK_UNIT);
         return u().attack(target.u());
     }

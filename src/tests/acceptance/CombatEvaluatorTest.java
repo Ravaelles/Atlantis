@@ -3,6 +3,7 @@ package tests.acceptance;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.information.enemy.EnemyInformation;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -20,6 +21,9 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     public void returnsRelativeAndAbsoluteValuesThatMakeSense() {
         createWorld(1, () -> {
             FakeUnit enemy = nearestEnemy(marine);
+
+            Select.our().print();
+            Select.enemy().print();
 
             double ourEval = marine.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();

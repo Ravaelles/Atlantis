@@ -16,6 +16,7 @@ public class WantsToAvoid {
 
         // =========================================================
 
+//        System.out.println("(new FightInsteadAvoid(unit, enemies)).shouldFight() = " + (new FightInsteadAvoid(unit, enemies)).shouldFight());
         if (!shouldAlwaysAvoid(unit, enemies)) {
             if (
                     !unit.hasNoWeaponAtAll()
@@ -39,7 +40,13 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
-        if (unit.isWorker() || unit.isScout() || unit.isSquadScout() || unit.hpLessThan(17)) {
+        if (unit.isWorker() || unit.isScout() || unit.hpLessThan(17)) {
+            unit.addLog("AlwaysAvoid" + unit.isSquadScout() + unit.isScout());
+            return true;
+        }
+
+        if (unit.isSquadScout() && unit.friendsNearby().inRadius(3, unit).isEmpty()) {
+            unit.addLog("SquadScoutAvoid");
             return true;
         }
 

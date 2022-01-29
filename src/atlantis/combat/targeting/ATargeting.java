@@ -57,21 +57,21 @@ public class ATargeting {
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 0);
         if (enemy != null) {
-//            ourUnit.paintInfo("Range", Color.White, 1);
+            ourUnit.addLog("AttackInRange");
             return enemy;
         }
 
         // Most wounded enemy ALMOST IN RANGE
         enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 1.2);
         if (enemy != null) {
-//            ourUnit.paintInfo("Close", Color.White, 1);
+            ourUnit.addLog("AttackClose");
             return enemy;
         }
 
         // Distant enemies
         enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 40);
         if (enemy != null) {
-//            ourUnit.paintInfo("Far", Color.White, 1);
+            ourUnit.addLog("AttackFar");
             return enemy;
         }
 
@@ -87,6 +87,7 @@ public class ATargeting {
         // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
         enemy = Select.enemyRealUnits().canBeAttackedBy(ourUnit, 0.1).mostWounded();
         if (enemy != null) {
+            ourUnit.addLog("MostWoundedInRange");
             return enemy;
         }
 
@@ -131,9 +132,9 @@ public class ATargeting {
     // =========================================================
 
     private static AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
-        if (maxDistFromEnemy > 30) {
-            maxDistFromEnemy = 30;
-        }
+//        if (maxDistFromEnemy > 30) {
+//            maxDistFromEnemy = 30;
+//        }
 
 //        Select.enemyRealUnits(true)
 //                .effVisible()
@@ -141,10 +142,10 @@ public class ATargeting {
 //                .canBeAttackedBy(unit, 8)
 //                .print();
 
-        Selection targets = Select.enemyRealUnits(true)
-                .effVisible()
-                .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 15);
+//        Selection targets = Select.enemyRealUnits(true)
+//                .effVisible()
+//                .inRadius(maxDistFromEnemy, unit)
+//                .canBeAttackedBy(unit, 15);
 
         // Quit early if no target at all
         if (
@@ -154,8 +155,8 @@ public class ATargeting {
                 .canBeAttackedBy(unit, 15)
                 .count() == 0
         ) {
-            if (debug(unit)) {
-                System.out.println("PreA quit");
+//            if (debug(unit)) {
+//                System.out.println("PreA quit");
 //                System.out.println(Select.enemyRealUnits(true).count());
 //                System.out.println(Select.enemyRealUnits(true)
 //                        .effVisible().count());
@@ -166,7 +167,7 @@ public class ATargeting {
 //                        .effVisible()
 //                        .inRadius(maxDistFromEnemy, unit)
 //                        .canBeAttackedBy(unit, 8).count());
-            }
+//            }
             return null;
         }
 

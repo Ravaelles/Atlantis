@@ -184,12 +184,7 @@ public class ACombatUnitManager {
         }
 
         return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
-//        return false;
     }
-
-//    private static boolean canHandleLowPriority(AUnit unit) {
-//        return unit.isStopped() || unit.isIdle();
-//    }
 
     /**
      * If we're here, mission manager is allowed to take control over this unit.
@@ -210,14 +205,6 @@ public class ACombatUnitManager {
     }
 
     // =========================================================
-
-    /**
-     * Some units like Reavers should open fire to nearby enemies even when retreating, otherwise they'll
-     * just get destroyed without firing even once.
-     */
-//    private static boolean isAllowedToAttackBeforeRetreating(AUnit unit) {
-//        return unit.isType(AUnitType.Protoss_Reaver, AUnitType.Terran_Vulture) && unit.getHPPercent() > 10;
-//    }
 
     /**
      * Can be used for testing.

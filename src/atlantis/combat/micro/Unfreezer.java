@@ -13,7 +13,7 @@ public class Unfreezer {
      * This is my ugly way of fixing this.
      */
     public static boolean handleUnfreeze(AUnit unit) {
-        if (unit.isRunning() && unit.lastActionFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES) {
+        if (unit.isRunning() && unit.lastActionFramesAgo() >= (AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES * 2)) {
             if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
                 System.err.println("UNFREEZE #1!");
 //                unit.setTooltip("UNFREEZE!");

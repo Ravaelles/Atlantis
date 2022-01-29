@@ -3,6 +3,7 @@ package atlantis.combat.micro.managers;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionUnitManager;
+import atlantis.combat.targeting.ATargeting;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -51,6 +52,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         // =========================================================
 
         if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit)) {
+            unit.setTooltip("Adv:Attack", true);
             return true;
         }
 
@@ -75,6 +77,9 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             if (unit.isMoving()) {
                 unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true);
             }
+            else {
+                unit.setTooltip("Adv:Fine", true);
+            }
             return true;
         }
 
@@ -83,6 +88,10 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")", true);
         }
 
+//        System.out.println("Target = " + ATargeting.defineBestEnemyToAttackFor(unit, 40) + " // " +
+//                unit.enemiesNearby().inRadius(10, unit).count());
+
+        unit.setTooltip("Adv:Nothing", true);
         return false;
     }
 

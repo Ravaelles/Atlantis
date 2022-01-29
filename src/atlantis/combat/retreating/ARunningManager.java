@@ -401,12 +401,13 @@ public class ARunningManager {
      */
     private boolean notifyNearbyUnitsToMakeSpace(AUnit unit) {
         if (We.protoss()) {
-            if (
-                    unit.shieldDamageAtLeast(20)
-                    || unit.friendsNearby().inRadius(0.7, unit).atLeast(3)
-            ) {
-                return false;
-            }
+            return false;
+//            if (
+//                    unit.shieldDamageAtLeast(20)
+//                    || unit.friendsNearby().inRadius(0.7, unit).atLeast(3)
+//            ) {
+//                return false;
+//            }
         }
 
         if (unit.isAir() || unit.isLoaded()) {

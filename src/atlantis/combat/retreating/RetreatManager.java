@@ -22,7 +22,7 @@ public class RetreatManager {
     public static boolean shouldRetreat(AUnit unit) {
         return cache.get(
                 "shouldRetreat:" + unit.id(),
-                6,
+                35,
                 () -> {
                     if (shouldNotConsiderRetreatingNow(unit)) {
                         return false;
@@ -43,7 +43,7 @@ public class RetreatManager {
     }
 
     private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
-        if (unit.isHealthy()) {
+        if (!unit.isTerran() && unit.isRanged() && unit.isHealthy()) {
             return false;
         }
 

@@ -25,30 +25,16 @@ public class AAttackEnemyUnit {
         if (unit.hasNoWeaponAtAll()) {
             return false;
         }
-//        if (shouldNotAttack(unit)) {
-//            return false;
-//        }
-
-//        if (unit.isWorker()) {
-//            throw new RuntimeException("aa");
-//        }
 
         AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, maxDistFromEnemy);
-//        System.out.println(unit + ", target = " + enemy);
 
         if (enemy == null) {
             return false;
         }
-
-//        atakujemy CHYBA fgged unit, nie ma takiego unitu wiec on odkurwia cos dziwnego
-
-//        System.out.println("enemy = " + enemy + " // effVisible:" + enemy.effVisible());
-
         if (!isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
             return false;
         }
-//            unit.setTooltip("->" + enemy.name() + "(" + unit.cooldownRemaining() + ")");
-//            APainter.paintLine(unit, enemy, Color.Red);
+
         return processAttackUnit(unit, enemy);
     }
 
