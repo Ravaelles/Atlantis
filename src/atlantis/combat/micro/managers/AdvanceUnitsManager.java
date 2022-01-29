@@ -91,6 +91,13 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 //        System.out.println("Target = " + ATargeting.defineBestEnemyToAttackFor(unit, 40) + " // " +
 //                unit.enemiesNearby().inRadius(10, unit).count());
 
+        // =========================================================
+
+        if (distToFocusPoint > 6) {
+            unit.move(focusPoint, Actions.MOVE_ENGAGE, "Adv:Forward", true);
+            return true;
+        }
+
         unit.setTooltip("Adv:Nothing", true);
         return false;
     }
