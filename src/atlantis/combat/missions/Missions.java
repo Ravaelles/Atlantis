@@ -6,7 +6,6 @@ import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.units.select.Select;
 import atlantis.util.A;
-import atlantis.util.Enemy;
 
 /**
  * Handles the global mission that is mission that affects the battle squad Alpha.

@@ -20,12 +20,12 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
 
 public class AbstractTestWithUnits extends UnitTestHelper {
 

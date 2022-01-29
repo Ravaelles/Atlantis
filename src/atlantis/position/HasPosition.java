@@ -1,10 +1,7 @@
 package atlantis.position;
 
 import atlantis.Atlantis;
-import atlantis.map.AMap;
 import atlantis.util.Vector;
-import bwapi.Point;
-import bwapi.Position;
 
 /**
  * This interface helps ease problems of overriding native bridge classes like e.g. BaseLocation which doesn't

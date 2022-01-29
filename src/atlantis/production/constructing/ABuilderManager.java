@@ -1,12 +1,12 @@
 package atlantis.production.constructing;
 
 import atlantis.AGame;
-import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
+import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import atlantis.util.A;
 import atlantis.util.We;
 import bwapi.TilePosition;

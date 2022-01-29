@@ -2,7 +2,9 @@ package atlantis.combat;
 
 import atlantis.AGame;
 import atlantis.ASpecialUnitManager;
-import atlantis.combat.micro.*;
+import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.AAvoidSpells;
+import atlantis.combat.micro.Unfreezer;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;

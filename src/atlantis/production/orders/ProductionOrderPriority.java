@@ -1,7 +1,5 @@
 package atlantis.production.orders;
 
-import bwapi.Point;
-
 public enum ProductionOrderPriority implements Comparable<ProductionOrderPriority> {
 
     STANDARD(1),

@@ -3,7 +3,6 @@ package atlantis.combat.micro.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.A;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 

@@ -1,7 +1,8 @@
 package atlantis.production.dynamic.terran;
 
 import atlantis.AGame;
-import atlantis.combat.micro.terran.*;
+import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
+import atlantis.combat.micro.terran.TerranMissileTurretsForNonMain;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.AddToQueue;

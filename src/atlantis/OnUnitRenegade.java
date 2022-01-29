@@ -1,12 +1,5 @@
 package atlantis;
 
-import atlantis.combat.squad.ASquadManager;
-import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.enemy.EnemyInformation;
-import atlantis.production.constructing.ConstructionOrder;
-import atlantis.production.constructing.ConstructionOrderStatus;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.units.AUnit;
 import bwapi.Unit;

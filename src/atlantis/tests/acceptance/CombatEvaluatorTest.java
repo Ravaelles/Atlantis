@@ -1,12 +1,9 @@
 package atlantis.tests.acceptance;
 
-import atlantis.combat.ACombatUnitManager;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.enemy.EnemyInformation;
-import atlantis.enemy.EnemyUnits;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.A;
 import org.junit.Test;
 
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;

@@ -1,7 +1,5 @@
 package atlantis.position;
 
-import bwapi.Point;
-
 import java.util.Objects;
 
 public class LargeTile implements Comparable<LargeTile> {

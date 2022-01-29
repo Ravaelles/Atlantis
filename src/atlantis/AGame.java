@@ -1,7 +1,5 @@
 package atlantis;
 
-import static atlantis.Atlantis.game;
-
 import atlantis.combat.missions.MissionChanger;
 import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.units.AUnitType;
@@ -9,6 +7,8 @@ import atlantis.util.A;
 import bwapi.*;
 
 import java.util.List;
+
+import static atlantis.Atlantis.game;
 
 /**
  * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply

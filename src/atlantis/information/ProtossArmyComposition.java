@@ -2,7 +2,6 @@ package atlantis.information;
 
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 
 public class ProtossArmyComposition {
 

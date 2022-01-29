@@ -2,9 +2,9 @@ package atlantis.production.constructing.position;
 
 import atlantis.AGame;
 import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

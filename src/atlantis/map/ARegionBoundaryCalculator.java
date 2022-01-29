@@ -1,7 +1,6 @@
 package atlantis.map;
 
 import atlantis.position.APosition;
-import atlantis.util.A;
 import atlantis.util.Vector;
 
 import java.util.ArrayList;

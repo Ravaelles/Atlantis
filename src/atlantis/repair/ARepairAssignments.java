@@ -4,7 +4,10 @@ import atlantis.log.Log;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ARepairAssignments {
 

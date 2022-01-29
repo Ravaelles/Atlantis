@@ -9,8 +9,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
-import java.util.Objects;
-
 public class RetreatManager {
 
     public static int GLOBAL_RETREAT_COUNTER = 0;

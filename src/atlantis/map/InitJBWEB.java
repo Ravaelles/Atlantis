@@ -1,7 +1,9 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
-import jbweb.*;
+import jbweb.Blocks;
+import jbweb.JBWEB;
+import jbweb.Stations;
 
 public class InitJBWEB {
 

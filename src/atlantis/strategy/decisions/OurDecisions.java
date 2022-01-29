@@ -1,12 +1,10 @@
 package atlantis.strategy.decisions;
 
 import atlantis.enemy.EnemyInformation;
-import atlantis.production.orders.CurrentProductionQueue;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.strategy.GamePhase;
 import atlantis.strategy.OurStrategy;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 

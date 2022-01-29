@@ -1,14 +1,13 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.eval.ACombatEvaluator;
-import atlantis.combat.micro.terran.TerranFirebat;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.Units;
 import atlantis.util.A;
 import atlantis.util.Enemy;
 import atlantis.util.We;

@@ -1,9 +1,9 @@
 package atlantis.combat.eval;
 
 import atlantis.AGame;
+import atlantis.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.position.PositionUtil;
 
 public class ACombatEvaluatorExtraConditions {
 

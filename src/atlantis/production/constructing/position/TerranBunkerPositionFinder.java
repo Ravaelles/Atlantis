@@ -1,10 +1,13 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.missions.defend.MissionDefend;
-import atlantis.map.*;
+import atlantis.map.ABaseLocation;
+import atlantis.map.AChoke;
+import atlantis.map.Bases;
+import atlantis.map.Chokes;
+import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
-import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

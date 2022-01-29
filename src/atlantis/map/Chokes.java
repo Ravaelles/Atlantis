@@ -8,7 +8,8 @@ import atlantis.util.Cache;
 import bwem.ChokePoint;
 import jbweb.JBWEB;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Chokes {
 

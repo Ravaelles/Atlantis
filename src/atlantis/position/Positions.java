@@ -2,11 +2,8 @@ package atlantis.position;
 
 import atlantis.util.A;
 import bwapi.Position;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+
+import java.util.*;
 
 /**
  * This class is wrapper for ArrayList<Position>. It allows some helpful methods to be executed upon squad of

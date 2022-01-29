@@ -1,11 +1,8 @@
 package atlantis.log;
 
-import atlantis.production.constructing.ConstructionOrder;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.util.A;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Log {
 

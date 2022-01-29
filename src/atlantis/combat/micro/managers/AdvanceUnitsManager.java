@@ -6,9 +6,9 @@ import atlantis.combat.missions.MissionUnitManager;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
 public class AdvanceUnitsManager extends MissionUnitManager {

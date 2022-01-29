@@ -9,7 +9,10 @@ import atlantis.units.Units;
 import atlantis.util.Cache;
 import atlantis.util.We;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This class allows to easily select units e.g. to select one of your Marines, nearest to given location, you

@@ -1,7 +1,7 @@
 package atlantis.production.orders;
 
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.ProductionOrder;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.wrappers.ATech;

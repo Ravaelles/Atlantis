@@ -2,8 +2,8 @@ package atlantis.production.constructing;
 
 import atlantis.AGame;
 import atlantis.combat.micro.zerg.ZergCreepColony;
-import atlantis.production.constructing.position.TerranAddonManager;
 import atlantis.production.ProductionOrder;
+import atlantis.production.constructing.position.TerranAddonManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

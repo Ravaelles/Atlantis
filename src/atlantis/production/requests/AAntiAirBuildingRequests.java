@@ -1,10 +1,10 @@
 package atlantis.production.requests;
 
 import atlantis.AtlantisConfig;
+import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.production.Requirements;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.position.APosition;
 import atlantis.production.orders.AddToQueue;
 import atlantis.strategy.decisions.OurStrategicBuildings;
 import atlantis.units.AUnit;

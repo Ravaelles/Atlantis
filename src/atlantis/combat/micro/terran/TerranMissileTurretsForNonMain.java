@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.map.*;
+import atlantis.map.Bases;
+import atlantis.map.Chokes;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
 import atlantis.production.orders.AddToQueue;

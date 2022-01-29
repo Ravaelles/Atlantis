@@ -8,9 +8,9 @@ import atlantis.position.APosition;
 import atlantis.tech.SpellCoordinator;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import bwapi.TechType;
 
 import java.util.List;

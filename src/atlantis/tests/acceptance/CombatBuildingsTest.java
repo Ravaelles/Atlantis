@@ -3,8 +3,6 @@ package atlantis.tests.acceptance;
 import atlantis.combat.ACombatUnitManager;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
-import atlantis.util.A;
 import org.junit.Test;
 
 public class CombatBuildingsTest extends AbstractTestFakingGame {

@@ -2,8 +2,8 @@ package atlantis.production.constructing;
 
 import atlantis.AGame;
 import atlantis.AtlantisConfig;
-import atlantis.production.constructing.position.APositionFinder;
 import atlantis.position.APosition;
+import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

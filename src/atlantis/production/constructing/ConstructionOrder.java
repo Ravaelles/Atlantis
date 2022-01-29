@@ -1,10 +1,10 @@
 package atlantis.production.constructing;
 
 import atlantis.AGame;
-import atlantis.position.HasPosition;
-import atlantis.production.constructing.position.APositionFinder;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.production.ProductionOrder;
+import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

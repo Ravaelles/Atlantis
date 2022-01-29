@@ -1,14 +1,14 @@
 package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
-import atlantis.position.HasPosition;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.ConstructionOrder;
-import atlantis.map.ABaseLocation;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
+import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

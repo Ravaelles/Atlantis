@@ -2,33 +2,36 @@ package atlantis.units;
 
 import atlantis.AGame;
 import atlantis.combat.eval.ACombatEvaluator;
-import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
-import atlantis.information.AbstractFoggedUnit;
-import atlantis.production.constructing.AConstructionManager;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.ConstructionOrder;
 import atlantis.debug.APainter;
 import atlantis.enemy.UnitsArchive;
+import atlantis.information.AbstractFoggedUnit;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
+import atlantis.position.PositionUtil;
+import atlantis.production.constructing.AConstructionManager;
+import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.repair.ARepairAssignments;
 import atlantis.scout.AScoutManager;
 import atlantis.tech.SpellCoordinator;
 import atlantis.tests.unit.FakeUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
-import atlantis.position.PositionUtil;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Cache;
 import atlantis.util.*;
-import atlantis.util.Vector;
 import atlantis.wrappers.ATech;
 import bwapi.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper for bwapi Unit class that makes units much easier to use.<br /><br />

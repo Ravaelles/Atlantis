@@ -1,11 +1,6 @@
 package atlantis;
 
-import atlantis.debug.APainter;
-import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.util.A;
-import bwapi.Color;
-import jbweb.Walls;
 
 public class OnEveryFrame {
 

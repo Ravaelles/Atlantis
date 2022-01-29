@@ -3,9 +3,9 @@ package atlantis.workers;
 import atlantis.AGame;
 import atlantis.strategy.GamePhase;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 import java.util.Collection;
 

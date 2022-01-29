@@ -3,7 +3,6 @@ package atlantis.tests.unit;
 import atlantis.AGame;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.enemy.EnemyInformation;
-import atlantis.information.FoggedUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -12,7 +11,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 public class AAvoidUnitsTest extends AbstractTestWithUnits {
 

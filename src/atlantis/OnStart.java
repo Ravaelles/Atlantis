@@ -3,7 +3,6 @@ package atlantis;
 import atlantis.debug.APainter;
 import atlantis.env.Env;
 import atlantis.init.AInitialActions;
-import atlantis.keyboard.AForcedClicks;
 import atlantis.map.AMap;
 import atlantis.production.orders.CurrentBuildOrder;
 import atlantis.strategy.OurStrategyManager;

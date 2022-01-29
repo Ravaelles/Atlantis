@@ -1,7 +1,6 @@
 package atlantis.strategy;
 
 import atlantis.AGame;
-import atlantis.strategy.response.AStrategyResponse;
 import atlantis.strategy.response.AStrategyResponseFactory;
 import atlantis.util.A;
 import atlantis.util.Enemy;

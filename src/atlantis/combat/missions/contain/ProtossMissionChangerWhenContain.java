@@ -1,6 +1,5 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.AGame;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.enemy.EnemyInformation;

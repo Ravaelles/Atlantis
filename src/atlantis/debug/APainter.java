@@ -5,10 +5,11 @@ import atlantis.env.Env;
 import atlantis.map.AChoke;
 import atlantis.position.APosition;
 import atlantis.position.HasPosition;
-import atlantis.position.PositionHelper;
 import atlantis.units.AUnit;
 import atlantis.util.ColorUtil;
-import bwapi.*;
+import bwapi.Color;
+import bwapi.Game;
+import bwapi.Text;
 
 /**
  * Here you can include code that will draw extra informations over units etc.

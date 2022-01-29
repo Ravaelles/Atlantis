@@ -1,12 +1,11 @@
 package atlantis.production.constructing;
 
 import atlantis.AGame;
-import atlantis.position.HasPosition;
-import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.position.APosition;
+import atlantis.position.HasPosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
+import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.orders.ProductionQueue;
 import atlantis.production.orders.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
@@ -15,7 +14,8 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ConstructionRequests {

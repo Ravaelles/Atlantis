@@ -1,7 +1,6 @@
 package atlantis.combat.targeting;
 
 import atlantis.debug.APainter;
-import atlantis.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

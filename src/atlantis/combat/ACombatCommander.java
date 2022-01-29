@@ -1,9 +1,9 @@
 package atlantis.combat;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;

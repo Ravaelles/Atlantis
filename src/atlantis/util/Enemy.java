@@ -1,9 +1,7 @@
 package atlantis.util;
 
 import atlantis.AGame;
-import atlantis.units.AUnit;
 import bwapi.Player;
-import bwapi.Unit;
 
 import java.util.ArrayList;
 

@@ -12,8 +12,6 @@
 
 package bwem;
 
-import atlantis.enemy.UnitsArchive;
-import atlantis.util.A;
 import bwapi.*;
 import bwem.util.BwemExt;
 import bwem.util.CheckMode;

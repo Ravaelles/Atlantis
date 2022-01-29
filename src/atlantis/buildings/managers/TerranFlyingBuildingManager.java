@@ -6,8 +6,8 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 import java.util.ArrayList;
 import java.util.Iterator;

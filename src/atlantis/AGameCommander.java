@@ -2,13 +2,12 @@ package atlantis;
 
 import atlantis.combat.ACombatCommander;
 import atlantis.combat.missions.AMissionManager;
-import atlantis.enemy.EnemyUnits;
-import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.debug.AAdvancedPainter;
+import atlantis.enemy.EnemyUnits;
 import atlantis.production.ABuildingsCommander;
 import atlantis.scout.AScoutManager;
 import atlantis.strategy.AStrategyCommander;
-import atlantis.util.A;
+import atlantis.ums.UmsSpecialActionsManager;
 import atlantis.util.CodeProfiler;
 import atlantis.workers.AWorkerCommander;
 

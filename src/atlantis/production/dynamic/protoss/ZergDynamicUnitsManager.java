@@ -4,12 +4,9 @@ package atlantis.production.dynamic.protoss;
 import atlantis.AGame;
 import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.CurrentBuildOrder;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-
-import java.util.List;
 
 
 public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
