@@ -748,7 +748,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return runningManager.isRunning() || action().isRunning();
+        return runningManager.isRunning() || (action() != null && action().isRunning());
     }
 
     public boolean lastOrderMinFramesAgo(int minFramesAgo) {

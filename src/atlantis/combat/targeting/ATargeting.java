@@ -1,5 +1,6 @@
 package atlantis.combat.targeting;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -62,18 +63,27 @@ public class ATargeting {
         }
 
         // Most wounded enemy ALMOST IN RANGE
-        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 1.2);
+//        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 1.2);
+//        if (enemy != null) {
+//            ourUnit.addLog("AttackClose");
+//            return enemy;
+//        }
+
+        // Most wounded enemy some distance from away
+        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 4);
         if (enemy != null) {
             ourUnit.addLog("AttackClose");
             return enemy;
         }
 
         // Distant enemies
-        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 40);
-        if (enemy != null) {
-            ourUnit.addLog("AttackFar");
-            return enemy;
-        }
+//        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 25);
+//        enemy = Select.enemy().canBeAttackedBy(ourUnit, 40).nearestTo(ourUnit);
+//        if (enemy != null) {
+////            ourUnit.addLog("AttackFar" + A.dist(ourUnit, enemy));
+//            ourUnit.addLog("AttackFar");
+//            return enemy;
+//        }
 
 //        // Most wounded enemy ALMOST IN RANGE
 //        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 2.2);
@@ -93,7 +103,7 @@ public class ATargeting {
 
 //        System.err.println("Man, how comes we're here? " + ourUnit + " // " + ourUnit.enemiesNearby().count());
 
-        return Select.enemyRealUnits().canBeAttackedBy(ourUnit, 14).nearestTo(ourUnit);
+        return Select.enemyRealUnits().canBeAttackedBy(ourUnit, 999).nearestTo(ourUnit);
 //        enemy = selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit, 1.2);
 //        if (enemy != null) {
 //            return enemy;

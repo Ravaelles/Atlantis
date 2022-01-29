@@ -76,7 +76,7 @@ public class Count {
 //                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
 //        }
         else if (type.isPrimaryBase()) {
-            return Select.ourIncludingUnfinished().bases().count()
+            return Select.ourUnfinished().bases().count()
                     + ConstructionRequests.countNotStartedOfType(type)
                     + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Lair)
                     + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Hive);

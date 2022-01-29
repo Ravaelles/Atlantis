@@ -65,7 +65,7 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        if (unit.distTo(enemy) > (unit.distTo(focusPoint) + 0.2)) {
+        if (focusPoint != null && unit.distTo(enemy) > (unit.distTo(focusPoint) + 0.2)) {
             return false;
         }
 

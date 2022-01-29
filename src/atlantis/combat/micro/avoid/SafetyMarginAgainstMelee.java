@@ -62,8 +62,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     + quicknessBonus(defender, attacker)
                     + enemyMovementBonus(defender, attacker);
 
-            // 3.9 tiles (almost base width) should be enough as a minimum versus melee unit
-            criticalDist = Math.min(criticalDist, 3.4);
+            // This should be enough as a minimum versus melee units
+            criticalDist = Math.min(criticalDist, defender.isDragoon() ? 2.7 : 3.4);
         }
 
         if (defender.isRanged() && attacker.isWorker()) {
