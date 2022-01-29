@@ -19,7 +19,7 @@ public class Main {
     public static void main(String[] args) {
         Env.readEnvFile(args);
 
-        // If run locally (not in tournament) auto-start Starcraft.exe and do other stuff
+        // If run locally (not in tournament) auto-start Starcraft.exe and Chaoslauncher, modify bwapi.ini etc
         if (Env.isLocal()) {
             ProcessHelper.killStarcraftProcess();
             ProcessHelper.killChaosLauncherProcess();

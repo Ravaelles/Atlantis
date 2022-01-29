@@ -2,6 +2,10 @@ package atlantis.env;
 
 import atlantis.util.A;
 
+/**
+ * Aim of Env is to differentiate between LOCAL, TESTING and PRODUCTION (any online tournaments).
+ * We don't want to print out too much data in production.
+ */
 public class Env {
 
     private static final String FILE = "ENV";

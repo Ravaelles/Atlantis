@@ -44,6 +44,10 @@ public class RetreatManager {
     }
 
     private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
+        if (unit.isHealthy()) {
+            return false;
+        }
+
         double radius = 1.2;
         Selection friends = unit.friendsNearby().inRadius(radius, unit);
         Selection veryCloseEnemies = enemies.inRadius(radius, unit);

@@ -135,8 +135,17 @@ public class AAdvancedPainter extends APainter {
             if (unit.isLoaded()) {
                 continue;
             }
-
             APosition position = unit.position();
+
+            // =========================================================
+            // === Paint targets for combat units
+            // =========================================================
+
+            paintOurCombatUnitTargets(unit);
+
+            // =========================================================
+            // === Paint running and white flag
+            // =========================================================
 
             if (unit.isRunning()) {
                 paintRunningUnitWhiteFlag(unit);
@@ -158,12 +167,6 @@ public class AAdvancedPainter extends APainter {
                 paintCircle(unit, 13, Color.Purple);
                 paintCircle(unit, 11, Color.Purple);
             }
-
-            // =========================================================
-            // === Paint targets for combat units
-            // =========================================================
-
-            paintOurCombatUnitTargets(unit);
 
             // =========================================================
             // === Combat Evaluation Strength
@@ -202,10 +205,11 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintOurCombatUnitTargets(AUnit unit) {
-//        if (unit.isAttacking()) {
-//            paintLine(unit, unit.getTargetPosition(), (unit.isAttackingOrMovingToAttack() ? Color.Teal : Color.Grey));
+        if (unit.hasTargetPosition() && !unit.targetPositionAtLeastAway(7)) {
+            paintLine(unit, unit.targetPosition(), Color.Grey);
+//            paintLine(unit, unit.targetPosition(), (unit.isAttackingOrMovingToAttack() ? Color.Teal : Color.Grey));
 //            paintLine(unit, unit.target(), (unit.isAttackingOrMovingToAttack() ? Color.Green : Color.Yellow));
-//        }
+        }
 //        if (!paintLine(unit, unit.getTarget(), (unit.isAttacking() ? Color.Green : Color.Yellow))) {
 //            paintLine(unit, unit.getTargetPosition(), (unit.isAttacking() ? Color.Orange : Color.Yellow));
 //        }

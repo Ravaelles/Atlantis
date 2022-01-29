@@ -47,6 +47,10 @@ public class MissionChanger {
     // =========================================================
 
     public static void notifyThatUnitRetreated(AUnit unit) {
+        if (A.isUms()) {
+            return;
+        }
+
         if (Missions.isFirstMission()) {
             if (Missions.isGlobalMissionAttack() && unit.friendsNearby().atLeast(3)) {
                 forceMissionContain();

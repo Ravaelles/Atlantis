@@ -114,6 +114,9 @@ public class Missions {
 //            if (mission.isMissionDefend()) {
 //                throw new RuntimeException("DEF?!?");
 //            }
+//            if (mission.isMissionContain()) {
+//                throw new RuntimeException("CHange to contain?!?");
+//            }
 
             System.err.println("CHANGED MISSION TO: " + mission.name());
             MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
