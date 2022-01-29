@@ -71,6 +71,10 @@ public class RetreatManager {
                 averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
             }
 
+            if (averageEnemyPosition == null) {
+                return false;
+            }
+
             return unit.runningManager().runFrom(averageEnemyPosition, 3.5, Actions.RUN_RETREAT);
         }
 
