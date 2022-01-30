@@ -12,7 +12,7 @@ import atlantis.information.strategy.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
-import atlantis.production.orders.CurrentBuildOrder;
+import atlantis.production.orders.build.CurrentBuildOrder;
 
 public class OnStart {
 

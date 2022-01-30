@@ -6,7 +6,7 @@ import atlantis.information.ProtossArmyComposition;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.AbstractDynamicUnits;
-import atlantis.production.orders.BuildOrderSettings;
+import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

@@ -1,7 +1,8 @@
-package atlantis.production.orders;
+package atlantis.production.orders.production;
 
 import atlantis.information.strategy.AStrategy;
 import atlantis.production.ProductionOrder;
+import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
@@ -28,6 +29,10 @@ public abstract class ProductionQueue {
     protected static int gasNeeded = 0;
 
     // =========================================================
+
+    public static void addToQueue(int index, ProductionOrder productionOrder) {
+        nextInQueue.add(index, productionOrder);
+    }
 
     public static boolean isAtTheTopOfQueue(AUnitType type, int amongNTop) {
         for (int i = 0; i < amongNTop && i < nextInQueue.size(); i++) {
@@ -90,5 +95,4 @@ public abstract class ProductionQueue {
         }
         return total;
     }
-
 }

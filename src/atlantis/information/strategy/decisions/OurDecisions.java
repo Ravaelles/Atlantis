@@ -3,7 +3,7 @@ package atlantis.information.strategy.decisions;
 import atlantis.information.enemy.EnemyInformation;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;

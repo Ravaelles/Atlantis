@@ -2,7 +2,7 @@ package atlantis.units.select;
 
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.util.Cache;
 

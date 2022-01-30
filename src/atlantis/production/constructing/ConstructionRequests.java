@@ -5,9 +5,10 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.Requirements;
+import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.production.orders.ProductionQueue;
-import atlantis.production.orders.ProductionQueueRebuilder;
+import atlantis.production.orders.production.ProductionQueue;
+import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -77,6 +78,7 @@ public class ConstructionRequests {
         // Find place for new building
 
         APosition positionToBuild = newConstructionOrder.findPositionForNewBuilding();
+        APositionFinder.clearCache();
 
         // =========================================================
         // Successfully found position for new building
@@ -91,6 +93,10 @@ public class ConstructionRequests {
 
             // Add to list of pending orders
             constructionOrders.add(newConstructionOrder);
+
+//            A.printStackTrace("AFTER ADDED");
+//            System.out.println("# ADDED, constructionOrders = ");
+//            A.printList(constructionOrders);
 
             // Rebuild production queue as new building is about to be built
             ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();

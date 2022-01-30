@@ -7,7 +7,7 @@ import atlantis.information.enemy.EnemyInformation;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.ProductionQueueRebuilder;
+import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
 
 public class OnUnitMorph {

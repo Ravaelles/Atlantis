@@ -1,4 +1,4 @@
-package atlantis.production.orders;
+package atlantis.production.orders.production;
 
 import atlantis.combat.missions.Mission;
 import atlantis.game.A;

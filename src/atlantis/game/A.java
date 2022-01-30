@@ -1187,6 +1187,13 @@ public class A {
     }
 
     public static void printStackTrace() {
+        printStackTrace(null);
+    }
+
+    public static void printStackTrace(String message) {
+        if (message != null) {
+            System.err.println("### " + message + " ##########");
+        }
         Thread.dumpStack();
     }
 

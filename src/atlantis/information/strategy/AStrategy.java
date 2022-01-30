@@ -1,7 +1,7 @@
 package atlantis.information.strategy;
 
-import atlantis.production.orders.ABuildOrder;
-import atlantis.production.orders.ABuildOrderLoader;
+import atlantis.production.orders.build.ABuildOrder;
+import atlantis.production.orders.build.ABuildOrderLoader;
 
 import java.util.ArrayList;
 import java.util.List;

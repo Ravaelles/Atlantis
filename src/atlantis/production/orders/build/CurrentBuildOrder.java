@@ -1,4 +1,4 @@
-package atlantis.production.orders;
+package atlantis.production.orders.build;
 
 public class CurrentBuildOrder {
 

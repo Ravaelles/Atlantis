@@ -1,4 +1,4 @@
-package atlantis.production.orders;
+package atlantis.production.orders.build;
 
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;

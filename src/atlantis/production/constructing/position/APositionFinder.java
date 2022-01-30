@@ -18,6 +18,10 @@ public class APositionFinder {
 
     // =========================================================
 
+    public static void clearCache() {
+        cache.clear();
+    }
+
     /**
      * Returns build position for next building of given type.
      */

@@ -231,6 +231,8 @@ public class APainter {
 ////            paintRectangle(APosition.create(walkPosition), 32, 32, Color.Brown);
 //            paintCircle(APosition.create(walkPosition), 32, Color.Brown);
 //        }
+
+        // Paint line perpendicular to the choke, useful for blocking it
         paintLine(choke.firstPoint(), choke.lastPoint(), Color.Brown);
 
         paintCircle(choke.center(), choke.width() * 32, color);

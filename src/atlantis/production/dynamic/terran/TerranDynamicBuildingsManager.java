@@ -9,7 +9,7 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.decisions.OurDecisions;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
-import atlantis.production.orders.AddToQueue;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
