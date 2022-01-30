@@ -8,6 +8,7 @@ import atlantis.map.Regions;
 import atlantis.units.AUnit;
 import bwapi.Point;
 import bwapi.Position;
+import bwapi.WalkPosition;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,6 +72,8 @@ public class APosition extends Position implements HasPosition, Comparable<Point
                 position = new APosition(((HasPosition) p).position());
             } else if (p instanceof Position) {
                 position = new APosition((Position) p);
+            } else if (p instanceof WalkPosition) {
+                position = new APosition(((WalkPosition) p).toPosition());
             } else {
                 throw new RuntimeException("APosition::create invalid param " + p);
             }

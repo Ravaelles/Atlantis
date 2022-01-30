@@ -100,8 +100,7 @@ public class AbstractDynamicUnits extends Helpers {
     protected static boolean addToQueueIfHaveFreeBuilding(AUnitType type) {
         AUnitType building = type.whatBuildsIt();
         for (AUnit buildingProducing : Select.ourOfType(building).list()) {
-            if (!buildingProducing.isTrainingAnyUnit()) {
-//                trainNow(type);
+            if (!buildingProducing.isTrainingAnyUnit() && AGame.canAffordWithReserved(type)) {
                 addToQueue(type);
                 return true;
             }

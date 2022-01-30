@@ -52,6 +52,18 @@ public class RetreatManager {
         Selection veryCloseEnemies = enemies.inRadius(radius, unit);
 
         if (veryCloseEnemies.totalHp() > friends.totalHp()) {
+            unit.setTooltip("CoordinateA", false);
+            unit.addLog("CoordinateA");
+            return true;
+        }
+
+        AUnit enemy = enemies.nearestTo(unit);
+        Selection oursAroundEnemy = enemy.enemiesNearby().inRadius(radius, unit);
+        if (oursAroundEnemy.count() <= 1 && unit.friendsNearby().inRadius(5, unit).atLeast(1)) {
+//        Selection enemiesAroundEnemy = enemy.friendsNearby().inRadius(radius, unit);
+//        if (oursAroundEnemy.count() > enemiesAroundEnemy.count()) {
+            unit.setTooltip("CoordinateB", false);
+            unit.addLog("CoordinateB");
             return true;
         }
 

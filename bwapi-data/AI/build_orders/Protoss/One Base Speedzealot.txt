@@ -42,6 +42,8 @@ Two High Templars or Dark Templars
 
 @ - Name - Modifier
 4 - MISSION=DEFEND
+5 - Pylon
+5 - Pylon
 8 - Pylon
 10 - Gateway
 12 - Assimilator
@@ -50,9 +52,9 @@ Two High Templars or Dark Templars
 17 - Zealot
 18 - Cybernetics Core
 21 - Zealot
+21 - Gateway
 23 - Pylon
 25 - Dragoon
-26 - Gateway
 27 - Citadel of Adun
 29 - Gateway
 29 - Dragoon
@@ -61,3 +63,4 @@ Two High Templars or Dark Templars
 33 - Zealot
 34 - MISSION=ATTACK
 36 - Zealot
+39 - Zealot

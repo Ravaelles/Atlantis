@@ -686,6 +686,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return distToLessThan(targetUnit, 7);
         }
 
+        if (!targetUnit.isDetected()) {
+            return false;
+        }
+
         WeaponType weaponAgainstThisUnit = weaponAgainst(targetUnit);
         if (weaponAgainstThisUnit == WeaponType.None) {
             return false;

@@ -10,6 +10,7 @@ import atlantis.util.ColorUtil;
 import bwapi.Color;
 import bwapi.Game;
 import bwapi.Text;
+import bwapi.WalkPosition;
 
 /**
  * Here you can include code that will draw extra informations over units etc.
@@ -226,8 +227,14 @@ public class APainter {
             extraText = choke.width() + " wide choke";
         }
 
-        APainter.paintCircle(choke.center(), choke.width() * 32, color);
-        APainter.paintTextCentered(
+//        for (WalkPosition walkPosition : choke.rawChoke().getGeometry()) {
+////            paintRectangle(APosition.create(walkPosition), 32, 32, Color.Brown);
+//            paintCircle(APosition.create(walkPosition), 32, Color.Brown);
+//        }
+        paintLine(choke.firstPoint(), choke.lastPoint(), Color.Brown);
+
+        paintCircle(choke.center(), choke.width() * 32, color);
+        paintTextCentered(
                 choke.center().translateByTiles(0, choke.width()),
                 extraText,
                 color

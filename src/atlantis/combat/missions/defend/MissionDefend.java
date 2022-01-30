@@ -62,12 +62,19 @@ public class MissionDefend extends Mission {
             }
         }
 
-        if (focusPoint() != null) {
-            double unitDistToFocusPoint = unit.distTo(focusPoint());
+        AFocusPoint focusPoint = focusPoint();
+        AUnit base = Select.main();
+        if (focusPoint != null && base != null) {
+//            double unitDistToFocusPoint = unit.distTo(focusPoint());
+            double focusPointDistToBase = focusPoint.distTo(base);
+            double unitDistToBase = unit.distTo(base);
+            double enemyDistToBase = enemy.distTo(base);
 
             // @ToDo CHECK
 //            if (unitDistToFocusPoint >= 8 || unitDistToFocusPoint > unit.distTo(enemy)) {
-            if (unitDistToFocusPoint <= 2 || unitDistToFocusPoint > unit.distTo(enemy)) {
+//            if (unitDistToFocusPoint <= 2 || unitDistToFocusPoint > unit.distTo(enemy)) {
+//            if (unitDistToFocusPoint <= 2 || unitDistToFocusPoint > unit.distTo(enemy)) {
+            if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitDistToBase) {
                 return true;
             }
         }
@@ -77,6 +84,10 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
+        if (unit.isDragoon() && enemies.onlyMelee() && unit.hp() >= 30 && unit.lastAttackFrameMoreThanAgo(35)) {
+            return true;
+        }
+
         if (unit.isHealthy() || unit.shieldDamageAtMost(14)) {
             return true;
         }

@@ -23,24 +23,24 @@ public abstract class MoveToFocusPoint {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     protected static boolean tooFar() {
+        if (distUnitToFocus > (optimalDist + MARGIN)) {
+            String dist = A.dist(distUnitToFocus);
+            return unit.move(focusPoint, Actions.MOVE_FOCUS, "GoToFocus" + dist, true);
+        }
+
         if ((distUnitToFromSide + MARGIN) > distFocusToFromSide) {
             String dist = A.dist(distUnitToFocus);
             return unit.move(fromSide, Actions.MOVE_FOCUS, "WithDraw" + dist, true);
         }
 
-        if (fromSide != null && distUnitToFromSide < 12) {
-            if ((distUnitToFocus + distUnitToFromSide) > distFocusToFromSide * 1.1) {
-                if (distUnitToFromSide > distUnitToFocus) {
-                    String dist = A.dist(distUnitToFocus);
-                    return unit.move(fromSide, Actions.MOVE_FOCUS, "Withdraw" + dist, true);
-                }
-            }
-        }
-
-        if (distUnitToFocus > (optimalDist + MARGIN)) {
-            String dist = A.dist(distUnitToFocus);
-            return unit.move(focusPoint, Actions.MOVE_FOCUS, "GoToFocus" + dist, true);
-        }
+//        if (fromSide != null && distUnitToFromSide < 12) {
+//            if ((distUnitToFocus + distUnitToFromSide) > distFocusToFromSide * 1.1) {
+//                if (distUnitToFromSide > distUnitToFocus) {
+//                    String dist = A.dist(distUnitToFocus);
+//                    return unit.move(fromSide, Actions.MOVE_FOCUS, "Withdraw" + dist, true);
+//                }
+//            }
+//        }
 
         return false;
     }

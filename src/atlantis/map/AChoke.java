@@ -17,6 +17,8 @@ public class AChoke implements HasPosition {
     private Position[] sides;
     private APosition center;
     private double width;
+    private APosition firstPoint;
+    private APosition lastPoint;
 
     public static AChoke create(ChokePoint chokepoint) {
         if (chokepoint == null) {
@@ -30,6 +32,8 @@ public class AChoke implements HasPosition {
         wrapper.sides = wrapper.calculateSides();
         wrapper.center = wrapper.calculateCenter();
         wrapper.width = wrapper.calculateWidth();
+        wrapper.firstPoint = APosition.create(chokepoint.getGeometry().get(0));
+        wrapper.lastPoint = APosition.create(chokepoint.getGeometry().get(chokepoint.getGeometry().size() - 1));
 
         return wrapper;
     }
@@ -62,6 +66,14 @@ public class AChoke implements HasPosition {
     @Override
     public int hashCode() {
         return Objects.hash(choke);
+    }
+
+    @Override
+    public String toString() {
+        return "AChoke{" +
+                "width=" + width +
+                ", center=" + center +
+                '}';
     }
 
     // =========================================================
@@ -129,12 +141,12 @@ public class AChoke implements HasPosition {
         return regions().getSecond();
     }
 
-    @Override
-    public String toString() {
-        return "AChoke{" +
-                "width=" + width +
-                ", chokepoint=" + center +
-                '}';
+    public APosition firstPoint() {
+        return firstPoint;
+    }
+
+    public APosition lastPoint() {
+        return lastPoint;
     }
 
     public ChokePoint rawChoke() {
