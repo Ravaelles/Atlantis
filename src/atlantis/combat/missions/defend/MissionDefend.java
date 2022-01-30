@@ -45,17 +45,46 @@ public class MissionDefend extends Mission {
 
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (unit.isMelee() && enemy.isMelee() && "300".equals(unit.tooltip())) {
-            return unit.distTo(enemy) <= 1;
-//            return false; // 300 mode - stand in line, default to SC auto attacks
+        AFocusPoint focusPoint = focusPoint();
+        AUnit base = Select.main();
+        if (focusPoint == null || base == null) {
+            return true;
+        }
+
+        // =========================================================
+
+        double focusPointDistToBase = focusPoint.distTo(base);
+        double unitDistToBase = unit.groundDist(base);
+        double enemyDistToBase = enemy.groundDist(base);
+        double enemyDistToFocus = enemy.groundDist(focusPoint);
+
+//        if (unit.isMelee() && enemy.isMelee() && "300".equals(unit.tooltip())) {
+//            return unit.distTo(enemy) <= 1;
+////            return false; // 300 mode - stand in line, default to SC auto attacks
+//        }
+
+        // Zealots vs Zealot fix
+        if (unit.isZealot() && enemy.isZealot()) {
+            int ourZealots = unit.zealotsNearbyCount(0.4);
+            if (ourZealots < unit.enemiesNearby().inRadius(0.5, unit).count()) {
+                return false;
+            }
+        }
+
+        if (enemyDistToFocus <= 1) {
+            return true;
         }
 
         if (
 //                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
-                (unit.isMelee() && unit.distToLessThan(enemy, 1.1))
+                (unit.isMelee() && enemyDistToFocus <= 1.3 && unit.distToLessThan(enemy, 1.1))
                 || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 2.2))
         ) {
             return true;
+        }
+
+        if (unit.isMelee() && enemyDistToBase > unitDistToBase) {
+            return false;
         }
 
         if (Have.main()) {
@@ -68,17 +97,8 @@ public class MissionDefend extends Mission {
             }
         }
 
-        AFocusPoint focusPoint = focusPoint();
-        AUnit base = Select.main();
-        if (focusPoint != null && base != null) {
-//            double unitDistToFocusPoint = unit.distTo(focusPoint());
-            double focusPointDistToBase = focusPoint.distTo(base);
-            double unitDistToBase = unit.distTo(base);
-            double enemyDistToBase = enemy.distTo(base);
-
-            if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitDistToBase) {
-                return true;
-            }
+        if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitDistToBase) {
+            return true;
         }
 
         return false;
@@ -86,17 +106,21 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
+        if (unit.hpLessThan(36) && unit.friendsNearbyCount() <= 2) {
+            return false;
+        }
+
         if (unit.isDragoon() && enemies.onlyMelee() && unit.hp() >= 30 && unit.lastAttackFrameMoreThanAgo(35)) {
             return true;
         }
 
-        if (unit.isHealthy() || unit.shieldDamageAtMost(14)) {
+        if (unit.isRanged() && (unit.isHealthy() || unit.shieldDamageAtMost(10))) {
             return true;
         }
 
-        if (unit.isMelee() && unit.friendsNearby().inRadius(1.3, unit).atLeast(3)) {
-            return true;
-        }
+//        if (unit.isMelee() && unit.friendsNearby().inRadius(1.3, unit).atLeast(3)) {
+//            return true;
+//        }
 
         return false;
 //        return enemies.onlyMelee() && unit.hp() >= 18;

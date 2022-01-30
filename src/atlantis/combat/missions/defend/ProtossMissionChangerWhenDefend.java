@@ -3,6 +3,8 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.game.A;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.select.Select;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
@@ -16,7 +18,19 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        return Select.ourCombatUnits().atLeast(13) || A.resourcesBalance() >= 450;
+        if (ArmyStrength.weAreStronger()) {
+            return true;
+        }
+
+        if (A.resourcesBalance() >= 300) {
+            return true;
+        }
+
+        return false;
+
+//        if (GamePhase.isEarlyGame()) {
+//            return Select.ourCombatUnits().atLeast(13) || A.resourcesBalance() >= 350;
+//        }
     }
 
 }

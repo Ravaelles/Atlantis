@@ -6,7 +6,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.information.strategy.decisions.OurDecisions;
+import atlantis.information.decisions.OurDecisions;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.build.AddToQueue;

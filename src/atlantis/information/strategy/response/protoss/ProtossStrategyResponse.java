@@ -2,7 +2,7 @@ package atlantis.information.strategy.response.protoss;
 
 import atlantis.combat.missions.Missions;
 import atlantis.information.strategy.AStrategy;
-import atlantis.information.strategy.decisions.OurStrategicBuildings;
+import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.strategy.response.AStrategyResponse;
 
 public class ProtossStrategyResponse extends AStrategyResponse {

@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.information.strategy.decisions.OurDecisions;
+import atlantis.information.decisions.OurDecisions;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.ADynamicTech;
 import bwapi.TechType;

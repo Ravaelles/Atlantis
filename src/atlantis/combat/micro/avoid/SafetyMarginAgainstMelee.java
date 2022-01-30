@@ -30,7 +30,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     (attacker.hp() <= 16 || defender.shieldDamageAtMost(32))
                     && (
                         !enemyFacingUs
-                        || defender.lastAttackFrameMoreThanAgo(90)
+                        || defender.lastAttackFrameMoreThanAgo(130)
+                        || (defender.lastAttackFrameMoreThanAgo(90) && attacker.hpPercent(30))
                         || (defender.lastAttackFrameMoreThanAgo(40) && defender.lastUnderAttackMoreThanAgo(150))
                     )
             ) {
@@ -172,12 +173,16 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 .inRadius(5, defender)
                 .count();
 
-        return beastNearby > 0 ? 1.6 : 0;
+        return beastNearby > 0 ? 1.8 : 0;
     }
 
     protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {
         if (attacker.isRanged()) {
             return 0;
+        }
+
+        if (defender.isZealot()) {
+            return defender.hpLessThan(21) ? 1.5 : 0;
         }
 
         if (defender.isTerranInfantry()) {

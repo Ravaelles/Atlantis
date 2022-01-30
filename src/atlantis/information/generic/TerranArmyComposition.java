@@ -1,4 +1,4 @@
-package atlantis.information;
+package atlantis.information.generic;
 
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

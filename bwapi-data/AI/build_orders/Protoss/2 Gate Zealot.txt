@@ -37,10 +37,12 @@ Probe x2
 12 - Gateway
 12 - Zealot
 14 - Zealot
+15 - Pylon
 16 - Zealot
 18 - Zealot
 20 - Zealot
-Zealot
+24 - Zealot
+26 - MISSION=ATTACK
 Cybernetics Core
 Assimilator
 Zealot
@@ -53,11 +55,11 @@ Dragoon
 36 - Robotics Facility
 39 - Shuttle
 40 - Robotics Support Bay
+43 - Observatory
 44 - Reaver
+47 - Observer
 48 - Reaver
-50 - MISSION=CONTAIN
+50 - MISSION=ATTACK
 50 - Nexus
-Observatory
-Observer
 Observer
 Zealot

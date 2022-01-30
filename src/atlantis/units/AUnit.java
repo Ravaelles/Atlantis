@@ -1777,7 +1777,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         return target().isAlive()
                 && (
-                (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
+                (targetAcquiredAgo <= 70 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 6))
                         || targetAcquiredAgo <= cooldownAbsolute() / 1.1
         );
 
@@ -2118,5 +2118,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public Log log() {
         return log;
+    }
+
+    public int zealotsNearbyCount(double maxDist) {
+        return friendsNearby().ofType(AUnitType.Protoss_Zealot).inRadius(maxDist, this).count();
     }
 }

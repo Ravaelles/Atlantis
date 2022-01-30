@@ -2,7 +2,7 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.game.AGame;
-import atlantis.information.ProtossArmyComposition;
+import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.AbstractDynamicUnits;

@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.strategy.decisions.OurDecisions;
+import atlantis.information.decisions.OurDecisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

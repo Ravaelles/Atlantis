@@ -1,4 +1,4 @@
-package atlantis.information.strategy.decisions;
+package atlantis.information.decisions;
 
 import atlantis.information.enemy.EnemyInformation;
 import atlantis.information.strategy.GamePhase;

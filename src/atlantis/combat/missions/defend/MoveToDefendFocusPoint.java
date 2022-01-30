@@ -6,6 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
@@ -34,13 +35,17 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 //        }
 
 //        unit.holdPosition("Sparta", true);
-        unit.addLog("Sparta");
+//        unit.addLog("Sparta");
         return false;
     }
 
     // =========================================================
 
     private static boolean holdOnPerpendicularLine() {
+        if (!Enemy.zerg()) {
+            return false;
+        }
+
         if (focusPoint.choke() == null) {
             return false;
         }
@@ -84,7 +89,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
     }
 
     protected static double optimalDist() {
-        double base = 0.0;
+        double base = Enemy.protoss() ? 1.6 : 0.0;
 
         if (unit.isTerran()) {
             base += (unit.isTank() ? 3 : 0)

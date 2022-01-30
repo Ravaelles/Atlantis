@@ -3,7 +3,7 @@ package atlantis.information.strategy;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.information.enemy.EnemyInformation;
-import atlantis.information.strategy.decisions.OurStrategicBuildings;
+import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 

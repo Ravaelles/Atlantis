@@ -1,7 +1,7 @@
 package atlantis.production.requests;
 
 import atlantis.config.AtlantisConfig;
-import atlantis.information.strategy.decisions.OurStrategicBuildings;
+import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;

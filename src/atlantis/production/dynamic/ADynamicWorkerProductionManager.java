@@ -33,7 +33,7 @@ public class ADynamicWorkerProductionManager {
         }
 
         // Check FREE SUPPLY
-        if (AGame.supplyFree() == 0 || (Count.workers() < 20 && !AGame.canAffordWithReserved(42, 0))) {
+        if (AGame.supplyFree() == 0 || (Count.workers() < 20 && !AGame.canAffordWithReserved(50, 0))) {
             return false;
         }
 

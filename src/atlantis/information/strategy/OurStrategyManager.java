@@ -31,8 +31,8 @@ public class OurStrategyManager {
 //            return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
         }
 
-        return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
-//        return ProtossStrategies.PROTOSS_2_Gate_Range_Expand;
+//        return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
+        return ProtossStrategies.PROTOSS_2_Gate_Zealot;
     }
 
     private static AStrategy initForTerran() {
