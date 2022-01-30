@@ -50,16 +50,16 @@ Dragoon
 Gateway
 Dragoon
 Dragoon
-//Dragoon Range
 Dragoon
-36 - Robotics Facility
-39 - Shuttle
+Dragoon Range
+39 - Robotics Facility
 40 - Robotics Support Bay
+42 - Shuttle
 43 - Observatory
 44 - Reaver
 47 - Observer
 48 - Reaver
 50 - MISSION=ATTACK
-50 - Nexus
+60 - Nexus
 Observer
 Zealot

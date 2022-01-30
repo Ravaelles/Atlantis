@@ -15,6 +15,8 @@ import atlantis.util.We;
 public class AExpansionManager {
 
     public static boolean shouldBuildNewBase() {
+        if (true) return false;
+
         if (Count.bases() >= 5 || Count.inProductionOrInQueue(AtlantisConfig.BASE) >= 1) {
 //            System.err.println("TOO MANY BASES, STOP MAN "
 //                    + Count.bases() + " // "

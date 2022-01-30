@@ -51,12 +51,7 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         AFocusPoint focusPoint = focusPoint();
 
-        if (enemy.hasWeaponRangeToAttack(unit, 0.2) || unit.hasWeaponRangeToAttack(enemy, 0.3)) {
-            return true;
-        }
-
-        // Attack enemies near squad center
-        if (enemy.distTo(unit.squad().median()) <= (Enemy.zerg() ? 5.1 : 6.3)) {
+        if (enemy.hasWeaponRangeToAttack(unit, 0.2) || unit.hasWeaponRangeToAttack(enemy, 0)) {
             return true;
         }
 
@@ -65,15 +60,21 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        if (focusPoint != null && unit.distTo(enemy) > (unit.distTo(focusPoint) + 0.2)) {
-            return false;
-        }
+//        if (focusPoint != null && unit.distTo(enemy) > (unit.distTo(focusPoint) + 0.2)) {
+//            return false;
+//        }
 
         if (unit.isStimmed()) {
             return true;
         }
 
-        if (!unit.isWounded() || unit.lastStartedAttackMoreThanAgo(30 * 5)) {
+//        if (!unit.isWounded() || unit.lastStartedAttackMoreThanAgo(30 * 5)) {
+//            return true;
+//        }
+
+        // Attack enemies near squad center
+//        if (enemy.distTo(unit.squad().median()) <= (Enemy.zerg() ? 5.1 : 6.3)) {
+        if (enemy.distTo(unit.squad().center()) <= 12) {
             return true;
         }
 

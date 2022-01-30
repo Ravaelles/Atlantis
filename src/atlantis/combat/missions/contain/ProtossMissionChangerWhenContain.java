@@ -24,15 +24,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
             return true;
         }
 
-        if (ArmyStrength.weAreStronger()) {
-            return false;
-        }
-
-        if (ArmyStrength.weAreStronger(-20)) {
+        if (!ArmyStrength.weAreStronger()) {
             return true;
         }
 
-        if (A.resourcesBalance() <= -300) {
+        if (A.resourcesBalance() <= -400) {
             return true;
         }
 
@@ -60,11 +56,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 //            return false;
 //        }
 
-        if (ArmyStrength.weAreStronger() && !EnemyInformation.hasDefensiveLandBuilding(true)) {
+        if (ArmyStrength.weAreMuchStronger() && !EnemyInformation.hasDefensiveLandBuilding(true)) {
             return true;
         }
 
-        if (A.resourcesBalance() >= 410) {
+        if (A.resourcesBalance() >= 410 && ArmyStrength.weAreStronger()) {
             return true;
         }
 

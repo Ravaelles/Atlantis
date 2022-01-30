@@ -58,9 +58,9 @@ public class TooSpreadOut extends ASquadCohesionManager {
 //    }
 
     private static boolean shouldSkipTooSpreadOut(AUnit unit) {
-        if (unit.cooldownAbsolute() > 0) {
-            return true;
-        }
+//        if (unit.cooldownAbsolute() > 0) {
+//            return true;
+//        }
 
         if (Count.ourCombatUnits() <= 4) {
             return true;

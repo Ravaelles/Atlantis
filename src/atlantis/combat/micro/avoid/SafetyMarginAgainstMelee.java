@@ -26,8 +26,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         if (defender.isDragoon()) {
             boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
+
+            if (!enemyFacingUs && defender.hp() >= 22) {
+                return 0.5;
+            }
+
             if (
-                    (attacker.hp() <= 16 || defender.shieldDamageAtMost(32))
+                    (attacker.hp() <= 16 || defender.shieldDamageAtMost(38))
                     && (
                         !enemyFacingUs
                         || defender.lastAttackFrameMoreThanAgo(130)
@@ -36,12 +41,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     )
             ) {
                 defender.addLog("CoolDragoon");
-                return (defender.isHealthy() || enemyFacingUs) ? 0 : 1.2;
+                return defender.isHealthy() ? 0 : 0.3;
     //            criticalDist = handleDragoon(defender, attacker);
             }
 
             if (Missions.isGlobalMissionDefend()) {
-                return defender.isHealthy() ? 0 : 2.3;
+                return defender.isHealthy() ? 0.3 : 2.3;
             }
         }
 

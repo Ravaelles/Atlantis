@@ -17,7 +17,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        if (ArmyStrength.weAreStronger()) {
+        if (!ArmyStrength.weAreStronger()) {
             return false;
         }
 
