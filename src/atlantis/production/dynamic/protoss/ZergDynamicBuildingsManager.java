@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
-import atlantis.production.orders.ZergBuildOrder;
+import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 

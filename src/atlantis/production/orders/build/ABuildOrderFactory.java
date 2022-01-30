@@ -1,5 +1,5 @@
 
-package atlantis.production.orders;
+package atlantis.production.orders.build;
 
 /**
  * Represents sequence of commands to produce units/buildings.

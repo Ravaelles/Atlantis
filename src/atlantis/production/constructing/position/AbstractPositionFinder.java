@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.game.A;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
@@ -89,8 +90,10 @@ public abstract class AbstractPositionFinder {
     protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
 
 //        System.out.println("============================");
-//        System.out.println("position = " + position + ", others count = " + ConstructionRequests.notStarted().size()
+//        System.out.println("position = " + position + ", not started = " + ConstructionRequests.notStarted().size()
 //                + " // all = " + ConstructionRequests.all().size());
+
+//        A.printStackTrace("loooooooooooking");
         
         // Compare against planned construction places
 //        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
@@ -105,7 +108,7 @@ public abstract class AbstractPositionFinder {
 //                System.out.println("distance = " + distance + " // " + position);
 //                System.out.println("------------");
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
-//                        && (distance <= 5 && !AGame.isPlayingAsZerg());
+//                        && (distance <= 5 && !We.zerg());
 
                 // Look for two bases that would be built too close one to another
                 if (distance <= 4) {

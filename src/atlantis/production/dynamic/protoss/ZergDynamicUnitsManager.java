@@ -3,7 +3,7 @@ package atlantis.production.dynamic.protoss;
 
 import atlantis.game.AGame;
 import atlantis.production.AbstractDynamicUnits;
-import atlantis.production.orders.CurrentBuildOrder;
+import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;

@@ -1,6 +1,6 @@
 package atlantis.information.strategy;
 
-import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.production.ProductionQueue;
 
 public class OurStrategy {
 

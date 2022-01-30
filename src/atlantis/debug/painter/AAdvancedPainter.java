@@ -16,6 +16,7 @@ import atlantis.game.AGame;
 import atlantis.game.GameLog;
 import atlantis.information.enemy.EnemyInformation;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.map.*;
@@ -26,9 +27,9 @@ import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.TerranPositionFinder;
-import atlantis.production.orders.CurrentProductionQueue;
-import atlantis.production.orders.ProductionQueue;
-import atlantis.production.orders.ProductionQueueMode;
+import atlantis.production.orders.production.CurrentProductionQueue;
+import atlantis.production.orders.production.ProductionQueue;
+import atlantis.production.orders.production.ProductionQueueMode;
 import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -281,11 +282,13 @@ public class AAdvancedPainter extends APainter {
         if (AGame.isUms()) {
             paintSideMessage("UMS map mode enabled", Color.Green);
         }
-        paintSideMessage("Time: " + AGame.timeSeconds() + "s", Color.Grey);
+        paintSideMessage("Time: " + AGame.timeSeconds() + "s (" + A.now() + ")", Color.Grey);
 
         // =========================================================
         // Global mission
 
+        int armyStrength = ArmyStrength.ourArmyRelativeStrength();
+        paintSideMessage("Army strength: " + armyStrength + "%", armyStrength >= 100 ? Color.Green : Color.Red);
         paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
                 ? EnemyStrategy.get().toString() : "Unknown"),
                 EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);

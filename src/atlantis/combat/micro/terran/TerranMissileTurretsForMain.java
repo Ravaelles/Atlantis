@@ -8,7 +8,7 @@ import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
-import atlantis.production.orders.AddToQueue;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;

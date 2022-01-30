@@ -84,6 +84,7 @@ public class ACombatEvaluator {
                 // Define nearby enemy and our units
 
                 Selection opposingUnits = opposingUnits(unit);
+//                opposingUnits.print("OPPOSING");
 
                 if (opposingUnits.isEmpty()) {
                     return MAX_VALUE;
@@ -140,7 +141,7 @@ public class ACombatEvaluator {
             return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS;
         }
 
-        return unit.mission().isMissionAttack()
+        return (unit.mission() != null && unit.mission().isMissionAttack())
                 ? PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_MISSION_ATTACK : PERCENT_ADVANTAGE_NEEDED_TO_FIGHT;
     }
 
@@ -175,16 +176,27 @@ public class ACombatEvaluator {
                 .ranged()
                 .canAttack(unit, 4);
 
+//        System.out.println("againstUnits A0 = " + againstUnits.size());
+//        System.out.println("againstUnits A1 = " + unit.enemiesNearby().size());
+//        System.out.println("againstUnits A2 = " + unit.enemiesNearby().ranged().size());
+//        System.out.println("againstUnits A3 = " + unit.enemiesNearby().ranged().canAttack(unit, 4).size());
+
         // Melee
         againstUnits.add(
                 unit.enemiesNearby().melee()
-                        .inRadius(6, unit)
-                        .canAttack(unit, 6)
+                        .inRadius(4, unit)
+                        .canAttack(unit, false, true, 4)
         );
+
+//        System.out.println("againstUnits B0 = " + againstUnits.size());
+//        System.out.println("againstUnits B1 = " + unit.enemiesNearby().size());
+//        System.out.println("againstUnits B2 = " + unit.enemiesNearby().inRadius(6, unit).size());
+//        System.out.println("againstUnits B3 = " + unit.enemiesNearby().inRadius(6, unit).canAttack(unit, 6).size());
 
         if (unit.isOur()) {
             againstUnits = againstUnits.add(EnemyUnits.combatUnitsToBetterAvoid()).removeDuplicates();
         }
+//        System.out.println("againstUnits C = " + againstUnits.size());
 
         return againstUnits;
     }

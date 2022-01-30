@@ -2,8 +2,8 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.TerranArmyComposition;
-import atlantis.information.strategy.decisions.OurDecisions;
+import atlantis.information.generic.TerranArmyComposition;
+import atlantis.information.decisions.OurDecisions;
 import atlantis.production.AbstractDynamicUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

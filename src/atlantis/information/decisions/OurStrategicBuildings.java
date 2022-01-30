@@ -1,4 +1,4 @@
-package atlantis.information.strategy.decisions;
+package atlantis.information.decisions;
 
 
 public class OurStrategicBuildings {

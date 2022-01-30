@@ -2,7 +2,7 @@ package atlantis.production;
 
 import atlantis.combat.missions.Mission;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.ProductionOrderPriority;
+import atlantis.production.orders.production.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -292,6 +292,7 @@ public class ProductionOrder {
     }
 
     public int minSupply() {
+//        return 0;
         return minSupply;
     }
 

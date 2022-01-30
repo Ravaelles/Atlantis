@@ -46,18 +46,19 @@ Two High Templars or Dark Templars
 10 - Gateway
 12 - Assimilator
 13 - Zealot
-16 - Pylon
+14 - Pylon
 17 - Zealot
-20 - Cybernetics Core
+18 - Cybernetics Core
 21 - Zealot
+21 - Gateway
 23 - Pylon
 25 - Dragoon
-26 - Gateway
 27 - Citadel of Adun
 29 - Gateway
-29 - Zealot
+29 - Dragoon
 31 - Leg enhancements
 31 - Zealot
 33 - Zealot
 34 - MISSION=ATTACK
 36 - Zealot
+39 - Zealot

@@ -4,7 +4,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.strategy.decisions.OurStrategicBuildings;
+import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.requests.AAntiAirBuildingRequests;
 import atlantis.production.requests.AAntiLandBuildingRequests;

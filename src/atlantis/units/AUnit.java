@@ -70,7 +70,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int _lastAttackFrame;
     public int _lastCooldown;
     public int _lastFrameOfStartingAttack;
-    public int _lastRetreat;
+    public int _lastRetreat = -99;
     public int _lastStartedRunning;
     public int _lastStoppedRunning;
     public int _lastStartedAttack;
@@ -622,7 +622,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             boolean includeCooldown,
             double extraMargin
     ) {
-        if (hasNoWeaponAtAll() && !isBunker()) {
+        if (hasNoWeaponAtAll()) {
             return false;
         }
 
@@ -647,6 +647,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         // Shooting RANGE
         if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) {
+//            System.out.println("No range for " + target + " / " + A.dist(this, target));
             return false;
         }
 
@@ -686,25 +687,22 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return distToLessThan(targetUnit, 7);
         }
 
+        if (!targetUnit.isDetected() || targetUnit.position() == null) {
+            System.out.println("Undetected fix");
+            return false;
+        }
+
         WeaponType weaponAgainstThisUnit = weaponAgainst(targetUnit);
         if (weaponAgainstThisUnit == WeaponType.None) {
             return false;
         }
 
         double dist = distTo(targetUnit);
+//        System.out.println("min = " + weaponAgainstThisUnit.minRange() / 32);
+//        System.out.println("max = " + weaponAgainstThisUnit.maxRange() / 32);
         return (weaponAgainstThisUnit.minRange() / 32) <= dist
                 && dist <= (weaponAgainstThisUnit.maxRange() / 32 + extraMargin);
     }
-
-//    public boolean hasGroundWeaponRange(APosition position, double extraMargin) {
-//        double weaponRange = groundWeaponRange();
-//        if (weaponRange <= 0) {
-//            return false;
-//        }
-//
-//        double dist = distTo(position);
-//        return dist <= (weaponRange + extraMargin);
-//    }
 
     /**
      * Returns weapon that would be used to attack given target. If no such weapon, then WeaponTypes.None will
@@ -902,6 +900,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemy() {
+        if (u == null) {
+            return true;
+        }
         return AGame.getPlayerUs().isEnemy(player());
 //        return (boolean) cache.get(
 //                "isEnemy",
@@ -917,7 +918,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to us.
      */
     public boolean isOur() {
-        if (player() == null) {
+        if (u == null || player() == null) {
             return false;
         }
         return player().equals(AGame.getPlayerUs());
@@ -1751,6 +1752,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return spaceRemaining() >= passenger.spaceRequired();
     }
 
+    public boolean hasAnyWeapon() {
+        return !hasNoWeaponAtAll();
+    }
+
     public boolean hasNoWeaponAtAll() {
         return cacheBoolean.get(
                 "hasNoWeaponAtAll",
@@ -1772,7 +1777,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         return target().isAlive()
                 && (
-                (targetAcquiredAgo <= 45 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 10))
+                (targetAcquiredAgo <= 70 && unit().woundPercent() <= 5 && !lastUnderAttackMoreThanAgo(30 * 6))
                         || targetAcquiredAgo <= cooldownAbsolute() / 1.1
         );
 
@@ -1934,6 +1939,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                                 .inRadius(14, this);
                     }
                     else if (unit().isEnemy()) {
+//                        System.out.println("------- for enemy -------- ");
+//                        System.out.println(Select.ourRealUnits().size());
+//                        System.out.println(Select.ourRealUnits().inRadius(14, this).size());
                         return Select.ourRealUnits()
                                 .inRadius(14, this);
                     }
@@ -2110,5 +2118,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public Log log() {
         return log;
+    }
+
+    public int zealotsNearbyCount(double maxDist) {
+        return friendsNearby().ofType(AUnitType.Protoss_Zealot).inRadius(maxDist, this).count();
     }
 }

@@ -2,7 +2,7 @@ package atlantis.units.select;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 
 public class Have {
@@ -59,6 +59,10 @@ public class Have {
 
     public static boolean engBay() {
         return Count.ofType(AUnitType.Terran_Engineering_Bay) > 0;
+    }
+
+    public static boolean dragoon() {
+        return Count.ofType(AUnitType.Protoss_Dragoon) > 0;
     }
 
     public static boolean barracks() {

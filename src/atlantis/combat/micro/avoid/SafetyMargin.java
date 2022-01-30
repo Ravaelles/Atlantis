@@ -1,8 +1,11 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+
+import static atlantis.combat.micro.avoid.AAvoidUnits.unit;
 
 public class SafetyMargin {
 
@@ -37,7 +40,8 @@ public class SafetyMargin {
     // =========================================================
 
     private static double baseMargin(AUnit defender, AUnit attacker) {
-        return defender.isSquadScout() ? -2.7 : 0;
+        return (defender.isSquadScout() ? -2.7 : 0)
+                + (defender.lastRetreatedAgo() <= 40 ? -3.3 : 0);
     }
 
     protected static double enemyWeaponRange(AUnit defender, AUnit attacker) {

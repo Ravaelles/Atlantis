@@ -2,7 +2,7 @@ package atlantis.combat.micro.terran;
 
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.AddToQueue;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 

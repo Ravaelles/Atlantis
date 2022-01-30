@@ -31,15 +31,18 @@ Probe x2
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
+4 - MISSION=DEFEND
 8 - Pylon
 10 - Gateway
 12 - Gateway
 12 - Zealot
 14 - Zealot
+15 - Pylon
 16 - Zealot
 18 - Zealot
 20 - Zealot
-Zealot
+24 - Zealot
+26 - MISSION=ATTACK
 Cybernetics Core
 Assimilator
 Zealot
@@ -47,15 +50,16 @@ Dragoon
 Gateway
 Dragoon
 Dragoon
-//Dragoon Range
 Dragoon
-36 - Robotics Facility
-39 - Shuttle
+Dragoon Range
+39 - Robotics Facility
 40 - Robotics Support Bay
+42 - Shuttle
+43 - Observatory
 44 - Reaver
+47 - Observer
 48 - Reaver
-50 - Nexus
-Observatory
-Observer
+50 - MISSION=ATTACK
+60 - Nexus
 Observer
 Zealot

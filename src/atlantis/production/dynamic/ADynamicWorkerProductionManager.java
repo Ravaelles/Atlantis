@@ -4,8 +4,8 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.AProductionManager;
 import atlantis.production.ProductionOrder;
-import atlantis.production.orders.BuildOrderSettings;
-import atlantis.production.orders.ProductionQueue;
+import atlantis.production.orders.build.BuildOrderSettings;
+import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -28,9 +28,12 @@ public class ADynamicWorkerProductionManager {
     // =========================================================
     
     public static boolean shouldTrainWorkers() {
+        if (!AGame.hasMinerals(50)) {
+            return false;
+        }
 
         // Check FREE SUPPLY
-        if (AGame.supplyFree() == 0 || !AGame.canAffordWithReserved(50, 0)) {
+        if (AGame.supplyFree() == 0 || (Count.workers() < 20 && !AGame.canAffordWithReserved(50, 0))) {
             return false;
         }
 
@@ -51,8 +54,10 @@ public class ADynamicWorkerProductionManager {
         // Check if AUTO-PRODUCTION of WORKERS is active.
 
         if (!isAutoProduceWorkersActive(workers)) {
+//            System.err.println("AUTO WORKERS DISABLED");
             return false;
         }
+
 
         // =========================================================
 

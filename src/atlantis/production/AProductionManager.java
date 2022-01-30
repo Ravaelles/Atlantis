@@ -5,10 +5,10 @@ import atlantis.config.AtlantisConfig;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.CurrentBuildOrder;
-import atlantis.production.orders.CurrentProductionQueue;
-import atlantis.production.orders.ProductionQueueMode;
-import atlantis.production.orders.ZergBuildOrder;
+import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.production.orders.production.CurrentProductionQueue;
+import atlantis.production.orders.production.ProductionQueueMode;
+import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -141,7 +141,7 @@ public class AProductionManager {
     }
 
     private static boolean isSafeToProduceWorkerAt(AUnit base) {
-        return Select.enemyCombatUnits().inRadius(10, base).isEmpty();
+        return Select.enemyCombatUnits().excludeTypes().inRadius(10, base).atMost(1);
     }
 
 }

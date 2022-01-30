@@ -69,6 +69,9 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     // =========================================================
 
     protected static double woundedBonus(AUnit defender, AUnit attacker) {
+        if (defender.isDragoon() && defender.hpLessThan(30)) {
+            return 2.5;
+        }
 
         // Don't apply wound bonus against units with bigger or equal range
         if (attacker.groundWeaponRange() >= defender.groundWeaponRange()) {

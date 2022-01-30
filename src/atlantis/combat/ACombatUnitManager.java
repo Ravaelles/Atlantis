@@ -83,6 +83,11 @@ public class ACombatUnitManager {
     }
 
     private static boolean preActions(AUnit unit) {
+        if (unit.isPatrolling()) {
+            unit.setTooltip("Manual", true);
+            return true;
+        }
+
 //        if (
 //                A.seconds() >= 1
 //                && GameSpeed.isDynamicSlowdownAllowed()

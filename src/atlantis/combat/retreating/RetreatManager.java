@@ -5,9 +5,11 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
+import atlantis.util.Enemy;
 
 public class RetreatManager {
 
@@ -47,13 +49,68 @@ public class RetreatManager {
             return false;
         }
 
+        if (unit.isMelee() && formationMeleeUnits(unit, enemies)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean formationMeleeUnits(AUnit unit, Selection enemies) {
         double radius = 1.2;
+
+        // =========================================================
+
+        AUnit enemy = enemies.nearestTo(unit);
+        int enemiesNearby = enemies.inRadius(2, unit).count();
+        int ourCount;
+        if (enemy != null) {
+            ourCount = enemy.enemiesNearby().inRadius(radius, unit).count();
+        } else {
+            ourCount = unit.friendsNearby().inRadius(0.6, unit).count();
+        }
+
+        if (ourCount <= enemiesNearby && unit.friendsNearby().inRadius(5, unit).atLeast(2)) {
+//        Selection enemiesAroundEnemy = enemy.friendsNearby().inRadius(radius, unit);
+//        if (oursAroundEnemy.count() > enemiesAroundEnemy.count()) {
+            unit.setTooltip("FormationB", false);
+            unit.addLog("FormationB");
+            return true;
+        }
+
+        if (Enemy.protoss() && applyZealotVsZealotFix(unit, enemies)) {
+            unit.setTooltip("FormationZ", false);
+            unit.addLog("FormationZ");
+            return true;
+        }
+
+        // =========================================================
+
         Selection friends = unit.friendsNearby().inRadius(radius, unit);
         Selection veryCloseEnemies = enemies.inRadius(radius, unit);
 
         if (veryCloseEnemies.totalHp() > friends.totalHp()) {
+            unit.setTooltip("FormationA", false);
+            unit.addLog("FormationA");
             return true;
         }
+
+        // =========================================================
+
+        return false;
+    }
+
+    private static boolean applyZealotVsZealotFix(AUnit unit, Selection enemies) {
+        int ourZealots = unit.friendsNearby().ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
+        int enemyZealots = enemies.ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
+
+        if (ourZealots < enemyZealots) {
+            return true;
+        }
+
+//        if (ourZealots < enemyZealots) {
+//            return true;
+//        }
 
         return false;
     }
@@ -112,7 +169,15 @@ public class RetreatManager {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
-//        if (unit.isHealthy()) {
+        if (unit.isRanged() && unit.isHealthy()) {
+            return true;
+        }
+
+//        if (unit.mission() != null && unit.mission().isMissionDefend()) {
+//            return true;
+//        }
+
+//        if (!unit.woundPercent(15) && unit.mission().isMissionDefend()) {
 //            return true;
 //        }
 

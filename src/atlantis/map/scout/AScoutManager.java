@@ -14,7 +14,7 @@ import atlantis.map.Regions;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
-import atlantis.production.orders.BuildOrderSettings;
+import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.AbstractFoggedUnit;
@@ -52,30 +52,31 @@ public class AScoutManager {
 
     // =========================================================
 
-    private static boolean update(AUnit scout) {
+    private static void update(AUnit scout) {
         scout.setTooltipTactical("Scout...");
 
         if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
             nextPositionToScout = null;
             scoutingAroundBaseWasInterrupted = true;
-            return handleScoutFreeBases(scout);
+            handleScoutFreeBases(scout);
+            return;
         }
 
         // =========================================================
 
         // We don't know any enemy building, scout nearest starting location.
         if (!EnemyInformation.hasDiscoveredAnyBuilding()) {
-            return tryFindingEnemy(scout);
+            tryFindingEnemy(scout);
         }
 
         // Scout other bases
         else if (!anyScoutBeenKilled) {
-            return roamAroundEnemyBase(scout);
+            roamAroundEnemyBase(scout);
         }
 
         // Map roaming
         else {
-            return handleScoutFreeBases(scout);
+            handleScoutFreeBases(scout);
         }
     }
 
@@ -369,11 +370,11 @@ public class AScoutManager {
             }
         }
 
-        if (MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE) {
+//        if (MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE) {
 //            AGame.changeSpeedTo(1);
 //            AGame.changeSpeedTo(1);
 //            APainter.paintingMode = APainter.MODE_FULL_PAINTING;
-        }
+//        }
     }
 
     private static ARegionBoundary useNearestBoundaryPoint(ARegion region, AUnit scout) {

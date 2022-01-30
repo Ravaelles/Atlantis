@@ -3,7 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
-import atlantis.production.orders.CurrentProductionQueue;
+import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnitType;
 import bwapi.*;
 

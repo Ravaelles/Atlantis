@@ -1,7 +1,9 @@
-package atlantis.production.orders;
+package atlantis.production.orders.build;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrderPriority;
+import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
@@ -45,7 +47,7 @@ public class AddToQueue {
 //        if (!allowToQueueRequiredBuildings(type)) {
         int minSupply = 0;
         ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
-        ProductionQueue.nextInQueue.add(index, productionOrder);
+        ProductionQueue.addToQueue(index, productionOrder);
         return productionOrder;
 //        }
 //        else {

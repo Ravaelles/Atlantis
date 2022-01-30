@@ -22,8 +22,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
         createWorld(1, () -> {
             FakeUnit enemy = nearestEnemy(marine);
 
-            Select.our().print();
-            Select.enemy().print();
+//            Select.our().print();
+//            Select.enemy().print();
 
             double ourEval = marine.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();
@@ -56,8 +56,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             double ourEval = wraith.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();
 
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+            System.out.println("ourEval = " + ourEval);
+            System.out.println("enemyEval = " + enemyEval);
 
             assertTrue(ourEval < enemyEval);
             assertTrue(ourEval * 8 > enemyEval);

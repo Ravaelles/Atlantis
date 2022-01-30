@@ -1,6 +1,7 @@
 package tests.acceptance;
 
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -11,6 +12,9 @@ public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
     @Test
     public void evaluatesMeleeUnits() {
         createWorld(1, () -> {
+//            Select.our().print("Our units");
+//            Select.enemy().print("Enemy units");
+
             FakeUnit our = ourFirst;
             FakeUnit enemy = nearestEnemy(our);
 
@@ -45,7 +49,7 @@ public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
     }
 
     protected FakeUnit[] generateEnemies() {
-        int enemyTy = 16;
+        int enemyTy = 13;
         return fakeEnemies(
                 fake(AUnitType.Protoss_Zealot, enemyTy),
                 fake(AUnitType.Protoss_Zealot, enemyTy + 1)

@@ -105,6 +105,7 @@ public class FightInsteadAvoid {
 //                unit.addLog("FightRanged");
                 return false;
             } else {
+                unit.setTooltip("Retreat", true);
                 unit.addLog("Retreat");
                 return false;
             }

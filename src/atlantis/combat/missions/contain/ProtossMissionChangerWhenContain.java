@@ -4,6 +4,7 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.units.select.Count;
 
 public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain {
@@ -23,13 +24,29 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
             return true;
         }
 
-        if (Missions.isFirstMission()) {
-            return false;
+        if (!ArmyStrength.weAreStronger()) {
+            return true;
         }
 
-        int ourCombatUnits = Count.ourCombatUnits();
+        if (A.resourcesBalance() <= -400) {
+            return true;
+        }
 
-        return ourCombatUnits <= 6;
+        return false;
+
+//        if (Missions.isFirstMission()) {
+//            return false;
+//        }
+//
+//        int ourCombatUnits = Count.ourCombatUnits();
+//
+//        if (ourCombatUnits <= 10 && EnemyInformation.hasDefensiveLandBuilding(true)) {
+//            return true;
+//        }
+//
+//        return false;
+//
+//        return ourCombatUnits <= 6;
     }
 
     // === ATTACK ==============================================
@@ -38,6 +55,14 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 //        if (AGame.killsLossesResourceBalance() <= 100) {
 //            return false;
 //        }
+
+        if (ArmyStrength.weAreMuchStronger() && !EnemyInformation.hasDefensiveLandBuilding(true)) {
+            return true;
+        }
+
+        if (A.resourcesBalance() >= 410 && ArmyStrength.weAreStronger()) {
+            return true;
+        }
 
         if (A.supplyUsed() >= 190 || Count.ourCombatUnits() >= 35) {
             return true;
