@@ -45,9 +45,15 @@ public class MissionDefend extends Mission {
 
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (unit.isMelee() && enemy.isMelee() && "300".equals(unit.tooltip())) {
+            return unit.distTo(enemy) <= 1;
+//            return false; // 300 mode - stand in line, default to SC auto attacks
+        }
+
         if (
-                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 1.2))
-                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 3.2))
+//                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
+                (unit.isMelee() && unit.distToLessThan(enemy, 1.1))
+                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 2.2))
         ) {
             return true;
         }
@@ -70,10 +76,6 @@ public class MissionDefend extends Mission {
             double unitDistToBase = unit.distTo(base);
             double enemyDistToBase = enemy.distTo(base);
 
-            // @ToDo CHECK
-//            if (unitDistToFocusPoint >= 8 || unitDistToFocusPoint > unit.distTo(enemy)) {
-//            if (unitDistToFocusPoint <= 2 || unitDistToFocusPoint > unit.distTo(enemy)) {
-//            if (unitDistToFocusPoint <= 2 || unitDistToFocusPoint > unit.distTo(enemy)) {
             if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitDistToBase) {
                 return true;
             }

@@ -7,7 +7,7 @@ import atlantis.units.actions.Actions;
 
 public abstract class MoveToFocusPoint {
 
-    protected static final double MARGIN = 0.6;
+    protected static final double MARGIN = 0.4;
 
     protected static double optimalDist;
     protected static double distUnitToFocus;
@@ -19,18 +19,22 @@ public abstract class MoveToFocusPoint {
 
     // =========================================================
 
+    protected static boolean advance() {
+        if (distUnitToFocus > (optimalDist + MARGIN)) {
+            String dist = A.dist(distUnitToFocus);
+            return unit.move(focusPoint, Actions.MOVE_FOCUS, "ToFocus" + dist, true);
+        }
+
+        return false;
+    }
+
     /**
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
-    protected static boolean tooFar() {
-        if (distUnitToFocus > (optimalDist + MARGIN)) {
-            String dist = A.dist(distUnitToFocus);
-            return unit.move(focusPoint, Actions.MOVE_FOCUS, "GoToFocus" + dist, true);
-        }
-
-        if ((distUnitToFromSide + MARGIN) > distFocusToFromSide) {
-            String dist = A.dist(distUnitToFocus);
-            return unit.move(fromSide, Actions.MOVE_FOCUS, "WithDraw" + dist, true);
+    protected static boolean wrongSideOfFocus() {
+//        if ((distUnitToFromSide + wrongSideMargin()) > distFocusToFromSide) {
+        if (distUnitToFromSide >= distFocusToFromSide) {
+            return unit.move(fromSide, Actions.MOVE_FOCUS, "WithDraw" + A.dist(distUnitToFocus), true);
         }
 
 //        if (fromSide != null && distUnitToFromSide < 12) {
@@ -48,7 +52,7 @@ public abstract class MoveToFocusPoint {
     /**
      * Unit is too close to its focus point.
      */
-    protected static boolean tooClose() {
+    protected static boolean tooCloseToFocusPoint() {
         if (distUnitToFocus <= (optimalDist - MARGIN)) {
             String dist = A.dist(distUnitToFocus);
 

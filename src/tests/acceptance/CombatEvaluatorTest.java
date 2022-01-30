@@ -56,8 +56,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             double ourEval = wraith.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();
 
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+            System.out.println("ourEval = " + ourEval);
+            System.out.println("enemyEval = " + enemyEval);
 
             assertTrue(ourEval < enemyEval);
             assertTrue(ourEval * 8 > enemyEval);

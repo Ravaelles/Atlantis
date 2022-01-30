@@ -100,6 +100,7 @@ public abstract class AAvoidUnits {
 //                    APainter.paintLine(enemy, unit, Color.Yellow);
                     enemies.addUnitWithValue(enemy, SafetyMargin.calculate(unit, enemy));
                 }
+//                enemies.print("Enemies to avoid");
 
 //                System.out.println(unit + " enemies near = " + enemyUnitsToPotentiallyAvoid(unit).size());
 
@@ -147,7 +148,7 @@ public abstract class AAvoidUnits {
         return unit.enemiesNearby()
                 .add(EnemyUnits.combatUnitsToBetterAvoid())
                 .removeDuplicates()
-                .canAttack(unit, true, true, 5)
+                .canAttack(unit, true, true, 4.5)
                 .list();
     }
 

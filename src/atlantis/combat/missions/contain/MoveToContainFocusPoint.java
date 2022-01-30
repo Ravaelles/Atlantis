@@ -21,7 +21,7 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
         distUnitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         distFocusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
-        return tooFar() || tooClose();
+        return advance() || wrongSideOfFocus() || tooCloseToFocusPoint();
     }
 
     // =========================================================

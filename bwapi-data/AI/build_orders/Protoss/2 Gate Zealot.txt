@@ -31,6 +31,7 @@ Probe x2
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
+4 - MISSION=DEFEND
 8 - Pylon
 10 - Gateway
 12 - Gateway
@@ -54,6 +55,7 @@ Dragoon
 40 - Robotics Support Bay
 44 - Reaver
 48 - Reaver
+50 - MISSION=CONTAIN
 50 - Nexus
 Observatory
 Observer

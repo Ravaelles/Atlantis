@@ -60,7 +60,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     AChoke natural = Chokes.natural();
                     if (natural != null) {
                         return new AFocusPoint(
-                                natural.center(),
+                                natural,
                                 Select.main()
                         );
                     }
@@ -71,7 +71,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 AChoke mainChoke = Chokes.mainChoke();
                 if (mainChoke != null) {
                     return new AFocusPoint(
-                            mainChoke.center(),
+                            mainChoke,
                             Select.main()
                     );
                 }
@@ -110,7 +110,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 AUnit building = Select.ourBuildings().first();
                 if (building != null) {
                     return new AFocusPoint(
-                            Chokes.nearestChoke(building.position()).center(),
+                            Chokes.nearestChoke(building.position()),
                             building
                     );
                 }

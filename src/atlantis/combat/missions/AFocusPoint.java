@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.game.A;
+import atlantis.map.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 
@@ -13,6 +14,7 @@ import atlantis.map.position.HasPosition;
 public class AFocusPoint extends APosition {
 
     private APosition fromSide = null;
+    private AChoke choke = null;
 
     public AFocusPoint(HasPosition position) {
         super(position.position());
@@ -29,7 +31,16 @@ public class AFocusPoint extends APosition {
         }
     }
 
+    public AFocusPoint(AChoke choke, HasPosition fromSide) {
+        this(choke.center(), fromSide);
+        this.choke = choke;
+    }
+
     public APosition fromSide() {
         return fromSide;
+    }
+
+    public AChoke choke() {
+        return choke;
     }
 }

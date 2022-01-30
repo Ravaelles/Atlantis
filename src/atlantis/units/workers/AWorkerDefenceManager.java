@@ -86,6 +86,10 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean shouldNotFight(AUnit worker) {
+        if (We.protoss() && worker.hp() <= 26) {
+            return true;
+        }
+
         if (worker.isBuilder() || worker.isConstructing()) {
             return true;
         }

@@ -6,6 +6,7 @@ import atlantis.information.enemy.EnemyInformation;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -20,10 +21,10 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
     @Test
     public void zergUnits() {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
-        FakeUnit enemy1, enemy2, enemy3, enemy4, enemy5;
+        FakeUnit drone, ling1, hydra, sunken, ling2;
 
         FakeUnit[] enemies = fakeEnemies(
-                enemy1 = fake(AUnitType.Zerg_Drone, 12),
+                drone = fake(AUnitType.Zerg_Drone, 12),
                 fake(AUnitType.Zerg_Larva, 11),
                 fake(AUnitType.Zerg_Egg, 11),
                 fake(AUnitType.Zerg_Hatchery, 11),
@@ -32,22 +33,24 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Creep_Colony, 12),
                 fake(AUnitType.Zerg_Spore_Colony, 12),
                 fake(AUnitType.Zerg_Drone, 13),
-                enemy2 = fake(AUnitType.Zerg_Zergling, 12.5),
-                enemy3 = fake(AUnitType.Zerg_Hydralisk, 14),
-                enemy4 = fake(AUnitType.Zerg_Sunken_Colony, 16),
+                fake(AUnitType.Zerg_Drone, 14),
+                ling1 = fake(AUnitType.Zerg_Zergling, 12.5),
+                hydra = fake(AUnitType.Zerg_Hydralisk, 14),
+                sunken = fake(AUnitType.Zerg_Sunken_Colony, 16),
                 fake(AUnitType.Zerg_Creep_Colony, 11),
-                enemy5 = fake(AUnitType.Zerg_Zergling, 12.9),
+                ling2 = fake(AUnitType.Zerg_Zergling, 12.9),
                 fake(AUnitType.Zerg_Zergling, 13),
                 fake(AUnitType.Zerg_Zergling, 14),
                 fake(AUnitType.Zerg_Zergling, 15),
                 fake(AUnitType.Zerg_Zergling, 16),
+                fake(AUnitType.Zerg_Zergling, 17),
                 fake(AUnitType.Zerg_Hydralisk, 18),
                 fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
-                    new FakeUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5 },
+                    new FakeUnit[] { drone, ling1, hydra, sunken, ling2 },
                     AAvoidUnits.unitsToAvoid(our).array()
             );
         });

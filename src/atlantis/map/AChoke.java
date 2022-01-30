@@ -2,12 +2,14 @@ package atlantis.map;
 
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import bwapi.Color;
 import bwapi.Pair;
 import bwapi.Position;
 import bwapi.WalkPosition;
 import bwem.Area;
 import bwem.ChokePoint;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +19,7 @@ public class AChoke implements HasPosition {
     private Position[] sides;
     private APosition center;
     private double width;
+    private List<APosition> perpendicular;
     private APosition firstPoint;
     private APosition lastPoint;
 
@@ -32,6 +35,7 @@ public class AChoke implements HasPosition {
         wrapper.sides = wrapper.calculateSides();
         wrapper.center = wrapper.calculateCenter();
         wrapper.width = wrapper.calculateWidth();
+        wrapper.perpendicular = wrapper.createPerpendicular();
         wrapper.firstPoint = APosition.create(chokepoint.getGeometry().get(0));
         wrapper.lastPoint = APosition.create(chokepoint.getGeometry().get(chokepoint.getGeometry().size() - 1));
 
@@ -113,6 +117,14 @@ public class AChoke implements HasPosition {
         return new Position[] { p1.toPosition(), p2.toPosition() };
     }
 
+    private List<APosition> createPerpendicular() {
+        List<APosition> perpendicular = new ArrayList<>();
+        for (WalkPosition walkPosition : choke.getGeometry()) {
+            perpendicular.add(APosition.create(walkPosition));
+        }
+        return perpendicular;
+    }
+
     // =========================================================
 
     public APosition center() {
@@ -131,6 +143,10 @@ public class AChoke implements HasPosition {
         );
 
         return aRegions;
+    }
+
+    public List<APosition> perpendicularLine() {
+        return perpendicular;
     }
 
     public ARegion firstRegion() {

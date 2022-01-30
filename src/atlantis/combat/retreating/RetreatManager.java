@@ -47,6 +47,14 @@ public class RetreatManager {
             return false;
         }
 
+        if (unit.isMelee() && coordinateMeleeUnits(unit, enemies)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean coordinateMeleeUnits(AUnit unit, Selection enemies) {
         double radius = 1.2;
         Selection friends = unit.friendsNearby().inRadius(radius, unit);
         Selection veryCloseEnemies = enemies.inRadius(radius, unit);
@@ -58,8 +66,14 @@ public class RetreatManager {
         }
 
         AUnit enemy = enemies.nearestTo(unit);
-        Selection oursAroundEnemy = enemy.enemiesNearby().inRadius(radius, unit);
-        if (oursAroundEnemy.count() <= 1 && unit.friendsNearby().inRadius(5, unit).atLeast(1)) {
+        int ourCount;
+        if (enemy != null) {
+            ourCount = enemy.enemiesNearby().inRadius(radius, unit).count();
+        } else {
+            ourCount = unit.friendsNearby().inRadius(0.6, unit).count();
+        }
+
+        if (ourCount <= 1 && unit.friendsNearby().inRadius(5, unit).atLeast(1)) {
 //        Selection enemiesAroundEnemy = enemy.friendsNearby().inRadius(radius, unit);
 //        if (oursAroundEnemy.count() > enemiesAroundEnemy.count()) {
             unit.setTooltip("CoordinateB", false);

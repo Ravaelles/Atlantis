@@ -44,10 +44,6 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             }
         }
 
-//        if (defender.isProtoss()) {
-//
-//        }
-
         // === Terran ===============================================
 
         if (defender.isTerran()) {
@@ -236,6 +232,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             criticalDist = INFANTRY_BASE_IF_NO_MEDIC
 //                    + ourMovementBonus(defender)
 //                    + enemyMovementBonus(defender, attacker)
+                    + workerBonus(defender, attacker)
                     + woundedAgainstMeleeBonus(defender, attacker);
 
 //            if (
@@ -256,6 +253,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         criticalDist += enemyUnitsNearbyBonus(defender);
         criticalDist = Math.min(criticalDist, 3.5);
 
+//        System.err.println("criticalDist against " + attacker + ": " + criticalDist + " // " + attacker.distTo(defender));
 //        defender.addTooltip(A.digit(criticalDist));
 
         return criticalDist;
