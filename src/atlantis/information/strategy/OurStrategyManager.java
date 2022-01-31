@@ -26,13 +26,13 @@ public class OurStrategyManager {
 
     private static AStrategy initForProtoss() {
         if (Enemy.zerg()) {
-            return ProtossStrategies.PROTOSS_2_Gate_Zealot;
+            return ProtossStrategies.PROTOSS_2_Gate_Zealot_vZ;
 //            return ProtossStrategies.PROTOSS_Speedzealot;
 //            return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
         }
 
 //        return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
-        return ProtossStrategies.PROTOSS_2_Gate_Zealot;
+        return ProtossStrategies.PROTOSS_2_Gate_Zealot_vP;
     }
 
     private static AStrategy initForTerran() {

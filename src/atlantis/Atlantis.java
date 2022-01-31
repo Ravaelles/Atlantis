@@ -191,43 +191,12 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitDestroy(Unit u) {
 
-        // Some ums maps have funky stuff happening at the start
+        // Some ums maps have funky stuff happening at the start, exclude first 20 frames
         if (A.now() <= 20) {
             return;
         }
 
-        AUnit unit = AUnit.getById(u);
-        ASquadManager.removeUnitFromSquads(unit);
-//        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
-
-//        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.name());
-
-        // Our unit
-        if (unit.isOur()) {
-            ARepairAssignments.removeRepairerOrProtector(unit);
-            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-            if (!unit.type().isGasBuilding()) {
-                LOST++;
-                LOST_RESOURCES += unit.type().getTotalResources();
-            }
-        } else {
-            EnemyInformation.removeDiscoveredUnit(unit);
-            if (!unit.type().isGeyser()) {
-                KILLED++;
-                KILLED_RESOURCES += unit.type().getTotalResources();
-            }
-        }
-
-        // Needs to be at the end, otherwise unit is reported as dead too early
-        UnitsArchive.markUnitAsDestroyed(unit);
-
-        // =========================================================
-
-        if (A.now() >= 50 && A.isUms() && A.supplyUsed() == 0 && Select.ourCombatUnits().isEmpty()) {
-            System.out.println("### ROUND END at " + A.seconds() + "s ###");
-            UnitsArchive.paintLostUnits();
-            UnitsArchive.paintKilledUnits();
-        }
+        OnUnitDestroyed.update(AUnit.createFrom(u));
     }
 
     /**

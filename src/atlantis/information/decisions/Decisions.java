@@ -1,14 +1,17 @@
 package atlantis.information.decisions;
 
 import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 
-public class OurDecisions {
+public class Decisions {
 
     private static Cache<Boolean> cache = new Cache<>();
 
@@ -64,6 +67,21 @@ public class OurDecisions {
                 "focusOnTanksOnly",
                 100,
                 () -> EnemyInformation.enemyStartedWithCombatBuilding && GamePhase.isEarlyGame()
+        );
+    }
+
+    public static boolean isEnemyGoingAirAndWeAreNotPreparedEnough() {
+        return cache.get(
+                "isEnemyGoingAirAndWeAreNotPreparedEnough",
+                100,
+                () -> {
+                    if (EnemyStrategy.get().isAirUnits()) {
+                        if (Count.ourStrictlyAntiAir() <= 10 || ArmyStrength.weAreWeaker()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
         );
     }
 }

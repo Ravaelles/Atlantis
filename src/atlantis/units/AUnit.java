@@ -904,14 +904,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return true;
         }
         return AGame.getPlayerUs().isEnemy(player());
-//        return (boolean) cache.get(
-//                "isEnemy",
-//                300,
-////                () -> getPlayer().isEnemy(AGame.getPlayerUs())
-////                () -> getPlayer().isEnemy(AGame.getPlayerUs())
-////                () -> AGame.getPlayerUs().isEnemy(getPlayer()) || (A.notUms() && !isNeutral() && !AGame.getPlayerUs().equals(getPlayer()))
-//                () -> AGame.getPlayerUs().isEnemy(getPlayer())
-//        );
     }
 
     /**
@@ -921,6 +913,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (u == null || player() == null) {
             return false;
         }
+
         return player().equals(AGame.getPlayerUs());
     }
 

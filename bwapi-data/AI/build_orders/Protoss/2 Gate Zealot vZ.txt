@@ -1,0 +1,63 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=8
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=14
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_WORKERS=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=55
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+http://wiki.teamliquid.net/starcraft/2_Gate_Zealot_(vs._Terran)
+8 - Pylon
+10 - Gateway
+12 - Gateway
+12 - Zealot - x2
+Probe x2
+Zealot x2
+15 - Pylon
+Probe x2
+Zealot x2
+Probe x2
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+4 - MISSION=DEFEND
+8 - Pylon
+10 - Gateway
+12 - Gateway
+12 - Zealot
+14 - Zealot
+15 - Pylon
+16 - Zealot
+18 - Zealot
+20 - Zealot
+24 - Zealot
+26 - MISSION=ATTACK
+28 - Cybernetics Core
+32 - Assimilator
+34 - Zealot
+34 - Dragoon
+37 - Dragoon
+40 - Dragoon
+42 - Gateway
+43 - Dragoon
+44 - Dragoon Range
+45 - Robotics Facility
+49 - Robotics Support Bay
+50 - MISSION=ATTACK
+50 - Observatory
+52 - Reaver
+55 - Observer
+60 - Shuttle
+62 - Nexus
+63 - Observer

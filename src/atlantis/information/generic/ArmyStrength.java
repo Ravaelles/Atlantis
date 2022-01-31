@@ -10,6 +10,10 @@ public class ArmyStrength {
 
     // =========================================================
 
+    public static boolean weAreWeaker() {
+        return !weAreStronger();
+    }
+
     public static boolean weAreStronger() {
         return weAreStronger(20);
     }

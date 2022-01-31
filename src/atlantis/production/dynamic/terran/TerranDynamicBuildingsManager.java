@@ -6,7 +6,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.information.decisions.OurDecisions;
+import atlantis.information.decisions.Decisions;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.build.AddToQueue;
@@ -68,7 +68,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         if (
                 OurStrategy.get().goingBio()
                 && (
-                        (OurDecisions.wantsToBeAbleToProduceTanksSoon() && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
+                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
                         || (A.supplyUsed() >= 80 && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
                 )
         ) {
@@ -126,7 +126,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      */
     private static void machineShop() {
         if (
-                OurDecisions.wantsToBeAbleToProduceTanksSoon()
+                Decisions.wantsToBeAbleToProduceTanksSoon()
                         || AGame.canAffordWithReserved(150, 150)
                         || A.supplyUsed(70)
         ) {

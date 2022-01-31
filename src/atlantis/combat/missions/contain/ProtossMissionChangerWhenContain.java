@@ -2,6 +2,7 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInformation;
 import atlantis.information.generic.ArmyStrength;
@@ -20,11 +21,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     private static boolean shouldChangeMissionToDefend() {
-        if (EnemyInformation.isEnemyNearAnyOurBuilding()) {
+        if (EnemyInformation.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 60) {
             return true;
         }
 
-        if (!ArmyStrength.weAreStronger()) {
+        if (ArmyStrength.weAreWeaker() && RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
             return true;
         }
 

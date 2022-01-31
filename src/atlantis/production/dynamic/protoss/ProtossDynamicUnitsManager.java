@@ -2,6 +2,8 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.game.AGame;
+import atlantis.information.decisions.Decisions;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -68,7 +70,9 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
-        buildToHave(AUnitType.Protoss_Reaver, 2);
+        int maxReavers = Decisions.isEnemyGoingAirAndWeAreNotPreparedEnough() ? 0 : 5;
+
+        buildToHave(AUnitType.Protoss_Reaver, maxReavers);
     }
 
     private static void dragoons() {

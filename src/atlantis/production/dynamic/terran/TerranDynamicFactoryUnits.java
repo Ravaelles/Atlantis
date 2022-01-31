@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.decisions.OurDecisions;
+import atlantis.information.decisions.Decisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -36,7 +36,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
     }
 
     private static boolean tanks(AUnit factory) {
-        if (OurDecisions.dontProduceVultures() || Count.tanks() <= 0.4 * Count.vultures()) {
+        if (Decisions.dontProduceVultures() || Count.tanks() <= 0.4 * Count.vultures()) {
             return addToQueue(AUnitType.Terran_Siege_Tank_Tank_Mode);
         }
 
@@ -44,7 +44,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
     }
 
     private static boolean vultures() {
-        if (OurDecisions.dontProduceVultures()) {
+        if (Decisions.dontProduceVultures()) {
             return false;
         }
         return addToQueue(AUnitType.Terran_Vulture);

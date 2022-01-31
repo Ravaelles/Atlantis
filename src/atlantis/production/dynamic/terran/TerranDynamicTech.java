@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.information.decisions.OurDecisions;
+import atlantis.information.decisions.Decisions;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.ADynamicTech;
 import bwapi.TechType;
@@ -23,7 +23,7 @@ public class TerranDynamicTech extends ADynamicTech {
         }
 
         if (
-                OurDecisions.wantsToBeAbleToProduceTanksSoon()
+                Decisions.wantsToBeAbleToProduceTanksSoon()
                 || (A.supplyUsed(70) && !ATech.isResearched(TechType.Tank_Siege_Mode))
         ) {
             handleTech(TechType.Tank_Siege_Mode);

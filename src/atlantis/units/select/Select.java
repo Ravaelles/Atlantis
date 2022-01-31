@@ -277,6 +277,42 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
+    public static int countOurOfTypes(AUnitType... types) {
+        return cacheInt.get(
+                "countOurOfTypes:" + AUnitType.arrayToIds(types),
+                0,
+                () -> {
+                    int total = 0;
+
+                    for (AUnit unit : ourUnits()) {
+                        if (unit.isCompleted() && unit.is(types)) {
+                            total++;
+                        }
+                    }
+
+                    return total;
+                }
+        );
+    }
+
+    public static int countOurOfTypesIncludingUnfinished(AUnitType... types) {
+        return cacheInt.get(
+                "countOurOfTypesIncludingUnfinished:" + AUnitType.arrayToIds(types),
+                0,
+                () -> {
+                    int total = 0;
+
+                    for (AUnit unit : ourUnits()) {
+                        if (unit.is(types)) {
+                            total++;
+                        }
+                    }
+
+                    return total;
+                }
+        );
+    }
+
     /**
      * Counts our units of given type.
      */
@@ -604,7 +640,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      */
     public static AUnit main() {
         String cachePath;
-        return cacheUnit.get(
+        AUnit base = cacheUnit.get(
                 cachePath = "mainBase",
                 30,
                 () -> {
@@ -612,6 +648,12 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);
                 }
         );
+
+        if (base != null && base.isAlive()) {
+            return base;
+        }
+
+        return null;
     }
 
     public static boolean haveMain() {

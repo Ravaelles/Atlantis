@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class CodeProfiler {
     
-    public static final String ASPECT_BUILDINGS = "production";
+    public static final String ASPECT_PRODUCTION = "production";
     public static final String ASPECT_COMBAT = "combat";
     public static final String ASPECT_PAINTING = "painting";
     public static final String ASPECT_OTHER = "other";

@@ -28,6 +28,10 @@ public class AbstractDynamicUnits extends Helpers {
     // =========================================================
 
     protected static void buildToHave(AUnitType type, int haveN) {
+        if (haveN <= 0) {
+            return;
+        }
+
         if (Count.includingPlanned(type) < haveN) {
             trainIfPossible(type);
         }
