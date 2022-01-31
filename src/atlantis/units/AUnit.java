@@ -2116,4 +2116,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int zealotsNearbyCount(double maxDist) {
         return friendsNearby().ofType(AUnitType.Protoss_Zealot).inRadius(maxDist, this).count();
     }
+
+    public boolean isNearEnemyBuilding() {
+        AUnit nearestEnemyBuilding = enemiesNearby().buildings().nearestTo(this);
+
+        if (nearestEnemyBuilding != null) {
+            return nearestEnemyBuilding.distToLessThan(this, 9);
+        }
+
+        return false;
+    }
 }

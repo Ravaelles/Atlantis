@@ -24,6 +24,7 @@ public class OnUnitMorph {
         }
 
         unit.refreshType();
+        EnemyInformation.refreshEnemyUnit(unit);
 
         // =========================================================
 

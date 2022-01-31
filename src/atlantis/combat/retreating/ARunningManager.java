@@ -1,14 +1,17 @@
 package atlantis.combat.retreating;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.missions.Missions;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInformation;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Vector;
@@ -162,6 +165,9 @@ public class ARunningManager {
      * Running behavior which will make unit run straight away from the enemy.
      */
     private APosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
+        if (shouldRunTowardsMainBase()) {
+            return Select.main().position();
+        }
 
         // === Run directly away from the enemy ========================================
 
@@ -203,21 +209,24 @@ public class ARunningManager {
     }
 
     // =========================================================
+
     /**
      * Running behavior which will make unit run toward main base.
      */
-//    private boolean shouldRunTowardsMainBase(AUnit unit, APosition runAwayFrom) {
-//        AUnit mainBase = Select.mainBase();
-//        if (mainBase != null) {
-//            if (PositionUtil.distanceTo(mainBase, unit) > 30) {
-//                return true;
-////                return mainBase.translated(0, 3 * 64);
-//            }
-//        }
-//
-//        return false;
-////        return findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
-//    }
+    private boolean shouldRunTowardsMainBase() {
+        if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
+            return true;
+        }
+
+        AUnit main = Select.main();
+        if (main != null) {
+            if (unit.distTo(main) > 15) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Simplest case: add enemy-to-you-vector to your own position.

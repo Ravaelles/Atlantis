@@ -169,12 +169,17 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     protected static double beastBonus(AUnit defender) {
-        int beastNearby = Select.enemy()
-                .ofType(
-                        AUnitType.Protoss_Archon,
-                        AUnitType.Protoss_Dark_Templar,
-                        AUnitType.Zerg_Ultralisk
-                )
+        if (
+                defender.enemiesNearby()
+                .ofType(AUnitType.Protoss_Dark_Templar)
+                .inRadius(5, defender)
+                .notEmpty()
+        ) {
+            return 2.6;
+        }
+
+        int beastNearby = defender.enemiesNearby()
+                .ofType(AUnitType.Protoss_Archon, AUnitType.Zerg_Ultralisk)
                 .inRadius(5, defender)
                 .count();
 

@@ -15,7 +15,7 @@ import atlantis.util.We;
 public class AExpansionManager {
 
     public static boolean shouldBuildNewBase() {
-        if (true) return false;
+//        if (true) return false;
 
         if (Count.bases() >= 5 || Count.inProductionOrInQueue(AtlantisConfig.BASE) >= 1) {
 //            System.err.println("TOO MANY BASES, STOP MAN "
@@ -28,12 +28,12 @@ public class AExpansionManager {
             return false;
         }
 
-        if (Count.bases() >= 2 && Count.ourCombatUnits() <= 13) {
-            return false;
-        }
+//        if (Count.bases() >= 2 && Count.ourCombatUnits() <= 13) {
+//            return false;
+//        }
 
         if (
-                Count.includingPlanned(AtlantisConfig.BASE) <= 1
+                Count.includingPlanned(AtlantisConfig.BASE) == 0
                 && (
                         (AGame.canAfford(370, 0))
                         || (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)

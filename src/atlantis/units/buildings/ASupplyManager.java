@@ -22,6 +22,10 @@ public class ASupplyManager {
     public static void update() {
         supplyTotal = AGame.supplyTotal();
 
+        if (supplyTotal >= 200) {
+            return;
+        }
+
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1 && requestedConstructionsOfSupply() == 0) {
             requestAdditionalSupply();

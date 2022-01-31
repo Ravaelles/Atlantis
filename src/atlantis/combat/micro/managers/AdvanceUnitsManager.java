@@ -98,7 +98,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             return true;
         }
 
-        unit.setTooltip("Adv:Nothing", true);
+        unit.setTooltip("Adv", true);
         return false;
     }
 
