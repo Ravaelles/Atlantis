@@ -1,7 +1,9 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.AGame;
+import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
@@ -11,6 +13,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 import atlantis.util.We;
+import bwapi.Color;
 
 public class APositionFinder {
 
@@ -28,6 +31,18 @@ public class APositionFinder {
     public static APosition findPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
         HasPosition near = constructionOrder != null ? constructionOrder.nearTo() : null;
         double maxDistance = constructionOrder != null ? constructionOrder.maxDistance() : 35;
+
+        String modifier = constructionOrder.productionOrder().getModifier();
+        if (modifier != null) {
+//            AAdvancedPainter.paintCircleFilled(
+//                PositionModifier.toPosition(modifier, building, builder, constructionOrder),
+//                24, Color.Brown
+//            );
+//            GameSpeed.pauseGame();
+            near = PositionModifier.toPosition(modifier, building, builder, constructionOrder);
+        }
+
+
         return findPositionForNew(builder, building, constructionOrder, near, maxDistance);
     }
 

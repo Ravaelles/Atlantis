@@ -14,7 +14,7 @@ public class UseMap {
 
     public static String activeMap() {
 //        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
@@ -22,7 +22,7 @@ public class UseMap {
 
         // === Protoss ============================================
 
-        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
+//        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 //        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
 //        if (true) return "ums/rav/Zeal_v_Zeal.scm";
@@ -47,12 +47,12 @@ public class UseMap {
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
-//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimap2s/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
 
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran

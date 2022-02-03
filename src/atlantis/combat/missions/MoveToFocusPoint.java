@@ -60,6 +60,10 @@ public abstract class MoveToFocusPoint {
      * Unit is too close to its focus point.
      */
     protected static boolean tooCloseToFocusPoint() {
+        if (unit.recentlyMoved()) {
+            return false;
+        }
+
         if (distUnitToFocus <= (optimalDist - MARGIN)) {
             String dist = A.dist(distUnitToFocus);
 

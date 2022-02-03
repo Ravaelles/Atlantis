@@ -252,7 +252,7 @@ public abstract class Squad extends Units {
                 () -> {
                     APosition center = center();
                     if (center == null) {
-                        return 0;
+                        return 0.0;
                     }
 
                     return unit.distTo(center());

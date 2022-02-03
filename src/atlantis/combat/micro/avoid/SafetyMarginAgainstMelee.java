@@ -66,15 +66,15 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             return -1;
         }
 
+        double base = woundedAgainstMeleeBonus(defender, attacker);
         boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
 
-        //
         if (attacker.isWorker() && attacker.hp() >= 30) {
-            return 0.5;
+            return base + 0.5;
         }
 
-        if (!enemyFacingUs && defender.shieldDamageAtMost(50)) {
-            return 1.5;
+        if (!enemyFacingUs && defender.shieldDamageAtMost(40)) {
+            return base + 1.5;
         }
 
         if (
@@ -87,12 +87,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 )
         ) {
             defender.addLog("CoolDragoon_" + defender.lastAttackFrameAgo());
-            return defender.isHealthy() ? 0 : 0.3;
+            return base + (defender.isHealthy() ? 0 : 0.3);
             //            criticalDist = handleDragoon(defender, attacker);
         }
 
         if (Missions.isGlobalMissionDefend()) {
-            return defender.isHealthy() ? 0.3 : 2.3;
+            return base + (defender.isHealthy() ? 0.3 : 2.3);
         }
 
         return -1;

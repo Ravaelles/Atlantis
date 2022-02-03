@@ -2163,7 +2163,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean recentlyMoved() {
-        return action().isMoving() && lastActionLessThanAgo(8);
+        return action().isMoving() && lastActionLessThanAgo(12);
     }
 
     public boolean idIsOdd() {
