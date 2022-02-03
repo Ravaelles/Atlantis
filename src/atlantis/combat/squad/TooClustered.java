@@ -5,9 +5,9 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-public class ShouldSpreadOut {
+public class TooClustered {
 
-    public static boolean handleSpreadOut(AUnit unit) {
+    public static boolean handleTooClustered(AUnit unit) {
         if (unit.mission() != null && unit.mission().isMissionAttack()) {
             return false;
         }

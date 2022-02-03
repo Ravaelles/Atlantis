@@ -19,19 +19,19 @@ import atlantis.util.We;
 
 import java.util.Collection;
 
-public class EnemyInformation {
+public class EnemyInfo {
 
     private static Cache<Object> cache = new Cache<>();
     private static Cache<Boolean> cacheBoolean = new Cache<>();
 
-    public static boolean enemyStartedWithCombatBuilding = false;
+    public static boolean startedWithCombatBuilding = false;
 
     // =========================================================
 
     public static void clearCache() {
         cache.clear();
         cacheBoolean.clear();
-        enemyStartedWithCombatBuilding = false;
+        startedWithCombatBuilding = false;
     }
 
     public static boolean isEnemyNearAnyOurBuilding() {
@@ -39,22 +39,32 @@ public class EnemyInformation {
     }
 
     public static AUnit enemyNearAnyOurBuilding() {
-        if (!Have.base()) {
-            return null;
-        }
+        return (AUnit) cache.get(
+                "enemyNearAnyOurBuilding",
+                50,
+                () -> {
+                    if (!Have.base()) {
+                        return null;
+                    }
 
-        AUnit nearestEnemy = Select.enemyCombatUnits().excludeTypes(
-                AUnitType.Zerg_Overlord, AUnitType.Protoss_Observer
-        ).nearestTo(Select.main());
-        if (nearestEnemy != null) {
-            return Select.ourBuildings()
-                    .excludeTypes(AUnitType.Terran_Missile_Turret)
-                    .inRadius(Enemy.terran() ? 13 : 7, nearestEnemy)
-                    .atLeast(1)
-                    ? nearestEnemy : null;
-        }
+                    AUnit nearestEnemy = Select.enemyCombatUnits().excludeTypes(
+                            AUnitType.Terran_Valkyrie,
+                            AUnitType.Protoss_Observer,
+                            AUnitType.Protoss_Corsair,
+                            AUnitType.Zerg_Overlord,
+                            AUnitType.Zerg_Scourge
+                    ).nearestTo(Select.main());
+                    if (nearestEnemy != null) {
+                        return Select.ourBuildings()
+                                .excludeTypes(AUnitType.Terran_Missile_Turret)
+                                .inRadius(Enemy.terran() ? 13 : 7, nearestEnemy)
+                                .atLeast(1)
+                                ? nearestEnemy : null;
+                    }
 
-        return null;
+                    return null;
+                }
+        );
     }
 
     /**
@@ -110,7 +120,6 @@ public class EnemyInformation {
      */
     public static void weDiscoveredEnemyUnit(AUnit enemyUnit) {
         EnemyUnits.addFoggedUnit(enemyUnit);
-
         EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
     }
 
@@ -118,14 +127,14 @@ public class EnemyInformation {
      * Saves information about given unit being destroyed, so counting units works properly.
      */
     public static void removeDiscoveredUnit(AUnit enemyUnit) {
-        EnemyUnits.remove(enemyUnit);
+        EnemyUnits.removeFoggedUnit(enemyUnit);
     }
 
     /**
      * Forgets and refreshes info about given unit
      */
     public static void refreshEnemyUnit(AUnit enemyUnit) {
-        EnemyUnits.remove(enemyUnit);
+        EnemyUnits.removeFoggedUnit(enemyUnit);
         weDiscoveredEnemyUnit(enemyUnit);
     }
 

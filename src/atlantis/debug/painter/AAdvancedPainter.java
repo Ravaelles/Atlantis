@@ -14,7 +14,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameLog;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
@@ -1102,7 +1102,7 @@ public class AAdvancedPainter extends APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     static void paintFoggedUnitsThatIsEnemiesDiscovered() {
-        for (AbstractFoggedUnit foggedEnemy : EnemyInformation.discoveredAndAliveUnits()) {
+        for (AbstractFoggedUnit foggedEnemy : EnemyInfo.discoveredAndAliveUnits()) {
             if (!foggedEnemy.hasKnownPosition()) {
                 continue;
             }
@@ -1418,4 +1418,9 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
+    public static void paintBuildingPosition(APosition position, String text) {
+        double dtx = 1;
+        paintRectangle(position, 2, 2, Color.Orange);
+        paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
+    }
 }

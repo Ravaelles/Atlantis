@@ -7,7 +7,8 @@ import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.AStrategyCommander;
 import atlantis.map.scout.AScoutManager;
-import atlantis.production.ABuildingsCommander;
+import atlantis.production.ABuildingManager;
+import atlantis.production.AProductionCommander;
 import atlantis.units.AUnitStateManager;
 import atlantis.units.UmsSpecialActionsManager;
 import atlantis.units.workers.AWorkerCommander;
@@ -37,9 +38,9 @@ public class AGameCommander {
 
         // === Production ===================================================
 
-        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_BUILDINGS);
-        ABuildingsCommander.update();
-        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_BUILDINGS);
+        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PRODUCTION);
+        AProductionCommander.update();
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PRODUCTION);
 
         // === Workers ======================================================
 
@@ -62,6 +63,7 @@ public class AGameCommander {
         // =========================================================
 
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_OTHER);
+        ABuildingManager.update();
         AMissionManager.updateGlobalMission();
         EnemyUnits.updateFoggedUnits();
         UmsSpecialActionsManager.update();

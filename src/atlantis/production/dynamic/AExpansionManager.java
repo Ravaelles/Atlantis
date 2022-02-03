@@ -15,12 +15,16 @@ import atlantis.util.We;
 public class AExpansionManager {
 
     public static boolean shouldBuildNewBase() {
-        if (true) return false;
+//        if (true) return false;
 
-        if (Count.bases() >= 5 || Count.inProductionOrInQueue(AtlantisConfig.BASE) >= 1) {
-//            System.err.println("TOO MANY BASES, STOP MAN "
-//                    + Count.bases() + " // "
-//                    + Count.inProductionOrInQueue(AtlantisConfig.BASE));
+        int bases = Count.bases();
+        int basesInProduction = Count.inProductionOrInQueue(AtlantisConfig.BASE);
+
+        if (bases == 0 && basesInProduction == 0) {
+            return true;
+        }
+
+        if (bases >= 5 || basesInProduction >= 1) {
             return false;
         }
 
@@ -28,18 +32,19 @@ public class AExpansionManager {
             return false;
         }
 
-        if (Count.bases() >= 2 && Count.ourCombatUnits() <= 13) {
-            return false;
-        }
+//        if (ProductionQueue.size() >= 3) {
+//            return false;
+//        }
 
         if (
-                Count.includingPlanned(AtlantisConfig.BASE) <= 1
+            bases <= 1
+                && basesInProduction == 0
                 && (
-                        (AGame.canAfford(370, 0))
-                        || (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
-                        || (A.seconds() >= 600 && Count.ourCombatUnits() >= 8)
-                        || (A.seconds() >= 700)
-                )
+                (AGame.canAfford(370, 0))
+                    || (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
+                    || (A.seconds() >= 600 && Count.ourCombatUnits() >= 8)
+                    || (A.seconds() >= 700)
+            )
         ) {
             return true;
         }
@@ -48,7 +53,11 @@ public class AExpansionManager {
             return true;
         }
 
-        boolean hasPlentyOfMinerals = AGame.hasMinerals(600);
+        if (Count.workers() <= 17 * (bases + basesInProduction)) {
+            return false;
+        }
+
+        boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
         int minMinerals = 100 + (AGame.isPlayingAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
@@ -69,8 +78,7 @@ public class AExpansionManager {
         // === Force decent army before 3rd base =========================================
 
         // Enforce too have a lot of tanks before expansion
-        int numberOfBases = Select.ourBases().count() + inConstruction;
-        if (!hasPlentyOfMinerals && AGame.isPlayingAsTerran() && numberOfBases >= 2) {
+        if (!hasPlentyOfMinerals && AGame.isPlayingAsTerran() && bases >= 2) {
             if (Select.ourTanks().count() <= 8) {
                 return false;
             }
@@ -78,20 +86,18 @@ public class AExpansionManager {
 
         // === Check if we have almost as many bases as base locations; if so, exit ======
 
-        if (numberOfBases >= Bases.baseLocations().size() - 2) {
+        if (bases >= Bases.baseLocations().size() - 2) {
             return false;
         }
 
         int numberOfUnfinishedBases = ConstructionRequests.countNotFinishedOfType(AtlantisConfig.BASE);
 
         boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
-        boolean haveEnoughBases = numberOfBases >= 4
-                && AGame.isPlayingAsZerg() && Select.ourLarva().count() >= 2;
+//        boolean haveEnoughBases = bases >= 4 && AGame.isPlayingAsZerg() && Select.ourLarva().count() >= 2;
         boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
-        boolean allowExtraExpansion = AGame.hasMinerals(minMinerals + 200)
-                && numberOfUnfinishedBases <= 1;
+        boolean allowExtraExpansion = AGame.hasMinerals(minMinerals + 200) && numberOfUnfinishedBases <= 1;
 
-        return haveEnoughMinerals && !haveEnoughBases && (noBaseToConstruct || allowExtraExpansion);
+        return haveEnoughMinerals && (noBaseToConstruct || allowExtraExpansion);
     }
 
     private static boolean handleNoZergLarvas() {

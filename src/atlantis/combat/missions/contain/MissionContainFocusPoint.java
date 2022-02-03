@@ -2,7 +2,7 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
@@ -30,7 +30,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                         if (
                                 enemyBuilding != null
                                         && enemyBuilding.position() != null
-                                        && EnemyInformation.isProxyBuilding(enemyBuilding)
+                                        && EnemyInfo.isProxyBuilding(enemyBuilding)
                         ) {
                             return new AFocusPoint(
                                     enemyBuilding,
@@ -40,7 +40,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //                        }
                     }
 
-                    if (EnemyInformation.hasDefensiveLandBuilding(true) && We.haveBase()) {
+                    if (EnemyInfo.hasDefensiveLandBuilding(true) && We.haveBase()) {
                         AUnit nearestCombatBuilding = EnemyUnits.foggedUnits()
                                 .combatBuildings(false)
                                 .nearestTo(Select.main());

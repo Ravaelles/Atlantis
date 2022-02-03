@@ -1,9 +1,8 @@
 package tests.acceptance;
 
 import atlantis.combat.eval.ACombatEvaluator;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -48,8 +47,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     @Test
     public void takesIntoAccountFoggedUnits() {
         createWorld(1, () -> {
-            EnemyInformation.weDiscoveredEnemyUnit(fake(Protoss_Photon_Cannon, 92));
-            EnemyInformation.weDiscoveredEnemyUnit(fake(Protoss_Photon_Cannon, 93));
+            EnemyInfo.weDiscoveredEnemyUnit(fake(Protoss_Photon_Cannon, 92));
+            EnemyInfo.weDiscoveredEnemyUnit(fake(Protoss_Photon_Cannon, 93));
 
             FakeUnit enemy = nearestEnemy(wraith);
 
@@ -70,8 +69,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
         FakeUnit cannon1 = fakeEnemy(Protoss_Photon_Cannon, 92);
         FakeUnit cannon2 = fakeEnemy(Protoss_Photon_Cannon, 93);
         createWorld(1, () -> {
-                    EnemyInformation.weDiscoveredEnemyUnit(cannon1);
-                    EnemyInformation.weDiscoveredEnemyUnit(cannon2);
+                    EnemyInfo.weDiscoveredEnemyUnit(cannon1);
+                    EnemyInfo.weDiscoveredEnemyUnit(cannon2);
 
                     FakeUnit enemy = cannon1;
 

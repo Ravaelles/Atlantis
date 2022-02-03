@@ -23,7 +23,7 @@ public class TerranBunkerPositionFinder {
             nearTo = defineBunkerPosition(locationModifier);
         }
         else {
-            nearTo = defineBunkerPosition(ASpecialPositionFinder.AT_NATURAL);
+            nearTo = defineBunkerPosition(PositionModifier.AT_NATURAL);
         }
         
         // =========================================================
@@ -59,11 +59,10 @@ public class TerranBunkerPositionFinder {
         }
 
         // Bunker at MAIN CHOKEPOINT
-        if (locationModifier.equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
-            AChoke chokepointForNatural = Chokes.mainChoke();
-            if (chokepointForNatural != null) {
-                return APosition.create(chokepointForNatural.center())
-                        .translatePercentTowards(mainBase.position(), 5);
+        if (locationModifier.equals(PositionModifier.NEAR_MAIN_CHOKEPOINT)) {
+            AChoke mainChoke = Chokes.mainChoke();
+            if (mainChoke != null) {
+                return APosition.create(mainChoke.center()).translateTilesTowards(mainBase, 3.5);
             }
         }
 
@@ -72,8 +71,7 @@ public class TerranBunkerPositionFinder {
             AChoke chokepointForNatural = Chokes.natural(mainBase.position());
             if (chokepointForNatural != null && mainBase != null) {
                 ABaseLocation natural = Bases.natural(Select.main().position());
-                return APosition.create(chokepointForNatural.center())
-                        .translatePercentTowards(natural, 25);
+                return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
 
 //                    System.out.println();
 //                    System.err.println(nearTo);

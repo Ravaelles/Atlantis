@@ -38,9 +38,18 @@ public class TerranSiegeTank {
 
 
     private static boolean updateWhenNotSieged(AUnit unit) {
-        if (unit.lastActionLessThanAgo(30 * 12, Actions.UNSIEGE)) {
+        if (
+            unit.lastActionLessThanAgo(30 * (11 + (unit.idIsOdd() ? 4 : 0)), Actions.UNSIEGE)
+            || unit.lastActionLessThanAgo(30 * (15 + (unit.idIsOdd() ? 4 : 0)), Actions.SIEGE)
+        ) {
             return false;
         }
+
+        if (unit.squad().distToCenter(unit) >= 5) {
+            return false;
+        }
+
+        // =========================================================
 
         if (handleNearEnemyCombatBuilding(unit)) {
             return true;
@@ -116,6 +125,12 @@ public class TerranSiegeTank {
     }
 
     private static boolean updateWhenSieged(AUnit unit) {
+        if (unit.lastActionLessThanAgo(30 * (9 + (unit.idIsOdd() ? 4 : 0)), Actions.SIEGE)) {
+            return false;
+        }
+
+        // =========================================================
+
         if (handleShootingAtInvisibleUnits(unit)) {
             return true;
         }
@@ -123,14 +138,12 @@ public class TerranSiegeTank {
         // =========================================================
 
         // Mission is CONTAIN
-        if (Missions.isGlobalMissionContain()) {
+        if (
+            Missions.isGlobalMissionContain()
+                && unit.squad().distToFocusPoint() < 9.9
+                && unit.lastAttackOrderLessThanAgo(7 * 30)
+        ) {
             return false;
-        }
-
-        // =========================================================
-
-        if (unit.lastActionLessThanAgo(30 * 8, Actions.SIEGE)) {
-            return true;
         }
 
         // =========================================================
@@ -213,7 +226,7 @@ public class TerranSiegeTank {
         if (siegeResearched() && nearestEnemyCombatBuilding != null) {
             if (
                     (tank.distToLessThan(nearestEnemyCombatBuilding, 10.5) && canSiegeHere(tank, false))
-                            || tank.distToLessThan(nearestEnemyCombatBuilding, 9.3)
+                            || tank.distToLessThan(nearestEnemyCombatBuilding, 8.4)
             ) {
 //                tank.setTooltip("Buildz:" + Select.enemy().combatBuildings().count() + "," + A.digit(tank.distTo(nearestEnemyCombatBuilding)));
                 tank.siege();

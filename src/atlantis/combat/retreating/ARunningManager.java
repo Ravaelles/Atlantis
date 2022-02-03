@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Vector;
@@ -162,6 +163,9 @@ public class ARunningManager {
      * Running behavior which will make unit run straight away from the enemy.
      */
     private APosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
+        if (shouldRunTowardsMainBase()) {
+            return Select.main().position();
+        }
 
         // === Run directly away from the enemy ========================================
 
@@ -203,21 +207,32 @@ public class ARunningManager {
     }
 
     // =========================================================
+
     /**
      * Running behavior which will make unit run toward main base.
      */
-//    private boolean shouldRunTowardsMainBase(AUnit unit, APosition runAwayFrom) {
-//        AUnit mainBase = Select.mainBase();
-//        if (mainBase != null) {
-//            if (PositionUtil.distanceTo(mainBase, unit) > 30) {
-//                return true;
-////                return mainBase.translated(0, 3 * 64);
-//            }
-//        }
-//
-//        return false;
-////        return findPositionToRun_preferAwayFromEnemy(unit, runAwayFrom);
-//    }
+    private boolean shouldRunTowardsMainBase() {
+
+        // Only run towards our main if our army isn't too numerous, otherwise units gonna bump upon each other
+        if (Count.ourCombatUnits() > 10) {
+            return false;
+        }
+
+        AUnit main = Select.main();
+        if (main != null) {
+
+            // If already close to the base, don't run towards it, no point
+            if (unit.distTo(main) < 50) {
+                return false;
+            }
+
+            if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Simplest case: add enemy-to-you-vector to your own position.
@@ -262,11 +277,9 @@ public class ARunningManager {
             return null;
         }
 
-//        Vector vector = new Vector((unit.x() - runAwayFrom.x()) / 32.0, (unit.y() - runAwayFrom.y()) / 32.0);
         Vector vector = new Vector(unit.x() - runAwayFrom.x(), unit.y() - runAwayFrom.y());
-//        vector.normalize(new Vector(32, 32));
         vector.normalize();
-        vector.scale(32);
+        vector.scale(82);
 
         // Apply opposite 2D vector
         runTo = unit.position().translateByVector(vector);

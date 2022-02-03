@@ -3,7 +3,7 @@ package atlantis.production.dynamic.terran;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.TerranArmyComposition;
-import atlantis.information.decisions.OurDecisions;
+import atlantis.information.decisions.Decisions;
 import atlantis.production.AbstractDynamicUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -28,7 +28,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static void medics() {
-        if (!OurDecisions.shouldBuildBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
+        if (!Decisions.shouldBuildBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
             return;
         }
 
@@ -69,7 +69,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static void marines() {
-        if (!OurDecisions.shouldBuildBio()) {
+        if (!Decisions.shouldBuildBio()) {
 //            System.out.println("Marines - A");
             return;
         }

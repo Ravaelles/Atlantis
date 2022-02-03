@@ -3,9 +3,11 @@ package atlantis.production;
 import atlantis.combat.micro.terran.TerranCommandCenter;
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.protoss.ProtossShieldBattery;
+import atlantis.terran.TerranFlyingBuildingManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class ABuildingManager {
 
@@ -22,6 +24,10 @@ public class ABuildingManager {
             else if (building.is(AUnitType.Protoss_Shield_Battery)) {
                 ProtossShieldBattery.update(building);
             }
+        }
+
+        if (We.terran()) {
+            TerranFlyingBuildingManager.update();
         }
 
         return false;

@@ -3,7 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.units.AUnit;
@@ -44,7 +44,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === Enemies that breached into base =============
 
                 if (Have.base()) {
-                    AUnit enemyNear = EnemyInformation.enemyNearAnyOurBuilding();
+                    AUnit enemyNear = EnemyInfo.enemyNearAnyOurBuilding();
 //                    AUnit enemyInBase = Select.enemy().combatUnits().effVisible().inRadius(10, Select.main()).first();
                     if (enemyNear != null) {
                         return new AFocusPoint(

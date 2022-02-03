@@ -4,10 +4,9 @@ import atlantis.Atlantis;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.map.AChoke;
-import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -24,15 +23,28 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      *
      */
-    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo,
-            double maxDistance) {
+    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance)
+    {
         _CONDITION_THAT_FAILED = null;
-        int initSearchRadius = building.isPylon() ? 5 : 0;
+        int initSearchRadius = 0;
 
-        // First pylon should be orientated towards the nearest choke
-        if (building.isPylon() && AGame.supplyTotal() <= 10) {
-            nearTo = positionForFirstPylon();
+
+        // =========================================================
+
+        if (building.isPylon()) {
+
+            // First pylon should be close to Nexus for shorter travel dist
+            if (AGame.supplyTotal() <= 10) {
+                nearTo = PylonPosition.positionForFirstPylon();
+            }
+
+            // First pylon should be orientated towards the nearest choke
+            else if (AGame.supplyTotal() <= 18) {
+                nearTo = PylonPosition.positionForSecondPylon();
+            }
         }
+
+        // =========================================================
 
         int searchRadius = initSearchRadius;
         while (searchRadius < maxDistance) {
@@ -161,13 +173,4 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                 || building.equals(AUnitType.Protoss_Nexus);
     }
 
-    private static APosition positionForFirstPylon() {
-        AUnit base = Select.main();
-        AChoke mainChoke = Chokes.mainChoke();
-        if (base == null || mainChoke == null) {
-            return Select.our().first().position();
-        }
-
-        return base.translateTilesTowards(mainChoke, 8);
-    }
 }

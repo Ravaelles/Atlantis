@@ -8,6 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 import java.util.List;
@@ -18,6 +19,10 @@ public class AWorkerDefenceManager {
      * Attack other workers, run from enemies etc.
      */
     public static boolean handleDefenceIfNeeded(AUnit worker) {
+        if (worker.enemiesNearby().isEmpty()) {
+            return false;
+        }
+
         if (shouldNotFight(worker)) {
             return false;
         }
@@ -86,15 +91,14 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean shouldNotFight(AUnit worker) {
-        if (We.protoss() && worker.hp() <= 26) {
+        if (Enemy.protoss() && worker.hp() <= 22) {
+            return true;
+        }
+        else if (worker.hp() <= 18) {
             return true;
         }
 
         if (worker.isBuilder() || worker.isConstructing()) {
-            return true;
-        }
-
-        if (worker.hp() <= 18) {
             return true;
         }
 
@@ -133,6 +137,14 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean handleFightEnemyCombatUnits(AUnit worker) {
+        if (worker.hp() <= 20) {
+            return false;
+        }
+
+        if (worker.friendsNearby().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
+            return attackNearestEnemy(worker);
+        }
+
         if (Count.workers() <= 12 || Select.our().inRadius(4, worker).atMost(2)) {
             return false;
         }
@@ -172,6 +184,17 @@ public class AWorkerDefenceManager {
         }
 
         return false;
+    }
+
+    private static boolean attackNearestEnemy(AUnit worker) {
+        AUnit enemy = worker.enemiesNearby().canBeAttackedBy(worker, 8).nearestTo(worker);
+        if (enemy == null) {
+            return false;
+        }
+
+        worker.setTooltip("Protect", true);
+        worker.attackUnit(enemy);
+        return true;
     }
 
     private static boolean handleEnemyWorkersNearby(AUnit worker) {

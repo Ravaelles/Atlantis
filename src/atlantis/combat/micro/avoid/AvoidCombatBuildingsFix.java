@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
@@ -13,7 +14,15 @@ public class AvoidCombatBuildingsFix {
             return false;
         }
 
-        double baseDist = 7.8 + (unit.isAir() ? 2.5 : 0);
+        if (
+                unit.isMissionAttack()
+                && !RetreatManager.shouldRetreat(unit)
+                && enemyCombatBuildings.selection().combatBuildings(false).inRadius(10, unit).notEmpty()
+        ) {
+            return false;
+        }
+
+        double baseDist = 8.7 + (unit.isAir() ? 2.5 : 0);
         double distTo = nearest.distTo(unit);
         if (distTo <= baseDist) {
             return unit.runningManager().runFrom(nearest, 1, Actions.MOVE_AVOID);

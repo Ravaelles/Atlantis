@@ -22,7 +22,7 @@ public class UnitsArchive {
         destroyedUnitIds.put(unit.id(), unit);
 
         if (unit.isEnemy()) {
-            EnemyInformation.removeDiscoveredUnit(unit);
+            EnemyInfo.removeDiscoveredUnit(unit);
             enemyUnitDestroyed(unit);
         }
         else if (unit.isOur()) {

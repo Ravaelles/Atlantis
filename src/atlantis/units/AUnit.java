@@ -61,7 +61,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
     protected AUnitType _lastType = null;
-    private Log log = new Log(30, 5);
+    private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
     private Action unitAction = Actions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
@@ -201,6 +201,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     @Override
     public boolean equals(Object o) {
+        if (o == null) return false;
         if (this == o) return true;
         if (!(o instanceof AUnit)) return false;
         AUnit aUnit = (AUnit) o;
@@ -904,14 +905,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return true;
         }
         return AGame.getPlayerUs().isEnemy(player());
-//        return (boolean) cache.get(
-//                "isEnemy",
-//                300,
-////                () -> getPlayer().isEnemy(AGame.getPlayerUs())
-////                () -> getPlayer().isEnemy(AGame.getPlayerUs())
-////                () -> AGame.getPlayerUs().isEnemy(getPlayer()) || (A.notUms() && !isNeutral() && !AGame.getPlayerUs().equals(getPlayer()))
-//                () -> AGame.getPlayerUs().isEnemy(getPlayer())
-//        );
     }
 
     /**
@@ -921,6 +914,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (u == null || player() == null) {
             return false;
         }
+
         return player().equals(AGame.getPlayerUs());
     }
 
@@ -2042,11 +2036,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 () -> is(AUnitType.Protoss_Dragoon)
         );
     }
+
     public boolean isDT() {
         return cacheBoolean.get(
                 "isDT",
                 -1,
                 () -> is(AUnitType.Protoss_Dark_Templar)
+        );
+    }
+
+    public boolean isObserver() {
+        return cacheBoolean.get(
+                "isObserver",
+                -1,
+                () -> is(AUnitType.Protoss_Observer)
         );
     }
 
@@ -2122,5 +2125,48 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int zealotsNearbyCount(double maxDist) {
         return friendsNearby().ofType(AUnitType.Protoss_Zealot).inRadius(maxDist, this).count();
+    }
+
+    public boolean isNearEnemyBuilding() {
+        AUnit nearestEnemyBuilding = enemiesNearby().buildings().nearestTo(this);
+
+        if (nearestEnemyBuilding != null) {
+            return nearestEnemyBuilding.distToLessThan(this, 9);
+        }
+
+        return false;
+    }
+
+    public boolean isMissionDefend() {
+        if (mission() == null) {
+            return false;
+        }
+        return mission().isMissionDefend();
+    }
+
+    public boolean isMissionAttack() {
+        if (mission() == null) {
+            return false;
+        }
+        return mission().isMissionAttack();
+    }
+
+    public boolean isMissionContain() {
+        if (mission() == null) {
+            return false;
+        }
+        return mission().isMissionContain();
+    }
+
+    public boolean isReaver() {
+        return type().isReaver();
+    }
+
+    public boolean recentlyMoved() {
+        return action().isMoving() && lastActionLessThanAgo(12);
+    }
+
+    public boolean idIsOdd() {
+        return id() % 2 > 0;
     }
 }

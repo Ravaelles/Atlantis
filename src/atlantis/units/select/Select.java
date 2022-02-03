@@ -1,7 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.config.AtlantisConfig;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -98,7 +98,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 0,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
-                    data.addAll(EnemyInformation.discoveredAndAliveUnits());
+                    data.addAll(EnemyInfo.discoveredAndAliveUnits());
 
                     return new Selection(data, cachePath);
                 }
@@ -268,6 +268,42 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
                     for (AUnit unit : ourUnits()) {
                         if (unit.isCompleted() && unit.is(type)) {
+                            total++;
+                        }
+                    }
+
+                    return total;
+                }
+        );
+    }
+
+    public static int countOurOfTypes(AUnitType... types) {
+        return cacheInt.get(
+                "countOurOfTypes:" + AUnitType.arrayToIds(types),
+                0,
+                () -> {
+                    int total = 0;
+
+                    for (AUnit unit : ourUnits()) {
+                        if (unit.isCompleted() && unit.is(types)) {
+                            total++;
+                        }
+                    }
+
+                    return total;
+                }
+        );
+    }
+
+    public static int countOurOfTypesIncludingUnfinished(AUnitType... types) {
+        return cacheInt.get(
+                "countOurOfTypesIncludingUnfinished:" + AUnitType.arrayToIds(types),
+                0,
+                () -> {
+                    int total = 0;
+
+                    for (AUnit unit : ourUnits()) {
+                        if (unit.is(types)) {
                             total++;
                         }
                     }
@@ -604,7 +640,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      */
     public static AUnit main() {
         String cachePath;
-        return cacheUnit.get(
+        AUnit base = cacheUnit.get(
                 cachePath = "mainBase",
                 30,
                 () -> {
@@ -612,6 +648,12 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);
                 }
         );
+
+        if (base != null && base.isAlive()) {
+            return base;
+        }
+
+        return null;
     }
 
     public static boolean haveMain() {

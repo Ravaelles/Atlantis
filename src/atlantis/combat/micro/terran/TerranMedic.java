@@ -213,7 +213,7 @@ public class TerranMedic extends Microable {
                 return medic.move(assignment.position(), Actions.MOVE_FOLLOW, "Stick", false);
             }
             else if (dist <= MIN_DIST_TO_ASSIGNMENT) {
-                return medic.moveAwayFrom(assignment.position(), 0.3, "TooClose", Actions.MOVE_FORMATION);
+                return medic.moveAwayFrom(assignment.position(), 0.3, "Separate", Actions.MOVE_FORMATION);
             }
 //            else if (medic.isMoving()) {
 //                return medic.holdPosition("Ok");

@@ -3,7 +3,8 @@ package atlantis.game;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.config.AtlantisConfig;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
@@ -23,7 +24,14 @@ public class OnUnitMorph {
             return;
         }
 
+        EnemyUnits.removeFoggedUnit(unit);
         unit.refreshType();
+
+        // Geyser fix - destroyed enemy assimilator is detected as enemy fogged unit
+//        if (unit.isEnemy() && !unit.u().getType().isNeutral()) {
+        if (unit.isEnemy() && (unit.u() != null && !unit.u().getType().isNeutral())) {
+            EnemyInfo.refreshEnemyUnit(unit);
+        }
 
         // =========================================================
 
@@ -55,7 +63,7 @@ public class OnUnitMorph {
 
         // Enemy unit
         else {
-            EnemyInformation.refreshEnemyUnit(unit);
+            EnemyInfo.refreshEnemyUnit(unit);
         }
     }
 }

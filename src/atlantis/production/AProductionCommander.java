@@ -10,16 +10,12 @@ import atlantis.util.We;
 /**
  * Manages construction of new buildings.
  */
-public class ABuildingsCommander {
+public class AProductionCommander {
 
     /**
      * Produce units and buildings according to build orders.
      */
     public static void update() {
-
-        // Auxiliary class, avoid using it for anything else than debugging.
-        ABuildingManager.update();
-
         if (AGame.isUms()) {
             return;
         }
@@ -35,10 +31,6 @@ public class ABuildingsCommander {
 
         // When it can be applied and makes sense, automatically produce units like workers, factories.
         ADynamicProductionCommander.update();
-
-        if (We.terran()) {
-            TerranFlyingBuildingManager.update();
-        }
     }
 
 }

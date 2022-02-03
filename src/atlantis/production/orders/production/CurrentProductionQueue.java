@@ -155,4 +155,7 @@ public abstract class CurrentProductionQueue {
         return new int[] { ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded };
     }
 
+    public static void remove(ProductionOrder order) {
+        ProductionQueue.nextInQueue.remove(order);
+    }
 }

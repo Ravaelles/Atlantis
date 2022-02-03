@@ -48,15 +48,15 @@ public class CameraManager {
 //        }
 
 //        return null;
-        return Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).groundUnits().first();
+        return Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).groundUnits().nonBuildings().first();
     }
 
-    public static void centerCameraNowOnFirstCombatUnit() {
-        AUnit unit = Select.ourCombatUnits().groundUnits().first();
-        if (unit != null) {
-            centerCameraOn(unit);
-        }
-    }
+//    public static void centerCameraNowOnFirstCombatUnit() {
+//        AUnit unit = Select.ourCombatUnits().groundUnits().nonBuildings().first();
+//        if (unit != null) {
+//            centerCameraOn(unit);
+//        }
+//    }
 
     public static void centerCameraOn(HasPosition position) {
         if (position == null) {

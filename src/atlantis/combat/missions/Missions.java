@@ -117,7 +117,9 @@ public class Missions {
 //                throw new RuntimeException("CHange to contain?!?");
 //            }
 
-            System.err.println("CHANGED MISSION TO: " + mission.name());
+            if (MissionChanger.DEBUG) {
+                System.err.println("CHANGED MISSION TO: " + mission.name() + ", reason: " + MissionChanger.debugReason);
+            }
             MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         }
     }

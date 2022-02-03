@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 
@@ -10,15 +11,15 @@ public class ASquadCohesionManager {
             return false;
         }
 
-        if (unit.isRunning()) {
-            return false;
-        }
+//        if (unit.isRunning()) {
+//            return false;
+//        }
 
         if (TooSpreadOut.handleTooSpreadOut(unit)) {
             return true;
         }
 
-        if (ShouldSpreadOut.handleSpreadOut(unit)) {
+        if (TooClustered.handleTooClustered(unit)) {
             return true;
         }
 
@@ -28,11 +29,16 @@ public class ASquadCohesionManager {
     private static boolean shouldSkip(AUnit unit) {
         return
                 // Only mission contain enforces unit coordination
-//                (unit.mission() != null && !unit.mission().isMissionDefend())
-                (unit.mission() != null && unit.mission().isMissionDefend())
-//                unit.mission() != null && (unit.mission().isMissionAttack() || unit.mission().isMissionDefend());
+//                (unit.mission() != null && !unit.isMissionDefend())
+                (unit.mission() != null && unit.isMissionDefend())
+//                unit.mission() != null && (unit.mission().isMissionAttack() || unit.isMissionDefend());
 //                || unit.friendsNearby().atMost(2);
-                || unit.squadSize() <= 2;
+                || unit.squadSize() <= 2
+                || unit.mission().focusPoint() == null;
+    }
+
+    protected static AFocusPoint focusPoint(AUnit unit) {
+        return unit.mission().focusPoint();
     }
 
 //    private static boolean handleShouldStickCloser(AUnit unit) {

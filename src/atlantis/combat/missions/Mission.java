@@ -3,7 +3,7 @@ package atlantis.combat.missions;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -56,8 +56,8 @@ public abstract class Mission {
 
     // =========================================================
 
-    protected boolean enemyIsNearBase(AUnit enemy) {
-        return EnemyInformation.isEnemyNearAnyOurBuilding();
+    protected boolean enemyIsNearAnyOurBuilding(AUnit enemy) {
+        return EnemyInfo.isEnemyNearAnyOurBuilding();
     }
 
 //    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {

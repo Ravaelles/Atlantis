@@ -5,6 +5,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionHelper;
 import atlantis.map.position.PositionUtil;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 import java.util.*;
@@ -436,5 +437,9 @@ public class Units {
         for (AUnit unit : newUnits.list()) {
             addUnit(unit);
         }
+    }
+
+    public Selection selection() {
+        return Select.from(this);
     }
 }

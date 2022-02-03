@@ -1,5 +1,6 @@
 package atlantis.production.constructing;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -106,13 +107,16 @@ public class ConstructionRequests {
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
-            System.err.print("Can't find place for `" + building + "`, " + order);
-            if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
-                System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
-            } else {
-                System.err.print("(reason not defined - bug)");
+            if (AGame.supplyTotal() > 10) {
+                System.err.print("Can't find place for `" + building + "`, " + order);
+//                A.printStackTrace("Can't find place for `" + building + "`, " + order);
+                if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
+                    System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
+                } else {
+                    System.err.print("(reason not defined - bug)");
+                }
+                System.err.println();
             }
-            System.err.println();
 
             newConstructionOrder.cancel();
 //            throw new RuntimeException("Can't find place for `" + building + "` ");

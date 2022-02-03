@@ -5,6 +5,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.util.Cache;
+import atlantis.util.We;
 
 /**
  * Quick auxiliary class for counting our units.
@@ -198,6 +199,34 @@ public class Count {
 
     public static int turrets() {
         return ofType(AUnitType.Terran_Missile_Turret);
+    }
+
+    public static int ourStrictlyAntiAir() {
+        if (We.protoss()) {
+            return Select.countOurOfTypeIncludingUnfinished(AUnitType.Protoss_Corsair);
+        }
+        else if (We.terran()) {
+            return Select.countOurOfTypesIncludingUnfinished(AUnitType.Terran_Goliath, AUnitType.Terran_Valkyrie);
+        }
+        else {
+            return Select.countOurOfTypesIncludingUnfinished(AUnitType.Zerg_Scourge);
+        }
+    }
+
+    public static int infantry() {
+        if (We.terran()) {
+            return Select.ourTerranInfantry().count();
+        }
+        else if (We.protoss()) {
+            return Select.ourOfType(
+                AUnitType.Protoss_Zealot, AUnitType.Protoss_Dragoon, AUnitType.Protoss_Dark_Templar
+            ).count();
+        }
+        else {
+            return Select.ourOfType(
+                AUnitType.Zerg_Zergling, AUnitType.Zerg_Hydralisk
+            ).count();
+        }
     }
 
 //    public static int () {

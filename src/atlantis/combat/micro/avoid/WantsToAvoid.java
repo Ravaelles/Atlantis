@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 import bwapi.Color;
 
 public class WantsToAvoid {
@@ -50,7 +51,7 @@ public class WantsToAvoid {
             return true;
         }
 
-        if (unit.hpLessThan(17) && !enemies.onlyMelee()) {
+        if (unit.hpLessThan(17) && !enemies.onlyMelee() && !Enemy.terran()) {
             unit.addLog("AlmostDead");
             return true;
         }
@@ -64,7 +65,7 @@ public class WantsToAvoid {
     }
 
     private static boolean shouldNeverAvoidIf(AUnit unit, Units enemies) {
-        if (unit.isAir()) {
+        if (unit.isWorker() || unit.isAir()) {
             return false;
         }
 

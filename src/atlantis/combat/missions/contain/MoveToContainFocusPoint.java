@@ -21,7 +21,15 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
         distUnitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         distFocusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
-        return advance() || wrongSideOfFocus() || tooCloseToFocusPoint();
+        if (advance()) {
+            return true;
+        }
+
+        if (unit.enemiesNearby().isEmpty()) {
+            return wrongSideOfFocus() || tooCloseToFocusPoint();
+        }
+
+        return false;
     }
 
     // =========================================================
@@ -41,7 +49,7 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
     }
 
     private static int workersComeThroughBonus() {
-        if (unit.mission() != null && unit.mission().isMissionDefend()) {
+        if (unit.mission() != null && unit.isMissionDefend()) {
             return Select.enemy().inRadius(5, unit).isEmpty()
                     && Select.ourWorkers().inRadius(6, unit).atLeast(1)
                     ? 4 : 0;

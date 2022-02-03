@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
 
@@ -39,6 +40,10 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
     // =========================================================
 
     private static boolean handleTurretForAllBases() {
+        if (!Enemy.zerg()) {
+            return false;
+        }
+
         for (AUnit base : Select.ourBases().list()) {
             int existing = Count.existingOrPlannedBuildingsNear(turret, 8, base.position());
 

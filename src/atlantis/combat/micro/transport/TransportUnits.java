@@ -8,6 +8,7 @@ import atlantis.units.select.Select;
 import bwapi.Color;
 
 import static atlantis.units.AUnitType.Protoss_High_Templar;
+import static atlantis.units.AUnitType.Terran_Siege_Tank_Tank_Mode;
 
 public class TransportUnits {
 
@@ -81,12 +82,12 @@ public class TransportUnits {
     }
 
     private static boolean shouldLoad(AUnit unit) {
-        if (!unit.is(AUnitType.Protoss_Reaver, Protoss_High_Templar)) {
+        if (!unit.is(AUnitType.Protoss_Reaver, Protoss_High_Templar, Terran_Siege_Tank_Tank_Mode)) {
             return false;
         }
 
         // Always load when unit is moving, otherwise it walks instead of flying
-        if (unit.isMoving() && unit.targetPositionAtLeastAway(3)) {
+        if (unit.isMoving() && unit.targetPositionAtLeastAway(1.5)) {
             return true;
         }
 

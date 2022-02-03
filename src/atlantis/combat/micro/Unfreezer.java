@@ -15,7 +15,7 @@ public class Unfreezer {
     public static boolean handleUnfreeze(AUnit unit) {
         if (unit.isRunning() && unit.lastActionFramesAgo() >= (AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES + 1)) {
             if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
-                System.err.println("UNFREEZE #1!");
+//                System.err.println("UNFREEZE #1!");
 //                unit.setTooltip("UNFREEZE!");
                 return unfreeze(unit);
             }
