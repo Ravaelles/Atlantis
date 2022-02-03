@@ -1,6 +1,6 @@
 package atlantis.information.decisions;
 
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -39,7 +39,7 @@ public class Decisions {
                         return false;
                     }
 
-                    return EnemyInformation.enemyStartedWithCombatBuilding && OurStrategy.get().goingBio();
+                    return EnemyInfo.startedWithCombatBuilding && OurStrategy.get().goingBio();
                 }
         );
     }
@@ -66,7 +66,7 @@ public class Decisions {
         return cache.get(
                 "focusOnTanksOnly",
                 100,
-                () -> EnemyInformation.enemyStartedWithCombatBuilding && GamePhase.isEarlyGame()
+                () -> EnemyInfo.startedWithCombatBuilding && GamePhase.isEarlyGame()
         );
     }
 

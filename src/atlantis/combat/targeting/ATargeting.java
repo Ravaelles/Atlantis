@@ -103,7 +103,7 @@ public class ATargeting {
 
 //        System.err.println("Man, how comes we're here? " + ourUnit + " // " + ourUnit.enemiesNearby().count());
 
-        double maxDistToEnemy = unit.mission() != null && unit.mission().isMissionDefend() ? 6 : 999;
+        double maxDistToEnemy = unit.mission() != null && unit.isMissionDefend() ? 6 : 999;
 
         return Select.enemyRealUnits().canBeAttackedBy(unit, maxDistToEnemy).nearestTo(unit);
 //        enemy = selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit, 1.2);

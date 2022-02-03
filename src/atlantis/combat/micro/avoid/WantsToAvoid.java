@@ -64,7 +64,7 @@ public class WantsToAvoid {
     }
 
     private static boolean shouldNeverAvoidIf(AUnit unit, Units enemies) {
-        if (unit.isAir()) {
+        if (unit.isWorker() || unit.isAir()) {
             return false;
         }
 

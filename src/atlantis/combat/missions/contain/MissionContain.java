@@ -6,7 +6,6 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
 
 public class MissionContain extends Mission {
 
@@ -49,14 +48,14 @@ public class MissionContain extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        AFocusPoint focusPoint = focusPoint();
+//        AFocusPoint focusPoint = focusPoint();
 
         if (enemy.hasWeaponRangeToAttack(unit, 0.2) || unit.hasWeaponRangeToAttack(enemy, 0)) {
             return true;
         }
 
         // Allow to defend bases
-        if (enemyIsNearBase(enemy)) {
+        if (enemyIsNearAnyOurBuilding(enemy)) {
             return true;
         }
 

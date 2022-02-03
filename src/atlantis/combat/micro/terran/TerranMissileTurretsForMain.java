@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
 import atlantis.map.Chokes;
@@ -112,7 +112,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                 "positionForMainBaseTurret",
                 30,
                 () -> {
-                    APosition enemyLocation = EnemyInformation.enemyLocationOrGuess();
+                    APosition enemyLocation = EnemyInfo.enemyLocationOrGuess();
                     AUnit mineralNearestToEnemy = Select.minerals().inRadius(12, Select.main()).nearestTo(enemyLocation);
 
                     if (mineralNearestToEnemy != null) {
@@ -140,7 +140,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                     return places;
                 }
 
-                APosition enemyLocation = EnemyInformation.enemyLocationOrGuess();
+                APosition enemyLocation = EnemyInfo.enemyLocationOrGuess();
 
                 Positions<ARegionBoundary> boundaries = new Positions<>();
                 boundaries.addPositions(region.boundaries());

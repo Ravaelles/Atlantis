@@ -2,7 +2,7 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.combat.squad.ASquadManager;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.terran.repair.ARepairAssignments;
@@ -26,7 +26,7 @@ public class OnUnitDestroyed {
             }
         }
         else if (unit.isEnemy() && unit.isRealUnit()) {
-            EnemyInformation.removeDiscoveredUnit(unit);
+            EnemyInfo.removeDiscoveredUnit(unit);
             if (!unit.type().isGeyser()) {
                 Atlantis.KILLED++;
                 Atlantis.KILLED_RESOURCES += unit.type().getTotalResources();

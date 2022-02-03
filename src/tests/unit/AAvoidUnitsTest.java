@@ -2,11 +2,10 @@ package tests.unit;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
-import atlantis.units.select.Select;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -16,7 +15,7 @@ import java.util.Arrays;
 public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
     public MockedStatic<AGame> aGame;
-    public MockedStatic<EnemyInformation> enemyInformation;
+    public MockedStatic<EnemyInfo> enemyInformation;
 
     @Test
     public void zergUnits() {
@@ -186,8 +185,8 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                     fogged(AUnitType.Zerg_Lurker, outsideRange)
             };
 
-            enemyInformation = Mockito.mockStatic(EnemyInformation.class);
-            enemyInformation.when(EnemyInformation::discoveredAndAliveUnits).thenReturn(Arrays.asList(fogged));
+            enemyInformation = Mockito.mockStatic(EnemyInfo.class);
+            enemyInformation.when(EnemyInfo::discoveredAndAliveUnits).thenReturn(Arrays.asList(fogged));
 
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));

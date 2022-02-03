@@ -1,6 +1,7 @@
 package atlantis.information.generic;
 
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.game.A;
 import atlantis.util.Cache;
 
 public class ArmyStrength {
@@ -34,7 +35,7 @@ public class ArmyStrength {
         return cacheInteger.get(
                 "ourArmyRelativeStrength",
                 50,
-                () -> (int) (OurArmyStrength.calculate() * 100 / EnemyArmyStrength.calculate())
+                () -> Math.min(999, (int) (OurArmyStrength.calculate() * 100 / EnemyArmyStrength.calculate()))
         );
     }
 

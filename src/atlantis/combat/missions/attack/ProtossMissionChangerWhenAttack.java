@@ -2,9 +2,9 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
-import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.units.select.Select;
+import atlantis.information.strategy.GamePhase;
 
 public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
@@ -18,7 +18,13 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     private static boolean shouldChangeMissionToContain() {
         if (ArmyStrength.weAreWeaker()) {
-            return false;
+            if (DEBUG) debugReason = "weAreWeaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return true;
+        }
+
+        if (!GamePhase.isLateGame() && EnemyInfo.startedWithCombatBuilding && !ArmyStrength.weAreMuchStronger()) {
+            if (DEBUG) debugReason = "startedWithCombatBuilding & !weAreMuchStronger";
+            return true;
         }
 
         return false;

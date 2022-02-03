@@ -61,7 +61,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
     protected AUnitType _lastType = null;
-    private Log log = new Log(30, 5);
+    private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
     private Action unitAction = Actions.INIT;
 //    private final AUnit _cachedNearestMeleeEnemy = null;
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
@@ -2125,5 +2125,26 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         return false;
+    }
+
+    public boolean isMissionDefend() {
+        if (mission() == null) {
+            return false;
+        }
+        return mission().isMissionDefend();
+    }
+
+    public boolean isMissionAttack() {
+        if (mission() == null) {
+            return false;
+        }
+        return mission().isMissionAttack();
+    }
+
+    public boolean isMissionContain() {
+        if (mission() == null) {
+            return false;
+        }
+        return mission().isMissionContain();
     }
 }

@@ -5,7 +5,7 @@ import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraManager;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
@@ -65,7 +65,7 @@ public class AScoutManager {
         // =========================================================
 
         // We don't know any enemy building, scout nearest starting location.
-        if (!EnemyInformation.hasDiscoveredAnyBuilding()) {
+        if (!EnemyInfo.hasDiscoveredAnyBuilding()) {
             tryFindingEnemy(scout);
         }
 
@@ -107,7 +107,7 @@ public class AScoutManager {
 
     private static void removeOverlordsAsScouts() {
         if (We.zerg()) {
-            if (EnemyInformation.hasDiscoveredAnyBuilding()) {
+            if (EnemyInfo.hasDiscoveredAnyBuilding()) {
                 scouts.clear();
             }
         }

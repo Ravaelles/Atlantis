@@ -38,36 +38,6 @@ public abstract class ABuildOrder {
     }
 
     // === Abstract methods ====================================
-    
-    /**
-     * Request to produce worker (Zerg Drone, Terran SCV or Protoss Probe) that should be handled according to
-     * the race played.
-     *
-     * See ADynamicWorkerProductionManager which is also used to produce workers.
-     */
-    public boolean produceWorker(AUnit base) {
-        if (!AGame.canAfford(50, 0) || AGame.supplyFree() < 1) {
-            return false;
-        }
-
-        if (base != null) {
-            return base.train(AtlantisConfig.WORKER);
-        }
-
-        // If we're here it means all bases are busy. Try queue request
-        for (AUnit anotherBase : Select.ourBases().reverse().list()) {
-            if (
-                    anotherBase.remainingTrainTime() <= 4
-                            && anotherBase.hasNothingInQueue()
-                            && AGame.supplyFree() >= 2
-            ) {
-                anotherBase.train(AtlantisConfig.WORKER);
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Request to produce non-building and non-worker unit. Should be handled according to the race played.

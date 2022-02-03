@@ -4,7 +4,7 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.units.select.Count;
 
@@ -21,15 +21,18 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     private static boolean shouldChangeMissionToDefend() {
-        if (EnemyInformation.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 60) {
+        if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
+            if (DEBUG) debugReason = "enemyNearAnyOurBuilding";
             return true;
         }
 
         if (ArmyStrength.weAreWeaker() && RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
+            if (DEBUG) debugReason = "weAreWeaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
-        if (A.resourcesBalance() <= -400) {
+        if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130) {
+            if (DEBUG) debugReason = "too many resources lost";
             return true;
         }
 
@@ -57,7 +60,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 //            return false;
 //        }
 
-        if (ArmyStrength.weAreMuchStronger() && !EnemyInformation.hasDefensiveLandBuilding(true)) {
+        if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {
             return true;
         }
 

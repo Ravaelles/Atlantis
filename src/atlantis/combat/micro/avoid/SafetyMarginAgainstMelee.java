@@ -40,7 +40,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                         || (defender.lastAttackFrameMoreThanAgo(40) && defender.lastUnderAttackMoreThanAgo(150))
                     )
             ) {
-                defender.addLog("CoolDragoon");
+                defender.addLog("CoolDragoon_" + defender.lastAttackFrameAgo());
                 return defender.isHealthy() ? 0 : 0.3;
     //            criticalDist = handleDragoon(defender, attacker);
             }
@@ -48,6 +48,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             if (Missions.isGlobalMissionDefend()) {
                 return defender.isHealthy() ? 0.3 : 2.3;
             }
+        }
+        else if (defender.isDT()) {
+            return 0;
         }
 
         // === Terran ===============================================

@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -49,7 +49,7 @@ public class SelectionTest extends AbstractTestWithUnits {
     @Test
     public void removesDuplicates() {
         FakeUnit cannon = fake(AUnitType.Protoss_Photon_Cannon);
-        EnemyInformation.weDiscoveredEnemyUnit(cannon);
+        EnemyInfo.weDiscoveredEnemyUnit(cannon);
 
         FakeUnit[] fakeEnemies = fakeEnemies(
                 cannon,
@@ -58,8 +58,8 @@ public class SelectionTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Larva)
         );
 
-        EnemyInformation.weDiscoveredEnemyUnit(fake(AUnitType.Protoss_Dragoon));
-        EnemyInformation.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Sunken_Colony));
+        EnemyInfo.weDiscoveredEnemyUnit(fake(AUnitType.Protoss_Dragoon));
+        EnemyInfo.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Sunken_Colony));
 
         Selection enemies = Select.from(fakeEnemies).add(EnemyUnits.unitsDiscoveredSelection()).removeDuplicates();
 

@@ -3,7 +3,7 @@ package atlantis.combat.micro.zerg;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.stack.StackedUnitsManager;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.APosition;
 import atlantis.map.scout.AScoutManager;
 import atlantis.units.AUnit;
@@ -25,7 +25,7 @@ public class ZergOverlordManager {
         }
 
         // We know enemy building
-        if (EnemyInformation.hasDiscoveredAnyBuilding()) {
+        if (EnemyInfo.hasDiscoveredAnyBuilding()) {
             return actWhenWeKnowEnemy(unit);
         } 
 

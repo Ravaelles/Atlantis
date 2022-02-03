@@ -19,10 +19,12 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     private static boolean shouldChangeMissionToContain() {
         if (ArmyStrength.weAreStronger()) {
+            if (DEBUG) debugReason = "weAreStronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
         if (A.resourcesBalance() >= 300) {
+            if (DEBUG) debugReason = "resourcesBalance good";
             return true;
         }
 

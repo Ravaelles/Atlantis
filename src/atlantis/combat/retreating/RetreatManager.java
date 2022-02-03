@@ -70,6 +70,12 @@ public class RetreatManager {
             ourCount = unit.friendsNearby().inRadius(0.6, unit).count();
         }
 
+        if (ourCount == enemiesNearby && unit.isZealot() && unit.hpMoreThan(36) && unit.isMissionDefend()) {
+            unit.setTooltip("Homeland!", true);
+            unit.addLog("Homeland!");
+            return false;
+        }
+
         if (ourCount <= enemiesNearby && unit.friendsNearby().inRadius(5, unit).atLeast(2)) {
 //        Selection enemiesAroundEnemy = enemy.friendsNearby().inRadius(radius, unit);
 //        if (oursAroundEnemy.count() > enemiesAroundEnemy.count()) {
@@ -173,11 +179,11 @@ public class RetreatManager {
             return true;
         }
 
-//        if (unit.mission() != null && unit.mission().isMissionDefend()) {
+//        if (unit.mission() != null && unit.isMissionDefend()) {
 //            return true;
 //        }
 
-//        if (!unit.woundPercent(15) && unit.mission().isMissionDefend()) {
+//        if (!unit.woundPercent(15) && unit.isMissionDefend()) {
 //            return true;
 //        }
 

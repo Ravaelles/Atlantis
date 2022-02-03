@@ -6,7 +6,10 @@ import atlantis.units.select.Select;
 
 
 public class ProtossStrategies extends AStrategy {
-    
+
+    // Standard
+    public static final AStrategy PROTOSS_Zealot_Core_Zealot = new AStrategy();
+
     // Rush
     public static final AStrategy PROTOSS_2_Gate_Zealot_vP = new AStrategy();
     public static final AStrategy PROTOSS_2_Gate_Zealot_vZ = new AStrategy();
@@ -23,13 +26,19 @@ public class ProtossStrategies extends AStrategy {
     public static final AStrategy PROTOSS_2_Gate_Range_Expand = new AStrategy();
     public static final AStrategy PROTOSS_2_Gate_DT = new AStrategy();
     public static final AStrategy PROTOSS_Carrier_Push = new AStrategy();
-    
+    public static final AStrategy PROTOSS_Fast_DT = new AStrategy();
+
     // =========================================================
 
     public static void initialize() {
-        
+
+        // === Standard ======================================
+
+        PROTOSS_Zealot_Core_Zealot.setProtoss().setName("Zealot Core Zealot")
+                .setUrl("https://liquipedia.net/starcraft/1_Gate_Core_(vs._Protoss)");
+
         // === Rushes ========================================
-        
+
         PROTOSS_2_Gate_Zealot_vP.setProtoss().setName("2 Gate Zealot vP")
                 .setGoingRush()
                 .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_Zealot_(vs._Terran)");
@@ -69,6 +78,10 @@ public class ProtossStrategies extends AStrategy {
 
         PROTOSS_Carrier_Push.setProtoss().setName("Carrier Push")
                 .setGoingTech().setGoingAirUnitsLate()
+                .setUrl("---");
+
+        PROTOSS_Fast_DT.setProtoss().setName("Fast DT")
+                .setGoingTech().setGoingRush()
                 .setUrl("---");
     }
     

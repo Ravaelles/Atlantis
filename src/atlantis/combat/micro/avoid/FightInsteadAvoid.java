@@ -269,8 +269,10 @@ public class FightInsteadAvoid {
         return unit.isMelee()
 //                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
                 && (
-                    (unit.hp() <= 30 && unit.enemiesNearby().ranged().inRadius(6, unit).notEmpty())
+                    unit.isDT()
+                    || (unit.hp() <= 30 && unit.enemiesNearby().ranged().inRadius(6, unit).notEmpty())
                     || (unit.enemiesNearby().ranged().inRadius(1, unit).isNotEmpty())
+                    || (unit.enemiesNearby().combatBuildings(false).inRadius(3, unit).isNotEmpty())
                 );
     }
 

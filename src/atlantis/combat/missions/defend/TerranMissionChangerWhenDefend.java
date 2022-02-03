@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
@@ -20,7 +20,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
     // === CONTAIN =============================================
 
     public static boolean shouldChangeMissionToContain() {
-        if (EnemyInformation.isEnemyNearAnyOurBuilding()) {
+        if (EnemyInfo.isEnemyNearAnyOurBuilding()) {
             return false;
         }
 

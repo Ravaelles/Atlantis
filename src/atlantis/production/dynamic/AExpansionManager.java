@@ -32,6 +32,10 @@ public class AExpansionManager {
 //            return false;
 //        }
 
+        if (ProductionQueue.size() >= 3) {
+            return false;
+        }
+
         if (
                 Count.includingPlanned(AtlantisConfig.BASE) == 0
                 && (

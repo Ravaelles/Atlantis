@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
@@ -9,6 +10,7 @@ import atlantis.units.Units;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Cache;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,8 +20,10 @@ import java.util.Collections;
  */
 public abstract class Squad extends Units {
 
-    private static int firstFreeID = 1;
     private final int ID = firstFreeID++;
+    private static int firstFreeID = 1;
+    private static Cache<AUnit> cache = new Cache<>();
+    private static Cache<Double> cacheDouble = new Cache<>();
 
     /**
      * Auxilary name for the squad e.g. "Alpha", "Bravo", "Delta".
@@ -32,7 +36,7 @@ public abstract class Squad extends Units {
     private Mission mission;
 
     // =========================================================
-    
+
     public Squad(String name, Mission mission) {
         super();
         this.name = name;
@@ -41,7 +45,7 @@ public abstract class Squad extends Units {
     }
 
     // =========================================================
-    
+
     /**
      * Returns median <b>position</b> of all units. It's better than the average, because the outliners
      * don't affect the end result so badly.
@@ -88,6 +92,29 @@ public abstract class Squad extends Units {
             return null;
         }
 
+        AUnit medianUnit = medianUnit();
+
+        return _getMedianUnitPosition = (medianUnit == null ? null : medianUnit.position());
+    }
+
+    private AUnit medianUnit() {
+        int ttl = 600;
+        AUnit medianUnit = cache.get(
+                "medianUnit",
+                ttl,
+                this::defineMedianUnit
+        );
+
+        if (medianUnit != null && medianUnit.isAlive()) {
+            return medianUnit;
+        }
+
+        medianUnit = this.defineMedianUnit();
+        cache.set("medianUnit", ttl, medianUnit);
+        return medianUnit;
+    }
+
+    private AUnit defineMedianUnit() {
         ArrayList<Integer> xCoords = new ArrayList<>();
         ArrayList<Integer> yCoords = new ArrayList<>();
 
@@ -101,8 +128,7 @@ public abstract class Squad extends Units {
 
         APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
         AUnit nearestToMedian = Select.ourCombatUnits().nearestTo(median);
-
-        return _getMedianUnitPosition = (nearestToMedian == null ? null : nearestToMedian.position());
+        return nearestToMedian;
     }
 
     // =========================================================
@@ -219,4 +245,43 @@ public abstract class Squad extends Units {
         return expectedUnits() - size();
     }
 
+    public double distToFocusPoint() {
+        return cacheDouble.get(
+                "distToFocusPoint",
+                5,
+                () -> {
+                    Mission mission = mission();
+                    if (mission == null) {
+                        return 0;
+                    }
+
+                    AFocusPoint focusPoint = mission.focusPoint();
+                    if (focusPoint == null) {
+                        return 0;
+                    }
+
+                    return focusPoint.distTo(center());
+                }
+        );
+    }
+
+    public double groundDistToFocusPoint() {
+        return cacheDouble.get(
+                "groundDistToFocusPoint",
+                8,
+                () -> {
+                    Mission mission = mission();
+                    if (mission == null) {
+                        return 0;
+                    }
+
+                    AFocusPoint focusPoint = mission.focusPoint();
+                    if (focusPoint == null) {
+                        return 0;
+                    }
+
+                    return focusPoint.groundDist(center());
+                }
+        );
+    }
 }

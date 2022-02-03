@@ -1,13 +1,16 @@
 
 package atlantis.production.dynamic.protoss;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.AbstractDynamicUnits;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -51,10 +54,17 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
     private static void observers() {
         if (Have.no(AUnitType.Protoss_Observatory)) {
+            if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
+                AddToQueue.withTopPriority(AUnitType.Protoss_Observatory);
+            }
             return;
         }
 
-        buildToHave(AUnitType.Protoss_Observer, 2);
+        int limit = Math.max(
+                1 + (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT ? 2 : 0),
+                A.supplyTotal() / 42
+        );
+        buildToHave(AUnitType.Protoss_Observer, limit);
     }
 
     private static void corsairs() {

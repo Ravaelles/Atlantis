@@ -1,5 +1,7 @@
 package atlantis.game;
 
+import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.units.select.Select;
 
 public class OnEveryFrame {
@@ -7,11 +9,17 @@ public class OnEveryFrame {
 //    private static CappedList<Integer> frames = new CappedList<>(4);
 
     public static void update() {
-        GameSpeed.checkIfNeedToSlowDown();
+//        GameSpeed.checkIfNeedToSlowDown();
+//
+//        if (Select.our().count() <= 8) {
+//            GameSpeed.changeSpeedTo(0);
+//            GameSpeed.changeFrameSkipTo(100);
+//
+//            CameraManager.centerCameraOn(PylonPosition.positionForSecondPylon());
+//        }
 
-        if (Select.our().count() == 0) {
-            GameSpeed.changeFrameSkipTo(100);
-        }
+        AAdvancedPainter.paintBuildingPosition(PylonPosition.positionForFirstPylon(), "First");
+        AAdvancedPainter.paintBuildingPosition(PylonPosition.positionForSecondPylon(), "Second");
 
 //        for (AUnit unit : Select.ourCombatUnits().list()) {
 //            if (unit.isUnderAttack(2) && unit.hpPercent() < 48) {

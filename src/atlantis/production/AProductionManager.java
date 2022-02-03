@@ -5,6 +5,7 @@ import atlantis.config.AtlantisConfig;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.dynamic.ADynamicWorkerProductionManager;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionQueueMode;
@@ -12,6 +13,7 @@ import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -80,13 +82,12 @@ public class AProductionManager {
 
     public static boolean produceWorker() {
         AUnit base = Select.ourOneNotTrainingUnits(AtlantisConfig.BASE);
-
         if (base == null) {
             return false;
         }
 
         if (isSafeToProduceWorkerAt(base)) {
-            return CurrentBuildOrder.get().produceWorker(base);
+            return ADynamicWorkerProductionManager.produceWorker(base);
         }
 
         return false;

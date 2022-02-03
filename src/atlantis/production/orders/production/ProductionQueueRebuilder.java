@@ -1,5 +1,6 @@
 package atlantis.production.orders.production;
 
+import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
@@ -56,6 +57,7 @@ public class ProductionQueueRebuilder {
 
             if (isOkayToAdd) {
                 ProductionQueue.nextInQueue.add(order);
+//                System.err.println("Enqueue " + order + " (now " + ProductionQueue.nextInQueue.size() + ")");
                 if (ProductionQueue.nextInQueue.size() >= 12) {
                     break;
                 }
@@ -87,8 +89,9 @@ public class ProductionQueueRebuilder {
         // If we don't have this unit, add it to the current production queue.
 //        if (type.is(AUnitType.Protoss_Gateway)) {
 //        if (type.is(AUnitType.Protoss_Zealot)) {
-//            System.out.println(type + " // have(" + weHaveThisManyUnits + ") < need(" + shouldHaveThisManyUnits
-//                    + "),   (notStarted = " + ConstructionRequests.countNotStartedConstructionsOfType(type) + ")");
+//            System.out.println(A.supplyUsed() + ",  " + type + " // have("
+//                    + weHaveThisManyUnits + ") < need(" + shouldHaveThisManyUnits + ")");
+////                    + "),   (notStarted = " + ConstructionRequests.countNotStartedConstructionsOfType(type) + ")");
 //        }
         if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
             return true;

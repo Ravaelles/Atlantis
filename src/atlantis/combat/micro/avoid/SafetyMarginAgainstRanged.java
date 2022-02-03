@@ -8,7 +8,7 @@ import bwapi.Color;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
 
-    private static final double MIN_DIST_TO_COMBAT_BUILDING = 8.2;
+    private static final double MIN_DIST_TO_COMBAT_BUILDING = 8.7;
 
     public static double calculate(AUnit defender, AUnit attacker) {
         double criticalDist;
@@ -69,8 +69,8 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     // =========================================================
 
     protected static double woundedBonus(AUnit defender, AUnit attacker) {
-        if (defender.isDragoon() && defender.hpLessThan(30)) {
-            return 2.5;
+        if (defender.isDragoon() && defender.hpLessThan(25)) {
+            return 3.4;
         }
 
         // Don't apply wound bonus against units with bigger or equal range

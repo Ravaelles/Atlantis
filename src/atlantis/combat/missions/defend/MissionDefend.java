@@ -43,7 +43,6 @@ public class MissionDefend extends Mission {
 
     // =========================================================
 
-
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         AFocusPoint focusPoint = focusPoint();
         AUnit base = Select.main();

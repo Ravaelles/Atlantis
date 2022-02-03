@@ -20,7 +20,7 @@ public class EnemyUnits {
 
     public static void updateFoggedUnits() {
         for (AUnit enemy : Select.enemy().list()) {
-            EnemyInformation.updateEnemyUnitTypeAndPosition(enemy);
+            EnemyInfo.updateEnemyUnitTypeAndPosition(enemy);
         }
 
 //        for (FoggedUnit fogged : enemyUnitsDiscovered()) {
@@ -52,6 +52,7 @@ public class EnemyUnits {
 
     public static void remove(AUnit enemyUnit) {
         enemyUnitsDiscovered.remove(enemyUnit.id());
+        clearCache();
     }
 
     public static boolean isKnown(AUnit enemyUnit) {
@@ -73,7 +74,7 @@ public class EnemyUnits {
     // =========================================================
 
     public static Selection foggedUnits() {
-        return Select.from(EnemyInformation.discoveredAndAliveUnits(), "foggedUnits");
+        return Select.from(EnemyInfo.discoveredAndAliveUnits(), "foggedUnits");
     }
 
     public static APosition enemyBase() {

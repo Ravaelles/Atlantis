@@ -1,10 +1,8 @@
 package atlantis.combat.retreating;
 
 import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.combat.missions.Missions;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInformation;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -214,13 +212,21 @@ public class ARunningManager {
      * Running behavior which will make unit run toward main base.
      */
     private boolean shouldRunTowardsMainBase() {
-        if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
-            return true;
+
+        // Only run towards our main if our army isn't too numerous, otherwise units gonna bump upon each other
+        if (Count.ourCombatUnits() > 10) {
+            return false;
         }
 
         AUnit main = Select.main();
         if (main != null) {
-            if (unit.distTo(main) > 15) {
+
+            // If already close to the base, don't run towards it, no point
+            if (unit.distTo(main) < 15) {
+                return false;
+            }
+
+            if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
                 return true;
             }
         }

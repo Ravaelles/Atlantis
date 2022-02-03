@@ -12,6 +12,10 @@ import java.util.ArrayList;
 
 public class MissionChanger {
 
+    public static final boolean DEBUG = true;
+//    public static final boolean DEBUG = false;
+    public static String debugReason = "";
+
     protected static ArrayList<Mission> missionHistory = new ArrayList<>();
 
     // =========================================================
@@ -56,9 +60,9 @@ public class MissionChanger {
             }
         }
 
-        if (!A.supplyUsed(180) && unit.friendsNearby().atLeast(5)) {
-            forceMissionDefend();
-        }
+//        if (!A.supplyUsed(180) && unit.friendsNearby().atLeast(5)) {
+//            forceMissionDefend();
+//        }
     }
 
     // =========================================================
@@ -75,8 +79,9 @@ public class MissionChanger {
     public static void forceMissionContain() {
         Missions.setGlobalMissionContain();
     }
-    public static void forceMissionDefend() {
-        Missions.setGlobalMissionDefend();
-    }
+
+//    public static void forceMissionDefend() {
+//        Missions.setGlobalMissionDefend();
+//    }
 
 }

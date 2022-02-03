@@ -53,13 +53,16 @@ public class Cache<V> {
         }
     }
 
-    public void set(String cacheKey, int cacheForFrames, Callback callback) {
+    public V set(String cacheKey, int cacheForFrames, Callback callback) {
         if (cacheKey == null || cacheKey.length() <= 2) {
             throw new RuntimeException("Invalid cacheKey = /" + cacheKey + "/");
         }
 
-        data.put(cacheKey, (V) callback.run());
+        V value = (V) callback.run();
+        data.put(cacheKey, value);
         addCachedUntilEntry(cacheKey, cacheForFrames);
+
+        return value;
     }
 
     public void set(String cacheKey, int cacheForFrames, V value) {

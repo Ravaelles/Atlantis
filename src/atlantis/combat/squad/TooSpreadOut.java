@@ -13,11 +13,15 @@ public class TooSpreadOut extends ASquadCohesionManager {
             return false;
         }
 
-        if (unit.friendsNearby().inRadius(5, unit).atLeast(7)) {
+        if (unit.friendsNearby().inRadius(3, unit).atLeast(7)) {
             return false;
         }
 
         if (isTooFarFromSquadCenter(unit)) {
+            return true;
+        }
+
+        if (isTooFarAhead(unit)) {
             return true;
         }
 
@@ -34,6 +38,15 @@ public class TooSpreadOut extends ASquadCohesionManager {
 //
 ////            maxDistanceToSquadCenter(unit)
 //        }
+
+        return false;
+    }
+
+    private static boolean isTooFarAhead(AUnit unit) {
+        if (unit.distTo(focusPoint(unit)) > unit.squad().distToFocusPoint() + 3) {
+            unit.addLog("TooAhead");
+            return true;
+        }
 
         return false;
     }
@@ -96,7 +109,7 @@ public class TooSpreadOut extends ASquadCohesionManager {
             unit.move(
                     unit.translatePercentTowards(center, 20),
                     Actions.MOVE_FOCUS,
-                    "Closa(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
+                    "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
                     false
             );
             return true;

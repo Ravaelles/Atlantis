@@ -1,7 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.config.AtlantisConfig;
-import atlantis.information.enemy.EnemyInformation;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -98,7 +98,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 0,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
-                    data.addAll(EnemyInformation.discoveredAndAliveUnits());
+                    data.addAll(EnemyInfo.discoveredAndAliveUnits());
 
                     return new Selection(data, cachePath);
                 }

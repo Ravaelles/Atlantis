@@ -30,6 +30,10 @@ public abstract class ProductionQueue {
 
     // =========================================================
 
+    public static int size() {
+        return nextInQueue.size();
+    }
+
     public static void addToQueue(int index, ProductionOrder productionOrder) {
         nextInQueue.add(index, productionOrder);
     }
