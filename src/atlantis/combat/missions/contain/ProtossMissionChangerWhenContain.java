@@ -22,7 +22,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 
     private static boolean shouldChangeMissionToDefend() {
         if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
-            if (DEBUG) debugReason = "enemyNearAnyOurBuilding";
+            if (DEBUG) debugReason = "Enemy near our building";
             return true;
         }
 
@@ -37,47 +37,27 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
         }
 
         return false;
-
-//        if (Missions.isFirstMission()) {
-//            return false;
-//        }
-//
-//        int ourCombatUnits = Count.ourCombatUnits();
-//
-//        if (ourCombatUnits <= 10 && EnemyInformation.hasDefensiveLandBuilding(true)) {
-//            return true;
-//        }
-//
-//        return false;
-//
-//        return ourCombatUnits <= 6;
     }
 
     // === ATTACK ==============================================
 
     private static boolean shouldChangeMissionToAttack() {
-//        if (AGame.killsLossesResourceBalance() <= 100) {
-//            return false;
-//        }
+        if (A.supplyUsed() >= 194) {
+            if (DEBUG) debugReason = "Supply blocked";
+            return true;
+        }
 
         if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {
+            if (DEBUG) debugReason = "Much stronger";
             return true;
         }
 
         if (A.resourcesBalance() >= 410 && ArmyStrength.weAreStronger()) {
-            return true;
-        }
-
-        if (A.supplyUsed() >= 190 || Count.ourCombatUnits() >= 35) {
+            if (DEBUG) debugReason = "Resources balance good";
             return true;
         }
 
         return false;
-//        if (AGame.timeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 900) {
-//            return true;
-//        }
-//
-//        return AGame.timeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
     }
 
 }

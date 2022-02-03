@@ -90,6 +90,11 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
         }
 
+        // Reaver range is 8, buildings have 7
+        if (defender.isReaver()) {
+            return 7.7;
+        }
+
         criticalDist += extraMarginAgainstCombatBuilding(defender, attacker);
 
         if (criticalDist <= MIN_DIST_TO_COMBAT_BUILDING) {

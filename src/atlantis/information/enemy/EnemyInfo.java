@@ -120,7 +120,6 @@ public class EnemyInfo {
      */
     public static void weDiscoveredEnemyUnit(AUnit enemyUnit) {
         EnemyUnits.addFoggedUnit(enemyUnit);
-
         EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
     }
 
@@ -128,14 +127,14 @@ public class EnemyInfo {
      * Saves information about given unit being destroyed, so counting units works properly.
      */
     public static void removeDiscoveredUnit(AUnit enemyUnit) {
-        EnemyUnits.remove(enemyUnit);
+        EnemyUnits.removeFoggedUnit(enemyUnit);
     }
 
     /**
      * Forgets and refreshes info about given unit
      */
     public static void refreshEnemyUnit(AUnit enemyUnit) {
-        EnemyUnits.remove(enemyUnit);
+        EnemyUnits.removeFoggedUnit(enemyUnit);
         weDiscoveredEnemyUnit(enemyUnit);
     }
 

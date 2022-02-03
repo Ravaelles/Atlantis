@@ -87,7 +87,7 @@ public class TransportUnits {
         }
 
         // Always load when unit is moving, otherwise it walks instead of flying
-        if (unit.isMoving() && unit.targetPositionAtLeastAway(3)) {
+        if (unit.isMoving() && unit.targetPositionAtLeastAway(1.5)) {
             return true;
         }
 

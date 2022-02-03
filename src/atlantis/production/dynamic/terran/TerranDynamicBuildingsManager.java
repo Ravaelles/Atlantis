@@ -31,11 +31,11 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         factoryIfBioOnly();
 
         armory();
+        machineShop();
         factory();
         starport();
 
         comsat();
-        machineShop();
 
         barracks();
     }
@@ -127,6 +127,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     private static void machineShop() {
         if (
                 Decisions.wantsToBeAbleToProduceTanksSoon()
+                        || (A.supplyUsed(45) && !Have.machineShop())
                         || AGame.canAffordWithReserved(150, 150)
                         || A.supplyUsed(70)
         ) {

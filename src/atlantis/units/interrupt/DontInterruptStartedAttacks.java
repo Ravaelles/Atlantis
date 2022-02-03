@@ -16,7 +16,12 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
-        if (unit.isDragoon() && unit.hpMoreThan(40) && unit.lastAttackOrderMoreThanAgo(40) && unit.lastAttackOrderLessThanAgo(40)) {
+        if (
+                unit.isDragoon()
+                        && unit.hpMoreThan(40)
+                        && unit.lastAttackOrderMoreThanAgo(40)
+                        && unit.lastAttackOrderLessThanAgo(40)
+        ) {
             return true;
         }
 

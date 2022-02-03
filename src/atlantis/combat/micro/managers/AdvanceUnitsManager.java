@@ -40,6 +40,10 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     private static boolean moveToFocusPoint(
             AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
+        if (unit.recentlyMoved()) {
+            return false;
+        }
+
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);
         double margin = Math.max(2.5, unit.squadSize() / 7.0);
@@ -85,7 +89,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // Too far
         else if (distToFocusPoint > optimalDist + margin) {
-            if (unit.isMoving() && unit.lastActionLessThanAgo(8, Actions.MOVE_ENGAGE)) {
+            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
                 return true;
             }
 
@@ -98,6 +102,10 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         // =========================================================
 
         if (distToFocusPoint > 6) {
+            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
+                return true;
+            }
+
             unit.move(focusPoint, Actions.MOVE_ENGAGE, "Adv:Forward", true);
             return true;
         }

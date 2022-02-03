@@ -184,6 +184,10 @@ public class Selection {
         return clone((unit -> !unit.isGroundUnit()));
     }
 
+    public Selection nonBuildings() {
+        return clone((unit -> unit.isBuilding()));
+    }
+
     /**
      * Selects units that are gathering minerals.
      */

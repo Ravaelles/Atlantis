@@ -66,9 +66,9 @@ public abstract class AbstractFoggedUnit extends AUnit {
             cacheInt.set("lastPositionUpdated", -1, A.now());
         }
         
-        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
-            _position = null;
-        }
+//        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
+//            _position = null;
+//        }
     }
 
     protected void updateType(AUnit unit) {

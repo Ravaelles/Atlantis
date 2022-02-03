@@ -20,6 +20,10 @@ public abstract class MoveToFocusPoint {
     // =========================================================
 
     protected static boolean advance() {
+        if (unit.recentlyMoved()) {
+            return false;
+        }
+
         if (distUnitToFocus > (optimalDist + MARGIN)) {
             String dist = A.dist(distUnitToFocus);
             return unit.move(focusPoint, Actions.MOVE_FOCUS, "ToFocus" + dist, true);
@@ -32,7 +36,10 @@ public abstract class MoveToFocusPoint {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     protected static boolean wrongSideOfFocus() {
-//        if ((distUnitToFromSide + wrongSideMargin()) > distFocusToFromSide) {
+        if (unit.recentlyMoved()) {
+            return false;
+        }
+
         if (distUnitToFromSide >= distFocusToFromSide) {
             return unit.move(fromSide, Actions.MOVE_FOCUS, "WithDraw" + A.dist(distUnitToFocus), true);
         }

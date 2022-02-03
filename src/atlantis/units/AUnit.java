@@ -201,6 +201,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     @Override
     public boolean equals(Object o) {
+        if (o == null) return false;
         if (this == o) return true;
         if (!(o instanceof AUnit)) return false;
         AUnit aUnit = (AUnit) o;
@@ -2035,11 +2036,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 () -> is(AUnitType.Protoss_Dragoon)
         );
     }
+
     public boolean isDT() {
         return cacheBoolean.get(
                 "isDT",
                 -1,
                 () -> is(AUnitType.Protoss_Dark_Templar)
+        );
+    }
+
+    public boolean isObserver() {
+        return cacheBoolean.get(
+                "isObserver",
+                -1,
+                () -> is(AUnitType.Protoss_Observer)
         );
     }
 
@@ -2146,5 +2156,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
         return mission().isMissionContain();
+    }
+
+    public boolean isReaver() {
+        return type().isReaver();
+    }
+
+    public boolean recentlyMoved() {
+        return action().isMoving() && lastActionLessThanAgo(8);
+    }
+
+    public boolean idIsOdd() {
+        return id() % 2 > 0;
     }
 }

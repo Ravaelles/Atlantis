@@ -34,6 +34,10 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     // =========================================================
 
     public static boolean buildIfNeeded() {
+        if (A.supplyUsed() <= 20) {
+            return false;
+        }
+
         if (!Have.engBay() || !Have.base()) {
             return false;
         }

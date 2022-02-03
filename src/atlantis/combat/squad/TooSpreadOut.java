@@ -43,7 +43,11 @@ public class TooSpreadOut extends ASquadCohesionManager {
     }
 
     private static boolean isTooFarAhead(AUnit unit) {
-        if (unit.distTo(focusPoint(unit)) > unit.squad().distToFocusPoint() + 3) {
+        if (unit.isMoving() && unit.lastActionLessThanAgo(6)) {
+            return false;
+        }
+
+        if (unit.groundDist(focusPoint(unit)) > unit.squad().groundDistToFocusPoint() + 3) {
             unit.addLog("TooAhead");
             return true;
         }
@@ -106,13 +110,17 @@ public class TooSpreadOut extends ASquadCohesionManager {
                 return false;
             }
 
-            unit.move(
-                    unit.translatePercentTowards(center, 20),
-                    Actions.MOVE_FOCUS,
-                    "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
-                    false
-            );
-            return true;
+            if (!unit.recentlyMoved()) {
+                unit.move(
+                        unit.translatePercentTowards(center, 20),
+                        Actions.MOVE_FOCUS,
+                        "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
+                        false
+                );
+                return true;
+            }
+
+            return false;
         }
 
         return false;

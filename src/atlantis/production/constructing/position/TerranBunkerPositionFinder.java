@@ -60,9 +60,9 @@ public class TerranBunkerPositionFinder {
 
         // Bunker at MAIN CHOKEPOINT
         if (locationModifier.equals(ASpecialPositionFinder.NEAR_MAIN_CHOKEPOINT)) {
-            AChoke chokepointForNatural = Chokes.mainChoke();
-            if (chokepointForNatural != null) {
-                return APosition.create(chokepointForNatural.center())
+            AChoke mainChoke = Chokes.mainChoke();
+            if (mainChoke != null) {
+                return APosition.create(mainChoke.center())
                         .translatePercentTowards(mainBase.position(), 5);
             }
         }

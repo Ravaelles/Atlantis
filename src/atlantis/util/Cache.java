@@ -1,6 +1,8 @@
 package atlantis.util;
 
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.game.A;
+import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
 import java.util.Collection;
@@ -51,6 +53,16 @@ public class Cache<V> {
         } else {
             return result;
         }
+    }
+
+    public V getIfValid(String cacheKey, int cacheForFrames, Callback callback) {
+        V value = get(cacheKey, cacheForFrames, callback);
+        if (value != null && ((AFocusPoint) value).isValid()) {
+            return value;
+        }
+
+        set(cacheKey, cacheForFrames, callback);
+        return get(cacheKey, cacheForFrames, callback);
     }
 
     public V set(String cacheKey, int cacheForFrames, Callback callback) {
@@ -118,4 +130,5 @@ public class Cache<V> {
     public int size() {
         return data.size();
     }
+
 }

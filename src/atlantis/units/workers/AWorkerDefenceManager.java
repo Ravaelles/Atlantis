@@ -18,6 +18,10 @@ public class AWorkerDefenceManager {
      * Attack other workers, run from enemies etc.
      */
     public static boolean handleDefenceIfNeeded(AUnit worker) {
+        if (worker.enemiesNearby().isEmpty()) {
+            return false;
+        }
+
         if (shouldNotFight(worker)) {
             return false;
         }
@@ -133,6 +137,14 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean handleFightEnemyCombatUnits(AUnit worker) {
+        if (worker.hp() <= 20) {
+            return false;
+        }
+
+        if (worker.friendsNearby().combatBuildings(false).isNotEmpty()) {
+            return attackNearestEnemy(worker);
+        }
+
         if (Count.workers() <= 12 || Select.our().inRadius(4, worker).atMost(2)) {
             return false;
         }
@@ -172,6 +184,17 @@ public class AWorkerDefenceManager {
         }
 
         return false;
+    }
+
+    private static boolean attackNearestEnemy(AUnit worker) {
+        AUnit enemy = worker.enemiesNearby().canBeAttackedBy(worker, 5).nearestTo(worker);
+        if (enemy == null) {
+            return false;
+        }
+
+        worker.setTooltip("Protect", true);
+        worker.attackUnit(enemy);
+        return true;
     }
 
     private static boolean handleEnemyWorkersNearby(AUnit worker) {

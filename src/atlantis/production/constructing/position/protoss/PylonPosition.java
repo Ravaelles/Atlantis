@@ -36,7 +36,8 @@ public class PylonPosition {
     // =========================================================
 
     private static APosition fallback() {
-        return Select.our().first().position();
+        AUnit first = Select.our().first();
+        return first != null ? first.position() : null;
     }
 
 }

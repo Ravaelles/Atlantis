@@ -29,7 +29,10 @@ https://liquipedia.net/starcraft/1_Gate_Core_(vs._Protoss)
 13 - Zealot
 16 - Cybernetics Core
 16 - Pylon
+17 - Zealot
 17 - Assimilator
 18 - Zealot
 20 - Dragoon
 23 - MISSION=ATTACK
+21 - Shield Battery - @MAIN_CHOKEPOINT
+34 - Shield Battery - @MAIN_CHOKEPOINT

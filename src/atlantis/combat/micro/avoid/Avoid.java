@@ -27,7 +27,7 @@ public class Avoid {
     }
 
     public static boolean groupOfUnits(AUnit unit, Units enemiesDangerouslyClose) {
-        HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
+        HasPosition runFrom = defineRunFromForGroupOfUnits(unit, enemiesDangerouslyClose);
         APainter.paintCircle(runFrom, 6, Color.Orange);
         APainter.paintCircle(runFrom, 4, Color.Orange);
         APainter.paintCircle(runFrom, 2, Color.Orange);
@@ -44,12 +44,13 @@ public class Avoid {
 
     // =========================================================
 
-    private static HasPosition defineRunFromForGroupOfUnits(Units enemiesDangerouslyClose) {
-        if (enemiesDangerouslyClose.size() >= 3) {
+    private static HasPosition defineRunFromForGroupOfUnits(AUnit unit, Units enemiesDangerouslyClose) {
+        int takeOnly = unit.isDragoon() ? 2 : 3;
+        if (enemiesDangerouslyClose.size() >= takeOnly) {
             Units nearestEnemies = new Units();
-            nearestEnemies.addUnit(enemiesDangerouslyClose.get(0));
-            nearestEnemies.addUnit(enemiesDangerouslyClose.get(1));
-            nearestEnemies.addUnit(enemiesDangerouslyClose.get(2));
+            for (int i = 0; i < takeOnly; i++) {
+                nearestEnemies.addUnit(enemiesDangerouslyClose.get(i));
+            }
             return nearestEnemies.average();
         }
 

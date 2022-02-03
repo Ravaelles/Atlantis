@@ -29,7 +29,14 @@ public class AProductionManager {
         // Get sequence of units (Production Orders) based on current build order
         ArrayList<ProductionOrder> queue = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         for (ProductionOrder order : queue) {
-            handleProductionOrder(order);
+            try {
+                handleProductionOrder(order);
+            }
+            catch (Exception e) {
+                CurrentProductionQueue.remove(order);
+                System.err.println("Cancelled " + order + " as there was a problem with it.");
+                throw e;
+            }
         }
     }
 

@@ -16,6 +16,7 @@ public class FakeUnit extends AUnit {
     public APosition position;
     public boolean enemy = false;
     public boolean neutral = false;
+    public boolean cloaked = false;
     public boolean detected = true;
     public boolean completed = true;
     public boolean loaded = false;
@@ -192,6 +193,11 @@ public class FakeUnit extends AUnit {
     @Override
     public boolean isUnderDarkSwarm() {
         return false;
+    }
+
+    @Override
+    public boolean isCloaked() {
+        return cloaked || isDT() || isObserver();
     }
 
     @Override

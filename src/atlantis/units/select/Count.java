@@ -213,6 +213,22 @@ public class Count {
         }
     }
 
+    public static int infantry() {
+        if (We.terran()) {
+            return Select.ourTerranInfantry().count();
+        }
+        else if (We.protoss()) {
+            return Select.ourOfType(
+                AUnitType.Protoss_Zealot, AUnitType.Protoss_Dragoon, AUnitType.Protoss_Dark_Templar
+            ).count();
+        }
+        else {
+            return Select.ourOfType(
+                AUnitType.Zerg_Zergling, AUnitType.Zerg_Hydralisk
+            ).count();
+        }
+    }
+
 //    public static int () {
 //        return ofType(AUnitType.);
 //    }

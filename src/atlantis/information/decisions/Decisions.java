@@ -1,5 +1,6 @@
 package atlantis.information.decisions;
 
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
@@ -48,7 +49,7 @@ public class Decisions {
         return cache.get(
                 "buildBio",
                 100,
-                () -> OurStrategy.get().goingBio()
+                () -> OurStrategy.get().goingBio() && (Count.infantry() <= 15 || A.hasMinerals(600))
 //                () -> (OurStrategy.get().goingBio() || Count.ourCombatUnits() <= 30)
 //                        (!EnemyInformation.enemyStartedWithCombatBuilding || Select.ourTerranInfantry().atMost(13))
         );
@@ -58,7 +59,7 @@ public class Decisions {
         return cache.get(
                 "dontProduceVultures",
                 100,
-                () -> focusOnTanks() || shouldBuildBio() || Select.ourTerranInfantry().atLeast(4)
+                () -> focusOnTanks() || shouldBuildBio() || Count.infantry() >= 4
         );
     }
 

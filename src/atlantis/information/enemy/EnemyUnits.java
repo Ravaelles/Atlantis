@@ -1,5 +1,6 @@
 package atlantis.information.enemy;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.*;
 import atlantis.units.select.Select;
@@ -22,19 +23,6 @@ public class EnemyUnits {
         for (AUnit enemy : Select.enemy().list()) {
             EnemyInfo.updateEnemyUnitTypeAndPosition(enemy);
         }
-
-//        for (FoggedUnit fogged : enemyUnitsDiscovered()) {
-////            System.err.println(fogged + " // " + fogged.isBuilding() + " // " + fogged.getPosition().isVisible() + " // " +fogged.isVisibleOnMap());
-//            if (
-//                    !fogged.isBuilding()
-//                            && fogged.hasKnownPosition()
-//                            && fogged.position().isVisible()
-//                            && !fogged.isVisibleOnMap()
-//            ) {
-//                fogged.positionUnknown();
-////                System.out.println("      " + fogged + " position now  unknown");
-//            }
-//        }
     }
 
     public static void clearCache() {
@@ -50,14 +38,19 @@ public class EnemyUnits {
         enemyUnitsDiscovered.put(enemyUnit.id(), foggedUnit);
     }
 
-    public static void remove(AUnit enemyUnit) {
+    public static void removeFoggedUnit(AUnit enemyUnit) {
+//        if (enemyUnit.isAlive()) {
+//            System.err.println("Removing fogged unit = " + enemyUnit);
+//        }
+//        A.printStackTrace("Removing fogged unit = " + enemyUnit);
+
         enemyUnitsDiscovered.remove(enemyUnit.id());
-        clearCache();
+        cache.clear();
     }
 
-    public static boolean isKnown(AUnit enemyUnit) {
-        return enemyUnitsDiscovered.containsKey(enemyUnit.id());
-    }
+//    public static boolean isKnown(AUnit enemyUnit) {
+//        return enemyUnitsDiscovered.containsKey(enemyUnit.id());
+//    }
 
     public static AbstractFoggedUnit getFoggedUnit(AUnit enemyUnit) {
         return enemyUnitsDiscovered.get(enemyUnit.id());
@@ -80,7 +73,7 @@ public class EnemyUnits {
     public static APosition enemyBase() {
         return (APosition) cache.get(
                 "enemyBase",
-                30,
+                70,
                 () -> {
                     for (AbstractFoggedUnit enemyUnit : unitsDiscovered()) {
                         if (enemyUnit.isBase()) {

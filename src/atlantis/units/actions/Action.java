@@ -45,6 +45,10 @@ public class Action {
         return attack;
     }
 
+    public boolean isMoving() {
+        return name.startsWith("MOVE_");
+    }
+
 //    public boolean isRunningOrRetreating() {
 //        return run;
 //    }

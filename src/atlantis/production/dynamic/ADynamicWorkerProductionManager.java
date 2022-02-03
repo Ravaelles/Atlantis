@@ -48,7 +48,7 @@ public class ADynamicWorkerProductionManager {
 
         // Check if not TOO MANY WORKERS
         int workers = Select.ourWorkers().count();
-        if (workers >= (25 * Select.ourBases().count())) {
+        if (workers >= (25 * Select.ourBuildingsIncludingUnfinished().bases().count())) {
             return false;
         }
 

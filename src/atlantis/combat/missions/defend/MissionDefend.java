@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class MissionDefend extends Mission {
 
@@ -105,6 +106,10 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
+        if (We.terran()) {
+            return false;
+        }
+
         if (unit.hpLessThan(36) && unit.friendsNearbyCount() <= 2) {
             return false;
         }

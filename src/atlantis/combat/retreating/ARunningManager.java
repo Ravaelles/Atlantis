@@ -222,7 +222,7 @@ public class ARunningManager {
         if (main != null) {
 
             // If already close to the base, don't run towards it, no point
-            if (unit.distTo(main) < 15) {
+            if (unit.distTo(main) < 30) {
                 return false;
             }
 
@@ -277,11 +277,9 @@ public class ARunningManager {
             return null;
         }
 
-//        Vector vector = new Vector((unit.x() - runAwayFrom.x()) / 32.0, (unit.y() - runAwayFrom.y()) / 32.0);
         Vector vector = new Vector(unit.x() - runAwayFrom.x(), unit.y() - runAwayFrom.y());
-//        vector.normalize(new Vector(32, 32));
         vector.normalize();
-        vector.scale(32);
+        vector.scale(82);
 
         // Apply opposite 2D vector
         runTo = unit.position().translateByVector(vector);

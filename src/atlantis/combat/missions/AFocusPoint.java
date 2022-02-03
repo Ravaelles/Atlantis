@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.map.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.units.AUnit;
 
 /**
  * POSITION - where units should concentrate around. Can be offensive or defensive. Usually around a choke.
@@ -15,9 +16,16 @@ public class AFocusPoint extends APosition {
 
     private APosition fromSide = null;
     private AChoke choke = null;
+    private AUnit unit = null;
+
+    // =========================================================
 
     public AFocusPoint(HasPosition position) {
         super(position.position());
+    }
+
+    public AFocusPoint(AUnit unit, HasPosition fromSide) {
+        this(unit.position(), fromSide);
     }
 
     public AFocusPoint(HasPosition position, HasPosition fromSide) {
@@ -36,11 +44,23 @@ public class AFocusPoint extends APosition {
         this.choke = choke;
     }
 
+    // =========================================================
+
+    public boolean isValid() {
+        return unit == null || unit.isAlive();
+    }
+
+    // =========================================================
+
     public APosition fromSide() {
         return fromSide;
     }
 
     public AChoke choke() {
         return choke;
+    }
+
+    public AUnit unit() {
+        return unit;
     }
 }

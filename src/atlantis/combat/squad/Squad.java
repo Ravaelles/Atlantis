@@ -245,6 +245,21 @@ public abstract class Squad extends Units {
         return expectedUnits() - size();
     }
 
+    public double distToCenter(AUnit unit) {
+        return cacheDouble.get(
+                "distToCenter",
+                5,
+                () -> {
+                    APosition center = center();
+                    if (center == null) {
+                        return 0;
+                    }
+
+                    return unit.distTo(center());
+                }
+        );
+    }
+
     public double distToFocusPoint() {
         return cacheDouble.get(
                 "distToFocusPoint",

@@ -2,6 +2,8 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
+import atlantis.combat.retreating.RetreatManager;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
@@ -12,13 +14,27 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
         if (shouldChangeMissionToContain()) {
             changeMissionTo(Missions.CONTAIN);
         }
+        else if (shouldChangeMissionToDefend()) {
+            changeMissionTo(Missions.DEFEND);
+        }
+    }
+
+    // === DEFEND ==============================================
+
+    private static boolean shouldChangeMissionToDefend() {
+        if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
+            if (DEBUG) debugReason = "Enemy near our building";
+            return true;
+        }
+
+        return false;
     }
 
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
         if (ArmyStrength.weAreWeaker()) {
-            if (DEBUG) debugReason = "weAreWeaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) debugReason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
