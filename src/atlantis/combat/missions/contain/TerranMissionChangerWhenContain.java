@@ -30,8 +30,13 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
     // =========================================================
 
     protected static boolean shouldChangeMissionToDefend() {
-        if (Atlantis.LOST <= 4) {
-            return false;
+//        if (Atlantis.LOST <= 4) {
+//            return false;
+//        }
+
+        if (ArmyStrength.weAreMuchWeaker()) {
+            if (DEBUG) debugReason = "Much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return true;
         }
 
         if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
@@ -40,12 +45,12 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         }
 
         if (ArmyStrength.weAreWeaker() && RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
-            if (DEBUG) debugReason = "weAreWeaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) debugReason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
         if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130) {
-            if (DEBUG) debugReason = "too many resources lost";
+            if (DEBUG) debugReason = "Too many resources lost";
             return true;
         }
 

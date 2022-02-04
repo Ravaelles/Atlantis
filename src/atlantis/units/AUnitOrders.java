@@ -314,7 +314,7 @@ public interface AUnitOrders {
 
         unit().setTooltip(tooltip, strategicLevel);
 
-        if (unit().isCommand(UnitCommandType.Repair) && !target.u().equals(u().getTarget())) {
+        if (unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
             return true;
         }
 

@@ -21,13 +21,13 @@ public class PositionModifier {
     /**
      * Constant used as a hint to indicate that building should be placed in the main base region.
      */
-    public static final String NEAR_MAIN = "MAIN";
+    public static final String MAIN = "MAIN";
 
     /**
      * Constant used as a hint to indicate that building should be placed in the chokepoints of the main base.
      */
-    public static final String NEAR_MAIN_CHOKEPOINT = "MAIN_CHOKEPOINT";
-    public static final String NEAR_NATURAL_CHOKEPOINT = "NEAR_NATURAL_CHOKEPOINT";
+    public static final String MAIN_CHOKE = "MAIN_CHOKE";
+    public static final String NATURAL_CHOKE = "NATURAL_CHOKE";
 
     /**
      * Constant used as a hint to indicate that building should be placed in the "natural"
@@ -40,7 +40,7 @@ public class PositionModifier {
     public static APosition toPosition(
         String modifier, AUnitType building, AUnit builder, ConstructionOrder constructionOrder
     ) {
-        if (modifier.equals(NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
+        if (modifier.equals(MAIN) ) {
             if (constructionOrder.maxDistance() < 0) {
                 constructionOrder.setMaxDistance(40);
             }
@@ -57,13 +57,15 @@ public class PositionModifier {
             return null;
         }
 
-        if (modifier.equals(NEAR_MAIN_CHOKEPOINT)) {
+        if (modifier.equals(MAIN_CHOKE)) {
+            constructionOrder.setMaxDistance(6);
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
                 return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 3.5);
             }
         }
-        else if (modifier.equals(NEAR_NATURAL_CHOKEPOINT)) {
+        else if (modifier.equals(NATURAL_CHOKE)) {
+            constructionOrder.setMaxDistance(6);
             AChoke chokepointForNatural = Chokes.natural(Select.main().position());
             if (chokepointForNatural != null && Select.main() != null) {
                 ABaseLocation natural = Bases.natural(Select.main().position());

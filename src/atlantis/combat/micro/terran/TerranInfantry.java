@@ -83,6 +83,13 @@ public class TerranInfantry {
             return false;
         }
 
+        if (unit.hasTargetPosition() && unit.targetPositionAtLeastAway(12)) {
+            Select.ourOfType(AUnitType.Terran_Bunker).inRadius(1, unit).first().unloadAll();
+            unit.setTooltipTactical("Unload");
+            unit.addLog("UnloadToMove");
+            return true;
+        }
+
 //        if (Select.enemyRealUnits().inRadius(6, unit).isEmpty()) {
         if (
                 unit.enemiesNearby().isEmpty()
@@ -111,18 +118,19 @@ public class TerranInfantry {
         // =========================================================
         
         AUnit nearestBunker = defineBunkerToLoadTo(unit);
-        int maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 15 : 9;
+        int maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 12 : 7;
 
-        if (
-                unit.lastActionMoreThanAgo(20)
-//                || Select.enemyRealUnits().inRadius(6, unit).atLeast(1)
-        ) {
+//        if (
+//                unit.lastActionMoreThanAgo(20)
+////                || Select.enemyRealUnits().inRadius(6, unit).atLeast(1)
+//        ) {
             if (nearestBunker != null && nearestBunker.distTo(unit) < maxDistanceToLoad) {
                 unit.load(nearestBunker);
-                unit.setTooltipTactical("GTFInto bunker!");
+                unit.setTooltipTactical("GetToDaChoppa");
+                unit.addLog("GetToDaChoppa");
                 return true;
             }
-        }
+//        }
 
         return false;
     }
@@ -133,6 +141,8 @@ public class TerranInfantry {
         Selection bunkers = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
                 .inRadius(15, unit).havingSpaceFree(unit.spaceRequired());
         AUnit bunker = bunkers.nearestTo(unit);
+
+//        System.out.println("bunker = " + bunker);
 //        if (bunker != null) {
 //            AUnit mainBase = Select.main();
 //

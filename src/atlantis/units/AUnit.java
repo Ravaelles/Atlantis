@@ -904,6 +904,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (u == null) {
             return true;
         }
+//        if (isNeutral()) {
+//            System.err.println("ooo");
+//            return false;
+//        }
         return AGame.getPlayerUs().isEnemy(player());
     }
 
@@ -2168,5 +2172,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean idIsOdd() {
         return id() % 2 > 0;
+    }
+
+    public AUnit nearestEnemy() {
+        return enemiesNearby().nearestTo(this);
+    }
+
+    public Selection friendsInRadius(double radius) {
+        return friendsNearby().inRadius(radius, this);
+    }
+
+    public int friendsInRadiusCount(double radius) {
+        return friendsNearby().inRadius(radius, this).count();
     }
 }

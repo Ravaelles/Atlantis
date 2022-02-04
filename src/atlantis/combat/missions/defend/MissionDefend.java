@@ -110,6 +110,14 @@ public class MissionDefend extends Mission {
             return false;
         }
 
+        if (
+            (unit.isMelee() || unit.hpMoreThan(40))
+            && unit.friendsNearby().combatBuildings(false).inRadius(5, unit).notEmpty()
+        ) {
+            unit.addLog("ProtectBuilding");
+            return true;
+        }
+
         if (unit.hpLessThan(36) && unit.friendsNearbyCount() <= 2) {
             return false;
         }

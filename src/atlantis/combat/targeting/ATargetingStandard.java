@@ -54,7 +54,17 @@ public class ATargetingStandard extends ATargeting {
 
         target = enemyUnits.clone()
                 .workers()
-                .inRadius(10, unit)
+                .inRadius(15, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Bases
+
+        target = enemyBuildings.clone()
+                .bases()
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -76,16 +86,6 @@ public class ATargetingStandard extends ATargeting {
                         AUnitType.Zerg_Greater_Spire
                 )
                 .inRadius(11, unit)
-                .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
-
-        // =========================================================
-        // Bases
-
-        target = enemyBuildings.clone()
-                .bases()
                 .nearestTo(unit);
         if (target != null) {
             return target;

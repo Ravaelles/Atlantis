@@ -109,9 +109,9 @@ public abstract class AbstractFoggedUnit extends AUnit {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " "
-                + nameWithId() +
-                " at " + _position;
+        return "Abstract" + getClass().getSimpleName() + " "
+                + nameWithId() + " at " + _position
+                + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
     }
 
     // =========================================================

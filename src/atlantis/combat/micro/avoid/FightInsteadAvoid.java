@@ -62,7 +62,7 @@ public class FightInsteadAvoid {
         }
 
         if (dontFightInTopImportantCases()) {
-            unit.addLog("DontFightImportant");
+            unit.addLog("DonNotFight");
             return false;
         }
 
@@ -257,12 +257,10 @@ public class FightInsteadAvoid {
         if (unit.hp() <= (Enemy.protoss() ? 18 : 11) * meleeEnemiesNearby) {
             return false;
         }
-//        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) && enemiesSelection.melee().atLeast((Enemy.protoss() ? 1 : 2))) {
-//            return false;
-//        }
 
+//        return false;
         boolean medicNearby = unit.medicNearby();
-        return medicNearby || (!unit.isWounded() && ranged == null);
+        return medicNearby || (!unit.isWounded() && ranged == null && unit.friendsInRadiusCount(1) >= 4);
     }
 
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {

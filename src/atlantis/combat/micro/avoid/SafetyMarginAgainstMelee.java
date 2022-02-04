@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -70,14 +71,14 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
 
         if (attacker.isWorker() && attacker.hp() >= 30) {
-            return base + 0.5;
+            base += 0.5;
         }
 
-        if (!enemyFacingUs && defender.shieldDamageAtMost(40)) {
-            return base + 1.5;
+        else if (!enemyFacingUs && defender.shieldDamageAtMost(40)) {
+            base += 1.5;
         }
 
-        if (
+        else if (
                 (attacker.hp() <= 16 || defender.shieldDamageAtMost(38))
                         && (
                         !enemyFacingUs
@@ -87,15 +88,20 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 )
         ) {
             defender.addLog("CoolDragoon_" + defender.lastAttackFrameAgo());
-            return base + (defender.isHealthy() ? 0 : 0.3);
+            base += (defender.isHealthy() ? 0 : 0.3);
             //            criticalDist = handleDragoon(defender, attacker);
         }
 
-        if (Missions.isGlobalMissionDefend()) {
-            return base + (defender.isHealthy() ? 0.3 : 2.3);
-        }
+        // =========================================================
 
-        return -1;
+        base = Math.min(2.4, base);
+        return base;
+
+//        if (Missions.isGlobalMissionDefend()) {
+//            return base;
+//        }
+//
+//        return -1;
     }
 
     // =========================================================
@@ -205,9 +211,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {
-        if (attacker.isRanged()) {
-            return 2;
-        }
+//        if (attacker.isRanged()) {
+//            return 2;
+//        }
 
         if (defender.isZealot()) {
             return defender.hpLessThan(21) ? 1.8 : 0;
@@ -280,7 +286,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
             criticalDist = Math.min(criticalDist, defender.isWounded() ? 3.2 : 2.5);
 
-            defender.setTooltipTactical("NoMedic");
+            String log = "NoMedic" + A.digit(criticalDist);
+            defender.setTooltipTactical(log);
+            defender.addLog(log);
         }
 
         criticalDist += enemyUnitsNearbyBonus(defender);

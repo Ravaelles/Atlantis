@@ -82,9 +82,9 @@ public class APositionFinder {
         // =========================================================
         // BUNKER
 
-        else if (building.isBunker()) {
-            return TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
-        } 
+//        else if (building.isBunker()) {
+//            return TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
+//        }
 
         // =========================================================
         // Creep colony

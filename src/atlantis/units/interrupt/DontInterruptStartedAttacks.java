@@ -12,17 +12,24 @@ public class DontInterruptStartedAttacks {
 
     public static boolean shouldNotInterrupt(AUnit unit) {
 //        if (true) return false;
-        if (unit.cooldownRemaining() == 0 || unit.lastActionMoreThanAgo(15)) {
+//        if (unit.cooldownRemaining() == 0 || unit.lastActionMoreThanAgo(15)) {
+        if (unit.lastActionMoreThanAgo(15)) {
             return false;
         }
 
-        if (
-                unit.isDragoon()
-                        && unit.hpMoreThan(40)
-                        && unit.lastAttackOrderMoreThanAgo(40)
-                        && unit.lastAttackOrderLessThanAgo(40)
-        ) {
-            return true;
+        if (unit.isDragoon()) {
+            if (unit.hpMoreThan(40)
+                && unit.lastAttackOrderMoreThanAgo(40)
+                && unit.lastAttackOrderLessThanAgo(40)) {
+                return true;
+            }
+
+            if (unit.action().isAttacking()) {
+                AUnit nearestEnemy = unit.nearestEnemy();
+                if (nearestEnemy != null && nearestEnemy.distToMoreThan(unit, 2.8)) {
+                    return true;
+                }
+            }
         }
 
         if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
@@ -36,7 +43,7 @@ public class DontInterruptStartedAttacks {
         if (unit.isVulture() && unit.target() != null && unit.isUnitActionAttack()) {
 //            if (unit.lastStartedAttackLessThanAgo(12 + unit.hpPercent() / 25)) {
             if (
-                    unit.target().hp() <= 18
+                unit.target().hp() <= 18
                     || unit.lastStartedAttackLessThanAgo(10)
                     || unit.target().distToMoreThan(unit, 2.4)
 //                    || (unit.lastStartedAttackLessThanAgo(13) && unit.isFacingItsTarget())
@@ -62,7 +69,7 @@ public class DontInterruptStartedAttacks {
         // === Unit already started attack animation ===============
 
         if (
-                UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
+            UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
 //                        && NearestEnemy.rangedHasSmallerRangeThan(unit)
         ) {
 //            if (unit.isFirstCombatUnit()) {

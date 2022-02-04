@@ -38,7 +38,9 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
 
     @Override
     public String toString() {
-        return "FakeFoggedUnit{#" + _id + " " + _lastType + " at " + _position + "}";
+        System.out.println("A");
+        return "FakeFogged" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral"))
+            + "{#" + _id + " " + _lastType + " at " + _position + "}";
     }
 
     // =========================================================

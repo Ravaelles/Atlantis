@@ -793,7 +793,7 @@ public class Selection {
     public void print(String message) {
         System.out.println("=== " + (message != null ? message : currentCachePath) + " (" + size() + ") ===");
         for (AUnit unit : data) {
-            System.out.println(unit);
+            System.out.println(unit.toString());
         }
         System.out.println();
     }

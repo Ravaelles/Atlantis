@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -21,6 +22,10 @@ public class AWorkerDefenceManager {
     public static boolean handleDefenceIfNeeded(AUnit worker) {
         if (worker.enemiesNearby().isEmpty()) {
             return false;
+        }
+
+        if (runFromReaverFix(worker)) {
+            return true;
         }
 
         if (shouldNotFight(worker)) {
@@ -40,6 +45,18 @@ public class AWorkerDefenceManager {
     }
 
     // =========================================================
+
+    private static boolean runFromReaverFix(AUnit worker) {
+        AUnit reaver = worker.enemiesNearby().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);
+        if (reaver != null && reaver.distToLessThan(worker, 10)) {
+            worker.runningManager().runFrom(reaver, 5, Actions.RUN_ENEMY);
+            worker.setTooltip("OhFuckReaver!", true);
+            worker.addLog("OhFuckReaver!");
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Sometimes workers need to fight.

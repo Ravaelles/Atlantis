@@ -23,6 +23,10 @@ public class ArmyStrength {
         return weAreStronger(muchStrongerPercent());
     }
 
+    public static boolean weAreMuchWeaker() {
+        return !weAreStronger(80);
+    }
+
     private static boolean weAreStronger(int percentAdvantage) {
         return cacheBoolean.get(
                 "weAreStronger:" + percentAdvantage,

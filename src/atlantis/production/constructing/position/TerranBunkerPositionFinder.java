@@ -53,36 +53,37 @@ public class TerranBunkerPositionFinder {
     // =========================================================
 
     private static APosition defineBunkerPosition(String locationModifier) {
-        AUnit mainBase = Select.main();
-        if (mainBase == null) {
-            return null;
-        }
-
-        // Bunker at MAIN CHOKEPOINT
-        if (locationModifier.equals(PositionModifier.NEAR_MAIN_CHOKEPOINT)) {
-            AChoke mainChoke = Chokes.mainChoke();
-            if (mainChoke != null) {
-                return APosition.create(mainChoke.center()).translateTilesTowards(mainBase, 3.5);
-            }
-        }
-
-        // Bunker at NATURAL CHOKEPOINT
-        else {
-            AChoke chokepointForNatural = Chokes.natural(mainBase.position());
-            if (chokepointForNatural != null && mainBase != null) {
-                ABaseLocation natural = Bases.natural(Select.main().position());
-                return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
-
-//                    System.out.println();
-//                    System.err.println(nearTo);
-//                    System.err.println("DIST TO CHOKE = " + nearTo.distanceTo(chokepointForNatural.getCenter()));
-//                    System.err.println("DIST TO REGION = " + nearTo.distanceTo(nearTo.getRegion().getCenter()));
-            }
-        }
-        
-        // Invalid location
-        System.err.println("Can't define bunker location: " + locationModifier);
         return null;
+//        AUnit mainBase = Select.main();
+//        if (mainBase == null) {
+//            return null;
+//        }
+//
+//        // Bunker at MAIN CHOKEPOINT
+//        if (locationModifier.equals(PositionModifier.MAIN_CHOKE)) {
+//            AChoke mainChoke = Chokes.mainChoke();
+//            if (mainChoke != null) {
+//                return APosition.create(mainChoke.center()).translateTilesTowards(mainBase, 3.5);
+//            }
+//        }
+//
+//        // Bunker at NATURAL CHOKEPOINT
+//        else {
+//            AChoke chokepointForNatural = Chokes.natural(mainBase.position());
+//            if (chokepointForNatural != null && mainBase != null) {
+//                ABaseLocation natural = Bases.natural(Select.main().position());
+//                return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
+//
+////                    System.out.println();
+////                    System.err.println(nearTo);
+////                    System.err.println("DIST TO CHOKE = " + nearTo.distanceTo(chokepointForNatural.getCenter()));
+////                    System.err.println("DIST TO REGION = " + nearTo.distanceTo(nearTo.getRegion().getCenter()));
+//            }
+//        }
+//
+//        // Invalid location
+//        System.err.println("Can't define bunker location: " + locationModifier);
+//        return null;
     }
     
 }
