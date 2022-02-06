@@ -47,10 +47,13 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     AUnit enemyNear = EnemyInfo.enemyNearAnyOurBuilding();
 //                    AUnit enemyInBase = Select.enemy().combatUnits().effVisible().inRadius(10, Select.main()).first();
                     if (enemyNear != null) {
-                        return new AFocusPoint(
+                        AUnit building = Select.ourBuildings().nearestTo(enemyNear);
+                        if (building != null) {
+                            return new AFocusPoint(
                                 enemyNear,
-                                Select.ourBuildings().nearestTo(enemyNear)
-                        );
+                                building
+                            );
+                        }
                     }
                 }
 
@@ -60,8 +63,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     AChoke natural = Chokes.natural();
                     if (natural != null) {
                         return new AFocusPoint(
-                                natural,
-                                Select.main()
+                            natural,
+                            Select.main()
                         );
                     }
                 }
@@ -71,23 +74,23 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 AChoke mainChoke = Chokes.mainChoke();
                 if (mainChoke != null) {
                     return new AFocusPoint(
-                            mainChoke,
-                            Select.main()
+                        mainChoke,
+                        Select.main()
                     );
                 }
 
                 // === Focus enemy attacking the main base =================
 
                 AUnit nearEnemy = Select.enemy()
-                        .combatUnits()
-                        .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Zerg_Overlord)
-                        .effVisible()
-                        .inRadius(12, mainBase)
-                        .nearestTo(mainBase);
+                    .combatUnits()
+                    .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Zerg_Overlord)
+                    .effVisible()
+                    .inRadius(12, mainBase)
+                    .nearestTo(mainBase);
                 if (nearEnemy != null) {
                     return new AFocusPoint(
-                            nearEnemy,
-                            Select.main()
+                        nearEnemy,
+                        Select.main()
                     );
                 }
 //
@@ -110,8 +113,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 AUnit building = Select.ourBuildings().first();
                 if (building != null) {
                     return new AFocusPoint(
-                            Chokes.nearestChoke(building.position()),
-                            building
+                        Chokes.nearestChoke(building.position()),
+                        building
                     );
                 }
 

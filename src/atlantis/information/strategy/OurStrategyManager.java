@@ -50,6 +50,7 @@ public class OurStrategyManager {
             return TerranStrategies.TERRAN_2_Rax_Academy_vP;
         }
         else {
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
             return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
         }
     }

@@ -30,16 +30,12 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-6 - Supply Depot
-6 - Supply Depot
-6 - Supply Depot
-//4 - Supply Depot - NATURAL
-//4 - Supply Depot - NATURAL
-//4 - Supply Depot - NATURAL
 9 - Supply Depot
 11 - Barracks
 14 - Supply Depot
 14 - Barracks
+19 - Bunker - @MAIN
+21 - Bunker - @MAIN
 24 - Supply Depot
 26 - Academy
 28 - Refinery

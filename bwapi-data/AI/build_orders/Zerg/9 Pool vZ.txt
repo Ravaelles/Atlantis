@@ -43,8 +43,11 @@ https://liquipedia.net/starcraft/9_Pool_(vs._Zerg)
 8 - Drone
 9 - Drone
 Zergling - x3
+Creep Colony
+Creep Colony
+Sunken Colony
+Sunken Colony
 Extractor
-Metabolic Boost
 Drone
 Zergling - x3
 Drone

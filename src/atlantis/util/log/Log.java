@@ -11,7 +11,7 @@ public class Log {
 
     private ArrayList<LogMessage> messages = new ArrayList<>();
     private int expireAfterFrames;
-    private int limit = 20;
+    private int limit;
 
     // =========================================================
 
