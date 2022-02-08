@@ -6,6 +6,8 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Current production queue. Based on Build Order loaded from file, with some dynamic changes applied.
@@ -36,6 +38,9 @@ public abstract class ProductionQueue {
 
     public static void addToQueue(int index, ProductionOrder productionOrder) {
         nextInQueue.add(index, productionOrder);
+        sortQueueByAtSupply();
+
+//        printQueue("Added to queue: " + productionOrder);
     }
 
     public static boolean isAtTheTopOfQueue(AUnitType type, int amongNTop) {
@@ -98,5 +103,23 @@ public abstract class ProductionQueue {
             }
         }
         return total;
+    }
+
+    public static void printQueue(String message) {
+        if (message == null) {
+            message = "Currently in queue";
+        }
+
+        System.out.println("=== " + message + " (" + nextInQueue.size() + ") ===");
+        for (ProductionOrder order : nextInQueue) {
+            System.out.println(order);
+        }
+    }
+
+    // =========================================================
+
+    private static void sortQueueByAtSupply() {
+//        nextInQueue.sort((o1, o2) -> o1.minSupply() < o2.minSupply());
+        nextInQueue.sort(Comparator.comparing(ProductionOrder::minSupply));
     }
 }

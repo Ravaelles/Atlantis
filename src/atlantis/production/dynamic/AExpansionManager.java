@@ -117,7 +117,7 @@ public class AExpansionManager {
         // TERRAN + PROTOSS
         else {
             ProductionOrder productionOrder = AddToQueue.withHighPriority(AtlantisConfig.BASE);
-            if (Count.bases() == 1) {
+            if (Count.bases() <= 1) {
                 productionOrder.setModifier("NATURAL");
             }
         }

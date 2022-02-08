@@ -28,10 +28,6 @@ public class AWorkerDefenceManager {
             return true;
         }
 
-        if (shouldNotFight(worker)) {
-            return false;
-        }
-
         if (handleFightEnemyIfNeeded(worker)) {
             return true;
         }
@@ -62,6 +58,9 @@ public class AWorkerDefenceManager {
      * Sometimes workers need to fight.
      */
     private static boolean handleFightEnemyIfNeeded(AUnit worker) {
+        if (shouldNotFight(worker)) {
+            return false;
+        }
 
         // DESTROY ENEMY BUILDINGS that are being built close to main base.
         if (handleEnemyBuildingsOffensive(worker)) {
@@ -108,6 +107,10 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean shouldNotFight(AUnit worker) {
+        if (worker.idIsOdd()) {
+            return true;
+        }
+
         if (Enemy.protoss() && worker.hp() <= 22) {
             return true;
         }
@@ -180,8 +183,10 @@ public class AWorkerDefenceManager {
 
         // FIGHT against ZERGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).list()) {
-            if ((worker.hp() <= 24 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
+//            if ((worker.hp() <= 20 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
+            if (worker.hp() <= 20) {
                 worker.setTooltipTactical("Aaargh!");
+                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY);
                 return true;
             }
             worker.attackUnit(enemy);

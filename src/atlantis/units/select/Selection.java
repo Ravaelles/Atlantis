@@ -117,7 +117,7 @@ public class Selection {
     /**
      * Selects only units of given type(s).
      */
-    public int countUnitsOfType(AUnitType... types) {
+    public int countOfType(AUnitType... types) {
         int total = 0;
         for (AUnit unit : data) {
             boolean typeMatches = false;
@@ -332,6 +332,10 @@ public class Selection {
 
     public Selection notHavingHp(int hp) {
         return clone((unit -> unit.hpMoreThan(hp)));
+    }
+
+    public Selection thatCanMove() {
+        return clone((unit -> !unit.isStasised() && !unit.isLockedDown()));
     }
 
     /**

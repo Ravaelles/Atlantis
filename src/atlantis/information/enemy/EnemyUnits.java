@@ -1,6 +1,5 @@
 package atlantis.information.enemy;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.*;
 import atlantis.units.select.Select;
@@ -60,7 +59,7 @@ public class EnemyUnits {
         return enemyUnitsDiscovered.values();
     }
 
-    public static Selection unitsDiscoveredSelection() {
+    public static Selection selection() {
         return Select.from(unitsDiscovered(), "");
     }
 

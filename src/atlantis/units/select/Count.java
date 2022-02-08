@@ -229,6 +229,18 @@ public class Count {
         }
     }
 
+    public static int bunkers() {
+        return Select.countOurOfType(AUnitType.Terran_Bunker);
+    }
+
+    public static int barracks() {
+        return Select.countOurOfType(AUnitType.Terran_Barracks);
+    }
+
+    public static int ghosts() {
+        return Count.ofType(AUnitType.Terran_Ghost);
+    }
+
 //    public static int () {
 //        return ofType(AUnitType.);
 //    }

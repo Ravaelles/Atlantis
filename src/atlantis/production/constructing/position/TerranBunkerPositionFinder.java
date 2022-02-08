@@ -1,10 +1,6 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.missions.defend.MissionDefend;
-import atlantis.map.ABaseLocation;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
@@ -23,7 +19,7 @@ public class TerranBunkerPositionFinder {
             nearTo = defineBunkerPosition(locationModifier);
         }
         else {
-            nearTo = defineBunkerPosition(PositionModifier.AT_NATURAL);
+            nearTo = defineBunkerPosition(PositionModifier.NATURAL);
         }
         
         // =========================================================

@@ -5,6 +5,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Count;
@@ -35,6 +36,11 @@ public abstract class Squad extends Units {
      */
     private Mission mission;
 
+    /**
+     * Unit that is considered to be "center" of this squad.
+     */
+    private AUnit _centerUnit = null;
+
     // =========================================================
 
     public Squad(String name, Mission mission) {
@@ -50,7 +56,7 @@ public abstract class Squad extends Units {
      * Returns median <b>position</b> of all units. It's better than the average, because the outliners
      * don't affect the end result so badly.
      */
-    private APosition _getMedianUnitPosition = null;
+    private APosition _centerUnitPosition = null;
 
     // === Getters =============================================
 
@@ -62,7 +68,7 @@ public abstract class Squad extends Units {
         ASquadManager.squads = squads;
     }
 
-    public static APosition alphaCenter() {
+    public static HasPosition alphaCenter() {
         return Alpha.get() != null ? Alpha.get().center() : null;
     }
 
@@ -81,40 +87,43 @@ public abstract class Squad extends Units {
 //            totalY += unit.y();
 //        }
 //
-//        return _getMedianUnitPosition = new APosition(totalX / size(), totalY / size());
+//        return _getcenterUnitPosition = new APosition(totalX / size(), totalY / size());
 //    }
 
     /**
-     * Median
+     * Center of this squad.
      */
     public APosition center() {
         if (size() <= 0) {
             return null;
         }
-
-        AUnit medianUnit = medianUnit();
-
-        return _getMedianUnitPosition = (medianUnit == null ? null : medianUnit.position());
-    }
-
-    private AUnit medianUnit() {
-        int ttl = 600;
-        AUnit medianUnit = cache.get(
-                "medianUnit",
-                ttl,
-                this::defineMedianUnit
-        );
-
-        if (medianUnit != null && medianUnit.isAlive()) {
-            return medianUnit;
+        
+        if (_centerUnit == null || _centerUnit.isDead()) {
+            _centerUnit = centerUnit();
         }
 
-        medianUnit = this.defineMedianUnit();
-        cache.set("medianUnit", ttl, medianUnit);
-        return medianUnit;
+        return _centerUnit != null ? _centerUnit.position() : null;
+//        return _centerUnitPosition = (_centerUnit != null ? _centerUnit.position() : null);
     }
 
-    private AUnit defineMedianUnit() {
+    private AUnit centerUnit() {
+        int ttl = 600;
+        AUnit centerUnit = cache.get(
+                "centerUnit",
+                ttl,
+                this::definecenterUnit
+        );
+
+        if (centerUnit != null && centerUnit.isAlive()) {
+            return centerUnit;
+        }
+
+        centerUnit = this.definecenterUnit();
+        cache.set("centerUnit", ttl, centerUnit);
+        return centerUnit;
+    }
+
+    private AUnit definecenterUnit() {
         ArrayList<Integer> xCoords = new ArrayList<>();
         ArrayList<Integer> yCoords = new ArrayList<>();
 

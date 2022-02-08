@@ -69,6 +69,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Barracks) > 0;
     }
 
+    public static boolean academy() {
+        return Count.ofType(AUnitType.Terran_Academy) > 0;
+    }
+
     public static boolean main() {
         return base();
     }

@@ -5,6 +5,7 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.ADynamicTech;
+import atlantis.units.select.Count;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -27,6 +28,10 @@ public class TerranDynamicTech extends ADynamicTech {
                 || (A.supplyUsed(70) && !ATech.isResearched(TechType.Tank_Siege_Mode))
         ) {
             handleResearch(TechType.Tank_Siege_Mode);
+        }
+
+        if (Count.ghosts() >= 2) {
+            handleResearch(TechType.Lockdown);
         }
     }
 

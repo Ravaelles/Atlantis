@@ -277,6 +277,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return exists() && (hp() > 0 || !UnitsArchive.isDestroyed(id()));
     }
 
+    public boolean isDead() {
+        return !isAlive();
+    }
+
     public boolean canBeHealed() {
         return _repairableMechanically || _healable;
     }
@@ -1811,6 +1815,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isStimmed();
     }
 
+    public boolean isStasised() {
+        return u.isStasised();
+    }
+
+    public boolean isLockedDown() {
+        return u.isLockedDown();
+    }
+
     public int stimTimer() {
         return u.getStimTimer();
     }
@@ -2167,7 +2179,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean recentlyMoved() {
-        return action().isMoving() && lastActionLessThanAgo(12);
+        return action().isMoving() && lastActionLessThanAgo(40);
     }
 
     public boolean idIsOdd() {

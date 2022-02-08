@@ -2,6 +2,7 @@ package atlantis.information.decisions;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -9,8 +10,9 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
+import atlantis.units.select.Have;
 import atlantis.util.Cache;
+import atlantis.util.Enemy;
 
 public class Decisions {
 
@@ -49,7 +51,7 @@ public class Decisions {
         return cache.get(
                 "buildBio",
                 100,
-                () -> OurStrategy.get().goingBio() && (Count.infantry() <= 15 || A.hasMinerals(600))
+                () -> OurStrategy.get().goingBio() && (Count.infantry() <= 16 || A.hasMinerals(650))
 //                () -> (OurStrategy.get().goingBio() || Count.ourCombatUnits() <= 30)
 //                        (!EnemyInformation.enemyStartedWithCombatBuilding || Select.ourTerranInfantry().atMost(13))
         );
@@ -59,15 +61,15 @@ public class Decisions {
         return cache.get(
                 "dontProduceVultures",
                 100,
-                () -> focusOnTanks() || shouldBuildBio() || Count.infantry() >= 4
+                () -> maxFocusOnTanks() || (shouldBuildBio() && !A.hasMinerals(120))
         );
     }
 
-    private static boolean focusOnTanks() {
+    private static boolean maxFocusOnTanks() {
         return cache.get(
-                "focusOnTanksOnly",
+                "maxFocusOnTanks",
                 100,
-                () -> EnemyInfo.startedWithCombatBuilding && GamePhase.isEarlyGame()
+                () -> EnemyInfo.startedWithCombatBuilding && GamePhase.isEarlyGame() && Have.factory() && Have.machineShop()
         );
     }
 
@@ -84,5 +86,21 @@ public class Decisions {
                     return false;
                 }
         );
+    }
+
+    public static boolean weHaveBunkerAndDefendingCanWeContainNow() {
+        if (Enemy.zerg()) {
+            if (GamePhase.isEarlyGame()) {
+                if (EnemyUnits.selection().countOfType(AUnitType.Zerg_Zergling) >= 9) {
+                    return false;
+                }
+
+                if (Count.medics() <= 2) {
+                    return false;
+                }
+            }
+        }
+
+        return Count.ourCombatUnits() >= 8;
     }
 }

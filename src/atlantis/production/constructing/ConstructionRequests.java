@@ -109,7 +109,7 @@ public class ConstructionRequests {
         else {
             if (AGame.supplyTotal() > 10) {
                 System.err.print("Can't find place for `" + building + "`, " + order);
-                A.printStackTrace("Can't find place for `" + building + "`, " + order);
+//                A.printStackTrace("Can't find place for `" + building + "`, " + order);
                 if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                     System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
                 } else {

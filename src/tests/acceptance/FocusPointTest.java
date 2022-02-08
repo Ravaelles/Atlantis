@@ -1,11 +1,8 @@
 package tests.acceptance;
 
-import atlantis.Atlantis;
 import atlantis.OnUnitDiscover;
 import atlantis.game.*;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
@@ -59,7 +56,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
     }
 
     private void secondFrame() {
-        EnemyUnits.unitsDiscoveredSelection().print();
+        EnemyUnits.selection().print();
 
         // Fake type change
         assimilator.changeRawUnitType(AUnitType.Resource_Vespene_Geyser);
@@ -67,7 +64,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
 //        OnUnitDestroyed.update(assimilator);
         OnUnitMorph.update(assimilator);
 
-        EnemyUnits.unitsDiscoveredSelection().print();
+        EnemyUnits.selection().print();
 
 //        // Visible
 //        assimilator.changeRawUnitType(AUnitType.Zerg_Creep_Colony);

@@ -110,7 +110,7 @@ public class TooSpreadOut extends ASquadCohesionManager {
                 return false;
             }
 
-            if (!unit.recentlyMoved()) {
+//            if (!unit.recentlyMoved()) {
                 unit.move(
                         unit.translatePercentTowards(center, 20),
                         Actions.MOVE_FOCUS,
@@ -118,9 +118,9 @@ public class TooSpreadOut extends ASquadCohesionManager {
                         false
                 );
                 return true;
-            }
+//            }
 
-            return false;
+//            return false;
         }
 
         return false;

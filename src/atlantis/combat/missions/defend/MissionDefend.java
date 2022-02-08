@@ -58,6 +58,25 @@ public class MissionDefend extends Mission {
         double enemyDistToBase = enemy.groundDist(base);
         double enemyDistToFocus = enemy.groundDist(focusPoint);
 
+        if (
+//                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
+                (unit.isMelee() && enemyDistToFocus <= 1.3 && unit.distToLessThan(enemy, 1.1))
+                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 0.6))
+        ) {
+            if (unit.cooldownRemaining() == 0 || unit.lastAttackFrameMoreThanAgo(40)) {
+                return true;
+            }
+        }
+
+        if (focusPoint.isAroundChoke()) {
+            if (enemyDistToBase < (focusPointDistToBase - 0.5)) {
+                return true;
+            }
+            else if (enemyDistToBase > (focusPointDistToBase + 0.5)) {
+                return false;
+            }
+        }
+
 //        if (unit.isMelee() && enemy.isMelee() && "300".equals(unit.tooltip())) {
 //            return unit.distTo(enemy) <= 1;
 ////            return false; // 300 mode - stand in line, default to SC auto attacks
@@ -69,18 +88,6 @@ public class MissionDefend extends Mission {
             if (ourZealots < unit.enemiesNearby().inRadius(0.5, unit).count()) {
                 return false;
             }
-        }
-
-        if (enemyDistToFocus <= 1) {
-            return true;
-        }
-
-        if (
-//                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
-                (unit.isMelee() && enemyDistToFocus <= 1.3 && unit.distToLessThan(enemy, 1.1))
-                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 2.2))
-        ) {
-            return true;
         }
 
         if (unit.isMelee() && enemyDistToBase > unitDistToBase) {

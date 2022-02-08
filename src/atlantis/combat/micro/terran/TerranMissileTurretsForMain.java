@@ -14,6 +14,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
+import atlantis.util.Enemy;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -26,7 +27,6 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 //    private static final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
     private static final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
     private static final int BORDER_TURRETS_ALLOW_MARGIN = 4;
-    private static final int MAIN_BASE_TURRETS = 2;
 
     private static Cache<ArrayList<APosition>> cacheList = new Cache<>();
     private static Cache<APosition> cachePosition = new Cache<>();
@@ -67,13 +67,21 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
         if (
                 forMainBase != null
-                && Count.existingOrPlannedBuildingsNear(turret, 6, forMainBase) < MAIN_BASE_TURRETS
+                && Count.existingOrPlannedBuildingsNear(turret, 6, forMainBase) < mainBaseTurrets()
         ) {
             AddToQueue.withHighPriority(turret, forMainBase).setMaximumDistance(12);
             return true;
         }
 
         return false;
+    }
+
+    private static int mainBaseTurrets() {
+        if (Enemy.zerg()) {
+            return (int) Math.min(6, (A.seconds() / 100));
+        }
+
+        return 2;
     }
 
     private static boolean turretForMainChoke() {

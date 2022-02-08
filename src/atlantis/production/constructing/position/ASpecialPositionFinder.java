@@ -66,7 +66,7 @@ public class ASpecialPositionFinder {
             }
             return findPositionForBase_nearMainBase(building, builder, constructionOrder);
         }
-        else if (modifier.equals(PositionModifier.AT_NATURAL)) {
+        else if (modifier.equals(PositionModifier.NATURAL)) {
             if (constructionOrder.maxDistance() < 0) {
                 constructionOrder.setMaxDistance(30);
             }

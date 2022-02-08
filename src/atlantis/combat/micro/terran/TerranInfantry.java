@@ -37,6 +37,10 @@ public class TerranInfantry {
     // =========================================================
 
     private static boolean goToNearMedic(AUnit unit) {
+        if (unit.squad() != null && unit.squad().distToCenter(unit) >= 6) {
+            return false;
+        }
+
         if (unit.cooldownRemaining() <= 3 || unit.hp() >= 26) {
             return false;
         }

@@ -40,10 +40,6 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     private static boolean moveToFocusPoint(
             AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
-        if (unit.recentlyMoved()) {
-            return false;
-        }
-
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);
         double margin = Math.max(2.5, unit.squadSize() / 7.0);

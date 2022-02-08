@@ -48,6 +48,8 @@ public class AddToQueue {
         int minSupply = 0;
         ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
         ProductionQueue.addToQueue(index, productionOrder);
+//        System.out.println("productionOrder = " + productionOrder);
+
         return productionOrder;
 //        }
 //        else {

@@ -17,6 +17,8 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
+import static atlantis.units.AUnitType.Terran_Barracks;
+
 
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
@@ -32,10 +34,10 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
         armory();
         machineShop();
-        factory();
+        factories();
         starport();
 
-        comsat();
+        comsats();
 
         barracks();
     }
@@ -62,14 +64,19 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static boolean factoryIfBioOnly() {
+        if (A.supplyUsed() <= 25 || !A.hasGas(90) || Have.factory()) {
+            return false;
+        }
+
 //        if (OurDecisions.haveFactories() && Count.factories() < 2) {
 //            AddToQueue.withHighPriority(AUnitType.Terran_Factory);
 //        }
         if (
                 OurStrategy.get().goingBio()
                 && (
-                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
-                        || (A.supplyUsed() >= 80 && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
+//                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
+                        (Count.includingPlanned(AUnitType.Terran_Factory) == 0)
+                        || (A.supplyUsed() >= 28 && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
                 )
         ) {
 //            System.err.println("Change from BIO to TANKS (" + Count.includingPlanned(AUnitType.Terran_Factory) + ")");
@@ -85,8 +92,8 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     /**
      * If all factories are busy (training units) request new ones.
      */
-    private static boolean factory() {
-        if (AGame.canAffordWithReserved(280, 180)) {
+    private static boolean factories() {
+        if (AGame.canAffordWithReserved(160, 120)) {
             Selection factories = Select.ourOfType(AUnitType.Terran_Factory);
             
             int unfinishedFactories = 
@@ -112,7 +119,11 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         return false;
     }
 
-    private static void comsat() {
+    private static void comsats() {
+        if (!Have.academy()) {
+            return;
+        }
+
         if (
                 Count.bases() > Count.includingPlanned(AUnitType.Terran_Comsat_Station)
                 && Count.inQueueOrUnfinished(AUnitType.Terran_Comsat_Station, 5) <= 0
@@ -125,6 +136,10 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      * If there are buildings without addons, build them.
      */
     private static void machineShop() {
+        if (!Have.factory()) {
+            return;
+        }
+
         if (
                 Decisions.wantsToBeAbleToProduceTanksSoon()
                         || (A.supplyUsed(45) && !Have.machineShop())
@@ -149,7 +164,11 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static boolean barracks() {
-        return requestMoreIfAllBusy(AUnitType.Terran_Barracks, 200, 0);
+        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 3) {
+            return false;
+        }
+
+        return requestMoreIfAllBusy(Terran_Barracks, 200, 0);
     }
 
 }

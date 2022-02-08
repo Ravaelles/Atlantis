@@ -12,19 +12,19 @@ public class ArmyStrength {
     // =========================================================
 
     public static boolean weAreWeaker() {
-        return !weAreStronger();
+        return ourArmyRelativeStrength() < 120;
     }
 
     public static boolean weAreStronger() {
-        return weAreStronger(20);
+        return ourArmyRelativeStrength() >= 120;
     }
 
     public static boolean weAreMuchStronger() {
-        return weAreStronger(muchStrongerPercent());
+        return ourArmyRelativeStrength() >= muchStrongerPercent();
     }
 
     public static boolean weAreMuchWeaker() {
-        return !weAreStronger(80);
+        return ourArmyRelativeStrength() <= 80;
     }
 
     private static boolean weAreStronger(int percentAdvantage) {

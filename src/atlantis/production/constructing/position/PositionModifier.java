@@ -33,7 +33,7 @@ public class PositionModifier {
      * Constant used as a hint to indicate that building should be placed in the "natural"
      * (also called the "expansion").
      */
-    public static final String AT_NATURAL = "NATURAL";
+    public static final String NATURAL = "NATURAL";
 
     // =========================================================
 
@@ -46,7 +46,7 @@ public class PositionModifier {
             }
             return ASpecialPositionFinder.findPositionForBase_nearMainBase(building, builder, constructionOrder);
         }
-        else if (modifier.equals(AT_NATURAL)) {
+        else if (modifier.equals(NATURAL)) {
             if (constructionOrder.maxDistance() < 0) {
                 constructionOrder.setMaxDistance(30);
             }

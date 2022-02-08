@@ -244,7 +244,7 @@ public class Blocks {
         // Check if a block of specified size would overlap any bases, resources or other blocks
         for (int x = here.x - 1; x < here.x + width + 1; x++) {
             for (int y = here.y - 1; y < here.y + height + 1; y++) {
-                TilePosition t = new TilePosition(x, y);
+                    TilePosition t = new TilePosition(x, y);
                 if (!t.isValid(JBWEB.game) || !JBWEB.mapBWEM.getMap().getTile(t).isBuildable() || JBWEB.isReserved(t, 1, 1)) {
                     return false;
                 }
@@ -257,7 +257,7 @@ public class Blocks {
         // Check if a proxy block of specified size is not buildable here
         for (int x = here.x - 1; x < here.x + width + 1; x++) {
             for (int y = here.y - 1; y < here.y + height + 1; y++) {
-                TilePosition t = new TilePosition(x, y);
+                    TilePosition t = new TilePosition(x, y);
                 if (!t.isValid(JBWEB.game) || !JBWEB.mapBWEM.getMap().getTile(t).isBuildable() || !JBWEB.game.isWalkable(new WalkPosition(t))) {
                     return false;
                 }
@@ -405,8 +405,11 @@ public class Blocks {
     }
 
     private static void findProductionBlocks() {
-        // Calculate distance for each tile to our natural choke, we want to place bigger blocks closer to the chokes
         HashMap<Double, TilePosition> tilesByPathDist = new HashMap<>();
+        int totalMedium = 0;
+        int totalLarge = 0;
+
+        // Calculate distance for each tile to our natural choke, we want to place bigger blocks closer to the chokes
         for (int y = 0; y < JBWEB.game.mapHeight(); y++) {
             for (int x = 0; x < JBWEB.game.mapWidth(); x++) {
                 TilePosition t = new TilePosition(x, y);
@@ -437,35 +440,30 @@ public class Blocks {
 
                     // Protoss caps large pieces in the main at 12 if we don't have necessary medium pieces
                     if (JBWEB.game.self().getRace() == Race.Protoss) {
-                        if (mainPieces.get(Piece.Large) != null && mainPieces.get(Piece.Medium) != null) {
-                            if (largeCount > 0 && JBWEB.mapBWEM.getMap().getArea(tile) == JBWEB.getMainArea() &&
-                                    mainPieces.get(Piece.Large) >= 12 && mainPieces.get(Piece.Medium) < 10) {
-                                continue;
-                            }
+                        if (largeCount > 0 && JBWEB.mapBWEM.getMap().getArea(tile) == JBWEB.getMainArea() && mainPieces.get(Piece.Large) >= 12 && mainPieces.get(Piece.Medium) < 10) {
+                            continue;
                         }
                     }
 
                     // Zerg only need 4 medium pieces and 2 small piece
                     if (JBWEB.game.self().getRace() == Race.Zerg) {
-                        if (mainPieces.get(Piece.Medium) != null && mainPieces.get(Piece.Small) != null) {
-                            if ((mediumCount > 0 && mainPieces.get(Piece.Medium) >= 4) ||
-                                    (smallCount > 0 && mainPieces.get(Piece.Small) >= 2)) {
-                                continue;
-                            }
+                        if ((mediumCount > 0 && mainPieces.get(Piece.Medium) >= 4)
+                                || (smallCount > 0 && mainPieces.get(Piece.Small) >= 2)) {
+                            continue;
                         }
                     }
 
                     // Terran only need about 20 depot spots
                     if (JBWEB.game.self().getRace() == Race.Terran) {
-                        if (mainPieces.get(Piece.Medium) != null) {
-                            if (mediumCount > 0 && mainPieces.get(Piece.Medium) >= 20) {
-                                continue;
-                            }
+                        if (mediumCount > 0 && mainPieces.get(Piece.Medium) >= 20) {
+                            continue;
                         }
                     }
 
                     if (canAddBlock(tile, i, j)) {
                         insertBlock(tile, pieces);
+                        totalMedium += mediumCount;
+                        totalLarge += largeCount;
 
                         if (JBWEB.mapBWEM.getMap().getArea(tile) == JBWEB.getMainArea()) {
                             for (Piece piece : pieces) {

@@ -73,13 +73,10 @@ public class ACombatUnitManager {
         if (debug) System.out.println("E " + unit.nameWithId());
 
         // =========================================================
-        // === LOW priority - STRATEGY level =======================
+        // === LOW priority - MISSION level =======================
         // =========================================================
 
         return handleLowPriority(unit);
-//        if (canHandleLowPriority(unit)) {
-//        }
-//        return false;
     }
 
     private static boolean preActions(AUnit unit) {
@@ -95,15 +92,6 @@ public class ACombatUnitManager {
 //                && (unit.lastActionLessThanAgo(2, UnitActions.ATTACK_UNIT) || unit.isUnderAttack(3)))
 //        {
 //            GameSpeed.activateDynamicSlowdown();
-//        }
-
-//        if (unit.isUnderAttack(1) && !GameSpeed.oneTimeSlowdownUsed) {
-//            GameSpeed.changeSpeedTo(30);
-//            GameSpeed.oneTimeSlowdownUsed = true;
-//        }
-
-//        if (unit.targetPosition() != null) {
-//            APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
 //        }
 
         if (unit.isNotRealUnit()) {
@@ -199,6 +187,10 @@ public class ACombatUnitManager {
 //        if (AvoidEdgesWhenMoving.handle(unit)) {
 //            return true;
 //        }
+
+        if (unit.recentlyMoved()) {
+            return true;
+        }
 
         Mission mission = unit.mission();
         if (mission != null) {

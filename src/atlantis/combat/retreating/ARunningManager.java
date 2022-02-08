@@ -3,9 +3,11 @@ package atlantis.combat.retreating;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
+import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
@@ -163,6 +165,10 @@ public class ARunningManager {
      * Running behavior which will make unit run straight away from the enemy.
      */
     private APosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
+        if ((runTo = shouldRunTowardsBunker()) != null) {
+            return runTo;
+        }
+
         if (shouldRunTowardsMainBase()) {
             return Select.main().position();
         }
@@ -207,6 +213,21 @@ public class ARunningManager {
     }
 
     // =========================================================
+
+    private APosition shouldRunTowardsBunker() {
+        if (!We.terran() || !GamePhase.isEarlyGame()) {
+            return null;
+        }
+
+        if (unit.isTerranInfantry() && Count.bunkers() > 0) {
+            AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).nearestTo(unit);
+            if (bunker != null && bunker.distToMoreThan(unit, 5)) {
+                return bunker.position();
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Running behavior which will make unit run toward main base.

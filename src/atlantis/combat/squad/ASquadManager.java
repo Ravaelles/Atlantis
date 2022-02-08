@@ -79,13 +79,13 @@ public class ASquadManager {
     public static void removeUnitFromSquads(AUnit unit) {
         Squad squad = unit.squad();
 
-//        if (unit.isOur() && unit.isCombatUnit()) {
-//            System.out.println("unit destroyed " + unit + " // " + (squad != null ? squad.name() : null));
-//        }
         if (squad != null) {
             squad.removeUnit(unit);
             unit.setSquad(null);
         }
+//        if (unit.isOur() && unit.isCombatUnit()) {
+//            System.out.println("unit destroyed " + unit + " // " + (squad != null ? squad.name() : null));
+//        }
     }
 
     public static ArrayList<Squad> allSquads() {

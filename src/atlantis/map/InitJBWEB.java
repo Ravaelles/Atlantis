@@ -1,32 +1,38 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
+import atlantis.game.A;
 import jbweb.*;
 
 public class InitJBWEB {
 
+    /**
+     * Walls are completely broken. I tried fixing it twice, but failed.
+     * Still JBWEB is used for ground dist calculation.
+     */
     public static void init() {
-        //        if (!A.isUms() && Select.main() != null && Count.workers() == 4) {
         try {
             JBWEB.onStart(Atlantis.game(), AMap.bwem);
-            Blocks.findBlocks();
-            Stations.findStations();
-            Wall wall = Walls.createTWall();
+//            Blocks.findBlocks();
+//            Stations.findStations();
+//            Wall wall = Walls.createTWall();
 
-            if (!wall.getDefenses().isEmpty()) {
-                System.out.println("Walls.getWalls() = " + Walls.getWalls());
-                System.out.println("Wall = " + wall);
-
-                wall = Walls.getWall(Chokes.mainChoke().rawChoke());
-                System.out.println("Walls.getWalls() = " + Walls.getWalls());
-                System.out.println("Wall = " + wall);
-            }
-
+//            if (!wall.getDefenses().isEmpty()) {
+//                System.out.println("Walls.getWalls() = " + Walls.getWalls());
+//                System.out.println("Wall = " + wall);
+//
+//                wall = Walls.getWall(Chokes.mainChoke().rawChoke());
+//                System.out.println("Walls.getWalls() = " + Walls.getWalls());
+//                System.out.println("Wall = " + wall);
+//            }
+//            else {
+//                System.err.println("Not able to init wall");
+//            }
         } catch (Exception e) {
             System.err.println("JBWEB exception: " + e.getMessage());
-//            AGame.setUmsMode();
+            e.printStackTrace();
+            Atlantis.getInstance().exitGame();
         }
-//        }
     }
 
 }

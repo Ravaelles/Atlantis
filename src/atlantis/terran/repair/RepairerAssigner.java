@@ -5,6 +5,8 @@ import atlantis.game.A;
 import atlantis.map.scout.AScoutManager;
 import atlantis.terran.TerranFlyingBuildingManager;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 public class RepairerAssigner {
@@ -57,7 +59,7 @@ public class RepairerAssigner {
         else if (unit.isMissileTurret()) {
             int enemies = Select.enemyCombatUnits().air().inRadius(10, unit).count();
 
-            if (Select.main().distToLessThan(unit, 14)) {
+            if (Have.main() && Select.main().distToLessThan(unit, 14)) {
                 return A.inRange(3, enemies, 5);
             }
 

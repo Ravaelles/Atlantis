@@ -13,8 +13,7 @@ import bwem.*;
 
 public class Walls {
     private static HashMap<ChokePoint, Wall> walls = new HashMap<>();
-//    private static boolean logInfo = true;
-    private static boolean logInfo = false;
+    private static boolean logInfo = true;
 
     static int failedPlacement = 0;
     static int failedAngle = 0;
@@ -34,6 +33,14 @@ public class Walls {
     /// <param name="openWall"> (Optional) Set as true if you want an opening in the wall for unit movement.
     /// <param name="requireTight"> (Optional) Set as true if you want pixel perfect placement.
     public static Wall createWall(List<UnitType> buildings, Area area, ChokePoint choke, UnitType tightType, List<UnitType> defenses, boolean openWall, boolean requireTight) {
+        FileWriter writeFile = null;
+        try {
+            writeFile = new FileWriter("bwapi-data/write/BWEB_Wall.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         Date date = new Date(System.currentTimeMillis());
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         String timeNow = formatter.format(date);
@@ -46,26 +53,51 @@ public class Walls {
 
         // Open the log file if desired and write information
         if (logInfo) {
-            System.out.println(timeNow + " " + JBWEB.game.mapFileName() + " At: " + clock + " o'clock.\n");
-            System.out.println("Buildings:");
+            try {
+                writeFile.write(timeNow);
+                writeFile.write(JBWEB.game.mapFileName());
+                writeFile.write("At: " + clock + " o'clock.");
+                writeFile.write("\n");
+                writeFile.write("Buildings:");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             for (UnitType building : buildings){
-                System.out.println(building.toString());
+                try {
+                    writeFile.write(building.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
         // Verify inputs are correct
         if (area == null) {
-            System.out.println("JBWEB: Can't create a wall without a valid Area");
+            try {
+                writeFile.write("JBWEB: Can't create a wall without a valid Area");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
         if (choke == null) {
-            System.out.println("JBWEB: Can't create a wall without a valid Chokepoint");
+
+            try {
+                writeFile.write("JBWEB: Can't create a wall without a valid Chokepoint");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
         if (buildings.isEmpty()) {
-            System.out.println("JBWEB: Can't create a wall with an empty vector of UnitTypes.");
+            try {
+                writeFile.write("JBWEB: Can't create a wall with an empty vector of UnitTypes.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
@@ -73,7 +105,11 @@ public class Walls {
         for (ChokePoint chokePoint : walls.keySet()) {
             Wall wall = walls.get(chokePoint);
             if (wall.getArea() == area && wall.getChokePoint() == choke) {
-                System.out.println("JBWEB: Can't create a Wall where one already exists.");
+                try {
+                    writeFile.write("JBWEB: Can't create a Wall where one already exists.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return wall;
             }
         }
@@ -86,18 +122,28 @@ public class Walls {
 
         // Log information
         if (logInfo) {
-            System.out.println("Failure Reasons:");
-            System.out.println("Power: " + failedPower);
-            System.out.println("Angle: " + failedAngle);
-            System.out.println("Placement: " + failedPlacement);
-            System.out.println("Tight: " + failedTight);
-            System.out.println("Path: " + failedPath);
-            System.out.println("Spawn: " + failedSpawn);
-            System.out.println("\n");
+            try {
+                writeFile.write("Failure Reasons:");
+                writeFile.write("Power: " + failedPower);
+                writeFile.write("Angle: " + failedAngle);
+                writeFile.write("Placement: " + failedPlacement);
+                writeFile.write("Tight: " + failedTight);
+                writeFile.write("Path: " + failedPath);
+                writeFile.write("Spawn: " + failedSpawn);
+                writeFile.write("\n");
 
-            date = new Date(System.currentTimeMillis() - date.getTime());
-            System.out.println("Generation Time: " + date.getTime() + "ms and " + (wallFound ? "successful." : "failed."));
-            System.out.println("--------------------");
+                date = new Date(System.currentTimeMillis() - date.getTime());
+                writeFile.write("Generation Time: " + date.getTime() + "ms and " + (wallFound ? "successful." : "failed."));
+                writeFile.write("--------------------");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            writeFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         // If we found a suitable Wall, push into container and return pointer to it
@@ -159,8 +205,6 @@ public class Walls {
         buildings.add(UnitType.Terran_Barracks);
         List<UnitType> defenses = new ArrayList<>();
         UnitType type = JBWEB.game.enemy() != null && JBWEB.game.enemy().getRace() == Race.Protoss ? UnitType.Protoss_Zealot : UnitType.Zerg_Zergling;
-//        System.out.println("JBWEB.getMainArea() = " + JBWEB.getMainArea());
-//        System.out.println("JBWEB.getMainChoke() = " + JBWEB.getMainChoke());
 
         return createWall(buildings, JBWEB.getMainArea(), JBWEB.getMainChoke(), type, defenses, false, true);
     }

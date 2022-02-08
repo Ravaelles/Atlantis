@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
+import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.OurStrategy;
@@ -21,6 +22,18 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
     // === CONTAIN =============================================
 
     public static boolean shouldChangeMissionToContain() {
+        if (Enemy.zerg()) {
+            if (Count.ourCombatUnits() <= 6) {
+                return false;
+            }
+        }
+
+        if (Count.bunkers() >= 1) {
+            if (Decisions.weHaveBunkerAndDefendingCanWeContainNow()) {
+                return false;
+            }
+        }
+
         if (ArmyStrength.weAreStronger()) {
             if (DEBUG) debugReason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;

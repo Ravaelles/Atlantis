@@ -135,20 +135,20 @@ public class Block {
 
         // Draw boxes around each feature
         for (TilePosition tile : smallTiles) {
-            Position p1 = new Position(tile.toPosition().x + 65, tile.toPosition().y + 65);
-            Position p2 = new Position(tile.toPosition().x + 52, tile.toPosition().y + 52);
+            Position p1 = new Position(tile.toPosition().x + 65, tile.toPosition().x + 65);
+            Position p2 = new Position(tile.toPosition().x + 52, tile.toPosition().x + 52);
             JBWEB.game.drawBoxMap(new Position(tile), p1, color);
             JBWEB.game.drawTextMap(p2, "%cB", textColor);
         }
         for (TilePosition tile : mediumTiles) {
-            Position p1 = new Position(tile.toPosition().x + 97, tile.toPosition().y + 65);
-            Position p2 = new Position(tile.toPosition().x + 84, tile.toPosition().y + 52);
+            Position p1 = new Position(tile.toPosition().x + 97, tile.toPosition().x + 65);
+            Position p2 = new Position(tile.toPosition().x + 84, tile.toPosition().x + 52);
             JBWEB.game.drawBoxMap(new Position(tile), p1, color);
             JBWEB.game.drawTextMap(p2, "%cB", textColor);
         }
         for (TilePosition tile : largeTiles) {
-            Position p1 = new Position(tile.toPosition().x + 129, tile.toPosition().y + 97);
-            Position p2 = new Position(tile.toPosition().x + 116, tile.toPosition().y + 84);
+            Position p1 = new Position(tile.toPosition().x + 129, tile.toPosition().x + 97);
+            Position p2 = new Position(tile.toPosition().x + 116, tile.toPosition().x + 84);
             JBWEB.game.drawBoxMap(new Position(tile), p1, color);
             JBWEB.game.drawTextMap(p2, "%cB", textColor);
         }

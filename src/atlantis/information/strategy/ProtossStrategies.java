@@ -89,9 +89,9 @@ public class ProtossStrategies extends AStrategy {
     
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
-        int gateways = Select.enemy().countUnitsOfType(AUnitType.Protoss_Gateway);
-        int nexus = Select.enemy().countUnitsOfType(AUnitType.Protoss_Nexus);
-        int citadel = Select.enemy().countUnitsOfType(AUnitType.Protoss_Citadel_of_Adun);
+        int gateways = Select.enemy().countOfType(AUnitType.Protoss_Gateway);
+        int nexus = Select.enemy().countOfType(AUnitType.Protoss_Nexus);
+        int citadel = Select.enemy().countOfType(AUnitType.Protoss_Citadel_of_Adun);
 
         // === Dark Templar ========================================
         
@@ -119,7 +119,7 @@ public class ProtossStrategies extends AStrategy {
         
         // === Carrier Push ========================================
         
-        int cannons = Select.enemy().countUnitsOfType(AUnitType.Protoss_Photon_Cannon);
+        int cannons = Select.enemy().countOfType(AUnitType.Protoss_Photon_Cannon);
         if (cannons >= 1 && nexus >= 2) {
             return PROTOSS_Carrier_Push;
         }

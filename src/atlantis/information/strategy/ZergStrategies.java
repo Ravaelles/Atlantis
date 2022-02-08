@@ -83,14 +83,14 @@ public class ZergStrategies extends AStrategy {
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
         int bases = Select.enemy().bases().count();
-        int lair = Select.enemy().countUnitsOfType(AUnitType.Zerg_Lair);
-        int pool = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spawning_Pool);
-        int extractor = Select.enemy().countUnitsOfType(AUnitType.Zerg_Extractor);
-        int spires = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spire);
-        int mutalisks = Select.enemy().countUnitsOfType(AUnitType.Zerg_Mutalisk);
-        int hydraliskDen = Select.enemy().countUnitsOfType(AUnitType.Zerg_Hydralisk_Den);
-        int drones = Select.enemy().countUnitsOfType(AUnitType.Zerg_Drone);
-        int lings = Select.enemy().countUnitsOfType(AUnitType.Zerg_Zergling);
+        int lair = Select.enemy().countOfType(AUnitType.Zerg_Lair);
+        int pool = Select.enemy().countOfType(AUnitType.Zerg_Spawning_Pool);
+        int extractor = Select.enemy().countOfType(AUnitType.Zerg_Extractor);
+        int spires = Select.enemy().countOfType(AUnitType.Zerg_Spire);
+        int mutalisks = Select.enemy().countOfType(AUnitType.Zerg_Mutalisk);
+        int hydraliskDen = Select.enemy().countOfType(AUnitType.Zerg_Hydralisk_Den);
+        int drones = Select.enemy().countOfType(AUnitType.Zerg_Drone);
+        int lings = Select.enemy().countOfType(AUnitType.Zerg_Zergling);
         
         // === Expansion ===========================================
         

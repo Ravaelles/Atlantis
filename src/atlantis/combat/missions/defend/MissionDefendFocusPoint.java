@@ -4,6 +4,7 @@ import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.strategy.GamePhase;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.units.AUnit;
@@ -28,6 +29,13 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             () -> {
                 if (AGame.isUms()) {
                     return null;
+                }
+
+                if (GamePhase.isEarlyGame()) {
+                    AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).first();
+                    if (bunker != null) {
+                        return new AFocusPoint(bunker);
+                    }
                 }
 
                 // If NO BASE exists, return any building

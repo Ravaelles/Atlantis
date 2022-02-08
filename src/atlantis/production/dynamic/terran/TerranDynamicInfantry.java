@@ -4,7 +4,6 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.TerranArmyComposition;
 import atlantis.information.decisions.Decisions;
-import atlantis.production.AbstractDynamicUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -27,17 +26,34 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         return false;
     }
 
-    protected static void medics() {
+    protected static boolean ghosts() {
+        if (Enemy.zerg()) {
+            return false;
+        }
+
+        int ghosts = Count.ofType(AUnitType.Terran_Ghost);
+        if (Count.ofType(AUnitType.Terran_Covert_Ops) == 0 || ghosts >= 14) {
+            return false;
+        }
+
+        if (ghosts >= 4 && !AGame.canAffordWithReserved(60, 30)) {
+            return false;
+        }
+
+        return addToQueueToMaxAtATime(AUnitType.Terran_Ghost, 4);
+    }
+
+    protected static boolean medics() {
         if (!Decisions.shouldBuildBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
-            return;
+            return false;
         }
 
         if (saveForFactory()) {
-            return;
+            return false;
         }
 
         if (!AGame.canAffordWithReserved(60, 30)) {
-            return;
+            return false;
         }
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
@@ -51,9 +67,12 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
             // Medics
             if (TerranArmyComposition.medicsToInfantryRatioTooLow()) {
-                produceUnit(barracks.first(), AUnitType.Terran_Medic);
+//                produceUnit(barracks.first(), AUnitType.Terran_Medic);
+                return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 4);
             }
         }
+
+        return false;
     }
 
     private static int minFirebats() {
@@ -68,30 +87,30 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         return (int) Math.max(2, Count.medics() / 4);
     }
 
-    protected static void marines() {
+    protected static boolean marines() {
         if (!Decisions.shouldBuildBio()) {
 //            System.out.println("Marines - A");
-            return;
+            return false;
         }
 
         if (saveForFactory()) {
 //            System.out.println("Marines - B");
-            return;
+            return false;
         }
 
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) {
-            return;
+            return false;
         }
 
         if (A.supplyUsed() >= 40 && !AGame.canAffordWithReserved(80, 0)) {
 //            System.out.println("Marines - D");
-            return;
+            return false;
         }
 
 //        if (Count.ourCombatUnits() > 25) {
             if (!AGame.canAffordWithReserved(80, 0)) {
 //                System.out.println("Marines - E");
-                return;
+                return false;
             }
 //        }
 
@@ -113,15 +132,15 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 //        if (Enemy.zerg() && Count.marines() == 0) {
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
-            produceUnit(barracks.first(), AUnitType.Terran_Marine);
+            return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 4);
 //            AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
 //            return;
         }
 
-        trainMarinesForBunkersIfNeeded();
+        return trainMarinesForBunkersIfNeeded();
     }
 
-    protected static void trainMarinesForBunkersIfNeeded() {
+    protected static boolean trainMarinesForBunkersIfNeeded() {
         int bunkers = Select.countOurOfTypeIncludingUnfinished(AUnitType.Terran_Bunker);
         if (bunkers > 0) {
             int marines = Select.countOurOfType(AUnitType.Terran_Marine);
@@ -132,7 +151,8 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
                 for (int i = 0; i < shouldHaveMarines - marines; i++) {
                     AUnit idleBarrack = Select.ourOneNotTrainingUnits(AUnitType.Terran_Barracks);
                     if (idleBarrack != null) {
-                        AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
+//                        return AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
+                        return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 4);
                     }
                     else {
                         break;
@@ -140,6 +160,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
                 }
             }
         }
+        return false;
     }
 
     protected static int defineOptimalNumberOfMarines(int bunkers) {
