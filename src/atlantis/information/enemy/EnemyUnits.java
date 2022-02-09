@@ -59,8 +59,10 @@ public class EnemyUnits {
         return enemyUnitsDiscovered.values();
     }
 
-    public static Selection selection() {
-        return Select.from(unitsDiscovered(), "");
+    public static Selection visibleAndFogged() {
+        return Select.from(unitsDiscovered(), "")
+            .add(Select.enemy())
+            .removeDuplicates();
     }
 
     // =========================================================

@@ -267,7 +267,7 @@ public class Selection {
      * Fogged units may have no position if e.g. unit moved and we don't know where it is.
      */
     public Selection havingPosition() {
-        return clone((unit -> unit.position() == null));
+        return clone((unit -> unit.position() != null));
     }
 
     public int totalHp() {

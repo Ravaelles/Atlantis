@@ -1630,6 +1630,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return squad().size();
     }
 
+    public HasPosition squadCenter() {
+        return squad().center();
+    }
+
     public int energy() {
         return u.getEnergy();
     }
@@ -1927,6 +1931,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isZealot();
     }
 
+    public boolean isZergling() {
+        return type().isZergling();
+    }
+
     public boolean isMissileTurret() {
         return type().isMissileTurret();
     }
@@ -2182,6 +2190,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return action().isMoving() && lastActionLessThanAgo(40);
     }
 
+    public boolean recentlyMoved(int framesAgo) {
+        return action().isMoving() && lastActionLessThanAgo(framesAgo);
+    }
+
     public boolean idIsOdd() {
         return id() % 2 > 0;
     }
@@ -2196,5 +2208,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int friendsInRadiusCount(double radius) {
         return friendsNearby().inRadius(radius, this).count();
+    }
+
+    public double distToSquadCenter() {
+        if (squad == null || squad.center() == null) {
+            return 0;
+        }
+
+        return (double) cache.get(
+            "distToSquadCenter",
+            5,
+            () -> squad.center().distTo(this)
+        );
     }
 }

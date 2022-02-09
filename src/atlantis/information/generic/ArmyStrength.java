@@ -28,18 +28,14 @@ public class ArmyStrength {
     }
 
     private static boolean weAreStronger(int percentAdvantage) {
-        return cacheBoolean.get(
-                "weAreStronger:" + percentAdvantage,
-                50,
-                () -> (OurArmyStrength.calculate() * (100 - percentAdvantage) / 100) > EnemyArmyStrength.calculate()
-        );
+        return ourArmyRelativeStrength() >= (100 + percentAdvantage);
     }
 
     public static int ourArmyRelativeStrength() {
         return cacheInteger.get(
                 "ourArmyRelativeStrength",
                 50,
-                () -> Math.min(999, (int) (OurArmyStrength.calculate() * 100 / EnemyArmyStrength.calculate()))
+                () -> (int) Math.min(999, (OurArmyStrength.calculate() * 100 / EnemyArmyStrength.calculate()))
         );
     }
 

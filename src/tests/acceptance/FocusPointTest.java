@@ -56,7 +56,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
     }
 
     private void secondFrame() {
-        EnemyUnits.selection().print();
+        EnemyUnits.visibleAndFogged().print();
 
         // Fake type change
         assimilator.changeRawUnitType(AUnitType.Resource_Vespene_Geyser);
@@ -64,7 +64,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
 //        OnUnitDestroyed.update(assimilator);
         OnUnitMorph.update(assimilator);
 
-        EnemyUnits.selection().print();
+        EnemyUnits.visibleAndFogged().print();
 
 //        // Visible
 //        assimilator.changeRawUnitType(AUnitType.Zerg_Creep_Colony);

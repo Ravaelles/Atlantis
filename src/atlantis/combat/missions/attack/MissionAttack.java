@@ -52,13 +52,17 @@ public class MissionAttack extends Mission {
     public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
 
         // Tanks always allowed
-        if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.6)) {
+        if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.9)) {
             return true;
         }
 
         // Air units
         if (unit.isAir() && combatBuilding.isSunken()) {
             return true;
+        }
+
+        if (unit.friendsNearbyCount() <= 7) {
+            return false;
         }
 
         // Standard infantry attack

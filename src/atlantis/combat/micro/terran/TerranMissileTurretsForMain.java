@@ -81,7 +81,11 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
             return (int) Math.min(6, (A.seconds() / 100));
         }
 
-        return 2;
+        if (Enemy.protoss()) {
+            return 3;
+        }
+
+        return 1;
     }
 
     private static boolean turretForMainChoke() {

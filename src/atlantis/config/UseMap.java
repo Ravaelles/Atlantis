@@ -13,7 +13,7 @@ import atlantis.units.select.Select;
 public class UseMap {
 
     public static String activeMap() {
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
@@ -54,8 +54,8 @@ public class UseMap {
         // === Gosu bots - advanced single player cheating bots ====
 
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
-        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 2x Protoss players, again Zealot rush
@@ -75,13 +75,13 @@ public class UseMap {
 
         // === Generic ======================================================
 
-//        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
-//        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
-//        if (true) return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
 //        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
+//        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
+//        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
+//        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
+//        if (true) return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
 //        if (true) return "ums/ConTrol2.scx"; // More minigames
 //        if (true) return "ums/micro challenge.scx"; // Even more minigames
-//        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
 //        if (true) return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships v. Dragoons
 //        if (true) return "ums/trainzvreaver.scm"; // Zerglings & Hydras v. 2 Reavers & Shuttle
 //        if (true) return "ums/trening nr 2.scx";

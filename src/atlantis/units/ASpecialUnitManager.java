@@ -24,7 +24,7 @@ public class ASpecialUnitManager {
         }
 
         if (unit.isTank()) {
-            return TerranSiegeTank.update(unit);
+            return TerranTank.update(unit);
         }
         else if (unit.is(AUnitType.Terran_Medic)) {
             return TerranMedic.update(unit);

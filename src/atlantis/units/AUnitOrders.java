@@ -122,6 +122,7 @@ public interface AUnitOrders {
         }
         if (target == null) {
             System.err.println("Null move position for " + this);
+            A.printStackTrace("Null move position");
             return false;
         }
 

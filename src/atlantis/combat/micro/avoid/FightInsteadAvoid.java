@@ -62,7 +62,7 @@ public class FightInsteadAvoid {
         }
 
         if (dontFightInTopImportantCases()) {
-            unit.addLog("DonNotFight");
+            unit.addLog("DoNotFight");
             return false;
         }
 
@@ -149,9 +149,9 @@ public class FightInsteadAvoid {
     protected boolean dontFightInTopImportantCases() {
 
         // Always avoid invisible combat units
-        if (invisibleDT != null || invisibleCombatUnit != null) {
-            return true;
-        }
+//        if (invisibleDT != null || invisibleCombatUnit != null) {
+//            return true;
+//        }
 
         return false;
     }
@@ -241,7 +241,7 @@ public class FightInsteadAvoid {
         }
 
         AUnit target = unit.target();
-        if (target != null && target.hp() <= (unit.damageAgainst(target) + 8)) {
+        if (target != null && !target.isZergling() && target.hp() <= (unit.damageAgainst(target) + 8)) {
             return true;
         }
 

@@ -67,6 +67,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             return -1;
         }
 
+        if (attacker.isZergling()) {
+            return (0.2 + defender.woundPercent() / 40);
+        }
+
         double base = woundedAgainstMeleeBonus(defender, attacker);
         boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
 
@@ -94,7 +98,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // =========================================================
 
-        base = Math.min(2.4, base);
+        base = Math.min(defender.isMissionDefend() ? (1 + defender.woundPercent() / 100) : 2.4, base);
         return base;
 
 //        if (Missions.isGlobalMissionDefend()) {

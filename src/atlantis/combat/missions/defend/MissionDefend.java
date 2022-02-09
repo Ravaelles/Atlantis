@@ -11,6 +11,11 @@ import atlantis.util.We;
 
 public class MissionDefend extends Mission {
 
+    private double focusPointDistToBase;
+    private double unitDistToBase;
+    private double enemyDistToBase;
+    private double enemyDistToFocus;
+
     public MissionDefend() {
         super("Defend");
         focusPointManager = new MissionDefendFocusPoint();
@@ -53,14 +58,18 @@ public class MissionDefend extends Mission {
 
         // =========================================================
 
-        double focusPointDistToBase = focusPoint.distTo(base);
-        double unitDistToBase = unit.groundDist(base);
-        double enemyDistToBase = enemy.groundDist(base);
-        double enemyDistToFocus = enemy.groundDist(focusPoint);
+        focusPointDistToBase = focusPoint.distTo(base);
+        unitDistToBase = unit.groundDist(base);
+        enemyDistToBase = enemy.groundDist(base);
+        enemyDistToFocus = enemy.groundDist(focusPoint);
+
+        if (notAllowedToAttackTooFar(unit, enemy)) {
+            return false;
+        }
 
         if (
 //                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
-                (unit.isMelee() && enemyDistToFocus <= 1.3 && unit.distToLessThan(enemy, 1.1))
+                (unit.isMelee() && unit.distToLessThan(enemy, 1.02))
                 || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 0.6))
         ) {
             if (unit.cooldownRemaining() == 0 || unit.lastAttackFrameMoreThanAgo(40)) {
@@ -105,6 +114,26 @@ public class MissionDefend extends Mission {
         }
 
         if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitDistToBase) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean notAllowedToAttackTooFar(AUnit unit, AUnit enemy) {
+        if (
+            unit.isMelee()
+                && enemyDistToFocus >= 1
+                && enemyDistToBase > focusPointDistToBase
+        ) {
+            return true;
+        }
+
+        else if (
+            unit.isRanged()
+                && enemyDistToFocus >= 1
+                && enemyDistToBase > focusPointDistToBase
+        ) {
             return true;
         }
 

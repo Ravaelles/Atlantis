@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.terran;
 
+import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.micro.terran.TerranMissileTurretsForNonMain;
 import atlantis.game.A;
@@ -28,6 +29,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             TerranMissileTurretsForNonMain.buildIfNeeded();
 //            OffensiveTerranMissileTurrets.buildIfNeeded();
 //            TerranBunker.handleOffensiveBunkers();
+            TerranBunker.handleDefensiveBunkers();
         }
 
         factoryIfBioOnly();
@@ -64,7 +66,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static boolean factoryIfBioOnly() {
-        if (A.supplyUsed() <= 25 || !A.hasGas(90) || Have.factory()) {
+        if (A.supplyUsed() <= 30 || !A.hasGas(90) || Have.factory()) {
             return false;
         }
 
@@ -76,7 +78,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
                 && (
 //                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
                         (Count.includingPlanned(AUnitType.Terran_Factory) == 0)
-                        || (A.supplyUsed() >= 28 && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
+                        || (A.supplyUsed() >= 30 && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
                 )
         ) {
 //            System.err.println("Change from BIO to TANKS (" + Count.includingPlanned(AUnitType.Terran_Factory) + ")");
@@ -164,7 +166,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static boolean barracks() {
-        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 3) {
+        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
             return false;
         }
 

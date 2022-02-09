@@ -601,7 +601,7 @@ public class AAdvancedPainter extends APainter {
      * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
      */
     static void paintSidebarConstructionsPending() {
-        int yOffset = 220;
+        int yOffset = 250;
         ArrayList<ConstructionOrder> allOrders = ConstructionRequests.all();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);

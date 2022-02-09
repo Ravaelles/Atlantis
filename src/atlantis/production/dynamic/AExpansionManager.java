@@ -3,9 +3,11 @@ package atlantis.production.dynamic;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.map.Bases;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.dynamic.zerg.ZergExpansionManager;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.select.Count;
@@ -17,10 +19,17 @@ public class AExpansionManager {
     public static boolean shouldBuildNewBase() {
 //        if (true) return false;
 
+        if (ZergExpansionManager.handleNoZergLarvas()) {
+            return true;
+        }
+
         int bases = Count.bases();
         int basesInProduction = Count.inProductionOrInQueue(AtlantisConfig.BASE);
 
         if (bases == 0 && basesInProduction == 0) {
+            if (We.terran() && EnemyStrategy.get().isRushOrCheese()) {
+                return false;
+            }
             return true;
         }
 
@@ -46,10 +55,6 @@ public class AExpansionManager {
                     || (A.seconds() >= 700)
             )
         ) {
-            return true;
-        }
-
-        if (handleNoZergLarvas()) {
             return true;
         }
 
@@ -98,14 +103,6 @@ public class AExpansionManager {
         boolean allowExtraExpansion = AGame.hasMinerals(minMinerals + 200) && numberOfUnfinishedBases <= 1;
 
         return haveEnoughMinerals && (noBaseToConstruct || allowExtraExpansion);
-    }
-
-    private static boolean handleNoZergLarvas() {
-        if (!We.zerg() || Count.larvas() > 0) {
-            return false;
-        }
-
-        return AGame.canAffordWithReserved(270, 0);
     }
 
     public static void requestNewBase() {

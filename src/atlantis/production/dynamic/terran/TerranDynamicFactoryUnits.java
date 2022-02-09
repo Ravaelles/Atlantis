@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.terran;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.Decisions;
@@ -56,7 +57,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return false;
         }
 
-        return Count.vultures() <= 10 && addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
+        return addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
     }
 
     private static boolean goliaths(AUnit factory) {

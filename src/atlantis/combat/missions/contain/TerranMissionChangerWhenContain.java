@@ -9,8 +9,11 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
@@ -29,10 +32,15 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
 
     // =========================================================
 
-    protected static boolean shouldChangeMissionToDefend() {
-//        if (Atlantis.LOST <= 4) {
-//            return false;
-//        }
+    public static boolean shouldChangeMissionToDefend() {
+        if (GamePhase.isEarlyGame()) {
+            if (Enemy.protoss() && EnemyUnits.visibleAndFogged().ofType(AUnitType.Protoss_Zealot).atLeast(4)) {
+                if (Count.medics() <= 4) {
+                    if (DEBUG) debugReason = "Enemy rush (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                    return true;
+                }
+            }
+        }
 
         if (ArmyStrength.weAreMuchWeaker()) {
             if (DEBUG) debugReason = "Much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
@@ -63,7 +71,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
             return true;
         }
 
-        if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {
+        if (ArmyStrength.weAreMuchStronger()) {
             if (DEBUG) debugReason = "Much stronger";
             return true;
         }

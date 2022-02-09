@@ -1,20 +1,20 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.contain.TerranMissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
-import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 
 public class TerranMissionChangerWhenDefend extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToContain()) {
+        if (shouldChangeMissionToContain() && !TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.CONTAIN);
         }
     }
@@ -22,15 +22,27 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
     // === CONTAIN =============================================
 
     public static boolean shouldChangeMissionToContain() {
+        if (ArmyStrength.weAreMuchWeaker()) {
+            if (DEBUG) debugReason = "We are much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return false;
+        }
+
         if (Enemy.zerg()) {
             if (Count.ourCombatUnits() <= 6) {
                 return false;
             }
         }
 
+        if (Enemy.protoss()) {
+            if (GamePhase.isEarlyGame() && EnemyUnits.visibleAndFogged().combatUnits().count() >= 6) {
+                return Count.ourCombatUnits() >= 13;
+            }
+        }
+
         if (Count.bunkers() >= 1) {
-            if (Decisions.weHaveBunkerAndDefendingCanWeContainNow()) {
-                return false;
+            if (Decisions.weHaveBunkerAndDontHaveToDefendAnyLonger()) {
+                if (DEBUG) debugReason = "No longer have to defend (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                return true;
             }
         }
 

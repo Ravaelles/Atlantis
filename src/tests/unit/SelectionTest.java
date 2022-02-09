@@ -61,7 +61,7 @@ public class SelectionTest extends AbstractTestWithUnits {
         EnemyInfo.weDiscoveredEnemyUnit(fake(AUnitType.Protoss_Dragoon));
         EnemyInfo.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Sunken_Colony));
 
-        Selection enemies = Select.from(fakeEnemies).add(EnemyUnits.selection()).removeDuplicates();
+        Selection enemies = Select.from(fakeEnemies).add(EnemyUnits.visibleAndFogged()).removeDuplicates();
 
 //        enemies.print();
 

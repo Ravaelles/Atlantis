@@ -98,7 +98,7 @@ public abstract class Squad extends Units {
             return null;
         }
         
-        if (_centerUnit == null || _centerUnit.isDead()) {
+        if (_centerUnit == null || _centerUnit.isDead() || (!_centerUnit.isTank() && Count.tanks() >= 2)) {
             _centerUnit = centerUnit();
         }
 
@@ -111,19 +111,19 @@ public abstract class Squad extends Units {
         AUnit centerUnit = cache.get(
                 "centerUnit",
                 ttl,
-                this::definecenterUnit
+                this::defineCenterUnit
         );
 
         if (centerUnit != null && centerUnit.isAlive()) {
             return centerUnit;
         }
 
-        centerUnit = this.definecenterUnit();
+        centerUnit = this.defineCenterUnit();
         cache.set("centerUnit", ttl, centerUnit);
         return centerUnit;
     }
 
-    private AUnit definecenterUnit() {
+    private AUnit defineCenterUnit() {
         ArrayList<Integer> xCoords = new ArrayList<>();
         ArrayList<Integer> yCoords = new ArrayList<>();
 
@@ -136,7 +136,7 @@ public abstract class Squad extends Units {
         Collections.sort(yCoords);
 
         APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
-        AUnit nearestToMedian = Select.ourCombatUnits().nearestTo(median);
+        AUnit nearestToMedian = Select.ourCombatUnits().nonBuildings().nearestTo(median);
         return nearestToMedian;
     }
 

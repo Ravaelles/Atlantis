@@ -44,6 +44,7 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 37 - Comsat Station
 38 - Stim Packs
 40 - Engineering Bay
+41 - Tank Siege Mode
 42 - U 238 Shells
 50 - Barracks
 //47 - Factory
@@ -60,7 +61,8 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 66 - Science Facility
 67 - Wraith
 68 - Factory
-69 - Physics Lab
+//69 - Physics Lab
+69 - Covert Ops
 70 - Wraith
 72 - Control Tower
 //73 - Tank Siege Mode

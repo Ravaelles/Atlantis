@@ -42,7 +42,7 @@ public class ProtossStrategies extends AStrategy {
         PROTOSS_2_Gate_Zealot_vP.setProtoss().setName("2 Gate Zealot vP")
                 .setGoingRush()
                 .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_Zealot_(vs._Terran)");
-        PROTOSS_2_Gate_Zealot_vZ.setProtoss().setName("2 Gate Zealot vP")
+        PROTOSS_2_Gate_Zealot_vZ.setProtoss().setName("2 Gate Zealot vZ")
                 .setGoingRush()
                 .setUrl("http://wiki.teamliquid.net/starcraft/2_Gate_Zealot_(vs._Terran)");
 

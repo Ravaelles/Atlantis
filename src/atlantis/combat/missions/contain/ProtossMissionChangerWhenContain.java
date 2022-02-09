@@ -21,6 +21,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     private static boolean shouldChangeMissionToDefend() {
+        if (defendAgainstMassZerglings()) {
+            if (DEBUG) debugReason = "Mass zerglings";
+            return true;
+        }
+
         if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
             if (DEBUG) debugReason = "Enemy near our building";
             return true;

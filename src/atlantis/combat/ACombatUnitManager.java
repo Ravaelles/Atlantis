@@ -80,7 +80,7 @@ public class ACombatUnitManager {
     }
 
     private static boolean preActions(AUnit unit) {
-        if (unit.isPatrolling()) {
+        if (unit.isPatrolling() || unit.lastActionLessThanAgo(15, Actions.RIGHT_CLICK)) {
             unit.setTooltip("Manual", true);
             return true;
         }
@@ -187,10 +187,6 @@ public class ACombatUnitManager {
 //        if (AvoidEdgesWhenMoving.handle(unit)) {
 //            return true;
 //        }
-
-        if (unit.recentlyMoved()) {
-            return true;
-        }
 
         Mission mission = unit.mission();
         if (mission != null) {

@@ -48,7 +48,7 @@ public class CameraManager {
 //        }
 
 //        return null;
-        return Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).groundUnits().nonBuildings().first();
+        return Select.ourCombatUnits().nonBuildings().excludeTypes(AUnitType.Terran_Medic).groundUnits().first();
     }
 
 //    public static void centerCameraNowOnFirstCombatUnit() {

@@ -5,8 +5,11 @@ import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
+import atlantis.util.Enemy;
 
 import java.util.ArrayList;
 
@@ -37,6 +40,8 @@ public class MissionChanger {
         if (!Have.main()) {
             return;
         }
+
+        debugReason = "";
 
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.changeMissionIfNeeded();
@@ -83,5 +88,15 @@ public class MissionChanger {
 //    public static void forceMissionDefend() {
 //        Missions.setGlobalMissionDefend();
 //    }
+
+    protected static boolean defendAgainstMassZerglings() {
+        System.out.println("Lings = " + EnemyUnits.visibleAndFogged().ofType(AUnitType.Zerg_Zergling).count());
+        if (Enemy.zerg() && A.seconds() <= 260 && EnemyUnits.visibleAndFogged().ofType(AUnitType.Zerg_Zergling).atLeast(9)) {
+            if (DEBUG) debugReason = "Mass zerglings";
+            return true;
+        }
+
+        return false;
+    }
 
 }

@@ -2,6 +2,7 @@ package atlantis.information.enemy;
 
 import atlantis.game.A;
 import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
+import atlantis.information.strategy.GamePhase;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.Bases;
@@ -237,6 +238,28 @@ public class EnemyInfo {
         }
 
         return Select.main().distToLessThan(enemyBuilding, 20);
+    }
+
+    public static boolean isDoingEarlyGamePush() {
+        return cacheBoolean.get(
+            "isDoingEarlyGamePush:",
+            30,
+            () -> {
+                if (!GamePhase.isEarlyGame()) {
+                    return false;
+                }
+
+                if (Enemy.protoss()) {
+                    return EnemyUnits.visibleAndFogged().ofType(AUnitType.Protoss_Zealot).atLeast(6);
+                }
+                else if (Enemy.terran()) {
+                    return EnemyUnits.visibleAndFogged().ofType(AUnitType.Terran_Marine).atLeast(6);
+                }
+                else {
+                    return EnemyUnits.visibleAndFogged().ofType(AUnitType.Zerg_Zergling).atLeast(9);
+                }
+            }
+        );
     }
 
 }

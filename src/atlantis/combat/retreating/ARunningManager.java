@@ -286,6 +286,7 @@ public class ARunningManager {
         APosition runTo;
         runAwayFrom = runAwayFrom.position();
         double vectorLength = unit.distTo(runAwayFrom);
+        double runDistInPixels = unit.isVulture() ? (4 * 32) : 82;
 
         if (vectorLength < 0.01) {
 //            CameraManager.centerCameraOn(unit);
@@ -300,7 +301,7 @@ public class ARunningManager {
 
         Vector vector = new Vector(unit.x() - runAwayFrom.x(), unit.y() - runAwayFrom.y());
         vector.normalize();
-        vector.scale(82);
+        vector.scale(runDistInPixels);
 
         // Apply opposite 2D vector
         runTo = unit.position().translateByVector(vector);
@@ -420,7 +421,7 @@ public class ARunningManager {
 
     private int runAnyDirectionInitialRadius(AUnit unit) {
         if (unit.isVulture()){
-            return 4;
+            return 5;
         }
 
         if (unit.isInfantry()) {

@@ -71,11 +71,11 @@ public class Count {
                     + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
                     + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Spore_Colony);
         }
-//        if (type.equals(AUnitType.Zerg_Creep_Colony)) {
-//            return Select.ourIncludingUnfinished().ofType(type).count()
-//                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-//                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
-//        }
+        else if (type.equals(AUnitType.Zerg_Creep_Colony)) {
+            return Select.ourIncludingUnfinished().ofType(type).count()
+                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
+        }
         else if (type.isPrimaryBase()) {
             return Select.ourUnfinished().bases().count()
                     + ConstructionRequests.countNotStartedOfType(type)
@@ -93,9 +93,10 @@ public class Count {
     }
 
     public static int existing(AUnitType type) {
-        if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
+        if (type.equals(AUnitType.Zerg_Creep_Colony)) {
             return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony)
-                    + Select.countOurOfType(AUnitType.Zerg_Creep_Colony);
+                    + Select.countOurOfType(AUnitType.Zerg_Creep_Colony)
+                    + Select.countOurOfType(AUnitType.Zerg_Spore_Colony);
         }
         else if (type.isPrimaryBase()) {
             return Select.ourOfType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive).count();
@@ -152,6 +153,14 @@ public class Count {
         return ofType(AUnitType.Protoss_Zealot);
     }
 
+    public static int zerglings() {
+        return ofType(AUnitType.Zerg_Zergling);
+    }
+
+    public static int hydralisks() {
+        return ofType(AUnitType.Zerg_Hydralisk);
+    }
+
     public static int pylons() {
         return Select.countOurOfType(AUnitType.Protoss_Pylon);
     }
@@ -169,8 +178,12 @@ public class Count {
     }
 
     public static int tanks() {
-        return ofType(AUnitType.Terran_Siege_Tank_Siege_Mode)
-                + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode);
+        return cache.get(
+            "tanks",
+            1,
+            () -> ofType(AUnitType.Terran_Siege_Tank_Siege_Mode)
+                + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode)
+        );
     }
 
     public static int vultures() {

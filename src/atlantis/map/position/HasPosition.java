@@ -63,8 +63,7 @@ public interface HasPosition {
         return new APosition((int) (x() + vector.x), (int) (y() + vector.y));
     }
 
-    default APosition makeWalkable() {
-        int maxRadius = 1;
+    default APosition makeWalkable(int maxRadius) {
         int currentRadius = 0;
         while (currentRadius <= maxRadius) {
             for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {

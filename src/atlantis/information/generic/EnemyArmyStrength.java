@@ -10,7 +10,7 @@ public class EnemyArmyStrength {
         double total = 0;
 
         Selection combatUnits = Select.enemyCombatUnits()
-                .add(EnemyUnits.selection().combatUnits())
+                .add(EnemyUnits.visibleAndFogged().combatUnits())
                 .removeDuplicates();
         total += combatUnits.totalHp();
         total += combatUnits.melee().count() * 10;

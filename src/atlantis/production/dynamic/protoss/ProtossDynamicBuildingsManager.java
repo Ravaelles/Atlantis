@@ -81,7 +81,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void forge() {
-        buildToHaveOne(30, AUnitType.Protoss_Forge);
+        buildToHaveOne(36, AUnitType.Protoss_Forge);
     }
 
     private static void stargate() {

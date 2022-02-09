@@ -25,7 +25,7 @@ public class TerranInfantry {
         if (tryLoadingInfantryIntoBunkerIfNeeded(unit)) {
             return true;
         }
-        
+
         if (goToNearMedic(unit)) {
             return true;
         }
@@ -37,7 +37,7 @@ public class TerranInfantry {
     // =========================================================
 
     private static boolean goToNearMedic(AUnit unit) {
-        if (unit.squad() != null && unit.squad().distToCenter(unit) >= 6) {
+        if (unit.isHealthy() && unit.distToSquadCenter() <= 6) {
             return false;
         }
 
@@ -45,11 +45,11 @@ public class TerranInfantry {
             return false;
         }
 
-        if (unit.enemiesNearby().canAttack(unit, 7).isNotEmpty()) {
-            return false;
-        }
+//        if (unit.enemiesNearby().canAttack(unit, 7).isNotEmpty()) {
+//            return false;
+//        }
 
-        AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(30).nearestTo(unit);
+        AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(25).nearestTo(unit);
         if (medic != null && medic.distToMoreThan(unit, 2)) {
             return unit.move(medic, Actions.MOVE_SPECIAL, "BeHealed", false);
         }
@@ -69,7 +69,7 @@ public class TerranInfantry {
         Selection enemies = unit.enemiesNearby().inRadius(9, unit);
 
         if (
-                enemies.atLeast(Enemy.zerg() ? 3 : 2)
+            enemies.atLeast(Enemy.zerg() ? 3 : 2)
         ) {
             if (unit.lastActionMoreThanAgo(5, Actions.USING_TECH)) {
                 if (Select.ourOfType(AUnitType.Terran_Medic).inRadius(5, unit).havingEnergy(40).atLeast(2)) {
@@ -96,7 +96,7 @@ public class TerranInfantry {
 
 //        if (Select.enemyRealUnits().inRadius(6, unit).isEmpty()) {
         if (
-                unit.enemiesNearby().isEmpty()
+            unit.enemiesNearby().isEmpty()
                 && unit.lastActionMoreThanAgo(15)
         ) {
             Select.ourOfType(AUnitType.Terran_Bunker).inRadius(0.5, unit).first().unloadAll();
@@ -108,7 +108,7 @@ public class TerranInfantry {
     }
 
     public static boolean tryLoadingInfantryIntoBunkerIfNeeded(AUnit unit) {
-        
+
         // Only Terran infantry get inside
         if (unit.isLoaded() || !unit.isMarine()) {
             return false;
@@ -118,32 +118,36 @@ public class TerranInfantry {
         if (unit.enemiesNearby().empty()) {
             return false;
         }
-        
+
         // =========================================================
-        
+
         AUnit nearestBunker = defineBunkerToLoadTo(unit);
         int maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 12 : 7;
 
-//        if (
-//                unit.lastActionMoreThanAgo(20)
-////                || Select.enemyRealUnits().inRadius(6, unit).atLeast(1)
-//        ) {
-            if (nearestBunker != null && nearestBunker.distTo(unit) < maxDistanceToLoad) {
-                unit.load(nearestBunker);
-                unit.setTooltipTactical("GetToDaChoppa");
-                unit.addLog("GetToDaChoppa");
-                return true;
-            }
-//        }
+        if (
+            nearestBunker != null
+                && nearestBunker.hasFreeSpaceFor(unit)
+                && nearestBunker.distTo(unit) < maxDistanceToLoad
+                && (
+                unit.hp() >= 38 || (
+                    unit.hp() >= 22 && unit.enemiesNearby().inRadius(1.6, unit).atMost(1)
+                )
+            )
+        ) {
+            unit.load(nearestBunker);
+            unit.setTooltipTactical("GetToDaChoppa");
+            unit.addLog("GetToDaChoppa");
+            return true;
+        }
 
         return false;
     }
-    
+
     // =========================================================
 
     private static AUnit defineBunkerToLoadTo(AUnit unit) {
         Selection bunkers = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
-                .inRadius(15, unit).havingSpaceFree(unit.spaceRequired());
+            .inRadius(15, unit).havingSpaceFree(unit.spaceRequired());
         AUnit bunker = bunkers.nearestTo(unit);
 
 //        System.out.println("bunker = " + bunker);
@@ -162,12 +166,12 @@ public class TerranInfantry {
 //                return bunker;
 //            }
 //        }
-        
+
         return bunker;
     }
 
     private static TechType stim() {
         return TechType.Stim_Packs;
     }
-    
+
 }

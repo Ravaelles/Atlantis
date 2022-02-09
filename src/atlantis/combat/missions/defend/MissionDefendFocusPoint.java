@@ -31,15 +31,16 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     return null;
                 }
 
-                if (GamePhase.isEarlyGame()) {
-                    AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).first();
+                AUnit mainBase = Select.main();
+
+                if (GamePhase.isEarlyGame() && mainBase != null) {
+                    AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
                     if (bunker != null) {
                         return new AFocusPoint(bunker);
                     }
                 }
 
                 // If NO BASE exists, return any building
-                AUnit mainBase = Select.main();
                 if (mainBase == null) {
                     Selection selection = Select.ourBuildingsIncludingUnfinished();
                     if (selection == null || selection.first() == null) {

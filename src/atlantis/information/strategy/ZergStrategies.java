@@ -25,7 +25,8 @@ public class ZergStrategies extends AStrategy {
     public static final AStrategy ZERG_1_Hatch_Lurker = new AStrategy();
     public static final AStrategy ZERG_2_Hatch_Lurker = new AStrategy();
     public static final AStrategy ZERG_13_Pool_Muta = new AStrategy();
-    
+    public static final AStrategy ZERG_2_Hatch_Hydra_vP = new AStrategy();
+
     // =========================================================
 
     public static void initialize() {
@@ -67,17 +68,17 @@ public class ZergStrategies extends AStrategy {
         // === Tech ==========================================
         
         ZERG_1_Hatch_Lurker.setZerg().setName("1 Hatch Lurker")
-                .setGoingTech().setGoingHiddenUnits()
-                .setUrl("http://wiki.teamliquid.net/starcraft/1_Hatch_Lurker");
-        
+                .setGoingTech().setGoingHiddenUnits();
+
         ZERG_2_Hatch_Lurker.setZerg().setName("2 Hatch Lurker")
-                .setGoingTech().setGoingHiddenUnits()
-                .setUrl("http://wiki.teamliquid.net/starcraft/1_Hatch_Lurker");
-        
+                .setGoingTech().setGoingHiddenUnits();
+
         ZERG_13_Pool_Muta.setZerg().setName("13 Pool Muta")
-                .setGoingTech().setGoingAirUnitsQuickly()
-                .setUrl("http://wiki.teamliquid.net/starcraft/13_Pool_Muta_(vs._Terran)");
-        
+                .setGoingTech().setGoingAirUnitsQuickly();
+
+        ZERG_2_Hatch_Hydra_vP.setZerg().setName("2 Hatch Hydra")
+                .setGoingTech();
+
     }
     
     public static AStrategy detectStrategy() {

@@ -71,7 +71,7 @@ public class APositionFinder {
 
         else if (building.isBase()) {
             if (We.zerg()) {
-                if (Count.bases() >= 3) {
+                if (Count.larvas() == 0 || Count.bases() >= 3) {
                     return findStandardPosition(builder, building, nearTo, 30);
                 }
             }

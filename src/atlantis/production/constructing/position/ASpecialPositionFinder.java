@@ -8,6 +8,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 
@@ -139,6 +140,10 @@ public class ASpecialPositionFinder {
     }
 
     protected static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
+        if (!Have.main()) {
+            return null;
+        }
+
         APosition near = APosition.create(
                 Bases.expansionFreeBaseLocationNearestTo(Select.main().position())
         ).translateByPixels(0, 0);

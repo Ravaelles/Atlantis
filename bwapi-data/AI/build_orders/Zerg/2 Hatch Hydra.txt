@@ -1,0 +1,34 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=9
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=15
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+https://liquipedia.net/starcraft/2_Hatch_Hydra_(vs._Protoss)
+
+@100 % Extractor send 3 Drones to mine Gas
+@50 Gas - Hydralisk Den
+16 - Overlord
+@150 Gas - Hydralisk Range
+Immediately after - Start Hydralisk Production
+Move out at when you have 12 Hydralisks.
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+9 - Overlord
+12 - Hatchery - NATURAL
+12 - Spawning Pool
+13 - Extractor
+14 - Hydralisk Den
+16 - Hydralisk
+25 - Muscular Augments
+30 - Grooved Spines
+
+

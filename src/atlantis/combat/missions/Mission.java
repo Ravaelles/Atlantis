@@ -41,6 +41,10 @@ public abstract class Mission {
 
     // Template method
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (enemy.isCombatBuilding()) {
+            return allowsToAttackCombatBuildings(unit, enemy);
+        }
+
         return true;
     }
 

@@ -109,7 +109,7 @@ public class AbstractDynamicUnits extends Helpers {
         return false;
     }
 
-    protected static boolean addToQueueToMaxAtATime(AUnitType type, int maxAtATime) {
+    public static boolean addToQueueToMaxAtATime(AUnitType type, int maxAtATime) {
         if (ProductionQueue.countInQueue(type, 20) < maxAtATime) {
             return addToQueue(type);
         }

@@ -2,7 +2,10 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 
 public abstract class MissionChangerWhenContain extends MissionChanger {
 
@@ -22,6 +25,32 @@ public abstract class MissionChangerWhenContain extends MissionChanger {
         else {
             ZergMissionChangerWhenContain.changeMissionIfNeeded();
             return;
+        }
+    }
+
+    // =========================================================
+
+    protected static boolean baseUnderSeriousAttack() {
+        AUnit main = Select.main();
+        if (main != null && Select.enemyCombatUnits().inRadius(20, main).atLeast(minEnemiesToDefend())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static int minEnemiesToDefend() {
+        if (A.supplyUsed() < 30) {
+            return 1;
+        }
+        else if (A.supplyUsed() < 50) {
+            return 2;
+        }
+        else if (A.supplyUsed() < 80) {
+            return 3;
+        }
+        else {
+            return 6;
         }
     }
 

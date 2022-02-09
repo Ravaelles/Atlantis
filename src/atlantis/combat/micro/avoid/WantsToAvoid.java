@@ -65,6 +65,10 @@ public class WantsToAvoid {
     }
 
     private static boolean shouldNeverAvoidIf(AUnit unit, Units enemies) {
+        if (unit.isWorker() && enemies.onlyMelee()) {
+            return unit.hp() >= 40;
+        }
+
         if (unit.isWorker() || unit.isAir()) {
             return false;
         }

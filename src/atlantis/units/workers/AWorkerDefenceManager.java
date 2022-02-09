@@ -165,6 +165,10 @@ public class AWorkerDefenceManager {
             return attackNearestEnemy(worker);
         }
 
+        if (worker.distToMoreThan(Select.main(), 8)) {
+            return false;
+        }
+
         if (Count.workers() <= 12 || Select.our().inRadius(4, worker).atMost(2)) {
             return false;
         }
@@ -196,7 +200,7 @@ public class AWorkerDefenceManager {
 
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = Select.enemyCombatUnits()
-                .inRadius(1, worker)
+                .inRadius(3, worker)
                 .canBeAttackedBy(worker, 1)
                 .list();
         for (AUnit enemy : enemies) {

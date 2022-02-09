@@ -56,9 +56,10 @@ public class OurStrategyManager {
     }
 
     private static AStrategy initForZerg() {
+        return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
 //        return ZergStrategies.ZERG_13_Pool_Muta;
 //        return ZergStrategies.ZERG_12_Hatch_vZ;
-        return ZergStrategies.ZERG_9_Pool_vZ;
+//        return ZergStrategies.ZERG_9_Pool_vZ;
     }
 
 }

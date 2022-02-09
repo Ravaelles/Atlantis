@@ -98,7 +98,7 @@ public class TerranVulture {
                     .groundUnits()
                     .inRadius(2, nearestEnemy)
                     .center()
-                    .makeWalkable();
+                    .makeWalkable(5);
 
             APosition finalPlace = enemiesCenter.position();
 

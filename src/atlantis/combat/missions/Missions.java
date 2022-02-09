@@ -129,7 +129,7 @@ public class Missions {
     }
 
     public static boolean recentlyChangedMission() {
-        return lastMissionChangedAgo() <= 30 * 15;
+        return lastMissionChangedAgo() <= 30 * 5;
     }
 
     public static int counter() {
