@@ -7,6 +7,9 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.FakeFoggedUnit;
+import tests.unit.FakeUnit;
 
 public class EnemyUnitDiscoveredResponse {
 

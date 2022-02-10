@@ -11,12 +11,12 @@ public class DontDisturbInterrupt {
     public static boolean dontInterruptImportantActions(AUnit unit) {
 //        if (true) return false;
 
-//        System.out.println("unit.meleeEnemiesNearby(1.9) = " + unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE));
-//        int enemiesMultiplier = unit.medicNearby() ? 1 : unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE);
+//        System.out.println("unit.meleeEnemiesNear(1.9) = " + unit.meleeEnemiesNear(MELEE_ENEMIES_RANGE));
+//        int enemiesMultiplier = unit.medicNear() ? 1 : unit.meleeEnemiesNear(MELEE_ENEMIES_RANGE);
 //        if (unit.hp() <= (Enemy.protoss() ? 18 : 8) * enemiesMultiplier) {
 //            APainter.paintCircleFilled(unit, 10, Color.Purple);
-//            System.err.println(unit.hp() + " < " + (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearby(MELEE_ENEMIES_RANGE));
-        if (unit.isWounded() && unit.hp() <= (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearbyCount()) {
+//            System.err.println(unit.hp() + " < " + (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNear(MELEE_ENEMIES_RANGE));
+        if (unit.isWounded() && unit.hp() <= (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearCount()) {
             return false;
         }
 

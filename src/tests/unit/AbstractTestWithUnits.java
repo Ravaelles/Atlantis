@@ -9,6 +9,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
 import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import bwapi.Game;
@@ -172,7 +173,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     protected FakeFoggedUnit fogged(AUnitType type, int x) {
-        return FakeFoggedUnit.fromFake(fake(type, x));
+        return FakeFoggedUnit.fromFake(fakeEnemy(type, x));
     }
 
     // =========================================================

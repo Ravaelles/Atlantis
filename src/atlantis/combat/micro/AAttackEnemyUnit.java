@@ -11,8 +11,8 @@ public class AAttackEnemyUnit {
 
     private static final double MAX_DIST_TO_ATTACK = 40;
 
-    public static boolean handleAttackNearbyEnemyUnits(AUnit unit) {
-        return handleAttackNearbyEnemyUnits(unit, MAX_DIST_TO_ATTACK);
+    public static boolean handleAttackNearEnemyUnits(AUnit unit) {
+        return handleAttackNearEnemyUnits(unit, MAX_DIST_TO_ATTACK);
     }
 
     /**
@@ -21,7 +21,7 @@ public class AAttackEnemyUnit {
      * an attack or just attacking the enemy<br />
      * <b>false</b> if no valid enemy to attack could be found
      */
-    public static boolean handleAttackNearbyEnemyUnits(AUnit unit, double maxDistFromEnemy) {
+    public static boolean handleAttackNearEnemyUnits(AUnit unit, double maxDistFromEnemy) {
         if (unit.hasNoWeaponAtAll()) {
             return false;
         }

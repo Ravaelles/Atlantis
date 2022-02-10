@@ -65,7 +65,7 @@ public class TerranMedic extends Microable {
             return true;
         }
 
-        if (healAnyWoundedNearby(medic)) {
+        if (healAnyWoundedNear(medic)) {
             return true;
         }
 
@@ -80,13 +80,13 @@ public class TerranMedic extends Microable {
     // =========================================================
 
     private static boolean bodyBlockMelee(AUnit medic) {
-        Selection meleeEnemies = medic.enemiesNearby().melee().inRadius(6, medic);
+        Selection meleeEnemies = medic.enemiesNear().melee().inRadius(6, medic);
 //        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 3) {
         if (meleeEnemies.count() == 0) {
             return false;
         }
 
-        AUnit nearestFriend = medic.friendsNearby().excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
+        AUnit nearestFriend = medic.friendsNear().excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
         AUnit nearestEnemy = meleeEnemies.inRadius(4, medic).nearestTo(medic);
         if (nearestEnemy == null || nearestFriend == null) {
             return false;
@@ -270,7 +270,7 @@ public class TerranMedic extends Microable {
         return false;
     }
 
-    private static boolean healAnyWoundedNearby(AUnit medic) {
+    private static boolean healAnyWoundedNear(AUnit medic) {
         if (!medic.energy(5)) {
             return false;
         }

@@ -4,11 +4,11 @@ import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.ARegionBoundary;
 import atlantis.units.AUnit;
+import atlantis.units.FakeFoggedUnit;
 import atlantis.units.FoggedUnit;
 import bwapi.Position;
 import bwapi.Unit;
 import jbweb.JBWEB;
-import tests.unit.FakeFoggedUnit;
 import tests.unit.FakeUnit;
 
 public class PositionUtil {

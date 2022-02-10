@@ -1,6 +1,7 @@
 package atlantis.combat.micro.transport;
 
 import atlantis.debug.painter.APainter;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -100,12 +101,12 @@ public class TransportUnits {
         }
 
         // Avoid ranged units
-        if (unit.enemiesNearby().ranged().canAttack(unit, 2.2).isEmpty()) {
+        if (unit.enemiesNear().ranged().canAttack(unit, 2.2).isEmpty()) {
             return false;
         }
 
         // Only run from melee if they really close
-        if (unit.enemiesNearby().melee().inRadius(1.5, unit).isEmpty()) {
+        if (unit.enemiesNear().melee().inRadius(1.5, unit).isEmpty()) {
             return false;
         }
 
@@ -115,7 +116,7 @@ public class TransportUnits {
     // =========================================================
 
     private static boolean handleGoToSafety(AUnit transport, AUnit baby) {
-        AUnit nearEnemy = Select.enemyCombatUnits().canAttack(baby, 5).nearestTo(transport);
+        AUnit nearEnemy = EnemyUnits.visibleAndFogged().canAttack(baby, 5).nearestTo(transport);
         if (nearEnemy != null) {
             transport.moveAwayFrom(nearEnemy, 8, "ToSafety", Actions.MOVE_SAFETY);
             APainter.paintLine(transport, transport.targetPosition(), Color.White);
@@ -127,8 +128,7 @@ public class TransportUnits {
 
     private static boolean isBabyInDanger(AUnit baby, boolean allowMoreDangerousBehavior) {
         double safetyMargin = (allowMoreDangerousBehavior ? 0.5 : 2.5) + baby.woundPercent() / 100;
-        boolean enemiesNear = Select.enemyCombatUnits()
-//                .inShootRangeOf((allowMoreDangerousBehavior ? 0.5 : 2.5) + baby.woundPercent() / 100, baby)
+        boolean enemiesNear = baby.enemiesNear()
                 .canAttack(baby, safetyMargin)
                 .isNotEmpty();
 
@@ -148,7 +148,7 @@ public class TransportUnits {
             return true;
         }
 
-        return Select.enemyCombatUnits().canAttack(transport, 2.5).isNotEmpty();
+        return transport.enemiesNear().canAttack(transport, 2.5).isNotEmpty();
     }
 
     private static boolean followBaby(AUnit transport, AUnit baby) {

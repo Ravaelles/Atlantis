@@ -1,13 +1,11 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.debug.painter.APainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
-import bwapi.Color;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +25,7 @@ public abstract class AAvoidUnits {
         Units enemiesDangerouslyClose = unitsToAvoid(unit);
 
         if (enemiesDangerouslyClose.isEmpty()) {
-//            AUnit nearestEnemy = unit.enemiesNearby().nearestTo(unit);
+//            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
 //            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
 //                    "C=0(" + (nearestEnemy != null ? A.dist(unit, nearestEnemy) : "-") + ")",
 //                    Color.Green                           );
@@ -145,9 +143,10 @@ public abstract class AAvoidUnits {
     // =========================================================
 
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
-        return unit.enemiesNearby()
+        return unit.enemiesNear()
                 .add(EnemyUnits.combatUnitsToBetterAvoid())
                 .removeDuplicates()
+                .onlyCompleted()
                 .canAttack(unit, true, true, 4.5)
                 .list();
     }

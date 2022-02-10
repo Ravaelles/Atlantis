@@ -20,7 +20,7 @@ public class TerranTankWhenSieged extends TerranTank {
         }
 
         if (
-            unit.enemiesNearby().isEmpty()
+            unit.enemiesNear().isEmpty()
                 && unit.lastAttackFrameMoreThanAgo(30 * 4 + (unit.id() % 3))
                 && unit.distToSquadCenter() >= 8
         ) {
@@ -41,6 +41,8 @@ public class TerranTankWhenSieged extends TerranTank {
         }
 
         if (tooLonely(unit) && !hasJustSiegedRecently(unit)) {
+            System.out.println("LAST SIEGE = " + unit.lastActionAgo(Actions.SIEGE));
+            System.out.println("LAST UNSIEGE = " + unit.lastActionAgo(Actions.UNSIEGE));
             return wantsToUnsiege(unit, "TooLonely");
         }
 

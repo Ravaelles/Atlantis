@@ -41,7 +41,7 @@ public class FakeUnit extends AUnit {
 
     @Override
     public String toString() {
-        return "Fake " + super.toString() + " " + position();
+        return "Fake " + super.toString() + " " + position() + (isEnemy() ? " (Enemy)" : "");
     }
 
     public String lastCommand() {

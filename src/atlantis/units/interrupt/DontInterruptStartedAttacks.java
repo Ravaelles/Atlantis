@@ -36,7 +36,7 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
-        if (unit.hp() <= 40 && unit.enemiesNearby().ofType(AUnitType.Protoss_Zealot).inRadius(2.7, unit).atLeast(2)) {
+        if (unit.hp() <= 40 && unit.enemiesNear().ofType(AUnitType.Protoss_Zealot).inRadius(2.7, unit).atLeast(2)) {
             return false;
         }
 

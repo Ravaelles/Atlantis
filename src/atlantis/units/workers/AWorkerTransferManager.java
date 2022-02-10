@@ -34,7 +34,7 @@ public class AWorkerTransferManager {
             if (
                     base.isLifted()
                     || base.lastUnderAttackLessThanAgo(30 * 30)
-                    || Select.enemyCombatUnits().inRadius(14, base).isNotEmpty()
+                    || base.enemiesNear().combatUnits().inRadius(15, base).isNotEmpty()
             ) {
                 continue;
             }

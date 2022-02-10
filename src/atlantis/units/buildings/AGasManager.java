@@ -35,18 +35,18 @@ public class AGasManager {
                 continue;
             }
             
-            int numOfWorkersNearby = countWorkersGatheringGasNear(gasBuilding);
-            int optimalNumOfGasWorkers = gasWorkers(gasBuilding, numOfWorkersNearby);
-//            System.out.println(optimalNumOfGasWorkers + " // " + numOfWorkersNearby);
+            int numOfWorkersNear = countWorkersGatheringGasNear(gasBuilding);
+            int optimalNumOfGasWorkers = gasWorkers(gasBuilding, numOfWorkersNear);
+//            System.out.println(optimalNumOfGasWorkers + " // " + numOfWorkersNear);
 
             // Less workers gathering gas than optimal
-            if (numOfWorkersNearby < optimalNumOfGasWorkers) {
+            if (numOfWorkersNear < optimalNumOfGasWorkers) {
                 assignBestWorkerToGasBuilding(gasBuilding);
                 break; // Only one worker per execution
             }
             
             // More workers than optimal
-            else if (numOfWorkersNearby > optimalNumOfGasWorkers) {
+            else if (numOfWorkersNear > optimalNumOfGasWorkers) {
                 AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
                     worker.stop("I'm fired!", true);
@@ -119,7 +119,7 @@ public class AGasManager {
 //        }
     }
 
-    private static int gasWorkers(AUnit gasBuilding, int numOfWorkersNearby) {
+    private static int gasWorkers(AUnit gasBuilding, int numOfWorkersNear) {
 
         if (Count.workers() <= 8) {
             return 0;
@@ -143,7 +143,7 @@ public class AGasManager {
 //        }
 
         if (GamePhase.isEarlyGame() && AGame.canAfford(0, 100)) {
-            return (int) A.inRange(1, numOfWorkersNearby / 4, 3);
+            return (int) A.inRange(1, numOfWorkersNear / 4, 3);
         }
 
         return 3;

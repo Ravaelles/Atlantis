@@ -1,5 +1,7 @@
 package atlantis.information.enemy;
 
+import atlantis.game.A;
+import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.map.position.APosition;
 import atlantis.units.*;
 import atlantis.units.select.Select;
@@ -13,62 +15,88 @@ import java.util.Map;
 
 public class EnemyUnits {
 
-    private static Map<Integer, AbstractFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
+    protected static Map<Integer, AbstractFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
     private static Cache<Object> cache = new Cache<>();
 
     // =========================================================
 
     public static void updateFoggedUnits() {
+//        System.out.println("--- UPDATE at " + A.now());
         for (AUnit enemy : Select.enemy().list()) {
-            EnemyInfo.updateEnemyUnitTypeAndPosition(enemy);
+//            System.out.println("update " + enemy);
+            updateFoggedUnitTypeAndPosition(enemy);
         }
     }
+
+    public static boolean updateFoggedUnitTypeAndPosition(AUnit enemy) {
+        if (enemy.type().isGasBuildingOrGeyser()) {
+            return true;
+        }
+
+        AbstractFoggedUnit foggedUnit = getFoggedUnit(enemy);
+        if (foggedUnit != null) {
+            foggedUnit.update(enemy);
+        }
+        return false;
+    }
+
+    // =========================================================
+
+    /**
+     * Saves information about enemy unit that we see for the first time.
+     */
+    public static void weDiscoveredEnemyUnit(AUnit enemyUnit) {
+        addFoggedUnit(enemyUnit);
+        EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
+    }
+
+    // =========================================================
 
     public static void clearCache() {
         cache.clear();
         enemyUnitsDiscovered.clear();
     }
 
+    public static Collection<AbstractFoggedUnit> unitsDiscovered() {
+        return enemyUnitsDiscovered.values();
+    }
+
     public static void addFoggedUnit(AUnit enemyUnit) {
-        AbstractFoggedUnit foggedUnit = enemyUnit instanceof FakeUnit
-                ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
-                : FoggedUnit.from(enemyUnit);
+        AbstractFoggedUnit foggedUnit = AbstractFoggedUnit.from(enemyUnit);
 
         enemyUnitsDiscovered.put(enemyUnit.id(), foggedUnit);
     }
 
     public static void removeFoggedUnit(AUnit enemyUnit) {
-//        if (enemyUnit.isAlive()) {
-//            System.err.println("Removing fogged unit = " + enemyUnit);
-//        }
-//        A.printStackTrace("Removing fogged unit = " + enemyUnit);
-
         enemyUnitsDiscovered.remove(enemyUnit.id());
         cache.clear();
     }
 
-//    public static boolean isKnown(AUnit enemyUnit) {
-//        return enemyUnitsDiscovered.containsKey(enemyUnit.id());
-//    }
-
     public static AbstractFoggedUnit getFoggedUnit(AUnit enemyUnit) {
         return enemyUnitsDiscovered.get(enemyUnit.id());
-    }
-
-    public static Collection<AbstractFoggedUnit> unitsDiscovered() {
-        return enemyUnitsDiscovered.values();
     }
 
     public static Selection visibleAndFogged() {
         return Select.from(unitsDiscovered(), "")
             .add(Select.enemy())
             .removeDuplicates();
+//        return (Selection) cache.get(
+//            "visibleAndFogged",
+//            0,
+//            () -> Select.from(unitsDiscovered(), "")
+//                .add(Select.enemy())
+//                .removeDuplicates()
+//        );
     }
 
     // =========================================================
 
     public static Selection foggedUnits() {
-        return Select.from(EnemyInfo.discoveredAndAliveUnits(), "foggedUnits");
+        return (Selection) cache.get(
+            "foggedUnits",
+            0,
+            () -> Select.from(unitsDiscovered(), "foggedUnits")
+        );
     }
 
     public static APosition enemyBase() {
@@ -144,5 +172,4 @@ public class EnemyUnits {
                 }
         );
     }
-
 }

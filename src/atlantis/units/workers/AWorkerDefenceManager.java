@@ -20,7 +20,7 @@ public class AWorkerDefenceManager {
      * Attack other workers, run from enemies etc.
      */
     public static boolean handleDefenceIfNeeded(AUnit worker) {
-        if (worker.enemiesNearby().isEmpty()) {
+        if (worker.enemiesNear().combatUnits().isEmpty()) {
             return false;
         }
 
@@ -32,8 +32,8 @@ public class AWorkerDefenceManager {
             return true;
         }
 
-        // Dynamic nearby CSV repairing
-        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNearby(worker)) {
+        // Dynamic Near CSV repairing
+        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNear(worker)) {
             return true;
         }
 
@@ -43,7 +43,7 @@ public class AWorkerDefenceManager {
     // =========================================================
 
     private static boolean runFromReaverFix(AUnit worker) {
-        AUnit reaver = worker.enemiesNearby().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);
+        AUnit reaver = worker.enemiesNear().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);
         if (reaver != null && reaver.distToLessThan(worker, 10)) {
             worker.runningManager().runFrom(reaver, 5, Actions.RUN_ENEMY);
             worker.setTooltip("OhFuckReaver!", true);
@@ -68,7 +68,7 @@ public class AWorkerDefenceManager {
         }
 
         // FIGHT against enemy WORKERS, worker rushes etc
-        if (handleEnemyWorkersNearby(worker)) {
+        if (handleEnemyWorkersNear(worker)) {
             return true;
         }
 
@@ -130,7 +130,7 @@ public class AWorkerDefenceManager {
         return false;
     }
 
-    private static boolean handleRepairNearby(AUnit worker) {
+    private static boolean handleRepairNear(AUnit worker) {
         if (!worker.isWounded() || (worker.id() % 5 != 0 && !worker.isRepairing())) {
             return false;
         }
@@ -161,7 +161,7 @@ public class AWorkerDefenceManager {
             return false;
         }
 
-        if (worker.friendsNearby().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
+        if (worker.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
             return attackNearestEnemy(worker);
         }
 
@@ -199,7 +199,7 @@ public class AWorkerDefenceManager {
         }
 
         // FIGHT against COMBAT UNITS
-        List<AUnit> enemies = Select.enemyCombatUnits()
+        List<AUnit> enemies = worker.enemiesNear()
                 .inRadius(3, worker)
                 .canBeAttackedBy(worker, 1)
                 .list();
@@ -213,7 +213,7 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean attackNearestEnemy(AUnit worker) {
-        AUnit enemy = worker.enemiesNearby().canBeAttackedBy(worker, 8).nearestTo(worker);
+        AUnit enemy = worker.enemiesNear().canBeAttackedBy(worker, 8).nearestTo(worker);
         if (enemy == null) {
             return false;
         }
@@ -223,7 +223,7 @@ public class AWorkerDefenceManager {
         return true;
     }
 
-    private static boolean handleEnemyWorkersNearby(AUnit worker) {
+    private static boolean handleEnemyWorkersNear(AUnit worker) {
         Selection enemyWorkers = Select.enemy().workers().inRadius(1.3, worker);
         for (AUnit enemy : enemyWorkers.list()) {
             worker.setTooltipTactical("NastyFuckers!");

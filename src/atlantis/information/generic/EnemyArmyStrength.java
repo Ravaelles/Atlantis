@@ -9,12 +9,10 @@ public class EnemyArmyStrength {
     public static double calculate() {
         double total = 0;
 
-        Selection combatUnits = Select.enemyCombatUnits()
-                .add(EnemyUnits.visibleAndFogged().combatUnits())
-                .removeDuplicates();
-        total += combatUnits.totalHp();
-        total += combatUnits.melee().count() * 10;
-        total += combatUnits.ranged().count() * 30;
+        Selection allEnemyCombatUnits = EnemyUnits.visibleAndFogged().combatUnits();
+        total += allEnemyCombatUnits.totalHp();
+        total += allEnemyCombatUnits.melee().count() * 10;
+        total += allEnemyCombatUnits.ranged().count() * 30;
 
         return total;
     }

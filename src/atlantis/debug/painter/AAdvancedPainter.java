@@ -265,7 +265,7 @@ public class AAdvancedPainter extends APainter {
             if (enemy.isCloaked() || enemy.isBurrowed()) {
                 paintCircle(enemy, 16, Color.Green);
                 paintCircle(enemy, 15, Color.Green);
-                paintCircle(enemy, 14, Color.Green);
+                paintCircle(enemy, 15, Color.Green);
                 paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.White);
             }
         }
@@ -1102,7 +1102,7 @@ public class AAdvancedPainter extends APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     static void paintFoggedUnitsThatIsEnemiesDiscovered() {
-        for (AbstractFoggedUnit foggedEnemy : EnemyInfo.discoveredAndAliveUnits()) {
+        for (AbstractFoggedUnit foggedEnemy : EnemyUnits.unitsDiscovered()) {
             if (!foggedEnemy.hasKnownPosition()) {
                 continue;
             }

@@ -60,12 +60,12 @@ public class MissionChanger {
         }
 
         if (Missions.isFirstMission()) {
-            if (Missions.isGlobalMissionAttack() && unit.friendsNearby().atLeast(3)) {
+            if (Missions.isGlobalMissionAttack() && unit.friendsNear().atLeast(3)) {
                 forceMissionContain();
             }
         }
 
-//        if (!A.supplyUsed(180) && unit.friendsNearby().atLeast(5)) {
+//        if (!A.supplyUsed(180) && unit.friendsNear().atLeast(5)) {
 //            forceMissionDefend();
 //        }
     }
@@ -90,7 +90,6 @@ public class MissionChanger {
 //    }
 
     protected static boolean defendAgainstMassZerglings() {
-        System.out.println("Lings = " + EnemyUnits.visibleAndFogged().ofType(AUnitType.Zerg_Zergling).count());
         if (Enemy.zerg() && A.seconds() <= 260 && EnemyUnits.visibleAndFogged().ofType(AUnitType.Zerg_Zergling).atLeast(9)) {
             if (DEBUG) debugReason = "Mass zerglings";
             return true;

@@ -56,7 +56,7 @@ public class TerranTank {
             return false;
         }
 
-        return unit.friendsNearby().tanksSieged().inRadius(1, unit).isEmpty();
+        return unit.friendsNear().tanksSieged().inRadius(1, unit).isEmpty();
     }
 
 }

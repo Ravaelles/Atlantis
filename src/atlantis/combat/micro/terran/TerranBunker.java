@@ -81,9 +81,9 @@ public class TerranBunker {
 //            return false;
 //        }
 //
-//        boolean hasTurretNearby = Select.ourOfTypeIncludingUnfinished(AUnitType.Terran_Bunker)
+//        boolean hasTurretNear = Select.ourOfTypeIncludingUnfinished(AUnitType.Terran_Bunker)
 //                .inRadius(13, squadCenter).atLeast(1);
-//        if (!hasTurretNearby) {
+//        if (!hasTurretNear) {
 //            AAntiAirBuildingRequests.requestCombatBuildingAntiAir(squadCenter);
 //        }
 //    }

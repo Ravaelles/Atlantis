@@ -128,7 +128,7 @@ public class AMap {
 
     /**
      * If unit moves near the edges, its running options are limited and could be stuck.
-     * Instead of going there, prefer a nearby position which has more space around.
+     * Instead of going there, prefer a Near position which has more space around.
      */
     public static APosition getMostWalkablePositionNear(APosition position, int tileSearchRadius) {
         int bestScore = -1;

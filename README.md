@@ -18,7 +18,7 @@ Atlantis wraps everything heavily, so you don't need to write yourself countless
 - if enemy goes air/hidden units responds by building e.g. Missile Turrets
 - micro-managers specific to units
 - auto-expansions
-- evaluation of unit chance to win the nearby skirmish and retreating when needed
+- evaluation of unit chance to win the Near skirmish and retreating when needed
 - advanced and code wrappers for selecting units that use cache
 
 # How to install

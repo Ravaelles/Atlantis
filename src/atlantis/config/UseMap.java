@@ -6,6 +6,7 @@ import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.CameraManager;
 import atlantis.game.GameSpeed;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -13,7 +14,7 @@ import atlantis.units.select.Select;
 public class UseMap {
 
     public static String activeMap() {
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
@@ -43,6 +44,7 @@ public class UseMap {
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
 //        if (true) return "ums/rav/M_v_Zealots.scx";
+        if (true) return "ums/rav/M&M_v_M&M.scx";
 //        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
 //        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
@@ -141,7 +143,7 @@ public class UseMap {
 
             if (GameSpeed.frameSkip == initFrameSkip && A.everyNthGameFrame(50)) {
                 if (
-                        Select.enemyCombatUnits().atLeast(4)
+                        EnemyUnits.visibleAndFogged().atLeast(4)
                         && Have.dragoon()
                 ) {
                     GameSpeed.changeSpeedTo(1);

@@ -51,7 +51,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // =========================================================
 
-        if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit)) {
+        if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
             unit.setTooltip("Adv:Attack", true);
             return true;
         }
@@ -93,7 +93,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
 //        System.out.println("Target = " + ATargeting.defineBestEnemyToAttackFor(unit, 40) + " // " +
-//                unit.enemiesNearby().inRadius(10, unit).count());
+//                unit.enemiesNear().inRadius(10, unit).count());
 
         // =========================================================
 
@@ -121,10 +121,6 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
     private static boolean handleTerranAdvance(AUnit unit) {
         if (unit.isInfantry() && !unit.isMedic() && Count.medics() >= 4) {
-//            if (Select.enemyCombatUnits().inRadius(7, unit).isEmpty()) {
-//                return false;
-//            }
-
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
             if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
                 if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
@@ -134,28 +130,6 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         return false;
-
-//        if (Select.our().tanks().isEmpty()) {
-//            return false;
-//        }
-//
-//        if (unit.isTank()) {
-//            return false;
-//        }
-//
-////        double maxRadiusFromTank = 4 + Math.sqrt(Count.ourCombatUnits());
-//        AUnit nearestTank = Select.our().tanks().nearestTo(unit);
-//
-//        if (nearestTank >= 1) {
-//            return false;
-//        }
-//
-//        unit.move(
-//                unit.translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
-//                UnitActions.MOVE_TO_FOCUS,
-//                "ToTank"
-//        );
-//        return true;
     }
 
     private static double maxDistToMedic(AUnit unit) {

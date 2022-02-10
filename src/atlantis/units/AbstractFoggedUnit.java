@@ -3,13 +3,14 @@ package atlantis.units;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.util.Cache;
+import tests.unit.FakeUnit;
 
 import java.util.TreeMap;
 
 /**
  * Stores information about units in order to retrieve them when they are out of sight
  */
-public abstract class AbstractFoggedUnit extends AUnit {
+public class AbstractFoggedUnit extends AUnit {
 
     protected final static TreeMap<Integer, AbstractFoggedUnit> all = new TreeMap<>();
 
@@ -21,6 +22,24 @@ public abstract class AbstractFoggedUnit extends AUnit {
     protected AUnitType _lastType;
     protected boolean _isCompleted;
     protected Cache<Integer> cacheInt = new Cache<>();
+
+    // =========================================================
+
+    protected AbstractFoggedUnit(AUnit unit) {
+        if (unit != null) {
+            this._id = unit.id();
+            this.aUnit = unit;
+            this.update(unit);
+
+            all.put(unit.id(), this);
+        }
+    }
+
+    public static AbstractFoggedUnit from(AUnit enemyUnit) {
+        return enemyUnit instanceof FakeUnit
+                ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
+                : FoggedUnit.from(enemyUnit);
+    }
 
     // =========================================================
 
@@ -109,7 +128,7 @@ public abstract class AbstractFoggedUnit extends AUnit {
 
     @Override
     public String toString() {
-        return "Abstract" + getClass().getSimpleName() + " "
+        return getClass().getSimpleName() + " "
                 + nameWithId() + " at " + _position
                 + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
     }

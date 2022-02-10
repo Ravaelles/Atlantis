@@ -166,7 +166,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        // If nearby enemies would likely defeat us, retreat
+        // If Near enemies would likely defeat us, retreat
 //        if (RetreatManager.shouldRetreat(unit)) {
 //            return true;
 //        }
@@ -176,7 +176,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
     }
 
     /**

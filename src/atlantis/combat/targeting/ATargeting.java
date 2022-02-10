@@ -101,7 +101,7 @@ public class ATargeting {
             return enemy;
         }
 
-//        System.err.println("Man, how comes we're here? " + ourUnit + " // " + ourUnit.enemiesNearby().count());
+//        System.err.println("Man, how comes we're here? " + ourUnit + " // " + ourUnit.enemiesNear().count());
 
         double maxDistToEnemy = unit.mission() != null && unit.isMissionDefend() ? 6 : 999;
 

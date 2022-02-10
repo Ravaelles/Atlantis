@@ -2,6 +2,7 @@ package atlantis.units.select;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -98,7 +99,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 0,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
-                    data.addAll(EnemyInfo.discoveredAndAliveUnits());
+                    data.addAll(EnemyUnits.unitsDiscovered());
 
                     return new Selection(data, cachePath);
                 }
@@ -190,7 +191,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     /**
-     * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
+     * Selects all VISIBLE enemy units. Since they're visible, the type is AUnit.
+     * Note that this might be null if no units are visible. For the list of ALL known enemy units
+     * @see EnemyUnits::visibleAndFogged()
      */
     public static Selection enemyCombatUnits() {
         String cachePath;

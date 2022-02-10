@@ -87,7 +87,7 @@ public class ARepairerManager {
             return false;
         }
 
-        return Select.enemyCombatUnits().inRadius(12, target).atLeast(1);
+        return target.enemiesNear().inRadius(12, target).atLeast(1);
     }
 
     // =========================================================
@@ -129,7 +129,7 @@ public class ARepairerManager {
         if (!repairer.isUnitActionRepair() || !repairer.isRepairing() || repairer.isIdle()) {
             int maxAllowedDistToRoam = 13;
 
-            // Try finding any repairable and wounded unit nearby
+            // Try finding any repairable and wounded unit Near
             AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null && A.hasMinerals(5)) {
                 repairer.repair(nearestWoundedUnit, "Help near " + nearestWoundedUnit.name(), true);

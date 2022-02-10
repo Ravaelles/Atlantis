@@ -57,7 +57,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
             return true;
         }
 
-        if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130) {
+        if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130 && !GamePhase.isLateGame()) {
             if (DEBUG) debugReason = "Too many resources lost";
             return true;
         }

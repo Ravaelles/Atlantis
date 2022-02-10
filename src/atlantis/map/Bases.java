@@ -242,7 +242,7 @@ public class Bases {
             return false;
         }
 
-        // If any enemy unit is nearby
+        // If any enemy unit is Near
         if (Select.enemy().inRadius(11, baseLocation.position()).count() > 0) {
             return false;
         }

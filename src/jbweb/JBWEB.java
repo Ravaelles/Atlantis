@@ -651,7 +651,7 @@ public class JBWEB {
             return Double.MAX_VALUE;
         }
 
-        // Check if we're in a valid area, if not try to find a different nearby WalkPosition
+        // Check if we're in a valid area, if not try to find a different Near WalkPosition
         if (mapBWEM.getMap().getArea(new WalkPosition(start)) == null) {
             start = validatePoint(new WalkPosition(start));
         }

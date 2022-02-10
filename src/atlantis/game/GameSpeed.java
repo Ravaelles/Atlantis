@@ -70,7 +70,7 @@ public class GameSpeed {
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
 //                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Select.enemyCombatUnits().atLeast(2)
-                        && EnemyInfo.discoveredEnemyBase()
+                        && EnemyInfo.hasDiscoveredEnemyBase()
                         && Alpha.get().getSquadScout() != null
                         && Alpha.get().getSquadScout().isWounded()
 //                        && Missions.isGlobalMissionContain()

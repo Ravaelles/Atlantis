@@ -37,7 +37,6 @@ public class Evaluate {
     protected static double evaluateUnitsAgainstUnit(Units theseUnits, Units againstUnits, boolean isEnemyEval) {
         double totalStrength = 0;
         boolean enemyCombatBuildingFound = false;
-        boolean enemyCombatBuildingInRange = false;
         AUnit againstUnit = againstUnits.first();
 
 //        theseUnits.print("THESE");
@@ -57,7 +56,6 @@ public class Evaluate {
         for (Iterator<AUnit> iterator = theseUnits.iterator(); iterator.hasNext(); ) {
             AUnit unit = iterator.next();
             double unitStrengthEval = evaluateUnitHPandDamage(unit, againstUnit);
-//            System.err.println(unit + " // unitStrengthEval = " + unitStrengthEval);
 
             // =========================================================
             // WORKER
@@ -76,30 +74,29 @@ public class Evaluate {
             }
 
             // === Infantry ============================================
-            
+
             else if (unit.isTerranInfantry()) {
                 totalStrength += terranInfantryTweak(unit, unitStrengthEval);
             }
 
             // =========================================================
             // Ordinary MILITARY UNIT
-            
+
             else {
                 totalStrength += unitStrengthEval;
             }
+
+//            System.err.println(unit + " // eval = " + unitStrengthEval);
         }
 
         // =========================================================
         // Extra bonus for DEFENSIVE BUILDING PRESENCE
 
-//        if (!isEnemyEval) {
         if (enemyCombatBuildingFound) {
-            totalStrength += theseUnits.onlyAir() ? 120 : 40;
+            totalStrength += theseUnits.onlyAir() ? 80 : 40;
         }
-//        if (enemyCombatBuildingInRange) {
-//            totalStrength += theseUnits.onlyAir() ? 50 : 60;
-//        }
-//        }
+
+//        System.err.println("totalStrength = " + totalStrength + " (against " + againstUnit.type() + ")");
 
         return totalStrength;
     }
@@ -186,7 +183,7 @@ public class Evaluate {
     }
 
     private static double terranInfantryTweak(AUnit unit, double strength) {
-        int medics = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(5).inRadius(3, unit).count();
+        int medics = unit.friendsNear().ofType(AUnitType.Terran_Medic).havingEnergy(10).inRadius(3, unit).count();
 
         if (unit.isWounded() && medics == 0) {
             strength = strength * unit.hpPercent() / 100;

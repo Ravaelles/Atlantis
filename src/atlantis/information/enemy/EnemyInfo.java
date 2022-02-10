@@ -1,7 +1,6 @@
 package atlantis.information.enemy;
 
 import atlantis.game.A;
-import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
@@ -22,10 +21,10 @@ import java.util.Collection;
 
 public class EnemyInfo {
 
+    public static boolean startedWithCombatBuilding = false;
+
     private static Cache<Object> cache = new Cache<>();
     private static Cache<Boolean> cacheBoolean = new Cache<>();
-
-    public static boolean startedWithCombatBuilding = false;
 
     // =========================================================
 
@@ -104,24 +103,12 @@ public class EnemyInfo {
         );
     }
 
-    public static boolean discoveredEnemyBase() {
+    public static boolean hasDiscoveredEnemyBase() {
         return cacheBoolean.get(
-                "discoveredEnemyBase",
+                "hasDiscoveredEnemyBase",
                 60,
                 () -> EnemyUnits.enemyBase() != null
         );
-    }
-
-    public static Collection<AbstractFoggedUnit> discoveredAndAliveUnits() {
-        return EnemyUnits.unitsDiscovered();
-    }
-
-    /**
-     * Saves information about enemy unit that we see for the first time.
-     */
-    public static void weDiscoveredEnemyUnit(AUnit enemyUnit) {
-        EnemyUnits.addFoggedUnit(enemyUnit);
-        EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
     }
 
     /**
@@ -136,52 +123,7 @@ public class EnemyInfo {
      */
     public static void refreshEnemyUnit(AUnit enemyUnit) {
         EnemyUnits.removeFoggedUnit(enemyUnit);
-        weDiscoveredEnemyUnit(enemyUnit);
-    }
-
-    /**
-     * Updates last known position of the enemy unit.
-     */
-    public static void updateEnemyUnitTypeAndPosition(AUnit enemyUnit) {
-        if (enemyUnit.type().isGasBuildingOrGeyser()) {
-            return;
-        }
-
-        AbstractFoggedUnit foggedUnit = EnemyUnits.getFoggedUnit(enemyUnit);
-        if (foggedUnit != null) {
-            foggedUnit.update(enemyUnit);
-        }
-    }
-
-    // =========================================================
-
-    /**
-     * Returns number of discovered and alive enemy units of given type. Some of them (maybe even all of them)
-     * may not be visible right now.
-     */
-//    public static int countEnemyKnownUnitsOfType(AUnitType type) {
-//        int total = 0;
-//        for (AUnit enemyUnit : EnemyUnits.unitsDiscovered()) {
-//            if (enemyUnit.is(type)) {
-//                total++;
-//            }
-//        }
-//        return total;
-//    }
-
-    public static void printEnemyFoggedUnits() {
-        Collection<AbstractFoggedUnit> foggedUnits = EnemyUnits.unitsDiscovered();
-        if (!foggedUnits.isEmpty()) {
-            System.out.println("--- Enemy fogged units (" + foggedUnits.size() + ") ---");
-            for (AUnit fogged : foggedUnits) {
-                System.out.println(
-                        fogged.type()
-                                + " " + fogged.position()
-                                + ", isBase=" + fogged.isBase()
-                                + ", alive=" + fogged.isAlive()
-                );
-            }
-        }
+        EnemyUnits.weDiscoveredEnemyUnit(enemyUnit);
     }
 
     public static APosition enemyLocationOrGuess() {

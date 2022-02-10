@@ -61,7 +61,7 @@ public class MissionAttack extends Mission {
             return true;
         }
 
-        if (unit.friendsNearbyCount() <= 7) {
+        if (unit.friendsNearCount() <= 7) {
             return false;
         }
 

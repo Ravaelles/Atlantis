@@ -151,7 +151,7 @@ public class ComeCloser extends ASquadCohesionManager {
         double maxDistToSquadCenter = preferredDistToSquadCenter(unit.squadSize());
 
         if (unit.distTo(center) > maxDistToSquadCenter) {
-            AUnit nearestFriend = unit.friendsNearby().nearestTo(unit);
+            AUnit nearestFriend = unit.friendsNear().nearestTo(unit);
             if (nearestFriend == null) {
                 return false;
             }

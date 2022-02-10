@@ -63,7 +63,7 @@ public class RepairerAssigner {
             ARepairCommander.assignProtectorsFor(unit, shouldHaveThisManyRepairers - repairersNeeded);
         }
         else if (unit.isMissileTurret()) {
-            int enemies = Select.enemyCombatUnits().air().inRadius(10, unit).count();
+            int enemies = unit.enemiesNear().air().inRadius(11, unit).count();
 
             if (Have.main() && Select.main().distToLessThan(unit, 14)) {
                 return A.inRange(3, enemies, 5);

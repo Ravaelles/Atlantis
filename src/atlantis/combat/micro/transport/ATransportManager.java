@@ -75,7 +75,7 @@ public class ATransportManager {
         transportsToPassengers.put(transport, passenger);
     }
 
-    public static boolean hasNearbyTransportAssigned(AUnit passenger) {
+    public static boolean hasNearTransportAssigned(AUnit passenger) {
         if (hasTransportAssigned(passenger)) {
             return passenger.distToLessThan(getTransportAssignedToUnit(passenger), 3);
         }

@@ -106,8 +106,8 @@ public class ARepairCommander {
                 return;
             }
                     
-            int numberOfCombatUnitsNearby = Select.ourCombatUnits().inRadius(6, bunker).count();
-            if (numberOfCombatUnitsNearby <= 7) {
+            int numberOfCombatUnitsNear = Select.ourCombatUnits().inRadius(6, bunker).count();
+            if (numberOfCombatUnitsNear <= 7) {
                 int numberOfRepairersAssigned = ARepairAssignments.countProtectorsFor(bunker);
                 assignProtectorsFor(
                         bunker, defineOptimalNumberOfBunkerProtectors() - numberOfRepairersAssigned
@@ -243,15 +243,15 @@ public class ARepairCommander {
     }
 
     protected static int defineOptimalRepairersForBunker(AUnit bunker) {
-        int enemiesNearby = Select.enemy().combatUnits().inRadius(10, bunker).count();
+        int enemiesNear = Select.enemy().combatUnits().inRadius(10, bunker).count();
         double optimalNumber;
 
         if (AGame.isEnemyProtoss()) {
-            optimalNumber = enemiesNearby;
+            optimalNumber = enemiesNear;
         } else if (AGame.isEnemyTerran()) {
-            optimalNumber = enemiesNearby * 0.5;
+            optimalNumber = enemiesNear * 0.5;
         } else {
-            optimalNumber = enemiesNearby * 0.5;
+            optimalNumber = enemiesNear * 0.5;
         }
 
         if (bunker.hp() < 100) {

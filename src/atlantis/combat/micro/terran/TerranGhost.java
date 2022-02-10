@@ -1,21 +1,10 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.micro.Microable;
-import atlantis.combat.micro.avoid.AAvoidUnits;
-import atlantis.combat.micro.terran.medic.BodyBlock;
-import atlantis.debug.painter.APainter;
 import atlantis.information.tech.ATech;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
-import bwapi.Color;
 import bwapi.TechType;
-
-import java.util.HashMap;
 
 public class TerranGhost extends Microable {
 
@@ -41,7 +30,7 @@ public class TerranGhost extends Microable {
             return false;
         }
 
-        AUnit goodTarget = unit.enemiesNearby().ofType(
+        AUnit goodTarget = unit.enemiesNear().ofType(
             AUnitType.Protoss_Carrier, AUnitType.Protoss_Reaver, AUnitType.Protoss_Shuttle, AUnitType.Protoss_Observer,
             AUnitType.Terran_Science_Vessel, AUnitType.Terran_Dropship, AUnitType.Terran_Valkyrie,
             AUnitType.Terran_Battlecruiser, AUnitType.Terran_Siege_Tank_Tank_Mode, AUnitType.Terran_Siege_Tank_Siege_Mode

@@ -14,9 +14,9 @@ public class OnUnitRenegade {
      * receives a Refinery.
      */
     public static void update(AUnit unit) {
-        Unit u = unit.u();
-
         AUnit.forgetUnitEntirely(unit);
+        unit.refreshType();
+
 //        if (newUnit.type().isGasBuilding() || newUnit.type().isGeyser() || newUnit.isLarvaOrEgg()) {
 //            return;
 //        }

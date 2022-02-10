@@ -45,7 +45,7 @@ public class TerranInfantry {
             return false;
         }
 
-//        if (unit.enemiesNearby().canAttack(unit, 7).isNotEmpty()) {
+//        if (unit.enemiesNear().canAttack(unit, 7).isNotEmpty()) {
 //            return false;
 //        }
 
@@ -66,7 +66,7 @@ public class TerranInfantry {
             return false;
         }
 
-        Selection enemies = unit.enemiesNearby().inRadius(9, unit);
+        Selection enemies = unit.enemiesNear().inRadius(9, unit);
 
         if (
             enemies.atLeast(Enemy.zerg() ? 3 : 2)
@@ -96,7 +96,7 @@ public class TerranInfantry {
 
 //        if (Select.enemyRealUnits().inRadius(6, unit).isEmpty()) {
         if (
-            unit.enemiesNearby().isEmpty()
+            unit.enemiesNear().isEmpty()
                 && unit.lastActionMoreThanAgo(15)
         ) {
             Select.ourOfType(AUnitType.Terran_Bunker).inRadius(0.5, unit).first().unloadAll();
@@ -115,7 +115,7 @@ public class TerranInfantry {
         }
 
         // Without enemies around, don't do anything
-        if (unit.enemiesNearby().empty()) {
+        if (unit.enemiesNear().empty()) {
             return false;
         }
 
@@ -130,7 +130,7 @@ public class TerranInfantry {
                 && nearestBunker.distTo(unit) < maxDistanceToLoad
                 && (
                 unit.hp() >= 38 || (
-                    unit.hp() >= 22 && unit.enemiesNearby().inRadius(1.6, unit).atMost(1)
+                    unit.hp() >= 22 && unit.enemiesNear().inRadius(1.6, unit).atMost(1)
                 )
             )
         ) {

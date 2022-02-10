@@ -23,7 +23,7 @@ public class TerranTankWhenNotSieged extends TerranTank {
             return true;
         }
 
-        if (shouldSiegeBecauseSpecificEnemiesNearby(unit)) {
+        if (shouldSiegeBecauseSpecificEnemiesNear(unit)) {
             return wantsToSiege(unit, "GroundEnemies");
         }
 
@@ -69,8 +69,8 @@ public class TerranTankWhenNotSieged extends TerranTank {
         return false;
     }
 
-    private static boolean shouldSiegeBecauseSpecificEnemiesNearby(AUnit unit) {
-        Selection enemies = unit.enemiesNearby().groundUnits().nonBuildings();
+    private static boolean shouldSiegeBecauseSpecificEnemiesNear(AUnit unit) {
+        Selection enemies = unit.enemiesNear().groundUnits().nonBuildings();
 
         if (
             enemies
@@ -91,7 +91,7 @@ public class TerranTankWhenNotSieged extends TerranTank {
 
     protected static boolean wantsToSiege(AUnit unit, String log) {
         if (!Enemy.terran()) {
-            if (unit.friendsNearby().tanksSieged().inRadius(1.2, unit).isNotEmpty()) {
+            if (unit.friendsNear().tanksSieged().inRadius(1.2, unit).isNotEmpty()) {
                 return false;
             }
         }

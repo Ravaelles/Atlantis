@@ -33,7 +33,7 @@ public class ASquadCohesionManager {
 //                (unit.mission() != null && !unit.isMissionDefend())
                 (unit.mission() != null && unit.isMissionDefend())
 //                unit.mission() != null && (unit.mission().isMissionAttack() || unit.isMissionDefend());
-//                || unit.friendsNearby().atMost(2);
+//                || unit.friendsNear().atMost(2);
                 || unit.squadSize() <= 2
                 || unit.mission().focusPoint() == null;
     }

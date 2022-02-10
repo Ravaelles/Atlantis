@@ -31,7 +31,7 @@ public class ATransportTargeting {
 //                .inRadius(13, unit)
 //                .nearestTo(unit));
         if (nearTransport != null) {
-            if (Select.enemyCombatUnits().inRadius(5, nearTransport).atMost(3)) {
+            if (nearTransport.enemiesNear().inRadius(5, nearTransport).atMost(3)) {
                 unit.setTooltipTactical("Invasion!");
                 if (ATargeting.debug(unit)) System.out.println("TransportTarget = " + nearTransport);
                 return nearTransport;
