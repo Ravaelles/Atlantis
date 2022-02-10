@@ -56,7 +56,7 @@ public class ATargeting {
     private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
 
         // Most wounded enemy IN RANGE
-        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, 0);
+        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, 1.2);
         if (enemy != null) {
             unit.addLog("AttackInRange");
             return enemy;

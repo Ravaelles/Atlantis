@@ -78,18 +78,18 @@ public class AdvanceUnitsManager extends MissionUnitManager {
                 unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true);
             }
             else {
-                unit.setTooltip("Adv:Fine", true);
+                unit.setTooltip("Adv:Ok", true);
             }
             return true;
         }
 
         // Too far
         else if (distToFocusPoint > optimalDist + margin) {
-            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
-                return true;
-            }
+//            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
+//                return true;
+//            }
 
-            return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")", true);
+            return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")", true);
         }
 
 //        System.out.println("Target = " + ATargeting.defineBestEnemyToAttackFor(unit, 40) + " // " +
@@ -98,15 +98,19 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         // =========================================================
 
         if (distToFocusPoint > 6) {
-            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
-                return true;
-            }
+//            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
+//                return true;
+//            }
 
-            unit.move(focusPoint, Actions.MOVE_ENGAGE, "Adv:Forward", true);
+            if (!unit.isMoving()) {
+                unit.move(focusPoint, Actions.MOVE_ENGAGE, "Adv:Forward", true);
+            }
             return true;
         }
 
-        unit.setTooltip("Adv", true);
+        if (!unit.hasTooltip()) {
+            unit.setTooltip("#Adv", true);
+        }
         return false;
     }
 

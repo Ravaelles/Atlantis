@@ -17,6 +17,12 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
+        if (unit.isVulture()) {
+            if (unit.hp() >= 22 && unit.isBraking() && unit.isAttackingOrMovingToAttack() && unit.lastAttackFrameAgo() >= 40) {
+                return true;
+            }
+        }
+
         if (unit.isDragoon()) {
             if (unit.hpMoreThan(40)
                 && unit.lastAttackOrderMoreThanAgo(40)

@@ -153,14 +153,14 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // === VULTURE ===============================================
 
-        else if (defender.isVulture()) {
-            return Math.min(
-                    3.6,
-                    2.5 + woundedAgainstMeleeBonus(defender, attacker)
-                            + ourMovementBonus(defender)
-                            + enemyMovementBonus(defender, attacker)
-            );
-        }
+//        else if (defender.isVulture()) {
+//            return Math.min(
+//                    3.6,
+//                    2.7 + woundedAgainstMeleeBonus(defender, attacker)
+//                            + ourMovementBonus(defender)
+//                            + enemyMovementBonus(defender, attacker)
+//            );
+//        }
 
         return -1;
     }

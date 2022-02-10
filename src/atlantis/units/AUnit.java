@@ -506,7 +506,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasTooltip() {
-        return this.tooltip != null;
+        return tooltip != null && !tooltip.equals("");
     }
 
     // =========================================================

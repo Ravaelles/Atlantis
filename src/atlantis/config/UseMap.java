@@ -44,14 +44,14 @@ public class UseMap {
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
 //        if (true) return "ums/rav/M_v_Zealots.scx";
-        if (true) return "ums/rav/M&M_v_M&M.scx";
-//        if (true) return "ums/rav/Vultures_v_Zealots.scm";
+        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
 //        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimap2s/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
+        if (true) return "ums/rav/M&M_v_M&M.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
 
