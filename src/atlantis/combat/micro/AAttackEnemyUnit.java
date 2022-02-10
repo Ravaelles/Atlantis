@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class AAttackEnemyUnit {
@@ -22,7 +23,7 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearEnemyUnits(AUnit unit, double maxDistFromEnemy) {
-        if (unit.hasNoWeaponAtAll()) {
+        if (shouldSkip(unit)) {
             return false;
         }
 
@@ -36,6 +37,20 @@ public class AAttackEnemyUnit {
         }
 
         return processAttackUnit(unit, enemy);
+    }
+
+    private static boolean shouldSkip(AUnit unit) {
+        if (unit.hasNoWeaponAtAll()) {
+            return true;
+        }
+
+        if (unit.isTerranInfantry() && !unit.medicInHealRange()) {
+            if (Count.medics() >= 2) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 //    public static boolean shouldNotAttack(AUnit unit) {

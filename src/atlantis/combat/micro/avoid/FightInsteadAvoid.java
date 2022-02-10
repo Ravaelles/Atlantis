@@ -102,7 +102,7 @@ public class FightInsteadAvoid {
             }
 
             if (unit.isRanged() && ranged == null) {
-//                unit.addLog("FightRanged");
+                unit.addLog("FightRanged");
                 return false;
             } else {
                 unit.setTooltip("Retreat", true);
@@ -241,7 +241,7 @@ public class FightInsteadAvoid {
         }
 
         AUnit target = unit.target();
-        if (target != null && !target.isZergling() && target.hp() <= (unit.damageAgainst(target) + 8)) {
+        if (target != null && target.type().totalCost() >= 70 && target.hp() <= (unit.damageAgainst(target) + 4)) {
             return true;
         }
 
@@ -259,7 +259,7 @@ public class FightInsteadAvoid {
         }
 
 //        return false;
-        boolean medicNear = unit.medicNear();
+        boolean medicNear = unit.medicInHealRange();
         return medicNear || (!unit.isWounded() && ranged == null && unit.friendsInRadiusCount(1) >= 4);
     }
 

@@ -2074,13 +2074,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isSpell();
     }
 
-    public boolean medicNear() {
+    public boolean medicInHealRange() {
         return cacheBoolean.get(
-            "medicNear",
+            "medicInHealRange",
             5,
             () -> Select.ourOfType(AUnitType.Terran_Medic)
                 .inRadius(2, this)
-                .havingEnergy(15)
+                .havingEnergy(12)
                 .atLeast(1)
         );
     }

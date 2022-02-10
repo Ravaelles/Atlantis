@@ -117,15 +117,16 @@ public class AdvanceUnitsManager extends MissionUnitManager {
                 + (unit.isMedic() ? -1.2 : 0);
     }
 
-    // =========================================================
+    // === Terran ======================================================
 
     private static boolean handleTerranAdvance(AUnit unit) {
-        if (unit.isInfantry() && !unit.isMedic() && Count.medics() >= 4) {
-            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
-            if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
-                if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
-                    return unit.move(medic, Actions.MOVE_FOCUS, "ToMedic", false);
-                }
+        if (unit.isTerranInfantry() && unit.isWounded() && !unit.isMedic() && Count.medics() >= 1) {
+            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).nearestTo(unit);
+//            if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
+            if (medic != null) {
+//                if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
+                return unit.move(medic, Actions.MOVE_FOCUS, "ToMedic", false);
+//                }
             }
         }
 
@@ -142,5 +143,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         return 8;
     }
+
+    // =========================================================
 
 }

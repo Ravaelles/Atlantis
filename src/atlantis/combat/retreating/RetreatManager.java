@@ -26,7 +26,7 @@ public class RetreatManager {
     public static boolean shouldRetreat(AUnit unit) {
         return cache.get(
                 "shouldRetreat:" + unit.id(),
-                35,
+                25,
                 () -> {
                     if (shouldNotConsiderRetreatingNow(unit)) {
                         return false;

@@ -73,7 +73,7 @@ public class ASquadCohesionManager {
     // =========================================================
 
     public static double preferredDistToSquadCenter(int squadSize) {
-        return Math.max(5.0, 1.3 * Math.sqrt(squadSize));
+        return Math.max(3.0, 1.3 * Math.sqrt(squadSize));
     }
 
 //    private static boolean isSquadQuiteNumerousAndUnitTooFarFromCenter(AUnit unit, AUnit nearestFriend, Selection closeFriends) {
