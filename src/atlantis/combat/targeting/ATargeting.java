@@ -56,62 +56,34 @@ public class ATargeting {
     private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
 
         // Most wounded enemy IN RANGE
-        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, 1.2);
-        if (enemy != null) {
-            unit.addLog("AttackInRange");
-            return enemy;
-        }
-
-        // Most wounded enemy ALMOST IN RANGE
-//        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 1.2);
-//        if (enemy != null) {
-//            ourUnit.addLog("AttackClose");
-//            return enemy;
-//        }
-
-        // Most wounded enemy some distance from away
-        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, 4);
+        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, unit.isRanged() ? 1.2 : 0);
         if (enemy != null) {
             unit.addLog("AttackClose");
             return enemy;
         }
 
-        // Distant enemies
-//        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 25);
-//        enemy = Select.enemy().canBeAttackedBy(ourUnit, 40).nearestTo(ourUnit);
-//        if (enemy != null) {
-////            ourUnit.addLog("AttackFar" + A.dist(ourUnit, enemy));
-//            ourUnit.addLog("AttackFar");
-//            return enemy;
-//        }
-
-//        // Most wounded enemy ALMOST IN RANGE
-//        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, ourUnit, 2.2);
-//        if (enemy != null) {
-//            return enemy;
-//        }
+        // Most wounded enemy some distance from away
+        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, 5);
+        if (enemy != null) {
+            unit.addLog("AttackDistant");
+            return enemy;
+        }
 
         // =====================================================================
         // Couldn't find enemy of given type in/near weapon range. Change target
 
         // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
-        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0.1).mostWounded();
+        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 1.2).mostWounded();
         if (enemy != null) {
-            unit.addLog("MostWoundedInRange");
+            unit.addLog("AttackMostWounded");
             return enemy;
         }
 
-//        System.err.println("Man, how comes we're here? " + ourUnit + " // " + ourUnit.enemiesNear().count());
+//        System.err.println("Man, how comes we're here? " + unit + " // " + unit.enemiesNear().count());
 
         double maxDistToEnemy = unit.mission() != null && unit.isMissionDefend() ? 6 : 999;
 
         return Select.enemyRealUnits().canBeAttackedBy(unit, maxDistToEnemy).nearestTo(unit);
-//        enemy = selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit, 1.2);
-//        if (enemy != null) {
-//            return enemy;
-//        }
-//
-//        return selectWeakestEnemyOfTypeOutsideOfWeaponRange(enemyType, ourUnit, 16);
     }
 
     private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType enemyType, AUnit ourUnit) {
