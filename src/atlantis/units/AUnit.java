@@ -1115,7 +1115,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isCloaked() {
-        System.out.println("BBBB");
         return u.isCloaked() || u.isBurrowed();
     }
 
@@ -1285,6 +1284,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true for flying Terran building.
      */
     public boolean isLifted() {
+        if (u == null) {
+            return false;
+        }
         return u.isLifted();
     }
 
@@ -1292,19 +1294,31 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if unit is inside bunker or dropship/shuttle.
      */
     public boolean isLoaded() {
+        if (u == null) {
+            return false;
+        }
         return u.isLoaded();
     }
 
     public boolean isUnderDisruptionWeb() {
-        return u().isUnderDisruptionWeb();
+        if (u == null) {
+            return false;
+        }
+        return u.isUnderDisruptionWeb();
     }
 
     public boolean isUnderDarkSwarm() {
-        return u().isUnderDarkSwarm();
+        if (u == null) {
+            return false;
+        }
+        return u.isUnderDarkSwarm();
     }
 
     public boolean isUnderStorm() {
-        return u().isUnderStorm();
+        if (u == null) {
+            return false;
+        }
+        return u.isUnderStorm();
     }
 
     public int getRemainingBuildTime() {
@@ -1647,6 +1661,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int energy() {
+        if (u == null) {
+            System.out.println(this.getClass());
+            System.out.println(this);
+            System.out.println(u);
+            System.out.println("---------");
+        }
         return u.getEnergy();
     }
 

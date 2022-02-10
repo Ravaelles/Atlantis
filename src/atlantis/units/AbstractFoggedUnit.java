@@ -18,6 +18,7 @@ public class AbstractFoggedUnit extends AUnit {
     protected AUnit aUnit;
     protected int _id;
     protected int _hp;
+    protected int _energy;
     protected APosition _position;
     protected AUnitType _lastType;
     protected boolean _isCompleted;
@@ -77,6 +78,7 @@ public class AbstractFoggedUnit extends AUnit {
         updateType(unit);
         _isCompleted = unit.isCompleted();
         _hp = unit.hp();
+        _energy = unit.energy();
     }
 
     public void updatePosition(AUnit unit) {
@@ -178,6 +180,11 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public int hp() {
         return _hp;
+    }
+
+    @Override
+    public int energy() {
+        return _energy;
     }
 
 }
