@@ -61,18 +61,19 @@ public class ATargeting {
     // =========================================================
 
     private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
+        double MOST_WOUNDED_EXTRA = 0;
 
         // Most wounded enemy IN RANGE
-        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, unit.isRanged() ? 1.3 : 0);
+        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, unit.isRanged() ? MOST_WOUNDED_EXTRA : 0);
         if (enemy != null) {
-            unit.addLog("AttackClose");
+//            unit.addLog("AttackClose");
             return enemy;
         }
 
         // Most wounded enemy some distance from away
         enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, 5);
         if (enemy != null) {
-            unit.addLog("AttackDistant");
+//            unit.addLog("AttackDistant");
             return enemy;
         }
 
@@ -80,7 +81,7 @@ public class ATargeting {
         // Couldn't find enemy of given type in/near weapon range. Change target
 
         // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
-        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 1.3).mostWounded();
+        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, MOST_WOUNDED_EXTRA).mostWounded();
         if (enemy != null) {
 //            unit.addLog("AttackMostWounded");
             return enemy;
@@ -112,7 +113,8 @@ public class ATargeting {
 //    }
 
     private static AUnit selectWeakestEnemyOfTypeWithWeaponRange(AUnitType type, AUnit ourUnit, double extraRange) {
-        Selection targets = ourUnit.enemiesNear()
+//        Selection targets = ourUnit.enemiesNear()
+        Selection targets = Select.enemies(type)
                 .ofType(type)
                 .canBeAttackedBy(ourUnit, extraRange)
                 .effVisible();
@@ -137,7 +139,7 @@ public class ATargeting {
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 15)
-                .count() == 0
+                .isEmpty()
         ) {
             return null;
         }
@@ -145,11 +147,12 @@ public class ATargeting {
         // =========================================================
 
         AUnit target;
-        enemyBuildings = unit.enemiesNear()
+//        enemyBuildings = unit.enemiesNear()
+        enemyBuildings = Select.enemyRealUnits()
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 14);
-        enemyUnits = unit.enemiesNear()
+        enemyUnits = Select.enemyRealUnits()
                 .nonBuildings()
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
@@ -168,9 +171,6 @@ public class ATargeting {
         // === Crucial units =======================================
 
         if ((target = ATargetingCrucial.target(unit)) != null) {
-//            if (!target.type().isCarrier()) {
-//                System.out.println(A.now() + "  #" + unit.id() + " " + unit.name() + " > " + target.name());
-//            }
             if (ATargeting.debug(unit)) System.out.println("B = "+ target);
             return target;
         }

@@ -52,9 +52,9 @@ public class UseMap {
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimap2s/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
-        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
+//        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
 //        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
-//        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
+        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
 
         // === Gosu bots - advanced single player cheating bots ====
 

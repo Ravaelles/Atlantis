@@ -86,7 +86,7 @@ public class ATargetingStandard extends ATargeting {
                         AUnitType.Zerg_Spire,
                         AUnitType.Zerg_Greater_Spire
                 )
-                .inRadius(11, unit)
+                .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -95,8 +95,17 @@ public class ATargetingStandard extends ATargeting {
         // =========================================================
         // Okay, try targeting any-fuckin-thing
 
-        return Select.enemyRealUnits()
-                .effVisible()
+        // Start with non medics nearby
+
+        target = unit.enemiesNear()
+            .excludeMedics()
+            .canBeAttackedBy(unit, 15)
+            .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        return unit.enemiesNear()
                 .canBeAttackedBy(unit, 150)
                 .nearestTo(unit);
     }

@@ -147,6 +147,7 @@ public abstract class AAvoidUnits {
 //                .add(EnemyUnits.combatUnitsToBetterAvoid())
                 .removeDuplicates()
                 .onlyCompleted()
+                .havingPosition()
                 .canAttack(unit, true, true, 4.5)
                 .list();
     }

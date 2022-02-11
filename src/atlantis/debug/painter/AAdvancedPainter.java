@@ -189,7 +189,7 @@ public class AAdvancedPainter extends APainter {
             // === Other stuff =========================================
 
             paintSquad(unit);
-            paintLastOrder(unit);
+            paintLastAction(unit);
             paintLog(unit);
         }
     }
@@ -211,16 +211,22 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    private static void paintLastOrder(AUnit unit) {
-        //            String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
-//                    + "(" + unit.lastOrderFramesAgo() + ")";
-//            String order = unit.getAction().toString() + "(" + unit.lastOrderFramesAgo() + ")";
-        String order = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
-        paintTextCentered(new APosition(unit.x(), unit.y() - 6), order, Color.Grey);
+    private static void paintLastAction(AUnit unit) {
+//        String action = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
+        String action = unit.action() != null ? unit.action().toString() : "NO_ACTION";
+        if ("ATTACK_UNIT".equals(action)) {
+            action += ":" + (unit.target() != null ? unit.target().type() : "NO_TARGET");
+        }
+        action += "(" + unit.lastActionFramesAgo() + ")";
+
+        paintTextCentered(new APosition(unit.x(), unit.y() - 6), action, Color.Grey);
     }
 
     private static void paintSquad(AUnit unit) {
-        String squadLetter = unit.squad() == null ? "NO_SQUAD" : unit.squad().letter();
+        if (!unit.isAlive() || unit.squad() == null) {
+            return;
+        }
+        String squadLetter = unit.squad().letter();
         paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
     }
 
@@ -764,9 +770,13 @@ public class AAdvancedPainter extends APainter {
                 paintWhiteFlagForRunningUnit(unit);
             }
 
-            // Paint #ID
-            paintTextCentered(unit.translateByTiles(0, 1),
-                    "#" + unit.id() + " " + unit.action(), Color.Cyan);
+            // Paint hash + unit ID and unit action e.g. "ENGAGE", "ATTACK_UNIT" etc
+            String action = unit.action() != null ? unit.action().toString() : null;
+            System.out.println(action + " // " + ("ATTACK_UNIT".equals(action)));
+            if ("ATTACK_UNIT".equals(action)) {
+                action += ":" + unit.target().type();
+            }
+            paintTextCentered(unit.translateByTiles(0, 1),"#" + unit.id() + " " + action, Color.Cyan);
 
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
@@ -779,8 +789,8 @@ public class AAdvancedPainter extends APainter {
 //                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
 //            }
             // =========================================================
-            Color color = Color.Grey;
-            if (unit.action() != null) {
+//            Color color = Color.Grey;
+//            if (unit.action() != null) {
 //                if (unit.getAction().equals(UnitActions.MOVE)) {
 //                    color = Color.Teal;
 //                } else if (unit.getAction().isAttacking()) {
@@ -800,7 +810,7 @@ public class AAdvancedPainter extends APainter {
 //            else if (unit.getAction().equals(UnitActions.)) {
 //                color = Color.;
 //            }
-            }
+//            }
 
 //            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
 //                paintCircle(unit, unit.type().getDimensionLeft() + unit.type().getDimensionRight(), color);

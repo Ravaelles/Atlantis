@@ -56,7 +56,7 @@ public class ATargetingCrucial extends ATargeting {
         target = enemyUnits.clone()
                 .ofType(AUnitType.Protoss_Observer)
                 .effVisible()
-                .inRadius(unit.isAir() ? 40 : 11, unit)
+                .inRadius(unit.isAir() ? 40 : 13, unit)
                 .mostWounded();
         if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, target).atLeast(1)) {
             return target;

@@ -36,6 +36,9 @@ public class FoggedUnit extends AbstractFoggedUnit {
 
     @Override
     public APosition position() {
+//        if (_lastAUnit != null && _lastAUnit.isVisibleUnitOnMap()) {
+//            return _lastAUnit.position();
+//        }
         return _position;
     }
 

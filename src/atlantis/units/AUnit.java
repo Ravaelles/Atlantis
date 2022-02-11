@@ -482,7 +482,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (strategicLevel) {
             this.tooltip = tooltip;
         }
-//        this.tooltip = tooltip;
+        this.tooltip = tooltip;
         return this;
     }
 
@@ -773,8 +773,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null) {
+        if (squad == null && isOur()) {
             NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
+            A.printStackTrace("Should not be here");
         }
 
         return squad;
@@ -1147,7 +1148,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isStopped() {
-        return u.getLastCommand() == null;
+        return u != null && u.getLastCommand() != null && u.getLastCommand().getType() == UnitCommandType.Stop;
     }
 
     public boolean isStuck() {

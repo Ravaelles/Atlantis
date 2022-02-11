@@ -12,7 +12,6 @@ import atlantis.units.select.Select;
 public class OnUnitDestroyed {
 
     public static void update(AUnit unit) {
-        ASquadManager.removeUnitFromSquads(unit);
 //        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 //        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.name());
 
@@ -43,6 +42,8 @@ public class OnUnitDestroyed {
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();
         }
+
+        ASquadManager.removeUnitFromSquads(unit);
     }
 
 }

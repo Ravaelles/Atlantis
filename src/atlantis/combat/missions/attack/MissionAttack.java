@@ -1,5 +1,6 @@
 package atlantis.combat.missions.attack;
 
+import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
@@ -40,7 +41,7 @@ public class MissionAttack extends Mission {
 
         // Focus point is well known
         if (focusPoint != null) {
-            unit.setTooltipTactical("#MA:Advance");
+            unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
             return AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint);
         }
 

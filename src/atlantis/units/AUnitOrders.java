@@ -23,35 +23,44 @@ public interface AUnitOrders {
     // =========================================================
     
     default boolean attackUnit(AUnit target) {
-        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(
-                    "@ @" + A.now() + " ATTACK  / " +
-                            "unit#" + unit().id() + " // " +
-                            "cooldown " + unit().cooldownRemaining()+ " // " +
-                            "attackFrame " + unit()._lastAttackFrame + " // " +
-                            "StartingAttack " + unit()._lastStartedAttack + " // " +
-                            unit().tooltip()
-            );
-        }
+//        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+//            System.out.println(
+//                    "@ @" + A.now() + " ATTACK  / " +
+//                            "unit#" + unit().id() + " // " +
+//                            "cooldown " + unit().cooldownRemaining()+ " // " +
+//                            "attackFrame " + unit()._lastAttackFrame + " // " +
+//                            "StartingAttack " + unit()._lastStartedAttack + " // " +
+//                            unit().tooltip()
+//            );
+//        }
 
         if (target == null) {
             System.err.println("Null attack unit target for unit " + this);
             return false;
         }
 
+        if (!target.hasPosition()) {
+            System.err.println("Target (" + target + ") has no position " + this);
+            return false;
+        }
+
+        if (!target.isAlive()) {
+            System.err.println("Dead target (" + target + ") for " + this);
+            return false;
+        }
+
+//        System.out.println("                  ------> ATTACK #" + target);
 
         // Do NOT issue double orders
         if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
             unit().setTooltipTactical("Attack");
-//            System.out.println("         ** DOUBLE ORDER");
             return true;
         }
 
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-//            System.out.println("                  ------> ATTACK #" + target.getID());
+//            System.out.println("                  ------> ATTACK #" + target);
 //        }
 
-//        unit().addLog("Target-" + target.idWithHash());
         unit().setTooltipTactical("ATTACK");
         unit().setAction(Actions.ATTACK_UNIT);
         return u().attack(target.u());

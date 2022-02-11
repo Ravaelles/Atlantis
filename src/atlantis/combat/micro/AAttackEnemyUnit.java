@@ -41,6 +41,13 @@ public class AAttackEnemyUnit {
         return defineEnemyToAttackFor(unit) != null;
     }
 
+    public static String canAttackEnemiesNowString(AUnit unit) {
+        return "(" + (AAttackEnemyUnit.canAttackEnemiesNow(unit)
+            ? "v"
+            : "DONT-" + AAttackEnemyUnit.reasonNotToAttack)
+            + ")";
+    }
+
     // =========================================================
 
     private static AUnit defineEnemyToAttackFor(AUnit unit) {
