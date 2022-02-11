@@ -91,11 +91,11 @@ public class AMap {
             position = unit.translateByPixels(dx, dy).makeValidFarFromBounds();
             if (
                     position.isWalkable()
-                            && !position.isVisible()
+                            && !position.isPositionVisible()
                             && unit.hasPathTo(position)
                             && unit.position().groundDistanceTo(position) <= 100
             ) {
-                return position;
+                return getMostWalkablePositionNear(position, 4);
             }
         }
         return null;
@@ -119,7 +119,7 @@ public class AMap {
                             && startPoint.position().hasPathTo(position)
                             && startPoint.position().groundDistanceTo(position) <= 100
             ) {
-                return getMostWalkablePositionNear(position, 2);
+                return getMostWalkablePositionNear(position, 4);
             }
         }
         return null;

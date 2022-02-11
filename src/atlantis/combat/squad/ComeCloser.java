@@ -1,6 +1,5 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.missions.AFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -142,13 +141,13 @@ public class ComeCloser extends ASquadCohesionManager {
 
     // =========================================================
 
-    private static boolean isTooFarFromSquadCenter(AUnit unit) {
+    public static boolean isTooFarFromSquadCenter(AUnit unit) {
         if (unit.squad() == null) {
             return false;
         }
 
         APosition center = unit.squad().center();
-        double maxDistToSquadCenter = preferredDistToSquadCenter(unit.squadSize());
+        double maxDistToSquadCenter = SquadCohesionAssurance.preferredDistToSquadCenter(unit.squad());
 
         if (unit.distTo(center) > maxDistToSquadCenter) {
             AUnit nearestFriend = unit.friendsNear().nearestTo(unit);

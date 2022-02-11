@@ -123,7 +123,7 @@ public interface HasPosition {
         return Atlantis.game().isExplored(position().toTilePosition());
     }
 
-    default boolean isVisible() {
+    default boolean isPositionVisible() {
         return Atlantis.game().isVisible(position().toTilePosition());
     }
 
@@ -133,6 +133,10 @@ public interface HasPosition {
 
     default boolean isConnected() {
         return Atlantis.game().isVisible(position().toTilePosition());
+    }
+
+    default boolean hasPosition() {
+        return position() != null;
     }
 
     // =========================================================

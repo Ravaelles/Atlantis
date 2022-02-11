@@ -39,8 +39,10 @@ public interface AUnitOrders {
             return false;
         }
 
+
         // Do NOT issue double orders
         if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
+            unit().setTooltipTactical("Attack");
 //            System.out.println("         ** DOUBLE ORDER");
             return true;
         }
@@ -50,6 +52,7 @@ public interface AUnitOrders {
 //        }
 
 //        unit().addLog("Target-" + target.idWithHash());
+        unit().setTooltipTactical("ATTACK");
         unit().setAction(Actions.ATTACK_UNIT);
         return u().attack(target.u());
     }

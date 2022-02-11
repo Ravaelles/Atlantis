@@ -45,7 +45,7 @@ public class Selection {
      * Selects only units of given type(s).
      */
     public Selection ofType(AUnitType... types) {
-        return clone((unit -> !typeMatches(unit, types)));
+        return cloneByRemovingIf((unit -> !typeMatches(unit, types)));
     }
 
     /**
@@ -76,8 +76,7 @@ public class Selection {
                 addToCachePath("inRadius:" + maxDist + ":" + unit.id()),
                 0,
                 () -> {
-//                    data.removeIf(u -> u.distTo(unit) > maxDist);
-                    return clone((u -> u.distTo(unit) > maxDist));
+                    return cloneByRemovingIf((u -> u.distTo(unit) > maxDist));
                 }
         );
     }
@@ -90,14 +89,15 @@ public class Selection {
                 addToCachePath("inRadius:" + maxDist + ":" + unitOrPosition),
                 0,
                 () -> {
-                    Iterator unitsIterator = data.iterator();// units.iterator();
-                    while (unitsIterator.hasNext()) {
-                        AUnit unit = (AUnit) unitsIterator.next();
-                        if (unit.distTo(unitOrPosition) > maxDist) {
-                            unitsIterator.remove();
-                        }
-                    }
-                    return clone();
+                    return cloneByRemovingIf((u -> u.distTo(unitOrPosition) > maxDist));
+//                    Iterator unitsIterator = data.iterator();// units.iterator();
+//                    while (unitsIterator.hasNext()) {
+//                        AUnit unit = (AUnit) unitsIterator.next();
+//                        if (unit.distTo(unitOrPosition) > maxDist) {
+//                            unitsIterator.remove();
+//                        }
+//                    }
+//                    return clone();
                 }
         );
     }
@@ -139,21 +139,21 @@ public class Selection {
      * Selects only those units which are VISIBLE ON MAP (not behind fog of war).
      */
     public Selection visible() {
-        return clone((unit -> !unit.isVisibleOnMap()));
+        return cloneByRemovingIf((unit -> !unit.isVisibleUnitOnMap()));
     }
 
     /**
      * Selects only those units which are visible and not cloaked.
      */
     public Selection effVisible() {
-        return clone((unit -> !unit.isDetected() && unit.effCloaked()));
+        return cloneByRemovingIf((unit -> !unit.isDetected() && unit.effCloaked()));
     }
 
     /**
      * Selects only those units which are hidden, cloaked / burrowed. Not possible to be attacked.
      */
     public Selection effCloaked() {
-        return clone((unit -> !unit.effCloaked()));
+        return cloneByRemovingIf((unit -> !unit.effCloaked()));
     }
 
     public Selection detectors() {
@@ -169,7 +169,7 @@ public class Selection {
     }
 
     public Selection tanksSieged() {
-        return clone((unit -> !unit.is(AUnitType.Terran_Siege_Tank_Siege_Mode)));
+        return cloneByRemovingIf((unit -> !unit.is(AUnitType.Terran_Siege_Tank_Siege_Mode)));
     }
 
     public Selection tanks() {
@@ -181,59 +181,59 @@ public class Selection {
     }
 
     public Selection groundUnits() {
-        return clone((unit -> !unit.isGroundUnit()));
+        return cloneByRemovingIf((unit -> !unit.isGroundUnit()));
     }
 
     public Selection nonBuildings() {
-        return clone((unit -> unit.isBuilding()));
+        return cloneByRemovingIf((unit -> unit.isBuilding()));
     }
 
     /**
      * Selects units that are gathering minerals.
      */
     public Selection gatheringMinerals(boolean onlyNotCarryingMinerals) {
-        return clone((unit -> !unit.isGatheringMinerals() || (onlyNotCarryingMinerals && unit.isCarryingMinerals())));
+        return cloneByRemovingIf((unit -> !unit.isGatheringMinerals() || (onlyNotCarryingMinerals && unit.isCarryingMinerals())));
     }
 
     public Selection notGathering() {
-        return clone((unit -> unit.isGatheringMinerals() || unit.isGatheringGas()));
+        return cloneByRemovingIf((unit -> unit.isGatheringMinerals() || unit.isGatheringGas()));
     }
 
     public Selection notGatheringGas() {
-        return clone((unit -> unit.isGatheringGas()));
+        return cloneByRemovingIf((unit -> unit.isGatheringGas()));
     }
 
     /**
      * Selects units being infantry.
      */
     public Selection organic() {
-        return clone((unit -> !unit.type().isOrganic()));
+        return cloneByRemovingIf((unit -> !unit.type().isOrganic()));
     }
 
     public Selection transports(boolean excludeOverlords) {
-        return clone((unit -> !unit.type().isTransport() || (excludeOverlords && !unit.type().isTransportExcludeOverlords())));
+        return cloneByRemovingIf((unit -> !unit.type().isTransport() || (excludeOverlords && !unit.type().isTransportExcludeOverlords())));
     }
 
     /**
      * Selects bases only (including Lairs and Hives).
      */
     public Selection bases() {
-        return clone((unit -> !unit.type().isBase()));
+        return cloneByRemovingIf((unit -> !unit.type().isBase()));
     }
 
     public Selection workers() {
-        return clone((unit -> !unit.isWorker()));
+        return cloneByRemovingIf((unit -> !unit.isWorker()));
     }
 
     public Selection air() {
-        return clone((unit -> !unit.isAir()));
+        return cloneByRemovingIf((unit -> !unit.isAir()));
     }
 
     /**
      * Selects melee units that is units which have attack range at most 1 tile.
      */
     public Selection melee() {
-        return clone((unit -> !unit.isMelee()));
+        return cloneByRemovingIf((unit -> !unit.isMelee()));
 //        return clone(unit -> !unit.isMelee());
     }
 
@@ -241,33 +241,33 @@ public class Selection {
      * Selects only units that do not currently have max hit points.
      */
     public Selection ranged() {
-        return clone(unit -> !unit.isRanged());
+        return cloneByRemovingIf(unit -> !unit.isRanged());
     }
 
     public Selection wounded() {
-        return clone((unit -> !unit.isWounded()));
+        return cloneByRemovingIf((unit -> !unit.isWounded()));
     }
 
     public Selection criticallyWounded() {
-        return clone((unit -> unit.hp() >= 21));
+        return cloneByRemovingIf((unit -> unit.hp() >= 21));
     }
 
     public Selection terranInfantryWithoutMedics() {
-        return clone((unit -> !unit.isTerranInfantryWithoutMedics()));
+        return cloneByRemovingIf((unit -> !unit.isTerranInfantryWithoutMedics()));
     }
 
     /**
      * Selects only buildings.
      */
     public Selection buildings() {
-        return clone((unit -> !unit.type().isBuilding() && !unit.type().isAddon()));
+        return cloneByRemovingIf((unit -> !unit.type().isBuilding() && !unit.type().isAddon()));
     }
 
     /**
      * Fogged units may have no position if e.g. unit moved and we don't know where it is.
      */
     public Selection havingPosition() {
-        return clone((unit -> unit.position() != null));
+        return cloneByRemovingIf(u -> !u.hasPosition());
     }
 
     public int totalHp() {
@@ -277,18 +277,18 @@ public class Selection {
     }
 
     public Selection combatUnits() {
-        return clone((unit -> !unit.isCompleted() || !unit.type().isCombatUnit()));
+        return cloneByRemovingIf((unit -> !unit.isCompleted() || !unit.type().isCombatUnit()));
     }
 
     /**
      * Selects military buildings like Photon Cannon, Bunker, Spore Colony, Sunken Colony
      */
     public Selection combatBuildings(boolean includeCreepColonies) {
-        return clone((unit -> includeCreepColonies ? !unit.type().isCombatBuildingOrCreepColony() : !unit.type().isCombatBuilding()));
+        return cloneByRemovingIf((unit -> includeCreepColonies ? !unit.type().isCombatBuildingOrCreepColony() : !unit.type().isCombatBuilding()));
     }
 
     public Selection onlyCompleted() {
-        return clone((unit -> !unit.isCompleted()));
+        return cloneByRemovingIf((unit -> !unit.isCompleted()));
     }
 
     /**
@@ -297,78 +297,82 @@ public class Selection {
      * - not 100% healthy<br />
      */
     public Selection repairable(boolean checkIfWounded) {
-        return clone((unit -> !unit.isCompleted() || !unit.type().isMechanical() || (checkIfWounded && !unit.isWounded())));
+        return cloneByRemovingIf((unit -> !unit.isCompleted() || !unit.type().isMechanical() || (checkIfWounded && !unit.isWounded())));
     }
 
     public Selection burrowed() {
-        return clone((unit -> !unit.isBurrowed()));
+        return cloneByRemovingIf((unit -> !unit.isBurrowed()));
     }
 
     public Selection loaded() {
-        return clone((unit -> !unit.isLoaded()));
+        return cloneByRemovingIf((unit -> !unit.isLoaded()));
     }
 
     public Selection unloaded() {
-        return clone((AUnit::isLoaded));
+        return cloneByRemovingIf((AUnit::isLoaded));
     }
 
     /**
      * Selects these units (makes sense only for workers) who aren't assigned to repair any other unit.
      */
     public Selection notRepairing() {
-        return clone((unit -> unit.isRepairing() || ARepairAssignments.isRepairerOfAnyKind(unit)));
+        return cloneByRemovingIf((unit -> unit.isRepairing() || ARepairAssignments.isRepairerOfAnyKind(unit)));
     }
 
     /**
      * Selects these transport/bunker units which have still enough room inside.
      */
     public Selection havingSpaceFree(int spaceRequired) {
-        return clone((unit -> unit.spaceRemaining() < spaceRequired));
+        return cloneByRemovingIf((unit -> unit.spaceRemaining() < spaceRequired));
     }
 
     public Selection havingEnergy(int minEnergy) {
-        return clone((unit -> !unit.energy(minEnergy)));
+        return cloneByRemovingIf((unit -> !unit.energy(minEnergy)));
     }
 
     public Selection notHavingHp(int hp) {
-        return clone((unit -> unit.hpMoreThan(hp)));
+        return cloneByRemovingIf((unit -> unit.hpMoreThan(hp)));
     }
 
     public Selection thatCanMove() {
-        return clone((unit -> !unit.isStasised() && !unit.isLockedDown()));
+        return cloneByRemovingIf((unit -> !unit.isStasised() && !unit.isLockedDown()));
     }
 
     /**
      * Selects these units (makes sense only for workers) who aren't assigned to construct anything.
      */
     public Selection notConstructing() {
-        return clone((unit -> unit.isConstructing() || unit.isMorphing() || unit.isBuilder()));
+        return cloneByRemovingIf((unit -> unit.isConstructing() || unit.isMorphing() || unit.isBuilder()));
     }
 
     public Selection free() {
-        return clone((u -> u.isBusy() || u.isLifted()));
+        return cloneByRemovingIf((u -> u.isBusy() || u.isLifted()));
     }
 
     /**
      * Selects these units which are not scouts.
      */
     public Selection notScout() {
-        return clone((AUnit::isScout));
+        return cloneByRemovingIf((AUnit::isScout));
     }
 
     /**
      * Selects these units which are not carrynig nor minerals, nor gas.
      */
     public Selection notCarrying() {
-        return clone((unit -> unit.isCarryingGas() || unit.isCarryingMinerals()));
+        return cloneByRemovingIf((unit -> unit.isCarryingGas() || unit.isCarryingMinerals()));
     }
 
     public Selection excludeTypes(AUnitType ...types) {
-        return clone((unit -> unit.is(types)));
+        return cloneByRemovingIf((unit -> unit.is(types)));
+    }
+
+    public Selection excludeMedics() {
+        return cloneByRemovingIf(AUnit::isMedic);
     }
 
     public Selection hasPathFrom(HasPosition fromPosition) {
-        return clone((unit -> !unit.hasPathTo(fromPosition)));
+        return cloneByRemovingIf((unit -> !unit.hasPathTo(fromPosition)));
     }
 
 //    public Selection canShootAt(AUnit targetUnit) {
@@ -509,7 +513,7 @@ public class Selection {
 
         sortByHealth();
 
-        return (AUnit) data.get(0);
+        return data.get(0);
     }
 
     // =========================================================
@@ -771,11 +775,21 @@ public class Selection {
         return clone();
     }
 
+    public Selection sortByIdAsc() {
+        if (data.isEmpty()) {
+            return new Selection(new ArrayList<>(), "");
+        }
+
+        data.sort(Comparator.comparingInt(AUnit::id));
+
+        return clone();
+    }
+
     public Selection clone() {
         return new Selection(this.data, currentCachePath);
     }
 
-    public Selection clone(Predicate<AUnit> newDataPredicate) {
+    public Selection cloneByRemovingIf(Predicate<AUnit> newDataPredicate) {
         List<AUnit> newData = new ArrayList<>(data);
         newData.removeIf(newDataPredicate);
         return new Selection(newData, currentCachePath);
@@ -790,15 +804,16 @@ public class Selection {
         return clone();
     }
 
-    public void print() {
-        print(null);
+    public Selection print() {
+        return print(null);
     }
 
-    public void print(String message) {
+    public Selection print(String message) {
         System.out.println("=== " + (message != null ? message : currentCachePath) + " (" + size() + ") ===");
         for (AUnit unit : data) {
             System.out.println(unit.toString());
         }
         System.out.println();
+        return this;
     }
 }

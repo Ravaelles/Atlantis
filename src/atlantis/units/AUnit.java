@@ -1048,12 +1048,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * RETURNS TRUE IF UNIT IS VISIBLE ON MAP (NOT THAT UNIT IS NOT CLOAKED!).
      */
-    public boolean isVisibleOnMap() {
-        return u.isVisible();
+    public boolean isVisibleUnitOnMap() {
+        return u != null && u.isVisible();
     }
 
     public boolean effVisible() {
-        return isVisibleOnMap() && (isDetected() || !effCloaked());
+        return isVisibleUnitOnMap() && (isDetected() || !effCloaked());
     }
 
     /**
@@ -1470,7 +1470,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        }
 
         if (time == null) {
-            return A.now();
+            return 999;
         }
         return A.now() - time;
     }
@@ -1986,8 +1986,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             () -> {
                 if (unit().isOur()) {
 //                        return Select.enemyRealUnits(true, true, true)
-                    return EnemyUnits
-                        .visibleAndFogged()
+
+                    return EnemyUnits.visibleAndFogged()
                         .inRadius(15, this)
                         .exclude(this);
                 }
@@ -2260,5 +2260,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             5,
             () -> squad.center().distTo(this)
         );
+    }
+
+    public boolean hasSquad() {
+        return squad != null;
     }
 }

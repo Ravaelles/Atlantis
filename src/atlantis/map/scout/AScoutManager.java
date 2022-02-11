@@ -116,7 +116,7 @@ public class AScoutManager {
     // =========================================================
 
     private static boolean handleScoutFreeBases(AUnit scout) {
-        if (nextPositionToScout != null && !nextPositionToScout.isVisible()) {
+        if (nextPositionToScout != null && !nextPositionToScout.isPositionVisible()) {
             return scout.move(nextPositionToScout, Actions.MOVE_SCOUT, "ScoutBases", true);
         }
 

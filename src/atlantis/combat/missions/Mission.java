@@ -90,7 +90,7 @@ public abstract class Mission {
         }
 
         // Go to random INVISIBLE
-        if (temporaryTarget == null || temporaryTarget.isVisible()) {
+        if (temporaryTarget == null || temporaryTarget.isPositionVisible()) {
             temporaryTarget = AMap.randomInvisiblePosition(unit);
 //            if (temporaryTarget != null) {
 //                System.out.println("Go to invisible " + temporaryTarget);

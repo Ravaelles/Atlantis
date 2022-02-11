@@ -13,6 +13,8 @@ import tests.unit.FakeUnit;
 
 public class PositionUtil {
 
+    public static final int DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION = 989;
+
     /**
      * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
      * of build tiles instead of pixels is preferable, because it's easier to imagine distances if one knows
@@ -37,9 +39,15 @@ public class PositionUtil {
         }
         else if (object1 instanceof FoggedUnit) {
             fromPosition = ((FoggedUnit) object1).position();
+            if (fromPosition == null) {
+                return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
+            }
         }
         else if (object1 instanceof FakeFoggedUnit) {
             fromPosition = ((FakeFoggedUnit) object1).position();
+            if (fromPosition == null) {
+                return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
+            }
         }
         else if (object1 instanceof AUnit) {
             fromUnit = ((AUnit) object1).u();

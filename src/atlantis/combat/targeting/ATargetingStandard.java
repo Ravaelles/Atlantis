@@ -4,8 +4,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
-import static atlantis.units.AUnitType.Terran_Medic;
-
 public class ATargetingStandard extends ATargeting {
 
     public static AUnit target(AUnit unit) {
@@ -46,17 +44,7 @@ public class ATargetingStandard extends ATargeting {
 
         target = enemyUnits.clone()
                 .inShootRangeOf(unit)
-                .excludeTypes(Terran_Medic)
-                .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
-
-        // =========================================================
-        // Target real units
-
-        target = enemyUnits.clone()
-                .inShootRangeOf(unit)
+                .excludeMedics()
                 .nearestTo(unit);
         if (target != null) {
             return target;

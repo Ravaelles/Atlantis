@@ -1,5 +1,6 @@
 package atlantis.information.enemy;
 
+import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.map.position.APosition;
@@ -7,7 +8,7 @@ import atlantis.units.*;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
-import tests.unit.FakeUnit;
+import bwapi.Color;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,12 +24,17 @@ public class EnemyUnits {
     public static void updateFoggedUnits() {
 //        System.out.println("--- UPDATE at " + A.now());
         for (AUnit enemy : Select.enemy().list()) {
-//            System.out.println("update " + enemy);
-            updateFoggedUnitTypeAndPosition(enemy);
+//            System.out.println("update fogged from real = " + enemy);
+            updateUnitTypeAndPosition(enemy);
+        }
+
+        for (AbstractFoggedUnit foggedUnit : enemyUnitsDiscovered.values()) {
+//            System.out.println("update fogged = " + foggedUnit);
+            updatedFogged(foggedUnit);
         }
     }
 
-    public static boolean updateFoggedUnitTypeAndPosition(AUnit enemy) {
+    public static boolean updateUnitTypeAndPosition(AUnit enemy) {
         if (enemy.type().isGasBuildingOrGeyser()) {
             return true;
         }
@@ -38,6 +44,29 @@ public class EnemyUnits {
             foggedUnit.update(enemy);
         }
         return false;
+    }
+
+    /**
+     * Check if the position of fogged unit is visible and there is no unit there.
+     * If so, change it, because it means we don't know where it is.
+     */
+    private static void updatedFogged(AbstractFoggedUnit foggedUnit) {
+        AUnit aUnit = foggedUnit.innerAUnit();
+//        System.out.println(aUnit + " // visible: " + (aUnit != null ? aUnit.isVisibleUnitOnMap() : "---"));
+        if (aUnit == null || !aUnit.isVisibleUnitOnMap()) {
+//            if (foggedUnit.hasPosition()) {
+//                APainter.paintCircleFilled(
+//                    foggedUnit,
+//                    8,
+//                    foggedUnit.position().isPositionVisible() ? Color.Green : Color.Red
+//                );
+//            }
+
+            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible()) {
+//                System.out.println(">> Fogged unit is no longer visible, remove position " + foggedUnit);
+                foggedUnit.removeKnownPosition();
+            }
+        }
     }
 
     // =========================================================
@@ -78,15 +107,13 @@ public class EnemyUnits {
 
     public static Selection visibleAndFogged() {
         return Select.from(unitsDiscovered(), "")
+//            .print("visibleAndFogged")
             .add(Select.enemy())
-            .removeDuplicates();
-//        return (Selection) cache.get(
-//            "visibleAndFogged",
-//            0,
-//            () -> Select.from(unitsDiscovered(), "")
-//                .add(Select.enemy())
-//                .removeDuplicates()
-//        );
+//            .print("now with enemy")
+            .removeDuplicates()
+//            .print("now after removal")
+            .havingPosition();
+//            .print("and having position?");
     }
 
     // =========================================================

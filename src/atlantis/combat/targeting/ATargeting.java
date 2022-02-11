@@ -1,10 +1,13 @@
 package atlantis.combat.targeting;
 
 import atlantis.game.A;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+
+import static atlantis.combat.micro.AAttackEnemyUnit.reasonNotToAttack;
 
 public class ATargeting {
 
@@ -27,6 +30,10 @@ public class ATargeting {
 //        if (enemy != null) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
 //        }
+
+        if (enemy == null) {
+            reasonNotToAttack = "NoTarget";
+        }
 
         return enemy;
     }
@@ -56,7 +63,7 @@ public class ATargeting {
     private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
 
         // Most wounded enemy IN RANGE
-        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, unit.isRanged() ? 1.2 : 0);
+        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, unit.isRanged() ? 1.3 : 0);
         if (enemy != null) {
             unit.addLog("AttackClose");
             return enemy;
@@ -73,34 +80,40 @@ public class ATargeting {
         // Couldn't find enemy of given type in/near weapon range. Change target
 
         // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
-        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 1.2).mostWounded();
+        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 1.3).mostWounded();
         if (enemy != null) {
-            unit.addLog("AttackMostWounded");
+//            unit.addLog("AttackMostWounded");
             return enemy;
         }
 
-//        System.err.println("Man, how comes we're here? " + unit + " // " + unit.enemiesNear().count());
+//        int nearbyEnemiesCount = unit.enemiesNear().inRadius(4, unit).count();
+//        System.err.println("Man, how comes we're here? " + unit + " // " + nearbyEnemiesCount);
+//        if (nearbyEnemiesCount > 0) {
+//            A.printStackTrace("Lets debug this");
+//        }
 
         double maxDistToEnemy = unit.mission() != null && unit.isMissionDefend() ? 6 : 999;
 
         return Select.enemyRealUnits().canBeAttackedBy(unit, maxDistToEnemy).nearestTo(unit);
     }
 
-    private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType enemyType, AUnit ourUnit) {
-        Selection targets = Select.enemies(enemyType)
-                .effVisible()
-                .inShootRangeOf(ourUnit);
-
-        AUnit mostWounded = targets.clone().mostWounded();
-        if (mostWounded != null && mostWounded.isWounded()) {
-            return mostWounded;
-        }
-
-        return targets.clone().nearestTo(ourUnit);
-    }
+//    private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType type, AUnit ourUnit) {
+//        Selection targets = ourUnit.enemiesNear()
+//                .ofType(type)
+//                .effVisible()
+//                .inShootRangeOf(ourUnit);
+//
+//        AUnit mostWounded = targets.clone().mostWounded();
+//        if (mostWounded != null && mostWounded.isWounded()) {
+//            return mostWounded;
+//        }
+//
+//        return targets.clone().nearestTo(ourUnit);
+//    }
 
     private static AUnit selectWeakestEnemyOfTypeWithWeaponRange(AUnitType type, AUnit ourUnit, double extraRange) {
-        Selection targets = Select.enemies(type)
+        Selection targets = ourUnit.enemiesNear()
+                .ofType(type)
                 .canBeAttackedBy(ourUnit, extraRange)
                 .effVisible();
 //                .hasPathFrom(ourUnit);
@@ -110,62 +123,37 @@ public class ATargeting {
             return mostWounded;
         }
 
-        return targets.clone().nearestTo(ourUnit);
+        HasPosition relativeTo = ourUnit.squadCenter() != null ? ourUnit.squadCenter() : ourUnit;
+        return targets.clone().nearestTo(relativeTo);
     }
 
     // =========================================================
 
     private static AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
-//        if (maxDistFromEnemy > 30) {
-//            maxDistFromEnemy = 30;
-//        }
-
-//        Select.enemyRealUnits(true)
-//                .effVisible()
-//                .inRadius(maxDistFromEnemy, unit)
-//                .canBeAttackedBy(unit, 8)
-//                .print();
-
-//        Selection targets = Select.enemyRealUnits(true)
-//                .effVisible()
-//                .inRadius(maxDistFromEnemy, unit)
-//                .canBeAttackedBy(unit, 15);
 
         // Quit early if no target at all
         if (
-                Select.enemyRealUnits(true)
+            unit.enemiesNear()
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, 15)
                 .count() == 0
         ) {
-//            if (debug(unit)) {
-//                System.out.println("PreA quit");
-//                System.out.println(Select.enemyRealUnits(true).count());
-//                System.out.println(Select.enemyRealUnits(true)
-//                        .effVisible().count());
-//                System.out.println(Select.enemyRealUnits(true)
-//                        .effVisible()
-//                        .inRadius(maxDistFromEnemy, unit).count());
-//                System.out.println(Select.enemyRealUnits(true)
-//                        .effVisible()
-//                        .inRadius(maxDistFromEnemy, unit)
-//                        .canBeAttackedBy(unit, 8).count());
-//            }
             return null;
         }
 
         // =========================================================
 
         AUnit target;
-        enemyBuildings = Select.enemy()
+        enemyBuildings = unit.enemiesNear()
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 13);
-        enemyUnits = Select.enemyRealUnits(false)
+                .canBeAttackedBy(unit, 14);
+        enemyUnits = unit.enemiesNear()
+                .nonBuildings()
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 13);
+                .canBeAttackedBy(unit, 14);
 
 //        enemyBuildings.print();
 //        enemyUnits.print();

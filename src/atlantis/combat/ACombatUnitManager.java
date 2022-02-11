@@ -18,15 +18,14 @@ import atlantis.units.select.Select;
 
 public class ACombatUnitManager {
 
-    private static boolean debug = false;
-//    private static boolean debug = true;
-
     public static boolean update(AUnit unit) {
+        //if (true)System.out.println("A0 " + unit.nameWithId() + " at " + A.now());
+
         if (preActions(unit)) {
             return true;
         }
 
-        if (debug) System.out.println("A " + unit.nameWithId());
+        //if (true)System.out.println("A " + unit.nameWithId() + " at " + A.now());
 
         // =========================================================
         // === SPECIAL units =======================================
@@ -38,7 +37,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (debug) System.out.println("B " + unit.nameWithId());
+        //if (true)System.out.println("B " + unit.nameWithId());
 
         // =========================================================
         // === TOP priority ========================================
@@ -48,7 +47,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (debug) System.out.println("C " + unit.nameWithId());
+        //if (true)System.out.println("C " + unit.nameWithId());
 
         // =========================================================
         // === SPECIAL units =======================================
@@ -60,7 +59,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (debug) System.out.println("D " + unit.nameWithId());
+        //if (true)System.out.println("D " + unit.nameWithId());
 
         // =========================================================
         // === MEDIUM priority - TACTICAL level ====================
@@ -70,7 +69,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (debug) System.out.println("E " + unit.nameWithId());
+        //if (true)System.out.println("E " + unit.nameWithId());
 
         // =========================================================
         // === LOW priority - MISSION level =======================

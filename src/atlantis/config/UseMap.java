@@ -44,20 +44,23 @@ public class UseMap {
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
 //        if (true) return "ums/rav/M_v_Zealots.scx";
-//        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
+//        if (true) return "ums/rav/Vultures_v_Marines.scm";
+//        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimap2s/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
-//        if (true) return "ums/rav/M&M_v_M&M.scx";
+        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
+//        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
+//        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
 
         // === Gosu bots - advanced single player cheating bots ====
 
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 2x Protoss players, again Zealot rush

@@ -16,7 +16,8 @@ public class ArmyStrength {
     }
 
     public static boolean weAreStronger() {
-        return ourArmyRelativeStrength() >= 120;
+        return ourArmyRelativeStrength() >= 96;
+//        return ourArmyRelativeStrength() >= 65;
     }
 
     public static boolean weAreMuchStronger() {

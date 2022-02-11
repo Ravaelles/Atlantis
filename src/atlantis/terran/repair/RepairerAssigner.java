@@ -2,6 +2,7 @@ package atlantis.terran.repair;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
+import atlantis.information.strategy.GamePhase;
 import atlantis.terran.TerranFlyingBuildingManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Have;
@@ -44,7 +45,8 @@ public class RepairerAssigner {
                 || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 5))
                 || (unit.isBuilding() && TerranFlyingBuildingManager.isFlyingBuilding(unit) && unit.lastUnderAttackLessThanAgo(30 * 15))
                 || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercent(40))
-                || ARepairerManager.itIsForbiddenToRepairThisUnitNow(unit);
+                || ARepairerManager.itIsForbiddenToRepairThisUnitNow(unit)
+                || GamePhase.isEarlyGame() && (unit.isBuilding() && !unit.isCombatBuilding() && unit.enemiesNear().atLeast(2));
     }
 
     private static boolean tooManyRepairs(AUnit unit) {

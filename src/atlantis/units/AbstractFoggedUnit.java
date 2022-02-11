@@ -76,17 +76,21 @@ public class AbstractFoggedUnit extends AUnit {
     public void update(AUnit unit) {
         updatePosition(unit);
         updateType(unit);
+        aUnit = unit;
         _isCompleted = unit.isCompleted();
         _hp = unit.hp();
         _energy = unit.energy();
     }
 
     public void updatePosition(AUnit unit) {
-        if (unit.x() > 0 && unit.y() > 0) {
+//        if (unit.x() > 0 && unit.y() > 0) {
+//        System.out.println("unit = " + unit);
+        if (unit.hasPosition()) {
             _position = new APosition(unit.x(), unit.y());
+//            System.out.println("_position = " + _position);
             cacheInt.set("lastPositionUpdated", -1, A.now());
         }
-        
+
 //        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
 //            _position = null;
 //        }
@@ -106,8 +110,13 @@ public class AbstractFoggedUnit extends AUnit {
         cacheInt.set("lastPositionUpdated", -1, A.now());
     }
 
-    public boolean hasKnownPosition() {
+    @Override
+    public boolean hasPosition() {
         return _position != null;
+    }
+
+    public void removeKnownPosition() {
+        _position = null;
     }
 
     public int lastPositionUpdated() {
@@ -116,7 +125,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     public int lastPositionUpdatedAgo() {
         if (cacheInt.get("lastPositionUpdated") == null) {
-            return -1;
+            return -666;
         }
 
         return A.ago(cacheInt.get("lastPositionUpdated"));
@@ -124,6 +133,10 @@ public class AbstractFoggedUnit extends AUnit {
 
     public boolean isAccessible() {
         return !AUnitType.Unknown.equals(aUnit.type());
+    }
+
+    public AUnit innerAUnit() {
+        return aUnit;
     }
 
     // =========================================================

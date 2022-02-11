@@ -4,6 +4,7 @@ import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.combat.targeting.ATargeting;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -40,10 +41,20 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     private static boolean moveToFocusPoint(
             AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
-        if (unit.isMoving() && unit.lastActionMoreThanAgo(15)) {
-            unit.holdPosition("TooFast", false);
-            return true;
+        if (focusPoint == null) {
+            return false;
         }
+
+        if (unit.enemiesNear().notEmpty()) {
+            return false;
+        }
+
+        // =========================================================
+
+//        if (unit.isMoving() && unit.lastActionMoreThanAgo(15, Actions.MOVE_ENGAGE)) {
+//            unit.stop("TooFast", false);
+//            return true;
+//        }
 
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);
@@ -94,7 +105,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 //                return true;
 //            }
 
-            return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")", true);
+//            return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")", true);
         }
 
 //        System.out.println("Target = " + ATargeting.defineBestEnemyToAttackFor(unit, 40) + " // " +
@@ -108,9 +119,19 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 //            }
 
             if (!unit.isMoving()) {
-                unit.move(focusPoint, Actions.MOVE_ENGAGE, "Adv:Forward", true);
+//                String canAttack = A.trueFalse(AAttackEnemyUnit.canAttackEnemiesNow(unit));
+                String canAttack = "(" + (AAttackEnemyUnit.canAttackEnemiesNow(unit)
+                    ? "v"
+                    : "DONT-" + AAttackEnemyUnit.reasonNotToAttack)
+                    + ")";
+//                if (AAttackEnemyUnit.reasonNotToAttack == null) {
+//                    canAttack = "";
+//                }
+
+                unit.move(focusPoint, Actions.MOVE_ENGAGE, "Advance" + canAttack, true);
             }
-            return true;
+            return false;
+//            return true;
         }
 
         if (!unit.hasTooltip()) {

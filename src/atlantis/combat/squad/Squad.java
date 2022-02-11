@@ -25,6 +25,7 @@ public abstract class Squad extends Units {
     private static int firstFreeID = 1;
     private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Double> cacheDouble = new Cache<>();
+    private static Cache<Integer> cacheInteger = new Cache<>();
 
     /**
      * Auxilary name for the squad e.g. "Alpha", "Bravo", "Delta".
@@ -306,6 +307,25 @@ public abstract class Squad extends Units {
 
                     return focusPoint.groundDist(center());
                 }
+        );
+    }
+
+    public int cohesionPercent() {
+        return cacheInteger.get(
+            "cohesionPercent",
+            15,
+            () -> {
+                APosition center = center();
+                if (size() <= 1 || center == null) {
+                    return 100;
+                }
+
+                int withinSquadRadius = selection()
+                    .inRadius(SquadCohesionAssurance.preferredDistToSquadCenter(this), center)
+                    .count();
+
+                return (int) (100 * withinSquadRadius / size());
+            }
         );
     }
 }

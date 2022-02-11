@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Log {
 
-    public static final int UNIT_LOG_SIZE = 3;
+    public static final int UNIT_LOG_SIZE = 4;
     public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 30;
 
     private ArrayList<LogMessage> messages = new ArrayList<>();

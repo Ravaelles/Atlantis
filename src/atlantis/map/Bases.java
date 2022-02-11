@@ -56,7 +56,7 @@ public class Bases {
 
         // For every location...
         for (ABaseLocation baseLocation : nonStartingLocations()) {
-            if (!baseLocation.position().isVisible()) {
+            if (!baseLocation.position().isPositionVisible()) {
                 return baseLocation.position();
             }
         }

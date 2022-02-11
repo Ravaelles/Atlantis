@@ -41,8 +41,8 @@ public class TerranTankWhenSieged extends TerranTank {
         }
 
         if (tooLonely(unit) && !hasJustSiegedRecently(unit)) {
-            System.out.println("LAST SIEGE = " + unit.lastActionAgo(Actions.SIEGE));
-            System.out.println("LAST UNSIEGE = " + unit.lastActionAgo(Actions.UNSIEGE));
+//            System.out.println("LAST SIEGE = " + unit.lastActionAgo(Actions.SIEGE));
+//            System.out.println("LAST UNSIEGE = " + unit.lastActionAgo(Actions.UNSIEGE));
             return wantsToUnsiege(unit, "TooLonely");
         }
 
@@ -85,7 +85,6 @@ public class TerranTankWhenSieged extends TerranTank {
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
         List<AUnit> cloaked = EnemyUnits.visibleAndFogged()
             .effCloaked()
-            .havingPosition()
             .groundUnits()
             .inRadius(11.9, tank)
             .list();

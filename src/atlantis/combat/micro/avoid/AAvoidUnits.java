@@ -144,7 +144,7 @@ public abstract class AAvoidUnits {
 
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
         return unit.enemiesNear()
-                .add(EnemyUnits.combatUnitsToBetterAvoid())
+//                .add(EnemyUnits.combatUnitsToBetterAvoid())
                 .removeDuplicates()
                 .onlyCompleted()
                 .canAttack(unit, true, true, 4.5)
