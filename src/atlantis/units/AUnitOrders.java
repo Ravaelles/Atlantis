@@ -61,6 +61,10 @@ public interface AUnitOrders {
 //            System.out.println("                  ------> ATTACK #" + target);
 //        }
 
+//        if (unit().outsideSquadRadius()) {
+//            A.printStackTrace("hmmm " + unit().distToSquadCenter() + " / " + unit().squadRadius());
+//        }
+
         unit().setTooltipTactical("ATTACK");
         unit().setAction(Actions.ATTACK_UNIT);
         return u().attack(target.u());

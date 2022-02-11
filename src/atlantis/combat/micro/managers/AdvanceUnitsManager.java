@@ -51,7 +51,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // =========================================================
 
-        if (unit.isMoving() && unit.lastActionMoreThanAgo(10, Actions.MOVE_ENGAGE)) {
+        if (unit.isMoving() && !unit.isRunning() && unit.lastActionMoreThanAgo(10, Actions.MOVE_ENGAGE)) {
 //        if (!unit.isStopped() && unit.lastActionMoreThanAgo(7, Actions.MOVE_ENGAGE)) {
             unit.stop("TooFast", false);
             return true;

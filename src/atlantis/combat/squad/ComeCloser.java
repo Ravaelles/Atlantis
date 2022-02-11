@@ -49,7 +49,7 @@ public class ComeCloser extends ASquadCohesionManager {
     private static boolean comeCloser(AUnit unit) {
         HasPosition squadCenter = unit.squadCenter();
         if (squadCenter != null) {
-            HasPosition goTo = unit.distToSquadCenter() >= 7
+            HasPosition goTo = unit.distToSquadCenter() >= unit.squadRadius()
                 ? squadCenter
                 : unit.translateTilesTowards(2, squadCenter).makeWalkable(6);
             if (goTo != null) {

@@ -5,6 +5,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.SquadCohesionAssurance;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -774,8 +775,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public Squad squad() {
         if (squad == null && isOur()) {
-            NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
-            A.printStackTrace("Should not be here");
+//            NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
+//            A.printStackTrace("Should not be here");
         }
 
         return squad;
@@ -2265,5 +2266,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean hasSquad() {
         return squad != null;
+    }
+
+    public double squadRadius() {
+        if (this.squad == null) {
+            return 988;
+        }
+        return SquadCohesionAssurance.preferredDistToSquadCenter(this.squad);
+    }
+
+    public boolean outsideSquadRadius() {
+        return (boolean) cache.get(
+            "outsideSquadRadius",
+            2,
+            () -> distToSquadCenter() > squadRadius()
+        );
     }
 }

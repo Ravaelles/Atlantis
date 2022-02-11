@@ -31,6 +31,9 @@ public class AAttackEnemyUnit {
     public static boolean handleAttackNearEnemyUnits(AUnit unit) {
         AUnit enemy = defineEnemyToAttackFor(unit);
         if (enemy == null) {
+            if (unit.isAttackingOrMovingToAttack()) {
+                unit.stop("Dont", false);
+            }
             return false;
         }
 
@@ -50,6 +53,37 @@ public class AAttackEnemyUnit {
 
     // =========================================================
 
+    private static boolean allowedToAttack(AUnit unit) {
+        if (unit.hasNoWeaponAtAll()) {
+//            reasonNotToAttack = "NoWeapon";
+            return true;
+        }
+
+        if (Count.medics() >= 2) {
+            if (unit.isTerranInfantry() && !unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
+//                if (unit.cooldownRemaining() >= 2) {
+                    reasonNotToAttack = "NoMedics";
+                    return true;
+//                }
+            }
+        }
+
+//        if (unit.outsideSquadRadius() && unit.enemiesNear().canAttack(unit, 2.3).notEmpty()) {
+        if (unit.outsideSquadRadius()) {
+            reasonNotToAttack = "Outside";
+            return true;
+        }
+
+        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80) {
+            if (unit.enemiesNear().ranged().notEmpty()) {
+                reasonNotToAttack = "Cautious";
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static AUnit defineEnemyToAttackFor(AUnit unit) {
         return cache.get(
             "defineEnemyToAttackFor",
@@ -57,7 +91,7 @@ public class AAttackEnemyUnit {
             () -> {
                 reasonNotToAttack = null;
 
-                if (shouldSkip(unit)) {
+                if (allowedToAttack(unit)) {
                     return null;
                 }
 
@@ -73,22 +107,6 @@ public class AAttackEnemyUnit {
                 return enemy;
             }
         );
-    }
-
-    private static boolean shouldSkip(AUnit unit) {
-        if (unit.hasNoWeaponAtAll()) {
-//            reasonNotToAttack = "NoWeapon";
-            return true;
-        }
-
-        if (unit.isWounded() && unit.isTerranInfantry() && !unit.medicInHealRange()) {
-            if (Count.medics() >= 2) {
-                reasonNotToAttack = "NoMedics";
-                return true;
-            }
-        }
-
-        return false;
     }
 
 //    public static boolean shouldNotAttack(AUnit unit) {

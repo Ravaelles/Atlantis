@@ -27,20 +27,20 @@ public class ARunningManager {
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
     public static double Near_UNIT_MAKE_SPACE = 0.75;
-//    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
+    //    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
     private static final double SHOW_BACK_TO_ENEMY_DIST = 3;
     public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.65;
 
     private final AUnit unit;
     private static APosition _lastPosition;
-//    private APosition runAwayFrom = null;
+    //    private APosition runAwayFrom = null;
     private APosition runTo;
 //    private Units closeEnemies;
 //    private APosition enemyMedian = null;
 
     // =========================================================
-    
+
     public ARunningManager(AUnit unit) {
         this.unit = unit;
     }
@@ -50,12 +50,21 @@ public class ARunningManager {
     public static boolean shouldStopRunning(AUnit unit) {
 //        System.out.println(unit.id() + " // " + unit.isRunning()
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
+
+        if (We.terran() && unit.isRunning() && unit.isHealthy() && unit.lastUnderAttackLessThanAgo(30)) {
+            unit.setTooltipTactical("HealthyNow");
+            return true;
+        }
+
         if (
-                unit.isRunning()
-                && unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
-                && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
-                && !unit.isUnderAttack(unit.isAir() ? 250 : 5)
-                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
+            unit.isRunning()
+                && (
+                unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
+                    && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
+                    && !unit.isUnderAttack(unit.isAir() ? 250 : 5)
+                    //                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
+                    || AAvoidUnits.shouldNotAvoidAnyUnit(unit)
+            )
         ) {
             unit.runningManager().stopRunning();
             unit.setTooltip("StopRun", false);
@@ -69,7 +78,7 @@ public class ARunningManager {
 //        return runFrom(null, -1);
 //    }
 
-//    public boolean runFrom(Object unitOrPosition, double dist) {
+    //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runAwayFrom, double dist, Action action) {
         if (runAwayFrom == null) {
             System.err.println("Null unit to run from");
@@ -160,7 +169,7 @@ public class ARunningManager {
 //    }
 
     // =========================================================
-    
+
     /**
      * Running behavior which will make unit run straight away from the enemy.
      */
@@ -187,7 +196,7 @@ public class ARunningManager {
 
 //        System.out.println("runTo = " + runTo + " // " + unit);
         if (
-                runTo != null
+            runTo != null
                 && unit.distTo(runTo) < 0.002
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
@@ -310,7 +319,7 @@ public class ARunningManager {
 //        System.out.println("unit = " + unit.position().toStringPixels() + " // " + runTo.toStringPixels() + " // " + unit.distTo(runTo));
 
         // === Ensure position is in bounds ========================================
-        
+
         int oldX = runTo.getX();
         int oldY = runTo.getY();
 
@@ -321,7 +330,7 @@ public class ARunningManager {
 //            throw new RuntimeException("aaa " + unit + " // " + unit.position() + " // " + runAwayFrom);
             return null;
         }
-        
+
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
@@ -330,7 +339,8 @@ public class ARunningManager {
 //            APainter.paintLine(unit.position(), runTo, Color.Purple);
 //            APainter.paintLine(unit.translateByPixels(-1, -1), runTo, Color.Purple);
             return runTo;
-        } else {
+        }
+        else {
 //            System.err.println("Not possible to show back");
             return null;
         }
@@ -376,7 +386,6 @@ public class ARunningManager {
 ////        AtlantisPainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
 //        return bestPosition;
 //    }
-
     private APosition findRunPositionInAnyDirection(HasPosition runAwayFrom) {
         int radius = runAnyDirectionInitialRadius(unit);
 
@@ -420,7 +429,7 @@ public class ARunningManager {
     }
 
     private int runAnyDirectionInitialRadius(AUnit unit) {
-        if (unit.isVulture()){
+        if (unit.isVulture()) {
             return 5;
         }
 
@@ -454,9 +463,9 @@ public class ARunningManager {
         }
 
         Selection friendsTooClose = Select.ourRealUnits()
-                .exclude(unit)
-                .groundUnits()
-                .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
+            .exclude(unit)
+            .groundUnits()
+            .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
 
         if (friendsTooClose.count() <= 1) {
             return false;
@@ -486,18 +495,19 @@ public class ARunningManager {
     }
 
     // =========================================================
+
     /**
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
     public boolean isPossibleAndReasonablePosition(
-            AUnit unit, APosition position
+        AUnit unit, APosition position
     ) {
 //        return isPossibleAndReasonablePosition(unit, position, true, "#", "%");
         return isPossibleAndReasonablePosition(unit, position, true, null, null);
     }
 
     public boolean isPossibleAndReasonablePosition(
-            AUnit unit, APosition position, boolean includeNearWalkability, String charForIsOk, String charForNotOk
+        AUnit unit, APosition position, boolean includeNearWalkability, String charForIsOk, String charForNotOk
     ) {
         if (unit.isAir()) {
             return true;
@@ -513,23 +523,23 @@ public class ARunningManager {
         boolean isOkay = position.isWalkable()
 //                && (
 //                    !includeNearWalkability
-                    && (
-                        position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
-                        && position.translateByPixels(walkRadius, walkRadius).isWalkable()
-                        && position.translateByPixels(walkRadius, -walkRadius).isWalkable()
-                        && position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
-                    )
+            && (
+            position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
+                && position.translateByPixels(walkRadius, walkRadius).isWalkable()
+                && position.translateByPixels(walkRadius, -walkRadius).isWalkable()
+                && position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
+        )
 //                )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
 //                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
-                && Select.all().inRadius(unit.size() * 1.7, position).exclude(unit).isEmpty()
+            && Select.all().inRadius(unit.size() * 1.7, position).exclude(unit).isEmpty()
 //                && distToNearestRegionBoundaryIsOkay(position)
-                && unit.hasPathTo(position)
-                && unit.position().groundDistanceTo(position) <= 18
+            && unit.hasPathTo(position)
+            && unit.position().groundDistanceTo(position) <= 18
 //                && Select.neutral().inRadius(1.2, position).count() == 0
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0
-                ;
+            ;
 
         if (charForIsOk != null) {
             APainter.paintTextCentered(position, isOkay ? charForIsOk : charForNotOk, isOkay ? Color.Green : Color.Red);

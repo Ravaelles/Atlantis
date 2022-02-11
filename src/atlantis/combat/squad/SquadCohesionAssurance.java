@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -15,8 +16,9 @@ public class SquadCohesionAssurance {
             return false;
         }
 
-        double maxDist = preferredDistToSquadCenter(unit.squad());
-        if (unit.distToMoreThan(unit.squadCenter(), maxDist)) {
+//        double maxDist = preferredDistToSquadCenter(unit.squad());
+        unit.setTooltipTactical(A.digit(unit.distToSquadCenter()) + " / " + A.digit(unit.squadRadius()));
+        if (unit.outsideSquadRadius()) {
             unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "Cohesion", false);
             unit.addLog("Cohesion");
             return true;
@@ -45,6 +47,6 @@ public class SquadCohesionAssurance {
     }
 
     public static double preferredDistToSquadCenter(Squad squad) {
-        return Math.max(2.5, 1.3 * Math.sqrt(squad.size()));
+        return Math.max(2.5, Math.sqrt(squad.size()));
     }
 }
