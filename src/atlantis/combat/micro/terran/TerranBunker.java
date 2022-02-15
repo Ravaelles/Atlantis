@@ -24,31 +24,31 @@ public class TerranBunker {
 
     public static final AUnitType bunker = AUnitType.Terran_Bunker;
 
-    public static boolean handleOffensiveBunkers() {
-//        if (true) return false;
-
-        if (!Have.barracks() || AGame.notNthGameFrame(50)) {
-            return false;
-        }
-
-        if (handleNaturalBunker()) {
-            return true;
-        }
-
-        if (handleMainBunker()) {
-            return true;
-        }
+//    public static boolean handleOffensiveBunkers() {
+////        if (true) return false;
 //
-//        if (handleMissionContain()) {
+//        if (!Have.barracks() || AGame.notNthGameFrame(50)) {
+//            return false;
+//        }
+//
+//        if (handleNaturalBunker()) {
 //            return true;
 //        }
-
-//        if (handleReinforceMissionAttack()) {
+//
+//        if (handleMainBunker()) {
 //            return true;
 //        }
-
-        return false;
-    }
+////
+////        if (handleMissionContain()) {
+////            return true;
+////        }
+//
+////        if (handleReinforceMissionAttack()) {
+////            return true;
+////        }
+//
+//        return false;
+//    }
 
     public static boolean handleDefensiveBunkers() {
         if (!EnemyInfo.isDoingEarlyGamePush()) {

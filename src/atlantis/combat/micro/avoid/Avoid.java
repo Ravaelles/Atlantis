@@ -16,6 +16,7 @@ public class Avoid {
 
         if (enemy.position() == null) {
             System.err.println("enemy.position() is NULL for " + enemy);
+            return false;
         }
 
         if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit), Actions.RUN_ENEMY)) {

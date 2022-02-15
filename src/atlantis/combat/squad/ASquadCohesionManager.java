@@ -19,7 +19,7 @@ public class ASquadCohesionManager {
             return true;
         }
 
-        if (SquadCohesionAssurance.handleTooLowCohesion(unit)) {
+        if (CohesionAssurance.handleTooLowCohesion(unit)) {
             return true;
         }
 

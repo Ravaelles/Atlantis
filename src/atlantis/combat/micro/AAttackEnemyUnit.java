@@ -59,8 +59,8 @@ public class AAttackEnemyUnit {
             return true;
         }
 
-        if (Count.medics() >= 2) {
-            if (unit.isTerranInfantry() && !unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
+        if (unit.isTerranInfantry() && Count.medics() >= 2) {
+            if (!unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
 //                if (unit.cooldownRemaining() >= 2) {
                     reasonNotToAttack = "NoMedics";
                     return true;

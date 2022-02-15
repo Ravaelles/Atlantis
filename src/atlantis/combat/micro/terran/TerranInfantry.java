@@ -122,7 +122,7 @@ public class TerranInfantry {
         // =========================================================
 
         AUnit nearestBunker = defineBunkerToLoadTo(unit);
-        int maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 12 : 7;
+        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 8.2 : 6.2;
 
         if (
             nearestBunker != null

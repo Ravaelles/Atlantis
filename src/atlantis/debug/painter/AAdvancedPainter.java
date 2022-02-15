@@ -9,7 +9,7 @@ import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.SquadCohesionAssurance;
+import atlantis.combat.squad.CohesionAssurance;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -1235,7 +1235,7 @@ public class AAdvancedPainter extends APainter {
         for (Squad squad : ASquadManager.allSquads()) {
             APosition median = squad.center();
             if (median != null) {
-                int maxDist = (int) (SquadCohesionAssurance.preferredDistToSquadCenter(squad) * 32);
+                int maxDist = (int) (CohesionAssurance.squadMaxRadius(squad) * 32);
 
                 paintCircle(median, maxDist + 1, Color.Cyan);
                 paintCircle(median, maxDist, Color.Cyan);

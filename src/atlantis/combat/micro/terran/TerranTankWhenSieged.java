@@ -21,20 +21,20 @@ public class TerranTankWhenSieged extends TerranTank {
 
         if (
             unit.enemiesNear().isEmpty()
-                && unit.lastAttackFrameMoreThanAgo(30 * 4 + (unit.id() % 3))
+                && unit.lastAttackFrameMoreThanAgo(30 * 3 + (unit.id() % 3))
                 && unit.distToSquadCenter() >= 8
         ) {
             return wantsToUnsiege(unit, "Reposition");
         }
 
         if (allowToUnsiegeToMove(unit)) {
-            return wantsToUnsiege(unit, "WantsTomove");
+            return wantsToUnsiege(unit, "WantsToMove");
         }
 
         // Mission is CONTAIN
         if (
             Missions.isGlobalMissionContain()
-                && unit.squad().distToFocusPoint() < 9.9
+                && unit.squad().distToFocusPoint() < 7.9
                 && unit.lastAttackOrderLessThanAgo(7 * 30)
         ) {
             return false;
@@ -52,7 +52,11 @@ public class TerranTankWhenSieged extends TerranTank {
     // =========================================================
 
     private static boolean shouldNotThinkAboutUnsieging(AUnit unit) {
-        if (unit.lastActionLessThanAgo(30 * (9 + (unit.idIsOdd() ? 4 : 0)), Actions.SIEGE)) {
+        if (unit.cooldownRemaining() > 0) {
+            return true;
+        }
+
+        if (unit.lastActionLessThanAgo(30 * (7 + (unit.idIsOdd() ? 3 : 0)), Actions.SIEGE)) {
             return true;
         }
 

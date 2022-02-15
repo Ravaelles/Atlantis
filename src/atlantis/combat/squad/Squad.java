@@ -14,7 +14,6 @@ import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Represents battle squad (unit squad) that contains multiple battle units (could be one unit as well).
@@ -23,7 +22,6 @@ public abstract class Squad extends Units {
 
     private final int ID = firstFreeID++;
     private static int firstFreeID = 1;
-    private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Double> cacheDouble = new Cache<>();
     private static Cache<Integer> cacheInteger = new Cache<>();
 
@@ -40,7 +38,9 @@ public abstract class Squad extends Units {
     /**
      * Unit that is considered to be "center" of this squad.
      */
-    private AUnit _centerUnit = null;
+    protected AUnit _centerUnit = null;
+
+    private SquadCenter squadCenter = new SquadCenter(this);
 
     // =========================================================
 
@@ -99,46 +99,11 @@ public abstract class Squad extends Units {
             return null;
         }
         
-        if (_centerUnit == null || _centerUnit.isDead() || (!_centerUnit.isTank() && Count.tanks() >= 2)) {
-            _centerUnit = centerUnit();
+        if (squadCenter.isInvalid(_centerUnit)) {
+            _centerUnit = squadCenter.centerUnit();
         }
 
         return _centerUnit != null ? _centerUnit.position() : null;
-//        return _centerUnitPosition = (_centerUnit != null ? _centerUnit.position() : null);
-    }
-
-    private AUnit centerUnit() {
-        int ttl = 600;
-        AUnit centerUnit = cache.get(
-                "centerUnit",
-                ttl,
-                this::defineCenterUnit
-        );
-
-        if (centerUnit != null && centerUnit.isAlive()) {
-            return centerUnit;
-        }
-
-        centerUnit = this.defineCenterUnit();
-        cache.set("centerUnit", ttl, centerUnit);
-        return centerUnit;
-    }
-
-    private AUnit defineCenterUnit() {
-        ArrayList<Integer> xCoords = new ArrayList<>();
-        ArrayList<Integer> yCoords = new ArrayList<>();
-
-        for (AUnit unit : list()) {
-            xCoords.add(unit.x());
-            yCoords.add(unit.y());
-        }
-
-        Collections.sort(xCoords);
-        Collections.sort(yCoords);
-
-        APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
-        AUnit nearestToMedian = Select.ourCombatUnits().nonBuildings().nearestTo(median);
-        return nearestToMedian;
     }
 
     // =========================================================
@@ -321,7 +286,7 @@ public abstract class Squad extends Units {
                 }
 
                 int withinSquadRadius = selection()
-                    .inRadius(SquadCohesionAssurance.preferredDistToSquadCenter(this), center)
+                    .inRadius(CohesionAssurance.squadMaxRadius(this), center)
                     .count();
 
                 return (int) (100 * withinSquadRadius / size());

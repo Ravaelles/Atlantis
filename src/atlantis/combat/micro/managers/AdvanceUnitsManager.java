@@ -46,6 +46,9 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         if (unit.enemiesNear().notEmpty()) {
+            if (unit.isMoving() && !unit.isRunning() && unit.lastActionMoreThanAgo(15)) {
+                unit.stop("TooFast", false);
+            }
             return false;
         }
 
@@ -91,7 +94,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // Close enough
         else if (allowCloseEnough && distToFocusPoint <= optimalDist + margin) {
-            if (unit.isMoving()) {
+            if (unit.isMoving() && unit.lastActionMoreThanAgo(5)) {
                 unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true);
             }
             else {
