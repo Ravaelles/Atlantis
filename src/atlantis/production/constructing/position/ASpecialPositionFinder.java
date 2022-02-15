@@ -8,6 +8,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
 
@@ -60,13 +61,13 @@ public class ASpecialPositionFinder {
     }
 
     public static APosition positionModifierToPosition(String modifier, AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
-        if (modifier.equals(PositionModifier.NEAR_MAIN) || modifier.equals("NEAR_MAIN")) {
+        if (modifier.equals(PositionModifier.MAIN) || modifier.equals("MAIN")) {
             if (constructionOrder.maxDistance() < 0) {
                 constructionOrder.setMaxDistance(40);
             }
             return findPositionForBase_nearMainBase(building, builder, constructionOrder);
         }
-        else if (modifier.equals(PositionModifier.AT_NATURAL)) {
+        else if (modifier.equals(PositionModifier.NATURAL)) {
             if (constructionOrder.maxDistance() < 0) {
                 constructionOrder.setMaxDistance(30);
             }
@@ -77,13 +78,13 @@ public class ASpecialPositionFinder {
             return null;
         }
 
-        if (modifier.equals(PositionModifier.NEAR_MAIN_CHOKEPOINT)) {
+        if (modifier.equals(PositionModifier.MAIN_CHOKE)) {
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
                 return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 3.5);
             }
         }
-        else if (modifier.equals(PositionModifier.NEAR_NATURAL_CHOKEPOINT)) {
+        else if (modifier.equals(PositionModifier.NATURAL_CHOKE)) {
             AChoke chokepointForNatural = Chokes.natural(Select.main().position());
             if (chokepointForNatural != null && Select.main() != null) {
                 ABaseLocation natural = Bases.natural(Select.main().position());
@@ -139,6 +140,10 @@ public class ASpecialPositionFinder {
     }
 
     protected static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
+        if (!Have.main()) {
+            return null;
+        }
+
         APosition near = APosition.create(
                 Bases.expansionFreeBaseLocationNearestTo(Select.main().position())
         ).translateByPixels(0, 0);

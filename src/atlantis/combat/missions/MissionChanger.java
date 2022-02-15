@@ -5,8 +5,11 @@ import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
+import atlantis.util.Enemy;
 
 import java.util.ArrayList;
 
@@ -38,6 +41,8 @@ public class MissionChanger {
             return;
         }
 
+        debugReason = "";
+
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.changeMissionIfNeeded();
         } else if (Missions.isGlobalMissionContain()) {
@@ -55,12 +60,12 @@ public class MissionChanger {
         }
 
         if (Missions.isFirstMission()) {
-            if (Missions.isGlobalMissionAttack() && unit.friendsNearby().atLeast(3)) {
+            if (Missions.isGlobalMissionAttack() && unit.friendsNear().atLeast(3)) {
                 forceMissionContain();
             }
         }
 
-//        if (!A.supplyUsed(180) && unit.friendsNearby().atLeast(5)) {
+//        if (!A.supplyUsed(180) && unit.friendsNear().atLeast(5)) {
 //            forceMissionDefend();
 //        }
     }
@@ -83,5 +88,14 @@ public class MissionChanger {
 //    public static void forceMissionDefend() {
 //        Missions.setGlobalMissionDefend();
 //    }
+
+    protected static boolean defendAgainstMassZerglings() {
+        if (Enemy.zerg() && A.seconds() <= 260 && EnemyUnits.visibleAndFogged().ofType(AUnitType.Zerg_Zergling).atLeast(9)) {
+            if (DEBUG) debugReason = "Mass zerglings";
+            return true;
+        }
+
+        return false;
+    }
 
 }

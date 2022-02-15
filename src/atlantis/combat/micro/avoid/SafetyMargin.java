@@ -93,7 +93,7 @@ public class SafetyMargin {
         return defender.isMoving() ? (defender.isRunning() ? -1.8 : 0) : 0.8;
     }
 
-    protected static double ourUnitsNearbyBonus(AUnit defender) {
+    protected static double ourUnitsNearBonus(AUnit defender) {
         return Select.ourRealUnits().inRadius(0.5, defender).count() / 1.5;
     }
 

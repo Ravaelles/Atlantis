@@ -26,12 +26,7 @@ public class OnUnitMorph {
 
         EnemyUnits.removeFoggedUnit(unit);
         unit.refreshType();
-
-        // Geyser fix - destroyed enemy assimilator is detected as enemy fogged unit
-//        if (unit.isEnemy() && !unit.u().getType().isNeutral()) {
-        if (unit.isEnemy() && (unit.u() != null && !unit.u().getType().isNeutral())) {
-            EnemyInfo.refreshEnemyUnit(unit);
-        }
+        unit.removeTooltip();
 
         // =========================================================
 
@@ -62,7 +57,7 @@ public class OnUnitMorph {
         }
 
         // Enemy unit
-        else {
+        else if (unit.isEnemy()) {
             EnemyInfo.refreshEnemyUnit(unit);
         }
     }

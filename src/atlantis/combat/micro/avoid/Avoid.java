@@ -16,6 +16,7 @@ public class Avoid {
 
         if (enemy.position() == null) {
             System.err.println("enemy.position() is NULL for " + enemy);
+            return false;
         }
 
         if (unit.runningManager().runFrom(enemy.position(), getRunDistance(unit), Actions.RUN_ENEMY)) {
@@ -91,7 +92,7 @@ public class Avoid {
 //        System.err.println("ERROR_RUN for " + unit.nameWithId());
         unit.addLog("RUN-ERROR");
 
-        AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
         unit.setTooltipTactical("Cant run, fight");
 
         return true;

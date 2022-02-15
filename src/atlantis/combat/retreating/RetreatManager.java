@@ -7,6 +7,8 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 import atlantis.util.Enemy;
@@ -19,12 +21,12 @@ public class RetreatManager {
     // =========================================================
 
     /**
-     * If chances to win the skirmish with the nearby enemy units aren't favorable, avoid fight and retreat.
+     * If chances to win the skirmish with the Near enemy units aren't favorable, avoid fight and retreat.
      */
     public static boolean shouldRetreat(AUnit unit) {
         return cache.get(
                 "shouldRetreat:" + unit.id(),
-                35,
+                25,
                 () -> {
                     if (shouldNotConsiderRetreatingNow(unit)) {
                         return false;
@@ -62,42 +64,42 @@ public class RetreatManager {
         // =========================================================
 
         AUnit enemy = enemies.nearestTo(unit);
-        int enemiesNearby = enemies.inRadius(2, unit).count();
+        int enemiesNear = enemies.inRadius(2, unit).count();
         int ourCount;
         if (enemy != null) {
-            ourCount = enemy.enemiesNearby().inRadius(radius, unit).count();
+            ourCount = enemy.enemiesNear().inRadius(radius, unit).count();
         } else {
-            ourCount = unit.friendsNearby().inRadius(0.6, unit).count();
+            ourCount = unit.friendsNear().inRadius(0.6, unit).count();
         }
 
-        if (ourCount == enemiesNearby && unit.isZealot() && unit.hpMoreThan(36) && unit.isMissionDefend()) {
+        if (ourCount == enemiesNear && unit.isZealot() && unit.hpMoreThan(36) && unit.isMissionDefend()) {
             unit.setTooltip("Homeland!", true);
             unit.addLog("Homeland!");
             return false;
         }
 
-        if (ourCount <= enemiesNearby && unit.friendsNearby().inRadius(5, unit).atLeast(2)) {
-//        Selection enemiesAroundEnemy = enemy.friendsNearby().inRadius(radius, unit);
+        if (ourCount <= enemiesNear && unit.friendsNear().inRadius(5, unit).atLeast(2)) {
+//        Selection enemiesAroundEnemy = enemy.friendsNear().inRadius(radius, unit);
 //        if (oursAroundEnemy.count() > enemiesAroundEnemy.count()) {
-            unit.setTooltip("FormationB", false);
-            unit.addLog("FormationB");
+            unit.setTooltip("RetreatingB", false);
+            unit.addLog("RetreatingB");
             return true;
         }
 
         if (Enemy.protoss() && applyZealotVsZealotFix(unit, enemies)) {
-            unit.setTooltip("FormationZ", false);
-            unit.addLog("FormationZ");
+            unit.setTooltip("RetreatingZ", false);
+            unit.addLog("RetreatingZ");
             return true;
         }
 
         // =========================================================
 
-        Selection friends = unit.friendsNearby().inRadius(radius, unit);
+        Selection friends = unit.friendsNear().inRadius(radius, unit);
         Selection veryCloseEnemies = enemies.inRadius(radius, unit);
 
         if (veryCloseEnemies.totalHp() > friends.totalHp()) {
-            unit.setTooltip("FormationA", false);
-            unit.addLog("FormationA");
+            unit.setTooltip("RetreatingA", false);
+            unit.addLog("RetreatingA");
             return true;
         }
 
@@ -107,7 +109,7 @@ public class RetreatManager {
     }
 
     private static boolean applyZealotVsZealotFix(AUnit unit, Selection enemies) {
-        int ourZealots = unit.friendsNearby().ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
+        int ourZealots = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
         int enemyZealots = enemies.ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
 
         if (ourZealots < enemyZealots) {
@@ -163,8 +165,7 @@ public class RetreatManager {
         return cache.get(
                 "shouldNotEngageCombatBuilding:" + unit.squad().name(),
                 10,
-                () -> ACombatEvaluator.relativeAdvantage(unit) <= 1.7
-//                () -> ACombatEvaluator.relativeAdvantage(unit) <= 0.6
+                () -> ACombatEvaluator.relativeAdvantage(unit) <= 1.8
         );
     }
 
@@ -179,21 +180,24 @@ public class RetreatManager {
             return true;
         }
 
-//        if (unit.mission() != null && unit.isMissionDefend()) {
-//            return true;
-//        }
-
-//        if (!unit.woundPercent(15) && unit.isMissionDefend()) {
-//            return true;
-//        }
-
         if (unit.isStimmed()) {
             return true;
         }
 
-        if (unit.type().isReaver()) {
-            return unit.enemiesNearby().isEmpty() && unit.cooldownRemaining() <= 7;
+        if (unit.isMissionDefend() &&
+            (
+                (Have.main() && unit.distToLessThan(Select.main(), 14))
+                || Select.ourOfType(AUnitType.Zerg_Sunken_Colony).inRadius(4.9, unit).isNotEmpty()
+            )
+        ) {
+            return unit.hp() >= 12;
         }
+
+        if (unit.type().isReaver()) {
+            return unit.enemiesNear().isEmpty() && unit.cooldownRemaining() <= 7;
+        }
+
+
 
         return false;
     }

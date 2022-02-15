@@ -143,28 +143,28 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     // Lo-level
 
     private static boolean isTooCloseToOtherPylons(APosition position) {
-        int pylonsNearby;
+        int pylonsNear;
 
         if (AGame.supplyUsed() < 25) {
-            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(8, position).count();
+            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(8, position).count();
         }
         else if (AGame.supplyUsed() < 35) {
-            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(6.5, position).count();
+            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(6.5, position).count();
         }
         else if (AGame.supplyUsed() < 70) {
-            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(4.5, position).count();
+            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(4.5, position).count();
         }
         else if (AGame.supplyUsed() < 100) {
-            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(3.2, position).count();
+            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(3.2, position).count();
         }
         else if (AGame.supplyUsed() < 140) {
-            pylonsNearby = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(2, position).count();
+            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(2, position).count();
         } else {
-            pylonsNearby = -1;
+            pylonsNear = -1;
         }
 
-        _CONDITION_THAT_FAILED = "Too close to other pylons (" + pylonsNearby + ")";
-        return pylonsNearby > 0;
+        _CONDITION_THAT_FAILED = "Too close to other pylons (" + pylonsNear + ")";
+        return pylonsNear > 0;
     }
 
     private static boolean isPowerConditionFulfilled(AUnitType building, APosition position) {

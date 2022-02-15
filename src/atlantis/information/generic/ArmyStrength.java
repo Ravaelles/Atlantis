@@ -12,30 +12,31 @@ public class ArmyStrength {
     // =========================================================
 
     public static boolean weAreWeaker() {
-        return !weAreStronger();
+        return ourArmyRelativeStrength() < 120;
     }
 
     public static boolean weAreStronger() {
-        return weAreStronger(20);
+        return ourArmyRelativeStrength() >= 96;
+//        return ourArmyRelativeStrength() >= 65;
     }
 
     public static boolean weAreMuchStronger() {
-        return weAreStronger(muchStrongerPercent());
+        return ourArmyRelativeStrength() >= muchStrongerPercent();
+    }
+
+    public static boolean weAreMuchWeaker() {
+        return ourArmyRelativeStrength() <= 80;
     }
 
     private static boolean weAreStronger(int percentAdvantage) {
-        return cacheBoolean.get(
-                "weAreStronger:" + percentAdvantage,
-                50,
-                () -> (OurArmyStrength.calculate() * (100 - percentAdvantage) / 100) > EnemyArmyStrength.calculate()
-        );
+        return ourArmyRelativeStrength() >= (100 + percentAdvantage);
     }
 
     public static int ourArmyRelativeStrength() {
         return cacheInteger.get(
                 "ourArmyRelativeStrength",
                 50,
-                () -> Math.min(999, (int) (OurArmyStrength.calculate() * 100 / EnemyArmyStrength.calculate()))
+                () -> (int) Math.min(999, (OurArmyStrength.calculate() * 100 / EnemyArmyStrength.calculate()))
         );
     }
 

@@ -23,33 +23,49 @@ public interface AUnitOrders {
     // =========================================================
     
     default boolean attackUnit(AUnit target) {
-        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(
-                    "@ @" + A.now() + " ATTACK  / " +
-                            "unit#" + unit().id() + " // " +
-                            "cooldown " + unit().cooldownRemaining()+ " // " +
-                            "attackFrame " + unit()._lastAttackFrame + " // " +
-                            "StartingAttack " + unit()._lastStartedAttack + " // " +
-                            unit().tooltip()
-            );
-        }
+//        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+//            System.out.println(
+//                    "@ @" + A.now() + " ATTACK  / " +
+//                            "unit#" + unit().id() + " // " +
+//                            "cooldown " + unit().cooldownRemaining()+ " // " +
+//                            "attackFrame " + unit()._lastAttackFrame + " // " +
+//                            "StartingAttack " + unit()._lastStartedAttack + " // " +
+//                            unit().tooltip()
+//            );
+//        }
 
         if (target == null) {
             System.err.println("Null attack unit target for unit " + this);
             return false;
         }
 
+        if (!target.hasPosition()) {
+            System.err.println("Target (" + target + ") has no position " + this);
+            return false;
+        }
+
+        if (!target.isAlive()) {
+            System.err.println("Dead target (" + target + ") for " + this);
+            return false;
+        }
+
+//        System.out.println("                  ------> ATTACK #" + target);
+
         // Do NOT issue double orders
         if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
-//            System.out.println("         ** DOUBLE ORDER");
+            unit().setTooltipTactical("Attack");
             return true;
         }
 
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-//            System.out.println("                  ------> ATTACK #" + target.getID());
+//            System.out.println("                  ------> ATTACK #" + target);
 //        }
 
-//        unit().addLog("Target-" + target.idWithHash());
+//        if (unit().outsideSquadRadius()) {
+//            A.printStackTrace("hmmm " + unit().distToSquadCenter() + " / " + unit().squadRadius());
+//        }
+
+        unit().setTooltipTactical("ATTACK");
         unit().setAction(Actions.ATTACK_UNIT);
         return u().attack(target.u());
     }
@@ -122,6 +138,7 @@ public interface AUnitOrders {
         }
         if (target == null) {
             System.err.println("Null move position for " + this);
+            A.printStackTrace("Null move position");
             return false;
         }
 
@@ -265,7 +282,7 @@ public interface AUnitOrders {
     }
 
     /**
-     * Orders the unit to return u().its cargo to a nearby resource depot such as a Command Center. Only
+     * Orders the unit to return u().its cargo to a Near resource depot such as a Command Center. Only
      * workers that are carrying minerals or gas can be ordered to return u().cargo. Parameters
      * shiftQueueCommand (optional) If this value is true, then the order will be queued instead of
      * immediately executed. If this value is omitted, then the order will be executed immediately by default.
@@ -314,7 +331,7 @@ public interface AUnitOrders {
 
         unit().setTooltip(tooltip, strategicLevel);
 
-        if (unit().isCommand(UnitCommandType.Repair) && !target.u().equals(u().getTarget())) {
+        if (unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
             return true;
         }
 

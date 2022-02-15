@@ -5,6 +5,7 @@ import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -23,16 +24,17 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     public static boolean shouldChangeMissionToContain() {
-        if (OurStrategy.get().goingBio()) {
+//        if (OurStrategy.get().goingBio()) {
+        if (!ArmyStrength.weAreStronger()) {
             if (DEBUG) debugReason = "We aren't stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
-            return !ArmyStrength.weAreStronger();
+            return true;
         }
 
         return false;
     }
 
     public static boolean shouldChangeMissionToDefend() {
-        if (Have.base() && Select.enemyCombatUnits().inRadius(15, Select.main()).atLeast(5)) {
+        if (baseUnderSeriousAttack()) {
             if (DEBUG) debugReason = "Protect base";
             return true;
         }

@@ -6,6 +6,7 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.select.Count;
 
 public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain {
@@ -21,6 +22,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     private static boolean shouldChangeMissionToDefend() {
+        if (defendAgainstMassZerglings()) {
+            if (DEBUG) debugReason = "Mass zerglings";
+            return true;
+        }
+
         if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
             if (DEBUG) debugReason = "Enemy near our building";
             return true;
@@ -31,7 +37,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
             return true;
         }
 
-        if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130) {
+        if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130 && !GamePhase.isLateGame()) {
             if (DEBUG) debugReason = "too many resources lost";
             return true;
         }

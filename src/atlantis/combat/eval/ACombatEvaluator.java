@@ -28,13 +28,13 @@ public class ACombatEvaluator {
     }
 
     /**
-     * Returns <b>TRUE</b> if our <b>unit</b> should engage in combat with nearby units or
+     * Returns <b>TRUE</b> if our <b>unit</b> should engage in combat with Near units or
      * <b>FALSE</b> if enemy is too strong and we should pull back.
      * (retreat otherwise). If false then it means we would engage in new fight, so make sure you've got
      * some safe margin. This feature avoids fighting and immediately running away and fighting again.
      */
     public static boolean isSituationFavorable(AUnit unit) {
-        AUnit nearestEnemy = unit.enemiesNearby().canAttack(unit, 4).nearestTo(unit);
+        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4).nearestTo(unit);
         if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
             return true;
         }
@@ -44,12 +44,12 @@ public class ACombatEvaluator {
 
     /**
      * Calculated per squad, not per unit.
-     * 1.6 means ~60% advantage of unit's squad against nearby enemies
+     * 1.6 means ~60% advantage of unit's squad against Near enemies
      * 1.0 means same strength
      * 0.8 means ~20% disadvantage against enemies
      */
     public static double relativeAdvantage(AUnit unit) {
-        AUnit nearestEnemy = unit.enemiesNearby().canAttack(unit, 4).nearestTo(unit);
+        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4).nearestTo(unit);
         if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
             return MAX_VALUE;
         }
@@ -67,7 +67,7 @@ public class ACombatEvaluator {
 
     /**
      * 
-     * Returns <b>POSITIVE</b> value if our unit <b>unit</b> should engage in combat with nearby units or
+     * Returns <b>POSITIVE</b> value if our unit <b>unit</b> should engage in combat with Near units or
      * <b>NEGATIVE</b> when enemy is too strong and we should pull back.
      * 
      * When absolute value is true, it returns the evaluation value 
@@ -81,10 +81,10 @@ public class ACombatEvaluator {
 //                System.err.println(unit.nameWithId() + " // our:" + unit.isOur() + " // enemy:" + unit.isEnemy());
 
                 // =========================================================
-                // Define nearby enemy and our units
+                // Define Near enemy and our units
 
                 Selection opposingUnits = opposingUnits(unit);
-//                opposingUnits.print("OPPOSING");
+//                opposingUnits.print("OPPOSING (for " + unit + ")");
 
                 if (opposingUnits.isEmpty()) {
                     return MAX_VALUE;
@@ -105,9 +105,11 @@ public class ACombatEvaluator {
                 // =========================================================
                 // Evaluate our and enemy strength
 
+//                System.err.println("------ theseUnitsEvaluation --------");
                 double theseUnitsEvaluation = Evaluate.evaluateUnitsAgainstUnit(
                         theseUnits.units(), opposingUnits.units(), false
                 );
+//                System.err.println("------ againstUnitsEvaluation --------");
                 double againstUnitsEvaluation = Evaluate.evaluateUnitsAgainstUnit(
                         opposingUnits.units(), theseUnits.units(), true
                 );
@@ -116,6 +118,7 @@ public class ACombatEvaluator {
 //                    System.err.println("theseUnitsEvaluation = " + unit + " // " + + theseUnitsEvaluation);
 //                    System.err.println("againstUnitsEvaluation = " + againstUnitsEvaluation);
 //                }
+//                System.err.println("These: " + theseUnitsEvaluation + " / Against: " + againstUnitsEvaluation);
 
                 // =========================================================
 
@@ -137,7 +140,7 @@ public class ACombatEvaluator {
     // =========================================================
 
     private static double percentOfAdvantageNeeded(AUnit unit) {
-        if (unit.enemiesNearby().combatBuildings(false).inRadius(8.2, unit).isNotEmpty()) {
+        if (unit.enemiesNear().combatBuildings(false).inRadius(8.2, unit).isNotEmpty()) {
             return PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS;
         }
 
@@ -156,9 +159,8 @@ public class ACombatEvaluator {
 
         // Enemy eval
         else if (unit.isEnemy()) {
-            theseUnits = Select.enemyCombatUnits().ranged().inRadius(RANGED_RADIUS, unit);
-            theseUnits.add(Select.enemyCombatUnits().melee().inRadius(MELEE_RADIUS, unit));
-            theseUnits.add(EnemyUnits.combatUnitsToBetterAvoid().havingPosition().inRadius(RANGED_RADIUS, unit));
+            theseUnits = EnemyUnits.visibleAndFogged().ranged().inRadius(RANGED_RADIUS, unit);
+            theseUnits.add(EnemyUnits.visibleAndFogged().melee().inRadius(MELEE_RADIUS, unit));
             theseUnits.removeDuplicates();
         }
 
@@ -172,31 +174,35 @@ public class ACombatEvaluator {
     public static Selection opposingUnits(AUnit unit) {
 
         // Ranged
-        Selection againstUnits = unit.enemiesNearby()
+        Selection againstUnits = unit.enemiesNear()
                 .ranged()
-                .canAttack(unit, 4);
+                .canAttack(unit, 6);
 
 //        System.out.println("againstUnits A0 = " + againstUnits.size());
-//        System.out.println("againstUnits A1 = " + unit.enemiesNearby().size());
-//        System.out.println("againstUnits A2 = " + unit.enemiesNearby().ranged().size());
-//        System.out.println("againstUnits A3 = " + unit.enemiesNearby().ranged().canAttack(unit, 4).size());
+//        System.out.println("againstUnits A1 = " + unit.enemiesNear().size());
+//        System.out.println("againstUnits A2 = " + unit.enemiesNear().ranged().size());
+//        System.out.println("againstUnits A3 = " + unit.enemiesNear().ranged().canAttack(unit, 4).size());
 
         // Melee
         againstUnits.add(
-                unit.enemiesNearby().melee()
-                        .inRadius(4, unit)
-                        .canAttack(unit, false, true, 4)
+                unit.enemiesNear().melee()
+                        .inRadius(5, unit)
+                        .canAttack(unit, false, true, 5)
         );
 
 //        System.out.println("againstUnits B0 = " + againstUnits.size());
-//        System.out.println("againstUnits B1 = " + unit.enemiesNearby().size());
-//        System.out.println("againstUnits B2 = " + unit.enemiesNearby().inRadius(6, unit).size());
-//        System.out.println("againstUnits B3 = " + unit.enemiesNearby().inRadius(6, unit).canAttack(unit, 6).size());
+//        System.out.println("againstUnits B1 = " + unit.enemiesNear().size());
+//        System.out.println("againstUnits B2 = " + unit.enemiesNear().inRadius(6, unit).size());
+//        System.out.println("againstUnits B3 = " + unit.enemiesNear().inRadius(6, unit).canAttack(unit, 6).size());
 
-        if (unit.isOur()) {
-            againstUnits = againstUnits.add(EnemyUnits.combatUnitsToBetterAvoid()).removeDuplicates();
-        }
-//        System.out.println("againstUnits C = " + againstUnits.size());
+//        if (unit.isOur()) {
+//            againstUnits = againstUnits.add(EnemyUnits.combatUnitsToBetterAvoid()).removeDuplicates();
+//        }
+//        System.out.println("againstUnits C1 = " + againstUnits.size());
+
+        againstUnits.removeDuplicates();
+
+//        System.out.println("againstUnits C2 = " + againstUnits.size());
 
         return againstUnits;
     }

@@ -25,7 +25,7 @@ public class WantsToAvoid {
                 APainter.paintCircle(unit, 10, Color.Green);
                 APainter.paintCircle(unit, 11, Color.Green);
 
-                return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+                return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
             }
         }
 
@@ -56,7 +56,7 @@ public class WantsToAvoid {
             return true;
         }
 
-        if (unit.isSquadScout() && unit.friendsNearby().inRadius(3, unit).isEmpty()) {
+        if (unit.isSquadScout() && unit.friendsNear().inRadius(3, unit).isEmpty()) {
             unit.addLog("SquadScoutAvoid");
             return true;
         }
@@ -65,11 +65,15 @@ public class WantsToAvoid {
     }
 
     private static boolean shouldNeverAvoidIf(AUnit unit, Units enemies) {
+        if (unit.isWorker() && enemies.onlyMelee()) {
+            return unit.hp() >= 40;
+        }
+
         if (unit.isWorker() || unit.isAir()) {
             return false;
         }
 
-        // Running is not viable - so many other units nearby, we would get stuck, better fight
+        // Running is not viable - so many other units Near, we would get stuck, better fight
         if (Select.all().inRadius(0.4, unit).count() >= 6) {
             APainter.paintCircleFilled(unit, 8, Color.Black);
 //            System.err.println(unit + " fight cause clustered " + Select.all().inRadius(0.4, unit).count());

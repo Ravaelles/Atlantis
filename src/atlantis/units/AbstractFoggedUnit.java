@@ -3,13 +3,14 @@ package atlantis.units;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.util.Cache;
+import tests.unit.FakeUnit;
 
 import java.util.TreeMap;
 
 /**
  * Stores information about units in order to retrieve them when they are out of sight
  */
-public abstract class AbstractFoggedUnit extends AUnit {
+public class AbstractFoggedUnit extends AUnit {
 
     protected final static TreeMap<Integer, AbstractFoggedUnit> all = new TreeMap<>();
 
@@ -17,10 +18,29 @@ public abstract class AbstractFoggedUnit extends AUnit {
     protected AUnit aUnit;
     protected int _id;
     protected int _hp;
+    protected int _energy;
     protected APosition _position;
     protected AUnitType _lastType;
     protected boolean _isCompleted;
     protected Cache<Integer> cacheInt = new Cache<>();
+
+    // =========================================================
+
+    protected AbstractFoggedUnit(AUnit unit) {
+        if (unit != null) {
+            this._id = unit.id();
+            this.aUnit = unit;
+            this.update(unit);
+
+            all.put(unit.id(), this);
+        }
+    }
+
+    public static AbstractFoggedUnit from(AUnit enemyUnit) {
+        return enemyUnit instanceof FakeUnit
+                ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
+                : FoggedUnit.from(enemyUnit);
+    }
 
     // =========================================================
 
@@ -56,16 +76,21 @@ public abstract class AbstractFoggedUnit extends AUnit {
     public void update(AUnit unit) {
         updatePosition(unit);
         updateType(unit);
+        aUnit = unit;
         _isCompleted = unit.isCompleted();
         _hp = unit.hp();
+        _energy = unit.energy();
     }
 
     public void updatePosition(AUnit unit) {
-        if (unit.x() > 0 && unit.y() > 0) {
+//        if (unit.x() > 0 && unit.y() > 0) {
+//        System.out.println("unit = " + unit);
+        if (unit.hasPosition()) {
             _position = new APosition(unit.x(), unit.y());
+//            System.out.println("_position = " + _position);
             cacheInt.set("lastPositionUpdated", -1, A.now());
         }
-        
+
 //        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
 //            _position = null;
 //        }
@@ -85,8 +110,13 @@ public abstract class AbstractFoggedUnit extends AUnit {
         cacheInt.set("lastPositionUpdated", -1, A.now());
     }
 
-    public boolean hasKnownPosition() {
+    @Override
+    public boolean hasPosition() {
         return _position != null;
+    }
+
+    public void removeKnownPosition() {
+        _position = null;
     }
 
     public int lastPositionUpdated() {
@@ -95,7 +125,7 @@ public abstract class AbstractFoggedUnit extends AUnit {
 
     public int lastPositionUpdatedAgo() {
         if (cacheInt.get("lastPositionUpdated") == null) {
-            return -1;
+            return -666;
         }
 
         return A.ago(cacheInt.get("lastPositionUpdated"));
@@ -105,13 +135,17 @@ public abstract class AbstractFoggedUnit extends AUnit {
         return !AUnitType.Unknown.equals(aUnit.type());
     }
 
+    public AUnit innerAUnit() {
+        return aUnit;
+    }
+
     // =========================================================
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + " "
-                + nameWithId() +
-                " at " + _position;
+                + nameWithId() + " at " + _position
+                + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
     }
 
     // =========================================================
@@ -159,6 +193,11 @@ public abstract class AbstractFoggedUnit extends AUnit {
     @Override
     public int hp() {
         return _hp;
+    }
+
+    @Override
+    public int energy() {
+        return _energy;
     }
 
 }

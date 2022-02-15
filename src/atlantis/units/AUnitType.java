@@ -1421,4 +1421,12 @@ public class AUnitType implements Comparable<Object> {
                 () -> airWeapon().damageAmount() > 0 || isBunker()
         );
     }
+
+    public boolean isZergling() {
+        return (boolean) cache.get(
+            "isZergling",
+            -1,
+            () -> is(Zerg_Zergling)
+        );
+    }
 }

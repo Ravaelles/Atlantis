@@ -25,7 +25,7 @@ public class GameSpeed {
     public static int frameSkip;
 
     // 0 speed - fastest, use positive frame skip to skip rendering and make it even quicker
-    private static final int NORMAL_GAME_SPEED = 1;
+    private static final int NORMAL_GAME_SPEED = 10;
     private static final int NORMAL_FRAME_SKIP = 0;
 
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
@@ -70,7 +70,7 @@ public class GameSpeed {
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
 //                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Select.enemyCombatUnits().atLeast(2)
-                        && EnemyInfo.discoveredEnemyBase()
+                        && EnemyInfo.hasDiscoveredEnemyBase()
                         && Alpha.get().getSquadScout() != null
                         && Alpha.get().getSquadScout().isWounded()
 //                        && Missions.isGlobalMissionContain()

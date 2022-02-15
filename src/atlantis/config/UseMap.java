@@ -6,6 +6,7 @@ import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.CameraManager;
 import atlantis.game.GameSpeed;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -43,12 +44,17 @@ public class UseMap {
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
 //        if (true) return "ums/rav/M_v_Zealots.scx";
-//        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
+//        if (true) return "ums/rav/Vultures_v_Marines.scm";
+//        if (true) return "ums/rav/Vultures_v_Zealots.scm";
+//        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimap2s/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
+//        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
+//        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
+        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
 
         // === Gosu bots - advanced single player cheating bots ====
 
@@ -74,13 +80,13 @@ public class UseMap {
 
         // === Generic ======================================================
 
-//        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
-//        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
-//        if (true) return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
 //        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
+//        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
+//        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
+//        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
+//        if (true) return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
 //        if (true) return "ums/ConTrol2.scx"; // More minigames
 //        if (true) return "ums/micro challenge.scx"; // Even more minigames
-//        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
 //        if (true) return "ums/tank-dropship.scm"; // 2 Tanks & 2 Dropships v. Dragoons
 //        if (true) return "ums/trainzvreaver.scm"; // Zerglings & Hydras v. 2 Reavers & Shuttle
 //        if (true) return "ums/trening nr 2.scx";
@@ -140,7 +146,7 @@ public class UseMap {
 
             if (GameSpeed.frameSkip == initFrameSkip && A.everyNthGameFrame(50)) {
                 if (
-                        Select.enemyCombatUnits().atLeast(4)
+                        EnemyUnits.visibleAndFogged().atLeast(4)
                         && Have.dragoon()
                 ) {
                     GameSpeed.changeSpeedTo(1);

@@ -22,7 +22,7 @@ public class AvoidCombatBuildingsFix {
             return false;
         }
 
-        double baseDist = 8.7 + (unit.isAir() ? 2.5 : 0);
+        double baseDist = 9.2 + (unit.isAir() ? 2.5 : 0);
         double distTo = nearest.distTo(unit);
         if (distTo <= baseDist) {
             return unit.runningManager().runFrom(nearest, 1, Actions.MOVE_AVOID);

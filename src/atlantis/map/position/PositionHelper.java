@@ -54,6 +54,9 @@ public class PositionHelper {
         
         for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
             AUnit unit = iterator.next();
+            if (!unit.hasPosition()) {
+                continue;
+            }
             totalX += unit.x();
             totalY += unit.y();
         }

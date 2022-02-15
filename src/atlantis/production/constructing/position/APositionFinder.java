@@ -71,7 +71,7 @@ public class APositionFinder {
 
         else if (building.isBase()) {
             if (We.zerg()) {
-                if (Count.bases() >= 3) {
+                if (Count.larvas() == 0 || Count.bases() >= 3) {
                     return findStandardPosition(builder, building, nearTo, 30);
                 }
             }
@@ -82,9 +82,9 @@ public class APositionFinder {
         // =========================================================
         // BUNKER
 
-        else if (building.isBunker()) {
-            return TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
-        } 
+//        else if (building.isBunker()) {
+//            return TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
+//        }
 
         // =========================================================
         // Creep colony

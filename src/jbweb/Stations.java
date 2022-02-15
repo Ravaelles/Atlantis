@@ -165,7 +165,7 @@ public class Stations {
         TilePosition test = new TilePosition(startCenter);
         TilePosition stationTilePosition = new TilePosition(stationCenter);
 
-        while (test.x != stationTilePosition.x || test.y != stationTilePosition.y) {
+        while (test != stationTilePosition) {
             double distBest = Double.MAX_VALUE;
             TilePosition current = test;
             for (int x = current.x - 1; x <= current.x + 1; x++) {

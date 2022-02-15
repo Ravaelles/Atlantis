@@ -59,10 +59,10 @@ public class SquadScout {
     }
 
     private static void engageWorkersNow(AUnit squadScout) {
-        AAttackEnemyUnit.handleAttackNearbyEnemyUnits(squadScout);
+        AAttackEnemyUnit.handleAttackNearEnemyUnits(squadScout);
         squadScout.setTooltipTactical("MadeContact");
 
-        if (Select.enemyCombatUnits().atMost(2)) {
+        if (EnemyUnits.visibleAndFogged().atMost(2)) {
             GameLog.get().addMessage("Squad scout forced GLOBAL ATTACK");
             if (!Missions.isGlobalMissionAttack()) {
                 MissionChanger.forceMissionAttack();

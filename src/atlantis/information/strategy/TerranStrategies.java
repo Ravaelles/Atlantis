@@ -77,12 +77,12 @@ public class TerranStrategies {
     
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
-        int barracks = Select.enemy().countUnitsOfType(AUnitType.Terran_Barracks);
-        int bases = Select.enemy().countUnitsOfType(AUnitType.Terran_Command_Center);
-        int factories = Select.enemy().countUnitsOfType(AUnitType.Terran_Factory);
-        int bunkers = Select.enemy().countUnitsOfType(AUnitType.Terran_Bunker);
-        int marines = Select.enemy().countUnitsOfType(AUnitType.Terran_Marine);
-        int medics = Select.enemy().countUnitsOfType(AUnitType.Terran_Medic);
+        int barracks = Select.enemy().countOfType(AUnitType.Terran_Barracks);
+        int bases = Select.enemy().countOfType(AUnitType.Terran_Command_Center);
+        int factories = Select.enemy().countOfType(AUnitType.Terran_Factory);
+        int bunkers = Select.enemy().countOfType(AUnitType.Terran_Bunker);
+        int marines = Select.enemy().countOfType(AUnitType.Terran_Marine);
+        int medics = Select.enemy().countOfType(AUnitType.Terran_Medic);
         
         // === Cheese ==============================================
         

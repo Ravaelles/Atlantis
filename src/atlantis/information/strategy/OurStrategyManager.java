@@ -50,14 +50,16 @@ public class OurStrategyManager {
             return TerranStrategies.TERRAN_2_Rax_Academy_vP;
         }
         else {
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
             return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
         }
     }
 
     private static AStrategy initForZerg() {
+        return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
 //        return ZergStrategies.ZERG_13_Pool_Muta;
 //        return ZergStrategies.ZERG_12_Hatch_vZ;
-        return ZergStrategies.ZERG_9_Pool_vZ;
+//        return ZergStrategies.ZERG_9_Pool_vZ;
     }
 
 }

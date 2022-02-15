@@ -104,7 +104,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
     }
 
     private static double letWorkersComeThroughBonus() {
-        return unit.enemiesNearby().combatUnits().isEmpty()
+        return unit.enemiesNear().combatUnits().isEmpty()
                 && Select.ourWorkers().inRadius(6, unit).atLeast(1)
                 ? 3 : 0;
     }

@@ -25,7 +25,7 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
             return true;
         }
 
-        if (unit.enemiesNearby().isEmpty()) {
+        if (unit.enemiesNear().isEmpty()) {
             return wrongSideOfFocus() || tooCloseToFocusPoint();
         }
 
@@ -37,7 +37,7 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
     protected static double optimalDist() {
         int workersComeThroughBonus = workersComeThroughBonus();
 
-        double ourUnitsNearbyBonus = Select.our().inRadius(2, unit).count() / 20.0;
+        double ourUnitsNearBonus = Select.our().inRadius(2, unit).count() / 20.0;
 
         return BASE_DIST_TO_FOCUS_POINT
                 + (unit.isTank() ? 3.8 : 0)
@@ -45,7 +45,7 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
 //                + (unit.isMarine() ? 2 : 0)
                 + workersComeThroughBonus
 //                + (unit.isMelee() ? 3 : 0)
-                + ourUnitsNearbyBonus;
+                + ourUnitsNearBonus;
     }
 
     private static int workersComeThroughBonus() {

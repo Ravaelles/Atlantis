@@ -63,4 +63,8 @@ public class AFocusPoint extends APosition {
     public AUnit unit() {
         return unit;
     }
+
+    public boolean isAroundChoke() {
+        return choke != null;
+    }
 }

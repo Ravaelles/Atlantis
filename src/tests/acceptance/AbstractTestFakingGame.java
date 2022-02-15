@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.OnStart;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.PositionUtil;
 import atlantis.units.select.BaseSelect;
@@ -111,7 +112,12 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
     private void initBuildOrder() {
         OnStart.initializeAllStrategies();
-        OnStart.initStrategyAndBuildOrder();
+
+        try {
+            OnStart.initStrategyAndBuildOrder();
+        } catch (RuntimeException e) {
+            // Ignore
+        }
     }
 
     private void mockGameObject() {
@@ -153,7 +159,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     // =========================================================
 
     protected FakeUnit nearestEnemy(FakeUnit unit) {
-        return (FakeUnit) Select.enemyCombatUnits().nearestTo(unit);
+        return (FakeUnit) EnemyUnits.visibleAndFogged().nearestTo(unit);
     }
 
     protected String distToNearestEnemy(FakeUnit unit) {

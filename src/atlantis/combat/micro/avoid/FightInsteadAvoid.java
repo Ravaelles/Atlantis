@@ -62,7 +62,7 @@ public class FightInsteadAvoid {
         }
 
         if (dontFightInTopImportantCases()) {
-            unit.addLog("DontFightImportant");
+            unit.addLog("DoNotFight");
             return false;
         }
 
@@ -90,7 +90,7 @@ public class FightInsteadAvoid {
     // =========================================================
 
     protected boolean fightAsCombatUnit() {
-        if (fightBecauseWayTooManyUnitsNearby(unit)) {
+        if (fightBecauseWayTooManyUnitsNear(unit)) {
             unit.addLog("FightStacked");
             return true;
         }
@@ -102,7 +102,7 @@ public class FightInsteadAvoid {
             }
 
             if (unit.isRanged() && ranged == null) {
-//                unit.addLog("FightRanged");
+                unit.addLog("FightRanged");
                 return false;
             } else {
                 unit.setTooltip("Retreat", true);
@@ -116,7 +116,7 @@ public class FightInsteadAvoid {
             return true;
         }
 
-//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNearby(unit)) {
+//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNear(unit)) {
 //            return true;
 //        }
 
@@ -149,9 +149,9 @@ public class FightInsteadAvoid {
     protected boolean dontFightInTopImportantCases() {
 
         // Always avoid invisible combat units
-        if (invisibleDT != null || invisibleCombatUnit != null) {
-            return true;
-        }
+//        if (invisibleDT != null || invisibleCombatUnit != null) {
+//            return true;
+//        }
 
         return false;
     }
@@ -241,7 +241,7 @@ public class FightInsteadAvoid {
         }
 
         AUnit target = unit.target();
-        if (target != null && target.hp() <= (unit.damageAgainst(target) + 8)) {
+        if (target != null && target.type().totalCost() >= 70 && target.hp() <= (unit.damageAgainst(target) + 4)) {
             return true;
         }
 
@@ -253,16 +253,14 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        int meleeEnemiesNearby = unit.enemiesNearby().melee().inRadius(1.5, unit).count();
-        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) * meleeEnemiesNearby) {
+        int meleeEnemiesNear = unit.enemiesNear().melee().inRadius(1.5, unit).count();
+        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) * meleeEnemiesNear) {
             return false;
         }
-//        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) && enemiesSelection.melee().atLeast((Enemy.protoss() ? 1 : 2))) {
-//            return false;
-//        }
 
-        boolean medicNearby = unit.medicNearby();
-        return medicNearby || (!unit.isWounded() && ranged == null);
+//        return false;
+        boolean medicNear = unit.medicInHealRange();
+        return medicNear || (!unit.isWounded() && ranged == null && unit.friendsInRadiusCount(1) >= 4);
     }
 
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
@@ -270,34 +268,34 @@ public class FightInsteadAvoid {
 //                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
                 && (
                     unit.isDT()
-                    || (unit.hp() <= 30 && unit.enemiesNearby().ranged().inRadius(6, unit).notEmpty())
-                    || (unit.enemiesNearby().ranged().inRadius(1, unit).isNotEmpty())
-                    || (unit.enemiesNearby().combatBuildings(false).inRadius(3, unit).isNotEmpty())
+                    || (unit.hp() <= 30 && unit.enemiesNear().ranged().inRadius(6, unit).notEmpty())
+                    || (unit.enemiesNear().ranged().inRadius(1, unit).isNotEmpty())
+                    || (unit.enemiesNear().combatBuildings(false).inRadius(3, unit).isNotEmpty())
                 );
     }
 
     protected boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
         return unit.isAirUnitAntiAir()
-                && unit.enemiesNearby()
+                && unit.enemiesNear()
                 .canBeAttackedBy(unit, 3)
                 .isNotEmpty();
     }
 
-    protected boolean fightBecauseWayTooManyUnitsNearby(AUnit unit) {
-        int unitsNearby = Select.all().exclude(unit).inRadius(0.3, unit).count();
-        int ourNearby = Select.our().exclude(unit).inRadius(0.3, unit).count();
+    protected boolean fightBecauseWayTooManyUnitsNear(AUnit unit) {
+        int unitsNear = Select.all().exclude(unit).inRadius(0.3, unit).count();
+        int ourNear = Select.our().exclude(unit).inRadius(0.3, unit).count();
 
         if (unit.mission() != null && unit.mission().isMissionAttack()) {
             if (We.terran()) {
-                return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
+                return unitsNear >= 6 || (invisibleDT != null && unitsNear >= 4)
                         || Select.ourCombatUnits().inRadius(10, unit).atLeast(25);
             }
             if (We.protoss()) {
-                return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
+                return unitsNear >= 6 || (invisibleDT != null && unitsNear >= 4)
                         || Select.ourCombatUnits().inRadius(10, unit).atLeast(10);
             }
             if (We.zerg()) {
-                return unitsNearby >= 6 || (invisibleDT != null && unitsNearby >= 4)
+                return unitsNear >= 6 || (invisibleDT != null && unitsNear >= 4)
                         || Select.ourCombatUnits().inRadius(10, unit).atLeast(20);
             }
         }
@@ -309,7 +307,7 @@ public class FightInsteadAvoid {
                     && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
         }
 
-        return ourNearby >= 5 || unitsNearby >= 6;
+        return ourNear >= 5 || unitsNear >= 6;
     }
 
     protected boolean fightAsWorker(AUnit unit, Units enemies) {

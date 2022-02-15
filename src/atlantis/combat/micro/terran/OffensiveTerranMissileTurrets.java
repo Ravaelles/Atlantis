@@ -24,7 +24,7 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
     // =========================================================
 
     protected static boolean handleReinforceMissionAttack() {
-        APosition squadCenter = Squad.alphaCenter();
+        HasPosition squadCenter = Squad.alphaCenter();
         if (squadCenter == null) {
             return false;
         }
@@ -49,7 +49,7 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
         APosition point = focusPoint;
 //        FoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
 
-        APosition alphaCenter = Squad.alphaCenter();
+        HasPosition alphaCenter = Squad.alphaCenter();
         if (alphaCenter != null) {
 //            point = point.translateTilesTowards(-6, enemyBuilding);
 //            AChoke choke = Chokes.nearestChoke(enemyBuilding);

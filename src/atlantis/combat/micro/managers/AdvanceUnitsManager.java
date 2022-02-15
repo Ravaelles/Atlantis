@@ -4,6 +4,7 @@ import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionUnitManager;
 import atlantis.combat.targeting.ATargeting;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -40,8 +41,23 @@ public class AdvanceUnitsManager extends MissionUnitManager {
     private static boolean moveToFocusPoint(
             AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
-        if (unit.recentlyMoved()) {
+        if (focusPoint == null) {
             return false;
+        }
+
+        if (unit.enemiesNear().notEmpty()) {
+            if (unit.isMoving() && !unit.isRunning() && unit.lastActionMoreThanAgo(15)) {
+                unit.stop("TooFast", false);
+            }
+            return false;
+        }
+
+        // =========================================================
+
+        if (unit.isMoving() && !unit.isRunning() && unit.lastActionMoreThanAgo(10, Actions.MOVE_ENGAGE)) {
+//        if (!unit.isStopped() && unit.lastActionMoreThanAgo(7, Actions.MOVE_ENGAGE)) {
+            unit.stop("TooFast", false);
+            return true;
         }
 
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
@@ -55,7 +71,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // =========================================================
 
-        if (AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit)) {
+        if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
             unit.setTooltip("Adv:Attack", true);
             return true;
         }
@@ -78,11 +94,11 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // Close enough
         else if (allowCloseEnough && distToFocusPoint <= optimalDist + margin) {
-            if (unit.isMoving()) {
+            if (unit.isMoving() && unit.lastActionMoreThanAgo(5)) {
                 unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true);
             }
             else {
-                unit.setTooltip("Adv:Fine", true);
+                unit.setTooltip("Adv:Ok", true);
             }
             return true;
         }
@@ -93,24 +109,29 @@ public class AdvanceUnitsManager extends MissionUnitManager {
                 return true;
             }
 
-            return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv(" + (int) distToFocusPoint + ")", true);
+            return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")", true);
         }
 
 //        System.out.println("Target = " + ATargeting.defineBestEnemyToAttackFor(unit, 40) + " // " +
-//                unit.enemiesNearby().inRadius(10, unit).count());
+//                unit.enemiesNear().inRadius(10, unit).count());
 
         // =========================================================
 
         if (distToFocusPoint > 6) {
-            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
-                return true;
-            }
+//            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
+//                return true;
+//            }
 
-            unit.move(focusPoint, Actions.MOVE_ENGAGE, "Adv:Forward", true);
+            if (!unit.isMoving()) {
+                String canAttack = AAttackEnemyUnit.canAttackEnemiesNowString(unit);
+                unit.move(focusPoint, Actions.MOVE_ENGAGE, "Advance" + canAttack, true);
+            }
             return true;
         }
 
-        unit.setTooltip("Adv", true);
+        if (!unit.hasTooltip()) {
+            unit.setTooltip("#Adv", true);
+        }
         return false;
     }
 
@@ -121,45 +142,20 @@ public class AdvanceUnitsManager extends MissionUnitManager {
                 + (unit.isMedic() ? -1.2 : 0);
     }
 
-    // =========================================================
+    // === Terran ======================================================
 
     private static boolean handleTerranAdvance(AUnit unit) {
-        if (unit.isInfantry() && !unit.isMedic() && Count.medics() >= 4) {
-//            if (Select.enemyCombatUnits().inRadius(7, unit).isEmpty()) {
-//                return false;
-//            }
-
-            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
-            if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
-                if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
-                    return unit.move(medic, Actions.MOVE_FOCUS, "ToMedic", false);
-                }
+        if (unit.isTerranInfantry() && unit.isWounded() && !unit.isMedic() && Count.medics() >= 1) {
+            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).nearestTo(unit);
+//            if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
+            if (medic != null) {
+//                if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
+                return unit.move(medic, Actions.MOVE_FOCUS, "ToMedic", false);
+//                }
             }
         }
 
         return false;
-
-//        if (Select.our().tanks().isEmpty()) {
-//            return false;
-//        }
-//
-//        if (unit.isTank()) {
-//            return false;
-//        }
-//
-////        double maxRadiusFromTank = 4 + Math.sqrt(Count.ourCombatUnits());
-//        AUnit nearestTank = Select.our().tanks().nearestTo(unit);
-//
-//        if (nearestTank >= 1) {
-//            return false;
-//        }
-//
-//        unit.move(
-//                unit.translatePercentTowards(Select.our().tanks().nearestTo(unit), 30),
-//                UnitActions.MOVE_TO_FOCUS,
-//                "ToTank"
-//        );
-//        return true;
     }
 
     private static double maxDistToMedic(AUnit unit) {
@@ -172,5 +168,7 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         return 8;
     }
+
+    // =========================================================
 
 }

@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.map.position.APosition;
 import tests.unit.FakeUnit;
 
 /**
@@ -7,7 +8,9 @@ import tests.unit.FakeUnit;
  */
 public class FakeFoggedUnit extends AbstractFoggedUnit {
 
-    protected FakeFoggedUnit() { }
+    protected FakeFoggedUnit() {
+        super(null);
+    }
 
     public static FakeFoggedUnit fromFake(FakeUnit unit) {
         FakeFoggedUnit fakeFoggedUnit = new FakeFoggedUnit();
@@ -22,4 +25,30 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
 
     // =========================================================
 
+    protected void updateType(AUnit unit) {
+        _lastType = ((FakeUnit) unit).rawType;
+    }
+
+    // =========================================================
+
+    @Override
+    public boolean isCloaked() {
+        return aUnit.isCloaked();
+    }
+
+
+    @Override
+    public APosition position() {
+        return aUnit.position();
+    }
+
+    @Override
+    public int x() {
+        return aUnit.position().x;
+    }
+
+    @Override
+    public int y() {
+        return aUnit.position().y;
+    }
 }

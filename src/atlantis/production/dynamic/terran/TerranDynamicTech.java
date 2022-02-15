@@ -5,6 +5,10 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.ADynamicTech;
+import atlantis.production.orders.build.AddToQueue;
+import atlantis.units.select.Count;
+import atlantis.units.select.Have;
+import atlantis.util.Enemy;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -16,17 +20,24 @@ public class TerranDynamicTech extends ADynamicTech {
             return;
         }
 
+        if (
+            !ATech.isResearched(TechType.Tank_Siege_Mode) && (
+                Decisions.wantsToBeAbleToProduceTanksSoon()
+                || (Enemy.protoss() && Have.machineShop())
+                || Count.tanks() >= 2
+            )
+        ) {
+            handleResearch(TechType.Tank_Siege_Mode);
+        }
+
         if (OurStrategy.get().goingBio()) {
             handleUpgrade(UpgradeType.Terran_Infantry_Weapons);
             handleUpgrade(UpgradeType.Terran_Infantry_Armor);
             handleUpgrade(UpgradeType.Caduceus_Reactor);
         }
 
-        if (
-                Decisions.wantsToBeAbleToProduceTanksSoon()
-                || (A.supplyUsed(70) && !ATech.isResearched(TechType.Tank_Siege_Mode))
-        ) {
-            handleResearch(TechType.Tank_Siege_Mode);
+        if (Count.ghosts() >= 2) {
+            handleResearch(TechType.Lockdown);
         }
     }
 

@@ -25,7 +25,8 @@ public class ZergStrategies extends AStrategy {
     public static final AStrategy ZERG_1_Hatch_Lurker = new AStrategy();
     public static final AStrategy ZERG_2_Hatch_Lurker = new AStrategy();
     public static final AStrategy ZERG_13_Pool_Muta = new AStrategy();
-    
+    public static final AStrategy ZERG_2_Hatch_Hydra_vP = new AStrategy();
+
     // =========================================================
 
     public static void initialize() {
@@ -67,30 +68,30 @@ public class ZergStrategies extends AStrategy {
         // === Tech ==========================================
         
         ZERG_1_Hatch_Lurker.setZerg().setName("1 Hatch Lurker")
-                .setGoingTech().setGoingHiddenUnits()
-                .setUrl("http://wiki.teamliquid.net/starcraft/1_Hatch_Lurker");
-        
+                .setGoingTech().setGoingHiddenUnits();
+
         ZERG_2_Hatch_Lurker.setZerg().setName("2 Hatch Lurker")
-                .setGoingTech().setGoingHiddenUnits()
-                .setUrl("http://wiki.teamliquid.net/starcraft/1_Hatch_Lurker");
-        
+                .setGoingTech().setGoingHiddenUnits();
+
         ZERG_13_Pool_Muta.setZerg().setName("13 Pool Muta")
-                .setGoingTech().setGoingAirUnitsQuickly()
-                .setUrl("http://wiki.teamliquid.net/starcraft/13_Pool_Muta_(vs._Terran)");
-        
+                .setGoingTech().setGoingAirUnitsQuickly();
+
+        ZERG_2_Hatch_Hydra_vP.setZerg().setName("2 Hatch Hydra")
+                .setGoingTech();
+
     }
     
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
         int bases = Select.enemy().bases().count();
-        int lair = Select.enemy().countUnitsOfType(AUnitType.Zerg_Lair);
-        int pool = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spawning_Pool);
-        int extractor = Select.enemy().countUnitsOfType(AUnitType.Zerg_Extractor);
-        int spires = Select.enemy().countUnitsOfType(AUnitType.Zerg_Spire);
-        int mutalisks = Select.enemy().countUnitsOfType(AUnitType.Zerg_Mutalisk);
-        int hydraliskDen = Select.enemy().countUnitsOfType(AUnitType.Zerg_Hydralisk_Den);
-        int drones = Select.enemy().countUnitsOfType(AUnitType.Zerg_Drone);
-        int lings = Select.enemy().countUnitsOfType(AUnitType.Zerg_Zergling);
+        int lair = Select.enemy().countOfType(AUnitType.Zerg_Lair);
+        int pool = Select.enemy().countOfType(AUnitType.Zerg_Spawning_Pool);
+        int extractor = Select.enemy().countOfType(AUnitType.Zerg_Extractor);
+        int spires = Select.enemy().countOfType(AUnitType.Zerg_Spire);
+        int mutalisks = Select.enemy().countOfType(AUnitType.Zerg_Mutalisk);
+        int hydraliskDen = Select.enemy().countOfType(AUnitType.Zerg_Hydralisk_Den);
+        int drones = Select.enemy().countOfType(AUnitType.Zerg_Drone);
+        int lings = Select.enemy().countOfType(AUnitType.Zerg_Zergling);
         
         // === Expansion ===========================================
         

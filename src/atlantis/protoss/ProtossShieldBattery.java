@@ -6,22 +6,23 @@ import atlantis.units.select.Select;
 
 public class ProtossShieldBattery {
 
-    public static boolean update(AUnit shieldBattery) {
-        if (shieldBattery.energy() >= 30) {
-            shieldBattery.removeTooltip();
-            for (AUnit unit : Select.ourRealUnits().inRadius(11, shieldBattery).list()) {
-                if (unit.shields() + 12 < unit.maxShields() ) {
-                    if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).isNotEmpty()) {
-                        return false;
-                    }
+    private static final double MAX_DIST = 13;
 
-                    if (shieldBattery.groundDist(unit) > 15) {
-                        return false;
-                    }
-                    if (!shieldBattery.equals(unit.target()) || A.chance(2)) {
+    public static boolean update(AUnit shieldBattery) {
+        if (shieldBattery.energy() >= 32) {
+            shieldBattery.removeTooltip();
+            for (AUnit unit : Select.ourRealUnits().inRadius(MAX_DIST, shieldBattery).list()) {
+                if (unit.shieldDamageAtLeast(25) || (unit.isWorker() && unit.shieldDamageAtLeast(15))) {
+//                    if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).isNotEmpty()) {
+//                        return false;
+//                    }
+
+//                    if (!shieldBattery.equals(unit.target()) || A.chance(2)) {
+                    if (!shieldBattery.equals(unit.target())) {
                         unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
                     }
                     shieldBattery.setTooltipTactical("RECHARGE " + unit.name());
+                    unit.addLog("Recharge");
                     return true;
                 }
             }

@@ -56,9 +56,9 @@ public class ATargetingCrucial extends ATargeting {
         target = enemyUnits.clone()
                 .ofType(AUnitType.Protoss_Observer)
                 .effVisible()
-                .inRadius(unit.isAir() ? 40 : 11, unit)
+                .inRadius(unit.isAir() ? 40 : 13, unit)
                 .mostWounded();
-        if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(14, target).atLeast(1)) {
+        if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, target).atLeast(1)) {
             return target;
         }
 
@@ -105,9 +105,9 @@ public class ATargetingCrucial extends ATargeting {
         // MELEE should attack CLOSE targets if too clustered
 
         if (unit.isMelee()) {
-            Selection nearbyEnemies = enemyUnits.clone().inRadius(0.9, unit);
-            if (nearbyEnemies.atLeast(2)) {
-                return nearbyEnemies.mostWounded();
+            Selection NearEnemies = enemyUnits.clone().inRadius(0.9, unit);
+            if (NearEnemies.atLeast(2)) {
+                return NearEnemies.mostWounded();
             }
         }
 

@@ -9,8 +9,11 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
@@ -29,9 +32,19 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
 
     // =========================================================
 
-    protected static boolean shouldChangeMissionToDefend() {
-        if (Atlantis.LOST <= 4) {
-            return false;
+    public static boolean shouldChangeMissionToDefend() {
+        if (GamePhase.isEarlyGame()) {
+            if (Enemy.protoss() && EnemyUnits.visibleAndFogged().ofType(AUnitType.Protoss_Zealot).atLeast(4)) {
+                if (Count.medics() <= 4) {
+                    if (DEBUG) debugReason = "Enemy rush (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                    return true;
+                }
+            }
+        }
+
+        if (ArmyStrength.weAreMuchWeaker()) {
+            if (DEBUG) debugReason = "Much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return true;
         }
 
         if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
@@ -40,12 +53,12 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         }
 
         if (ArmyStrength.weAreWeaker() && RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
-            if (DEBUG) debugReason = "weAreWeaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) debugReason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
-        if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130) {
-            if (DEBUG) debugReason = "too many resources lost";
+        if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130 && !GamePhase.isLateGame()) {
+            if (DEBUG) debugReason = "Too many resources lost";
             return true;
         }
 
@@ -58,7 +71,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
             return true;
         }
 
-        if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {
+        if (ArmyStrength.weAreMuchStronger()) {
             if (DEBUG) debugReason = "Much stronger";
             return true;
         }

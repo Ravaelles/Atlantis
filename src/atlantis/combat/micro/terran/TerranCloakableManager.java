@@ -14,17 +14,17 @@ public class TerranCloakableManager {
         }
 
         if (unit.canCloak() && ATech.isResearched(TechType.Cloaking_Field)) {
-            boolean enemiesNearby = unit.enemiesNearby()
+            boolean enemiesNear = unit.enemiesNear()
                     .canAttack(unit, true, true, 3)
                     .isNotEmpty();
-            boolean detectorsNearby = Select.enemy()
+            boolean detectorsNear = Select.enemy()
                     .detectors()
                     .inRadius(9.1, unit)
                     .isNotEmpty();
 
             // Not cloaked
             if (!unit.isCloaked()) {
-                if (unit.energy() > 10 && enemiesNearby && !detectorsNearby) {
+                if (unit.energy() > 10 && enemiesNear && !detectorsNear) {
                     System.err.println(unit.name() + " CLOAKED");
                     unit.cloak();
                     unit.setTooltipTactical("CLOAK!");
@@ -35,7 +35,7 @@ public class TerranCloakableManager {
             // Cloaked
             else {
                 System.out.println("CLOAKED");
-                if (!enemiesNearby || detectorsNearby || unit.lastUnderAttackLessThanAgo(25)) {
+                if (!enemiesNear || detectorsNear || unit.lastUnderAttackLessThanAgo(25)) {
                     System.err.println("------------- DECLOAK");
                     unit.decloak();
                     unit.setTooltipTactical("DECLOAK");

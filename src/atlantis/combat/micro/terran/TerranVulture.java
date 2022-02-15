@@ -83,7 +83,7 @@ public class TerranVulture {
 //        }
 
         // First define closest enemy
-        AUnit nearestEnemy = unit.enemiesNearby().ofType(
+        AUnit nearestEnemy = unit.enemiesNear().ofType(
                 AUnitType.Terran_Siege_Tank_Siege_Mode,
                 AUnitType.Terran_Siege_Tank_Tank_Mode,
                 AUnitType.Protoss_Dragoon
@@ -92,13 +92,13 @@ public class TerranVulture {
         if (nearestEnemy != null) {
             APainter.paintTextCentered(unit.translateByTiles(0, -1.2), A.trueFalse(unit.isBraking()) + "," + A.trueFalse(unit.isIdle()), Color.Orange);
 
-            // Define center of other enemy units nearby
+            // Define center of other enemy units Near
             HasPosition enemiesCenter = nearestEnemy
-                    .friendsNearby()
+                    .friendsNear()
                     .groundUnits()
                     .inRadius(2, nearestEnemy)
                     .center()
-                    .makeWalkable();
+                    .makeWalkable(5);
 
             APosition finalPlace = enemiesCenter.position();
 
@@ -132,9 +132,9 @@ public class TerranVulture {
     }
 
     private static boolean plantStandardMine(AUnit unit) {
-        Selection nearbyMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);
-        if ((nearbyMines.count() <= 3 || (unit.minesCount() >= 3 && nearbyMines.count() <= 4))
-                && nearbyMines.inRadius(2, unit).atMost(1)) {
+        Selection NearMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);
+        if ((NearMines.count() <= 3 || (unit.minesCount() >= 3 && NearMines.count() <= 4))
+                && NearMines.inRadius(2, unit).atMost(1)) {
             plantMineAt(unit, unit.position());
             unit.setTooltipTactical("Plant mine");
             return true;

@@ -10,14 +10,14 @@ public class ParamTweakerFactory extends ParamTweaker {
         tweaker = new ParamTweaker();
 
 //        tweaker.addParam(new Param(
-//                "ENEMIES_NEARBY_FACTOR",
-//                () -> SafetyMarginAgainstMelee.ENEMIES_NEARBY_FACTOR,
-//                () -> SafetyMarginAgainstMelee.ENEMIES_NEARBY_FACTOR = A.rand(0, 200) / 100.0
+//                "ENEMIES_Near_FACTOR",
+//                () -> SafetyMarginAgainstMelee.ENEMIES_Near_FACTOR,
+//                () -> SafetyMarginAgainstMelee.ENEMIES_Near_FACTOR = A.rand(0, 200) / 100.0
 //        ));
 //        tweaker.addParam(new Param(
-//                "ENEMIES_NEARBY_MAX_DIST",
-//                () -> SafetyMarginAgainstMelee.ENEMIES_NEARBY_MAX_DIST,
-//                () -> SafetyMarginAgainstMelee.ENEMIES_NEARBY_MAX_DIST = A.rand(120, 260) / 100.0
+//                "ENEMIES_Near_MAX_DIST",
+//                () -> SafetyMarginAgainstMelee.ENEMIES_Near_MAX_DIST,
+//                () -> SafetyMarginAgainstMelee.ENEMIES_Near_MAX_DIST = A.rand(120, 260) / 100.0
 //        ));
         tweaker.addParam(new Param(
                 "SafetyMeleeInfantryBaseNoMedic",
@@ -52,9 +52,9 @@ public class ParamTweakerFactory extends ParamTweaker {
 //                () -> ARunningManager.NOTIFY_UNITS_IN_RADIUS_BASE = A.rand(70, 95) / 100.0
 //        ));
 //        tweaker.addParam(new Param(
-//                "NearbyUnitMakeSpace",
-//                () -> ARunningManager.NEARBY_UNIT_MAKE_SPACE,
-//                () -> ARunningManager.NEARBY_UNIT_MAKE_SPACE = A.rand(60, 90) / 100.0
+//                "NearUnitMakeSpace",
+//                () -> ARunningManager.Near_UNIT_MAKE_SPACE,
+//                () -> ARunningManager.Near_UNIT_MAKE_SPACE = A.rand(60, 90) / 100.0
 //        ));
 //        tweaker.addParam(new Param(
 //                "STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO",

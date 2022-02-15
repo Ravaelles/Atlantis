@@ -1,10 +1,12 @@
 
 package atlantis.production.dynamic.protoss;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.AbstractDynamicUnits;
-import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
@@ -13,6 +15,7 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
 
     public static void update() {
         mutalisks();
+        hydralisks();
         zerglings();
     }
 
@@ -27,32 +30,54 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
-        if (larvas(1)) {
-            make(AUnitType.Zerg_Mutalisk);
+        if (larvas(1) && AGame.canAffordWithReserved(50, 0)) {
+            AddToQueue.withStandardPriority(AUnitType.Zerg_Mutalisk);
         }
     }
 
-    private static void zerglings() {
-        if (!AGame.canAffordWithReserved(100, 0)) {
-            return;
+    private static boolean hydralisks() {
+        if (Have.no(AUnitType.Zerg_Hydralisk_Den)) {
+            return false;
         }
 
-        if (larvas(2)) {
-            make(AUnitType.Zerg_Zergling);
+        if (AGame.canAffordWithReserved(75, 75)) {
+            AddToQueue.withStandardPriority(AUnitType.Zerg_Hydralisk);
+            return true;
         }
+
+        return false;
+    }
+
+    private static boolean zerglings() {
+        if (Count.zerglings() >= 8 && !AGame.canAffordWithReserved(100, 0)) {
+            return false;
+        }
+
+        if (Have.hydraliskDen()) {
+            if (!A.hasMinerals(300)) {
+                return false;
+            }
+        }
+
+        if (Count.zerglings() <= 50 && larvas(1)) {
+            AddToQueue.withStandardPriority(AUnitType.Zerg_Zergling);
+            return true;
+        }
+
+        return false;
     }
 
     // =========================================================
 
-    private static void make(AUnitType type) {
-        CurrentBuildOrder.get().produceUnit(type);
-//        for (AUnit base : Select.ourBases().reverse().list()) {
-//            if (!base.isTrainingAnyUnit()) {
-////                base.train(unitType);
-//                return;
-//            }
-//        }
-    }
+//    private static void make(AUnitType type) {
+//        CurrentBuildOrder.get().produceUnit(type);
+////        for (AUnit base : Select.ourBases().reverse().list()) {
+////            if (!base.isTrainingAnyUnit()) {
+//////                base.train(unitType);
+////                return;
+////            }
+////        }
+//    }
 
     private static boolean larvas(int minLarvas) {
         return Select.ourLarva().count() >= minLarvas;

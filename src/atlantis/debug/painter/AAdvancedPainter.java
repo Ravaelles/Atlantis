@@ -7,14 +7,13 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.CohesionAssurance;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameLog;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
@@ -116,7 +115,7 @@ public class AAdvancedPainter extends APainter {
         paintWorkersAssignedToBuildings();
         paintBuildingsTrainingUnitsAndResearching();
         paintBarsUnderUnits();
-        paintFoggedUnitsThatIsEnemiesDiscovered();
+        paintFoggedUnits();
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
@@ -190,7 +189,7 @@ public class AAdvancedPainter extends APainter {
             // === Other stuff =========================================
 
             paintSquad(unit);
-            paintLastOrder(unit);
+            paintLastAction(unit);
             paintLog(unit);
         }
     }
@@ -201,7 +200,7 @@ public class AAdvancedPainter extends APainter {
         for (int i = unit.log().messages().size() - 1; i >= 0; i--) {
             LogMessage message = unit.log().messages().get(i);
 //            unit.paintInfo(message.createdAtFrames() + "-" + message.message(), Color.Grey, offset);
-            APainter.paintTextCentered(
+            paintTextCentered(
                     unit,
                     message.createdAtFrames() + "-" + message.message(),
 //                    Color.Grey,
@@ -212,21 +211,27 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    private static void paintLastOrder(AUnit unit) {
-        //            String order = (unit.u().getLastCommand() == null ? "NONE" : unit.getLastCommand().getType().toString())
-//                    + "(" + unit.lastOrderFramesAgo() + ")";
-//            String order = unit.getAction().toString() + "(" + unit.lastOrderFramesAgo() + ")";
-        String order = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
-        paintTextCentered(new APosition(unit.x(), unit.y() - 6), order, Color.Grey);
+    private static void paintLastAction(AUnit unit) {
+//        String action = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
+        String action = unit.action() != null ? unit.action().toString() : "NO_ACTION";
+        if ("ATTACK_UNIT".equals(action)) {
+            action += ":" + (unit.target() != null ? unit.target().type() : "NO_TARGET");
+        }
+        action += "(" + unit.lastActionFramesAgo() + ")";
+
+        paintTextCentered(new APosition(unit.x(), unit.y() - 6), action, Color.Grey);
     }
 
     private static void paintSquad(AUnit unit) {
-        String squadLetter = unit.squad() == null ? "NO_SQUAD" : unit.squad().letter();
+        if (!unit.isAlive() || unit.squad() == null) {
+            return;
+        }
+        String squadLetter = unit.squad().letter();
         paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
     }
 
     private static void paintOurCombatUnitTargets(AUnit unit) {
-        if (unit.hasTargetPosition() && !unit.targetPositionAtLeastAway(7)) {
+        if (unit.hasTargetPosition() && !unit.targetPositionAtLeastAway(12)) {
             paintLine(unit, unit.targetPosition(), Color.Grey);
 //            paintLine(unit, unit.targetPosition(), (unit.isAttackingOrMovingToAttack() ? Color.Teal : Color.Grey));
 //            paintLine(unit, unit.target(), (unit.isAttackingOrMovingToAttack() ? Color.Green : Color.Yellow));
@@ -265,7 +270,7 @@ public class AAdvancedPainter extends APainter {
             if (enemy.isCloaked() || enemy.isBurrowed()) {
                 paintCircle(enemy, 16, Color.Green);
                 paintCircle(enemy, 15, Color.Green);
-                paintCircle(enemy, 14, Color.Green);
+                paintCircle(enemy, 15, Color.Green);
                 paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.White);
             }
         }
@@ -601,7 +606,7 @@ public class AAdvancedPainter extends APainter {
      * Paints all pending contstructions, including those not yet started, even if only in the AI memory.
      */
     static void paintSidebarConstructionsPending() {
-        int yOffset = 220;
+        int yOffset = 250;
         ArrayList<ConstructionOrder> allOrders = ConstructionRequests.all();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
@@ -765,9 +770,13 @@ public class AAdvancedPainter extends APainter {
                 paintWhiteFlagForRunningUnit(unit);
             }
 
-            // Paint #ID
-            paintTextCentered(unit.translateByTiles(0, 1),
-                    "#" + unit.id() + " " + unit.action(), Color.Cyan);
+            // Paint hash + unit ID and unit action e.g. "ENGAGE", "ATTACK_UNIT" etc
+            String action = unit.action() != null ? unit.action().toString() : null;
+            System.out.println(action + " // " + ("ATTACK_UNIT".equals(action)));
+            if ("ATTACK_UNIT".equals(action)) {
+                action += ":" + unit.target().type();
+            }
+            paintTextCentered(unit.translateByTiles(0, 1),"#" + unit.id() + " " + action, Color.Cyan);
 
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
@@ -780,8 +789,8 @@ public class AAdvancedPainter extends APainter {
 //                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
 //            }
             // =========================================================
-            Color color = Color.Grey;
-            if (unit.action() != null) {
+//            Color color = Color.Grey;
+//            if (unit.action() != null) {
 //                if (unit.getAction().equals(UnitActions.MOVE)) {
 //                    color = Color.Teal;
 //                } else if (unit.getAction().isAttacking()) {
@@ -801,7 +810,7 @@ public class AAdvancedPainter extends APainter {
 //            else if (unit.getAction().equals(UnitActions.)) {
 //                color = Color.;
 //            }
-            }
+//            }
 
 //            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
 //                paintCircle(unit, unit.type().getDimensionLeft() + unit.type().getDimensionRight(), color);
@@ -1101,9 +1110,9 @@ public class AAdvancedPainter extends APainter {
     /**
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
-    static void paintFoggedUnitsThatIsEnemiesDiscovered() {
-        for (AbstractFoggedUnit foggedEnemy : EnemyInfo.discoveredAndAliveUnits()) {
-            if (!foggedEnemy.hasKnownPosition()) {
+    static void paintFoggedUnits() {
+        for (AbstractFoggedUnit foggedEnemy : EnemyUnits.unitsDiscovered()) {
+            if (!foggedEnemy.hasPosition()) {
                 continue;
             }
 
@@ -1226,13 +1235,13 @@ public class AAdvancedPainter extends APainter {
         for (Squad squad : ASquadManager.allSquads()) {
             APosition median = squad.center();
             if (median != null) {
-                int maxDist = (int) (ASquadCohesionManager.preferredDistToSquadCenter(squad.size()) * 32);
+                int maxDist = (int) (CohesionAssurance.squadMaxRadius(squad) * 32);
 
-                APainter.paintCircle(median, maxDist + 1, Color.Cyan);
-                APainter.paintCircle(median, maxDist, Color.Cyan);
+                paintCircle(median, maxDist + 1, Color.Cyan);
+                paintCircle(median, maxDist, Color.Cyan);
 
-                //            APainter.setTextSizeMedium();
-                //            APainter.paintTextCentered(median, "Median (" + maxDist + ")", Color.Cyan, 0, 0.5);
+                setTextSizeMedium();
+                paintTextCentered(median, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);
             }
         }
     }
@@ -1242,7 +1251,7 @@ public class AAdvancedPainter extends APainter {
         int y = rightSideMessageTopOffset;
 
         int counter = 0;
-        APainter.setTextSizeSmall();
+        setTextSizeSmall();
         for (LogMessage log : GameLog.get().messages()) {
             paintMessage(log.message(), log.color(), x, y - 12 * counter++, true);
         }
@@ -1305,13 +1314,13 @@ public class AAdvancedPainter extends APainter {
 
 //        List<ARegion> regions = Regions.regions();
 //        for (ARegion region : regions) {
-//            APainter.paintRectangle(
+//            paintRectangle(
 //                    region.center().translateByTiles(-3, -3),
 //                    6,
 //                    6,
 //                    Color.Brown
 //            );
-//            APainter.paintTextCentered(
+//            paintTextCentered(
 //                    region.center(),
 //                    region.toString(),
 //                    Color.Brown
@@ -1324,8 +1333,8 @@ public class AAdvancedPainter extends APainter {
             return;
         }
 
-        APainter.paintCircle(region.center(), 6, Color.Brown);
-        APainter.paintCircle(region.center(), 5, Color.Brown);
+        paintCircle(region.center(), 6, Color.Brown);
+        paintCircle(region.center(), 5, Color.Brown);
 
         ArrayList<ARegionBoundary> boundaries = region.boundaries();
         for (ARegionBoundary boundary : boundaries) {
@@ -1352,7 +1361,7 @@ public class AAdvancedPainter extends APainter {
             return;
         }
 
-        APainter.setTextSizeMedium();
+        setTextSizeMedium();
 
         // Natural base
         APosition natural = Bases.natural();

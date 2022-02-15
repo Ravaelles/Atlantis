@@ -53,6 +53,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Armory) > 0;
     }
 
+    public static boolean hydraliskDen() {
+        return Count.ofType(AUnitType.Zerg_Hydralisk_Den) > 0;
+    }
+
     public static boolean base() {
         return Select.main() != null;
     }
@@ -67,6 +71,10 @@ public class Have {
 
     public static boolean barracks() {
         return Count.ofType(AUnitType.Terran_Barracks) > 0;
+    }
+
+    public static boolean academy() {
+        return Count.ofType(AUnitType.Terran_Academy) > 0;
     }
 
     public static boolean main() {

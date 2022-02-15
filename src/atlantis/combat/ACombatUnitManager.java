@@ -18,15 +18,14 @@ import atlantis.units.select.Select;
 
 public class ACombatUnitManager {
 
-    private static boolean debug = false;
-//    private static boolean debug = true;
-
     public static boolean update(AUnit unit) {
+        //if (true)System.out.println("A0 " + unit.nameWithId() + " at " + A.now());
+
         if (preActions(unit)) {
             return true;
         }
 
-        if (debug) System.out.println("A " + unit.nameWithId());
+        //if (true)System.out.println("A " + unit.nameWithId() + " at " + A.now());
 
         // =========================================================
         // === SPECIAL units =======================================
@@ -38,7 +37,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (debug) System.out.println("B " + unit.nameWithId());
+        //if (true)System.out.println("B " + unit.nameWithId());
 
         // =========================================================
         // === TOP priority ========================================
@@ -48,7 +47,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (debug) System.out.println("C " + unit.nameWithId());
+        //if (true)System.out.println("C " + unit.nameWithId());
 
         // =========================================================
         // === SPECIAL units =======================================
@@ -60,7 +59,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (debug) System.out.println("D " + unit.nameWithId());
+        //if (true)System.out.println("D " + unit.nameWithId());
 
         // =========================================================
         // === MEDIUM priority - TACTICAL level ====================
@@ -70,20 +69,17 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (debug) System.out.println("E " + unit.nameWithId());
+        //if (true)System.out.println("E " + unit.nameWithId());
 
         // =========================================================
-        // === LOW priority - STRATEGY level =======================
+        // === LOW priority - MISSION level =======================
         // =========================================================
 
         return handleLowPriority(unit);
-//        if (canHandleLowPriority(unit)) {
-//        }
-//        return false;
     }
 
     private static boolean preActions(AUnit unit) {
-        if (unit.isPatrolling()) {
+        if (unit.isPatrolling() || unit.lastActionLessThanAgo(15, Actions.RIGHT_CLICK)) {
             unit.setTooltip("Manual", true);
             return true;
         }
@@ -95,15 +91,6 @@ public class ACombatUnitManager {
 //                && (unit.lastActionLessThanAgo(2, UnitActions.ATTACK_UNIT) || unit.isUnderAttack(3)))
 //        {
 //            GameSpeed.activateDynamicSlowdown();
-//        }
-
-//        if (unit.isUnderAttack(1) && !GameSpeed.oneTimeSlowdownUsed) {
-//            GameSpeed.changeSpeedTo(30);
-//            GameSpeed.oneTimeSlowdownUsed = true;
-//        }
-
-//        if (unit.targetPosition() != null) {
-//            APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
 //        }
 
         if (unit.isNotRealUnit()) {
@@ -178,7 +165,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        // If nearby enemies would likely defeat us, retreat
+        // If Near enemies would likely defeat us, retreat
 //        if (RetreatManager.shouldRetreat(unit)) {
 //            return true;
 //        }
@@ -188,7 +175,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        return AAttackEnemyUnit.handleAttackNearbyEnemyUnits(unit);
+        return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
     }
 
     /**

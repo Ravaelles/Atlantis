@@ -33,7 +33,8 @@ public class ASquadManager {
     // Beta
 
     private static boolean shouldHaveBeta() {
-        return Count.ourCombatUnits() >= 24 && Have.main();
+        return false;
+//        return Count.ourCombatUnits() >= 24 && Have.main();
     }
 
     private static void handleReinforcements(Squad squad) {
@@ -79,13 +80,13 @@ public class ASquadManager {
     public static void removeUnitFromSquads(AUnit unit) {
         Squad squad = unit.squad();
 
-//        if (unit.isOur() && unit.isCombatUnit()) {
-//            System.out.println("unit destroyed " + unit + " // " + (squad != null ? squad.name() : null));
-//        }
         if (squad != null) {
             squad.removeUnit(unit);
             unit.setSquad(null);
         }
+//        if (unit.isOur() && unit.isCombatUnit()) {
+//            System.out.println("unit destroyed " + unit + " // " + (squad != null ? squad.name() : null));
+//        }
     }
 
     public static ArrayList<Squad> allSquads() {

@@ -2,13 +2,12 @@ package atlantis;
 
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.game.*;
-import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.constructing.ProtossConstructionManager;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
-import atlantis.units.UmsSpecialActionsManager;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 
@@ -26,7 +25,6 @@ public class Atlantis implements BWEventListener {
      * JBWAPI core class.
      */
     private static BWClient bwClient;
-    private final OnUnitMorph onUnitMorph = new OnUnitMorph();
 
     /**
      * JBWAPI's game object, contains low-level methods.
@@ -204,23 +202,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitDiscover(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
-
-            // Enemy unit
-            if (unit.isEnemy()) {
-                enemyNewUnit(unit);
-            }
-
-            else if (unit.isOur()) {
-            }
-
-            else {
-                if (!unit.isNotRealUnit()) {
-//                    System.out.println("Neutral unit discovered! " + unit.name());
-                    if (A.isUms()) {
-                        UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
-                    }
-                }
-            }
+            OnUnitDiscover.update(unit);
         }
     }
 
@@ -231,7 +213,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitEvade(Unit u) {
         AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
-            EnemyInfo.updateEnemyUnitTypeAndPosition(unit);
+            EnemyUnits.updateUnitTypeAndPosition(unit);
         }
     }
 
@@ -242,7 +224,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitHide(Unit u) {
         AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
-            EnemyInfo.updateEnemyUnitTypeAndPosition(unit);
+            EnemyUnits.updateUnitTypeAndPosition(unit);
         }
     }
 
@@ -280,7 +262,7 @@ public class Atlantis implements BWEventListener {
     }
 
     public static void enemyNewUnit(AUnit unit) {
-        EnemyInfo.weDiscoveredEnemyUnit(unit);
+        EnemyUnits.weDiscoveredEnemyUnit(unit);
     }
 
     public static void ourNewUnit(AUnit unit) {

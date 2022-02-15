@@ -98,8 +98,7 @@ public class OnStart {
             }
         }
         catch (Exception e) {
-            System.err.println("Exception when loading build orders file");
-            e.printStackTrace();
+            throw new RuntimeException("Exception when loading build orders file");
         }
     }
 

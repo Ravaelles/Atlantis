@@ -1,0 +1,27 @@
+package atlantis;
+
+import atlantis.game.A;
+import atlantis.units.AUnit;
+import atlantis.units.UmsSpecialActionsManager;
+
+public class OnUnitDiscover {
+
+    public static void update(AUnit unit) {
+        // Enemy unit
+        if (unit.isEnemy()) {
+            Atlantis.enemyNewUnit(unit);
+        }
+
+        else if (unit.isOur()) {
+        }
+
+        else {
+            if (!unit.isNotRealUnit()) {
+//                    System.out.println("Neutral unit discovered! " + unit.name());
+                if (A.isUms()) {
+                    UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+                }
+            }
+        }
+    }
+}

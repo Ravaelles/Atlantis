@@ -13,7 +13,6 @@ import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.We;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -149,7 +148,9 @@ public class AProductionManager {
     }
 
     private static boolean isSafeToProduceWorkerAt(AUnit base) {
-        return Select.enemyCombatUnits().excludeTypes().inRadius(10, base).atMost(1);
+        return base.enemiesNear().excludeTypes(
+            AUnitType.Zerg_Overlord, AUnitType.Protoss_Observer
+        ).inRadius(10, base).atMost(1);
     }
 
 }

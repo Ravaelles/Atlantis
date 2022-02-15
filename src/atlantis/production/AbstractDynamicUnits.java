@@ -13,13 +13,13 @@ import atlantis.util.Helpers;
 public class AbstractDynamicUnits extends Helpers {
 
     protected static boolean addToQueue(AUnitType type) {
-        if (AGame.supplyFree() == 0) {
-            return false;
-        }
+//        if (AGame.supplyFree() == 0) {
+//            return false;
+//        }
 
-        if (!AGame.canAffordWithReserved(Math.max(80, type.getMineralPrice()), type.getGasPrice())) {
-            return false;
-        }
+//        if (!AGame.canAffordWithReserved(Math.max(80, type.getMineralPrice()), type.getGasPrice())) {
+//            return false;
+//        }
 
         AddToQueue.withStandardPriority(type);
         return true;
@@ -100,6 +100,22 @@ public class AbstractDynamicUnits extends Helpers {
 //    protected static void trainNow(AUnitType type, boolean onlyOneAtTime) {
 //        AddToQueue.withTopPriority(type);
 //    }
+
+    protected static boolean addToQueueIfNotAlreadyThere(AUnitType type) {
+        if (ProductionQueue.countInQueue(type, 5) == 0) {
+            return addToQueue(type);
+        }
+
+        return false;
+    }
+
+    public static boolean addToQueueToMaxAtATime(AUnitType type, int maxAtATime) {
+        if (ProductionQueue.countInQueue(type, 20) < maxAtATime) {
+            return addToQueue(type);
+        }
+
+        return false;
+    }
 
     protected static boolean addToQueueIfHaveFreeBuilding(AUnitType type) {
         AUnitType building = type.whatBuildsIt();

@@ -5,6 +5,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Count;
@@ -13,7 +14,6 @@ import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Represents battle squad (unit squad) that contains multiple battle units (could be one unit as well).
@@ -22,8 +22,8 @@ public abstract class Squad extends Units {
 
     private final int ID = firstFreeID++;
     private static int firstFreeID = 1;
-    private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Double> cacheDouble = new Cache<>();
+    private static Cache<Integer> cacheInteger = new Cache<>();
 
     /**
      * Auxilary name for the squad e.g. "Alpha", "Bravo", "Delta".
@@ -34,6 +34,13 @@ public abstract class Squad extends Units {
      * Current mission object for this squad.
      */
     private Mission mission;
+
+    /**
+     * Unit that is considered to be "center" of this squad.
+     */
+    protected AUnit _centerUnit = null;
+
+    private SquadCenter squadCenter = new SquadCenter(this);
 
     // =========================================================
 
@@ -50,7 +57,7 @@ public abstract class Squad extends Units {
      * Returns median <b>position</b> of all units. It's better than the average, because the outliners
      * don't affect the end result so badly.
      */
-    private APosition _getMedianUnitPosition = null;
+    private APosition _centerUnitPosition = null;
 
     // === Getters =============================================
 
@@ -62,7 +69,7 @@ public abstract class Squad extends Units {
         ASquadManager.squads = squads;
     }
 
-    public static APosition alphaCenter() {
+    public static HasPosition alphaCenter() {
         return Alpha.get() != null ? Alpha.get().center() : null;
     }
 
@@ -81,54 +88,22 @@ public abstract class Squad extends Units {
 //            totalY += unit.y();
 //        }
 //
-//        return _getMedianUnitPosition = new APosition(totalX / size(), totalY / size());
+//        return _getcenterUnitPosition = new APosition(totalX / size(), totalY / size());
 //    }
 
     /**
-     * Median
+     * Center of this squad.
      */
     public APosition center() {
         if (size() <= 0) {
             return null;
         }
-
-        AUnit medianUnit = medianUnit();
-
-        return _getMedianUnitPosition = (medianUnit == null ? null : medianUnit.position());
-    }
-
-    private AUnit medianUnit() {
-        int ttl = 600;
-        AUnit medianUnit = cache.get(
-                "medianUnit",
-                ttl,
-                this::defineMedianUnit
-        );
-
-        if (medianUnit != null && medianUnit.isAlive()) {
-            return medianUnit;
+        
+        if (squadCenter.isInvalid(_centerUnit)) {
+            _centerUnit = squadCenter.centerUnit();
         }
 
-        medianUnit = this.defineMedianUnit();
-        cache.set("medianUnit", ttl, medianUnit);
-        return medianUnit;
-    }
-
-    private AUnit defineMedianUnit() {
-        ArrayList<Integer> xCoords = new ArrayList<>();
-        ArrayList<Integer> yCoords = new ArrayList<>();
-
-        for (AUnit unit : list()) {
-            xCoords.add(unit.x());
-            yCoords.add(unit.y());
-        }
-
-        Collections.sort(xCoords);
-        Collections.sort(yCoords);
-
-        APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
-        AUnit nearestToMedian = Select.ourCombatUnits().nearestTo(median);
-        return nearestToMedian;
+        return _centerUnit != null ? _centerUnit.position() : null;
     }
 
     // =========================================================
@@ -297,6 +272,25 @@ public abstract class Squad extends Units {
 
                     return focusPoint.groundDist(center());
                 }
+        );
+    }
+
+    public int cohesionPercent() {
+        return cacheInteger.get(
+            "cohesionPercent",
+            15,
+            () -> {
+                APosition center = center();
+                if (size() <= 1 || center == null) {
+                    return 100;
+                }
+
+                int withinSquadRadius = selection()
+                    .inRadius(CohesionAssurance.squadMaxRadius(this), center)
+                    .count();
+
+                return (int) (100 * withinSquadRadius / size());
+            }
         );
     }
 }

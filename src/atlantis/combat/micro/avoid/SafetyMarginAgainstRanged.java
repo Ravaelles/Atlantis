@@ -49,7 +49,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 + quicknessBonus(defender, attacker)
                 + lurkerBonus(defender, attacker)
                 + woundedBonus(defender, attacker)
-                + ourUnitsNearbyBonus(defender)
+                + ourUnitsNearBonus(defender)
                 + ourMovementBonus(defender)
                 + enemyMovementBonus(defender, attacker)
                 + scoutBonus(defender, attacker)

@@ -63,8 +63,7 @@ public interface HasPosition {
         return new APosition((int) (x() + vector.x), (int) (y() + vector.y));
     }
 
-    default APosition makeWalkable() {
-        int maxRadius = 1;
+    default APosition makeWalkable(int maxRadius) {
         int currentRadius = 0;
         while (currentRadius <= maxRadius) {
             for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
@@ -124,7 +123,7 @@ public interface HasPosition {
         return Atlantis.game().isExplored(position().toTilePosition());
     }
 
-    default boolean isVisible() {
+    default boolean isPositionVisible() {
         return Atlantis.game().isVisible(position().toTilePosition());
     }
 
@@ -134,6 +133,10 @@ public interface HasPosition {
 
     default boolean isConnected() {
         return Atlantis.game().isVisible(position().toTilePosition());
+    }
+
+    default boolean hasPosition() {
+        return position() != null;
     }
 
     // =========================================================

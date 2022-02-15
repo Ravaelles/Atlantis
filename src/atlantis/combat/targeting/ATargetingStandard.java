@@ -40,10 +40,11 @@ public class ATargetingStandard extends ATargeting {
         }
 
         // =========================================================
-        // Target real units
+        // Target real units - exclude MEDICS
 
         target = enemyUnits.clone()
                 .inShootRangeOf(unit)
+                .excludeMedics()
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -54,7 +55,17 @@ public class ATargetingStandard extends ATargeting {
 
         target = enemyUnits.clone()
                 .workers()
-                .inRadius(10, unit)
+                .inRadius(15, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Bases
+
+        target = enemyBuildings.clone()
+                .bases()
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -75,17 +86,7 @@ public class ATargetingStandard extends ATargeting {
                         AUnitType.Zerg_Spire,
                         AUnitType.Zerg_Greater_Spire
                 )
-                .inRadius(11, unit)
-                .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
-
-        // =========================================================
-        // Bases
-
-        target = enemyBuildings.clone()
-                .bases()
+                .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
             return target;
@@ -94,8 +95,17 @@ public class ATargetingStandard extends ATargeting {
         // =========================================================
         // Okay, try targeting any-fuckin-thing
 
-        return Select.enemyRealUnits()
-                .effVisible()
+        // Start with non medics nearby
+
+        target = unit.enemiesNear()
+            .excludeMedics()
+            .canBeAttackedBy(unit, 15)
+            .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        return unit.enemiesNear()
                 .canBeAttackedBy(unit, 150)
                 .nearestTo(unit);
     }

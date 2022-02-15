@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -19,20 +20,20 @@ public class AWorkerDefenceManager {
      * Attack other workers, run from enemies etc.
      */
     public static boolean handleDefenceIfNeeded(AUnit worker) {
-        if (worker.enemiesNearby().isEmpty()) {
+        if (worker.enemiesNear().combatUnits().isEmpty()) {
             return false;
         }
 
-        if (shouldNotFight(worker)) {
-            return false;
+        if (runFromReaverFix(worker)) {
+            return true;
         }
 
         if (handleFightEnemyIfNeeded(worker)) {
             return true;
         }
 
-        // Dynamic nearby CSV repairing
-        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNearby(worker)) {
+        // Dynamic Near CSV repairing
+        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNear(worker)) {
             return true;
         }
 
@@ -41,10 +42,25 @@ public class AWorkerDefenceManager {
 
     // =========================================================
 
+    private static boolean runFromReaverFix(AUnit worker) {
+        AUnit reaver = worker.enemiesNear().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);
+        if (reaver != null && reaver.distToLessThan(worker, 10)) {
+            worker.runningManager().runFrom(reaver, 5, Actions.RUN_ENEMY);
+            worker.setTooltip("OhFuckReaver!", true);
+            worker.addLog("OhFuckReaver!");
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Sometimes workers need to fight.
      */
     private static boolean handleFightEnemyIfNeeded(AUnit worker) {
+        if (shouldNotFight(worker)) {
+            return false;
+        }
 
         // DESTROY ENEMY BUILDINGS that are being built close to main base.
         if (handleEnemyBuildingsOffensive(worker)) {
@@ -52,7 +68,7 @@ public class AWorkerDefenceManager {
         }
 
         // FIGHT against enemy WORKERS, worker rushes etc
-        if (handleEnemyWorkersNearby(worker)) {
+        if (handleEnemyWorkersNear(worker)) {
             return true;
         }
 
@@ -91,6 +107,10 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean shouldNotFight(AUnit worker) {
+        if (worker.idIsOdd()) {
+            return true;
+        }
+
         if (Enemy.protoss() && worker.hp() <= 22) {
             return true;
         }
@@ -110,7 +130,7 @@ public class AWorkerDefenceManager {
         return false;
     }
 
-    private static boolean handleRepairNearby(AUnit worker) {
+    private static boolean handleRepairNear(AUnit worker) {
         if (!worker.isWounded() || (worker.id() % 5 != 0 && !worker.isRepairing())) {
             return false;
         }
@@ -141,8 +161,12 @@ public class AWorkerDefenceManager {
             return false;
         }
 
-        if (worker.friendsNearby().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
+        if (worker.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
             return attackNearestEnemy(worker);
+        }
+
+        if (worker.distToMoreThan(Select.main(), 8)) {
+            return false;
         }
 
         if (Count.workers() <= 12 || Select.our().inRadius(4, worker).atMost(2)) {
@@ -163,8 +187,10 @@ public class AWorkerDefenceManager {
 
         // FIGHT against ZERGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).list()) {
-            if ((worker.hp() <= 24 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
+//            if ((worker.hp() <= 20 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
+            if (worker.hp() <= 20) {
                 worker.setTooltipTactical("Aaargh!");
+                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY);
                 return true;
             }
             worker.attackUnit(enemy);
@@ -173,8 +199,8 @@ public class AWorkerDefenceManager {
         }
 
         // FIGHT against COMBAT UNITS
-        List<AUnit> enemies = Select.enemyCombatUnits()
-                .inRadius(1, worker)
+        List<AUnit> enemies = worker.enemiesNear()
+                .inRadius(3, worker)
                 .canBeAttackedBy(worker, 1)
                 .list();
         for (AUnit enemy : enemies) {
@@ -187,7 +213,7 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean attackNearestEnemy(AUnit worker) {
-        AUnit enemy = worker.enemiesNearby().canBeAttackedBy(worker, 8).nearestTo(worker);
+        AUnit enemy = worker.enemiesNear().canBeAttackedBy(worker, 8).nearestTo(worker);
         if (enemy == null) {
             return false;
         }
@@ -197,7 +223,7 @@ public class AWorkerDefenceManager {
         return true;
     }
 
-    private static boolean handleEnemyWorkersNearby(AUnit worker) {
+    private static boolean handleEnemyWorkersNear(AUnit worker) {
         Selection enemyWorkers = Select.enemy().workers().inRadius(1.3, worker);
         for (AUnit enemy : enemyWorkers.list()) {
             worker.setTooltipTactical("NastyFuckers!");

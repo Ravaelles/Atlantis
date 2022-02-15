@@ -2,9 +2,10 @@ package atlantis.terran.repair;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
-import atlantis.map.scout.AScoutManager;
+import atlantis.information.strategy.GamePhase;
 import atlantis.terran.TerranFlyingBuildingManager;
 import atlantis.units.AUnit;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 public class RepairerAssigner {
@@ -12,9 +13,13 @@ public class RepairerAssigner {
     public static final int MAX_REPAIRERS_AT_ONCE = 8;
 
     protected static void assignRepairersToWoundedUnits() {
-        if (!hasMoreRepairersThanAllowed() && A.hasMinerals(15)) {
+        if (!usingMoreRepairersThanAllowed() && A.hasMinerals(15)) {
             for (AUnit woundedUnit : Select.our().repairable(true).excludeTypes(AtlantisConfig.WORKER).list()) {
                 if (shouldNotRepairUnit(woundedUnit)) {
+                    continue;
+                }
+
+                if (tooManyRepairs(woundedUnit)) {
                     continue;
                 }
 
@@ -33,14 +38,19 @@ public class RepairerAssigner {
 
     // =========================================================
 
-    private static boolean shouldNotRepairUnit(AUnit target) {
-        return !target.isRepairable()
-                || (target.isAir() && target.hp() >= 51)
-                || AScoutManager.isScout(target)
-                || (target.isRunning() && target.lastStoppedRunningLessThanAgo(30 * 5))
-                || (target.isBuilding() && TerranFlyingBuildingManager.isFlyingBuilding(target) && target.lastUnderAttackLessThanAgo(30 * 15))
-                || (target.isBuilding() && !target.isCombatBuilding() && !target.woundPercent(40))
-                || ARepairerManager.itIsForbiddenToRepairThisUnitNow(target);
+    private static boolean shouldNotRepairUnit(AUnit unit) {
+        return !unit.isRepairable()
+                || (unit.isAir() && unit.hp() >= 51)
+                || unit.isScout()
+                || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 5))
+                || (unit.isBuilding() && TerranFlyingBuildingManager.isFlyingBuilding(unit) && unit.lastUnderAttackLessThanAgo(30 * 15))
+                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercent(40))
+                || ARepairerManager.itIsForbiddenToRepairThisUnitNow(unit)
+                || GamePhase.isEarlyGame() && (unit.isBuilding() && !unit.isCombatBuilding() && unit.enemiesNear().atLeast(2));
+    }
+
+    private static boolean tooManyRepairs(AUnit unit) {
+        return ARepairAssignments.countRepairersForUnit(unit) >= optimalRepairersFor(unit);
     }
 
     private static int optimalRepairersFor(AUnit unit) {
@@ -55,16 +65,16 @@ public class RepairerAssigner {
             ARepairCommander.assignProtectorsFor(unit, shouldHaveThisManyRepairers - repairersNeeded);
         }
         else if (unit.isMissileTurret()) {
-            int enemies = Select.enemyCombatUnits().air().inRadius(10, unit).count();
+            int enemies = unit.enemiesNear().air().inRadius(11, unit).count();
 
-            if (Select.main().distToLessThan(unit, 14)) {
+            if (Have.main() && Select.main().distToLessThan(unit, 14)) {
                 return A.inRange(3, enemies, 5);
             }
 
             return A.inRange(2, (int) (enemies / 1.5), 5);
         }
         else if (unit.isTank()) {
-            return 2;
+            return 3;
         }
 
         return Math.max(0, repairersNeeded - alreadyAssigned);
@@ -73,7 +83,7 @@ public class RepairerAssigner {
     private static boolean removeExcessiveRepairersIfNeeded() {
         int allowedRepairers = A.hasMinerals(5) ? MAX_REPAIRERS_AT_ONCE : 0;
 
-        if (hasMoreRepairersThanAllowed()) {
+        if (usingMoreRepairersThanAllowed()) {
             for (int i = 0; i < ARepairAssignments.countTotalRepairers() - allowedRepairers; i++) {
                 AUnit repairer = ARepairAssignments.getRepairers().get(ARepairAssignments.getRepairers().size() - 1);
 //                System.err.println("Remove excessive repairer " + repairer);
@@ -85,7 +95,7 @@ public class RepairerAssigner {
         return false;
     }
 
-    public static boolean hasMoreRepairersThanAllowed() {
+    public static boolean usingMoreRepairersThanAllowed() {
         return ARepairAssignments.countTotalRepairers() > MAX_REPAIRERS_AT_ONCE;
     }
 }

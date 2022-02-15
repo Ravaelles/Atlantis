@@ -9,10 +9,10 @@ public class FoggedUnit extends AbstractFoggedUnit {
 
     // =========================================================
 
-    public static FoggedUnit from(AUnit unit) {
+    public static AbstractFoggedUnit from(AUnit unit) {
         _lastAUnit = unit;
 
-        FoggedUnit foggedUnit = (FoggedUnit) all.get(unit.id());
+        AbstractFoggedUnit foggedUnit = (AbstractFoggedUnit) all.get(unit.id());
         if (foggedUnit != null) {
             return foggedUnit;
         }
@@ -21,17 +21,24 @@ public class FoggedUnit extends AbstractFoggedUnit {
     }
 
     protected FoggedUnit(AUnit unit) {
-        this._id = unit.id();
-        this.aUnit = unit;
-        this.update(unit);
-
-        all.put(unit.id(), this);
+        super(unit);
     }
+
+//    protected FoggedUnit(AUnit unit) {
+//        this._id = unit.id();
+//        this.aUnit = unit;
+//        this.update(unit);
+//
+//        all.put(unit.id(), this);
+//    }
 
     // =========================================================
 
     @Override
     public APosition position() {
+//        if (_lastAUnit != null && _lastAUnit.isVisibleUnitOnMap()) {
+//            return _lastAUnit.position();
+//        }
         return _position;
     }
 
