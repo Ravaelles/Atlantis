@@ -46,7 +46,13 @@ public class AdvanceUnitsManager extends MissionUnitManager {
         }
 
         if (unit.enemiesNear().notEmpty()) {
-            if (unit.isMoving() && !unit.isRunning() && unit.lastActionMoreThanAgo(15)) {
+            if (
+                unit.isMoving()
+                    && !unit.isUnitAction(Actions.MOVE_FORMATION)
+                    && !unit.isRunning()
+                    && unit.lastActionMoreThanAgo(15)
+                    && unit.distToSquadCenter() >= 5
+            ) {
                 unit.stop("TooFast", false);
             }
             return false;
@@ -54,11 +60,16 @@ public class AdvanceUnitsManager extends MissionUnitManager {
 
         // =========================================================
 
-        if (unit.isMoving() && !unit.isRunning() && unit.lastActionMoreThanAgo(10, Actions.MOVE_ENGAGE)) {
-//        if (!unit.isStopped() && unit.lastActionMoreThanAgo(7, Actions.MOVE_ENGAGE)) {
-            unit.stop("TooFast", false);
-            return true;
-        }
+//        if (
+//            unit.isMoving()
+//                && !unit.isUnitAction(Actions.MOVE_FORMATION)
+//                && !unit.isRunning()
+//                && unit.lastActionMoreThanAgo(10, Actions.MOVE_ENGAGE)
+//        ) {
+////        if (!unit.isStopped() && unit.lastActionMoreThanAgo(7, Actions.MOVE_ENGAGE)) {
+//            unit.stop("TooFast", false);
+//            return true;
+//        }
 
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);

@@ -115,7 +115,7 @@ public class TerranInfantry {
         }
 
         // Without enemies around, don't do anything
-        if (unit.enemiesNear().empty()) {
+        if (unit.enemiesNear().excludeMedics().empty()) {
             return false;
         }
 

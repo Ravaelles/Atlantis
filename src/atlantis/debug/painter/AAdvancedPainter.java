@@ -133,16 +133,17 @@ public class AAdvancedPainter extends APainter {
      */
     protected static void paintCombatUnits() {
         for (AUnit unit : Select.ourCombatUnits().list()) {
-            if (unit.isLoaded()) {
-                continue;
-            }
             APosition position = unit.position();
 
             // =========================================================
             // === Paint targets for combat units
             // =========================================================
 
-            paintOurCombatUnitTargets(unit);
+            paintTargets(unit);
+
+            if (unit.isLoaded()) {
+                continue;
+            }
 
             // =========================================================
             // === Paint running and white flag
@@ -230,7 +231,7 @@ public class AAdvancedPainter extends APainter {
         paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
     }
 
-    private static void paintOurCombatUnitTargets(AUnit unit) {
+    private static void paintTargets(AUnit unit) {
         if (unit.hasTargetPosition() && !unit.targetPositionAtLeastAway(12)) {
             paintLine(unit, unit.targetPosition(), Color.Grey);
 //            paintLine(unit, unit.targetPosition(), (unit.isAttackingOrMovingToAttack() ? Color.Teal : Color.Grey));

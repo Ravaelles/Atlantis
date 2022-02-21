@@ -270,6 +270,10 @@ public class Selection {
         return cloneByRemovingIf(u -> !u.hasPosition());
     }
 
+    public Selection havingWeapon() {
+        return cloneByRemovingIf(u -> !u.hasAnyWeapon());
+    }
+
     public int totalHp() {
         return data.stream()
                 .map(AUnit::hp)

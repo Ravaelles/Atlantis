@@ -52,7 +52,18 @@ public class ARunningManager {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
 
         if (We.terran() && unit.isRunning() && unit.isHealthy() && unit.lastUnderAttackLessThanAgo(30)) {
+            unit.runningManager().stopRunning();
             unit.setTooltipTactical("HealthyNow");
+            return true;
+        }
+
+        if (
+            unit.isRunning()
+                && unit.lastStartedRunningMoreThanAgo(20)
+                && !AAvoidUnits.shouldNotAvoidAnyUnit(unit))
+        {
+            unit.runningManager().stopRunning();
+            unit.setTooltip("StopMan", false);
             return true;
         }
 

@@ -2284,4 +2284,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             () -> distToSquadCenter() > squadRadius()
         );
     }
+
+    public boolean isProtector() {
+        return ARepairAssignments.isProtector(this);
+    }
 }

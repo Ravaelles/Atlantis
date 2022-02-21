@@ -321,9 +321,6 @@ public interface AUnitOrders {
      * canRepair
      */
     default boolean repair(AUnit target, String tooltip, boolean strategicLevel) {
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("REPAIR @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
-        }
 
         if (target == null) {
             return false;
@@ -331,12 +328,17 @@ public interface AUnitOrders {
 
         unit().setTooltip(tooltip, strategicLevel);
 
-        if (unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
+        if (unit().isRepairing() && unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
+//            System.err.println(this + " avoid double command / " + unit().getLastCommand() + " // " + unit().target());
             return true;
         }
 
         unit().setAction(Actions.REPAIR);
         u().repair(target.u());
+
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("REPAIR @" + A.now() + " / " + this + " repair " + target + " (" + target.hp() + ")");
+        }
 
         return true;
 

@@ -81,7 +81,7 @@ public class ARepairAssignments {
             throw new RuntimeException(repairer + "is not SCV in addRepairer!");
         }
 
-        if (addLogs) { GameLog.get().addMessage("Added Repairer of " + unitToRepair); }
+        if (addLogs) { GameLog.get().addMessage("Added Repairer (" + repairer.idWithHash() + ") of " + unitToRepair); }
 
         repairersToUnit.put(repairer, unitToRepair);
         repairersToModes.put(repairer, MODE_REPAIR_ONLY);

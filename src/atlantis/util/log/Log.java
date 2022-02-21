@@ -25,6 +25,8 @@ public class Log {
     public void addMessage(String message) {
         messages.add(new LogMessage(message, expireAfterFrames));
 
+//        System.out.println("LOG: " + message);
+
         if (messages.size() > limit) {
             messages.remove(0);
         }

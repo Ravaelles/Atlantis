@@ -157,7 +157,7 @@ public class ComeCloser extends ASquadCohesionManager {
 
 //            if (!unit.recentlyMoved()) {
             unit.move(
-                unit.translatePercentTowards(center, 20),
+                unit.translateTilesTowards(center, 2).makeWalkable(5),
                 Actions.MOVE_FOCUS,
                 "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
                 false
