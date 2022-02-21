@@ -25,6 +25,7 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.position.TerranBunkerPositionFinder;
 import atlantis.production.constructing.position.TerranPositionFinder;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionQueue;
@@ -1383,6 +1384,9 @@ public class AAdvancedPainter extends APainter {
         // Enemy natural choke
         AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
+
+        // Bunker
+        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
 
         // Next defensive building position
 //        if (Count.bases() > 0) {

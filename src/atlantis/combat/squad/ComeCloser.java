@@ -67,8 +67,8 @@ public class ComeCloser extends ASquadCohesionManager {
 
         if (Count.tanks() >= 2) {
             AUnit tank = Select.ourTanks().nearestTo(unit);
-            if (tank != null && tank.distToMoreThan(unit, 4.6)) {
-                unit.move(tank, Actions.MOVE_FORMATION, "HugTanks", true);
+            if (tank != null && tank.distToMoreThan(unit, 4.9)) {
+                unit.move(unit.translateTilesTowards(2, tank), Actions.MOVE_FORMATION, "HugTanks", true);
                 unit.addLog("HugTanks");
                 return true;
             }
@@ -89,8 +89,10 @@ public class ComeCloser extends ASquadCohesionManager {
         }
 
         if (unit.groundDist(focusPoint(unit)) + 3 <= unit.squad().groundDistToFocusPoint()) {
-            unit.addLog("TooAhead");
-            return true;
+            if (unit.friendsNear().inRadius(4, unit).atMost(6)) {
+                unit.addLog("TooAhead");
+                return true;
+            }
         }
 
         return false;
@@ -147,6 +149,10 @@ public class ComeCloser extends ASquadCohesionManager {
         }
 
         APosition center = unit.squad().center();
+        if (center == null) {
+            return false;
+        }
+
         double maxDistToSquadCenter = CohesionAssurance.squadMaxRadius(unit.squad());
 
         if (unit.distTo(center) > maxDistToSquadCenter) {

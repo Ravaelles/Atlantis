@@ -66,7 +66,8 @@ public class TerranTankWhenSieged extends TerranTank {
     private static boolean wantsToUnsiege(AUnit unit, String log) {
         if (
             hasJustSiegedRecently(unit)
-                || unit.lastAttackFrameLessThanAgo(30 * 9)) {
+                || unit.lastAttackFrameLessThanAgo(30 * (1 + unit.id() % 5))
+        ) {
             return false;
         }
 

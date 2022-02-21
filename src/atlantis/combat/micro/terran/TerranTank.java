@@ -23,7 +23,7 @@ public class TerranTank {
     // =========================================================
 
     protected static boolean hasJustSiegedRecently(AUnit unit) {
-        return unit.lastActionLessThanAgo(30 * 10, Actions.SIEGE) && unit.cooldownRemaining() == 0;
+        return unit.lastActionLessThanAgo(30 * 7, Actions.SIEGE) || unit.cooldownRemaining() > 0;
     }
 
     protected static boolean tooLonely(AUnit unit) {
