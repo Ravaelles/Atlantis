@@ -483,6 +483,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             this.tooltip = tooltip;
         }
         this.tooltip = tooltip;
+//        System.out.println(A.now() + " - " + this.tooltip);
         return this;
     }
 
@@ -762,7 +763,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-        return runningManager.isRunning() || (action() != null && action().isRunning());
+//        return runningManager.isRunning() || (action() != null && action().isRunning());
+        return runningManager.isRunning();
     }
 
     public boolean lastOrderMinFramesAgo(int minFramesAgo) {
@@ -1148,7 +1150,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isStopped() {
-        return u != null && u.getLastCommand() != null && u.getLastCommand().getType() == UnitCommandType.Stop;
+        return u != null && (u.getLastCommand() == null || u.getLastCommand().getType() == UnitCommandType.Stop);
     }
 
     public boolean isStuck() {
@@ -1271,7 +1273,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isMoving();
     }
 
-    protected boolean isAttacking() {
+    public boolean isAttacking() {
         return u.isAttacking();
     }
 
@@ -1496,6 +1498,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return groundWeaponCooldown() <= 0 || airWeaponCooldown() <= 0;
     }
 
+    public boolean hasCooldown() {
+        return groundWeaponCooldown() > 0 || airWeaponCooldown() > 0;
+    }
+
     public int scarabCount() {
         return u().getScarabCount();
     }
@@ -1633,6 +1639,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isOtherUnitFacingThisUnit(AUnit otherUnit) {
+        if (otherUnit.hasNoU()) {
+            return false;
+        }
+
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
 
@@ -1643,6 +1653,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        }
 
         return positionDifference.isParallelTo(otherUnitLookingVector);
+    }
+
+    /**
+     * Inner BWAPI unit object, if null it means unit is not visible.
+     */
+    public boolean hasNoU() {
+        return u == null;
     }
 
     public boolean isFirstCombatUnit() {

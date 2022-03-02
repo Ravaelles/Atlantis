@@ -5,6 +5,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
+import atlantis.util.We;
 
 public class CohesionAssurance {
 
@@ -13,6 +14,10 @@ public class CohesionAssurance {
      */
     public static boolean handleTooLowCohesion(AUnit unit) {
         if (!isSquadCohesionTooLow(unit)) {
+            return false;
+        }
+
+        if (!We.terran() && unit.enemiesNear().units().onlyMelee()) {
             return false;
         }
 
@@ -53,6 +58,6 @@ public class CohesionAssurance {
 
     public static double squadMaxRadius(Squad squad) {
         double tanksBonus = (Count.tanks() >= 2 ? (2 + Count.tanks() / 3.0) : 0);
-        return Math.max(2.5, Math.sqrt(squad.size()) + tanksBonus);
+        return Math.max(2.7, Math.sqrt(squad.size()) + tanksBonus);
     }
 }

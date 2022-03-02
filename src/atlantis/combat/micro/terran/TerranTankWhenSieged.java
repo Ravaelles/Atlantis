@@ -88,15 +88,23 @@ public class TerranTankWhenSieged extends TerranTank {
     }
 
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
+        if (tank.lastActionLessThanAgo(55, Actions.ATTACK_POSITION)) {
+            tank.setTooltipTactical("SmashInvisible!");
+            tank.addLog("SmashInvisible!");
+            return true;
+        }
+
         List<AUnit> cloaked = EnemyUnits.visibleAndFogged()
             .effCloaked()
             .groundUnits()
             .inRadius(11.9, tank)
             .list();
         for (AUnit cloakedUnit : cloaked) {
+//            System.out.println(cloakedUnit + " // " + cloakedUnit.position());
             if (cloakedUnit.distTo(tank) >= tank.groundWeaponMinRange()) {
 //                if (tank.lastActionMoreThanAgo(30, Actions.ATTACK_POSITION)) {
 //                }
+//                System.out.println("SHOOT AT " + cloakedUnit.position());
                 tank.attackPosition(cloakedUnit.position());
                 tank.setTooltipTactical("SmashInvisible");
                 tank.addLog("SmashInvisible");

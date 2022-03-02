@@ -10,6 +10,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
@@ -21,6 +22,15 @@ public class TerranBunkerPositionFinder {
         HasPosition nearTo = defineNearTo(order);
         if (nearTo == null) {
             nearTo = Select.ourBuildings().first();
+        }
+
+        // =========================================================
+
+        if (nearTo != null && Count.bunkers() > 0) {
+            AUnit otherBunker = Select.ourOfType(bunker).nearestTo(Select.main());
+            if (otherBunker != null) {
+                nearTo = otherBunker;
+            }
         }
 
         // =========================================================

@@ -181,7 +181,7 @@ public class FightInsteadAvoid {
 
     // RANGED
     protected boolean fightAsRangedUnit() {
-        if (melee != null) {
+        if (melee != null && melee.hasPosition()) {
             unit.addLog("RunMelee" + A.dist(unit, melee));
 //            unit.addLog("RunMelee");
             return false;

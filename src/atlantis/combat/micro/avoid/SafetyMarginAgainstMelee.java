@@ -68,7 +68,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             return (0.2 + defender.woundPercent() / 40);
         }
 
-        double base = woundedAgainstMeleeBonus(defender, attacker);
+        double base = woundedAgainstMeleeBonus(defender, attacker)
+            + beastBonus(defender);
         boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
 
         if (attacker.isWorker() && attacker.hp() >= 30) {
@@ -76,7 +77,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
         else if (!enemyFacingUs && defender.shieldDamageAtMost(40)) {
-            base += 1.5;
+            base -= 1.5;
         }
 
         else if (
@@ -269,7 +270,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         else {
             criticalDist = INFANTRY_BASE_IF_NO_MEDIC
 //                    + ourMovementBonus(defender)
-//                    + enemyMovementBonus(defender, attacker)
+                    + (defender.hasCooldown() ? enemyMovementBonus(defender, attacker) : 0)
                     + workerBonus(defender, attacker)
                     + woundedAgainstMeleeBonus(defender, attacker);
 
@@ -283,7 +284,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
 //                System.out.println("criticalDist = " + criticalDist + " (hp = " + defender.hp() + ")");
 
-            criticalDist = Math.min(criticalDist, defender.isWounded() ? 3.2 : 2.5);
+            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.5);
 
             String log = "NoMedic" + A.digit(criticalDist);
             defender.setTooltipTactical(log);

@@ -23,6 +23,7 @@ public class Actions {
     public static final Action MOVE_ATTACK = new Action().setName("MOVE_ATTACK");
     public static final Action MOVE_AVOID = new Action().setName("MOVE_AVOID");
     public static final Action MOVE_BUILD = new Action().setName("MOVE_BUILD");
+    public static final Action MOVE_DANCE = new Action().setName("MOVE_DANCE");
     public static final Action MOVE_ENGAGE = new Action().setName("MOVE_ENGAGE");
     public static final Action MOVE_ERROR = new Action().setName("MOVE_ERROR");
     public static final Action MOVE_EXPLORE = new Action().setName("MOVE_EXPLORE");
@@ -35,6 +36,7 @@ public class Actions {
     public static final Action MOVE_SCOUT = new Action().setName("MOVE_SCOUT");
     public static final Action MOVE_SPACE = new Action().setName("MOVE_SPACE");
     public static final Action MOVE_SPECIAL = new Action().setName("MOVE_SPECIAL");
+    public static final Action MOVE_UNFREEZE = new Action().setName("MOVE_UNFREEZE");
     public static final Action PATROL = new Action().setName("PATROL");
     public static final Action REPAIR = new Action().setName("REPAIR");
 //    public static final Action RETREAT = new Action(false, true).setName("RETREAT");

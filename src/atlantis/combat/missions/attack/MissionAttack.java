@@ -5,6 +5,7 @@ import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -22,6 +23,16 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean update(AUnit unit) {
+        if (
+            unit.lastActionLessThanAgo(30)
+                && !unit.isStopped()
+                && (A.notNthGameFrame(3) || unit.lastActionLessThanAgo(10))) {
+            return false;
+        }
+//        if (!unit.isStopped()) {
+//            return false;
+//        }
+
         unit.setTooltipTactical("#MA");
 
         return handleAdvance(unit);

@@ -33,6 +33,8 @@ public class UseMap {
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
+//        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
+//        if (true) return "ums/rav/Dragoons_v_Zealots.scm";
 
         // === Terran ==============================================
 
@@ -48,9 +50,10 @@ public class UseMap {
 //        if (true) return "ums/rav/Vultures_v_Marines.scm";
 //        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
+//        if (true) return "ums/rav/Tanks_v_DT.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
-//        if (true) return "ums/rav/minimap2s/3M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
@@ -126,6 +129,18 @@ public class UseMap {
         ) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(30);
+                GameSpeed.changeFrameSkipTo(0);
+            }
+        }
+
+        // =========================================================
+
+        else if (
+            activeMap().equals("ums/rav/Dragoon_v_Zealot.scm")
+            || activeMap().equals("ums/rav/Dragoons_v_Zealots.scm")
+        ) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedTo(50);
                 GameSpeed.changeFrameSkipTo(0);
             }
         }

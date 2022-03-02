@@ -37,7 +37,7 @@ public class SquadCenter {
             this::defineCenterUnit
         );
 
-        if (centerUnit != null && centerUnit.isAlive()) {
+        if (centerUnit != null && centerUnit.isAlive() && !centerUnit.isRunning()) {
             return centerUnit;
         }
 

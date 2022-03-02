@@ -32,7 +32,7 @@ public class ATargeting {
 //        }
 
         if (enemy == null) {
-            reasonNotToAttack = "NoTarget";
+            reasonNotToAttack = null;
         }
 
         return enemy;

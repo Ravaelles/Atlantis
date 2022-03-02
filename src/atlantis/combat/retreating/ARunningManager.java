@@ -35,7 +35,7 @@ public class ARunningManager {
     private final AUnit unit;
     private static APosition _lastPosition;
     //    private APosition runAwayFrom = null;
-    private APosition runTo;
+    private APosition runTo = null;
 //    private Units closeEnemies;
 //    private APosition enemyMedian = null;
 
@@ -50,34 +50,35 @@ public class ARunningManager {
     public static boolean shouldStopRunning(AUnit unit) {
 //        System.out.println(unit.id() + " // " + unit.isRunning()
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
+//        System.out.println(unit.isRunning() + " // " + unit.runningManager().isRunning() + " // " + unit.action().isRunning());
+        if (!unit.isRunning()) {
+            return false;
+        }
 
-        if (We.terran() && unit.isRunning() && unit.isHealthy() && unit.lastUnderAttackLessThanAgo(30)) {
-            unit.runningManager().stopRunning();
+        if (unit.hp() > 30 && unit.lastStartedRunningMoreThanAgo(150)) {
+            unit.setTooltipTactical("RanTooLong");
+            return true;
+        }
+
+        if (We.terran() && unit.isHealthy() && unit.lastUnderAttackLessThanAgo(30)) {
             unit.setTooltipTactical("HealthyNow");
             return true;
         }
 
         if (
-            unit.isRunning()
-                && unit.lastStartedRunningMoreThanAgo(20)
-                && !AAvoidUnits.shouldNotAvoidAnyUnit(unit))
+            unit.lastStartedRunningMoreThanAgo(20) && !AAvoidUnits.shouldNotAvoidAnyUnit(unit))
         {
-            unit.runningManager().stopRunning();
             unit.setTooltip("StopMan", false);
             return true;
         }
 
         if (
-            unit.isRunning()
-                && (
-                unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
-                    && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
-                    && !unit.isUnderAttack(unit.isAir() ? 250 : 5)
-                    //                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
-                    || AAvoidUnits.shouldNotAvoidAnyUnit(unit)
-            )
+            unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
+                && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
+                && !unit.isUnderAttack(unit.isAir() ? 250 : 5)
+                //                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
+                || AAvoidUnits.shouldNotAvoidAnyUnit(unit)
         ) {
-            unit.runningManager().stopRunning();
             unit.setTooltip("StopRun", false);
             return true;
         }
@@ -111,7 +112,7 @@ public class ARunningManager {
 
         if (runTo != null && unit.distTo(runTo) >= 0.001) {
             dist = unit.distTo(runTo);
-            unit.setTooltip("StartRun(" + String.format("%.1f", dist) + ")", false);
+            unit.setTooltip("RunToDist(" + String.format("%.1f", dist) + ")", false);
             return makeUnitRun(action);
         }
 
@@ -642,7 +643,7 @@ public class ARunningManager {
 //            }
         }
 
-        stopRunning();
+//        stopRunning();
         return false;
     }
 

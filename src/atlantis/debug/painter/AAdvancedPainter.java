@@ -1386,7 +1386,7 @@ public class AAdvancedPainter extends APainter {
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
         // Bunker
-        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
+//        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
 
         // Next defensive building position
 //        if (Count.bases() > 0) {

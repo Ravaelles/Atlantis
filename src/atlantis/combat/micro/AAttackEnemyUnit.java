@@ -1,6 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.targeting.ATargeting;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -8,6 +9,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
+import bwapi.Color;
 
 public class AAttackEnemyUnit {
 
@@ -29,11 +31,19 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearEnemyUnits(AUnit unit) {
+//        if (!unit.isStopped()) {
+        if (unit.lastActionLessThanAgo(5)) {
+//            AAdvancedPainter.paintCircleFilled(unit, 6, Color.Orange);
+//            System.out.println("u.getLastCommand().getType().name() = " + unit.getLastCommand().getType().name());
+            return false;
+        }
+
         AUnit enemy = defineEnemyToAttackFor(unit);
         if (enemy == null) {
-            if (unit.isAttackingOrMovingToAttack()) {
-                unit.stop("Dont", false);
-            }
+            AAdvancedPainter.paintCircleFilled(unit, 4, Color.Brown);
+//            if (unit.isAttackingOrMovingToAttack()) {
+//                unit.stop("Dont", false);
+//            }
             return false;
         }
 
@@ -41,6 +51,10 @@ public class AAttackEnemyUnit {
     }
 
     public static boolean canAttackEnemiesNow(AUnit unit) {
+        if (AAttackEnemyUnit.reasonNotToAttack == null) {
+            return true;
+        }
+
         return defineEnemyToAttackFor(unit) != null;
     }
 
@@ -55,33 +69,33 @@ public class AAttackEnemyUnit {
 
     private static boolean allowedToAttack(AUnit unit) {
         if (unit.hasNoWeaponAtAll()) {
-//            reasonNotToAttack = "NoWeapon";
-            return true;
+            reasonNotToAttack = "NoWeapon";
+            return false;
         }
 
         if (unit.isTerranInfantry() && Count.medics() >= 2) {
             if (!unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
 //                if (unit.cooldownRemaining() >= 2) {
                     reasonNotToAttack = "NoMedics";
-                    return true;
+                    return false;
 //                }
             }
         }
 
-//        if (unit.outsideSquadRadius() && unit.enemiesNear().canAttack(unit, 2.3).notEmpty()) {
-        if (unit.outsideSquadRadius()) {
-            reasonNotToAttack = "Outside";
-            return true;
-        }
+        // @Problematic - Vultures dont attack from far
+//        if (Count.ourCombatUnits() >= 5 && unit.outsideSquadRadius()) {
+//            reasonNotToAttack = "Outside";
+//            return false;
+//        }
 
-        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80) {
-            if (unit.enemiesNear().ranged().notEmpty()) {
+        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80 && !unit.isStopped()) {
+            if (unit.enemiesNear().ranged().notEmpty() && unit.lastStartedAttackMoreThanAgo(90)) {
                 reasonNotToAttack = "Cautious";
-                return true;
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     private static AUnit defineEnemyToAttackFor(AUnit unit) {
@@ -91,11 +105,12 @@ public class AAttackEnemyUnit {
             () -> {
                 reasonNotToAttack = null;
 
-                if (allowedToAttack(unit)) {
+                if (!allowedToAttack(unit)) {
                     return null;
                 }
 
                 AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, MAX_DIST_TO_ATTACK);
+//                System.out.println("enemy = " + enemy);
 
                 if (enemy == null) {
                     return null;
@@ -193,6 +208,7 @@ public class AAttackEnemyUnit {
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
         return unit.mission() == null
+            || unit.isTank()
             || unit.mission().allowsToAttackEnemyUnit(unit, enemy)
             || (unit.isRanged() && enemy.isMelee());
     }

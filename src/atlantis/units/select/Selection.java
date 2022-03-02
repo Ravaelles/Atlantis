@@ -188,6 +188,10 @@ public class Selection {
         return cloneByRemovingIf((unit -> unit.isBuilding()));
     }
 
+    public Selection nonWorkers() {
+        return cloneByRemovingIf((unit -> unit.isWorker()));
+    }
+
     /**
      * Selects units that are gathering minerals.
      */
@@ -302,6 +306,14 @@ public class Selection {
      */
     public Selection repairable(boolean checkIfWounded) {
         return cloneByRemovingIf((unit -> !unit.isCompleted() || !unit.type().isMechanical() || (checkIfWounded && !unit.isWounded())));
+    }
+
+    public boolean onlyMelee() {
+        return units().onlyMelee();
+    }
+
+    public boolean onlyAir() {
+        return units().onlyAir();
     }
 
     public Selection burrowed() {

@@ -6,6 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ComeCloser extends ASquadCohesionManager {
@@ -134,6 +135,10 @@ public class ComeCloser extends ASquadCohesionManager {
             return true;
         }
 
+        if (unit.isVulture()) {
+            return true;
+        }
+
 //        if (unit.squad().mission().isMissionAttack()) {
 //            return false;
 //        }
@@ -158,6 +163,11 @@ public class ComeCloser extends ASquadCohesionManager {
         if (unit.distTo(center) > maxDistToSquadCenter) {
             AUnit nearestFriend = unit.friendsNear().nearestTo(unit);
             if (nearestFriend == null) {
+                return false;
+            }
+
+            Selection enemiesNear = unit.enemiesNear();
+            if ((unit.isVulture() || unit.isDragoon()) && (enemiesNear.isEmpty() || enemiesNear.onlyMelee())) {
                 return false;
             }
 
